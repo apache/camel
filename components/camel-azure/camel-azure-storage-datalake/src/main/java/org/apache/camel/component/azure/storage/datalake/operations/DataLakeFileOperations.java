@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.OpenOption;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Map;
@@ -106,7 +107,7 @@ public class DataLakeFileOperations {
             throw new IllegalArgumentException("to download a file, you need to specify the fileDir in the URI");
         }
         final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
-        final File recieverFile = new File(fileDir, fileClientWrapper.getFileName());
+        final File recieverFile = resolveWithinDirectory(fileDir, fileClientWrapper.getFileName());
         final FileCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
         final FileRange fileRange = configurationProxy.getFileRange(exchange);
         final ParallelTransferOptions parallelTransferOptions = configurationProxy.getParallelTransferOptions(exchange);
@@ -252,5 +253,19 @@ public class DataLakeFileOperations {
     private DataLakeFileClientWrapper getFileClientWrapper(final Exchange exchange) {
         final DataLakeFileClient fileClient = configurationProxy.getFileClient(exchange);
         return null == fileClient ? client : new DataLakeFileClientWrapper(fileClient);
+    }
+
+    private static File resolveWithinDirectory(String fileDir, String name) {
+        final File target = new File(fileDir, name);
+        // normalize lexically (removes ./ and ../ segments) and compare on path-segment boundaries so a sibling
+        // directory whose name merely extends fileDir is not considered contained
+        final Path normalizedDir = new File(fileDir).toPath().normalize();
+        final Path normalizedTarget = target.toPath().normalize();
+        if (!normalizedTarget.startsWith(normalizedDir)) {
+            throw new IllegalArgumentException(
+                    "Cannot download to file '" + name
+                                               + "' as it resolves outside the configured fileDir directory: " + fileDir);
+        }
+        return target;
     }
 }

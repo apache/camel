@@ -125,6 +125,19 @@ class BlobOperationsTest extends CamelTestSupport {
     }
 
     @Test
+    void testDownloadBlobToFileRejectsPathTraversalName() {
+        // a blob name is influenced by whoever writes to the container and may contain ../ segments;
+        // the download must stay within the configured fileDir
+        configuration.setFileDir("/tmp/camel-azure-blob-download");
+        when(client.getBlobName()).thenReturn("../escaped/PROOF_PWNED");
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final Exchange exchange = new DefaultExchange(context);
+
+        assertThrows(IllegalArgumentException.class, () -> operations.downloadBlobToFile(exchange));
+    }
+
+    @Test
     void testUploadBlockBlob() throws Exception {
         // mocking
         final BlockBlobItem blockBlobItem = new BlockBlobItem("testTag", OffsetDateTime.now(), null, false, null);
