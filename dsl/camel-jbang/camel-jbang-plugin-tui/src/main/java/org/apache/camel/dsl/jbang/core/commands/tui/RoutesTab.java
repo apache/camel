@@ -1250,7 +1250,8 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(6),
                             Constraint.length(9))
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                            .title(" Processors [" + route.routeId + "] ").build())
+                            .title(" Processors [" + route.routeId + "] ")
+                            .build())
                     .build();
         } else {
             boolean hasProcPercentiles = route.p50Time >= 0
@@ -1329,7 +1330,8 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(14),
                             Constraint.length(13))
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                            .title(" Processors [" + route.routeId + "] ").build())
+                            .title(" Processors [" + route.routeId + "] ")
+                            .build())
                     .build();
         }
 

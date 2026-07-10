@@ -289,17 +289,21 @@ class LogTab extends AbstractTab {
         int contentHeight = entries.size();
 
         boolean hasNew = !followMode && scroll < contentHeight - Math.max(1, area.height() - 2);
-        String logLabel;
-        if (infraSel != null) {
-            logLabel = " Log [" + infraSel.alias + "]";
-        } else if (info != null && info.rootLogLevel != null) {
-            logLabel = " Log level:" + info.rootLogLevel;
-        } else {
-            logLabel = " Log";
-        }
         Line titleLine;
         List<Span> titleSpans = new ArrayList<>();
-        titleSpans.add(Span.raw(logLabel + " "));
+        if (infraSel != null) {
+            titleSpans.add(Span.raw(" ["));
+            titleSpans.add(Span.styled(infraSel.alias, Theme.label().bold()));
+            titleSpans.add(Span.raw("] Log "));
+        } else if (ctx.logPinVisible && ctx.selectedPid != null) {
+            titleSpans.add(Span.raw(" ["));
+            titleSpans.add(Span.styled(ctx.selectedName(), Theme.label().bold()));
+            titleSpans.add(Span.raw("] Log "));
+        } else if (info != null && info.rootLogLevel != null) {
+            titleSpans.add(Span.raw(" Log level:" + info.rootLogLevel + " "));
+        } else {
+            titleSpans.add(Span.raw(" Log "));
+        }
         if (hasNew) {
             titleSpans.add(Span.styled("(*)", Theme.label()));
             titleSpans.add(Span.raw(" "));
