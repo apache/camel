@@ -57,8 +57,8 @@ public class UriBindingProvider implements BindingProvider {
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
-        context = context.replaceFirst("\\{\\{ \\.URI }}", endpointUri);
-        context = context.replaceFirst("\\{\\{ \\.EndpointProperties }}\n",
+        context = context.replace("{{ .URI }}", endpointUri);
+        context = context.replace("{{ .EndpointProperties }}\n",
                 templateProvider.asEndpointProperties(endpointProperties));
 
         return context;

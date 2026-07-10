@@ -40,7 +40,7 @@ import org.apache.camel.util.URISupport;
 public class ObjectReferenceBindingProvider implements BindingProvider {
 
     private static final Pattern OBJECT_REFERENCE_URI_PATTERN
-            = Pattern.compile("^([a-z.]+/[alphbetv0-9]+):([A-Z][a-z]+):([a-z][a-z-]*/?[a-z][a-z-]*)\\??[^?]*", Pattern.DOTALL);
+            = Pattern.compile("^([a-z.]+/[a-z0-9]+):([A-Z][a-zA-Z]+):([a-z][a-z-]*/?[a-z][a-z-]*)\\??[^?]*", Pattern.DOTALL);
 
     private final String apiVersion;
     private final String kind;
@@ -105,11 +105,11 @@ public class ObjectReferenceBindingProvider implements BindingProvider {
             namespaceContext = "      namespace: " + namespace + "\n";
         }
 
-        context = context.replaceFirst("\\{\\{ \\.ApiVersion }}", apiVersionValue);
-        context = context.replaceFirst("\\{\\{ \\.Kind }}", kindValue);
-        context = context.replaceFirst("\\{\\{ \\.Name }}", objectName);
-        context = context.replaceFirst("\\{\\{ \\.Namespace }}\n", namespaceContext);
-        context = context.replaceFirst("\\{\\{ \\.EndpointProperties }}\n",
+        context = context.replace("{{ .ApiVersion }}", apiVersionValue);
+        context = context.replace("{{ .Kind }}", kindValue);
+        context = context.replace("{{ .Name }}", objectName);
+        context = context.replace("{{ .Namespace }}\n", namespaceContext);
+        context = context.replace("{{ .EndpointProperties }}\n",
                 templateProvider.asEndpointProperties(endpointUriProperties));
 
         return context;
@@ -148,7 +148,7 @@ public class ObjectReferenceBindingProvider implements BindingProvider {
         if (uriExpression.contains("?")) {
             String query = StringHelper.after(uriExpression, "?");
             if (query != null) {
-                endpointUriProperties = URISupport.parseQuery(query, true);
+                endpointUriProperties.putAll(URISupport.parseQuery(query, true));
             }
         }
 
