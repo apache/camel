@@ -63,7 +63,7 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
     private String proxyAuthMethod;
     @UriParam(label = "proxy", description = "Proxy Username to access GeoCoding server.")
     private String proxyAuthUsername;
-    @UriParam(label = "proxy", description = "Proxy Password to access GeoCoding server.")
+    @UriParam(label = "proxy", security = "secret", description = "Proxy Password to access GeoCoding server.")
     private String proxyAuthPassword;
     @UriParam(label = "proxy", description = "Proxy Authentication Domain to access Google GeoCoding server.")
     private String proxyAuthDomain;

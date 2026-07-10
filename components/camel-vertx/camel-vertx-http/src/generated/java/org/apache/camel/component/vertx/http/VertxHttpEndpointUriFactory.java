@@ -55,7 +55,11 @@ public class VertxHttpEndpointUriFactory extends org.apache.camel.support.compon
         props.add("vertxHttpBinding");
         props.add("webClientOptions");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(3);
+        secretProps.add("basicAuthPassword");
+        secretProps.add("bearerToken");
+        secretProps.add("proxyPassword");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }

@@ -46,20 +46,6 @@ public interface HuggingFaceEndpointBuilderFactory {
         }
 
         /**
-         * HF API token for private models.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param authToken the value to set
-         * @return the dsl builder
-         */
-        default HuggingFaceEndpointBuilder authToken(String authToken) {
-            doSetProperty("authToken", authToken);
-            return this;
-        }
-        /**
          * If true, auto-select the best label (highest score) for zero-shot
          * classification.
          * 
@@ -429,6 +415,20 @@ public interface HuggingFaceEndpointBuilderFactory {
          */
         default HuggingFaceEndpointBuilder userRole(String userRole) {
             doSetProperty("userRole", userRole);
+            return this;
+        }
+        /**
+         * HF API token for private models.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param authToken the value to set
+         * @return the dsl builder
+         */
+        default HuggingFaceEndpointBuilder authToken(String authToken) {
+            doSetProperty("authToken", authToken);
             return this;
         }
         /**

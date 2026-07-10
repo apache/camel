@@ -134,21 +134,6 @@ public interface WordpressComponentBuilderFactory {
         }
     
         /**
-         * Password from authorized user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default WordpressComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-    
-        /**
          * Search criteria.
          * 
          * The option is a:
@@ -307,6 +292,21 @@ public interface WordpressComponentBuilderFactory {
             doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
             return this;
         }
+    
+        /**
+         * Password from authorized user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default WordpressComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
     }
 
     class WordpressComponentBuilderImpl
@@ -333,7 +333,6 @@ public interface WordpressComponentBuilderFactory {
             case "criteria": getOrCreateConfiguration((WordpressComponent) component).setCriteria((java.util.Map) value); return true;
             case "force": getOrCreateConfiguration((WordpressComponent) component).setForce((boolean) value); return true;
             case "id": getOrCreateConfiguration((WordpressComponent) component).setId((java.lang.Integer) value); return true;
-            case "password": getOrCreateConfiguration((WordpressComponent) component).setPassword((java.lang.String) value); return true;
             case "searchCriteria": getOrCreateConfiguration((WordpressComponent) component).setSearchCriteria((org.apache.camel.component.wordpress.api.model.SearchCriteria) value); return true;
             case "url": getOrCreateConfiguration((WordpressComponent) component).setUrl((java.lang.String) value); return true;
             case "user": getOrCreateConfiguration((WordpressComponent) component).setUser((java.lang.String) value); return true;
@@ -342,6 +341,7 @@ public interface WordpressComponentBuilderFactory {
             case "autowiredEnabled": ((WordpressComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((WordpressComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((WordpressComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "password": getOrCreateConfiguration((WordpressComponent) component).setPassword((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -563,23 +563,6 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             return this;
         }
     
-        
-        /**
-         * Whether to verify SSL certificates.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param verifySsl the value to set
-         * @return the dsl builder
-         */
-        default IbmWatsonxAiComponentBuilder verifySsl(java.lang.Boolean verifySsl) {
-            doSetProperty("verifySsl", verifySsl);
-            return this;
-        }
-    
         /**
          * IBM Cloud API key for authentication.
          * 
@@ -610,6 +593,23 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder oauthProfile(java.lang.String oauthProfile) {
             doSetProperty("oauthProfile", oauthProfile);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to verify SSL certificates.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param verifySsl the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder verifySsl(java.lang.Boolean verifySsl) {
+            doSetProperty("verifySsl", verifySsl);
             return this;
         }
     }
@@ -665,9 +665,9 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             case "logRequests": getOrCreateConfiguration((WatsonxAiComponent) component).setLogRequests((java.lang.Boolean) value); return true;
             case "logResponses": getOrCreateConfiguration((WatsonxAiComponent) component).setLogResponses((java.lang.Boolean) value); return true;
             case "timeout": getOrCreateConfiguration((WatsonxAiComponent) component).setTimeout((java.lang.Long) value); return true;
-            case "verifySsl": getOrCreateConfiguration((WatsonxAiComponent) component).setVerifySsl((java.lang.Boolean) value); return true;
             case "apiKey": getOrCreateConfiguration((WatsonxAiComponent) component).setApiKey((java.lang.String) value); return true;
             case "oauthProfile": getOrCreateConfiguration((WatsonxAiComponent) component).setOauthProfile((java.lang.String) value); return true;
+            case "verifySsl": getOrCreateConfiguration((WatsonxAiComponent) component).setVerifySsl((java.lang.Boolean) value); return true;
             default: return false;
             }
         }

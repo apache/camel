@@ -135,7 +135,7 @@ public class DMSEndpoint extends DefaultEndpoint {
     private String accessUser;
 
     @UriParam(description = "The password of a RabbitMQ instance. This option is mandatory when creating a RabbitMQ instance.",
-              displayName = "Password")
+              displayName = "Password", security = "secret")
     @Metadata(required = false)
     private String password;
 
@@ -167,7 +167,7 @@ public class DMSEndpoint extends DefaultEndpoint {
     private String kafkaManagerUser;
 
     @UriParam(description = "The password for logging in to the Kafka Manager. This option is mandatory when creating a Kafka instance.",
-              displayName = "Kafka manager password")
+              displayName = "Kafka manager password", security = "secret")
     @Metadata(required = false)
     private String kafkaManagerPassword;
 

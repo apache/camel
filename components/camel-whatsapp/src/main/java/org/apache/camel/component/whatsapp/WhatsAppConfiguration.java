@@ -40,7 +40,7 @@ public class WhatsAppConfiguration {
     @UriParam(description = "Facebook graph api version.", label = "advanced")
     private String apiVersion;
 
-    @UriParam(description = "Webhook verify token", label = "advanced")
+    @UriParam(description = "Webhook verify token", label = "security", security = "secret")
     private String webhookVerifyToken;
 
     @UriParam(description = "Webhook path", label = "advanced", defaultValue = "webhook")
@@ -50,7 +50,7 @@ public class WhatsAppConfiguration {
                             + " payloads (from the Meta/WhatsApp app dashboard). When set, event callbacks with a missing"
                             + " or invalid signature are rejected with HTTP 403; when not set, no signature verification"
                             + " is performed.",
-              label = "security", secret = true)
+              label = "security", security = "secret")
     private String webhookSecret;
 
     public WhatsAppConfiguration() {

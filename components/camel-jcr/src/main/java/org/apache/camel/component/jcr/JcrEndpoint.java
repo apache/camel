@@ -54,7 +54,7 @@ public class JcrEndpoint extends DefaultEndpoint {
     private String base;
     @UriParam
     private String username;
-    @UriParam
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam
     private int eventTypes;

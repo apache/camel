@@ -39,7 +39,7 @@ public class WordpressConfiguration {
     private String apiVersion = WordpressConstants.API_VERSION;
     @UriParam(description = "Authorized user to perform writing operations")
     private String user;
-    @UriParam(description = "Password from authorized user")
+    @UriParam(description = "Password from authorized user", label = "security", security = "secret")
     private String password;
     @UriParam(description = "The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post")
     private Integer id;

@@ -66,9 +66,9 @@ public class VertxHttpConfiguration {
     private boolean responsePayloadAsByteArray = true;
     @UriParam(label = "security")
     private String basicAuthUsername;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "secret")
     private String basicAuthPassword;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "secret")
     private String bearerToken;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
@@ -80,7 +80,7 @@ public class VertxHttpConfiguration {
     private ProxyType proxyType;
     @UriParam(label = "proxy")
     private String proxyUsername;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", security = "secret")
     private String proxyPassword;
     @UriParam(label = "producer")
     private WebClientOptions webClientOptions;

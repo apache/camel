@@ -71,11 +71,12 @@ public class ServiceNowEndpointUriFactory extends org.apache.camel.support.compo
         props.add("topLevelOnly");
         props.add("userName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(5);
+        Set<String> secretProps = new HashSet<>(6);
         secretProps.add("oauthClientId");
         secretProps.add("oauthClientSecret");
         secretProps.add("oauthTokenUrl");
         secretProps.add("password");
+        secretProps.add("proxyPassword");
         secretProps.add("userName");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();

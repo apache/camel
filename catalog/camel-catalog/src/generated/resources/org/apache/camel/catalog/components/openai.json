@@ -24,7 +24,7 @@
     "remote": true
   },
   "componentProperties": {
-    "apiKey": { "index": 0, "kind": "property", "displayName": "Api Key", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Default API key for all endpoints" },
+    "apiKey": { "index": 0, "kind": "property", "displayName": "Api Key", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "security": "secret", "description": "Default API key for all endpoints" },
     "audioModel": { "index": 1, "kind": "property", "displayName": "Audio Model", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Default model for audio transcription endpoints" },
     "baseUrl": { "index": 2, "kind": "property", "displayName": "Base Url", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "https:\/\/api.openai.com\/v1", "description": "Default base URL for all endpoints" },
     "embeddingModel": { "index": 3, "kind": "property", "displayName": "Embedding Model", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Default model for embeddings endpoints" },

@@ -52,7 +52,7 @@ public class HuggingFaceConfiguration implements Cloneable {
     @Metadata(description = "Temperature for sampling (0.0-1.0)")
     private float temperature = 1.0f;
 
-    @UriParam
+    @UriParam(label = "security", security = "secret")
     @Metadata(description = "HF API token for private models")
     private String authToken;
 
