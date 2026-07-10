@@ -171,9 +171,9 @@ public class OpenAIMcpAdvancedIT extends OpenAITestSupport {
      */
     @Test
     void testReturnDirect() throws InterruptedException {
-        // Inject "echo" as a returnDirect tool via the public getter (returns mutable HashSet)
+        // Mark "echo" as a returnDirect tool at runtime
         OpenAIEndpoint endpoint = context.getEndpoint(returnDirectEndpointUri, OpenAIEndpoint.class);
-        endpoint.getReturnDirectTools().add("echo");
+        endpoint.addReturnDirectTool("echo");
 
         try {
             MockEndpoint mockEndpoint = getMockEndpoint("mock:return-direct-result");
@@ -199,7 +199,7 @@ public class OpenAIMcpAdvancedIT extends OpenAITestSupport {
                     "Body should contain the raw tool result but was: " + body);
         } finally {
             // Cleanup: remove to avoid affecting other tests
-            endpoint.getReturnDirectTools().remove("echo");
+            endpoint.removeReturnDirectTool("echo");
         }
     }
 
