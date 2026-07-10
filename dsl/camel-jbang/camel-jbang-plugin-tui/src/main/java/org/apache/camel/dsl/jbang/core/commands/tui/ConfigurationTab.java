@@ -370,7 +370,7 @@ class ConfigurationTab extends AbstractTableTab {
         if (info == null || info.configProperties.isEmpty()) {
             return null;
         }
-        List<String> items = info.configProperties.stream().map(p -> p.key).toList();
+        List<String> items = sortedProperties(info).stream().map(p -> p.key).toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Configuration");
     }
@@ -455,7 +455,7 @@ class ConfigurationTab extends AbstractTableTab {
         JsonObject result = new JsonObject();
         result.put("tab", "Configuration");
         JsonArray rows = new JsonArray();
-        for (ConfigProperty cp : info.configProperties) {
+        for (ConfigProperty cp : sortedProperties(info)) {
             JsonObject row = new JsonObject();
             row.put("key", cp.key);
             row.put("value", cp.value);

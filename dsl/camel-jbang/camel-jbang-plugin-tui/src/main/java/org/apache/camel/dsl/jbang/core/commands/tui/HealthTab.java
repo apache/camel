@@ -296,7 +296,9 @@ class HealthTab extends AbstractTableTab {
         JsonObject result = new JsonObject();
         result.put("tab", "Health");
         JsonArray rows = new JsonArray();
-        for (HealthCheckInfo hi : info.healthChecks) {
+        List<HealthCheckInfo> checks = new ArrayList<>(getFilteredHealthChecks(info));
+        checks.sort(this::sortHealth);
+        for (HealthCheckInfo hi : checks) {
             JsonObject row = new JsonObject();
             row.put("group", hi.group);
             row.put("name", hi.name);

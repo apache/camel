@@ -385,7 +385,9 @@ class ConsumersTab extends AbstractTableTab {
         JsonObject result = new JsonObject();
         result.put("tab", "Consumers");
         JsonArray rows = new JsonArray();
-        for (ConsumerInfo ci : info.consumers) {
+        List<ConsumerInfo> sorted = new ArrayList<>(info.consumers);
+        sorted.sort(this::sortConsumer);
+        for (ConsumerInfo ci : sorted) {
             JsonObject row = new JsonObject();
             row.put("id", ci.id);
             row.put("uri", ci.uri);

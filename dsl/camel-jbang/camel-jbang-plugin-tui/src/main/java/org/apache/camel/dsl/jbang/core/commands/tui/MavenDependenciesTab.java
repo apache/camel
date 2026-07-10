@@ -464,7 +464,9 @@ class MavenDependenciesTab extends AbstractTableTab {
         if (filteredEntries.isEmpty()) {
             return null;
         }
-        List<String> items = filteredEntries.stream().map(DependencyLoader.DepEntry::display).toList();
+        List<DependencyLoader.DepEntry> sorted = new ArrayList<>(filteredEntries);
+        sorted.sort(this::sortDep);
+        List<String> items = sorted.stream().map(DependencyLoader.DepEntry::display).toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Maven Dependencies");
     }
@@ -563,10 +565,11 @@ class MavenDependenciesTab extends AbstractTableTab {
 
     @Override
     public JsonObject getTableDataAsJson() {
-        List<DependencyLoader.DepEntry> entries = filteredEntries;
-        if (entries.isEmpty()) {
+        if (filteredEntries.isEmpty()) {
             return null;
         }
+        List<DependencyLoader.DepEntry> entries = new ArrayList<>(filteredEntries);
+        entries.sort(this::sortDep);
         JsonObject result = new JsonObject();
         result.put("tab", "Maven Dependencies");
         JsonArray rows = new JsonArray();

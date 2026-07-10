@@ -293,7 +293,9 @@ class InflightTab extends AbstractTableTab {
         JsonObject result = new JsonObject();
         result.put("tab", "Inflight");
         JsonArray rows = new JsonArray();
-        for (InflightInfo ii : info.inflightExchanges) {
+        List<InflightInfo> sorted = new ArrayList<>(info.inflightExchanges);
+        sorted.sort(this::sortExchange);
+        for (InflightInfo ii : sorted) {
             JsonObject row = new JsonObject();
             row.put("exchangeId", ii.exchangeId);
             row.put("fromRouteId", ii.fromRouteId);

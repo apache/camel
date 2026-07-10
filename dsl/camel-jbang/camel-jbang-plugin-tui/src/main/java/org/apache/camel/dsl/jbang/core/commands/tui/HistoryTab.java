@@ -2276,7 +2276,7 @@ class HistoryTab extends AbstractTab {
         if (historyEntries.isEmpty()) {
             return null;
         }
-        List<String> items = historyEntries.stream()
+        List<String> items = reorderHistoryDepthFirst(historyEntries).stream()
                 .map(h -> h.exchangeId != null ? h.exchangeId : "")
                 .toList();
         Integer sel = historyTableState.selected();

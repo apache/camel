@@ -495,7 +495,9 @@ class SqlTraceTab extends AbstractTableTab {
         JsonObject result = new JsonObject();
         result.put("tab", "SQL Trace");
         JsonArray rows = new JsonArray();
-        for (SqlTraceInfo si : info.sqlTraceStatements) {
+        List<SqlTraceInfo> sorted = new ArrayList<>(info.sqlTraceStatements);
+        sorted.sort(this::sortTrace);
+        for (SqlTraceInfo si : sorted) {
             JsonObject row = new JsonObject();
             row.put("timestamp", si.timestamp);
             row.put("exchangeId", si.exchangeId);
