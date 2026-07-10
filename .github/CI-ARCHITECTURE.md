@@ -90,12 +90,10 @@ PR comment: /component-test kafka http
 The core test runner. Determines which modules to test using:
 
 1. **File-path analysis**: Maps changed files to Maven modules
-2. **POM dependency analysis** (dual detection):
-   - **Grep-based**: For `parent/pom.xml` changes, detects property changes and finds modules that explicitly reference the affected properties via `${property}` in their `pom.xml` files
-   - **Scalpel-based**: Uses [Maveniverse Scalpel](https://github.com/maveniverse/scalpel) (Maven extension) for effective POM model comparison — catches managed dependencies, plugin version changes, BOM imports, and transitive dependency impacts that the grep approach misses
+2. **POM dependency analysis** via [Maveniverse Scalpel](https://github.com/maveniverse/scalpel): effective POM model comparison that detects changed properties, managed dependencies, plugin version changes, BOM imports, and transitive dependency impacts
 3. **Extra modules**: Additional modules passed via `/component-test`
 
-Both detection methods run in parallel. Their results are merged (union), deduplicated, and tested. If Scalpel fails (build error, runtime error), the script falls back to grep-only with no regression.
+If Scalpel fails (merge-base unreachable, build error), the PR comment warns about the failure. File-path analysis and `/component-test` modules are always available as fallback.
 
 The script also:
 
@@ -123,63 +121,31 @@ Installs system packages required for the build.
 
 The CI sets `-Dci.env.name=github.com` via `MVND_OPTS` (in `install-mvnd`). Tests can use `@DisabledIfSystemProperty(named = "ci.env.name")` to skip flaky tests in CI. The test comment warns about these skipped tests.
 
-## POM Dependency Detection: Dual Approach
+## POM Dependency Detection via Scalpel
 
-### Grep-based detection (legacy)
+[Maveniverse Scalpel](https://github.com/maveniverse/scalpel) is a Maven core extension that compares effective POM models between the base branch and the PR. It detects:
 
-The grep approach searches for `${property-name}` references in module `pom.xml` files. It has known limitations:
-
-1. **Managed dependencies without explicit `<version>`** — Modules inheriting versions via `<dependencyManagement>` without declaring `<version>${property}</version>` are missed.
-2. **Maven plugin version changes** — Plugin version properties consumed in `parent/pom.xml` via `<pluginManagement>` are invisible to child modules.
-3. **BOM imports** — Modules using artifacts from a BOM are not linked to the BOM version property.
-4. **Transitive dependency changes** — Only direct property references are detected.
-5. **Non-property version changes** — Structural `<dependencyManagement>` edits without property substitution are not caught.
-
-### Scalpel-based detection (new)
-
-[Maveniverse Scalpel](https://github.com/maveniverse/scalpel) is a Maven core extension that compares effective POM models between the base branch and the PR. It resolves all 5 grep limitations by:
-
-- Reading old POM files from the merge-base commit (via JGit)
-- Comparing properties, managed dependencies, and managed plugins between old and new POMs
-- Resolving the full transitive dependency graph to find all affected modules
-- Detecting plugin version changes via `project.getBuildPlugins()` comparison
+- **Changed properties** — old/new `<properties>` comparison
+- **Managed dependencies** — `<dependencyManagement>` changes, including modules inheriting versions without explicit `<version>${property}</version>`
+- **Managed plugins** — `<pluginManagement>` version changes
+- **BOM imports** — modules using artifacts from a BOM are linked to the BOM version property
+- **Transitive dependency impacts** — resolves the full dependency graph to find all affected modules
 
 Scalpel runs in **report mode** (`-Dscalpel.mode=report`), writing a JSON report to `target/scalpel-report.json` without modifying the Maven reactor. The report includes affected modules with reasons (`SOURCE_CHANGE`, `POM_CHANGE`, `TRANSITIVE_DEPENDENCY`, `MANAGED_PLUGIN`).
 
-### Dual-detection strategy
-
-Both methods run in parallel. Results are merged (union) before testing. This lets us:
-
-1. **Validate Scalpel** — Compare what each method detects across many PRs
-2. **No regression** — If Scalpel fails, grep results are still used
-3. **Gradual migration** — Once Scalpel is validated, grep can be removed
-
 Scalpel is configured permanently in `.mvn/extensions.xml`. On developer machines it is a no-op (disabled via `-Dscalpel.enabled=false` in `.mvn/maven.config`). The CI script overrides this with `-Dscalpel.enabled=true`. The `mvn validate` with report mode adds ~60-90 seconds in CI.
 
-Scalpel is only invoked when a **subdirectory** `pom.xml` is changed (e.g. `parent/pom.xml`, `components/camel-kafka/pom.xml`). Changes to the **root** `pom.xml` are excluded because it contains build-infrastructure config (license plugin, checkstyle, etc.) that does not affect module compilation or test behavior. Without this filter, Scalpel would report every module as affected since they all inherit from the root POM.
-
-#### Scalpel features used for shadow comparison
+### Scalpel features
 
 - **Source-set-aware propagation**: Distinguishes test-jar dependencies from regular dependencies. A module that depends only on another module's test-jar (e.g., `camel-core`'s test-jar with test utilities) is propagated through the `TEST` source set, not the `MAIN` source set. This prevents a change to test utilities from triggering tests in all ~500 modules that depend on `camel-core`.
-- **`skipTestsForDownstreamModules`**: Allows specifying modules whose tests should be skipped when they appear as downstream dependents (mirrors the `EXCLUSION_LIST` in `incremental-build.sh`). This gives Scalpel an accurate picture of what skip-tests mode would actually test.
 
-#### Shadow comparison
-
-Scalpel runs in **shadow mode**: it observes what skip-tests mode *would* have done and reports it in a collapsible section of the PR comment, without affecting actual test execution. This allows the team to validate Scalpel's decisions across many PRs before switching to Scalpel-driven test execution.
-
-The shadow comparison section shows:
-- How many modules Scalpel would test (direct + downstream)
-- How many downstream modules would have tests skipped (generated code, meta-modules)
-- Set differences: modules only Scalpel found vs modules only the current approach found
-- The full list of modules in each category
-
-The comparison is apples-to-apples: the current approach's reactor is filtered through the `EXCLUSION_LIST` before comparing, so both sides exclude the same meta/generated modules (catalog, jbang, docs, etc.).
-
-#### Configuration notes
+### Configuration notes
 
 The script overrides `fullBuildTriggers` to empty (`-Dscalpel.fullBuildTriggers=`) because Scalpel's default (`.mvn/**`) would trigger a full build whenever `.mvn/extensions.xml` itself changes (e.g., Dependabot bumping Scalpel).
 
-The grep-based script fetches the PR diff via the GitHub REST API (unchanged). Scalpel uses local git history to compare effective POM models and detect source file changes — the CI workflow progressively deepens the shallow clone (`50 → 200 → 1000 → full`) until the merge-base is reachable. Scalpel runs for **all PRs** (not just POM changes) so the shadow comparison covers source-only changes too, building confidence for a future switch to Scalpel-driven builds. Scalpel disables its built-in JGit fetch (`-Dscalpel.fetchBaseBranch=false`) because the CI workflow already pre-fetches the base branch with native git (Scalpel uses JGit 5.x which has limited shallow clone support).
+Root `pom.xml` changes are excluded via `-Dscalpel.excludePaths=.github/**` because it contains build-infrastructure config (license plugin, checkstyle, etc.) that does not affect module compilation or test behavior.
+
+Scalpel uses local git history to compare effective POM models — the CI workflow progressively deepens the shallow clone (`50 → 200 → 1000 → full`) until the merge-base is reachable. Scalpel disables its built-in JGit fetch (`-Dscalpel.fetchBaseBranch=false`) because the CI workflow already pre-fetches the base branch with native git (Scalpel uses JGit 5.x which has limited shallow clone support).
 
 ## Manual Integration Test Advisories
 
