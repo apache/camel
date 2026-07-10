@@ -112,4 +112,62 @@ class AiSlashCommandRegistryTest {
                 assertThrows(IllegalArgumentException.class, () -> AiSlashCommandRegistry.parseSend("direct:foo"))
                         .getMessage());
     }
+
+    @Test
+    void unknownCommandIncludesHelpHint() {
+        AiSlashCommandRegistry.CommandResult result
+                = AiSlashCommandRegistry.defaults().execute("/nope", new NoopSlashContext());
+
+        assertEquals("error", result.role());
+        assertEquals("Unknown command: /nope. Type /help for available commands.", result.text());
+    }
+
+    private static final class NoopSlashContext implements AiSlashCommandContext {
+
+        @Override
+        public void closePanel() {
+        }
+
+        @Override
+        public void requestExit() {
+        }
+
+        @Override
+        public void openProviderSwitch() {
+        }
+
+        @Override
+        public void clearConversation() {
+        }
+
+        @Override
+        public String currentModel() {
+            return "test-model";
+        }
+
+        @Override
+        public List<String> availableModels() {
+            return List.of();
+        }
+
+        @Override
+        public void switchModel(String model) {
+        }
+
+        @Override
+        public String selectedProcessName() {
+            return null;
+        }
+
+        @Override
+        public java.util.concurrent.CompletableFuture<AiCliCommandExecutor.Result> executeCli(
+                AiCliCommandExecutor.Request request) {
+            return java.util.concurrent.CompletableFuture.completedFuture(
+                    new AiCliCommandExecutor.Result("", 0, "", 0, false));
+        }
+
+        @Override
+        public void cancelCli() {
+        }
+    }
 }

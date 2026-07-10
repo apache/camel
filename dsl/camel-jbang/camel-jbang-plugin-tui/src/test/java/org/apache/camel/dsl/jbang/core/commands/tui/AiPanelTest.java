@@ -108,6 +108,73 @@ class AiPanelTest {
     }
 
     @Test
+    void providerCommandOpensProviderSwitch() {
+        AiPanel panel = new AiPanel();
+        FakeSlashContext context = new FakeSlashContext();
+        panel.setSlashCommandContextForTesting(context);
+        panel.open();
+
+        type(panel, "/provider");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertTrue(context.providerSwitchRequested);
+    }
+
+    @Test
+    void modelCommandListsModelsAndSwitches() {
+        AiPanel panel = new AiPanel();
+        FakeSlashContext context = new FakeSlashContext();
+        panel.setSlashCommandContextForTesting(context);
+        panel.open();
+
+        type(panel, "/model");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> entry.text().contains("Current model: test-model")
+                        && entry.text().contains("model-a")));
+
+        type(panel, "/model model-b");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertEquals("model-b", context.switchedModel);
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> entry.text().contains("Switched model to model-b")));
+    }
+
+    @Test
+    void unknownCommandRendersHelpHint() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(LlmClient.create());
+        panel.open();
+
+        type(panel, "/nope");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> "error".equals(entry.role())
+                        && entry.text().contains("Type /help for available commands.")));
+    }
+
+    @Test
+    void providerAndModelWaitWhileBusy() throws Exception {
+        AiPanel panel = new AiPanel();
+        FakeSlashContext context = new FakeSlashContext();
+        panel.setSlashCommandContextForTesting(context);
+        panel.open();
+
+        type(panel, "/run route.yaml");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(panel.isThinkingForTesting());
+
+        panel.executeSlashCommandForTesting("/provider");
+
+        assertFalse(context.providerSwitchRequested);
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> entry.text().contains("Wait for the current operation to finish")));
+    }
+
+    @Test
     void runCommandExecutesThroughContextAndRendersOutput() throws Exception {
         AiPanel panel = new AiPanel();
         FakeSlashContext context = new FakeSlashContext();
@@ -235,6 +302,8 @@ class AiPanelTest {
 
         boolean exitRequested;
         boolean cancelRequested;
+        boolean providerSwitchRequested;
+        String switchedModel;
         AiCliCommandExecutor.Request cliRequest;
         AiCliCommandExecutor.Result cliResult = new AiCliCommandExecutor.Result("", 0, "", 0, false);
         private CompletableFuture<AiCliCommandExecutor.Result> pendingCli;
@@ -250,6 +319,7 @@ class AiPanelTest {
 
         @Override
         public void openProviderSwitch() {
+            providerSwitchRequested = true;
         }
 
         @Override
@@ -268,6 +338,7 @@ class AiPanelTest {
 
         @Override
         public void switchModel(String model) {
+            switchedModel = model;
         }
 
         @Override

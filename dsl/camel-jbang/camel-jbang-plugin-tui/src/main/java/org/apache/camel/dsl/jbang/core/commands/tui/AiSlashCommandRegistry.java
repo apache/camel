@@ -130,7 +130,7 @@ final class AiSlashCommandRegistry {
         Optional<ParsedCommand> parsed = parse(command);
         if (parsed.isEmpty()) {
             String name = command.length() > 1 ? command.substring(1).split("\\s+", 2)[0] : "";
-            return CommandResult.error("Unknown command: /" + name);
+            return CommandResult.error("Unknown command: /" + name + ". Type /help for available commands.");
         }
         ParsedCommand value = parsed.get();
         try {

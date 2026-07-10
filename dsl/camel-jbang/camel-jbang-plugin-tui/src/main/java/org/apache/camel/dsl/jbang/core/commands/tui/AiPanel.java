@@ -342,6 +342,17 @@ class AiPanel {
     }
 
     private void executeSlashCommand(String input) {
+        Optional<AiSlashCommandRegistry.ParsedCommand> parsed = slashCommands.parse(input);
+        if (parsed.isPresent() && thinking.get()) {
+            String name = parsed.get().descriptor().name();
+            if ("provider".equals(name) || "model".equals(name)) {
+                conversation.add(new ConversationEntry(
+                        "system",
+                        "Wait for the current operation to finish before changing provider or model."));
+                return;
+            }
+        }
+
         AiSlashCommandRegistry.CommandResult result = slashCommands.execute(input, slashCommandContext);
         if (result.cliRequest() != null) {
             AiCliCommandExecutor.Request request = result.cliRequest();
@@ -939,6 +950,10 @@ class AiPanel {
         // so the LLM's line-by-line formatting is preserved in MarkdownView.
         // Double newlines (paragraph breaks) are left as-is.
         return text.replaceAll("(?<!\n)\n(?!\n)", "  \n");
+    }
+
+    void executeSlashCommandForTesting(String input) {
+        executeSlashCommand(input);
     }
 
     void clearConversation() {
