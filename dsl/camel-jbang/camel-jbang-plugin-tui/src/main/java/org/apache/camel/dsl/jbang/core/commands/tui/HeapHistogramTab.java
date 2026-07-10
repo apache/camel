@@ -432,7 +432,7 @@ class HeapHistogramTab extends AbstractTableTab {
         }
         if (className.startsWith("[")) {
             // array type — extract element class if object array
-            int idx = className.lastIndexOf('L');
+            int idx = className.indexOf('L');
             if (idx >= 0) {
                 String element = className.substring(idx + 1).replace(";", "");
                 int dot = element.lastIndexOf('.');
