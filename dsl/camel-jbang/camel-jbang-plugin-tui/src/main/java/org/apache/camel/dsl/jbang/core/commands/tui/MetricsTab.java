@@ -64,7 +64,6 @@ class MetricsTab extends AbstractTableTab {
     private static final Style GOOD = Theme.success();
     private static final Style BAD = Theme.error();
 
-    private final ScrollbarState scrollbarState = new ScrollbarState();
     private final ScrollbarState rawScrollbarState = new ScrollbarState();
     private boolean tableMode;
     private int lastRowCount;
@@ -519,16 +518,6 @@ class MetricsTab extends AbstractTableTab {
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
         renderScrollbar(frame, lastRowCount);
-
-        int visibleRows = Math.max(1, area.height() - 4);
-        if (lastRowCount > visibleRows) {
-            Integer sel = tableState.selected();
-            scrollbarState
-                    .contentLength(lastRowCount)
-                    .viewportContentLength(visibleRows)
-                    .position(sel != null ? sel : 0);
-            frame.renderStatefulWidget(Scrollbar.builder().build(), area, scrollbarState);
-        }
     }
 
     // ---- Raw metrics view ----
@@ -1001,7 +990,7 @@ class MetricsTab extends AbstractTableTab {
 
                 ## Keys
 
-                - `t` — toggle table mode
+                - `d` — toggle table mode
                 - `r` — toggle raw Prometheus mode
                 - `Up/Down` — navigate (in table or raw mode)
                 - `s` — cycle sort column (in table mode)

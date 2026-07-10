@@ -740,19 +740,20 @@ class LogTab extends AbstractTab {
                  10:29:38 ERROR [Camel (camel-demo) thread #3] Connection refused: localhost:9092
                 ```
 
-                ## Log Level Filter
+                ## Log Level
 
-                Press `l` to open the log level picker. Selecting a level filters the
-                display to show only messages at that level and above:
+                Press `l` to open the log level picker. Selecting a level changes the
+                running application's root logger to that level:
 
-                - Select **ERROR** — shows only ERROR messages
-                - Select **WARN** — shows WARN and ERROR
-                - Select **INFO** — shows INFO, WARN, and ERROR (default)
-                - Select **DEBUG** — shows everything except TRACE
-                - Select **TRACE** — shows all messages
+                - Select **ERROR** — only ERROR messages are logged
+                - Select **WARN** — WARN and ERROR are logged
+                - Select **INFO** — INFO, WARN, and ERROR are logged (default)
+                - Select **DEBUG** — everything except TRACE is logged
+                - Select **TRACE** — all messages are logged
 
-                Filtering is useful when the log is noisy with INFO messages and you
-                want to focus on warnings and errors.
+                This changes the actual log level of the running integration, not
+                just a display filter. It is useful for temporarily enabling debug
+                logging to diagnose an issue.
 
                 ## Find and Highlight
 
@@ -805,7 +806,7 @@ class LogTab extends AbstractTab {
                 - `n` — next match
                 - `N` — previous match
                 - `h` — highlight a word
-                - `l` — change log level filter
+                - `l` — change log level
                 - `f` — toggle follow mode
                 - `w` — toggle word wrap
                 - `Ctrl+L` — pin/cycle/unpin log panel (works from any tab)

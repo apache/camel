@@ -1648,7 +1648,7 @@ class HttpTab extends AbstractTableTab {
                 - **Response**: Shows the HTTP status code, response headers, and response body after sending
                 - **History**: Recent requests you have sent, with the ability to replay any previous request
 
-                Press `Ctrl+S` to send the request. Press `p` to toggle pretty-print
+                Press `Enter` to send the request. Press `p` to toggle pretty-print
                 for JSON responses — this formats the response body with indentation
                 for easier reading.
 
