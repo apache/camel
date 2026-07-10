@@ -78,7 +78,9 @@ public class Hawtio extends CamelCommand {
                     exit = callHawtio();
                 }
             } finally {
-                disconnectJolokia();
+                if (pid != 0) {
+                    disconnectJolokia();
+                }
             }
         }
         return exit;

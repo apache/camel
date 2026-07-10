@@ -63,6 +63,7 @@ abstract class ActionBaseCommand extends CamelCommand {
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                return null;
             } catch (Exception e) {
                 // ignore
             }

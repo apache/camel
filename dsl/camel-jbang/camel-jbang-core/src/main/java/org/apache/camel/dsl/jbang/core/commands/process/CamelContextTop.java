@@ -82,7 +82,6 @@ public class CamelContextTop extends ProcessWatchCommand {
                     // there must be a status file for the running Camel integration
                     if (root != null) {
                         Row row = new Row();
-                        rows.add(row);
                         JsonObject context = (JsonObject) root.get("context");
                         if (context == null) {
                             return;
@@ -143,6 +142,7 @@ public class CamelContextTop extends ProcessWatchCommand {
                             row.gcCount = gc.getLong("collectionCount");
                             row.gcTime = gc.getLong("collectionTime");
                         }
+                        rows.add(row);
                     }
                 });
 

@@ -93,7 +93,7 @@ public class LoggerAction extends ActionBaseCommand {
     protected Integer callList() {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids("*");
+        List<Long> pids = findPids(name);
         ProcessHandle.allProcesses()
                 .filter(ph -> pids.contains(ph.pid()))
                 .forEach(ph -> {

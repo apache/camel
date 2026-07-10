@@ -122,6 +122,10 @@ public class RouteControllerAction extends ActionWatchCommand {
             supervising = "SupervisingRouteController".equals(jo.getString("controller"));
 
             JsonArray arr = (JsonArray) jo.get("routes");
+            if (arr == null) {
+                printer().printErr("Route controller data not available from the running integration");
+                return 0;
+            }
             for (int i = 0; i < arr.size(); i++) {
                 JsonObject jt = (JsonObject) arr.get(i);
 

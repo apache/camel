@@ -84,7 +84,8 @@ public class CamelCount extends ProcessWatchCommand {
                             row.name = ProcessHelper.extractName(root, ph);
                         }
                         row.pid = Long.toString(ph.pid());
-                        row.age = TimeUtils.printSince(extractSince(ph));
+                        row.uptime = extractSince(ph);
+                        row.age = TimeUtils.printSince(row.uptime);
                         Map<String, ?> stats = context.getMap("statistics");
                         if (stats != null) {
                             row.total = stats.get("exchangesTotal").toString();

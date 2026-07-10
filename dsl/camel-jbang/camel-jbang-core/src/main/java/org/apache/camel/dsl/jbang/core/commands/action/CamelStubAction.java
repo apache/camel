@@ -256,7 +256,9 @@ public class CamelStubAction extends ActionWatchCommand {
         }
         switch (s) {
             case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
+                String q1 = o1.queue != null ? o1.queue : "";
+                String q2 = o2.queue != null ? o2.queue : "";
+                return q1.compareToIgnoreCase(q2) * negate;
             case "total":
                 return Integer.compare(o1.size, o2.size) * negate;
             default:

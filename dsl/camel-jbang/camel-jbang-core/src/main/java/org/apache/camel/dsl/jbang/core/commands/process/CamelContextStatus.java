@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -146,7 +147,7 @@ public class CamelContextStatus extends ProcessWatchCommand {
                                 row.reloadedFailed = stats.get("failed").toString();
                                 stats = (Map<String, ?>) stats.get("lastError");
                                 if (stats != null) {
-                                    row.reloadedError = stats.get("message").toString();
+                                    row.reloadedError = Objects.toString(stats.get("message"), "");
                                 }
                             }
                         }

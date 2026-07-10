@@ -86,6 +86,10 @@ public class CamelSourceTop extends ActionWatchCommand {
         JsonObject jo = waitForOutputFile(outputFile);
         if (jo != null) {
             JsonArray arr = (JsonArray) jo.get("processors");
+            if (arr == null) {
+                printer().printErr("Source top data not available from the running integration");
+                return 0;
+            }
             for (int i = 0; i < arr.size(); i++) {
                 JsonObject o = (JsonObject) arr.get(i);
                 Row row = new Row();

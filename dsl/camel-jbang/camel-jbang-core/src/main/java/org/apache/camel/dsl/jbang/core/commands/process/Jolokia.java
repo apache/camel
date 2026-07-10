@@ -63,6 +63,7 @@ public class Jolokia extends ProcessBaseCommand {
     public Integer doCall() throws Exception {
         List<Long> pids = findPids(name);
         if (pids.isEmpty()) {
+            printer().printErr("No running Camel integration matches: " + name);
             return 1;
         } else if (pids.size() > 1) {
             printer().println("Name or pid " + name + " matches " + pids.size()

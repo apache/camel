@@ -134,6 +134,10 @@ public class CamelThreadDump extends ActionWatchCommand {
         JsonObject jo = waitForOutputFile(outputFile);
         if (jo != null) {
             JsonArray arr = (JsonArray) jo.get("threads");
+            if (arr == null) {
+                printer().printErr("Thread dump data not available from the running integration");
+                return 0;
+            }
             for (int i = 0; i < arr.size(); i++) {
                 JsonObject jt = (JsonObject) arr.get(i);
 
@@ -177,8 +181,8 @@ public class CamelThreadDump extends ActionWatchCommand {
             clearScreen();
         }
         if (!rows.isEmpty()) {
-            int total = jo.getInteger("threadCount");
-            int peak = jo.getInteger("peakThreadCount");
+            int total = jo.getIntegerOrDefault("threadCount", 0);
+            int peak = jo.getIntegerOrDefault("peakThreadCount", 0);
             printer().printf("PID: %s\tThreads: %d\tPeak: %d\t\tDisplay: %d/%d%n", pid, total, peak, rows.size(), total);
 
             if (depth == 1) {

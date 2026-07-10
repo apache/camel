@@ -660,10 +660,10 @@ public class CamelTraceAction extends ActionBaseCommand {
                 long t1 = r1.timestamp;
                 long t2 = r2.timestamp;
                 if (t1 == 0) {
-                    t1 = lastTimestamp.get(r1.name);
+                    t1 = lastTimestamp.getOrDefault(r1.name, 0L);
                 }
-                if (t1 == 0) {
-                    t1 = lastTimestamp.get(r2.name);
+                if (t2 == 0) {
+                    t2 = lastTimestamp.getOrDefault(r2.name, 0L);
                 }
                 if (t1 == 0 && t2 == 0) {
                     return 0;
