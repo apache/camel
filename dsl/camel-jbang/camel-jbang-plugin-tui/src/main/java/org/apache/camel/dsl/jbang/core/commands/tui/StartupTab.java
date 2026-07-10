@@ -101,6 +101,10 @@ class StartupTab extends AbstractTab {
             scrollOffset = Integer.MAX_VALUE;
             return true;
         }
+        if (ke.isKey(KeyCode.F5)) {
+            loadStartupData();
+            return true;
+        }
         return false;
     }
 
