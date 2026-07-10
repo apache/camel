@@ -190,7 +190,18 @@ class TuiMcpServer {
                 logMethodCall(jsonrpcMethod, request, body, responseJson);
             }
         } catch (Exception e) {
-            exchange.sendResponseHeaders(500, -1);
+            try {
+                JsonObject error = new JsonObject();
+                error.put("code", -32603);
+                error.put("message", "Internal error");
+                JsonObject response = new JsonObject();
+                response.put("jsonrpc", "2.0");
+                response.put("id", null);
+                response.put("error", error);
+                sendJson(exchange, 200, response);
+            } catch (Exception ignored) {
+                // headers already sent
+            }
         } finally {
             exchange.close();
         }
