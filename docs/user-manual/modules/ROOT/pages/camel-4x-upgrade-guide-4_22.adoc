@@ -296,3 +296,28 @@ Four new operations have been added to the Weaviate component, leveraging v6 cli
 * `HYBRID_QUERY` — Keyword + vector hybrid search. The exchange body is the query text (`String`). Supports `CamelWeaviateQueryTopK` (default 10), `CamelWeaviateHybridAlpha` (0.0 = pure BM25, 1.0 = pure vector), `CamelWeaviateQueryVector` (optional pre-computed vector to override server-side vectorizer), and `CamelWeaviateFields` headers. Returns a `QueryResponse<Map<String, Object>>`.
 * `BM25_QUERY` — Keyword-only (BM25) search. The exchange body is the query text (`String`). Supports `CamelWeaviateQueryTopK` and `CamelWeaviateFields` headers. Returns a `QueryResponse<Map<String, Object>>`.
 * `AGGREGATE` — Returns aggregate statistics for a collection. No body required. Returns an `AggregateResponse` with `totalCount()` and per-property aggregations.
+
+=== camel-spring-boot - Duration configuration properties
+
+The following configuration properties are now bound as `java.time.Duration` instead of raw
+milliseconds (`long`/`int`):
+
+* `camel.routecontroller.initial-delay`
+* `camel.routecontroller.back-off-delay`
+* `camel.routecontroller.back-off-max-delay`
+* `camel.routecontroller.back-off-max-elapsed-time`
+* `camel.startupcondition.interval`
+* `camel.startupcondition.timeout`
+
+Plain numeric values in `application.properties`/`application.yaml` are still interpreted as
+milliseconds, so existing configurations keep working unchanged. In addition, readable duration
+values such as `5s` or `2m` are now supported.
+
+This is a source-incompatible change for code that reads these values programmatically: the
+getters and setters of `SupervisingRouteControllerConfiguration` and
+`CamelStartupConditionConfigurationProperties` now use `java.time.Duration` instead of
+`long`/`int`.
+
+The clustered route controller property `camel.clustered.controller.initial-delay` is unchanged:
+it keeps its `String` type because it supports Camel time patterns (for example `10 seconds`)
+that `Duration` binding does not.
