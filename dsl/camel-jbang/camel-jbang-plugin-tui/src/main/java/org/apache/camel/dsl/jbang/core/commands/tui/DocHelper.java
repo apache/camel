@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
@@ -40,8 +41,15 @@ final class DocHelper {
     }
 
     static String downloadContent(String url) {
-        try (InputStream is = URI.create(url).toURL().openStream()) {
-            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        try {
+            HttpURLConnection conn = (HttpURLConnection) URI.create(url).toURL().openConnection();
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(10000);
+            try (InputStream is = conn.getInputStream()) {
+                return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            } finally {
+                conn.disconnect();
+            }
         } catch (Exception e) {
             return null;
         }

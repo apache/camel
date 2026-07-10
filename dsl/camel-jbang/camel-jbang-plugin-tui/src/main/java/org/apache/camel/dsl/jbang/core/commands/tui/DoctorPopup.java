@@ -22,6 +22,7 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
@@ -217,8 +218,12 @@ class DoctorPopup {
                         .redirectErrorStream(true)
                         .start();
                 p.getInputStream().transferTo(OutputStream.nullOutputStream());
-                int exit = p.waitFor();
-                if (exit == 0) {
+                boolean done = p.waitFor(5, TimeUnit.SECONDS);
+                if (!done) {
+                    p.destroyForcibly();
+                    continue;
+                }
+                if (p.exitValue() == 0) {
                     String name = Character.toUpperCase(cmd.charAt(0)) + cmd.substring(1);
                     result.add(Line.from(
                             Span.raw(TuiIcons.indent(TuiIcons.DOCKER)),

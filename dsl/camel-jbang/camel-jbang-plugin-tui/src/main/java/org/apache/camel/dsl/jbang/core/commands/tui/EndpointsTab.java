@@ -19,11 +19,13 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -88,6 +90,7 @@ class EndpointsTab extends AbstractTableTab {
     private final DragSplit hSplit = new DragSplit();
 
     private final Map<String, CamelCatalog> catalogCache = new HashMap<>();
+    private final Set<String> catalogLoadFailed = new HashSet<>();
 
     EndpointsTab(MonitorContext ctx, MetricsCollector metrics) {
         super(ctx, "component", "route", "dir", "total", "body", "hdr", "uri");
@@ -824,13 +827,25 @@ class EndpointsTab extends AbstractTableTab {
         if (version == null) {
             return null;
         }
-        return catalogCache.computeIfAbsent(version, v -> {
-            try {
-                return CatalogLoader.loadCatalog(null, v, true);
-            } catch (Exception e) {
-                return null;
+        CamelCatalog cached = catalogCache.get(version);
+        if (cached != null) {
+            return cached;
+        }
+        if (catalogLoadFailed.contains(version)) {
+            return null;
+        }
+        try {
+            cached = CatalogLoader.loadCatalog(null, version, true);
+            if (cached != null) {
+                catalogCache.put(version, cached);
+            } else {
+                catalogLoadFailed.add(version);
             }
-        });
+            return cached;
+        } catch (Exception e) {
+            catalogLoadFailed.add(version);
+            return null;
+        }
     }
 
     private static long unbox(Long value) {

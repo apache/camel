@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -137,8 +138,12 @@ class LaunchManager {
                         .redirectErrorStream(true)
                         .start();
                 p.getInputStream().transferTo(OutputStream.nullOutputStream());
-                int exit = p.waitFor();
-                if (exit == 0) {
+                boolean done = p.waitFor(5, TimeUnit.SECONDS);
+                if (!done) {
+                    p.destroyForcibly();
+                    continue;
+                }
+                if (p.exitValue() == 0) {
                     return true;
                 }
             } catch (Exception e) {
