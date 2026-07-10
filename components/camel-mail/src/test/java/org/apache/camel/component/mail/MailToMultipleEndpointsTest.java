@@ -27,13 +27,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MailToMultipleEndpointsTest extends CamelTestSupport {
-    private static final MailboxUser james2 = Mailbox.getOrCreateUser("james2", "secret");
-    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
-    private static final MailboxUser admin = Mailbox.getOrCreateUser("admin", "secret");
+    private static final MailboxUser james2 = Mailbox.getOrCreateUser("MailToMultipleEndpointsTest-james2", "secret");
+    private static final MailboxUser james = Mailbox.getOrCreateUser("MailToMultipleEndpointsTest-james", "secret");
+    private static final MailboxUser admin = Mailbox.getOrCreateUser("MailToMultipleEndpointsTest-admin", "secret");
 
-    private static final MailboxUser a = Mailbox.getOrCreateUser("a", "secret");
-    private static final MailboxUser b = Mailbox.getOrCreateUser("b", "secret");
-    private static final MailboxUser c = Mailbox.getOrCreateUser("c", "secret");
+    private static final MailboxUser a = Mailbox.getOrCreateUser("MailToMultipleEndpointsTest-a", "secret");
+    private static final MailboxUser b = Mailbox.getOrCreateUser("MailToMultipleEndpointsTest-b", "secret");
+    private static final MailboxUser c = Mailbox.getOrCreateUser("MailToMultipleEndpointsTest-c", "secret");
 
     @Test
     public void testMultipleEndpoints() throws Exception {

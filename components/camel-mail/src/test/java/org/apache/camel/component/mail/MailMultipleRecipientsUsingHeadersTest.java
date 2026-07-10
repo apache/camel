@@ -33,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for Mail using camel headers to set recipeient subject.
  */
 public class MailMultipleRecipientsUsingHeadersTest extends CamelTestSupport {
-    private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
-    private static final MailboxUser jon = Mailbox.getOrCreateUser("jon", "secret");
+    private static final MailboxUser claus = Mailbox.getOrCreateUser("MailMultipleRecipientsUsingHeadersTest-claus", "secret");
+    private static final MailboxUser jon = Mailbox.getOrCreateUser("MailMultipleRecipientsUsingHeadersTest-jon", "secret");
 
     @Test
     public void testMailMultipleRecipientUsingHeaders() throws Exception {

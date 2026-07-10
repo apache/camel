@@ -27,8 +27,8 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
-    private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("davsclaus", "secret");
-    private static final MailboxUser jstrachan = Mailbox.getOrCreateUser("jstrachan", "secret");
+    private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("MailNameAndEmailInRecipientTest-davsclaus", "secret");
+    private static final MailboxUser jstrachan = Mailbox.getOrCreateUser("MailNameAndEmailInRecipientTest-jstrachan", "secret");
 
     @Test
     public void testSendWithNameAndEmailInRecipient() throws Exception {
@@ -36,8 +36,8 @@ public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
 
         // START SNIPPET: e1
         Map<String, Object> headers = new HashMap<>();
-        headers.put("to", "Claus Ibsen <davsclaus@localhost>");
-        headers.put("cc", "James Strachan <jstrachan@localhost>");
+        headers.put("to", "Claus Ibsen <" + davsclaus.getEmail() + ">");
+        headers.put("cc", "James Strachan <" + jstrachan.getEmail() + ">");
 
         assertMailbox("davsclaus");
         assertMailbox("jstrachan");
@@ -52,8 +52,8 @@ public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
     private void assertMailbox(String name) {
         MockEndpoint mock = getMockEndpoint("mock:" + name);
         mock.expectedBodiesReceived("Hello World\r\n");
-        mock.message(0).header("to").isEqualTo("Claus Ibsen <davsclaus@localhost>");
-        mock.message(0).header("cc").isEqualTo("James Strachan <jstrachan@localhost>");
+        mock.message(0).header("to").isEqualTo("Claus Ibsen <" + davsclaus.getEmail() + ">");
+        mock.message(0).header("cc").isEqualTo("James Strachan <" + jstrachan.getEmail() + ">");
     }
 
     @Override

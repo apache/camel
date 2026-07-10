@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for a special corner case with fetchSize=0
  */
 public class MailFetchSizeZeroTest extends CamelTestSupport {
-    private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
+    private static final MailboxUser bill = Mailbox.getOrCreateUser("MailFetchSizeZeroTest-bill", "secret");
 
     @Override
     public void doPreSetup() throws Exception {

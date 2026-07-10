@@ -34,6 +34,7 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,13 +45,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  * Unit test for Mail using camel headers to set recipient subject.
  */
+@Isolated
 public class RawMailMessageTest extends CamelTestSupport {
 
-    private static final MailboxUser jonesPop3 = Mailbox.getOrCreateUser("jonesPop3", "secret");
-    private static final MailboxUser jonesRawPop3 = Mailbox.getOrCreateUser("jonesRawPop3", "secret");
-    private static final MailboxUser jonesImap = Mailbox.getOrCreateUser("jonesImap", "secret");
-    private static final MailboxUser jonesRawImap = Mailbox.getOrCreateUser("jonesRawImap", "secret");
-    private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("davsclaus", "secret");
+    private static final MailboxUser jonesPop3 = Mailbox.getOrCreateUser("RawMailMessageTest-jonesPop3", "secret");
+    private static final MailboxUser jonesRawPop3 = Mailbox.getOrCreateUser("RawMailMessageTest-jonesRawPop3", "secret");
+    private static final MailboxUser jonesImap = Mailbox.getOrCreateUser("RawMailMessageTest-jonesImap", "secret");
+    private static final MailboxUser jonesRawImap = Mailbox.getOrCreateUser("RawMailMessageTest-jonesRawImap", "secret");
+    private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("RawMailMessageTest-davsclaus", "secret");
 
     @Override
     protected void setupResources() throws Exception {
@@ -78,7 +80,7 @@ public class RawMailMessageTest extends CamelTestSupport {
 
         getMockEndpoint("mock:mail").expectedMessageCount(1);
         template.sendBodyAndHeaders(
-                "smtp://davsclaus@localhost:" + Mailbox.getPort(Protocol.smtp) + "?password=" + davsclaus.getPassword()
+                "smtp://" + davsclaus.getEmail() + ":" + Mailbox.getPort(Protocol.smtp) + "?password=" + davsclaus.getPassword()
                                     + "&useHeaderRecipients=true&useHeaderFrom=true&useHeaderSubject=true",
                 body, map);
         MockEndpoint.assertIsSatisfied(context);

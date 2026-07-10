@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  * Unit test for batch consumer.
  */
 public class MailMaxMessagesPerPollTest extends CamelTestSupport {
-    private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
+    private static final MailboxUser jones = Mailbox.getOrCreateUser("MailMaxMessagesPerPollTest-jones", "secret");
 
     @Override
     public void doPreSetup() throws Exception {

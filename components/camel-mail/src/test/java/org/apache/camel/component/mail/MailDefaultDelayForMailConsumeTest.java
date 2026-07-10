@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for testing mail polling is happening according to the default poll interval.
  */
 public class MailDefaultDelayForMailConsumeTest extends CamelTestSupport {
-    private static final MailboxUser bond = Mailbox.getOrCreateUser("bond", "secret");
+    private static final MailboxUser bond = Mailbox.getOrCreateUser("MailDefaultDelayForMailConsumeTest-bond", "secret");
 
     @Test
     public void testConsuming() throws Exception {

@@ -36,7 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MimeMultipartAlternativeWithContentTypeTest extends CamelTestSupport {
-    private static final MailboxUser sachin = Mailbox.getOrCreateUser("sachin", "secret");
+    private static final MailboxUser sachin
+            = Mailbox.getOrCreateUser("MimeMultipartAlternativeWithContentTypeTest-sachin", "secret");
     private Logger log = LoggerFactory.getLogger(getClass());
     private String alternativeBody = "hello world! (plain text)";
     private String htmlBody = "<html><body><h1>Hello</h1>World</body></html>";
