@@ -73,6 +73,7 @@ public class YamlNormalizeCommand extends CamelCommand {
         }
 
         String dump = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/normalize-output.yaml";
+        Files.deleteIfExists(Path.of(dump));
         final String target = dump;
 
         Run run = new Run(getMain()) {

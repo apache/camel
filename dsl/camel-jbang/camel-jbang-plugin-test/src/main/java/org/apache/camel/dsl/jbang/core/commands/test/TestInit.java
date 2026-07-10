@@ -75,7 +75,8 @@ public class TestInit extends CitrusCommand {
 
         Path currentDir = Paths.get(".");
         Path workingDir;
-        if (directory.equals(currentDir.getFileName().toString())) {
+        String currentDirName = Paths.get("").toAbsolutePath().getFileName().toString();
+        if (directory.equals(currentDirName)) {
             // current directory is already the target subfolder
             workingDir = currentDir;
         } else if (currentDir.resolve(directory).toFile().exists()) {

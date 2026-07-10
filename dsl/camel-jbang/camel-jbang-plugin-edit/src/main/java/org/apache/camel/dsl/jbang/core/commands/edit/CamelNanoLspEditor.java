@@ -145,9 +145,9 @@ public class CamelNanoLspEditor extends Nano {
             TextEdit left = textEdit.getLeft();
             Range range = left.getRange();
             Position start = range.getStart();
-            int endLine = start.getLine();
+            int startLine = start.getLine();
             Position end = range.getEnd();
-            int startLine = end.getLine();
+            int endLine = end.getLine();
             if (startLine == endLine) {
                 StringBuilder newLine = new StringBuilder();
                 String line = this.buffer.getLines().get(startLine);
@@ -168,7 +168,7 @@ public class CamelNanoLspEditor extends Nano {
                 StringBuilder newSecondLine = new StringBuilder();
                 String oldSecondLine = this.buffer.getLines().get(endLine);
                 newSecondLine.append(newText, oldFirstLine.length() - start.getCharacter(), end.getCharacter());
-                newSecondLine.append(oldSecondLine, end.getCharacter(), end.getCharacter());
+                newSecondLine.append(oldSecondLine.substring(end.getCharacter()));
                 this.buffer.getLines().set(endLine, newSecondLine.toString());
                 this.buffer.moveRight(left.getNewText().length());
             }
@@ -221,7 +221,6 @@ public class CamelNanoLspEditor extends Nano {
                     = configurationPropertiesDiagnosticService.computeCamelConfigurationPropertiesErrors(camelText, uri);
             diagnostics.addAll(configurationPropertiesDiagnosticService.converToLSPDiagnostics(configurationPropertiesErrors));
             diagnostics.addAll(camelKModelineDiagnosticService.compute(camelText, documentItem));
-            diagnostics.addAll(connectedModeDiagnosticService.compute(camelText, documentItem));
             diagnostics.addAll(connectedModeDiagnosticService.compute(camelText, documentItem));
             return diagnostics.stream()
                     .map(diag -> (Diagnostic) new DiagnosticWrapper(diag))

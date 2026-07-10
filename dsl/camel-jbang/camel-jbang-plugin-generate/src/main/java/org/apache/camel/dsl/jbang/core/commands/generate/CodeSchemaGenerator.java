@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.generate;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -35,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.util.IOHelper;
 import picocli.CommandLine;
 
 /**
@@ -212,6 +212,7 @@ public class CodeSchemaGenerator extends CamelCommand {
                             "Error: No artifacts found for component 'camel-" + camelComponent + "' version '" + version + "'");
                     printer().printErr("Please verify that the component name is correct and the version exists.");
                     printer().printErr("Available components can be found at: https://camel.apache.org/components/");
+                    IOHelper.close(cl);
                     return null;
                 }
 
@@ -221,6 +222,9 @@ public class CodeSchemaGenerator extends CamelCommand {
                 }
 
                 artifacts.forEach(artifact -> cl.addFile(artifact.getFile()));
+            } catch (Exception e) {
+                IOHelper.close(cl);
+                throw e;
             }
 
             return cl;
@@ -324,15 +328,14 @@ public class CodeSchemaGenerator extends CamelCommand {
      * @param schema The schema to output
      */
     private void outputSchema(JsonNode schema) throws Exception {
-        if (outputFile == null || outputFile.isEmpty()) {
-            outputFile = Paths.get(".") + File.separator + fullyQualifiedName + "-schema.json";
-        }
-
         ObjectMapper objectMapper = new ObjectMapper();
 
-        objectMapper.writerWithDefaultPrettyPrinter()
-                .writeValue(new File(outputFile), schema);
-
-        printer().println("Schema saved to: " + outputFile);
+        if (outputFile == null || outputFile.isEmpty()) {
+            printer().println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schema));
+        } else {
+            objectMapper.writerWithDefaultPrettyPrinter()
+                    .writeValue(new File(outputFile), schema);
+            printer().println("Schema saved to: " + outputFile);
+        }
     }
 }

@@ -60,6 +60,8 @@ public class YamlValidateCommand extends CamelCommand {
             if (matchFile(n)) {
                 var report = validator.validate(new File(n));
                 reports.put(n, report);
+            } else {
+                printer().println("WARN: Skipping non-YAML file: " + n);
             }
         }
 
@@ -105,9 +107,7 @@ public class YamlValidateCommand extends CamelCommand {
     private static int errorCounts(Map<String, List<Error>> reports) {
         int count = 0;
         for (List<Error> list : reports.values()) {
-            if (!list.isEmpty()) {
-                count++;
-            }
+            count += list.size();
         }
         return count;
     }

@@ -105,6 +105,7 @@ public class TransformRoute extends CamelCommand {
         if (output == null || "clipboard".equals(output)) {
             dump = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/transform-output." + format;
         }
+        Files.deleteIfExists(Path.of(dump));
         final String target = dump;
 
         Run run = new Run(getMain()) {
