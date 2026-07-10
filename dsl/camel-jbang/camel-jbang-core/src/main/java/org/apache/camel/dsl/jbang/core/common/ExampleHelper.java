@@ -28,6 +28,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -133,7 +134,7 @@ public final class ExampleHelper {
             case "ai" -> "AI";
             case "eip" -> "EIP";
             case "rest" -> "REST";
-            default -> category.substring(0, 1).toUpperCase() + category.substring(1);
+            default -> category.substring(0, 1).toUpperCase(Locale.ROOT) + category.substring(1);
         };
     }
 

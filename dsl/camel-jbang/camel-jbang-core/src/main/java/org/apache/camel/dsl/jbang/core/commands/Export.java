@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -306,9 +306,7 @@ public class Export extends ExportBaseCommand {
 
     // Maven reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html
     protected String getBuildMavenProjectDate() {
-        // 2024-09-23T10:00:00Z
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        return sdf.format(new Date());
+        return Instant.now().truncatedTo(ChronoUnit.SECONDS).toString();
     }
 
     // Copy the dockerfile into the same Maven project root directory.

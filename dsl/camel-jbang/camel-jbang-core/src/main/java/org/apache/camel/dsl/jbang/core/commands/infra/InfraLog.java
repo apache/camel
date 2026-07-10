@@ -69,7 +69,7 @@ public class InfraLog extends InfraBaseCommand {
                         .toList();
 
                 for (Path logFile : logFiles) {
-                    String alias = logFile.getFileName().toString().split("-")[1];
+                    String alias = serviceNameFromPidFile(logFile.getFileName().toString());
                     createTailer(logFile.toFile(), alias, futures);
                 }
             } catch (IOException e) {

@@ -417,7 +417,7 @@ public class Run extends CamelCommand {
                 return cat.equals(levelName) ? "" : cat;
             }).thenComparing(e -> e.getString("name")));
             printer().println();
-            String levelLabel = levelName.substring(0, 1).toUpperCase() + levelName.substring(1) + ":";
+            String levelLabel = levelName.substring(0, 1).toUpperCase(Locale.ROOT) + levelName.substring(1) + ":";
             printer().println(levelLabel);
             printer().println("=".repeat(levelLabel.length()));
             String currentCategory = null;
@@ -2051,7 +2051,7 @@ public class Run extends CamelCommand {
         }
         if (kameletsVersion != null) {
             if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.16.0")) {
-                jbangArgs.add("-Dcamel-kamelets.version=" + camelVersion);
+                jbangArgs.add("-Dcamel-kamelets.version=" + kameletsVersion);
             } else {
                 cmds.add("--kamelets-version=" + kameletsVersion);
             }

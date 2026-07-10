@@ -240,7 +240,7 @@ public class Init extends CamelCommand {
      */
     private String computeJavaPackageDeclaration(Path targetPath) throws IOException {
         String packageDeclaration = "";
-        String canonicalPath = targetPath.getParent().toRealPath().toString();
+        String canonicalPath = targetPath.getParent().toAbsolutePath().normalize().toString();
         String srcMainJavaPath = Paths.get("src", "main", "java").toString();
         int index = canonicalPath.indexOf(srcMainJavaPath);
         if (index != -1) {

@@ -157,7 +157,7 @@ public class Doctor extends CamelCommand {
         long mb = free / (1024 * 1024);
         long gb = mb / (1024);
         String status = mb > 500 ? "OK" : "LOW";
-        String unit = gb > 10 ? "GB" : "MB";
+        String unit = gb > 0 ? "GB" : "MB";
         printer().printf("  Disk Space:  %d %s free in temp dir (%s)%n", gb > 0 ? gb : mb, unit, status);
     }
 }

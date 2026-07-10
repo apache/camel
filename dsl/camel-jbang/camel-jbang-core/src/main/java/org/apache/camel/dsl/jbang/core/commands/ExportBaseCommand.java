@@ -1031,7 +1031,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
 
             // files are now loaded in classpath
-            v = v.replaceAll("file:", "classpath:");
+            if (v.startsWith("file:")) {
+                v = "classpath:" + v.substring(5);
+            }
             if ("camel.main.routesIncludePattern".equals(k)) {
                 // camel.main.routesIncludePattern should remove all .java as we use move them to regular src/main/java
                 // camel.main.routesIncludePattern should remove all file: classpath: as we copy
@@ -1076,10 +1078,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
         if (propertySources != null) {
             for (String[] props : Arrays.stream(propertySources).filter(Objects::nonNull).toList()) {
                 for (String s : props) {
-                    String[] kv = s.split("=");
-                    if (kv.length != 2) {
-                        // likely a user mistake, we warn the user
-                        printer().println("WARN: property '" + s + "'' has a bad format (should be 'key=value'), skipping.");
+                    String[] kv = s.split("=", 2);
+                    if (kv.length < 2) {
+                        printer().println("WARN: property '" + s + "' has a bad format (should be 'key=value'), skipping.");
                     } else {
                         result.put(kv[0], kv[1]);
                     }
@@ -1098,7 +1099,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
         var answer = new Properties();
         buildProperties.stream()
                 .filter(item -> !item.isEmpty())
-                .map(item -> item.split("="))
+                .map(item -> item.split("=", 2))
+                .filter(toks -> toks.length == 2)
                 .forEach(toks -> answer.setProperty(toks[0], toks[1]));
         return answer;
     }

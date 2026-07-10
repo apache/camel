@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -288,7 +289,7 @@ public class Explain extends CamelCommand {
         }
 
         prompt.append("File: ").append(fileName).append("\n");
-        prompt.append("Format: ").append(fileExtension.toUpperCase()).append("\n\n");
+        prompt.append("Format: ").append(fileExtension.toUpperCase(Locale.ROOT)).append("\n\n");
         prompt.append("Route definition:\n```").append(fileExtension).append("\n");
         prompt.append(routeContent).append("\n```\n\n");
         prompt.append("Please explain this Camel route:");

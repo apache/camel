@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.version;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
-import java.io.UncheckedIOException;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -599,7 +598,7 @@ public class VersionList extends CamelCommand {
                 }
             }
         } catch (IOException e) {
-            throw new UncheckedIOException("Could not get " + gitUrl, e);
+            return null;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Interrupted", e);

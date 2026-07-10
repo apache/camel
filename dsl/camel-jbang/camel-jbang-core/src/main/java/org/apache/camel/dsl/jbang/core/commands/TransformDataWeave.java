@@ -121,7 +121,10 @@ public class TransformDataWeave extends CamelCommand {
 
             if (output != null) {
                 Path outputPath = resolveOutputPath(dwlFile, Path.of(output));
-                Files.createDirectories(outputPath.getParent());
+                Path parentDir = outputPath.getParent();
+                if (parentDir != null) {
+                    Files.createDirectories(parentDir);
+                }
                 Files.writeString(outputPath, dsContent);
                 printer().println("Converted: " + dwlFile + " -> " + outputPath);
             } else {

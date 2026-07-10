@@ -129,6 +129,7 @@ public final class CommandLineHelper {
                 properties.load(reader);
             } catch (IOException e) {
                 commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(file));
+                return;
             }
 
             commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(properties));

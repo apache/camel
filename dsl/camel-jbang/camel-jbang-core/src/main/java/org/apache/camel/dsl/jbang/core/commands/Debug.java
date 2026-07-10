@@ -379,9 +379,9 @@ public class Debug extends Run {
             printer().println("Preparing Camel Spring Boot for debugging ...");
 
             // use maven wrapper if present
-            String mvnw = "/mvnw";
+            String mvnw = "mvnw";
             if (FileUtil.isWindows()) {
-                mvnw = "/mvnw.cmd";
+                mvnw = "mvnw.cmd";
             }
             if (!new File(mvnw).exists()) {
                 mvnw = "mvn";
@@ -389,9 +389,10 @@ public class Debug extends Run {
             // use maven to build the JAR and then run the JAR after-wards
             ProcessBuilder pb = new ProcessBuilder();
             pb.command(mvnw, "-Dmaven.test.skip", "--file", "camel-jbang-debug-pom.xml", "package", "spring-boot:repackage");
+            pb.inheritIO();
             Process p = pb.start();
 
-            if (p.waitFor(30, TimeUnit.SECONDS)) {
+            if (p.waitFor(120, TimeUnit.SECONDS)) {
                 AtomicReference<Process> processRef = new AtomicReference<>();
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                     try {
@@ -503,9 +504,9 @@ public class Debug extends Run {
             printer().println("Preparing Camel Quarkus for debugging ...");
 
             // use maven wrapper if present
-            String mvnw = "/mvnw";
+            String mvnw = "mvnw";
             if (FileUtil.isWindows()) {
-                mvnw = "/mvnw.cmd";
+                mvnw = "mvnw.cmd";
             }
             if (!new File(mvnw).exists()) {
                 mvnw = "mvn";
@@ -513,9 +514,10 @@ public class Debug extends Run {
             // use maven to build the JAR and then run the JAR after-wards
             ProcessBuilder pb = new ProcessBuilder();
             pb.command(mvnw, "-Dmaven.test.skip", "--file", "camel-jbang-debug-pom.xml", "package", "quarkus:build");
+            pb.inheritIO();
             Process p = pb.start();
 
-            if (p.waitFor(30, TimeUnit.SECONDS)) {
+            if (p.waitFor(120, TimeUnit.SECONDS)) {
                 AtomicReference<Process> processRef = new AtomicReference<>();
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                     try {
