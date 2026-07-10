@@ -31,7 +31,6 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AutomatedConversionTest extends CamelTestSupport {
@@ -47,7 +46,7 @@ public class AutomatedConversionTest extends CamelTestSupport {
             = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 - BOM'su root' failed for lonvick on /dev/pts/8";
 
     @Test
-    public void testSendingRawUDP() throws IOException {
+    public void testSendingRawUDP() throws IOException, InterruptedException {
 
         MockEndpoint mock = getMockEndpoint("mock:syslogReceiver");
         MockEndpoint mock2 = getMockEndpoint("mock:syslogReceiver2");
@@ -72,8 +71,7 @@ public class AutomatedConversionTest extends CamelTestSupport {
             socket.close();
         }
 
-        await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @Override

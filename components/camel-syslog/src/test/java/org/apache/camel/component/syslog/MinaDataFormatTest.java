@@ -32,7 +32,6 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MinaDataFormatTest extends CamelTestSupport {
@@ -46,7 +45,7 @@ public class MinaDataFormatTest extends CamelTestSupport {
               + "         Conveyer1=OK, Conveyer2=OK # %%";
 
     @Test
-    public void testSendingRawUDP() throws IOException {
+    public void testSendingRawUDP() throws IOException, InterruptedException {
 
         MockEndpoint mock = getMockEndpoint("mock:syslogReceiver");
         MockEndpoint mock2 = getMockEndpoint("mock:syslogReceiver2");
@@ -68,8 +67,7 @@ public class MinaDataFormatTest extends CamelTestSupport {
             socket.close();
         }
 
-        await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @Override

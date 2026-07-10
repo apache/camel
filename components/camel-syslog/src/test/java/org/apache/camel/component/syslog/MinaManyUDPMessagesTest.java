@@ -31,7 +31,6 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MinaManyUDPMessagesTest extends CamelTestSupport {
@@ -65,8 +64,7 @@ public class MinaManyUDPMessagesTest extends CamelTestSupport {
             socket.close();
         }
 
-        await().atMost(20, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override

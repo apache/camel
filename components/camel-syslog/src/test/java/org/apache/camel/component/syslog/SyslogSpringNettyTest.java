@@ -30,8 +30,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.awaitility.Awaitility.await;
-
 public class SyslogSpringNettyTest extends CamelSpringTestSupport {
     @RegisterExtension
     AvailablePortFinder.Port serverPort = AvailablePortFinder.find();
@@ -52,7 +50,7 @@ public class SyslogSpringNettyTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testSendingRawUDP() throws IOException {
+    public void testSendingRawUDP() throws IOException, InterruptedException {
 
         MockEndpoint mock = getMockEndpoint("mock:stop1");
         MockEndpoint mock2 = getMockEndpoint("mock:stop2");
@@ -74,7 +72,6 @@ public class SyslogSpringNettyTest extends CamelSpringTestSupport {
             socket.close();
         }
 
-        await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 }
