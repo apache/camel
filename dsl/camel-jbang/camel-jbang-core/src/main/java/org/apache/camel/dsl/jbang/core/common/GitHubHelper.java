@@ -35,9 +35,17 @@ public final class GitHubHelper {
     }
 
     public static String asGithubSingleUrl(String url) {
+        if (url.startsWith("https://raw.githubusercontent.com/")) {
+            // https://raw.githubusercontent.com/apache/camel/main/path/file.java
+            // -> github:apache:camel:main:path/file.java
+            url = url.substring(34);
+            url = url.replaceFirst("/", ":");
+            url = url.replaceFirst("/", ":");
+            url = url.replaceFirst("/", ":");
+            return "github:" + url;
+        }
         // strip https://github.com/
         url = url.substring(19);
-        // https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/hello-java/Hey.java
         // https://github.com/apache/camel-kamelets-examples/blob/main/jbang/hello-java/Hey.java
         url = url.replaceFirst("/", ":");
         url = url.replaceFirst("/", ":");
@@ -61,7 +69,11 @@ public final class GitHubHelper {
             StringJoiner all)
             throws Exception {
 
-        // this is a directory, so we need to query github which files are there and filter them
+        // raw.githubusercontent.com URLs are single files, not directories
+        if (url.startsWith("https://raw.githubusercontent.com/")) {
+            addSingleFileUrl(url, routes, kamelets, properties, all);
+            return;
+        }
 
         // strip https://github.com/
         url = url.substring(19);
@@ -75,7 +87,14 @@ public final class GitHubHelper {
         String repo = parts[1];
         String action = parts[2];
         String branch = parts[3];
-        String path;
+
+        // blob URLs are single files, not directories
+        if ("blob".equals(action)) {
+            addSingleFileUrl("https://github.com/" + url, routes, kamelets, properties, all);
+            return;
+        }
+
+        // this is a directory, so we need to query github which files are there and filter them
         String wildcard = null;
         StringJoiner sj = new StringJoiner("/");
         for (int i = 4; i < parts.length; i++) {
@@ -88,7 +107,7 @@ public final class GitHubHelper {
             }
             sj.add(parts[i]);
         }
-        path = sj.toString();
+        String path = sj.toString();
 
         if ("tree".equals(action)) {
             url = "https://api.github.com/repos/" + org + "/" + repo + "/contents/" + path;
@@ -98,6 +117,25 @@ public final class GitHubHelper {
         }
 
         resolveGithubAsRawFiles(url, wildcard, routes, kamelets, properties, all);
+    }
+
+    private static void addSingleFileUrl(
+            String url, StringJoiner routes, StringJoiner kamelets, StringJoiner properties,
+            StringJoiner all) {
+        String ghUrl = asGithubSingleUrl(url);
+        String ext = FileUtil.onlyExt(url, false);
+        if (all != null) {
+            all.add(ghUrl);
+        } else if (kamelets != null && "kamelet.yaml".equalsIgnoreCase(ext)) {
+            kamelets.add(ghUrl);
+        } else if (properties != null && "properties".equalsIgnoreCase(ext)) {
+            properties.add(ghUrl);
+        } else if (routes != null) {
+            if ("java".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext)
+                    || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)) {
+                routes.add(ghUrl);
+            }
+        }
     }
 
     private static void resolveGithubAsRawFiles(
