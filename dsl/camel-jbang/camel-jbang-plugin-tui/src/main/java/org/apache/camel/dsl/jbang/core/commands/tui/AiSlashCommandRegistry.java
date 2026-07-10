@@ -34,57 +34,73 @@ final class AiSlashCommandRegistry {
         this.descriptors = List.copyOf(descriptors);
         Map<String, Descriptor> commands = new LinkedHashMap<>();
         for (Descriptor descriptor : descriptors) {
-            commands.put(descriptor.name().toLowerCase(Locale.ROOT), descriptor);
+            registerKey(commands, descriptor.name(), descriptor);
             for (String alias : descriptor.aliases()) {
-                commands.put(alias.toLowerCase(Locale.ROOT), descriptor);
+                registerKey(commands, alias, descriptor);
             }
         }
         lookup = Collections.unmodifiableMap(commands);
     }
 
+    private static void registerKey(Map<String, Descriptor> commands, String key, Descriptor descriptor) {
+        String normalized = key.toLowerCase(Locale.ROOT);
+        Descriptor existing = commands.putIfAbsent(normalized, descriptor);
+        if (existing != null) {
+            throw new IllegalStateException(
+                    "Slash command name/alias '" + normalized + "' is already registered to /" + existing.name()
+                                            + "; cannot also register it to /" + descriptor.name());
+        }
+    }
+
     static AiSlashCommandRegistry defaults() {
         List<Descriptor> commands = new ArrayList<>();
+        // The /help executor closes over this local list rather than calling the static defaults() factory
+        // recursively, so it reflects this registry's own commands instead of rebuilding a whole new one.
         commands.add(new Descriptor(
-                "help", List.of("h"), "Show available slash commands", null, false,
-                (context, arguments) -> CommandResult.system(AiSlashCommandRegistry.defaults().helpText())));
+                "help", List.of("h"), "Show available slash commands", null,
+                (context, arguments) -> CommandResult.system(buildHelpText(commands))));
         commands.add(new Descriptor(
-                "provider", List.of("p"), "Switch the AI provider", null, false,
+                "provider", List.of("p"), "Switch the AI provider", null,
                 (context, arguments) -> {
                     context.openProviderSwitch();
                     return CommandResult.system("");
                 }));
         commands.add(new Descriptor(
-                "model", List.of("m"), "Show or switch the AI model", "<model>", false,
+                "model", List.of("m"), "Show or switch the AI model", "<model>",
                 AiSlashCommandRegistry::executeModel));
         commands.add(new Descriptor(
-                "clear", List.of("c"), "Clear the conversation", null, false,
+                "clear", List.of("c"), "Clear the conversation", null,
                 (context, arguments) -> {
                     context.clearConversation();
                     return CommandResult.system("");
                 }));
         commands.add(new Descriptor(
-                "close", List.of(), "Close the AI panel", null, false,
+                "close", List.of(), "Close the AI panel", null,
                 (context, arguments) -> {
                     context.closePanel();
                     return CommandResult.system("Closing AI panel");
                 }));
         commands.add(new Descriptor(
-                "quit", List.of("q", "x", "exit"), "Exit the TUI", null, false,
+                "quit", List.of("q", "x", "exit"), "Exit the TUI", null,
                 (context, arguments) -> {
                     context.requestExit();
                     return CommandResult.system("Exiting TUI");
                 }));
         commands.add(new Descriptor(
-                "run", List.of("r"), "<camel run args>", "<files...> [--dev] [--port=8080] [...]", true,
+                "run", List.of("r"), "<camel run args>", "<files...> [--dev] [--port=8080] [...]",
                 (context, arguments) -> CommandResult.async(AiCliCommandExecutor.Request.run(arguments))));
         commands.add(new Descriptor(
-                "infra", List.of("i"), "Manage Camel infrastructure", "<camel infra args>", true,
+                "infra", List.of("i"), "Manage Camel infrastructure", "<camel infra args>",
                 (context, arguments) -> CommandResult.async(AiCliCommandExecutor.Request.infra(arguments))));
         commands.add(new Descriptor(
-                "send", List.of("s"), "Send a message to an endpoint", SEND_USAGE, true,
+                "send", List.of("s"), "Send a message to an endpoint", SEND_USAGE,
                 (context, arguments) -> CommandResult.async(
                         AiCliCommandExecutor.Request.send(context.selectedProcessName(), parseSend(arguments)))));
         return new AiSlashCommandRegistry(commands);
+    }
+
+    static AiSlashCommandRegistry forTesting(List<Descriptor> descriptors) {
+        return new AiSlashCommandRegistry(descriptors);
     }
 
     List<Descriptor> descriptors() {
@@ -129,15 +145,22 @@ final class AiSlashCommandRegistry {
         ParsedCommand value = parsed.get();
         try {
             return value.descriptor().executor().execute(context, value.arguments());
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
+            // Catches both the IllegalArgumentException that /send's argument parsing throws for bad input
+            // and any other unexpected failure from an executor, so a misbehaving command reports an error
+            // instead of propagating uncaught into the TUI's event loop.
             return CommandResult.error(e.getMessage());
         }
     }
 
     String helpText() {
-        int width = commandColumnWidth(descriptors);
+        return buildHelpText(descriptors);
+    }
+
+    private static String buildHelpText(List<Descriptor> items) {
+        int width = commandColumnWidth(items);
         StringBuilder text = new StringBuilder("Available commands:\n");
-        for (Descriptor descriptor : descriptors) {
+        for (Descriptor descriptor : items) {
             text.append(formatAlignedLine(descriptor, width)).append('\n');
         }
         return text.toString().strip();
@@ -182,11 +205,11 @@ final class AiSlashCommandRegistry {
         return false;
     }
 
-    String commandLabel(Descriptor descriptor) {
+    static String commandLabel(Descriptor descriptor) {
         return helpUsage(descriptor);
     }
 
-    String descriptionLabel(Descriptor descriptor) {
+    static String descriptionLabel(Descriptor descriptor) {
         String description = descriptor.description();
         if (description.startsWith("<")) {
             return "";
@@ -194,11 +217,11 @@ final class AiSlashCommandRegistry {
         return description;
     }
 
-    int commandColumnWidth(List<Descriptor> items) {
+    static int commandColumnWidth(List<Descriptor> items) {
         return items.stream().mapToInt(descriptor -> commandLabel(descriptor).length()).max().orElse(0);
     }
 
-    String formatAlignedLine(Descriptor descriptor, int width) {
+    static String formatAlignedLine(Descriptor descriptor, int width) {
         String command = commandLabel(descriptor);
         String description = descriptionLabel(descriptor);
         if (description.isEmpty()) {
@@ -208,7 +231,7 @@ final class AiSlashCommandRegistry {
         return command + " ".repeat(padding) + description;
     }
 
-    private String helpUsage(Descriptor descriptor) {
+    private static String helpUsage(Descriptor descriptor) {
         if (descriptor.description().startsWith("<")) {
             return "/" + descriptor.name() + " " + descriptor.description();
         }
@@ -248,7 +271,9 @@ final class AiSlashCommandRegistry {
 
     private static CommandResult executeModel(AiSlashCommandContext context, String arguments) {
         if (!arguments.isBlank()) {
-            context.switchModel(arguments);
+            if (!context.switchModel(arguments)) {
+                return CommandResult.error("No LLM client available. Press Ctrl+P to pick a provider.");
+            }
             return CommandResult.system("Switched model to " + arguments);
         }
         List<String> models = context.availableModels();
@@ -272,8 +297,14 @@ final class AiSlashCommandRegistry {
         return -1;
     }
 
-    record Descriptor(String name, List<String> aliases, String description, String placeholder,
-            boolean asynchronous, Executor executor) {
+    /**
+     * A {@code description} starting with {@code "<"} is treated as an inline usage string rather than prose: it
+     * replaces {@code placeholder} in {@code /help} output and suppresses the description column (see
+     * {@link #descriptionLabel(Descriptor)} / {@code helpUsage}). Use this for commands whose full argument grammar is
+     * documented via {@code placeholder} but is too long to also show as a separate description (see {@code run},
+     * {@code infra}, {@code send}).
+     */
+    record Descriptor(String name, List<String> aliases, String description, String placeholder, Executor executor) {
         String usage() {
             return placeholder == null || placeholder.isBlank() ? "/" + name : "/" + name + " " + placeholder;
         }
@@ -289,17 +320,17 @@ final class AiSlashCommandRegistry {
         CommandResult execute(AiSlashCommandContext context, String arguments);
     }
 
-    record CommandResult(String role, String text, AiCliCommandExecutor.Request cliRequest) {
+    record CommandResult(AiRole role, String text, AiCliCommandExecutor.Request cliRequest) {
         static CommandResult system(String text) {
-            return new CommandResult("system", text, null);
+            return new CommandResult(AiRole.SYSTEM, text, null);
         }
 
         static CommandResult error(String text) {
-            return new CommandResult("error", text, null);
+            return new CommandResult(AiRole.ERROR, text, null);
         }
 
         static CommandResult async(AiCliCommandExecutor.Request request) {
-            return new CommandResult("system", "Running " + request.displayText(), request);
+            return new CommandResult(AiRole.SYSTEM, "Running " + request.displayText(), request);
         }
     }
 }

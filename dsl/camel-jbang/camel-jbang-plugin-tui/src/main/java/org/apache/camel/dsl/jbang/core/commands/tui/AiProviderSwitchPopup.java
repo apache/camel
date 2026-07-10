@@ -37,9 +37,15 @@ import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 
-class AiProviderSwitchPopup {
+final class AiProviderSwitchPopup {
 
     record ProviderChoice(String provider, String model, String url, boolean persistedDefault) {
+        ProviderChoice {
+            if (provider == null || provider.isBlank()) {
+                throw new IllegalArgumentException("provider must not be blank");
+            }
+        }
+
         String label() {
             String modelLabel = model == null || model.isBlank() ? "auto" : model;
             return provider + "  " + modelLabel + (persistedDefault ? "  default" : "");

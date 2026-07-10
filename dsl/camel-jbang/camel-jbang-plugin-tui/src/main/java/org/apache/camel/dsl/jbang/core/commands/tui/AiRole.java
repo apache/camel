@@ -16,31 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
-interface AiSlashCommandContext {
-    void closePanel();
-
-    void requestExit();
-
-    void openProviderSwitch();
-
-    void clearConversation();
-
-    String currentModel();
-
-    List<String> availableModels();
-
-    /**
-     * Switches the active model. Returns {@code false} (without effect) when no LLM client is available to apply the
-     * change to.
-     */
-    boolean switchModel(String model);
-
-    String selectedProcessName();
-
-    CompletableFuture<AiCliCommandExecutor.Result> executeCli(AiCliCommandExecutor.Request request);
-
-    void cancelCli();
+/**
+ * Role of an AI panel conversation entry, shared between {@link AiPanel.ConversationEntry} and
+ * {@link AiSlashCommandRegistry.CommandResult} so an unexpected value is caught by the compiler instead of silently
+ * being dropped by the conversation renderer.
+ */
+enum AiRole {
+    USER,
+    ASSISTANT,
+    SYSTEM,
+    ERROR
 }

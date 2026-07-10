@@ -59,11 +59,11 @@ class AiSlashCommandRegistryTest {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
         String help = registry.helpText();
         AiSlashCommandRegistry.Descriptor provider = registry.lookup("provider").orElseThrow();
-        int width = registry.commandColumnWidth(registry.descriptors());
+        int width = AiSlashCommandRegistry.commandColumnWidth(registry.descriptors());
 
         assertTrue(help.contains("/run <camel run args>"));
         assertTrue(help.contains("/send <endpoint> <message text | @file>"));
-        assertTrue(help.contains(registry.formatAlignedLine(provider, width)));
+        assertTrue(help.contains(AiSlashCommandRegistry.formatAlignedLine(provider, width)));
         assertFalse(help.contains("\n\n/"));
     }
 
@@ -148,8 +148,49 @@ class AiSlashCommandRegistryTest {
         AiSlashCommandRegistry.CommandResult result
                 = AiSlashCommandRegistry.defaults().execute("/nope", new NoopSlashContext());
 
-        assertEquals("error", result.role());
+        assertEquals(AiRole.ERROR, result.role());
         assertEquals("Unknown command: /nope. Type /help for available commands.", result.text());
+    }
+
+    @Test
+    void helpCommandReflectsThisRegistrysOwnDescriptorsWithoutRebuilding() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+
+        AiSlashCommandRegistry.CommandResult result = registry.execute("/help", new NoopSlashContext());
+
+        assertEquals(AiRole.SYSTEM, result.role());
+        assertEquals(registry.helpText(), result.text());
+    }
+
+    @Test
+    void constructorRejectsDuplicateNameOrAliasAcrossCommands() {
+        List<AiSlashCommandRegistry.Descriptor> commands = List.of(
+                new AiSlashCommandRegistry.Descriptor(
+                        "foo", List.of("x"), "Foo command", null,
+                        (context, arguments) -> AiSlashCommandRegistry.CommandResult.system("foo")),
+                new AiSlashCommandRegistry.Descriptor(
+                        "bar", List.of("x"), "Bar command", null,
+                        (context, arguments) -> AiSlashCommandRegistry.CommandResult.system("bar")));
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> AiSlashCommandRegistry.forTesting(commands));
+        assertTrue(ex.getMessage().contains("x"));
+    }
+
+    @Test
+    void executeCatchesUnexpectedRuntimeExceptionFromExecutor() {
+        List<AiSlashCommandRegistry.Descriptor> commands = List.of(
+                new AiSlashCommandRegistry.Descriptor(
+                        "boom", List.of(), "Throws", null,
+                        (context, arguments) -> {
+                            throw new IllegalStateException("kaboom");
+                        }));
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.forTesting(commands);
+
+        AiSlashCommandRegistry.CommandResult result = registry.execute("/boom", new NoopSlashContext());
+
+        assertEquals(AiRole.ERROR, result.role());
+        assertEquals("kaboom", result.text());
     }
 
     private static final class NoopSlashContext implements AiSlashCommandContext {
@@ -181,7 +222,8 @@ class AiSlashCommandRegistryTest {
         }
 
         @Override
-        public void switchModel(String model) {
+        public boolean switchModel(String model) {
+            return true;
         }
 
         @Override

@@ -50,7 +50,7 @@ class AiPanelTest {
 
         assertTrue(client.awaitAnswer(5, TimeUnit.SECONDS));
         assertEquals("what routes are running?", client.lastQuestion());
-        assertTrue(panel.conversationForTesting().stream().anyMatch(entry -> "user".equals(entry.role())));
+        assertTrue(panel.conversationForTesting().stream().anyMatch(entry -> entry.role() == AiRole.USER));
     }
 
     @Test
@@ -65,9 +65,9 @@ class AiPanelTest {
 
         assertNull(client.lastQuestion());
         assertTrue(panel.conversationForTesting().stream()
-                .anyMatch(entry -> "system".equals(entry.role()) && entry.text().contains("/run <camel run args>")));
+                .anyMatch(entry -> entry.role() == AiRole.SYSTEM && entry.text().contains("/run <camel run args>")));
         assertTrue(panel.conversationForTesting().stream()
-                .anyMatch(entry -> "system".equals(entry.role()) && entry.text().contains("/provider")
+                .anyMatch(entry -> entry.role() == AiRole.SYSTEM && entry.text().contains("/provider")
                         && entry.text().contains("Switch the AI provider")));
     }
 
@@ -99,6 +99,32 @@ class AiPanelTest {
 
         assertTrue(panel.conversationForTesting().isEmpty());
         assertEquals(0, panel.sessionTotalTokensForTesting());
+    }
+
+    @Test
+    void clearAlsoResetsLlmMessageContext() throws Exception {
+        AiPanel panel = new AiPanel();
+        RecordingLlmClient client = new RecordingLlmClient("ok");
+        panel.setClientForTesting(client);
+        panel.open();
+
+        type(panel, "what routes are running?");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(client.awaitAnswer(5, TimeUnit.SECONDS));
+        // awaitAnswer() only signals that chatWithTools() was called; wait for the whole agent thread to
+        // finish (including appending the assistant message) before asserting on message history.
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+        while (panel.isAgentThreadRunningForTesting() && System.nanoTime() < deadline) {
+            Thread.onSpinWait();
+        }
+        assertFalse(panel.isAgentThreadRunningForTesting(), "agent thread should finish within 5 seconds");
+        assertTrue(panel.messageCountForTesting() > 0, "asking a question should populate the LLM message history");
+
+        type(panel, "/clear");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertEquals(0, panel.messageCountForTesting(),
+                "/clear should reset the LLM message context, not just the visible conversation");
     }
 
     @Test
@@ -162,6 +188,23 @@ class AiPanelTest {
     }
 
     @Test
+    void modelCommandReportsErrorWhenNoClientAvailable() {
+        AiPanel panel = new AiPanel();
+        FakeSlashContext context = new FakeSlashContext();
+        context.switchModelResult = false;
+        panel.setSlashCommandContextForTesting(context);
+        panel.open();
+
+        type(panel, "/model model-b");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertNull(context.switchedModel, "the model must not be reported as switched when it wasn't");
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> entry.role() == AiRole.ERROR
+                        && entry.text().contains("No LLM client available")));
+    }
+
+    @Test
     void unknownCommandRendersHelpHint() {
         AiPanel panel = new AiPanel();
         panel.setClientForTesting(LlmClient.create());
@@ -171,7 +214,7 @@ class AiPanelTest {
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
 
         assertTrue(panel.conversationForTesting().stream()
-                .anyMatch(entry -> "error".equals(entry.role())
+                .anyMatch(entry -> entry.role() == AiRole.ERROR
                         && entry.text().contains("Type /help for available commands.")));
     }
 
@@ -207,7 +250,7 @@ class AiPanelTest {
 
         assertEquals(List.of("run", "route.yaml"), context.cliRequest.argv());
         assertTrue(panel.conversationForTesting().stream()
-                .anyMatch(entry -> "system".equals(entry.role()) && entry.text().contains("Started")));
+                .anyMatch(entry -> entry.role() == AiRole.SYSTEM && entry.text().contains("Started")));
     }
 
     @Test
@@ -223,7 +266,7 @@ class AiPanelTest {
         context.completeCli();
 
         assertTrue(panel.conversationForTesting().stream()
-                .anyMatch(entry -> "error".equals(entry.role()) && entry.text().contains("exit code 2")));
+                .anyMatch(entry -> entry.role() == AiRole.ERROR && entry.text().contains("exit code 2")));
     }
 
     @Test
@@ -269,7 +312,7 @@ class AiPanelTest {
 
         assertTrue(context.cancelRequested);
         assertTrue(panel.conversationForTesting().stream()
-                .anyMatch(entry -> "system".equals(entry.role()) && entry.text().contains("cancelled")));
+                .anyMatch(entry -> entry.role() == AiRole.SYSTEM && entry.text().contains("cancelled")));
     }
 
     @Test
@@ -307,7 +350,7 @@ class AiPanelTest {
         assertFalse(panel.isThinkingForTesting());
         assertFalse(panel.isAgentThreadRunningForTesting(), "Esc should wait for the agent thread to stop");
         assertTrue(panel.conversationForTesting().stream()
-                .anyMatch(entry -> "system".equals(entry.role()) && "(cancelled)".equals(entry.text())));
+                .anyMatch(entry -> entry.role() == AiRole.SYSTEM && "(cancelled)".equals(entry.text())));
     }
 
     @Test
@@ -422,6 +465,7 @@ class AiPanelTest {
         boolean cancelRequested;
         boolean providerSwitchRequested;
         String switchedModel;
+        boolean switchModelResult = true;
         AiCliCommandExecutor.Request cliRequest;
         AiCliCommandExecutor.Result cliResult = new AiCliCommandExecutor.Result("", 0, "", 0, false);
         private CompletableFuture<AiCliCommandExecutor.Result> pendingCli;
@@ -455,8 +499,12 @@ class AiPanelTest {
         }
 
         @Override
-        public void switchModel(String model) {
+        public boolean switchModel(String model) {
+            if (!switchModelResult) {
+                return false;
+            }
             switchedModel = model;
+            return true;
         }
 
         @Override

@@ -432,23 +432,23 @@ Use *F2* -> _MCP Info_ to see server details and _MCP Log_ to view the tool call
 
 === AI panel slash commands
 
-When the AI panel is open, input that starts with `/` runs a local panel command instead of sending a question to the configured AI provider.
+When the AI panel is open, input that starts with `/` runs a local panel command instead of sending a question to the configured AI provider. `/provider` and `/model` are unavailable while a response or command is already in progress; the panel shows a message asking you to wait.
 
 [cols="1,3",options="header"]
 |===
 | Command | Description
 
-| `/help`
+| `/help` (`/h`)
 | Show the available slash commands.
 
-| `/provider`
+| `/provider` (`/p`)
 | Open the provider switcher.
 
-| `/model [model-name]`
+| `/model [model-name]` (`/m`)
 | Show the current model, or switch the session model.
 
-| `/clear`
-| Clear the AI conversation and usage counters without changing the provider or model.
+| `/clear` (`/c`)
+| Clear the AI conversation, usage counters, and model context without changing the provider or model.
 
 | `/close`
 | Close the AI panel.
@@ -456,13 +456,13 @@ When the AI panel is open, input that starts with `/` runs a local panel command
 | `/quit` (`/exit`, `/q`, `/x`)
 | Exit the TUI.
 
-| `/run <camel run args>`
+| `/run <camel run args>` (`/r`)
 | Run `camel run` with the provided arguments.
 
-| `/infra <camel infra args>`
+| `/infra <camel infra args>` (`/i`)
 | Run `camel infra` with the provided arguments.
 
-| `/send <endpoint> <message text \| @file>`
+| `/send <endpoint> <message text \| @file>` (`/s`)
 | Send a message through `camel cmd send`. A body that is exactly one `@file` token is sent as `file:<path>`; inline `@file` text is sent literally.
 |===
 

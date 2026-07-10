@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -94,7 +96,8 @@ class AiPanel {
     private final StringBuilder inputBuffer = new StringBuilder();
     private int cursorPos;
 
-    // Conversation display
+    // Conversation display. CopyOnWriteArrayList because entries are appended from the agent thread and the
+    // CLI-command-completion callback while the render thread iterates the list concurrently.
     private final List<ConversationEntry> conversation = new CopyOnWriteArrayList<>();
     private int scrollOffset;
 
@@ -134,8 +137,8 @@ class AiPanel {
     private boolean statsView;
     private int statsScrollOffset;
 
-    record ConversationEntry(String role, String text, long elapsedSeconds, int totalTokens) {
-        ConversationEntry(String role, String text) {
+    record ConversationEntry(AiRole role, String text, long elapsedSeconds, int totalTokens) {
+        ConversationEntry(AiRole role, String text) {
             this(role, text, -1, 0);
         }
     }
@@ -184,7 +187,7 @@ class AiPanel {
             return -1;
         }
         ConversationEntry last = conversation.get(conversation.size() - 1);
-        return "assistant".equals(last.role()) ? last.elapsedSeconds() : -1;
+        return last.role() == AiRole.ASSISTANT ? last.elapsedSeconds() : -1;
     }
 
     private int lastResponseTokens() {
@@ -192,7 +195,7 @@ class AiPanel {
             return 0;
         }
         ConversationEntry last = conversation.get(conversation.size() - 1);
-        return "assistant".equals(last.role()) ? last.totalTokens() : 0;
+        return last.role() == AiRole.ASSISTANT ? last.totalTokens() : 0;
     }
 
     void cycleHeight(int contentHeight) {
@@ -263,12 +266,12 @@ class AiPanel {
         }
         if (client != null) {
             conversation.add(new ConversationEntry(
-                    "system",
+                    AiRole.SYSTEM,
                     "Switched to " + displayModel(choice) + " (" + choice.provider() + ")"));
         } else {
             sessionProviderChoice = null;
             conversation.add(new ConversationEntry(
-                    "error",
+                    AiRole.ERROR,
                     "Failed to switch to " + choice.provider() + ": " + initError));
         }
     }
@@ -279,13 +282,25 @@ class AiPanel {
 
     private void applyChoice(LlmClient target, String provider, String model, String url) {
         if (provider != null && !provider.isBlank() && !"auto".equals(provider)) {
-            target.withApiType(LlmClient.ApiType.valueOf(provider.replace('-', '_')));
+            target.withApiType(parseApiType(provider));
         }
         if (model != null && !model.isBlank()) {
             target.withModel(model);
         }
         if (url != null && !url.isBlank()) {
             target.withUrl(url);
+        }
+    }
+
+    private static LlmClient.ApiType parseApiType(String provider) {
+        try {
+            return LlmClient.ApiType.valueOf(provider.replace('-', '_'));
+        } catch (IllegalArgumentException e) {
+            String valid = Arrays.stream(LlmClient.ApiType.values())
+                    .map(Enum::name)
+                    .collect(Collectors.joining(", "));
+            throw new IllegalArgumentException(
+                    "Unknown AI provider '" + provider + "'. Valid values: " + valid + ", auto.");
         }
     }
 
@@ -463,7 +478,7 @@ class AiPanel {
             String name = parsed.get().descriptor().name();
             if ("provider".equals(name) || "model".equals(name)) {
                 conversation.add(new ConversationEntry(
-                        "system",
+                        AiRole.SYSTEM,
                         "Wait for the current operation to finish before changing provider or model."));
                 return;
             }
@@ -472,7 +487,7 @@ class AiPanel {
         AiSlashCommandRegistry.CommandResult result = slashCommands.execute(input, slashCommandContext);
         if (result.cliRequest() != null) {
             AiCliCommandExecutor.Request request = result.cliRequest();
-            conversation.add(new ConversationEntry("system", "Running " + request.displayText()));
+            conversation.add(new ConversationEntry(AiRole.SYSTEM, "Running " + request.displayText()));
             thinkingVerb = "Running command";
             thinkingStartTime = System.currentTimeMillis();
             thinking.set(true);
@@ -499,18 +514,19 @@ class AiPanel {
 
         if (error != null) {
             String displayText = cliResult != null ? cliResult.displayText() : "command";
-            conversation.add(new ConversationEntry("error", "Failed to run " + displayText + ": " + error.getMessage()));
+            conversation.add(new ConversationEntry(
+                    AiRole.ERROR, "Failed to run " + displayText + ": " + error.getMessage()));
             scrollOffset = 0;
             return;
         }
 
         if (cliResult.exitCode() == 0) {
             conversation.add(new ConversationEntry(
-                    "system",
+                    AiRole.SYSTEM,
                     cliResult.displayText() + " completed in " + cliResult.elapsedMs() + " ms\n\n" + cliResult.output()));
         } else {
             conversation.add(new ConversationEntry(
-                    "error",
+                    AiRole.ERROR,
                     cliResult.displayText() + " exit code " + cliResult.exitCode() + "\n\n" + cliResult.output()));
         }
         scrollOffset = 0;
@@ -520,12 +536,12 @@ class AiPanel {
         if (activeCliCommand != null) {
             activeCliCommand = null;
             slashCommandContext.cancelCli();
-            conversation.add(new ConversationEntry("system", "(command cancelled)"));
+            conversation.add(new ConversationEntry(AiRole.SYSTEM, "(command cancelled)"));
             thinking.set(false);
             thinkingVerb = null;
         } else {
             stopAgentThread();
-            conversation.add(new ConversationEntry("system", "(cancelled)"));
+            conversation.add(new ConversationEntry(AiRole.SYSTEM, "(cancelled)"));
         }
     }
 
@@ -550,11 +566,11 @@ class AiPanel {
         stopAgentThread();
         if (client == null) {
             conversation.add(new ConversationEntry(
-                    "error",
+                    AiRole.ERROR,
                     initError != null ? initError : "No LLM client available. Press Ctrl+P to pick a provider."));
             return;
         }
-        conversation.add(new ConversationEntry("user", question));
+        conversation.add(new ConversationEntry(AiRole.USER, question));
         log(LogLevel.QUESTION, "Question", question);
         thinkingVerb = THINKING_VERBS.get(ThreadLocalRandom.current().nextInt(THINKING_VERBS.size()));
         thinkingStartTime = System.currentTimeMillis();
@@ -573,7 +589,7 @@ class AiPanel {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
-                conversation.add(new ConversationEntry("error", e.getMessage()));
+                conversation.add(new ConversationEntry(AiRole.ERROR, e.getMessage()));
             } finally {
                 if (agentThread == Thread.currentThread()) {
                     thinking.set(false);
@@ -602,7 +618,7 @@ class AiPanel {
             long callLatency = System.currentTimeMillis() - callStart;
             if (response == null) {
                 String err = "No response from LLM";
-                conversation.add(new ConversationEntry("error", err));
+                conversation.add(new ConversationEntry(AiRole.ERROR, err));
                 log(LogLevel.ERROR, "Error", err);
                 return;
             }
@@ -614,7 +630,7 @@ class AiPanel {
                     && (response.toolCalls() == null || response.toolCalls().isEmpty())
                     && response.text() == null) {
                 String err = "LLM request failed. Check API key and endpoint.";
-                conversation.add(new ConversationEntry("error", err));
+                conversation.add(new ConversationEntry(AiRole.ERROR, err));
                 log(LogLevel.ERROR, "Error", err);
                 return;
             }
@@ -638,14 +654,14 @@ class AiPanel {
                 sessionTotalTokens += totalUsage.totalTokens();
                 if (text != null && !text.isBlank()) {
                     long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
-                    conversation.add(new ConversationEntry("assistant", text, elapsed, totalUsage.totalTokens()));
+                    conversation.add(new ConversationEntry(AiRole.ASSISTANT, text, elapsed, totalUsage.totalTokens()));
                     String tokenInfo = totalUsage.totalTokens() > 0
                             ? ", " + LlmClient.formatTokens(totalUsage.totalTokens()) + " tokens"
                             : "";
                     log(LogLevel.RESPONSE, "Response (" + elapsed + "s" + tokenInfo + ")", text);
                 } else {
                     String err = "Empty response from LLM.";
-                    conversation.add(new ConversationEntry("error", err));
+                    conversation.add(new ConversationEntry(AiRole.ERROR, err));
                     log(LogLevel.ERROR, "Error", err);
                 }
                 scrollOffset = 0;
@@ -654,7 +670,7 @@ class AiPanel {
             }
         }
         conversation.add(new ConversationEntry(
-                "error",
+                AiRole.ERROR,
                 "Reached maximum iterations (" + MAX_ITERATIONS + ") without a final answer."));
     }
 
@@ -753,12 +769,12 @@ class AiPanel {
         if (area.height() < 1 || hints.isEmpty()) {
             return;
         }
-        int commandWidth = slashCommands.commandColumnWidth(hints);
+        int commandWidth = AiSlashCommandRegistry.commandColumnWidth(hints);
         int rows = Math.min(area.height(), hints.size());
         for (int i = 0; i < rows; i++) {
             AiSlashCommandRegistry.Descriptor descriptor = hints.get(i);
-            String command = slashCommands.commandLabel(descriptor);
-            String description = slashCommands.descriptionLabel(descriptor);
+            String command = AiSlashCommandRegistry.commandLabel(descriptor);
+            String description = AiSlashCommandRegistry.descriptionLabel(descriptor);
             List<Span> spans = new ArrayList<>();
             spans.add(Span.styled(command, Style.EMPTY.fg(Theme.accent())));
             if (!description.isEmpty()) {
@@ -788,12 +804,10 @@ class AiPanel {
 
         for (ConversationEntry entry : conversation) {
             switch (entry.role()) {
-                case "user" -> md.append("**You:** ").append(entry.text()).append("\n\n");
-                case "assistant" -> md.append(toHardBreaks(entry.text())).append("\n\n");
-                case "error" -> md.append("**Error:** ").append(entry.text()).append("\n\n");
-                case "system" -> md.append(toHardBreaks(entry.text())).append("\n\n");
-                default -> {
-                }
+                case USER -> md.append("**You:** ").append(entry.text()).append("\n\n");
+                case ASSISTANT -> md.append(toHardBreaks(entry.text())).append("\n\n");
+                case ERROR -> md.append("**Error:** ").append(entry.text()).append("\n\n");
+                case SYSTEM -> md.append(toHardBreaks(entry.text())).append("\n\n");
             }
         }
 
@@ -802,7 +816,7 @@ class AiPanel {
         int lastTokens = 0;
         if (!thinking.get() && !conversation.isEmpty()) {
             ConversationEntry last = conversation.get(conversation.size() - 1);
-            if ("assistant".equals(last.role()) && last.elapsedSeconds() >= 0) {
+            if (last.role() == AiRole.ASSISTANT && last.elapsedSeconds() >= 0) {
                 lastElapsed = last.elapsedSeconds();
                 lastTokens = last.totalTokens();
             }
@@ -1161,6 +1175,9 @@ class AiPanel {
         usageHistory.clear();
         statsScrollOffset = 0;
         sessionTotalTokens = 0;
+        if (messages != null) {
+            messages.clear();
+        }
     }
 
     void setClientForTesting(LlmClient client) {
@@ -1184,6 +1201,10 @@ class AiPanel {
 
     int sessionTotalTokensForTesting() {
         return sessionTotalTokens;
+    }
+
+    int messageCountForTesting() {
+        return messages == null ? 0 : messages.size();
     }
 
     boolean isThinkingForTesting() {
@@ -1254,10 +1275,12 @@ class AiPanel {
         }
 
         @Override
-        public void switchModel(String model) {
-            if (client != null) {
-                client.withModel(model);
+        public boolean switchModel(String model) {
+            if (client == null) {
+                return false;
             }
+            client.withModel(model);
+            return true;
         }
 
         @Override

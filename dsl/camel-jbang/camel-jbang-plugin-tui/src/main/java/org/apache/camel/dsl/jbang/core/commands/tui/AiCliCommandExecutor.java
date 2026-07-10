@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -24,10 +26,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 final class AiCliCommandExecutor {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AiCliCommandExecutor.class);
     private static final long CANCEL_TIMEOUT_MILLIS = 30_000;
 
     private final Invoker invoker;
@@ -49,7 +54,10 @@ final class AiCliCommandExecutor {
 
     synchronized CompletableFuture<Result> executeAsync(Request request) {
         if (activeCommand != null) {
-            return CompletableFuture.failedFuture(new IllegalStateException("A CLI command is already running"));
+            String message = activeCommand.cancelled.get()
+                    ? "A previous command is still stopping after cancellation. Please wait and try again."
+                    : "A CLI command is already running";
+            return CompletableFuture.failedFuture(new IllegalStateException(message));
         }
 
         CompletableFuture<Result> result = new CompletableFuture<>();
@@ -72,9 +80,17 @@ final class AiCliCommandExecutor {
         }
 
         Thread thread = command.thread;
-
         command.cancelled.set(true);
         thread.interrupt();
+
+        // Wait for the cancellation timeout off the caller's thread (typically the TUI event/render
+        // thread) so an unresponsive external command cannot freeze the UI for cancelTimeoutMillis.
+        Thread watcher = new Thread(() -> awaitCancellationTimeout(command, thread), "tui-ai-cli-cancel-watcher");
+        watcher.setDaemon(true);
+        watcher.start();
+    }
+
+    private void awaitCancellationTimeout(ActiveCommand command, Thread thread) {
         try {
             thread.join(cancelTimeoutMillis);
         } catch (InterruptedException e) {
@@ -97,7 +113,9 @@ final class AiCliCommandExecutor {
             exitCode = invoker.execute(command.request.argv(), new CapturePrinter(output));
             interrupted = command.cancelled.get() || Thread.currentThread().isInterrupted();
         } catch (Exception e) {
-            output.append(e.getClass().getSimpleName()).append(": ").append(e.getMessage()).append('\n');
+            String message = e.getMessage() != null ? e.getMessage() : "(no message; see logs for the stack trace)";
+            output.append(e.getClass().getSimpleName()).append(": ").append(message).append('\n');
+            LOG.warn("Failed to execute CLI command: {}", command.request.displayText(), e);
             interrupted = command.cancelled.get() || Thread.currentThread().isInterrupted();
         } finally {
             command.result.complete(
@@ -116,16 +134,29 @@ final class AiCliCommandExecutor {
         CommandLine commandLine = CamelJBangMain.getCommandLine();
         CamelJBangMain main = (CamelJBangMain) commandLine.getCommand();
         Printer originalPrinter = main.getOut();
+        PrintWriter originalErr = commandLine.getErr();
+        StringWriter errCapture = new StringWriter();
+        PrintWriter errWriter = new PrintWriter(errCapture);
         String originalProcess = EnvironmentHelper.getSelectedProcess();
         String selectedProcess = selectedProcess(argv);
         try {
             main.setOut(printer);
+            // picocli's default execution strategy catches exceptions thrown by a sub-command and
+            // prints them to CommandLine.getErr() instead of rethrowing, so without redirecting it
+            // here that output would go to the real System.err and never reach the TUI.
+            commandLine.setErr(errWriter);
             if (selectedProcess != null) {
                 EnvironmentHelper.setSelectedProcess(selectedProcess);
             }
             return commandLine.execute(argv.toArray(String[]::new));
         } finally {
             main.setOut(originalPrinter);
+            commandLine.setErr(originalErr);
+            errWriter.flush();
+            String errOutput = errCapture.toString();
+            if (!errOutput.isBlank()) {
+                printer.print(errOutput);
+            }
             if (selectedProcess != null) {
                 EnvironmentHelper.setSelectedProcess(originalProcess);
             }
