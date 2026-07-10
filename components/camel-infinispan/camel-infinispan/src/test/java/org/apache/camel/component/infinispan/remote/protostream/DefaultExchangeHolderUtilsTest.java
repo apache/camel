@@ -24,6 +24,7 @@ import com.example.external.NotAllowedSerializable;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
+import org.apache.camel.support.DeserializationFilterHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +36,7 @@ public class DefaultExchangeHolderUtilsTest {
 
     @Test
     public void testDefaultFilterContainsGraphShapeLimits() {
-        String filter = DefaultExchangeHolderUtils.DEFAULT_DESERIALIZATION_FILTER;
+        String filter = DeserializationFilterHelper.DEFAULT_DESERIALIZATION_FILTER;
         assertTrue(filter.contains("maxdepth="), "Expected maxdepth in filter: " + filter);
         assertTrue(filter.contains("maxrefs="), "Expected maxrefs in filter: " + filter);
         assertTrue(filter.contains("maxbytes="), "Expected maxbytes in filter: " + filter);

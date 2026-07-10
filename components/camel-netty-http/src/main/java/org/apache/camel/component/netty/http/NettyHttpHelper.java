@@ -18,7 +18,6 @@ package org.apache.camel.component.netty.http;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,31 +28,17 @@ import io.netty.handler.codec.http.HttpMethod;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.support.DeserializationFilterHelper;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helpers.
  */
 public final class NettyHttpHelper {
-
-    /**
-     * Default {@link ObjectInputFilter} pattern applied when deserializing Java objects from HTTP responses with
-     * Content-Type {@code application/x-java-serialized-object}. Allows standard Java types and Apache Camel types,
-     * denies {@code java.net.**}, and applies JEP-290 graph-shape limits ({@code maxdepth}, {@code maxrefs},
-     * {@code maxbytes}) as defense-in-depth against resource-exhaustion payloads. Can be overridden per-endpoint via
-     * {@link NettyHttpConfiguration#setDeserializationFilter(String)} or globally via the JVM system property
-     * {@code jdk.serialFilter}.
-     */
-    static final String DEFAULT_DESERIALIZATION_FILTER
-            = "!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*";
-
-    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpHelper.class);
 
     private NettyHttpHelper() {
     }
@@ -156,7 +141,7 @@ public final class NettyHttpHelper {
 
         Object answer = null;
         ObjectInputStream ois = new ObjectInputStream(is);
-        ois.setObjectInputFilter(resolveDeserializationFilter(deserializationFilter));
+        ois.setObjectInputFilter(DeserializationFilterHelper.resolveDeserializationFilter(deserializationFilter));
         try {
             answer = ois.readObject();
         } finally {
@@ -164,19 +149,6 @@ public final class NettyHttpHelper {
         }
 
         return answer;
-    }
-
-    private static ObjectInputFilter resolveDeserializationFilter(String configuredPattern) {
-        if (configuredPattern != null && !configuredPattern.isBlank()) {
-            return ObjectInputFilter.Config.createFilter(configuredPattern);
-        }
-        ObjectInputFilter jvmFilter = ObjectInputFilter.Config.getSerialFilter();
-        if (jvmFilter != null) {
-            return jvmFilter;
-        }
-        LOG.debug("No JVM-wide deserialization filter set, applying default Camel filter: {}",
-                DEFAULT_DESERIALIZATION_FILTER);
-        return ObjectInputFilter.Config.createFilter(DEFAULT_DESERIALIZATION_FILTER);
     }
 
     /**

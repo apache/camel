@@ -16,17 +16,49 @@
  */
 package org.apache.camel.component.mina;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InvalidClassException;
+import java.io.ObjectInput;
+import java.io.ObjectOutputStream;
+import java.net.URI;
+
+import org.apache.camel.support.DeserializationFilterHelper;
+import org.apache.mina.core.buffer.IoBuffer;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MinaConverterDefaultFilterTest {
 
     @Test
     public void testDefaultFilterContainsGraphShapeLimits() {
-        String filter = MinaConverter.DEFAULT_DESERIALIZATION_FILTER;
+        String filter = DeserializationFilterHelper.DEFAULT_DESERIALIZATION_FILTER;
         assertTrue(filter.contains("maxdepth="), "Expected maxdepth in filter: " + filter);
         assertTrue(filter.contains("maxrefs="), "Expected maxrefs in filter: " + filter);
         assertTrue(filter.contains("maxbytes="), "Expected maxbytes in filter: " + filter);
+    }
+
+    @Test
+    public void testToObjectInputAllowsStandardJavaType() throws Exception {
+        ObjectInput oi = MinaConverter.toObjectInput(toIoBuffer("hello"));
+        assertEquals("hello", oi.readObject());
+    }
+
+    @Test
+    public void testToObjectInputRejectsJavaNetClass() throws Exception {
+        ObjectInput oi = MinaConverter.toObjectInput(toIoBuffer(URI.create("http://example.com/")));
+        assertThrows(InvalidClassException.class, oi::readObject);
+    }
+
+    private static IoBuffer toIoBuffer(Object value) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(value);
+        }
+        IoBuffer buffer = MinaConverter.toIoBuffer(baos.toByteArray());
+        buffer.flip();
+        return buffer;
     }
 }
