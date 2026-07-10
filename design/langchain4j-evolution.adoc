@@ -1,0 +1,385 @@
+---
+title: Camel LangChain4j — evolution, architecture and future direction
+authors:
+  - "@zbendhiba"
+reviewers: []
+approvers: []
+creation-date: 2026-07-08
+last-updated: 2026-07-08
+status: informational
+see-also:
+  - "design/aiTool.adoc"
+  - "https://issues.apache.org/jira/browse/CAMEL-23382"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+This document traces the evolution of LangChain4j integration in Apache Camel, from the
+initial chat component through today's agent-based architecture. It explains *why* each
+module exists, what worked, what did not, and where the project is heading — including
+the open question of whether the LangChain4j layer should become Quarkus-native rather
+than being maintained in Camel core.
+
+== Phase 1: LangChain4j Chat — the starting point
+
+The first LangChain4j component followed the standard LangChain4j documentation. It
+mapped the basic chat model interaction to the Camel component model:
+
+* **`camel-langchain4j-chat`**: a producer to send messages to an LLM and a consumer to
+  define tool routes that the chat component can invoke.
+
+This was straightforward: one component, one concern. The user provides a `ChatLanguageModel`
+bean, sends a message body, and gets a response.
+
+An early design decision was to **not create a separate component per model provider**
+(no `camel-langchain4j-openai-chat`, no `camel-langchain4j-ollama-chat`). The reasoning
+was that LangChain4j already abstracts over providers — the user just swaps the model
+bean. This kept the component count manageable but created a configuration challenge that
+would come back later (see <<phase-5-forage>>).
+
+== Phase 2: Tools and Web Search — growing the ecosystem
+
+As LangChain4j added more capabilities, Camel followed:
+
+* **`camel-langchain4j-tools`**: a consumer endpoint that lets route authors define
+  Camel routes as LLM-callable tools. The LLM sees the tool description and parameters;
+  when it decides to call a tool, the corresponding route executes and returns the result.
+  Notably, this was designed as a separate component from chat — tools were used *alongside*
+  chat rather than *inside* it. The chat producer would discover tool consumers via a shared
+  cache and include them in the LLM request.
+
+* **`camel-langchain4j-web-search`**: a producer that lets the LLM search the web via
+  LangChain4j's web search engine abstraction (Google, Tavily, etc.).
+
+== Phase 3: Embeddings and Tokenization — the RAG building blocks
+
+In parallel, we added the components needed for Retrieval-Augmented Generation (RAG):
+
+* **`camel-langchain4j-embeddings`**: a producer that generates vector embeddings from
+  text using LangChain4j's embedding models.
+
+* **`camel-langchain4j-tokenizer`**: text splitters (by character, word, sentence,
+  paragraph, line) that use LangChain4j's tokenizer implementations. These are
+  model-specific: different LLMs have different tokenization rules, so the tokenizer
+  must match the model that will consume the chunks.
+
+=== The vector database problem
+
+To actually do RAG, embeddings need to be stored in and retrieved from a vector database.
+Camel already had dedicated components for vector databases (Qdrant, Milvus, PgVector,
+Pinecone, Neo4j, Weaviate, Infinispan), but these only handled basic CRUD operations.
+
+We added **LangChain4j embedding store** support to these components so that the
+`camel-langchain4j-embeddings` producer could push embeddings directly into a vector
+store using LangChain4j's `EmbeddingStore` API:
+
+* **`camel-langchain4j-embeddingstore`**: component for managing embeddings in vector
+  stores via LangChain4j's embedding store abstraction.
+* **`camel-langchain4j-embeddingstore-api`**: the `EmbeddingStoreFactory` interface that
+  each vector database module implements.
+
+This approach involves some code duplication with LangChain4j. The reason is deliberate:
+LangChain4j's embedding store implementations use the same properties and collection
+names internally, so to reuse RAG data across LangChain4j and Camel, we need to write
+embeddings the same way LangChain4j does. If we used our own storage format, RAG
+retrieval through LangChain4j would not find the data.
+
+=== Vector search: harder than expected
+
+The reverse operation — searching for similar vectors — proved much harder. Each vector
+database has its own similarity search API, and the quality of these Java APIs varies
+wildly:
+
+* **Neo4j** was particularly painful: the similarity search code was essentially
+  incomprehensible, poorly documented, and the Java driver's vector search API was not
+  mature at all. Implementing it felt like copying opaque code that we could not
+  reasonably maintain.
+* Other databases had similar friction, to varying degrees.
+
+We ended up needing to do vector search the same way we push embeddings: through
+LangChain4j's `EmbeddingStore` abstraction, which handles the provider-specific
+queries internally.
+
+The `camel-langchain4j-vector-search` module was started to address this but remains
+incomplete. We decided not to ship half-baked vector search implementations that we
+could not demo or maintain confidently.
+
+== Phase 4: The RAG and AIService gap
+
+With all these building blocks in place, there was still no way to do RAG end-to-end
+from a single Camel component. The user had to manually orchestrate: split text, generate
+embeddings, store them, then at query time retrieve similar documents and inject them
+into the prompt. None of the existing components tied this together.
+
+Meanwhile, LangChain4j had introduced **AI Services** — a high-level abstraction that
+combines chat, tools, memory, and RAG in a single interface. One method call, and
+LangChain4j handles tool dispatch, conversation memory, document retrieval, and
+response generation.
+
+=== RAG in chat
+
+One pragmatic step was adding RAG support directly to `camel-langchain4j-chat` via an
+aggregation strategy (`LangChain4jRagAggregatorStrategy`). This lets a route fetch
+documents from any source (including vector databases) and inject them as context
+before the chat call. It works, but it is manual wiring — the user builds the RAG
+pipeline in the route rather than having the component handle it.
+
+[[phase-5-forage]]
+== Phase 5: Kaoto, Forage, and the visual agent challenge
+
+In parallel with the LangChain4j work, the project was thinking about visual tooling.
+The goal: replicate the experience of tools like n8n, where a user can visually create
+an AI agent and drag in the pieces it needs — LLM, vector database, memory, tools — all
+without writing code.
+
+https://kaoto.io[Kaoto] is the visual editor for Camel routes. To make AI agents
+visual in Kaoto, we needed a way to go from declarative properties to a fully configured
+chat model, embedding model, memory store, etc. The problem is that we had deliberately
+avoided creating per-provider components (see Phase 1), so there was no component-level
+knob to say "use OpenAI" or "use Ollama" — that was left to the user's bean configuration.
+
+This led to the **Forage** project (https://github.com/KaotoIO/forage[KaotoIO/forage]):
+a configuration layer that takes properties and generates the right LangChain4j model
+beans. It bridges the gap between Kaoto's visual property panels and LangChain4j's
+programmatic model construction.
+
+Forage solves the LLM configuration problem, but it is only the beginning. To fully
+support a visual agent builder, Forage would need to handle:
+
+* Chat model configuration (done)
+* Embedding model configuration
+* Memory store configuration
+* Vector store configuration
+* RAG pipeline configuration
+* Tool discovery and binding
+* Guardrails
+* MCP client configuration
+
+Each of these is a significant effort, and some aspects (security, guardrails,
+dependency injection) are genuinely better handled by runtime frameworks like Quarkus
+and Spring Boot rather than a configuration layer.
+
+== Phase 6: LangChain4j Agent — the AIService component
+
+To close the gap between Camel's building-block approach and LangChain4j's integrated
+AI Service, a new component was created:
+
+* **`camel-langchain4j-agent`**: a producer that wraps LangChain4j's AI Service. It
+  handles chat, tools, memory, RAG, MCP clients, guardrails, and structured output in
+  a single component.
+
+NOTE: The name "agent" was chosen at a time when it felt like a fun way to position
+Camel's AI capabilities alongside tools like n8n. However, LangChain4j has since
+introduced its own concept called "Agent" (agentic workflows with planning and
+autonomy), which is different from what `camel-langchain4j-agent` does. We may want to
+rename it to `camel-langchain4j-aiservice` in the future to avoid confusion with
+LangChain4j's own agent abstraction.
+
+=== What it needs
+
+The agent component needs *all* the bits:
+
+* **Chat model**: the LLM itself
+* **Embedding stores**: for vector-based RAG, using LangChain4j's native embedding
+  store implementations
+* **RAG**: LangChain4j's built-in retrieval augmentation
+* **Tools**: Camel routes exposed as LLM-callable tools, Java methods annotated with
+  `@Tool`, and MCP tools
+* **MCP clients**: Model Context Protocol servers providing external tools
+* **Guardrails**: input and output validation (prompt injection detection, PII filtering,
+  keyword blocking, format validation, etc.)
+* **Memory**: conversation memory via LangChain4j's `ChatMemory` or
+  `ChatMemoryProvider` interfaces
+* **Structured output**: type-safe response parsing
+
+=== Supporting API modules
+
+* **`camel-langchain4j-agent-api`**: contains the `Agent`, `AgentConfiguration`,
+  `AgentFactory`, `Guardrails` interfaces and their implementations. This is the SPI
+  that lets users configure agents programmatically or via properties.
+* **`camel-langchain4j-core`**: shared type converters used across LangChain4j
+  components.
+
+=== The configuration cliff
+
+The agent component exposes a rich feature set, but configuring it from Camel's
+property-based model is extremely difficult. There is no standard way in Camel core
+to configure:
+
+* An embedding store with its connection details, collection name, and embedding model
+* A memory service with its backing store
+* MCP server connections
+* Guardrail chains
+* RAG retrieval strategies
+
+Users who know LangChain4j can create these objects programmatically in Java and
+register them as beans. But for the Camel CLI (`camel-jbang`), YAML DSL, or Kaoto
+visual editing, there is no property-driven path to a fully configured agent.
+
+This is where Forage was supposed to help — but scaling Forage to cover all of this
+is a very large effort (see <<future-direction>>).
+
+== Phase 7: Unified AI Tool abstraction
+
+The tool definition pattern was duplicated across `camel-langchain4j-tools`,
+`camel-spring-ai-tools`, and `camel-langchain4j-agent`. Each had its own consumer
+endpoint, registry, and specification types.
+
+**`camel-ai-tool`** unifies this into a single, framework-agnostic abstraction:
+
+* `AiToolSpec`: framework-agnostic tool descriptor
+* `AiToolRegistry`: CamelContext-scoped registry (replaces all `CamelToolExecutorCache`
+  instances)
+* `AiToolExecutor`: shared dispatch logic
+* `ai-tool:` consumer endpoint: one way to define tools, usable by any AI producer
+
+See link:aiTool.adoc[design/aiTool.adoc] for the full design.
+
+== Current module map
+
+[cols="1,2,1"]
+|===
+| Module | Purpose | Status
+
+| `camel-langchain4j-core`
+| Shared converters
+| Stable
+
+| `camel-langchain4j-chat`
+| Chat with LLM (producer + consumer for tools)
+| Stable
+
+| `camel-langchain4j-tools`
+| Define Camel routes as LLM tools (consumer + producer)
+| Being superseded by `camel-ai-tool`
+
+| `camel-langchain4j-web-search`
+| Web search via LangChain4j
+| Stable
+
+| `camel-langchain4j-embeddings`
+| Generate vector embeddings
+| Stable
+
+| `camel-langchain4j-embeddingstore`
+| Store/retrieve embeddings in vector DBs
+| Stable
+
+| `camel-langchain4j-embeddingstore-api`
+| `EmbeddingStoreFactory` interface
+| Stable
+
+| `camel-langchain4j-tokenizer`
+| Model-specific text splitting
+| Stable
+
+| `camel-langchain4j-agent`
+| Full AI Service (chat + tools + memory + RAG + MCP + guardrails)
+| Active development
+
+| `camel-langchain4j-agent-api`
+| Agent interfaces, configuration, guardrails
+| Active development
+
+| `camel-langchain4j-vector-search`
+| Vector similarity search
+| Incomplete/placeholder
+
+| `camel-ai-tool`
+| Framework-agnostic tool abstraction
+| Active development (CAMEL-23382)
+|===
+
+[[future-direction]]
+== Future direction: Quarkus-native LangChain4j
+
+=== The maintainability question
+
+Today, Camel maintains its own LangChain4j integration layer. This means:
+
+* Reimplementing patterns that LangChain4j and its framework integrations already
+  provide (embedding store wiring, memory configuration, model construction)
+* Maintaining vector database integration code that duplicates LangChain4j internals
+* Building configuration infrastructure (Forage) that frameworks like Quarkus already
+  solve with CDI, configuration profiles, and extension mechanisms
+
+Meanwhile, the **Quarkus LangChain4j** extension
+(https://github.com/quarkiverse/quarkus-langchain4j[quarkiverse/quarkus-langchain4j])
+already provides:
+
+* Per-provider extensions with full configuration support
+* CDI-based model, memory, and embedding store injection
+* Built-in guardrails as CDI beans
+* Declarative AI Services via `@RegisterAiService`
+* Integration with Quarkus security, observability, and dev services
+* An active community with one of the main LangChain4j maintainers contributing
+
+=== The proposition
+
+If the LangChain4j components were made **Quarkus-native** — meaning they run on top of
+the Quarkus LangChain4j extension rather than doing everything themselves — Camel would:
+
+* **Leverage the Quarkus LangChain4j ecosystem** for model configuration, memory, RAG,
+  guardrails, and all the infrastructure that is painful to maintain in Camel core
+* **Focus on what Camel does best**: routing, EIP patterns, the component model, and
+  connecting AI to the 300+ integration endpoints
+* **Avoid duplicating effort** on the configuration layer that Forage is trying to build
+  from scratch
+* **Benefit from framework-level features** (security, dependency injection, dev services,
+  native compilation) that are fundamentally better handled at the framework level
+
+This does not mean abandoning the standalone Camel experience. The building-block
+components (`camel-langchain4j-chat`, `camel-langchain4j-embeddings`,
+`camel-langchain4j-web-search`, `camel-langchain4j-tokenizer`) work fine as-is and
+serve users who want simple, focused integrations.
+
+The question is specifically about the **agent / AI Service** layer and the complex
+configuration it requires. This is where the Quarkus LangChain4j ecosystem offers the
+most value and where maintaining a parallel infrastructure in Camel core is the hardest
+to justify.
+
+=== Open questions
+
+* What is the current status of Camel contributions to Quarkus LangChain4j? Are there
+  blockers or gaps that would prevent the Quarkus-native approach?
+* Can we maintain a usable standalone experience (camel-jbang, plain Java) for simple
+  use cases while recommending Quarkus for the full agent experience?
+* Should `camel-langchain4j-agent` be renamed to `camel-langchain4j-aiservice` to avoid
+  confusion with LangChain4j's own agent concept?
+* What is the roadmap for Prince memory service and its Quarkus extension? Does it
+  affect the timeline for the Quarkus-native approach?
+* How much of the Forage configuration layer should we continue building vs. deferring
+  to Quarkus?
+
+== Lessons learned
+
+[cols="1,2"]
+|===
+| Decision | Outcome
+
+| No per-provider components
+| Kept component count low but made visual tooling and property-based configuration
+  very difficult. Forage was created to bridge this gap.
+
+| Separate tools component from chat
+| Clean separation but required a shared cache, which then got duplicated across
+  frameworks. Now being unified via `camel-ai-tool`.
+
+| Reusing LangChain4j embedding store internals
+| Necessary for RAG data compatibility but means maintaining code that mirrors
+  LangChain4j's internal storage format.
+
+| Not shipping incomplete vector search
+| Right call — the Neo4j experience showed that shipping code we cannot maintain or
+  demo is worse than shipping nothing.
+
+| The "agent" naming
+| Made sense at the time (competitive positioning) but is now confusing given
+  LangChain4j's own agent concept. Rename is worth considering.
+
+| AI Service as a single component
+| Solves the integration problem but creates a configuration problem that Camel's
+  property model cannot easily handle without framework support.
+|===
