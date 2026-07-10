@@ -1206,6 +1206,11 @@ class AiPanel {
         this.providerChoicesForTesting = choices;
     }
 
+    boolean isAgentThreadRunningForTesting() {
+        Thread t = agentThread;
+        return t != null && t.isAlive();
+    }
+
     boolean isProviderSwitchVisibleForTesting() {
         return providerSwitchPopup.isVisible();
     }
