@@ -40,7 +40,7 @@ public class MailFetchSizeTest extends CamelTestSupport {
     private static final MailboxUser jones = Mailbox.getOrCreateUser("MailFetchSizeTest-jones", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

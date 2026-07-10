@@ -38,7 +38,7 @@ public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
     private static final MailboxUser jones = Mailbox.getOrCreateUser("MailShutdownCompleteCurrentTaskOnlyTest-jones", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

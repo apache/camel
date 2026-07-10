@@ -47,7 +47,7 @@ public class MailPostProcessActionTest extends CamelTestSupport {
     private TestPostProcessAction action = new TestPostProcessAction();
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

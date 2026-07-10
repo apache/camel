@@ -39,7 +39,7 @@ public class MailBatchConsumerTest extends CamelTestSupport {
     private static final MailboxUser jones = Mailbox.getOrCreateUser("MailBatchConsumerTest-jones", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

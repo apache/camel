@@ -37,7 +37,7 @@ public class MailPollEnrichTest extends CamelTestSupport {
     private static final MailboxUser bill = Mailbox.getOrCreateUser("MailPollEnrichTest-bill", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

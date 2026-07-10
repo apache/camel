@@ -37,7 +37,7 @@ public class MailSearchTermUriConfigLast24HoursTest extends CamelTestSupport {
     private static final MailboxUser bill = Mailbox.getOrCreateUser("MailSearchTermUriConfigLast24HoursTest-bill", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

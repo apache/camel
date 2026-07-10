@@ -41,7 +41,7 @@ public class MailSearchTermTest extends CamelTestSupport {
     private SearchTerm term = createSearchTerm();
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

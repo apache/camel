@@ -37,7 +37,7 @@ public class MailFetchSizeZeroTest extends CamelTestSupport {
     private static final MailboxUser bill = Mailbox.getOrCreateUser("MailFetchSizeZeroTest-bill", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

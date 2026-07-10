@@ -45,7 +45,7 @@ public class MailMoveToTest extends CamelTestSupport {
     private static final MailboxUser jones2 = Mailbox.getOrCreateUser("MailMoveToTest-jones2", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

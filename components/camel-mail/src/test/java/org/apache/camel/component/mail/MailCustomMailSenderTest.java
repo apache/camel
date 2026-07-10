@@ -25,6 +25,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +41,7 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
 
     @Test
     public void testSendWithCustomMailSender() {
-        sendBody(claus.uriPrefix(Protocol.smtp) + "&javaMailSender=#mySender", "Hello World");
+        TestSupport.sendBody(template, claus.uriPrefix(Protocol.smtp) + "&javaMailSender=#mySender", "Hello World");
 
         assertTrue(sent, "Should have used custom mail sender");
 
