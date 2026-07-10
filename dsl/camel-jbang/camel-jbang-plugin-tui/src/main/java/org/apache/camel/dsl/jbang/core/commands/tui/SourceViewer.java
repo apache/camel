@@ -28,6 +28,7 @@ import java.util.function.IntConsumer;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
+import dev.tamboui.markdown.MarkdownView;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -83,6 +84,10 @@ class SourceViewer {
     private MonitorContext currentCtx;
     private String currentPid;
     private Rect lastInnerArea;
+    private boolean isMarkdownFile;
+    private boolean markdownMode;
+    private String rawMarkdownContent;
+    private int markdownScroll;
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
@@ -116,6 +121,10 @@ class SourceViewer {
         currentRouteId = null;
         currentCtx = null;
         currentPid = null;
+        isMarkdownFile = false;
+        markdownMode = false;
+        rawMarkdownContent = null;
+        markdownScroll = 0;
     }
 
     void setOnLineSelected(IntConsumer callback) {
@@ -145,6 +154,32 @@ class SourceViewer {
         if (ke.isChar('c')) {
             visible = false;
             onLineSelected = null;
+            return true;
+        }
+        if (isMarkdownFile) {
+            if (ke.isChar('M') || ke.isChar('m')) {
+                markdownMode = true;
+                return true;
+            }
+            if (ke.isChar('R') || ke.isChar('r')) {
+                markdownMode = false;
+                return true;
+            }
+        }
+        if (markdownMode) {
+            if (ke.isUp() || ke.isChar('k')) {
+                markdownScroll = Math.max(0, markdownScroll - 1);
+            } else if (ke.isDown() || ke.isChar('j')) {
+                markdownScroll++;
+            } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                markdownScroll = Math.max(0, markdownScroll - 10);
+            } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                markdownScroll += 10;
+            } else if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
+                markdownScroll = 0;
+            } else if (ke.isEnd() || ke.isKey(KeyCode.END)) {
+                markdownScroll = Integer.MAX_VALUE;
+            }
             return true;
         }
         if (currentRouteId != null) {
@@ -220,6 +255,17 @@ class SourceViewer {
         if (!visible) {
             return false;
         }
+        if (markdownMode) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                markdownScroll = Math.max(0, markdownScroll - 3);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                markdownScroll += 3;
+                return true;
+            }
+            return true;
+        }
         if (me.kind() == MouseEventKind.SCROLL_UP) {
             selectedLine = Math.max(0, selectedLine - 3);
             return true;
@@ -249,6 +295,21 @@ class SourceViewer {
     }
 
     void render(Frame frame, Rect area) {
+        if (markdownMode && rawMarkdownContent != null) {
+            Block block = Block.builder()
+                    .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                    .title(buildTitle())
+                    .build();
+            MarkdownView view = MarkdownView.builder()
+                    .source(rawMarkdownContent)
+                    .scroll(markdownScroll)
+                    .block(block)
+                    .styles(Theme.markdownStyles())
+                    .build();
+            frame.renderWidget(view, area);
+            return;
+        }
+
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(buildTitle())
@@ -325,6 +386,14 @@ class SourceViewer {
     }
 
     void renderFooter(List<Span> spans) {
+        if (markdownMode) {
+            TuiHelper.hint(spans, "Esc/c", "close");
+            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "scroll");
+            TuiHelper.hint(spans, "M", "markdown");
+            TuiHelper.hint(spans, "R", "raw");
+            TuiHelper.hint(spans, "PgUp/PgDn", "page");
+            return;
+        }
         search.renderFooterHints(spans);
         if (search.isSearchInputActive()) {
             return;
@@ -335,6 +404,10 @@ class SourceViewer {
             TuiHelper.hint(spans, "Esc/c", "close");
         }
         TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
+        if (isMarkdownFile) {
+            TuiHelper.hint(spans, "M", "markdown");
+            TuiHelper.hint(spans, "R", "raw");
+        }
         if (currentRouteId != null) {
             TuiHelper.hint(spans, "Y", "yaml");
             TuiHelper.hint(spans, "J", "java");
@@ -361,6 +434,7 @@ class SourceViewer {
         currentCtx = null;
         currentPid = null;
         String fileName = filePath.getFileName().toString();
+        boolean isMd = fileName.toLowerCase().endsWith(".md");
         try {
             List<String> rawLines = java.nio.file.Files.readAllLines(filePath, java.nio.charset.StandardCharsets.UTF_8);
             int lineNumWidth = String.valueOf(rawLines.size()).length();
@@ -384,11 +458,23 @@ class SourceViewer {
             scrollX = 0;
             pendingScroll = true;
             visible = true;
+            isMarkdownFile = isMd;
+            if (isMd) {
+                rawMarkdownContent = String.join("\n", rawLines);
+                markdownMode = true;
+                markdownScroll = 0;
+            } else {
+                rawMarkdownContent = null;
+                markdownMode = false;
+            }
         } catch (java.io.IOException e) {
             title = fileName;
             lines = List.of("(Failed to read file: " + e.getMessage() + ")");
             codeData = Collections.emptyList();
             visible = true;
+            isMarkdownFile = false;
+            markdownMode = false;
+            rawMarkdownContent = null;
         }
     }
 
@@ -598,6 +684,24 @@ class SourceViewer {
 
     private Title buildTitle() {
         String info = title != null ? title : "";
+        if (isMarkdownFile) {
+            List<Span> spans = new ArrayList<>();
+            spans.add(Span.raw(" Source [" + info + "]  "));
+            String mdLabel = "Markdown*";
+            if (markdownMode) {
+                spans.add(Span.styled(mdLabel, Style.EMPTY.bold()));
+            } else {
+                spans.add(Span.styled(mdLabel, Style.EMPTY.dim()));
+            }
+            spans.add(Span.styled(" │ ", Style.EMPTY.dim()));
+            if (!markdownMode) {
+                spans.add(Span.styled("Raw", Style.EMPTY.bold()));
+            } else {
+                spans.add(Span.styled("Raw", Style.EMPTY.dim()));
+            }
+            spans.add(Span.raw(" "));
+            return Title.from(Line.from(spans));
+        }
         if (currentRouteId == null) {
             return Title.from(Line.from(List.of(Span.raw(" Source [" + info + "] "))));
         }
