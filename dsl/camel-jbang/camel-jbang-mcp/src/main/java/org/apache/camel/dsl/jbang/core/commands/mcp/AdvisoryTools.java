@@ -53,8 +53,8 @@ public class AdvisoryTools {
             @ToolArg(description = "Component to filter by, e.g. kafka or camel-kafka (optional; best-effort match "
                                    + "against components named in the advisory text - older advisories may not name "
                                    + "components)") String component,
-            @ToolArg(description = "Severity to filter by as published, e.g. LOW, MEDIUM, MODERATE, IMPORTANT or "
-                                   + "CRITICAL (optional)") String severity) {
+            @ToolArg(description = "Severity to filter by: LOW, MEDIUM, HIGH, or CRITICAL "
+                                   + "(optional)") String severity) {
         try {
             List<SecurityAdvisoryModel> advisories = advisoryService.advisories();
             List<AdvisoryService.AdvisoryView> matches

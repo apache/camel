@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,8 +64,19 @@ public class UpdateSecurityAdvisoriesMojo extends AbstractGeneratorMojo {
     private static final String WEBSITE_BASE_URL = "https://camel.apache.org";
 
     private static final Pattern ADVISORY_FILE = Pattern.compile("CVE-\\d{4}-\\d{4,}\\.md");
-    private static final Pattern COMPONENT_TOKEN = Pattern.compile("camel-[a-z0-9]+(?:-[a-z0-9]+)*");
+    // the first segment must start with a letter so that lowercased JIRA ids ("camel-12444") never match
+    private static final Pattern COMPONENT_TOKEN = Pattern.compile("camel-[a-z][a-z0-9]+(?:-[a-z0-9]+)*");
     private static final Pattern CVE_ID = Pattern.compile("CVE-(\\d{4})-(\\d+)");
+
+    /**
+     * English prose that follows "Camel-" in advisory texts (e.g. "Camel-internal headers", "non-Camel-prefixed names")
+     * and therefore must not be mistaken for component artifact ids. Deliberately not validated against the current
+     * catalog instead: old advisories legitimately name components that have since been removed or renamed
+     * (camel-xstream, camel-hessian, camel-castor, camel-cxfrs, ...), which must remain filterable.
+     */
+    private static final Set<String> COMPONENT_TOKEN_DENYLIST = Set.of(
+            "camel-internal", "camel-prefixed", "camel-specific", "camel-side", "camel-namespace",
+            "camel-case", "camel-cased", "camel-based", "camel-related", "camel-style");
 
     /**
      * The output directory for the generated catalog advisories file
@@ -201,7 +213,8 @@ public class UpdateSecurityAdvisoriesMojo extends AbstractGeneratorMojo {
 
     /**
      * The Camel components named by the advisory text, as {@code camel-*} tokens (best-effort: some older advisories do
-     * not name components at all).
+     * not name components at all). Lowercased JIRA ids and common English prose such as "Camel-internal" are filtered
+     * out.
      */
     static List<String> extractComponents(String... texts) {
         TreeSet<String> found = new TreeSet<>();
@@ -211,7 +224,9 @@ public class UpdateSecurityAdvisoriesMojo extends AbstractGeneratorMojo {
             }
             Matcher matcher = COMPONENT_TOKEN.matcher(text.toLowerCase(Locale.ROOT));
             while (matcher.find()) {
-                found.add(matcher.group());
+                if (!COMPONENT_TOKEN_DENYLIST.contains(matcher.group())) {
+                    found.add(matcher.group());
+                }
             }
         }
         return new ArrayList<>(found);

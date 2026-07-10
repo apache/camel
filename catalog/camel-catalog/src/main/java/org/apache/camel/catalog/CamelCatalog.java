@@ -668,6 +668,8 @@ public interface CamelCatalog {
      * Load all published Camel CVE security advisories from catalog (the data behind
      * <a href="https://camel.apache.org/security/">camel.apache.org/security</a>, synced into the catalog when it was
      * built).
+     *
+     * @since 4.22
      */
     List<SecurityAdvisoryModel> camelSecurityAdvisories();
 

@@ -99,6 +99,16 @@ class UpdateSecurityAdvisoriesMojoTest {
     }
 
     @Test
+    void componentExtractionSkipsJiraIdsAndProse() {
+        // lowercased JIRA ids and English prose following "Camel-" must not become component names
+        assertThat(UpdateSecurityAdvisoriesMojo.extractComponents(
+                "See CAMEL-12444 and CAMEL-23200 for the fix.",
+                "Camel-internal headers with non-Camel-prefixed names are Camel-specific.",
+                "The camel-side filter uses the Camel-namespace and camel-case naming on camel-kafka and camel-aws2-sqs."))
+                .containsExactly("camel-aws2-sqs", "camel-kafka");
+    }
+
+    @Test
     void modelRoundTripsThroughJsonMapper() throws Exception {
         SecurityAdvisoryModel model = UpdateSecurityAdvisoriesMojo.parseAdvisory(fixture("CVE-2025-27636.md"));
 

@@ -143,11 +143,7 @@
         "affected": "2.20.0 up to 2.20.3, 2.21.0",
         "fixed": "2.20.4, 2.21.1 and newer",
         "mitigation": "2.20.x users should upgrade to 2.20.4, 2.21.0 users should upgrade to 2.21.1. The JIRA tickets: https:\/\/issues.apache.org\/jira\/browse\/CAMEL-12444 and https:\/\/issues.apache.org\/jira\/browse\/CAMEL-10894 (partial fix) refer to the various commits that resovoled the issue, and have more details.",
-        "url": "https:\/\/camel.apache.org\/security\/CVE-2018-8027.html",
-        "components": [
-            "camel-10894",
-            "camel-12444"
-        ]
+        "url": "https:\/\/camel.apache.org\/security\/CVE-2018-8027.html"
     },
     {
         "cve": "CVE-2018-8041",
@@ -439,8 +435,6 @@
             "camel-bean",
             "camel-exec",
             "camel-mail",
-            "camel-prefixed",
-            "camel-specific",
             "camel-sql",
             "camel-undertow"
         ]
@@ -468,9 +462,7 @@
         "mitigation": "Users are recommended to upgrade to a release that contains the CAMEL-23212 fix. On the mainline the fix is included from Apache Camel 4.19.0 (and later releases such as 4.20.0). For users on the 4.18.x LTS releases stream, upgrade to 4.18.3. The fix replaces the denylist with a strict allowlist of recognized `docling` CLI flags (rejecting any unrecognized flag, and rejecting producer-managed flags such as the output-directory flags), defensively rejects shell metacharacters in argument values, and normalizes path-like values with Path.normalize() before validating them so that traversal sequences which bypass a literal `..\/` check are detected. As defence in depth, route authors should avoid mapping untrusted message content into the `CamelDoclingCustomArguments` header and the path-bearing headers, and should strip Camel-internal headers from messages that arrive from untrusted producers.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-40047.html",
         "components": [
-            "camel-23212",
-            "camel-docling",
-            "camel-internal"
+            "camel-docling"
         ]
     },
     {
@@ -572,7 +564,6 @@
         "mitigation": "Users are recommended to upgrade to a version that contains the CAMEL-23372 fix once available: 4.21.0 for the 4.21.x line, 4.18.3 for the 4.18.x line, and 4.14.8 for the 4.14.x line. For deployments that cannot upgrade immediately, configure a JMS-provider-side allow-list (Apache ActiveMQ Artemis 'deserializationAllowList' \/ 'deserializationDenyList', Apache ActiveMQ Classic 'org.apache.activemq.SERIALIZABLE_PACKAGES') as the primary mitigation, and\/or override the in-code default via the endpoint-level 'deserializationFilter' option or the JVM-wide '-Djdk.serialFilter' system property with an explicit deny: '!java.net.**;java.**;javax.**;org.apache.camel.**;!*' (or '!java.net.**;java.**;org.apache.camel.**;!*' for the aggregation-repository components, which do not include javax.**).",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-42527.html",
         "components": [
-            "camel-23372",
             "camel-amqp",
             "camel-cassandraql",
             "camel-consul",
@@ -597,8 +588,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. The fix makes Camel apply a default Hazelcast JavaSerializationFilterConfig (whitelisting the java., javax. and org.apache.camel. class-name prefixes and blacklisting java.net.) to instances it creates from its own default configuration, while leaving any user-supplied Config or HazelcastInstance untouched. For deployments that cannot upgrade immediately, configure a deserialization filter on the Hazelcast instance (Hazelcast JavaSerializationFilterConfig, or the JVM-wide system property -Djdk.serialFilter=!java.net.**;java.**;javax.**;org.apache.camel.**;!*) and enable Hazelcast cluster authentication and TLS to restrict who can reach the cluster.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-43865.html",
         "components": [
-            "camel-hazelcast",
-            "camel-side"
+            "camel-hazelcast"
         ]
     },
     {
@@ -629,7 +619,6 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.18.x LTS releases stream, then they are suggested to upgrade to 4.18.3. For deployments that cannot upgrade immediately, restrict write access to the AWS Secrets Manager secret that holds the camel-pqc key metadata so that only the application's own identity holds secretsmanager:PutSecretValue on it (least-privilege IAM), and keep the PQC key material in a secret separate from any data that less-trusted principals can write.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-43867.html",
         "components": [
-            "camel-23200",
             "camel-pqc"
         ]
     },
@@ -666,8 +655,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. The fix implements a HeaderFilterStrategy in the camel-cometd binding (a long-standing TODO in the code) that filters the Camel header namespace case-insensitively on inbound mapping, so client-supplied Camel* \/ camel* headers are no longer copied into the Exchange. For deployments that cannot upgrade immediately, strip the Camel control headers from inbound CometD messages before they reach any downstream producer (for example removeHeaders('Camel*') and removeHeaders('camel*') at the start of the route), and install an explicit Bayeux SecurityPolicy on the CometdComponent so that only authenticated clients can publish.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-46454.html",
         "components": [
-            "camel-cometd",
-            "camel-internal"
+            "camel-cometd"
         ]
     },
     {
@@ -693,8 +681,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. The fix adds an inbound HeaderFilterStrategy rule to Sqs2HeaderFilterStrategy that filters the Camel header namespace case-insensitively on inbound mapping, so sender-supplied Camel* \/ camel* headers are no longer copied into the Exchange. For deployments that cannot upgrade immediately, strip the Camel control headers from inbound messages before they reach any downstream producer (for example removeHeaders('Camel*') and removeHeaders('camel*') at the start of the route), and restrict who may send to the consumed SQS queue by applying least-privilege sqs:SendMessage permissions on the queue resource policy.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-46456.html",
         "components": [
-            "camel-aws2-sqs",
-            "camel-internal"
+            "camel-aws2-sqs"
         ]
     },
     {
@@ -707,7 +694,6 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. The fix makes camel-nats default to a dedicated NatsHeaderFilterStrategy that filters the Camel header namespace case-insensitively on inbound mapping, so client-supplied Camel* \/ camel* headers are no longer copied into the Exchange. For deployments that cannot upgrade immediately, strip the Camel control headers from inbound NATS messages before they reach any downstream producer (for example removeHeaders('Camel*') and removeHeaders('camel*') at the start of the route), and enable authentication on the NATS server so that only trusted clients can publish to the consumed subject.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-46457.html",
         "components": [
-            "camel-internal",
             "camel-nats"
         ]
     },
@@ -721,7 +707,6 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. After upgrading, the per-message override is disabled by default; enable it only on trusted endpoints with useJavaMailSessionPropertiesFromHeaders=true. For deployments that cannot upgrade immediately, strip the namespace before the mail producer with removeHeaders('mail.smtp.*') and removeHeaders('mail.smtps.*') between any untrusted ingress and the smtp \/ smtps producer. Even with the opt-in enabled, route authors should still strip the namespace on any path that carries untrusted input.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-46584.html",
         "components": [
-            "camel-internal",
             "camel-mail"
         ]
     },
@@ -735,8 +720,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. After upgrading, routes that set the query via the raw header name must use CamelLuceneQuery (and CamelLuceneReturnLuceneDocs) instead of QUERY \/ RETURN_LUCENE_DOCS. For deployments that cannot upgrade immediately, strip the attacker-controllable headers before the Lucene producer and set the query from a trusted source (for example removeHeader('QUERY') and removeHeader('RETURN_LUCENE_DOCS'), then setHeader('QUERY', constant(...)) at the start of the route).",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-46585.html",
         "components": [
-            "camel-lucene",
-            "camel-prefixed"
+            "camel-lucene"
         ]
     },
     {
@@ -749,8 +733,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. The fix renames the camel-couchbase Exchange header constant string values (CCB_KEY, CCB_ID, CCB_TTL, CCB_DDN, CCB_VN) to carry the Camel prefix (CamelCouchbaseKey, CamelCouchbaseId, CamelCouchbaseTtl, CamelCouchbaseDesignDocumentName, CamelCouchbaseViewName) so that they are blocked by the inbound HttpHeaderFilterStrategy; the Java constant field names are unchanged. For deployments that cannot upgrade immediately, strip the affected headers from untrusted inbound messages before they reach the producer (for example removeHeader('CCB_KEY'), removeHeader('CCB_ID'), removeHeader('CCB_TTL'), removeHeader('CCB_DDN') and removeHeader('CCB_VN') in front of the couchbase endpoint), or apply a custom HeaderFilterStrategy that blocks these names.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-46587.html",
         "components": [
-            "camel-couchbase",
-            "camel-prefixed"
+            "camel-couchbase"
         ]
     },
     {
@@ -763,8 +746,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. The fix renames the camel-couchdb Exchange header constant string values (CouchDbDatabase, CouchDbSeq, CouchDbId, CouchDbRev, CouchDbMethod) to carry the Camel prefix (CamelCouchDbDatabase, CamelCouchDbSeq, CamelCouchDbId, CamelCouchDbRev, CamelCouchDbMethod) so that they are blocked by the inbound HttpHeaderFilterStrategy; the Java constant field names are unchanged. For deployments that cannot upgrade immediately, strip the affected headers from untrusted inbound messages before they reach the producer (for example removeHeader('CouchDbDatabase'), removeHeader('CouchDbId'), removeHeader('CouchDbRev'), removeHeader('CouchDbSeq') and removeHeader('CouchDbMethod') in front of the couchdb endpoint), or apply a custom HeaderFilterStrategy that blocks these names.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-46588.html",
         "components": [
-            "camel-couchdb",
-            "camel-prefixed"
+            "camel-couchdb"
         ]
     },
     {
@@ -777,7 +759,6 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.18.x LTS releases stream, then they are suggested to upgrade to 4.18.3. For deployments that cannot upgrade immediately, restrict write access to the key backend so that only the application's own identity can write the camel-pqc secrets (least-privilege HashiCorp Vault policies and secretsmanager:PutSecretValue IAM), and keep the PQC key material in a backend separate from any data that less-trusted principals can write.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-46590.html",
         "components": [
-            "camel-23200",
             "camel-pqc"
         ]
     },
@@ -791,8 +772,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. For deployments that cannot upgrade immediately, do not populate the CamelNeo4jMatchProperties map from untrusted input: validate or allow-list the property names (for example against ^[A-Za-z_][A-Za-z0-9_]*$) before the Neo4j producer, and ensure that any consumer feeding such a route filters inbound Camel* \/ camel* headers so the match header cannot be supplied by an external sender.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-46591.html",
         "components": [
-            "camel-neo4j",
-            "camel-prefixed"
+            "camel-neo4j"
         ]
     },
     {
@@ -807,8 +787,7 @@
         "components": [
             "camel-cxf",
             "camel-cxf-common",
-            "camel-cxfrs",
-            "camel-prefixed"
+            "camel-cxfrs"
         ]
     },
     {
@@ -821,7 +800,6 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. The fix makes the affected consumers apply a HeaderFilterStrategy that filters the Camel header namespace case-insensitively on inbound mapping, so externally-supplied Camel* \/ camel* headers are no longer copied into the Exchange. For deployments that cannot upgrade immediately, strip the Camel control headers from the inbound message before they reach any downstream producer (for example removeHeaders('Camel*') and removeHeaders('camel*') at the start of the route), require authentication on the WebSocket endpoint, and avoid bridging an untrusted consumer directly into an HTTP producer whose target URI can be driven from message headers.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-46726.html",
         "components": [
-            "camel-internal",
             "camel-vertx-websocket"
         ]
     },
@@ -840,7 +818,6 @@
             "camel-cxf-transport",
             "camel-exec",
             "camel-file",
-            "camel-internal",
             "camel-knative",
             "camel-knative-http",
             "camel-undertow"
@@ -856,7 +833,6 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. After upgrading, routes that set Solr parameters or fields via the raw header prefixes must use CamelSolrParam. \/ CamelSolrField. instead of SolrParam. \/ SolrField.. For deployments that cannot upgrade immediately, strip the SolrParam.* and SolrField.* headers from any untrusted ingress before the solr: producer, and set the required Solr parameters and fields from a trusted source in the route.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-48203.html",
         "components": [
-            "camel-prefixed",
             "camel-solr"
         ]
     },
@@ -870,8 +846,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. After upgrading, routes that drive GridFS operations or metadata via the raw header names must use CamelGridFsOperation \/ CamelGridFsObjectId \/ CamelGridFsMetadata \/ CamelGridFsChunkSize \/ CamelGridFsFileId instead of the gridfs.* names. For deployments that cannot upgrade immediately, set an explicit operation on the mongodb-gridfs: endpoint so the operation is not taken from a header, and strip the gridfs.* headers from any untrusted ingress before the producer.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-48204.html",
         "components": [
-            "camel-mongodb-gridfs",
-            "camel-prefixed"
+            "camel-mongodb-gridfs"
         ]
     },
     {
@@ -884,8 +859,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. After upgrading, routes that drive DNS operations via the raw header names must use CamelDnsServer \/ CamelDnsName \/ CamelDnsDomain \/ CamelDnsType \/ CamelDnsClass \/ CamelDnsTerm instead of the dns.* \/ term names. For deployments that cannot upgrade immediately, strip the dns.* and term headers from any untrusted ingress before the dns: producer, and set the DNS server and lookup parameters from a trusted source in the route.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-48205.html",
         "components": [
-            "camel-dns",
-            "camel-prefixed"
+            "camel-dns"
         ]
     },
     {
@@ -898,8 +872,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. After upgrading, routes that drive JIRA operations via the raw header names must use the CamelJira* names (for example CamelJiraIssueKey) instead of the old values. For deployments that cannot upgrade immediately, strip the camel-jira control headers from any untrusted ingress before the jira: producer (for example removing the IssueKey, ProjectKey, IssueTransitionId and related headers at the start of the route), and set the required JIRA operation parameters from a trusted source.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-48206.html",
         "components": [
-            "camel-jira",
-            "camel-prefixed"
+            "camel-jira"
         ]
     },
     {
@@ -912,7 +885,6 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. After upgrading, only tool argument fields that match a declared parameter in the tool specification are set as Exchange headers. Tools defined without parameter declarations will have zero argument headers set from LLM tool calls - this is a breaking change for routes that rely on implicit argument passthrough; to restore argument flow, declare the expected parameters explicitly via the parameter.NAME=TYPE endpoint option. For deployments that cannot upgrade immediately, strip untrusted headers after the tool invocation (for example removeHeaders('Camel*') and removeHeaders('camel*') after the langchain4j-tools endpoint) and declare explicit parameter schemas for every tool so the LLM-returned arguments are constrained.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-49042.html",
         "components": [
-            "camel-internal",
             "camel-langchain4j-agent",
             "camel-langchain4j-tools",
             "camel-spring-ai-tools"
@@ -941,8 +913,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. After upgrading, routes that set IRC headers via the raw header names must use the CamelIrc* names (for example CamelIrcSendTo) instead of the old irc.* values. For deployments that cannot upgrade immediately, strip the irc.* headers from any untrusted ingress before the irc: producer (for example removeHeaders('irc.*') at the start of the route), and set the IRC destination from a trusted source.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-49097.html",
         "components": [
-            "camel-irc",
-            "camel-prefixed"
+            "camel-irc"
         ]
     },
     {
@@ -955,8 +926,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. After upgrading, routes that set or read Kafka headers via the raw header names must use the CamelKafka* names (for example CamelKafkaOverrideTopic and CamelKafkaTopic) instead of the old kafka.* values. For deployments that cannot upgrade immediately, strip the kafka.* headers from any untrusted ingress before the kafka: producer (for example removeHeaders('kafka.*') at the start of the route), and set the target topic from a trusted source.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-49098.html",
         "components": [
-            "camel-kafka",
-            "camel-prefixed"
+            "camel-kafka"
         ]
     },
     {
@@ -969,7 +939,6 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. After upgrading, routes that set Salesforce operation parameters via the raw header names must use the CamelSalesforce* names (for example CamelSalesforceSObjectQuery and CamelSalesforceApexUrl) instead of the old sObject* \/ apex* values; the endpoint-option spelling is unchanged. For deployments that cannot upgrade immediately, strip the Salesforce control headers from any untrusted ingress before the salesforce: producer (for example removeHeaders('sObject*') and removeHeaders('apex*') at the start of the route), and set the query, SObject and Apex parameters from a trusted source.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-49099.html",
         "components": [
-            "camel-prefixed",
             "camel-salesforce"
         ]
     },
@@ -1013,8 +982,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.14.x LTS releases stream, then they are suggested to upgrade to 4.14.8. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. The fix makes the consumer apply the HeaderFilterStrategy it already inherits from the HTTP\/servlet stack, filtering the Camel header namespace case-insensitively on inbound mapping, so externally-supplied Camel* \/ camel* headers are no longer copied into the Exchange. For deployments that cannot upgrade immediately, strip the Camel control headers from the inbound message before they reach any downstream producer (for example removeHeaders('Camel*') and removeHeaders('camel*') at the start of the route), require authentication on the WebSocket endpoint, and avoid bridging an untrusted consumer directly into an HTTP producer whose target URI can be driven from message headers.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-55993.html",
         "components": [
-            "camel-atmosphere-websocket",
-            "camel-internal"
+            "camel-atmosphere-websocket"
         ]
     },
     {
@@ -1027,8 +995,7 @@
         "mitigation": "Users are recommended to upgrade to version 4.21.0, which fixes the issue. If users are on the 4.18.x releases stream, then they are suggested to upgrade to 4.18.3. The fix adds a dedicated IggyHeaderFilterStrategy (and a headerFilterStrategy endpoint option) that filters the Camel header namespace case-insensitively on inbound mapping, so externally-supplied Camel* \/ camel* headers are no longer copied into the Exchange. For deployments that cannot upgrade immediately, strip the Camel control headers from the inbound message before they reach any downstream producer (for example removeHeaders('Camel*') and removeHeaders('camel*') at the start of the route), restrict who can publish to the consumed Iggy stream\/topic, and avoid bridging an untrusted consumer directly into an HTTP producer whose target URI can be driven from message headers.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-55994.html",
         "components": [
-            "camel-iggy",
-            "camel-internal"
+            "camel-iggy"
         ]
     },
     {
@@ -1058,10 +1025,8 @@
         "mitigation": "This is a defense-in-depth hardening change with no known exploit path in camel-aws2-sns, which is producer-only, so no urgent action or workaround is required. Users who want the aligned behaviour can upgrade to version 4.21.0, or to 4.14.8 on the 4.14.x LTS releases stream, or to 4.18.3 on the 4.18.x releases stream, which contain the change. As a general best practice, operators should continue to apply least-privilege IAM permissions on their SNS topics.",
         "url": "https:\/\/camel.apache.org\/security\/CVE-2026-56140.html",
         "components": [
-            "camel-23506",
             "camel-aws2-sns",
-            "camel-aws2-sqs",
-            "camel-namespace"
+            "camel-aws2-sqs"
         ]
     }
 ]
