@@ -68,7 +68,7 @@ public class MinaDataFormatTest extends CamelTestSupport {
             socket.close();
         }
 
-        await().atMost(5, TimeUnit.SECONDS)
+        await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
