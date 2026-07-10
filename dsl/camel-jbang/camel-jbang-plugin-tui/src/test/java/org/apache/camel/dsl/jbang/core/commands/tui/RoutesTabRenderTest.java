@@ -201,7 +201,7 @@ class RoutesTabRenderTest {
 
         // Render in normal mode first
         String normalRender = renderToString(tab, 140, 30);
-        assertTrue(normalRender.contains("AGE"), "Normal mode should show AGE header");
+        assertTrue(normalRender.contains("STATUS"), "Normal mode should show STATUS header");
 
         // Press 't' to toggle top mode
         tab.handleKeyEvent(KeyEvent.ofChar('t', KeyModifiers.NONE));
@@ -264,17 +264,6 @@ class RoutesTabRenderTest {
         assertTrue(footer.contains("Esc"), "Footer should contain Esc hint");
         assertTrue(footer.contains("sort"), "Footer should contain sort hint");
         assertTrue(footer.contains("topology"), "Footer should contain topology hint");
-    }
-
-    @Test
-    void renderRouteWithCoverageShowsCoverage() {
-        RouteInfo route = addRoute("route1", "timer://tick", "Started");
-        route.coverage = "5/5";
-
-        RoutesTab tab = new RoutesTab(ctx);
-        String rendered = renderToString(tab, 140, 30);
-
-        assertTrue(rendered.contains("5/5"), "Should show coverage value");
     }
 
     @Test

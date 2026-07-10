@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ShellPanelTest {
@@ -344,11 +343,10 @@ class ShellPanelTest {
     }
 
     @Test
-    void encodeUnhandledKeyReturnsNull() {
-        // F11 is not handled by encodeKeyEvent
+    void encodeF11Key() {
         KeyEvent ke = KeyEvent.ofKey(KeyCode.F11, KeyModifiers.NONE);
         byte[] result = ShellPanel.encodeKeyEvent(ke);
-        assertNull(result);
+        assertArrayEquals("\033[23~".getBytes(StandardCharsets.UTF_8), result);
     }
 
     // ---- convertCellToStyle tests ----
