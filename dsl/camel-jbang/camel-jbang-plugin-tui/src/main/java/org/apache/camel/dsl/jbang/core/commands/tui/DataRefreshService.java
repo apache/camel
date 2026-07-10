@@ -510,14 +510,9 @@ class DataRefreshService {
             }
 
             raf.seek(lastPos);
-            // If we're resuming mid-file, skip any partial line
-            if (lastPos > 0) {
-                raf.readLine();
-            }
 
             // Read remaining bytes
-            long startPos = raf.getFilePointer();
-            byte[] remaining = new byte[(int) (length - startPos)];
+            byte[] remaining = new byte[(int) (length - lastPos)];
             raf.readFully(remaining);
             String content = new String(remaining, StandardCharsets.UTF_8);
 

@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 
 import dev.tamboui.layout.Constraint;
@@ -93,7 +94,7 @@ class SendMessagePopup {
     private boolean showResponseHeaders;
 
     // History
-    private final List<SendHistoryEntry> history = new ArrayList<>();
+    private final List<SendHistoryEntry> history = new CopyOnWriteArrayList<>();
     private int historyIndex;
 
     // File chooser

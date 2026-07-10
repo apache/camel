@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.tamboui.layout.Constraint;
@@ -83,7 +84,7 @@ class AiPanel {
     private int cursorPos;
 
     // Conversation display
-    private final List<ConversationEntry> conversation = new ArrayList<>();
+    private final List<ConversationEntry> conversation = new CopyOnWriteArrayList<>();
     private int scrollOffset;
 
     // LLM state
@@ -103,7 +104,7 @@ class AiPanel {
     private Rect lastArea;
 
     // AI usage stats
-    private final List<AiUsageEntry> usageHistory = new ArrayList<>();
+    private final List<AiUsageEntry> usageHistory = new CopyOnWriteArrayList<>();
     private final TableState statsTableState = new TableState();
     private boolean statsView;
     private int statsScrollOffset;

@@ -542,8 +542,7 @@ class RoutesTab extends AbstractTab {
         }
 
         // Normal table view
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
+        List<RouteInfo> sortedRoutes = displayedRoutes(info);
 
         if (topPanelHeight < 0) {
             topPanelHeight = area.height() * 45 / 100;
@@ -556,8 +555,6 @@ class RoutesTab extends AbstractTab {
         // Routes table
         Table routeTable;
         if (routeTopMode) {
-            sortedRoutes.sort(this::sortRouteTop);
-
             List<Row> routeRows = new ArrayList<>();
             for (RouteInfo route : sortedRoutes) {
                 Style failStyle = route.failed > 0
@@ -1430,58 +1427,49 @@ class RoutesTab extends AbstractTab {
 
     // ---- Route actions ----
 
-    String selectedRouteId() {
+    private List<RouteInfo> displayedRoutes(IntegrationInfo info) {
+        List<RouteInfo> sorted = new ArrayList<>(info.routes);
+        sorted.sort(this::sortRoute);
+        if (routeTopMode) {
+            sorted.sort(this::sortRouteTop);
+        }
+        return sorted;
+    }
+
+    private RouteInfo selectedRoute() {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null || info.routes.isEmpty()) {
             return null;
         }
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
+        List<RouteInfo> sortedRoutes = displayedRoutes(info);
         Integer sel = routeTableState.selected();
-        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
+        return (sel != null && sel >= 0 && sel < sortedRoutes.size())
                 ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-        return route.routeId;
+    }
+
+    String selectedRouteId() {
+        RouteInfo route = selectedRoute();
+        return route != null ? route.routeId : null;
     }
 
     private String selectedRouteState() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null || info.routes.isEmpty()) {
-            return null;
-        }
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
-        Integer sel = routeTableState.selected();
-        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
-                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-        return route.state;
+        RouteInfo route = selectedRoute();
+        return route != null ? route.state : null;
     }
 
     private boolean selectedRouteSupportsSuspension() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null || info.routes.isEmpty()) {
-            return false;
-        }
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
-        Integer sel = routeTableState.selected();
-        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
-                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-        return route.supportsSuspension;
+        RouteInfo route = selectedRoute();
+        return route != null && route.supportsSuspension;
     }
 
     private void toggleRouteStartStop() {
         if (ctx.selectedPid == null) {
             return;
         }
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null || info.routes.isEmpty()) {
+        RouteInfo route = selectedRoute();
+        if (route == null) {
             return;
         }
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
-        Integer sel = routeTableState.selected();
-        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
-                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
         String command = "Started".equals(route.state) ? "stop" : "start";
         sendRouteCommand(ctx.selectedPid, route.routeId, command);
     }
@@ -1490,15 +1478,10 @@ class RoutesTab extends AbstractTab {
         if (ctx.selectedPid == null) {
             return;
         }
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null || info.routes.isEmpty()) {
+        RouteInfo route = selectedRoute();
+        if (route == null) {
             return;
         }
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
-        Integer sel = routeTableState.selected();
-        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
-                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
         String command = switch (route.state != null ? route.state : "") {
             case "Started" -> "suspend";
             case "Suspended" -> "resume";
@@ -1549,16 +1532,11 @@ class RoutesTab extends AbstractTab {
     }
 
     private void loadSourceForSelectedRoute() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null || info.routes.isEmpty()) {
+        RouteInfo selected = selectedRoute();
+        if (selected == null) {
             return;
         }
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
-        Integer sel = routeTableState.selected();
-        RouteInfo selectedRoute = (sel != null && sel >= 0 && sel < sortedRoutes.size())
-                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-        String routeId = selectedRoute.routeId;
+        String routeId = selected.routeId;
         sourceViewer.setOnLineSelected(sourceLine -> {
             sourceViewer.hide();
             // Open drill-down diagram for this route
@@ -1682,8 +1660,7 @@ class RoutesTab extends AbstractTab {
         if (info == null || info.routes.isEmpty()) {
             return null;
         }
-        List<RouteInfo> sorted = new ArrayList<>(info.routes);
-        sorted.sort(this::sortRoute);
+        List<RouteInfo> sorted = displayedRoutes(info);
         List<String> items = sorted.stream().map(r -> r.routeId != null ? r.routeId : "").toList();
         Integer sel = routeTableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Routes");

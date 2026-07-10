@@ -2105,6 +2105,10 @@ public class CamelMonitor extends CamelCommand {
 
     private static Path writeMcpJson(int port) {
         Path path = Path.of(".mcp.json");
+        if (Files.exists(path)) {
+            // do not overwrite an existing .mcp.json (may belong to Claude Code, Cursor, etc.)
+            return null;
+        }
         try {
             String json = """
                     {

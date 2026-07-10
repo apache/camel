@@ -90,6 +90,7 @@ class OsvClient {
         JsonObject requestBody = new JsonObject();
         requestBody.put("queries", queries);
 
+        boolean success = false;
         try {
             HttpClient client = HttpClient.newBuilder()
                     .connectTimeout(Duration.ofSeconds(5))
@@ -103,6 +104,7 @@ class OsvClient {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
+                success = true;
                 JsonObject body = (JsonObject) Jsoner.deserialize(response.body());
                 JsonArray results = (JsonArray) body.get("results");
                 if (results != null) {
@@ -148,14 +150,16 @@ class OsvClient {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            // network errors — return whatever we have from cache
+            // network errors — return whatever we have from cache; leave entries uncached for retry
         }
 
-        // cache empty results for uncached entries that got no response
-        for (DependencyLoader.DepEntry entry : uncached) {
-            String gav = entry.display();
-            result.putIfAbsent(gav, Collections.emptyList());
-            CACHE.putIfAbsent(gav, Collections.emptyList());
+        if (success) {
+            // cache empty results only for entries the API actually processed
+            for (DependencyLoader.DepEntry entry : uncached) {
+                String gav = entry.display();
+                result.putIfAbsent(gav, Collections.emptyList());
+                CACHE.putIfAbsent(gav, Collections.emptyList());
+            }
         }
 
         return result;
