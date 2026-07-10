@@ -376,6 +376,8 @@ class MetricsCollector {
     void removeVanished(String pid) {
         throughputHistory.remove(pid);
         failedHistory.remove(pid);
+        throughputSamples.remove(pid);
+        previousExchangesTime.remove(pid);
 
         endpointInHistory.remove(pid);
         endpointOutHistory.remove(pid);
