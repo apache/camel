@@ -555,8 +555,7 @@ public final class Theme {
     private static void logPersistedReadFallbackOnce(Throwable t) {
         if (!persistedReadFallbackLogged) {
             persistedReadFallbackLogged = true;
-            LOG.warn("Camel TUI theme preference could not be read; falling back to the default theme for this session",
-                    t);
+            LOG.warn("Camel TUI theme preference could not be read; falling back to the default theme for this session");
         }
     }
 
