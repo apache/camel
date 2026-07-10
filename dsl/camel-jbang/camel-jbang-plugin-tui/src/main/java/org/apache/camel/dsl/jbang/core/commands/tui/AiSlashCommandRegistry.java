@@ -51,7 +51,7 @@ final class AiSlashCommandRegistry {
                 "provider", List.of("p"), "Switch the AI provider", null, false,
                 (context, arguments) -> {
                     context.openProviderSwitch();
-                    return CommandResult.system("Opening provider selection");
+                    return CommandResult.system("");
                 }));
         commands.add(new Descriptor(
                 "model", List.of("m"), "Show or switch the AI model", "<model>", false,

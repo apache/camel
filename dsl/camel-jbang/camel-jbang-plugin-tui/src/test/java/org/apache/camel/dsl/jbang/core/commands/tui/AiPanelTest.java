@@ -110,14 +110,14 @@ class AiPanelTest {
     @Test
     void providerCommandOpensProviderSwitch() {
         AiPanel panel = new AiPanel();
-        FakeSlashContext context = new FakeSlashContext();
-        panel.setSlashCommandContextForTesting(context);
+        panel.setProviderChoicesForTesting(List.of(
+                new AiProviderSwitchPopup.ProviderChoice("auto", "", "", true)));
         panel.open();
 
         type(panel, "/provider");
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
 
-        assertTrue(context.providerSwitchRequested);
+        assertTrue(panel.isProviderSwitchVisibleForTesting());
     }
 
     @Test

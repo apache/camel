@@ -107,7 +107,12 @@ class AiPanel {
     private final AiCliCommandExecutor cliCommandExecutor = new AiCliCommandExecutor();
     private volatile CompletableFuture<AiCliCommandExecutor.Result> activeCliCommand;
     private Runnable exitCallback;
-    private Runnable openProviderSwitchCallback;
+
+    // Provider switch popup
+    private final AiProviderSwitchPopup providerSwitchPopup = new AiProviderSwitchPopup();
+    private AiProviderSwitchPopup.ProviderChoice sessionProviderChoice;
+    private List<AiProviderSwitchPopup.ProviderChoice> providerChoicesForTesting;
+    private boolean testingClientInjected;
 
     // Activity log for AI Log popup
     private final List<LogEntry> activityLog = new ArrayList<>();
@@ -198,22 +203,25 @@ class AiPanel {
 
     void close() {
         visible = false;
+        providerSwitchPopup.close();
     }
 
     void destroy() {
         close();
-        Thread t = agentThread;
-        if (t != null) {
-            t.interrupt();
-        }
+        stopAgentThread();
     }
 
     private void initClient() {
         try {
-            client = LlmClient.create()
+            LlmClient created = LlmClient.create()
                     .withTemperature(0.3)
                     .withTimeout(120)
                     .withMaxTokens(4096);
+            if (sessionProviderChoice != null) {
+                applyChoice(created, sessionProviderChoice.provider(), sessionProviderChoice.model(),
+                        sessionProviderChoice.url());
+            }
+            client = created;
             if (!client.detectEndpoint()) {
                 initError = "No LLM service reachable. Set ANTHROPIC_API_KEY, OPENAI_API_KEY, or start Ollama.";
                 client = null;
@@ -231,9 +239,89 @@ class AiPanel {
         }
     }
 
+    private void applyProviderChoice(AiProviderSwitchPopup.ProviderChoice choice) {
+        stopAgentThread();
+        sessionProviderChoice = choice;
+        if (testingClientInjected && client != null) {
+            applyChoice(client, choice.provider(), choice.model(), choice.url());
+        } else {
+            client = null;
+            initClient();
+        }
+        if (client != null) {
+            conversation.add(new ConversationEntry(
+                    "system",
+                    "Switched to " + displayModel(choice) + " (" + choice.provider() + ")"));
+        } else {
+            sessionProviderChoice = null;
+            conversation.add(new ConversationEntry(
+                    "error",
+                    "Failed to switch to " + choice.provider() + ": " + initError));
+        }
+    }
+
+    private String displayModel(AiProviderSwitchPopup.ProviderChoice choice) {
+        return choice.model() == null || choice.model().isBlank() ? "auto" : choice.model();
+    }
+
+    private void applyChoice(LlmClient target, String provider, String model, String url) {
+        if (provider != null && !provider.isBlank() && !"auto".equals(provider)) {
+            target.withApiType(LlmClient.ApiType.valueOf(provider.replace('-', '_')));
+        }
+        if (model != null && !model.isBlank()) {
+            target.withModel(model);
+        }
+        if (url != null && !url.isBlank()) {
+            target.withUrl(url);
+        }
+    }
+
+    private List<AiProviderSwitchPopup.ProviderChoice> buildProviderChoices(Map<String, String> env) {
+        List<AiProviderSwitchPopup.ProviderChoice> choices = new ArrayList<>();
+        String current = sessionProviderChoice != null ? sessionProviderChoice.provider() : "auto";
+        String currentModel = sessionProviderChoice != null ? sessionProviderChoice.model() : "";
+        String currentUrl = sessionProviderChoice != null ? sessionProviderChoice.url() : "";
+        choices.add(new AiProviderSwitchPopup.ProviderChoice(current, currentModel, currentUrl, true));
+        if (hasEnv(env, "ANTHROPIC_API_KEY") && !"anthropic".equals(current)) {
+            choices.add(new AiProviderSwitchPopup.ProviderChoice("anthropic", "", "", false));
+        }
+        if ((hasEnv(env, "OPENAI_API_KEY") || hasEnv(env, "LLM_API_KEY")) && !"openai".equals(current)) {
+            choices.add(new AiProviderSwitchPopup.ProviderChoice("openai", "", "", false));
+        }
+        if (!"ollama".equals(current)) {
+            choices.add(new AiProviderSwitchPopup.ProviderChoice("ollama", "", "", false));
+        }
+        return choices;
+    }
+
+    private static boolean hasEnv(Map<String, String> env, String key) {
+        String value = env.get(key);
+        return value != null && !value.isBlank();
+    }
+
+    private Map<String, String> envSnapshot() {
+        Map<String, String> env = new LinkedHashMap<>();
+        for (String key : List.of("ANTHROPIC_API_KEY", "OPENAI_API_KEY", "LLM_API_KEY")) {
+            String value = System.getenv(key);
+            if (value != null) {
+                env.put(key, value);
+            }
+        }
+        return env;
+    }
+
+    void openProviderSwitch() {
+        providerSwitchPopup.open(providerChoicesForTesting != null
+                ? providerChoicesForTesting
+                : buildProviderChoices(envSnapshot()));
+    }
+
     boolean handleMouseEvent(MouseEvent me) {
         if (!visible || lastArea == null) {
             return false;
+        }
+        if (providerSwitchPopup.isVisible()) {
+            return providerSwitchPopup.handleMouseEvent(me);
         }
         if (!TuiHelper.contains(lastArea, me.x(), me.y())) {
             return false;
@@ -250,8 +338,20 @@ class AiPanel {
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
+        if (providerSwitchPopup.isVisible()) {
+            providerSwitchPopup.handleKeyEvent(ke);
+            AiProviderSwitchPopup.ProviderChoice choice = providerSwitchPopup.consumePendingChoice();
+            if (choice != null) {
+                applyProviderChoice(choice);
+            }
+            return true;
+        }
         if (ke.isKey(KeyCode.F8)) {
             close();
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('p') && !thinking.get() && activeCliCommand == null) {
+            openProviderSwitch();
             return true;
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('u')) {
@@ -572,6 +672,9 @@ class AiPanel {
 
         if (statsView) {
             renderStats(frame, inner);
+            if (providerSwitchPopup.isVisible()) {
+                providerSwitchPopup.render(frame, inner);
+            }
             return;
         }
 
@@ -589,6 +692,9 @@ class AiPanel {
         frame.renderWidget(Paragraph.from(Line.from(Span.styled(line, Style.EMPTY.dim()))),
                 separatorArea);
         renderInput(frame, inputArea);
+        if (providerSwitchPopup.isVisible()) {
+            providerSwitchPopup.render(frame, inner);
+        }
     }
 
     private void renderConversation(Frame frame, Rect area) {
@@ -753,6 +859,7 @@ class AiPanel {
         TuiHelper.hint(spans, "Shift+F8", "resize (" + anim.cyclePercent() + "%)");
         TuiHelper.hint(spans, "PgUp/Dn", "scroll");
         if (!statsView) {
+            TuiHelper.hint(spans, "Ctrl+P", "provider");
             if (!thinking.get()) {
                 TuiHelper.hint(spans, "Enter", "send");
             } else {
@@ -971,6 +1078,7 @@ class AiPanel {
         this.client = client;
         this.initError = null;
         this.messages = new ArrayList<>();
+        this.testingClientInjected = true;
     }
 
     void setSlashCommandContextForTesting(AiSlashCommandContext context) {
@@ -997,8 +1105,12 @@ class AiPanel {
         this.exitCallback = callback;
     }
 
-    void setOpenProviderSwitchCallback(Runnable callback) {
-        this.openProviderSwitchCallback = callback;
+    void setProviderChoicesForTesting(List<AiProviderSwitchPopup.ProviderChoice> choices) {
+        this.providerChoicesForTesting = choices;
+    }
+
+    boolean isProviderSwitchVisibleForTesting() {
+        return providerSwitchPopup.isVisible();
     }
 
     private final class PanelSlashCommandContext implements AiSlashCommandContext {
@@ -1017,9 +1129,7 @@ class AiPanel {
 
         @Override
         public void openProviderSwitch() {
-            if (openProviderSwitchCallback != null) {
-                openProviderSwitchCallback.run();
-            }
+            AiPanel.this.openProviderSwitch();
         }
 
         @Override
