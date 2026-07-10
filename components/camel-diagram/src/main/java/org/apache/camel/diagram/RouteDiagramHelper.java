@@ -110,6 +110,9 @@ public final class RouteDiagramHelper {
                         stat.minProcessingTime = ls.getLongOrDefault("minProcessingTime", 0);
                         stat.lastProcessingTime = ls.getLongOrDefault("lastProcessingTime", -1);
                         stat.deltaProcessingTime = ls.getLongOrDefault("deltaProcessingTime", -1);
+                        stat.p50ProcessingTime = ls.getLongOrDefault("p50ProcessingTime", -1);
+                        stat.p95ProcessingTime = ls.getLongOrDefault("p95ProcessingTime", -1);
+                        stat.p99ProcessingTime = ls.getLongOrDefault("p99ProcessingTime", -1);
                         stat.lastCreatedExchangeTimestamp = ls.getLongOrDefault("lastCreatedExchangeTimestamp", -1);
                         stat.lastCompletedExchangeTimestamp = ls.getLongOrDefault("lastCompletedExchangeTimestamp", -1);
                         stat.lastFailedExchangeTimestamp = ls.getLongOrDefault("lastFailedExchangeTimestamp", -1);

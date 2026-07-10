@@ -475,6 +475,19 @@ class DiagramTab extends AbstractTab {
                 lines.add(Line.from(
                         Span.styled(" Min:  ", Theme.muted()),
                         Span.raw(String.format("%" + tw + "d ms", route.minTime))));
+                if (route.p50Time >= 0) {
+                    int pw = numWidth(route.p50Time, route.p95Time, route.p99Time);
+                    lines.add(Line.from(Span.raw("")));
+                    lines.add(Line.from(
+                            Span.styled(" p50:  ", Theme.muted()),
+                            Span.raw(String.format("%" + pw + "d ms", route.p50Time))));
+                    lines.add(Line.from(
+                            Span.styled(" p95:  ", Theme.muted()),
+                            Span.raw(String.format("%" + pw + "d ms", route.p95Time))));
+                    lines.add(Line.from(
+                            Span.styled(" p99:  ", Theme.muted()),
+                            Span.raw(String.format("%" + pw + "d ms", route.p99Time))));
+                }
             }
 
             if (route.sinceLastCompleted != null || route.sinceLastFailed != null) {
@@ -619,6 +632,20 @@ class DiagramTab extends AbstractTab {
                     lines.add(Line.from(
                             Span.styled(" Last: ", Theme.muted()),
                             Span.raw(String.format("%" + tw + "d ms", stat.lastProcessingTime))));
+                    if (stat.p50ProcessingTime >= 0) {
+                        int pw = numWidth(stat.p50ProcessingTime, stat.p95ProcessingTime,
+                                stat.p99ProcessingTime);
+                        lines.add(Line.from(Span.raw("")));
+                        lines.add(Line.from(
+                                Span.styled(" p50:  ", Theme.muted()),
+                                Span.raw(String.format("%" + pw + "d ms", stat.p50ProcessingTime))));
+                        lines.add(Line.from(
+                                Span.styled(" p95:  ", Theme.muted()),
+                                Span.raw(String.format("%" + pw + "d ms", stat.p95ProcessingTime))));
+                        lines.add(Line.from(
+                                Span.styled(" p99:  ", Theme.muted()),
+                                Span.raw(String.format("%" + pw + "d ms", stat.p99ProcessingTime))));
+                    }
 
                     if (stat.lastCompletedExchangeTimestamp > 0 || stat.lastFailedExchangeTimestamp > 0) {
                         long now = System.currentTimeMillis();
@@ -1143,6 +1170,11 @@ class DiagramTab extends AbstractTab {
                         ri.put("maxTime", route.maxTime);
                         ri.put("minTime", route.minTime);
                     }
+                    if (route.p50Time >= 0) {
+                        ri.put("p50Time", route.p50Time);
+                        ri.put("p95Time", route.p95Time);
+                        ri.put("p99Time", route.p99Time);
+                    }
                     if (route.sinceLastCompleted != null) {
                         ri.put("sinceLastSuccess", route.sinceLastCompleted);
                     }
@@ -1169,6 +1201,11 @@ class DiagramTab extends AbstractTab {
                         ni.put("maxTime", stat.maxProcessingTime);
                         ni.put("minTime", stat.minProcessingTime);
                         ni.put("lastTime", stat.lastProcessingTime);
+                    }
+                    if (stat.p50ProcessingTime >= 0) {
+                        ni.put("p50Time", stat.p50ProcessingTime);
+                        ni.put("p95Time", stat.p95ProcessingTime);
+                        ni.put("p99Time", stat.p99ProcessingTime);
                     }
                     result.put("nodeInfo", ni);
                 }

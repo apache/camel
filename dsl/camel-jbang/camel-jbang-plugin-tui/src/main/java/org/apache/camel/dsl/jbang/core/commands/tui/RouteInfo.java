@@ -37,6 +37,9 @@ class RouteInfo {
     long maxTime;
     long lastTime;
     long deltaTime;
+    long p50Time = -1;
+    long p95Time = -1;
+    long p99Time = -1;
     String load01;
     String load05;
     String load15;

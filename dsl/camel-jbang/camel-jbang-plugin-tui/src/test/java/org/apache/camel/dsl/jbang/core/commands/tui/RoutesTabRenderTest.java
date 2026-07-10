@@ -205,7 +205,6 @@ class RoutesTabRenderTest {
 
         // Press 't' to toggle top mode
         tab.handleKeyEvent(KeyEvent.ofChar('t', KeyModifiers.NONE));
-        assertTrue(tab.isTopMode(), "Should be in top mode after pressing 't'");
 
         String topRender = renderToString(tab, 140, 30);
         assertTrue(topRender.contains("MEAN"), "Top mode should show MEAN header");

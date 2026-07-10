@@ -145,6 +145,9 @@ public class RouteDiagramLayoutEngine {
         public long minProcessingTime;
         public long lastProcessingTime;
         public long deltaProcessingTime;
+        public long p50ProcessingTime = -1;
+        public long p95ProcessingTime = -1;
+        public long p99ProcessingTime = -1;
         public long lastCreatedExchangeTimestamp;
         public long lastCompletedExchangeTimestamp;
         public long lastFailedExchangeTimestamp;

@@ -42,6 +42,14 @@ class IntegrationInfo {
     String inflightLoad01;
     String inflightLoad05;
     String inflightLoad15;
+    long meanTime;
+    long maxTime;
+    long minTime;
+    long lastTime;
+    long deltaTime;
+    long p50Time = -1;
+    long p95Time = -1;
+    long p99Time = -1;
     String last;
     String delta;
     String sinceLastStarted;

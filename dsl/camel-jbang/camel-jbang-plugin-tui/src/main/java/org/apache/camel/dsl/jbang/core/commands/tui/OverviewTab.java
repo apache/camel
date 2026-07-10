@@ -77,6 +77,7 @@ class OverviewTab extends AbstractTab {
     private static final int MAX_SPARKLINE_POINTS = 300;
     private static final String[] SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
     private static final String[] INFRA_SORT_COLUMNS = { "service", "version", "port", "status" };
+    private static final String[] TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta", "p50", "p95", "p99" };
 
     static final int CHART_ALL = 0;
     static final int CHART_SINGLE = 1;
@@ -108,6 +109,10 @@ class OverviewTab extends AbstractTab {
     private String infraSort = "service";
     private int infraSortIndex = 0;
     private boolean infraSortReversed;
+    boolean topMode;
+    private String topSort = "mean";
+    private int topSortIndex;
+    private boolean topSortReversed;
 
     OverviewTab(
                 MonitorContext ctx,
@@ -133,6 +138,10 @@ class OverviewTab extends AbstractTab {
                 infraSortIndex = (infraSortIndex + 1) % INFRA_SORT_COLUMNS.length;
                 infraSort = INFRA_SORT_COLUMNS[infraSortIndex];
                 infraSortReversed = false;
+            } else if (topMode) {
+                topSortIndex = (topSortIndex + 1) % TOP_SORT_COLUMNS.length;
+                topSort = TOP_SORT_COLUMNS[topSortIndex];
+                topSortReversed = false;
             } else {
                 sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
                 sort = SORT_COLUMNS[sortIndex];
@@ -143,9 +152,15 @@ class OverviewTab extends AbstractTab {
         if (ke.isChar('S')) {
             if (infraFocused) {
                 infraSortReversed = !infraSortReversed;
+            } else if (topMode) {
+                topSortReversed = !topSortReversed;
             } else {
                 sortReversed = !sortReversed;
             }
+            return true;
+        }
+        if (ke.isCharIgnoreCase('t') && !infraFocused) {
+            topMode = !topMode;
             return true;
         }
         if (ke.isChar('i') && !ctx.infraData.get().isEmpty()) {
@@ -312,121 +327,244 @@ class OverviewTab extends AbstractTab {
         }
 
         List<Row> rows = new ArrayList<>();
+        Row header;
+        Constraint[] widths;
         int rowIndex = 0;
-        for (IntegrationInfo info : infos) {
-            boolean isEven = (rowIndex++ % 2 == 0);
-            Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
 
-            if (info.vanishing) {
-                long elapsed = System.currentTimeMillis() - info.vanishStart;
-                float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
-                int gray = (int) (100 * fade);
-                Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
+        if (topMode) {
+            for (IntegrationInfo info : infos) {
+                boolean isEven = (rowIndex++ % 2 == 0);
+                Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
 
-                String vanishName = TuiIcons.labeled(TuiIcons.CAMEL, info.name != null ? info.name : "");
-                rows.add(Row.from(
-                        Cell.from(Span.styled(info.pid, dimStyle)),
-                        Cell.from(Span.styled(vanishName, dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error().dim())),
-                        Cell.from(Span.styled(info.ago != null ? info.ago : "", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle))).style(rowBg));
-            } else {
-                String stateText = extractState(info.state);
-                if (stoppingPids.contains(info.pid) || "Terminating".equals(stateText)) {
-                    stateText = "Stopping";
-                } else if ("Terminated".equals(stateText)) {
-                    stateText = "Stopped";
-                } else if ("Running".equals(stateText) && info.routeStarted == 0 && info.routeTotal > 0) {
-                    stateText = "Stopped";
-                }
-                Style statusStyle = switch (stateText) {
-                    case "Started", "Running" -> Theme.success();
-                    case "Stopped" -> Theme.error();
-                    default -> Theme.warning();
-                };
-
-                Style failStyle = info.failed > 0 ? Theme.error().bold() : Style.EMPTY;
-
-                String sinceLastDisplay = formatSinceLast(info);
-
-                boolean hasDoc = info.readmeFiles != null && !info.readmeFiles.isEmpty();
-                if (!hasDoc) {
-                    hasDoc = hasReadmeInSourceDir(info);
-                }
-                String platformIcon = TuiIcons.runtimeIcon(info.platform != null ? info.platform : "");
-                String nameText = platformIcon + " " + (info.name != null ? info.name : "");
-                List<Span> nameSpans = new ArrayList<>();
-                nameSpans.add(Span.styled(nameText, Theme.info()));
-                if (info.devMode) {
-                    nameSpans.add(Span.styled(" [dev]", Theme.label()));
-                }
-                if (hasDoc) {
-                    nameSpans.add(Span.styled(" " + TuiIcons.README, Style.EMPTY));
-                }
-                Line nameLine = Line.from(nameSpans);
-                String throughputDisplay = info.throughput;
-                if (throughputDisplay == null || "0.00".equals(throughputDisplay)) {
-                    LinkedList<Long> tpHist = throughputHistory.get(info.pid);
-                    if (tpHist != null && !tpHist.isEmpty()) {
-                        long tp = tpHist.getLast();
-                        if (tp > 0) {
-                            throughputDisplay = String.format(java.util.Locale.US, "%.2f", (double) tp);
+                if (info.vanishing) {
+                    long elapsed = System.currentTimeMillis() - info.vanishStart;
+                    float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
+                    int gray = (int) (100 * fade);
+                    Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
+                    String vanishName = TuiIcons.labeled(TuiIcons.CAMEL, info.name != null ? info.name : "");
+                    rows.add(Row.from(
+                            Cell.from(Span.styled(vanishName, dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle))).style(rowBg));
+                } else {
+                    String platformIcon = TuiIcons.runtimeIcon(info.platform != null ? info.platform : "");
+                    String nameText = platformIcon + " " + (info.name != null ? info.name : "");
+                    List<Span> nameSpans = new ArrayList<>();
+                    nameSpans.add(Span.styled(nameText, Theme.info()));
+                    if (info.devMode) {
+                        nameSpans.add(Span.styled(" [dev]", Theme.label()));
+                    }
+                    Line nameLine = Line.from(nameSpans);
+                    Style failStyle = info.failed > 0 ? Theme.error().bold() : Style.EMPTY;
+                    String throughputDisplay = info.throughput;
+                    if (throughputDisplay == null || "0.00".equals(throughputDisplay)) {
+                        LinkedList<Long> tpHist = throughputHistory.get(info.pid);
+                        if (tpHist != null && !tpHist.isEmpty()) {
+                            long tp = tpHist.getLast();
+                            if (tp > 0) {
+                                throughputDisplay = String.format(java.util.Locale.US, "%.2f", (double) tp);
+                            }
                         }
                     }
+                    rows.add(Row.from(
+                            Cell.from(nameLine),
+                            rightCell(info.exchangesTotal > 0 ? String.valueOf(info.meanTime) : "", 6,
+                                    TuiHelper.topTimeStyle(info.meanTime)),
+                            rightCell(info.exchangesTotal > 0 ? String.valueOf(info.maxTime) : "", 6,
+                                    TuiHelper.topTimeStyle(info.maxTime)),
+                            rightCell(info.exchangesTotal > 0 ? String.valueOf(info.minTime) : "", 6),
+                            rightCell(info.exchangesTotal > 0 ? String.valueOf(info.lastTime) : "", 6),
+                            rightCell(info.deltaTime != 0 ? String.valueOf(info.deltaTime) : "", 6,
+                                    TuiHelper.topDeltaStyle(info.deltaTime)),
+                            rightCell(info.p50Time >= 0 ? String.valueOf(info.p50Time) : "", 6),
+                            rightCell(info.p95Time >= 0 ? String.valueOf(info.p95Time) : "", 6),
+                            rightCell(info.p99Time >= 0 ? String.valueOf(info.p99Time) : "", 6),
+                            rightCell(String.valueOf(info.exchangesTotal), 8),
+                            rightCell(String.valueOf(info.failed), 6, failStyle),
+                            rightCell(String.valueOf(info.inflight), 8),
+                            rightCell(throughputDisplay != null ? throughputDisplay : "", 8),
+                            rightCell(TuiHelper.formatLoad(
+                                    info.inflightLoad01, info.inflightLoad05, info.inflightLoad15), 12))
+                            .style(rowBg));
                 }
-                rows.add(Row.from(
-                        Cell.from(info.pid),
-                        Cell.from(nameLine),
-                        Cell.from(info.camelVersion != null ? info.camelVersion : ""),
-                        centerCell(info.ready != null ? info.ready : "", 5),
-                        Cell.from(Span.styled(stateText, statusStyle)),
-                        Cell.from(info.ago != null ? info.ago : ""),
-                        rightCell(info.routeStarted + "/" + info.routeTotal, 7),
-                        rightCell(throughputDisplay != null ? throughputDisplay : "", 8),
-                        rightCell(String.valueOf(info.exchangesTotal), 8),
-                        rightCell(String.valueOf(info.failed), 6, failStyle),
-                        rightCell(String.valueOf(info.inflight), 8),
-                        Cell.from(sinceLastDisplay)).style(rowBg));
             }
-        }
 
-        Row header = Row.from(
-                Cell.from(Span.styled(sortLabel("PID", "pid"), sortStyle("pid"))),
-                Cell.from(Span.styled(sortLabel("NAME", "name"), sortStyle("name"))),
-                Cell.from(Span.styled(sortLabel("VERSION", "version"), sortStyle("version"))),
-                centerCell("READY", 5, Style.EMPTY.bold()),
-                Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
-                Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
-                rightCell("ROUTE", 7, Style.EMPTY.bold()),
-                rightCell("MSG/S", 8, Style.EMPTY.bold()),
-                rightCell(sortLabel("TOTAL", "total"), 8, sortStyle("total")),
-                rightCell(sortLabel("FAIL", "fail"), 6, sortStyle("fail")),
-                rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())));
+            header = Row.from(
+                    Cell.from(Span.styled("NAME", Style.EMPTY.bold())),
+                    rightCell(topSortLabel("MEAN", "mean"), 6, topSortStyle("mean")),
+                    rightCell(topSortLabel("MAX", "max"), 6, topSortStyle("max")),
+                    rightCell(topSortLabel("MIN", "min"), 6, topSortStyle("min")),
+                    rightCell(topSortLabel("LAST", "last"), 6, topSortStyle("last")),
+                    rightCell(topSortLabel("DELTA", "delta"), 6, topSortStyle("delta")),
+                    rightCell(topSortLabel("P50", "p50"), 6, topSortStyle("p50")),
+                    rightCell(topSortLabel("P95", "p95"), 6, topSortStyle("p95")),
+                    rightCell(topSortLabel("P99", "p99"), 6, topSortStyle("p99")),
+                    rightCell("TOTAL", 8, Style.EMPTY.bold()),
+                    rightCell("FAIL", 6, Style.EMPTY.bold()),
+                    rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
+                    rightCell("MSG/S", 8, Style.EMPTY.bold()),
+                    rightCell("LOAD", 12, Style.EMPTY.bold()));
+
+            widths = new Constraint[] {
+                    Constraint.fill(),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(8),
+                    Constraint.length(6),
+                    Constraint.length(8),
+                    Constraint.length(8),
+                    Constraint.length(13)
+            };
+        } else {
+            boolean hasPercentiles = infos.stream().anyMatch(i -> i.p50Time >= 0);
+            for (IntegrationInfo info : infos) {
+                boolean isEven = (rowIndex++ % 2 == 0);
+                Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
+
+                if (info.vanishing) {
+                    long elapsed = System.currentTimeMillis() - info.vanishStart;
+                    float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
+                    int gray = (int) (100 * fade);
+                    Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
+
+                    String vanishName = TuiIcons.labeled(TuiIcons.CAMEL, info.name != null ? info.name : "");
+                    rows.add(Row.from(
+                            Cell.from(Span.styled(info.pid, dimStyle)),
+                            Cell.from(Span.styled(vanishName, dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error().dim())),
+                            Cell.from(Span.styled(info.ago != null ? info.ago : "", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle)),
+                            Cell.from(Span.styled("", dimStyle))).style(rowBg));
+                } else {
+                    String stateText = extractState(info.state);
+                    if (stoppingPids.contains(info.pid) || "Terminating".equals(stateText)) {
+                        stateText = "Stopping";
+                    } else if ("Terminated".equals(stateText)) {
+                        stateText = "Stopped";
+                    } else if ("Running".equals(stateText) && info.routeStarted == 0 && info.routeTotal > 0) {
+                        stateText = "Stopped";
+                    }
+                    Style statusStyle = switch (stateText) {
+                        case "Started", "Running" -> Theme.success();
+                        case "Stopped" -> Theme.error();
+                        default -> Theme.warning();
+                    };
+
+                    Style failStyle = info.failed > 0 ? Theme.error().bold() : Style.EMPTY;
+
+                    String sinceLastDisplay = formatSinceLast(info);
+
+                    boolean hasDoc = info.readmeFiles != null && !info.readmeFiles.isEmpty();
+                    if (!hasDoc) {
+                        hasDoc = hasReadmeInSourceDir(info);
+                    }
+                    String platformIcon = TuiIcons.runtimeIcon(info.platform != null ? info.platform : "");
+                    String nameText = platformIcon + " " + (info.name != null ? info.name : "");
+                    List<Span> nameSpans = new ArrayList<>();
+                    nameSpans.add(Span.styled(nameText, Theme.info()));
+                    if (info.devMode) {
+                        nameSpans.add(Span.styled(" [dev]", Theme.label()));
+                    }
+                    if (hasDoc) {
+                        nameSpans.add(Span.styled(" " + TuiIcons.README, Style.EMPTY));
+                    }
+                    Line nameLine = Line.from(nameSpans);
+                    String throughputDisplay = info.throughput;
+                    if (throughputDisplay == null || "0.00".equals(throughputDisplay)) {
+                        LinkedList<Long> tpHist = throughputHistory.get(info.pid);
+                        if (tpHist != null && !tpHist.isEmpty()) {
+                            long tp = tpHist.getLast();
+                            if (tp > 0) {
+                                throughputDisplay = String.format(java.util.Locale.US, "%.2f", (double) tp);
+                            }
+                        }
+                    }
+                    String timingCol;
+                    if (hasPercentiles && info.p50Time >= 0) {
+                        timingCol = info.p50Time + "/" + info.p95Time + "/" + info.p99Time;
+                    } else if (info.exchangesTotal > 0) {
+                        timingCol = info.minTime + "/" + info.maxTime + "/" + info.meanTime;
+                    } else {
+                        timingCol = "";
+                    }
+                    rows.add(Row.from(
+                            Cell.from(info.pid),
+                            Cell.from(nameLine),
+                            Cell.from(info.camelVersion != null ? info.camelVersion : ""),
+                            centerCell(info.ready != null ? info.ready : "", 5),
+                            Cell.from(Span.styled(stateText, statusStyle)),
+                            Cell.from(info.ago != null ? info.ago : ""),
+                            rightCell(info.routeStarted + "/" + info.routeTotal, 7),
+                            rightCell(throughputDisplay != null ? throughputDisplay : "", 8),
+                            rightCell(String.valueOf(info.exchangesTotal), 8),
+                            rightCell(String.valueOf(info.failed), 6, failStyle),
+                            rightCell(String.valueOf(info.inflight), 8),
+                            rightCell(timingCol, 14),
+                            Cell.from(sinceLastDisplay)).style(rowBg));
+                }
+            }
+
+            String timingHeader = hasPercentiles ? "P50/P95/P99" : "MIN/MAX/MEAN";
+            header = Row.from(
+                    Cell.from(Span.styled(sortLabel("PID", "pid"), sortStyle("pid"))),
+                    Cell.from(Span.styled(sortLabel("NAME", "name"), sortStyle("name"))),
+                    Cell.from(Span.styled(sortLabel("VERSION", "version"), sortStyle("version"))),
+                    centerCell("READY", 5, Style.EMPTY.bold()),
+                    Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
+                    Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
+                    rightCell("ROUTE", 7, Style.EMPTY.bold()),
+                    rightCell("MSG/S", 8, Style.EMPTY.bold()),
+                    rightCell(sortLabel("TOTAL", "total"), 8, sortStyle("total")),
+                    rightCell(sortLabel("FAIL", "fail"), 6, sortStyle("fail")),
+                    rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
+                    rightCell(timingHeader, 14, Style.EMPTY.bold()),
+                    Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())));
+
+            widths = new Constraint[] {
+                    Constraint.length(8),
+                    Constraint.fill(),
+                    Constraint.length(16),
+                    Constraint.length(5),
+                    Constraint.length(10),
+                    Constraint.length(8),
+                    Constraint.length(7),
+                    Constraint.length(8),
+                    Constraint.length(8),
+                    Constraint.length(6),
+                    Constraint.length(8),
+                    Constraint.length(14),
+                    Constraint.length(13)
+            };
+        }
 
         Table.Builder tableBuilder = Table.builder()
                 .rows(rows)
                 .header(header)
-                .widths(
-                        Constraint.length(8),
-                        Constraint.fill(),
-                        Constraint.length(16),
-                        Constraint.length(5),
-                        Constraint.length(10),
-                        Constraint.length(8),
-                        Constraint.length(7),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(6),
-                        Constraint.length(8),
-                        Constraint.length(13))
+                .widths(widths)
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(infraCount > 0 ? " Integrations " : " Overview ").build());
@@ -873,6 +1011,7 @@ class OverviewTab extends AbstractTab {
         }
         if (!ctx.isInfraSelected()) {
             hint(spans, "s", "sort");
+            hint(spans, "t", topMode ? "top [on]" : "top [off]");
             int effectiveMode = (chartMode == CHART_SINGLE && ctx.selectedPid == null) ? CHART_ALL : chartMode;
             hint(spans, "a", "chart " + switch (effectiveMode) {
                 case CHART_ALL -> "[all]";
@@ -904,7 +1043,7 @@ class OverviewTab extends AbstractTab {
 
     List<IntegrationInfo> sortedInfos() {
         List<IntegrationInfo> infos = new ArrayList<>(ctx.data.get());
-        infos.sort(this::sortCompare);
+        infos.sort(topMode ? this::topSortCompare : this::sortCompare);
         return infos;
     }
 
@@ -986,6 +1125,32 @@ class OverviewTab extends AbstractTab {
             default -> 0;
         };
         return sortReversed ? -result : result;
+    }
+
+    private int topSortCompare(IntegrationInfo a, IntegrationInfo b) {
+        if (a.vanishing != b.vanishing) {
+            return a.vanishing ? 1 : -1;
+        }
+        int result = switch (topSort) {
+            case "mean" -> Long.compare(b.meanTime, a.meanTime);
+            case "max" -> Long.compare(b.maxTime, a.maxTime);
+            case "min" -> Long.compare(b.minTime, a.minTime);
+            case "last" -> Long.compare(b.lastTime, a.lastTime);
+            case "delta" -> Long.compare(Math.abs(b.deltaTime), Math.abs(a.deltaTime));
+            case "p50" -> Long.compare(b.p50Time, a.p50Time);
+            case "p95" -> Long.compare(b.p95Time, a.p95Time);
+            case "p99" -> Long.compare(b.p99Time, a.p99Time);
+            default -> 0;
+        };
+        return topSortReversed ? -result : result;
+    }
+
+    private String topSortLabel(String label, String column) {
+        return sortLabel(label, column, topSort, topSortReversed);
+    }
+
+    private Style topSortStyle(String column) {
+        return sortStyle(column, topSort);
     }
 
     private int infraSortCompare(InfraInfo a, InfraInfo b) {
@@ -1076,12 +1241,30 @@ class OverviewTab extends AbstractTab {
                 - **INFLIGHT** — Exchanges currently being processed right now. A consistently high inflight count may indicate slow downstream services
                 - **SINCE-LAST** — Time since the last exchange activity, shown as up to three values separated by `/`: started/completed/failed. For example, `1s/3s/1m14s` means the last exchange started 1s ago, the last completed 3s ago, and the last failure was 1m14s ago. Values are omitted when there is no activity of that type
 
+                ## Percentile Latency (P50/P95/P99)
+
+                When **Extended** statistics level is enabled, a timing column shows
+                percentile latencies instead of MIN/MAX/MEAN:
+
+                - **P50** — Median processing time (50th percentile). Half of all exchanges completed faster than this
+                - **P95** — 95th percentile. 95% of exchanges completed faster than this. Useful for SLA monitoring
+                - **P99** — 99th percentile. Only 1% of exchanges were slower. Highlights worst-case tail latency
+
+                Percentiles are computed over a sliding window of recent exchanges, making
+                them more meaningful than MIN/MAX for understanding real-world performance.
+                With very few messages (e.g., 10), P95 and P99 may equal the MAX value since
+                there aren't enough samples to differentiate.
+
+                To enable Extended statistics, set `camel.main.load-statistics-enabled = true`
+                in your application configuration. Without Extended statistics, the column
+                shows MIN/MAX/MEAN instead.
+
                 ## Example Screen
 
                 ```
-                 PID   NAME         VERSION    STATUS   AGE    MSG/S  TOTAL  FAIL  INFLIGHT  SINCE-LAST
-                 73136 camel-demo   4.21.0     Running  2m30s  1.00   142    0     0         0s
-                 64628 my-routes    4.21.0     Running  1h15m  0.50   2850   3     1         2s
+                 PID   NAME         VERSION    STATUS   AGE    MSG/S  TOTAL  FAIL  INFLIGHT  P50/P95/P99  SINCE-LAST
+                 73136 camel-demo   4.21.0     Running  2m30s  1.00   142    0     0           1/10/31    0s
+                 64628 my-routes    4.21.0     Running  1h15m  0.50   2850   3     1           2/15/42    2s
                 ```
 
                 ## Sparkline Chart
@@ -1176,6 +1359,16 @@ class OverviewTab extends AbstractTab {
             row.put("throughput", info.throughput);
             row.put("routeStarted", info.routeStarted);
             row.put("routeTotal", info.routeTotal);
+            row.put("meanTime", info.meanTime);
+            row.put("maxTime", info.maxTime);
+            row.put("minTime", info.minTime);
+            row.put("lastTime", info.lastTime);
+            row.put("deltaTime", info.deltaTime);
+            if (info.p50Time >= 0) {
+                row.put("p50Time", info.p50Time);
+                row.put("p95Time", info.p95Time);
+                row.put("p99Time", info.p99Time);
+            }
             rows.add(row);
         }
         result.put("rows", rows);

@@ -1395,13 +1395,11 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        // Route and Top labels are the same display width so toggling Top mode does not shift the bar.
-        String routesLabel = tabRegistry.routesTab().isTopMode() ? " Top " : "Route";
         Line[] labels = {
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "3", "Diagram")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "4", routesLabel)),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "4", "Route")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "5", "Endpoint")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HTTP, "6", "HTTP")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HEALTH, "7", "Health")),

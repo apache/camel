@@ -53,7 +53,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 class RoutesTab extends AbstractTab {
 
     private static final String[] ROUTE_SORT_COLUMNS = { "name", "from", "status", "total", "failed" };
-    private static final String[] ROUTE_TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta" };
+    private static final String[] ROUTE_TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta", "p50", "p95", "p99" };
 
     // Route sort state
     private String routeSort = "name";
@@ -88,10 +88,6 @@ class RoutesTab extends AbstractTab {
 
     RoutesTab(MonitorContext ctx) {
         super(ctx);
-    }
-
-    boolean isTopMode() {
-        return routeTopMode;
     }
 
     boolean isShowDiagram() {
@@ -577,11 +573,37 @@ class RoutesTab extends AbstractTab {
                         rightCell(route.total > 0 ? String.valueOf(route.lastTime) : "", 6),
                         rightCell(route.deltaTime != 0 ? String.valueOf(route.deltaTime) : "", 6,
                                 topDeltaStyle(route.deltaTime)),
+                        rightCell(route.p50Time >= 0 ? String.valueOf(route.p50Time) : "", 6),
+                        rightCell(route.p95Time >= 0 ? String.valueOf(route.p95Time) : "", 6),
+                        rightCell(route.p99Time >= 0 ? String.valueOf(route.p99Time) : "", 6),
                         rightCell(String.valueOf(route.total), 8),
                         rightCell(String.valueOf(route.failed), 6, failStyle),
                         rightCell(String.valueOf(route.inflight), 8),
                         rightCell(route.throughput != null ? route.throughput : "", 8),
                         rightCell(formatLoad(route.load01, route.load05, route.load15), 12)));
+            }
+
+            IntegrationInfo selTop = ctx.findSelectedIntegration();
+            if (selTop != null && selTop.exchangesTotal > 0) {
+                Style ts = Theme.label();
+                routeRows.add(Row.from(
+                        Cell.from(Span.styled("TOTAL", ts)),
+                        Cell.from(""),
+                        rightCell(String.valueOf(selTop.meanTime), 6, ts),
+                        rightCell(String.valueOf(selTop.maxTime), 6, ts),
+                        rightCell(String.valueOf(selTop.minTime), 6, ts),
+                        rightCell(String.valueOf(selTop.lastTime), 6, ts),
+                        rightCell(selTop.deltaTime != 0 ? String.valueOf(selTop.deltaTime) : "", 6, ts),
+                        rightCell(selTop.p50Time >= 0 ? String.valueOf(selTop.p50Time) : "", 6, ts),
+                        rightCell(selTop.p95Time >= 0 ? String.valueOf(selTop.p95Time) : "", 6, ts),
+                        rightCell(selTop.p99Time >= 0 ? String.valueOf(selTop.p99Time) : "", 6, ts),
+                        rightCell(String.valueOf(selTop.exchangesTotal), 8, ts),
+                        rightCell(String.valueOf(selTop.failed), 6,
+                                selTop.failed > 0 ? Theme.error().bold() : ts),
+                        rightCell(String.valueOf(selTop.inflight), 8, ts),
+                        rightCell(selTop.throughput != null ? selTop.throughput : "", 8, ts),
+                        rightCell(TuiHelper.formatLoad(
+                                selTop.inflightLoad01, selTop.inflightLoad05, selTop.inflightLoad15), 12, ts)));
             }
 
             routeTable = Table.builder()
@@ -594,6 +616,9 @@ class RoutesTab extends AbstractTab {
                             rightCell(routeTopSortLabel("MIN", "min"), 6, routeTopSortStyle("min")),
                             rightCell(routeTopSortLabel("LAST", "last"), 6, routeTopSortStyle("last")),
                             rightCell(routeTopSortLabel("DELTA", "delta"), 6, routeTopSortStyle("delta")),
+                            rightCell(routeTopSortLabel("P50", "p50"), 6, routeTopSortStyle("p50")),
+                            rightCell(routeTopSortLabel("P95", "p95"), 6, routeTopSortStyle("p95")),
+                            rightCell(routeTopSortLabel("P99", "p99"), 6, routeTopSortStyle("p99")),
                             rightCell("TOTAL", 8, Style.EMPTY.bold()),
                             rightCell("FAIL", 6, Style.EMPTY.bold()),
                             rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
@@ -607,6 +632,9 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(6),
                             Constraint.length(6),
                             Constraint.length(6),
+                            Constraint.length(6),
+                            Constraint.length(6),
+                            Constraint.length(6),
                             Constraint.length(8),
                             Constraint.length(6),
                             Constraint.length(8),
@@ -615,9 +643,11 @@ class RoutesTab extends AbstractTab {
                     .highlightStyle(Theme.selectionBg())
                     .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                            .title(" Top Routes ").build())
+                            .title(" Routes ").build())
                     .build();
         } else {
+            boolean hasPercentiles = sortedRoutes.stream().anyMatch(r -> r.p50Time >= 0);
+
             List<Row> routeRows = new ArrayList<>();
             for (RouteInfo route : sortedRoutes) {
                 Style stateStyle = "Started".equals(route.state)
@@ -630,6 +660,15 @@ class RoutesTab extends AbstractTab {
 
                 String sinceLastRoute = formatSinceLastRoute(route);
 
+                String timingCol;
+                if (hasPercentiles && route.p50Time >= 0) {
+                    timingCol = route.p50Time + "/" + route.p95Time + "/" + route.p99Time;
+                } else if (route.total > 0) {
+                    timingCol = route.minTime + "/" + route.maxTime + "/" + route.meanTime;
+                } else {
+                    timingCol = "";
+                }
+
                 routeRows.add(Row.from(
                         Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                         Cell.from(routeFromLabel(route)),
@@ -640,11 +679,35 @@ class RoutesTab extends AbstractTab {
                         rightCell(String.valueOf(route.total), 8),
                         rightCell(String.valueOf(route.failed), 6, failStyle),
                         rightCell(String.valueOf(route.inflight), 8),
-                        rightCell(route.total > 0
-                                ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
-                                : "", 14),
+                        rightCell(timingCol, 14),
                         Cell.from(sinceLastRoute)));
             }
+
+            IntegrationInfo selDef = ctx.findSelectedIntegration();
+            if (selDef != null && selDef.exchangesTotal > 0) {
+                Style ts = Theme.label();
+                String totalTimingCol;
+                if (hasPercentiles && selDef.p50Time >= 0) {
+                    totalTimingCol = selDef.p50Time + "/" + selDef.p95Time + "/" + selDef.p99Time;
+                } else {
+                    totalTimingCol = selDef.minTime + "/" + selDef.maxTime + "/" + selDef.meanTime;
+                }
+                routeRows.add(Row.from(
+                        Cell.from(Span.styled("TOTAL", ts)),
+                        Cell.from(""),
+                        Cell.from(""),
+                        Cell.from(""),
+                        Cell.from(""),
+                        rightCell(selDef.throughput != null ? selDef.throughput : "", 8, ts),
+                        rightCell(String.valueOf(selDef.exchangesTotal), 8, ts),
+                        rightCell(String.valueOf(selDef.failed), 6,
+                                selDef.failed > 0 ? Theme.error().bold() : ts),
+                        rightCell(String.valueOf(selDef.inflight), 8, ts),
+                        rightCell(totalTimingCol, 14, ts),
+                        Cell.from("")));
+            }
+
+            String timingHeader = hasPercentiles ? "P50/P95/P99" : "MIN/MAX/MEAN";
 
             routeTable = Table.builder()
                     .rows(routeRows)
@@ -658,7 +721,7 @@ class RoutesTab extends AbstractTab {
                             rightCell(routeSortLabel("TOTAL", "total"), 8, routeSortStyle("total")),
                             rightCell(routeSortLabel("FAIL", "failed"), 6, routeSortStyle("failed")),
                             rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                            rightCell("MIN/MAX/MEAN", 14, Style.EMPTY.bold()),
+                            rightCell(timingHeader, 14, Style.EMPTY.bold()),
                             Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold()))))
                     .widths(
                             Constraint.length(24),
@@ -885,6 +948,19 @@ class RoutesTab extends AbstractTab {
                 lines.add(Line.from(
                         Span.styled(" Min:  ", Theme.muted()),
                         Span.raw(String.format("%" + tw + "d ms", route.minTime))));
+                if (route.p50Time >= 0) {
+                    int pw = numWidth(route.p50Time, route.p95Time, route.p99Time);
+                    lines.add(Line.from(Span.raw("")));
+                    lines.add(Line.from(
+                            Span.styled(" p50:  ", Theme.muted()),
+                            Span.raw(String.format("%" + pw + "d ms", route.p50Time))));
+                    lines.add(Line.from(
+                            Span.styled(" p95:  ", Theme.muted()),
+                            Span.raw(String.format("%" + pw + "d ms", route.p95Time))));
+                    lines.add(Line.from(
+                            Span.styled(" p99:  ", Theme.muted()),
+                            Span.raw(String.format("%" + pw + "d ms", route.p99Time))));
+                }
             }
 
             if (route.sinceLastCompleted != null || route.sinceLastFailed != null) {
@@ -1025,6 +1101,20 @@ class RoutesTab extends AbstractTab {
                     lines.add(Line.from(
                             Span.styled(" Last: ", Style.EMPTY.dim()),
                             Span.raw(String.format("%" + tw + "d ms", stat.lastProcessingTime))));
+                    if (stat.p50ProcessingTime >= 0) {
+                        int pw = numWidth(stat.p50ProcessingTime, stat.p95ProcessingTime,
+                                stat.p99ProcessingTime);
+                        lines.add(Line.from(Span.raw("")));
+                        lines.add(Line.from(
+                                Span.styled(" p50:  ", Style.EMPTY.dim()),
+                                Span.raw(String.format("%" + pw + "d ms", stat.p50ProcessingTime))));
+                        lines.add(Line.from(
+                                Span.styled(" p95:  ", Style.EMPTY.dim()),
+                                Span.raw(String.format("%" + pw + "d ms", stat.p95ProcessingTime))));
+                        lines.add(Line.from(
+                                Span.styled(" p99:  ", Style.EMPTY.dim()),
+                                Span.raw(String.format("%" + pw + "d ms", stat.p99ProcessingTime))));
+                    }
 
                     if (stat.lastCompletedExchangeTimestamp > 0 || stat.lastFailedExchangeTimestamp > 0) {
                         long now = System.currentTimeMillis();
@@ -1118,6 +1208,9 @@ class RoutesTab extends AbstractTab {
                         rightCell(proc.total > 0 ? String.valueOf(proc.lastTime) : "", 6),
                         rightCell(proc.deltaTime != 0 ? String.valueOf(proc.deltaTime) : "", 6,
                                 topDeltaStyle(proc.deltaTime)),
+                        rightCell(proc.p50Time >= 0 ? String.valueOf(proc.p50Time) : "", 6),
+                        rightCell(proc.p95Time >= 0 ? String.valueOf(proc.p95Time) : "", 6),
+                        rightCell(proc.p99Time >= 0 ? String.valueOf(proc.p99Time) : "", 6),
                         rightCell(String.valueOf(proc.total), 8),
                         rightCell(String.valueOf(proc.failed), 6,
                                 proc.failed > 0 ? Theme.error() : Style.EMPTY),
@@ -1135,6 +1228,9 @@ class RoutesTab extends AbstractTab {
                             rightCell(routeTopSortLabel("MIN", "min"), 6, routeTopSortStyle("min")),
                             rightCell(routeTopSortLabel("LAST", "last"), 6, routeTopSortStyle("last")),
                             rightCell(routeTopSortLabel("DELTA", "delta"), 6, routeTopSortStyle("delta")),
+                            rightCell(routeTopSortLabel("P50", "p50"), 6, routeTopSortStyle("p50")),
+                            rightCell(routeTopSortLabel("P95", "p95"), 6, routeTopSortStyle("p95")),
+                            rightCell(routeTopSortLabel("P99", "p99"), 6, routeTopSortStyle("p99")),
                             rightCell("TOTAL", 8, Style.EMPTY.bold()),
                             rightCell("FAIL", 6, Style.EMPTY.bold()),
                             rightCell("INFLIGHT", 8, Style.EMPTY.bold())))
@@ -1147,17 +1243,31 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(6),
                             Constraint.length(6),
                             Constraint.length(6),
+                            Constraint.length(6),
+                            Constraint.length(6),
+                            Constraint.length(6),
                             Constraint.length(8),
                             Constraint.length(6),
                             Constraint.length(9))
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                            .title(" Top Processors [" + route.routeId + "] ").build())
+                            .title(" Processors [" + route.routeId + "] ").build())
                     .build();
         } else {
+            boolean hasProcPercentiles = route.p50Time >= 0
+                    || route.processors.stream().anyMatch(p -> p.p50Time >= 0);
+
             List<Row> rows = new ArrayList<>();
 
             // Synthetic top row representing the route itself
             Style routeStyle = route.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
+            String routeTimingCol;
+            if (hasProcPercentiles && route.p50Time >= 0) {
+                routeTimingCol = route.p50Time + "/" + route.p95Time + "/" + route.p99Time;
+            } else if (route.total > 0) {
+                routeTimingCol = route.minTime + "/" + route.maxTime + "/" + route.meanTime;
+            } else {
+                routeTimingCol = "";
+            }
             rows.add(Row.from(
                     Cell.from("   route"),
                     Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
@@ -1166,14 +1276,21 @@ class RoutesTab extends AbstractTab {
                     rightCell(String.valueOf(route.failed), 6,
                             route.failed > 0 ? Theme.error() : Style.EMPTY),
                     rightCell(String.valueOf(route.inflight), 8),
-                    rightCell(route.total > 0
-                            ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
-                            : "", 14),
+                    rightCell(routeTimingCol, 14),
                     Cell.from("")));
 
             for (ProcessorInfo proc : route.processors) {
                 String indent = "  ".repeat(proc.level);
                 Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
+
+                String procTimingCol;
+                if (hasProcPercentiles && proc.p50Time >= 0) {
+                    procTimingCol = proc.p50Time + "/" + proc.p95Time + "/" + proc.p99Time;
+                } else if (proc.total > 0) {
+                    procTimingCol = proc.minTime + "/" + proc.maxTime + "/" + proc.meanTime;
+                } else {
+                    procTimingCol = "";
+                }
 
                 rows.add(Row.from(
                         Cell.from("   " + (proc.processor != null ? proc.processor : "")),
@@ -1183,11 +1300,10 @@ class RoutesTab extends AbstractTab {
                         rightCell(String.valueOf(proc.failed), 6,
                                 proc.failed > 0 ? Theme.error() : Style.EMPTY),
                         rightCell(String.valueOf(proc.inflight), 8),
-                        rightCell(proc.total > 0
-                                ? proc.minTime + "/" + proc.maxTime + "/" + proc.meanTime
-                                : "", 14),
+                        rightCell(procTimingCol, 14),
                         Cell.from("")));
             }
+            String procTimingHeader = hasProcPercentiles ? "P50/P95/P99" : "MIN/MAX/MEAN";
 
             table = Table.builder()
                     .rows(rows)
@@ -1198,7 +1314,7 @@ class RoutesTab extends AbstractTab {
                             rightCell("TOTAL", 8, Style.EMPTY.bold()),
                             rightCell("FAIL", 6, Style.EMPTY.bold()),
                             rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                            rightCell("MIN/MAX/MEAN", 14, Style.EMPTY.bold()),
+                            rightCell(procTimingHeader, 14, Style.EMPTY.bold()),
                             Cell.from("")))
                     .widths(
                             Constraint.length(20),
@@ -1256,6 +1372,9 @@ class RoutesTab extends AbstractTab {
             case "min" -> Long.compare(b.minTime, a.minTime);
             case "last" -> Long.compare(b.lastTime, a.lastTime);
             case "delta" -> Long.compare(b.deltaTime, a.deltaTime);
+            case "p50" -> Long.compare(b.p50Time, a.p50Time);
+            case "p95" -> Long.compare(b.p95Time, a.p95Time);
+            case "p99" -> Long.compare(b.p99Time, a.p99Time);
             default -> 0;
         };
         return routeTopSortReversed ? -result : result;
@@ -1268,6 +1387,9 @@ class RoutesTab extends AbstractTab {
             case "min" -> Long.compare(b.minTime, a.minTime);
             case "last" -> Long.compare(b.lastTime, a.lastTime);
             case "delta" -> Long.compare(b.deltaTime, a.deltaTime);
+            case "p50" -> Long.compare(b.p50Time, a.p50Time);
+            case "p95" -> Long.compare(b.p95Time, a.p95Time);
+            case "p99" -> Long.compare(b.p99Time, a.p99Time);
             default -> 0;
         };
         return routeTopSortReversed ? -result : result;
@@ -1280,6 +1402,9 @@ class RoutesTab extends AbstractTab {
             case "min" -> proc.minTime;
             case "last" -> proc.lastTime;
             case "delta" -> Math.abs(proc.deltaTime);
+            case "p50" -> proc.p50Time;
+            case "p95" -> proc.p95Time;
+            case "p99" -> proc.p99Time;
             default -> proc.meanTime;
         };
     }
@@ -1590,13 +1715,33 @@ class RoutesTab extends AbstractTab {
                 - **MAX** — Slowest exchange processing time in milliseconds. A very high MAX compared to MEAN suggests occasional slow outliers
                 - **SINCE-LAST** — Time since the last exchange activity on this route, shown as up to three values separated by `/`: started/completed/failed (e.g., `1s/3s/1m14s`). Values are omitted when there is no activity of that type
 
+                ## Percentile Latency (P50/P95/P99)
+
+                When **Extended** statistics level is enabled, the timing columns show
+                percentile latencies instead of MIN/MEAN/MAX — both for routes and processors:
+
+                - **P50** — Median processing time (50th percentile). Half of all exchanges completed faster than this
+                - **P95** — 95th percentile. 95% of exchanges completed faster than this. Useful for SLA monitoring
+                - **P99** — 99th percentile. Only 1% of exchanges were slower. Highlights worst-case tail latency
+
+                Percentiles are computed over a sliding window of recent exchanges, making
+                them more meaningful than MIN/MAX for understanding real-world performance.
+                With very few messages (e.g., 10), P95 and P99 may equal the MAX value since
+                there aren't enough samples to differentiate.
+
+                To enable Extended statistics, set `camel.main.load-statistics-enabled = true`
+                in your application configuration. Without Extended statistics, the columns
+                show MIN/MEAN/MAX instead.
+
+                The TOTAL summary row shows the overall percentiles across all routes.
+
                 ## Example Screen
 
                 ```
-                 ROUTE           FROM                  STATUS   COVER  MSG/S  TOTAL  FAIL  INFLIGHT  MIN  MEAN  MAX  SINCE-LAST
-                 timer-to-log    timer://hello?p=2000  Started  5/5    0.50   142    0     0         0    0     2    1s
-                 timer-to-seda   timer://pump?p=3000   Started  2/2    0.33   95     0     0         0    0     2    2s
-                 seda-consumer   seda://queue          Started  1/1    0.33   95     0     0         0    0     0    2s
+                 ROUTE           FROM                  STATUS   COVER  MSG/S  TOTAL  FAIL  INFLIGHT  P50/P95/P99  SINCE-LAST
+                 timer-to-log    timer://hello?p=2000  Started  5/5    0.50   142    0     0           1/10/31    1s
+                 timer-to-seda   timer://pump?p=3000   Started  2/2    0.33   95     0     0           0/1/2      2s
+                 seda-consumer   seda://queue          Started  1/1    0.33   95     0     0           0/0/1      2s
                 ```
 
                 ## Top Mode
@@ -1726,6 +1871,11 @@ class RoutesTab extends AbstractTab {
             row.put("min", ri.minTime);
             row.put("last", ri.lastTime);
             row.put("throughput", ri.throughput);
+            if (ri.p50Time >= 0) {
+                row.put("p50", ri.p50Time);
+                row.put("p95", ri.p95Time);
+                row.put("p99", ri.p99Time);
+            }
             if (ri.group != null) {
                 row.put("group", ri.group);
             }

@@ -98,8 +98,16 @@ final class StatusParser {
             info.inflightLoad01 = objToString(stats.get("load01"));
             info.inflightLoad05 = objToString(stats.get("load05"));
             info.inflightLoad15 = objToString(stats.get("load15"));
+            info.meanTime = Math.max(0, objToLong(stats.get("meanProcessingTime")));
+            info.maxTime = Math.max(0, objToLong(stats.get("maxProcessingTime")));
+            info.minTime = Math.max(0, objToLong(stats.get("minProcessingTime")));
+            info.p50Time = objToLong(stats.get("p50ProcessingTime"));
+            info.p95Time = objToLong(stats.get("p95ProcessingTime"));
+            info.p99Time = objToLong(stats.get("p99ProcessingTime"));
             info.last = objToString(stats.get("lastProcessingTime"));
+            info.lastTime = Math.max(0, objToLong(stats.get("lastProcessingTime")));
             info.delta = objToString(stats.get("deltaProcessingTime"));
+            info.deltaTime = objToLong(stats.get("deltaProcessingTime"));
             long tsStarted = objToLong(stats.get("lastCreatedExchangeTimestamp"));
             if (tsStarted > 0) {
                 info.sinceLastStarted = TimeUtils.printSince(tsStarted);
@@ -185,6 +193,9 @@ final class StatusParser {
                     ri.maxTime = Math.max(0, objToLong(rs.get("maxProcessingTime")));
                     ri.lastTime = Math.max(0, objToLong(rs.get("lastProcessingTime")));
                     ri.deltaTime = objToLong(rs.get("deltaProcessingTime"));
+                    ri.p50Time = objToLong(rs.get("p50ProcessingTime"));
+                    ri.p95Time = objToLong(rs.get("p95ProcessingTime"));
+                    ri.p99Time = objToLong(rs.get("p99ProcessingTime"));
                     ri.load01 = objToString(rs.get("load01"));
                     ri.load05 = objToString(rs.get("load05"));
                     ri.load15 = objToString(rs.get("load15"));
@@ -221,6 +232,9 @@ final class StatusParser {
                             pi.maxTime = Math.max(0, objToLong(ps.get("maxProcessingTime")));
                             pi.lastTime = objToLong(ps.get("lastProcessingTime"));
                             pi.deltaTime = objToLong(ps.get("deltaProcessingTime"));
+                            pi.p50Time = objToLong(ps.get("p50ProcessingTime"));
+                            pi.p95Time = objToLong(ps.get("p95ProcessingTime"));
+                            pi.p99Time = objToLong(ps.get("p99ProcessingTime"));
                             pi.inflight = objToLong(ps.get("exchangesInflight"));
                             long tsStarted = objToLong(ps.get("lastCreatedExchangeTimestamp"));
                             if (tsStarted > 0) {
