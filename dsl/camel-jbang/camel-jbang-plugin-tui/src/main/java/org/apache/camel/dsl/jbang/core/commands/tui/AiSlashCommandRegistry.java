@@ -58,7 +58,10 @@ final class AiSlashCommandRegistry {
                 AiSlashCommandRegistry::executeModel));
         commands.add(new Descriptor(
                 "clear", List.of("c"), "Clear the conversation", null, false,
-                (context, arguments) -> CommandResult.system("Conversation cleared")));
+                (context, arguments) -> {
+                    context.clearConversation();
+                    return CommandResult.system("");
+                }));
         commands.add(new Descriptor(
                 "close", List.of(), "Close the AI panel", null, false,
                 (context, arguments) -> {
@@ -79,13 +82,14 @@ final class AiSlashCommandRegistry {
                 }));
         commands.add(new Descriptor(
                 "run", List.of("r"), "<camel run args>", "<files...> [--dev] [--port=8080] [...]", true,
-                (context, arguments) -> CommandResult.async(new AiCliCommandExecutor.Request("camel run"))));
+                (context, arguments) -> CommandResult.async(AiCliCommandExecutor.Request.run(arguments))));
         commands.add(new Descriptor(
                 "infra", List.of("i"), "Manage Camel infrastructure", "<camel infra args>", true,
-                (context, arguments) -> CommandResult.async(new AiCliCommandExecutor.Request("camel infra"))));
+                (context, arguments) -> CommandResult.async(AiCliCommandExecutor.Request.infra(arguments))));
         commands.add(new Descriptor(
                 "send", List.of("s"), "Send a message to an endpoint", SEND_USAGE, true,
-                (context, arguments) -> CommandResult.async(new AiCliCommandExecutor.Request("camel send"))));
+                (context, arguments) -> CommandResult.async(
+                        AiCliCommandExecutor.Request.send(context.selectedProcessName(), parseSend(arguments)))));
         return new AiSlashCommandRegistry(commands);
     }
 
@@ -183,9 +187,16 @@ final class AiSlashCommandRegistry {
             context.switchModel(arguments);
             return CommandResult.system("Switched model to " + arguments);
         }
-        String models = String.join(", ", context.availableModels());
-        return CommandResult
-                .system("Current model: " + context.currentModel() + (models.isBlank() ? "" : "\nAvailable models: " + models));
+        List<String> models = context.availableModels();
+        if (models.isEmpty()) {
+            return CommandResult.system("Current model: " + context.currentModel());
+        }
+        StringBuilder text = new StringBuilder("Current model: ").append(context.currentModel())
+                .append("\nAvailable models:");
+        for (String model : models) {
+            text.append("\n- ").append(model);
+        }
+        return CommandResult.system(text.toString());
     }
 
     private static int firstWhitespace(String value) {

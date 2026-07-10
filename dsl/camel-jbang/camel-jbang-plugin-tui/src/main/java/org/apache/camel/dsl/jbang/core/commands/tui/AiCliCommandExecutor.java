@@ -101,7 +101,9 @@ final class AiCliCommandExecutor {
             interrupted = command.cancelled.get() || Thread.currentThread().isInterrupted();
         } finally {
             command.result.complete(
-                    new Result(command.request.displayText(), exitCode, output.toString(), elapsedMillis(command.startedAtNanos), interrupted));
+                    new Result(
+                            command.request.displayText(), exitCode, output.toString(), elapsedMillis(command.startedAtNanos),
+                            interrupted));
             synchronized (this) {
                 if (activeCommand == command) {
                     activeCommand = null;

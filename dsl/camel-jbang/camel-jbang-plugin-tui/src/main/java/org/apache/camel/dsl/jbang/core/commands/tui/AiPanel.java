@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.tamboui.layout.Constraint;
@@ -97,6 +98,15 @@ class AiPanel {
     private String initError;
     private long thinkingStartTime;
     private volatile int sessionTotalTokens;
+    private String thinkingVerb = "thinking";
+
+    // Slash commands
+    private final AiSlashCommandRegistry slashCommands = AiSlashCommandRegistry.defaults();
+    private AiSlashCommandContext slashCommandContext = new PanelSlashCommandContext();
+    private final AiCliCommandExecutor cliCommandExecutor = new AiCliCommandExecutor();
+    private volatile CompletableFuture<AiCliCommandExecutor.Result> activeCliCommand;
+    private Runnable exitCallback;
+    private Runnable openProviderSwitchCallback;
 
     // Activity log for AI Log popup
     private final List<LogEntry> activityLog = new ArrayList<>();
@@ -265,20 +275,15 @@ class AiPanel {
             return true;
         }
         if (thinking.get()) {
-            if (ke.isCtrlC()) {
-                Thread t = agentThread;
-                if (t != null) {
-                    t.interrupt();
-                }
-                thinking.set(false);
-                conversation.add(new ConversationEntry("system", "(cancelled)"));
+            if (ke.isCtrlC() || ke.isKey(KeyCode.ESCAPE)) {
+                interruptBusyOperation();
                 return true;
             }
             return true;
         }
         if (ke.isKey(KeyCode.ENTER)) {
             if (!inputBuffer.isEmpty()) {
-                submitQuestion();
+                submitInput();
             }
             return true;
         }
@@ -323,15 +328,93 @@ class AiPanel {
         return true;
     }
 
-    private void submitQuestion() {
-        String question = inputBuffer.toString().trim();
+    private void submitInput() {
+        String input = inputBuffer.toString().trim();
         inputBuffer.setLength(0);
         cursorPos = 0;
         scrollOffset = 0;
+        if (input.startsWith("/")) {
+            executeSlashCommand(input);
+        } else {
+            submitQuestion(input);
+        }
+    }
 
+    private void executeSlashCommand(String input) {
+        AiSlashCommandRegistry.CommandResult result = slashCommands.execute(input, slashCommandContext);
+        if (result.cliRequest() != null) {
+            AiCliCommandExecutor.Request request = result.cliRequest();
+            conversation.add(new ConversationEntry("system", "Running " + request.displayText()));
+            thinkingVerb = "Running command";
+            thinkingStartTime = System.currentTimeMillis();
+            thinking.set(true);
+            CompletableFuture<AiCliCommandExecutor.Result> future = slashCommandContext.executeCli(request);
+            activeCliCommand = future;
+            future.whenComplete(this::handleCliCompletion);
+            return;
+        }
+        if (result.text() != null && !result.text().isBlank()) {
+            conversation.add(new ConversationEntry(result.role(), result.text()));
+        }
+    }
+
+    private void handleCliCompletion(AiCliCommandExecutor.Result cliResult, Throwable error) {
+        CompletableFuture<AiCliCommandExecutor.Result> future = activeCliCommand;
+        synchronized (this) {
+            if (future == null || activeCliCommand != future) {
+                return;
+            }
+            activeCliCommand = null;
+        }
+        thinking.set(false);
+        thinkingVerb = "thinking";
+
+        if (error != null) {
+            String displayText = cliResult != null ? cliResult.displayText() : "command";
+            conversation.add(new ConversationEntry("error", "Failed to run " + displayText + ": " + error.getMessage()));
+            scrollOffset = 0;
+            return;
+        }
+
+        if (cliResult.exitCode() == 0) {
+            conversation.add(new ConversationEntry(
+                    "system",
+                    cliResult.displayText() + " completed in " + cliResult.elapsedMs() + " ms\n\n" + cliResult.output()));
+        } else {
+            conversation.add(new ConversationEntry(
+                    "error",
+                    cliResult.displayText() + " exit code " + cliResult.exitCode() + "\n\n" + cliResult.output()));
+        }
+        scrollOffset = 0;
+    }
+
+    private void interruptBusyOperation() {
+        if (activeCliCommand != null) {
+            activeCliCommand = null;
+            slashCommandContext.cancelCli();
+            conversation.add(new ConversationEntry("system", "(command cancelled)"));
+            thinking.set(false);
+            thinkingVerb = "thinking";
+        } else {
+            stopAgentThread();
+            conversation.add(new ConversationEntry("system", "(cancelled)"));
+        }
+    }
+
+    private void stopAgentThread() {
+        Thread t = agentThread;
+        if (t != null) {
+            t.interrupt();
+        }
+        thinking.set(false);
+        thinkingVerb = "thinking";
+    }
+
+    private void submitQuestion(String question) {
         conversation.add(new ConversationEntry("user", question));
         log(LogLevel.QUESTION, "Question", question);
         thinkingStartTime = System.currentTimeMillis();
+        thinkingVerb = "thinking";
         thinking.set(true);
 
         // rebuild tools if target process changed
@@ -526,7 +609,7 @@ class AiPanel {
         if (thinking.get()) {
             long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
             long dots = (System.currentTimeMillis() / 500) % 4;
-            md.append("*" + TuiIcons.THINKING + " thinking");
+            md.append("*" + TuiIcons.THINKING + " " + thinkingVerb);
             if (elapsed > 0) {
                 md.append(" (").append(elapsed).append("s)");
             }
@@ -655,6 +738,7 @@ class AiPanel {
             if (!thinking.get()) {
                 TuiHelper.hint(spans, "Enter", "send");
             } else {
+                TuiHelper.hint(spans, "Esc", "cancel");
                 TuiHelper.hint(spans, "Ctrl+C", "cancel");
             }
         }
@@ -848,6 +932,110 @@ class AiPanel {
         // so the LLM's line-by-line formatting is preserved in MarkdownView.
         // Double newlines (paragraph breaks) are left as-is.
         return text.replaceAll("(?<!\n)\n(?!\n)", "  \n");
+    }
+
+    void clearConversation() {
+        conversation.clear();
+        activityLog.clear();
+        inputBuffer.setLength(0);
+        cursorPos = 0;
+        scrollOffset = 0;
+        usageHistory.clear();
+        statsScrollOffset = 0;
+        sessionTotalTokens = 0;
+    }
+
+    void setClientForTesting(LlmClient client) {
+        this.client = client;
+        this.initError = null;
+        this.messages = new ArrayList<>();
+    }
+
+    void setSlashCommandContextForTesting(AiSlashCommandContext context) {
+        this.slashCommandContext = context;
+    }
+
+    AiSlashCommandRegistry slashCommandRegistryForTesting() {
+        return slashCommands;
+    }
+
+    List<ConversationEntry> conversationForTesting() {
+        return List.copyOf(conversation);
+    }
+
+    int sessionTotalTokensForTesting() {
+        return sessionTotalTokens;
+    }
+
+    boolean isThinkingForTesting() {
+        return thinking.get();
+    }
+
+    void setExitCallbackForTestingOrRuntime(Runnable callback) {
+        this.exitCallback = callback;
+    }
+
+    void setOpenProviderSwitchCallback(Runnable callback) {
+        this.openProviderSwitchCallback = callback;
+    }
+
+    private final class PanelSlashCommandContext implements AiSlashCommandContext {
+
+        @Override
+        public void closePanel() {
+            close();
+        }
+
+        @Override
+        public void requestExit() {
+            if (exitCallback != null) {
+                exitCallback.run();
+            }
+        }
+
+        @Override
+        public void openProviderSwitch() {
+            if (openProviderSwitchCallback != null) {
+                openProviderSwitchCallback.run();
+            }
+        }
+
+        @Override
+        public void clearConversation() {
+            AiPanel.this.clearConversation();
+        }
+
+        @Override
+        public String currentModel() {
+            return client != null && client.model() != null ? client.model() : "unknown";
+        }
+
+        @Override
+        public List<String> availableModels() {
+            return List.of();
+        }
+
+        @Override
+        public void switchModel(String model) {
+            if (client != null) {
+                client.withModel(model);
+            }
+        }
+
+        @Override
+        public String selectedProcessName() {
+            return ctx != null ? ctx.selectedName() : null;
+        }
+
+        @Override
+        public CompletableFuture<AiCliCommandExecutor.Result> executeCli(AiCliCommandExecutor.Request request) {
+            return cliCommandExecutor.executeAsync(request);
+        }
+
+        @Override
+        public void cancelCli() {
+            cliCommandExecutor.cancel();
+        }
     }
 
 }

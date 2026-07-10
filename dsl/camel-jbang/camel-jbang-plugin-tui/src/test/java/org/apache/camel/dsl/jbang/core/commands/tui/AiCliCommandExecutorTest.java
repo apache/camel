@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.lang.reflect.Field;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -29,6 +29,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
+import picocli.CommandLine.Command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -117,22 +118,25 @@ class AiCliCommandExecutorTest {
 
     @Test
     void productionInvokerRestoresPrinterAndDoesNotQuitMain() throws Exception {
-        NonExitingCamelJBangMain main = new NonExitingCamelJBangMain();
-        Printer originalPrinter = new Printer.SystemOutPrinter();
-        main.setOut(originalPrinter);
-        CamelJBangMain.getCommandLine().addSubcommand("tui-test", new CommandLine((Callable<Integer>) () -> {
-            main.getOut().println("captured command output");
-            return 0;
-        }));
+        CamelJBangMain main = new CamelJBangMain();
+        Printer originalPrinter = main.getOut();
+        CommandLine commandLine = new CommandLine(main)
+                .addSubcommand("tui-test", new CommandLine(new TuiTestCommand(main)));
+        Field field = CamelJBangMain.class.getDeclaredField("commandLine");
+        field.setAccessible(true);
+        CommandLine previous = (CommandLine) field.get(null);
+        field.set(null, commandLine);
+        try {
+            AiCliCommandExecutor.Result result = new AiCliCommandExecutor()
+                    .executeAsync(new AiCliCommandExecutor.Request(List.of("tui-test"), "camel tui-test"))
+                    .get(5, TimeUnit.SECONDS);
 
-        AiCliCommandExecutor.Result result = new AiCliCommandExecutor()
-                .executeAsync(new AiCliCommandExecutor.Request(List.of("tui-test"), "camel tui-test"))
-                .get(5, TimeUnit.SECONDS);
-
-        assertEquals(0, result.exitCode());
-        assertEquals("captured command output\n", result.output());
-        assertSame(originalPrinter, main.getOut());
-        assertFalse(main.quitCalled);
+            assertEquals(0, result.exitCode());
+            assertEquals("captured command output\n", result.output());
+            assertSame(originalPrinter, main.getOut());
+        } finally {
+            field.set(null, previous);
+        }
     }
 
     @Test
@@ -215,13 +219,18 @@ class AiCliCommandExecutorTest {
         }
     }
 
-    private static final class NonExitingCamelJBangMain extends CamelJBangMain {
+    @Command(name = "tui-test")
+    private static final class TuiTestCommand implements Runnable {
 
-        private boolean quitCalled;
+        private final CamelJBangMain main;
+
+        private TuiTestCommand(CamelJBangMain main) {
+            this.main = main;
+        }
 
         @Override
-        public void quit(int exitCode) {
-            quitCalled = true;
+        public void run() {
+            main.getOut().println("captured command output");
         }
     }
 }

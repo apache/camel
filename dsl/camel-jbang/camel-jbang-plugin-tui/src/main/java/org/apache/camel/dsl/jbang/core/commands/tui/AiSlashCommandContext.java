@@ -26,6 +26,8 @@ interface AiSlashCommandContext {
 
     void openProviderSwitch();
 
+    void clearConversation();
+
     String currentModel();
 
     List<String> availableModels();
@@ -35,4 +37,6 @@ interface AiSlashCommandContext {
     String selectedProcessName();
 
     CompletableFuture<AiCliCommandExecutor.Result> executeCli(AiCliCommandExecutor.Request request);
+
+    void cancelCli();
 }
