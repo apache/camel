@@ -484,6 +484,7 @@ public class CamelMonitor extends CamelCommand {
 
         try (var tui = TuiBackendHelper.createTuiRunner()) {
             this.runner = tui;
+            aiPanel.setExitCallbackForTestingOrRuntime(tui::quit);
             ctx.runner = tui;
             actionsPopup.setScheduler(tui.scheduler());
             actionsPopup.setResetScreenAction(() -> tui.terminal().clear());
@@ -2136,6 +2137,14 @@ public class CamelMonitor extends CamelCommand {
                 LOG.log(Level.DEBUG, "Failed to delete .mcp.json: {0}", e.getMessage());
             }
         }
+    }
+
+    void setRunnerForTesting(Runnable onQuit) {
+        aiPanel.setExitCallbackForTestingOrRuntime(onQuit);
+    }
+
+    AiPanel aiPanelForTesting() {
+        return aiPanel;
     }
 
 }

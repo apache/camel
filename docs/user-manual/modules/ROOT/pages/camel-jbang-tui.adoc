@@ -430,6 +430,42 @@ The server is bound to `127.0.0.1` only -- it never listens on external interfac
 When MCP is active, the TUI footer shows the connection status.
 Use *F2* -> _MCP Info_ to see server details and _MCP Log_ to view the tool call history.
 
+=== AI panel slash commands
+
+When the AI panel is open, input that starts with `/` runs a local panel command instead of sending a question to the configured AI provider.
+
+[cols="1,3",options="header"]
+|===
+| Command | Description
+
+| `/help`
+| Show the available slash commands.
+
+| `/provider`
+| Open the provider switcher.
+
+| `/model [model-name]`
+| Show the current model, or switch the session model.
+
+| `/clear`
+| Clear the AI conversation and usage counters without changing the provider or model.
+
+| `/close`
+| Close the AI panel.
+
+| `/exit`, `/quit`
+| Exit the TUI.
+
+| `/run <camel run args>`
+| Run `camel run` with the provided arguments.
+
+| `/infra <camel infra args>`
+| Run `camel infra` with the provided arguments.
+
+| `/send <endpoint> <message text \| @file>`
+| Send a message through `camel cmd send`. A body that is exactly one `@file` token is sent as `file:<path>`; inline `@file` text is sent literally.
+|===
+
 === Connecting an AI Agent
 
 To connect Claude Code to the TUI, add the MCP server to your project configuration
