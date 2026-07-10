@@ -17,10 +17,14 @@
 package org.apache.camel.component.weaviate;
 
 public enum WeaviateVectorDbAction {
+    AGGREGATE,
+    BATCH_CREATE,
+    BM25_QUERY,
     CREATE_COLLECTION,
     CREATE,
     DELETE_BY_ID,
     DELETE_COLLECTION,
+    HYBRID_QUERY,
     QUERY,
     QUERY_BY_ID,
     UPDATE_BY_ID
