@@ -1876,3 +1876,13 @@ is migrated to JSON the next time the metadata is updated.
 
 Because older versions cannot read the new JSON metadata, downgrading after new key metadata has been
 written is not supported.
+
+=== camel-azure-storage-blob / camel-azure-storage-datalake - download contained within fileDir
+
+When `fileDir` is configured, the Azure Storage Blob and DataLake consumers now ensure the downloaded
+local file stays within the configured directory, so a remote object name containing `../` sequences
+can no longer resolve to a path outside it. This is consistent with the containment already performed
+by the file-based consumers.
+
+Ordinary object names are unaffected. A name that resolves outside `fileDir` is now rejected with an
+`IllegalArgumentException`.
