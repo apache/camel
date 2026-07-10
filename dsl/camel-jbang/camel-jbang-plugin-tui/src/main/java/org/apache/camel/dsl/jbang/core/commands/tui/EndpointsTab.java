@@ -111,7 +111,7 @@ class EndpointsTab extends AbstractTableTab {
     @Override
     protected int getRowCount() {
         IntegrationInfo info = ctx.findSelectedIntegration();
-        return info != null ? info.endpoints.size() : 0;
+        return info != null ? (int) info.endpoints.stream().filter(this::matchesFilter).count() : 0;
     }
 
     @Override
