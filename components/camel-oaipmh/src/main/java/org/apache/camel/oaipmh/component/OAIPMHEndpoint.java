@@ -66,7 +66,7 @@ public class OAIPMHEndpoint extends ScheduledPollEndpoint implements EndpointSer
     @UriParam(label = "security", description = "Causes the defined url to make an https request")
     private boolean ssl;
 
-    @UriParam(label = "security", description = "Ignore SSL certificate warnings")
+    @UriParam(label = "security", description = "Ignore SSL certificate warnings", security = "insecure:ssl")
     private boolean ignoreSSLWarnings;
 
     @UriParam(description = "Identifier of the requested resources. Applicable only with certain verbs")

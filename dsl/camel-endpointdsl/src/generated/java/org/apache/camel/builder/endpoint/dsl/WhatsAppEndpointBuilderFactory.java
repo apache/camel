@@ -78,6 +78,20 @@ public interface WhatsAppEndpointBuilderFactory {
             doSetProperty("webhookSecret", webhookSecret);
             return this;
         }
+        /**
+         * Webhook verify token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param webhookVerifyToken the value to set
+         * @return the dsl builder
+         */
+        default WhatsAppEndpointBuilder webhookVerifyToken(String webhookVerifyToken) {
+            doSetProperty("webhookVerifyToken", webhookVerifyToken);
+            return this;
+        }
     }
 
     /**
@@ -207,20 +221,6 @@ public interface WhatsAppEndpointBuilderFactory {
          */
         default AdvancedWhatsAppEndpointBuilder webhookPath(String webhookPath) {
             doSetProperty("webhookPath", webhookPath);
-            return this;
-        }
-        /**
-         * Webhook verify token.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param webhookVerifyToken the value to set
-         * @return the dsl builder
-         */
-        default AdvancedWhatsAppEndpointBuilder webhookVerifyToken(String webhookVerifyToken) {
-            doSetProperty("webhookVerifyToken", webhookVerifyToken);
             return this;
         }
         /**

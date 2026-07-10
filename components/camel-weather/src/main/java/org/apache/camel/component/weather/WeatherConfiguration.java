@@ -38,7 +38,7 @@ public class WeatherConfiguration {
     @UriPath(description = "The name value is not used.")
     @Metadata(required = true)
     private String name;
-    @UriParam
+    @UriParam(label = "security", security = "secret")
     @Metadata(required = true)
     private String appid;
     @UriParam
@@ -71,7 +71,7 @@ public class WeatherConfiguration {
     private String ids;
     @UriParam(label = "filter")
     private Integer cnt;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "secret")
     @Metadata(required = true)
     private String geolocationAccessKey;
     @UriParam(label = "security")

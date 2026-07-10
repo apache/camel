@@ -52,21 +52,6 @@ public interface HuggingfaceComponentBuilderFactory {
      */
     interface HuggingfaceComponentBuilder extends ComponentBuilder<HuggingFaceComponent> {
     
-        /**
-         * HF API token for private models.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param authToken the value to set
-         * @return the dsl builder
-         */
-        default HuggingfaceComponentBuilder authToken(java.lang.String authToken) {
-            doSetProperty("authToken", authToken);
-            return this;
-        }
-    
         
         /**
          * If true, auto-select the best label (highest score) for zero-shot
@@ -428,6 +413,21 @@ public interface HuggingfaceComponentBuilderFactory {
         }
     
         /**
+         * HF API token for private models.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param authToken the value to set
+         * @return the dsl builder
+         */
+        default HuggingfaceComponentBuilder authToken(java.lang.String authToken) {
+            doSetProperty("authToken", authToken);
+            return this;
+        }
+    
+        /**
          * OAuth profile name for obtaining an access token via the OAuth 2.0
          * Client Credentials grant. When set, the token is acquired from the
          * configured identity provider and used as authToken. Requires
@@ -465,7 +465,6 @@ public interface HuggingfaceComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "authToken": getOrCreateConfiguration((HuggingFaceComponent) component).setAuthToken((java.lang.String) value); return true;
             case "autoSelect": getOrCreateConfiguration((HuggingFaceComponent) component).setAutoSelect((boolean) value); return true;
             case "configuration": ((HuggingFaceComponent) component).setConfiguration((org.apache.camel.component.huggingface.HuggingFaceConfiguration) value); return true;
             case "device": getOrCreateConfiguration((HuggingFaceComponent) component).setDevice((java.lang.String) value); return true;
@@ -487,6 +486,7 @@ public interface HuggingfaceComponentBuilderFactory {
             case "autowiredEnabled": ((HuggingFaceComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((HuggingFaceComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((HuggingFaceComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "authToken": getOrCreateConfiguration((HuggingFaceComponent) component).setAuthToken((java.lang.String) value); return true;
             case "oauthProfile": getOrCreateConfiguration((HuggingFaceComponent) component).setOauthProfile((java.lang.String) value); return true;
             default: return false;
             }

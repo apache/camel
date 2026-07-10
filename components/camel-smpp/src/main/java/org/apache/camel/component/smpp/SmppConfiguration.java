@@ -102,7 +102,7 @@ public class SmppConfiguration implements Cloneable {
     private Integer httpProxyPort = 3128;
     @UriParam(label = "proxy")
     private String httpProxyUsername;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", security = "secret")
     private String httpProxyPassword;
     @UriParam(label = "proxy")
     private Map<String, String> proxyHeaders;

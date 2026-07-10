@@ -72,7 +72,8 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("typeOfNumber");
         props.add("usingSSL");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
+        Set<String> secretProps = new HashSet<>(3);
+        secretProps.add("httpProxyPassword");
         secretProps.add("password");
         secretProps.add("systemId");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);

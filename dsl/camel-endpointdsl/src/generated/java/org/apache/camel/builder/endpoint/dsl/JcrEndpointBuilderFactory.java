@@ -158,20 +158,6 @@ public interface JcrEndpointBuilderFactory {
             return this;
         }
         /**
-         * Password for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default JcrEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
@@ -278,6 +264,20 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointConsumerBuilder workspaceName(String workspaceName) {
             doSetProperty("workspaceName", workspaceName);
+            return this;
+        }
+        /**
+         * Password for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default JcrEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
     }
@@ -535,20 +535,6 @@ public interface JcrEndpointBuilderFactory {
             return this;
         }
         /**
-         * Password for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default JcrEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
@@ -655,6 +641,20 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointProducerBuilder workspaceName(String workspaceName) {
             doSetProperty("workspaceName", workspaceName);
+            return this;
+        }
+        /**
+         * Password for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default JcrEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
     }
@@ -841,20 +841,6 @@ public interface JcrEndpointBuilderFactory {
             return this;
         }
         /**
-         * Password for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default JcrEndpointBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
@@ -961,6 +947,20 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointBuilder workspaceName(String workspaceName) {
             doSetProperty("workspaceName", workspaceName);
+            return this;
+        }
+        /**
+         * Password for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default JcrEndpointBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
     }

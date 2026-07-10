@@ -56,8 +56,10 @@ public class DMSEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("subnetId");
         props.add("vpcId");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(5);
+        Set<String> secretProps = new HashSet<>(7);
         secretProps.add("accessKey");
+        secretProps.add("kafkaManagerPassword");
+        secretProps.add("password");
         secretProps.add("proxyPassword");
         secretProps.add("proxyUser");
         secretProps.add("secretKey");

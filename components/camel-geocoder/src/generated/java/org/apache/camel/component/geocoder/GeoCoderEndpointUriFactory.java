@@ -43,10 +43,11 @@ public class GeoCoderEndpointUriFactory extends org.apache.camel.support.compone
         props.add("serverUrl");
         props.add("type");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
+        Set<String> secretProps = new HashSet<>(4);
         secretProps.add("apiKey");
         secretProps.add("clientId");
         secretProps.add("clientKey");
+        secretProps.add("proxyAuthPassword");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();

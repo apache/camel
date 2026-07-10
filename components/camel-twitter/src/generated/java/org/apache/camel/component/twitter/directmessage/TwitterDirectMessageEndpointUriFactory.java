@@ -69,11 +69,12 @@ public class TwitterDirectMessageEndpointUriFactory extends org.apache.camel.sup
         props.add("user");
         props.add("userIds");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
+        Set<String> secretProps = new HashSet<>(5);
         secretProps.add("accessToken");
         secretProps.add("accessTokenSecret");
         secretProps.add("consumerKey");
         secretProps.add("consumerSecret");
+        secretProps.add("httpProxyPassword");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(1);

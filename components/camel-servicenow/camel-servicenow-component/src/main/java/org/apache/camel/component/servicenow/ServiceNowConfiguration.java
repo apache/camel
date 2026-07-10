@@ -126,7 +126,7 @@ public class ServiceNowConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam(label = "proxy,security")
     private String proxyUserName;
-    @UriParam(label = "proxy,security")
+    @UriParam(label = "proxy,security", security = "secret")
     private String proxyPassword;
     @UriParam(label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_DATE_FORMAT)
     private String dateFormat = ServiceNowConstants.DEFAULT_DATE_FORMAT;
