@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for shutdown.
  */
 public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
-    private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
+    private static final MailboxUser jones = Mailbox.getOrCreateUser("MailShutdownCompleteCurrentTaskOnlyTest-jones", "secret");
 
     @Override
     public void doPreSetup() throws Exception {

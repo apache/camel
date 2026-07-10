@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * and a polling event yields no results.
  */
 public class MailConsumerIdleMessageTest extends CamelTestSupport {
-    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
+    private static final MailboxUser james = Mailbox.getOrCreateUser("MailConsumerIdleMessageTest-james", "secret");
 
     @Test
     public void testConsumeIdleMessages() throws Exception {

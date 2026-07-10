@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for contentType option.
  */
 public class MailCustomContentTypeTest extends CamelTestSupport {
-    private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
+    private static final MailboxUser claus = Mailbox.getOrCreateUser("MailCustomContentTypeTest-claus", "secret");
 
     @Test
     public void testSendHtmlMail() throws Exception {

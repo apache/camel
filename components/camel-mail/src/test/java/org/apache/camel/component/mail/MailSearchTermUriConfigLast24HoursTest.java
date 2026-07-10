@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MailSearchTermUriConfigLast24HoursTest extends CamelTestSupport {
-    private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
+    private static final MailboxUser bill = Mailbox.getOrCreateUser("MailSearchTermUriConfigLast24HoursTest-bill", "secret");
 
     @Override
     public void doPreSetup() throws Exception {

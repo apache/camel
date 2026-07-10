@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  * Unit test for batch consumer.
  */
 public class MailDisconnectTest extends CamelTestSupport {
-    private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
+    private static final MailboxUser jones = Mailbox.getOrCreateUser("MailDisconnectTest-jones", "secret");
 
     private int expectedCount = 5;
     private CountDownLatch latch = new CountDownLatch(expectedCount);

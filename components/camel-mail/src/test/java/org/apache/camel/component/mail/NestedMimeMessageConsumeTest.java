@@ -44,8 +44,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NestedMimeMessageConsumeTest extends CamelTestSupport {
-    private static final MailboxUser james3 = Mailbox.getOrCreateUser("james3", "secret");
-    private static final MailboxUser james4 = Mailbox.getOrCreateUser("james4", "secret");
+    private static final MailboxUser james3 = Mailbox.getOrCreateUser("NestedMimeMessageConsumeTest-james3", "secret");
+    private static final MailboxUser james4 = Mailbox.getOrCreateUser("NestedMimeMessageConsumeTest-james4", "secret");
 
     @Test
     public void testNestedMultipart() throws Exception {

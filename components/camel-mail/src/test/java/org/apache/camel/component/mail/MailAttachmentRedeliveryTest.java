@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for Camel attachments and Mail attachments.
  */
 public class MailAttachmentRedeliveryTest extends CamelTestSupport {
-    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
+    private static final MailboxUser james = Mailbox.getOrCreateUser("MailAttachmentRedeliveryTest-james", "secret");
 
     private final List<String> names = new ArrayList<>();
 

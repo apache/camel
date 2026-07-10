@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for Mail replyTo support.
  */
 public class MailReplyToTest extends CamelTestSupport {
-    private static final MailboxUser christian = Mailbox.getOrCreateUser("christian", "secret");
+    private static final MailboxUser christian = Mailbox.getOrCreateUser("MailReplyToTest-christian", "secret");
 
     @Test
     public void testMailReplyTo() throws Exception {

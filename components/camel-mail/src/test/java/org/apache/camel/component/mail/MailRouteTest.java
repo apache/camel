@@ -41,9 +41,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailRouteTest extends CamelTestSupport {
-    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
-    private static final MailboxUser result = Mailbox.getOrCreateUser("result", "secret");
-    private static final MailboxUser copy = Mailbox.getOrCreateUser("copy", "secret");
+    private static final MailboxUser james = Mailbox.getOrCreateUser("MailRouteTest-james", "secret");
+    private static final MailboxUser result = Mailbox.getOrCreateUser("MailRouteTest-result", "secret");
+    private static final MailboxUser copy = Mailbox.getOrCreateUser("MailRouteTest-copy", "secret");
 
     @Test
     public void testSendAndReceiveMails() throws Exception {
@@ -130,7 +130,7 @@ public class MailRouteTest extends CamelTestSupport {
                 // plain string with semi colon
                 // to seperate the mail addresses
                 from("direct:a")
-                        .setHeader("to", constant("result@localhost; copy@localhost"))
+                        .setHeader("to", constant(result.getEmail() + "; " + copy.getEmail()))
                         .to(result.uriPrefix(Protocol.smtp)
                             + "&useHeaderRecipients=true&useHeaderReplyTo=true&useHeaderSubject=true");
 

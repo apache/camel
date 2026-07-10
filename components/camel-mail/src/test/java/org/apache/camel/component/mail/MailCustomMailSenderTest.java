@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailCustomMailSenderTest extends CamelTestSupport {
-    private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
+    private static final MailboxUser claus = Mailbox.getOrCreateUser("MailCustomMailSenderTest-claus", "secret");
 
     private static boolean sent;
 

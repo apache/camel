@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  * Unit test for unseen option.
  */
 public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
-    private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
+    private static final MailboxUser claus = Mailbox.getOrCreateUser("MailProcessOnlyUnseenMessagesTest-claus", "secret");
 
     @Override
     public void doPreSetup() throws Exception {

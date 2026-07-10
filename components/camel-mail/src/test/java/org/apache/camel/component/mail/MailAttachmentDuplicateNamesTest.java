@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for Camel attachments and Mail attachments.
  */
 public class MailAttachmentDuplicateNamesTest extends CamelTestSupport {
-    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
+    private static final MailboxUser james = Mailbox.getOrCreateUser("MailAttachmentDuplicateNamesTest-james", "secret");
 
     @Test
     public void testSendAndReceiveMailWithAttachmentsWithDuplicateNames() throws Exception {
