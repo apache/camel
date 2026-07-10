@@ -21,6 +21,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
@@ -135,6 +138,34 @@ class AiPanelTest {
 
         assertTrue(panel.conversationForTesting().stream()
                 .anyMatch(entry -> "error".equals(entry.role()) && entry.text().contains("exit code 2")));
+    }
+
+    @Test
+    void commandPlaceholderRendersAfterTrailingSpace() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "/send ");
+
+        Rect area = new Rect(0, 0, 80, 6);
+        Buffer buffer = Buffer.empty(area);
+        panel.render(Frame.forTesting(buffer), area);
+
+        String rendered = TuiTestHelper.bufferToString(buffer);
+        assertTrue(rendered.contains("/send"));
+        assertTrue(rendered.contains("<endpoint> <message text | @file>"));
+    }
+
+    @Test
+    void commandPlaceholderDisappearsWhenParametersStart() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "/send direct:foo");
+
+        Rect area = new Rect(0, 0, 80, 6);
+        Buffer buffer = Buffer.empty(area);
+        panel.render(Frame.forTesting(buffer), area);
+
+        assertFalse(TuiTestHelper.bufferToString(buffer).contains("<endpoint> <message text | @file>"));
     }
 
     @Test

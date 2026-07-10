@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -718,6 +719,12 @@ class AiPanel {
                 spans.add(Span.raw(visible));
                 if (cursorInWindow == visible.length()) {
                     spans.add(Span.styled(" ", Style.EMPTY.reversed()));
+                }
+            }
+            if (cursorPos == text.length()) {
+                Optional<String> placeholder = slashCommands.placeholderFor(text);
+                if (placeholder.isPresent()) {
+                    spans.add(Span.styled(" " + placeholder.get(), Style.EMPTY.dim()));
                 }
             }
         }
