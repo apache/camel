@@ -65,6 +65,24 @@ class AiPanelTest {
         assertNull(client.lastQuestion());
         assertTrue(panel.conversationForTesting().stream()
                 .anyMatch(entry -> "system".equals(entry.role()) && entry.text().contains("/run <camel run args>")));
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(
+                        entry -> "system".equals(entry.role()) && entry.text().contains("/provider — Switch the AI provider")));
+    }
+
+    @Test
+    void slashCommandHintsRenderWhileTyping() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "/");
+
+        Rect area = new Rect(0, 0, 100, 20);
+        Buffer buffer = Buffer.empty(area);
+        panel.render(Frame.forTesting(buffer), area);
+
+        String rendered = TuiTestHelper.bufferToString(buffer);
+        assertTrue(rendered.contains("/provider"));
+        assertTrue(rendered.contains("Switch the AI provider"));
     }
 
     @Test

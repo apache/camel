@@ -58,6 +58,30 @@ class AiSlashCommandRegistryTest {
 
         assertTrue(help.contains("/run <camel run args>"));
         assertTrue(help.contains("/send <endpoint> <message text | @file>"));
+        assertTrue(help.contains("/provider — Switch the AI provider"));
+        assertTrue(help.contains("\n\n"));
+    }
+
+    @Test
+    void completionsIncludeAllCommandsForBareSlash() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+
+        assertEquals(registry.descriptors().size(), registry.completionsFor("/").size());
+    }
+
+    @Test
+    void completionsFilterByPrefix() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+
+        assertEquals("help", registry.completionsFor("/h").get(0).name());
+        assertTrue(registry.completionsFor("/p").stream().anyMatch(descriptor -> "provider".equals(descriptor.name())));
+    }
+
+    @Test
+    void completionsHideAfterKnownCommandWithTrailingSpace() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+
+        assertTrue(registry.completionsFor("/send ").isEmpty());
     }
 
     @Test

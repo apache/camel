@@ -141,7 +141,59 @@ final class AiSlashCommandRegistry {
     }
 
     String helpText() {
-        return descriptors.stream().map(this::helpUsage).reduce((left, right) -> left + "\n" + right).orElse("");
+        StringBuilder text = new StringBuilder("Available commands:\n\n");
+        for (Descriptor descriptor : descriptors) {
+            text.append(helpLine(descriptor)).append("\n\n");
+        }
+        return text.toString().strip();
+    }
+
+    List<Descriptor> completionsFor(String input) {
+        if (input == null || !input.startsWith("/")) {
+            return List.of();
+        }
+        String body = input.substring(1);
+        int separator = firstWhitespace(body);
+        if (separator >= 0) {
+            if (!body.substring(separator).isBlank()) {
+                return List.of();
+            }
+            String command = body.substring(0, separator);
+            if (lookup(command).isPresent()) {
+                return List.of();
+            }
+            return matchDescriptors(command);
+        }
+        return matchDescriptors(body);
+    }
+
+    private List<Descriptor> matchDescriptors(String prefix) {
+        String needle = prefix.strip().toLowerCase(Locale.ROOT);
+        return descriptors.stream().filter(descriptor -> matchesPrefix(descriptor, needle)).toList();
+    }
+
+    private static boolean matchesPrefix(Descriptor descriptor, String needle) {
+        if (needle.isEmpty()) {
+            return true;
+        }
+        if (descriptor.name().startsWith(needle)) {
+            return true;
+        }
+        for (String alias : descriptor.aliases()) {
+            if (alias.startsWith(needle)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String helpLine(Descriptor descriptor) {
+        String command = helpUsage(descriptor);
+        String description = descriptor.description();
+        if (description.startsWith("<")) {
+            return command;
+        }
+        return command + " — " + description;
     }
 
     private String helpUsage(Descriptor descriptor) {

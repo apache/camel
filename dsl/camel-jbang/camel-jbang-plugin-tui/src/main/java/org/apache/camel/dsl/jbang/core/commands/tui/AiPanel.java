@@ -678,15 +678,27 @@ class AiPanel {
             return;
         }
 
-        // Split inner area: conversation (fill) + separator (1 row) + input (1 row)
-        List<Rect> parts = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(1), Constraint.length(1))
-                .split(inner);
+        // Split inner area: conversation (fill) + optional slash hints + separator (1 row) + input (1 row)
+        List<AiSlashCommandRegistry.Descriptor> slashHints = slashCommandHints();
+        int hintRows = slashHints.isEmpty() ? 0 : slashHints.size();
+        List<Rect> parts;
+        if (hintRows == 0) {
+            parts = Layout.vertical()
+                    .constraints(Constraint.fill(), Constraint.length(1), Constraint.length(1))
+                    .split(inner);
+        } else {
+            parts = Layout.vertical()
+                    .constraints(Constraint.fill(), Constraint.length(hintRows), Constraint.length(1), Constraint.length(1))
+                    .split(inner);
+        }
         Rect conversationArea = parts.get(0);
-        Rect separatorArea = parts.get(1);
-        Rect inputArea = parts.get(2);
+        Rect separatorArea = parts.get(hintRows == 0 ? 1 : 2);
+        Rect inputArea = parts.get(hintRows == 0 ? 2 : 3);
 
-        renderConversation(frame, conversationArea);
+        renderConversation(frame, conversationArea, !slashHints.isEmpty());
+        if (hintRows > 0) {
+            renderSlashCommandHints(frame, parts.get(1), slashHints);
+        }
         // horizontal line separator
         String line = "─".repeat(separatorArea.width());
         frame.renderWidget(Paragraph.from(Line.from(Span.styled(line, Style.EMPTY.dim()))),
@@ -697,7 +709,30 @@ class AiPanel {
         }
     }
 
-    private void renderConversation(Frame frame, Rect area) {
+    private List<AiSlashCommandRegistry.Descriptor> slashCommandHints() {
+        if (thinking.get() || statsView || providerSwitchPopup.isVisible()) {
+            return List.of();
+        }
+        return slashCommands.completionsFor(inputBuffer.toString());
+    }
+
+    private void renderSlashCommandHints(Frame frame, Rect area, List<AiSlashCommandRegistry.Descriptor> hints) {
+        if (area.height() < 1 || hints.isEmpty()) {
+            return;
+        }
+        int rows = Math.min(area.height(), hints.size());
+        for (int i = 0; i < rows; i++) {
+            AiSlashCommandRegistry.Descriptor descriptor = hints.get(i);
+            String description = descriptor.description();
+            String suffix = description.startsWith("<") ? "" : " — " + description;
+            Line line = Line.from(
+                    Span.styled(descriptor.usage(), Style.EMPTY.fg(Theme.accent())),
+                    Span.styled(suffix, Style.EMPTY.dim()));
+            frame.renderWidget(Paragraph.from(line), new Rect(area.left(), area.top() + i, area.width(), 1));
+        }
+    }
+
+    private void renderConversation(Frame frame, Rect area, boolean slashHintsVisible) {
         if (area.height() < 1) {
             return;
         }
@@ -706,7 +741,7 @@ class AiPanel {
 
         if (initError != null) {
             md.append("**Error:** ").append(initError).append("\n\n");
-        } else if (conversation.isEmpty() && !thinking.get()) {
+        } else if (conversation.isEmpty() && !thinking.get() && !slashHintsVisible) {
             frame.renderWidget(
                     Paragraph.from(Line.from(Span.styled("Ask a question about your Camel application...", Style.EMPTY.dim()))),
                     area);
@@ -718,7 +753,7 @@ class AiPanel {
                 case "user" -> md.append("**You:** ").append(entry.text()).append("\n\n");
                 case "assistant" -> md.append(toHardBreaks(entry.text())).append("\n\n");
                 case "error" -> md.append("**Error:** ").append(entry.text()).append("\n\n");
-                case "system" -> md.append("*").append(entry.text()).append("*\n\n");
+                case "system" -> md.append(toHardBreaks(entry.text())).append("\n\n");
                 default -> {
                 }
             }
