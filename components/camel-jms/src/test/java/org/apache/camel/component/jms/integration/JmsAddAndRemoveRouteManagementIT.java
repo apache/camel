@@ -27,6 +27,7 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -75,7 +76,11 @@ public class JmsAddAndRemoveRouteManagementIT extends AbstractJMSTest {
 
         Set<ObjectName> before = mbeanServer.queryNames(query, null);
 
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        // Allow extra time for the JMS consumer to subscribe to the broker
+        // after the route is started (the default 10 s can be too short on slow CI)
+        mock.setResultWaitTime(30_000);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -95,6 +100,11 @@ public class JmsAddAndRemoveRouteManagementIT extends AbstractJMSTest {
                     "There should be at least one new thread pool in JMX");
             duringRef.set(during);
         });
+
+        // Wait for the route to be fully started — thread pool registration in JMX
+        // does not guarantee the JMS consumer has subscribed to the broker yet
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> context.getRouteController().getRouteStatus("myNewRoute") == ServiceStatus.Started);
 
         // Identify the thread pools added by the new route
         Set<ObjectName> addedPools = new HashSet<>(duringRef.get());
