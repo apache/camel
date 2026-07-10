@@ -1126,11 +1126,41 @@ public class LlmClient {
 
     // ---- Endpoint detection helpers ----
 
+    // Order matters: /api/tags is checked before /v1/models, matching the original priority.
+    private static final List<Map.Entry<String, ApiType>> EXPLICIT_URL_HEALTH_CHECK_SUFFIXES = List.of(
+            Map.entry("/api/tags", ApiType.ollama),
+            Map.entry("/v1/models", ApiType.openai));
+
     private boolean tryExplicitUrl() {
         if (url == null || url.isBlank()) {
             return false;
         }
-        return isEndpointReachable(url);
+        for (Map.Entry<String, ApiType> check : EXPLICIT_URL_HEALTH_CHECK_SUFFIXES) {
+            if (tryHealthCheck(url + check.getKey())) {
+                if (apiType == null) {
+                    apiType = check.getValue();
+                }
+                return true;
+            }
+        }
+        if (tryHealthCheck(url)) {
+            if (apiType == null) {
+                apiType = inferApiTypeFromUrlHost();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    ApiType inferApiTypeFromUrlHost() {
+        String lower = url.toLowerCase();
+        if (lower.contains("anthropic")) {
+            return ApiType.anthropic;
+        }
+        if (lower.contains("11434") || lower.contains("ollama")) {
+            return ApiType.ollama;
+        }
+        return ApiType.openai;
     }
 
     private boolean tryAnthropicApiKey() {

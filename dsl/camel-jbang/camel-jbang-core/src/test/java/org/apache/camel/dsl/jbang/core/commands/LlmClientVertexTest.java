@@ -33,6 +33,16 @@ class LlmClientVertexTest {
     }
 
     @Test
+    void inferApiTypeFromUrlHostUsesKnownProviders() {
+        assertEquals(LlmClient.ApiType.anthropic,
+                LlmClient.create().withUrl("https://api.anthropic.com").inferApiTypeFromUrlHost());
+        assertEquals(LlmClient.ApiType.ollama,
+                LlmClient.create().withUrl("http://localhost:11434").inferApiTypeFromUrlHost());
+        assertEquals(LlmClient.ApiType.openai,
+                LlmClient.create().withUrl("https://example.test/v1").inferApiTypeFromUrlHost());
+    }
+
+    @Test
     void passesThroughDatelessModels() {
         assertEquals("claude-sonnet-4-6", LlmClient.resolveVertexModel("claude-sonnet-4-6"));
         assertEquals("claude-opus-4-6", LlmClient.resolveVertexModel("claude-opus-4-6"));

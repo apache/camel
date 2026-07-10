@@ -305,8 +305,51 @@ class AiPanelTest {
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
 
         assertFalse(panel.isThinkingForTesting());
+        assertFalse(panel.isAgentThreadRunningForTesting(), "Esc should wait for the agent thread to stop");
         assertTrue(panel.conversationForTesting().stream()
                 .anyMatch(entry -> "system".equals(entry.role()) && "(cancelled)".equals(entry.text())));
+    }
+
+    @Test
+    void ctrlPBlockedWhileAgentThreadRunning() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new BlockingLlmClient());
+        panel.open();
+        for (char ch : "still running".toCharArray()) {
+            panel.handleKeyEvent(KeyEvent.ofChar(ch));
+        }
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(panel.isAgentThreadRunningForTesting());
+
+        panel.handleKeyEvent(KeyEvent.ofChar('p', KeyModifiers.of(true, false, false)));
+        assertFalse(panel.isProviderSwitchVisibleForTesting(), "Ctrl+P must wait until the agent thread stops");
+
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        assertFalse(panel.isAgentThreadRunningForTesting());
+
+        panel.handleKeyEvent(KeyEvent.ofChar('p', KeyModifiers.of(true, false, false)));
+        assertTrue(panel.isProviderSwitchVisibleForTesting());
+    }
+
+    @Test
+    void providerSwitchAfterCancelStopsAgentThread() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new BlockingLlmClient());
+        panel.open();
+        for (char ch : "cancel then switch".toCharArray()) {
+            panel.handleKeyEvent(KeyEvent.ofChar(ch));
+        }
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+
+        panel.setProviderChoicesForTesting(List.of(
+                new AiProviderSwitchPopup.ProviderChoice("openai", "gpt-4o", "", false)));
+        panel.handleKeyEvent(KeyEvent.ofChar('p', KeyModifiers.of(true, false, false)));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertFalse(panel.isAgentThreadRunningForTesting());
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> entry.text().contains("Switched to gpt-4o (openai)")));
     }
 
     @Test

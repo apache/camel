@@ -33,6 +33,7 @@ import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
@@ -55,8 +56,16 @@ class SettingsPopup {
     private static final int ROW_COUNT = 7;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
-    private static final List<String> AI_PROVIDERS = List.of("ollama", "openai", "anthropic", "gemini", "azure-openai",
-            "auto");
+    private static final List<String> AI_PROVIDERS = buildAiProviderList();
+
+    private static List<String> buildAiProviderList() {
+        List<String> providers = new ArrayList<>();
+        for (LlmClient.ApiType apiType : LlmClient.ApiType.values()) {
+            providers.add(apiType.name());
+        }
+        providers.add("auto");
+        return providers;
+    }
 
     private boolean visible;
     private int selectedRow;
@@ -114,7 +123,8 @@ class SettingsPopup {
 
         folderInput = new TextInputState(settings.getDefaultFolder() != null ? settings.getDefaultFolder() : "");
         String currentProvider = settings.getAiProvider() != null ? settings.getAiProvider() : "auto";
-        aiProviderIndex = Math.max(0, AI_PROVIDERS.indexOf(currentProvider));
+        int providerIdx = AI_PROVIDERS.indexOf(currentProvider);
+        aiProviderIndex = providerIdx >= 0 ? providerIdx : AI_PROVIDERS.indexOf("auto");
         aiModelInput = new TextInputState(settings.getAiModel() != null ? settings.getAiModel() : "");
         aiUrlInput = new TextInputState(settings.getAiUrl() != null ? settings.getAiUrl() : "");
         selectedRow = ROW_THEME;
