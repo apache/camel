@@ -667,6 +667,7 @@ class ShellPanel {
             case F8 -> "\033[19~".getBytes(StandardCharsets.UTF_8);
             case F9 -> "\033[20~".getBytes(StandardCharsets.UTF_8);
             case F10 -> "\033[21~".getBytes(StandardCharsets.UTF_8);
+            case F11 -> "\033[23~".getBytes(StandardCharsets.UTF_8);
             case F12 -> "\033[24~".getBytes(StandardCharsets.UTF_8);
             default -> null;
         };
