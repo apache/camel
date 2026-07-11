@@ -327,6 +327,14 @@ public interface Exchange extends VariableAware {
     String OTEL_ACTIVE_SPAN = "OpenTracing.activeSpan";
     @Deprecated(since = "4.19.0")
     String OTEL_CLOSE_CLIENT_SCOPE = "OpenTracing.closeClientScope";
+    /**
+     * Exchange property set by tracing implementations (e.g., camel-telemetry) containing span decorator attributes as a
+     * {@code Map<String, String>}. Used by the BacklogTracer activity feature to enrich endpoint send entries with
+     * component-specific details (e.g., Kafka topic, SQL query, HTTP method).
+     *
+     * @since 4.22
+     */
+    String ACTIVITY_SPAN_TAGS = "CamelActivitySpanTags";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.

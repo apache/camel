@@ -24,11 +24,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.CamelTracingService;
@@ -68,6 +70,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     private final TracingEventNotifier eventNotifier = new TracingEventNotifier();
     private final SpanStorageManager spanStorageManager = new SpanStorageManagerExchange();
     private final SpanDecoratorManager spanDecoratorManager = new SpanDecoratorManagerImpl();
+    private boolean activityEnabled;
 
     /*
      * It has to be provided by the specific implementation
@@ -209,6 +212,13 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         InterceptStrategy interceptStrategy = new TraceProcessorsInterceptStrategy(this);
         camelContext.getCamelContextExtension().addInterceptStrategy(interceptStrategy);
 
+        // check if BacklogTracer activity is enabled so we can enrich activity data with span attributes
+        BacklogTracer backlogTracer
+                = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
+        if (backlogTracer != null) {
+            activityEnabled = backlogTracer.isActivityEnabled();
+        }
+
         initTracer();
         ServiceHelper.startService(eventNotifier);
     }
@@ -349,7 +359,21 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         Span span = spanLifecycleManager.create(spanName, spanKind, parentSpan,
                 spanDecorator.getExtractor(exchange));
         span.setTag(TagConstants.OP, op.toString());
-        spanDecorator.beforeTracingEvent(span, exchange, endpoint);
+
+        if (activityEnabled && op == Op.EVENT_SENT) {
+            // wrap with recording span to capture decorator attributes for activity enrichment
+            RecordingSpan recording = new RecordingSpan(span);
+            spanDecorator.beforeTracingEvent(recording, exchange, endpoint);
+            // store recorded tags on exchange for BacklogTracer activity to pick up
+            Map<String, String> tags = recording.getRecordedTags();
+            if (!tags.isEmpty()) {
+                exchange.setProperty(ExchangePropertyKey.ACTIVITY_SPAN_TAGS, tags);
+            }
+            // continue with the real span for activation/storage
+        } else {
+            spanDecorator.beforeTracingEvent(span, exchange, endpoint);
+        }
+
         spanLifecycleManager.activate(span);
         spanStorageManager.push(exchange, span);
         spanLifecycleManager.inject(span, spanDecorator.getInjector(exchange), this.traceHeadersInclusion);
