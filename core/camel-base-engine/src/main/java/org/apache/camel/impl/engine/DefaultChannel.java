@@ -312,6 +312,11 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             tracer.setTraceTemplates(camelContext.isBacklogTracingTemplates());
             tracer.setTraceRests(camelContext.isBacklogTracingRests());
             camelContext.getCamelContextExtension().addContextPlugin(BacklogTracer.class, tracer);
+            try {
+                camelContext.addService(tracer);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         return tracer;
     }

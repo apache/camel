@@ -34,6 +34,8 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
     private boolean standby;
     @Metadata(label = "advanced", defaultValue = "100")
     private int backlogSize = 100;
+    @Metadata(label = "advanced", defaultValue = "100")
+    private int activitySize = 100;
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean removeOnDump = true;
     @Metadata(label = "advanced", defaultValue = "32768")
@@ -102,6 +104,19 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
      */
     public void setBacklogSize(int backlogSize) {
         this.backlogSize = backlogSize;
+    }
+
+    public int getActivitySize() {
+        return activitySize;
+    }
+
+    /**
+     * Defines how many completed exchange summaries to keep in the activity queue (should be between 1 - 1000). The
+     * activity queue captures lightweight metadata (no body or headers) each time an exchange completes a route,
+     * providing a rolling window of recent exchange activity.
+     */
+    public void setActivitySize(int activitySize) {
+        this.activitySize = activitySize;
     }
 
     public boolean isRemoveOnDump() {
@@ -250,6 +265,14 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
      */
     public TracerConfigurationProperties withBacklogSize(int backlogSize) {
         this.backlogSize = backlogSize;
+        return this;
+    }
+
+    /**
+     * Defines how many completed exchange summaries to keep in the activity queue (should be between 1 - 1000).
+     */
+    public TracerConfigurationProperties withActivitySize(int activitySize) {
+        this.activitySize = activitySize;
         return this;
     }
 
