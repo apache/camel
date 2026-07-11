@@ -122,8 +122,7 @@ public class Ask extends CamelCommand {
 
         if (!client.detectEndpoint()) {
             printer().printErr("LLM service is not reachable.");
-            printer()
-                    .printErr("Options: --url=<endpoint>, --api-type=anthropic, or start Ollama with: camel infra run ollama");
+            printer().printErr("Options: --url=<endpoint>, --api-type=anthropic, or start Ollama with: camel infra run ollama");
             return 1;
         }
 

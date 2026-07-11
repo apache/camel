@@ -108,7 +108,7 @@ class AiPanel {
     private volatile Thread agentThread;
     private String initError;
     private long thinkingStartTime;
-    private String thinkingVerb;
+    private volatile String thinkingVerb;
     private volatile int sessionTotalTokens;
 
     // Slash commands

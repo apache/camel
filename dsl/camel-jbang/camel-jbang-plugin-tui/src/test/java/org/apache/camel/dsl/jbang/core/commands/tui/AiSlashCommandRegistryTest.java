@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.Test;
 
@@ -232,9 +233,9 @@ class AiSlashCommandRegistryTest {
         }
 
         @Override
-        public java.util.concurrent.CompletableFuture<AiCliCommandExecutor.Result> executeCli(
+        public CompletableFuture<AiCliCommandExecutor.Result> executeCli(
                 AiCliCommandExecutor.Request request) {
-            return java.util.concurrent.CompletableFuture.completedFuture(
+            return CompletableFuture.completedFuture(
                     new AiCliCommandExecutor.Result("", 0, "", 0, false));
         }
 
