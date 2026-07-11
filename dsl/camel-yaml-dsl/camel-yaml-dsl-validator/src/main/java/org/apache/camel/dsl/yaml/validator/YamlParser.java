@@ -40,9 +40,11 @@ public class YamlParser {
             mapper.readTree(file);
             return Collections.emptyList();
         } catch (Exception e) {
+            String msg = e.getClass().getName() + ": " + e.getMessage();
             Error error = Error.builder()
                     .messageKey("parser")
-                    .format(new MessageFormat(e.getClass().getName() + ": " + e.getMessage()))
+                    .format(new MessageFormat("{0}"))
+                    .arguments(msg)
                     .build();
             return List.of(error);
         }
