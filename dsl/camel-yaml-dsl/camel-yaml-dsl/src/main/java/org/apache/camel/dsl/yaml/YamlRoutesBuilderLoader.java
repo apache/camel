@@ -160,7 +160,13 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                             }
                         }
                     } else {
-                        doConfigure(target);
+                        boolean accepted = doConfigure(target);
+                        if (!accepted) {
+                            String loc = ctx.getResource() != null ? ctx.getResource().getLocation() : "";
+                            LOG.warn(
+                                    "Unsupported top-level YAML node in resource: {}. Ensure the YAML file uses a sequence (list) of route definitions.",
+                                    loc);
+                        }
                     }
                 }
 
@@ -326,7 +332,13 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                             }
                         }
                     } else {
-                        doConfiguration(target);
+                        boolean accepted = doConfiguration(target);
+                        if (!accepted) {
+                            String loc = ctx.getResource() != null ? ctx.getResource().getLocation() : "";
+                            LOG.warn(
+                                    "Unsupported top-level YAML node in resource: {}. Ensure the YAML file uses a sequence (list) of route definitions.",
+                                    loc);
+                        }
                     }
                 }
             }
