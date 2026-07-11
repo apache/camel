@@ -104,6 +104,14 @@ class LlmClientListModelsTest {
     }
 
     @Test
+    void returnsEmptyListWhenModelListHasUnexpectedShape() throws IOException {
+        String baseUrl = startServer("/api/tags", 200, "{\"models\":{}}", null, null);
+        LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.ollama).withUrl(baseUrl);
+
+        assertTrue(client.listModels().isEmpty());
+    }
+
+    @Test
     void returnsEmptyListWhenEndpointUnreachable() {
         LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.ollama).withUrl("http://127.0.0.1:1");
 

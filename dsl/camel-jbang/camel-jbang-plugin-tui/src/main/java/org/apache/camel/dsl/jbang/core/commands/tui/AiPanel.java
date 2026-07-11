@@ -247,8 +247,7 @@ class AiPanel {
             LlmClient created = LlmClient.create()
                     .withTemperature(0.3)
                     .withTimeout(120)
-                    .withMaxTokens(4096)
-                    .withModel("llama3.2");
+                    .withMaxTokens(4096);
             if (sessionProviderChoice != null) {
                 providerSelector.applyChoice(created, sessionProviderChoice.provider(), sessionProviderChoice.model(),
                         sessionProviderChoice.url());

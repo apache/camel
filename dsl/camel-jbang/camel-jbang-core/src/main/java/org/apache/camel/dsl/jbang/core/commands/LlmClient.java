@@ -332,8 +332,7 @@ public class LlmClient {
         if (response == null) {
             return List.of();
         }
-        JsonArray items = (JsonArray) response.get(arrayField);
-        if (items == null) {
+        if (!(response.get(arrayField) instanceof JsonArray items)) {
             return List.of();
         }
         List<String> names = new ArrayList<>();
