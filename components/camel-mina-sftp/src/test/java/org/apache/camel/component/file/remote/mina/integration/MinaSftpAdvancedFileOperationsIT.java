@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -35,6 +36,7 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -333,10 +335,11 @@ public class MinaSftpAdvancedFileOperationsIT extends MinaSftpServerTestSupport 
         context.getRouteController().startRoute("renameTest");
         mock.assertIsSatisfied();
 
-        // Verify source file is gone and target file exists
-        Thread.sleep(500);
-        assertTrue(!sourceFile.exists(), "Source file should be moved");
-        assertTrue(ftpFile("done/rename-source.txt").toFile().exists(), "Moved file should exist in done folder");
+        // Wait for the post-processing file move to complete on the filesystem
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertTrue(!sourceFile.exists(), "Source file should be moved");
+            assertTrue(ftpFile("done/rename-source.txt").toFile().exists(), "Moved file should exist in done folder");
+        });
 
         // Verify content is intact (no download/upload)
         assertEquals("Rename test content",
@@ -378,9 +381,10 @@ public class MinaSftpAdvancedFileOperationsIT extends MinaSftpServerTestSupport 
         context.getRouteController().startRoute("renameSubTest");
         mock.assertIsSatisfied();
 
-        Thread.sleep(500);
-        assertTrue(!ftpFile("subdir/rename-sub.txt").toFile().exists(), "Source should be moved");
-        assertTrue(ftpFile("subdir/processed/rename-sub.txt").toFile().exists(), "Target should exist");
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertTrue(!ftpFile("subdir/rename-sub.txt").toFile().exists(), "Source should be moved");
+            assertTrue(ftpFile("subdir/processed/rename-sub.txt").toFile().exists(), "Target should exist");
+        });
 
         context.getRouteController().stopRoute("renameSubTest");
     }
@@ -437,10 +441,12 @@ public class MinaSftpAdvancedFileOperationsIT extends MinaSftpServerTestSupport 
         context.getRouteController().startRoute("sizePreserveTest");
         mock.assertIsSatisfied();
 
-        Thread.sleep(500);
-        // Verify moved file has same size
-        long movedSize = ftpFile("moved/size-preserve.txt").toFile().length();
-        assertEquals(originalSize, movedSize, "Moved file should have same size (server-side rename)");
+        // Wait for the post-processing file move to complete on the filesystem
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertTrue(ftpFile("moved/size-preserve.txt").toFile().exists(), "Moved file should exist");
+            long movedSize = ftpFile("moved/size-preserve.txt").toFile().length();
+            assertEquals(originalSize, movedSize, "Moved file should have same size (server-side rename)");
+        });
 
         context.getRouteController().stopRoute("sizePreserveTest");
     }
