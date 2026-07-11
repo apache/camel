@@ -34,5 +34,6 @@ mvnd.zip*
 .mvn/.develocity/develocity-workspace-id
 backlog
 .claude
+.codex
 .mcp.json
 .omc
