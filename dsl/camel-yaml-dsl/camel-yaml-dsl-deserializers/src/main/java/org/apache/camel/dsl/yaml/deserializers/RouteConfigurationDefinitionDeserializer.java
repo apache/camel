@@ -76,6 +76,12 @@ public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBa
         final MappingNode bn = asMappingNode(node);
         setDeserializationContext(node, dc);
 
+        int line = -1;
+        if (node.getStartMark().isPresent()) {
+            line = node.getStartMark().get().getLine();
+        }
+        onNewTarget(node, target, line);
+
         for (NodeTuple tuple : bn.getValue()) {
             String key = asText(tuple.getKeyNode());
             Node val = tuple.getValueNode();
