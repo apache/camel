@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -149,12 +150,16 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
      * reading the server's SSH version banner (e.g., "SSH-2.0-..."). A TCP-only check can pass while the SSH layer is
      * still initializing, causing clients to time out during the SSH handshake. This was the root cause of widespread
      * flaky tests in camel-mina-sftp (CAMEL-23216).
+     * <p/>
+     * This method is {@code protected} so that subclasses that override {@link #setUpServer()} can call it after
+     * starting their own {@link SshServer} instance.
      *
      * @throws IOException if the server does not become ready within 30 seconds
      */
-    private void waitForServerReady() throws IOException {
+    protected void waitForServerReady() throws IOException {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(30);
         IOException lastException = null;
+        String lastBanner = null;
         while (System.nanoTime() < deadline) {
             try (Socket socket = new Socket()) {
                 socket.connect(new InetSocketAddress("localhost", port), 2000);
@@ -163,12 +168,13 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
                 // The server sends "SSH-2.0-..." immediately upon accepting a connection.
                 // A successful TCP connect alone is not sufficient — the SSH handshake can
                 // still time out if the protocol layer hasn't finished initializing.
+                // SSH version strings are US-ASCII per RFC 4253 §4.2.
                 byte[] buf = new byte[256];
                 int len = socket.getInputStream().read(buf);
                 if (len > 0) {
-                    String banner = new String(buf, 0, len).trim();
-                    if (banner.startsWith("SSH-")) {
-                        LOG.debug("SFTP server ready on port {} (banner: {})", port, banner);
+                    lastBanner = new String(buf, 0, len, StandardCharsets.US_ASCII).trim();
+                    if (lastBanner.startsWith("SSH-")) {
+                        LOG.debug("SFTP server ready on port {} (banner: {})", port, lastBanner);
                         return;
                     }
                 }
@@ -183,7 +189,11 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
                 throw new IOException("Interrupted while waiting for SFTP server on port " + port, e);
             }
         }
-        throw new IOException("SFTP server not ready after 30 seconds on port " + port, lastException);
+        String detail = lastBanner != null
+                ? "last banner received: \"" + lastBanner + "\""
+                : "no banner received";
+        throw new IOException(
+                "SFTP server not ready after 30 seconds on port " + port + " (" + detail + ")", lastException);
     }
 
     protected PublickeyAuthenticator getPublickeyAuthenticator() {
