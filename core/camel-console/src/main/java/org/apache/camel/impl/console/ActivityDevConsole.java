@@ -62,7 +62,7 @@ public class ActivityDevConsole extends AbstractDevConsole {
 
             JsonArray arr = new JsonArray();
             root.put("activity", arr);
-            for (BacklogTracerEventMessage event : tracer.dumpActivity()) {
+            for (BacklogTracerEventMessage event : tracer.getActivity()) {
                 JsonObject jo = new JsonObject();
                 jo.put("uid", event.getUid());
                 jo.put("exchangeId", event.getExchangeId());

@@ -199,6 +199,13 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
 
     @Override
     public void traceEvent(BacklogTracerEventMessage event) {
+        // capture completed exchange summaries for activity monitoring
+        // (done before the early return so activity works in standby mode without requiring messageHistory)
+        if ((enabled || standby) && event.isLast()) {
+            drainActivity();
+            activityQueue.offer(event);
+        }
+
         // special in standby mode we allow using tracer to capture latest tracing data for
         // enriched message history
         boolean history = (enabled || standby) && camelContext.isMessageHistory();
@@ -262,12 +269,6 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
                 // that arrived after the provisional queue was claimed by a new exchange
                 completeHistoryQueue.add(event);
             }
-        }
-
-        // capture completed exchange summaries for activity monitoring
-        if (event.isLast()) {
-            drainActivity();
-            activityQueue.offer(event);
         }
 
         if (!enabled) {
@@ -537,9 +538,12 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         root.put("activity", arr);
         for (BacklogTracerEventMessage event : events) {
             JsonObject jo = new JsonObject();
+            jo.put("uid", event.getUid());
             jo.put("exchangeId", event.getExchangeId());
             jo.put("routeId", event.getRouteId());
-            jo.put("fromRouteId", event.getFromRouteId());
+            if (event.getFromRouteId() != null) {
+                jo.put("fromRouteId", event.getFromRouteId());
+            }
             if (event.getTimestamp() > 0) {
                 jo.put("timestamp", event.getTimestamp());
             }
@@ -547,6 +551,9 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
             jo.put("failed", event.isFailed());
             if (event.getEndpointUri() != null) {
                 jo.put("endpointUri", event.getEndpointUri());
+            }
+            if (event.isRemoteEndpoint()) {
+                jo.put("remoteEndpoint", true);
             }
             if (event.hasException()) {
                 jo.put("exception", event.getExceptionAsJSon());
