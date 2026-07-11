@@ -214,7 +214,7 @@ class ActivityTab extends AbstractTableTab {
         TuiHelper.hint(spans, "Home/End", "top/end");
         TuiHelper.hint(spans, "s", "sort");
         hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
-        TuiHelper.hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
+        TuiHelper.hintLast(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
     }
 
     private void renderDetail(Frame frame, Rect area, ActivityEntry ae) {
@@ -347,12 +347,12 @@ class ActivityTab extends AbstractTableTab {
     }
 
     private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
-        String label = "["
-                       + (body ? "b" : "-")
-                       + (headers ? "h" : "-")
-                       + (props ? "p" : "-")
-                       + (vars ? "v" : "-")
-                       + "]";
-        TuiHelper.hint(spans, "bhpv", label);
+        spans.add(Span.styled(" show ", Theme.hintKey()));
+        spans.add(Span.raw(" "));
+        spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(props ? "P" : "p", props ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(vars ? "V" : "v", vars ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
+        spans.add(Span.raw("  "));
     }
 }
