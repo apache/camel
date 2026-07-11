@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -58,6 +59,8 @@ import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.commands.AskTools;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
+import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.util.json.JsonObject;
 
 /**
  * AI prompt panel for the TUI. Communicates directly with an LLM via {@link LlmClient} and uses the same tool
@@ -118,6 +121,12 @@ class AiPanel {
     private volatile CompletableFuture<AiCliCommandExecutor.Result> activeCliCommand;
     private Runnable exitCallback;
 
+    // Detached launches (/run, /infra run) go through the same LaunchManager the F2 Actions menu uses, so they are
+    // spawned as tracked background processes instead of blocking in-process. Null in tests that construct the panel
+    // directly; the slash context reports an error in that case.
+    private LaunchManager launchManager;
+    private volatile List<JsonObject> exampleCatalog;
+
     // Provider switch popup
     private final AiProviderSwitchPopup providerSwitchPopup = new AiProviderSwitchPopup();
     private final AiProviderSelector providerSelector = new AiProviderSelector();
@@ -148,6 +157,10 @@ class AiPanel {
 
     void setContext(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    void setLaunchManager(LaunchManager launchManager) {
+        this.launchManager = launchManager;
     }
 
     synchronized List<LogEntry> getActivityLog() {
@@ -351,6 +364,12 @@ class AiPanel {
             }
             return true;
         }
+        // A background CLI command (e.g. /send) does not put the panel into the thinking state, so handle its
+        // cancellation here while the panel stays usable for typing.
+        if ((ke.isCtrlC() || ke.isKey(KeyCode.ESCAPE)) && activeCliCommand != null) {
+            interruptBusyOperation();
+            return true;
+        }
         if (ke.isKey(KeyCode.ENTER)) {
             if (!inputBuffer.isEmpty()) {
                 submitInput();
@@ -426,9 +445,8 @@ class AiPanel {
         if (result.cliRequest() != null) {
             AiCliCommandExecutor.Request request = result.cliRequest();
             conversation.add(new ConversationEntry(AiRole.SYSTEM, "Running " + request.displayText()));
-            thinkingVerb = "Running command";
-            thinkingStartTime = System.currentTimeMillis();
-            thinking.set(true);
+            // Runs in the background without entering the panel's "thinking" state, so the user can keep typing
+            // and asking questions while the command runs. Esc still cancels it via interruptBusyOperation().
             CompletableFuture<AiCliCommandExecutor.Result> future = slashCommandContext.executeCli(request);
             activeCliCommand = future;
             future.whenComplete(this::handleCliCompletion);
@@ -1243,6 +1261,68 @@ class AiPanel {
         @Override
         public void cancelCli() {
             cliCommandExecutor.cancel();
+        }
+
+        @Override
+        public String launchDetached(AiSlashCommandRegistry.LaunchSpec spec) {
+            if (launchManager == null) {
+                throw new IllegalStateException("Launching commands is not available in this session.");
+            }
+            JsonObject example = spec.exampleName() != null ? findExample(spec.exampleName()) : null;
+            if (example != null) {
+                List<String> missing = launchManager.findMissingInfraServices(example);
+                if (!missing.isEmpty()) {
+                    if (!LaunchManager.isContainerRuntimeAvailable()) {
+                        throw new IllegalStateException(
+                                "Docker/Podman required for infra services: " + String.join(", ", missing));
+                    }
+                    launchManager.startMissingInfraAndDefer(
+                            missing, spec.displayName(), () -> launchDetachedQuietly(spec));
+                    return "Starting infra: " + String.join(", ", missing) + " → then: " + spec.displayName();
+                }
+            }
+            try {
+                launchManager.launchDetached(spec.displayName(), spec.camelArgs());
+            } catch (IOException e) {
+                throw new IllegalStateException(
+                        "Failed to start: " + spec.displayName() + " - " + e.getMessage(), e);
+            }
+            return "Started: " + spec.displayName();
+        }
+    }
+
+    /**
+     * Launches a deferred spec (after its infra services have started) without propagating failures, since this runs
+     * from {@link LaunchManager#tick(long)} where there is no slash-command result to surface. Errors are reported in
+     * the conversation instead.
+     */
+    private void launchDetachedQuietly(AiSlashCommandRegistry.LaunchSpec spec) {
+        try {
+            launchManager.launchDetached(spec.displayName(), spec.camelArgs());
+        } catch (IOException e) {
+            conversation.add(new ConversationEntry(
+                    AiRole.ERROR, "Failed to start: " + spec.displayName() + " - " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Looks up a catalog example by its full name (e.g. {@code beginner/timer-log}) so its required infra services can
+     * be determined before launching. The catalog is loaded lazily and cached. Returns {@code null} when the example is
+     * unknown or the catalog cannot be loaded, in which case the launch proceeds without infra auto-start.
+     */
+    private JsonObject findExample(String name) {
+        try {
+            List<JsonObject> catalog = exampleCatalog;
+            if (catalog == null) {
+                catalog = ExampleHelper.loadCatalog();
+                exampleCatalog = catalog;
+            }
+            return catalog.stream()
+                    .filter(example -> name.equals(example.getStringOrDefault("name", "")))
+                    .findFirst()
+                    .orElse(null);
+        } catch (RuntimeException e) {
+            return null;
         }
     }
 

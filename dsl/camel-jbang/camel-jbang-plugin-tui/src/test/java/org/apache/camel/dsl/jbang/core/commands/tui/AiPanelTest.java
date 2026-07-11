@@ -247,13 +247,14 @@ class AiPanelTest {
     }
 
     @Test
-    void providerAndModelWaitWhileBusy() throws Exception {
+    void providerAndModelWaitWhileBusy() {
         AiPanel panel = new AiPanel();
         FakeSlashContext context = new FakeSlashContext();
         panel.setSlashCommandContextForTesting(context);
+        panel.setClientForTesting(new BlockingLlmClient());
         panel.open();
 
-        type(panel, "/run route.yaml");
+        type(panel, "what routes are running?");
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
         assertTrue(panel.isThinkingForTesting());
 
@@ -262,23 +263,28 @@ class AiPanelTest {
         assertFalse(context.providerSwitchRequested);
         assertTrue(panel.conversationForTesting().stream()
                 .anyMatch(entry -> entry.text().contains("Wait for the current operation to finish")));
+
+        // Stop the blocking agent thread so it does not spin past the test.
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
     }
 
     @Test
-    void runCommandExecutesThroughContextAndRendersOutput() throws Exception {
+    void runCommandLaunchesDetachedAndRendersStatus() {
         AiPanel panel = new AiPanel();
         FakeSlashContext context = new FakeSlashContext();
-        context.cliResult = new AiCliCommandExecutor.Result("camel run route.yaml", 0, "Started\n", 12, false);
+        context.launchResult = "Started: route.yaml";
         panel.setSlashCommandContextForTesting(context);
         panel.open();
 
         type(panel, "/run route.yaml");
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
-        context.completeCli();
 
-        assertEquals(List.of("run", "route.yaml"), context.cliRequest.argv());
+        // /run detaches through the launch context (not the in-process CLI executor) and adds --logging-color.
+        assertEquals(List.of("run", "route.yaml", "--logging-color=true"), context.launchSpec.camelArgs());
+        assertEquals("route.yaml", context.launchSpec.displayName());
+        assertFalse(panel.isThinkingForTesting(), "detached launch must not lock the panel into thinking");
         assertTrue(panel.conversationForTesting().stream()
-                .anyMatch(entry -> entry.role() == AiRole.SYSTEM && entry.text().contains("Started")));
+                .anyMatch(entry -> entry.role() == AiRole.SYSTEM && entry.text().contains("Started: route.yaml")));
     }
 
     @Test
@@ -334,9 +340,10 @@ class AiPanelTest {
         panel.setSlashCommandContextForTesting(context);
         panel.open();
 
-        type(panel, "/run route.yaml --dev");
+        // /send runs in-process without locking the panel into thinking; Esc still cancels it.
+        type(panel, "/send direct:foo hello");
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
-        assertTrue(panel.isThinkingForTesting());
+        assertFalse(panel.isThinkingForTesting());
 
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
 
@@ -520,6 +527,8 @@ class AiPanelTest {
         String switchedModel;
         boolean switchModelResult = true;
         AiCliCommandExecutor.Request cliRequest;
+        AiSlashCommandRegistry.LaunchSpec launchSpec;
+        String launchResult = "Started: example";
         AiCliCommandExecutor.Result cliResult = new AiCliCommandExecutor.Result("", 0, "", 0, false);
         private CompletableFuture<AiCliCommandExecutor.Result> pendingCli;
 
@@ -582,6 +591,12 @@ class AiPanelTest {
             if (pendingCli != null) {
                 pendingCli.complete(new AiCliCommandExecutor.Result("", 130, "", 0, true));
             }
+        }
+
+        @Override
+        public String launchDetached(AiSlashCommandRegistry.LaunchSpec spec) {
+            launchSpec = spec;
+            return launchResult;
         }
     }
 

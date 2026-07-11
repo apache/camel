@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -95,7 +96,8 @@ class AiSlashCommandRegistryTest {
     void placeholderUsesRegistryDescriptor() {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
-        assertEquals("<files...> [--dev] [--port=8080] [...]", registry.placeholderFor("/run ").orElseThrow());
+        assertEquals("<files...|--example=name> [--name=...] [--dev] [--port=8080] [...]",
+                registry.placeholderFor("/run ").orElseThrow());
         assertEquals("<endpoint> <message text | @file>", registry.placeholderFor("/send ").orElseThrow());
         assertTrue(registry.placeholderFor("/run route.yaml").isEmpty());
     }
@@ -142,6 +144,71 @@ class AiSlashCommandRegistryTest {
         assertEquals("Missing body. Usage: /send <endpoint> <message text | @file>",
                 assertThrows(IllegalArgumentException.class, () -> AiSlashCommandRegistry.parseSend("direct:foo"))
                         .getMessage());
+    }
+
+    @Test
+    void runLaunchSpecAddsLoggingColorAndKeepsDisplayName() {
+        AiSlashCommandRegistry.LaunchSpec spec = AiSlashCommandRegistry.LaunchSpec.forRun("route.yaml --dev");
+
+        assertEquals(List.of("run", "route.yaml", "--dev", "--logging-color=true"), spec.camelArgs());
+        assertEquals("route.yaml --dev", spec.displayName());
+        assertNull(spec.exampleName());
+    }
+
+    @Test
+    void runLaunchSpecDerivesNameFromCategorisedExample() {
+        AiSlashCommandRegistry.LaunchSpec spec
+                = AiSlashCommandRegistry.LaunchSpec.forRun("--example=beginner/timer-log");
+
+        assertEquals(
+                List.of("run", "--example=beginner/timer-log", "--name=timer-log", "--logging-color=true"),
+                spec.camelArgs());
+        assertEquals("beginner/timer-log", spec.displayName());
+        assertEquals("beginner/timer-log", spec.exampleName());
+    }
+
+    @Test
+    void runLaunchSpecDoesNotOverrideExplicitNameOrColor() {
+        AiSlashCommandRegistry.LaunchSpec spec = AiSlashCommandRegistry.LaunchSpec.forRun(
+                "--example=beginner/timer-log --name=custom --logging-color=false");
+
+        assertEquals(
+                List.of("run", "--example=beginner/timer-log", "--name=custom", "--logging-color=false"),
+                spec.camelArgs());
+    }
+
+    @Test
+    void infraRunRoutesThroughDetachedLaunch() {
+        RecordingLaunchContext context = new RecordingLaunchContext();
+
+        AiSlashCommandRegistry.CommandResult result
+                = AiSlashCommandRegistry.defaults().execute("/infra run kafka", context);
+
+        assertEquals(AiRole.SYSTEM, result.role());
+        assertEquals(List.of("infra", "run", "kafka"), context.launched.camelArgs());
+        assertEquals("infra run kafka", context.launched.displayName());
+    }
+
+    @Test
+    void infraListStaysInProcess() {
+        RecordingLaunchContext context = new RecordingLaunchContext();
+
+        AiSlashCommandRegistry.CommandResult result
+                = AiSlashCommandRegistry.defaults().execute("/infra list", context);
+
+        assertNull(context.launched);
+        assertEquals(List.of("infra", "list"), result.cliRequest().argv());
+    }
+
+    @Test
+    void runRoutesThroughDetachedLaunch() {
+        RecordingLaunchContext context = new RecordingLaunchContext();
+
+        AiSlashCommandRegistry.CommandResult result
+                = AiSlashCommandRegistry.defaults().execute("/run route.yaml", context);
+
+        assertEquals(AiRole.SYSTEM, result.role());
+        assertEquals(List.of("run", "route.yaml", "--logging-color=true"), context.launched.camelArgs());
     }
 
     @Test
@@ -194,7 +261,18 @@ class AiSlashCommandRegistryTest {
         assertEquals("kaboom", result.text());
     }
 
-    private static final class NoopSlashContext implements AiSlashCommandContext {
+    private static final class RecordingLaunchContext extends NoopSlashContext {
+
+        private AiSlashCommandRegistry.LaunchSpec launched;
+
+        @Override
+        public String launchDetached(AiSlashCommandRegistry.LaunchSpec spec) {
+            launched = spec;
+            return "Started: " + spec.displayName();
+        }
+    }
+
+    private static class NoopSlashContext implements AiSlashCommandContext {
 
         @Override
         public void closePanel() {
@@ -241,6 +319,11 @@ class AiSlashCommandRegistryTest {
 
         @Override
         public void cancelCli() {
+        }
+
+        @Override
+        public String launchDetached(AiSlashCommandRegistry.LaunchSpec spec) {
+            return "Started: " + spec.displayName();
         }
     }
 }

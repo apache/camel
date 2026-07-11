@@ -43,4 +43,12 @@ interface AiSlashCommandContext {
     CompletableFuture<AiCliCommandExecutor.Result> executeCli(AiCliCommandExecutor.Request request);
 
     void cancelCli();
+
+    /**
+     * Launches a long-running command (such as {@code camel run} or {@code camel infra run}) as a detached, tracked
+     * background process, first starting any infra services the launch requires. Returns a human-readable status line
+     * to show in the panel, or throws a {@link RuntimeException} whose message describes why the launch could not
+     * start.
+     */
+    String launchDetached(AiSlashCommandRegistry.LaunchSpec spec);
 }

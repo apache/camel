@@ -87,11 +87,17 @@ final class AiSlashCommandRegistry {
                     return CommandResult.system("Exiting TUI");
                 }));
         commands.add(new Descriptor(
-                "run", List.of("r"), "<camel run args>", "<files...> [--dev] [--port=8080] [...]",
-                (context, arguments) -> CommandResult.async(AiCliCommandExecutor.Request.run(arguments))));
+                "run", List.of("r"), "<camel run args>",
+                "<files...|--example=name> [--name=...] [--dev] [--port=8080] [...]",
+                (context, arguments) -> CommandResult.system(context.launchDetached(LaunchSpec.forRun(arguments)))));
         commands.add(new Descriptor(
                 "infra", List.of("i"), "Manage Camel infrastructure", "<camel infra args>",
-                (context, arguments) -> CommandResult.async(AiCliCommandExecutor.Request.infra(arguments))));
+                (context, arguments) -> {
+                    if (isInfraRun(arguments)) {
+                        return CommandResult.system(context.launchDetached(LaunchSpec.forInfra(arguments)));
+                    }
+                    return CommandResult.async(AiCliCommandExecutor.Request.infra(arguments));
+                }));
         commands.add(new Descriptor(
                 "send", List.of("s"), "Send a message to an endpoint", SEND_USAGE,
                 (context, arguments) -> CommandResult.async(
@@ -250,6 +256,11 @@ final class AiSlashCommandRegistry {
         return lookup(name).map(Descriptor::placeholder).filter(value -> value != null && !value.isBlank());
     }
 
+    private static boolean isInfraRun(String arguments) {
+        List<String> tokens = AiCliCommandExecutor.Request.splitRawTail(arguments);
+        return !tokens.isEmpty() && "run".equalsIgnoreCase(tokens.get(0));
+    }
+
     static SendCommand parseSend(String arguments) {
         String value = arguments == null ? "" : arguments.trim();
         if (value.isEmpty()) {
@@ -314,6 +325,65 @@ final class AiSlashCommandRegistry {
     }
 
     record SendCommand(String endpoint, String body, boolean fileBody) {
+    }
+
+    /**
+     * A long-running command to launch as a detached background process. {@code camelArgs} is the full argument vector
+     * passed to the {@code camel} CLI (e.g. {@code [run, --example=..., --name=..., --logging-color=true]}).
+     * {@code exampleName} is non-null when the launch targets a catalog example, so the panel can start any infra
+     * services the example requires before launching.
+     */
+    record LaunchSpec(String displayName, List<String> camelArgs, String exampleName) {
+
+        LaunchSpec {
+            camelArgs = List.copyOf(camelArgs);
+        }
+
+        static LaunchSpec forRun(String arguments) {
+            List<String> tokens = AiCliCommandExecutor.Request.splitRawTail(arguments);
+            List<String> args = new ArrayList<>();
+            args.add("run");
+            args.addAll(tokens);
+            String exampleName = extractOption(tokens, "--example");
+            if (exampleName != null && exampleName.contains("/")
+                    && tokens.stream().noneMatch(token -> token.startsWith("--name"))) {
+                args.add("--name=" + TuiHelper.stripCategory(exampleName));
+            }
+            if (tokens.stream().noneMatch(token -> token.startsWith("--logging-color"))) {
+                args.add("--logging-color=true");
+            }
+            String displayName = exampleName != null
+                    ? exampleName
+                    : (tokens.isEmpty() ? "run" : String.join(" ", tokens));
+            return new LaunchSpec(displayName, args, exampleName);
+        }
+
+        static LaunchSpec forInfra(String arguments) {
+            List<String> tokens = AiCliCommandExecutor.Request.splitRawTail(arguments);
+            List<String> args = new ArrayList<>();
+            args.add("infra");
+            args.addAll(tokens);
+            String displayName = ("infra " + String.join(" ", tokens)).strip();
+            return new LaunchSpec(displayName, args, null);
+        }
+
+        /**
+         * Returns the value of {@code --option=value} or {@code --option value} from the given tokens, or {@code null}
+         * when the option is absent.
+         */
+        private static String extractOption(List<String> tokens, String option) {
+            String inline = option + "=";
+            for (int i = 0; i < tokens.size(); i++) {
+                String token = tokens.get(i);
+                if (token.startsWith(inline)) {
+                    return token.substring(inline.length());
+                }
+                if (token.equals(option) && i + 1 < tokens.size()) {
+                    return tokens.get(i + 1);
+                }
+            }
+            return null;
+        }
     }
 
     interface Executor {

@@ -258,7 +258,7 @@ final class AiCliCommandExecutor {
             return new Request(args, "camel " + String.join(" ", args));
         }
 
-        private static List<String> splitRawTail(String rawTail) {
+        static List<String> splitRawTail(String rawTail) {
             if (rawTail == null || rawTail.isBlank()) {
                 return List.of();
             }

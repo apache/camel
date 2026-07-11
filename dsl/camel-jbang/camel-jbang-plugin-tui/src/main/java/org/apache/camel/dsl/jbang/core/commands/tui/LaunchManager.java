@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,6 +65,23 @@ class LaunchManager {
 
     void clearPendingAutoSelect() {
         pendingAutoSelect = null;
+    }
+
+    /**
+     * Launches {@code camel <extraArgs>} as a detached background process and registers it as a pending launch so it is
+     * tracked and monitored like an example started from the F2 Actions menu. Output is redirected to a temporary log
+     * file. Used by the AI panel's {@code /run} and {@code /infra run} slash commands.
+     */
+    void launchDetached(String displayName, List<String> extraArgs) throws IOException {
+        List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
+        cmd.addAll(extraArgs);
+        Path outputFile = Files.createTempFile("camel-launch-", ".log");
+        outputFile.toFile().deleteOnExit();
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        pb.redirectErrorStream(true);
+        pb.redirectOutput(outputFile.toFile());
+        Process process = pb.start();
+        addPendingLaunch(displayName, process, outputFile);
     }
 
     void addPendingLaunch(String name, Process process, Path outputFile) {
