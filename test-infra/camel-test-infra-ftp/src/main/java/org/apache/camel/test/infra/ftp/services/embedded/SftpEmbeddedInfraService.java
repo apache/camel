@@ -142,16 +142,45 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
         waitForServerReady();
     }
 
+    /**
+     * Waits for the embedded SFTP server to be fully ready to accept SSH connections.
+     * <p/>
+     * This method goes beyond a simple TCP port check — it verifies that the SSH protocol layer is initialized by
+     * reading the server's SSH version banner (e.g., "SSH-2.0-..."). A TCP-only check can pass while the SSH layer is
+     * still initializing, causing clients to time out during the SSH handshake. This was the root cause of widespread
+     * flaky tests in camel-mina-sftp (CAMEL-23216).
+     *
+     * @throws IOException if the server does not become ready within 30 seconds
+     */
     private void waitForServerReady() throws IOException {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(30);
         IOException lastException = null;
         while (System.nanoTime() < deadline) {
             try (Socket socket = new Socket()) {
-                socket.connect(new InetSocketAddress("localhost", port), 1000);
-                return;
+                socket.connect(new InetSocketAddress("localhost", port), 2000);
+                socket.setSoTimeout(5000);
+                // Read the SSH version banner to verify the SSH protocol layer is ready.
+                // The server sends "SSH-2.0-..." immediately upon accepting a connection.
+                // A successful TCP connect alone is not sufficient — the SSH handshake can
+                // still time out if the protocol layer hasn't finished initializing.
+                byte[] buf = new byte[256];
+                int len = socket.getInputStream().read(buf);
+                if (len > 0) {
+                    String banner = new String(buf, 0, len).trim();
+                    if (banner.startsWith("SSH-")) {
+                        LOG.debug("SFTP server ready on port {} (banner: {})", port, banner);
+                        return;
+                    }
+                }
+                // TCP connected but no SSH banner yet — server still initializing
             } catch (IOException e) {
                 lastException = e;
-                Thread.onSpinWait();
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IOException("Interrupted while waiting for SFTP server on port " + port, e);
             }
         }
         throw new IOException("SFTP server not ready after 30 seconds on port " + port, lastException);
