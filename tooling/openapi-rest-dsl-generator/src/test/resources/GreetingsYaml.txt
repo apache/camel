@@ -6,6 +6,7 @@
       produces: "*/*"
       param:
       - name: "name"
+        type: "path"
       to: "direct:greeting-api"
     post:
     - id: "post-greeting-api"
@@ -13,10 +14,12 @@
       produces: "*/*"
       param:
       - name: "name"
+        type: "path"
       to: "direct:post-greeting-api"
     - id: "bye-api"
       path: "/bye/{name}"
       produces: "*/*"
       param:
       - name: "name"
+        type: "path"
       to: "direct:bye-api"

@@ -80,6 +80,16 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
             element.removeAttribute("customId");
         }
 
+        // ensure param elements always have the type attribute
+        // (the XML writer omits it when the value is the default "path")
+        final NodeList params = document.getElementsByTagName("param");
+        for (int i = 0; i < params.getLength(); i++) {
+            final Element param = (Element) params.item(i);
+            if (!param.hasAttribute("type")) {
+                param.setAttribute("type", "path");
+            }
+        }
+
         boolean restConfig = restComponent != null || restContextPath != null || clientRequestValidation;
         if (restConfig) {
             final Element configuration = document.createElement("restConfiguration");
