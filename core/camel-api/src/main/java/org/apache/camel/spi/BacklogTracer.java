@@ -258,19 +258,20 @@ public interface BacklogTracer {
     /**
      * Get all activity summaries (without removing).
      * <p>
-     * Activity summaries are lightweight snapshots captured when an exchange completes a route. They contain only
-     * metadata (exchange ID, route, elapsed time, status) — no message body or headers.
+     * Activity summaries are lightweight snapshots captured when an exchange completes. They contain exchange-level
+     * metadata (exchange ID, route, elapsed time, status) and a list of remote endpoints that were called — no message
+     * body or headers.
      *
      * @since 4.22
      */
-    Collection<BacklogTracerEventMessage> getActivity();
+    Collection<BacklogTracerActivityMessage> getActivity();
 
     /**
      * Dumps all activity summaries.
      *
      * @since 4.22
      */
-    List<BacklogTracerEventMessage> dumpActivity();
+    List<BacklogTracerActivityMessage> dumpActivity();
 
     /**
      * Dumps all activity summaries as JSon.

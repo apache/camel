@@ -60,10 +60,8 @@ public class BacklogTracerActivityTest extends ManagementTestSupport {
         assertTrue(json.contains("exchangeId"));
         assertTrue(json.contains("routeId"));
         assertTrue(json.contains("elapsed"));
-
-        // each exchange produces one activity entry (the isLast event)
-        // so 2 messages = 2 activity entries
         assertTrue(json.contains("\"failed\":false"));
+        assertTrue(json.contains("fromEndpointUri"));
     }
 
     @SuppressWarnings("unchecked")
