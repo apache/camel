@@ -2503,6 +2503,7 @@ public abstract class BaseMainSupport extends BaseService {
         tracer.setEnabled(config.isEnabled());
         tracer.setStandby(config.isStandby());
         tracer.setBacklogSize(config.getBacklogSize());
+        tracer.setActivitySize(config.getActivitySize());
         tracer.setRemoveOnDump(config.isRemoveOnDump());
         tracer.setBodyMaxChars(config.getBodyMaxChars());
         tracer.setBodyIncludeStreams(config.isBodyIncludeStreams());

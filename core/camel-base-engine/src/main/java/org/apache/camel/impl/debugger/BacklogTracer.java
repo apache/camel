@@ -66,6 +66,9 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     // use tracer to capture additional information for capturing latest completed exchange message-history
     private final Queue<BacklogTracerEventMessage> provisionalHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     private final Queue<BacklogTracerEventMessage> completeHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE + 1);
+    // rolling window of completed exchange summaries for activity monitoring
+    private final Queue<BacklogTracerEventMessage> activityQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
+    private int activitySize = 100;
     private volatile String lastCompletedBreadcrumbId;
     private boolean removeOnDump = true;
     private int bodyMaxChars = 32 * 1024;
@@ -260,6 +263,13 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
                 completeHistoryQueue.add(event);
             }
         }
+
+        // capture completed exchange summaries for activity monitoring
+        if (event.isLast()) {
+            drainActivity();
+            activityQueue.offer(event);
+        }
+
         if (!enabled) {
             return;
         }
@@ -286,6 +296,15 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
                 for (int i = 0; i < drain; i++) {
                     queue.poll();
                 }
+            }
+        }
+    }
+
+    private void drainActivity() {
+        int drain = activityQueue.size() - activitySize + 1;
+        if (drain > 0) {
+            for (int i = 0; i < drain; i++) {
+                activityQueue.poll();
             }
         }
     }
@@ -329,6 +348,23 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
                     "The backlog size cannot be greater than the max size of " + MAX_BACKLOG_SIZE + ", was: " + backlogSize);
         }
         this.backlogSize = backlogSize;
+    }
+
+    @Override
+    public int getActivitySize() {
+        return activitySize;
+    }
+
+    @Override
+    public void setActivitySize(int activitySize) {
+        if (activitySize <= 0) {
+            throw new IllegalArgumentException("The activity size must be a positive number, was: " + activitySize);
+        }
+        if (activitySize > MAX_BACKLOG_SIZE) {
+            throw new IllegalArgumentException(
+                    "The activity size cannot be greater than the max size of " + MAX_BACKLOG_SIZE + ", was: " + activitySize);
+        }
+        this.activitySize = activitySize;
     }
 
     @Override
@@ -478,6 +514,48 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         return Collections.unmodifiableCollection(completeHistoryQueue);
     }
 
+    @Override
+    public Collection<BacklogTracerEventMessage> getActivity() {
+        return Collections.unmodifiableCollection(activityQueue);
+    }
+
+    @Override
+    public List<BacklogTracerEventMessage> dumpActivity() {
+        List<BacklogTracerEventMessage> answer = new ArrayList<>(activityQueue);
+        if (isRemoveOnDump()) {
+            activityQueue.clear();
+        }
+        return answer;
+    }
+
+    @Override
+    public String dumpActivityAsJSon() {
+        List<BacklogTracerEventMessage> events = dumpActivity();
+
+        JsonObject root = new JsonObject();
+        JsonArray arr = new JsonArray();
+        root.put("activity", arr);
+        for (BacklogTracerEventMessage event : events) {
+            JsonObject jo = new JsonObject();
+            jo.put("exchangeId", event.getExchangeId());
+            jo.put("routeId", event.getRouteId());
+            jo.put("fromRouteId", event.getFromRouteId());
+            if (event.getTimestamp() > 0) {
+                jo.put("timestamp", event.getTimestamp());
+            }
+            jo.put("elapsed", event.getElapsed());
+            jo.put("failed", event.isFailed());
+            if (event.getEndpointUri() != null) {
+                jo.put("endpointUri", event.getEndpointUri());
+            }
+            if (event.hasException()) {
+                jo.put("exception", event.getExceptionAsJSon());
+            }
+            arr.add(jo);
+        }
+        return root.toJson();
+    }
+
     public List<BacklogTracerEventMessage> dumpTracedMessages(String nodeId) {
         List<BacklogTracerEventMessage> answer = new ArrayList<>();
         if (nodeId != null) {
@@ -585,6 +663,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         queue.clear();
         completeHistoryQueue.clear();
         provisionalHistoryQueue.clear();
+        activityQueue.clear();
     }
 
     @Override

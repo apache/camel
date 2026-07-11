@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "activity",
+    "title": "Camel Activity",
+    "description": "Recent completed exchange activity",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.ActivityDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.22.0-SNAPSHOT"
+  }
+}
+

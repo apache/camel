@@ -22,6 +22,7 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ActivitySize", int.class);
         map.put("BacklogSize", int.class);
         map.put("BodyIncludeFiles", boolean.class);
         map.put("BodyIncludeStreams", boolean.class);
@@ -43,6 +44,8 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.TracerConfigurationProperties target = (org.apache.camel.main.TracerConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "activitysize":
+        case "activitySize": target.setActivitySize(property(camelContext, int.class, value)); return true;
         case "backlogsize":
         case "backlogSize": target.setBacklogSize(property(camelContext, int.class, value)); return true;
         case "bodyincludefiles":
@@ -81,6 +84,8 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "activitysize":
+        case "activitySize": return int.class;
         case "backlogsize":
         case "backlogSize": return int.class;
         case "bodyincludefiles":
@@ -115,6 +120,8 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.TracerConfigurationProperties target = (org.apache.camel.main.TracerConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "activitysize":
+        case "activitySize": return target.getActivitySize();
         case "backlogsize":
         case "backlogSize": return target.getBacklogSize();
         case "bodyincludefiles":

@@ -87,6 +87,16 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     }
 
     @Override
+    public int getActivitySize() {
+        return backlogTracer.getActivitySize();
+    }
+
+    @Override
+    public void setActivitySize(int activitySize) {
+        backlogTracer.setActivitySize(activitySize);
+    }
+
+    @Override
     public boolean isRemoveOnDump() {
         return backlogTracer.isRemoveOnDump();
     }
@@ -234,6 +244,11 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     @Override
     public String dumpLatestMessageHistoryAsJSon() {
         return backlogTracer.dumpLatestMessageHistoryAsJSon();
+    }
+
+    @Override
+    public String dumpActivityAsJSon() {
+        return backlogTracer.dumpActivityAsJSon();
     }
 
     @Override
