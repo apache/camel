@@ -1880,7 +1880,7 @@ class HistoryTab extends AbstractTab {
     }
 
     private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
-        spans.add(Span.styled(" show", Theme.hintKey()));
+        spans.add(Span.styled(" show ", Theme.hintKey()));
         spans.add(Span.raw(" "));
         spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
         spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
