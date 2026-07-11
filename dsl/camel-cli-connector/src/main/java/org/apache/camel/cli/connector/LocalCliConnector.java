@@ -130,6 +130,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File errorFile;
     private File receiveFile;
     private long receiveFilePos; // keep track of receive offset
+    private File activityFile;
     private byte[] lastSource;
     private ExpressionDefinition lastSourceExpression;
 
@@ -202,6 +203,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             errorFile = createLockFile(lockFile.getName() + "-error.json");
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             receiveFile = createLockFile(lockFile.getName() + "-receive.json");
+            activityFile = createLockFile(lockFile.getName() + "-activity.json");
             scheduledFuture = executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
             LOG.info("Camel CLI connector enabled");
         } else {
@@ -1693,6 +1695,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             LOG.trace("Error updating receive file: {} due to: {}. This exception is ignored.",
                     receiveFile, e.getMessage(), e);
         }
+        try {
+            DevConsole dc15 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                    .resolveById("activity");
+            if (dc15 != null) {
+                JsonObject json = (JsonObject) dc15.call(DevConsole.MediaType.JSON);
+                LOG.trace("Updating activity file: {}", activityFile);
+                String data = json.toJson() + System.lineSeparator();
+                IOHelper.writeText(data, activityFile);
+            }
+        } catch (Exception e) {
+            // ignore
+            LOG.trace("Error updating activity file: {} due to: {}. This exception is ignored.",
+                    activityFile, e.getMessage(), e);
+        }
     }
 
     private JsonObject collectMemory() {
@@ -1852,6 +1868,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         if (receiveFile != null) {
             FileUtil.deleteFile(receiveFile);
+        }
+        if (activityFile != null) {
+            FileUtil.deleteFile(activityFile);
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);
