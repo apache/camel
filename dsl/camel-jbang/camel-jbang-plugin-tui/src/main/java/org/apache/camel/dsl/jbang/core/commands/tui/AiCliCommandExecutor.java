@@ -110,7 +110,9 @@ final class AiCliCommandExecutor {
         int exitCode = 1;
         boolean interrupted = false;
         try {
-            exitCode = invoker.execute(command.request.argv(), new CapturePrinter(output));
+            synchronized (CamelJBangMain.class) {
+                exitCode = invoker.execute(command.request.argv(), new CapturePrinter(output));
+            }
             interrupted = command.cancelled.get() || Thread.currentThread().isInterrupted();
         } catch (Exception e) {
             String message = e.getMessage() != null ? e.getMessage() : "(no message; see logs for the stack trace)";

@@ -347,30 +347,31 @@ public class AskTools {
         CamelJBangMain main = (CamelJBangMain) commandLine.getCommand();
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        PrintWriter originalOut = commandLine.getOut();
-        PrintWriter originalErr = commandLine.getErr();
-        commandLine.setOut(pw);
-        commandLine.setErr(pw);
-
-        Printer originalPrinter = main.getOut();
-        main.setOut(capturingPrinter);
-        try {
-            int exitCode = commandLine.execute(cmdArgs);
-            pw.flush();
-            String output = captured.toString() + sw.toString();
-            if (output.isBlank() && exitCode != 0) {
-                return "Command exited with code " + exitCode;
+        synchronized (CamelJBangMain.class) {
+            PrintWriter originalOut = commandLine.getOut();
+            PrintWriter originalErr = commandLine.getErr();
+            Printer originalPrinter = main.getOut();
+            commandLine.setOut(pw);
+            commandLine.setErr(pw);
+            main.setOut(capturingPrinter);
+            try {
+                int exitCode = commandLine.execute(cmdArgs);
+                pw.flush();
+                String output = captured.toString() + sw.toString();
+                if (output.isBlank() && exitCode != 0) {
+                    return "Command exited with code " + exitCode;
+                }
+                if (output.length() > 32768) {
+                    output = output.substring(0, 32768) + "\n... (truncated)";
+                }
+                return output;
+            } catch (Exception e) {
+                return "Error executing command: " + e.getMessage();
+            } finally {
+                main.setOut(originalPrinter);
+                commandLine.setOut(originalOut);
+                commandLine.setErr(originalErr);
             }
-            if (output.length() > 32768) {
-                output = output.substring(0, 32768) + "\n... (truncated)";
-            }
-            return output;
-        } catch (Exception e) {
-            return "Error executing command: " + e.getMessage();
-        } finally {
-            main.setOut(originalPrinter);
-            commandLine.setOut(originalOut);
-            commandLine.setErr(originalErr);
         }
     }
 

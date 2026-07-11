@@ -117,6 +117,24 @@ class AiCliCommandExecutorTest {
     }
 
     @Test
+    void executorWaitsForSharedCamelJbangLock() throws Exception {
+        CountDownLatch invoked = new CountDownLatch(1);
+        AiCliCommandExecutor executor = new AiCliCommandExecutor((argv, printer) -> {
+            invoked.countDown();
+            return 0;
+        });
+
+        CompletableFuture<AiCliCommandExecutor.Result> future;
+        synchronized (CamelJBangMain.class) {
+            future = executor.executeAsync(AiCliCommandExecutor.Request.run("route.yaml"));
+            assertFalse(invoked.await(250, TimeUnit.MILLISECONDS));
+        }
+
+        assertTrue(invoked.await(5, TimeUnit.SECONDS));
+        assertEquals(0, future.get(5, TimeUnit.SECONDS).exitCode());
+    }
+
+    @Test
     void productionInvokerRestoresPrinterAndDoesNotQuitMain() throws Exception {
         CamelJBangMain main = new CamelJBangMain();
         Printer originalPrinter = main.getOut();

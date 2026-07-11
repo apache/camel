@@ -532,7 +532,7 @@ class AiPanel {
 
     private void executeSlashCommand(String input) {
         Optional<AiSlashCommandRegistry.ParsedCommand> parsed = slashCommands.parse(input);
-        if (parsed.isPresent() && thinking.get()) {
+        if (parsed.isPresent() && (thinking.get() || activeCliCommand != null)) {
             String name = parsed.get().descriptor().name();
             if ("provider".equals(name) || "model".equals(name)) {
                 conversation.add(new ConversationEntry(

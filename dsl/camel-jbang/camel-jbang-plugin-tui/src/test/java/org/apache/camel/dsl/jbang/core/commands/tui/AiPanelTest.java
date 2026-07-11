@@ -291,6 +291,27 @@ class AiPanelTest {
     }
 
     @Test
+    void providerAndModelWaitWhileCliCommandRuns() {
+        AiPanel panel = new AiPanel();
+        FakeSlashContext context = new FakeSlashContext();
+        panel.setSlashCommandContextForTesting(context);
+        panel.open();
+
+        type(panel, "/send direct:foo hello");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        panel.executeSlashCommandForTesting("/provider");
+        panel.executeSlashCommandForTesting("/model model-b");
+
+        assertFalse(context.providerSwitchRequested);
+        assertNull(context.switchedModel);
+        assertTrue(panel.conversationForTesting().stream()
+                .filter(entry -> entry.text().contains("Wait for the current operation to finish"))
+                .count() >= 2);
+        context.completeCli();
+    }
+
+    @Test
     void runCommandLaunchesDetachedAndRendersStatus() {
         AiPanel panel = new AiPanel();
         FakeSlashContext context = new FakeSlashContext();
