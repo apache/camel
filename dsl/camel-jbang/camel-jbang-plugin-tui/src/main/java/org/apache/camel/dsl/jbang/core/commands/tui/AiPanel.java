@@ -292,6 +292,22 @@ class AiPanel {
         return choice.model() == null || choice.model().isBlank() ? "auto" : choice.model();
     }
 
+    /**
+     * Persists a model chosen via {@code /model} so it survives a TUI restart, matching the Settings popup. The
+     * in-session provider choice is kept in sync so re-initialising the client (for example reopening the panel) does
+     * not revert to the previously selected model.
+     */
+    private void persistModelSelection(String model) {
+        TuiSettings settings = TuiSettings.load();
+        settings.setAiModel(model);
+        settings.save();
+        if (sessionProviderChoice != null) {
+            sessionProviderChoice = new AiProviderSwitchPopup.ProviderChoice(
+                    sessionProviderChoice.provider(), model, sessionProviderChoice.url(),
+                    sessionProviderChoice.persistedDefault());
+        }
+    }
+
     void openProviderSwitch() {
         providerSwitchPopup.open(providerChoicesForTesting != null
                 ? providerChoicesForTesting
@@ -1245,6 +1261,7 @@ class AiPanel {
                 return false;
             }
             client.withModel(model);
+            persistModelSelection(model);
             return true;
         }
 
