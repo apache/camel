@@ -45,7 +45,7 @@ public class ValidateMojo extends AbstractMojo {
 
     private final YamlValidator validator = new YamlValidator();
 
-    private static final String IGNORE_FILE = "application.yml";
+    private static final String IGNORE_FILE = "application";
 
     /**
      * The maven project.
@@ -103,10 +103,7 @@ public class ValidateMojo extends AbstractMojo {
     @Parameter(property = "camel.excludes")
     private String excludes;
 
-    /**
-     * yamlFiles in memory cache, useful for multi modules maven projects
-     */
-    private static final Set<File> yamlFiles = new LinkedHashSet<>();
+    private final Set<File> yamlFiles = new LinkedHashSet<>();
 
     private final RepositorySystem repositorySystem;
 
