@@ -119,6 +119,20 @@ public final class YamlSupport {
                         }
                     }
 
+                    // flatten multiValue map parameters
+                    for (Map.Entry<String, String> multi : factory.multiValuePrefixes().entrySet()) {
+                        Object val = options.get(multi.getKey());
+                        if (val instanceof Map<?, ?> m) {
+                            String prefix = multi.getValue();
+                            for (var entry : m.entrySet()) {
+                                if (entry.getValue() != null) {
+                                    options.put(prefix + entry.getKey(), entry.getValue());
+                                }
+                            }
+                            options.remove(multi.getKey());
+                        }
+                    }
+
                     answer += "?" + URISupport.createQueryString(options, false);
                 }
             } else {
