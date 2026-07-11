@@ -115,6 +115,8 @@ public class SftpCertHostVerificationIT extends BaseServerTestSupport {
 
             sshd.start();
             port = sshd.getPort();
+
+            waitForServerReady();
         }
     };
 
