@@ -171,7 +171,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 if (resource != null) {
                     preparseDone.remove(resource.getLocation());
                 }
-                beansDeserializer.clearCache();
+                if (preparseDone.isEmpty()) {
+                    beansDeserializer.clearCache();
+                }
             }
 
             private boolean doConfigure(Object item) throws Exception {
