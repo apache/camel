@@ -50,6 +50,8 @@ public class LlmClient {
     private static final String ANTHROPIC_VERSION = "2023-06-01";
     private static final String VERTEX_ANTHROPIC_VERSION = "vertex-2023-10-16";
     private static final String DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6";
+    private static final String DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
+    private static final String DEFAULT_OLLAMA_MODEL = "llama3.2";
     private static final int CONNECT_TIMEOUT_SECONDS = 10;
     private static final int HEALTH_CHECK_TIMEOUT_SECONDS = 5;
 
@@ -238,10 +240,39 @@ public class LlmClient {
                     || tryInfraOllama()
                     || tryDefaultOllama();
         }
-        if (found && apiType == ApiType.ollama && "llama3.2".equals(model)) {
-            resolveOllamaModel();
+        if (found) {
+            applyDefaultModel();
         }
         return found;
+    }
+
+    /**
+     * Ensures a model is set once an endpoint is detected. A provider switch (or a session with no persisted model)
+     * reaches detection with a null model; without a per-provider default the request would be sent with a null model
+     * and rejected. Anthropic detection already assigns its default inline (also replacing the generic {@code llama3.2}
+     * placeholder that the CLI commands pass); this fills the same gap for the OpenAI and Ollama providers, and
+     * upgrades Ollama to an installed model with better tool-calling support when only the placeholder is in effect.
+     */
+    private void applyDefaultModel() {
+        switch (apiType) {
+            case anthropic -> {
+                if (model == null || model.isBlank()) {
+                    model = DEFAULT_ANTHROPIC_MODEL;
+                }
+            }
+            case openai -> {
+                if (model == null || model.isBlank()) {
+                    model = DEFAULT_OPENAI_MODEL;
+                }
+            }
+            case ollama -> {
+                if (model == null || model.isBlank()) {
+                    model = resolveDefaultOllamaModel();
+                } else if (DEFAULT_OLLAMA_MODEL.equals(model)) {
+                    resolveOllamaModel();
+                }
+            }
+        }
     }
 
     String resolveApiKey() {
@@ -350,6 +381,11 @@ public class LlmClient {
 
     String normalizeOpenAiModelsUrl(String endpoint) {
         String u = endpoint.endsWith("/") ? endpoint.substring(0, endpoint.length() - 1) : endpoint;
+        // A configured full chat endpoint (.../v1/chat/completions) shares the same /v1 base as the models
+        // endpoint, so strip the chat suffix rather than appending /v1/models onto it.
+        if (u.endsWith("/v1/chat/completions")) {
+            u = u.substring(0, u.length() - "/chat/completions".length());
+        }
         if (!u.endsWith("/v1/models")) {
             u = u.endsWith("/v1") ? u : u + "/v1";
             u = u + "/models";
@@ -1330,6 +1366,23 @@ public class LlmClient {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Picks a default Ollama model when none was configured (for example after a provider switch). Rather than assume a
+     * hardcoded model that may not be installed, this queries the installed models and prefers {@code llama3.2} when
+     * present, otherwise the first installed model. Falls back to the {@code llama3.2} placeholder only when the list
+     * cannot be retrieved, so the model is never left null.
+     */
+    private String resolveDefaultOllamaModel() {
+        List<String> available = listOllamaModels();
+        if (available.isEmpty()) {
+            return DEFAULT_OLLAMA_MODEL;
+        }
+        return available.stream()
+                .filter(name -> name.equals(DEFAULT_OLLAMA_MODEL) || name.startsWith(DEFAULT_OLLAMA_MODEL + ":"))
+                .findFirst()
+                .orElse(available.get(0));
     }
 
     private void resolveOllamaModel() {

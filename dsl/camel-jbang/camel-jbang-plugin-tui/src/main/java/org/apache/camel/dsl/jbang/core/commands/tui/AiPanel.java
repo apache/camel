@@ -553,9 +553,29 @@ class AiPanel {
             future.whenComplete(this::handleCliCompletion);
             return;
         }
+        if (result.modelListing()) {
+            listModelsAsync();
+            return;
+        }
         if (result.text() != null && !result.text().isBlank()) {
             conversation.add(new ConversationEntry(result.role(), result.text()));
         }
+    }
+
+    /**
+     * Fetches the available models off the TUI event thread. Model discovery reaches a blocking HTTP call, so running
+     * it inline from key-event handling would freeze rendering and input if the provider became slow or unreachable.
+     */
+    private void listModelsAsync() {
+        conversation.add(new ConversationEntry(AiRole.SYSTEM, "Fetching available models..."));
+        Thread worker = new Thread(() -> {
+            List<String> models = slashCommandContext.availableModels();
+            conversation.add(new ConversationEntry(
+                    AiRole.SYSTEM,
+                    AiSlashCommandRegistry.formatModelListing(slashCommandContext.currentModel(), models)));
+        }, "tui-ai-model-list");
+        worker.setDaemon(true);
+        worker.start();
     }
 
     private void handleCliCompletion(AiCliCommandExecutor.Result cliResult, Throwable error) {
@@ -587,13 +607,15 @@ class AiPanel {
     }
 
     private void interruptBusyOperation() {
+        // A background CLI command and an LLM request can be in flight at the same time, so cancel each one
+        // independently. Cancelling the CLI must not touch the LLM's thinking state (that belongs to the agent
+        // thread, which clears it in its own finally block) and vice versa.
         if (activeCliCommand != null) {
             activeCliCommand = null;
             slashCommandContext.cancelCli();
             conversation.add(new ConversationEntry(AiRole.SYSTEM, "(command cancelled)"));
-            thinking.set(false);
-            thinkingVerb = null;
-        } else {
+        }
+        if (thinking.get()) {
             stopAgentThread();
             conversation.add(new ConversationEntry(AiRole.SYSTEM, "(cancelled)"));
         }
