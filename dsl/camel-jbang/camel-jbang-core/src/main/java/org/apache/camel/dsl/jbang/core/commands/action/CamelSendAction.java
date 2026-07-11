@@ -225,12 +225,10 @@ public class CamelSendAction extends ActionBaseCommand {
         this.pid = pids.get(0);
 
         Path outputFile = writeSendData();
-        showStatus(outputFile);
-
-        return 0;
+        return showStatus(outputFile);
     }
 
-    protected void showStatus(Path outputFile) throws Exception {
+    protected int showStatus(Path outputFile) throws Exception {
         try {
             // wait longer than timeout
             JsonObject jo = getJsonObject(outputFile, timeout + 10000);
@@ -278,8 +276,14 @@ public class CamelSendAction extends ActionBaseCommand {
                         printer().println(table);
                     }
                 }
+                String status = jo.getString("status");
+                if ("failed".equals(status) || "error".equals(status) || "timeout".equals(status)) {
+                    return 1;
+                }
+                return 0;
             } else {
                 printer().println("Send timeout");
+                return 1;
             }
         } finally {
             // delete output file after use

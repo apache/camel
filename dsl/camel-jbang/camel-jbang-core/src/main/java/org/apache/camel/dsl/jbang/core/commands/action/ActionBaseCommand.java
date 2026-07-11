@@ -95,22 +95,27 @@ abstract class ActionBaseCommand extends CamelCommand {
                     JsonObject root = loadStatus(ph.pid());
                     // there must be a status file for the running Camel integration
                     if (root != null) {
+                        // skip terminated processes (e.g. launcher process for spring-boot/quarkus runtimes)
+                        JsonObject context = (JsonObject) root.get("context");
+                        if (context != null) {
+                            int phase = context.getIntegerOrDefault("phase", 0);
+                            if (phase >= 9) {
+                                return;
+                            }
+                        }
                         String pName = ProcessHelper.extractName(root, ph);
                         // ignore file extension, so it is easier to match by name
                         pName = FileUtil.onlyName(pName);
                         if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
                             pids.add(ph.pid());
-                        } else {
+                        } else if (context != null) {
                             // try camel context name
-                            JsonObject context = (JsonObject) root.get("context");
-                            if (context != null) {
-                                pName = context.getString("name");
-                                if ("CamelJBang".equals(pName)) {
-                                    pName = null;
-                                }
-                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
-                                    pids.add(ph.pid());
-                                }
+                            pName = context.getString("name");
+                            if ("CamelJBang".equals(pName)) {
+                                pName = null;
+                            }
+                            if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
+                                pids.add(ph.pid());
                             }
                         }
                     }
