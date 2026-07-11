@@ -1123,6 +1123,66 @@ final class StatusParser {
         return parsed;
     }
 
+    static List<ActivityEntry> parseActivityEntries(JsonObject root) {
+        JsonArray activityList = (JsonArray) root.get("activity");
+        if (activityList == null) {
+            return List.of();
+        }
+        List<ActivityEntry> parsed = new ArrayList<>();
+        for (Object e : activityList) {
+            JsonObject aj = (JsonObject) e;
+            ActivityEntry ae = new ActivityEntry();
+            Object uidObj = aj.get("uid");
+            if (uidObj instanceof Number n) {
+                ae.uid = n.longValue();
+            }
+            ae.exchangeId = aj.getString("exchangeId");
+            ae.routeId = aj.getString("routeId");
+            ae.fromRouteId = aj.getString("fromRouteId");
+            Long ts = aj.getLong("timestamp");
+            if (ts != null) {
+                ae.timestamp = ts;
+            }
+            Object elapsedObj = aj.get("elapsed");
+            if (elapsedObj instanceof Number n) {
+                ae.elapsed = n.longValue();
+            }
+            ae.failed = aj.getBooleanOrDefault("failed", false);
+            ae.endpointUri = aj.getString("endpointUri");
+            ae.remoteEndpoint = aj.getBooleanOrDefault("remoteEndpoint", false);
+            JsonObject ex = (JsonObject) aj.get("exception");
+            if (ex != null) {
+                ae.exceptionType = ex.getString("type");
+                ae.exceptionMessage = ex.getString("message");
+                ae.stackTrace = ex.getString("stackTrace");
+            }
+            JsonObject msg = (JsonObject) aj.get("message");
+            if (msg != null) {
+                Object bodyObj = msg.get("body");
+                if (bodyObj instanceof JsonObject bodyJson) {
+                    ae.body = bodyJson.getString("value");
+                    ae.bodyType = bodyJson.getString("type");
+                } else if (bodyObj != null) {
+                    ae.body = bodyObj.toString();
+                }
+                JsonArray hdrs = msg.getCollection("headers");
+                if (hdrs != null) {
+                    parseKvArray(hdrs, ae.headers, ae.headerTypes);
+                }
+            }
+            JsonArray props = aj.getCollection("exchangeProperties");
+            if (props != null) {
+                parseKvArray(props, ae.properties, ae.propertyTypes);
+            }
+            JsonArray vars = aj.getCollection("exchangeVariables");
+            if (vars != null) {
+                parseKvArray(vars, ae.variables, ae.variableTypes);
+            }
+            parsed.add(ae);
+        }
+        return parsed;
+    }
+
     static String stringValue(Object obj) {
         return obj != null ? obj.toString() : null;
     }

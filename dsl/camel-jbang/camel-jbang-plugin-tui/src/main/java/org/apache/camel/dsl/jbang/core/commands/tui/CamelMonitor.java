@@ -300,6 +300,11 @@ public class CamelMonitor extends CamelCommand {
             }
 
             @Override
+            public void refreshActivityData(List<Long> pids) {
+                dataService.refreshActivityData(pids);
+            }
+
+            @Override
             public void openMorePopup() {
                 popupManager.openMorePopup();
             }
@@ -1466,6 +1471,7 @@ public class CamelMonitor extends CamelCommand {
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HEALTH, "7", "Health")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_INSPECT, "8", "Inspect")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ERRORS, "9", "Errors")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ACTIVITY, "", "Activity")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_MORE, "0", TuiIcons.moreTabLabel())),
         };
         popupManager.setCurrentTabLabels(labels);
@@ -1626,6 +1632,10 @@ public class CamelMonitor extends CamelCommand {
         if (errorCount > 0) {
             badgeTexts[TAB_ERRORS] = "(" + errorCount + ")";
             badgeStyles[TAB_ERRORS] = red;
+        }
+        int activityCount = hasSelection ? sel.activity.size() : 0;
+        if (activityCount > 0) {
+            badgeTexts[TAB_ACTIVITY] = "(" + activityCount + ")";
         }
     }
 
@@ -2102,6 +2112,9 @@ public class CamelMonitor extends CamelCommand {
         List<Long> selectedPids = dataService.selectedPidAsList();
         if (tabRegistry.selectedTabIndex() == TAB_ERRORS && !selectedPids.isEmpty()) {
             dataService.refreshErrorData(selectedPids);
+        }
+        if (tabRegistry.selectedTabIndex() == TAB_ACTIVITY && !selectedPids.isEmpty()) {
+            dataService.refreshActivityData(selectedPids);
         }
         if (tabRegistry.selectedTabIndex() == TAB_HISTORY && !selectedPids.isEmpty()) {
             if (tabRegistry.historyTab().historyRefreshRequested) {

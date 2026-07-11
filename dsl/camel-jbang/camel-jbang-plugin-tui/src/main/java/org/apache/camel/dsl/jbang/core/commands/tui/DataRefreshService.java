@@ -657,6 +657,32 @@ class DataRefreshService {
         return allEntries;
     }
 
+    void refreshActivityData(List<Long> pids) {
+        for (Long pid : pids) {
+            IntegrationInfo sel = ctx.data.get().stream()
+                    .filter(i -> String.valueOf(pid).equals(i.pid) && !i.vanishing)
+                    .findFirst().orElse(null);
+            if (sel == null) {
+                continue;
+            }
+            try {
+                Path activityFile = CommandLineHelper.getCamelDir().resolve(pid + "-activity.json");
+                if (!Files.exists(activityFile)) {
+                    continue;
+                }
+                String content = Files.readString(activityFile);
+                if (content != null && !content.isBlank()) {
+                    JsonObject json = (JsonObject) Jsoner.deserialize(content);
+                    List<ActivityEntry> parsed = StatusParser.parseActivityEntries(json);
+                    sel.activity.clear();
+                    sel.activity.addAll(parsed);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+    }
+
     // ---- Helpers ----
 
     private void detectReload(IntegrationInfo info) {

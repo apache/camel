@@ -37,9 +37,10 @@ class TabRegistry {
     static final int TAB_HEALTH = 6;
     static final int TAB_HISTORY = 7;
     static final int TAB_ERRORS = 8;
-    static final int TAB_MORE = 9;
+    static final int TAB_ACTIVITY = 9;
+    static final int TAB_MORE = 10;
 
-    static final int NUM_TABS = 10;
+    static final int NUM_TABS = 11;
 
     /**
      * Callbacks for operations that remain in {@link CamelMonitor} or other collaborators.
@@ -52,6 +53,8 @@ class TabRegistry {
         void refreshTraceData(List<Long> pids);
 
         void refreshErrorData(List<Long> pids);
+
+        void refreshActivityData(List<Long> pids);
 
         void openMorePopup();
 
@@ -74,6 +77,7 @@ class TabRegistry {
     private HistoryTab historyTab;
     private CircuitBreakerTab circuitBreakerTab;
     private ErrorsTab errorsTab;
+    private ActivityTab activityTab;
     private MetricsTab metricsTab;
     private StartupTab startupTab;
     private ConfigurationTab configurationTab;
@@ -121,6 +125,7 @@ class TabRegistry {
         historyTab = new HistoryTab(ctx, dataService.traces(), dataService.traceFilePositions());
         circuitBreakerTab = new CircuitBreakerTab(ctx, dataService.metrics());
         errorsTab = new ErrorsTab(ctx);
+        activityTab = new ActivityTab(ctx);
         metricsTab = new MetricsTab(ctx);
         startupTab = new StartupTab(ctx);
         configurationTab = new ConfigurationTab(ctx);
@@ -181,6 +186,7 @@ class TabRegistry {
             case TAB_HISTORY -> historyTab;
             case TAB_HTTP -> httpTab;
             case TAB_ERRORS -> errorsTab;
+            case TAB_ACTIVITY -> activityTab;
             case TAB_MORE -> activeMoreTab;
             default -> null;
         };
@@ -230,6 +236,15 @@ class TabRegistry {
                 // ignore
             }
             errorsTab.onTabSelected();
+        }
+        if (tab == TAB_ACTIVITY && ctx.selectedPid != null) {
+            try {
+                long pid = Long.parseLong(ctx.selectedPid);
+                callbacks.refreshActivityData(List.of(pid));
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+            activityTab.onTabSelected();
         }
         if (tab == TAB_MORE) {
             callbacks.openMorePopup();
@@ -300,6 +315,10 @@ class TabRegistry {
 
     ErrorsTab errorsTab() {
         return errorsTab;
+    }
+
+    ActivityTab activityTab() {
+        return activityTab;
     }
 
     BeansTab beansTab() {
@@ -389,6 +408,7 @@ class TabRegistry {
         entries.add(new TabEntry(icon(TAB_HEALTH), "Health", healthTab.description(), "7", TAB_HEALTH, -1));
         entries.add(new TabEntry(icon(TAB_HISTORY), "Inspect", historyTab.description(), "8", TAB_HISTORY, -1));
         entries.add(new TabEntry(icon(TAB_ERRORS), "Errors", errorsTab.description(), "9", TAB_ERRORS, -1));
+        entries.add(new TabEntry(icon(TAB_ACTIVITY), "Activity", activityTab.description(), "", TAB_ACTIVITY, -1));
         for (int i = 0; i < moreTabs.size(); i++) {
             MoreTab mt = moreTabs.get(i);
             entries.add(new TabEntry(
