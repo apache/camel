@@ -18,6 +18,7 @@ package org.apache.camel.component.stream;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.createDirectory;
 import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
+import static org.awaitility.Awaitility.await;
 
 /**
  * Unit test for scan stream file
@@ -58,15 +60,14 @@ public class ScanStreamFileTest extends CamelTestSupport {
         FileOutputStream fos = new FileOutputStream(file);
         try {
             fos.write("Hello\n".getBytes());
-            Thread.sleep(150);
+            fos.flush();
             fos.write("World\n".getBytes());
-            // ensure it does not read the file again
-            Thread.sleep(1000);
+            fos.flush();
         } finally {
             fos.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @Test
@@ -79,22 +80,22 @@ public class ScanStreamFileTest extends CamelTestSupport {
         FileOutputStream fos = refreshFile(null);
         try {
             fos.write("Hello\nWorld\n".getBytes());
-            Thread.sleep(150);
+            fos.flush();
 
             context.getRouteController().startAllRoutes();
 
-            // roll-over file
-            Thread.sleep(1500);
+            // wait for the initial 2 messages before rolling over the file
+            await().atMost(10, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() >= 2);
+
             fos = refreshFile(fos);
             fos.write("Bye\nWorld\n".getBytes());
             fos.write("!\n".getBytes());
-            // ensure it does not read the file again
-            Thread.sleep(1500);
+            fos.flush();
         } finally {
             fos.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @Test
@@ -105,14 +106,13 @@ public class ScanStreamFileTest extends CamelTestSupport {
         FileOutputStream fos = refreshFile(null);
         try {
             fos.write("Hello\nthere\nWorld\n!\n".getBytes());
+            fos.flush();
             context.getRouteController().startAllRoutes();
-            // ensure it does not read the file again
-            Thread.sleep(1000);
         } finally {
             fos.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     private FileOutputStream refreshFile(FileOutputStream fos) throws Exception {

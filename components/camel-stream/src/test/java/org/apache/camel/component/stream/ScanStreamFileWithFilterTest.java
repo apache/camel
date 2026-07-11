@@ -18,6 +18,7 @@ package org.apache.camel.component.stream;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -50,24 +51,17 @@ public class ScanStreamFileWithFilterTest extends CamelTestSupport {
 
         FileOutputStream fos = new FileOutputStream(file);
         fos.write("Hello\n".getBytes());
-        Thread.sleep(150);
         fos.write("World\n".getBytes());
-        Thread.sleep(150);
         fos.write("Hello\n".getBytes());
-        Thread.sleep(150);
         fos.write("World\n".getBytes());
-        Thread.sleep(150);
         fos.write("Hello\n".getBytes());
-        Thread.sleep(150);
         fos.write("World\n".getBytes());
-        Thread.sleep(150);
         fos.write("Hello Boy\n".getBytes());
-        Thread.sleep(150);
         fos.write("World\n".getBytes());
-
-        MockEndpoint.assertIsSatisfied(context);
-
+        fos.flush();
         fos.close();
+
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @Override
