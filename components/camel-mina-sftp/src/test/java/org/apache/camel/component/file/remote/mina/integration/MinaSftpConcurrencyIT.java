@@ -269,7 +269,6 @@ public class MinaSftpConcurrencyIT extends MinaSftpServerTestSupport {
                     template.sendBodyAndHeader(baseUri(), "Write content " + i,
                             Exchange.FILE_NAME, "write-" + i + ".txt");
                     writeSuccess.incrementAndGet();
-                    Thread.sleep(50); // Small delay between writes
                 }
             } catch (Exception e) {
                 errorCount.incrementAndGet();
@@ -291,7 +290,6 @@ public class MinaSftpConcurrencyIT extends MinaSftpServerTestSupport {
                             readSuccess.incrementAndGet();
                         }
                     }
-                    Thread.sleep(100); // Small delay between reads
                 }
             } catch (Exception e) {
                 errorCount.incrementAndGet();
