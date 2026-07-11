@@ -392,6 +392,11 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         // need to prepare exchange first
         ExchangeHelper.prepareOutToIn(exchange);
 
+        // is the body empty (no Content-Type should be set for body-less responses such as 204 No Content)
+        if (exchange.getMessage().getBody() == null) {
+            return;
+        }
+
         // ensure there is a content type header (even if binding is off)
         ensureHeaderContentType(produces, isXml, isJson, exchange);
 
@@ -402,11 +407,6 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
 
         // is there any marshaller at all
         if (jsonMarshal == null && xmlMarshal == null) {
-            return;
-        }
-
-        // is the body empty
-        if (exchange.getMessage().getBody() == null) {
             return;
         }
 
@@ -484,27 +484,18 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     }
 
     private void ensureHeaderContentType(String contentType, boolean isXml, boolean isJson, Exchange exchange) {
-        // favor given content type
-        if (contentType != null) {
-            String type = ExchangeHelper.getContentType(exchange);
-            if (type == null) {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, contentType);
-            }
+        String type = ExchangeHelper.getContentType(exchange);
+        if (type != null) {
+            return;
         }
 
-        // favor json over xml
+        // favor json over xml as a concrete single media type
         if (isJson) {
-            // make sure there is a content-type with json
-            String type = ExchangeHelper.getContentType(exchange);
-            if (type == null) {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
-            }
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
         } else if (isXml) {
-            // make sure there is a content-type with xml
-            String type = ExchangeHelper.getContentType(exchange);
-            if (type == null) {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-            }
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+        } else if (contentType != null) {
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, contentType);
         }
     }
 
