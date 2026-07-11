@@ -70,7 +70,6 @@ import picocli.CommandLine.Command;
 import sun.misc.Signal;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TabRegistry.*;
-import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 
 @Command(name = "monitor",
@@ -270,6 +269,7 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.setResetStatsAction(this::resetStats);
         shellPanel.setContext(ctx);
         aiPanel.setContext(ctx);
+        aiPanel.setLaunchManager(actionsPopup.getLaunchManager());
         actionsPopup.setOpenShellAction(shellPanel::open);
         actionsPopup.setOpenAiPromptAction(aiPanel::open);
         actionsPopup.setBrowseFilesAction(this::openFilesPopup);
@@ -484,6 +484,7 @@ public class CamelMonitor extends CamelCommand {
 
         try (var tui = TuiBackendHelper.createTuiRunner()) {
             this.runner = tui;
+            aiPanel.setExitCallbackForTestingOrRuntime(tui::quit);
             ctx.runner = tui;
             actionsPopup.setScheduler(tui.scheduler());
             actionsPopup.setResetScreenAction(() -> tui.terminal().clear());
@@ -2136,6 +2137,14 @@ public class CamelMonitor extends CamelCommand {
                 LOG.log(Level.DEBUG, "Failed to delete .mcp.json: {0}", e.getMessage());
             }
         }
+    }
+
+    void setRunnerForTesting(Runnable onQuit) {
+        aiPanel.setExitCallbackForTestingOrRuntime(onQuit);
+    }
+
+    AiPanel aiPanelForTesting() {
+        return aiPanel;
     }
 
 }

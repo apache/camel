@@ -45,6 +45,7 @@ import org.apache.camel.util.json.Jsoner;
 public class LlmClient {
 
     private static final String DEFAULT_OLLAMA_URL = "http://localhost:11434";
+    private static final String OLLAMA_ROOT_RESPONSE = "Ollama is running";
     private static final String DEFAULT_ANTHROPIC_URL = "https://api.anthropic.com";
     private static final String ANTHROPIC_VERSION = "2023-06-01";
     private static final String VERTEX_ANTHROPIC_VERSION = "vertex-2023-10-16";
@@ -285,6 +286,94 @@ public class LlmClient {
             case openai -> chatOpenAiFormat(systemPrompt, messages, tools);
             case anthropic -> chatAnthropicFormat(systemPrompt, messages, tools);
         };
+    }
+
+    // -- Model listing --
+
+    /**
+     * Lists model identifiers available from the configured provider: Ollama's {@code /api/tags}, or the
+     * OpenAI-compatible/Anthropic {@code /v1/models}. Vertex AI has no equivalent listing endpoint (models come from
+     * the Vertex AI model garden, not the Anthropic API surface), so it always returns an empty list. Best-effort: any
+     * failure (unreachable endpoint, non-200 response, unexpected JSON shape) yields an empty list rather than
+     * throwing, since this only feeds the informational {@code /model} listing in the AI panel.
+     */
+    public List<String> listModels() {
+        if (apiType == null || url == null || url.isBlank()) {
+            return List.of();
+        }
+        return switch (apiType) {
+            case ollama -> listOllamaModels();
+            case openai -> listOpenAiModels();
+            case anthropic -> isVertexAi() ? List.of() : listAnthropicModels();
+        };
+    }
+
+    private List<String> listOllamaModels() {
+        JsonObject response = sendGetRequest(url + "/api/tags", Map.of());
+        return extractStringList(response, "models", "name");
+    }
+
+    private List<String> listOpenAiModels() {
+        Map<String, String> headers = new HashMap<>();
+        String key = resolveApiKey();
+        if (key != null) {
+            headers.put("Authorization", "Bearer " + key);
+        }
+        JsonObject response = sendGetRequest(normalizeOpenAiModelsUrl(url), headers);
+        return extractStringList(response, "data", "id");
+    }
+
+    private List<String> listAnthropicModels() {
+        String base = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+        JsonObject response = sendGetRequest(base + "/v1/models", buildAnthropicHeaders());
+        return extractStringList(response, "data", "id");
+    }
+
+    private static List<String> extractStringList(JsonObject response, String arrayField, String nameField) {
+        if (response == null) {
+            return List.of();
+        }
+        if (!(response.get(arrayField) instanceof JsonArray items)) {
+            return List.of();
+        }
+        List<String> names = new ArrayList<>();
+        for (Object obj : items) {
+            if (obj instanceof JsonObject item) {
+                String name = item.getString(nameField);
+                if (name != null) {
+                    names.add(name);
+                }
+            }
+        }
+        return names;
+    }
+
+    String normalizeOpenAiModelsUrl(String endpoint) {
+        String u = endpoint.endsWith("/") ? endpoint.substring(0, endpoint.length() - 1) : endpoint;
+        if (!u.endsWith("/v1/models")) {
+            u = u.endsWith("/v1") ? u : u + "/v1";
+            u = u + "/models";
+        }
+        return u;
+    }
+
+    private JsonObject sendGetRequest(String requestUrl, Map<String, String> headers) {
+        try {
+            HttpRequest.Builder builder = HttpRequest.newBuilder()
+                    .uri(URI.create(requestUrl))
+                    .timeout(Duration.ofSeconds(HEALTH_CHECK_TIMEOUT_SECONDS))
+                    .GET();
+            for (Map.Entry<String, String> h : headers.entrySet()) {
+                builder.header(h.getKey(), h.getValue());
+            }
+            HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return (JsonObject) Jsoner.deserialize(response.body());
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     // ---- Ollama generate ----
@@ -1126,11 +1215,43 @@ public class LlmClient {
 
     // ---- Endpoint detection helpers ----
 
+    // Order matters: /api/tags is checked before /v1/models, matching the original priority.
+    private static final List<Map.Entry<String, ApiType>> EXPLICIT_URL_HEALTH_CHECK_SUFFIXES = List.of(
+            Map.entry("/api/tags", ApiType.ollama),
+            Map.entry("/v1/models", ApiType.openai));
+
     private boolean tryExplicitUrl() {
         if (url == null || url.isBlank()) {
             return false;
         }
-        return isEndpointReachable(url);
+        if (apiType != null) {
+            return isEndpointReachable(url);
+        }
+        for (Map.Entry<String, ApiType> check : EXPLICIT_URL_HEALTH_CHECK_SUFFIXES) {
+            if (tryHealthCheck(url + check.getKey())) {
+                apiType = check.getValue();
+                return true;
+            }
+        }
+        if (isOllamaRoot(url)) {
+            apiType = ApiType.ollama;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isOllamaRoot(String endpoint) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(endpoint))
+                    .timeout(Duration.ofSeconds(HEALTH_CHECK_TIMEOUT_SECONDS))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.statusCode() == 200 && OLLAMA_ROOT_RESPONSE.equals(response.body().trim());
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean tryAnthropicApiKey() {

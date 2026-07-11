@@ -171,6 +171,10 @@ class ActionsPopup {
         docViewerPopup.setContext(ctx);
     }
 
+    LaunchManager getLaunchManager() {
+        return launchManager;
+    }
+
     void setScheduler(ScheduledExecutorService scheduler) {
         this.scheduler = scheduler;
     }

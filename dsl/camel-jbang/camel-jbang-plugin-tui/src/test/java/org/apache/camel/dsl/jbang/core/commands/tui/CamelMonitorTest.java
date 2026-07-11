@@ -27,6 +27,7 @@ import dev.tamboui.style.Style;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -301,5 +302,37 @@ class CamelMonitorTest {
         assertEquals(Theme.baseBg(), cell.style().bg().orElse(null), "light palette background is applied");
         assertEquals(Theme.baseFg(), cell.style().fg().orElse(null), "light palette foreground is applied");
         assertFalse(darkBg.equals(cell.style().bg().orElse(null)), "patched background must follow the active theme");
+    }
+
+    @Test
+    void aiPanelQuitCommandRequestsTuiQuit() {
+        CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
+        TestRunner runner = new TestRunner();
+        monitor.setRunnerForTesting(runner::quit);
+
+        AiPanel panel = monitor.aiPanelForTesting();
+        panel.open();
+        type(panel, "/quit");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertTrue(runner.quitRequested());
+    }
+
+    private static void type(AiPanel panel, String text) {
+        for (char ch : text.toCharArray()) {
+            panel.handleKeyEvent(KeyEvent.ofChar(ch));
+        }
+    }
+
+    private static final class TestRunner {
+        private boolean quitRequested;
+
+        void quit() {
+            quitRequested = true;
+        }
+
+        boolean quitRequested() {
+            return quitRequested;
+        }
     }
 }

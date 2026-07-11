@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -23,7 +24,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.tamboui.layout.Constraint;
@@ -46,12 +50,17 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.spinner.Spinner;
+import dev.tamboui.widgets.spinner.SpinnerState;
+import dev.tamboui.widgets.spinner.SpinnerStyle;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.commands.AskTools;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
+import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.util.json.JsonObject;
 
 /**
  * AI prompt panel for the TUI. Communicates directly with an LLM via {@link LlmClient} and uses the same tool
@@ -63,6 +72,11 @@ class AiPanel {
     private static final int MAX_LOG_ENTRIES = 200;
     private static final DateTimeFormatter TIME_FMT
             = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
+    private static final String INPUT_PROMPT = "❯ ";
+    private static final List<String> THINKING_VERBS = List.of(
+            "Herding thoughts", "Chewing the cud", "Crossing the desert", "Loading the caravan",
+            "Sniffing out an oasis", "Trekking onward", "Kicking up sand", "Grazing on context",
+            "Following the trail", "Navigating dunes", "Unpacking the saddlebags", "Warming up the hump");
 
     enum LogLevel {
         QUESTION,
@@ -83,12 +97,20 @@ class AiPanel {
     private final StringBuilder inputBuffer = new StringBuilder();
     private int cursorPos;
 
-    // Conversation display
+    // TAB completion cycle state. completionMatches holds the candidate command names for the active cycle;
+    // completionSnapshot is the buffer text a TAB press last produced. The cycle continues only while the buffer still
+    // equals that snapshot, so any other edit (typing, backspace, cursor move) transparently starts a fresh completion.
+    private List<String> completionMatches;
+    private int completionCycleIndex = -1;
+    private String completionSnapshot;
+
+    // Conversation display. CopyOnWriteArrayList because entries are appended from the agent thread and the
+    // CLI-command-completion callback while the render thread iterates the list concurrently.
     private final List<ConversationEntry> conversation = new CopyOnWriteArrayList<>();
     private int scrollOffset;
 
     // LLM state
-    private LlmClient client;
+    private volatile LlmClient client;
     private List<LlmClient.Message> messages;
     private List<LlmClient.ToolDef> tools;
     private AskTools askTools;
@@ -96,7 +118,28 @@ class AiPanel {
     private volatile Thread agentThread;
     private String initError;
     private long thinkingStartTime;
+    private volatile String thinkingVerb;
     private volatile int sessionTotalTokens;
+
+    // Slash commands
+    private final AiSlashCommandRegistry slashCommands = AiSlashCommandRegistry.defaults();
+    private AiSlashCommandContext slashCommandContext = new PanelSlashCommandContext();
+    private final AiCliCommandExecutor cliCommandExecutor = new AiCliCommandExecutor();
+    private volatile CompletableFuture<AiCliCommandExecutor.Result> activeCliCommand;
+    private Runnable exitCallback;
+
+    // Detached launches (/run, /infra run) go through the same LaunchManager the F2 Actions menu uses, so they are
+    // spawned as tracked background processes instead of blocking in-process. Null in tests that construct the panel
+    // directly; the slash context reports an error in that case.
+    private LaunchManager launchManager;
+    private volatile List<JsonObject> exampleCatalog;
+
+    // Provider switch popup
+    private final AiProviderSwitchPopup providerSwitchPopup = new AiProviderSwitchPopup();
+    private final AiProviderSelector providerSelector = new AiProviderSelector();
+    private AiProviderSwitchPopup.ProviderChoice sessionProviderChoice;
+    private List<AiProviderSwitchPopup.ProviderChoice> providerChoicesForTesting;
+    private boolean testingClientInjected;
 
     // Activity log for AI Log popup
     private final List<LogEntry> activityLog = new ArrayList<>();
@@ -109,8 +152,8 @@ class AiPanel {
     private boolean statsView;
     private int statsScrollOffset;
 
-    record ConversationEntry(String role, String text, long elapsedSeconds, int totalTokens) {
-        ConversationEntry(String role, String text) {
+    record ConversationEntry(AiRole role, String text, long elapsedSeconds, int totalTokens) {
+        ConversationEntry(AiRole role, String text) {
             this(role, text, -1, 0);
         }
     }
@@ -121,6 +164,10 @@ class AiPanel {
 
     void setContext(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    void setLaunchManager(LaunchManager launchManager) {
+        this.launchManager = launchManager;
     }
 
     synchronized List<LogEntry> getActivityLog() {
@@ -159,7 +206,7 @@ class AiPanel {
             return -1;
         }
         ConversationEntry last = conversation.get(conversation.size() - 1);
-        return "assistant".equals(last.role()) ? last.elapsedSeconds() : -1;
+        return last.role() == AiRole.ASSISTANT ? last.elapsedSeconds() : -1;
     }
 
     private int lastResponseTokens() {
@@ -167,7 +214,7 @@ class AiPanel {
             return 0;
         }
         ConversationEntry last = conversation.get(conversation.size() - 1);
-        return "assistant".equals(last.role()) ? last.totalTokens() : 0;
+        return last.role() == AiRole.ASSISTANT ? last.totalTokens() : 0;
     }
 
     void cycleHeight(int contentHeight) {
@@ -187,22 +234,28 @@ class AiPanel {
 
     void close() {
         visible = false;
+        providerSwitchPopup.close();
     }
 
     void destroy() {
         close();
-        Thread t = agentThread;
-        if (t != null) {
-            t.interrupt();
-        }
+        stopAgentThread();
     }
 
     private void initClient() {
         try {
-            client = LlmClient.create()
+            LlmClient created = LlmClient.create()
                     .withTemperature(0.3)
                     .withTimeout(120)
                     .withMaxTokens(4096);
+            if (sessionProviderChoice != null) {
+                providerSelector.applyChoice(created, sessionProviderChoice.provider(), sessionProviderChoice.model(),
+                        sessionProviderChoice.url());
+            } else {
+                TuiSettings settings = TuiSettings.load();
+                providerSelector.applyChoice(created, settings.getAiProvider(), settings.getAiModel(), settings.getAiUrl());
+            }
+            client = created;
             if (!client.detectEndpoint()) {
                 initError = "No LLM service reachable. Set ANTHROPIC_API_KEY, OPENAI_API_KEY, or start Ollama.";
                 client = null;
@@ -220,9 +273,59 @@ class AiPanel {
         }
     }
 
+    private void applyProviderChoice(AiProviderSwitchPopup.ProviderChoice choice) {
+        stopAgentThread();
+        sessionProviderChoice = choice;
+        if (testingClientInjected && client != null) {
+            // Keep tests independent of the locally installed camel-jbang-core artifact.
+        } else {
+            client = null;
+            initClient();
+        }
+        if (client != null) {
+            conversation.add(new ConversationEntry(
+                    AiRole.SYSTEM,
+                    "Switched to " + displayModel(choice) + " (" + choice.provider() + ")"));
+        } else {
+            sessionProviderChoice = null;
+            conversation.add(new ConversationEntry(
+                    AiRole.ERROR,
+                    "Failed to switch to " + choice.provider() + ": " + initError));
+        }
+    }
+
+    private String displayModel(AiProviderSwitchPopup.ProviderChoice choice) {
+        return choice.model() == null || choice.model().isBlank() ? "auto" : choice.model();
+    }
+
+    /**
+     * Persists a model chosen via {@code /model} so it survives a TUI restart, matching the Settings popup. The
+     * in-session provider choice is kept in sync so re-initialising the client (for example reopening the panel) does
+     * not revert to the previously selected model.
+     */
+    private void persistModelSelection(String model) {
+        TuiSettings settings = TuiSettings.load();
+        settings.setAiModel(model);
+        settings.save();
+        if (sessionProviderChoice != null) {
+            sessionProviderChoice = new AiProviderSwitchPopup.ProviderChoice(
+                    sessionProviderChoice.provider(), model, sessionProviderChoice.url(),
+                    sessionProviderChoice.persistedDefault());
+        }
+    }
+
+    void openProviderSwitch() {
+        providerSwitchPopup.open(providerChoicesForTesting != null
+                ? providerChoicesForTesting
+                : providerSelector.buildChoices());
+    }
+
     boolean handleMouseEvent(MouseEvent me) {
         if (!visible || lastArea == null) {
             return false;
+        }
+        if (providerSwitchPopup.isVisible()) {
+            return providerSwitchPopup.handleMouseEvent(me);
         }
         if (!TuiHelper.contains(lastArea, me.x(), me.y())) {
             return false;
@@ -239,8 +342,20 @@ class AiPanel {
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
+        if (providerSwitchPopup.isVisible()) {
+            providerSwitchPopup.handleKeyEvent(ke);
+            AiProviderSwitchPopup.ProviderChoice choice = providerSwitchPopup.consumePendingChoice();
+            if (choice != null) {
+                applyProviderChoice(choice);
+            }
+            return true;
+        }
         if (ke.isKey(KeyCode.F8)) {
             close();
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('p') && !thinking.get() && activeCliCommand == null) {
+            openProviderSwitch();
             return true;
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('u')) {
@@ -265,20 +380,21 @@ class AiPanel {
             return true;
         }
         if (thinking.get()) {
-            if (ke.isCtrlC()) {
-                Thread t = agentThread;
-                if (t != null) {
-                    t.interrupt();
-                }
-                thinking.set(false);
-                conversation.add(new ConversationEntry("system", "(cancelled)"));
+            if (ke.isCtrlC() || ke.isKey(KeyCode.ESCAPE)) {
+                interruptBusyOperation();
                 return true;
             }
             return true;
         }
+        // A background CLI command (e.g. /send) does not put the panel into the thinking state, so handle its
+        // cancellation here while the panel stays usable for typing.
+        if ((ke.isCtrlC() || ke.isKey(KeyCode.ESCAPE)) && activeCliCommand != null) {
+            interruptBusyOperation();
+            return true;
+        }
         if (ke.isKey(KeyCode.ENTER)) {
             if (!inputBuffer.isEmpty()) {
-                submitQuestion();
+                submitInput();
             }
             return true;
         }
@@ -315,6 +431,10 @@ class AiPanel {
             cursorPos = inputBuffer.length();
             return true;
         }
+        if (ke.isKey(KeyCode.TAB)) {
+            handleTabCompletion(ke.hasShift());
+            return true;
+        }
         if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
             inputBuffer.insert(cursorPos, ke.character());
             cursorPos++;
@@ -323,14 +443,196 @@ class AiPanel {
         return true;
     }
 
-    private void submitQuestion() {
-        String question = inputBuffer.toString().trim();
+    /**
+     * Completes the slash command name at the cursor. With multiple matches, TAB first fills in the longest common
+     * prefix; once no further prefix can be added it cycles forward through the matches (wrapping so every match is
+     * reachable with TAB alone). A single match is completed fully and a trailing space is appended. Shift+TAB cycles
+     * backward. TAB is a no-op unless the buffer is a partial command name (starts with {@code /}, no arguments yet).
+     */
+    private void handleTabCompletion(boolean backward) {
+        String text = inputBuffer.toString();
+        boolean continuing = text.equals(completionSnapshot) && completionMatches != null && completionMatches.size() > 1;
+        if (continuing) {
+            int size = completionMatches.size();
+            if (completionCycleIndex < 0) {
+                completionCycleIndex = backward ? size - 1 : 0;
+            } else {
+                completionCycleIndex = backward
+                        ? (completionCycleIndex - 1 + size) % size
+                        : (completionCycleIndex + 1) % size;
+            }
+            applyCompletionToken(completionMatches.get(completionCycleIndex), false);
+            return;
+        }
+
+        List<String> names = slashCommands.completionsFor(text).stream()
+                .map(AiSlashCommandRegistry.Descriptor::name)
+                .toList();
+        if (names.isEmpty()) {
+            completionMatches = null;
+            completionCycleIndex = -1;
+            completionSnapshot = null;
+            return;
+        }
+        if (names.size() == 1) {
+            applyCompletionToken(names.get(0), true);
+            // A single completion ends with a trailing space, so there is nothing left to cycle.
+            completionMatches = null;
+            completionCycleIndex = -1;
+            completionSnapshot = null;
+            return;
+        }
+        String currentToken = text.substring(1);
+        String prefix = longestCommonPrefix(names);
+        completionMatches = names;
+        if (prefix.length() > currentToken.length()) {
+            applyCompletionToken(prefix, false);
+            completionCycleIndex = -1;
+        } else {
+            completionCycleIndex = backward ? names.size() - 1 : 0;
+            applyCompletionToken(names.get(completionCycleIndex), false);
+        }
+    }
+
+    private void applyCompletionToken(String token, boolean trailingSpace) {
+        inputBuffer.setLength(0);
+        inputBuffer.append('/').append(token);
+        if (trailingSpace) {
+            inputBuffer.append(' ');
+        }
+        cursorPos = inputBuffer.length();
+        completionSnapshot = inputBuffer.toString();
+    }
+
+    private static String longestCommonPrefix(List<String> values) {
+        String prefix = values.get(0);
+        for (int i = 1; i < values.size() && !prefix.isEmpty(); i++) {
+            String value = values.get(i);
+            int max = Math.min(prefix.length(), value.length());
+            int j = 0;
+            while (j < max && prefix.charAt(j) == value.charAt(j)) {
+                j++;
+            }
+            prefix = prefix.substring(0, j);
+        }
+        return prefix;
+    }
+
+    private void submitInput() {
+        String input = inputBuffer.toString().trim();
         inputBuffer.setLength(0);
         cursorPos = 0;
         scrollOffset = 0;
+        if (input.startsWith("/")) {
+            executeSlashCommand(input);
+        } else {
+            submitQuestion(input);
+        }
+    }
 
-        conversation.add(new ConversationEntry("user", question));
+    private void executeSlashCommand(String input) {
+        Optional<AiSlashCommandRegistry.ParsedCommand> parsed = slashCommands.parse(input);
+        if (parsed.isPresent() && (thinking.get() || activeCliCommand != null)) {
+            String name = parsed.get().descriptor().name();
+            if ("provider".equals(name) || "model".equals(name)) {
+                conversation.add(new ConversationEntry(
+                        AiRole.SYSTEM,
+                        "Wait for the current operation to finish before changing provider or model."));
+                return;
+            }
+        }
+
+        AiSlashCommandRegistry.CommandResult result = slashCommands.execute(input, slashCommandContext);
+        if (result.cliRequest() != null) {
+            AiCliCommandExecutor.Request request = result.cliRequest();
+            conversation.add(new ConversationEntry(AiRole.SYSTEM, "Running " + request.displayText()));
+            // Runs in the background without entering the panel's "thinking" state, so the user can keep typing
+            // and asking questions while the command runs. Esc still cancels it via interruptBusyOperation().
+            CompletableFuture<AiCliCommandExecutor.Result> future = slashCommandContext.executeCli(request);
+            activeCliCommand = future;
+            future.whenComplete(this::handleCliCompletion);
+            return;
+        }
+        if (result.text() != null && !result.text().isBlank()) {
+            conversation.add(new ConversationEntry(result.role(), result.text()));
+        }
+    }
+
+    private void handleCliCompletion(AiCliCommandExecutor.Result cliResult, Throwable error) {
+        CompletableFuture<AiCliCommandExecutor.Result> future = activeCliCommand;
+        synchronized (this) {
+            if (future == null || activeCliCommand != future) {
+                return;
+            }
+            activeCliCommand = null;
+        }
+        if (error != null) {
+            String displayText = cliResult != null ? cliResult.displayText() : "command";
+            conversation.add(new ConversationEntry(
+                    AiRole.ERROR, "Failed to run " + displayText + ": " + error.getMessage()));
+            scrollOffset = 0;
+            return;
+        }
+
+        if (cliResult.exitCode() == 0) {
+            conversation.add(new ConversationEntry(
+                    AiRole.SYSTEM,
+                    cliResult.displayText() + " completed in " + cliResult.elapsedMs() + " ms\n\n" + cliResult.output()));
+        } else {
+            conversation.add(new ConversationEntry(
+                    AiRole.ERROR,
+                    cliResult.displayText() + " exit code " + cliResult.exitCode() + "\n\n" + cliResult.output()));
+        }
+        scrollOffset = 0;
+    }
+
+    private void interruptBusyOperation() {
+        if (activeCliCommand != null) {
+            activeCliCommand = null;
+            slashCommandContext.cancelCli();
+            conversation.add(new ConversationEntry(AiRole.SYSTEM, "(command cancelled)"));
+            thinking.set(false);
+            thinkingVerb = null;
+        } else {
+            stopAgentThread();
+            conversation.add(new ConversationEntry(AiRole.SYSTEM, "(cancelled)"));
+        }
+    }
+
+    private void stopAgentThread() {
+        Thread t = agentThread;
+        if (t == null) {
+            return;
+        }
+        if (t != Thread.currentThread()) {
+            t.interrupt();
+            // Do not block the TUI event thread if an HTTP client ignores interruption. The agent thread clears the
+            // thinking state in its finally block; the watcher only bounds the wait off the caller's thread.
+            Thread watcher = new Thread(() -> awaitAgentThreadStop(t), "tui-ai-agent-cancel-watcher");
+            watcher.setDaemon(true);
+            watcher.start();
+        }
+    }
+
+    private void awaitAgentThreadStop(Thread agent) {
+        try {
+            agent.join(30_000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void submitQuestion(String question) {
+        stopAgentThread();
+        if (client == null) {
+            conversation.add(new ConversationEntry(
+                    AiRole.ERROR,
+                    initError != null ? initError : "No LLM client available. Press Ctrl+P to pick a provider."));
+            return;
+        }
+        conversation.add(new ConversationEntry(AiRole.USER, question));
         log(LogLevel.QUESTION, "Question", question);
+        thinkingVerb = THINKING_VERBS.get(ThreadLocalRandom.current().nextInt(THINKING_VERBS.size()));
         thinkingStartTime = System.currentTimeMillis();
         thinking.set(true);
 
@@ -347,10 +649,12 @@ class AiPanel {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
-                conversation.add(new ConversationEntry("error", e.getMessage()));
+                conversation.add(new ConversationEntry(AiRole.ERROR, e.getMessage()));
             } finally {
-                thinking.set(false);
-                agentThread = null;
+                if (agentThread == Thread.currentThread()) {
+                    thinking.set(false);
+                    agentThread = null;
+                }
             }
         }, "tui-ai-agent");
         agentThread.setDaemon(true);
@@ -374,7 +678,7 @@ class AiPanel {
             long callLatency = System.currentTimeMillis() - callStart;
             if (response == null) {
                 String err = "No response from LLM";
-                conversation.add(new ConversationEntry("error", err));
+                conversation.add(new ConversationEntry(AiRole.ERROR, err));
                 log(LogLevel.ERROR, "Error", err);
                 return;
             }
@@ -386,7 +690,7 @@ class AiPanel {
                     && (response.toolCalls() == null || response.toolCalls().isEmpty())
                     && response.text() == null) {
                 String err = "LLM request failed. Check API key and endpoint.";
-                conversation.add(new ConversationEntry("error", err));
+                conversation.add(new ConversationEntry(AiRole.ERROR, err));
                 log(LogLevel.ERROR, "Error", err);
                 return;
             }
@@ -410,14 +714,14 @@ class AiPanel {
                 sessionTotalTokens += totalUsage.totalTokens();
                 if (text != null && !text.isBlank()) {
                     long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
-                    conversation.add(new ConversationEntry("assistant", text, elapsed, totalUsage.totalTokens()));
+                    conversation.add(new ConversationEntry(AiRole.ASSISTANT, text, elapsed, totalUsage.totalTokens()));
                     String tokenInfo = totalUsage.totalTokens() > 0
                             ? ", " + LlmClient.formatTokens(totalUsage.totalTokens()) + " tokens"
                             : "";
                     log(LogLevel.RESPONSE, "Response (" + elapsed + "s" + tokenInfo + ")", text);
                 } else {
                     String err = "Empty response from LLM.";
-                    conversation.add(new ConversationEntry("error", err));
+                    conversation.add(new ConversationEntry(AiRole.ERROR, err));
                     log(LogLevel.ERROR, "Error", err);
                 }
                 scrollOffset = 0;
@@ -426,7 +730,7 @@ class AiPanel {
             }
         }
         conversation.add(new ConversationEntry(
-                "error",
+                AiRole.ERROR,
                 "Reached maximum iterations (" + MAX_ITERATIONS + ") without a final answer."));
     }
 
@@ -477,26 +781,72 @@ class AiPanel {
 
         if (statsView) {
             renderStats(frame, inner);
+            if (providerSwitchPopup.isVisible()) {
+                providerSwitchPopup.render(frame, inner);
+            }
             return;
         }
 
-        // Split inner area: conversation (fill) + separator (1 row) + input (1 row)
-        List<Rect> parts = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(1), Constraint.length(1))
-                .split(inner);
+        // Split inner area: conversation (fill) + optional slash hints + separator (1 row) + input (1 row)
+        List<AiSlashCommandRegistry.Descriptor> slashHints = slashCommandHints();
+        int hintRows = slashHints.isEmpty() ? 0 : slashHints.size();
+        List<Rect> parts;
+        if (hintRows == 0) {
+            parts = Layout.vertical()
+                    .constraints(Constraint.fill(), Constraint.length(1), Constraint.length(1))
+                    .split(inner);
+        } else {
+            parts = Layout.vertical()
+                    .constraints(Constraint.fill(), Constraint.length(hintRows), Constraint.length(1), Constraint.length(1))
+                    .split(inner);
+        }
         Rect conversationArea = parts.get(0);
-        Rect separatorArea = parts.get(1);
-        Rect inputArea = parts.get(2);
+        Rect separatorArea = parts.get(hintRows == 0 ? 1 : 2);
+        Rect inputArea = parts.get(hintRows == 0 ? 2 : 3);
 
-        renderConversation(frame, conversationArea);
+        renderConversation(frame, conversationArea, !slashHints.isEmpty());
+        if (hintRows > 0) {
+            renderSlashCommandHints(frame, parts.get(1), slashHints);
+        }
         // horizontal line separator
         String line = "─".repeat(separatorArea.width());
         frame.renderWidget(Paragraph.from(Line.from(Span.styled(line, Style.EMPTY.dim()))),
                 separatorArea);
         renderInput(frame, inputArea);
+        if (providerSwitchPopup.isVisible()) {
+            providerSwitchPopup.render(frame, inner);
+        }
     }
 
-    private void renderConversation(Frame frame, Rect area) {
+    private List<AiSlashCommandRegistry.Descriptor> slashCommandHints() {
+        if (thinking.get() || statsView || providerSwitchPopup.isVisible()) {
+            return List.of();
+        }
+        return slashCommands.completionsFor(inputBuffer.toString());
+    }
+
+    private void renderSlashCommandHints(Frame frame, Rect area, List<AiSlashCommandRegistry.Descriptor> hints) {
+        if (area.height() < 1 || hints.isEmpty()) {
+            return;
+        }
+        int commandWidth = AiSlashCommandRegistry.commandColumnWidth(hints);
+        int rows = Math.min(area.height(), hints.size());
+        for (int i = 0; i < rows; i++) {
+            AiSlashCommandRegistry.Descriptor descriptor = hints.get(i);
+            String command = AiSlashCommandRegistry.commandLabel(descriptor);
+            String description = AiSlashCommandRegistry.descriptionLabel(descriptor);
+            List<Span> spans = new ArrayList<>();
+            spans.add(Span.styled(command, Style.EMPTY.fg(Theme.accent())));
+            if (!description.isEmpty()) {
+                int padding = Math.max(2, commandWidth - command.length() + 2);
+                spans.add(Span.raw(" ".repeat(padding)));
+                spans.add(Span.styled(description, Style.EMPTY.dim()));
+            }
+            frame.renderWidget(Paragraph.from(Line.from(spans)), new Rect(area.left(), area.top() + i, area.width(), 1));
+        }
+    }
+
+    private void renderConversation(Frame frame, Rect area, boolean slashHintsVisible) {
         if (area.height() < 1) {
             return;
         }
@@ -505,7 +855,7 @@ class AiPanel {
 
         if (initError != null) {
             md.append("**Error:** ").append(initError).append("\n\n");
-        } else if (conversation.isEmpty() && !thinking.get()) {
+        } else if (conversation.isEmpty() && !thinking.get() && !slashHintsVisible) {
             frame.renderWidget(
                     Paragraph.from(Line.from(Span.styled("Ask a question about your Camel application...", Style.EMPTY.dim()))),
                     area);
@@ -514,23 +864,11 @@ class AiPanel {
 
         for (ConversationEntry entry : conversation) {
             switch (entry.role()) {
-                case "user" -> md.append("**You:** ").append(entry.text()).append("\n\n");
-                case "assistant" -> md.append(toHardBreaks(entry.text())).append("\n\n");
-                case "error" -> md.append("**Error:** ").append(entry.text()).append("\n\n");
-                case "system" -> md.append("*").append(entry.text()).append("*\n\n");
-                default -> {
-                }
+                case USER -> md.append("**You:** ").append(entry.text()).append("\n\n");
+                case ASSISTANT -> md.append("**TUI:** ").append(toHardBreaks(entry.text())).append("\n\n");
+                case ERROR -> md.append("**Error:** ").append(entry.text()).append("\n\n");
+                case SYSTEM -> md.append(toHardBreaks(entry.text())).append("\n\n");
             }
-        }
-
-        if (thinking.get()) {
-            long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
-            long dots = (System.currentTimeMillis() / 500) % 4;
-            md.append("*" + TuiIcons.THINKING + " thinking");
-            if (elapsed > 0) {
-                md.append(" (").append(elapsed).append("s)");
-            }
-            md.append(".".repeat((int) dots + 1)).append("*\n");
         }
 
         // Show elapsed time and token count as a dimmed line below the markdown when at the bottom
@@ -538,7 +876,7 @@ class AiPanel {
         int lastTokens = 0;
         if (!thinking.get() && !conversation.isEmpty()) {
             ConversationEntry last = conversation.get(conversation.size() - 1);
-            if ("assistant".equals(last.role()) && last.elapsedSeconds() >= 0) {
+            if (last.role() == AiRole.ASSISTANT && last.elapsedSeconds() >= 0) {
                 lastElapsed = last.elapsedSeconds();
                 lastTokens = last.totalTokens();
             }
@@ -546,8 +884,15 @@ class AiPanel {
 
         // Reserve 1 row for dimmed elapsed time (skip at 25% — shown in title bar instead)
         Rect mdArea = area;
+        Rect statusArea = null;
         Rect elapsedArea = null;
-        if (lastElapsed >= 0 && anim.cyclePercent() > 25 && area.height() > 2) {
+        if (thinking.get() && area.height() > 2) {
+            List<Rect> vParts = Layout.vertical()
+                    .constraints(Constraint.fill(), Constraint.length(1))
+                    .split(area);
+            mdArea = vParts.get(0);
+            statusArea = vParts.get(1);
+        } else if (lastElapsed >= 0 && anim.cyclePercent() > 25 && area.height() > 2) {
             List<Rect> vParts = Layout.vertical()
                     .constraints(Constraint.fill(), Constraint.length(1))
                     .split(area);
@@ -557,14 +902,16 @@ class AiPanel {
 
         String source = md.toString();
 
-        // Estimate total rendered lines (accounting for word wrap)
-        int contentWidth = Math.max(1, mdArea.width());
-        int estimatedLines = 0;
-        for (String l : source.split("\n", -1)) {
-            estimatedLines += Math.max(1, (l.length() / contentWidth) + 1);
-        }
+        // Measure the exact rendered height with MarkdownView's own word-wrap accounting rather than estimating from
+        // character counts. A rough estimate under-counts wrapped lines, so auto-scrolling to the bottom left the last
+        // couple of lines hidden below the visible area.
+        MarkdownView.Builder viewBuilder = MarkdownView.builder()
+                .source(source)
+                .styles(Theme.markdownStyles());
+        MarkdownView measure = viewBuilder.build();
+        int totalLines = measure.computeHeight(mdArea.width());
 
-        boolean overflow = estimatedLines > mdArea.height();
+        boolean overflow = totalLines > mdArea.height();
         Rect contentArea = mdArea;
         Rect scrollbarArea = null;
         if (overflow) {
@@ -573,25 +920,23 @@ class AiPanel {
                     .split(mdArea);
             contentArea = hParts.get(0);
             scrollbarArea = hParts.get(1);
+            // The scrollbar column narrows the content, which can change the wrapping, so re-measure at that width.
+            totalLines = measure.computeHeight(contentArea.width());
         }
 
         // scrollOffset=0 means auto-scroll to bottom (most recent content visible)
         // scrollOffset>0 means user scrolled up by that many lines
         // Clamp so PgDn always has immediate effect after scrolling past the top
-        int maxScrollOffset = Math.max(0, estimatedLines - contentArea.height());
+        int maxScrollOffset = Math.max(0, totalLines - contentArea.height());
         scrollOffset = Math.min(scrollOffset, maxScrollOffset);
 
         int scroll = Math.max(0, maxScrollOffset - scrollOffset);
 
-        MarkdownView view = MarkdownView.builder()
-                .source(source)
-                .scroll(scroll)
-                .styles(Theme.markdownStyles())
-                .build();
+        MarkdownView view = viewBuilder.scroll(scroll).build();
         frame.renderWidget(view, contentArea);
 
         if (overflow && scrollbarArea != null) {
-            renderScrollbar(frame, scrollbarArea, estimatedLines, contentArea.height(), scroll);
+            renderScrollbar(frame, scrollbarArea, totalLines, contentArea.height(), scroll);
         }
 
         if (elapsedArea != null && lastElapsed >= 0) {
@@ -600,10 +945,32 @@ class AiPanel {
                     Paragraph.from(Line.from(Span.styled("(" + lastElapsed + "s" + tokenSuffix + ")", Style.EMPTY.dim()))),
                     elapsedArea);
         }
+        if (statusArea != null) {
+            renderThinkingStatus(frame, statusArea);
+        }
+    }
+
+    private void renderThinkingStatus(Frame frame, Rect area) {
+        long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
+        Spinner spinner = Spinner.builder()
+                .spinnerStyle(SpinnerStyle.DOTS)
+                .style(Style.EMPTY.fg(Theme.accent()).bold())
+                .build();
+        Rect spinnerArea = new Rect(area.left(), area.top(), 2, 1);
+        frame.renderStatefulWidget(spinner, spinnerArea, new SpinnerState(System.currentTimeMillis() / 100));
+
+        long dots = (System.currentTimeMillis() / 500) % 4;
+        String text = " " + (thinkingVerb != null ? thinkingVerb : THINKING_VERBS.get(0));
+        if (elapsed > 0) {
+            text += " (" + elapsed + "s)";
+        }
+        text += ".".repeat((int) dots + 1);
+        frame.renderWidget(Paragraph.from(Line.from(Span.styled(text, Style.EMPTY.fg(Theme.accent())))),
+                new Rect(area.left() + 2, area.top(), Math.max(0, area.width() - 2), 1));
     }
 
     private void renderInput(Frame frame, Rect area) {
-        String prompt = "> ";
+        String prompt = INPUT_PROMPT;
         String text = inputBuffer.toString();
 
         List<Span> spans = new ArrayList<>();
@@ -637,6 +1004,12 @@ class AiPanel {
                     spans.add(Span.styled(" ", Style.EMPTY.reversed()));
                 }
             }
+            if (cursorPos == text.length()) {
+                Optional<String> placeholder = slashCommands.placeholderFor(text);
+                if (placeholder.isPresent()) {
+                    spans.add(Span.styled(" " + placeholder.get(), Style.EMPTY.dim()));
+                }
+            }
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
@@ -652,10 +1025,11 @@ class AiPanel {
         TuiHelper.hint(spans, "Shift+F8", "resize (" + anim.cyclePercent() + "%)");
         TuiHelper.hint(spans, "PgUp/Dn", "scroll");
         if (!statsView) {
+            TuiHelper.hint(spans, "Ctrl+P", "provider");
             if (!thinking.get()) {
                 TuiHelper.hint(spans, "Enter", "send");
             } else {
-                TuiHelper.hint(spans, "Ctrl+C", "cancel");
+                TuiHelper.hint(spans, "Esc/Ctrl+C", "interrupt");
             }
         }
     }
@@ -848,6 +1222,210 @@ class AiPanel {
         // so the LLM's line-by-line formatting is preserved in MarkdownView.
         // Double newlines (paragraph breaks) are left as-is.
         return text.replaceAll("(?<!\n)\n(?!\n)", "  \n");
+    }
+
+    void executeSlashCommandForTesting(String input) {
+        executeSlashCommand(input);
+    }
+
+    void clearConversation() {
+        conversation.clear();
+        activityLog.clear();
+        inputBuffer.setLength(0);
+        cursorPos = 0;
+        scrollOffset = 0;
+        usageHistory.clear();
+        statsScrollOffset = 0;
+        sessionTotalTokens = 0;
+        if (messages != null) {
+            messages.clear();
+        }
+    }
+
+    void setClientForTesting(LlmClient client) {
+        this.client = client;
+        this.initError = null;
+        this.messages = new ArrayList<>();
+        this.testingClientInjected = true;
+    }
+
+    void setSlashCommandContextForTesting(AiSlashCommandContext context) {
+        this.slashCommandContext = context;
+    }
+
+    AiSlashCommandRegistry slashCommandRegistryForTesting() {
+        return slashCommands;
+    }
+
+    List<ConversationEntry> conversationForTesting() {
+        return List.copyOf(conversation);
+    }
+
+    int sessionTotalTokensForTesting() {
+        return sessionTotalTokens;
+    }
+
+    int messageCountForTesting() {
+        return messages == null ? 0 : messages.size();
+    }
+
+    boolean isThinkingForTesting() {
+        return thinking.get();
+    }
+
+    String thinkingVerbForTesting() {
+        return thinkingVerb;
+    }
+
+    String inputPromptForTesting() {
+        return INPUT_PROMPT;
+    }
+
+    String inputBufferForTesting() {
+        return inputBuffer.toString();
+    }
+
+    void setExitCallbackForTestingOrRuntime(Runnable callback) {
+        this.exitCallback = callback;
+    }
+
+    void setProviderChoicesForTesting(List<AiProviderSwitchPopup.ProviderChoice> choices) {
+        this.providerChoicesForTesting = choices;
+    }
+
+    boolean isAgentThreadRunningForTesting() {
+        Thread t = agentThread;
+        return t != null && t.isAlive();
+    }
+
+    boolean isProviderSwitchVisibleForTesting() {
+        return providerSwitchPopup.isVisible();
+    }
+
+    List<AiProviderSwitchPopup.ProviderChoice> buildProviderChoicesForTesting() {
+        return providerSelector.buildChoices();
+    }
+
+    private final class PanelSlashCommandContext implements AiSlashCommandContext {
+
+        @Override
+        public void closePanel() {
+            close();
+        }
+
+        @Override
+        public void requestExit() {
+            if (exitCallback != null) {
+                exitCallback.run();
+            }
+        }
+
+        @Override
+        public void openProviderSwitch() {
+            AiPanel.this.openProviderSwitch();
+        }
+
+        @Override
+        public void clearConversation() {
+            AiPanel.this.clearConversation();
+        }
+
+        @Override
+        public String currentModel() {
+            return client != null && client.model() != null ? client.model() : "unknown";
+        }
+
+        @Override
+        public List<String> availableModels() {
+            return client != null ? client.listModels() : List.of();
+        }
+
+        @Override
+        public boolean switchModel(String model) {
+            if (client == null) {
+                return false;
+            }
+            client.withModel(model);
+            persistModelSelection(model);
+            return true;
+        }
+
+        @Override
+        public String selectedProcessName() {
+            return ctx != null ? ctx.selectedName() : null;
+        }
+
+        @Override
+        public CompletableFuture<AiCliCommandExecutor.Result> executeCli(AiCliCommandExecutor.Request request) {
+            return cliCommandExecutor.executeAsync(request);
+        }
+
+        @Override
+        public void cancelCli() {
+            cliCommandExecutor.cancel();
+        }
+
+        @Override
+        public String launchDetached(AiSlashCommandRegistry.LaunchSpec spec) {
+            if (launchManager == null) {
+                throw new IllegalStateException("Launching commands is not available in this session.");
+            }
+            JsonObject example = spec.exampleName() != null ? findExample(spec.exampleName()) : null;
+            if (example != null) {
+                List<String> missing = launchManager.findMissingInfraServices(example);
+                if (!missing.isEmpty()) {
+                    if (!LaunchManager.isContainerRuntimeAvailable()) {
+                        throw new IllegalStateException(
+                                "Docker/Podman required for infra services: " + String.join(", ", missing));
+                    }
+                    launchManager.startMissingInfraAndDefer(
+                            missing, spec.displayName(), () -> launchDetachedQuietly(spec));
+                    return "Starting infra: " + String.join(", ", missing) + " → then: " + spec.displayName();
+                }
+            }
+            try {
+                launchManager.launchDetached(spec.displayName(), spec.camelArgs());
+            } catch (IOException e) {
+                throw new IllegalStateException(
+                        "Failed to start: " + spec.displayName() + " - " + e.getMessage(), e);
+            }
+            return "Started: " + spec.displayName();
+        }
+    }
+
+    /**
+     * Launches a deferred spec (after its infra services have started) without propagating failures, since this runs
+     * from {@link LaunchManager#tick(long)} where there is no slash-command result to surface. Errors are reported in
+     * the conversation instead.
+     */
+    private void launchDetachedQuietly(AiSlashCommandRegistry.LaunchSpec spec) {
+        try {
+            launchManager.launchDetached(spec.displayName(), spec.camelArgs());
+        } catch (IOException e) {
+            conversation.add(new ConversationEntry(
+                    AiRole.ERROR, "Failed to start: " + spec.displayName() + " - " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Looks up a catalog example by its full name (e.g. {@code beginner/timer-log}) so its required infra services can
+     * be determined before launching. The catalog is loaded lazily and cached. Returns {@code null} when the example is
+     * unknown or the catalog cannot be loaded, in which case the launch proceeds without infra auto-start.
+     */
+    private JsonObject findExample(String name) {
+        try {
+            List<JsonObject> catalog = exampleCatalog;
+            if (catalog == null) {
+                catalog = ExampleHelper.loadCatalog();
+                exampleCatalog = catalog;
+            }
+            return catalog.stream()
+                    .filter(example -> name.equals(example.getStringOrDefault("name", "")))
+                    .findFirst()
+                    .orElse(null);
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 
 }

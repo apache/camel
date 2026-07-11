@@ -88,7 +88,6 @@ final class TuiIcons {
     static final String COMPUTER = "💻";
     static final String SETTINGS = "🧰";
     static final String HELP = "❔";
-    static final String THINKING = "🤔";
 
     // ---- UI symbols (non-emoji glyphs used across the TUI) ----
     static final String SELECTED = "●";

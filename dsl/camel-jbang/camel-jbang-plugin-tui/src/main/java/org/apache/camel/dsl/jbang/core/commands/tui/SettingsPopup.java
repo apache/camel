@@ -33,6 +33,7 @@ import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
@@ -49,9 +50,22 @@ class SettingsPopup {
     private static final int ROW_START_TAB = 1;
     private static final int ROW_LOG_PIN = 2;
     private static final int ROW_FOLDER = 3;
-    private static final int ROW_COUNT = 4;
+    private static final int ROW_AI_PROVIDER = 4;
+    private static final int ROW_AI_MODEL = 5;
+    private static final int ROW_AI_URL = 6;
+    private static final int ROW_COUNT = 7;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
+    private static final List<String> AI_PROVIDERS = buildAiProviderList();
+
+    private static List<String> buildAiProviderList() {
+        List<String> providers = new ArrayList<>();
+        for (LlmClient.ApiType apiType : LlmClient.ApiType.values()) {
+            providers.add(apiType.name());
+        }
+        providers.add("auto");
+        return providers;
+    }
 
     private boolean visible;
     private int selectedRow;
@@ -60,7 +74,10 @@ class SettingsPopup {
     private int themeIndex;
     private int startTabIndex;
     private int logPinIndex;
+    private int aiProviderIndex;
     private TextInputState folderInput;
+    private TextInputState aiModelInput;
+    private TextInputState aiUrlInput;
     private List<String> tabNames = new ArrayList<>();
 
     private List<TabRegistry.TabEntry> tabEntries;
@@ -105,6 +122,11 @@ class SettingsPopup {
         }
 
         folderInput = new TextInputState(settings.getDefaultFolder() != null ? settings.getDefaultFolder() : "");
+        String currentProvider = settings.getAiProvider() != null ? settings.getAiProvider() : "auto";
+        int providerIdx = AI_PROVIDERS.indexOf(currentProvider);
+        aiProviderIndex = providerIdx >= 0 ? providerIdx : AI_PROVIDERS.indexOf("auto");
+        aiModelInput = new TextInputState(settings.getAiModel() != null ? settings.getAiModel() : "");
+        aiUrlInput = new TextInputState(settings.getAiUrl() != null ? settings.getAiUrl() : "");
         selectedRow = ROW_THEME;
         visible = true;
     }
@@ -175,6 +197,22 @@ class SettingsPopup {
             handleTextInput(ke, folderInput);
             return true;
         }
+        if (selectedRow == ROW_AI_PROVIDER) {
+            if (ke.isChar(' ') || ke.isRight()) {
+                aiProviderIndex = (aiProviderIndex + 1) % AI_PROVIDERS.size();
+            } else if (ke.isLeft()) {
+                aiProviderIndex = (aiProviderIndex - 1 + AI_PROVIDERS.size()) % AI_PROVIDERS.size();
+            }
+            return true;
+        }
+        if (selectedRow == ROW_AI_MODEL) {
+            handleTextInput(ke, aiModelInput);
+            return true;
+        }
+        if (selectedRow == ROW_AI_URL) {
+            handleTextInput(ke, aiUrlInput);
+            return true;
+        }
         return true;
     }
 
@@ -187,6 +225,9 @@ class SettingsPopup {
         String logPinValue = LOG_PIN_OPTIONS[logPinIndex];
         settings.setLogPin("off".equals(logPinValue) ? null : logPinValue);
         settings.setDefaultFolder(stripControlChars(folderInput.text().trim()));
+        settings.setAiProvider(AI_PROVIDERS.get(aiProviderIndex));
+        settings.setAiModel(stripControlChars(aiModelInput.text().trim()));
+        settings.setAiUrl(stripControlChars(aiUrlInput.text().trim()));
         settings.save();
         if (Theme.mode().equals(selectedThemeId)) {
             // Already active via live preview (or unchanged): just persist and clear the preview marker.
@@ -237,11 +278,25 @@ class SettingsPopup {
 
         renderLabel(frame, innerX, rowY, labelW, "Default Folder:", selectedRow == ROW_FOLDER);
         renderFolder(frame, innerX + labelW, rowY, fieldW, selectedRow == ROW_FOLDER);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "AI Provider:", selectedRow == ROW_AI_PROVIDER);
+        renderValue(frame, innerX + labelW, rowY, fieldW, AI_PROVIDERS.get(aiProviderIndex),
+                selectedRow == ROW_AI_PROVIDER);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "AI Model:", selectedRow == ROW_AI_MODEL);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, aiModelInput, selectedRow == ROW_AI_MODEL, "(auto)");
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "AI Base URL:", selectedRow == ROW_AI_URL);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, aiUrlInput, selectedRow == ROW_AI_URL, "(auto)");
     }
 
     void renderFooter(List<Span> spans) {
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-        if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_LOG_PIN) {
+        if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_LOG_PIN
+                || selectedRow == ROW_AI_PROVIDER) {
             hint(spans, "Space", "cycle");
         }
         hint(spans, "Enter", "save");
@@ -310,18 +365,24 @@ class SettingsPopup {
     }
 
     private void renderFolder(Frame frame, int x, int y, int w, boolean active) {
+        renderTextInput(frame, x, y, w, folderInput, active, "/path/to/folder");
+    }
+
+    private void renderTextInput(
+            Frame frame, int x, int y, int w, TextInputState input, boolean active,
+            String placeholder) {
         Rect area = new Rect(x, y, w, 1);
         if (active) {
             TextInput textInput = TextInput.builder()
                     .cursorStyle(Style.EMPTY.reversed())
-                    .placeholder("/path/to/folder")
+                    .placeholder(placeholder)
                     .build();
-            frame.renderStatefulWidget(textInput, area, folderInput);
+            frame.renderStatefulWidget(textInput, area, input);
         } else {
-            String text = folderInput.text();
+            String text = input.text();
             Style style = text.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY;
             frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled(text.isEmpty() ? "(none)" : text, style))), area);
+                    Span.styled(text.isEmpty() ? placeholder : text, style))), area);
         }
     }
 
@@ -345,5 +406,17 @@ class SettingsPopup {
 
     String folderText() {
         return folderInput != null ? folderInput.text() : "";
+    }
+
+    String selectedAiProvider() {
+        return AI_PROVIDERS.get(aiProviderIndex);
+    }
+
+    String aiModelText() {
+        return aiModelInput != null ? aiModelInput.text() : "";
+    }
+
+    String aiUrlText() {
+        return aiUrlInput != null ? aiUrlInput.text() : "";
     }
 }

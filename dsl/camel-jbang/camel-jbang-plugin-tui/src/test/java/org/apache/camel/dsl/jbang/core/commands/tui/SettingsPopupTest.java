@@ -160,6 +160,42 @@ class SettingsPopupTest {
     }
 
     @Test
+    void aiRowsPersistProviderModelAndUrl(@TempDir Path tempDir) {
+        useHome(tempDir);
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(tabs());
+        popup.open();
+
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(4, popup.selectedRow());
+        assertEquals("auto", popup.selectedAiProvider());
+        popup.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertEquals("ollama", popup.selectedAiProvider());
+
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        for (char c : "gemini-3.5-flash".toCharArray()) {
+            popup.handleKeyEvent(KeyEvent.ofChar(c));
+        }
+        assertEquals("gemini-3.5-flash", popup.aiModelText());
+
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        for (char c : "https://example.test".toCharArray()) {
+            popup.handleKeyEvent(KeyEvent.ofChar(c));
+        }
+        assertEquals("https://example.test", popup.aiUrlText());
+
+        popup.handleKeyEvent(key(KeyCode.ENTER));
+
+        TuiSettings persisted = TuiSettings.load();
+        assertEquals("ollama", persisted.getAiProvider());
+        assertEquals("gemini-3.5-flash", persisted.getAiModel());
+        assertEquals("https://example.test", persisted.getAiUrl());
+    }
+
+    @Test
     void enterPersistsSelectionsAndAppliesThemeLive(@TempDir Path tempDir) throws Exception {
         useHome(tempDir);
         // Exercise the real persistence path (disk read/write) against the isolated home directory.
