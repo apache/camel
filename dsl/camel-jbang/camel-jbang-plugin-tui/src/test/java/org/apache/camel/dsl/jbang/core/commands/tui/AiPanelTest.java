@@ -310,6 +310,8 @@ class AiPanelTest {
         String rendered = TuiTestHelper.bufferToString(buffer);
         assertTrue(rendered.contains("/send"));
         assertTrue(rendered.contains("<endpoint> <message text | @file>"));
+        // The placeholder hint must render exactly once (guards against duplicate placeholder blocks).
+        assertEquals(1, countOccurrences(rendered, "<endpoint> <message text | @file>"));
     }
 
     @Test
@@ -446,6 +448,14 @@ class AiPanelTest {
         for (char ch : text.toCharArray()) {
             panel.handleKeyEvent(KeyEvent.ofChar(ch));
         }
+    }
+
+    private static int countOccurrences(String haystack, String needle) {
+        int count = 0;
+        for (int i = haystack.indexOf(needle); i >= 0; i = haystack.indexOf(needle, i + needle.length())) {
+            count++;
+        }
+        return count;
     }
 
     private static final class RecordingLlmClient extends LlmClient {

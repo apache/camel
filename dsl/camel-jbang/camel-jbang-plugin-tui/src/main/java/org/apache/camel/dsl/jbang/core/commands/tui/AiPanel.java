@@ -895,12 +895,6 @@ class AiPanel {
                     spans.add(Span.styled(" " + placeholder.get(), Style.EMPTY.dim()));
                 }
             }
-            if (cursorPos == text.length()) {
-                Optional<String> placeholder = slashCommands.placeholderFor(text);
-                if (placeholder.isPresent()) {
-                    spans.add(Span.styled(" " + placeholder.get(), Style.EMPTY.dim()));
-                }
-            }
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
