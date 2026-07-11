@@ -97,6 +97,13 @@ class AiPanel {
     private final StringBuilder inputBuffer = new StringBuilder();
     private int cursorPos;
 
+    // TAB completion cycle state. completionMatches holds the candidate command names for the active cycle;
+    // completionSnapshot is the buffer text a TAB press last produced. The cycle continues only while the buffer still
+    // equals that snapshot, so any other edit (typing, backspace, cursor move) transparently starts a fresh completion.
+    private List<String> completionMatches;
+    private int completionCycleIndex = -1;
+    private String completionSnapshot;
+
     // Conversation display. CopyOnWriteArrayList because entries are appended from the agent thread and the
     // CLI-command-completion callback while the render thread iterates the list concurrently.
     private final List<ConversationEntry> conversation = new CopyOnWriteArrayList<>();
@@ -425,12 +432,91 @@ class AiPanel {
             cursorPos = inputBuffer.length();
             return true;
         }
+        if (ke.isKey(KeyCode.TAB)) {
+            handleTabCompletion(ke.hasShift());
+            return true;
+        }
         if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
             inputBuffer.insert(cursorPos, ke.character());
             cursorPos++;
             return true;
         }
         return true;
+    }
+
+    /**
+     * Completes the slash command name at the cursor. With multiple matches, TAB first fills in the longest common
+     * prefix; once no further prefix can be added it cycles forward through the matches (wrapping so every match is
+     * reachable with TAB alone). A single match is completed fully and a trailing space is appended. Shift+TAB cycles
+     * backward. TAB is a no-op unless the buffer is a partial command name (starts with {@code /}, no arguments yet).
+     */
+    private void handleTabCompletion(boolean backward) {
+        String text = inputBuffer.toString();
+        boolean continuing = text.equals(completionSnapshot) && completionMatches != null && completionMatches.size() > 1;
+        if (continuing) {
+            int size = completionMatches.size();
+            if (completionCycleIndex < 0) {
+                completionCycleIndex = backward ? size - 1 : 0;
+            } else {
+                completionCycleIndex = backward
+                        ? (completionCycleIndex - 1 + size) % size
+                        : (completionCycleIndex + 1) % size;
+            }
+            applyCompletionToken(completionMatches.get(completionCycleIndex), false);
+            return;
+        }
+
+        List<String> names = slashCommands.completionsFor(text).stream()
+                .map(AiSlashCommandRegistry.Descriptor::name)
+                .toList();
+        if (names.isEmpty()) {
+            completionMatches = null;
+            completionCycleIndex = -1;
+            completionSnapshot = null;
+            return;
+        }
+        if (names.size() == 1) {
+            applyCompletionToken(names.get(0), true);
+            // A single completion ends with a trailing space, so there is nothing left to cycle.
+            completionMatches = null;
+            completionCycleIndex = -1;
+            completionSnapshot = null;
+            return;
+        }
+        String currentToken = text.substring(1);
+        String prefix = longestCommonPrefix(names);
+        completionMatches = names;
+        if (prefix.length() > currentToken.length()) {
+            applyCompletionToken(prefix, false);
+            completionCycleIndex = -1;
+        } else {
+            completionCycleIndex = backward ? names.size() - 1 : 0;
+            applyCompletionToken(names.get(completionCycleIndex), false);
+        }
+    }
+
+    private void applyCompletionToken(String token, boolean trailingSpace) {
+        inputBuffer.setLength(0);
+        inputBuffer.append('/').append(token);
+        if (trailingSpace) {
+            inputBuffer.append(' ');
+        }
+        cursorPos = inputBuffer.length();
+        completionSnapshot = inputBuffer.toString();
+    }
+
+    private static String longestCommonPrefix(List<String> values) {
+        String prefix = values.get(0);
+        for (int i = 1; i < values.size() && !prefix.isEmpty(); i++) {
+            String value = values.get(i);
+            int max = Math.min(prefix.length(), value.length());
+            int j = 0;
+            while (j < max && prefix.charAt(j) == value.charAt(j)) {
+                j++;
+            }
+            prefix = prefix.substring(0, j);
+        }
+        return prefix;
     }
 
     private void submitInput() {
@@ -821,14 +907,16 @@ class AiPanel {
 
         String source = md.toString();
 
-        // Estimate total rendered lines (accounting for word wrap)
-        int contentWidth = Math.max(1, mdArea.width());
-        int estimatedLines = 0;
-        for (String l : source.split("\n", -1)) {
-            estimatedLines += Math.max(1, (l.length() / contentWidth) + 1);
-        }
+        // Measure the exact rendered height with MarkdownView's own word-wrap accounting rather than estimating from
+        // character counts. A rough estimate under-counts wrapped lines, so auto-scrolling to the bottom left the last
+        // couple of lines hidden below the visible area.
+        MarkdownView.Builder viewBuilder = MarkdownView.builder()
+                .source(source)
+                .styles(Theme.markdownStyles());
+        MarkdownView measure = viewBuilder.build();
+        int totalLines = measure.computeHeight(mdArea.width());
 
-        boolean overflow = estimatedLines > mdArea.height();
+        boolean overflow = totalLines > mdArea.height();
         Rect contentArea = mdArea;
         Rect scrollbarArea = null;
         if (overflow) {
@@ -837,25 +925,23 @@ class AiPanel {
                     .split(mdArea);
             contentArea = hParts.get(0);
             scrollbarArea = hParts.get(1);
+            // The scrollbar column narrows the content, which can change the wrapping, so re-measure at that width.
+            totalLines = measure.computeHeight(contentArea.width());
         }
 
         // scrollOffset=0 means auto-scroll to bottom (most recent content visible)
         // scrollOffset>0 means user scrolled up by that many lines
         // Clamp so PgDn always has immediate effect after scrolling past the top
-        int maxScrollOffset = Math.max(0, estimatedLines - contentArea.height());
+        int maxScrollOffset = Math.max(0, totalLines - contentArea.height());
         scrollOffset = Math.min(scrollOffset, maxScrollOffset);
 
         int scroll = Math.max(0, maxScrollOffset - scrollOffset);
 
-        MarkdownView view = MarkdownView.builder()
-                .source(source)
-                .scroll(scroll)
-                .styles(Theme.markdownStyles())
-                .build();
+        MarkdownView view = viewBuilder.scroll(scroll).build();
         frame.renderWidget(view, contentArea);
 
         if (overflow && scrollbarArea != null) {
-            renderScrollbar(frame, scrollbarArea, estimatedLines, contentArea.height(), scroll);
+            renderScrollbar(frame, scrollbarArea, totalLines, contentArea.height(), scroll);
         }
 
         if (elapsedArea != null && lastElapsed >= 0) {
@@ -1198,6 +1284,10 @@ class AiPanel {
 
     String inputPromptForTesting() {
         return INPUT_PROMPT;
+    }
+
+    String inputBufferForTesting() {
+        return inputBuffer.toString();
     }
 
     void setExitCallbackForTestingOrRuntime(Runnable callback) {

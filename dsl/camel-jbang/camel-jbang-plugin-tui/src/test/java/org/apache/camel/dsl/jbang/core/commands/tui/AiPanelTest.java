@@ -475,10 +475,131 @@ class AiPanelTest {
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
     }
 
+    @Test
+    void longResponseAutoScrollsToShowLastLine() throws Exception {
+        AiPanel panel = new AiPanel();
+        // Markdown block elements (headings, lists, fenced code, blockquotes) render with surrounding blank rows that a
+        // naive per-source-line count ignores, so the old estimate under-counted the height and the auto-scroll clipped
+        // the last couple of lines below the visible area.
+        String response = "# Routes overview\n"
+                          + "Here are the routes:\n"
+                          + "## Details\n"
+                          + "- route-one does a thing\n"
+                          + "- route-two does another thing\n"
+                          + "- route-three does yet another\n"
+                          + "\n"
+                          + "```java\n"
+                          + "from(\"timer:foo\").to(\"log:bar\");\n"
+                          + "```\n"
+                          + "> a blockquote note about the routes\n"
+                          + "FINAL_MARKER_LINE";
+        RecordingLlmClient client = new RecordingLlmClient(response);
+        panel.setClientForTesting(client);
+        panel.open();
+
+        type(panel, "show me the routes");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(client.awaitAnswer(5, TimeUnit.SECONDS));
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+        while (panel.isAgentThreadRunningForTesting() && System.nanoTime() < deadline) {
+            Thread.onSpinWait();
+        }
+        assertFalse(panel.isAgentThreadRunningForTesting(), "agent thread should finish within 5 seconds");
+
+        // A short panel forces overflow; scrollOffset defaults to 0 (auto-scroll to the newest content).
+        Rect area = new Rect(0, 0, 48, 16);
+        Buffer buffer = Buffer.empty(area);
+        panel.render(Frame.forTesting(buffer), area);
+
+        assertTrue(TuiTestHelper.bufferToString(buffer).contains("FINAL_MARKER"),
+                "auto-scroll must keep the most recent response line visible, not clip it below the input bar");
+    }
+
+    @Test
+    void tabCompletesSingleMatchAndAppendsSpace() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "/ru");
+
+        tab(panel);
+
+        // /ru only matches /run, so it completes fully and adds a trailing space ready for arguments.
+        assertEquals("/run ", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void tabCompletesLongestCommonPrefixThenCyclesForward() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "/c");
+
+        // /c matches both /clear and /close, so the first TAB fills in their common prefix without choosing one.
+        tab(panel);
+        assertEquals("/cl", panel.inputBufferForTesting());
+
+        // No further prefix can be added, so subsequent TABs cycle through the matches and wrap around.
+        tab(panel);
+        assertEquals("/clear", panel.inputBufferForTesting());
+        tab(panel);
+        assertEquals("/close", panel.inputBufferForTesting());
+        tab(panel);
+        assertEquals("/clear", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void shiftTabCyclesBackward() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "/c");
+        tab(panel);
+        assertEquals("/cl", panel.inputBufferForTesting());
+
+        // Shift+TAB from the common prefix selects the last match, then walks backward through the list.
+        shiftTab(panel);
+        assertEquals("/close", panel.inputBufferForTesting());
+        shiftTab(panel);
+        assertEquals("/clear", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void tabIsNoOpWithoutSlashPrefix() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "hello");
+
+        tab(panel);
+
+        assertEquals("hello", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void editingResetsCompletionCycle() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "/c");
+        tab(panel);
+        tab(panel);
+        assertEquals("/clear", panel.inputBufferForTesting());
+
+        // Backspacing breaks the cycle; the next TAB recomputes from the edited buffer instead of jumping to /close.
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.BACKSPACE, KeyModifiers.NONE));
+        assertEquals("/clea", panel.inputBufferForTesting());
+        tab(panel);
+        assertEquals("/clear ", panel.inputBufferForTesting());
+    }
+
     private static void type(AiPanel panel, String text) {
         for (char ch : text.toCharArray()) {
             panel.handleKeyEvent(KeyEvent.ofChar(ch));
         }
+    }
+
+    private static void tab(AiPanel panel) {
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
+    }
+
+    private static void shiftTab(AiPanel panel) {
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.SHIFT));
     }
 
     private static int countOccurrences(String haystack, String needle) {
