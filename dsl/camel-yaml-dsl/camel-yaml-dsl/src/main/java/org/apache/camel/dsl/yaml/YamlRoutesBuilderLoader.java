@@ -160,7 +160,13 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                             }
                         }
                     } else {
-                        doConfigure(target);
+                        boolean accepted = doConfigure(target);
+                        if (!accepted) {
+                            String loc = ctx.getResource() != null ? ctx.getResource().getLocation() : "";
+                            LOG.warn(
+                                    "Unsupported top-level YAML node in resource: {}. Ensure the YAML file uses a sequence (list) of route definitions.",
+                                    loc);
+                        }
                     }
                 }
 
@@ -171,7 +177,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 if (resource != null) {
                     preparseDone.remove(resource.getLocation());
                 }
-                beansDeserializer.clearCache();
+                if (preparseDone.isEmpty()) {
+                    beansDeserializer.clearCache();
+                }
             }
 
             private boolean doConfigure(Object item) throws Exception {
@@ -324,7 +332,13 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                             }
                         }
                     } else {
-                        doConfiguration(target);
+                        boolean accepted = doConfiguration(target);
+                        if (!accepted) {
+                            String loc = ctx.getResource() != null ? ctx.getResource().getLocation() : "";
+                            LOG.warn(
+                                    "Unsupported top-level YAML node in resource: {}. Ensure the YAML file uses a sequence (list) of route definitions.",
+                                    loc);
+                        }
                     }
                 }
             }
@@ -506,7 +520,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
                 // is there any error handler?
                 MappingNode errorHandler = asMappingNode(nodeAt(root, "/spec/errorHandler"));
-                if (errorHandler != null) {
+                if (errorHandler != null && !errorHandler.getValue().isEmpty()) {
                     // there are 5 different error handlers, which one is it
                     NodeTuple nt = errorHandler.getValue().get(0);
                     String ehName = asText(nt.getKeyNode());
@@ -516,6 +530,10 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                         // a sink is a dead letter queue
                         DeadLetterChannelDefinition dlcd = new DeadLetterChannelDefinition();
                         MappingNode endpoint = asMappingNode(nodeAt(nt.getValueNode(), "/endpoint"));
+                        if (endpoint == null) {
+                            throw new IllegalArgumentException(
+                                    "Pipe errorHandler sink must have an endpoint defined");
+                        }
                         String dlq = extractCamelEndpointUri(endpoint);
                         dlcd.setDeadLetterUri(dlq);
                         ehf = dlcd;
@@ -590,6 +608,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             uri = extractTupleValue(mn.getValue(), "name");
         } else {
             uri = extractTupleValue(node.getValue(), "uri");
+            if (uri == null && mn != null) {
+                String kind = extractTupleValue(mn.getValue(), "kind");
+                String apiVersion = extractTupleValue(mn.getValue(), "apiVersion");
+                throw new IllegalArgumentException(
+                        "Unsupported Pipe ref kind: " + kind + " (apiVersion: " + apiVersion + ")");
+            }
         }
 
         // properties

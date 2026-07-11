@@ -40,6 +40,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "variableReceive", type = "string"),
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "description", type = "string"),
+                  @YamlProperty(name = "note", type = "string"),
                   @YamlProperty(name = "parameters", type = "object"),
                   @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition", required = true)
           })
@@ -71,6 +72,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
         String uri = null;
         String id = null;
         String desc = null;
+        String note = null;
         String variableReceive = null;
         Map<String, Object> parameters = null;
 
@@ -87,6 +89,9 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
                     break;
                 case "description":
                     desc = asText(val);
+                    break;
+                case "note":
+                    note = asText(val);
                     break;
                 case "uri":
                     uri = asText(val);
@@ -119,6 +124,9 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
             }
             if (desc != null) {
                 from.setDescription(desc);
+            }
+            if (note != null) {
+                from.setNote(note);
             }
             if (variableReceive != null) {
                 from.setVariableReceive(variableReceive);

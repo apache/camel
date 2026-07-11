@@ -314,6 +314,9 @@
           "id" : {
             "type" : "string"
           },
+          "note" : {
+            "type" : "string"
+          },
           "parameters" : {
             "type" : "object"
           },
@@ -341,6 +344,9 @@
             "type" : "string"
           },
           "id" : {
+            "type" : "string"
+          },
+          "note" : {
             "type" : "string"
           },
           "parameters" : {
@@ -941,7 +947,8 @@
             "description" : "The claim check operation to use. Get=retrieve, GetAndRemove=retrieve and remove, Set=store with key, Push=store on stack, Pop=retrieve from stack.",
             "enum" : [ "Get", "GetAndRemove", "Set", "Push", "Pop" ]
           }
-        }
+        },
+        "required" : [ "operation" ]
       },
       "org.apache.camel.model.ContextScanDefinition" : {
         "title" : "Context Scan",
@@ -2691,7 +2698,13 @@
           "type" : "object",
           "additionalProperties" : false,
           "properties" : {
+            "description" : {
+              "type" : "string"
+            },
             "name" : {
+              "type" : "string"
+            },
+            "note" : {
               "type" : "string"
             },
             "parameters" : {
@@ -4638,8 +4651,6 @@
           }, {
             "not" : {
               "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
                 "required" : [ "constant" ]
               }, {
                 "required" : [ "csimple" ]
@@ -5328,8 +5339,6 @@
           }, {
             "not" : {
               "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
                 "required" : [ "constant" ]
               }, {
                 "required" : [ "csimple" ]
@@ -5838,6 +5847,9 @@
                 }
               }
             }
+          },
+          "note" : {
+            "type" : "string"
           },
           "onCompletion" : {
             "type" : "array",
@@ -6592,7 +6604,8 @@
               "enum" : [ "InOnly", "InOut" ]
             }
           }
-        } ]
+        } ],
+        "required" : [ "pattern" ]
       },
       "org.apache.camel.model.SetHeaderDefinition" : {
         "title" : "Set Header",
@@ -9834,7 +9847,8 @@
             "description" : "When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a java.util.List.",
             "default" : true
           }
-        }
+        },
+        "required" : [ "type" ]
       },
       "org.apache.camel.model.dataformat.CBORDataFormat" : {
         "title" : "CBOR",
@@ -14607,7 +14621,8 @@
             "title" : "Type",
             "description" : "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level."
           }
-        }
+        },
+        "required" : [ "to" ]
       },
       "org.apache.camel.model.rest.GetDefinition" : {
         "title" : "Get",
@@ -14750,7 +14765,8 @@
             "title" : "Type",
             "description" : "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level."
           }
-        }
+        },
+        "required" : [ "to" ]
       },
       "org.apache.camel.model.rest.HeadDefinition" : {
         "title" : "Head",
@@ -14893,7 +14909,8 @@
             "title" : "Type",
             "description" : "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level."
           }
-        }
+        },
+        "required" : [ "to" ]
       },
       "org.apache.camel.model.rest.MutualTLSDefinition" : {
         "title" : "Mutual TLS",
@@ -15119,7 +15136,7 @@
             "enum" : [ "body", "formData", "header", "path", "query" ]
           }
         },
-        "required" : [ "name" ]
+        "required" : [ "name", "type" ]
       },
       "org.apache.camel.model.rest.PatchDefinition" : {
         "title" : "Patch",
@@ -15262,7 +15279,8 @@
             "title" : "Type",
             "description" : "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level."
           }
-        }
+        },
+        "required" : [ "to" ]
       },
       "org.apache.camel.model.rest.PostDefinition" : {
         "title" : "Post",
@@ -15405,7 +15423,8 @@
             "title" : "Type",
             "description" : "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level."
           }
-        }
+        },
+        "required" : [ "to" ]
       },
       "org.apache.camel.model.rest.PutDefinition" : {
         "title" : "Put",
@@ -15548,7 +15567,8 @@
             "title" : "Type",
             "description" : "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level."
           }
-        }
+        },
+        "required" : [ "to" ]
       },
       "org.apache.camel.model.rest.ResponseHeaderDefinition" : {
         "title" : "Response Header",
@@ -16212,7 +16232,7 @@
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
           }
         },
-        "required" : [ "maxOverlap", "maxTokens" ]
+        "required" : [ "maxOverlap", "maxTokens", "tokenizerType" ]
       },
       "org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with line splitter",
@@ -16247,7 +16267,7 @@
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
           }
         },
-        "required" : [ "maxOverlap", "maxTokens" ]
+        "required" : [ "maxOverlap", "maxTokens", "tokenizerType" ]
       },
       "org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with paragraph splitter",
@@ -16282,7 +16302,7 @@
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
           }
         },
-        "required" : [ "maxOverlap", "maxTokens" ]
+        "required" : [ "maxOverlap", "maxTokens", "tokenizerType" ]
       },
       "org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with sentence splitter",
@@ -16317,7 +16337,7 @@
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
           }
         },
-        "required" : [ "maxOverlap", "maxTokens" ]
+        "required" : [ "maxOverlap", "maxTokens", "tokenizerType" ]
       },
       "org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition" : {
         "type" : "object",
@@ -16340,7 +16360,7 @@
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
           }
         },
-        "required" : [ "maxOverlap", "maxTokens" ]
+        "required" : [ "maxOverlap", "maxTokens", "tokenizerType" ]
       },
       "org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with word splitter",
@@ -16375,7 +16395,7 @@
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
           }
         },
-        "required" : [ "maxOverlap", "maxTokens" ]
+        "required" : [ "maxOverlap", "maxTokens", "tokenizerType" ]
       },
       "org.apache.camel.model.transformer.CustomTransformerDefinition" : {
         "title" : "Custom Transformer",

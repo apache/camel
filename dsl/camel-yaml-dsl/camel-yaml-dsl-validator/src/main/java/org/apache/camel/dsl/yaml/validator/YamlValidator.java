@@ -66,9 +66,11 @@ public class YamlValidator {
             var target = mapper.readTree(file);
             return new ArrayList<>(schema.validate(target));
         } catch (Exception e) {
+            String msg = e.getClass().getName() + ": " + e.getMessage();
             Error error = Error.builder()
                     .messageKey("parser")
-                    .format(new MessageFormat(e.getClass().getName() + ": " + e.getMessage()))
+                    .format(new MessageFormat("{0}"))
+                    .arguments(msg)
                     .build();
             return List.of(error);
         }

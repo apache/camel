@@ -23,6 +23,7 @@ import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition
 import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition
+import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition
 import org.junit.jupiter.api.Assertions
 
 class ErrorHandlerTest extends YamlTestSupport {
@@ -170,6 +171,21 @@ class ErrorHandlerTest extends YamlTestSupport {
             hasRedeliveryPolicy() == false
             redeliveryPolicyRef == "myPolicy"
         }
+    }
+
+    def "errorHandler (springTransactionErrorHandler)"() {
+        setup:
+            loadRoutesNoValidate """
+                - errorHandler:
+                    springTransactionErrorHandler:
+                      transactedPolicyRef: "myTxPolicy"
+            """
+        when:
+            context.start()
+        then:
+            with(context.getCamelContextExtension().getErrorHandlerFactory(), SpringTransactionErrorHandlerDefinition) {
+                transactedPolicyRef == 'myTxPolicy'
+            }
     }
 
     def "Error: duplicate errorHandler"() {

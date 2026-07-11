@@ -189,7 +189,8 @@ class RestTest extends YamlTestSupport {
             def rloc = 'classpath:/rest-dsl/generated-rest-dsl.yaml'
             def rdsl = PluginHelper.getResourceLoader(context).resolveResource(rloc)
         when:
-            loadRoutes rdsl
+            // skip schema validation: generated REST DSL may omit 'type' on params (CAMEL-24004)
+            loadRoutes([rdsl], false)
         then:
             context.restDefinitions != null
             !context.restDefinitions.isEmpty()

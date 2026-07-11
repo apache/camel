@@ -1605,7 +1605,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "defaultValueStringAsNull", type = "boolean", defaultValue = "false", description = "To change the default value for string types to be null instead of an empty string.", displayName = "Default Value String As Null"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "locale", type = "string", description = "To configure a default locale to use, such as us for united states. To use the JVM platform default locale then use the name default.", displayName = "Locale"),
-                    @YamlProperty(name = "type", type = "enum:Csv,Fixed,KeyValue", description = "Whether to use Csv, Fixed, or KeyValue.", displayName = "Type"),
+                    @YamlProperty(name = "type", type = "enum:Csv,Fixed,KeyValue", required = true, description = "Whether to use Csv, Fixed, or KeyValue.", displayName = "Type"),
                     @YamlProperty(name = "unwrapSingleInstance", type = "boolean", defaultValue = "true", description = "When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a java.util.List.", displayName = "Unwrap Single Instance")
             }
     )
@@ -2107,7 +2107,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "key", type = "string", description = "The unique claim check key to use for Get, GetAndRemove, and Set operations.", displayName = "Key"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
-                    @YamlProperty(name = "operation", type = "enum:Get,GetAndRemove,Set,Push,Pop", description = "The claim check operation to use. Get=retrieve, GetAndRemove=retrieve and remove, Set=store with key, Push=store on stack, Pop=retrieve from stack.", displayName = "Operation")
+                    @YamlProperty(name = "operation", type = "enum:Get,GetAndRemove,Set,Push,Pop", required = true, description = "The claim check operation to use. Get=retrieve, GetAndRemove=retrieve and remove, Set=store with key, Push=store on stack, Pop=retrieve from stack.", displayName = "Operation")
             }
     )
     public static class ClaimCheckDefinitionDeserializer extends YamlDeserializerBase<ClaimCheckDefinition> {
@@ -4510,7 +4510,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Security settings for this REST operation", displayName = "Security"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "streamCache", type = "boolean", defaultValue = "false", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
-                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
+                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", required = true, description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.", displayName = "Type")
             }
     )
@@ -6010,7 +6010,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Security settings for this REST operation", displayName = "Security"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "streamCache", type = "boolean", defaultValue = "false", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
-                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
+                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", required = true, description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.", displayName = "Type")
             }
     )
@@ -6582,7 +6582,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Security settings for this REST operation", displayName = "Security"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "streamCache", type = "boolean", defaultValue = "false", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
-                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
+                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", required = true, description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.", displayName = "Type")
             }
     )
@@ -8529,7 +8529,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "The maximum number of tokens that can overlap in each segment.", displayName = "Max Overlap"),
                     @YamlProperty(name = "maxTokens", type = "number", required = true, description = "The maximum number of tokens on each segment.", displayName = "Max Tokens"),
                     @YamlProperty(name = "modelName", type = "string", description = "The underlying model name used by the tokenizer. Providing this switches to computing segment sizes in terms of tokens.", displayName = "Model Name"),
-                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.", displayName = "Tokenizer Type")
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", required = true, description = "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.", displayName = "Tokenizer Type")
             }
     )
     public static class LangChain4jCharacterTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jCharacterTokenizerDefinition> {
@@ -8592,7 +8592,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "The maximum number of tokens that can overlap in each segment.", displayName = "Max Overlap"),
                     @YamlProperty(name = "maxTokens", type = "number", required = true, description = "The maximum number of tokens on each segment.", displayName = "Max Tokens"),
                     @YamlProperty(name = "modelName", type = "string", description = "The underlying model name used by the tokenizer. Providing this switches to computing segment sizes in terms of tokens.", displayName = "Model Name"),
-                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.", displayName = "Tokenizer Type")
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", required = true, description = "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.", displayName = "Tokenizer Type")
             }
     )
     public static class LangChain4jLineTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jLineTokenizerDefinition> {
@@ -8655,7 +8655,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "The maximum number of tokens that can overlap in each segment.", displayName = "Max Overlap"),
                     @YamlProperty(name = "maxTokens", type = "number", required = true, description = "The maximum number of tokens on each segment.", displayName = "Max Tokens"),
                     @YamlProperty(name = "modelName", type = "string", description = "The underlying model name used by the tokenizer. Providing this switches to computing segment sizes in terms of tokens.", displayName = "Model Name"),
-                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.", displayName = "Tokenizer Type")
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", required = true, description = "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.", displayName = "Tokenizer Type")
             }
     )
     public static class LangChain4jParagraphTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jParagraphTokenizerDefinition> {
@@ -8718,7 +8718,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "The maximum number of tokens that can overlap in each segment.", displayName = "Max Overlap"),
                     @YamlProperty(name = "maxTokens", type = "number", required = true, description = "The maximum number of tokens on each segment.", displayName = "Max Tokens"),
                     @YamlProperty(name = "modelName", type = "string", description = "The underlying model name used by the tokenizer. Providing this switches to computing segment sizes in terms of tokens.", displayName = "Model Name"),
-                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.", displayName = "Tokenizer Type")
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", required = true, description = "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.", displayName = "Tokenizer Type")
             }
     )
     public static class LangChain4jSentenceTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jSentenceTokenizerDefinition> {
@@ -8777,7 +8777,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "maxOverlap", type = "number", required = true),
                     @YamlProperty(name = "maxTokens", type = "number", required = true),
                     @YamlProperty(name = "modelName", type = "string"),
-                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN")
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", required = true)
             }
     )
     public static class LangChain4jTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jTokenizerDefinition> {
@@ -8840,7 +8840,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "The maximum number of tokens that can overlap in each segment.", displayName = "Max Overlap"),
                     @YamlProperty(name = "maxTokens", type = "number", required = true, description = "The maximum number of tokens on each segment.", displayName = "Max Tokens"),
                     @YamlProperty(name = "modelName", type = "string", description = "The underlying model name used by the tokenizer. Providing this switches to computing segment sizes in terms of tokens.", displayName = "Model Name"),
-                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.", displayName = "Tokenizer Type")
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", required = true, description = "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.", displayName = "Tokenizer Type")
             }
     )
     public static class LangChain4jWordTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jWordTokenizerDefinition> {
@@ -11393,7 +11393,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "examples", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Examples of the parameter.", displayName = "Examples"),
                     @YamlProperty(name = "name", type = "string", required = true, description = "The parameter name.", displayName = "Name"),
                     @YamlProperty(name = "required", type = "boolean", defaultValue = "true", description = "Sets the parameter required flag.", displayName = "Required"),
-                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", defaultValue = "path", description = "Sets the parameter type such as body, form, header, path, or query.", displayName = "Type")
+                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", required = true, defaultValue = "path", description = "Sets the parameter type such as body, form, header, path, or query.", displayName = "Type")
             }
     )
     public static class ParamDefinitionDeserializer extends YamlDeserializerBase<ParamDefinition> {
@@ -11564,7 +11564,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Security settings for this REST operation", displayName = "Security"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "streamCache", type = "boolean", defaultValue = "false", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
-                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
+                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", required = true, description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.", displayName = "Type")
             }
     )
@@ -12155,7 +12155,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Security settings for this REST operation", displayName = "Security"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "streamCache", type = "boolean", defaultValue = "false", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
-                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
+                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", required = true, description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.", displayName = "Type")
             }
     )
@@ -12459,7 +12459,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
-                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "The property value as an expression.", displayName = "Expression", oneOf = "expression"),
+                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", required = true, description = "The property value as an expression.", displayName = "Expression", oneOf = "expression"),
                     @YamlProperty(name = "key", type = "string", required = true, description = "The property key.", displayName = "Key")
             }
     )
@@ -12704,7 +12704,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition", description = "Security settings for this REST operation", displayName = "Security"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", defaultValue = "false", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "streamCache", type = "boolean", defaultValue = "false", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
-                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
+                    @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", required = true, description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data. This option will override what may be configured on a parent level.", displayName = "Type")
             }
     )
@@ -13793,7 +13793,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "batchConfig", type = "object:org.apache.camel.model.config.BatchResequencerConfig", oneOf = "resequencerConfig"),
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
-                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Expression to use for re-ordering the messages, such as a header with a sequence number.", displayName = "Expression", oneOf = "expression"),
+                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", required = true, description = "Expression to use for re-ordering the messages, such as a header with a sequence number.", displayName = "Expression", oneOf = "expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
@@ -16153,7 +16153,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
-                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut", description = "The new exchange pattern to use from this point forward.", displayName = "Pattern")
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut", required = true, description = "The new exchange pattern to use from this point forward.", displayName = "Pattern")
             }
     )
     public static class SetExchangePatternDefinitionDeserializer extends YamlDeserializerBase<SetExchangePatternDefinition> {

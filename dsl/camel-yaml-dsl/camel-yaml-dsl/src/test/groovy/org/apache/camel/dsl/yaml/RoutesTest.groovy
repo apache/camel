@@ -365,6 +365,32 @@ class RoutesTest extends YamlTestSupport {
         }
     }
 
+    def "load from note"() {
+        when:
+        loadRoutes '''
+                - from:
+                    id: from-demo
+                    description: from something cool
+                    note: a developer note
+                    uri: "direct:info"
+                    steps:
+                      - log: "message"
+            '''
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0], RouteDefinition) {
+            input.id == 'from-demo'
+            input.description == 'from something cool'
+            input.note == 'a developer note'
+            input.endpointUri == 'direct:info'
+
+            with (outputs[0], LogDefinition) {
+                message == 'message'
+            }
+        }
+    }
+
     def "load route with from description"() {
         when:
         loadRoutes '''

@@ -26,6 +26,9 @@ import org.junit.jupiter.api.Assertions
 
 import static org.apache.camel.util.PropertiesHelper.asProperties
 
+import org.apache.camel.spi.Resource
+import org.apache.camel.support.PluginHelper
+
 class RouteConfigurationTest extends YamlTestSupport {
     def "routeConfiguration"() {
         setup:
@@ -399,6 +402,62 @@ class RouteConfigurationTest extends YamlTestSupport {
         }
         then:
         MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "routeConfiguration note"() {
+        when:
+        loadRoutesNoValidate """
+                - routeConfiguration:
+                    id: myConfig
+                    description: my route config
+                    note: a developer note
+                    onException:
+                      - onException:
+                          handled:
+                            constant: "true"
+                          exception:
+                            - ${MyException.name}
+                          steps:
+                            - transform:
+                                constant: "Sorry"
+                            - to: "mock:on-exception"
+            """
+        then:
+        context.routeConfigurationDefinitions.size() == 1
+
+        with(context.routeConfigurationDefinitions[0], RouteConfigurationDefinition) {
+            id == 'myConfig'
+            description == 'my route config'
+            note == 'a developer note'
+        }
+    }
+
+    def "routeConfiguration has line number"() {
+        when:
+        Resource res = asResource('route-config-line',
+            '''
+                - routeConfiguration:
+                    id: myConfig
+                    onException:
+                      - onException:
+                          handled:
+                            constant: "true"
+                          exception:
+                            - java.lang.Exception
+                          steps:
+                            - to: "mock:on-exception"
+            '''
+        )
+        PluginHelper.getRoutesLoader(context).loadRoutes(res)
+
+        then:
+        context.routeConfigurationDefinitions.size() == 1
+
+        with(context.routeConfigurationDefinitions[0], RouteConfigurationDefinition) {
+            id == 'myConfig'
+            lineNumber >= 0
+            location != null
+        }
     }
 
 }

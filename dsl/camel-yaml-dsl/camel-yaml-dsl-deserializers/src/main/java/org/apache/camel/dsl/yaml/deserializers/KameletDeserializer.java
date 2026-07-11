@@ -37,6 +37,8 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           nodes = "kamelet",
           properties = {
                   @YamlProperty(name = "name", type = "string", required = true),
+                  @YamlProperty(name = "description", type = "string"),
+                  @YamlProperty(name = "note", type = "string"),
                   @YamlProperty(name = "parameters", type = "object"),
                   @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
           })
@@ -75,6 +77,12 @@ public class KameletDeserializer extends YamlDeserializerBase<KameletDefinition>
                     break;
                 case "id":
                     target.setId(asText(val));
+                    break;
+                case "description":
+                    target.setDescription(asText(val));
+                    break;
+                case "note":
+                    target.setNote(asText(val));
                     break;
                 case "name":
                     name = asText(val);
