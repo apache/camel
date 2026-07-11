@@ -566,9 +566,6 @@ class AiPanel {
             }
             activeCliCommand = null;
         }
-        thinking.set(false);
-        thinkingVerb = null;
-
         if (error != null) {
             String displayText = cliResult != null ? cliResult.displayText() : "command";
             conversation.add(new ConversationEntry(
@@ -609,21 +606,20 @@ class AiPanel {
         }
         if (t != Thread.currentThread()) {
             t.interrupt();
-            // Unlike AiCliCommandExecutor.cancel(), this join is not offloaded to a watcher thread: it runs
-            // on the caller, which is either the interactive UI thread (Esc/Ctrl+C via interruptBusyOperation)
-            // or destroy() during shutdown. If the LLM HTTP call in runAgentLoop() ignores the interrupt (e.g.
-            // a client/library that doesn't check the interrupt flag mid-request), this blocks that caller for
-            // up to 30s. Left blocking deliberately for now because AiPanelTest asserts synchronous
-            // cancellation semantics (isAgentThreadRunningForTesting() is false immediately after Esc); making
-            // this async would need those tests reworked to poll instead.
-            try {
-                t.join(30_000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            // Do not block the TUI event thread if an HTTP client ignores interruption. The agent thread clears the
+            // thinking state in its finally block; the watcher only bounds the wait off the caller's thread.
+            Thread watcher = new Thread(() -> awaitAgentThreadStop(t), "tui-ai-agent-cancel-watcher");
+            watcher.setDaemon(true);
+            watcher.start();
         }
-        thinking.set(false);
-        thinkingVerb = null;
+    }
+
+    private void awaitAgentThreadStop(Thread agent) {
+        try {
+            agent.join(30_000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private void submitQuestion(String question) {

@@ -33,6 +33,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -116,11 +117,8 @@ class AiPanelTest {
         assertTrue(client.awaitAnswer(5, TimeUnit.SECONDS));
         // awaitAnswer() only signals that chatWithTools() was called; wait for the whole agent thread to
         // finish (including appending the assistant message) before asserting on message history.
-        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
-        while (panel.isAgentThreadRunningForTesting() && System.nanoTime() < deadline) {
-            Thread.onSpinWait();
-        }
-        assertFalse(panel.isAgentThreadRunningForTesting(), "agent thread should finish within 5 seconds");
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(
+                () -> assertFalse(panel.isAgentThreadRunningForTesting(), "agent thread should finish within 5 seconds"));
         assertTrue(panel.messageCountForTesting() > 0, "asking a question should populate the LLM message history");
 
         type(panel, "/clear");
@@ -377,6 +375,27 @@ class AiPanelTest {
     }
 
     @Test
+    void cliCompletionDoesNotClearLlmThinkingState() {
+        AiPanel panel = new AiPanel();
+        FakeSlashContext context = new FakeSlashContext();
+        panel.setSlashCommandContextForTesting(context);
+        panel.setClientForTesting(new BlockingLlmClient());
+        panel.open();
+
+        type(panel, "/send direct:foo hello");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        type(panel, "what routes are running?");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(panel.isThinkingForTesting());
+
+        context.completeCli();
+
+        assertTrue(panel.isThinkingForTesting(), "a CLI completion must not clear an active LLM request");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertFalse(panel.isAgentThreadRunningForTesting()));
+    }
+
+    @Test
     void inputPromptUsesAccentChevron() {
         AiPanel panel = new AiPanel();
         assertEquals("❯ ", panel.inputPromptForTesting());
@@ -408,8 +427,9 @@ class AiPanelTest {
 
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
 
-        assertFalse(panel.isThinkingForTesting());
-        assertFalse(panel.isAgentThreadRunningForTesting(), "Esc should wait for the agent thread to stop");
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFalse(panel.isThinkingForTesting(), "thinking should stop after Esc"));
+        assertFalse(panel.isAgentThreadRunningForTesting(), "agent thread should stop after Esc");
         assertTrue(panel.conversationForTesting().stream()
                 .anyMatch(entry -> entry.role() == AiRole.SYSTEM && "(cancelled)".equals(entry.text())));
     }
@@ -429,7 +449,7 @@ class AiPanelTest {
         assertFalse(panel.isProviderSwitchVisibleForTesting(), "Ctrl+P must wait until the agent thread stops");
 
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
-        assertFalse(panel.isAgentThreadRunningForTesting());
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertFalse(panel.isAgentThreadRunningForTesting()));
 
         panel.handleKeyEvent(KeyEvent.ofChar('p', KeyModifiers.of(true, false, false)));
         assertTrue(panel.isProviderSwitchVisibleForTesting());
@@ -445,6 +465,8 @@ class AiPanelTest {
         }
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertFalse(panel.isAgentThreadRunningForTesting()));
 
         panel.setProviderChoicesForTesting(List.of(
                 new AiProviderSwitchPopup.ProviderChoice("openai", "gpt-4o", "", false)));
@@ -500,11 +522,8 @@ class AiPanelTest {
         type(panel, "show me the routes");
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
         assertTrue(client.awaitAnswer(5, TimeUnit.SECONDS));
-        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
-        while (panel.isAgentThreadRunningForTesting() && System.nanoTime() < deadline) {
-            Thread.onSpinWait();
-        }
-        assertFalse(panel.isAgentThreadRunningForTesting(), "agent thread should finish within 5 seconds");
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(
+                () -> assertFalse(panel.isAgentThreadRunningForTesting(), "agent thread should finish within 5 seconds"));
 
         // A short panel forces overflow; scrollOffset defaults to 0 (auto-scroll to the newest content).
         Rect area = new Rect(0, 0, 48, 16);

@@ -63,6 +63,29 @@ class LlmClientListModelsTest {
         return "http://127.0.0.1:" + server.getAddress().getPort();
     }
 
+    private String startRootServer(String body) throws IOException {
+        server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/", exchange -> {
+            byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+            int status = "/".equals(exchange.getRequestURI().getPath()) ? 200 : 404;
+            exchange.sendResponseHeaders(status, bytes.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(bytes);
+            }
+        });
+        server.start();
+        return "http://127.0.0.1:" + server.getAddress().getPort();
+    }
+
+    @Test
+    void detectsOllamaFromRootResponseOnNonDefaultPort() throws IOException {
+        String baseUrl = startRootServer("Ollama is running");
+        LlmClient client = LlmClient.create().withUrl(baseUrl);
+
+        assertTrue(client.detectEndpoint());
+        assertEquals(LlmClient.ApiType.ollama, client.apiType());
+    }
+
     @Test
     void listsOllamaModelsFromApiTags() throws IOException {
         String baseUrl = startServer("/api/tags", 200,

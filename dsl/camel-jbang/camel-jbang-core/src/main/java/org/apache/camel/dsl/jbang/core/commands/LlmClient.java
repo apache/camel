@@ -45,6 +45,7 @@ import org.apache.camel.util.json.Jsoner;
 public class LlmClient {
 
     private static final String DEFAULT_OLLAMA_URL = "http://localhost:11434";
+    private static final String OLLAMA_ROOT_RESPONSE = "Ollama is running";
     private static final String DEFAULT_ANTHROPIC_URL = "https://api.anthropic.com";
     private static final String ANTHROPIC_VERSION = "2023-06-01";
     private static final String VERTEX_ANTHROPIC_VERSION = "vertex-2023-10-16";
@@ -1223,32 +1224,34 @@ public class LlmClient {
         if (url == null || url.isBlank()) {
             return false;
         }
+        if (apiType != null) {
+            return isEndpointReachable(url);
+        }
         for (Map.Entry<String, ApiType> check : EXPLICIT_URL_HEALTH_CHECK_SUFFIXES) {
             if (tryHealthCheck(url + check.getKey())) {
-                if (apiType == null) {
-                    apiType = check.getValue();
-                }
+                apiType = check.getValue();
                 return true;
             }
         }
-        if (tryHealthCheck(url)) {
-            if (apiType == null) {
-                apiType = inferApiTypeFromUrlHost();
-            }
+        if (isOllamaRoot(url)) {
+            apiType = ApiType.ollama;
             return true;
         }
         return false;
     }
 
-    ApiType inferApiTypeFromUrlHost() {
-        String lower = url.toLowerCase();
-        if (lower.contains("anthropic")) {
-            return ApiType.anthropic;
+    private boolean isOllamaRoot(String endpoint) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(endpoint))
+                    .timeout(Duration.ofSeconds(HEALTH_CHECK_TIMEOUT_SECONDS))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.statusCode() == 200 && OLLAMA_ROOT_RESPONSE.equals(response.body().trim());
+        } catch (Exception e) {
+            return false;
         }
-        if (lower.contains("11434") || lower.contains("ollama")) {
-            return ApiType.ollama;
-        }
-        return ApiType.openai;
     }
 
     private boolean tryAnthropicApiKey() {
