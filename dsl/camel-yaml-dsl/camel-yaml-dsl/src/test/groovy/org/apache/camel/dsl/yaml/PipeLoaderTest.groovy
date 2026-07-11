@@ -20,6 +20,7 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.KameletDefinition
 import org.apache.camel.model.ToDefinition
 import org.apache.camel.model.TransformDataTypeDefinition
+import org.junit.jupiter.api.Assertions
 
 class PipeLoaderTest extends YamlTestSupport {
     @Override
@@ -820,6 +821,36 @@ class PipeLoaderTest extends YamlTestSupport {
             input.endpointUri == 'kamelet:timer-source?message={{my.message}}'
             !input.endpointUri.contains('%7B')
             !input.endpointUri.contains('%7D')
+        }
+    }
+
+    def "Error: Pipe with unsupported ref kind"() {
+        when:
+        var pipe = '''
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: bad-ref-pipe
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "Hello"
+                  sink:
+                    ref:
+                      kind: UnknownKind
+                      apiVersion: unknown/v1
+                      name: bad-sink
+            '''
+        then:
+        try {
+            loadBindings(pipe)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            assert e.message.contains("Unsupported Pipe ref kind")
         }
     }
 

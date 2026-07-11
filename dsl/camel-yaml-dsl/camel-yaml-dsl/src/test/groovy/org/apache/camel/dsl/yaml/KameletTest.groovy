@@ -21,6 +21,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MySetBody
 import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
+import org.apache.camel.model.KameletDefinition
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy
 import org.apache.camel.spi.Resource
 
@@ -420,5 +421,43 @@ class KameletTest extends YamlTestSupport {
             }
         then:
             MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "kamelet (note property)"() {
+        setup:
+            addTemplate('setPayload') {
+                from('kamelet:source')
+                    .setBody().simple('${body}: {{payload}}')
+            }
+
+            loadRoutesNoValidate '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - kamelet:
+                          name: "setPayload"
+                          description: "calls setPayload template"
+                          note: "a developer note"
+                          parameters:
+                            payload: 1
+                      - to: "mock:kamelet"
+            '''
+
+            withMock('mock:kamelet') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'a: 1'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('a').send()
+            }
+
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+
+            with(context.routeDefinitions[0].outputs[0], KameletDefinition) {
+                description == 'calls setPayload template'
+                note == 'a developer note'
+            }
     }
 }
