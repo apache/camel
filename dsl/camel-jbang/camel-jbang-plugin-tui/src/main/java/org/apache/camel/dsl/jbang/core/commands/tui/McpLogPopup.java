@@ -127,7 +127,7 @@ class McpLogPopup {
 
     void renderFooter(List<Span> spans) {
         hint(spans, TuiIcons.HINT_SCROLL, "select");
-        hint(spans, "PgUp/Dn", "scroll detail");
+        hint(spans, "PgUp/Dn", "detail");
         hintLast(spans, "Esc", "back");
     }
 

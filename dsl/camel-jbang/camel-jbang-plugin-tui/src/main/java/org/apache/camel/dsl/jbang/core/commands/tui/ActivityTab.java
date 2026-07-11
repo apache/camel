@@ -103,14 +103,6 @@ class ActivityTab extends AbstractTableTab {
             detailScroll += 10;
             return true;
         }
-        if (ke.isHome()) {
-            detailScroll = 0;
-            return true;
-        }
-        if (ke.isEnd()) {
-            detailScroll = Integer.MAX_VALUE;
-            return true;
-        }
         if (ke.isLeft()) {
             detailHScroll = Math.max(0, detailHScroll - 5);
             return true;
@@ -168,7 +160,7 @@ class ActivityTab extends AbstractTableTab {
         boolean showDetail = selectedEntry != null;
         List<Rect> chunks = showDetail
                 ? Layout.vertical()
-                        .constraints(Constraint.length(13), Constraint.length(1), Constraint.fill())
+                        .constraints(Constraint.length(13), Constraint.fill())
                         .split(area)
                 : List.of(area);
 
@@ -199,7 +191,7 @@ class ActivityTab extends AbstractTableTab {
         renderScrollbar(frame, sorted.size());
 
         if (showDetail) {
-            renderDetail(frame, chunks.get(2), selectedEntry);
+            renderDetail(frame, chunks.get(1), selectedEntry);
         }
     }
 
@@ -207,7 +199,7 @@ class ActivityTab extends AbstractTableTab {
     public void renderFooter(List<Span> spans) {
         TuiHelper.hint(spans, "Esc", "back");
         TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-        TuiHelper.hint(spans, "PgUp/Dn", "scroll detail");
+        TuiHelper.hint(spans, "PgUp/Dn", "detail");
         if (!wordWrap) {
             TuiHelper.hint(spans, TuiIcons.HINT_H, "h-scroll");
         }

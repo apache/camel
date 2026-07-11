@@ -739,7 +739,7 @@ class MemoryLeakTab extends AbstractTab {
                 hint(spans, "R", "new recording");
                 hint(spans, "d", "mode [" + modeLabel + "]");
                 hint(spans, "+/-", "duration [" + duration + "s]");
-                hintLast(spans, "PgUp/Dn", "scroll detail");
+                hintLast(spans, "PgUp/Dn", "detail");
             }
             default -> hintLast(spans, "Esc", "back");
         }

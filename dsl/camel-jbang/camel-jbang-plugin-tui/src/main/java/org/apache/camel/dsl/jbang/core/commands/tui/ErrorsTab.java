@@ -431,7 +431,7 @@ class ErrorsTab extends AbstractTableTab {
         }
         hint(spans, "Esc", "back");
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-        hint(spans, "PgUp/Dn", "scroll detail");
+        hint(spans, "PgUp/Dn", "detail");
         if (!wordWrap) {
             hint(spans, TuiIcons.HINT_H, "h-scroll");
         }
