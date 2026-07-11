@@ -338,6 +338,59 @@ class ActivityTab extends AbstractTableTab {
         return "Recent completed exchange activity with message details";
     }
 
+    @Override
+    public String getHelpText() {
+        return """
+                # Activity
+
+                The Activity tab shows a live feed of recently completed exchanges.
+                It captures the last N exchanges (default 100) with their message
+                content, giving you a rolling window of what your integration has
+                been processing.
+
+                Unlike the Inspect tab which traces individual processing steps
+                within a route, Activity shows one entry per completed exchange
+                with a summary of the final state.
+
+                ## Activity List
+
+                - **EXCHANGE** — Exchange identifier
+                - **ROUTE** — Route that processed the exchange
+                - **STATUS** — `OK` (green) or `FAILED` (red)
+                - **ELAPSED** — Total processing time in milliseconds
+                - **SINCE** — How long ago the exchange completed (e.g., `5s`, `2m`)
+                - **ENDPOINT** — The consumer endpoint that received the exchange
+
+                ## Detail View
+
+                Select an exchange to see its details in the panel below:
+
+                - **Exchange info**: Exchange ID, route, elapsed time, and failure status
+                - **Exception**: If the exchange failed, shows the exception type,
+                  message, and stack trace
+                - **Headers**: Message headers at the time of completion
+                - **Properties**: Exchange-level properties
+                - **Variables**: Exchange variables
+                - **Body**: Message body content with type information
+
+                Use `h`, `b`, `p`, `v` keys to toggle each section on or off.
+
+                ## Keys
+
+                - `Up/Down` — select exchange
+                - `Home/End` — jump to first/last exchange
+                - `PgUp/PgDn` — scroll the detail panel
+                - `Left/Right` — horizontal scroll (when wrap is off)
+                - `h` — toggle headers
+                - `b` — toggle body
+                - `p` — toggle properties
+                - `v` — toggle variables
+                - `w` — toggle word wrap
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                """;
+    }
+
     private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
         spans.add(Span.styled(" show ", Theme.hintKey()));
         spans.add(Span.raw(" "));
