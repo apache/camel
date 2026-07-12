@@ -54,9 +54,21 @@ set "LAUNCHER_JAR="
 for %%i in ("%BASEDIR%\camel-launcher-*.jar") do set "LAUNCHER_JAR=%%i"
 
 @REM Execute Camel CLI, preserving arguments and the child exit code
+for %%e in ("%JAVACMD%") do set "_JAVACMD_EXT=%%~xe"
+if /i "%_JAVACMD_EXT%"==".bat" goto executeJavaBatch
+if /i "%_JAVACMD_EXT%"==".cmd" goto executeJavaBatch
+goto executeJavaNative
+
+:executeJavaBatch
+call "%JAVACMD%" %JAVA_OPTS% -jar "%LAUNCHER_JAR%" %*
+set ERROR_CODE=%ERRORLEVEL%
+goto javaExecuted
+
+:executeJavaNative
 "%JAVACMD%" %JAVA_OPTS% -jar "%LAUNCHER_JAR%" %*
 set ERROR_CODE=%ERRORLEVEL%
 
+:javaExecuted
 @REM End local scope for the variables with windows NT shell
 if "%OS%"=="Windows_NT" endlocal & set ERROR_CODE=%ERROR_CODE%
 exit /B %ERROR_CODE%
@@ -74,12 +86,29 @@ exit /B 1
 set "_CAND=%~1"
 if "%_CAND%"=="" exit /b 1
 if not exist "%_CAND%" exit /b 1
+for %%e in ("%_CAND%") do set "_CAND_EXT=%%~xe"
+set "_PROBE_DIR="
+if defined TEMP set "_PROBE_DIR=%TEMP%"
+if not defined _PROBE_DIR if defined TMP set "_PROBE_DIR=%TMP%"
+if not defined _PROBE_DIR set "_PROBE_DIR=%BASEDIR%"
 
 :tryJavaProbePath
-set "_PROBE=%TEMP%\camel-java-probe-%RANDOM%-%RANDOM%.tmp"
+set "_PROBE=%_PROBE_DIR%\camel-java-probe-%RANDOM%-%RANDOM%.tmp"
 if exist "%_PROBE%" goto tryJavaProbePath
+if /i "%_CAND_EXT%"==".bat" goto tryJavaProbeBatch
+if /i "%_CAND_EXT%"==".cmd" goto tryJavaProbeBatch
+goto tryJavaProbeNative
+
+:tryJavaProbeBatch
+call "%_CAND%" -version <NUL >"%_PROBE%" 2>&1
+set "_PROBE_RC=%ERRORLEVEL%"
+goto tryJavaProbeComplete
+
+:tryJavaProbeNative
 "%_CAND%" -version <NUL >"%_PROBE%" 2>&1
 set "_PROBE_RC=%ERRORLEVEL%"
+
+:tryJavaProbeComplete
 if "%_PROBE_RC%"=="0" goto tryJavaParseProbe
 del /q "%_PROBE%" >NUL 2>&1
 set "_PROBE="
