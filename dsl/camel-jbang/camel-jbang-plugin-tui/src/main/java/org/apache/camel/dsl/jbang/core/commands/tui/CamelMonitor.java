@@ -1153,13 +1153,47 @@ public class CamelMonitor extends CamelCommand {
         boolean anyDiagramShowing = tabRegistry.routesTab().isShowDiagram()
                 || tabRegistry.diagramTab().isShowDiagram();
         long interval = anyDiagramShowing ? Math.max(refreshInterval, 1000) : refreshInterval;
+        boolean dataRefreshed = false;
         if (now - dataService.lastRefresh() >= interval) {
             dataService.refresh(runner, this::refreshLogData, this::refreshConditionalData);
             tabRegistry.routesTab().refreshDiagramIfNeeded();
             tabRegistry.diagramTab().refreshDiagramIfNeeded();
-            return true;
+            dataRefreshed = true;
         }
-        return true;
+        // Redraw only when the periodic data refresh fired or an animation is in flight.
+        // Everything else (footer indicators, auto-dismiss overlays, live tab data) is
+        // refreshed by the next data-refresh redraw, which is bounded by {@code interval}.
+        // Without this gate the tick loop forced a full redraw on every tick (~25/s at the
+        // default 40ms tick rate) even while idle.
+        return dataRefreshed || needsAnimationRedraw(
+                shellPanel.isOpen(),
+                aiPanel.isOpen(),
+                logPinAnim.isAnimating(),
+                canvasOverlay.isVisible(),
+                captionOverlay.isVisible(),
+                monitorNotification != null,
+                recordingManager.isRecording() && !recordingManager.getRecentKeys().isEmpty());
+    }
+
+    /**
+     * Decides whether a tick must trigger a redraw because something is animating faster than the periodic data
+     * refresh. Kept as a pure static method so the redraw intent can be unit-tested without wiring up the whole
+     * monitor.
+     *
+     * @param  shellOpen            the shell panel is open (live terminal output)
+     * @param  aiOpen               the AI panel is open (streaming output / thinking spinner)
+     * @param  logPinAnimating      the pinned-log panel is sliding open/closed
+     * @param  canvasVisible        a full-screen canvas animation is playing
+     * @param  captionVisible       a caption is typing or fading
+     * @param  notificationActive   a header notification wave is animating
+     * @param  recordingKeysVisible recorded keystrokes are shown (1s highlight then fade-out)
+     * @return                      true if the frame must be redrawn on this tick
+     */
+    static boolean needsAnimationRedraw(
+            boolean shellOpen, boolean aiOpen, boolean logPinAnimating, boolean canvasVisible,
+            boolean captionVisible, boolean notificationActive, boolean recordingKeysVisible) {
+        return shellOpen || aiOpen || logPinAnimating || canvasVisible
+                || captionVisible || notificationActive || recordingKeysVisible;
     }
 
     private void resetIntegrationTabState() {
