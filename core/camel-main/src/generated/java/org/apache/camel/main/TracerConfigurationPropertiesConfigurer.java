@@ -22,6 +22,7 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ActivityEnabled", boolean.class);
         map.put("ActivitySize", int.class);
         map.put("BacklogSize", int.class);
         map.put("BodyIncludeFiles", boolean.class);
@@ -44,6 +45,8 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.TracerConfigurationProperties target = (org.apache.camel.main.TracerConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "activityenabled":
+        case "activityEnabled": target.setActivityEnabled(property(camelContext, boolean.class, value)); return true;
         case "activitysize":
         case "activitySize": target.setActivitySize(property(camelContext, int.class, value)); return true;
         case "backlogsize":
@@ -84,6 +87,8 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "activityenabled":
+        case "activityEnabled": return boolean.class;
         case "activitysize":
         case "activitySize": return int.class;
         case "backlogsize":
@@ -120,6 +125,8 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.TracerConfigurationProperties target = (org.apache.camel.main.TracerConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "activityenabled":
+        case "activityEnabled": return target.isActivityEnabled();
         case "activitysize":
         case "activitySize": return target.getActivitySize();
         case "backlogsize":

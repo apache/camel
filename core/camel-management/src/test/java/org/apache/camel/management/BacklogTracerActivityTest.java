@@ -43,6 +43,14 @@ public class BacklogTracerActivityTest extends ManagementTestSupport {
         assertNotNull(on);
         assertTrue(mbeanServer.isRegistered(on));
 
+        Boolean activityEnabled = (Boolean) mbeanServer.getAttribute(on, "ActivityEnabled");
+        assertFalse(activityEnabled, "Activity should be disabled by default (no dev profile)");
+
+        // enable activity via JMX
+        mbeanServer.setAttribute(on, new Attribute("ActivityEnabled", true));
+        activityEnabled = (Boolean) mbeanServer.getAttribute(on, "ActivityEnabled");
+        assertTrue(activityEnabled, "Activity should be enabled after setting via JMX");
+
         Integer activitySize = (Integer) mbeanServer.getAttribute(on, "ActivitySize");
         assertEquals(100, activitySize.intValue());
 

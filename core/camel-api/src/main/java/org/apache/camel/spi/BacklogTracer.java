@@ -44,6 +44,23 @@ import org.jspecify.annotations.Nullable;
 public interface BacklogTracer {
 
     /**
+     * Whether the activity tracking feature is enabled.
+     *
+     * @since 4.22
+     */
+    default boolean isActivityEnabled() {
+        return false;
+    }
+
+    /**
+     * To turn on or off the activity tracking feature.
+     *
+     * @since 4.22
+     */
+    default void setActivityEnabled(boolean activityEnabled) {
+    }
+
+    /**
      * Is the tracer enabled.
      */
     boolean isEnabled();

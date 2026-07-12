@@ -39,6 +39,7 @@ public class ActivityDevConsole extends AbstractDevConsole {
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
+            sb.append("Activity Enabled: ").append(tracer.isActivityEnabled()).append("\n");
             sb.append("Activity Size: ").append(tracer.getActivitySize()).append("\n");
             for (BacklogTracerActivityMessage event : tracer.getActivity()) {
                 sb.append(String.format("  %s | %s | %s | %dms | %s",
@@ -64,6 +65,7 @@ public class ActivityDevConsole extends AbstractDevConsole {
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
+            root.put("activityEnabled", tracer.isActivityEnabled());
             root.put("activitySize", tracer.getActivitySize());
 
             JsonArray arr = new JsonArray();

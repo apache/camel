@@ -32,6 +32,8 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
     private boolean enabled;
     @Metadata
     private boolean standby;
+    @Metadata
+    private boolean activityEnabled;
     @Metadata(label = "advanced", defaultValue = "100")
     private int backlogSize = 100;
     @Metadata(label = "advanced", defaultValue = "100")
@@ -93,6 +95,18 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
      */
     public void setStandby(boolean standby) {
         this.standby = standby;
+    }
+
+    public boolean isActivityEnabled() {
+        return activityEnabled;
+    }
+
+    /**
+     * Whether activity tracking is enabled. When enabled, the backlog tracer will capture activity data that can be
+     * enriched with additional details from tracing (such as span decorator attributes).
+     */
+    public void setActivityEnabled(boolean activityEnabled) {
+        this.activityEnabled = activityEnabled;
     }
 
     public int getBacklogSize() {
@@ -257,6 +271,14 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
      */
     public TracerConfigurationProperties withStandby(boolean standby) {
         this.standby = standby;
+        return this;
+    }
+
+    /**
+     * Whether activity tracking is enabled.
+     */
+    public TracerConfigurationProperties withActivityEnabled(boolean activityEnabled) {
+        this.activityEnabled = activityEnabled;
         return this;
     }
 
