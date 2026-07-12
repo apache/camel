@@ -359,7 +359,7 @@ class ErrorsTab extends AbstractTableTab {
         boolean showDetail = selectedError != null;
         List<Rect> chunks = showDetail
                 ? Layout.vertical()
-                        .constraints(Constraint.length(13), Constraint.length(1), Constraint.fill())
+                        .constraints(Constraint.length(13), Constraint.fill())
                         .split(area)
                 : List.of(area);
 
@@ -392,7 +392,7 @@ class ErrorsTab extends AbstractTableTab {
         renderScrollbar(frame, filteredSize());
 
         if (showDetail) {
-            renderDetail(frame, chunks.get(2), selectedError);
+            renderDetail(frame, chunks.get(1), selectedError);
         }
     }
 
@@ -453,17 +453,6 @@ class ErrorsTab extends AbstractTableTab {
         // exception with stack trace
         String exception = null;
         if (ei.exceptionType != null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(ei.exceptionType);
-            if (ei.exceptionMessage != null) {
-                String msg = ei.exceptionMessage;
-                try {
-                    msg = Jsoner.unescape(msg);
-                } catch (Exception e) {
-                    // ignore
-                }
-                sb.append(": ").append(msg);
-            }
             if (ei.stackTrace != null) {
                 String st = ei.stackTrace;
                 try {
@@ -471,9 +460,38 @@ class ErrorsTab extends AbstractTableTab {
                 } catch (Exception e) {
                     // ignore
                 }
-                sb.append("\n").append(st);
+                if (st.startsWith(ei.exceptionType)) {
+                    // stackTrace already contains the exception type and message
+                    exception = st;
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(ei.exceptionType);
+                    if (ei.exceptionMessage != null) {
+                        String msg = ei.exceptionMessage;
+                        try {
+                            msg = Jsoner.unescape(msg);
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                        sb.append(": ").append(msg);
+                    }
+                    sb.append("\n").append(st);
+                    exception = sb.toString();
+                }
+            } else {
+                StringBuilder sb = new StringBuilder();
+                sb.append(ei.exceptionType);
+                if (ei.exceptionMessage != null) {
+                    String msg = ei.exceptionMessage;
+                    try {
+                        msg = Jsoner.unescape(msg);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    sb.append(": ").append(msg);
+                }
+                exception = sb.toString();
             }
-            exception = sb.toString();
         }
         HistoryTab.addExceptionLines(lines, exception);
 
@@ -502,7 +520,7 @@ class ErrorsTab extends AbstractTableTab {
 
         int[] scroll = { detailScroll };
         int[] hScroll = { detailHScroll };
-        HistoryTab.renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, detailScrollState);
+        HistoryTab.renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, detailScrollState, " Detail ");
         detailScroll = scroll[0];
         detailHScroll = hScroll[0];
     }

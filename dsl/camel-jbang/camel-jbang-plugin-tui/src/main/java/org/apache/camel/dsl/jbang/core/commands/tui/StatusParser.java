@@ -889,7 +889,7 @@ final class StatusParser {
                 values.put(key, jo.get("value"));
                 String type = jo.getString("type");
                 if (type != null) {
-                    types.put(key, type);
+                    types.put(key, TuiHelper.shortTypeName(type));
                 }
             }
         }
@@ -1101,7 +1101,7 @@ final class StatusParser {
                 Object bodyObj = msg.get("body");
                 if (bodyObj instanceof JsonObject bodyJson) {
                     ei.body = bodyJson.getString("value");
-                    ei.bodyType = bodyJson.getString("type");
+                    ei.bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
                 } else if (bodyObj != null) {
                     ei.body = bodyObj.toString();
                 }
