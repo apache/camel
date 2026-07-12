@@ -287,16 +287,7 @@ final class AiSlashCommandRegistry {
             }
             return CommandResult.system("Switched model to " + arguments);
         }
-        List<String> models = context.availableModels();
-        if (models.isEmpty()) {
-            return CommandResult.system("Current model: " + context.currentModel());
-        }
-        StringBuilder text = new StringBuilder("Current model: ").append(context.currentModel())
-                .append("\nAvailable models:");
-        for (String model : models) {
-            text.append("\n- ").append(model);
-        }
-        return CommandResult.system(text.toString());
+        return CommandResult.listModels();
     }
 
     private static int firstWhitespace(String value) {
@@ -390,17 +381,37 @@ final class AiSlashCommandRegistry {
         CommandResult execute(AiSlashCommandContext context, String arguments);
     }
 
-    record CommandResult(AiRole role, String text, AiCliCommandExecutor.Request cliRequest) {
+    record CommandResult(AiRole role, String text, AiCliCommandExecutor.Request cliRequest, boolean modelListing) {
         static CommandResult system(String text) {
-            return new CommandResult(AiRole.SYSTEM, text, null);
+            return new CommandResult(AiRole.SYSTEM, text, null, false);
         }
 
         static CommandResult error(String text) {
-            return new CommandResult(AiRole.ERROR, text, null);
+            return new CommandResult(AiRole.ERROR, text, null, false);
         }
 
         static CommandResult async(AiCliCommandExecutor.Request request) {
-            return new CommandResult(AiRole.SYSTEM, "Running " + request.displayText(), request);
+            return new CommandResult(AiRole.SYSTEM, "Running " + request.displayText(), request, false);
         }
+
+        /**
+         * Signals the panel to fetch the available models off the event thread, since model discovery reaches a
+         * blocking network call that must not freeze rendering and input. The panel formats the result via
+         * {@link AiSlashCommandRegistry#formatModelListing(String, List)}.
+         */
+        static CommandResult listModels() {
+            return new CommandResult(AiRole.SYSTEM, null, null, true);
+        }
+    }
+
+    static String formatModelListing(String currentModel, List<String> models) {
+        if (models.isEmpty()) {
+            return "Current model: " + currentModel;
+        }
+        StringBuilder text = new StringBuilder("Current model: ").append(currentModel).append("\nAvailable models:");
+        for (String model : models) {
+            text.append("\n- ").append(model);
+        }
+        return text.toString();
     }
 }

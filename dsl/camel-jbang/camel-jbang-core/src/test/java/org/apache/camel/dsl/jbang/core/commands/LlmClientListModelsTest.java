@@ -147,4 +147,77 @@ class LlmClientListModelsTest {
 
         assertTrue(client.listModels().isEmpty());
     }
+
+    @Test
+    void listsOpenAiModelsWhenConfiguredWithFullChatCompletionsUrl() throws IOException {
+        // A user may configure the full chat endpoint; model discovery must derive /v1/models from the same /v1 base
+        // instead of appending onto /v1/chat/completions.
+        String baseUrl = startServer("/v1/models", 200, "{\"data\":[{\"id\":\"gpt-4o\"}]}", null, null);
+        LlmClient client = LlmClient.create()
+                .withApiType(LlmClient.ApiType.openai)
+                .withUrl(baseUrl + "/v1/chat/completions")
+                .withApiKey("sk-test");
+
+        assertEquals(List.of("gpt-4o"), client.listModels());
+    }
+
+    @Test
+    void assignsDefaultOpenAiModelWhenDetectionResolvesNoModel() throws IOException {
+        String baseUrl = startServer("/v1/models", 200, "{\"data\":[]}", null, null);
+        LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.openai).withUrl(baseUrl);
+
+        assertTrue(client.detectEndpoint());
+        assertEquals(LlmClient.ApiType.openai, client.apiType());
+        assertEquals("gpt-4o-mini", client.model(), "OpenAI detection must leave a usable default model, not null");
+    }
+
+    @Test
+    void fallsBackToDefaultOllamaModelWhenModelsCannotBeListed() throws IOException {
+        // Root responds so the endpoint is detected, but /api/tags is unavailable, so the installed models cannot be
+        // listed; detection must still leave a usable (non-null) model.
+        String baseUrl = startRootServer("Ollama is running");
+        LlmClient client = LlmClient.create().withUrl(baseUrl);
+
+        assertTrue(client.detectEndpoint());
+        assertEquals(LlmClient.ApiType.ollama, client.apiType());
+        assertEquals("llama3.2", client.model(), "Ollama detection must leave a usable default model, not null");
+    }
+
+    @Test
+    void picksFirstInstalledOllamaModelWhenNoneConfiguredAndLlama32Absent() throws IOException {
+        String baseUrl = startOllamaServer("{\"models\":[{\"name\":\"qwen3\"},{\"name\":\"mistral\"}]}");
+        LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.ollama).withUrl(baseUrl);
+
+        assertTrue(client.detectEndpoint());
+        assertEquals("qwen3", client.model(), "must pick the first installed model when llama3.2 is not installed");
+    }
+
+    @Test
+    void prefersInstalledLlama32OllamaModelWhenNoneConfigured() throws IOException {
+        String baseUrl = startOllamaServer("{\"models\":[{\"name\":\"qwen3\"},{\"name\":\"llama3.2:latest\"}]}");
+        LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.ollama).withUrl(baseUrl);
+
+        assertTrue(client.detectEndpoint());
+        assertEquals("llama3.2:latest", client.model(), "must prefer an installed llama3.2 over the first entry");
+    }
+
+    /**
+     * Starts a server that answers the Ollama root probe ({@code "Ollama is running"}) and serves the given
+     * {@code /api/tags} body, so endpoint detection and model resolution both succeed against it.
+     */
+    private String startOllamaServer(String apiTagsBody) throws IOException {
+        server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/", exchange -> {
+            String path = exchange.getRequestURI().getPath();
+            String body = "/api/tags".equals(path) ? apiTagsBody : "Ollama is running";
+            int status = "/".equals(path) || "/api/tags".equals(path) ? 200 : 404;
+            byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(status, bytes.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(bytes);
+            }
+        });
+        server.start();
+        return "http://127.0.0.1:" + server.getAddress().getPort();
+    }
 }

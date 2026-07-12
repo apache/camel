@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -176,9 +178,9 @@ class AiPanelTest {
         type(panel, "/model");
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
 
-        assertTrue(panel.conversationForTesting().stream()
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.conversationForTesting().stream()
                 .anyMatch(entry -> entry.text().contains("Current model: test-model")
-                        && entry.text().contains("model-a")));
+                        && entry.text().contains("model-a"))));
 
         type(panel, "/model model-b");
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
@@ -214,10 +216,10 @@ class AiPanelTest {
         type(panel, "/model");
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
 
-        assertTrue(panel.conversationForTesting().stream()
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.conversationForTesting().stream()
                 .anyMatch(entry -> entry.text().contains("Current model: test-model")
                         && entry.text().contains("model-a")
-                        && entry.text().contains("model-b")));
+                        && entry.text().contains("model-b"))));
     }
 
     @Test
@@ -229,8 +231,31 @@ class AiPanelTest {
         type(panel, "/model");
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
 
-        assertTrue(panel.conversationForTesting().stream()
-                .anyMatch(entry -> entry.text().equals("Current model: test-model")));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> entry.text().equals("Current model: test-model"))));
+    }
+
+    @Test
+    void modelListingRunsOffTheEventThread() {
+        AtomicReference<String> listThread = new AtomicReference<>();
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new LlmClient() {
+            @Override
+            public List<String> listModels() {
+                listThread.set(Thread.currentThread().getName());
+                return List.of("model-a");
+            }
+        });
+        panel.open();
+        String eventThread = Thread.currentThread().getName();
+
+        type(panel, "/model");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertNotNull(listThread.get()));
+        assertNotEquals(eventThread, listThread.get(),
+                "model discovery must not run on the TUI event thread, which reaches a blocking HTTP call");
+        assertTrue(listThread.get().contains("model-list"));
     }
 
     @Test
@@ -414,6 +439,32 @@ class AiPanelTest {
         assertTrue(panel.isThinkingForTesting(), "a CLI completion must not clear an active LLM request");
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertFalse(panel.isAgentThreadRunningForTesting()));
+    }
+
+    @Test
+    void escapeDuringOverlapCancelsBothCliAndLlm() {
+        AiPanel panel = new AiPanel();
+        FakeSlashContext context = new FakeSlashContext();
+        panel.setSlashCommandContextForTesting(context);
+        panel.setClientForTesting(new BlockingLlmClient());
+        panel.open();
+
+        // A background CLI command and an LLM request run concurrently: /send does not lock the panel into
+        // thinking, so a question submitted afterwards starts the agent thread while the CLI is still in flight.
+        type(panel, "/send direct:foo hello");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        type(panel, "what routes are running?");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(panel.isThinkingForTesting());
+        assertTrue(panel.isAgentThreadRunningForTesting());
+
+        // Esc while both are active must cancel the CLI *and* stop the LLM agent, not silently orphan the agent
+        // thread while clearing the thinking indicator.
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+
+        assertTrue(context.cancelRequested, "the background CLI command must be cancelled");
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertFalse(panel.isAgentThreadRunningForTesting(),
+                "the LLM agent thread must also stop, leaving no orphan mutating the conversation"));
     }
 
     @Test
