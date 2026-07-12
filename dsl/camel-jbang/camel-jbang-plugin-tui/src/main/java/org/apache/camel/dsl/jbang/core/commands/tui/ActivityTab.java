@@ -26,10 +26,12 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -47,6 +49,11 @@ class ActivityTab extends AbstractTableTab {
     private boolean showVariables;
     private boolean showHeaders = true;
     private boolean showBody = true;
+    private boolean paused;
+    private List<ActivityEntry> pausedSnapshot;
+    private int timeFilterIndex;
+    private static final String[] TIME_FILTERS = { "all", "1m", "5m", "15m", "30m", "1h" };
+    private static final long[] TIME_FILTER_MILLIS = { 0, 60_000, 300_000, 900_000, 1_800_000, 3_600_000 };
     private String filter;
 
     ActivityTab(MonitorContext ctx) {
@@ -95,6 +102,20 @@ class ActivityTab extends AbstractTableTab {
             showBody = !showBody;
             return true;
         }
+        if (ke.isChar(' ')) {
+            paused = !paused;
+            if (paused) {
+                IntegrationInfo info = ctx.findSelectedIntegration();
+                pausedSnapshot = info != null ? new ArrayList<>(info.activity) : List.of();
+            } else {
+                pausedSnapshot = null;
+            }
+            return true;
+        }
+        if (ke.isChar('t')) {
+            timeFilterIndex = (timeFilterIndex + 1) % TIME_FILTERS.length;
+            return true;
+        }
         if (ke.isPageUp()) {
             detailScroll = Math.max(0, detailScroll - 10);
             return true;
@@ -140,12 +161,12 @@ class ActivityTab extends AbstractTableTab {
 
             rows.add(Row
                     .from(
-                    Cell.from(ae.exchangeId != null ? ae.exchangeId : ""),
-                    Cell.from(Span.styled(ae.routeId != null ? ae.routeId : "", Style.EMPTY.fg(Theme.accent()))),
-                    Cell.from(Span.styled(status, statusStyle)),
-                    Cell.from(elapsed),
-                    Cell.from(ago),
-                    Cell.from(ae.endpointUri != null ? ae.endpointUri : "")));
+                            Cell.from(ae.exchangeId != null ? ae.exchangeId : ""),
+                            Cell.from(Span.styled(ae.routeId != null ? ae.routeId : "", Style.EMPTY.fg(Theme.accent()))),
+                            Cell.from(Span.styled(status, statusStyle)),
+                            Cell.from(elapsed),
+                            Cell.from(ago),
+                            Cell.from(ae.fromEndpointUri != null ? ae.fromEndpointUri : "")));
         }
 
         if (rows.isEmpty()) {
@@ -158,11 +179,20 @@ class ActivityTab extends AbstractTableTab {
             selectedEntry = sorted.get(sel);
         }
         boolean showDetail = selectedEntry != null;
-        List<Rect> chunks = showDetail
-                ? Layout.vertical()
-                        .constraints(Constraint.length(13), Constraint.fill())
-                        .split(area)
-                : List.of(area);
+
+        List<Constraint> constraints = new ArrayList<>();
+        constraints.add(Constraint.length(5));
+        if (showDetail) {
+            constraints.add(Constraint.length(13));
+            constraints.add(Constraint.fill());
+        } else {
+            constraints.add(Constraint.fill());
+        }
+        List<Rect> chunks = Layout.vertical()
+                .constraints(constraints)
+                .split(area);
+
+        renderStatsPanel(frame, chunks.get(0), sorted);
 
         Table table = Table.builder()
                 .rows(rows)
@@ -186,13 +216,71 @@ class ActivityTab extends AbstractTableTab {
                         .title(" Activity [" + sorted.size() + "] ").build())
                 .build();
 
-        lastTableArea = chunks.get(0);
-        frame.renderStatefulWidget(table, chunks.get(0), tableState);
+        lastTableArea = chunks.get(1);
+        frame.renderStatefulWidget(table, chunks.get(1), tableState);
         renderScrollbar(frame, sorted.size());
 
         if (showDetail) {
-            renderDetail(frame, chunks.get(1), selectedEntry);
+            renderDetail(frame, chunks.get(2), selectedEntry);
         }
+    }
+
+    private void renderStatsPanel(Frame frame, Rect area, List<ActivityEntry> entries) {
+        int total = entries.size();
+        int failed = 0;
+        long sumElapsed = 0;
+        long maxElapsed = 0;
+        long oldestTs = Long.MAX_VALUE;
+        long newestTs = 0;
+
+        for (ActivityEntry ae : entries) {
+            if (ae.failed) {
+                failed++;
+            }
+            sumElapsed += ae.elapsed;
+            if (ae.elapsed > maxElapsed) {
+                maxElapsed = ae.elapsed;
+            }
+            if (ae.timestamp > 0 && ae.timestamp < oldestTs) {
+                oldestTs = ae.timestamp;
+            }
+            if (ae.timestamp > newestTs) {
+                newestTs = ae.timestamp;
+            }
+        }
+
+        int succeeded = total - failed;
+        long avgElapsed = total > 0 ? sumElapsed / total : 0;
+
+        Style dim = Theme.muted();
+        List<Line> lines = new ArrayList<>();
+
+        lines.add(Line
+                .from(
+                Span.styled(" Total: ", dim), Span.raw(String.valueOf(total)),
+                Span.styled("   OK: ", dim), Span.styled(String.valueOf(succeeded), Theme.success()),
+                Span.styled("   Failed: ", dim),
+                Span.styled(String.valueOf(failed), failed > 0 ? Theme.error() : Style.EMPTY),
+                Span.styled("   Sends: ", dim),
+                Span.raw(String.valueOf(entries.stream().mapToInt(ae -> ae.endpointSends.size()).sum()))));
+
+        lines.add(Line.from(
+                Span.styled(" Avg: ", dim), Span.raw(avgElapsed + "ms"),
+                Span.styled("   Max: ", dim),
+                Span.styled(maxElapsed + "ms", TuiHelper.topTimeStyle(maxElapsed)),
+                oldestTs < Long.MAX_VALUE
+                        ? Span.styled("   Window: ", dim)
+                        : Span.raw(""),
+                oldestTs < Long.MAX_VALUE
+                        ? Span.raw(org.apache.camel.util.TimeUtils.printSince(oldestTs)
+                                   + " ... " + org.apache.camel.util.TimeUtils.printSince(newestTs))
+                        : Span.raw("")));
+
+        String title = paused ? " Summary (PAUSED) " : " Summary ";
+        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .title(title).build();
+        Paragraph para = Paragraph.builder().text(Text.from(lines)).block(block).build();
+        frame.renderWidget(para, area);
     }
 
     @Override
@@ -205,6 +293,8 @@ class ActivityTab extends AbstractTableTab {
         }
         TuiHelper.hint(spans, "Home/End", "top/end");
         TuiHelper.hint(spans, "s", "sort");
+        TuiHelper.hint(spans, "Space", paused ? "resume" : "pause");
+        TuiHelper.hint(spans, "t", TIME_FILTERS[timeFilterIndex]);
         hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
         TuiHelper.hintLast(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
     }
@@ -213,7 +303,7 @@ class ActivityTab extends AbstractTableTab {
         List<Line> lines = new ArrayList<>();
 
         HistoryTab.addExchangeInfoLines(lines,
-                ae.exchangeId, ae.routeId, null, null, null,
+                ae.exchangeId, ae.routeId, null, null, ae.fromEndpointUri,
                 ae.elapsed, null, ae.failed);
 
         if (ae.exceptionType != null) {
@@ -240,6 +330,16 @@ class ActivityTab extends AbstractTableTab {
             HistoryTab.addExceptionLines(lines, sb.toString());
         }
 
+        if (!ae.endpointSends.isEmpty()) {
+            lines.add(Line.from(Span.styled(" Endpoint Sends:", Style.EMPTY.fg(Theme.accent()).bold())));
+            for (ActivityEntry.EndpointSendEntry se : ae.endpointSends) {
+                lines.add(Line
+                        .from(
+                        Span.styled("   " + (se.endpointUri != null ? se.endpointUri : ""), Style.EMPTY),
+                        Span.styled("  " + se.elapsed + "ms", Theme.muted())));
+            }
+        }
+
         if (showProperties && !ae.properties.isEmpty()) {
             HistoryTab.addKvLines(lines, " Exchange Properties:", ae.properties, ae.propertyTypes, false, null);
         }
@@ -261,10 +361,16 @@ class ActivityTab extends AbstractTableTab {
     }
 
     private List<ActivityEntry> filteredActivity(IntegrationInfo info) {
-        List<ActivityEntry> result = new ArrayList<>(info.activity);
+        List<ActivityEntry> source = paused && pausedSnapshot != null ? pausedSnapshot : info.activity;
+        List<ActivityEntry> result = new ArrayList<>(source);
         if (filter != null && !filter.isEmpty()) {
             result.removeIf(ae -> ae.routeId == null
                     || !org.apache.camel.support.PatternHelper.matchPattern(ae.routeId, filter));
+        }
+        long filterMillis = TIME_FILTER_MILLIS[timeFilterIndex];
+        if (filterMillis > 0) {
+            long cutoff = System.currentTimeMillis() - filterMillis;
+            result.removeIf(ae -> ae.timestamp > 0 && ae.timestamp < cutoff);
         }
         result.sort(this::sortActivity);
         return result;
@@ -321,8 +427,8 @@ class ActivityTab extends AbstractTableTab {
             if (ae.timestamp > 0) {
                 jo.put("since", org.apache.camel.util.TimeUtils.printSince(ae.timestamp));
             }
-            if (ae.endpointUri != null) {
-                jo.put("endpointUri", ae.endpointUri);
+            if (ae.fromEndpointUri != null) {
+                jo.put("fromEndpointUri", ae.fromEndpointUri);
             }
             jsonRows.add(jo);
         }
@@ -352,6 +458,15 @@ class ActivityTab extends AbstractTableTab {
                 within a route, Activity shows one entry per completed exchange
                 with a summary of the final state.
 
+                ## Summary Panel
+
+                The top panel shows aggregated stats from the visible activity:
+
+                - **Total** / **OK** / **Failed** — exchange counts
+                - **Sends** — total remote endpoint calls across all exchanges
+                - **Avg** / **Max** — elapsed time statistics
+                - **Window** — how far back the oldest and newest entries are
+
                 ## Activity List
 
                 - **EXCHANGE** — Exchange identifier
@@ -366,6 +481,8 @@ class ActivityTab extends AbstractTableTab {
                 Select an exchange to see its details in the panel below:
 
                 - **Exchange info**: Exchange ID, route, elapsed time, and failure status
+                - **Endpoint Sends**: Remote endpoints called during the exchange,
+                  with individual elapsed times
                 - **Exception**: If the exchange failed, shows the exception type,
                   message, and stack trace
                 - **Headers**: Message headers at the time of completion
@@ -381,6 +498,8 @@ class ActivityTab extends AbstractTableTab {
                 - `Home/End` — jump to first/last exchange
                 - `PgUp/PgDn` — scroll the detail panel
                 - `Left/Right` — horizontal scroll (when wrap is off)
+                - `Space` — pause/resume data feed (freezes the view for inspection)
+                - `t` — cycle time filter (all, 1m, 5m, 15m, 30m, 1h)
                 - `h` — toggle headers
                 - `b` — toggle body
                 - `p` — toggle properties

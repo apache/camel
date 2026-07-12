@@ -1148,8 +1148,21 @@ final class StatusParser {
                 ae.elapsed = n.longValue();
             }
             ae.failed = aj.getBooleanOrDefault("failed", false);
-            ae.endpointUri = aj.getString("endpointUri");
-            ae.remoteEndpoint = aj.getBooleanOrDefault("remoteEndpoint", false);
+            ae.fromEndpointUri = aj.getString("fromEndpointUri");
+            JsonArray sends = aj.getCollection("endpointSends");
+            if (sends != null) {
+                for (Object s : sends) {
+                    JsonObject so = (JsonObject) s;
+                    ActivityEntry.EndpointSendEntry se = new ActivityEntry.EndpointSendEntry();
+                    se.endpointUri = so.getString("endpointUri");
+                    se.remoteEndpoint = so.getBooleanOrDefault("remoteEndpoint", false);
+                    Object sendElapsed = so.get("elapsed");
+                    if (sendElapsed instanceof Number sn) {
+                        se.elapsed = sn.longValue();
+                    }
+                    ae.endpointSends.add(se);
+                }
+            }
             JsonObject ex = (JsonObject) aj.get("exception");
             if (ex != null) {
                 ae.exceptionType = ex.getString("type");
