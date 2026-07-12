@@ -133,7 +133,7 @@ public class SjmsConnectionRecoveryTest extends CamelTestSupport {
         // Phase 1: verify normal consumption (also confirms consumer is fully started)
         mock.expectedMessageCount(1);
         template.sendBody(SJMS_QUEUE_NAME, "before-failure");
-        mock.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
         mock.reset();
 
         // Phase 2: simulate a transient JMS connection exception.
@@ -145,29 +145,31 @@ public class SjmsConnectionRecoveryTest extends CamelTestSupport {
         ExceptionListener container = (ExceptionListener) containerField.get(sjmsConsumer);
         container.onException(new JMSException("Simulated transient connection failure"));
 
-        // Phase 3: wait for recovery to complete and for multiple recovery intervals to pass.
-        // With recoveryInterval=1000ms and BackgroundTask initial delay=1s:
-        //   t=0s: onException fires, consumers/sessions nullified, recovery scheduled
-        //   t=1s: recovery iteration 1 — creates new connection + consumers
-        //   t=2s: BUG: iteration 2 — creates another connection, skips consumer re-creation
-        //   t=3s: BUG: iteration 3 — creates yet another connection
-        // By t=4s, if the bug is present, 3+ connections were created.
-        await().pollDelay(4 * RECOVERY_INTERVAL_MS, TimeUnit.MILLISECONDS)
-                .atMost(5 * RECOVERY_INTERVAL_MS, TimeUnit.MILLISECONDS)
-                .until(() -> true);
+        // Phase 3: wait for recovery to create a new connection.
+        // This uses a condition-based wait instead of a hardcoded sleep, so it
+        // adapts to CI environments where recovery may take longer.
+        await().atMost(30, TimeUnit.SECONDS)
+                .until(() -> countingFactory.createCount.get() > connectionsBefore);
 
-        // Phase 4: assert recovery happened exactly once and stopped.
-        int connectionsAfter = countingFactory.createCount.get();
-        int recoveryConnections = connectionsAfter - connectionsBefore;
-        assertEquals(1, recoveryConnections,
-                "Recovery should create exactly one new connection and stop, "
-                                             + "but created " + recoveryConnections
-                                             + " — the recovery loop did not stop after successful reconnection");
+        // Phase 4: verify recovery created exactly one connection and then stopped.
+        // First confirm exactly one new connection was created.
+        int connectionsAfterRecovery = countingFactory.createCount.get();
+        assertEquals(connectionsBefore + 1, connectionsAfterRecovery,
+                "Recovery should create exactly one new connection");
+
+        // Then wait several recovery intervals to confirm no additional connections
+        // are created — this catches the infinite-loop bug where recovery keeps
+        // destroying and recreating connections.
+        await().pollDelay(3 * RECOVERY_INTERVAL_MS, TimeUnit.MILLISECONDS)
+                .atMost(5 * RECOVERY_INTERVAL_MS, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(connectionsAfterRecovery,
+                        countingFactory.createCount.get(),
+                        "Recovery loop should have stopped — connection count should remain stable"));
 
         // Phase 5: verify messages are consumed after recovery.
         mock.expectedMessageCount(1);
         template.sendBody(SJMS_QUEUE_NAME, "after-failure");
-        mock.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
