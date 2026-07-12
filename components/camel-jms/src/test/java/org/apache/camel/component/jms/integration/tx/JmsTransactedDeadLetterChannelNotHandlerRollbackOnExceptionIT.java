@@ -40,6 +40,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -104,9 +105,15 @@ public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionIT exten
         assertTrue(notify.matches(30, TimeUnit.SECONDS), "Exchange should be done");
 
         // as we do not handle new exception, then the exception propagates back
-        // and causes the transaction to rollback, and we can find the message in the DLQ
-        Object dlqBody = consumer.receiveBody("activemq:" + DLQ_NAME, 10000);
-        assertEquals("Hello World", dlqBody);
+        // and causes the transaction to rollback, and we can find the message in the DLQ.
+        // Use Awaitility to retry: the transacted session may be briefly closed after
+        // the rollback, causing "Session is closed" on the first receiveBody attempt.
+        await().atMost(30, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    Object dlqBody = consumer.receiveBody("activemq:" + DLQ_NAME, 2000);
+                    assertEquals("Hello World", dlqBody);
+                });
     }
 
     @Override
