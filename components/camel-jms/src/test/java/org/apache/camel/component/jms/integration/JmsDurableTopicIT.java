@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractPersistentJMSTest;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -32,6 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Timeout(30)
 public class JmsDurableTopicIT extends AbstractPersistentJMSTest {
+
+    // topic subscriptions take a little longer to register than queue consumers, so keep the longer 200ms threshold
+    private static final long TOPIC_ROUTE_UPTIME_MILLIS = 200;
+
     private MockEndpoint mock;
     private MockEndpoint mock2;
 
@@ -43,7 +47,11 @@ public class JmsDurableTopicIT extends AbstractPersistentJMSTest {
         mock2 = getMockEndpoint("mock:result2");
         mock2.expectedBodiesReceived("Hello World");
 
-        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 200);
+        // Wait for BOTH durable topic consumer routes to be ready before sending.
+        // The original code only waited for route-2, so route-1's subscriber could
+        // still be registering when the message was published, causing mock:result
+        // to miss the message intermittently.
+        JmsTestHelper.waitForJmsConsumerRoutes(context, TOPIC_ROUTE_UPTIME_MILLIS, "route-1", "route-2");
     }
 
     @Test
