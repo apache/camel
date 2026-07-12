@@ -84,6 +84,16 @@ public class AuthenticationConfigurationMainHttpServerTest {
         }
     }
 
+    @Test
+    public void testAuthenticationEnabledWithoutMechanismProdProfile() {
+        Main main = MainHttpServerAuthenticationTestSupport.createMain(
+                "auth-no-mechanism.properties", port, new PlatformHttpRouteBuilder());
+
+        main.configure().withProfile("prod");
+
+        assertThrows(IllegalStateException.class, main::start);
+    }
+
     private static class PlatformHttpRouteBuilder extends RouteBuilder {
         @Override
         public void configure() throws Exception {
