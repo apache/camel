@@ -50,6 +50,12 @@ class CamelShDiscoveryTest {
         return FakeJava.newLauncherHome(base, SCRIPT);
     }
 
+    private String pathWithNonqualifyingJava(Path base) throws Exception {
+        Path pathDir = base.resolve("path-shadow");
+        FakeJava.writeFakeJava(pathDir, "java", GARBAGE, 0, "PATH-REJECTED");
+        return pathDir + ":/usr/bin:/bin";
+    }
+
     @Test
     void acceptsJava17ViaJavacmd(@TempDir Path base) throws Exception {
         Path h = home(base);
@@ -108,7 +114,7 @@ class CamelShDiscoveryTest {
 
         Map<String, String> env = new HashMap<>();
         env.put("JAVA_HOME", base.resolve("jh").toString());
-        env.put("PATH", "/usr/bin:/bin"); // no java on PATH
+        env.put("PATH", pathWithNonqualifyingJava(base));
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
 
@@ -133,6 +139,25 @@ class CamelShDiscoveryTest {
     }
 
     @Test
+    void skipsNonExecutableJavacmdFallsBackToJavaHome(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path nonExecutable = base.resolve("non-executable-java");
+        Files.writeString(nonExecutable, "#!/bin/sh\nexit 0\n");
+        assertFalse(Files.isExecutable(nonExecutable), "test candidate must not be executable");
+        Path jhomeBin = base.resolve("jh/bin");
+        FakeJava.writeFakeJava(jhomeBin, "java", JAVA17, 0, "JAVAHOME");
+
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVACMD", nonExecutable.toString());
+        env.put("JAVA_HOME", base.resolve("jh").toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=JAVAHOME"), r.stdout());
+    }
+
+    @Test
     void skipsOldJavaHomeFallsBackToPath(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path jhomeBin = base.resolve("jh/bin");
@@ -148,6 +173,43 @@ class CamelShDiscoveryTest {
 
         assertEquals(0, r.exitCode(), r.stderr());
         assertTrue(r.stdout().contains("RAN=PATH"), r.stdout());
+        assertFalse(r.stdout().contains(JAVA11), "rejected probe banner leaked to stdout");
+        assertFalse(r.stderr().contains(JAVA11), "rejected probe banner leaked to stderr");
+    }
+
+    @Test
+    void precedenceJavaHomeBeatsPath(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path jhomeBin = base.resolve("jh/bin");
+        FakeJava.writeFakeJava(jhomeBin, "java", JAVA17, 0, "JAVAHOME");
+        Path pathDir = base.resolve("pd");
+        FakeJava.writeFakeJava(pathDir, "java", JAVA21, 0, "PATH");
+
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVA_HOME", base.resolve("jh").toString());
+        env.put("PATH", pathDir + ":/usr/bin:/bin");
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=JAVAHOME"), r.stdout());
+    }
+
+    @Test
+    void precedencePathBeatsCamelFallbackJava(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path pathDir = base.resolve("pd");
+        FakeJava.writeFakeJava(pathDir, "java", JAVA17, 0, "PATH");
+        Path fallback = FakeJava.writeFakeJava(base.resolve("fb"), "java", JAVA21, 0, "FALLBACK");
+
+        Map<String, String> env = new HashMap<>();
+        env.put("PATH", pathDir + ":/usr/bin:/bin");
+        env.put("CAMEL_FALLBACK_JAVA", fallback.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=PATH"), r.stdout());
     }
 
     @Test
@@ -156,7 +218,7 @@ class CamelShDiscoveryTest {
         Path fb = FakeJava.writeFakeJava(base.resolve("fb"), "java", JAVA17, 0, "FALLBACK");
 
         Map<String, String> env = new HashMap<>();
-        env.put("PATH", "/usr/bin:/bin"); // no java on PATH
+        env.put("PATH", pathWithNonqualifyingJava(base));
         env.put("CAMEL_FALLBACK_JAVA", fb.toString());
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
@@ -172,7 +234,7 @@ class CamelShDiscoveryTest {
 
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", old.toString());
-        env.put("PATH", "/usr/bin:/bin");
+        env.put("PATH", pathWithNonqualifyingJava(base));
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
 
@@ -188,11 +250,30 @@ class CamelShDiscoveryTest {
 
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", garbage.toString());
-        env.put("PATH", "/usr/bin:/bin");
+        env.put("PATH", pathWithNonqualifyingJava(base));
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
 
         assertEquals(1, r.exitCode());
+    }
+
+    @Test
+    void skipsUnparseableJavacmdFallsBackToJavaHome(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path garbage = FakeJava.writeFakeJava(base.resolve("g"), "java", GARBAGE, 0, "GARBAGE");
+        Path jhomeBin = base.resolve("jh/bin");
+        FakeJava.writeFakeJava(jhomeBin, "java", JAVA17, 0, "JAVAHOME");
+
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVACMD", garbage.toString());
+        env.put("JAVA_HOME", base.resolve("jh").toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=JAVAHOME"), r.stdout());
+        assertFalse(r.stdout().contains(GARBAGE), "rejected probe banner leaked to stdout");
+        assertFalse(r.stderr().contains(GARBAGE), "rejected probe banner leaked to stderr");
     }
 
     @Test
@@ -203,7 +284,7 @@ class CamelShDiscoveryTest {
 
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", java8.toString());
-        env.put("PATH", "/usr/bin:/bin");
+        env.put("PATH", pathWithNonqualifyingJava(base));
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
 
@@ -278,8 +359,24 @@ class CamelShDiscoveryTest {
     }
 
     @Test
+    void preservesChildStdinStdoutAndStderr(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "STDIO");
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVACMD", java.toString());
+
+        FakeJava.Result r = FakeJava.runWithInput(h.resolve("camel.sh"), env, "route input\n", "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=STDIO"), r.stdout());
+        assertTrue(r.stdout().contains("route input"), "stdin did not reach child stdout: " + r.stdout());
+        assertTrue(r.stderr().contains("STDERR=STDIO"), "child stderr was not preserved: " + r.stderr());
+    }
+
+    @Test
     void scriptItselfIsExecutableFixture(@TempDir Path base) throws Exception {
         Path h = home(base);
         assertTrue(Files.exists(h.resolve("camel.sh")));
+        assertTrue(Files.isExecutable(h.resolve("camel.sh")));
     }
 }

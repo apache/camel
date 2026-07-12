@@ -47,6 +47,18 @@ class FakeJavaTest {
         assertTrue(result.stderr().contains("stderr-20000"));
     }
 
+    @Test
+    void fakeJavaPreservesInputAndNormalStderr() throws Exception {
+        Path java = FakeJava.writeFakeJava(tempDir, "java", "openjdk version \"17.0.2\"", 0, "STDIO");
+
+        FakeJava.Result result = FakeJava.runWithInput(java, Map.of(), "route input\n", "version");
+
+        assertEquals(0, result.exitCode());
+        assertTrue(result.stdout().contains("RAN=STDIO"), result.stdout());
+        assertTrue(result.stdout().contains("route input"), result.stdout());
+        assertTrue(result.stderr().contains("STDERR=STDIO"), result.stderr());
+    }
+
     private static String largeOutputScript() {
         if (FakeJava.WINDOWS) {
             return "@echo off\r\n"

@@ -64,6 +64,8 @@ final class FakeJava {
                           + ")\r\n"
                           + "echo RAN=" + marker + "\r\n"
                           + "echo ARGS=%*\r\n"
+                          + "echo STDERR=" + marker + " 1>&2\r\n"
+                          + "more\r\n"
                           + "exit /b " + normalExit + "\r\n";
             Files.writeString(exe, body, StandardCharsets.UTF_8);
             return exe;
@@ -76,6 +78,8 @@ final class FakeJava {
                       + "fi\n"
                       + "echo \"RAN=" + marker + "\"\n"
                       + "printf 'ARGS='; for a in \"$@\"; do printf '%s|' \"$a\"; done; echo\n"
+                      + "echo \"STDERR=" + marker + "\" 1>&2\n"
+                      + "cat\n"
                       + "exit " + normalExit + "\n";
         Files.writeString(exe, body, StandardCharsets.UTF_8);
         Files.setPosixFilePermissions(exe, Set.of(OWNER_READ, OWNER_WRITE, OWNER_EXECUTE));
@@ -95,6 +99,10 @@ final class FakeJava {
     }
 
     static Result run(Path script, Map<String, String> env, String... args) throws Exception {
+        return runWithInput(script, env, null, args);
+    }
+
+    static Result runWithInput(Path script, Map<String, String> env, String input, String... args) throws Exception {
         List<String> cmd = new ArrayList<>();
         if (WINDOWS) {
             cmd.add("cmd.exe");
@@ -122,6 +130,10 @@ final class FakeJava {
         try {
             Future<byte[]> stdout = collectors.submit(() -> p.getInputStream().readAllBytes());
             Future<byte[]> stderr = collectors.submit(() -> p.getErrorStream().readAllBytes());
+            if (input != null) {
+                p.getOutputStream().write(input.getBytes(StandardCharsets.UTF_8));
+            }
+            p.getOutputStream().close();
             if (!p.waitFor(PROCESS_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
                 terminate(p);
                 throw new IllegalStateException("launcher did not exit in time");
