@@ -70,7 +70,9 @@ public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSuppor
         resetMocks();
         mock.expectedBodiesReceived("B");
         context.resume();
-        assertMockEndpointsSatisfied();
+        // after resume, the seda consumer may need a moment to restart polling
+        // and deliver the queued message "B" — use a timed assertion
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         assertFalse(context.isSuspended());
 

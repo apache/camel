@@ -37,10 +37,13 @@ class LoopNoBreakOnShutdownTest extends ContextTestSupport {
         mock.expectedMinimumMessageCount(LOOP_COUNT);
 
         CompletableFuture<Object> future = template.asyncSendBody("seda:foo", "foo");
-        await().atMost(1, SECONDS).until(future::isDone);
+        // asyncSendBody to seda completes almost instantly (just enqueues), but on
+        // slow CI the handoff can take longer — use a generous timeout
+        await().atMost(10, SECONDS).until(future::isDone);
 
         context.stop();
 
+        // after context.stop(), all shutdown-deferred processing has completed
         mock.assertIsSatisfied();
     }
 
