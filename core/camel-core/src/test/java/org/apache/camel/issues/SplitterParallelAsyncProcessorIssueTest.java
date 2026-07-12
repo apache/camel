@@ -22,6 +22,7 @@ import java.util.concurrent.*;
 
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Assertions;
@@ -50,7 +51,10 @@ public class SplitterParallelAsyncProcessorIssueTest extends ContextTestSupport 
 
         template.sendBody("direct:start", xmlBody);
 
-        assertMockEndpointsSatisfied();
+        // the 10 elements are processed in parallel with 250ms delays
+        // in both the async processor and the route — use a timed assertion
+        // to avoid flaky failures on slow CI
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         log.info("{} Threads in use: {}", threads.size(), threads);
 
