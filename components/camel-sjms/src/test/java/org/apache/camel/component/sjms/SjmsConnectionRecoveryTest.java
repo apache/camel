@@ -130,10 +130,20 @@ public class SjmsConnectionRecoveryTest extends CamelTestSupport {
     public void testRecoveryStopsAfterSuccessfulReconnection() throws Exception {
         MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
 
-        // Phase 1: verify normal consumption (also confirms consumer is fully started)
-        mock.expectedMessageCount(1);
-        template.sendBody(SJMS_QUEUE_NAME, "before-failure");
-        mock.assertIsSatisfied();
+        // Phase 1: verify normal consumption (also confirms consumer is fully started).
+        // With asyncStartListener=true, the consumer starts in the background and may not be
+        // subscribed yet when the first message is sent. The message would be lost (delivered
+        // to a queue with no subscriber). Use Awaitility to retry the send+assert cycle until
+        // the async consumer is ready.
+        // NOTE: This is NOT redundant Awaitility wrapping of MockEndpoint — we are retrying
+        // the send operation itself, not just the assertion wait.
+        await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    mock.reset();
+                    mock.expectedMessageCount(1);
+                    template.sendBody(SJMS_QUEUE_NAME, "before-failure");
+                    mock.assertIsSatisfied();
+                });
         mock.reset();
 
         // Phase 2: simulate a transient JMS connection exception.
@@ -145,16 +155,19 @@ public class SjmsConnectionRecoveryTest extends CamelTestSupport {
         ExceptionListener container = (ExceptionListener) containerField.get(sjmsConsumer);
         container.onException(new JMSException("Simulated transient connection failure"));
 
-        // Phase 3: wait for recovery to complete and for multiple recovery intervals to pass.
-        // With recoveryInterval=1000ms and BackgroundTask initial delay=1s:
-        //   t=0s: onException fires, consumers/sessions nullified, recovery scheduled
-        //   t=1s: recovery iteration 1 — creates new connection + consumers
-        //   t=2s: BUG: iteration 2 — creates another connection, skips consumer re-creation
-        //   t=3s: BUG: iteration 3 — creates yet another connection
-        // By t=4s, if the bug is present, 3+ connections were created.
-        await().pollDelay(4 * RECOVERY_INTERVAL_MS, TimeUnit.MILLISECONDS)
-                .atMost(5 * RECOVERY_INTERVAL_MS, TimeUnit.MILLISECONDS)
-                .until(() -> true);
+        // Phase 3: wait for recovery to complete — poll until a new connection is created,
+        // then wait for stability (no additional connections for several recovery intervals).
+        // This replaces a fixed-delay wait that was effectively Thread.sleep().
+        await().atMost(30, TimeUnit.SECONDS)
+                .until(() -> countingFactory.createCount.get() > connectionsBefore);
+
+        // Wait for stability: if the bug is present, additional connections keep being created
+        // every recoveryInterval. Wait 3 intervals and verify the count is stable.
+        int countAfterRecovery = countingFactory.createCount.get();
+        await().pollDelay(3L * RECOVERY_INTERVAL_MS, TimeUnit.MILLISECONDS)
+                .atMost(5L * RECOVERY_INTERVAL_MS, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(countAfterRecovery, countingFactory.createCount.get(),
+                        "Connection count should remain stable after recovery completes"));
 
         // Phase 4: assert recovery happened exactly once and stopped.
         int connectionsAfter = countingFactory.createCount.get();
@@ -165,9 +178,15 @@ public class SjmsConnectionRecoveryTest extends CamelTestSupport {
                                              + " — the recovery loop did not stop after successful reconnection");
 
         // Phase 5: verify messages are consumed after recovery.
-        mock.expectedMessageCount(1);
-        template.sendBody(SJMS_QUEUE_NAME, "after-failure");
-        mock.assertIsSatisfied();
+        // After recovery, consumers may need a moment to be fully re-established.
+        // Use Awaitility to retry the send+assert cycle (same rationale as Phase 1).
+        await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    mock.reset();
+                    mock.expectedMessageCount(1);
+                    template.sendBody(SJMS_QUEUE_NAME, "after-failure");
+                    mock.assertIsSatisfied();
+                });
     }
 
     @Override
