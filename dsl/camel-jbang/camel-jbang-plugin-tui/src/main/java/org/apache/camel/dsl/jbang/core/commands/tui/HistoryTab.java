@@ -2162,7 +2162,17 @@ class HistoryTab extends AbstractTab {
     static void renderDetailPanel(
             Frame frame, Rect area, List<Line> lines,
             boolean wordWrap, int[] hScroll, int[] scroll, ScrollbarState scrollState) {
-        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build();
+        renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, scrollState, null);
+    }
+
+    static void renderDetailPanel(
+            Frame frame, Rect area, List<Line> lines,
+            boolean wordWrap, int[] hScroll, int[] scroll, ScrollbarState scrollState, String title) {
+        Block.Builder bb = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL);
+        if (title != null) {
+            bb.title(title);
+        }
+        Block block = bb.build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);

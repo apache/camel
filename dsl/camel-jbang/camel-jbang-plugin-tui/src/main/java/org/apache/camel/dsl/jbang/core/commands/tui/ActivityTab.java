@@ -160,7 +160,7 @@ class ActivityTab extends AbstractTableTab {
         boolean showDetail = selectedEntry != null;
 
         List<Constraint> constraints = new ArrayList<>();
-        constraints.add(Constraint.length(5));
+        constraints.add(Constraint.length(4));
         if (showDetail) {
             constraints.add(Constraint.length(13));
             constraints.add(Constraint.fill());
@@ -300,7 +300,7 @@ class ActivityTab extends AbstractTableTab {
 
         int[] scroll = { detailScroll };
         int[] hScroll = { detailHScroll };
-        HistoryTab.renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, detailScrollState);
+        HistoryTab.renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, detailScrollState, " Detail ");
         detailScroll = scroll[0];
         detailHScroll = hScroll[0];
     }
