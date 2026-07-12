@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.opensearch.integration;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.opensearch.OpensearchConstants;
 import org.apache.camel.component.opensearch.OpensearchOperation;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.opensearch.indices.DeleteIndexRequest;
 
@@ -31,6 +33,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OpensearchIndexIT extends OpensearchTestSupport {
+
+    @AfterEach
+    void cleanupIndex() throws IOException {
+        try {
+            client.indices().delete(new DeleteIndexRequest.Builder().index("twitter").build());
+        } catch (Exception e) {
+            // index may not exist, ignore
+        }
+    }
 
     @Test
     void testIndex() {
