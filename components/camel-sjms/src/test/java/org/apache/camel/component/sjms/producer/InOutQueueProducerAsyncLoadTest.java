@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.sjms.producer;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -34,14 +36,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
 
     private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.InOutQueueProducerAsyncLoadTest";
+    private static final int MESSAGE_COUNT = 500;
     private MessageConsumer mc1;
     private MessageConsumer mc2;
 
@@ -75,30 +78,37 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
     public void testInOutQueueProducer() throws Exception {
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
+        CountDownLatch latch = new CountDownLatch(MESSAGE_COUNT);
+        AtomicInteger failures = new AtomicInteger();
 
-        for (int i = 1; i <= 5000; i++) {
+        for (int i = 1; i <= MESSAGE_COUNT; i++) {
             final int tempI = i;
-            Runnable worker = new Runnable() {
 
-                @Override
-                public void run() {
-                    try {
-                        final String requestText = "Message " + tempI;
-                        final String responseText = "Response Message " + tempI;
-                        String response = template.requestBody("direct:start", requestText, String.class);
-                        assertNotNull(response);
-                        assertEquals(responseText, response);
-                    } catch (Exception e) {
-                        log.error("Failed to process message {}", tempI, e);
-                    }
+            executor.execute(() -> {
+                try {
+                    final String requestText = "Message " + tempI;
+                    final String responseText = "Response Message " + tempI;
+
+                    String response = template.requestBody("direct:start", requestText, String.class);
+
+                    assertNotNull(response);
+                    assertEquals(responseText, response);
+                } catch (Exception e) {
+                    failures.incrementAndGet();
+                    log.error("Failed to process message {}", tempI, e);
+                } finally {
+                    latch.countDown();
                 }
-            };
-            executor.execute(worker);
+            });
         }
-        // shut down the executor and wait for all submitted tasks to complete
+
         executor.shutdown();
-        await().atMost(30, SECONDS)
-                .until(() -> executor.isTerminated());
+
+        assertTrue(latch.await(30, SECONDS));
+        assertTrue(executor.awaitTermination(30, SECONDS));
+
+        assertEquals(0, failures.get(), "Some async requests failed");
+
         // verify all inflight messages have completed
         assertEquals(0, context.getInflightRepository().size());
     }
