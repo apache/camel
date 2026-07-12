@@ -36,6 +36,7 @@ import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
 class ActivityTab extends AbstractTableTab {
@@ -49,7 +50,6 @@ class ActivityTab extends AbstractTableTab {
     private int timeFilterIndex;
     private static final String[] TIME_FILTERS = { "all", "1m", "5m", "15m", "30m", "1h" };
     private static final long[] TIME_FILTER_MILLIS = { 0, 60_000, 300_000, 900_000, 1_800_000, 3_600_000 };
-    private String filter;
 
     ActivityTab(MonitorContext ctx) {
         super(ctx, "exchange", "route", "elapsed", "since");
@@ -133,7 +133,7 @@ class ActivityTab extends AbstractTableTab {
         List<Row> rows = new ArrayList<>();
         for (ActivityEntry ae : sorted) {
             String ago = ae.timestamp > 0
-                    ? org.apache.camel.util.TimeUtils.printSince(ae.timestamp) : "";
+                    ? TimeUtils.printSince(ae.timestamp) : "";
             String status = ae.failed ? "FAILED" : "OK";
             Style statusStyle = ae.failed ? Theme.error() : Theme.success();
             String elapsed = ae.elapsed + "ms";
@@ -251,8 +251,8 @@ class ActivityTab extends AbstractTableTab {
                         ? Span.styled("   Window: ", dim)
                         : Span.raw(""),
                 oldestTs < Long.MAX_VALUE
-                        ? Span.raw(org.apache.camel.util.TimeUtils.printSince(oldestTs)
-                                   + " ... " + org.apache.camel.util.TimeUtils.printSince(newestTs))
+                        ? Span.raw(TimeUtils.printSince(oldestTs)
+                                   + " ... " + TimeUtils.printSince(newestTs))
                         : Span.raw("")));
 
         String title = paused ? " Summary (PAUSED) " : " Summary ";
@@ -308,10 +308,6 @@ class ActivityTab extends AbstractTableTab {
     private List<ActivityEntry> filteredActivity(IntegrationInfo info) {
         List<ActivityEntry> source = paused && pausedSnapshot != null ? pausedSnapshot : info.activity;
         List<ActivityEntry> result = new ArrayList<>(source);
-        if (filter != null && !filter.isEmpty()) {
-            result.removeIf(ae -> ae.routeId == null
-                    || !org.apache.camel.support.PatternHelper.matchPattern(ae.routeId, filter));
-        }
         long filterMillis = TIME_FILTER_MILLIS[timeFilterIndex];
         if (filterMillis > 0) {
             long cutoff = System.currentTimeMillis() - filterMillis;
@@ -370,7 +366,7 @@ class ActivityTab extends AbstractTableTab {
             jo.put("failed", ae.failed);
             jo.put("timestamp", ae.timestamp);
             if (ae.timestamp > 0) {
-                jo.put("since", org.apache.camel.util.TimeUtils.printSince(ae.timestamp));
+                jo.put("since", TimeUtils.printSince(ae.timestamp));
             }
             if (ae.fromEndpointUri != null) {
                 jo.put("fromEndpointUri", ae.fromEndpointUri);
