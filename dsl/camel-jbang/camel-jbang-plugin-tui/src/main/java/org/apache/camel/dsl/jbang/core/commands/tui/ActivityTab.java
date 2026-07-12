@@ -37,7 +37,6 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 
 class ActivityTab extends AbstractTableTab {
 
@@ -45,10 +44,6 @@ class ActivityTab extends AbstractTableTab {
     private int detailScroll;
     private int detailHScroll;
     private boolean wordWrap = true;
-    private boolean showProperties;
-    private boolean showVariables;
-    private boolean showHeaders = true;
-    private boolean showBody = true;
     private boolean paused;
     private List<ActivityEntry> pausedSnapshot;
     private int timeFilterIndex;
@@ -84,22 +79,6 @@ class ActivityTab extends AbstractTableTab {
         }
         if (ke.isChar('w')) {
             wordWrap = !wordWrap;
-            return true;
-        }
-        if (ke.isChar('p')) {
-            showProperties = !showProperties;
-            return true;
-        }
-        if (ke.isChar('v')) {
-            showVariables = !showVariables;
-            return true;
-        }
-        if (ke.isChar('h')) {
-            showHeaders = !showHeaders;
-            return true;
-        }
-        if (ke.isChar('b')) {
-            showBody = !showBody;
             return true;
         }
         if (ke.isChar(' ')) {
@@ -295,7 +274,6 @@ class ActivityTab extends AbstractTableTab {
         TuiHelper.hint(spans, "s", "sort");
         TuiHelper.hint(spans, "Space", paused ? "resume" : "pause");
         TuiHelper.hint(spans, "t", TIME_FILTERS[timeFilterIndex]);
-        hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
         TuiHelper.hintLast(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
     }
 
@@ -306,28 +284,8 @@ class ActivityTab extends AbstractTableTab {
                 ae.exchangeId, ae.routeId, null, null, ae.fromEndpointUri,
                 ae.elapsed, null, ae.failed);
 
-        if (ae.exceptionType != null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(ae.exceptionType);
-            if (ae.exceptionMessage != null) {
-                String msg = ae.exceptionMessage;
-                try {
-                    msg = Jsoner.unescape(msg);
-                } catch (Exception e) {
-                    // ignore
-                }
-                sb.append(": ").append(msg);
-            }
-            if (ae.stackTrace != null) {
-                String st = ae.stackTrace;
-                try {
-                    st = Jsoner.unescape(st);
-                } catch (Exception e) {
-                    // ignore
-                }
-                sb.append("\n").append(st);
-            }
-            HistoryTab.addExceptionLines(lines, sb.toString());
+        if (ae.exceptionMessage != null) {
+            HistoryTab.addExceptionLines(lines, ae.exceptionMessage);
         }
 
         if (!ae.endpointSends.isEmpty()) {
@@ -338,19 +296,6 @@ class ActivityTab extends AbstractTableTab {
                         Span.styled("   " + (se.endpointUri != null ? se.endpointUri : ""), Style.EMPTY),
                         Span.styled("  " + se.elapsed + "ms", Theme.muted())));
             }
-        }
-
-        if (showProperties && !ae.properties.isEmpty()) {
-            HistoryTab.addKvLines(lines, " Exchange Properties:", ae.properties, ae.propertyTypes, false, null);
-        }
-        if (showVariables && !ae.variables.isEmpty()) {
-            HistoryTab.addKvLines(lines, " Exchange Variables:", ae.variables, ae.variableTypes, false, null);
-        }
-        if (showHeaders && !ae.headers.isEmpty()) {
-            HistoryTab.addKvLines(lines, " Headers:", ae.headers, ae.headerTypes, false, null);
-        }
-        if (showBody) {
-            HistoryTab.addBodyLines(lines, ae.body, ae.bodyType, false);
         }
 
         int[] scroll = { detailScroll };
@@ -485,12 +430,6 @@ class ActivityTab extends AbstractTableTab {
                   with individual elapsed times
                 - **Exception**: If the exchange failed, shows the exception type,
                   message, and stack trace
-                - **Headers**: Message headers at the time of completion
-                - **Properties**: Exchange-level properties
-                - **Variables**: Exchange variables
-                - **Body**: Message body content with type information
-
-                Use `h`, `b`, `p`, `v` keys to toggle each section on or off.
 
                 ## Keys
 
@@ -500,23 +439,10 @@ class ActivityTab extends AbstractTableTab {
                 - `Left/Right` — horizontal scroll (when wrap is off)
                 - `Space` — pause/resume data feed (freezes the view for inspection)
                 - `t` — cycle time filter (all, 1m, 5m, 15m, 30m, 1h)
-                - `h` — toggle headers
-                - `b` — toggle body
-                - `p` — toggle properties
-                - `v` — toggle variables
                 - `w` — toggle word wrap
                 - `s` — cycle sort column
                 - `S` — reverse sort order
                 """;
     }
 
-    private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
-        spans.add(Span.styled(" show ", Theme.hintKey()));
-        spans.add(Span.raw(" "));
-        spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(props ? "P" : "p", props ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
-        spans.add(Span.styled(vars ? "V" : "v", vars ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
-        spans.add(Span.raw("  "));
-    }
 }

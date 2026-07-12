@@ -1163,34 +1163,7 @@ final class StatusParser {
                     ae.endpointSends.add(se);
                 }
             }
-            JsonObject ex = (JsonObject) aj.get("exception");
-            if (ex != null) {
-                ae.exceptionType = ex.getString("type");
-                ae.exceptionMessage = ex.getString("message");
-                ae.stackTrace = ex.getString("stackTrace");
-            }
-            JsonObject msg = (JsonObject) aj.get("message");
-            if (msg != null) {
-                Object bodyObj = msg.get("body");
-                if (bodyObj instanceof JsonObject bodyJson) {
-                    ae.body = bodyJson.getString("value");
-                    ae.bodyType = bodyJson.getString("type");
-                } else if (bodyObj != null) {
-                    ae.body = bodyObj.toString();
-                }
-                JsonArray hdrs = msg.getCollection("headers");
-                if (hdrs != null) {
-                    parseKvArray(hdrs, ae.headers, ae.headerTypes);
-                }
-            }
-            JsonArray props = aj.getCollection("exchangeProperties");
-            if (props != null) {
-                parseKvArray(props, ae.properties, ae.propertyTypes);
-            }
-            JsonArray vars = aj.getCollection("exchangeVariables");
-            if (vars != null) {
-                parseKvArray(vars, ae.variables, ae.variableTypes);
-            }
+            ae.exceptionMessage = aj.getString("exception");
             parsed.add(ae);
         }
         return parsed;

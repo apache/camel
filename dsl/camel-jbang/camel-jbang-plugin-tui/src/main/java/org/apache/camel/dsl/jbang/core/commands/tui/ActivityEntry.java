@@ -17,9 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 class ActivityEntry {
     long uid;
@@ -30,18 +28,8 @@ class ActivityEntry {
     long timestamp;
     long elapsed;
     boolean failed;
-    String exceptionType;
     String exceptionMessage;
-    String stackTrace;
-    String body;
-    String bodyType;
     final List<EndpointSendEntry> endpointSends = new ArrayList<>();
-    final Map<String, Object> headers = new LinkedHashMap<>();
-    final Map<String, String> headerTypes = new LinkedHashMap<>();
-    final Map<String, Object> properties = new LinkedHashMap<>();
-    final Map<String, String> propertyTypes = new LinkedHashMap<>();
-    final Map<String, Object> variables = new LinkedHashMap<>();
-    final Map<String, String> variableTypes = new LinkedHashMap<>();
 
     static class EndpointSendEntry {
         String endpointUri;
