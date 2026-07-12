@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms.integration.tx;
 
+import java.util.concurrent.TimeUnit;
+
 import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.artemis.api.core.SimpleString;
@@ -23,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
@@ -36,6 +39,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tags({ @Tag("not-parallel"), @Tag("transaction") })
 public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionIT extends CamelTestSupport {
@@ -86,11 +90,17 @@ public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionIT extends 
 
     @Test
     public void shouldNotLoseMessagesOnExceptionInErrorHandler() {
+        // wait for the exchange to be fully done (processed + transaction committed/rolled back)
+        // before checking the DLQ, to avoid a race between route processing and the assertion
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         template.sendBody(testingEndpoint, "Hello World");
+
+        assertTrue(notify.matches(30, TimeUnit.SECONDS), "Exchange should be done");
 
         // as we handle new exception, then the exception is ignored
         // and causes the transaction to commit, so there is no message in the DLQ queue
-        Object dlqBody = consumer.receiveBody("activemq:" + DLQ_NAME, 10000);
+        Object dlqBody = consumer.receiveBody("activemq:" + DLQ_NAME, 2000);
         assertNull(dlqBody, "Should not rollback the transaction");
     }
 

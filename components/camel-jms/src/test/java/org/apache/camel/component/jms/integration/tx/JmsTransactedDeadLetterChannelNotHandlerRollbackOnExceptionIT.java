@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms.integration.tx;
 
+import java.util.concurrent.TimeUnit;
+
 import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.artemis.api.core.QueueConfiguration;
@@ -25,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
@@ -38,6 +41,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tags({ @Tag("not-parallel"), @Tag("transaction") })
 public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionIT extends CamelTestSupport {
@@ -91,11 +95,17 @@ public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionIT exten
 
     @Test
     public void shouldNotLoseMessagesOnExceptionInErrorHandler() {
+        // wait for the exchange to be fully done (processed + transaction rolled back)
+        // before checking the DLQ, to avoid a race between route processing and the assertion
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         template.sendBody(testingEndpoint, "Hello World");
+
+        assertTrue(notify.matches(30, TimeUnit.SECONDS), "Exchange should be done");
 
         // as we do not handle new exception, then the exception propagates back
         // and causes the transaction to rollback, and we can find the message in the DLQ
-        Object dlqBody = consumer.receiveBody("activemq:" + DLQ_NAME, 30000);
+        Object dlqBody = consumer.receiveBody("activemq:" + DLQ_NAME, 10000);
         assertEquals("Hello World", dlqBody);
     }
 
