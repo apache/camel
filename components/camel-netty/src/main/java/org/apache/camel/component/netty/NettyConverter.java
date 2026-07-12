@@ -19,7 +19,6 @@ package org.apache.camel.component.netty;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
-import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -35,24 +34,13 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufInputStream;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DeserializationFilterHelper;
 
 /**
  * A set of converter methods for working with Netty types
  */
 @Converter(generateLoader = true)
 public final class NettyConverter {
-    private static final Logger LOG = LoggerFactory.getLogger(NettyConverter.class);
-
-    /**
-     * Default deserialization filter that restricts which classes can be deserialized. Allows standard Java types and
-     * Apache Camel types, denies {@code java.net.**}, and applies JEP-290 graph-shape limits ({@code maxdepth},
-     * {@code maxrefs}, {@code maxbytes}) as defense-in-depth against resource-exhaustion payloads. Can be overridden
-     * via the JVM system property {@code jdk.serialFilter}.
-     */
-    static final String DEFAULT_DESERIALIZATION_FILTER
-            = "!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*";
 
     private NettyConverter() {
         //Utility Class
@@ -93,14 +81,7 @@ public final class NettyConverter {
     public static ObjectInput toObjectInput(ByteBuf buffer, Exchange exchange) throws IOException {
         InputStream is = toInputStream(buffer, exchange);
         ObjectInputStream ois = new ObjectInputStream(is);
-        ObjectInputFilter jvmFilter = ObjectInputFilter.Config.getSerialFilter();
-        if (jvmFilter != null) {
-            ois.setObjectInputFilter(jvmFilter);
-        } else {
-            LOG.debug("No JVM-wide deserialization filter set, applying default Camel filter: {}",
-                    DEFAULT_DESERIALIZATION_FILTER);
-            ois.setObjectInputFilter(ObjectInputFilter.Config.createFilter(DEFAULT_DESERIALIZATION_FILTER));
-        }
+        ois.setObjectInputFilter(DeserializationFilterHelper.resolveDeserializationFilter(null));
         return ois;
     }
 

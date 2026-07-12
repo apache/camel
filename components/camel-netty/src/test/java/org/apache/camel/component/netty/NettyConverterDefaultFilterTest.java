@@ -16,17 +16,47 @@
  */
 package org.apache.camel.component.netty;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InvalidClassException;
+import java.io.ObjectInput;
+import java.io.ObjectOutputStream;
+import java.net.URI;
+
+import io.netty.buffer.ByteBuf;
+import org.apache.camel.support.DeserializationFilterHelper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyConverterDefaultFilterTest {
 
     @Test
     public void testDefaultFilterContainsGraphShapeLimits() {
-        String filter = NettyConverter.DEFAULT_DESERIALIZATION_FILTER;
+        String filter = DeserializationFilterHelper.DEFAULT_DESERIALIZATION_FILTER;
         assertTrue(filter.contains("maxdepth="), "Expected maxdepth in filter: " + filter);
         assertTrue(filter.contains("maxrefs="), "Expected maxrefs in filter: " + filter);
         assertTrue(filter.contains("maxbytes="), "Expected maxbytes in filter: " + filter);
+    }
+
+    @Test
+    public void testToObjectInputAllowsStandardJavaType() throws Exception {
+        ObjectInput oi = NettyConverter.toObjectInput(toByteBuf("hello"), null);
+        assertEquals("hello", oi.readObject());
+    }
+
+    @Test
+    public void testToObjectInputRejectsJavaNetClass() throws Exception {
+        ObjectInput oi = NettyConverter.toObjectInput(toByteBuf(URI.create("http://example.com/")), null);
+        assertThrows(InvalidClassException.class, oi::readObject);
+    }
+
+    private static ByteBuf toByteBuf(Object value) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(value);
+        }
+        return NettyConverter.toByteBuffer(baos.toByteArray());
     }
 }
