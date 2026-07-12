@@ -24,7 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE;
 import static java.nio.file.attribute.PosixFilePermission.OWNER_READ;
@@ -35,6 +40,9 @@ import static java.nio.file.attribute.PosixFilePermission.OWNER_WRITE;
  * Java-discovery contract in camel.sh / camel.bat can be exercised without a real JDK.
  */
 final class FakeJava {
+
+    private static final long PROCESS_TIMEOUT_SECONDS = 60;
+    private static final long CLEANUP_TIMEOUT_SECONDS = 10;
 
     static final boolean WINDOWS = System.getProperty("os.name").toLowerCase().contains("win");
 
@@ -109,12 +117,84 @@ final class FakeJava {
         }
         pb.environment().putAll(env);
         Process p = pb.start();
-        String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-        String err = new String(p.getErrorStream().readAllBytes(), StandardCharsets.UTF_8);
-        if (!p.waitFor(60, TimeUnit.SECONDS)) {
-            p.destroyForcibly();
-            throw new IllegalStateException("launcher did not exit in time");
+        ExecutorService collectors = Executors.newFixedThreadPool(2);
+        Throwable failure = null;
+        try {
+            Future<byte[]> stdout = collectors.submit(() -> p.getInputStream().readAllBytes());
+            Future<byte[]> stderr = collectors.submit(() -> p.getErrorStream().readAllBytes());
+            if (!p.waitFor(PROCESS_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                terminate(p);
+                throw new IllegalStateException("launcher did not exit in time");
+            }
+            String out = new String(await(stdout, "stdout"), StandardCharsets.UTF_8);
+            String err = new String(await(stderr, "stderr"), StandardCharsets.UTF_8);
+            return new Result(p.exitValue(), out, err);
+        } catch (Exception | Error e) {
+            failure = e;
+            throw e;
+        } finally {
+            try {
+                cleanup(p, collectors);
+            } catch (Exception | Error cleanupFailure) {
+                if (failure != null) {
+                    failure.addSuppressed(cleanupFailure);
+                } else {
+                    throw cleanupFailure;
+                }
+            }
         }
-        return new Result(p.exitValue(), out, err);
+    }
+
+    private static void cleanup(Process process, ExecutorService collectors) throws Exception {
+        Throwable failure = null;
+        try {
+            terminate(process);
+        } catch (Exception | Error e) {
+            failure = e;
+        }
+        collectors.shutdownNow();
+        try {
+            if (!collectors.awaitTermination(CLEANUP_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                throw new IllegalStateException("launcher stream collectors did not terminate");
+            }
+        } catch (Exception | Error e) {
+            if (failure != null) {
+                failure.addSuppressed(e);
+            } else {
+                failure = e;
+            }
+        }
+        if (failure instanceof Exception exception) {
+            throw exception;
+        }
+        if (failure instanceof Error error) {
+            throw error;
+        }
+    }
+
+    private static byte[] await(Future<byte[]> collector, String stream) throws Exception {
+        try {
+            return collector.get(CLEANUP_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof Exception exception) {
+                throw exception;
+            }
+            if (cause instanceof Error error) {
+                throw error;
+            }
+            throw new IllegalStateException("failed to collect launcher " + stream, cause);
+        } catch (TimeoutException e) {
+            throw new IllegalStateException("timed out collecting launcher " + stream, e);
+        }
+    }
+
+    private static void terminate(Process process) throws InterruptedException {
+        if (process.isAlive()) {
+            process.destroyForcibly();
+            if (!process.waitFor(CLEANUP_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                throw new IllegalStateException("launcher could not be terminated");
+            }
+        }
     }
 }
