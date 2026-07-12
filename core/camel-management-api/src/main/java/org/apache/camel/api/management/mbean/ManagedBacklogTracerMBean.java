@@ -39,6 +39,12 @@ public interface ManagedBacklogTracerMBean {
     @ManagedAttribute(description = "Is tracing enabled")
     void setEnabled(boolean enabled);
 
+    @ManagedAttribute(description = "Whether activity tracking is enabled")
+    boolean isActivityEnabled();
+
+    @ManagedAttribute(description = "Whether activity tracking is enabled")
+    void setActivityEnabled(boolean activityEnabled);
+
     @ManagedAttribute(description = "Number of maximum traced messages in total to keep in the backlog (FIFO queue)")
     int getBacklogSize();
 

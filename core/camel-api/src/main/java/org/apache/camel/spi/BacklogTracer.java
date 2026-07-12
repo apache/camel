@@ -53,6 +53,14 @@ public interface BacklogTracer {
     }
 
     /**
+     * To turn on or off the activity tracking feature.
+     *
+     * @since 4.22
+     */
+    default void setActivityEnabled(boolean activityEnabled) {
+    }
+
+    /**
      * Is the tracer enabled.
      */
     boolean isEnabled();

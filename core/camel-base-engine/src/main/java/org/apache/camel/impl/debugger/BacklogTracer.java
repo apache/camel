@@ -86,6 +86,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     private boolean includeExchangeProperties = true;
     private boolean includeExchangeVariables = true;
     private boolean includeException = true;
+    private boolean activityEnabled;
     private boolean traceRests;
     private boolean traceTemplates;
     // a pattern to filter tracing nodes
@@ -314,6 +315,11 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
 
     private boolean shouldTraceFilter(Exchange exchange) {
         return predicate.matches(exchange);
+    }
+
+    @Override
+    public boolean isActivityEnabled() {
+        return activityEnabled;
     }
 
     @Override
@@ -687,6 +693,10 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     @Override
     public long incrementTraceCounter() {
         return traceCounter.incrementAndGet();
+    }
+
+    public void setActivityEnabled(boolean activityEnabled) {
+        this.activityEnabled = activityEnabled;
     }
 
     @Override

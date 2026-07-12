@@ -54,6 +54,8 @@ public class ProfileConfigurer {
             if (!enabled) {
                 config.tracerConfig().withStandby(true);
             }
+            // enable activity tracking so backlog tracer captures enriched data
+            config.tracerConfig().withActivityEnabled(true);
             // enable error registry to capture routing errors
             config.errorRegistryConfig().withEnabled(true);
             // dev profile allows insecure:dev options by default since those features

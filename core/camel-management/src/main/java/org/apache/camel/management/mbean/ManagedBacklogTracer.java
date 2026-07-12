@@ -77,6 +77,16 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     }
 
     @Override
+    public boolean isActivityEnabled() {
+        return backlogTracer.isActivityEnabled();
+    }
+
+    @Override
+    public void setActivityEnabled(boolean activityEnabled) {
+        backlogTracer.setActivityEnabled(activityEnabled);
+    }
+
+    @Override
     public int getBacklogSize() {
         return backlogTracer.getBacklogSize();
     }
