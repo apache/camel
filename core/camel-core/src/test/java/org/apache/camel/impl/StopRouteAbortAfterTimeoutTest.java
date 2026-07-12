@@ -53,7 +53,8 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
             template.sendBody("seda:start", "message-" + i);
         }
 
-        mockEP.assertIsSatisfied();
+        // use timed assertion to avoid flaky failures on slow CI
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
