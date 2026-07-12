@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * <li>a conservative Camel default.</li>
  * </ol>
  *
- * @since 4.22.0
+ * @since 4.22
  */
 public final class DeserializationFilterHelper {
 
