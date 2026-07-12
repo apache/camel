@@ -74,8 +74,22 @@ exit /B 1
 set "_CAND=%~1"
 if "%_CAND%"=="" exit /b 1
 if not exist "%_CAND%" exit /b 1
+
+:tryJavaProbePath
+set "_PROBE=%TEMP%\camel-java-probe-%RANDOM%-%RANDOM%.tmp"
+if exist "%_PROBE%" goto tryJavaProbePath
+"%_CAND%" -version <NUL >"%_PROBE%" 2>&1
+set "_PROBE_RC=%ERRORLEVEL%"
+if "%_PROBE_RC%"=="0" goto tryJavaParseProbe
+del /q "%_PROBE%" >NUL 2>&1
+set "_PROBE="
+exit /b 1
+
+:tryJavaParseProbe
 set "_RAW="
-for /f "tokens=3" %%v in ('""%_CAND%" -version" ^<NUL 2^>^&1 ^| findstr /i "version"') do if not defined _RAW set "_RAW=%%v"
+for /f "tokens=3" %%v in ('findstr /b /l /i /c:"java version " /c:"openjdk version " "%_PROBE%"') do if not defined _RAW set "_RAW=%%v"
+del /q "%_PROBE%" >NUL 2>&1
+set "_PROBE="
 if not defined _RAW exit /b 1
 set "_RAW=%_RAW:"=%"
 set "_MAJOR="
