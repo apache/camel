@@ -80,6 +80,16 @@ The Gentoo `java-config` auto-detection and the IBM AIX `$JAVA_HOME/jre/sh/java`
 removed; set `JAVA_HOME` or `JAVACMD` explicitly on those platforms.
 `JAVA_OPTS` handling is unchanged: when unset, the default `-Xmx512m` heap is applied.
 
+==== Native `camel.exe` in the launcher distribution
+
+The `camel-launcher` Windows distribution now ships a native x64 `bin/camel.exe`
+alongside `bin/camel.bat`. `camel.exe` is a thin bootstrap: it forwards all
+arguments to the adjacent `camel.bat` (preserving spaces and Unicode) and returns
+its exit code. It exists so package managers that require a genuine executable
+command (such as WinGet's portable installer) can expose `camel` directly. Direct
+users may continue to invoke `bin\camel.bat`; both behave identically. Windows
+ARM64 and x86 are not yet supported.
+
 === camel-langchain4j-agent
 
 The `Agent.chat()` method return type has changed from `String` to `Result<String>` (from `dev.langchain4j.service.Result`).
