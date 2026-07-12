@@ -37,50 +37,61 @@ REPO=
 
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false;
-darwin=false;
 case "`uname`" in
   CYGWIN*) cygwin=true ;;
-  Darwin*) darwin=true
-           if [ -z "$JAVA_VERSION" ] ; then
-             JAVA_VERSION="CurrentJDK"
-           else
-             echo "Using Java version: $JAVA_VERSION"
-           fi
-           if [ -z "$JAVA_HOME" ] ; then
-             JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/${JAVA_VERSION}/Home
-           fi
-           ;;
 esac
 
-if [ -z "$JAVA_HOME" ] ; then
-  if [ -r /etc/gentoo-release ] ; then
-    JAVA_HOME=`java-config --jre-home`
-  fi
-fi
-
-# For Cygwin, ensure paths are in UNIX format before anything is touched
+# For Cygwin, ensure JAVA_HOME is in UNIX format before it is probed.
 if $cygwin ; then
   [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
   [ -n "$CLASSPATH" ] && CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
 fi
 
-# If a specific java binary isn't specified search for the standard 'java' binary
-if [ -z "$JAVACMD" ] ; then
-  if [ -n "$JAVA_HOME"  ] ; then
-    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
-      # IBM's JDK on AIX uses strange locations for the executables
-      JAVACMD="$JAVA_HOME/jre/sh/java"
-    else
-      JAVACMD="$JAVA_HOME/bin/java"
-    fi
-  else
-    JAVACMD=`which java`
-  fi
-fi
+# --- Shared Java 17+ discovery contract ---
+# Candidates are tried in order: JAVACMD, $JAVA_HOME/bin/java, java on PATH, CAMEL_FALLBACK_JAVA.
+# ($JAVA_HOME is also how SDKMAN's java candidate exposes its runtime.)
+# Each must exist, be executable, and report a Java major version >= CAMEL_MIN_JAVA.
+# Probe output is captured and never printed during a normal invocation.
+CAMEL_MIN_JAVA=17
 
-if [ ! -x "$JAVACMD" ] ; then
-  echo "Error: JAVA_HOME is not defined correctly." 1>&2
-  echo "  We cannot execute $JAVACMD" 1>&2
+# Echo the Java major version of the launcher in $1, or nothing if it cannot be determined.
+camel_java_major() {
+  _cjm_out=`"$1" -version 2>&1` || return 1
+  _cjm_ver=`echo "$_cjm_out" | sed -n 's/.*version "\([0-9][0-9.]*\).*/\1/p' | head -n 1`
+  [ -n "$_cjm_ver" ] || return 1
+  case "$_cjm_ver" in
+    1.*) echo "$_cjm_ver" | cut -d. -f2 ;;
+    *)   echo "$_cjm_ver" | cut -d. -f1 ;;
+  esac
+}
+
+# Return 0 and set JAVACMD when $1 is an existing, executable, Java >= CAMEL_MIN_JAVA launcher.
+camel_try_java() {
+  [ -n "$1" ] || return 1
+  [ -x "$1" ] || return 1
+  _ctj_major=`camel_java_major "$1"` || return 1
+  [ -n "$_ctj_major" ] || return 1
+  { [ "$_ctj_major" -ge "$CAMEL_MIN_JAVA" ]; } 2>/dev/null || return 1
+  JAVACMD="$1"
+  return 0
+}
+
+if camel_try_java "$JAVACMD"; then
+  :
+elif [ -n "$JAVA_HOME" ] && camel_try_java "$JAVA_HOME/bin/java"; then
+  :
+elif _camel_path_java=`command -v java 2>/dev/null` && camel_try_java "$_camel_path_java"; then
+  :
+elif camel_try_java "$CAMEL_FALLBACK_JAVA"; then
+  :
+else
+  echo "Error: no suitable Java runtime found. Camel CLI requires Java $CAMEL_MIN_JAVA or newer." 1>&2
+  echo "Checked the following sources (in order):" 1>&2
+  echo "  1. JAVACMD             = ${JAVACMD:-<unset>}" 1>&2
+  echo "  2. JAVA_HOME/bin/java  = ${JAVA_HOME:+$JAVA_HOME/bin/java}" 1>&2
+  echo "  3. java on PATH        = ${_camel_path_java:-<not found>}" 1>&2
+  echo "  4. CAMEL_FALLBACK_JAVA = ${CAMEL_FALLBACK_JAVA:-<unset>}" 1>&2
+  echo "Install a Java $CAMEL_MIN_JAVA+ runtime and either add it to PATH, set JAVA_HOME, or set JAVACMD." 1>&2
   exit 1
 fi
 
