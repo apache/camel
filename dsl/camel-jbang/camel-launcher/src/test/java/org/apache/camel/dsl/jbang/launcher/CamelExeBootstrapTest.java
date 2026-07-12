@@ -25,17 +25,16 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Windows-only behavioral test for the native camel.exe bootstrap. Requires the build-windows-exe
- * profile to have produced target/camel.exe; the test fails loudly if it is missing so a broken
- * native build does not pass silently.
+ * Windows-only behavioral test for the native camel.exe bootstrap. Requires the build-windows-exe profile to have
+ * produced target/camel.exe; the test fails loudly if it is missing so a broken native build does not pass silently.
  */
 @EnabledOnOs(OS.WINDOWS)
 class CamelExeBootstrapTest {
