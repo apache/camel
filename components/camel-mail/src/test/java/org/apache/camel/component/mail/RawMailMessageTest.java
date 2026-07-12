@@ -69,8 +69,6 @@ public class RawMailMessageTest extends CamelTestSupport {
 
     @Test
     public void testGetRawJavaMailMessage() throws Exception {
-        Mailbox.clearAll();
-
         Map<String, Object> map = new HashMap<>();
         map.put("To", davsclaus.getEmail());
         map.put("From", "jstrachan@apache.org");
@@ -188,7 +186,7 @@ public class RawMailMessageTest extends CamelTestSupport {
                      + "&closeFolder=false&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
                         .to("mock://rawMessagePop3");
 
-                from(jonesImap.uriPrefix(Protocol.imap)
+                from(jonesRawImap.uriPrefix(Protocol.imap)
                      + "&closeFolder=false&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
                         .to("mock://rawMessageImap");
 
