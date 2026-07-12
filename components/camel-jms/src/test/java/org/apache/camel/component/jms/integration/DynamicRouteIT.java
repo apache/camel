@@ -17,11 +17,13 @@
 package org.apache.camel.component.jms.integration;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,14 +42,18 @@ public class DynamicRouteIT extends AbstractJMSTest {
     private final MyBean myBean = new MyBean();
     private final String componentName = "jms";
     protected ProducerTemplate template;
+    protected CamelContext context;
 
     @Test
     void testDynamicRouteWithJms() {
-        String response = template.requestBody("jms:queue:request?replyTo=bar", "foo", String.class);
-        assertEquals("response is foo", response);
-        response = template.requestBody("jms:queue:request", "bar", String.class);
-        assertEquals("response is bar", response);
+        // Wait for the JMS consumer to be fully subscribed to the broker
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "jmsConsumer");
 
+        String response
+                = template.requestBody("jms:queue:DynamicRouteIT.request?replyTo=DynamicRouteIT.reply", "foo", String.class);
+        assertEquals("response is foo", response);
+        response = template.requestBody("jms:queue:DynamicRouteIT.request", "bar", String.class);
+        assertEquals("response is bar", response);
     }
 
     @Test
@@ -63,7 +69,7 @@ public class DynamicRouteIT extends AbstractJMSTest {
 
         return new RouteBuilder() {
             public void configure() {
-                from("jms:queue:request")
+                from("jms:queue:DynamicRouteIT.request").routeId("jmsConsumer")
                         .dynamicRouter().method(MyDynamicRouter.class, "route");
                 from("direct:start")
                         .dynamicRouter(method(new MyDynamicRouter()));
@@ -107,6 +113,7 @@ public class DynamicRouteIT extends AbstractJMSTest {
 
     @BeforeEach
     void setUpRequirements() {
+        context = camelContextExtension.getContext();
         template = camelContextExtension.getProducerTemplate();
     }
 
