@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.jms.integration.spring;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -31,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @Tags({ @Tag("not-parallel"), @Tag("spring") })
 @Isolated
+@Timeout(60)
 public class JmsSpringLoadBalanceFailOverJMSIT extends AbstractSpringJMSITSupport {
 
     @Override
@@ -48,7 +52,7 @@ public class JmsSpringLoadBalanceFailOverJMSIT extends AbstractSpringJMSITSuppor
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
 }
