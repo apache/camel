@@ -18,6 +18,7 @@ package org.apache.camel.processor.jpa;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.persistence.OptimisticLockException;
@@ -32,6 +33,11 @@ import org.junit.jupiter.api.Test;
 
 public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + Customer.class.getName() + " x";
+
+    // Barrier that forces both "not-locked" threads to complete the read (pollEnrich)
+    // before either proceeds to the write (to("jpa://...")), ensuring they both hold
+    // stale version references and the second commit triggers an OptimisticLockException.
+    private final CyclicBarrier notLockedBarrier = new CyclicBarrier(2);
 
     @BeforeEach
     public void setupBeans() {
@@ -71,7 +77,12 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
         MockEndpoint mock = getMockEndpoint("mock:not-locked");
         MockEndpoint errMock = getMockEndpoint("mock:error");
 
-        mock.expectedBodiesReceived("orders: 1");
+        // Without pessimistic locking, two concurrent updates to the same versioned entity
+        // should cause an OptimisticLockException for the loser. The CyclicBarrier in the
+        // enrichment strategy (see createRouteBuilder) forces both threads to read the entity
+        // before either can proceed to the write, making the conflict deterministic.
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isEqualTo("orders: 1");
 
         errMock.expectedMessageCount(1);
         errMock.message(0).body().isInstanceOf(OptimisticLockException.class);
@@ -82,7 +93,7 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
         template.asyncRequestBodyAndHeaders("direct:not-locked", "message", headers);
         template.asyncRequestBodyAndHeaders("direct:not-locked", "message", headers);
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override
@@ -95,6 +106,28 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
                     public Exchange aggregate(Exchange originalExchange, Exchange jpaExchange) {
                         Customer customer = jpaExchange.getIn().getBody(Customer.class);
                         customer.setOrderCount(customer.getOrderCount() + 1);
+
+                        return jpaExchange;
+                    }
+                };
+
+                // Enrichment strategy for the not-locked route that synchronizes both
+                // threads after the read so they both hold stale entity versions.
+                // The barrier wait happens AFTER the entity has been read and mutated
+                // but BEFORE it is written back to the DB via the subsequent to("jpa://...").
+                AggregationStrategy notLockedEnrichStrategy = new AggregationStrategy() {
+                    @Override
+                    public Exchange aggregate(Exchange originalExchange, Exchange jpaExchange) {
+                        Customer customer = jpaExchange.getIn().getBody(Customer.class);
+                        customer.setOrderCount(customer.getOrderCount() + 1);
+
+                        try {
+                            // Wait for the other thread to also complete its read, ensuring
+                            // both threads proceed to the write with the same stale version.
+                            notLockedBarrier.await(10, TimeUnit.SECONDS);
+                        } catch (Exception e) {
+                            throw new RuntimeException("Barrier wait interrupted", e);
+                        }
 
                         return jpaExchange;
                     }
@@ -124,7 +157,7 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
                         .pollEnrich()
                         .simple("jpa://" + Customer.class.getName()
                                 + "?query=select c from Customer c where c.name like '${header.name}'")
-                        .aggregationStrategy(enrichStrategy)
+                        .aggregationStrategy(notLockedEnrichStrategy)
                         .to("jpa://" + Customer.class.getName())
                         .setBody().simple("orders: ${body.orderCount}")
                         .to("mock:not-locked");
