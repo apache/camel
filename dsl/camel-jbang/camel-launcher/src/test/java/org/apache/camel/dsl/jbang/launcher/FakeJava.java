@@ -121,6 +121,7 @@ final class FakeJava {
         pb.environment().put("PATH", WINDOWS ? System.getenv("PATH") : "/usr/bin:/bin");
         if (WINDOWS) {
             pb.environment().put("SystemRoot", System.getenv("SystemRoot"));
+            pb.environment().put("OS", "Windows_NT");
             pb.environment().put("PATHEXT", ".COM;.EXE;.BAT;.CMD");
         }
         pb.environment().putAll(env);

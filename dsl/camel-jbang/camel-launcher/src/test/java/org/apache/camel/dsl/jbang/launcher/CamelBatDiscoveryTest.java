@@ -48,8 +48,10 @@ class CamelBatDiscoveryTest {
     private static final Path SCRIPT = Paths.get("src/main/resources/bin/camel.bat");
 
     private static final String JAVA17 = "openjdk version \"17.0.2\" 2022-01-18";
+    private static final String JAVA21 = "openjdk version \"21.0.3\" 2024-04-16";
     private static final String JAVA11 = "openjdk version \"11.0.20\" 2023-07-18";
     private static final String JAVA8 = "java version \"1.8.0_202\"";
+    private static final String JAVA17_EA = "openjdk version \"17-ea\"";
     private static final String GARBAGE = "totally not a java banner";
 
     private Path home(Path base) throws Exception {
@@ -57,9 +59,20 @@ class CamelBatDiscoveryTest {
     }
 
     private Map<String, String> isolatedEnvironment() {
+        String systemRoot = System.getenv("SystemRoot");
+        assertTrue(systemRoot != null && !systemRoot.isBlank(), "Windows test fixture requires SystemRoot");
+        Path system32 = Path.of(systemRoot, "System32");
+        assertTrue(Files.isDirectory(system32), "Windows test fixture requires SystemRoot\\System32: " + system32);
         Map<String, String> env = new HashMap<>();
-        env.put("PATH", Path.of(System.getenv("SystemRoot"), "System32").toString());
+        env.put("PATH", system32.toString());
         return env;
+    }
+
+    private Path currentJavaHome() {
+        Path javaHome = Path.of(System.getProperty("java.home"));
+        assertTrue(Files.isRegularFile(javaHome.resolve("bin/java.exe")),
+                "Windows test fixture requires the current JDK java.exe: " + javaHome);
+        return javaHome;
     }
 
     @Test
@@ -78,17 +91,104 @@ class CamelBatDiscoveryTest {
     }
 
     @Test
-    void honorsJavaHomeWhenOnlySource(@TempDir Path base) throws Exception {
+    void acceptsJava21ViaJavacmd(@TempDir Path base) throws Exception {
         Path h = home(base);
-        writeRealJavaMarkerJar(h);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "JAVA21");
         Map<String, String> env = isolatedEnvironment();
-        env.put("JAVA_HOME", System.getProperty("java.home"));
+        env.put("JAVACMD", java.toString());
 
         FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
 
         assertEquals(0, r.exitCode(), r.stderr());
-        assertTrue(r.stdout().contains("RAN=JAVAHOME"), r.stdout());
+        assertTrue(r.stdout().contains("RAN=JAVA21"), r.stdout());
+    }
+
+    @Test
+    void precedenceJavacmdBeatsJavaHome(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "JAVACMD-FIRST");
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", java.toString());
+        env.put("JAVA_HOME", currentJavaHome().toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=JAVACMD-FIRST"), r.stdout());
+        assertFalse(r.stdout().contains("RAN=NATIVE-JAVA"), r.stdout());
+    }
+
+    @Test
+    void honorsJavaHomeWhenOnlySource(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        writeRealJavaMarkerJar(h);
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVA_HOME", currentJavaHome().toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=NATIVE-JAVA"), r.stdout());
         assertTrue(r.stdout().contains("version"), r.stdout());
+    }
+
+    @Test
+    void missingJavacmdContinuesToJavaHome(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        writeRealJavaMarkerJar(h);
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", base.resolve("missing-java.bat").toString());
+        env.put("JAVA_HOME", currentJavaHome().toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=NATIVE-JAVA"), r.stdout());
+    }
+
+    @Test
+    void presentButNonRunnableJavacmdContinuesToJavaHome(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        writeRealJavaMarkerJar(h);
+        Path nonRunnable = base.resolve("not-a-program.exe");
+        Files.writeString(nonRunnable, "not a Windows executable", StandardCharsets.UTF_8);
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", nonRunnable.toString());
+        env.put("JAVA_HOME", currentJavaHome().toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=NATIVE-JAVA"), r.stdout());
+    }
+
+    @Test
+    void acceptsNativeJavaFromPath(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        writeRealJavaMarkerJar(h);
+        Map<String, String> env = isolatedEnvironment();
+        env.put("PATH", currentJavaHome().resolve("bin") + ";" + env.get("PATH"));
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=NATIVE-JAVA"), r.stdout());
+    }
+
+    @Test
+    void precedenceNativePathBeatsCamelFallbackJava(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        writeRealJavaMarkerJar(h);
+        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA17, 0, "FALLBACK");
+        Map<String, String> env = isolatedEnvironment();
+        env.put("PATH", currentJavaHome().resolve("bin") + ";" + env.get("PATH"));
+        env.put("CAMEL_FALLBACK_JAVA", fallback.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=NATIVE-JAVA"), r.stdout());
+        assertFalse(r.stdout().contains("RAN=FALLBACK"), r.stdout());
     }
 
     @Test
@@ -132,6 +232,22 @@ class CamelBatDiscoveryTest {
         FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
 
         assertEquals(1, r.exitCode());
+    }
+
+    @Test
+    void rejectsNonnumericMajorAndContinuesToFallback(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path earlyAccess = FakeJava.writeFakeJava(base.resolve("early-access"), "java", JAVA17_EA, 0, "EARLY");
+        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA17, 0, "FALLBACK");
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", earlyAccess.toString());
+        env.put("CAMEL_FALLBACK_JAVA", fallback.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=FALLBACK"), r.stdout());
+        assertFalse(r.stdout().contains("RAN=EARLY"), r.stdout());
     }
 
     @Test
@@ -179,7 +295,23 @@ class CamelBatDiscoveryTest {
     @Test
     void javacmdBatchWrapperReturnsForProbeAndLaunchAndPreservesBehavior(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path wrapper = FakeJava.writeFakeJava(base.resolve("wrapper"), "java", JAVA17, 37, "JAVACMD-WRAPPER");
+        Path wrapper = writeBatch(base.resolve("wrapper"), "java",
+                "if \"%~1\"==\"-version\" (",
+                "  echo " + JAVA17 + " 1>&2",
+                "  exit /b 0",
+                ")",
+                "set ARG_COUNT=0",
+                "for %%a in (%*) do set /a ARG_COUNT+=1 >NUL",
+                "echo ARG_COUNT=%ARG_COUNT%",
+                "echo ARG1=[%~1]",
+                "echo ARG2=[%~2]",
+                "echo ARG3=[%~3]",
+                "echo ARG4=[%~4]",
+                "echo ARG5=[%~5]",
+                "echo ARG6=[%~6]",
+                "echo STDERR=JAVACMD-WRAPPER 1>&2",
+                "more",
+                "exit /b 37");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", wrapper.toString());
 
@@ -187,11 +319,30 @@ class CamelBatDiscoveryTest {
                 "my route.yaml");
 
         assertEquals(37, r.exitCode(), "batch child exit code must be propagated");
-        assertTrue(r.stdout().contains("RAN=JAVACMD-WRAPPER"), r.stdout());
-        assertTrue(r.stdout().contains("run"), r.stdout());
-        assertTrue(r.stdout().contains("my route.yaml"), r.stdout());
+        assertTrue(r.stdout().contains("ARG_COUNT=5"), r.stdout());
+        assertTrue(r.stdout().contains("ARG1=[-Xmx512m]"), r.stdout());
+        assertTrue(r.stdout().contains("ARG2=[-jar]"), r.stdout());
+        assertTrue(r.stdout().contains("ARG3=[" + h.resolve("camel-launcher-9.9.9.jar") + "]"), r.stdout());
+        assertTrue(r.stdout().contains("ARG4=[run]"), r.stdout());
+        assertTrue(r.stdout().contains("ARG5=[my route.yaml]"), r.stdout());
+        assertTrue(r.stdout().contains("ARG6=[]"), r.stdout());
         assertTrue(r.stdout().contains("route input"), "stdin did not reach batch child stdout: " + r.stdout());
         assertTrue(r.stderr().contains("STDERR=JAVACMD-WRAPPER"), "batch child stderr was not preserved: " + r.stderr());
+    }
+
+    @Test
+    void finalBatchWrapperReturnsToLauncherStatementAfterCall(@TempDir Path base) throws Exception {
+        Path sentinel = base.resolve("launcher-resumed.txt");
+        Path h = instrumentBatchLaunchReturn(home(base), sentinel);
+        Path wrapper = FakeJava.writeFakeJava(base.resolve("wrapper"), "java", JAVA17, 41, "RETURN");
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", wrapper.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(41, r.exitCode(), "captured batch child exit code must survive sentinel instrumentation");
+        assertEquals("LAUNCHER-RESUMED", Files.readString(sentinel).trim(),
+                "launcher did not resume after the final batch wrapper call");
     }
 
     @Test
@@ -277,6 +428,7 @@ class CamelBatDiscoveryTest {
 
         assertEquals(0, r.exitCode(), r.stderr());
         assertTrue(r.stdout().contains("RAN=VALID-BANNER"), r.stdout());
+        assertFalse(r.stdout().contains("wrapper version metadata"), "probe output leaked: " + r.stdout());
         assertFalse(r.stderr().contains("wrapper version metadata"), "probe output leaked: " + r.stderr());
     }
 
@@ -309,6 +461,23 @@ class CamelBatDiscoveryTest {
         return script;
     }
 
+    private Path instrumentBatchLaunchReturn(Path launcherHome, Path sentinel) throws Exception {
+        Path launcher = launcherHome.resolve("camel.bat");
+        String source = Files.readString(launcher, StandardCharsets.UTF_8);
+        String newline = source.contains("\r\n") ? "\r\n" : "\n";
+        String launchBlock = "call \"%JAVACMD%\" %JAVA_OPTS% -jar \"%LAUNCHER_JAR%\" %*" + newline
+                             + "set ERROR_CODE=%ERRORLEVEL%" + newline
+                             + "goto javaExecuted";
+        String instrumentedBlock = "call \"%JAVACMD%\" %JAVA_OPTS% -jar \"%LAUNCHER_JAR%\" %*" + newline
+                                   + "set ERROR_CODE=%ERRORLEVEL%" + newline
+                                   + "echo LAUNCHER-RESUMED>\"" + sentinel + "\"" + newline
+                                   + "goto javaExecuted";
+        String instrumented = source.replace(launchBlock, instrumentedBlock);
+        assertFalse(instrumented.equals(source), "could not instrument copied batch-launch block");
+        Files.writeString(launcher, instrumented, StandardCharsets.UTF_8);
+        return launcherHome;
+    }
+
     private void writeRealJavaMarkerJar(Path launcherHome) throws Exception {
         Manifest manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
@@ -332,7 +501,7 @@ final class CamelBatRealJavaMarker {
     }
 
     public static void main(String[] args) {
-        System.out.println("RAN=JAVAHOME");
+        System.out.println("RAN=NATIVE-JAVA");
         System.out.println("ARGS=" + Arrays.toString(args));
     }
 }

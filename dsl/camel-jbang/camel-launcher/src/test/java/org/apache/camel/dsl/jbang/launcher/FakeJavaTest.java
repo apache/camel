@@ -23,6 +23,8 @@ import java.time.Duration;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,6 +59,23 @@ class FakeJavaTest {
         assertTrue(result.stdout().contains("RAN=STDIO"), result.stdout());
         assertTrue(result.stdout().contains("route input"), result.stdout());
         assertTrue(result.stderr().contains("STDERR=STDIO"), result.stderr());
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void windowsEnvironmentExercisesSetlocalEndlocalAndPreservesExit() throws Exception {
+        Path script = tempDir.resolve("setlocal-exit.bat");
+        Files.writeString(script, "@echo off\r\n"
+                                  + "if not \"%OS%\"==\"Windows_NT\" exit /b 91\r\n"
+                                  + "if \"%OS%\"==\"Windows_NT\" setlocal\r\n"
+                                  + "set ERROR_CODE=43\r\n"
+                                  + "if \"%OS%\"==\"Windows_NT\" endlocal & set ERROR_CODE=%ERROR_CODE%\r\n"
+                                  + "exit /b %ERROR_CODE%\r\n",
+                StandardCharsets.UTF_8);
+
+        FakeJava.Result result = FakeJava.run(script, Map.of());
+
+        assertEquals(43, result.exitCode(), "Windows_NT setlocal/endlocal path did not preserve exit status");
     }
 
     private static String largeOutputScript() {
