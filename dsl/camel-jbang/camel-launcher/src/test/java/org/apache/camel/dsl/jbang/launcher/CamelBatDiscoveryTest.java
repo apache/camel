@@ -28,6 +28,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -116,6 +117,23 @@ class CamelBatDiscoveryTest {
         assertEquals(0, r.exitCode(), r.stderr());
         assertTrue(r.stdout().contains("RAN=JAVACMD-FIRST"), r.stdout());
         assertFalse(r.stdout().contains("RAN=NATIVE-JAVA"), r.stdout());
+    }
+
+    @Test
+    void candidateSourceOrderIsJavacmdJavaHomePathThenFallback(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        String launcher = Files.readString(h.resolve("camel.bat"), StandardCharsets.UTF_8);
+        String candidateOrder = String.join("",
+                "call\\s+:tryJava\\s+\"%JAVACMD%\"",
+                ".*?if\\s+defined\\s+JAVA_HOME\\s+call\\s+:tryJava\\s+",
+                "\"%JAVA_HOME%\\\\bin\\\\java\\.exe\"",
+                ".*?for\\s+%%p\\s+in\\s*\\(\\s*java\\.exe\\s*\\)\\s+do\\s+",
+                "call\\s+:tryJava\\s+\"%%~\\$PATH:p\"",
+                ".*?call\\s+:tryJava\\s+\"%CAMEL_FALLBACK_JAVA%\"");
+        Pattern orderedCandidates = Pattern.compile(candidateOrder, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+
+        assertTrue(orderedCandidates.matcher(launcher).find(),
+                "candidate order must be JAVACMD, JAVA_HOME, PATH java.exe, CAMEL_FALLBACK_JAVA");
     }
 
     @Test
