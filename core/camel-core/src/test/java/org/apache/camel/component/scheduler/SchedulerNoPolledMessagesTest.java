@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.scheduler;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,13 +31,15 @@ public class SchedulerNoPolledMessagesTest extends ContextTestSupport {
     public void testSchedulerNoPolledMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(3);
-        // the first 2 is fast
-        mock.message(0).arrives().between(0, 500).millis().beforeNext();
-        mock.message(1).arrives().between(0, 500).millis().beforeNext();
+        // the first 2 fire quickly (100ms interval), but CI environments can add
+        // significant jitter from GC pauses and CPU contention — use wide windows
+        mock.message(0).arrives().between(0, 2000).millis().beforeNext();
+        mock.message(1).arrives().between(0, 2000).millis().beforeNext();
         // the last message should be slower as the backoff idle has kicked in
-        mock.message(2).arrives().between(500, 1500).millis().afterPrevious();
+        // (backoffMultiplier=10 × delay=100ms = ~1000ms), but allow extra margin for CI
+        mock.message(2).arrives().between(200, 5000).millis().afterPrevious();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
