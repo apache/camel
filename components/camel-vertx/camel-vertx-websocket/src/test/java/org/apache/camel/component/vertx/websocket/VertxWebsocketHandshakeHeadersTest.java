@@ -137,7 +137,6 @@ public class VertxWebsocketHandshakeHeadersTest extends VertxWebSocketTestSuppor
 
     @Test
     public void testHandshakeHeadersAsConsumer() throws Exception {
-        CountDownLatch latch = new CountDownLatch(1);
         Vertx vertx = Vertx.vertx();
         Router router = Router.router(vertx);
         Route route = router.route("/ws");
@@ -177,7 +176,7 @@ public class VertxWebsocketHandshakeHeadersTest extends VertxWebSocketTestSuppor
                             // Send a text message to consumer
                             ServerWebSocket webSocket = toWebSocket.result();
                             webSocket.writeTextMessage("Hello World");
-                            webSocket.writeTextMessage("Ping").onComplete(event -> latch.countDown());
+                            webSocket.writeTextMessage("Ping");
                         } else {
                             // the upgrade failed
                             context.fail(toWebSocket.cause());
@@ -205,13 +204,14 @@ public class VertxWebsocketHandshakeHeadersTest extends VertxWebSocketTestSuppor
             }
         });
 
+        // Set up mock expectations BEFORE starting the context to avoid race conditions
+        // where messages arrive before expectations are configured
+        MockEndpoint mockEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        mockEndpoint.expectedBodiesReceivedInAnyOrder("Hello World", "Ping");
+
         context.start();
         try {
-            assertTrue(latch.await(10, TimeUnit.SECONDS));
-
-            MockEndpoint mockEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-            mockEndpoint.expectedBodiesReceivedInAnyOrder("Hello World", "Ping");
-            mockEndpoint.assertIsSatisfied();
+            MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
         } finally {
             try {
                 host.stop();
