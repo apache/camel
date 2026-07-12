@@ -16,12 +16,8 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpMethod;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.PlatformHttpConstants;
@@ -47,51 +43,22 @@ class VertxPlatformHttpOAuthProfileTest {
     @Test
     void rejectsMissingBearerTokenBeforeBodyHandler() throws Exception {
         CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
-        HttpClient client = null;
         try {
             addRoute(context);
             VertxPlatformHttpEngineTest.startCamelContext(context);
 
-            VertxPlatformHttpServer server = context.hasService(VertxPlatformHttpServer.class);
-            client = server.getVertx().createHttpClient();
-
-            // Collect status code and response body atomically inside the response
-            // handler to avoid a race where the body arrives and is discarded before
-            // the test registers a body() handler.
-            CompletableFuture<int[]> statusFuture = new CompletableFuture<>();
-            CompletableFuture<String> bodyFuture = new CompletableFuture<>();
-            client.request(HttpMethod.POST, server.getPort(), "localhost", "/secure")
-                    .onSuccess(request -> {
-                        request.putHeader("Content-Length", "1024");
-                        request.response()
-                                .onSuccess(response -> {
-                                    statusFuture.complete(new int[] { response.statusCode() });
-                                    response.body()
-                                            .onSuccess(buffer -> bodyFuture.complete(buffer.toString()))
-                                            .onFailure(bodyFuture::completeExceptionally);
-                                })
-                                .onFailure(t -> {
-                                    statusFuture.completeExceptionally(t);
-                                    bodyFuture.completeExceptionally(t);
-                                });
-                        request.sendHead().onFailure(t -> {
-                            statusFuture.completeExceptionally(t);
-                            bodyFuture.completeExceptionally(t);
-                        });
-                    })
-                    .onFailure(t -> {
-                        statusFuture.completeExceptionally(t);
-                        bodyFuture.completeExceptionally(t);
-                    });
-
-            assertEquals(401, statusFuture.get(5, TimeUnit.SECONDS)[0]);
-            assertEquals("Unauthorized", bodyFuture.get(5, TimeUnit.SECONDS));
+            // Send a POST with a body but no Authorization header.
+            // The server must reject the request before reaching the route.
+            given()
+                    .body("hello")
+                    .when()
+                    .post("/secure")
+                    .then()
+                    .statusCode(401)
+                    .body(equalTo("Unauthorized"));
 
             assertEquals(0, routeInvocations.get());
         } finally {
-            if (client != null) {
-                client.close().toCompletionStage().toCompletableFuture().get(5, TimeUnit.SECONDS);
-            }
             context.stop();
         }
     }
