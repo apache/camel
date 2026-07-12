@@ -70,7 +70,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     private final TracingEventNotifier eventNotifier = new TracingEventNotifier();
     private final SpanStorageManager spanStorageManager = new SpanStorageManagerExchange();
     private final SpanDecoratorManager spanDecoratorManager = new SpanDecoratorManagerImpl();
-    private boolean activityEnabled;
+    private BacklogTracer backlogTracer;
 
     /*
      * It has to be provided by the specific implementation
@@ -212,12 +212,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         InterceptStrategy interceptStrategy = new TraceProcessorsInterceptStrategy(this);
         camelContext.getCamelContextExtension().addInterceptStrategy(interceptStrategy);
 
-        // check if BacklogTracer activity is enabled so we can enrich activity data with span attributes
-        BacklogTracer backlogTracer
-                = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
-        if (backlogTracer != null) {
-            activityEnabled = backlogTracer.isActivityEnabled();
-        }
+        backlogTracer = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
 
         initTracer();
         ServiceHelper.startService(eventNotifier);
@@ -360,7 +355,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                 spanDecorator.getExtractor(exchange));
         span.setTag(TagConstants.OP, op.toString());
 
-        if (activityEnabled && op == Op.EVENT_SENT) {
+        if (backlogTracer != null && backlogTracer.isActivityEnabled() && op == Op.EVENT_SENT) {
             // wrap with recording span to capture decorator attributes for activity enrichment
             RecordingSpan recording = new RecordingSpan(span);
             spanDecorator.beforeTracingEvent(recording, exchange, endpoint);
