@@ -498,8 +498,26 @@ class ErrorsTab extends AbstractTableTab {
         // message history
         if (ei.messageHistory != null && ei.messageHistory.length > 0) {
             lines.add(Line.from(Span.styled(" Message History:", Theme.notice().bold())));
-            for (String step : ei.messageHistory) {
-                lines.add(Line.from(Span.raw("   " + TuiHelper.fixControlChars(step))));
+            for (int i = 0; i < ei.messageHistory.length; i++) {
+                String s = TuiHelper.fixControlChars(ei.messageHistory[i]);
+                boolean lastAndFailed = !ei.handled && i == ei.messageHistory.length - 1;
+                int bracket = s.indexOf('[');
+                if (bracket > 0) {
+                    String routeId = s.substring(0, bracket);
+                    String rest = s.substring(bracket);
+                    if (lastAndFailed) {
+                        lines.add(Line.from(
+                                Span.styled("   " + routeId, Theme.error()),
+                                Span.styled(rest, Theme.error())));
+                    } else {
+                        lines.add(Line.from(
+                                Span.styled("   " + routeId, Style.EMPTY.fg(Theme.accent())),
+                                Span.styled(rest, Theme.muted())));
+                    }
+                } else {
+                    lines.add(Line.from(Span.styled("   " + s,
+                            lastAndFailed ? Theme.error() : Style.EMPTY)));
+                }
             }
             lines.add(Line.from(Span.raw("")));
         }
