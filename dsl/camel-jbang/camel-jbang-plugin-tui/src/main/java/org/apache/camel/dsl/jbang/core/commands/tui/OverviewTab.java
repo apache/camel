@@ -545,7 +545,7 @@ class OverviewTab extends AbstractTab {
                     rightCell("ROUTE", 7, Style.EMPTY.bold()),
                     rightCell("MSG/S", 8, Style.EMPTY.bold()),
                     centerCell(sortLabel("TOTAL", "total"), 14, sortStyle("total")),
-                    centerCell(sortLabel("FAIL", "fail"), 10, sortStyle("fail")),
+                    centerCell(sortLabel("FAIL", "fail"), 14, sortStyle("fail")),
                     rightCell(timingHeader, 14, Style.EMPTY.bold()),
                     Cell.from(""));
 
@@ -558,7 +558,7 @@ class OverviewTab extends AbstractTab {
                     Constraint.length(7),
                     Constraint.length(8),
                     Constraint.length(14),
-                    Constraint.length(10),
+                    Constraint.length(14),
                     Constraint.length(14),
                     Constraint.fill()
             };
