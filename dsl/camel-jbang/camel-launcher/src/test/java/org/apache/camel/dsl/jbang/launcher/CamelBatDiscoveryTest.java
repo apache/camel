@@ -23,12 +23,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -123,17 +123,17 @@ class CamelBatDiscoveryTest {
     void candidateSourceOrderIsJavacmdJavaHomePathThenFallback(@TempDir Path base) throws Exception {
         Path h = home(base);
         String launcher = Files.readString(h.resolve("camel.bat"), StandardCharsets.UTF_8);
-        String candidateOrder = String.join("",
-                "call\\s+:tryJava\\s+\"%JAVACMD%\"",
-                ".*?if\\s+defined\\s+JAVA_HOME\\s+call\\s+:tryJava\\s+",
-                "\"%JAVA_HOME%\\\\bin\\\\java\\.exe\"",
-                ".*?for\\s+%%p\\s+in\\s*\\(\\s*java\\.exe\\s*\\)\\s+do\\s+",
-                "call\\s+:tryJava\\s+\"%%~\\$PATH:p\"",
-                ".*?call\\s+:tryJava\\s+\"%CAMEL_FALLBACK_JAVA%\"");
-        Pattern orderedCandidates = Pattern.compile(candidateOrder, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        List<String> expected = expectedDiscoveryLines();
 
-        assertTrue(orderedCandidates.matcher(launcher).find(),
-                "candidate order must be JAVACMD, JAVA_HOME, PATH java.exe, CAMEL_FALLBACK_JAVA");
+        assertEquals(expected, executableDiscoveryLines(launcher),
+                "active discovery order must be JAVACMD, JAVA_HOME, PATH java.exe, CAMEL_FALLBACK_JAVA");
+
+        String commentedCandidates = String.join("\n", expected.stream().map(line -> "REM " + line).toList());
+        String commentedDecoy = "set \"CAMEL_JAVACMD=\"\n" + commentedCandidates + "\n"
+                                + ":haveJava\n"
+                                + String.join("\n", expected);
+        assertFalse(expected.equals(executableDiscoveryLines(commentedDecoy)),
+                "commented or out-of-region candidate text must not satisfy the active discovery contract");
     }
 
     @Test
@@ -477,6 +477,45 @@ class CamelBatDiscoveryTest {
         Path script = dir.resolve(name + ".bat");
         Files.writeString(script, "@echo off\r\n" + String.join("\r\n", lines) + "\r\n", StandardCharsets.UTF_8);
         return script;
+    }
+
+    private List<String> expectedDiscoveryLines() {
+        return List.of(
+                "call :tryJava \"%JAVACMD%\"",
+                "if defined CAMEL_JAVACMD goto haveJava",
+                "if defined JAVA_HOME call :tryJava \"%JAVA_HOME%\\bin\\java.exe\"",
+                "if defined CAMEL_JAVACMD goto haveJava",
+                "for %%p in (java.exe) do call :tryJava \"%%~$PATH:p\"",
+                "if defined CAMEL_JAVACMD goto haveJava",
+                "call :tryJava \"%CAMEL_FALLBACK_JAVA%\"",
+                "if defined CAMEL_JAVACMD goto haveJava",
+                "goto noJava");
+    }
+
+    private List<String> executableDiscoveryLines(String source) {
+        List<String> lines = source.lines()
+                .map(String::trim)
+                .map(line -> line.replaceAll("\\s+", " "))
+                .toList();
+        assertEquals(1, lines.stream().filter("set \"CAMEL_JAVACMD=\""::equals).count(),
+                "active discovery start must be unique");
+        assertEquals(1, lines.stream().filter(":haveJava"::equals).count(),
+                "active discovery end must be unique");
+        int start = lines.indexOf("set \"CAMEL_JAVACMD=\"");
+        int end = lines.indexOf(":haveJava");
+        assertTrue(start >= 0, "active discovery start was not found");
+        assertTrue(end > start, "active discovery end was not found after its start");
+        return lines.subList(start + 1, end).stream()
+                .filter(line -> !line.isBlank())
+                .filter(line -> !isBatchComment(line))
+                .toList();
+    }
+
+    private boolean isBatchComment(String line) {
+        String command = line.startsWith("@") ? line.substring(1).stripLeading() : line;
+        return command.equalsIgnoreCase("REM")
+                || command.regionMatches(true, 0, "REM ", 0, 4)
+                || command.startsWith("::");
     }
 
     private Path instrumentBatchLaunchReturn(Path launcherHome, Path sentinel) throws Exception {
