@@ -374,6 +374,28 @@ class CamelShDiscoveryTest {
     }
 
     @Test
+    void probeCannotConsumeChildStdin(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "PROBE-STDIN");
+        Files.writeString(java, "#!/bin/sh\n"
+                                + "if [ \"$1\" = \"-version\" ]; then\n"
+                                + "  IFS= read -r ignored\n"
+                                + "  echo '" + JAVA17 + "' 1>&2\n"
+                                + "  exit 0\n"
+                                + "fi\n"
+                                + "echo 'RAN=PROBE-STDIN'\n"
+                                + "cat\n");
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVACMD", java.toString());
+
+        FakeJava.Result r = FakeJava.runWithInput(h.resolve("camel.sh"), env, "route input\n", "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=PROBE-STDIN"), r.stdout());
+        assertTrue(r.stdout().contains("route input"), "version probe consumed child stdin: " + r.stdout());
+    }
+
+    @Test
     void scriptItselfIsExecutableFixture(@TempDir Path base) throws Exception {
         Path h = home(base);
         assertTrue(Files.exists(h.resolve("camel.sh")));

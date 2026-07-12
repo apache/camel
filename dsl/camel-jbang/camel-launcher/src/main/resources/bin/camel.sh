@@ -56,7 +56,7 @@ CAMEL_MIN_JAVA=17
 
 # Echo the Java major version of the launcher in $1, or nothing if it cannot be determined.
 camel_java_major() {
-  _cjm_out=`"$1" -version 2>&1` || return 1
+  _cjm_out=`"$1" -version </dev/null 2>&1` || return 1
   _cjm_ver=`echo "$_cjm_out" | sed -n 's/.*version "\([0-9][0-9.]*\).*/\1/p' | head -n 1`
   [ -n "$_cjm_ver" ] || return 1
   case "$_cjm_ver" in
