@@ -123,10 +123,7 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
             JWTAuthenticationConfigurer auth = new JWTAuthenticationConfigurer();
             auth.configureAuthentication(server.getConfiguration().getAuthenticationConfig(), configuration);
         } else {
-            LOG.warn("Authentication is enabled (authenticationEnabled=true) but no authentication mechanism is"
-                     + " configured: neither a basic-auth properties file (basicPropertiesFile) nor a JWT keystore"
-                     + " (jwtKeystoreType) is set. The HTTP server will start WITHOUT authentication. Configure an"
-                     + " authentication mechanism, or set authenticationEnabled=false to disable authentication.");
+            handleMissingAuthenticationMechanism(server.getCamelContext(), "HTTP server");
         }
     }
 
@@ -141,12 +138,27 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
             JWTAuthenticationConfigurer auth = new JWTAuthenticationConfigurer();
             auth.configureAuthentication(server.getConfiguration().getAuthenticationConfig(), configuration);
         } else {
-            LOG.warn("Authentication is enabled (authenticationEnabled=true) but no authentication mechanism is"
-                     + " configured: neither a basic-auth properties file (basicPropertiesFile) nor a JWT keystore"
-                     + " (jwtKeystoreType) is set. The HTTP management server will start WITHOUT authentication."
-                     + " Configure an authentication mechanism, or set authenticationEnabled=false to disable"
-                     + " authentication.");
+            handleMissingAuthenticationMechanism(server.getCamelContext(), "HTTP management server");
         }
+    }
+
+    private void handleMissingAuthenticationMechanism(CamelContext camelContext, String serverName) {
+        if ("prod".equals(camelContext.getCamelContextExtension().getProfile())) {
+            throw new IllegalStateException(
+                    "Authentication is enabled (authenticationEnabled=true) but no authentication mechanism is "
+                                            + "configured: neither a basic-auth properties file (basicPropertiesFile) nor a JWT keystore "
+                                            + "(jwtKeystoreType) is set. Refusing to start the " + serverName
+                                            + " in the prod profile without authentication. Configure an authentication mechanism, "
+                                            + "or set authenticationEnabled=false to disable authentication.");
+        }
+
+        LOG.warn(
+                "Authentication is enabled (authenticationEnabled=true) but no authentication mechanism is "
+                 + "configured: neither a basic-auth properties file (basicPropertiesFile) nor a JWT keystore "
+                 + "(jwtKeystoreType) is set. The {} will start WITHOUT authentication. "
+                 + "Configure an authentication mechanism, or set authenticationEnabled=false to disable "
+                 + "authentication.",
+                serverName);
     }
 
 }
