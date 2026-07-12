@@ -1327,7 +1327,7 @@ class HistoryTab extends AbstractTab {
 
         int[] scroll = { traceDetailScroll };
         int[] hScroll = { traceDetailHScroll };
-        renderDetailPanel(frame, area, lines, traceWordWrap, hScroll, scroll, traceDetailScrollState);
+        renderDetailPanel(frame, area, lines, traceWordWrap, hScroll, scroll, traceDetailScrollState, " Detail ");
         traceDetailScroll = scroll[0];
         traceDetailHScroll = hScroll[0];
     }
@@ -1606,7 +1606,7 @@ class HistoryTab extends AbstractTab {
 
         int[] scroll = { historyDetailScroll };
         int[] hScroll = { historyDetailHScroll };
-        renderDetailPanel(frame, area, lines, historyWordWrap, hScroll, scroll, historyDetailScrollState);
+        renderDetailPanel(frame, area, lines, historyWordWrap, hScroll, scroll, historyDetailScrollState, " Detail ");
         historyDetailScroll = scroll[0];
         historyDetailHScroll = hScroll[0];
     }
