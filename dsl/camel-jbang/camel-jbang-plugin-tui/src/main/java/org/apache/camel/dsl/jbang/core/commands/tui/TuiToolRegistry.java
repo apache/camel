@@ -25,6 +25,7 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
+import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -58,9 +59,15 @@ class TuiToolRegistry {
     private volatile AnimationState currentAnimation;
 
     private volatile List<ToolDef> cachedTools;
+    private volatile LaunchManager launchManager;
+    private volatile List<JsonObject> exampleCatalog;
 
     TuiToolRegistry(McpFacade facade) {
         this.facade = facade;
+    }
+
+    void setLaunchManager(LaunchManager launchManager) {
+        this.launchManager = launchManager;
     }
 
     /**
@@ -120,6 +127,8 @@ class TuiToolRegistry {
             case "tui_canvas_close" -> callCanvasClose();
             case "tui_animate" -> callAnimate(args);
             case "tui_animate_status" -> callAnimateStatus(args);
+            case "tui_list_examples" -> callListExamples(args);
+            case "tui_run_example" -> callRunExample(args);
             default -> throw new IllegalArgumentException("Unknown tool: " + name);
         };
     }
@@ -524,6 +533,30 @@ class TuiToolRegistry {
                                 "Single diagram node ID to locate (routeId or nodeId)."),
                         "nodes", propDef("array",
                                 "Array of diagram node IDs to locate. Returns individual rects plus combined bounds.")))));
+
+        // --- Example tools ---
+
+        tools.add(toToolDef(toolDef(
+                "tui_list_examples",
+                "Returns the list of available bundled Camel examples as structured JSON. "
+                                     + "Each example has: name, title, description, level, category, tags, "
+                                     + "bundled, requiresDocker, infraServices. "
+                                     + "Use the 'name' field with tui_run_example to launch one.",
+                Map.of("filter", propDef("string",
+                        "Case-insensitive substring filter on name, title, description, level, or tags"),
+                        "level", propDef("string",
+                                "Filter by difficulty level: beginner, intermediate, or advanced")))));
+        tools.add(toToolDef(toolDef(
+                "tui_run_example",
+                "Launches a named bundled example as a background process. "
+                                   + "Bypasses the F2 menu entirely — no UI navigation needed. "
+                                   + "Automatically starts required infra services (Docker containers) if needed. "
+                                   + "Use tui_list_examples to discover available example names.",
+                Map.of("name", propDef("string",
+                        "Example name from the catalog (e.g. 'beginner/timer-log', 'ai/ollama')"),
+                        "profile", propDef("string",
+                                "Camel profile to use (e.g. 'dev'). Optional.")),
+                List.of("name"))));
 
         return List.copyOf(tools);
     }
@@ -1542,6 +1575,123 @@ class TuiToolRegistry {
             return DrawOverlay.generateText(x, y, text != null ? text : "", color);
         }
         return DrawOverlay.generateShape(shape, x, y, width, height, length, color);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String callListExamples(Map<String, Object> args) {
+        List<JsonObject> catalog = exampleCatalog;
+        if (catalog == null) {
+            catalog = ExampleHelper.loadCatalog();
+            exampleCatalog = catalog;
+        }
+
+        String filter = args.get("filter") instanceof String v ? v : null;
+        String level = args.get("level") instanceof String v ? v : null;
+
+        List<JsonObject> filtered = catalog;
+        if (filter != null && !filter.isEmpty()) {
+            filtered = ExampleHelper.filterExamples(filtered, filter);
+        }
+        if (level != null && !level.isEmpty()) {
+            String lowerLevel = level.toLowerCase();
+            filtered = filtered.stream()
+                    .filter(e -> lowerLevel.equals(e.getStringOrDefault("level", "")))
+                    .toList();
+        }
+
+        JsonArray examples = new JsonArray();
+        for (JsonObject entry : filtered) {
+            JsonObject ex = new JsonObject();
+            ex.put("name", entry.getStringOrDefault("name", ""));
+            ex.put("title", entry.getStringOrDefault("title", ""));
+            ex.put("description", entry.getStringOrDefault("description", ""));
+            ex.put("level", entry.getStringOrDefault("level", ""));
+            ex.put("category", ExampleHelper.getCategory(entry));
+            ex.put("tags", toJsonArray(
+                    entry.get("tags") instanceof java.util.Collection<?> c
+                            ? c.stream().map(Object::toString).toList()
+                            : List.of()));
+            ex.put("bundled", ExampleHelper.isBundled(entry));
+            ex.put("requiresDocker", ExampleHelper.requiresDocker(entry));
+            ex.put("infraServices", toJsonArray(ExampleHelper.getInfraServices(entry)));
+            examples.add(ex);
+        }
+
+        JsonObject result = new JsonObject();
+        result.put("examples", examples);
+        result.put("totalCount", examples.size());
+        return Jsoner.serialize(result);
+    }
+
+    private String callRunExample(Map<String, Object> args) throws Exception {
+        String name = args.get("name") instanceof String v ? v : null;
+        if (name == null || name.isEmpty()) {
+            return "{\"error\": \"'name' parameter is required\"}";
+        }
+
+        LaunchManager lm = launchManager;
+        if (lm == null) {
+            return "{\"error\": \"Launching examples is not available in this session\"}";
+        }
+
+        List<JsonObject> catalog = exampleCatalog;
+        if (catalog == null) {
+            catalog = ExampleHelper.loadCatalog();
+            exampleCatalog = catalog;
+        }
+
+        JsonObject example = ExampleHelper.findExample(catalog, name);
+        if (example == null) {
+            return "{\"error\": \"Unknown example: " + name + ". Use tui_list_examples to see available names.\"}";
+        }
+
+        List<String> missing = lm.findMissingInfraServices(example);
+        if (!missing.isEmpty()) {
+            if (!LaunchManager.isContainerRuntimeAvailable()) {
+                JsonObject err = new JsonObject();
+                err.put("error", "Docker/Podman required for infra services: " + String.join(", ", missing));
+                return Jsoner.serialize(err);
+            }
+            String displayName = name;
+            List<String> camelArgs = buildExampleArgs(name, args);
+            lm.startMissingInfraAndDefer(
+                    missing, displayName, () -> {
+                        try {
+                            lm.launchDetached(displayName, camelArgs);
+                        } catch (Exception e) {
+                            // silently swallow — same as ExampleBrowserPopup's deferred path
+                        }
+                    });
+            JsonObject result = new JsonObject();
+            result.put("status", "starting_infra");
+            result.put("message", "Starting infra: " + String.join(", ", missing) + " → then: " + displayName);
+            result.put("infraServices", toJsonArray(missing));
+            return Jsoner.serialize(result);
+        }
+
+        List<String> camelArgs = buildExampleArgs(name, args);
+        lm.launchDetached(name, camelArgs);
+
+        JsonObject result = new JsonObject();
+        result.put("status", "started");
+        result.put("message", "Started: " + name);
+        result.put("name", name);
+        return Jsoner.serialize(result);
+    }
+
+    private static List<String> buildExampleArgs(String name, Map<String, Object> args) {
+        List<String> camelArgs = new ArrayList<>();
+        camelArgs.add("run");
+        camelArgs.add("--example=" + name);
+        camelArgs.add("--logging-color=true");
+        if (name.contains("/")) {
+            camelArgs.add("--name=" + TuiHelper.stripCategory(name));
+        }
+        String profile = args.get("profile") instanceof String v ? v : null;
+        if (profile != null && !profile.isEmpty()) {
+            camelArgs.add("--profile=" + profile);
+        }
+        return camelArgs;
     }
 
     private static String actionKeys(int index, int totalActions) {
