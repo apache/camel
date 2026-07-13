@@ -95,6 +95,7 @@ jobs:
         run: |
           for /f "usebackq delims=" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set "VSINSTALL=%%i"
           call "%VSINSTALL%\VC\Auxiliary\Build\vcvars64.bat"
+          mvn -B -ntp -pl buildingtools install -DskipTests
           mvn -B -ntp -pl tooling/camel-exe verify -Dcamel.exe.requireWindowsExe=true
 
   camel-launcher-windows:
@@ -116,7 +117,7 @@ jobs:
         run: |
           for /f "usebackq delims=" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set "VSINSTALL=%%i"
           call "%VSINSTALL%\VC\Auxiliary\Build\vcvars64.bat"
-          mvn -B -ntp -pl tooling/camel-exe,dsl/camel-jbang/camel-launcher -am install -Dcamel.launcher.requireWindowsExe=true
+          mvn -B -ntp -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher -am install -Dcamel.launcher.requireWindowsExe=true
       - name: Assert archive carries bin/camel.exe
         shell: pwsh
         run: |

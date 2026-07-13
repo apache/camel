@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CamelExeBootstrapTest {
 
     private static final Path BUILT_EXE = Paths.get("target/camel.exe");
+    private static final String CAPTURED_ARGS_FILE = "camel-args.txt";
 
     /** Writes a fake camel.bat that echoes each argument on its own line and returns exitCode. */
     private Path fakeBat(Path dir, int exitCode) throws Exception {
@@ -54,6 +55,37 @@ class CamelExeBootstrapTest {
                       + "exit /b " + exitCode + "\r\n";
         Files.writeString(bat, body, StandardCharsets.UTF_8);
         return bat;
+    }
+
+    /**
+     * Writes a fake camel.bat that appends each forwarded argument to {@link #CAPTURED_ARGS_FILE} as UTF-8.
+     * <p>
+     * Non-ASCII argument checks cannot rely on parsing process stdout: cmd.exe {@code echo} uses the console OEM
+     * code page on Windows CI hosts, so Unicode forwarded correctly by camel.exe is still mangled (for example
+     * {@code ü} becomes {@code ?}) before Java reads the pipe. Appending via PowerShell preserves the exact
+     * argument text in a UTF-8 file we control.
+     */
+    private void fakeBatCapturingArgsToUtf8File(Path dir, int exitCode) throws Exception {
+        Path bat = dir.resolve("camel.bat");
+        String body = "@echo off\r\n"
+                      + ":loop\r\n"
+                      + "if \"%~1\"==\"\" goto done\r\n"
+                      + "powershell -NoProfile -Command \""
+                      + "[System.IO.File]::AppendAllText('%~dp0" + CAPTURED_ARGS_FILE + "', '%~1' + [char]10, "
+                      + "[System.Text.UTF8Encoding]::new($false))\"\r\n"
+                      + "shift\r\n"
+                      + "goto loop\r\n"
+                      + ":done\r\n"
+                      + "exit /b " + exitCode + "\r\n";
+        Files.writeString(bat, body, StandardCharsets.UTF_8);
+    }
+
+    private List<String> readCapturedArgs(Path dir) throws Exception {
+        Path file = dir.resolve(CAPTURED_ARGS_FILE);
+        if (!Files.exists(file)) {
+            return List.of();
+        }
+        return Files.readAllLines(file, StandardCharsets.UTF_8);
     }
 
     private Path stagedExe(Path dir) throws Exception {
@@ -110,12 +142,15 @@ class CamelExeBootstrapTest {
 
     @Test
     void preservesUnicodeArgument(@TempDir Path dir) throws Exception {
-        fakeBat(dir, 0);
+        fakeBatCapturingArgsToUtf8File(dir, 0);
         Path exe = stagedExe(dir);
 
         Result r = run(exe, "run", "rüte-über.yaml");
 
-        assertTrue(r.stdout.contains("rüte-über.yaml"), "Unicode argument must survive: " + r.stdout);
+        assertEquals(0, r.exit);
+        List<String> captured = readCapturedArgs(dir);
+        assertTrue(captured.contains("run"), captured.toString());
+        assertTrue(captured.contains("rüte-über.yaml"), "Unicode argument must survive: " + captured);
     }
 
     @Test
