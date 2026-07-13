@@ -34,9 +34,9 @@ import org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyMetadata;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -368,7 +368,7 @@ public class PQCKeyStatusEnforcementTest extends CamelTestSupport {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
                 PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(),
                 PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
-        kpGen.initialize(DilithiumParameterSpec.dilithium2, new SecureRandom());
+        kpGen.initialize(MLDSAParameterSpec.ml_dsa_44, new SecureRandom());
         sharedKeyPair = kpGen.generateKeyPair();
 
         // Store the key in the lifecycle manager so we can test status enforcement

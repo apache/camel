@@ -32,9 +32,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -98,7 +98,7 @@ public class PQCDataFormatMultipleAlgorithmsTest extends CamelTestSupport {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(
                 PQCKeyEncapsulationAlgorithms.KYBER.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.KYBER.getBcProvider());
-        kpg.initialize(KyberParameterSpec.kyber512, new SecureRandom());
+        kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
         return kpg.generateKeyPair();
     }
 }

@@ -32,9 +32,9 @@ import org.apache.camel.component.pqc.lifecycle.KeyMetadata;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -97,7 +97,7 @@ public class AwsSecretsManagerKeyLifecycleIT extends CamelTestSupport {
     @Test
     public void testGenerateAndStoreKeyInSecretsManager() throws Exception {
         // Generate a Dilithium key
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "test-dilithium-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "test-dilithium-key", MLDSAParameterSpec.ml_dsa_44);
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -133,7 +133,7 @@ public class AwsSecretsManagerKeyLifecycleIT extends CamelTestSupport {
     @Test
     public void testKeyRotation() throws Exception {
         // Generate initial key
-        keyManager.generateKeyPair("DILITHIUM", "rotation-key-old", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "rotation-key-old", MLDSAParameterSpec.ml_dsa_44);
 
         KeyMetadata oldMetadata = keyManager.getKeyMetadata("rotation-key-old");
         assertEquals(KeyMetadata.KeyStatus.ACTIVE, oldMetadata.getStatus());
@@ -153,7 +153,7 @@ public class AwsSecretsManagerKeyLifecycleIT extends CamelTestSupport {
 
     @Test
     public void testNeedsRotation() throws Exception {
-        keyManager.generateKeyPair("DILITHIUM", "rotation-check-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "rotation-check-key", MLDSAParameterSpec.ml_dsa_44);
 
         // New key should not need rotation
         assertFalse(keyManager.needsRotation("rotation-check-key", Duration.ofDays(90), 10000));
@@ -170,9 +170,9 @@ public class AwsSecretsManagerKeyLifecycleIT extends CamelTestSupport {
     @Test
     public void testListKeys() throws Exception {
         // Generate multiple keys
-        keyManager.generateKeyPair("DILITHIUM", "list-key-1", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "list-key-1", MLDSAParameterSpec.ml_dsa_44);
         keyManager.generateKeyPair("FALCON", "list-key-2", FalconParameterSpec.falcon_512);
-        keyManager.generateKeyPair("DILITHIUM", "list-key-3", DilithiumParameterSpec.dilithium3);
+        keyManager.generateKeyPair("DILITHIUM", "list-key-3", MLDSAParameterSpec.ml_dsa_65);
 
         // List all keys
         List<KeyMetadata> keys = keyManager.listKeys();
@@ -187,14 +187,14 @@ public class AwsSecretsManagerKeyLifecycleIT extends CamelTestSupport {
     @Test
     public void testExpireAndRevokeKey() throws Exception {
         // Test expiration
-        keyManager.generateKeyPair("DILITHIUM", "expire-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "expire-key", MLDSAParameterSpec.ml_dsa_44);
         keyManager.expireKey("expire-key");
 
         KeyMetadata expiredMetadata = keyManager.getKeyMetadata("expire-key");
         assertEquals(KeyMetadata.KeyStatus.EXPIRED, expiredMetadata.getStatus());
 
         // Test revocation
-        keyManager.generateKeyPair("DILITHIUM", "revoke-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "revoke-key", MLDSAParameterSpec.ml_dsa_44);
         keyManager.revokeKey("revoke-key", "Key compromised in test");
 
         KeyMetadata revokedMetadata = keyManager.getKeyMetadata("revoke-key");
@@ -204,7 +204,7 @@ public class AwsSecretsManagerKeyLifecycleIT extends CamelTestSupport {
 
     @Test
     public void testDeleteKey() throws Exception {
-        keyManager.generateKeyPair("DILITHIUM", "delete-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "delete-key", MLDSAParameterSpec.ml_dsa_44);
         assertNotNull(keyManager.getKey("delete-key"));
 
         keyManager.deleteKey("delete-key");
@@ -215,7 +215,7 @@ public class AwsSecretsManagerKeyLifecycleIT extends CamelTestSupport {
 
     @Test
     public void testExportAndImportKey() throws Exception {
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "export-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "export-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Export public key as PEM
         byte[] exported = keyManager.exportPublicKey(keyPair, KeyLifecycleManager.KeyFormat.PEM);
@@ -235,7 +235,7 @@ public class AwsSecretsManagerKeyLifecycleIT extends CamelTestSupport {
     @Test
     public void testMetadataTracking() throws Exception {
         // Generate key
-        keyManager.generateKeyPair("DILITHIUM", "tracking-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "tracking-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Get initial metadata
         KeyMetadata metadata = keyManager.getKeyMetadata("tracking-key");

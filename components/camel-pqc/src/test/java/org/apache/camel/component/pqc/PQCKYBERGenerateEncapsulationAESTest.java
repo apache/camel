@@ -28,9 +28,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
+import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -92,7 +92,7 @@ public class PQCKYBERGenerateEncapsulationAESTest extends CamelTestSupport {
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.KYBER.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.KYBER.getBcProvider());
-        kpg.initialize(KyberParameterSpec.kyber1024, new SecureRandom());
+        kpg.initialize(MLKEMParameterSpec.ml_kem_1024, new SecureRandom());
         KeyPair kp = kpg.generateKeyPair();
         return kp;
     }
