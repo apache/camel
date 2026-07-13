@@ -20,7 +20,7 @@ Windows. It requires the Microsoft C/C++ Build Tools (`cl.exe`) on PATH — set 
 a developer command prompt (e.g. `vcvars64.bat`) or a CI action that provisions
 MSVC before running Maven:
 
-    mvn -pl dsl/camel-jbang/camel-launcher package
+    mvn -pl tooling/camel-exe package
 
 The compiler is invoked as:
 
@@ -32,7 +32,7 @@ builds from the same source produce byte-identical output.
 
 ## Release gate
 
-Release builds pass `-Dcamel.launcher.requireWindowsExe=true`, which makes the
+Release builds pass `-Dcamel.exe.requireWindowsExe=true`, which makes the
 `require-windows-exe` profile fail the build if `target/camel.exe` is absent. This
 prevents publishing a Windows package that cannot satisfy WinGet's portable
 command contract. Because MSVC cannot cross-compile from macOS/Linux, the release

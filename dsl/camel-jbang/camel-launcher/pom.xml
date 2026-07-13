@@ -328,44 +328,47 @@
 
     <profiles>
         <!--
-            Compiles the native x64 camel.exe bootstrap with the Microsoft C/C++ Build Tools.
-            Activates automatically on Windows; requires cl.exe on PATH (run from a developer
-            command prompt / after vcvars64.bat). Non-Windows builds skip this and omit camel.exe.
+            On Windows, copy the native camel.exe artifact from tooling/camel-exe into target/
+            so the assembly descriptor can include it in bin/camel.exe.
         -->
         <profile>
-            <id>build-windows-exe</id>
+            <id>include-camel-exe</id>
             <activation>
                 <os>
                     <family>windows</family>
                 </os>
             </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-exe</artifactId>
+                    <version>${project.version}</version>
+                    <type>exe</type>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>compile-camel-exe</id>
-                                <phase>prepare-package</phase>
+                                <id>copy-camel-exe</id>
+                                <phase>generate-resources</phase>
                                 <goals>
-                                    <goal>exec</goal>
+                                    <goal>copy</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>cl.exe</executable>
-                                    <arguments>
-                                        <argument>/nologo</argument>
-                                        <argument>/W4</argument>
-                                        <argument>/O1</argument>
-                                        <argument>/MT</argument>
-                                        <argument>/Brepro</argument>
-                                        <argument>/Fe:${project.build.directory}\camel.exe</argument>
-                                        <argument>/Fo:${project.build.directory}\camel.obj</argument>
-                                        <argument>${project.basedir}\src\main\native\camel.c</argument>
-                                        <argument>/link</argument>
-                                        <argument>/Brepro</argument>
-                                        <argument>/SUBSYSTEM:CONSOLE</argument>
-                                    </arguments>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.apache.camel</groupId>
+                                            <artifactId>camel-exe</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>exe</type>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                            <destFileName>camel.exe</destFileName>
+                                        </artifactItem>
+                                    </artifactItems>
                                 </configuration>
                             </execution>
                         </executions>
@@ -375,8 +378,8 @@
         </profile>
 
         <!--
-            Release gate: fails the build before packaging if the native camel.exe was not
-            produced. Enabled only when -Dcamel.launcher.requireWindowsExe=true (release job on
+            Release gate: fails the build before packaging if camel.exe was not copied into
+            target/. Enabled only when -Dcamel.launcher.requireWindowsExe=true (release job on
             a Windows x64 host), so ordinary cross-platform dev builds are unaffected.
         -->
         <profile>

@@ -34,7 +34,40 @@ permissions:
   contents: read
 
 jobs:
-  camel-launcher-windows:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      camel-exe: ${{ steps.outputs.outputs.camel-exe }}
+      camel-launcher: ${{ steps.outputs.outputs.camel-launcher }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3.0.3
+        id: filter
+        if: github.event_name != 'workflow_dispatch'
+        with:
+          filters: |
+            camel-exe:
+              - 'tooling/camel-exe/**'
+              - '.github/workflows/camel-launcher-windows.yml'
+            camel-launcher:
+              - 'dsl/camel-jbang/**'
+              - 'tooling/camel-exe/**'
+              - '.github/workflows/camel-launcher-windows.yml'
+      - id: outputs
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "camel-exe=true" >> "$GITHUB_OUTPUT"
+            echo "camel-launcher=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "camel-exe=${{ steps.filter.outputs.camel-exe }}" >> "$GITHUB_OUTPUT"
+            echo "camel-launcher=${{ steps.filter.outputs.camel-launcher }}" >> "$GITHUB_OUTPUT"
+          fi
+
+  camel-exe:
+    needs: detect-changes
+    if: github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.camel-exe == 'true'
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -46,12 +79,33 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
           cache: 'maven'
-      - name: Build launcher (compiles native camel.exe) and run tests
+      - name: Build and test native camel.exe
         shell: cmd
         run: |
           for /f "usebackq delims=" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set "VSINSTALL=%%i"
           call "%VSINSTALL%\VC\Auxiliary\Build\vcvars64.bat"
-          mvn -B -ntp -pl dsl/camel-jbang/camel-launcher -am install -Dcamel.launcher.requireWindowsExe=true
+          mvn -B -ntp -pl tooling/camel-exe verify -Dcamel.exe.requireWindowsExe=true
+
+  camel-launcher-windows:
+    needs: detect-changes
+    if: github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.camel-launcher == 'true'
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Set up JDK 21
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+      - name: Build launcher with native camel.exe and run tests
+        shell: cmd
+        run: |
+          for /f "usebackq delims=" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set "VSINSTALL=%%i"
+          call "%VSINSTALL%\VC\Auxiliary\Build\vcvars64.bat"
+          mvn -B -ntp -pl tooling/camel-exe,dsl/camel-jbang/camel-launcher -am install -Dcamel.launcher.requireWindowsExe=true
       - name: Assert archive carries bin/camel.exe
         shell: pwsh
         run: |
