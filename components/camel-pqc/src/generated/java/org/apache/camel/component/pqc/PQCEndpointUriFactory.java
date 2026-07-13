@@ -24,7 +24,7 @@ public class PQCEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(23);
+        Set<String> props = new HashSet<>(24);
         props.add("classicalKEMAlgorithm");
         props.add("classicalKeyAgreement");
         props.add("classicalKeyPair");
@@ -41,6 +41,7 @@ public class PQCEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("label");
         props.add("lazyStartProducer");
         props.add("operation");
+        props.add("parameterSpec");
         props.add("signatureAlgorithm");
         props.add("signer");
         props.add("statefulKeyWarningThreshold");

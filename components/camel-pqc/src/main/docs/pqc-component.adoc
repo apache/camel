@@ -63,6 +63,55 @@ Experimental and non-standardized
 - MAYO
 - SPHINCS+
 
+== Parameter Sets (NIST Security Levels)
+
+By default each algorithm uses a fixed parameter set - for example ML-DSA-65 for `MLDSA` and ML-KEM-512 for `MLKEM`.
+Use the `parameterSpec` option to select a different NIST parameter set (security level); the key material is then
+generated with that parameter set instead of the algorithm default.
+
+._Java DSL: selecting ML-DSA-87 (NIST level 5)_
+[source,java]
+----
+from("direct:sign")
+    .to("pqc:sign?operation=sign&signatureAlgorithm=MLDSA&parameterSpec=ML-DSA-87")
+    .to("pqc:verify?operation=verify&signatureAlgorithm=MLDSA&parameterSpec=ML-DSA-87");
+----
+
+Endpoints configured with the same algorithm and `parameterSpec` share the same generated key, so a sign/verify endpoint
+pair works out of the box - exactly as with the default key material.
+
+Values are the BouncyCastle parameter-set names, resolved case-insensitively. The underscore form used by the
+BouncyCastle constants (`ml_dsa_87`) is accepted as an alias of the canonical name (`ML-DSA-87`).
+
+[cols="1,3",options="header"]
+|===
+| Algorithm | Parameter sets
+
+| `MLDSA` | `ML-DSA-44`, `ML-DSA-65` (default), `ML-DSA-87`
+| `MLKEM` | `ML-KEM-512` (default), `ML-KEM-768`, `ML-KEM-1024`
+| `SLHDSA` | `SLH-DSA-SHA2-128S`, `SLH-DSA-SHAKE-256F`, ... (see `SLHDSAParameterSpec`)
+| `FALCON` | `FALCON-512`, `FALCON-1024`
+| `DILITHIUM` | `DILITHIUM2`, `DILITHIUM3`, `DILITHIUM5`
+| `SPHINCSPLUS` | `sha2-128s`, ... (see `SPHINCSPlusParameterSpec`)
+| `PICNIC` | `picnicl1fs`, ... (see `PicnicParameterSpec`)
+| `KYBER` | `kyber512`, `kyber768`, `kyber1024`
+| `NTRU` | `ntruhps2048509`, ... (see `NTRUParameterSpec`)
+| `NTRULPRime` | `ntrulpr653`, ... (see `NTRULPRimeParameterSpec`)
+| `SNTRUPrime` | `sntrup761`, ... (see `SNTRUPrimeParameterSpec`)
+| `BIKE` | `bike128`, `bike192`, `bike256`
+| `HQC` | `hqc128`, `hqc192`, `hqc256`
+| `CMCE` | `mceliece348864`, ... (see `CMCEParameterSpec`)
+| `FRODO` | `frodokem640aes`, ... (see `FrodoParameterSpec`)
+| `SABER` | `lightsaberkem128r3`, ... (see `SABERParameterSpec`)
+|===
+
+The `parameterSpec` option is also honoured by the `generateKeyPair` lifecycle operation, which then generates the key
+at the configured security level.
+
+NOTE: `parameterSpec` is not supported for the stateful hash-based signature algorithms (XMSS, XMSSMT, LMS, HSS), for
+MAYO and SNOVA, nor for the hybrid operations: those either have no name-addressable BouncyCastle parameter set, or pair
+a fixed classical key set with a matching PQC key set. For those, register a `KeyPair` bean in the registry instead.
+
 == Supported Operations
 
 The component supports the following operations:

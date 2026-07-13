@@ -74,6 +74,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.pqc.PQCOperations.class, value)); return true;
+        case "parameterspec":
+        case "parameterSpec": getOrCreateConfiguration(target).setParameterSpec(property(camelContext, java.lang.String.class, value)); return true;
         case "signaturealgorithm":
         case "signatureAlgorithm": getOrCreateConfiguration(target).setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "signer": getOrCreateConfiguration(target).setSigner(property(camelContext, java.security.Signature.class, value)); return true;
@@ -143,6 +145,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.pqc.PQCOperations.class;
+        case "parameterspec":
+        case "parameterSpec": return java.lang.String.class;
         case "signaturealgorithm":
         case "signatureAlgorithm": return java.lang.String.class;
         case "signer": return java.security.Signature.class;
@@ -208,6 +212,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "parameterspec":
+        case "parameterSpec": return getOrCreateConfiguration(target).getParameterSpec();
         case "signaturealgorithm":
         case "signatureAlgorithm": return getOrCreateConfiguration(target).getSignatureAlgorithm();
         case "signer": return getOrCreateConfiguration(target).getSigner();
