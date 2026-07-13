@@ -139,18 +139,21 @@ class ActivityTab extends AbstractTableTab {
             Style statusStyle = ae.failed ? Theme.error() : Theme.success();
             String elapsed = ae.elapsed + "ms";
 
+            String sends = ae.endpointSends.isEmpty() ? "" : String.valueOf(ae.endpointSends.size());
+
             rows.add(Row
                     .from(
                             Cell.from(ae.exchangeId != null ? ae.exchangeId : ""),
                             Cell.from(Span.styled(ae.routeId != null ? ae.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                             Cell.from(Span.styled(status, statusStyle)),
                             Cell.from(elapsed),
+                            Cell.from(sends),
                             Cell.from(ago),
                             Cell.from(ae.fromEndpointUri != null ? ae.fromEndpointUri : "")));
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No activity captured", 6));
+            rows.add(emptyRow("No activity captured", 7));
         }
 
         ActivityEntry selectedEntry = null;
@@ -181,6 +184,7 @@ class ActivityTab extends AbstractTableTab {
                         Cell.from(Span.styled(sortLabel("ROUTE", "route"), sortStyle("route"))),
                         Cell.from(Span.styled("STATUS", Style.EMPTY.bold())),
                         Cell.from(Span.styled(sortLabel("ELAPSED", "elapsed"), sortStyle("elapsed"))),
+                        Cell.from(Span.styled("SENDS", Style.EMPTY.bold())),
                         Cell.from(Span.styled(sortLabel("SINCE", "since"), sortStyle("since"))),
                         Cell.from(Span.styled("ENDPOINT", Style.EMPTY.bold()))))
                 .widths(
@@ -188,6 +192,7 @@ class ActivityTab extends AbstractTableTab {
                         Constraint.length(20),
                         Constraint.length(8),
                         Constraint.length(10),
+                        Constraint.length(7),
                         Constraint.length(8),
                         Constraint.fill())
                 .highlightStyle(Theme.selectionBg())
