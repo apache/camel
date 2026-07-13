@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -207,16 +208,17 @@ class ActivityTab extends AbstractTableTab {
     private void renderStatsPanel(Frame frame, Rect area, List<ActivityEntry> entries) {
         int total = entries.size();
         int failed = 0;
-        long sumElapsed = 0;
         long maxElapsed = 0;
         long oldestTs = Long.MAX_VALUE;
         long newestTs = 0;
+        long[] elapsedValues = new long[total];
 
-        for (ActivityEntry ae : entries) {
+        for (int i = 0; i < total; i++) {
+            ActivityEntry ae = entries.get(i);
+            elapsedValues[i] = ae.elapsed;
             if (ae.failed) {
                 failed++;
             }
-            sumElapsed += ae.elapsed;
             if (ae.elapsed > maxElapsed) {
                 maxElapsed = ae.elapsed;
             }
@@ -228,23 +230,37 @@ class ActivityTab extends AbstractTableTab {
             }
         }
 
-        int succeeded = total - failed;
-        long avgElapsed = total > 0 ? sumElapsed / total : 0;
+        java.util.Arrays.sort(elapsedValues);
+        long p50 = total > 0 ? elapsedValues[Math.min((int) (total * 0.50), total - 1)] : 0;
+        long p95 = total > 0 ? elapsedValues[Math.min((int) (total * 0.95), total - 1)] : 0;
+
+        String errorRate = total > 0
+                ? String.format(Locale.US, "%.1f%%", (failed * 100.0) / total) : "0%";
+        String rate = "";
+        if (oldestTs < Long.MAX_VALUE && newestTs > oldestTs) {
+            double minutes = (newestTs - oldestTs) / 60_000.0;
+            if (minutes > 0) {
+                rate = String.format(Locale.US, "%.1f/min", total / minutes);
+            }
+        }
+
+        int sends = entries.stream().mapToInt(ae -> ae.endpointSends.size()).sum();
 
         Style dim = Theme.muted();
         List<Line> lines = new ArrayList<>();
 
-        lines.add(Line
-                .from(
+        lines.add(Line.from(
                 Span.styled(" Total: ", dim), Span.raw(String.valueOf(total)),
-                Span.styled("   OK: ", dim), Span.styled(String.valueOf(succeeded), Theme.success()),
+                Span.styled("   OK: ", dim), Span.styled(String.valueOf(total - failed), Theme.success()),
                 Span.styled("   Failed: ", dim),
-                Span.styled(String.valueOf(failed), failed > 0 ? Theme.error() : Style.EMPTY),
-                Span.styled("   Sends: ", dim),
-                Span.raw(String.valueOf(entries.stream().mapToInt(ae -> ae.endpointSends.size()).sum()))));
+                Span.styled(failed + " (" + errorRate + ")", failed > 0 ? Theme.error() : Style.EMPTY),
+                Span.styled("   Rate: ", dim), Span.raw(rate),
+                Span.styled("   Sends: ", dim), Span.raw(String.valueOf(sends))));
 
         lines.add(Line.from(
-                Span.styled(" Avg: ", dim), Span.raw(avgElapsed + "ms"),
+                Span.styled(" p50: ", dim), Span.raw(p50 + "ms"),
+                Span.styled("   p95: ", dim),
+                Span.styled(p95 + "ms", TuiHelper.topTimeStyle(p95)),
                 Span.styled("   Max: ", dim),
                 Span.styled(maxElapsed + "ms", TuiHelper.topTimeStyle(maxElapsed)),
                 oldestTs < Long.MAX_VALUE
@@ -255,7 +271,9 @@ class ActivityTab extends AbstractTableTab {
                                    + " ... " + TimeUtils.printSince(newestTs))
                         : Span.raw("")));
 
-        String title = paused ? " Summary (PAUSED) " : " Summary ";
+        String title = paused
+                ? " Summary (PAUSED, last " + total + ") "
+                : " Summary (last " + total + ") ";
         Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title).build();
         Paragraph para = Paragraph.builder().text(Text.from(lines)).block(block).build();
