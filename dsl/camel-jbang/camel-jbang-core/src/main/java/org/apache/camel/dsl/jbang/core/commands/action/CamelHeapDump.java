@@ -29,10 +29,11 @@ import picocli.CommandLine.Command;
 @Command(name = "heap-dump", description = "Write a heap dump (.hprof) file for deep memory analysis", sortOptions = false,
          showDefaultValues = true,
          footer = {
+                 "%nThe .hprof file can be analyzed with tools like Eclipse MAT, VisualVM, or jhat.",
                  "%nExamples:",
                  "  camel cmd heap-dump",
-                 "  camel cmd heap-dump --name=mydump",
-                 "  camel cmd heap-dump --name=mydump --live=false" })
+                 "  camel cmd heap-dump --dump-name=mydump",
+                 "  camel cmd heap-dump --dump-name=mydump --live=false" })
 public class CamelHeapDump extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
