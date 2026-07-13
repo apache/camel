@@ -386,6 +386,7 @@ class ActivityTab extends AbstractTableTab {
             jo.put("routeId", ae.routeId);
             jo.put("status", ae.failed ? "FAILED" : "OK");
             jo.put("elapsed", ae.elapsed);
+            jo.put("sends", ae.endpointSends.size());
             jo.put("failed", ae.failed);
             jo.put("timestamp", ae.timestamp);
             if (ae.timestamp > 0) {
@@ -437,6 +438,7 @@ class ActivityTab extends AbstractTableTab {
                 - **ROUTE** — Route that processed the exchange
                 - **STATUS** — `OK` (green) or `FAILED` (red)
                 - **ELAPSED** — Total processing time in milliseconds
+                - **SENDS** — Number of outbound endpoint calls made during the exchange
                 - **SINCE** — How long ago the exchange completed (e.g., `5s`, `2m`)
                 - **ENDPOINT** — The consumer endpoint that received the exchange
 

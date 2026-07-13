@@ -126,7 +126,9 @@ public class ListActivity extends ProcessWatchCommand {
                                         row.status = row.failed ? "FAILED" : "OK";
                                         row.elapsed = o.getLongOrDefault("elapsed", 0);
                                         row.timestamp = o.getLongOrDefault("timestamp", 0);
-                                        row.endpointUri = o.getString("endpointUri");
+                                        row.endpointUri = o.getString("fromEndpointUri");
+                                        JsonArray sends = (JsonArray) o.get("endpointSends");
+                                        row.sends = sends != null ? sends.size() : 0;
                                         if (row.timestamp > 0) {
                                             long ago = System.currentTimeMillis() - row.timestamp;
                                             row.since = TimeUtils.printSince(ago);
@@ -199,6 +201,7 @@ public class ListActivity extends ProcessWatchCommand {
                 jo.put("routeId", r.routeId);
                 jo.put("status", r.status);
                 jo.put("elapsed", r.elapsed);
+                jo.put("sends", r.sends);
                 jo.put("since", r.since);
                 if (r.endpointUri != null) {
                     jo.put("endpointUri", r.endpointUri);
@@ -209,9 +212,9 @@ public class ListActivity extends ProcessWatchCommand {
         }
 
         // Flexible column: ENDPOINT (40/140)
-        // Fixed columns: PID(8)+NAME(30)+AGE(8)+EXCHANGE(40)+ROUTE(25)+STATUS(6)+ELAPSED(8)+SINCE(8) ~= 133
-        int fixedW = 133;
-        int numCols = 9;
+        // Fixed columns: PID(8)+NAME(30)+AGE(8)+EXCHANGE(40)+ROUTE(25)+STATUS(6)+ELAPSED(8)+SENDS(7)+SINCE(8) ~= 140
+        int fixedW = 140;
+        int numCols = 10;
         int tw = terminalWidth();
         int uriW = TerminalWidthHelper.flexWidth(tw, fixedW, TerminalWidthHelper.noBorderOverhead(numCols), 20, 40);
         int uriWideW = TerminalWidthHelper.flexWidth(tw, fixedW, TerminalWidthHelper.noBorderOverhead(numCols), 20, 140);
@@ -228,6 +231,8 @@ public class ListActivity extends ProcessWatchCommand {
                         .with(r -> r.status),
                 new Column().header("ELAPSED").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> r.elapsed + "ms"),
+                new Column().header("SENDS").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> r.sends > 0 ? String.valueOf(r.sends) : ""),
                 new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER)
                         .with(r -> r.since),
                 new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
@@ -288,6 +293,7 @@ public class ListActivity extends ProcessWatchCommand {
         long timestamp;
         String since;
         String endpointUri;
+        int sends;
     }
 
 }

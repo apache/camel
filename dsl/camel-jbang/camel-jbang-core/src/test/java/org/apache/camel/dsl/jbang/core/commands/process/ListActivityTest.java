@@ -196,7 +196,7 @@ class ListActivityTest extends ProcessCommandTestSupport {
         e.put("elapsed", elapsed);
         e.put("timestamp", System.currentTimeMillis());
         if (endpointUri != null) {
-            e.put("endpointUri", endpointUri);
+            e.put("fromEndpointUri", endpointUri);
         }
         return e;
     }
