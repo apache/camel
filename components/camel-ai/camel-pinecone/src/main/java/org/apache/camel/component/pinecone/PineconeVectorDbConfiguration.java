@@ -59,7 +59,7 @@ public class PineconeVectorDbConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private Integer proxyPort;
 
-    @UriParam(defaultValue = "true", label = "security")
+    @UriParam(defaultValue = "false", label = "security", security = "insecure:ssl", insecureValue = "false")
     private boolean tls;
 
     @UriParam(label = "producer")
