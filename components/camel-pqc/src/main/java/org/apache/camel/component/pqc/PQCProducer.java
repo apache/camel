@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.pqc;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.util.Arrays;
@@ -31,7 +33,9 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.pqc.crypto.hybrid.HybridKEM;
 import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
@@ -103,6 +107,8 @@ public class PQCProducer extends DefaultProducer {
             PQCKeyEncapsulationAlgorithms.NTRULPRime.name(),
             PQCKeyEncapsulationAlgorithms.SNTRUPrime.name(),
             PQCKeyEncapsulationAlgorithms.KYBER.name());
+
+    private static final int STREAM_BUFFER_SIZE = 8192;
 
     private Signature signer;
     private KeyGenerator keyGenerator;
@@ -426,10 +432,8 @@ public class PQCProducer extends DefaultProducer {
             throws Exception {
         checkStatefulKeyBeforeSign();
 
-        String payload = exchange.getMessage().getMandatoryBody(String.class);
-
         signer.initSign(keyPair.getPrivate());
-        signer.update(payload.getBytes());
+        updateSignatureFromBody(signer, exchange.getMessage());
 
         byte[] signature = signer.sign();
         exchange.getMessage().setHeader(PQCConstants.SIGNATURE, signature);
@@ -438,15 +442,63 @@ public class PQCProducer extends DefaultProducer {
     }
 
     private void verification(Exchange exchange)
-            throws InvalidPayloadException, InvalidKeyException, SignatureException {
-        String payload = exchange.getMessage().getMandatoryBody(String.class);
-
+            throws InvalidPayloadException, InvalidKeyException, SignatureException, IOException {
         signer.initVerify(keyPair.getPublic());
-        signer.update(payload.getBytes());
+        updateSignatureFromBody(signer, exchange.getMessage());
         if (signer.verify(exchange.getMessage().getHeader(PQCConstants.SIGNATURE, byte[].class))) {
             exchange.getMessage().setHeader(PQCConstants.VERIFY, true);
         } else {
             exchange.getMessage().setHeader(PQCConstants.VERIFY, false);
+        }
+    }
+
+    /**
+     * Feeds the message body into the given {@link Signature} without materialising the whole payload as a String. A
+     * {@code byte[]} body is used directly, an {@link InputStream} body is read in chunks (and reset afterwards when it
+     * is a re-readable {@link StreamCache} so downstream processors still see the payload), and any other body type
+     * falls back to its String representation.
+     */
+    private static void updateSignatureFromBody(Signature signature, Message message)
+            throws InvalidPayloadException, SignatureException, IOException {
+        Object body = message.getBody();
+        if (body instanceof byte[] bytes) {
+            signature.update(bytes);
+        } else if (body instanceof InputStream stream) {
+            try {
+                byte[] buffer = new byte[STREAM_BUFFER_SIZE];
+                int read;
+                while ((read = stream.read(buffer)) != -1) {
+                    signature.update(buffer, 0, read);
+                }
+            } finally {
+                if (body instanceof StreamCache streamCache) {
+                    streamCache.reset();
+                }
+            }
+        } else {
+            signature.update(message.getMandatoryBody(String.class).getBytes());
+        }
+    }
+
+    /**
+     * Returns the message body as a byte array without a String round-trip when it is already binary. Used by the
+     * hybrid operations, which need the whole payload in memory. An {@link InputStream} is fully read (and reset
+     * afterwards when it is a re-readable {@link StreamCache}).
+     */
+    private static byte[] bodyToByteArray(Message message) throws InvalidPayloadException, IOException {
+        Object body = message.getBody();
+        if (body instanceof byte[] bytes) {
+            return bytes;
+        } else if (body instanceof InputStream stream) {
+            try {
+                return stream.readAllBytes();
+            } finally {
+                if (body instanceof StreamCache streamCache) {
+                    streamCache.reset();
+                }
+            }
+        } else {
+            return message.getMandatoryBody(String.class).getBytes();
         }
     }
 
@@ -510,11 +562,10 @@ public class PQCProducer extends DefaultProducer {
     // ========== Hybrid Signature Operations ==========
 
     private void hybridSignature(Exchange exchange)
-            throws InvalidPayloadException, InvalidKeyException, SignatureException {
+            throws InvalidPayloadException, InvalidKeyException, SignatureException, IOException {
         checkStatefulKeyBeforeSign();
 
-        String payload = exchange.getMessage().getMandatoryBody(String.class);
-        byte[] data = payload.getBytes();
+        byte[] data = bodyToByteArray(exchange.getMessage());
 
         if (classicalSigner == null || classicalKeyPair == null) {
             throw new IllegalStateException(
@@ -547,9 +598,8 @@ public class PQCProducer extends DefaultProducer {
     }
 
     private void hybridVerification(Exchange exchange)
-            throws InvalidPayloadException, InvalidKeyException, SignatureException {
-        String payload = exchange.getMessage().getMandatoryBody(String.class);
-        byte[] data = payload.getBytes();
+            throws InvalidPayloadException, InvalidKeyException, SignatureException, IOException {
+        byte[] data = bodyToByteArray(exchange.getMessage());
 
         byte[] hybridSig = exchange.getMessage().getHeader(PQCConstants.HYBRID_SIGNATURE, byte[].class);
         if (hybridSig == null) {

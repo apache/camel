@@ -119,6 +119,8 @@ This will be true for standardized algorithms and for experimental ones.
 
 TIP: To combine a classical signature (ECDSA, Ed25519, RSA) with a PQC signature for defense-in-depth during the post-quantum transition, use the hybrid signature operations described in xref:others:pqc-hybrid.adoc[Hybrid Cryptography].
 
+NOTE: The sign and verify operations stream the message body. A `byte[]` or `InputStream` body is fed to the signature in chunks without being materialised as a String, so large payloads (files, large messages) can be signed and verified without loading them fully into memory. When the body is a re-readable `StreamCache` (for example with stream caching enabled) it is reset after reading so downstream processors still see the payload.
+
 == Examples
 
 All signature algorithms follow the same route pattern. Below is a complete example using ML-DSA, followed by a reference table for the other algorithms.
