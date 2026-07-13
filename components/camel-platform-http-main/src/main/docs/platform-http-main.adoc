@@ -35,7 +35,7 @@ These features are as follows:
 - `/observe/health` - Health checks
 - `/observe/jolokia` - To use Jolokia to expose JMX over HTTP REST
 - `/observe/metrics` - To provide OTEL metrics in prometheus format
-- `/q/dev` - Developer console that provides a lot of statistics and information
+- `/q/dev` - Developer console that provides a lot of statistics and information (supports both GET and POST; POST accepts a JSON body)
 - `/q/upload` - Uploading source files, to allow hot reloading.
 - `/q/download` - Downloading source files, to allow inspecting
 - `/q/send` - Sending messages to the Camel application via HTTP
