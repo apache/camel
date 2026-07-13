@@ -380,6 +380,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionSqlQueryTask(root);
             } else if ("sql-update-row".equals(action)) {
                 doActionSqlUpdateRowTask(root);
+            } else if ("heap-dump".equals(action)) {
+                doActionHeapDumpTask(root);
             } else if ("jfr-memory-leak".equals(action)) {
                 doActionJfrMemoryLeakTask(root);
             } else if ("cli-debug".equals(action)) {
@@ -848,6 +850,27 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 .resolveById("heap-histogram");
         if (dc != null) {
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionHeapDumpTask(JsonObject root) throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("heap-dump");
+        if (dc != null) {
+            Map<String, Object> params = new HashMap<>();
+            String name = root.getString("name");
+            if (name != null) {
+                params.put("name", name);
+            }
+            String live = root.getString("live");
+            if (live != null) {
+                params.put("live", live);
+            }
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {

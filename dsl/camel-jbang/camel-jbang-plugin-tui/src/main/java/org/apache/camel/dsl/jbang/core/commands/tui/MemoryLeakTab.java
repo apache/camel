@@ -127,6 +127,10 @@ class MemoryLeakTab extends AbstractTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (ke.isChar('h')) {
+            triggerHeapDump();
+            return true;
+        }
         if (state == State.IDLE || state == State.HAS_RESULTS) {
             if (ke.isCharIgnoreCase('r')) {
                 startRecording();
@@ -725,10 +729,12 @@ class MemoryLeakTab extends AbstractTab {
                 hint(spans, "R", "record");
                 hint(spans, "d", "mode [" + modeLabel + "]");
                 hint(spans, "+/-", "duration [" + duration + "s]");
+                hint(spans, "h", "heap dump");
             }
             case RECORDING -> {
                 hint(spans, "Esc", "back");
                 hint(spans, "X", "stop");
+                hint(spans, "h", "heap dump");
             }
             case HAS_RESULTS -> {
                 hint(spans, "Esc", "back");
@@ -739,6 +745,7 @@ class MemoryLeakTab extends AbstractTab {
                 hint(spans, "R", "new recording");
                 hint(spans, "d", "mode [" + modeLabel + "]");
                 hint(spans, "+/-", "duration [" + duration + "s]");
+                hint(spans, "h", "heap dump");
                 hintLast(spans, "PgUp/Dn", "detail");
             }
             default -> hintLast(spans, "Esc", "back");
@@ -1590,6 +1597,43 @@ class MemoryLeakTab extends AbstractTab {
         return method != null
                 && (method.startsWith("java.") || method.startsWith("javax.") || method.startsWith("jakarta.")
                         || method.startsWith("jdk.") || method.startsWith("sun.") || method.startsWith("com.sun."));
+    }
+
+    private void triggerHeapDump() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return;
+        }
+        notify("Writing heap dump...", false);
+        String pid = info.pid;
+        startDaemonThread("heap-dump-" + pid, () -> {
+            Path outputFile = ctx.getOutputFile(pid);
+            PathUtils.deleteFile(outputFile);
+            JsonObject root = new JsonObject();
+            root.put("action", "heap-dump");
+            Path actionFile = ctx.getActionFile(pid);
+            PathUtils.writeTextSafely(root.toJson(), actionFile);
+            JsonObject jo = TuiHelper.pollJsonResponse(outputFile, 60000);
+            if (jo != null) {
+                String error = jo.getString("error");
+                if (error != null) {
+                    notify("Heap dump failed: " + error, true);
+                } else {
+                    String file = jo.getString("file");
+                    long size = jo.getLongOrDefault("size", 0);
+                    notify("Heap dump: " + file + " (" + TuiHelper.formatBytes(size) + ")", false);
+                }
+            } else {
+                notify("Heap dump: no response within 60s", true);
+            }
+            PathUtils.deleteFile(outputFile);
+        });
+    }
+
+    private void notify(String message, boolean error) {
+        if (ctx.notificationCallback != null) {
+            ctx.notificationCallback.accept(message, error);
+        }
     }
 
     private static void startDaemonThread(String name, Runnable task) {

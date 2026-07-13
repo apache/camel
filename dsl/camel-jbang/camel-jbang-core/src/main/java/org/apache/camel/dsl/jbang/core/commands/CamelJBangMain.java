@@ -110,6 +110,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("disable-processor", new CommandLine(new CamelProcessorDisableAction(this)))
                         .addSubcommand("enable-processor", new CommandLine(new CamelProcessorEnableAction(this)))
                         .addSubcommand("gc", new CommandLine(new CamelGCAction(this)))
+                        .addSubcommand("heap-dump", new CommandLine(new CamelHeapDump(this)))
                         .addSubcommand("heap-histogram", new CommandLine(new CamelHeapHistogram(this)))
                         .addSubcommand("memory-leak", new CommandLine(new CamelMemoryLeak(this)))
                         .addSubcommand("load", new CommandLine(new CamelLoadAction(this)))
