@@ -17,10 +17,11 @@ This will create:
 2. Distribution archives (`camel-launcher-<version>-bin.zip` and `camel-launcher-<version>-bin.tar.gz`) in the `target` directory
 
 On Windows, the distribution archives also include `bin/camel.exe`, a native bootstrap built by
-[`tooling/camel-exe`](../../../tooling/camel-exe). Release builds on a Windows x64 host:
+[`tooling/camel-exe`](../../../tooling/camel-exe). Release builds on a Windows x64 host run an integration test during `verify` that asserts
+`target/camel.exe` is staged and `bin/camel.exe` is present in the assembled ZIP:
 
 ```bash
-mvn -pl tooling/camel-exe,dsl/camel-jbang/camel-launcher -am install -Dcamel.launcher.requireWindowsExe=true
+mvn -pl tooling/camel-exe,dsl/camel-jbang/camel-launcher -am verify -Dcamel.launcher.requireWindowsExe=true
 ```
 
 To build and test only the native bootstrap:
