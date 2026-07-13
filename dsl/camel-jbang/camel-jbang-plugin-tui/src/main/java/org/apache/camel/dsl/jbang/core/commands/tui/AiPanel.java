@@ -59,7 +59,6 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
-import org.apache.camel.dsl.jbang.core.commands.AskTools;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -67,8 +66,8 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 /**
- * AI prompt panel for the TUI. Communicates directly with an LLM via {@link LlmClient} and uses the same tool
- * definitions as {@code camel ask}. Toggled with F8 when the TUI runs with {@code --mcp} mode.
+ * AI prompt panel for the TUI. Communicates directly with an LLM via {@link LlmClient} and uses TUI-specific tools
+ * backed by {@link McpFacade} for observing and interacting with the monitored Camel integrations. Toggled with F8.
  */
 class AiPanel {
 
@@ -117,7 +116,6 @@ class AiPanel {
     private volatile LlmClient client;
     private List<LlmClient.Message> messages;
     private List<LlmClient.ToolDef> tools;
-    private AskTools askTools;
     private final AtomicBoolean thinking = new AtomicBoolean();
     private volatile Thread agentThread;
     private String initError;
@@ -281,11 +279,7 @@ class AiPanel {
             }
             initError = null;
             messages = new ArrayList<>();
-            long pid = ctx != null && ctx.selectedPid != null ? Long.parseLong(ctx.selectedPid) : -1;
-            String name = ctx != null ? ctx.selectedName() : null;
-            askTools = new AskTools(pid);
-            tools = askTools.buildToolDefinitions();
-            tools.addAll(buildTuiToolDefinitions());
+            tools = buildTuiToolDefinitions();
         } catch (Exception e) {
             initError = "Failed to initialize AI: " + e.getMessage();
             client = null;
@@ -680,13 +674,9 @@ class AiPanel {
         thinkingStartTime = System.currentTimeMillis();
         thinking.set(true);
 
-        // rebuild tools if target process changed
-        long pid = ctx != null && ctx.selectedPid != null ? Long.parseLong(ctx.selectedPid) : -1;
-        String name = ctx != null ? ctx.selectedName() : null;
-        askTools = new AskTools(pid);
-        tools = askTools.buildToolDefinitions();
-        tools.addAll(buildTuiToolDefinitions());
-        String systemPrompt = buildSystemPrompt(pid, name);
+        // rebuild tools in case mcpFacade was wired after init
+        tools = buildTuiToolDefinitions();
+        String systemPrompt = buildSystemPrompt();
 
         agentThread = new Thread(() -> {
             try {
@@ -749,12 +739,7 @@ class AiPanel {
                         throw new InterruptedException();
                     }
                     log(LogLevel.TOOL, toolCall.name(), toolCall.arguments().toJson());
-                    String result;
-                    if (toolCall.name().startsWith("tui_") && mcpFacade != null) {
-                        result = executeTuiTool(toolCall.name(), toolCall.arguments());
-                    } else {
-                        result = askTools.executeTool(toolCall.name(), toolCall.arguments());
-                    }
+                    String result = executeTuiTool(toolCall.name(), toolCall.arguments());
                     log(LogLevel.RESULT, toolCall.name(), result);
                     results.add(new LlmClient.ToolResult(toolCall.id(), result));
                 }
@@ -1264,18 +1249,37 @@ class AiPanel {
         frame.renderWidget(Paragraph.from(new dev.tamboui.text.Text(lines, dev.tamboui.layout.Alignment.LEFT)), area);
     }
 
-    private String buildSystemPrompt(long pid, String name) {
-        String base = AskTools.buildSystemPrompt(pid, name);
-        if (mcpFacade == null) {
-            return base;
+    private String buildSystemPrompt() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("You are an Apache Camel assistant running inside the Camel TUI terminal console. ");
+        sb.append("You help users understand and troubleshoot their running Camel integrations.\n\n");
+
+        String selectedName = mcpFacade != null ? mcpFacade.getSelectedIntegrationName() : null;
+        String selectedPid = mcpFacade != null ? mcpFacade.getSelectedPid() : null;
+        if (selectedName != null && selectedPid != null) {
+            sb.append("The user is monitoring: ").append(selectedName);
+            sb.append(" (PID ").append(selectedPid).append(").\n\n");
         }
-        StringBuilder sb = new StringBuilder(base);
-        sb.append("\n\nYou are running inside the Camel TUI terminal console. ");
-        sb.append("You have tui_* tools to observe and navigate the TUI: ");
-        sb.append("read screen content, get structured table/log/error data, view diagrams and topology, ");
-        sb.append("navigate tabs, control integrations, and send test messages. ");
-        sb.append("Prefer tui_get_table over tui_get_screen for structured data. ");
-        sb.append("Use tui_get_state to see which tab is active before navigating.");
+
+        sb.append("You have tui_* tools to observe and interact with the TUI:\n");
+        sb.append("- tui_get_state: see which tab is active and which integration is selected\n");
+        sb.append("- tui_get_table: get structured data from any tab (Routes, Endpoints, Health, ");
+        sb.append("Memory, Threads, Metrics, Circuit Breaker, Startup, Heap Histogram, etc.)\n");
+        sb.append("- tui_get_log: read application logs with filtering\n");
+        sb.append("- tui_get_errors: get error details with stack traces\n");
+        sb.append("- tui_get_diagram: view route diagrams as text\n");
+        sb.append("- tui_get_topology: see how routes connect to each other\n");
+        sb.append("- tui_get_history: trace exchange processing steps\n");
+        sb.append("- tui_get_spans: OpenTelemetry span data\n");
+        sb.append("- tui_navigate: switch tabs, select integrations, select routes\n");
+        sb.append("- tui_control: stop/start routes, restart or stop integrations\n");
+        sb.append("- tui_send_message: send test messages to endpoints\n\n");
+        sb.append("Guidelines:\n");
+        sb.append("- Prefer tui_get_table over tui_get_screen for structured data\n");
+        sb.append("- Use tui_get_state first to understand context before acting\n");
+        sb.append("- Be concise and actionable in your answers\n");
+        sb.append("- When something looks wrong, explain what it means and suggest fixes\n");
+        sb.append("- For stopping routes or applications, use tui_control for graceful shutdown\n");
         if (mcpServerActive) {
             sb.append("\nThe TUI MCP server is available at http://localhost:")
                     .append(mcpServerPort).append("/mcp for external AI agents.");
@@ -1291,92 +1295,92 @@ class AiPanel {
         defs.add(new LlmClient.ToolDef(
                 "tui_get_screen",
                 "Returns the current TUI screen content as text, showing exactly what the user sees.",
-                AskTools.emptyParams()));
+                emptyParams()));
         defs.add(new LlmClient.ToolDef(
                 "tui_get_state",
                 "Returns TUI navigation state: active tab, selected integration, integration count.",
-                AskTools.emptyParams()));
+                emptyParams()));
         defs.add(new LlmClient.ToolDef(
                 "tui_get_options",
                 "Returns all available tabs and integrations for navigation discovery.",
-                AskTools.emptyParams()));
+                emptyParams()));
         defs.add(new LlmClient.ToolDef(
                 "tui_navigate",
                 "Navigates the TUI: switch tabs and/or select an integration. "
                                 + "Tab names: Overview, Log, Activity, Diagram, Routes, Endpoints, HTTP, Inspect, "
                                 + "Circuit Breaker, Health, Spans, Process.",
-                AskTools.objectParams(Map.of(
-                        "tab", AskTools.stringProp("Tab to switch to"),
-                        "integration", AskTools.stringProp("Integration name or PID to select"),
-                        "route", AskTools.stringProp("Route ID to select in Diagram tab"),
-                        "node", AskTools.stringProp("Processor/EIP node ID to select within a route")))));
+                objectParams(Map.of(
+                        "tab", stringProp("Tab to switch to"),
+                        "integration", stringProp("Integration name or PID to select"),
+                        "route", stringProp("Route ID to select in Diagram tab"),
+                        "node", stringProp("Processor/EIP node ID to select within a route")))));
         defs.add(new LlmClient.ToolDef(
                 "tui_get_table",
                 "Returns structured table data as JSON with typed values. "
                                  + "Much more reliable than parsing screen text.",
-                AskTools.objectParams(Map.of(
-                        "tab", AskTools.stringProp("Tab name (e.g. 'Routes', 'Endpoints'). Uses active tab if omitted.")))));
+                objectParams(Map.of(
+                        "tab", stringProp("Tab name (e.g. 'Routes', 'Endpoints'). Uses active tab if omitted.")))));
         defs.add(new LlmClient.ToolDef(
                 "tui_get_log",
                 "Returns recent log lines as structured data with optional filtering.",
-                AskTools.objectParams(Map.of(
-                        "limit", AskTools.stringProp("Maximum lines to return (default 50)"),
-                        "filter", AskTools.stringProp("Case-insensitive substring filter"),
-                        "level", AskTools.stringProp("Filter by level: INFO, WARN, ERROR, DEBUG, TRACE")))));
+                objectParams(Map.of(
+                        "limit", stringProp("Maximum lines to return (default 50)"),
+                        "filter", stringProp("Case-insensitive substring filter"),
+                        "level", stringProp("Filter by level: INFO, WARN, ERROR, DEBUG, TRACE")))));
         defs.add(new LlmClient.ToolDef(
                 "tui_get_errors",
                 "Returns structured error data including routeId, exception, stack trace.",
-                AskTools.emptyParams()));
+                emptyParams()));
         defs.add(new LlmClient.ToolDef(
                 "tui_get_diagram",
                 "Returns the route diagram as text showing routes and connections.",
-                AskTools.emptyParams()));
+                emptyParams()));
         defs.add(new LlmClient.ToolDef(
                 "tui_get_history",
                 "Returns trace and history data from the History tab as structured JSON.",
-                AskTools.objectParams(Map.of(
-                        "exchangeId", AskTools.stringProp("Exchange ID to get trace steps for")))));
+                objectParams(Map.of(
+                        "exchangeId", stringProp("Exchange ID to get trace steps for")))));
         defs.add(new LlmClient.ToolDef(
                 "tui_get_topology",
                 "Returns route topology as structured JSON graph with nodes and edges.",
-                AskTools.emptyParams()));
+                emptyParams()));
         defs.add(new LlmClient.ToolDef(
                 "tui_get_spans",
                 "Returns OpenTelemetry span data as structured JSON.",
-                AskTools.objectParams(Map.of(
-                        "traceId", AskTools.stringProp("Filter by trace ID"),
-                        "limit", AskTools.stringProp("Maximum spans to return (default 500)")))));
+                objectParams(Map.of(
+                        "traceId", stringProp("Filter by trace ID"),
+                        "limit", stringProp("Maximum spans to return (default 500)")))));
         defs.add(new LlmClient.ToolDef(
                 "tui_filter",
                 "Sets or clears the text filter on a tab. Empty string clears the filter.",
-                AskTools.objectParams(Map.of(
-                        "filter", AskTools.stringProp("Filter text to apply"),
-                        "tab", AskTools.stringProp("Tab name. Uses active tab if omitted.")))));
+                objectParams(Map.of(
+                        "filter", stringProp("Filter text to apply"),
+                        "tab", stringProp("Tab name. Uses active tab if omitted.")))));
         defs.add(new LlmClient.ToolDef(
                 "tui_control",
                 "Controls the integration: stop-routes, start-routes, restart, stop, or kill.",
-                AskTools.objectParams(Map.of(
-                        "action", AskTools.stringProp("Action: stop-routes, start-routes, restart, stop, kill")))));
+                objectParams(Map.of(
+                        "action", stringProp("Action: stop-routes, start-routes, restart, stop, kill")))));
         defs.add(new LlmClient.ToolDef(
                 "tui_send_message",
                 "Sends a message to a Camel endpoint in the selected integration.",
-                AskTools.objectParams(Map.of(
-                        "endpoint", AskTools.stringProp("Endpoint URI (e.g. 'direct:myRoute')"),
-                        "body", AskTools.stringProp("Message body"),
-                        "headers", AskTools.stringProp("Headers as key=value pairs separated by newlines")))));
+                objectParams(Map.of(
+                        "endpoint", stringProp("Endpoint URI (e.g. 'direct:myRoute')"),
+                        "body", stringProp("Message body"),
+                        "headers", stringProp("Headers as key=value pairs separated by newlines")))));
         defs.add(new LlmClient.ToolDef(
                 "tui_execute_sql",
                 "Executes a SQL query against a DataSource in the selected integration.",
-                AskTools.objectParams(Map.of(
-                        "query", AskTools.stringProp("SQL query to execute"),
-                        "datasource", AskTools.stringProp("DataSource bean name (auto-detected if only one)"),
-                        "maxRows", AskTools.stringProp("Max rows to return (default 100)"),
-                        "queryTimeout", AskTools.stringProp("Query timeout in seconds (default 30)")))));
+                objectParams(Map.of(
+                        "query", stringProp("SQL query to execute"),
+                        "datasource", stringProp("DataSource bean name (auto-detected if only one)"),
+                        "maxRows", stringProp("Max rows to return (default 100)"),
+                        "queryTimeout", stringProp("Query timeout in seconds (default 30)")))));
         defs.add(new LlmClient.ToolDef(
                 "tui_set_log_level",
                 "Changes the runtime log level of the selected integration.",
-                AskTools.objectParams(Map.of(
-                        "level", AskTools.stringProp("Log level: ERROR, WARN, INFO, DEBUG, TRACE")))));
+                objectParams(Map.of(
+                        "level", stringProp("Log level: ERROR, WARN, INFO, DEBUG, TRACE")))));
         return defs;
     }
 
@@ -1567,6 +1571,31 @@ class AiPanel {
         } catch (Exception e) {
             return "Error executing " + name + ": " + e.getMessage();
         }
+    }
+
+    private static JsonObject emptyParams() {
+        JsonObject schema = new JsonObject();
+        schema.put("type", "object");
+        schema.put("properties", new JsonObject());
+        return schema;
+    }
+
+    private static JsonObject objectParams(Map<String, JsonObject> properties) {
+        JsonObject props = new JsonObject();
+        for (Map.Entry<String, JsonObject> entry : new LinkedHashMap<>(properties).entrySet()) {
+            props.put(entry.getKey(), entry.getValue());
+        }
+        JsonObject schema = new JsonObject();
+        schema.put("type", "object");
+        schema.put("properties", props);
+        return schema;
+    }
+
+    private static JsonObject stringProp(String description) {
+        JsonObject prop = new JsonObject();
+        prop.put("type", "string");
+        prop.put("description", description);
+        return prop;
     }
 
     private static int parseIntOrDefault(String value, int defaultValue) {
