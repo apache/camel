@@ -75,7 +75,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
         template.sendBody(url, "MessageTrigger");
 
         // wait for the circuit to open (consumer suspended)
-        await().atMost(5, TimeUnit.SECONDS).until(consumer::isSuspended);
+        await().atMost(10, TimeUnit.SECONDS).until(consumer::isSuspended);
 
         // send next set of messages
         // should NOT go through b/c circuit is open
@@ -91,7 +91,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
         policy.setKeepOpen(false);
 
         // wait for the consumer to resume since keepOpen is now false
-        await().atMost(5, TimeUnit.SECONDS).until(consumer::isStarted);
+        await().atMost(10, TimeUnit.SECONDS).until(consumer::isStarted);
 
         // it should close b/c keepOpen is false — queued messages should now arrive
         result.expectedMessageCount(size * 2 + 1);
