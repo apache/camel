@@ -995,13 +995,15 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
 
     protected void setupDevConsole() {
         Route dev = router.route("/q/dev");
-        dev.method(HttpMethod.GET);
+        dev.method(HttpMethod.GET).method(HttpMethod.POST);
         dev.produces("text/plain");
         dev.produces("application/json");
+        dev.handler(BodyHandler.create(false));
         Route devSub = router.route("/q/dev/*");
-        devSub.method(HttpMethod.GET);
+        devSub.method(HttpMethod.GET).method(HttpMethod.POST);
         devSub.produces("text/plain");
         devSub.produces("application/json");
+        devSub.handler(BodyHandler.create(false));
 
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
             @Override
@@ -1083,6 +1085,19 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 } else {
                     Map<String, Object> params = new HashMap<>();
                     ctx.queryParams().forEach(params::put);
+                    if (ctx.request().method() == HttpMethod.POST) {
+                        String jsonBody = ctx.body() != null ? ctx.body().asString() : null;
+                        if (jsonBody != null && !jsonBody.isBlank()) {
+                            try {
+                                Object parsed = Jsoner.deserialize(jsonBody);
+                                if (parsed instanceof JsonObject jo) {
+                                    jo.forEach((k, v) -> params.put(k, v));
+                                }
+                            } catch (Exception e) {
+                                // ignore invalid JSON
+                            }
+                        }
+                    }
                     params.put(Exchange.HTTP_PATH, path);
                     StringBuilder sb = new StringBuilder();
                     JsonObject root = new JsonObject();
@@ -1127,7 +1142,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         dev.blockingHandler(handler);
         devSub.blockingHandler(handler);
 
-        platformHttpComponent.addHttpManagementEndpoint("/q/dev", "GET", null,
+        platformHttpComponent.addHttpManagementEndpoint("/q/dev", "GET,POST", null,
                 "text/plain,application/json", null);
     }
 

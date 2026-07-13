@@ -1058,16 +1058,28 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             boolean predicate = root.getBooleanOrDefault("predicate", false);
             String template = root.getStringOrDefault("template", "");
             String body = root.getStringOrDefault("body", "");
-            Map<String, String> map = new LinkedHashMap<>();
+            Map<String, String> headerMap = new LinkedHashMap<>();
             Collection<JsonObject> headers = root.getCollection("headers");
             if (headers != null) {
-                map = new LinkedHashMap<>();
                 for (JsonObject jo : headers) {
-                    map.put(jo.getString("key"), jo.getString("value"));
+                    headerMap.put(jo.getString("key"), jo.getString("value"));
                 }
             }
-            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON,
-                    Map.of("language", lan, "predicate", predicate, "template", template, "body", body, "headers", map));
+            Map<String, String> variableMap = new LinkedHashMap<>();
+            Collection<JsonObject> variables = root.getCollection("variables");
+            if (variables != null) {
+                for (JsonObject jo : variables) {
+                    variableMap.put(jo.getString("key"), jo.getString("value"));
+                }
+            }
+            Map<String, Object> params = new HashMap<>();
+            params.put("language", lan);
+            params.put("predicate", predicate);
+            params.put("template", template);
+            params.put("body", body);
+            params.put("headers", headerMap);
+            params.put("variables", variableMap);
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {

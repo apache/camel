@@ -48,6 +48,9 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "Optional message headers", javaType = "java.lang.String")
     public static final String HEADERS = "headers";
 
+    @Metadata(label = "query", description = "Optional exchange variables", javaType = "java.lang.String")
+    public static final String VARIABLES = "variables";
+
     public EvalLanguageDevConsole() {
         super("camel", "eval-language", "Evaluate Language", "Evaluate Language and display result");
     }
@@ -67,6 +70,10 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
             var headers = options.get(HEADERS);
             if (headers instanceof Map map) {
                 dummy.getMessage().setHeaders(map);
+            }
+            var variables = options.get(VARIABLES);
+            if (variables instanceof Map map2) {
+                map2.forEach((k, v) -> dummy.setVariable(k.toString(), v));
             }
 
             String out;
@@ -100,6 +107,10 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
             var headers = options.get(HEADERS);
             if (headers instanceof Map map) {
                 dummy.getMessage().setHeaders(map);
+            }
+            var variables = options.get(VARIABLES);
+            if (variables instanceof Map map2) {
+                map2.forEach((k, v) -> dummy.setVariable(k.toString(), v));
             }
 
             Exception cause = null;
