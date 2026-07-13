@@ -31,6 +31,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
+import org.apache.camel.builder.EndpointConsumerBuilder;
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionNode;
@@ -76,12 +78,13 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         Properties properties = new Properties();
         Map<String, String> namespaces = new LinkedHashMap<>();
         Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
+        List<Runnable> restorers = new ArrayList<>();
         Consumer<RouteDefinition> extractor = route -> {
             extractNamespaces(route, namespaces);
             if (sourceLocation || context.isDebugging()) {
                 extractSourceLocations(route, locations);
             }
-            resolveEndpointDslUris(route);
+            restorers.add(resolveEndpointDslUris(route));
             if (Boolean.TRUE.equals(route.isTemplate())) {
                 Map<String, Object> parameters = route.getTemplateParameters();
                 if (parameters != null) {
@@ -154,35 +157,39 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         writer.setCamelContext(context);
 
         List<JsonObject> roots = new ArrayList<>();
-        if (definition instanceof RoutesDefinition rd) {
-            for (RouteDefinition route : rd.getRoutes()) {
+        try {
+            if (definition instanceof RoutesDefinition rd) {
+                for (RouteDefinition route : rd.getRoutes()) {
+                    roots.add(writer.writeRouteDefinition(route));
+                }
+            } else if (definition instanceof RouteDefinition route) {
                 roots.add(writer.writeRouteDefinition(route));
-            }
-        } else if (definition instanceof RouteDefinition route) {
-            roots.add(writer.writeRouteDefinition(route));
-        } else if (definition instanceof RouteTemplatesDefinition rtd) {
-            for (RouteTemplateDefinition template : rtd.getRouteTemplates()) {
+            } else if (definition instanceof RouteTemplatesDefinition rtd) {
+                for (RouteTemplateDefinition template : rtd.getRouteTemplates()) {
+                    roots.add(writer.writeRouteTemplateDefinition(template));
+                }
+            } else if (definition instanceof RouteTemplateDefinition template) {
                 roots.add(writer.writeRouteTemplateDefinition(template));
-            }
-        } else if (definition instanceof RouteTemplateDefinition template) {
-            roots.add(writer.writeRouteTemplateDefinition(template));
-        } else if (definition instanceof RestsDefinition rd) {
-            for (RestDefinition rest : rd.getRests()) {
+            } else if (definition instanceof RestsDefinition rd) {
+                for (RestDefinition rest : rd.getRests()) {
+                    roots.add(writer.writeRestDefinition(rest));
+                }
+            } else if (definition instanceof RestDefinition rest) {
                 roots.add(writer.writeRestDefinition(rest));
-            }
-        } else if (definition instanceof RestDefinition rest) {
-            roots.add(writer.writeRestDefinition(rest));
-        } else if (definition instanceof RouteConfigurationsDefinition rcd) {
-            for (RouteConfigurationDefinition config : rcd.getRouteConfigurations()) {
+            } else if (definition instanceof RouteConfigurationsDefinition rcd) {
+                for (RouteConfigurationDefinition config : rcd.getRouteConfigurations()) {
+                    roots.add(writer.writeRouteConfigurationDefinition(config));
+                }
+            } else if (definition instanceof RouteConfigurationDefinition config) {
                 roots.add(writer.writeRouteConfigurationDefinition(config));
+            } else {
+                JsonObject jo = writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition) definition);
+                if (jo != null) {
+                    roots.add(jo);
+                }
             }
-        } else if (definition instanceof RouteConfigurationDefinition config) {
-            roots.add(writer.writeRouteConfigurationDefinition(config));
-        } else {
-            JsonObject jo = writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition) definition);
-            if (jo != null) {
-                roots.add(jo);
-            }
+        } finally {
+            restorers.forEach(Runnable::run);
         }
 
         return writer.printAsYaml(roots);
@@ -289,26 +296,31 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
      * in the model dump
      */
     @SuppressWarnings("rawtypes")
-    private static void resolveEndpointDslUris(RouteDefinition route) {
+    private static Runnable resolveEndpointDslUris(RouteDefinition route) {
+        List<Runnable> restorers = new ArrayList<>();
         FromDefinition from = route.getInput();
         if (from != null && from.getEndpointConsumerBuilder() != null) {
-            String uri = from.getEndpointConsumerBuilder().getRawUri();
-            from.setUri(uri);
+            EndpointConsumerBuilder builder = from.getEndpointConsumerBuilder();
+            from.setUri(builder.getRawUri());
+            restorers.add(() -> from.setEndpointConsumerBuilder(builder));
         }
         Collection<SendDefinition> col = filterTypeInOutputs(route.getOutputs(), SendDefinition.class);
         for (SendDefinition<?> to : col) {
             if (to.getEndpointProducerBuilder() != null) {
-                String uri = to.getEndpointProducerBuilder().getRawUri();
-                to.setUri(uri);
+                EndpointProducerBuilder builder = to.getEndpointProducerBuilder();
+                to.setUri(builder.getRawUri());
+                restorers.add(() -> to.setEndpointProducerBuilder(builder));
             }
         }
         Collection<ToDynamicDefinition> col2 = filterTypeInOutputs(route.getOutputs(), ToDynamicDefinition.class);
         for (ToDynamicDefinition to : col2) {
             if (to.getEndpointProducerBuilder() != null) {
-                String uri = to.getEndpointProducerBuilder().getRawUri();
-                to.setUri(uri);
+                EndpointProducerBuilder builder = to.getEndpointProducerBuilder();
+                to.setUri(builder.getRawUri());
+                restorers.add(() -> to.setUri(null));
             }
         }
+        return () -> restorers.forEach(Runnable::run);
     }
 
     private static NamespaceAware getNamespaceAwareFromExpression(ExpressionNode expressionNode) {

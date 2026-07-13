@@ -16,11 +16,15 @@
  */
 package org.apache.camel.java;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
+import org.apache.camel.builder.EndpointConsumerBuilder;
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
@@ -60,75 +64,80 @@ public class LwModelToJavaDumper implements ModelToJavaDumper {
             throws Exception {
 
         Properties properties = new Properties();
+        List<Runnable> restorers = new ArrayList<>();
         if (definition instanceof RouteTemplatesDefinition templates) {
             templates.getRouteTemplates().forEach(template -> {
-                resolveEndpointDslUris(template.getRoute());
+                restorers.add(resolveEndpointDslUris(template.getRoute()));
                 collectTemplateProperties(template, properties);
             });
         } else if (definition instanceof RouteTemplateDefinition template) {
-            resolveEndpointDslUris(template.getRoute());
+            restorers.add(resolveEndpointDslUris(template.getRoute()));
             collectTemplateProperties(template, properties);
         } else if (definition instanceof RoutesDefinition routes) {
-            routes.getRoutes().forEach(LwModelToJavaDumper::resolveEndpointDslUris);
+            routes.getRoutes().forEach(r -> restorers.add(resolveEndpointDslUris(r)));
         } else if (definition instanceof RouteDefinition route) {
-            resolveEndpointDslUris(route);
+            restorers.add(resolveEndpointDslUris(route));
         }
 
         org.apache.camel.java.out.JavaDslModelWriter writer = new org.apache.camel.java.out.JavaDslModelWriter();
 
         StringBuilder sb = new StringBuilder();
-        if (definition instanceof RoutesDefinition rd) {
-            for (RouteDefinition route : rd.getRoutes()) {
-                if (!sb.isEmpty()) {
-                    sb.append("\n\n");
+        try {
+            if (definition instanceof RoutesDefinition rd) {
+                for (RouteDefinition route : rd.getRoutes()) {
+                    if (!sb.isEmpty()) {
+                        sb.append("\n\n");
+                    }
+                    sb.append(writer.writeRouteDefinition(route));
                 }
+            } else if (definition instanceof RouteDefinition route) {
                 sb.append(writer.writeRouteDefinition(route));
-            }
-        } else if (definition instanceof RouteDefinition route) {
-            sb.append(writer.writeRouteDefinition(route));
-        } else if (definition instanceof RouteTemplatesDefinition rtd) {
-            for (RouteTemplateDefinition template : rtd.getRouteTemplates()) {
-                if (!sb.isEmpty()) {
-                    sb.append("\n\n");
+            } else if (definition instanceof RouteTemplatesDefinition rtd) {
+                for (RouteTemplateDefinition template : rtd.getRouteTemplates()) {
+                    if (!sb.isEmpty()) {
+                        sb.append("\n\n");
+                    }
+                    sb.append(writer.writeRouteTemplateDefinition(template));
                 }
+            } else if (definition instanceof RouteTemplateDefinition template) {
                 sb.append(writer.writeRouteTemplateDefinition(template));
-            }
-        } else if (definition instanceof RouteTemplateDefinition template) {
-            sb.append(writer.writeRouteTemplateDefinition(template));
-        } else if (definition instanceof RestsDefinition rd) {
-            for (RestDefinition rest : rd.getRests()) {
-                if (!sb.isEmpty()) {
-                    sb.append("\n\n");
+            } else if (definition instanceof RestsDefinition rd) {
+                for (RestDefinition rest : rd.getRests()) {
+                    if (!sb.isEmpty()) {
+                        sb.append("\n\n");
+                    }
+                    sb.append(writer.writeRestDefinition(rest));
                 }
+            } else if (definition instanceof RestDefinition rest) {
                 sb.append(writer.writeRestDefinition(rest));
-            }
-        } else if (definition instanceof RestDefinition rest) {
-            sb.append(writer.writeRestDefinition(rest));
-        } else if (definition instanceof RouteConfigurationsDefinition rcd) {
-            for (RouteConfigurationDefinition config : rcd.getRouteConfigurations()) {
-                if (!sb.isEmpty()) {
-                    sb.append("\n\n");
+            } else if (definition instanceof RouteConfigurationsDefinition rcd) {
+                for (RouteConfigurationDefinition config : rcd.getRouteConfigurations()) {
+                    if (!sb.isEmpty()) {
+                        sb.append("\n\n");
+                    }
+                    sb.append(writer.writeRouteConfigurationDefinition(config));
                 }
+            } else if (definition instanceof RouteConfigurationDefinition config) {
                 sb.append(writer.writeRouteConfigurationDefinition(config));
-            }
-        } else if (definition instanceof RouteConfigurationDefinition config) {
-            sb.append(writer.writeRouteConfigurationDefinition(config));
-        } else if (definition instanceof RestConfigurationDefinition restConfig) {
-            sb.append(writer.writeRestConfigurationDefinition(restConfig));
-        } else if (definition instanceof TransformersDefinition td) {
-            for (TransformerDefinition t : td.getTransformers()) {
-                if (!sb.isEmpty()) {
-                    sb.append("\n\n");
+            } else if (definition instanceof RestConfigurationDefinition restConfig) {
+                sb.append(writer.writeRestConfigurationDefinition(restConfig));
+            } else if (definition instanceof TransformersDefinition td) {
+                for (TransformerDefinition t : td.getTransformers()) {
+                    if (!sb.isEmpty()) {
+                        sb.append("\n\n");
+                    }
+                    sb.append(writer.writeTransformer(t));
                 }
-                sb.append(writer.writeTransformer(t));
-            }
-        } else if (definition instanceof ValidatorsDefinition vd) {
-            for (ValidatorDefinition v : vd.getValidators()) {
-                if (!sb.isEmpty()) {
-                    sb.append("\n\n");
+            } else if (definition instanceof ValidatorsDefinition vd) {
+                for (ValidatorDefinition v : vd.getValidators()) {
+                    if (!sb.isEmpty()) {
+                        sb.append("\n\n");
+                    }
+                    sb.append(writer.writeValidator(v));
                 }
-                sb.append(writer.writeValidator(v));
             }
+        } finally {
+            restorers.forEach(Runnable::run);
         }
 
         String result = sb.toString();
@@ -149,26 +158,35 @@ public class LwModelToJavaDumper implements ModelToJavaDumper {
     }
 
     @SuppressWarnings("rawtypes")
-    private static void resolveEndpointDslUris(RouteDefinition route) {
+    private static Runnable resolveEndpointDslUris(RouteDefinition route) {
         if (route == null) {
-            return;
+            return () -> {
+            };
         }
+        List<Runnable> restorers = new ArrayList<>();
         FromDefinition from = route.getInput();
         if (from != null && from.getEndpointConsumerBuilder() != null) {
-            from.setUri(from.getEndpointConsumerBuilder().getRawUri());
+            EndpointConsumerBuilder builder = from.getEndpointConsumerBuilder();
+            from.setUri(builder.getRawUri());
+            restorers.add(() -> from.setEndpointConsumerBuilder(builder));
         }
         Collection<SendDefinition> col = filterTypeInOutputs(route.getOutputs(), SendDefinition.class);
         for (SendDefinition<?> to : col) {
             if (to.getEndpointProducerBuilder() != null) {
-                to.setUri(to.getEndpointProducerBuilder().getRawUri());
+                EndpointProducerBuilder builder = to.getEndpointProducerBuilder();
+                to.setUri(builder.getRawUri());
+                restorers.add(() -> to.setEndpointProducerBuilder(builder));
             }
         }
         Collection<ToDynamicDefinition> col2 = filterTypeInOutputs(route.getOutputs(), ToDynamicDefinition.class);
         for (ToDynamicDefinition to : col2) {
             if (to.getEndpointProducerBuilder() != null) {
-                to.setUri(to.getEndpointProducerBuilder().getRawUri());
+                EndpointProducerBuilder builder = to.getEndpointProducerBuilder();
+                to.setUri(builder.getRawUri());
+                restorers.add(() -> to.setUri(null));
             }
         }
+        return () -> restorers.forEach(Runnable::run);
     }
 
     private static String resolvePlaceholders(CamelContext context, String text, Properties properties) {
