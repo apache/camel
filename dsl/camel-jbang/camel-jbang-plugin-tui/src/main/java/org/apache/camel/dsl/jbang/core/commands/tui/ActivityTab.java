@@ -430,7 +430,7 @@ class ActivityTab extends AbstractTableTab {
 
                 - **Total** / **OK** / **Failed** — exchange counts
                 - **Sends** — total remote endpoint calls across all exchanges
-                - **Avg** / **Max** — elapsed time statistics
+                - **p50** / **p95** / **Max** — elapsed time statistics
                 - **Window** — how far back the oldest and newest entries are
 
                 ## Activity List
