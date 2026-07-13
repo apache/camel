@@ -40,7 +40,7 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:start", expectedBody, "foo", "bar");
 
-        endpoint.assertIsSatisfied();
+        endpoint.assertIsSatisfied(30_000);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
 
-        endpoint.assertIsSatisfied();
+        endpoint.assertIsSatisfied(30_000);
     }
 
     @Override

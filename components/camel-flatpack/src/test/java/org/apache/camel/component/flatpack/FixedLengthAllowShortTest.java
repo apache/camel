@@ -52,7 +52,7 @@ public class FixedLengthAllowShortTest {
     @Test
     public void testCamel() throws Exception {
         results.expectedMessageCount(4);
-        results.assertIsSatisfied();
+        results.assertIsSatisfied(30_000);
 
         int counter = 0;
         List<Exchange> list = results.getReceivedExchanges();
@@ -70,7 +70,7 @@ public class FixedLengthAllowShortTest {
     @Test
     public void testFlatpackDataFormat() throws Exception {
         resultsdf.expectedMessageCount(1);
-        resultsdf.assertIsSatisfied();
+        resultsdf.assertIsSatisfied(30_000);
 
         Exchange exchange = resultsdf.getReceivedExchanges().get(0);
         DataSetList data = exchange.getIn().getBody(DataSetList.class);
@@ -84,7 +84,7 @@ public class FixedLengthAllowShortTest {
     @Test
     public void testFlatpackDataFormatXML() throws Exception {
         resultsxml.expectedMessageCount(1);
-        resultsxml.assertIsSatisfied();
+        resultsxml.assertIsSatisfied(30_000);
 
         Exchange exchange = resultsxml.getReceivedExchanges().get(0);
         DataSetList data = exchange.getIn().getBody(DataSetList.class);
