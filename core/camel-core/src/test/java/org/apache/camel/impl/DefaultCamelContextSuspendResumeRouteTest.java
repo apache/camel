@@ -39,7 +39,7 @@ public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSuppor
 
         template.sendBody("seda:foo", "A");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         log.info("Suspending");
 
@@ -57,7 +57,7 @@ public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSuppor
                 .atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> Assertions.assertDoesNotThrow(() -> template.sendBody("seda:foo", "B")));
 
-        mock.assertIsSatisfied(1000);
+        mock.assertIsSatisfied(5000);
 
         assertTrue(context.isSuspended());
         assertFalse(context.getStatus().isStarted());

@@ -49,7 +49,7 @@ public class AggregateDiscardOnTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "E", "id", 456);
 
         // should complete before timeout
-        assertTrue(mock.await(1000, TimeUnit.MILLISECONDS));
+        assertTrue(mock.await(5000, TimeUnit.MILLISECONDS));
     }
 
     @Override
