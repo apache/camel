@@ -78,6 +78,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     private final ActivityEventNotifier activityEventNotifier = new ActivityEventNotifier();
     private int activitySize = 100;
     private static final long INFLIGHT_EVICTION_MILLIS = 5 * 60 * 1000;
+    private final Object historyLock = new Object();
     private volatile String lastCompletedBreadcrumbId;
     private boolean removeOnDump = true;
     private int bodyMaxChars = 32 * 1024;
@@ -218,59 +219,66 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
 
         // handle capturing events for last full completed exchange (aka replay)
         if (camelContext.isMessageHistory()) {
-            var head = provisionalHistoryQueue.peek();
-            String bid = null;
-            String tid = null;
-            if (head != null) {
-                bid = head.getBreadcrumbId();
-                tid = head.getExchangeId();
-            }
-            // correlate by breadcrumb ID when available (links exchanges across broker boundaries)
-            // fallback to exchange ID / correlation ID matching when breadcrumb is not set
-            boolean match;
-            if (bid != null && event.getBreadcrumbId() != null) {
-                match = bid.equals(event.getBreadcrumbId());
-            } else {
-                match = tid == null || tid.equals(event.getExchangeId()) || tid.equals(event.getCorrelationExchangeId());
-            }
-            // check if this event continues a previously completed breadcrumb flow
-            // (e.g. a downstream route connected via Kafka/SEDA that starts after the originating route finished)
-            boolean appendMode = false;
-            if (head == null && event.getBreadcrumbId() != null
-                    && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
-                appendMode = true;
-            } else if (head != null && event.getBreadcrumbId() != null
-                    && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)
-                    && head.getBreadcrumbId() != null
-                    && head.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
-                appendMode = true;
-            }
-            if (match || appendMode) {
-                boolean added = provisionalHistoryQueue.offer(event);
-                boolean original = head != null && event.getRouteId() != null && event.getRouteId().equals(head.getRouteId());
-                if (event.isLast() && original) {
-                    if (appendMode) {
-                        // downstream route finished: merge into existing complete history
-                        completeHistoryQueue.addAll(provisionalHistoryQueue);
-                        if (!added) {
-                            completeHistoryQueue.add(event);
-                        }
-                    } else {
-                        // originating route finished: replace complete history
-                        completeHistoryQueue.clear();
-                        completeHistoryQueue.addAll(provisionalHistoryQueue);
-                        if (!added) {
-                            completeHistoryQueue.add(event);
-                        }
-                        lastCompletedBreadcrumbId = event.getBreadcrumbId();
-                    }
-                    provisionalHistoryQueue.clear();
+            // synchronized to prevent race conditions when multiple threads (e.g. timer thread
+            // and Kafka consumer threads) call traceEvent concurrently — the peek/offer/addAll/clear
+            // sequence must be atomic to avoid dropping events or corrupting the queue state
+            synchronized (historyLock) {
+                var head = provisionalHistoryQueue.peek();
+                String bid = null;
+                String tid = null;
+                if (head != null) {
+                    bid = head.getBreadcrumbId();
+                    tid = head.getExchangeId();
                 }
-            } else if (lastCompletedBreadcrumbId != null && event.getBreadcrumbId() != null
-                    && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
-                // late-arriving event from a downstream route (e.g. second branch of a multicast via Kafka/SEDA)
-                // that arrived after the provisional queue was claimed by a new exchange
-                completeHistoryQueue.add(event);
+                // correlate by breadcrumb ID when available (links exchanges across broker boundaries)
+                // fallback to exchange ID / correlation ID matching when breadcrumb is not set
+                boolean match;
+                if (bid != null && event.getBreadcrumbId() != null) {
+                    match = bid.equals(event.getBreadcrumbId());
+                } else {
+                    match = tid == null || tid.equals(event.getExchangeId())
+                            || tid.equals(event.getCorrelationExchangeId());
+                }
+                // check if this event continues a previously completed breadcrumb flow
+                // (e.g. a downstream route connected via Kafka/SEDA that starts after the originating route finished)
+                boolean appendMode = false;
+                if (head == null && event.getBreadcrumbId() != null
+                        && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
+                    appendMode = true;
+                } else if (head != null && event.getBreadcrumbId() != null
+                        && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)
+                        && head.getBreadcrumbId() != null
+                        && head.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
+                    appendMode = true;
+                }
+                if (match || appendMode) {
+                    boolean added = provisionalHistoryQueue.offer(event);
+                    boolean original
+                            = head != null && event.getRouteId() != null && event.getRouteId().equals(head.getRouteId());
+                    if (event.isLast() && original) {
+                        if (appendMode) {
+                            // downstream route finished: merge into existing complete history
+                            completeHistoryQueue.addAll(provisionalHistoryQueue);
+                            if (!added) {
+                                completeHistoryQueue.add(event);
+                            }
+                        } else {
+                            // originating route finished: replace complete history
+                            completeHistoryQueue.clear();
+                            completeHistoryQueue.addAll(provisionalHistoryQueue);
+                            if (!added) {
+                                completeHistoryQueue.add(event);
+                            }
+                            lastCompletedBreadcrumbId = event.getBreadcrumbId();
+                        }
+                        provisionalHistoryQueue.clear();
+                    }
+                } else if (lastCompletedBreadcrumbId != null && event.getBreadcrumbId() != null
+                        && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
+                    // late-arriving event from a downstream route (e.g. second branch of a multicast via Kafka/SEDA)
+                    // that arrived after the provisional queue was claimed by a new exchange
+                    completeHistoryQueue.add(event);
+                }
             }
         }
 
