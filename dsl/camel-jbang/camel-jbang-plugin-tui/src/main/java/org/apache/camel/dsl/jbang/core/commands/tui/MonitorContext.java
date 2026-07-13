@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 
 import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -39,6 +40,7 @@ class MonitorContext {
     int logPinPercent;
     boolean logPinVisible;
     boolean ratePerMinute;
+    BiConsumer<String, Boolean> notificationCallback;
 
     MonitorContext(
                    AtomicReference<List<IntegrationInfo>> data,

@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import dev.tamboui.layout.Rect;
@@ -33,6 +34,7 @@ import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
@@ -899,5 +901,39 @@ final class TuiHelper {
             // ignore
         }
         return false;
+    }
+
+    static void triggerHeapDump(MonitorContext ctx, BiConsumer<String, Boolean> notifyCallback) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return;
+        }
+        notifyCallback.accept("Writing heap dump...", false);
+        String pid = info.pid;
+        Thread t = new Thread(() -> {
+            Path outputFile = ctx.getOutputFile(pid);
+            PathUtils.deleteFile(outputFile);
+            JsonObject root = new JsonObject();
+            root.put("action", "heap-dump");
+            Path actionFile = ctx.getActionFile(pid);
+            PathUtils.writeTextSafely(root.toJson(), actionFile);
+            JsonObject jo = pollJsonResponse(outputFile, 60000);
+            if (jo != null) {
+                String error = jo.getString("error");
+                if (error != null) {
+                    notifyCallback.accept("Heap dump failed: " + error, true);
+                } else {
+                    String file = jo.getString("file");
+                    long size = jo.getLongOrDefault("size", 0);
+                    notifyCallback.accept("Heap dump: " + file + " (" + formatBytes(size) + ")", false);
+                }
+            } else {
+                notifyCallback.accept("Heap dump: no response within 60s", true);
+            }
+            PathUtils.deleteFile(outputFile);
+        });
+        t.setDaemon(true);
+        t.setName("heap-dump-" + pid);
+        t.start();
     }
 }

@@ -340,6 +340,27 @@ public final class ToolRegistry {
                                             + "Useful for diagnosing memory leaks and understanding which classes dominate heap usage.")
                 .executor((ctx, args) -> ctx.executeAction("heap-histogram", null)));
 
+        register(tool("write_heap_dump",
+                "Write a heap dump (.hprof) file for deep memory analysis with tools like Eclipse MAT or VisualVM. "
+                                         + "Returns the absolute file path and size of the dump.")
+                .param("name", "string",
+                        "File name for the heap dump (without .hprof extension). Defaults to heap-dump-<timestamp>", false)
+                .param("live", "string",
+                        "Whether to dump only live objects (default true). Live dumps trigger a GC first", false)
+                .readOnly(false)
+                .executor((ctx, args) -> {
+                    String name = args.get("name");
+                    String live = args.get("live");
+                    return ctx.executeAction("heap-dump", root -> {
+                        if (name != null && !name.isBlank()) {
+                            root.put("name", name);
+                        }
+                        if (live != null && !live.isBlank()) {
+                            root.put("live", live);
+                        }
+                    });
+                }));
+
         register(tool("execute_sql",
                 "Execute a SQL query against a DataSource in the running Camel application. "
                                      + "Returns structured JSON with columns, rows, and metadata for SELECT queries, "
