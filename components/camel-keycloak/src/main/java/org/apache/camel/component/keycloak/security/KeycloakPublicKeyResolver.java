@@ -57,7 +57,8 @@ public class KeycloakPublicKeyResolver {
     /**
      * Gets the public key for verifying JWT signatures. Keys are cached and refreshed periodically.
      *
-     * @param  kid         the key ID from the JWT header (optional, uses first key if null)
+     * @param  kid         the key ID from the JWT header; the matching key is selected, and resolution fails closed
+     *                     when a kid is given but no key matches (a {@code null} kid falls back to the first key)
      * @return             the public key
      * @throws IOException if fetching keys fails
      */
@@ -68,11 +69,33 @@ public class KeycloakPublicKeyResolver {
             refreshKeys();
         }
 
-        if (kid != null && keyCache.containsKey(kid)) {
-            return keyCache.get(kid);
+        // If the kid is not known yet, force a refresh once to pick up rotated keys
+        if (kid != null && !keyCache.containsKey(kid)) {
+            refreshKeys();
         }
 
-        // If no kid specified or not found, return the first available key
+        return selectKey(kid);
+    }
+
+    /**
+     * Selects the cached key matching the given kid. Fails closed (throws) when a kid is provided but no key matches,
+     * so a token is never verified against the wrong key during key rotation. Falls back to the first available key
+     * only when the token carries no kid.
+     *
+     * @param  kid         the key ID from the JWT header, or {@code null}
+     * @return             the matching public key
+     * @throws IOException if no matching key (or, for a {@code null} kid, no key at all) is available
+     */
+    PublicKey selectKey(String kid) throws IOException {
+        if (kid != null) {
+            PublicKey key = keyCache.get(kid);
+            if (key == null) {
+                throw new IOException("No public key found in Keycloak JWKS for kid: " + kid);
+            }
+            return key;
+        }
+
+        // No kid in the token header - fall back to the first available key
         if (!keyCache.isEmpty()) {
             return keyCache.values().iterator().next();
         }
@@ -105,7 +128,7 @@ public class KeycloakPublicKeyResolver {
     }
 
     @SuppressWarnings("unchecked")
-    private void parseJwks(String jwksJson) throws IOException {
+    void parseJwks(String jwksJson) throws IOException {
         Map<String, Object> jwks = OBJECT_MAPPER.readValue(jwksJson, Map.class);
         List<Map<String, Object>> keys = (List<Map<String, Object>>) jwks.get("keys");
 
