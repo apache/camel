@@ -50,21 +50,50 @@ static LPWSTR skip_argv0(LPWSTR cmd) {
     return p;
 }
 
-int wmain(void) {
-    wchar_t exePath[MAX_PATH];
-    DWORD n = GetModuleFileNameW(NULL, exePath, MAX_PATH);
-    if (n == 0 || n >= MAX_PATH) {
-        fwprintf(stderr, L"camel: launcher path exceeds MAX_PATH (%d chars) or cannot be resolved\n", MAX_PATH);
-        return 1;
+/*
+ * Return a heap-allocated wide string holding the directory that contains this
+ * exe, or NULL on failure. The caller must free() the result. Uses a doubling
+ * loop so paths beyond MAX_PATH (260) work on Windows 10+ with long-path
+ * support enabled.
+ */
+static wchar_t *get_exe_dir(void) {
+    DWORD bufSize = MAX_PATH;
+    wchar_t *buf = (wchar_t *) malloc(bufSize * sizeof(wchar_t));
+    if (buf == NULL) {
+        return NULL;
     }
-
-    /* Strip the exe filename, leaving the directory. */
-    wchar_t *slash = wcsrchr(exePath, L'\\');
+    for (;;) {
+        DWORD n = GetModuleFileNameW(NULL, buf, bufSize);
+        if (n == 0) {
+            free(buf);
+            return NULL;
+        }
+        if (n < bufSize) {
+            break;
+        }
+        bufSize *= 2;
+        wchar_t *tmp = (wchar_t *) realloc(buf, bufSize * sizeof(wchar_t));
+        if (tmp == NULL) {
+            free(buf);
+            return NULL;
+        }
+        buf = tmp;
+    }
+    wchar_t *slash = wcsrchr(buf, L'\\');
     if (slash == NULL) {
-        fwprintf(stderr, L"camel: unexpected launcher path\n");
-        return 1;
+        free(buf);
+        return NULL;
     }
     *slash = L'\0';
+    return buf;
+}
+
+int wmain(void) {
+    wchar_t *exePath = get_exe_dir();
+    if (exePath == NULL) {
+        fwprintf(stderr, L"camel: cannot resolve launcher directory\n");
+        return 1;
+    }
 
     LPWSTR tail = skip_argv0(GetCommandLineW());
 
@@ -78,10 +107,17 @@ int wmain(void) {
     LPWSTR cmdline = (LPWSTR) malloc(cap * sizeof(wchar_t));
     if (cmdline == NULL) {
         fwprintf(stderr, L"camel: out of memory\n");
+        free(exePath);
         return 1;
     }
-    _snwprintf_s(cmdline, cap, _TRUNCATE,
-                 L"cmd.exe /S /C \"\"%s\\camel.bat\" %s\"", exePath, tail);
+    int ret = _snwprintf_s(cmdline, cap, _TRUNCATE,
+                           L"cmd.exe /S /C \"\"%s\\camel.bat\" %s\"", exePath, tail);
+    if (ret == -1) {
+        fwprintf(stderr, L"camel: command line was truncated\n");
+        free(cmdline);
+        free(exePath);
+        return 1;
+    }
 
     STARTUPINFOW si;
     PROCESS_INFORMATION pi;
@@ -93,14 +129,18 @@ int wmain(void) {
     if (!CreateProcessW(NULL, cmdline, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi)) {
         fwprintf(stderr, L"camel: failed to start camel.bat (error %lu)\n", GetLastError());
         free(cmdline);
+        free(exePath);
         return 1;
     }
 
     WaitForSingleObject(pi.hProcess, INFINITE);
     DWORD code = 1;
-    GetExitCodeProcess(pi.hProcess, &code);
+    if (!GetExitCodeProcess(pi.hProcess, &code)) {
+        fwprintf(stderr, L"camel: failed to get exit code (error %lu)\n", GetLastError());
+    }
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
     free(cmdline);
+    free(exePath);
     return (int) code;
 }

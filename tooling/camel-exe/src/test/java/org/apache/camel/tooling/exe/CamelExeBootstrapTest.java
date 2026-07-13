@@ -181,4 +181,14 @@ class CamelExeBootstrapTest {
         assertEquals(0, r.exit, r.stdout);
         assertTrue(r.stdout.contains("ARG=version"), r.stdout);
     }
+
+    @Test
+    void failsGracefullyWhenCamelBatIsMissing(@TempDir Path dir) throws Exception {
+        Path exe = stagedExe(dir);
+
+        Result r = run(exe, "version");
+
+        assertTrue(r.exit != 0, "exit code must be non-zero when camel.bat is missing");
+        assertTrue(r.stdout.length() > 0, "error message must be present in output");
+    }
 }

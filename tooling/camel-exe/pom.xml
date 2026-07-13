@@ -46,6 +46,11 @@
         </dependency>
     </dependencies>
 
+    <!--
+        POM packaging is used because the main artifact is a native .exe, not a jar.
+        The test plugins below are wired manually so that CamelExeBootstrapTest (Java,
+        Windows-only) runs during the standard 'mvn verify' lifecycle.
+    -->
     <build>
         <plugins>
             <plugin>
