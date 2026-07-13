@@ -67,6 +67,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.BacklogDebugger;
+import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
@@ -1022,6 +1023,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         RuntimeEndpointRegistry reg = camelContext.getRuntimeEndpointRegistry();
         if (reg != null) {
             reg.reset();
+        }
+        BacklogTracer tracer = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
+        if (tracer != null) {
+            tracer.clear();
+        }
+        if (camelContext.getErrorRegistry() != null) {
+            camelContext.getErrorRegistry().clear();
         }
     }
 

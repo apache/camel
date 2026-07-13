@@ -137,16 +137,16 @@ class StopAllPopup {
     }
 
     void render(Frame frame, Rect area) {
-        int popupW = Math.min(42, area.width() - 4);
+        int popupW = Math.min(48, area.width() - 4);
         int popupH = 6;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
-        String intLabel = (checkIntegrations ? "[x]" : "[ ]") + " All integrations (" + integrationCount + ")";
-        String infraLabel = (checkInfra ? "[x]" : "[ ]") + " All infra services (" + infraCount + ")";
+        String intLabel = (checkIntegrations ? "[x]" : "[ ]") + " All integrations (" + integrationCount + " running)";
+        String infraLabel = (checkInfra ? "[x]" : "[ ]") + " All infra services (" + infraCount + " running)";
 
         Style normalStyle = Style.EMPTY;
         Style selectedStyle = Style.EMPTY.bold().reversed();

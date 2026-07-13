@@ -1839,6 +1839,12 @@ public class CamelMonitor extends CamelCommand {
         Path actionFile = ctx.getActionFile(pid);
         PathUtils.writeTextSafely(root.toJson(), actionFile);
         dataService.metrics().resetStats(pid);
+
+        info.activity = List.of();
+        info.errors = new ArrayList<>();
+        dataService.traces().set(Collections.emptyList());
+        dataService.traceFilePositions().clear();
+        tabRegistry.historyTab().historyEntries = Collections.emptyList();
     }
 
     private void playBuiltinAnimation(String name) {
