@@ -1091,7 +1091,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                             try {
                                 Object parsed = Jsoner.deserialize(jsonBody);
                                 if (parsed instanceof JsonObject jo) {
-                                    jo.forEach((k, v) -> params.put(k, v));
+                                    params.putAll(jo);
                                 }
                             } catch (Exception e) {
                                 // ignore invalid JSON
