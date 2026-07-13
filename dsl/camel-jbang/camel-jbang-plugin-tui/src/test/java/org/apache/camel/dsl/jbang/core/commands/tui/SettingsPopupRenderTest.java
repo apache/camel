@@ -77,6 +77,7 @@ class SettingsPopupRenderTest {
         assertTrue(rendered.contains("Theme"), "the Theme row should be shown");
         assertTrue(rendered.contains("Starting Tab"), "the Starting Tab row should be shown");
         assertTrue(rendered.contains("Log Pin"), "the Log Pin row should be shown");
+        assertTrue(rendered.contains("Rate per"), "the Rate per row should be shown");
         assertTrue(rendered.contains("Default Folder"), "the Default Folder row should be shown");
         assertTrue(rendered.contains("AI Provider"), "the AI Provider row should be shown");
         assertTrue(rendered.contains("AI Model"), "the AI Model row should be shown");

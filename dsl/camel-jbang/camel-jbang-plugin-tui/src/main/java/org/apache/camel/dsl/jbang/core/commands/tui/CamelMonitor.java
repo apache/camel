@@ -265,6 +265,7 @@ public class CamelMonitor extends CamelCommand {
                 dataService::enableBurstMode, dataService.stoppingPids());
 
         actionsPopup.setContext(ctx);
+        actionsPopup.setMonitorContext(ctx);
         actionsPopup.setNotificationCallback((msg, error) -> setNotification(msg, error));
         actionsPopup.setResetStatsAction(this::resetStats);
         shellPanel.setContext(ctx);
@@ -502,6 +503,7 @@ public class CamelMonitor extends CamelCommand {
             // Open on the configured starting tab (if any), now that all tab wiring is in place
             applyStartingTab();
             applyLogPin();
+            applyRatePer();
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -565,6 +567,11 @@ public class CamelMonitor extends CamelCommand {
         logPinAnim.reset(cycleIndex);
         ctx.logPinned = true;
         ctx.logPinPercent = Integer.parseInt(logPin);
+    }
+
+    private void applyRatePer() {
+        String ratePer = TuiSettings.load().getRatePer();
+        ctx.ratePerMinute = "minutes".equals(ratePer);
     }
 
     // ---- Event Handling ----

@@ -38,6 +38,7 @@ class MonitorContext {
     boolean logPinned;
     int logPinPercent;
     boolean logPinVisible;
+    boolean ratePerMinute;
 
     MonitorContext(
                    AtomicReference<List<IntegrationInfo>> data,
