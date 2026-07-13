@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class SedaMultipleConsumersTest extends ContextTestSupport {
@@ -30,7 +33,7 @@ public class SedaMultipleConsumersTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello World");
         template.sendBody("seda:bar", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -42,7 +45,7 @@ public class SedaMultipleConsumersTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello World");
         template.sendBody("seda:bar", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -62,7 +65,7 @@ public class SedaMultipleConsumersTest extends ContextTestSupport {
             template.sendBody("seda:foo", "Hello World");
             template.sendBody("seda:bar", "Bye World");
         }
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
         resetMocks();
 
         context.getRouteController().suspendRoute("testRoute");
@@ -74,7 +77,7 @@ public class SedaMultipleConsumersTest extends ContextTestSupport {
             template.sendBody("seda:foo", "Hello World");
             template.sendBody("seda:bar", "Bye World");
         }
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
