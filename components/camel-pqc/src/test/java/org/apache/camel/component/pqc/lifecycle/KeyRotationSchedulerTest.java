@@ -27,9 +27,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.component.pqc.PQCComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -81,7 +81,7 @@ class KeyRotationSchedulerTest {
 
     /** Generates a Dilithium key and drives its recorded usage count to the given value. */
     private void generateKeyWithUsage(String keyId, long usage) throws Exception {
-        keyManager.generateKeyPair("DILITHIUM", keyId, DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", keyId, MLDSAParameterSpec.ml_dsa_44);
         KeyMetadata metadata = keyManager.getKeyMetadata(keyId);
         for (long i = 0; i < usage; i++) {
             metadata.updateLastUsed();

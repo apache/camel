@@ -31,9 +31,9 @@ import org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyMetadata;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -157,7 +157,7 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
     @Test
     void testGenerateKeyThroughRoute() throws Exception {
         // First manually generate a key to test the operation
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "route-test-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "route-test-key", MLDSAParameterSpec.ml_dsa_44);
         assertNotNull(keyPair);
 
         // Verify metadata
@@ -170,7 +170,7 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
     @Test
     void testExportKeyThroughManager() throws Exception {
         // Generate a key first
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "export-route-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "export-route-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Export the key
         byte[] exportedKey = keyManager.exportPublicKey(keyPair, KeyLifecycleManager.KeyFormat.PEM);
@@ -184,7 +184,7 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
     @Test
     void testGetMetadataThroughManager() throws Exception {
         // Generate a key
-        keyManager.generateKeyPair("DILITHIUM", "metadata-route-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "metadata-route-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Get metadata
         KeyMetadata metadata = keyManager.getKeyMetadata("metadata-route-key");
@@ -198,9 +198,9 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
     @Test
     void testListKeysThroughManager() throws Exception {
         // Generate multiple keys
-        keyManager.generateKeyPair("DILITHIUM", "list-key-1", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "list-key-1", MLDSAParameterSpec.ml_dsa_44);
         keyManager.generateKeyPair("FALCON", "list-key-2");
-        keyManager.generateKeyPair("DILITHIUM", "list-key-3", DilithiumParameterSpec.dilithium3);
+        keyManager.generateKeyPair("DILITHIUM", "list-key-3", MLDSAParameterSpec.ml_dsa_65);
 
         // List all keys
         List<KeyMetadata> keys = keyManager.listKeys();
@@ -215,7 +215,7 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
     @Test
     void testKeyRotationThroughManager() throws Exception {
         // Generate initial key
-        keyManager.generateKeyPair("DILITHIUM", "rotate-old-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "rotate-old-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Rotate the key
         KeyPair newKeyPair = keyManager.rotateKey("rotate-old-key", "rotate-new-key", "DILITHIUM");
@@ -234,7 +234,7 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
     @Test
     void testExpireKeyThroughManager() throws Exception {
         // Generate a key
-        keyManager.generateKeyPair("DILITHIUM", "expire-route-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "expire-route-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Expire the key
         keyManager.expireKey("expire-route-key");
@@ -248,7 +248,7 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
     @Test
     void testRevokeKeyThroughManager() throws Exception {
         // Generate a key
-        keyManager.generateKeyPair("DILITHIUM", "revoke-route-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "revoke-route-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Revoke the key
         String reason = "Security breach detected";
@@ -264,7 +264,7 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
     void testKeyPersistenceAcrossManagers() throws Exception {
         // Generate key with first manager
         KeyPair originalKeyPair = keyManager.generateKeyPair("DILITHIUM", "persistence-key",
-                DilithiumParameterSpec.dilithium2);
+                MLDSAParameterSpec.ml_dsa_44);
 
         // Create new manager instance
         KeyLifecycleManager newManager = new FileBasedKeyLifecycleManager(tempDir.toString());
@@ -280,7 +280,7 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
     @Test
     void testKeyMetadataUpdates() throws Exception {
         // Generate a key
-        keyManager.generateKeyPair("DILITHIUM", "update-test-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "update-test-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Get and update metadata
         KeyMetadata metadata = keyManager.getKeyMetadata("update-test-key");
@@ -300,7 +300,7 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
     @Test
     void testKeyDeletion() throws Exception {
         // Generate a key
-        keyManager.generateKeyPair("DILITHIUM", "delete-test-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "delete-test-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Verify it exists
         assertNotNull(keyManager.getKeyMetadata("delete-test-key"));
