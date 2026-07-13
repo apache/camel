@@ -253,7 +253,7 @@ class ActivityTab extends AbstractTableTab {
                 Span.styled(" Total: ", dim), Span.raw(String.valueOf(total)),
                 Span.styled("   OK: ", dim), Span.styled(String.valueOf(total - failed), Theme.success()),
                 Span.styled("   Failed: ", dim),
-                Span.styled(failed + " (" + errorRate + ")", failed > 0 ? Theme.error() : Style.EMPTY),
+                Span.styled(failed > 0 ? failed + " (" + errorRate + ")" : "0", failed > 0 ? Theme.error() : Style.EMPTY),
                 Span.styled("   Rate: ", dim), Span.raw(rate),
                 Span.styled("   Sends: ", dim), Span.raw(String.valueOf(sends))));
 
