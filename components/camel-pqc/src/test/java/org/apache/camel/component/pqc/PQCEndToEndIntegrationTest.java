@@ -31,9 +31,9 @@ import org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyMetadata;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -88,7 +88,7 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
         if (keyManager == null && tempDir != null) {
             keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
             // Pre-generate keys needed for binding
-            dilithiumKeyPair = keyManager.generateKeyPair("DILITHIUM", "setup-dilithium", DilithiumParameterSpec.dilithium2);
+            dilithiumKeyPair = keyManager.generateKeyPair("DILITHIUM", "setup-dilithium", MLDSAParameterSpec.ml_dsa_44);
             ntruKeyPair = keyManager.generateKeyPair("NTRU", "setup-ntru", NTRUParameterSpec.ntruhps2048509);
         }
     }
@@ -138,7 +138,7 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
     void testEndToEndSignatureWithGeneratedKey() throws Exception {
         // Step 1: Generate a Dilithium key pair using lifecycle manager
         dilithiumKeyPair = keyManager.generateKeyPair("DILITHIUM", "e2e-dilithium-key",
-                DilithiumParameterSpec.dilithium2);
+                MLDSAParameterSpec.ml_dsa_44);
         assertNotNull(dilithiumKeyPair);
 
         // Verify metadata was created
@@ -179,7 +179,7 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
     @Test
     void testEndToEndKeyRotationWithSigning() throws Exception {
         // Step 1: Generate initial key
-        KeyPair oldKeyPair = keyManager.generateKeyPair("DILITHIUM", "e2e-old-key", DilithiumParameterSpec.dilithium2);
+        KeyPair oldKeyPair = keyManager.generateKeyPair("DILITHIUM", "e2e-old-key", MLDSAParameterSpec.ml_dsa_44);
         assertNotNull(oldKeyPair);
 
         // Step 2: Use old key for signing
@@ -223,7 +223,7 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
     void testEndToEndKeyExportImportAndUse() throws Exception {
         // Step 1: Generate a key
         KeyPair originalKeyPair = keyManager.generateKeyPair("DILITHIUM", "e2e-export-key",
-                DilithiumParameterSpec.dilithium2);
+                MLDSAParameterSpec.ml_dsa_44);
 
         // Step 2: Export the key to PEM format
         byte[] exportedPublicKey = keyManager.exportPublicKey(originalKeyPair, KeyLifecycleManager.KeyFormat.PEM);
@@ -264,7 +264,7 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
     void testEndToEndMultipleSignaturesWithMetadataTracking() throws Exception {
         // Step 1: Generate a key
         dilithiumKeyPair = keyManager.generateKeyPair("DILITHIUM", "e2e-multi-sig-key",
-                DilithiumParameterSpec.dilithium2);
+                MLDSAParameterSpec.ml_dsa_44);
 
         KeyMetadata metadata = keyManager.getKeyMetadata("e2e-multi-sig-key");
         assertEquals(0, metadata.getUsageCount());
@@ -298,7 +298,7 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
     @Test
     void testEndToEndKeyExpirationPreventsUsage() throws Exception {
         // Step 1: Generate a key
-        dilithiumKeyPair = keyManager.generateKeyPair("DILITHIUM", "e2e-expire-key", DilithiumParameterSpec.dilithium2);
+        dilithiumKeyPair = keyManager.generateKeyPair("DILITHIUM", "e2e-expire-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Step 2: Use the key successfully
         mockSigned.reset();
@@ -328,7 +328,7 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
         String keyId = "e2e-complete-lifecycle-key";
 
         // Phase 1: Creation
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", keyId, DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", keyId, MLDSAParameterSpec.ml_dsa_44);
         assertNotNull(keyPair);
 
         KeyMetadata metadata = keyManager.getKeyMetadata(keyId);
