@@ -268,6 +268,7 @@ public class SqlProducer extends DefaultProducer {
             } else {
                 // not a query so there is no result set to stream; close the statement
                 // and return the connection to the pool right away
+                exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                 closeStatement(ps);
                 closeConnection(con);
             }

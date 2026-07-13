@@ -68,6 +68,7 @@ public class SqlProducerStreamListNonSelectConnectionLeakTest extends CamelTestS
     public void testNonSelectStreamListDoesNotLeakConnection() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(SqlConstants.SQL_UPDATE_COUNT, 1);
 
         template.sendBody("direct:update", "go");
 
