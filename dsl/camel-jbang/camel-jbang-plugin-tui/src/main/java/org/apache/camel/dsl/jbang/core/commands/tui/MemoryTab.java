@@ -445,43 +445,11 @@ class MemoryTab extends AbstractTab {
     }
 
     private void triggerHeapDump() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            return;
-        }
-        notify("Writing heap dump...", false);
-        String pid = info.pid;
-        Thread t = new Thread(() -> {
-            Path outputFile = ctx.getOutputFile(pid);
-            PathUtils.deleteFile(outputFile);
-            JsonObject root = new JsonObject();
-            root.put("action", "heap-dump");
-            Path actionFile = ctx.getActionFile(pid);
-            PathUtils.writeTextSafely(root.toJson(), actionFile);
-            JsonObject jo = TuiHelper.pollJsonResponse(outputFile, 60000);
-            if (jo != null) {
-                String error = jo.getString("error");
-                if (error != null) {
-                    notify("Heap dump failed: " + error, true);
-                } else {
-                    String file = jo.getString("file");
-                    long size = jo.getLongOrDefault("size", 0);
-                    notify("Heap dump: " + file + " (" + formatBytes(size) + ")", false);
-                }
-            } else {
-                notify("Heap dump: no response within 60s", true);
+        TuiHelper.triggerHeapDump(ctx, (msg, error) -> {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept(msg, error);
             }
-            PathUtils.deleteFile(outputFile);
         });
-        t.setDaemon(true);
-        t.setName("heap-dump-" + pid);
-        t.start();
-    }
-
-    private void notify(String message, boolean error) {
-        if (ctx.notificationCallback != null) {
-            ctx.notificationCallback.accept(message, error);
-        }
     }
 
     private void triggerGC() {

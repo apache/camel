@@ -18,11 +18,14 @@ package org.apache.camel.impl.console;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import com.sun.management.HotSpotDiagnosticMXBean;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -66,6 +69,8 @@ public class HeapDumpDevConsole extends AbstractDevConsole {
         if (name == null || name.isBlank()) {
             name = "heap-dump-" + TIMESTAMP.format(LocalDateTime.now());
         }
+        // strip path separators to prevent writing outside the working directory
+        name = Path.of(name).getFileName().toString();
         if (!name.endsWith(".hprof")) {
             name = name + ".hprof";
         }
@@ -73,8 +78,11 @@ public class HeapDumpDevConsole extends AbstractDevConsole {
         boolean live = optionBoolean(options, LIVE, true);
 
         try {
-            HotSpotDiagnosticMXBean bean = ManagementFactory.getPlatformMXBean(HotSpotDiagnosticMXBean.class);
-            bean.dumpHeap(name, live);
+            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            ObjectName objName = new ObjectName("com.sun.management:type=HotSpotDiagnostic");
+            server.invoke(objName, "dumpHeap",
+                    new Object[] { name, live },
+                    new String[] { String.class.getName(), boolean.class.getName() });
 
             File file = new File(name);
             root.put("file", file.getAbsolutePath());
