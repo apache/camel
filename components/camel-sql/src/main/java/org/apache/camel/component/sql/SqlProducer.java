@@ -265,6 +265,11 @@ public class SqlProducer extends DefaultProducer {
                 // we do not know the row count so we cannot set a ROW_COUNT header
                 // defer closing the iterator when the exchange is complete
                 exchange.getExchangeExtension().addOnCompletion(new ResultSetIteratorCompletion(iterator));
+            } else {
+                // not a query so there is no result set to stream; close the statement
+                // and return the connection to the pool right away
+                closeStatement(ps);
+                closeConnection(con);
             }
             return iterator;
         } catch (Exception e) {
