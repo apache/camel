@@ -2032,20 +2032,32 @@ class HistoryTab extends AbstractTab {
         lines.add(Line.from(
                 Span.styled(" Exchange: ", Theme.muted()),
                 Span.raw(exchangeId != null ? exchangeId : "")));
-        lines.add(Line.from(
-                Span.styled(" Route:    ", Theme.muted()),
-                Span.raw(String.format("%-25s", routeId != null ? routeId : "")),
-                Span.styled("  Node: ", Theme.muted()),
-                Span.raw(nodeId != null ? nodeId : ""),
-                Span.raw(nodeLabel != null ? " (" + nodeLabel + ")" : "")));
+        if (nodeId != null) {
+            lines.add(Line.from(
+                    Span.styled(" Route:    ", Theme.muted()),
+                    Span.raw(String.format("%-25s", routeId != null ? routeId : "")),
+                    Span.styled("  Node: ", Theme.muted()),
+                    Span.raw(nodeId),
+                    Span.raw(nodeLabel != null ? " (" + nodeLabel + ")" : "")));
+        } else {
+            lines.add(Line.from(
+                    Span.styled(" Route:    ", Theme.muted()),
+                    Span.raw(routeId != null ? routeId : "")));
+        }
         lines.add(Line.from(
                 Span.styled(" Location: ", Theme.muted()),
                 Span.raw(location != null ? location : "")));
-        lines.add(Line.from(
-                Span.styled(" Elapsed:  ", Theme.muted()),
-                Span.raw(elapsed >= 0 ? elapsed + "ms" : ""),
-                Span.styled("  Thread: ", Theme.muted()),
-                Span.raw(threadName != null ? threadName : "")));
+        if (threadName != null) {
+            lines.add(Line.from(
+                    Span.styled(" Elapsed:  ", Theme.muted()),
+                    Span.raw(elapsed >= 0 ? elapsed + "ms" : ""),
+                    Span.styled("  Thread: ", Theme.muted()),
+                    Span.raw(threadName)));
+        } else {
+            lines.add(Line.from(
+                    Span.styled(" Elapsed:  ", Theme.muted()),
+                    Span.raw(elapsed >= 0 ? elapsed + "ms" : "")));
+        }
         if (failed) {
             lines.add(Line.from(
                     Span.styled(" Status:   ", Theme.muted()),
