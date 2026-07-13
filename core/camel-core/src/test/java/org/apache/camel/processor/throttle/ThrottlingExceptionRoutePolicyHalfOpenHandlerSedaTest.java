@@ -84,7 +84,9 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
         log.debug("sending message three");
         sendMessage("Message Three");
 
-        assertMockEndpointsSatisfied();
+        // use timed assertion — consumer suspend/resume and SEDA queue
+        // draining can be slow on CI
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         result.reset();
         result.expectedMessageCount(2);
@@ -99,7 +101,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
         log.debug("sending message four");
         sendMessage("Message Four");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override

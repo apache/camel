@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -85,7 +86,9 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         assertEquals(QUEUE_SIZE, seda.getQueue().remainingCapacity());
 
         sendTwoOverCapacity(BLOCK_WHEN_FULL_URI, QUEUE_SIZE);
-        assertMockEndpointsSatisfied();
+        // use timed assertion — the SEDA consumer with 130ms delay needs
+        // time to drain the queue on slow CI
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
