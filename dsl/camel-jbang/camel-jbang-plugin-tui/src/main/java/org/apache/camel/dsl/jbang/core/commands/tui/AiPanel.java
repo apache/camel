@@ -30,8 +30,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import dev.tamboui.buffer.Buffer;
-import dev.tamboui.export.ExportRequest;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -61,9 +59,7 @@ import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 
 /**
  * AI prompt panel for the TUI. Communicates directly with an LLM via {@link LlmClient} and uses TUI-specific tools
@@ -145,6 +141,7 @@ class AiPanel {
 
     // MCP facade for TUI tool access from the AI panel
     private McpFacade mcpFacade;
+    private TuiToolRegistry toolRegistry;
     private boolean mcpServerActive;
     private int mcpServerPort;
 
@@ -179,6 +176,9 @@ class AiPanel {
 
     void setMcpFacade(McpFacade mcpFacade) {
         this.mcpFacade = mcpFacade;
+        if (mcpFacade != null) {
+            this.toolRegistry = new TuiToolRegistry(mcpFacade);
+        }
     }
 
     void setMcpInfo(boolean active, int port) {
@@ -1277,7 +1277,23 @@ class AiPanel {
         sb.append("- tui_send_message: send test messages to endpoints\n");
         sb.append("- tui_filter: set or clear text filters on any tab\n");
         sb.append("- tui_execute_sql: run SQL queries against a DataSource in the integration\n");
-        sb.append("- tui_set_log_level: change the runtime log level\n\n");
+        sb.append("- tui_set_log_level: change the runtime log level\n");
+        sb.append("- tui_draw_shape: draw shapes (box, highlight, arrow, underline, text) on screen to annotate problems\n");
+        sb.append("- tui_draw_clear: clear drawing overlay\n");
+        sb.append("- tui_locate: find elements on screen by text or diagram node ID, returns coordinates for drawing\n");
+        sb.append("- tui_show_caption: display a message to the user on screen\n");
+        sb.append("- tui_action: invoke TUI actions (reset-stats, screenshot, toggle-theme, etc.)\n");
+        sb.append("- tui_get_themes / tui_set_theme: list and switch TUI themes\n");
+        sb.append("- tui_get_files / tui_get_readme: read source files and README from integrations\n");
+        sb.append("- tui_update_row: update a database row via PreparedStatement\n");
+        sb.append("- tui_set_input: set input field values on tabs directly\n");
+        sb.append("- tui_toggle_trace_display: control which sections show in History detail view\n");
+        sb.append("- tui_canvas_open / tui_canvas_close: open/close a blank canvas for free-form drawing\n");
+        sb.append("- tui_animate: run built-in animations on the canvas\n");
+        sb.append("- tui_send_keys: send key presses to the TUI\n");
+        sb.append("- tui_get_events: see recent user interaction events\n");
+        sb.append("- tui_tape_start / tui_tape_stop: record TUI interactions as .tape files\n");
+        sb.append("- tui_wait_for_idle / tui_sleep: timing tools for pacing interactions\n\n");
         sb.append("Guidelines:\n");
         sb.append("- NEVER call tui_navigate just to read data ");
         sb.append("- all tui_get_* tools fetch data directly from any tab without changing the active tab\n");
@@ -1287,6 +1303,7 @@ class AiPanel {
         sb.append("- Be concise and actionable in your answers\n");
         sb.append("- When something looks wrong, explain what it means and suggest fixes\n");
         sb.append("- For stopping routes or applications, use tui_control for graceful shutdown\n");
+        sb.append("- Use tui_locate + tui_draw_shape to visually highlight problems on screen for the user\n");
         if (mcpServerActive) {
             sb.append("\nThe TUI MCP server is available at http://localhost:")
                     .append(mcpServerPort).append("/mcp for external AI agents.");
@@ -1295,324 +1312,26 @@ class AiPanel {
     }
 
     private List<LlmClient.ToolDef> buildTuiToolDefinitions() {
-        if (mcpFacade == null) {
+        if (toolRegistry == null) {
             return List.of();
         }
         List<LlmClient.ToolDef> defs = new ArrayList<>();
-        defs.add(new LlmClient.ToolDef(
-                "tui_get_screen",
-                "Returns the current TUI screen content as text, showing exactly what the user sees.",
-                emptyParams()));
-        defs.add(new LlmClient.ToolDef(
-                "tui_get_state",
-                "Returns TUI navigation state: active tab, selected integration, integration count.",
-                emptyParams()));
-        defs.add(new LlmClient.ToolDef(
-                "tui_get_options",
-                "Returns all available tabs and integrations for navigation discovery.",
-                emptyParams()));
-        defs.add(new LlmClient.ToolDef(
-                "tui_navigate",
-                "Navigates the TUI: switch tabs and/or select an integration. "
-                                + "Tab names: Overview, Log, Activity, Diagram, Routes, Endpoints, HTTP, Inspect, "
-                                + "Circuit Breaker, Health, Spans, Process.",
-                objectParams(Map.of(
-                        "tab", stringProp("Tab to switch to"),
-                        "integration", stringProp("Integration name or PID to select"),
-                        "route", stringProp("Route ID to select in Diagram tab"),
-                        "node", stringProp("Processor/EIP node ID to select within a route")))));
-        defs.add(new LlmClient.ToolDef(
-                "tui_get_table",
-                "Returns structured table data as JSON with typed values. "
-                                 + "Much more reliable than parsing screen text.",
-                objectParams(Map.of(
-                        "tab", stringProp("Tab name (e.g. 'Routes', 'Endpoints'). Uses active tab if omitted.")))));
-        defs.add(new LlmClient.ToolDef(
-                "tui_get_log",
-                "Returns recent log lines as structured data with optional filtering.",
-                objectParams(Map.of(
-                        "limit", stringProp("Maximum lines to return (default 50)"),
-                        "filter", stringProp("Case-insensitive substring filter"),
-                        "level", stringProp("Filter by level: INFO, WARN, ERROR, DEBUG, TRACE")))));
-        defs.add(new LlmClient.ToolDef(
-                "tui_get_errors",
-                "Returns structured error data including routeId, exception, stack trace.",
-                emptyParams()));
-        defs.add(new LlmClient.ToolDef(
-                "tui_get_diagram",
-                "Returns the route diagram as text showing routes and connections.",
-                emptyParams()));
-        defs.add(new LlmClient.ToolDef(
-                "tui_get_history",
-                "Returns trace and history data from the History tab as structured JSON.",
-                objectParams(Map.of(
-                        "exchangeId", stringProp("Exchange ID to get trace steps for")))));
-        defs.add(new LlmClient.ToolDef(
-                "tui_get_topology",
-                "Returns route topology as structured JSON graph with nodes and edges.",
-                emptyParams()));
-        defs.add(new LlmClient.ToolDef(
-                "tui_get_spans",
-                "Returns OpenTelemetry span data as structured JSON.",
-                objectParams(Map.of(
-                        "traceId", stringProp("Filter by trace ID"),
-                        "limit", stringProp("Maximum spans to return (default 500)")))));
-        defs.add(new LlmClient.ToolDef(
-                "tui_filter",
-                "Sets or clears the text filter on a tab. Empty string clears the filter.",
-                objectParams(Map.of(
-                        "filter", stringProp("Filter text to apply"),
-                        "tab", stringProp("Tab name. Uses active tab if omitted.")))));
-        defs.add(new LlmClient.ToolDef(
-                "tui_control",
-                "Controls the integration: stop-routes, start-routes, restart, stop, or kill.",
-                objectParams(Map.of(
-                        "action", stringProp("Action: stop-routes, start-routes, restart, stop, kill")))));
-        defs.add(new LlmClient.ToolDef(
-                "tui_send_message",
-                "Sends a message to a Camel endpoint in the selected integration.",
-                objectParams(Map.of(
-                        "endpoint", stringProp("Endpoint URI (e.g. 'direct:myRoute')"),
-                        "body", stringProp("Message body"),
-                        "headers", stringProp("Headers as key=value pairs separated by newlines")))));
-        defs.add(new LlmClient.ToolDef(
-                "tui_execute_sql",
-                "Executes a SQL query against a DataSource in the selected integration.",
-                objectParams(Map.of(
-                        "query", stringProp("SQL query to execute"),
-                        "datasource", stringProp("DataSource bean name (auto-detected if only one)"),
-                        "maxRows", stringProp("Max rows to return (default 100)"),
-                        "queryTimeout", stringProp("Query timeout in seconds (default 30)")))));
-        defs.add(new LlmClient.ToolDef(
-                "tui_set_log_level",
-                "Changes the runtime log level of the selected integration.",
-                objectParams(Map.of(
-                        "level", stringProp("Log level: ERROR, WARN, INFO, DEBUG, TRACE")))));
+        for (TuiToolRegistry.ToolDef td : toolRegistry.getToolDefinitions()) {
+            defs.add(new LlmClient.ToolDef(td.name(), td.description(), td.inputSchema()));
+        }
         return defs;
     }
 
     private String executeTuiTool(String name, JsonObject args) {
+        if (toolRegistry == null) {
+            return "Error: TUI tools not available";
+        }
         try {
-            return switch (name) {
-                case "tui_get_screen" -> {
-                    Buffer buf = mcpFacade.getLastBuffer();
-                    if (buf == null) {
-                        yield "Screen not yet available";
-                    }
-                    JsonObject result = new JsonObject();
-                    result.put("screen", ExportRequest.export(buf).text().toString());
-                    result.put("width", buf.area().width());
-                    result.put("height", buf.area().height());
-                    yield Jsoner.serialize(result);
-                }
-                case "tui_get_state" -> {
-                    JsonObject result = new JsonObject();
-                    result.put("activeTab", mcpFacade.getActiveTabName());
-                    result.put("tabIndex", mcpFacade.getActiveTabIndex());
-                    String pid = mcpFacade.getSelectedPid();
-                    if (pid != null) {
-                        result.put("selectedPid", pid);
-                    }
-                    String iname = mcpFacade.getSelectedIntegrationName();
-                    if (iname != null) {
-                        result.put("selectedIntegration", iname);
-                    }
-                    result.put("integrationCount", mcpFacade.getIntegrationCount());
-                    yield Jsoner.serialize(result);
-                }
-                case "tui_get_options" -> {
-                    JsonObject result = new JsonObject();
-                    JsonArray tabsArray = new JsonArray();
-                    for (TabRegistry.TabEntry entry : mcpFacade.getTabEntries()) {
-                        JsonObject tab = new JsonObject();
-                        tab.put("name", entry.name());
-                        if (entry.description() != null) {
-                            tab.put("description", entry.description());
-                        }
-                        tabsArray.add(tab);
-                    }
-                    result.put("tabs", tabsArray);
-                    result.put("activeTab", mcpFacade.getActiveTabName());
-                    JsonArray intArray = new JsonArray();
-                    for (String n : mcpFacade.getIntegrationNames()) {
-                        intArray.add(n);
-                    }
-                    result.put("integrations", intArray);
-                    yield Jsoner.serialize(result);
-                }
-                case "tui_navigate" -> {
-                    JsonObject result = new JsonObject();
-                    String tab = args.getString("tab");
-                    String integration = args.getString("integration");
-                    String route = args.getString("route");
-                    String node = args.getString("node");
-                    if (integration != null) {
-                        String selected = mcpFacade.selectIntegration(integration);
-                        if (selected != null) {
-                            result.put("selectedIntegration", selected);
-                        } else {
-                            result.put("integrationError", "Not found: " + integration);
-                        }
-                    }
-                    if (tab != null) {
-                        String switched = mcpFacade.navigateToTab(tab);
-                        if (switched != null) {
-                            result.put("activeTab", switched);
-                        } else {
-                            result.put("tabError", "Unknown tab: " + tab);
-                        }
-                    }
-                    if (route != null && node == null) {
-                        String selected = mcpFacade.navigateDiagramToRoute(route);
-                        if (selected != null) {
-                            result.put("selectedRoute", route);
-                        } else {
-                            result.put("routeError", "Route not found: " + route);
-                        }
-                    }
-                    if (node != null) {
-                        if (route != null) {
-                            mcpFacade.navigateDiagramToNode(route, null);
-                        }
-                        String selected = mcpFacade.navigateDiagramToNode(null, node);
-                        if (selected != null) {
-                            result.put("selectedNode", node);
-                        } else {
-                            result.put("nodeError", "Node not found: " + node);
-                        }
-                    }
-                    yield Jsoner.serialize(result);
-                }
-                case "tui_get_table" -> {
-                    String tab = args.getString("tab");
-                    JsonObject data = mcpFacade.getTableData(tab);
-                    yield data != null ? Jsoner.serialize(data) : "No table data available";
-                }
-                case "tui_get_log" -> {
-                    int limit = parseIntOrDefault(args.getString("limit"), 50);
-                    String filter = args.getString("filter");
-                    String level = args.getString("level");
-                    JsonObject data = mcpFacade.getLogData(limit, filter, level);
-                    yield Jsoner.serialize(data);
-                }
-                case "tui_get_errors" -> {
-                    JsonObject data = mcpFacade.getTableData("Errors");
-                    if (data == null) {
-                        JsonObject empty = new JsonObject();
-                        empty.put("tab", "Errors");
-                        empty.put("rows", new JsonArray());
-                        empty.put("totalRows", 0);
-                        yield Jsoner.serialize(empty);
-                    }
-                    yield Jsoner.serialize(data);
-                }
-                case "tui_get_diagram" -> {
-                    JsonObject data = mcpFacade.getDiagramData();
-                    yield data != null ? Jsoner.serialize(data) : "No diagram available";
-                }
-                case "tui_get_history" -> {
-                    String exchangeId = args.getString("exchangeId");
-                    if (exchangeId != null && !exchangeId.isBlank()) {
-                        mcpFacade.navigateToTab("History");
-                        mcpFacade.selectTraceExchange(exchangeId);
-                    }
-                    JsonObject data = mcpFacade.getTableData("History");
-                    yield data != null ? Jsoner.serialize(data) : "No history data available";
-                }
-                case "tui_get_topology" -> {
-                    JsonObject data = mcpFacade.getTopologyData();
-                    yield data != null ? Jsoner.serialize(data) : "No topology data available";
-                }
-                case "tui_get_spans" -> {
-                    String traceId = args.getString("traceId");
-                    int limit = parseIntOrDefault(args.getString("limit"), 500);
-                    JsonObject data = mcpFacade.getSpanData(traceId, limit);
-                    yield Jsoner.serialize(data);
-                }
-                case "tui_filter" -> {
-                    String filter = args.getStringOrDefault("filter", "");
-                    String tab = args.getString("tab");
-                    boolean applied = mcpFacade.setTabFilter(tab, filter);
-                    yield applied
-                            ? (filter.isEmpty() ? "Filter cleared" : "Filter set to: " + filter)
-                            : "This tab does not support filtering";
-                }
-                case "tui_control" -> {
-                    String action = args.getString("action");
-                    if (action == null || action.isBlank()) {
-                        yield "Error: action is required";
-                    }
-                    yield mcpFacade.controlIntegration(action);
-                }
-                case "tui_send_message" -> {
-                    String endpoint = args.getString("endpoint");
-                    if (endpoint == null || endpoint.isBlank()) {
-                        yield "Error: endpoint is required";
-                    }
-                    String body = args.getString("body");
-                    String headers = args.getString("headers");
-                    JsonObject response = mcpFacade.sendMessage(endpoint, body, headers);
-                    yield response != null ? Jsoner.serialize(response) : "Error: no integration selected";
-                }
-                case "tui_execute_sql" -> {
-                    String query = args.getString("query");
-                    if (query == null || query.isBlank()) {
-                        yield "Error: query is required";
-                    }
-                    String datasource = args.getString("datasource");
-                    int maxRows = parseIntOrDefault(args.getString("maxRows"), 100);
-                    int queryTimeout = parseIntOrDefault(args.getString("queryTimeout"), 30);
-                    JsonObject response = mcpFacade.executeSql(query, datasource, maxRows, queryTimeout);
-                    yield response != null ? Jsoner.serialize(response) : "Error: no integration selected";
-                }
-                case "tui_set_log_level" -> {
-                    String level = args.getString("level");
-                    if (level == null || level.isBlank()) {
-                        yield "Error: level is required (ERROR, WARN, INFO, DEBUG, TRACE)";
-                    }
-                    mcpFacade.setLogLevel(level.toUpperCase());
-                    yield "Log level set to " + level.toUpperCase();
-                }
-                default -> "Unknown TUI tool: " + name;
-            };
+            return toolRegistry.execute(name, args);
+        } catch (IllegalArgumentException e) {
+            return "Unknown TUI tool: " + name;
         } catch (Exception e) {
             return "Error executing " + name + ": " + e.getMessage();
-        }
-    }
-
-    private static JsonObject emptyParams() {
-        JsonObject schema = new JsonObject();
-        schema.put("type", "object");
-        schema.put("properties", new JsonObject());
-        return schema;
-    }
-
-    private static JsonObject objectParams(Map<String, JsonObject> properties) {
-        JsonObject props = new JsonObject();
-        for (Map.Entry<String, JsonObject> entry : new LinkedHashMap<>(properties).entrySet()) {
-            props.put(entry.getKey(), entry.getValue());
-        }
-        JsonObject schema = new JsonObject();
-        schema.put("type", "object");
-        schema.put("properties", props);
-        return schema;
-    }
-
-    private static JsonObject stringProp(String description) {
-        JsonObject prop = new JsonObject();
-        prop.put("type", "string");
-        prop.put("description", description);
-        return prop;
-    }
-
-    private static int parseIntOrDefault(String value, int defaultValue) {
-        if (value == null) {
-            return defaultValue;
-        }
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            return defaultValue;
         }
     }
 
