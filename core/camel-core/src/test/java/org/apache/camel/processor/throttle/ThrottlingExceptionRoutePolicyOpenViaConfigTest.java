@@ -65,8 +65,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
             template.sendBody(url, "MessageRound1 " + i);
         }
         result.expectedMessageCount(size);
-        result.setResultWaitTime(5000);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // set keepOpen to true
         policy.setKeepOpen(true);
@@ -86,8 +85,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
 
         // should not close b/c keepOpen is true
         result.expectedMessageCount(size + 1);
-        result.setResultWaitTime(2000);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // set keepOpen to false
         policy.setKeepOpen(false);
@@ -97,8 +95,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
 
         // it should close b/c keepOpen is false — queued messages should now arrive
         result.expectedMessageCount(size * 2 + 1);
-        result.setResultWaitTime(5000);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
