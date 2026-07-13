@@ -132,12 +132,12 @@ public class RouteDiagramLayoutEngine {
         public String load01;
         public String load05;
         public String load15;
-        public String exchangesThroughput;
     }
 
     public static class StatInfo {
         public long idleSince;
         public long exchangesTotal;
+        public String exchangesThroughput;
         public long exchangesFailed;
         public long exchangesInflight;
         public long meanProcessingTime;

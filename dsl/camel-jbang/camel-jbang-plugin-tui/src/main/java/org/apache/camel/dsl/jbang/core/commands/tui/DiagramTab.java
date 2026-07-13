@@ -441,9 +441,14 @@ class DiagramTab extends AbstractTab {
             lines.add(Line.from(
                     Span.styled(" Uptime:     ", Theme.muted()),
                     Span.raw(route.uptime != null ? route.uptime : "")));
+            String tpUnit = ctx.ratePerMinute ? " msg/m" : " msg/s";
+            String tpValue = route.throughput != null
+                    ? (ctx.ratePerMinute ? TuiHelper.throughputPerMinute(route.throughput) : route.throughput)
+                    : "";
             lines.add(Line.from(
                     Span.styled(" Throughput: ", Theme.muted()),
-                    Span.raw(route.throughput != null ? route.throughput : "")));
+                    Span.raw(tpValue),
+                    Span.styled(tpUnit, Theme.muted())));
             if (route.coverage != null) {
                 lines.add(Line.from(
                         Span.styled(" Coverage:   ", Theme.muted()),
@@ -616,6 +621,16 @@ class DiagramTab extends AbstractTab {
                 lines.add(Line.from(
                         Span.styled(" Inflight: ", Theme.muted()),
                         Span.raw(String.format("%" + w + "d", stat.exchangesInflight))));
+                if (stat.exchangesThroughput != null && !stat.exchangesThroughput.isEmpty()) {
+                    String tpUnit = ctx.ratePerMinute ? " msg/m" : " msg/s";
+                    String tpValue = ctx.ratePerMinute
+                            ? TuiHelper.throughputPerMinute(stat.exchangesThroughput)
+                            : stat.exchangesThroughput;
+                    lines.add(Line.from(
+                            Span.styled(" Throughput: ", Theme.muted()),
+                            Span.raw(tpValue),
+                            Span.styled(tpUnit, Theme.muted())));
+                }
 
                 if (stat.exchangesTotal > 0) {
                     lines.add(Line.from(Span.raw("")));
@@ -1200,6 +1215,9 @@ class DiagramTab extends AbstractTab {
                     ni.put("total", stat.exchangesTotal);
                     ni.put("failed", stat.exchangesFailed);
                     ni.put("inflight", stat.exchangesInflight);
+                    if (stat.exchangesThroughput != null) {
+                        ni.put("throughput", stat.exchangesThroughput);
+                    }
                     if (stat.exchangesTotal > 0) {
                         ni.put("meanTime", stat.meanProcessingTime);
                         ni.put("maxTime", stat.maxProcessingTime);

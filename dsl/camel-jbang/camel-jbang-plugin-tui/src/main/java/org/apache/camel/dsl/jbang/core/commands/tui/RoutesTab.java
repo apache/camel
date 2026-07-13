@@ -1084,6 +1084,16 @@ class RoutesTab extends AbstractTab {
                 lines.add(Line.from(
                         Span.styled(" Inflight: ", Style.EMPTY.dim()),
                         Span.raw(String.format("%" + w + "d", stat.exchangesInflight))));
+                if (stat.exchangesThroughput != null && !stat.exchangesThroughput.isEmpty()) {
+                    String tpUnit = ctx.ratePerMinute ? " msg/m" : " msg/s";
+                    String tpValue = ctx.ratePerMinute
+                            ? TuiHelper.throughputPerMinute(stat.exchangesThroughput)
+                            : stat.exchangesThroughput;
+                    lines.add(Line.from(
+                            Span.styled(" Throughput: ", Style.EMPTY.dim()),
+                            Span.raw(tpValue),
+                            Span.styled(tpUnit, Style.EMPTY.dim())));
+                }
 
                 if (stat.exchangesTotal > 0) {
                     lines.add(Line.from(Span.raw("")));
