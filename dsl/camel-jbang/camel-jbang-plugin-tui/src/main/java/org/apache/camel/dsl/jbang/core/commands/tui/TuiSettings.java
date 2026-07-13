@@ -29,6 +29,7 @@ final class TuiSettings {
 
     static final String PROP_THEME = "camel.tui.theme";
     static final String PROP_START_TAB = "camel.tui.startTab";
+    static final String PROP_SELECT_TAB = "camel.tui.selectTab";
     static final String PROP_LOG_PIN = "camel.tui.logPin";
     static final String PROP_DEFAULT_FOLDER = "camel.tui.defaultFolder";
     static final String PROP_RATE_PER = "camel.tui.ratePer";
@@ -38,6 +39,7 @@ final class TuiSettings {
 
     private String themeId;
     private String startTab;
+    private String selectTab;
     private String logPin;
     private String ratePer;
     private String defaultFolder;
@@ -59,6 +61,14 @@ final class TuiSettings {
 
     void setStartTab(String startTab) {
         this.startTab = startTab;
+    }
+
+    String getSelectTab() {
+        return selectTab;
+    }
+
+    void setSelectTab(String selectTab) {
+        this.selectTab = selectTab;
     }
 
     String getLogPin() {
@@ -119,6 +129,7 @@ final class TuiSettings {
         try {
             settings.themeId = trimToNull(TuiUserConfig.read(PROP_THEME));
             settings.startTab = trimToNull(TuiUserConfig.read(PROP_START_TAB));
+            settings.selectTab = trimToNull(TuiUserConfig.read(PROP_SELECT_TAB));
             settings.logPin = trimToNull(TuiUserConfig.read(PROP_LOG_PIN));
             settings.ratePer = trimToNull(TuiUserConfig.read(PROP_RATE_PER));
             settings.defaultFolder = trimToNull(TuiUserConfig.read(PROP_DEFAULT_FOLDER));
@@ -140,6 +151,7 @@ final class TuiSettings {
         try {
             TuiUserConfig.write(PROP_THEME, themeId);
             TuiUserConfig.write(PROP_START_TAB, startTab);
+            TuiUserConfig.write(PROP_SELECT_TAB, selectTab);
             TuiUserConfig.write(PROP_LOG_PIN, logPin);
             TuiUserConfig.write(PROP_RATE_PER, ratePer);
             TuiUserConfig.write(PROP_DEFAULT_FOLDER, defaultFolder);

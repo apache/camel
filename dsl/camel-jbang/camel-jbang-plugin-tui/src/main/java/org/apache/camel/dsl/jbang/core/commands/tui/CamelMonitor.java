@@ -895,8 +895,10 @@ public class CamelMonitor extends CamelCommand {
         if (ke.isConfirm() && tab == TAB_OVERVIEW) {
             tabRegistry.overviewTab().selectCurrentIntegration();
             if (ctx.selectedPid != null) {
-                tabsState.select(TAB_LOG);
-                refreshLogData();
+                int selectTab = resolveSelectTab();
+                if (selectTab != TAB_OVERVIEW) {
+                    tabRegistry.handleTabKey(selectTab, ctx, dataService);
+                }
             }
             return true;
         }
@@ -2069,6 +2071,20 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "X", "kill");
         }
         return fKeyTotal;
+    }
+
+    private int resolveSelectTab() {
+        TuiSettings settings = TuiSettings.load();
+        String tabName = settings.getSelectTab();
+        if (tabName == null) {
+            return TAB_LOG;
+        }
+        for (TabRegistry.TabEntry entry : tabRegistry.allTabEntries()) {
+            if (entry.name().equals(tabName) && entry.tabIndex() != TAB_MORE) {
+                return entry.tabIndex();
+            }
+        }
+        return TAB_LOG;
     }
 
     // ---- Data Loading ----

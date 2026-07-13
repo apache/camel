@@ -611,8 +611,7 @@ class DataRefreshService {
                 JsonObject root = loadErrorFile(pid);
                 if (root != null) {
                     List<ErrorInfo> parsed = StatusParser.parseErrors(root);
-                    sel.errors.clear();
-                    sel.errors.addAll(parsed);
+                    sel.errors = List.copyOf(parsed);
                 }
             } catch (Exception e) {
                 // ignore
@@ -674,8 +673,7 @@ class DataRefreshService {
                 if (content != null && !content.isBlank()) {
                     JsonObject json = (JsonObject) Jsoner.deserialize(content);
                     List<ActivityEntry> parsed = StatusParser.parseActivityEntries(json);
-                    sel.activity.clear();
-                    sel.activity.addAll(parsed);
+                    sel.activity = List.copyOf(parsed);
                 }
             } catch (Exception e) {
                 // ignore

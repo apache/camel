@@ -48,13 +48,14 @@ class SettingsPopup {
 
     private static final int ROW_THEME = 0;
     private static final int ROW_START_TAB = 1;
-    private static final int ROW_LOG_PIN = 2;
-    private static final int ROW_RATE_PER = 3;
-    private static final int ROW_FOLDER = 4;
-    private static final int ROW_AI_PROVIDER = 5;
-    private static final int ROW_AI_MODEL = 6;
-    private static final int ROW_AI_URL = 7;
-    private static final int ROW_COUNT = 8;
+    private static final int ROW_SELECT_TAB = 2;
+    private static final int ROW_LOG_PIN = 3;
+    private static final int ROW_RATE_PER = 4;
+    private static final int ROW_FOLDER = 5;
+    private static final int ROW_AI_PROVIDER = 6;
+    private static final int ROW_AI_MODEL = 7;
+    private static final int ROW_AI_URL = 8;
+    private static final int ROW_COUNT = 9;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
     private static final String[] RATE_PER_OPTIONS = { "seconds", "minutes" };
@@ -75,6 +76,7 @@ class SettingsPopup {
     private TuiSettings settings;
     private int themeIndex;
     private int startTabIndex;
+    private int selectTabIndex;
     private int logPinIndex;
     private int ratePerIndex;
     private int aiProviderIndex;
@@ -84,6 +86,7 @@ class SettingsPopup {
     private List<String> tabNames = new ArrayList<>();
 
     private List<TabRegistry.TabEntry> tabEntries;
+    private List<String> primaryTabNames = new ArrayList<>();
     private Runnable clearScreen;
     private MonitorContext monitorContext;
 
@@ -119,6 +122,21 @@ class SettingsPopup {
         String currentStartTab = settings.getStartTab() != null ? settings.getStartTab() : "Overview";
         int idx = tabNames.indexOf(currentStartTab);
         startTabIndex = idx >= 0 ? idx : 0;
+
+        primaryTabNames = new ArrayList<>();
+        if (tabEntries != null) {
+            for (TabRegistry.TabEntry entry : tabEntries) {
+                if (entry.tabIndex() != TabRegistry.TAB_MORE) {
+                    primaryTabNames.add(entry.name());
+                }
+            }
+        }
+        String currentSelectTab = settings.getSelectTab() != null ? settings.getSelectTab() : "Log";
+        int selIdx = primaryTabNames.indexOf(currentSelectTab);
+        selectTabIndex = selIdx >= 0 ? selIdx : primaryTabNames.indexOf("Log");
+        if (selectTabIndex < 0) {
+            selectTabIndex = 0;
+        }
 
         String currentLogPin = settings.getLogPin() != null ? settings.getLogPin() : "off";
         logPinIndex = 0;
@@ -196,6 +214,16 @@ class SettingsPopup {
             }
             return true;
         }
+        if (selectedRow == ROW_SELECT_TAB) {
+            if (!primaryTabNames.isEmpty()) {
+                if (ke.isChar(' ') || ke.isRight()) {
+                    selectTabIndex = (selectTabIndex + 1) % primaryTabNames.size();
+                } else if (ke.isLeft()) {
+                    selectTabIndex = (selectTabIndex - 1 + primaryTabNames.size()) % primaryTabNames.size();
+                }
+            }
+            return true;
+        }
         if (selectedRow == ROW_LOG_PIN) {
             if (ke.isChar(' ') || ke.isRight()) {
                 logPinIndex = (logPinIndex + 1) % LOG_PIN_OPTIONS.length;
@@ -240,6 +268,10 @@ class SettingsPopup {
         settings.setThemeId(selectedThemeId);
         if (!tabNames.isEmpty()) {
             settings.setStartTab(tabNames.get(startTabIndex));
+        }
+        if (!primaryTabNames.isEmpty()) {
+            String selectTabValue = primaryTabNames.get(selectTabIndex);
+            settings.setSelectTab("Log".equals(selectTabValue) ? null : selectTabValue);
         }
         String logPinValue = LOG_PIN_OPTIONS[logPinIndex];
         settings.setLogPin("off".equals(logPinValue) ? null : logPinValue);
@@ -293,6 +325,10 @@ class SettingsPopup {
         renderValue(frame, innerX + labelW, rowY, fieldW, currentTabLabel(), selectedRow == ROW_START_TAB);
         rowY++;
 
+        renderLabel(frame, innerX, rowY, labelW, "Select Tab:", selectedRow == ROW_SELECT_TAB);
+        renderValue(frame, innerX + labelW, rowY, fieldW, currentSelectTabLabel(), selectedRow == ROW_SELECT_TAB);
+        rowY++;
+
         String logPinLabel = "off".equals(LOG_PIN_OPTIONS[logPinIndex])
                 ? "off"
                 : LOG_PIN_OPTIONS[logPinIndex] + "%";
@@ -323,8 +359,8 @@ class SettingsPopup {
 
     void renderFooter(List<Span> spans) {
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-        if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_LOG_PIN
-                || selectedRow == ROW_RATE_PER || selectedRow == ROW_AI_PROVIDER) {
+        if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_SELECT_TAB
+                || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER || selectedRow == ROW_AI_PROVIDER) {
             hint(spans, "Space", "cycle");
         }
         hint(spans, "Enter", "save");
@@ -345,6 +381,19 @@ class SettingsPopup {
         }
         TabRegistry.TabEntry entry = tabEntries.get(Math.min(startTabIndex, tabEntries.size() - 1));
         return entry.icon() + " " + entry.name();
+    }
+
+    private String currentSelectTabLabel() {
+        if (tabEntries == null || primaryTabNames.isEmpty()) {
+            return "Log";
+        }
+        String name = primaryTabNames.get(Math.min(selectTabIndex, primaryTabNames.size() - 1));
+        for (TabRegistry.TabEntry entry : tabEntries) {
+            if (entry.name().equals(name)) {
+                return entry.icon() + " " + name;
+            }
+        }
+        return name;
     }
 
     private void handleTextInput(KeyEvent ke, TextInputState active) {
@@ -426,6 +475,10 @@ class SettingsPopup {
 
     String selectedStartTab() {
         return tabNames.isEmpty() ? null : tabNames.get(startTabIndex);
+    }
+
+    String selectedSelectTab() {
+        return primaryTabNames.isEmpty() ? null : primaryTabNames.get(selectTabIndex);
     }
 
     String selectedLogPin() {
