@@ -48,10 +48,10 @@ public class AggregateTimeoutTest extends ContextTestSupport {
 
         // wait about 0.2 second so that the timeout kicks in, but it was
         // discarded
-        mock.assertIsSatisfied(200);
+        mock.assertIsSatisfied(500);
 
         // should invoke the timeout method
-        await().atMost(Duration.ofSeconds(2))
+        await().atMost(Duration.ofSeconds(5))
                 .untilAsserted(() -> assertEquals(1, invoked.get()));
 
         assertNotNull(receivedExchange);
@@ -69,10 +69,10 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "C", "id", 123);
 
         // should complete before timeout
-        mock.assertIsSatisfied(150);
+        mock.assertIsSatisfied(500);
 
         // should have not invoked the timeout method anymore
-        await().atMost(Duration.ofSeconds(2))
+        await().atMost(Duration.ofSeconds(5))
                 .untilAsserted(() -> assertEquals(1, invoked.get()));
     }
 

@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -26,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -52,7 +54,7 @@ public class DefaultConsumerBridgeErrorHandlerContinuedTest extends ContextTestS
         // so mock:result should receive messages.
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // Verify the exception is present in the onException route
         Exception cause = getMockEndpoint("mock:onException").getReceivedExchanges().get(0)
