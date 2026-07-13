@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.integration.spring;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -45,6 +46,9 @@ public class JmsSpringLoadBalanceFailOverJMSIT extends AbstractSpringJMSITSuppor
 
     @Test
     public void testFailover() throws Exception {
+        // Wait for the JMS consumer routes to be fully subscribed to the broker
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "fooConsumerRoute", "barConsumerRoute");
+
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
