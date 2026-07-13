@@ -41,5 +41,5 @@ Release and integration builds that produce the launcher ZIP also build this mod
 mvn -pl tooling/camel-exe,dsl/camel-jbang/camel-launcher -am install -Dcamel.launcher.requireWindowsExe=true
 ```
 
-See [src/main/native/README.md](src/main/native/README.md) for compiler flags, MSVC setup,
-and release-gate details.
+See [src/main/native/README.md](src/main/native/README.md) for MSVC setup, compiler
+flags, and the release-gate profile.
