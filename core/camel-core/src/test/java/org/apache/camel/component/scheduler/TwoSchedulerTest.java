@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.scheduler;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TwoSchedulerTest extends ContextTestSupport {
 
@@ -29,12 +32,12 @@ public class TwoSchedulerTest extends ContextTestSupport {
         getMockEndpoint("mock:a").expectedMinimumMessageCount(4);
         getMockEndpoint("mock:b").expectedMinimumMessageCount(2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // should use same thread as they share the same scheduler
         String tn1 = getMockEndpoint("mock:a").getReceivedExchanges().get(0).getMessage().getHeader("tn", String.class);
         String tn2 = getMockEndpoint("mock:b").getReceivedExchanges().get(0).getMessage().getHeader("tn", String.class);
-        assertSame(tn1, tn2);
+        assertEquals(tn1, tn2);
     }
 
     @Override
