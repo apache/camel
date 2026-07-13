@@ -354,6 +354,9 @@ class AiPanel {
             close();
             return true;
         }
+        if (isFunctionKey(ke)) {
+            return false;
+        }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('p') && !thinking.get() && activeCliCommand == null) {
             openProviderSwitch();
             return true;
@@ -1234,6 +1237,14 @@ class AiPanel {
             }
         }
         frame.renderWidget(Paragraph.from(new dev.tamboui.text.Text(lines, dev.tamboui.layout.Alignment.LEFT)), area);
+    }
+
+    private static boolean isFunctionKey(KeyEvent ke) {
+        KeyCode code = ke.code();
+        return code == KeyCode.F1 || code == KeyCode.F2 || code == KeyCode.F3
+                || code == KeyCode.F4 || code == KeyCode.F5 || code == KeyCode.F6
+                || code == KeyCode.F7 || code == KeyCode.F9 || code == KeyCode.F10
+                || code == KeyCode.F11 || code == KeyCode.F12;
     }
 
     private static String toHardBreaks(String text) {

@@ -620,7 +620,9 @@ public class CamelMonitor extends CamelCommand {
                     }
                     return true;
                 }
-                return aiPanel.handleKeyEvent(ke);
+                if (aiPanel.handleKeyEvent(ke)) {
+                    return true;
+                }
             }
             if (actionsPopup.isVisible()) {
                 return actionsPopup.handleKeyEvent(ke);
