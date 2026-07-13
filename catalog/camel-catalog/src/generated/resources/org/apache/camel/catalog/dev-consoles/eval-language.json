@@ -83,6 +83,20 @@
       "autowired": false,
       "secret": false,
       "description": "Template to use for executing simple language function"
+    },
+    "variables": {
+      "index": 5,
+      "kind": "option",
+      "displayName": "Variables",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Optional exchange variables"
     }
   }
 }
