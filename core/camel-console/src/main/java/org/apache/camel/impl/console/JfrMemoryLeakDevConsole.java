@@ -371,12 +371,15 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             } else if (baseSize == 0) {
                 trend = curSize > 0 ? "new" : "stable";
             } else {
-                growthRatio = ((double) curSize / baseSize) / durationRatio;
-                if (growthRatio >= 1.2) {
+                // compare raw sizes without duration normalization: JFR samples
+                // allocation events, so stable objects produce similar counts
+                // regardless of recording length — only leaks accumulate more
+                growthRatio = (double) curSize / baseSize;
+                if (growthRatio >= 1.5) {
                     trend = "growing";
-                } else if (growthRatio >= 1.1) {
+                } else if (growthRatio >= 1.3) {
                     trend = "suspicious";
-                } else if (growthRatio < 0.8) {
+                } else if (growthRatio < 0.7) {
                     trend = "shrinking";
                 } else {
                     trend = "stable";

@@ -260,7 +260,7 @@ class MemoryLeakTab extends AbstractTab {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled("  Press ", Style.EMPTY.dim()),
-                    Span.styled("R", Theme.label().bold()),
+                    Span.styled("r", Theme.label().bold()),
                     Span.styled(" to start a recording.", Style.EMPTY.dim())));
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
@@ -970,7 +970,7 @@ class MemoryLeakTab extends AbstractTab {
         switch (state) {
             case IDLE -> {
                 hint(spans, "Esc", "back");
-                hint(spans, "R", "record");
+                hint(spans, "r", "record");
                 hint(spans, "d", "mode [" + modeLabel + "]");
                 hint(spans, "+/-", "duration [" + duration + "s]");
                 hint(spans, "h", "heap dump");
@@ -989,7 +989,7 @@ class MemoryLeakTab extends AbstractTab {
                 if (comparisons == null) {
                     hint(spans, "v", dominatorView ? "dominators" : "samples");
                 }
-                hint(spans, "R", "new recording");
+                hint(spans, "r", "new recording");
                 hint(spans, "d", "mode [" + modeLabel + "]");
                 hint(spans, "+/-", "duration [" + duration + "s]");
                 hint(spans, "h", "heap dump");
@@ -1183,23 +1183,25 @@ class MemoryLeakTab extends AbstractTab {
                 which is the most effective way to detect leaks. Press **d**
                 to toggle between **dual** and **single** mode.
 
-                In **dual** mode, pressing **R** runs:
+                In **dual** mode, pressing **r** runs:
                 - **Run 1** at the configured duration (e.g. 60s)
                 - **Run 2** at 2x the duration (e.g. 120s)
 
                 After both complete, a comparison table shows how each class
-                behaved across the two runs. The **GROWTH** column shows the
-                normalized growth as a percentage. For example, +30%% means
-                the class grew 30%% faster than expected from the duration
-                increase alone. Entries under 1KB in both runs are filtered
-                out as noise.
+                behaved across the two runs. The **RUN1** and **RUN2**
+                columns show the raw sampled sizes. For stable objects,
+                the sampled size stays roughly the same regardless of
+                duration. For leaking objects, the sampled size grows
+                because more allocations accumulate over the longer run.
+                The **GROWTH** column shows the percentage change.
+                Entries under 1KB in both runs are filtered out as noise.
 
                 ### Trend Indicators
 
-                - **↑ leak!** (red) — Growth >= +20%%, very likely leak
-                - **↑ leak?** (yellow) — Growth +10%% to +20%%, suspicious
-                - **→ stable** (green) — Growth -20%% to +10%%, normal
-                - **↓** (dim) — Growth < -20%%, shrinking
+                - **↑ leak!** (red) — Growth >= +50%%, very likely leak
+                - **↑ leak?** (yellow) — Growth +30%% to +50%%, suspicious
+                - **→ stable** (green) — Growth -30%% to +30%%, normal
+                - **↓** (dim) — Growth < -30%%, shrinking
                 - **new** (yellow) — Only appeared in Run 2
                 - **gone** (dim) — Only appeared in Run 1
 
