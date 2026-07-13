@@ -472,6 +472,7 @@ public class CamelMonitor extends CamelCommand {
                         stopSelectedProcess(forceKill);
                     }
                 });
+        aiPanel.setMcpFacade(mcpFacade);
         Path mcpJsonFile = null;
         actionsPopup.setAiActivityLog(aiPanel::getActivityLog);
         if (mcp) {
@@ -488,6 +489,7 @@ public class CamelMonitor extends CamelCommand {
                 mcp = false;
             }
         }
+        aiPanel.setMcpInfo(mcp, mcpPort);
 
         try (var tui = TuiBackendHelper.createTuiRunner()) {
             this.runner = tui;
