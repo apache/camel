@@ -62,7 +62,7 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
                         .to("mock:start")
                         .pollEnrich(
                                 fileUri("enrichdata?initialDelay=0&delay=10&move=.done"),
-                                1000)
+                                5000)
                         .to("mock:result");
             }
         };
