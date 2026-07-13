@@ -1053,6 +1053,55 @@ public final class JsonMapper {
         return model;
     }
 
+    public static JsonObject asJsonObject(SecurityAdvisoryModel model) {
+        JsonObject json = new JsonObject();
+        json.put("cve", model.getCve());
+        if (model.getDate() != null) {
+            json.put("date", model.getDate());
+        }
+        if (model.getSeverity() != null) {
+            json.put("severity", model.getSeverity());
+        }
+        if (model.getSummary() != null) {
+            json.put("summary", model.getSummary());
+        }
+        if (model.getAffected() != null) {
+            json.put("affected", model.getAffected());
+        }
+        if (model.getFixed() != null) {
+            json.put("fixed", model.getFixed());
+        }
+        if (model.getMitigation() != null) {
+            json.put("mitigation", model.getMitigation());
+        }
+        if (model.getUrl() != null) {
+            json.put("url", model.getUrl());
+        }
+        if (model.getComponents() != null && !model.getComponents().isEmpty()) {
+            json.put("components", new JsonArray(model.getComponents()));
+        }
+        return json;
+    }
+
+    public static SecurityAdvisoryModel generateSecurityAdvisoryModel(JsonObject obj) {
+        SecurityAdvisoryModel model = new SecurityAdvisoryModel();
+        model.setCve(obj.getString("cve"));
+        model.setDate(obj.getString("date"));
+        model.setSeverity(obj.getString("severity"));
+        model.setSummary(obj.getString("summary"));
+        model.setAffected(obj.getString("affected"));
+        model.setFixed(obj.getString("fixed"));
+        model.setMitigation(obj.getString("mitigation"));
+        model.setUrl(obj.getString("url"));
+        JsonArray components = (JsonArray) obj.get("components");
+        if (components != null) {
+            for (Object component : components) {
+                model.getComponents().add(String.valueOf(component));
+            }
+        }
+        return model;
+    }
+
     public static String createJsonSchema(MainModel model) {
         JsonObject wrapper = asJsonObject(model);
         return serialize(wrapper);

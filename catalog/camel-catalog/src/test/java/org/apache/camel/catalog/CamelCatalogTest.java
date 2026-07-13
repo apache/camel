@@ -37,6 +37,7 @@ import org.apache.camel.tooling.model.Kind;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.ReleaseModel;
+import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -1750,6 +1751,25 @@ public class CamelCatalogTest {
         Assertions.assertEquals("2023-07-06", rel.getEol());
         Assertions.assertEquals("lts", rel.getKind());
         Assertions.assertEquals("11", rel.getJdk());
+    }
+
+    @Test
+    public void camelSecurityAdvisories() {
+        List<SecurityAdvisoryModel> list = catalog.camelSecurityAdvisories();
+        Assertions.assertTrue(list.size() > 70);
+
+        // oldest advisory first
+        SecurityAdvisoryModel advisory = list.get(0);
+        Assertions.assertEquals("CVE-2013-4330", advisory.getCve());
+        Assertions.assertEquals("CRITICAL", advisory.getSeverity());
+
+        advisory = list.stream().filter(a -> a.getCve().equals("CVE-2025-27636")).findFirst().orElse(null);
+        Assertions.assertNotNull(advisory);
+        Assertions.assertEquals("MEDIUM", advisory.getSeverity());
+        Assertions.assertTrue(advisory.getAffected().contains("4.10.0 before 4.10.2"));
+        Assertions.assertTrue(advisory.getFixed().contains("4.10.2"));
+        Assertions.assertEquals("https://camel.apache.org/security/CVE-2025-27636.html", advisory.getUrl());
+        Assertions.assertTrue(advisory.getComponents().contains("camel-bean"));
     }
 
     @Test
