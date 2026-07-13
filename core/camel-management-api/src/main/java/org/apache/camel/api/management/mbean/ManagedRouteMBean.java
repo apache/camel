@@ -103,9 +103,6 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Average load (inflight messages, not cpu) over the last fifteen minutes")
     String getLoad15();
 
-    @ManagedAttribute(description = "Throughput message/second")
-    String getThroughput();
-
     @ManagedOperation(description = "Start route")
     void start() throws Exception;
 

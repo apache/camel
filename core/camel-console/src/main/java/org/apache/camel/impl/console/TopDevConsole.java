@@ -92,6 +92,10 @@ public class TopDevConsole extends AbstractDevConsole {
                             String.format("%n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
                     sb.append(
                             String.format("%n    Total Time: %s", TimeUtils.printDuration(mrb.getTotalProcessingTime(), true)));
+                    String thp = mrb.getThroughput();
+                    if (thp != null && !thp.isEmpty()) {
+                        sb.append(String.format("%n    Messages/Sec: %s", thp));
+                    }
                     sb.append("\n");
                     return null;
                 };
@@ -148,6 +152,10 @@ public class TopDevConsole extends AbstractDevConsole {
                             String.format("%n    Delta Time: %s", TimeUtils.printDuration(mpb.getDeltaProcessingTime(), true)));
                     sb.append(
                             String.format("%n    Total Time: %s", TimeUtils.printDuration(mpb.getTotalProcessingTime(), true)));
+                    String thp = mpb.getThroughput();
+                    if (thp != null && !thp.isEmpty()) {
+                        sb.append(String.format("%n    Messages/Sec: %s", thp));
+                    }
                     sb.append("\n");
                     return null;
                 };
@@ -246,40 +254,25 @@ public class TopDevConsole extends AbstractDevConsole {
         return root;
     }
 
-    private static JsonObject getStatsObject(ManagedProcessorMBean mpb) {
+    private static JsonObject getStatsObject(ManagedPerformanceCounterMBean mbean) {
         JsonObject stats = new JsonObject();
-        stats.put("exchangesTotal", mpb.getExchangesTotal());
-        stats.put("exchangesFailed", mpb.getExchangesFailed());
-        stats.put("exchangesInflight", mpb.getExchangesInflight());
-        stats.put("meanProcessingTime", mpb.getMeanProcessingTime());
-        stats.put("maxProcessingTime", mpb.getMaxProcessingTime());
-        stats.put("minProcessingTime", mpb.getMinProcessingTime());
-        stats.put("lastProcessingTime", mpb.getLastProcessingTime());
-        stats.put("deltaProcessingTime", mpb.getDeltaProcessingTime());
-        stats.put("totalProcessingTime", mpb.getTotalProcessingTime());
-        if (mpb.getProcessingTimeP50() >= 0) {
-            stats.put("p50ProcessingTime", mpb.getProcessingTimeP50());
-            stats.put("p95ProcessingTime", mpb.getProcessingTimeP95());
-            stats.put("p99ProcessingTime", mpb.getProcessingTimeP99());
+        stats.put("exchangesTotal", mbean.getExchangesTotal());
+        stats.put("exchangesFailed", mbean.getExchangesFailed());
+        stats.put("exchangesInflight", mbean.getExchangesInflight());
+        stats.put("meanProcessingTime", mbean.getMeanProcessingTime());
+        stats.put("maxProcessingTime", mbean.getMaxProcessingTime());
+        stats.put("minProcessingTime", mbean.getMinProcessingTime());
+        stats.put("lastProcessingTime", mbean.getLastProcessingTime());
+        stats.put("deltaProcessingTime", mbean.getDeltaProcessingTime());
+        stats.put("totalProcessingTime", mbean.getTotalProcessingTime());
+        String thp = mbean.getThroughput();
+        if (thp != null && !thp.isEmpty()) {
+            stats.put("exchangesThroughput", thp);
         }
-        return stats;
-    }
-
-    private static JsonObject getStatsObject(ManagedRouteMBean mrb) {
-        JsonObject stats = new JsonObject();
-        stats.put("exchangesTotal", mrb.getExchangesTotal());
-        stats.put("exchangesFailed", mrb.getExchangesFailed());
-        stats.put("exchangesInflight", mrb.getExchangesInflight());
-        stats.put("meanProcessingTime", mrb.getMeanProcessingTime());
-        stats.put("maxProcessingTime", mrb.getMaxProcessingTime());
-        stats.put("minProcessingTime", mrb.getMinProcessingTime());
-        stats.put("lastProcessingTime", mrb.getLastProcessingTime());
-        stats.put("deltaProcessingTime", mrb.getDeltaProcessingTime());
-        stats.put("totalProcessingTime", mrb.getTotalProcessingTime());
-        if (mrb.getProcessingTimeP50() >= 0) {
-            stats.put("p50ProcessingTime", mrb.getProcessingTimeP50());
-            stats.put("p95ProcessingTime", mrb.getProcessingTimeP95());
-            stats.put("p99ProcessingTime", mrb.getProcessingTimeP99());
+        if (mbean.getProcessingTimeP50() >= 0) {
+            stats.put("p50ProcessingTime", mbean.getProcessingTimeP50());
+            stats.put("p95ProcessingTime", mbean.getProcessingTimeP95());
+            stats.put("p99ProcessingTime", mbean.getProcessingTimeP99());
         }
         return stats;
     }
