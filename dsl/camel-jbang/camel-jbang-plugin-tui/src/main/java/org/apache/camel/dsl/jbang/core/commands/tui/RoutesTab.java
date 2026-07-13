@@ -584,7 +584,7 @@ class RoutesTab extends AbstractTab {
             if (selTop != null && selTop.exchangesTotal > 0) {
                 Style ts = Theme.label();
                 routeRows.add(Row.from(
-                        Cell.from(Span.styled("TOTAL", ts)),
+                        Cell.from(Span.styled("GLOBAL", ts)),
                         Cell.from(""),
                         rightCell(String.valueOf(selTop.meanTime), 6, ts),
                         rightCell(String.valueOf(selTop.maxTime), 6, ts),
@@ -699,7 +699,7 @@ class RoutesTab extends AbstractTab {
                     totalTimingCol = selDef.minTime + "/" + selDef.maxTime + "/" + selDef.meanTime;
                 }
                 routeRows.add(Row.from(
-                        Cell.from(Span.styled("TOTAL", ts)),
+                        Cell.from(Span.styled("GLOBAL", ts)),
                         Cell.from(""),
                         Cell.from(""),
                         rightCell(formatThroughput(selDef.throughput), 8, ts),
