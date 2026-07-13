@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -235,7 +236,7 @@ class ActivityTab extends AbstractTableTab {
             }
         }
 
-        java.util.Arrays.sort(elapsedValues);
+        Arrays.sort(elapsedValues);
         long p50 = total > 0 ? elapsedValues[Math.min((int) (total * 0.50), total - 1)] : 0;
         long p95 = total > 0 ? elapsedValues[Math.min((int) (total * 0.95), total - 1)] : 0;
 
