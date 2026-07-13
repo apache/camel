@@ -409,8 +409,8 @@
         <opensearch-java-client-version>3.9.0</opensearch-java-client-version>
         <opensearch-testcontainers-version>2.1.3</opensearch-testcontainers-version>
         <openstack4j-version>3.12</openstack4j-version>
-        <opentelemetry-version>1.63.0</opentelemetry-version>
-        <opentelemetry-alpha-version>1.63.0-alpha</opentelemetry-alpha-version>
+        <opentelemetry-version>1.64.0</opentelemetry-version>
+        <opentelemetry-alpha-version>1.64.0-alpha</opentelemetry-alpha-version>
         <opentelemetry-proto-version>1.10.0-alpha</opentelemetry-proto-version>
         <opentelemetry-log4j2-version>2.29.0-alpha</opentelemetry-log4j2-version>
         <opentelemetry-incubator-version>1.43.0-alpha</opentelemetry-incubator-version>
