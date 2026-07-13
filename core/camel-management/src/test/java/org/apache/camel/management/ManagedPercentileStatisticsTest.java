@@ -59,12 +59,14 @@ public class ManagedPercentileStatisticsTest extends ManagementTestSupport {
         Long p50 = (Long) mbeanServer.getAttribute(on, "ProcessingTimeP50");
         Long p95 = (Long) mbeanServer.getAttribute(on, "ProcessingTimeP95");
         Long p99 = (Long) mbeanServer.getAttribute(on, "ProcessingTimeP99");
+        Long rate = (Long) mbeanServer.getAttribute(on, "ExchangeRate1m");
 
         assertTrue(p50 >= 0, "p50 should be >= 0, was: " + p50);
         assertTrue(p95 >= 0, "p95 should be >= 0, was: " + p95);
         assertTrue(p99 >= 0, "p99 should be >= 0, was: " + p99);
         assertTrue(p50 <= p95, "p50 should be <= p95, was p50=" + p50 + " p95=" + p95);
         assertTrue(p95 <= p99, "p95 should be <= p99, was p95=" + p95 + " p99=" + p99);
+        assertEquals(5, rate.longValue());
     }
 
     @Test
@@ -83,10 +85,12 @@ public class ManagedPercentileStatisticsTest extends ManagementTestSupport {
         Long p50 = (Long) mbeanServer.getAttribute(on, "ProcessingTimeP50");
         Long p95 = (Long) mbeanServer.getAttribute(on, "ProcessingTimeP95");
         Long p99 = (Long) mbeanServer.getAttribute(on, "ProcessingTimeP99");
+        Long rate = (Long) mbeanServer.getAttribute(on, "ExchangeRate1m");
 
         assertTrue(p50 >= 0, "p50 should be >= 0, was: " + p50);
         assertTrue(p95 >= 0, "p95 should be >= 0, was: " + p95);
         assertTrue(p99 >= 0, "p99 should be >= 0, was: " + p99);
+        assertEquals(3, rate.longValue());
     }
 
     @Override

@@ -261,6 +261,7 @@ public class TopDevConsole extends AbstractDevConsole {
             stats.put("p50ProcessingTime", mpb.getProcessingTimeP50());
             stats.put("p95ProcessingTime", mpb.getProcessingTimeP95());
             stats.put("p99ProcessingTime", mpb.getProcessingTimeP99());
+            stats.put("exchangeRate1m", mpb.getExchangeRate1m());
         }
         return stats;
     }

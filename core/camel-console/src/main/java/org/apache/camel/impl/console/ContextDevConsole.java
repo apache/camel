@@ -191,6 +191,7 @@ public class ContextDevConsole extends AbstractDevConsole {
                     stats.put("p50ProcessingTime", mb.getProcessingTimeP50());
                     stats.put("p95ProcessingTime", mb.getProcessingTimeP95());
                     stats.put("p99ProcessingTime", mb.getProcessingTimeP99());
+                    stats.put("exchangeRate1m", mb.getExchangeRate1m());
                 }
                 if (mb.getExchangesTotal() > 0) {
                     stats.put("lastProcessingTime", mb.getLastProcessingTime());

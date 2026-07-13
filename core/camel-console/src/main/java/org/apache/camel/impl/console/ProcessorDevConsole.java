@@ -340,6 +340,7 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             stats.put("p50ProcessingTime", mp.getProcessingTimeP50());
             stats.put("p95ProcessingTime", mp.getProcessingTimeP95());
             stats.put("p99ProcessingTime", mp.getProcessingTimeP99());
+            stats.put("exchangeRate1m", mp.getExchangeRate1m());
         }
         if (mp.getExchangesTotal() > 0) {
             stats.put("lastProcessingTime", mp.getLastProcessingTime());

@@ -65,6 +65,11 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     private long[] percentileWindow;
     private int percentileIndex;
     private int percentileCount;
+    // rolling 1-minute exchange rate (Extended statistics only)
+    private static final int EXCHANGE_RATE_WINDOW_SECONDS = 60;
+    private final Object exchangeRateLock = new Object();
+    private long[] exchangeRateSeconds;
+    private long[] exchangeRateCounts;
 
     @Override
     public void init(ManagementStrategy strategy) {
@@ -96,6 +101,9 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         percentileWindow = new long[PERCENTILE_WINDOW_SIZE];
         percentileIndex = 0;
         percentileCount = 0;
+
+        exchangeRateSeconds = new long[EXCHANGE_RATE_WINDOW_SECONDS];
+        exchangeRateCounts = new long[EXCHANGE_RATE_WINDOW_SECONDS];
     }
 
     @Override
@@ -126,6 +134,10 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         if (percentileWindow != null) {
             percentileIndex = 0;
             percentileCount = 0;
+        }
+        if (exchangeRateSeconds != null) {
+            Arrays.fill(exchangeRateSeconds, 0);
+            Arrays.fill(exchangeRateCounts, 0);
         }
     }
 
@@ -202,6 +214,27 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     @Override
     public long getProcessingTimeP99() {
         return getPercentile(0.99);
+    }
+
+    @Override
+    public long getExchangeRate1m() {
+        if (exchangeRateSeconds == null) {
+            return -1;
+        }
+
+        long currentSecond = System.currentTimeMillis() / 1000;
+        long rate = 0;
+
+        synchronized (exchangeRateLock) {
+            for (int i = 0; i < EXCHANGE_RATE_WINDOW_SECONDS; i++) {
+                long age = currentSecond - exchangeRateSeconds[i];
+                if (age >= 0 && age < EXCHANGE_RATE_WINDOW_SECONDS) {
+                    rate += exchangeRateCounts[i];
+                }
+            }
+        }
+
+        return rate;
     }
 
     @Override
@@ -329,6 +362,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         }
 
         lastExchangeCompletedTimestamp.updateValue(now);
+        updateExchangeRate(now);
         if (firstExchangeCompletedExchangeId == null) {
             firstExchangeCompletedExchangeId = exchange.getExchangeId();
         }
@@ -362,10 +396,29 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         }
 
         lastExchangeFailureTimestamp.updateValue(now);
+        updateExchangeRate(now);
         if (firstExchangeFailureExchangeId == null) {
             firstExchangeFailureExchangeId = exchange.getExchangeId();
         }
         lastExchangeFailureExchangeId = exchange.getExchangeId();
+    }
+
+    private void updateExchangeRate(long now) {
+        if (exchangeRateSeconds == null) {
+            return;
+        }
+
+        long currentSecond = now / 1000;
+        int bucket = (int) (currentSecond % EXCHANGE_RATE_WINDOW_SECONDS);
+
+        synchronized (exchangeRateLock) {
+            if (exchangeRateSeconds[bucket] != currentSecond) {
+                exchangeRateSeconds[bucket] = currentSecond;
+                exchangeRateCounts[bucket] = 1;
+            } else {
+                exchangeRateCounts[bucket]++;
+            }
+        }
     }
 
     private long getPercentile(double percentile) {
@@ -399,6 +452,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
             sb.append(String.format(" p50ProcessingTime=\"%s\"", getProcessingTimeP50()));
             sb.append(String.format(" p95ProcessingTime=\"%s\"", getProcessingTimeP95()));
             sb.append(String.format(" p99ProcessingTime=\"%s\"", getProcessingTimeP99()));
+            sb.append(String.format(" exchangeRate1m=\"%s\"", getExchangeRate1m()));
         }
         sb.append(String.format(" idleSince=\"%s\"", getIdleSince()));
 
@@ -451,6 +505,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
             jo.put("p50ProcessingTime", getProcessingTimeP50());
             jo.put("p95ProcessingTime", getProcessingTimeP95());
             jo.put("p99ProcessingTime", getProcessingTimeP99());
+            jo.put("exchangeRate1m", getExchangeRate1m());
         }
         jo.put("idleSince", getIdleSince());
         if (fullStats) {

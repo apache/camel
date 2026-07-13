@@ -111,6 +111,12 @@ public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
     @ManagedAttribute(description = "99th percentile of recent processing times [milliseconds]. Requires Extended statistics level, returns -1 otherwise.")
     long getProcessingTimeP99();
 
+    /**
+     * @since 4.22
+     */
+    @ManagedAttribute(description = "Rolling 1-minute exchange rate [exchanges/minute]. Requires Extended statistics level, returns -1 otherwise.")
+    long getExchangeRate1m();
+
     @ManagedAttribute(description = "Statistics enabled")
     boolean isStatisticsEnabled();
 

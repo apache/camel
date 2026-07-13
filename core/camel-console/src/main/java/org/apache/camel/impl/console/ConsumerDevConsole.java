@@ -237,6 +237,7 @@ public class ConsumerDevConsole extends AbstractDevConsole {
             stats.put("p50ProcessingTime", mr.getProcessingTimeP50());
             stats.put("p95ProcessingTime", mr.getProcessingTimeP95());
             stats.put("p99ProcessingTime", mr.getProcessingTimeP99());
+            stats.put("exchangeRate1m", mr.getExchangeRate1m());
         }
         if (mr.getExchangesTotal() > 0) {
             stats.put("lastProcessingTime", mr.getLastProcessingTime());

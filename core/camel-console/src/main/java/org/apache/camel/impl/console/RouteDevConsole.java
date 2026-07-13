@@ -493,6 +493,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             stats.put("p50ProcessingTime", mrb.getProcessingTimeP50());
             stats.put("p95ProcessingTime", mrb.getProcessingTimeP95());
             stats.put("p99ProcessingTime", mrb.getProcessingTimeP99());
+            stats.put("exchangeRate1m", mrb.getExchangeRate1m());
         }
         if (mrb.getExchangesTotal() > 0) {
             stats.put("lastProcessingTime", mrb.getLastProcessingTime());
