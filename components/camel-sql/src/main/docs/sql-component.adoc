@@ -1040,7 +1040,7 @@ uses special `INSERT .. ON CONFLICT ..` statement to provide optimistic locking 
 This statement is (with default aggregation table definition):
 [source,sql]
 ----
-INSERT INTO aggregation (id, exchange) values (?, ?) ON CONFLICT DO NOTHING
+INSERT INTO aggregation (exchange, id, version) VALUES (?, ?, ?) ON CONFLICT DO NOTHING
 ----
 
 Details can be found https://www.postgresql.org/docs/9.5/sql-insert.html[in PostgreSQL documentation].

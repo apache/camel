@@ -94,6 +94,19 @@
             <version>${mariadb-version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- PostgreSQL only used for the aggregation repository integration tests -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${pgjdbc-driver-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-postgres</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
