@@ -76,6 +76,8 @@ sources instead of attempting to run an unsuitable Java.
 
 The obsolete macOS `JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/...` default was
 removed from `camel.sh`; set `JAVA_HOME` or `JAVACMD`, or ensure a Java 17+ `java` is on `PATH`.
+The Gentoo `java-config` auto-detection and the IBM AIX `$JAVA_HOME/jre/sh/java` probe were also
+removed; set `JAVA_HOME` or `JAVACMD` explicitly on those platforms.
 `JAVA_OPTS` handling is unchanged: when unset, the default `-Xmx512m` heap is applied.
 
 === camel-langchain4j-agent
