@@ -85,6 +85,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         final JAXBContext jaxbContext = getJAXBContext(context);
         final Map<String, String> namespaces = new LinkedHashMap<>();
         final Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
+        final List<Runnable> restorers = new ArrayList<>();
 
         // gather all namespaces from the routes or route which is stored on the
         // expression nodes
@@ -95,14 +96,14 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                 if (sourceLocation || context.isDebugging()) {
                     extractSourceLocations(route.getRoute(), locations);
                 }
-                resolveEndpointDslUris(route.getRoute());
+                restorers.add(resolveEndpointDslUris(route.getRoute()));
             }
         } else if (definition instanceof RouteTemplateDefinition template) {
             extractNamespaces(template.getRoute(), namespaces);
             if (sourceLocation || context.isDebugging()) {
                 extractSourceLocations(template.getRoute(), locations);
             }
-            resolveEndpointDslUris(template.getRoute());
+            restorers.add(resolveEndpointDslUris(template.getRoute()));
         } else if (definition instanceof RoutesDefinition routesDefinition) {
             List<RouteDefinition> routes = routesDefinition.getRoutes();
             for (RouteDefinition route : routes) {
@@ -110,21 +111,25 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                 if (sourceLocation || context.isDebugging()) {
                     extractSourceLocations(route, locations);
                 }
-                resolveEndpointDslUris(route);
+                restorers.add(resolveEndpointDslUris(route));
             }
         } else if (definition instanceof RouteDefinition route) {
             extractNamespaces(route, namespaces);
             if (sourceLocation || context.isDebugging()) {
                 extractSourceLocations(route, locations);
             }
-            resolveEndpointDslUris(route);
+            restorers.add(resolveEndpointDslUris(route));
         }
 
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         StringWriter buffer = new StringWriter();
-        marshaller.marshal(definition, buffer);
+        try {
+            marshaller.marshal(definition, buffer);
+        } finally {
+            restorers.forEach(Runnable::run);
+        }
 
         XmlConverter xmlConverter = newXmlConverter(context);
         String xml = buffer.toString();
