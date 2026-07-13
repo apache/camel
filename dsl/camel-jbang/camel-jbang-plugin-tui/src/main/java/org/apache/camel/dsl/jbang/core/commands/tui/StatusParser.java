@@ -236,6 +236,7 @@ final class StatusParser {
                             pi.p95Time = objToLong(ps.get("p95ProcessingTime"));
                             pi.p99Time = objToLong(ps.get("p99ProcessingTime"));
                             pi.inflight = objToLong(ps.get("exchangesInflight"));
+                            pi.throughput = objToString(ps.get("exchangesThroughput"));
                             long tsStarted = objToLong(ps.get("lastCreatedExchangeTimestamp"));
                             if (tsStarted > 0) {
                                 pi.sinceLastStarted = TimeUtils.printSince(tsStarted);

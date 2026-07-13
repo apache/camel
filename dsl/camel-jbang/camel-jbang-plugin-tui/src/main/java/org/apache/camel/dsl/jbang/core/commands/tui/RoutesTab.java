@@ -1299,7 +1299,7 @@ class RoutesTab extends AbstractTab {
                 rows.add(Row.from(
                         Cell.from("   " + (proc.processor != null ? proc.processor : "")),
                         Cell.from(Span.styled(indent + (proc.id != null ? proc.id : ""), nameStyle)),
-                        Cell.from(""),
+                        rightCell(formatThroughput(proc.throughput), 8),
                         rightCell(String.valueOf(proc.total), 8),
                         rightCell(String.valueOf(proc.failed), 6,
                                 proc.failed > 0 ? Theme.error() : Style.EMPTY),
