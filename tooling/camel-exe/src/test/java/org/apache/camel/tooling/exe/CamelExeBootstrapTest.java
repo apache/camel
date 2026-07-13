@@ -60,10 +60,10 @@ class CamelExeBootstrapTest {
     /**
      * Writes a fake camel.bat that appends each forwarded argument to {@link #CAPTURED_ARGS_FILE} as UTF-8.
      * <p>
-     * Non-ASCII argument checks cannot rely on parsing process stdout: cmd.exe {@code echo} uses the console OEM
-     * code page on Windows CI hosts, so Unicode forwarded correctly by camel.exe is still mangled (for example
-     * {@code ü} becomes {@code ?}) before Java reads the pipe. Appending via PowerShell preserves the exact
-     * argument text in a UTF-8 file we control.
+     * Non-ASCII argument checks cannot rely on parsing process stdout: cmd.exe {@code echo} uses the console OEM code
+     * page on Windows CI hosts, so Unicode forwarded correctly by camel.exe is still mangled (for example {@code ü}
+     * becomes {@code ?}) before Java reads the pipe. Appending via PowerShell preserves the exact argument text in a
+     * UTF-8 file we control.
      */
     private void fakeBatCapturingArgsToUtf8File(Path dir, int exitCode) throws Exception {
         Path bat = dir.resolve("camel.bat");
