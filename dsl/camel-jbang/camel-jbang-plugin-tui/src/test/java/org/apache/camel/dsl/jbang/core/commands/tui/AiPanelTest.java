@@ -468,6 +468,45 @@ class AiPanelTest {
     }
 
     @Test
+    void functionKeysPassThroughToGlobalHandlers() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(LlmClient.create());
+        panel.open();
+
+        assertFalse(panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.F1, KeyModifiers.NONE)));
+        assertFalse(panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.F2, KeyModifiers.NONE)));
+        assertFalse(panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.F3, KeyModifiers.NONE)));
+        assertFalse(panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.F6, KeyModifiers.NONE)));
+        assertFalse(panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.F12, KeyModifiers.NONE)));
+    }
+
+    @Test
+    void f8ClosesPanel() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(LlmClient.create());
+        panel.open();
+        assertTrue(panel.isOpen());
+
+        assertTrue(panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.F8, KeyModifiers.NONE)));
+        assertFalse(panel.isOpen());
+    }
+
+    @Test
+    void functionKeysPassThroughWhileThinking() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new BlockingLlmClient());
+        panel.open();
+        type(panel, "thinking test");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(panel.isThinkingForTesting());
+
+        assertFalse(panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.F1, KeyModifiers.NONE)));
+        assertFalse(panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.F2, KeyModifiers.NONE)));
+
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+    }
+
+    @Test
     void inputPromptUsesAccentChevron() {
         AiPanel panel = new AiPanel();
         assertEquals("❯ ", panel.inputPromptForTesting());

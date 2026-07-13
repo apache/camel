@@ -1609,6 +1609,7 @@ class AiPanel {
         }
     }
 
+    // F8 intentionally excluded — it closes the panel and is handled above
     private static boolean isFunctionKey(KeyEvent ke) {
         KeyCode code = ke.code();
         return code == KeyCode.F1 || code == KeyCode.F2 || code == KeyCode.F3
