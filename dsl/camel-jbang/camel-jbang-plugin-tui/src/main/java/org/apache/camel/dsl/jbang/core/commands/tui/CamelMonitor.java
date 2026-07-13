@@ -265,6 +265,7 @@ public class CamelMonitor extends CamelCommand {
                 dataService::enableBurstMode, dataService.stoppingPids());
 
         actionsPopup.setContext(ctx);
+        actionsPopup.setMonitorContext(ctx);
         actionsPopup.setNotificationCallback((msg, error) -> setNotification(msg, error));
         actionsPopup.setResetStatsAction(this::resetStats);
         shellPanel.setContext(ctx);
@@ -297,6 +298,11 @@ public class CamelMonitor extends CamelCommand {
             @Override
             public void refreshErrorData(List<Long> pids) {
                 dataService.refreshErrorData(pids);
+            }
+
+            @Override
+            public void refreshActivityData(List<Long> pids) {
+                dataService.refreshActivityData(pids);
             }
 
             @Override
@@ -497,6 +503,7 @@ public class CamelMonitor extends CamelCommand {
             // Open on the configured starting tab (if any), now that all tab wiring is in place
             applyStartingTab();
             applyLogPin();
+            applyRatePer();
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -560,6 +567,11 @@ public class CamelMonitor extends CamelCommand {
         logPinAnim.reset(cycleIndex);
         ctx.logPinned = true;
         ctx.logPinPercent = Integer.parseInt(logPin);
+    }
+
+    private void applyRatePer() {
+        String ratePer = TuiSettings.load().getRatePer();
+        ctx.ratePerMinute = "minutes".equals(ratePer);
     }
 
     // ---- Event Handling ----
@@ -701,19 +713,19 @@ public class CamelMonitor extends CamelCommand {
             }
             if (!isInfraSelected()) {
                 if (ke.isChar('3')) {
-                    return tabRegistry.handleTabKey(TAB_DIAGRAM, ctx, dataService);
+                    return tabRegistry.handleTabKey(TAB_ACTIVITY, ctx, dataService);
                 }
                 if (ke.isChar('4')) {
-                    return tabRegistry.handleTabKey(TAB_ROUTES, ctx, dataService);
+                    return tabRegistry.handleTabKey(TAB_DIAGRAM, ctx, dataService);
                 }
                 if (ke.isChar('5')) {
-                    return tabRegistry.handleTabKey(TAB_ENDPOINTS, ctx, dataService);
+                    return tabRegistry.handleTabKey(TAB_ROUTES, ctx, dataService);
                 }
                 if (ke.isChar('6')) {
-                    return tabRegistry.handleTabKey(TAB_HTTP, ctx, dataService);
+                    return tabRegistry.handleTabKey(TAB_ENDPOINTS, ctx, dataService);
                 }
                 if (ke.isChar('7')) {
-                    return tabRegistry.handleTabKey(TAB_HEALTH, ctx, dataService);
+                    return tabRegistry.handleTabKey(TAB_HTTP, ctx, dataService);
                 }
                 if (ke.isChar('8')) {
                     return tabRegistry.handleTabKey(TAB_HISTORY, ctx, dataService);
@@ -1459,11 +1471,11 @@ public class CamelMonitor extends CamelCommand {
         Line[] labels = {
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "3", "Diagram")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "4", "Route")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "5", "Endpoint")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HTTP, "6", "HTTP")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HEALTH, "7", "Health")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ACTIVITY, "3", "Activity")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "4", "Diagram")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "5", "Route")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "6", "Endpoint")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HTTP, "7", "HTTP")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_INSPECT, "8", "Inspect")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ERRORS, "9", "Errors")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_MORE, "0", TuiIcons.moreTabLabel())),
@@ -1579,17 +1591,6 @@ public class CamelMonitor extends CamelCommand {
         if (httpCount > 0) {
             badgeTexts[TAB_HTTP] = "(" + httpCount + ")";
         }
-        long healthDownCount = hasSelection
-                ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
-        if (healthDownCount > 0) {
-            badgeTexts[TAB_HEALTH] = "(" + healthDownCount + " DOWN)";
-            badgeStyles[TAB_HEALTH] = red;
-        } else {
-            int healthCount = hasSelection ? sel.healthChecks.size() : 0;
-            if (healthCount > 0) {
-                badgeTexts[TAB_HEALTH] = "(" + healthCount + ")";
-            }
-        }
         boolean hasTraces = hasSelection && !dataService.traces().get().isEmpty();
         if (hasTraces) {
             badgeTexts[TAB_HISTORY] = "(*)";
@@ -1626,6 +1627,10 @@ public class CamelMonitor extends CamelCommand {
         if (errorCount > 0) {
             badgeTexts[TAB_ERRORS] = "(" + errorCount + ")";
             badgeStyles[TAB_ERRORS] = red;
+        }
+        int activityCount = hasSelection ? sel.activity.size() : 0;
+        if (activityCount > 0) {
+            badgeTexts[TAB_ACTIVITY] = "(" + activityCount + ")";
         }
     }
 
@@ -2102,6 +2107,9 @@ public class CamelMonitor extends CamelCommand {
         List<Long> selectedPids = dataService.selectedPidAsList();
         if (tabRegistry.selectedTabIndex() == TAB_ERRORS && !selectedPids.isEmpty()) {
             dataService.refreshErrorData(selectedPids);
+        }
+        if (tabRegistry.selectedTabIndex() == TAB_ACTIVITY && !selectedPids.isEmpty()) {
+            dataService.refreshActivityData(selectedPids);
         }
         if (tabRegistry.selectedTabIndex() == TAB_HISTORY && !selectedPids.isEmpty()) {
             if (tabRegistry.historyTab().historyRefreshRequested) {

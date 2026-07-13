@@ -86,6 +86,7 @@ class IntegrationInfo {
     final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
     int errorCount;
     final List<ErrorInfo> errors = new CopyOnWriteArrayList<>();
+    final List<ActivityEntry> activity = new CopyOnWriteArrayList<>();
     boolean inflightBrowseEnabled;
     final List<InflightInfo> inflightExchanges = new ArrayList<>();
     final List<MicrometerMeterInfo> meters = new ArrayList<>();

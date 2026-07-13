@@ -155,6 +155,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("ask", new CommandLine(new Ask(this)))
                 .addSubcommand("harden", new CommandLine(new Harden(this)))
                 .addSubcommand("get", new CommandLine(new CamelStatus(this))
+                        .addSubcommand("activity", new CommandLine(new ListActivity(this)))
                         .addSubcommand("bean", new CommandLine(new CamelBeanDump(this)))
                         .addSubcommand("blocked", new CommandLine(new ListBlocked(this)))
                         .addSubcommand("circuit-breaker", new CommandLine(new ListCircuitBreaker(this)))

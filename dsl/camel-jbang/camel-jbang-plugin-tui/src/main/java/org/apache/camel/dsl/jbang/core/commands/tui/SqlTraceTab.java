@@ -388,7 +388,7 @@ class SqlTraceTab extends AbstractTableTab {
         hint(spans, "Esc", "back");
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hint(spans, "Home/End", "top/end");
-        hint(spans, "PgUp/Dn", "scroll detail");
+        hint(spans, "PgUp/Dn", "detail");
         hint(spans, "e", "edit SQL");
         hint(spans, "s", "sort");
         hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");

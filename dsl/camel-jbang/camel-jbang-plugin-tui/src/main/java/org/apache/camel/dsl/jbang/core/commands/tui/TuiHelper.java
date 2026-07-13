@@ -528,6 +528,19 @@ final class TuiHelper {
         return formatSinceLast(route.sinceLastStarted, route.sinceLastCompleted, route.sinceLastFailed);
     }
 
+    static String throughputPerMinute(String msgPerSec) {
+        if (msgPerSec == null || msgPerSec.isEmpty()) {
+            return msgPerSec;
+        }
+        try {
+            double perSec = Double.parseDouble(msgPerSec);
+            double perMin = perSec * 60;
+            return String.format(Locale.US, "%.1f", perMin);
+        } catch (NumberFormatException e) {
+            return msgPerSec;
+        }
+    }
+
     static String formatLoad(String l1, String l5, String l15) {
         String s1 = l1 != null && !"0.00".equals(l1) ? l1 : "0";
         String s5 = l5 != null && !"0.00".equals(l5) ? l5 : "0";

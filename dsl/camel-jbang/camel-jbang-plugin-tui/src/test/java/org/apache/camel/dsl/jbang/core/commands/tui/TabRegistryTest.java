@@ -82,8 +82,8 @@ class TabRegistryTest {
     }
 
     @Test
-    void moreTabsHasTwentyEntries() {
-        assertEquals(20, registry.moreTabs().size());
+    void moreTabsHasTwentyOneEntries() {
+        assertEquals(21, registry.moreTabs().size());
     }
 
     @Test
@@ -109,7 +109,8 @@ class TabRegistryTest {
         // MORE_SHORTCUTS array carried before the MoreTab refactor. A label edit that repoints a key must fail here.
         List<Character> shortcuts = registry.moreTabs().stream().map(TabRegistry.MoreTab::shortcut).toList();
         assertEquals(
-                List.of('B', 'W', 'C', 'A', 'G', 'N', 'V', 'H', 'I', 'J', 'D', 'M', 'K', 'E', 'Q', 'R', 'O', 'P', 'S', 'T'),
+                List.of('B', 'W', 'C', 'A', 'G', 'N', 'V', 'E', 'H', 'F', 'J', 'D', 'M', 'K', 'I', 'Q', 'R', 'O', 'P', 'S',
+                        'T'),
                 shortcuts, "More tab shortcut letters must match the historical sequence");
     }
 
@@ -196,11 +197,11 @@ class TabRegistryTest {
     void tabConstantsAreSequential() {
         assertEquals(0, TabRegistry.TAB_OVERVIEW, "TAB_OVERVIEW should be 0");
         assertEquals(1, TabRegistry.TAB_LOG, "TAB_LOG should be 1");
-        assertEquals(2, TabRegistry.TAB_DIAGRAM, "TAB_DIAGRAM should be 2");
-        assertEquals(3, TabRegistry.TAB_ROUTES, "TAB_ROUTES should be 3");
-        assertEquals(4, TabRegistry.TAB_ENDPOINTS, "TAB_ENDPOINTS should be 4");
-        assertEquals(5, TabRegistry.TAB_HTTP, "TAB_HTTP should be 5");
-        assertEquals(6, TabRegistry.TAB_HEALTH, "TAB_HEALTH should be 6");
+        assertEquals(2, TabRegistry.TAB_ACTIVITY, "TAB_ACTIVITY should be 2");
+        assertEquals(3, TabRegistry.TAB_DIAGRAM, "TAB_DIAGRAM should be 3");
+        assertEquals(4, TabRegistry.TAB_ROUTES, "TAB_ROUTES should be 4");
+        assertEquals(5, TabRegistry.TAB_ENDPOINTS, "TAB_ENDPOINTS should be 5");
+        assertEquals(6, TabRegistry.TAB_HTTP, "TAB_HTTP should be 6");
         assertEquals(7, TabRegistry.TAB_HISTORY, "TAB_HISTORY should be 7");
         assertEquals(8, TabRegistry.TAB_ERRORS, "TAB_ERRORS should be 8");
         assertEquals(9, TabRegistry.TAB_MORE, "TAB_MORE should be 9");
@@ -220,9 +221,9 @@ class TabRegistryTest {
     @Test
     void tabConstantsAreUnique() {
         int[] tabs = {
-                TabRegistry.TAB_OVERVIEW, TabRegistry.TAB_LOG, TabRegistry.TAB_DIAGRAM,
-                TabRegistry.TAB_ROUTES, TabRegistry.TAB_ENDPOINTS, TabRegistry.TAB_HTTP,
-                TabRegistry.TAB_HEALTH, TabRegistry.TAB_HISTORY, TabRegistry.TAB_ERRORS,
+                TabRegistry.TAB_OVERVIEW, TabRegistry.TAB_LOG, TabRegistry.TAB_ACTIVITY,
+                TabRegistry.TAB_DIAGRAM, TabRegistry.TAB_ROUTES, TabRegistry.TAB_ENDPOINTS,
+                TabRegistry.TAB_HTTP, TabRegistry.TAB_HISTORY, TabRegistry.TAB_ERRORS,
                 TabRegistry.TAB_MORE
         };
         for (int i = 0; i < tabs.length; i++) {
@@ -237,11 +238,11 @@ class TabRegistryTest {
     void allTabIndicesAreNonNegative() {
         assertTrue(TabRegistry.TAB_OVERVIEW >= 0, "TAB_OVERVIEW should be non-negative");
         assertTrue(TabRegistry.TAB_LOG >= 0, "TAB_LOG should be non-negative");
+        assertTrue(TabRegistry.TAB_ACTIVITY >= 0, "TAB_ACTIVITY should be non-negative");
         assertTrue(TabRegistry.TAB_DIAGRAM >= 0, "TAB_DIAGRAM should be non-negative");
         assertTrue(TabRegistry.TAB_ROUTES >= 0, "TAB_ROUTES should be non-negative");
         assertTrue(TabRegistry.TAB_ENDPOINTS >= 0, "TAB_ENDPOINTS should be non-negative");
         assertTrue(TabRegistry.TAB_HTTP >= 0, "TAB_HTTP should be non-negative");
-        assertTrue(TabRegistry.TAB_HEALTH >= 0, "TAB_HEALTH should be non-negative");
         assertTrue(TabRegistry.TAB_HISTORY >= 0, "TAB_HISTORY should be non-negative");
         assertTrue(TabRegistry.TAB_ERRORS >= 0, "TAB_ERRORS should be non-negative");
         assertTrue(TabRegistry.TAB_MORE >= 0, "TAB_MORE should be non-negative");
@@ -251,11 +252,11 @@ class TabRegistryTest {
     void allTabIndicesAreLessThanNumTabs() {
         assertTrue(TabRegistry.TAB_OVERVIEW < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_LOG < TabRegistry.NUM_TABS);
+        assertTrue(TabRegistry.TAB_ACTIVITY < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_DIAGRAM < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_ROUTES < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_ENDPOINTS < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_HTTP < TabRegistry.NUM_TABS);
-        assertTrue(TabRegistry.TAB_HEALTH < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_HISTORY < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_ERRORS < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_MORE < TabRegistry.NUM_TABS);

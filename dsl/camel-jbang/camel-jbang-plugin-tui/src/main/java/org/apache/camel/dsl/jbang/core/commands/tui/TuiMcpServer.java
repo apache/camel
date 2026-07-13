@@ -306,12 +306,12 @@ class TuiMcpServer {
                 "tui_navigate",
                 "Navigates the TUI: switch tabs and/or select an integration. "
                                 + "All parameters are optional — set whichever you want to change. "
-                                + "Tab names: Overview, Log, Diagram, Routes, Endpoints, HTTP, Health, Inspect, "
-                                + "Circuit Breaker, Spans, Process. "
+                                + "Tab names: Overview, Log, Activity, Diagram, Routes, Endpoints, HTTP, Inspect, "
+                                + "Circuit Breaker, Health, Spans, Process. "
                                 + "Use 'route' to select a route in the Diagram topology, "
                                 + "and 'node' to drill down into a route and select a specific processor/EIP node. "
                                 + "Returns screen content and selection metadata after navigating.",
-                Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Health', 'Diagram')"),
+                Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Activity', 'Diagram')"),
                         "integration", propDef("string", "Integration name or PID to select"),
                         "route", propDef("string",
                                 "Route ID to select in the Diagram tab topology (e.g. 'order-dispatcher')"),
@@ -480,7 +480,7 @@ class TuiMcpServer {
                                  + "Much more reliable than parsing screen text. "
                                  + "Returns tab name, rows array with all fields, totalRows, and selectedIndex.",
                 Map.of("tab", propDef("string",
-                        "Tab name to get data from (e.g. 'Routes', 'Endpoints', 'Health'). "
+                        "Tab name to get data from (e.g. 'Routes', 'Endpoints', 'Activity'). "
                                                 + "If omitted, uses the active tab."))));
         toolList.add(toolDef(
                 "tui_action",

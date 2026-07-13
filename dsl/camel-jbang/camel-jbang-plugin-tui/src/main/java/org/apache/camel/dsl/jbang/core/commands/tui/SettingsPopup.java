@@ -49,13 +49,15 @@ class SettingsPopup {
     private static final int ROW_THEME = 0;
     private static final int ROW_START_TAB = 1;
     private static final int ROW_LOG_PIN = 2;
-    private static final int ROW_FOLDER = 3;
-    private static final int ROW_AI_PROVIDER = 4;
-    private static final int ROW_AI_MODEL = 5;
-    private static final int ROW_AI_URL = 6;
-    private static final int ROW_COUNT = 7;
+    private static final int ROW_RATE_PER = 3;
+    private static final int ROW_FOLDER = 4;
+    private static final int ROW_AI_PROVIDER = 5;
+    private static final int ROW_AI_MODEL = 6;
+    private static final int ROW_AI_URL = 7;
+    private static final int ROW_COUNT = 8;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
+    private static final String[] RATE_PER_OPTIONS = { "seconds", "minutes" };
     private static final List<String> AI_PROVIDERS = buildAiProviderList();
 
     private static List<String> buildAiProviderList() {
@@ -74,6 +76,7 @@ class SettingsPopup {
     private int themeIndex;
     private int startTabIndex;
     private int logPinIndex;
+    private int ratePerIndex;
     private int aiProviderIndex;
     private TextInputState folderInput;
     private TextInputState aiModelInput;
@@ -82,6 +85,7 @@ class SettingsPopup {
 
     private List<TabRegistry.TabEntry> tabEntries;
     private Runnable clearScreen;
+    private MonitorContext monitorContext;
 
     void setTabEntries(List<TabRegistry.TabEntry> tabEntries) {
         this.tabEntries = tabEntries;
@@ -89,6 +93,10 @@ class SettingsPopup {
 
     void setClearScreen(Runnable clearScreen) {
         this.clearScreen = clearScreen;
+    }
+
+    void setMonitorContext(MonitorContext monitorContext) {
+        this.monitorContext = monitorContext;
     }
 
     boolean isVisible() {
@@ -120,6 +128,9 @@ class SettingsPopup {
                 break;
             }
         }
+
+        String currentRatePer = settings.getRatePer() != null ? settings.getRatePer() : "seconds";
+        ratePerIndex = "minutes".equals(currentRatePer) ? 1 : 0;
 
         folderInput = new TextInputState(settings.getDefaultFolder() != null ? settings.getDefaultFolder() : "");
         String currentProvider = settings.getAiProvider() != null ? settings.getAiProvider() : "auto";
@@ -193,6 +204,14 @@ class SettingsPopup {
             }
             return true;
         }
+        if (selectedRow == ROW_RATE_PER) {
+            if (ke.isChar(' ') || ke.isRight()) {
+                ratePerIndex = (ratePerIndex + 1) % RATE_PER_OPTIONS.length;
+            } else if (ke.isLeft()) {
+                ratePerIndex = (ratePerIndex - 1 + RATE_PER_OPTIONS.length) % RATE_PER_OPTIONS.length;
+            }
+            return true;
+        }
         if (selectedRow == ROW_FOLDER) {
             handleTextInput(ke, folderInput);
             return true;
@@ -224,6 +243,11 @@ class SettingsPopup {
         }
         String logPinValue = LOG_PIN_OPTIONS[logPinIndex];
         settings.setLogPin("off".equals(logPinValue) ? null : logPinValue);
+        String ratePerValue = RATE_PER_OPTIONS[ratePerIndex];
+        settings.setRatePer("seconds".equals(ratePerValue) ? null : ratePerValue);
+        if (monitorContext != null) {
+            monitorContext.ratePerMinute = "minutes".equals(ratePerValue);
+        }
         settings.setDefaultFolder(stripControlChars(folderInput.text().trim()));
         settings.setAiProvider(AI_PROVIDERS.get(aiProviderIndex));
         settings.setAiModel(stripControlChars(aiModelInput.text().trim()));
@@ -276,6 +300,10 @@ class SettingsPopup {
         renderValue(frame, innerX + labelW, rowY, fieldW, logPinLabel, selectedRow == ROW_LOG_PIN);
         rowY++;
 
+        renderLabel(frame, innerX, rowY, labelW, "Rate per:", selectedRow == ROW_RATE_PER);
+        renderValue(frame, innerX + labelW, rowY, fieldW, RATE_PER_OPTIONS[ratePerIndex], selectedRow == ROW_RATE_PER);
+        rowY++;
+
         renderLabel(frame, innerX, rowY, labelW, "Default Folder:", selectedRow == ROW_FOLDER);
         renderFolder(frame, innerX + labelW, rowY, fieldW, selectedRow == ROW_FOLDER);
         rowY++;
@@ -296,7 +324,7 @@ class SettingsPopup {
     void renderFooter(List<Span> spans) {
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_LOG_PIN
-                || selectedRow == ROW_AI_PROVIDER) {
+                || selectedRow == ROW_RATE_PER || selectedRow == ROW_AI_PROVIDER) {
             hint(spans, "Space", "cycle");
         }
         hint(spans, "Enter", "save");

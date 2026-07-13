@@ -236,6 +236,7 @@ final class StatusParser {
                             pi.p95Time = objToLong(ps.get("p95ProcessingTime"));
                             pi.p99Time = objToLong(ps.get("p99ProcessingTime"));
                             pi.inflight = objToLong(ps.get("exchangesInflight"));
+                            pi.throughput = objToString(ps.get("exchangesThroughput"));
                             long tsStarted = objToLong(ps.get("lastCreatedExchangeTimestamp"));
                             if (tsStarted > 0) {
                                 pi.sinceLastStarted = TimeUtils.printSince(tsStarted);
@@ -889,7 +890,7 @@ final class StatusParser {
                 values.put(key, jo.get("value"));
                 String type = jo.getString("type");
                 if (type != null) {
-                    types.put(key, type);
+                    types.put(key, TuiHelper.shortTypeName(type));
                 }
             }
         }
@@ -1101,7 +1102,7 @@ final class StatusParser {
                 Object bodyObj = msg.get("body");
                 if (bodyObj instanceof JsonObject bodyJson) {
                     ei.body = bodyJson.getString("value");
-                    ei.bodyType = bodyJson.getString("type");
+                    ei.bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
                 } else if (bodyObj != null) {
                     ei.body = bodyObj.toString();
                 }
@@ -1119,6 +1120,52 @@ final class StatusParser {
                 parseKvArray(vars, ei.variables, ei.variableTypes);
             }
             parsed.add(ei);
+        }
+        return parsed;
+    }
+
+    static List<ActivityEntry> parseActivityEntries(JsonObject root) {
+        JsonArray activityList = (JsonArray) root.get("activity");
+        if (activityList == null) {
+            return List.of();
+        }
+        List<ActivityEntry> parsed = new ArrayList<>();
+        for (Object e : activityList) {
+            JsonObject aj = (JsonObject) e;
+            ActivityEntry ae = new ActivityEntry();
+            Object uidObj = aj.get("uid");
+            if (uidObj instanceof Number n) {
+                ae.uid = n.longValue();
+            }
+            ae.exchangeId = aj.getString("exchangeId");
+            ae.routeId = aj.getString("routeId");
+            ae.fromRouteId = aj.getString("fromRouteId");
+            Long ts = aj.getLong("timestamp");
+            if (ts != null) {
+                ae.timestamp = ts;
+            }
+            Object elapsedObj = aj.get("elapsed");
+            if (elapsedObj instanceof Number n) {
+                ae.elapsed = n.longValue();
+            }
+            ae.failed = aj.getBooleanOrDefault("failed", false);
+            ae.fromEndpointUri = aj.getString("fromEndpointUri");
+            JsonArray sends = aj.getCollection("endpointSends");
+            if (sends != null) {
+                for (Object s : sends) {
+                    JsonObject so = (JsonObject) s;
+                    ActivityEntry.EndpointSendEntry se = new ActivityEntry.EndpointSendEntry();
+                    se.endpointUri = so.getString("endpointUri");
+                    se.remoteEndpoint = so.getBooleanOrDefault("remoteEndpoint", false);
+                    Object sendElapsed = so.get("elapsed");
+                    if (sendElapsed instanceof Number sn) {
+                        se.elapsed = sn.longValue();
+                    }
+                    ae.endpointSends.add(se);
+                }
+            }
+            ae.exceptionMessage = aj.getString("exception");
+            parsed.add(ae);
         }
         return parsed;
     }

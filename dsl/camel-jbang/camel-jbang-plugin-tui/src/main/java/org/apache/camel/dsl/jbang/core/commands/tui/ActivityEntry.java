@@ -16,23 +16,24 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-class ProcessorInfo {
-    String id;
-    String processor;
-    int level;
-    long total;
-    long failed;
-    long meanTime;
-    long minTime;
-    long maxTime;
-    long lastTime;
-    long deltaTime;
-    long p50Time = -1;
-    long p95Time = -1;
-    long p99Time = -1;
-    long inflight;
-    String throughput;
-    String sinceLastStarted;
-    String sinceLastCompleted;
-    String sinceLastFailed;
+import java.util.ArrayList;
+import java.util.List;
+
+class ActivityEntry {
+    long uid;
+    String exchangeId;
+    String routeId;
+    String fromRouteId;
+    String fromEndpointUri;
+    long timestamp;
+    long elapsed;
+    boolean failed;
+    String exceptionMessage;
+    final List<EndpointSendEntry> endpointSends = new ArrayList<>();
+
+    static class EndpointSendEntry {
+        String endpointUri;
+        boolean remoteEndpoint;
+        long elapsed;
+    }
 }
