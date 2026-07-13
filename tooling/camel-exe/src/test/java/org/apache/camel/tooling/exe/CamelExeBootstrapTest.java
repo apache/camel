@@ -41,6 +41,7 @@ class CamelExeBootstrapTest {
 
     private static final Path BUILT_EXE = Paths.get("target/camel.exe");
     private static final String CAPTURED_ARGS_FILE = "camel-args.txt";
+    private static final String CAPTURE_ARGS_SCRIPT = "capture-arg.ps1";
 
     /** Writes a fake camel.bat that echoes each argument on its own line and returns exitCode. */
     private Path fakeBat(Path dir, int exitCode) throws Exception {
@@ -62,21 +63,26 @@ class CamelExeBootstrapTest {
      * <p>
      * Non-ASCII argument checks cannot rely on parsing process stdout: cmd.exe {@code echo} uses the console OEM code
      * page on Windows CI hosts, so Unicode forwarded correctly by camel.exe is still mangled (for example {@code ü}
-     * becomes {@code ?}) before Java reads the pipe. Appending via PowerShell preserves the exact argument text in a
-     * UTF-8 file we control.
+     * becomes {@code ?}) before Java reads the pipe. We therefore capture arguments in a UTF-8 file via a helper
+     * PowerShell script. The batch file passes all arguments at once using {@code %*} (the raw command-line tail)
+     * rather than iterating with {@code %~1}, because per-argument expansion through cmd.exe's batch variable
+     * substitution can corrupt non-ASCII characters on certain OEM code pages.
      */
     private void fakeBatCapturingArgsToUtf8File(Path dir, int exitCode) throws Exception {
+        Path captureScript = dir.resolve(CAPTURE_ARGS_SCRIPT);
+        String ps1 = "$outFile = $args[0]\r\n"
+                     + "for ($i = 1; $i -lt $args.Count; $i++) {\r\n"
+                     + "    [System.IO.File]::AppendAllText($outFile,\r\n"
+                     + "        $args[$i] + [Environment]::NewLine,\r\n"
+                     + "        [System.Text.UTF8Encoding]::new($false))\r\n"
+                     + "}\r\n"
+                     + "exit " + exitCode + "\r\n";
+        Files.writeString(captureScript, ps1, StandardCharsets.UTF_8);
+
         Path bat = dir.resolve("camel.bat");
-        String body = "@echo off\r\n"
-                      + ":loop\r\n"
-                      + "if \"%~1\"==\"\" goto done\r\n"
-                      + "powershell -NoProfile -Command \""
-                      + "[System.IO.File]::AppendAllText('%~dp0" + CAPTURED_ARGS_FILE + "', '%~1' + [char]10, "
-                      + "[System.Text.UTF8Encoding]::new($false))\"\r\n"
-                      + "shift\r\n"
-                      + "goto loop\r\n"
-                      + ":done\r\n"
-                      + "exit /b " + exitCode + "\r\n";
+        String body = "@powershell -NoProfile -ExecutionPolicy Bypass -File \"%~dp0" + CAPTURE_ARGS_SCRIPT + "\" "
+                      + "\"%~dp0" + CAPTURED_ARGS_FILE + "\" %*\r\n"
+                      + "@exit /b %ERRORLEVEL%\r\n";
         Files.writeString(bat, body, StandardCharsets.UTF_8);
     }
 
@@ -108,7 +114,7 @@ class CamelExeBootstrapTest {
             cmd.add(a);
         }
         ProcessBuilder pb = new ProcessBuilder(cmd);
-        pb.redirectErrorStream(false);
+        pb.redirectErrorStream(true);
         Process p = pb.start();
         String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         assertTrue(p.waitFor(60, TimeUnit.SECONDS), "camel.exe did not exit in time");

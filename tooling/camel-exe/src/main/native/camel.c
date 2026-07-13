@@ -54,7 +54,7 @@ int wmain(void) {
     wchar_t exePath[MAX_PATH];
     DWORD n = GetModuleFileNameW(NULL, exePath, MAX_PATH);
     if (n == 0 || n >= MAX_PATH) {
-        fwprintf(stderr, L"camel: cannot resolve launcher path\n");
+        fwprintf(stderr, L"camel: launcher path exceeds MAX_PATH (%d chars) or cannot be resolved\n", MAX_PATH);
         return 1;
     }
 
