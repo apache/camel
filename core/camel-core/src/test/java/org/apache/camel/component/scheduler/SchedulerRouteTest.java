@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.scheduler;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -37,7 +38,7 @@ public class SchedulerRouteTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         assertTrue(bean.counter.get() >= 2, "Should have fired 2 or more times was: " + bean.counter.get());
     }

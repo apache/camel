@@ -38,7 +38,7 @@ public class NotAllowRedeliveryWhileStoppingTest extends ContextTestSupport {
 
         template.sendBody("seda:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // wait for the error handler to start the redelivery cycle
         await().pollDelay(500, TimeUnit.MILLISECONDS)

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.scheduler;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class TwoSchedulerConcurrentTasksOneRouteTest extends ContextTestSupport {
@@ -32,7 +34,7 @@ public class TwoSchedulerConcurrentTasksOneRouteTest extends ContextTestSupport 
     public void testTwoScheduler() throws Exception {
         getMockEndpoint("mock:done").expectedMinimumMessageCount(10);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
