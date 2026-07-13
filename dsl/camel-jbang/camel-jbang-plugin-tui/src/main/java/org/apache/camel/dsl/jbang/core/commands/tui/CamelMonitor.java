@@ -613,6 +613,12 @@ public class CamelMonitor extends CamelCommand {
                 }
                 return shellPanel.handleKeyEvent(ke);
             }
+            if (actionsPopup.isVisible()) {
+                return actionsPopup.handleKeyEvent(ke);
+            }
+            if (popupManager.handleKeyEvent(ke, tabRegistry.selectedTabIndex(), TAB_LOG)) {
+                return true;
+            }
             if (aiPanel.isOpen()) {
                 if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
                     if (lastContentArea != null) {
@@ -623,12 +629,6 @@ public class CamelMonitor extends CamelCommand {
                 if (aiPanel.handleKeyEvent(ke)) {
                     return true;
                 }
-            }
-            if (actionsPopup.isVisible()) {
-                return actionsPopup.handleKeyEvent(ke);
-            }
-            if (popupManager.handleKeyEvent(ke, tabRegistry.selectedTabIndex(), TAB_LOG)) {
-                return true;
             }
             if (handleGlobalKeys(ke, runner)) {
                 return true;
