@@ -147,8 +147,8 @@ final class TuiIcons {
 
     /** Icons for {@link TabRegistry#TAB_OVERVIEW}..{@link TabRegistry#TAB_MORE} (in order). */
     static final List<String> PRIMARY_TAB_ICONS = List.of(
-            TAB_OVERVIEW, TAB_LOG, TAB_DIAGRAM, TAB_ROUTES, TAB_ENDPOINTS,
-            TAB_HTTP, TAB_HEALTH, TAB_INSPECT, TAB_ERRORS, TAB_ACTIVITY, TAB_MORE);
+            TAB_OVERVIEW, TAB_LOG, TAB_ACTIVITY, TAB_DIAGRAM, TAB_ROUTES,
+            TAB_ENDPOINTS, TAB_HTTP, TAB_INSPECT, TAB_ERRORS, TAB_MORE);
 
     /** Marker placed immediately before a label's keyboard-shortcut letter (Windows-style mnemonic). */
     static final char MNEMONIC_MARKER = '&';

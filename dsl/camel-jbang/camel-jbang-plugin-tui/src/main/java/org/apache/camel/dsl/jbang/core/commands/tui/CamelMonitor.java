@@ -713,19 +713,19 @@ public class CamelMonitor extends CamelCommand {
             }
             if (!isInfraSelected()) {
                 if (ke.isChar('3')) {
-                    return tabRegistry.handleTabKey(TAB_DIAGRAM, ctx, dataService);
+                    return tabRegistry.handleTabKey(TAB_ACTIVITY, ctx, dataService);
                 }
                 if (ke.isChar('4')) {
-                    return tabRegistry.handleTabKey(TAB_ROUTES, ctx, dataService);
+                    return tabRegistry.handleTabKey(TAB_DIAGRAM, ctx, dataService);
                 }
                 if (ke.isChar('5')) {
-                    return tabRegistry.handleTabKey(TAB_ENDPOINTS, ctx, dataService);
+                    return tabRegistry.handleTabKey(TAB_ROUTES, ctx, dataService);
                 }
                 if (ke.isChar('6')) {
-                    return tabRegistry.handleTabKey(TAB_HTTP, ctx, dataService);
+                    return tabRegistry.handleTabKey(TAB_ENDPOINTS, ctx, dataService);
                 }
                 if (ke.isChar('7')) {
-                    return tabRegistry.handleTabKey(TAB_HEALTH, ctx, dataService);
+                    return tabRegistry.handleTabKey(TAB_HTTP, ctx, dataService);
                 }
                 if (ke.isChar('8')) {
                     return tabRegistry.handleTabKey(TAB_HISTORY, ctx, dataService);
@@ -1471,14 +1471,13 @@ public class CamelMonitor extends CamelCommand {
         Line[] labels = {
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "3", "Diagram")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "4", "Route")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "5", "Endpoint")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HTTP, "6", "HTTP")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HEALTH, "7", "Health")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ACTIVITY, "3", "Activity")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "4", "Diagram")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "5", "Route")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "6", "Endpoint")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HTTP, "7", "HTTP")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_INSPECT, "8", "Inspect")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ERRORS, "9", "Errors")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ACTIVITY, "", "Activity")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_MORE, "0", TuiIcons.moreTabLabel())),
         };
         popupManager.setCurrentTabLabels(labels);
@@ -1591,17 +1590,6 @@ public class CamelMonitor extends CamelCommand {
         int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
         if (httpCount > 0) {
             badgeTexts[TAB_HTTP] = "(" + httpCount + ")";
-        }
-        long healthDownCount = hasSelection
-                ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
-        if (healthDownCount > 0) {
-            badgeTexts[TAB_HEALTH] = "(" + healthDownCount + " DOWN)";
-            badgeStyles[TAB_HEALTH] = red;
-        } else {
-            int healthCount = hasSelection ? sel.healthChecks.size() : 0;
-            if (healthCount > 0) {
-                badgeTexts[TAB_HEALTH] = "(" + healthCount + ")";
-            }
         }
         boolean hasTraces = hasSelection && !dataService.traces().get().isEmpty();
         if (hasTraces) {

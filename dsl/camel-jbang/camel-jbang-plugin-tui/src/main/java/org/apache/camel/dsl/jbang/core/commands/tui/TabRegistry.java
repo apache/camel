@@ -30,17 +30,16 @@ class TabRegistry {
     // Tab indices
     static final int TAB_OVERVIEW = 0;
     static final int TAB_LOG = 1;
-    static final int TAB_DIAGRAM = 2;
-    static final int TAB_ROUTES = 3;
-    static final int TAB_ENDPOINTS = 4;
-    static final int TAB_HTTP = 5;
-    static final int TAB_HEALTH = 6;
+    static final int TAB_ACTIVITY = 2;
+    static final int TAB_DIAGRAM = 3;
+    static final int TAB_ROUTES = 4;
+    static final int TAB_ENDPOINTS = 5;
+    static final int TAB_HTTP = 6;
     static final int TAB_HISTORY = 7;
     static final int TAB_ERRORS = 8;
-    static final int TAB_ACTIVITY = 9;
-    static final int TAB_MORE = 10;
+    static final int TAB_MORE = 9;
 
-    static final int NUM_TABS = 11;
+    static final int NUM_TABS = 10;
 
     /**
      * Callbacks for operations that remain in {@link CamelMonitor} or other collaborators.
@@ -158,6 +157,7 @@ class TabRegistry {
                 new MoreTab(TuiIcons.TAB_CONFIGURATION, "Configuration", "Confi&guration", configurationTab),
                 new MoreTab(TuiIcons.TAB_CONSUMERS, "Consumers", "Co&nsumers", consumersTab),
                 new MoreTab(TuiIcons.TAB_CVE_AUDIT, "CVE Audit", "C&VE Audit", cveAuditTab),
+                new MoreTab(TuiIcons.TAB_HEALTH, "Health", "Hea&lth", healthTab),
                 new MoreTab(TuiIcons.TAB_HEAP, "Heap Histogram", "&Heap Histogram", heapHistogramTab),
                 new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "&Inflight", inflightTab),
                 new MoreTab(TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab),
@@ -179,14 +179,13 @@ class TabRegistry {
         return switch (tabsState.selected()) {
             case TAB_OVERVIEW -> overviewTab;
             case TAB_LOG -> logTab;
+            case TAB_ACTIVITY -> activityTab;
             case TAB_DIAGRAM -> diagramTab;
             case TAB_ROUTES -> routesTab;
             case TAB_ENDPOINTS -> endpointsTab;
-            case TAB_HEALTH -> healthTab;
-            case TAB_HISTORY -> historyTab;
             case TAB_HTTP -> httpTab;
+            case TAB_HISTORY -> historyTab;
             case TAB_ERRORS -> errorsTab;
-            case TAB_ACTIVITY -> activityTab;
             case TAB_MORE -> activeMoreTab;
             default -> null;
         };
@@ -401,14 +400,13 @@ class TabRegistry {
         List<TabEntry> entries = new ArrayList<>();
         entries.add(new TabEntry(icon(TAB_OVERVIEW), "Overview", overviewTab.description(), "1", TAB_OVERVIEW, -1));
         entries.add(new TabEntry(icon(TAB_LOG), "Log", logTab.description(), "2", TAB_LOG, -1));
-        entries.add(new TabEntry(icon(TAB_DIAGRAM), "Diagram", diagramTab.description(), "3", TAB_DIAGRAM, -1));
-        entries.add(new TabEntry(icon(TAB_ROUTES), "Routes", routesTab.description(), "4", TAB_ROUTES, -1));
-        entries.add(new TabEntry(icon(TAB_ENDPOINTS), "Endpoints", endpointsTab.description(), "5", TAB_ENDPOINTS, -1));
-        entries.add(new TabEntry(icon(TAB_HTTP), "HTTP", httpTab.description(), "6", TAB_HTTP, -1));
-        entries.add(new TabEntry(icon(TAB_HEALTH), "Health", healthTab.description(), "7", TAB_HEALTH, -1));
+        entries.add(new TabEntry(icon(TAB_ACTIVITY), "Activity", activityTab.description(), "3", TAB_ACTIVITY, -1));
+        entries.add(new TabEntry(icon(TAB_DIAGRAM), "Diagram", diagramTab.description(), "4", TAB_DIAGRAM, -1));
+        entries.add(new TabEntry(icon(TAB_ROUTES), "Routes", routesTab.description(), "5", TAB_ROUTES, -1));
+        entries.add(new TabEntry(icon(TAB_ENDPOINTS), "Endpoints", endpointsTab.description(), "6", TAB_ENDPOINTS, -1));
+        entries.add(new TabEntry(icon(TAB_HTTP), "HTTP", httpTab.description(), "7", TAB_HTTP, -1));
         entries.add(new TabEntry(icon(TAB_HISTORY), "Inspect", historyTab.description(), "8", TAB_HISTORY, -1));
         entries.add(new TabEntry(icon(TAB_ERRORS), "Errors", errorsTab.description(), "9", TAB_ERRORS, -1));
-        entries.add(new TabEntry(icon(TAB_ACTIVITY), "Activity", activityTab.description(), "", TAB_ACTIVITY, -1));
         for (int i = 0; i < moreTabs.size(); i++) {
             MoreTab mt = moreTabs.get(i);
             entries.add(new TabEntry(

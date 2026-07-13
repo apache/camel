@@ -83,8 +83,8 @@ class McpFacade {
 
     // Tab name constants
     static final String[] TAB_NAMES = {
-            "Overview", "Log", "Diagram", "Routes", "Endpoints",
-            "HTTP", "Health", "Inspect", "Errors", "Activity", "More"
+            "Overview", "Log", "Activity", "Diagram", "Routes",
+            "Endpoints", "HTTP", "Inspect", "Errors", "More"
     };
 
     private final MonitorContext ctx;
