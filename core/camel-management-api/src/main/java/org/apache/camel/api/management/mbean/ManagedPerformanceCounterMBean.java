@@ -111,6 +111,9 @@ public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
     @ManagedAttribute(description = "99th percentile of recent processing times [milliseconds]. Requires Extended statistics level, returns -1 otherwise.")
     long getProcessingTimeP99();
 
+    @ManagedAttribute(description = "Throughput (messages per second)")
+    String getThroughput();
+
     @ManagedAttribute(description = "Statistics enabled")
     boolean isStatisticsEnabled();
 

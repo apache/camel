@@ -135,9 +135,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Average load (inflight messages, not cpu) over the last fifteen minutes")
     String getLoad15();
 
-    @ManagedAttribute(description = "Throughput message/second")
-    String getThroughput();
-
     @ManagedAttribute(description = "Total number of exchanges processed from remote endpoints only")
     long getRemoteExchangesTotal();
 

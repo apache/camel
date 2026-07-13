@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedPerformanceCounterMBean;
 import org.apache.camel.management.PerformanceCounter;
@@ -31,7 +32,7 @@ import org.apache.camel.util.json.JsonObject;
 
 @ManagedResource(description = "Managed PerformanceCounter")
 public abstract class ManagedPerformanceCounter extends ManagedCounter
-        implements PerformanceCounter, ManagedPerformanceCounterMBean {
+        implements TimerListener, PerformanceCounter, ManagedPerformanceCounterMBean {
 
     public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
@@ -59,6 +60,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     private Statistic lastExchangeFailureHandledTimestamp;
     private Statistic lastExchangeFailureTimestamp;
     private String lastExchangeFailureExchangeId;
+    private final LoadThroughput thp = new LoadThroughput();
     private boolean statisticsEnabled = true;
 
     // sliding window ring buffer for percentile computation (Extended statistics only)
@@ -123,6 +125,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         lastExchangeFailureHandledTimestamp.reset();
         lastExchangeFailureTimestamp.reset();
         lastExchangeFailureExchangeId = null;
+        thp.reset();
         if (percentileWindow != null) {
             percentileIndex = 0;
             percentileCount = 0;
@@ -287,6 +290,21 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
+    public String getThroughput() {
+        double d = thp.getThroughput();
+        if (Double.isNaN(d)) {
+            return "";
+        } else {
+            return String.format("%.2f", d);
+        }
+    }
+
+    @Override
+    public void onTimer() {
+        thp.update(getExchangesTotal());
+    }
+
+    @Override
     public void processExchange(Exchange exchange, String type) {
         exchangesInflight.increment();
         if ("route".equals(type)) {
@@ -395,6 +413,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         sb.append(String.format(" lastProcessingTime=\"%s\"", lastProcessingTime.getValue()));
         sb.append(String.format(" deltaProcessingTime=\"%s\"", deltaProcessingTime.getValue()));
         sb.append(String.format(" meanProcessingTime=\"%s\"", meanProcessingTime.getValue()));
+        sb.append(String.format(" exchangesThroughput=\"%s\"", getThroughput()));
         if (percentileWindow != null) {
             sb.append(String.format(" p50ProcessingTime=\"%s\"", getProcessingTimeP50()));
             sb.append(String.format(" p95ProcessingTime=\"%s\"", getProcessingTimeP95()));
@@ -447,6 +466,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         jo.put("lastProcessingTime", lastProcessingTime.getValue());
         jo.put("deltaProcessingTime", deltaProcessingTime.getValue());
         jo.put("meanProcessingTime", meanProcessingTime.getValue());
+        jo.put("exchangesThroughput", getThroughput());
         if (percentileWindow != null) {
             jo.put("p50ProcessingTime", getProcessingTimeP50());
             jo.put("p95ProcessingTime", getProcessingTimeP95());

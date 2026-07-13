@@ -72,9 +72,6 @@ public interface ManagedRouteGroupMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Average load (inflight messages, not cpu) over the last fifteen minutes")
     String getLoad15();
 
-    @ManagedAttribute(description = "Throughput message/second")
-    String getThroughput();
-
     @ManagedAttribute(description = "Last error from the routes in this group")
     RouteError getLastError();
 
