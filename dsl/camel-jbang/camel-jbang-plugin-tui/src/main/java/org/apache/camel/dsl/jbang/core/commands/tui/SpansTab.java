@@ -385,10 +385,10 @@ class SpansTab extends AbstractTab {
 
         String title;
         if (filterTerm != null) {
-            title = String.format(" OTel Traces — %d/%d traces [%s] ",
+            title = String.format(" OTel Traces [%d/%d, %s] ",
                     summaries.size(), allSummaries.size(), filterTerm);
         } else {
-            title = String.format(" OTel Traces — %d traces, %d spans ", allSummaries.size(), spans.get().size());
+            title = String.format(" OTel Traces [%d traces, %d spans] ", allSummaries.size(), spans.get().size());
         }
         Table table = Table.builder()
                 .rows(rows)
@@ -457,7 +457,7 @@ class SpansTab extends AbstractTab {
             Frame frame, Rect area, List<WaterfallNode> nodes,
             long traceStart, long traceDuration, long minDuration, long maxDuration) {
 
-        String title = String.format(" Trace %s — %d spans, %dms ",
+        String title = String.format(" Trace %s [%d spans, %dms] ",
                 shortId(selectedTraceId), nodes.size(), traceDuration);
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -1044,7 +1044,7 @@ class SpansTab extends AbstractTab {
                 Example waterfall for an order-processing integration:
 
                 ```
-                 Trace 4bb73039 — 15 spans, 4ms
+                 Trace 4bb73039 [15 spans, 4ms]
                 ▸ timer://orders (order-generator)       █████████████████████████████████  2ms
                     setBody1 (order-generator)            █  0ms
                     direct://process-order (process)      ████████████████  1ms
