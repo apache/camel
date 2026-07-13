@@ -664,14 +664,14 @@ class OverviewTab extends AbstractTab {
                 titleLine = Line.from(
                         Span.raw(" ["),
                         Span.styled(chartName, Theme.label().bold()),
-                        Span.raw(String.format("] Throughput: %s msg/s  ", curTpFmt)),
+                        Span.raw(String.format("] Rate: %s msg/s  ", curTpFmt)),
                         Span.styled("■", Theme.success()),
                         Span.raw(String.format(" ok:%s  ", curOkFmt)),
                         Span.styled("■", Theme.error()),
                         Span.raw(String.format(" fail:%s ", curFailFmt)));
             } else {
                 titleLine = Line.from(
-                        Span.raw(String.format(" [All] Throughput: %s msg/s  ", curTpFmt)),
+                        Span.raw(String.format(" [All] Rate: %s msg/s  ", curTpFmt)),
                         Span.styled("■", Theme.success()),
                         Span.raw(String.format(" ok:%s  ", curOkFmt)),
                         Span.styled("■", Theme.error()),

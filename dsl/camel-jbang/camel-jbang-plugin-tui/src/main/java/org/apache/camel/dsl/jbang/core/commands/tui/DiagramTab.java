@@ -446,7 +446,7 @@ class DiagramTab extends AbstractTab {
                     ? (ctx.ratePerMinute ? TuiHelper.throughputPerMinute(route.throughput) : route.throughput)
                     : "";
             lines.add(Line.from(
-                    Span.styled(" Throughput: ", Theme.muted()),
+                    Span.styled(" Rate:       ", Theme.muted()),
                     Span.raw(tpValue),
                     Span.styled(tpUnit, Theme.muted())));
             if (route.coverage != null) {
@@ -503,12 +503,12 @@ class DiagramTab extends AbstractTab {
                         Span.styled(" Since last:", Theme.muted())));
                 if (route.sinceLastCompleted != null) {
                     lines.add(Line.from(
-                            Span.styled("   success: ", Theme.muted()),
+                            Span.styled("   ok:   ", Theme.muted()),
                             Span.raw(route.sinceLastCompleted)));
                 }
                 if (route.sinceLastFailed != null) {
                     lines.add(Line.from(
-                            Span.styled("   fail:    ", Theme.muted()),
+                            Span.styled("   fail: ", Theme.muted()),
                             Span.styled(route.sinceLastFailed,
                                     Theme.error())));
                 }
@@ -627,7 +627,7 @@ class DiagramTab extends AbstractTab {
                             ? TuiHelper.throughputPerMinute(stat.exchangesThroughput)
                             : stat.exchangesThroughput;
                     lines.add(Line.from(
-                            Span.styled(" Throughput: ", Theme.muted()),
+                            Span.styled(" Rate:     ", Theme.muted()),
                             Span.raw(tpValue),
                             Span.styled(tpUnit, Theme.muted())));
                 }
@@ -674,13 +674,13 @@ class DiagramTab extends AbstractTab {
                         if (stat.lastCompletedExchangeTimestamp > 0) {
                             long ago = now - stat.lastCompletedExchangeTimestamp;
                             lines.add(Line.from(
-                                    Span.styled("   success: ", Theme.muted()),
+                                    Span.styled("   ok:   ", Theme.muted()),
                                     Span.raw(TimeUtils.printDuration(ago, false))));
                         }
                         if (stat.lastFailedExchangeTimestamp > 0) {
                             long ago = now - stat.lastFailedExchangeTimestamp;
                             lines.add(Line.from(
-                                    Span.styled("   fail:    ", Theme.muted()),
+                                    Span.styled("   fail: ", Theme.muted()),
                                     Span.styled(TimeUtils.printDuration(ago, false),
                                             Theme.error())));
                         }

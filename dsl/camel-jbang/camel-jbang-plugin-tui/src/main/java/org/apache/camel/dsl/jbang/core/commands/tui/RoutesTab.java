@@ -913,7 +913,7 @@ class RoutesTab extends AbstractTab {
                     Span.raw(route.uptime != null ? route.uptime : "")));
             String tpUnit = ctx.ratePerMinute ? " msg/m" : " msg/s";
             lines.add(Line.from(
-                    Span.styled(" Throughput: ", Theme.muted()),
+                    Span.styled(" Rate:       ", Theme.muted()),
                     Span.raw(formatThroughput(route.throughput)),
                     Span.styled(tpUnit, Theme.muted())));
             if (route.coverage != null) {
@@ -970,12 +970,12 @@ class RoutesTab extends AbstractTab {
                         Span.styled(" Since last:", Theme.muted())));
                 if (route.sinceLastCompleted != null) {
                     lines.add(Line.from(
-                            Span.styled("   success: ", Theme.muted()),
+                            Span.styled("   ok:   ", Theme.muted()),
                             Span.raw(route.sinceLastCompleted)));
                 }
                 if (route.sinceLastFailed != null) {
                     lines.add(Line.from(
-                            Span.styled("   fail:    ", Theme.muted()),
+                            Span.styled("   fail: ", Theme.muted()),
                             Span.styled(route.sinceLastFailed,
                                     Theme.error())));
                 }
@@ -1090,7 +1090,7 @@ class RoutesTab extends AbstractTab {
                             ? TuiHelper.throughputPerMinute(stat.exchangesThroughput)
                             : stat.exchangesThroughput;
                     lines.add(Line.from(
-                            Span.styled(" Throughput: ", Style.EMPTY.dim()),
+                            Span.styled(" Rate:     ", Style.EMPTY.dim()),
                             Span.raw(tpValue),
                             Span.styled(tpUnit, Style.EMPTY.dim())));
                 }
@@ -1137,13 +1137,13 @@ class RoutesTab extends AbstractTab {
                         if (stat.lastCompletedExchangeTimestamp > 0) {
                             long ago = now - stat.lastCompletedExchangeTimestamp;
                             lines.add(Line.from(
-                                    Span.styled("   success: ", Style.EMPTY.dim()),
+                                    Span.styled("   ok:   ", Style.EMPTY.dim()),
                                     Span.raw(TimeUtils.printDuration(ago, false))));
                         }
                         if (stat.lastFailedExchangeTimestamp > 0) {
                             long ago = now - stat.lastFailedExchangeTimestamp;
                             lines.add(Line.from(
-                                    Span.styled("   fail:    ", Style.EMPTY.dim()),
+                                    Span.styled("   fail: ", Style.EMPTY.dim()),
                                     Span.styled(TimeUtils.printDuration(ago, false),
                                             Theme.error())));
                         }

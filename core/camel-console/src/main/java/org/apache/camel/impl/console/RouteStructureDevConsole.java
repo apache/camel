@@ -217,7 +217,6 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                             stats.remove("load01");
                             stats.remove("load05");
                             stats.remove("load15");
-                            stats.remove("exchangesThroughput");
                         }
                         c.put("statistics", stats);
                     }

@@ -333,6 +333,13 @@ public class ProcessorDevConsole extends AbstractDevConsole {
         stats.put("exchangesTotal", mp.getExchangesTotal());
         stats.put("exchangesFailed", mp.getExchangesFailed());
         stats.put("exchangesInflight", mp.getExchangesInflight());
+        String thp = mp.getThroughput();
+        if (thp != null) {
+            thp = thp.replace(',', '.');
+            if (!thp.isEmpty()) {
+                stats.put("exchangesThroughput", thp);
+            }
+        }
         stats.put("meanProcessingTime", mp.getMeanProcessingTime());
         stats.put("maxProcessingTime", mp.getMaxProcessingTime());
         stats.put("minProcessingTime", mp.getMinProcessingTime());

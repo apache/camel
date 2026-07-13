@@ -2013,7 +2013,7 @@ class HistoryTab extends AbstractTab {
         List<Span> spans = new ArrayList<>();
         spans.add(Span.raw(" History of last completed — " + entries.size() + " steps ("));
         boolean failed = last.failed;
-        spans.add(Span.styled("status:" + (failed ? "failed" : "success"),
+        spans.add(Span.styled("status:" + (failed ? "failed" : "ok"),
                 failed ? Theme.error().bold() : Theme.success().bold()));
         if (last.elapsed >= 0) {
             spans.add(Span.raw(" elapsed:" + TimeUtils.printDuration(last.elapsed, true)));

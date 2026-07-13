@@ -355,7 +355,7 @@ class CircuitBreakerTab extends AbstractTableTab {
                 Span.raw(" "),
                 Span.styled("since last", dim),
                 Span.raw(" "),
-                Span.styled("success:", dim), Span.raw(" " + lastSuccess + " "),
+                Span.styled("ok:", dim), Span.raw(" " + lastSuccess + " "),
                 Span.styled("fail:", dim), Span.raw(" " + lastFail));
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(Line.from(Span.raw("")), metricsLine1, metricsLine2))
