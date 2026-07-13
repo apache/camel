@@ -31,8 +31,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
 
-    // topic subscriptions take a little longer to register than queue consumers, so keep the longer 200ms threshold
-    private static final long TOPIC_ROUTE_UPTIME_MILLIS = 200;
+    // topic subscriptions take longer to register than queue consumers on slow CI;
+    // 200ms was too tight — use 2000ms to avoid flaky failures
+    private static final long TOPIC_ROUTE_UPTIME_MILLIS = 2000;
 
     @BeforeEach
     void waitAndPrepare() {
