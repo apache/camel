@@ -304,7 +304,7 @@ class ActivityTab extends AbstractTableTab {
         List<Line> lines = new ArrayList<>();
 
         HistoryTab.addExchangeInfoLines(lines,
-                ae.exchangeId, ae.routeId, null, null, ae.fromEndpointUri,
+                ae.exchangeId, ae.routeId, null, null, "Endpoint", ae.fromEndpointUri,
                 ae.elapsed, null, ae.failed);
 
         if (ae.exceptionMessage != null) {

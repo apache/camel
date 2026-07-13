@@ -2029,6 +2029,14 @@ class HistoryTab extends AbstractTab {
     static void addExchangeInfoLines(
             List<Line> lines, String exchangeId, String routeId,
             String nodeId, String nodeLabel, String location, long elapsed, String threadName, boolean failed) {
+        addExchangeInfoLines(lines, exchangeId, routeId, nodeId, nodeLabel, "Location", location, elapsed, threadName,
+                failed);
+    }
+
+    static void addExchangeInfoLines(
+            List<Line> lines, String exchangeId, String routeId,
+            String nodeId, String nodeLabel, String locationLabel, String location, long elapsed, String threadName,
+            boolean failed) {
         lines.add(Line.from(
                 Span.styled(" Exchange: ", Theme.muted()),
                 Span.raw(exchangeId != null ? exchangeId : "")));
@@ -2045,7 +2053,7 @@ class HistoryTab extends AbstractTab {
                     Span.raw(routeId != null ? routeId : "")));
         }
         lines.add(Line.from(
-                Span.styled(" Location: ", Theme.muted()),
+                Span.styled(String.format(" %-9s ", locationLabel + ":"), Theme.muted()),
                 Span.raw(location != null ? location : "")));
         if (threadName != null) {
             lines.add(Line.from(
