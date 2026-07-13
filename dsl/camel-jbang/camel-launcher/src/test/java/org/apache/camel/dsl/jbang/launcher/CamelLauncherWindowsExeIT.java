@@ -33,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Release gate for the native {@code camel.exe} packaged into the launcher distribution. Runs during
- * {@code verify} when {@code -Dcamel.launcher.requireWindowsExe=true} is set on a Windows x64 host.
+ * Release gate for the native {@code camel.exe} packaged into the launcher distribution. Runs during {@code verify}
+ * when {@code -Dcamel.launcher.requireWindowsExe=true} is set on a Windows x64 host.
  */
 @EnabledOnOs(OS.WINDOWS)
 @EnabledIfSystemProperty(named = "camel.launcher.requireWindowsExe", matches = "true")
