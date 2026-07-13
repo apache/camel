@@ -805,7 +805,14 @@ public class PQCProducer extends DefaultProducer {
             throw new IllegalArgumentException("Key ID header (" + PQCConstants.KEY_ID + ") is required for generateKeyPair");
         }
 
-        KeyPair generated = klm.generateKeyPair(algorithm, keyId);
+        String parameterSpec = getConfiguration().getParameterSpec();
+        KeyPair generated;
+        if (ObjectHelper.isNotEmpty(parameterSpec)) {
+            // Use the parameterSpec-aware overload so the key is generated at the configured NIST security level
+            generated = klm.generateKeyPair(algorithm, keyId, PQCParameterSpecResolver.resolve(algorithm, parameterSpec));
+        } else {
+            generated = klm.generateKeyPair(algorithm, keyId);
+        }
         exchange.getMessage().setHeader(PQCConstants.KEY_PAIR, generated);
     }
 

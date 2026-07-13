@@ -16,8 +16,16 @@
  */
 package org.apache.camel.component.pqc;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.Security;
+import java.security.Signature;
+import java.security.spec.AlgorithmParameterSpec;
 import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.crypto.KeyGenerator;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -30,6 +38,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.SecureRandomHelper;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 /**
  * For working with Post Quantum Cryptography Algorithms
@@ -58,6 +69,10 @@ public class PQCComponent extends HealthCheckComponent {
 
     private KeyRotationScheduler keyRotationScheduler;
 
+    // Key pairs generated for a specific parameterSpec, cached per algorithm and parameter set so that endpoints
+    // sharing the same configuration (for example a sign and a verify endpoint) use the same key
+    private final Map<String, KeyPair> parameterSpecKeyPairs = new ConcurrentHashMap<>();
+
     public PQCComponent() {
         this(null);
     }
@@ -72,6 +87,12 @@ public class PQCComponent extends HealthCheckComponent {
                 = this.configuration != null ? this.configuration.copy() : new PQCConfiguration();
         PQCEndpoint endpoint = new PQCEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+
+        // When a parameterSpec (NIST security level) is configured, generate the key material with that parameter set
+        // instead of using the algorithm's hardcoded default material
+        if (ObjectHelper.isNotEmpty(configuration.getParameterSpec())) {
+            configureParameterSpecMaterial(configuration);
+        }
 
         if (ObjectHelper.isEmpty(configuration.getSigner()) && ObjectHelper.isEmpty(configuration.getKeyPair())
                 && ObjectHelper.isEmpty(configuration.getKeyStore()) && ObjectHelper.isEmpty(configuration.getKeyPairAlias())) {
@@ -176,6 +197,90 @@ public class PQCComponent extends HealthCheckComponent {
         configureHybridKEMMaterial(configuration);
 
         return endpoint;
+    }
+
+    /**
+     * Generates the key material for the configured parameterSpec (the NIST parameter set / security level) instead of
+     * using the algorithm's hardcoded default material. Key material supplied explicitly by the route author always
+     * wins and is never regenerated.
+     */
+    private void configureParameterSpecMaterial(PQCConfiguration configuration) throws Exception {
+        PQCOperations operation = configuration.getOperation();
+        if (operation != null && isHybridOperation(operation)) {
+            // The hybrid operations pair a specific classical key set with a matching PQC key set, so a custom
+            // parameter set cannot be applied without breaking that pairing
+            throw new IllegalArgumentException(
+                    "The parameterSpec option is not supported for hybrid operations. Configure the hybrid key material"
+                                               + " explicitly (keyPair and classicalKeyPair) instead.");
+        }
+
+        if (ObjectHelper.isNotEmpty(configuration.getKeyPair()) || ObjectHelper.isNotEmpty(configuration.getKeyStore())
+                || ObjectHelper.isNotEmpty(configuration.getKeyPairAlias())) {
+            // The route author supplied the key material explicitly
+            return;
+        }
+
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastlePQCProvider());
+        }
+
+        String spec = configuration.getParameterSpec();
+        String signatureAlgorithm = configuration.getSignatureAlgorithm();
+        String kemAlgorithm = configuration.getKeyEncapsulationAlgorithm();
+
+        if (ObjectHelper.isNotEmpty(signatureAlgorithm)) {
+            PQCSignatureAlgorithms algorithm = PQCSignatureAlgorithms.valueOf(signatureAlgorithm);
+            configuration.setKeyPair(
+                    resolveKeyPair(signatureAlgorithm, spec, algorithm.getAlgorithm(), algorithm.getBcProvider()));
+            if (ObjectHelper.isEmpty(configuration.getSigner())) {
+                configuration.setSigner(Signature.getInstance(algorithm.getAlgorithm(), algorithm.getBcProvider()));
+            }
+        } else if (ObjectHelper.isNotEmpty(kemAlgorithm)) {
+            PQCKeyEncapsulationAlgorithms algorithm = PQCKeyEncapsulationAlgorithms.valueOf(kemAlgorithm);
+            configuration.setKeyPair(
+                    resolveKeyPair(kemAlgorithm, spec, algorithm.getAlgorithm(), algorithm.getBcProvider()));
+            if (ObjectHelper.isEmpty(configuration.getKeyGenerator())) {
+                configuration.setKeyGenerator(
+                        KeyGenerator.getInstance(algorithm.getAlgorithm(), algorithm.getBcProvider()));
+            }
+        } else {
+            throw new IllegalArgumentException(
+                    "The parameterSpec option requires either signatureAlgorithm or keyEncapsulationAlgorithm to be"
+                                               + " set");
+        }
+    }
+
+    /**
+     * Returns the key pair for the given algorithm and parameter set, generating it on first use. The key pair is
+     * cached per algorithm and parameter set so that endpoints sharing the same configuration - for example a sign and
+     * a verify endpoint - use the same key, mirroring the behaviour of the shared default key material.
+     */
+    private KeyPair resolveKeyPair(String algorithm, String parameterSpec, String jceAlgorithm, String provider)
+            throws Exception {
+        String cacheKey = algorithm + ':' + parameterSpec;
+        KeyPair keyPair = parameterSpecKeyPairs.get(cacheKey);
+        if (keyPair == null) {
+            AlgorithmParameterSpec spec = PQCParameterSpecResolver.resolve(algorithm, parameterSpec);
+            KeyPairGenerator generator = KeyPairGenerator.getInstance(jceAlgorithm, provider);
+            generator.initialize(spec, SecureRandomHelper.getSecureRandom());
+            keyPair = generator.generateKeyPair();
+            KeyPair existing = parameterSpecKeyPairs.putIfAbsent(cacheKey, keyPair);
+            if (existing != null) {
+                keyPair = existing;
+            }
+        }
+        return keyPair;
+    }
+
+    private static boolean isHybridOperation(PQCOperations operation) {
+        return operation == PQCOperations.hybridSign
+                || operation == PQCOperations.hybridVerify
+                || operation == PQCOperations.hybridGenerateSecretKeyEncapsulation
+                || operation == PQCOperations.hybridExtractSecretKeyEncapsulation
+                || operation == PQCOperations.hybridExtractSecretKeyFromEncapsulation;
     }
 
     /**

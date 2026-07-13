@@ -54,6 +54,9 @@ public class PQCConfiguration implements Cloneable {
     @UriParam(enums = "MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime,SNTRUPrime,KYBER")
     @Metadata(label = "advanced")
     private String keyEncapsulationAlgorithm;
+    @UriParam
+    @Metadata(label = "advanced")
+    private String parameterSpec;
     @UriParam(enums = "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE")
     @Metadata(label = "advanced")
     private String symmetricKeyAlgorithm;
@@ -186,6 +189,22 @@ public class PQCConfiguration implements Cloneable {
      */
     public void setKeyEncapsulationAlgorithm(String keyEncapsulationAlgorithm) {
         this.keyEncapsulationAlgorithm = keyEncapsulationAlgorithm;
+    }
+
+    public String getParameterSpec() {
+        return parameterSpec;
+    }
+
+    /**
+     * The NIST parameter set (security level) to use for the configured signature or key encapsulation algorithm, using
+     * the BouncyCastle parameter-set names: for example ML-DSA-44, ML-DSA-65 or ML-DSA-87 for MLDSA, and ML-KEM-512,
+     * ML-KEM-768 or ML-KEM-1024 for MLKEM. Names are case-insensitive and the underscore form (ml_dsa_87) is accepted
+     * as an alias. When set, the key material is generated with this parameter set instead of the algorithm default.
+     * Not supported for the stateful signature algorithms (XMSS, XMSSMT, LMS, HSS), for MAYO and SNOVA, nor for the
+     * hybrid operations: for those, register a KeyPair bean in the registry instead.
+     */
+    public void setParameterSpec(String parameterSpec) {
+        this.parameterSpec = parameterSpec;
     }
 
     public String getSymmetricKeyAlgorithm() {
