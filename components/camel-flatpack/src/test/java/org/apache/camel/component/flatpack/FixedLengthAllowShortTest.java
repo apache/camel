@@ -52,7 +52,8 @@ public class FixedLengthAllowShortTest {
     @Test
     public void testCamel() throws Exception {
         results.expectedMessageCount(4);
-        results.assertIsSatisfied(30_000);
+        results.setResultWaitTime(30_000);
+        results.assertIsSatisfied();
 
         int counter = 0;
         List<Exchange> list = results.getReceivedExchanges();
@@ -70,7 +71,8 @@ public class FixedLengthAllowShortTest {
     @Test
     public void testFlatpackDataFormat() throws Exception {
         resultsdf.expectedMessageCount(1);
-        resultsdf.assertIsSatisfied(30_000);
+        resultsdf.setResultWaitTime(30_000);
+        resultsdf.assertIsSatisfied();
 
         Exchange exchange = resultsdf.getReceivedExchanges().get(0);
         DataSetList data = exchange.getIn().getBody(DataSetList.class);
@@ -84,7 +86,8 @@ public class FixedLengthAllowShortTest {
     @Test
     public void testFlatpackDataFormatXML() throws Exception {
         resultsxml.expectedMessageCount(1);
-        resultsxml.assertIsSatisfied(30_000);
+        resultsxml.setResultWaitTime(30_000);
+        resultsxml.assertIsSatisfied();
 
         Exchange exchange = resultsxml.getReceivedExchanges().get(0);
         DataSetList data = exchange.getIn().getBody(DataSetList.class);
