@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1095,8 +1093,7 @@ class AiPanel {
             ConversationEntry entry = conversation.get(i);
             if (entry.role() == AiRole.ASSISTANT && entry.text() != null && !entry.text().isEmpty()) {
                 try {
-                    Toolkit.getDefaultToolkit().getSystemClipboard()
-                            .setContents(new StringSelection(entry.text()), null);
+                    copyToSystemClipboard(entry.text());
                     if (mcpFacade != null) {
                         mcpFacade.showCaption("Copied to clipboard", 3);
                     }
@@ -1110,6 +1107,27 @@ class AiPanel {
         }
         if (mcpFacade != null) {
             mcpFacade.showCaption("No AI response to copy", 3);
+        }
+    }
+
+    private static void copyToSystemClipboard(String text) throws IOException {
+        String os = System.getProperty("os.name", "").toLowerCase();
+        String[] cmd;
+        if (os.contains("mac")) {
+            cmd = new String[] { "pbcopy" };
+        } else if (os.contains("win")) {
+            cmd = new String[] { "clip" };
+        } else {
+            cmd = new String[] { "xclip", "-selection", "clipboard" };
+        }
+        Process p = new ProcessBuilder(cmd).start();
+        try (java.io.OutputStream out = p.getOutputStream()) {
+            out.write(text.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        }
+        try {
+            p.waitFor(5, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
