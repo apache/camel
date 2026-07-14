@@ -310,6 +310,10 @@ public class QuartzEndpoint extends DefaultEndpoint {
         this.customCalendar = customCalendar;
     }
 
+    private String customCalendarName() {
+        return QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR + "_" + triggerKey.getGroup() + "_" + triggerKey.getName();
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("Quartz producer is not supported.");
@@ -328,8 +332,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("Cannot have both options deleteJob and pauseJob enabled");
         }
         if (ObjectHelper.isNotEmpty(customCalendar)) {
-            getComponent().getScheduler().addCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR, customCalendar, true,
-                    false);
+            getComponent().getScheduler().addCalendar(customCalendarName(), customCalendar, true, false);
         }
         addJobInScheduler();
     }
@@ -352,6 +355,13 @@ public class QuartzEndpoint extends DefaultEndpoint {
                 scheduler.unscheduleJob(triggerKey);
 
                 jobAdded.set(false);
+                if (ObjectHelper.isNotEmpty(customCalendar)) {
+                    try {
+                        scheduler.deleteCalendar(customCalendarName());
+                    } catch (SchedulerException e) {
+                        LOG.warn("Could not delete calendar {}: {}", customCalendarName(), e.getMessage(), e);
+                    }
+                }
             }
         } else if (pauseJob) {
             pauseTrigger();
@@ -501,7 +511,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
                             .withSchedule(cronSchedule(cron)
                                     .withMisfireHandlingInstructionFireAndProceed()
                                     .inTimeZone(TimeZone.getTimeZone(timeZone)))
-                            .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
+                            .modifiedByCalendar(customCalendarName());
                 } else {
                     triggerBuilder
                             .withSchedule(cronSchedule(cron)
@@ -514,7 +524,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
                     triggerBuilder
                             .withSchedule(cronSchedule(cron)
                                     .withMisfireHandlingInstructionFireAndProceed())
-                            .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
+                            .modifiedByCalendar(customCalendarName());
                 } else {
                     triggerBuilder
                             .withSchedule(cronSchedule(cron)
@@ -547,7 +557,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
                 triggerBuilder
                         .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()
                                 .withRepeatCount(repeat).withIntervalInMilliseconds(interval))
-                        .modifiedByCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
+                        .modifiedByCalendar(customCalendarName());
             } else {
                 triggerBuilder
                         .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()
