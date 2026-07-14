@@ -16,8 +16,11 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,7 +38,7 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -48,7 +51,7 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -61,7 +64,7 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
         template.sendBody("direct:start", "A");
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -74,7 +77,7 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
         template.sendBody("direct:start", "A");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override

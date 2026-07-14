@@ -377,6 +377,9 @@ class OverviewTab extends AbstractTab {
                             }
                         }
                     }
+                    if (ctx.ratePerMinute) {
+                        throughputDisplay = TuiHelper.throughputPerMinute(throughputDisplay);
+                    }
                     rows.add(Row.from(
                             Cell.from(nameLine),
                             rightCell(info.exchangesTotal > 0 ? String.valueOf(info.meanTime) : "", 6,
@@ -413,7 +416,7 @@ class OverviewTab extends AbstractTab {
                     rightCell("TOTAL", 8, Style.EMPTY.bold()),
                     rightCell("FAIL", 6, Style.EMPTY.bold()),
                     rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                    rightCell("MSG/S", 8, Style.EMPTY.bold()),
+                    rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
                     rightCell("LOAD", 12, Style.EMPTY.bold()));
 
             widths = new Constraint[] {
@@ -503,6 +506,9 @@ class OverviewTab extends AbstractTab {
                             }
                         }
                     }
+                    if (ctx.ratePerMinute) {
+                        throughputDisplay = TuiHelper.throughputPerMinute(throughputDisplay);
+                    }
                     String timingCol;
                     if (hasPercentiles && info.p50Time >= 0) {
                         timingCol = info.p50Time + "/" + info.p95Time + "/" + info.p99Time;
@@ -543,9 +549,9 @@ class OverviewTab extends AbstractTab {
                     centerCell("READY", 7, Style.EMPTY.bold()),
                     Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
                     rightCell("ROUTE", 7, Style.EMPTY.bold()),
-                    rightCell("MSG/S", 8, Style.EMPTY.bold()),
+                    rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
                     centerCell(sortLabel("TOTAL", "total"), 14, sortStyle("total")),
-                    centerCell(sortLabel("FAIL", "fail"), 10, sortStyle("fail")),
+                    centerCell(sortLabel("FAIL", "fail"), 14, sortStyle("fail")),
                     rightCell(timingHeader, 14, Style.EMPTY.bold()),
                     Cell.from(""));
 
@@ -558,7 +564,7 @@ class OverviewTab extends AbstractTab {
                     Constraint.length(7),
                     Constraint.length(8),
                     Constraint.length(14),
-                    Constraint.length(10),
+                    Constraint.length(14),
                     Constraint.length(14),
                     Constraint.fill()
             };
@@ -658,14 +664,14 @@ class OverviewTab extends AbstractTab {
                 titleLine = Line.from(
                         Span.raw(" ["),
                         Span.styled(chartName, Theme.label().bold()),
-                        Span.raw(String.format("] Throughput: %s msg/s  ", curTpFmt)),
+                        Span.raw(String.format("] Rate: %s msg/s  ", curTpFmt)),
                         Span.styled("■", Theme.success()),
                         Span.raw(String.format(" ok:%s  ", curOkFmt)),
                         Span.styled("■", Theme.error()),
                         Span.raw(String.format(" fail:%s ", curFailFmt)));
             } else {
                 titleLine = Line.from(
-                        Span.raw(String.format(" [All] Throughput: %s msg/s  ", curTpFmt)),
+                        Span.raw(String.format(" [All] Rate: %s msg/s  ", curTpFmt)),
                         Span.styled("■", Theme.success()),
                         Span.raw(String.format(" ok:%s  ", curOkFmt)),
                         Span.styled("■", Theme.error()),
@@ -1246,7 +1252,7 @@ class OverviewTab extends AbstractTab {
                 - **VERSION** — Camel version the integration is running on (e.g., `4.21.0`)
                 - **STATUS** — Current lifecycle state: `Running` (processing messages), `Started` (ready), or `Stopped`
                 - **AGE** — How long the integration has been running (e.g., `2m30s`, `1h15m`)
-                - **MSG/S** — Messages processed per second (current throughput). This is the overall rate across all routes
+                - **MSG/S** or **MSG/M** — Messages processed per second or per minute (current throughput). Toggle with `u`. This is the overall rate across all routes
                 - **TOTAL** — Total number of exchanges (messages) processed since the integration started
                 - **FAIL** — Number of exchanges that ended with an unhandled error
                 - **INFLIGHT** — Exchanges currently being processed right now. A consistently high inflight count may indicate slow downstream services

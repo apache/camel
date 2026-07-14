@@ -67,6 +67,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.BacklogDebugger;
+import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
@@ -130,6 +131,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File errorFile;
     private File receiveFile;
     private long receiveFilePos; // keep track of receive offset
+    private File activityFile;
     private byte[] lastSource;
     private ExpressionDefinition lastSourceExpression;
 
@@ -202,6 +204,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             errorFile = createLockFile(lockFile.getName() + "-error.json");
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             receiveFile = createLockFile(lockFile.getName() + "-receive.json");
+            activityFile = createLockFile(lockFile.getName() + "-activity.json");
             scheduledFuture = executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
             LOG.info("Camel CLI connector enabled");
         } else {
@@ -377,6 +380,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionSqlQueryTask(root);
             } else if ("sql-update-row".equals(action)) {
                 doActionSqlUpdateRowTask(root);
+            } else if ("heap-dump".equals(action)) {
+                doActionHeapDumpTask(root);
             } else if ("jfr-memory-leak".equals(action)) {
                 doActionJfrMemoryLeakTask(root);
             } else if ("cli-debug".equals(action)) {
@@ -852,6 +857,27 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
     }
 
+    private void doActionHeapDumpTask(JsonObject root) throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("heap-dump");
+        if (dc != null) {
+            Map<String, Object> params = new HashMap<>();
+            String name = root.getString("name");
+            if (name != null) {
+                params.put("name", name);
+            }
+            String live = root.getString("live");
+            if (live != null) {
+                params.put("live", live);
+            }
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
     private void doActionJfrMemoryLeakTask(JsonObject root) throws IOException {
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("jfr-memory-leak");
@@ -1021,6 +1047,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         if (reg != null) {
             reg.reset();
         }
+        BacklogTracer tracer = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
+        if (tracer != null) {
+            tracer.clear();
+        }
+        if (camelContext.getErrorRegistry() != null) {
+            camelContext.getErrorRegistry().clear();
+        }
     }
 
     private void doActionDebugTask(JsonObject root) throws Exception {
@@ -1048,16 +1081,28 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             boolean predicate = root.getBooleanOrDefault("predicate", false);
             String template = root.getStringOrDefault("template", "");
             String body = root.getStringOrDefault("body", "");
-            Map<String, String> map = new LinkedHashMap<>();
+            Map<String, String> headerMap = new LinkedHashMap<>();
             Collection<JsonObject> headers = root.getCollection("headers");
             if (headers != null) {
-                map = new LinkedHashMap<>();
                 for (JsonObject jo : headers) {
-                    map.put(jo.getString("key"), jo.getString("value"));
+                    headerMap.put(jo.getString("key"), jo.getString("value"));
                 }
             }
-            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON,
-                    Map.of("language", lan, "predicate", predicate, "template", template, "body", body, "headers", map));
+            Map<String, String> variableMap = new LinkedHashMap<>();
+            Collection<JsonObject> variables = root.getCollection("variables");
+            if (variables != null) {
+                for (JsonObject jo : variables) {
+                    variableMap.put(jo.getString("key"), jo.getString("value"));
+                }
+            }
+            Map<String, Object> params = new HashMap<>();
+            params.put("language", lan);
+            params.put("predicate", predicate);
+            params.put("template", template);
+            params.put("body", body);
+            params.put("headers", headerMap);
+            params.put("variables", variableMap);
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
@@ -1693,6 +1738,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             LOG.trace("Error updating receive file: {} due to: {}. This exception is ignored.",
                     receiveFile, e.getMessage(), e);
         }
+        try {
+            DevConsole dc15 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                    .resolveById("activity");
+            if (dc15 != null) {
+                JsonObject json = (JsonObject) dc15.call(DevConsole.MediaType.JSON);
+                LOG.trace("Updating activity file: {}", activityFile);
+                String data = json.toJson() + System.lineSeparator();
+                IOHelper.writeText(data, activityFile);
+            }
+        } catch (Exception e) {
+            // ignore
+            LOG.trace("Error updating activity file: {} due to: {}. This exception is ignored.",
+                    activityFile, e.getMessage(), e);
+        }
     }
 
     private JsonObject collectMemory() {
@@ -1852,6 +1911,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         if (receiveFile != null) {
             FileUtil.deleteFile(receiveFile);
+        }
+        if (activityFile != null) {
+            FileUtil.deleteFile(activityFile);
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);

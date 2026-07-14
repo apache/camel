@@ -25,9 +25,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -78,7 +78,7 @@ public class PQCSignatureSPHINCSPLUSTest extends CamelTestSupport {
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.SPHINCSPLUS.getAlgorithm(),
                 PQCSignatureAlgorithms.SPHINCSPLUS.getBcProvider());
-        kpGen.initialize(SPHINCSPlusParameterSpec.haraka_256s, new SecureRandom());
+        kpGen.initialize(SLHDSAParameterSpec.slh_dsa_sha2_128s, new SecureRandom());
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
     }

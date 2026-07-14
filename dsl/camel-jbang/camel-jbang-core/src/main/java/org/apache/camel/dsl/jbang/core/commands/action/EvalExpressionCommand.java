@@ -76,6 +76,10 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                         description = "Message header (key=value)")
     List<String> headers;
 
+    @CommandLine.Option(names = { "--variable" },
+                        description = "Exchange variable (key=value)")
+    List<String> variables;
+
     @CommandLine.Option(names = { "--timeout" }, defaultValue = "10000",
                         description = "Timeout in millis waiting for evaluation to be done")
     long timeout = 10000;
@@ -164,6 +168,20 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                 arr.add(jo);
             }
             root.put("headers", arr);
+        }
+        if (variables != null) {
+            JsonArray arr = new JsonArray();
+            for (String v : variables) {
+                JsonObject jo = new JsonObject();
+                if (!v.contains("=")) {
+                    printer().printErr("Variable must be in key=value format, was: " + v);
+                    return 1;
+                }
+                jo.put("key", StringHelper.before(v, "="));
+                jo.put("value", StringHelper.after(v, "="));
+                arr.add(jo);
+            }
+            root.put("variables", arr);
         }
 
         Path outputFile = getOutputFile(Long.toString(pid));

@@ -1327,7 +1327,7 @@ class HistoryTab extends AbstractTab {
 
         int[] scroll = { traceDetailScroll };
         int[] hScroll = { traceDetailHScroll };
-        renderDetailPanel(frame, area, lines, traceWordWrap, hScroll, scroll, traceDetailScrollState);
+        renderDetailPanel(frame, area, lines, traceWordWrap, hScroll, scroll, traceDetailScrollState, " Detail ");
         traceDetailScroll = scroll[0];
         traceDetailHScroll = hScroll[0];
     }
@@ -1606,7 +1606,7 @@ class HistoryTab extends AbstractTab {
 
         int[] scroll = { historyDetailScroll };
         int[] hScroll = { historyDetailHScroll };
-        renderDetailPanel(frame, area, lines, historyWordWrap, hScroll, scroll, historyDetailScrollState);
+        renderDetailPanel(frame, area, lines, historyWordWrap, hScroll, scroll, historyDetailScrollState, " Detail ");
         historyDetailScroll = scroll[0];
         historyDetailHScroll = hScroll[0];
     }
@@ -1880,7 +1880,7 @@ class HistoryTab extends AbstractTab {
     }
 
     private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
-        spans.add(Span.styled(" show", Theme.hintKey()));
+        spans.add(Span.styled(" show ", Theme.hintKey()));
         spans.add(Span.raw(" "));
         spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
         spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
@@ -2013,7 +2013,7 @@ class HistoryTab extends AbstractTab {
         List<Span> spans = new ArrayList<>();
         spans.add(Span.raw(" History of last completed — " + entries.size() + " steps ("));
         boolean failed = last.failed;
-        spans.add(Span.styled("status:" + (failed ? "failed" : "success"),
+        spans.add(Span.styled("status:" + (failed ? "failed" : "ok"),
                 failed ? Theme.error().bold() : Theme.success().bold()));
         if (last.elapsed >= 0) {
             spans.add(Span.raw(" elapsed:" + TimeUtils.printDuration(last.elapsed, true)));
@@ -2029,23 +2029,43 @@ class HistoryTab extends AbstractTab {
     static void addExchangeInfoLines(
             List<Line> lines, String exchangeId, String routeId,
             String nodeId, String nodeLabel, String location, long elapsed, String threadName, boolean failed) {
+        addExchangeInfoLines(lines, exchangeId, routeId, nodeId, nodeLabel, "Location", location, elapsed, threadName,
+                failed);
+    }
+
+    static void addExchangeInfoLines(
+            List<Line> lines, String exchangeId, String routeId,
+            String nodeId, String nodeLabel, String locationLabel, String location, long elapsed, String threadName,
+            boolean failed) {
         lines.add(Line.from(
                 Span.styled(" Exchange: ", Theme.muted()),
                 Span.raw(exchangeId != null ? exchangeId : "")));
+        if (nodeId != null) {
+            lines.add(Line.from(
+                    Span.styled(" Route:    ", Theme.muted()),
+                    Span.raw(String.format("%-25s", routeId != null ? routeId : "")),
+                    Span.styled("  Node: ", Theme.muted()),
+                    Span.raw(nodeId),
+                    Span.raw(nodeLabel != null ? " (" + nodeLabel + ")" : "")));
+        } else {
+            lines.add(Line.from(
+                    Span.styled(" Route:    ", Theme.muted()),
+                    Span.raw(routeId != null ? routeId : "")));
+        }
         lines.add(Line.from(
-                Span.styled(" Route:    ", Theme.muted()),
-                Span.raw(String.format("%-25s", routeId != null ? routeId : "")),
-                Span.styled("  Node: ", Theme.muted()),
-                Span.raw(nodeId != null ? nodeId : ""),
-                Span.raw(nodeLabel != null ? " (" + nodeLabel + ")" : "")));
-        lines.add(Line.from(
-                Span.styled(" Location: ", Theme.muted()),
+                Span.styled(String.format(" %-9s ", locationLabel + ":"), Theme.muted()),
                 Span.raw(location != null ? location : "")));
-        lines.add(Line.from(
-                Span.styled(" Elapsed:  ", Theme.muted()),
-                Span.raw(elapsed >= 0 ? elapsed + "ms" : ""),
-                Span.styled("  Thread: ", Theme.muted()),
-                Span.raw(threadName != null ? threadName : "")));
+        if (threadName != null) {
+            lines.add(Line.from(
+                    Span.styled(" Elapsed:  ", Theme.muted()),
+                    Span.raw(elapsed >= 0 ? elapsed + "ms" : ""),
+                    Span.styled("  Thread: ", Theme.muted()),
+                    Span.raw(threadName)));
+        } else {
+            lines.add(Line.from(
+                    Span.styled(" Elapsed:  ", Theme.muted()),
+                    Span.raw(elapsed >= 0 ? elapsed + "ms" : "")));
+        }
         if (failed) {
             lines.add(Line.from(
                     Span.styled(" Status:   ", Theme.muted()),
@@ -2162,7 +2182,17 @@ class HistoryTab extends AbstractTab {
     static void renderDetailPanel(
             Frame frame, Rect area, List<Line> lines,
             boolean wordWrap, int[] hScroll, int[] scroll, ScrollbarState scrollState) {
-        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build();
+        renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, scrollState, null);
+    }
+
+    static void renderDetailPanel(
+            Frame frame, Rect area, List<Line> lines,
+            boolean wordWrap, int[] hScroll, int[] scroll, ScrollbarState scrollState, String title) {
+        Block.Builder bb = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL);
+        if (title != null) {
+            bb.title(title);
+        }
+        Block block = bb.build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);

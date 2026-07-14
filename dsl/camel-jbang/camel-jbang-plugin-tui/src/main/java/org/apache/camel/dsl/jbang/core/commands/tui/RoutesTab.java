@@ -576,7 +576,7 @@ class RoutesTab extends AbstractTab {
                         rightCell(String.valueOf(route.total), 8),
                         rightCell(String.valueOf(route.failed), 6, failStyle),
                         rightCell(String.valueOf(route.inflight), 8),
-                        rightCell(route.throughput != null ? route.throughput : "", 8),
+                        rightCell(formatThroughput(route.throughput), 8),
                         rightCell(formatLoad(route.load01, route.load05, route.load15), 12)));
             }
 
@@ -584,7 +584,7 @@ class RoutesTab extends AbstractTab {
             if (selTop != null && selTop.exchangesTotal > 0) {
                 Style ts = Theme.label();
                 routeRows.add(Row.from(
-                        Cell.from(Span.styled("TOTAL", ts)),
+                        Cell.from(Span.styled("GLOBAL", ts)),
                         Cell.from(""),
                         rightCell(String.valueOf(selTop.meanTime), 6, ts),
                         rightCell(String.valueOf(selTop.maxTime), 6, ts),
@@ -598,7 +598,7 @@ class RoutesTab extends AbstractTab {
                         rightCell(String.valueOf(selTop.failed), 6,
                                 selTop.failed > 0 ? Theme.error().bold() : ts),
                         rightCell(String.valueOf(selTop.inflight), 8, ts),
-                        rightCell(selTop.throughput != null ? selTop.throughput : "", 8, ts),
+                        rightCell(formatThroughput(selTop.throughput), 8, ts),
                         rightCell(TuiHelper.formatLoad(
                                 selTop.inflightLoad01, selTop.inflightLoad05, selTop.inflightLoad15), 12, ts)));
             }
@@ -619,7 +619,7 @@ class RoutesTab extends AbstractTab {
                             rightCell("TOTAL", 8, Style.EMPTY.bold()),
                             rightCell("FAIL", 6, Style.EMPTY.bold()),
                             rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                            rightCell("MSG/S", 8, Style.EMPTY.bold()),
+                            rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
                             rightCell("LOAD", 12, Style.EMPTY.bold())))
                     .widths(
                             Constraint.length(24),
@@ -682,7 +682,7 @@ class RoutesTab extends AbstractTab {
                         Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                         Cell.from(routeFromLabel(route)),
                         Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
-                        rightCell(route.throughput != null ? route.throughput : "", 8),
+                        rightCell(formatThroughput(route.throughput), 8),
                         Cell.from(totalCell),
                         Cell.from(failCell),
                         rightCell(timingCol, 14),
@@ -699,10 +699,10 @@ class RoutesTab extends AbstractTab {
                     totalTimingCol = selDef.minTime + "/" + selDef.maxTime + "/" + selDef.meanTime;
                 }
                 routeRows.add(Row.from(
-                        Cell.from(Span.styled("TOTAL", ts)),
+                        Cell.from(Span.styled("GLOBAL", ts)),
                         Cell.from(""),
                         Cell.from(""),
-                        rightCell(selDef.throughput != null ? selDef.throughput : "", 8, ts),
+                        rightCell(formatThroughput(selDef.throughput), 8, ts),
                         Cell.from(Span.styled(String.format("%" + tw + "d", selDef.exchangesTotal), ts)),
                         Cell.from(Span.styled(String.format("%" + fw + "d", selDef.failed),
                                 selDef.failed > 0 ? Theme.error().bold() : ts)),
@@ -718,7 +718,7 @@ class RoutesTab extends AbstractTab {
                             Cell.from(Span.styled(routeSortLabel("ROUTE", "name"), routeSortStyle("name"))),
                             Cell.from(Span.styled(routeSortLabel("FROM", "from"), routeSortStyle("from"))),
                             Cell.from(Span.styled(routeSortLabel("STATUS", "status"), routeSortStyle("status"))),
-                            rightCell("MSG/S", 8, Style.EMPTY.bold()),
+                            rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
                             centerCell(routeSortLabel("TOTAL", "total"), 14, routeSortStyle("total")),
                             centerCell(routeSortLabel("FAIL", "failed"), 14, routeSortStyle("failed")),
                             rightCell(timingHeader, 14, Style.EMPTY.bold()),
@@ -911,9 +911,11 @@ class RoutesTab extends AbstractTab {
             lines.add(Line.from(
                     Span.styled(" Uptime:     ", Theme.muted()),
                     Span.raw(route.uptime != null ? route.uptime : "")));
+            String tpUnit = ctx.ratePerMinute ? " msg/m" : " msg/s";
             lines.add(Line.from(
-                    Span.styled(" Throughput: ", Theme.muted()),
-                    Span.raw(route.throughput != null ? route.throughput : "")));
+                    Span.styled(" Rate:       ", Theme.muted()),
+                    Span.raw(formatThroughput(route.throughput)),
+                    Span.styled(tpUnit, Theme.muted())));
             if (route.coverage != null) {
                 lines.add(Line.from(
                         Span.styled(" Coverage:   ", Theme.muted()),
@@ -968,12 +970,12 @@ class RoutesTab extends AbstractTab {
                         Span.styled(" Since last:", Theme.muted())));
                 if (route.sinceLastCompleted != null) {
                     lines.add(Line.from(
-                            Span.styled("   success: ", Theme.muted()),
+                            Span.styled("   ok:   ", Theme.muted()),
                             Span.raw(route.sinceLastCompleted)));
                 }
                 if (route.sinceLastFailed != null) {
                     lines.add(Line.from(
-                            Span.styled("   fail:    ", Theme.muted()),
+                            Span.styled("   fail: ", Theme.muted()),
                             Span.styled(route.sinceLastFailed,
                                     Theme.error())));
                 }
@@ -1082,6 +1084,16 @@ class RoutesTab extends AbstractTab {
                 lines.add(Line.from(
                         Span.styled(" Inflight: ", Style.EMPTY.dim()),
                         Span.raw(String.format("%" + w + "d", stat.exchangesInflight))));
+                if (stat.exchangesThroughput != null && !stat.exchangesThroughput.isEmpty()) {
+                    String tpUnit = ctx.ratePerMinute ? " msg/m" : " msg/s";
+                    String tpValue = ctx.ratePerMinute
+                            ? TuiHelper.throughputPerMinute(stat.exchangesThroughput)
+                            : stat.exchangesThroughput;
+                    lines.add(Line.from(
+                            Span.styled(" Rate:     ", Style.EMPTY.dim()),
+                            Span.raw(tpValue),
+                            Span.styled(tpUnit, Style.EMPTY.dim())));
+                }
 
                 if (stat.exchangesTotal > 0) {
                     lines.add(Line.from(Span.raw("")));
@@ -1125,13 +1137,13 @@ class RoutesTab extends AbstractTab {
                         if (stat.lastCompletedExchangeTimestamp > 0) {
                             long ago = now - stat.lastCompletedExchangeTimestamp;
                             lines.add(Line.from(
-                                    Span.styled("   success: ", Style.EMPTY.dim()),
+                                    Span.styled("   ok:   ", Style.EMPTY.dim()),
                                     Span.raw(TimeUtils.printDuration(ago, false))));
                         }
                         if (stat.lastFailedExchangeTimestamp > 0) {
                             long ago = now - stat.lastFailedExchangeTimestamp;
                             lines.add(Line.from(
-                                    Span.styled("   fail:    ", Style.EMPTY.dim()),
+                                    Span.styled("   fail: ", Style.EMPTY.dim()),
                                     Span.styled(TimeUtils.printDuration(ago, false),
                                             Theme.error())));
                         }
@@ -1273,7 +1285,7 @@ class RoutesTab extends AbstractTab {
             rows.add(Row.from(
                     Cell.from("   route"),
                     Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
-                    rightCell(route.throughput != null ? route.throughput : "", 8),
+                    rightCell(formatThroughput(route.throughput), 8),
                     rightCell(String.valueOf(route.total), 8),
                     rightCell(String.valueOf(route.failed), 6,
                             route.failed > 0 ? Theme.error() : Style.EMPTY),
@@ -1297,7 +1309,7 @@ class RoutesTab extends AbstractTab {
                 rows.add(Row.from(
                         Cell.from("   " + (proc.processor != null ? proc.processor : "")),
                         Cell.from(Span.styled(indent + (proc.id != null ? proc.id : ""), nameStyle)),
-                        Cell.from(""),
+                        rightCell(formatThroughput(proc.throughput), 8),
                         rightCell(String.valueOf(proc.total), 8),
                         rightCell(String.valueOf(proc.failed), 6,
                                 proc.failed > 0 ? Theme.error() : Style.EMPTY),
@@ -1312,7 +1324,7 @@ class RoutesTab extends AbstractTab {
                     .header(Row.from(
                             Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
                             Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                            rightCell("MSG/S", 8, Style.EMPTY.bold()),
+                            rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
                             rightCell("TOTAL", 8, Style.EMPTY.bold()),
                             rightCell("FAIL", 6, Style.EMPTY.bold()),
                             rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
@@ -1337,6 +1349,16 @@ class RoutesTab extends AbstractTab {
         int processorRowCount = routeTopMode ? route.processors.size() : route.processors.size() + 1;
         renderTableScrollbar(frame, area, processorTableState, processorTableScrollState,
                 processorRowCount);
+    }
+
+    private String formatThroughput(String throughput) {
+        if (throughput == null || throughput.isEmpty()) {
+            return "";
+        }
+        if (ctx.ratePerMinute) {
+            return TuiHelper.throughputPerMinute(throughput);
+        }
+        return throughput;
     }
 
     // ---- Sorting ----
@@ -1685,7 +1707,7 @@ class RoutesTab extends AbstractTab {
                 - **ROUTE** — Unique route identifier (e.g., `timer-to-log`, `seda-consumer`)
                 - **FROM** — The endpoint that triggers this route (e.g., `timer`, `kafka`, `file`). This is the source of messages
                 - **STATUS** — Route state: `Started` (running), `Stopped` (not running), or `Suspended` (paused, can be resumed)
-                - **MSG/S** — Current message throughput (messages per second) for this route
+                - **MSG/S** or **MSG/M** — Current message throughput (per second or per minute) for this route. Configure in Settings (F2)
                 - **TOTAL** — Total exchanges processed by this route since startup
                 - **FAIL** — Exchanges that ended with an unhandled error in this route
                 - **MIN** — Fastest exchange processing time in milliseconds. This is the time from when the exchange entered the route until it completed

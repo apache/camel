@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "heap-dump",
+    "title": "Heap Dump",
+    "description": "Write a heap dump (.hprof) file for deep memory analysis",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.HeapDumpDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.22.0-SNAPSHOT"
+  }
+}
+

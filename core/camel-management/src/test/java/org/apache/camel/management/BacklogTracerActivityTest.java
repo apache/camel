@@ -82,7 +82,8 @@ public class BacklogTracerActivityTest extends ManagementTestSupport {
         assertNotNull(on);
         assertTrue(mbeanServer.isRegistered(on));
 
-        // set activity size to 5
+        // enable activity and set activity size to 5
+        mbeanServer.setAttribute(on, new Attribute("ActivityEnabled", true));
         mbeanServer.setAttribute(on, new Attribute("ActivitySize", 5));
         Integer activitySize = (Integer) mbeanServer.getAttribute(on, "ActivitySize");
         assertEquals(5, activitySize.intValue());
@@ -121,6 +122,9 @@ public class BacklogTracerActivityTest extends ManagementTestSupport {
         assertNotNull(on);
         assertTrue(mbeanServer.isRegistered(on));
 
+        // enable activity via JMX
+        mbeanServer.setAttribute(on, new Attribute("ActivityEnabled", true));
+
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(2);
 
@@ -149,6 +153,9 @@ public class BacklogTracerActivityTest extends ManagementTestSupport {
                         "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
         assertNotNull(on);
         assertTrue(mbeanServer.isRegistered(on));
+
+        // enable activity via JMX
+        mbeanServer.setAttribute(on, new Attribute("ActivityEnabled", true));
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

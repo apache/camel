@@ -182,6 +182,12 @@ the message, consistent with the inbound header filtering already performed by t
 Ordinary application headers are unaffected. If a route relied on `Camel*` headers being propagated from the MIME
 content, set them explicitly after unmarshalling.
 
+=== camel-pinecone
+
+The `tls` endpoint option now correctly documents its default as `false` (previously the catalog
+listed the default as `true`, but the runtime value was always `false`). No behavioral change — the
+runtime default was already `false`.
+
 === camel-platform-http-main
 
 When `authenticationEnabled=true` but neither a basic-auth properties file
@@ -333,3 +339,17 @@ getters and setters of `SupervisingRouteControllerConfiguration` and
 The clustered route controller property `camel.clustered.controller.initial-delay` is unchanged:
 it keeps its `String` type because it supports Camel time patterns (for example `10 seconds`)
 that `Duration` binding does not.
+
+=== camel-sql - PostgreSQL aggregation repositories fixed
+
+`PostgresAggregationRepository` and `ClusteredPostgresAggregationRepository` were broken since
+Camel 3.4: every insert failed with a parameter-index error because the `version` column was
+bound but not included in the generated `INSERT ... ON CONFLICT DO NOTHING` statement. Both
+repositories now include the `version` column in the insert, and the clustered variant also
+writes the `instance_id` column to the completed table when `recoveryByInstance` is enabled
+(previously instance-scoped recovery could never match any row).
+
+The aggregation tables used with these repositories must have the `version BIGINT` column, as
+already required by `JdbcAggregationRepository` for reading and updating aggregates. When
+`recoveryByInstance` is enabled, the completed table must have the `instance_id VARCHAR(255)`
+column as documented.

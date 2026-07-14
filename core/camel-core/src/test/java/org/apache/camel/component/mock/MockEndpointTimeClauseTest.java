@@ -44,7 +44,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
         template.sendBody("direct:a", "A");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
         template.sendBody("direct:a", "A");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         await().atMost(5, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() >= 1);
         template.sendBody("direct:a", "B");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -155,7 +155,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         await().atMost(5, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() >= 1);
         template.sendBody("direct:a", "B");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -171,7 +171,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         await().atMost(5, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() >= 2);
         template.sendBody("direct:a", "C");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -185,7 +185,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
                 .until(() -> mock.getReceivedCounter() >= 1);
         template.sendBody("direct:a", "B");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -199,7 +199,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
                 .until(() -> mock.getReceivedCounter() >= 1);
         template.sendBody("direct:a", "B");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -217,7 +217,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         await().atMost(5, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() >= 4);
         template.sendBody("direct:a", "E");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override

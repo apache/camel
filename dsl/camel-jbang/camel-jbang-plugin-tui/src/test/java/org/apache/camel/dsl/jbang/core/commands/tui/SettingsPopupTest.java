@@ -135,7 +135,9 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(3, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(5, popup.selectedRow());
         popup.handleKeyEvent(KeyEvent.ofChar('/'));
         popup.handleKeyEvent(KeyEvent.ofChar('a'));
         assertEquals("/a", popup.folderText());
@@ -151,7 +153,9 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(3, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(5, popup.selectedRow());
         popup.handleKeyEvent(KeyEvent.ofChar(0x01));
         popup.handleKeyEvent(KeyEvent.ofChar(0x00));
         popup.handleKeyEvent(KeyEvent.ofChar('x'));
@@ -170,7 +174,9 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(4, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(6, popup.selectedRow());
         assertEquals("auto", popup.selectedAiProvider());
         popup.handleKeyEvent(KeyEvent.ofChar(' '));
         assertEquals("ollama", popup.selectedAiProvider());
@@ -212,8 +218,10 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(KeyEvent.ofChar(' ')); // starting tab Overview -> Health
         assertEquals("Health", popup.selectedStartTab());
-        popup.handleKeyEvent(key(KeyCode.DOWN));
-        popup.handleKeyEvent(key(KeyCode.DOWN));
+        popup.handleKeyEvent(key(KeyCode.DOWN)); // select tab
+        popup.handleKeyEvent(key(KeyCode.DOWN)); // log pin
+        popup.handleKeyEvent(key(KeyCode.DOWN)); // rate per
+        popup.handleKeyEvent(key(KeyCode.DOWN)); // folder
         for (char c : "/tmp/p".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));
         }

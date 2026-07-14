@@ -359,7 +359,7 @@ class ErrorsTab extends AbstractTableTab {
         boolean showDetail = selectedError != null;
         List<Rect> chunks = showDetail
                 ? Layout.vertical()
-                        .constraints(Constraint.length(13), Constraint.length(1), Constraint.fill())
+                        .constraints(Constraint.length(13), Constraint.fill())
                         .split(area)
                 : List.of(area);
 
@@ -392,7 +392,7 @@ class ErrorsTab extends AbstractTableTab {
         renderScrollbar(frame, filteredSize());
 
         if (showDetail) {
-            renderDetail(frame, chunks.get(2), selectedError);
+            renderDetail(frame, chunks.get(1), selectedError);
         }
     }
 
@@ -431,7 +431,7 @@ class ErrorsTab extends AbstractTableTab {
         }
         hint(spans, "Esc", "back");
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-        hint(spans, "PgUp/Dn", "scroll detail");
+        hint(spans, "PgUp/Dn", "detail");
         if (!wordWrap) {
             hint(spans, TuiIcons.HINT_H, "h-scroll");
         }
@@ -453,17 +453,6 @@ class ErrorsTab extends AbstractTableTab {
         // exception with stack trace
         String exception = null;
         if (ei.exceptionType != null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(ei.exceptionType);
-            if (ei.exceptionMessage != null) {
-                String msg = ei.exceptionMessage;
-                try {
-                    msg = Jsoner.unescape(msg);
-                } catch (Exception e) {
-                    // ignore
-                }
-                sb.append(": ").append(msg);
-            }
             if (ei.stackTrace != null) {
                 String st = ei.stackTrace;
                 try {
@@ -471,17 +460,64 @@ class ErrorsTab extends AbstractTableTab {
                 } catch (Exception e) {
                     // ignore
                 }
-                sb.append("\n").append(st);
+                if (st.startsWith(ei.exceptionType)) {
+                    // stackTrace already contains the exception type and message
+                    exception = st;
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(ei.exceptionType);
+                    if (ei.exceptionMessage != null) {
+                        String msg = ei.exceptionMessage;
+                        try {
+                            msg = Jsoner.unescape(msg);
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                        sb.append(": ").append(msg);
+                    }
+                    sb.append("\n").append(st);
+                    exception = sb.toString();
+                }
+            } else {
+                StringBuilder sb = new StringBuilder();
+                sb.append(ei.exceptionType);
+                if (ei.exceptionMessage != null) {
+                    String msg = ei.exceptionMessage;
+                    try {
+                        msg = Jsoner.unescape(msg);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    sb.append(": ").append(msg);
+                }
+                exception = sb.toString();
             }
-            exception = sb.toString();
         }
         HistoryTab.addExceptionLines(lines, exception);
 
         // message history
         if (ei.messageHistory != null && ei.messageHistory.length > 0) {
             lines.add(Line.from(Span.styled(" Message History:", Theme.notice().bold())));
-            for (String step : ei.messageHistory) {
-                lines.add(Line.from(Span.raw("   " + TuiHelper.fixControlChars(step))));
+            for (int i = 0; i < ei.messageHistory.length; i++) {
+                String s = TuiHelper.fixControlChars(ei.messageHistory[i]);
+                boolean lastAndFailed = !ei.handled && i == ei.messageHistory.length - 1;
+                int bracket = s.indexOf('[');
+                if (bracket > 0) {
+                    String routeId = s.substring(0, bracket);
+                    String rest = s.substring(bracket);
+                    if (lastAndFailed) {
+                        lines.add(Line.from(
+                                Span.styled("   " + routeId, Theme.error()),
+                                Span.styled(rest, Theme.error())));
+                    } else {
+                        lines.add(Line.from(
+                                Span.styled("   " + routeId, Style.EMPTY.fg(Theme.accent())),
+                                Span.styled(rest, Theme.muted())));
+                    }
+                } else {
+                    lines.add(Line.from(Span.styled("   " + s,
+                            lastAndFailed ? Theme.error() : Style.EMPTY)));
+                }
             }
             lines.add(Line.from(Span.raw("")));
         }
@@ -502,7 +538,7 @@ class ErrorsTab extends AbstractTableTab {
 
         int[] scroll = { detailScroll };
         int[] hScroll = { detailHScroll };
-        HistoryTab.renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, detailScrollState);
+        HistoryTab.renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, detailScrollState, " Detail ");
         detailScroll = scroll[0];
         detailHScroll = hScroll[0];
     }
@@ -684,7 +720,7 @@ class ErrorsTab extends AbstractTableTab {
     }
 
     private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
-        spans.add(Span.styled(" show", Theme.hintKey()));
+        spans.add(Span.styled(" show ", Theme.hintKey()));
         spans.add(Span.raw(" "));
         spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));
         spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Theme.baseFg()).bold() : Style.EMPTY.dim()));

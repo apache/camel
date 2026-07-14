@@ -344,6 +344,25 @@ public class RuntimeTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = """
+                  Write a heap dump (.hprof) file from a running Camel integration for deep memory analysis \
+                  with tools like Eclipse MAT, VisualVM, or jhat. The dump is written to the process working directory.""")
+    public JsonObject camel_runtime_heap_dump(
+            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = "File name for the heap dump (without .hprof extension). Defaults to heap-dump-<timestamp>") String name,
+            @ToolArg(description = "Whether to dump only live objects (default true). Live dumps trigger a GC first") String live) {
+        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+        return runtimeService.executeAction(p.pid(), "heap-dump", root -> {
+            if (name != null && !name.isBlank()) {
+                root.put("name", name);
+            }
+            if (live != null && !live.isBlank()) {
+                root.put("live", live);
+            }
+        });
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = """
                   Diagnose memory leaks in a running Camel integration using Java Flight Recorder (JFR). \
                   JFR samples objects that survive multiple GC cycles and captures their reference chains back to GC roots. \
                   This is lightweight and safe for production, but shows sampled sizes not total heap — \

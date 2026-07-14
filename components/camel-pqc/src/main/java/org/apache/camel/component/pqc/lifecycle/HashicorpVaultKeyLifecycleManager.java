@@ -35,6 +35,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
+import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
 import org.bouncycastle.pqc.jcajce.spec.*;
@@ -596,15 +599,13 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
         try {
             switch (algorithm) {
                 case "DILITHIUM":
-                    return DilithiumParameterSpec.dilithium2;
                 case "MLDSA":
+                    return MLDSAParameterSpec.ml_dsa_44;
                 case "SLHDSA":
-                    // These use default initialization
-                    return null;
+                case "SPHINCSPLUS":
+                    return SLHDSAParameterSpec.slh_dsa_sha2_128s;
                 case "FALCON":
                     return FalconParameterSpec.falcon_512;
-                case "SPHINCSPLUS":
-                    return SPHINCSPlusParameterSpec.sha2_128s;
                 case "XMSS":
                     return new XMSSParameterSpec(
                             10,
@@ -618,8 +619,7 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
                             LMOtsParameters.sha256_n32_w4);
                 case "MLKEM":
                 case "KYBER":
-                    // These use default initialization
-                    return null;
+                    return MLKEMParameterSpec.ml_kem_768;
                 case "NTRU":
                     return NTRUParameterSpec.ntruhps2048509;
                 case "NTRULPRime":

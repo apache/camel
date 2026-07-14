@@ -31,6 +31,7 @@ class ProcessorInfo {
     long p95Time = -1;
     long p99Time = -1;
     long inflight;
+    String throughput;
     String sinceLastStarted;
     String sinceLastCompleted;
     String sinceLastFailed;

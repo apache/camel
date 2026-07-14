@@ -372,7 +372,7 @@ plus prompts that provide structured multi-step workflows.
 
 | `camel_security_advisories`
 | Lists the published Apache Camel CVE security advisories (the data behind
-  https://camel.apache.org/security/[camel.apache.org/security]), optionally filtered by Camel version, component
+  link:/security/[camel.apache.org/security]), optionally filtered by Camel version, component
   and severity. Each advisory includes the summary, affected and fixed versions, mitigation, and a best-effort
   verdict on whether the given Camel version is affected. Use it to answer questions such as "is my Camel 4.10.1
   project affected by known CVEs?".
@@ -382,7 +382,7 @@ plus prompts that provide structured multi-step workflows.
 
 The advisory data ships with the Camel catalog bundled in the MCP server, where it is synced from the official
 published Apache Camel security advisories (the sources of
-https://camel.apache.org/security/[camel.apache.org/security]) when Camel is built — the same way the known
+link:/security/[camel.apache.org/security]) when Camel is built — the same way the known
 releases are synced. Lookups are therefore fully offline, only published advisories are included, and the data
 is as fresh as the Camel version of the MCP server: advisories published after that release are not included,
 so check the web page for the very latest. When the catalog carries no advisory data the tools report it as

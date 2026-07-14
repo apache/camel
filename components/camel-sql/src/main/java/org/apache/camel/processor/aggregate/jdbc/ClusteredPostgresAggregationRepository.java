@@ -56,13 +56,14 @@ public class ClusteredPostgresAggregationRepository extends ClusteredJdbcAggrega
             final CamelContext camelContext, final String correlationId, final Exchange exchange, String repositoryName,
             final Long version, final boolean completed)
             throws Exception {
-        // The default totalParameterIndex is 2 for ID and Exchange. Depending on logic this will be increased
-        int totalParameterIndex = 2;
+        // The default totalParameterIndex is 3 for ID, Exchange and version. Depending on logic this will be increased
+        int totalParameterIndex = 3;
         StringBuilder queryBuilder = new StringBuilder(256)
                 .append("INSERT INTO ").append(repositoryName)
                 .append('(')
                 .append(EXCHANGE).append(", ")
-                .append(ID);
+                .append(ID).append(", ")
+                .append(VERSION);
 
         if (isStoreBodyAsText()) {
             queryBuilder.append(", ").append(BODY);
@@ -76,6 +77,11 @@ public class ClusteredPostgresAggregationRepository extends ClusteredJdbcAggrega
             }
         }
 
+        if (completed && isRecoveryByInstance()) {
+            queryBuilder.append(", ").append("instance_id");
+            totalParameterIndex++;
+        }
+
         queryBuilder.append(") VALUES (");
 
         queryBuilder.append("?, ".repeat(Math.max(0, totalParameterIndex - 1)));
@@ -85,7 +91,7 @@ public class ClusteredPostgresAggregationRepository extends ClusteredJdbcAggrega
 
         String sql = queryBuilder.toString();
 
-        int updateCount = insertHelper(camelContext, correlationId, exchange, sql, 1L, completed);
+        int updateCount = insertHelper(camelContext, correlationId, exchange, sql, version, completed);
         if (updateCount == 0 && getRepositoryName().equals(repositoryName)) {
             throw new DataIntegrityViolationException("No row was inserted due to data violation");
         }

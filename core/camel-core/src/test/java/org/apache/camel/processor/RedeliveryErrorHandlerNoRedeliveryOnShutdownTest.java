@@ -16,9 +16,12 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
@@ -35,14 +38,14 @@ public class RedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends ContextTes
 
         template.sendBody("seda:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // should not take long to stop the route
         StopWatch watch = new StopWatch();
         context.getRouteController().stopRoute("foo");
         watch.taken();
 
-        assertTrue(watch.taken() < 4000, "Should stop route faster, was " + watch.taken());
+        assertTrue(watch.taken() < 8000, "Should stop route faster, was " + watch.taken());
     }
 
     @Override

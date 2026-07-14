@@ -225,6 +225,10 @@ class ActionsPopup {
         settingsPopup.setClearScreen(clearScreen);
     }
 
+    void setMonitorContext(MonitorContext ctx) {
+        settingsPopup.setMonitorContext(ctx);
+    }
+
     void setMcpEnabled(
             boolean enabled, int port, Supplier<String> connectedClient,
             Supplier<List<TuiMcpServer.LogEntry>> activityLog, Supplier<Integer> toolCallCount) {

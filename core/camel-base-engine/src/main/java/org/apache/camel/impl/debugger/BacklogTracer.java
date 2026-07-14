@@ -817,7 +817,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
 
         @Override
         public boolean isDisabled() {
-            return !enabled && !standby;
+            return !activityEnabled || (!enabled && !standby);
         }
 
         @Override

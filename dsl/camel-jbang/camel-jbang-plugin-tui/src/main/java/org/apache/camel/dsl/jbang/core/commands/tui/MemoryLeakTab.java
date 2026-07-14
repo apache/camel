@@ -19,8 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.tamboui.layout.Constraint;
@@ -88,6 +90,7 @@ class MemoryLeakTab extends AbstractTab {
     private String lastPid;
     private int detailScroll;
     private int minSizeIndex;
+    private boolean dominatorView;
 
     // dual recording mode state
     private boolean dualFirstDone;
@@ -122,11 +125,16 @@ class MemoryLeakTab extends AbstractTab {
         samples = Collections.emptyList();
         comparisons = null;
         dualFirstDone = false;
+        dominatorView = false;
         lastPid = null;
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (ke.isChar('h')) {
+            triggerHeapDump();
+            return true;
+        }
         if (state == State.IDLE || state == State.HAS_RESULTS) {
             if (ke.isCharIgnoreCase('r')) {
                 startRecording();
@@ -156,17 +164,23 @@ class MemoryLeakTab extends AbstractTab {
             }
         }
         if (state == State.HAS_RESULTS) {
-            if (ke.isChar('s')) {
+            if (ke.isChar('v')) {
+                dominatorView = !dominatorView;
+                tableState.select(0);
+                detailScroll = 0;
+                return true;
+            }
+            if (ke.isChar('s') && !dominatorView) {
                 sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
                 sort = SORT_COLUMNS[sortIndex];
                 sortReversed = false;
                 return true;
             }
-            if (ke.isChar('S')) {
+            if (ke.isChar('S') && !dominatorView) {
                 sortReversed = !sortReversed;
                 return true;
             }
-            if (ke.isChar('m')) {
+            if (ke.isChar('m') && !dominatorView) {
                 minSizeIndex = (minSizeIndex + 1) % MIN_SIZE_PRESETS.length;
                 tableState.select(0);
                 return true;
@@ -199,7 +213,16 @@ class MemoryLeakTab extends AbstractTab {
     @Override
     public void navigateDown() {
         if (state == State.HAS_RESULTS) {
-            int size = comparisons != null ? comparisons.size() : sortedSamples().size();
+            int size;
+            if (comparisons != null && dominatorView) {
+                size = buildComparisonDominators(comparisons).size();
+            } else if (comparisons != null) {
+                size = comparisons.size();
+            } else if (dominatorView) {
+                size = buildDominators(sortedSamples()).size();
+            } else {
+                size = sortedSamples().size();
+            }
             tableState.selectNext(size);
             detailScroll = 0;
         }
@@ -239,7 +262,7 @@ class MemoryLeakTab extends AbstractTab {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
                     Span.styled("  Press ", Style.EMPTY.dim()),
-                    Span.styled("R", Theme.label().bold()),
+                    Span.styled("r", Theme.label().bold()),
                     Span.styled(" to start a recording.", Style.EMPTY.dim())));
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
@@ -370,12 +393,26 @@ class MemoryLeakTab extends AbstractTab {
     }
 
     private void renderResults(Frame frame, Rect area) {
-        if (comparisons != null) {
+        if (comparisons != null && dominatorView) {
+            List<ComparisonDominatorEntry> dominators = buildComparisonDominators(comparisons);
+            List<Rect> chunks = Layout.vertical()
+                    .constraints(Constraint.percentage(40), Constraint.fill())
+                    .split(area);
+            renderComparisonDominatorTable(frame, chunks.get(0), dominators);
+            renderComparisonDominatorDetail(frame, chunks.get(1), dominators);
+        } else if (comparisons != null) {
             List<Rect> chunks = Layout.vertical()
                     .constraints(Constraint.percentage(40), Constraint.fill())
                     .split(area);
             renderComparisonTable(frame, chunks.get(0));
             renderComparisonDetail(frame, chunks.get(1));
+        } else if (dominatorView) {
+            List<DominatorEntry> dominators = buildDominators(sortedSamples());
+            List<Rect> chunks = Layout.vertical()
+                    .constraints(Constraint.percentage(40), Constraint.fill())
+                    .split(area);
+            renderDominatorTable(frame, chunks.get(0), dominators);
+            renderDominatorDetail(frame, chunks.get(1), dominators);
         } else {
             List<SampleEntry> visible = sortedSamples();
             List<Rect> chunks = Layout.vertical()
@@ -701,6 +738,430 @@ class MemoryLeakTab extends AbstractTab {
                 area);
     }
 
+    private List<DominatorEntry> buildDominators(List<SampleEntry> filtered) {
+        Map<String, DominatorEntry> groups = new LinkedHashMap<>();
+        for (SampleEntry sample : filtered) {
+            String key = extractHolderKey(sample);
+            DominatorEntry dom = groups.computeIfAbsent(key, k -> {
+                DominatorEntry d = new DominatorEntry();
+                d.members = new ArrayList<>();
+                ChainLink holder = extractHolder(sample);
+                if (holder != null) {
+                    d.holderFullType = holder.type;
+                    d.holderType = abbreviateType(holder.type);
+                    d.holderField = holder.field;
+                } else {
+                    d.holderFullType = "(no chain)";
+                    d.holderType = "(no chain)";
+                }
+                return d;
+            });
+            dom.totalCount += sample.count;
+            dom.totalSampledSize += sample.sampledSize;
+            dom.members.add(sample);
+        }
+
+        List<DominatorEntry> result = new ArrayList<>(groups.values());
+        // compute distinct classes per group
+        for (DominatorEntry d : result) {
+            d.distinctClasses = (int) d.members.stream()
+                    .map(e -> e.className).distinct().count();
+        }
+        result.sort((a, b) -> Long.compare(b.totalSampledSize, a.totalSampledSize));
+        for (int i = 0; i < result.size(); i++) {
+            result.get(i).num = i + 1;
+        }
+        return result;
+    }
+
+    private List<ComparisonDominatorEntry> buildComparisonDominators(List<ComparisonEntry> entries) {
+        Map<String, ComparisonDominatorEntry> groups = new LinkedHashMap<>();
+        for (ComparisonEntry entry : entries) {
+            String key = holderKey(entry.referenceChain);
+            ComparisonDominatorEntry dom = groups.computeIfAbsent(key, k -> {
+                ComparisonDominatorEntry d = new ComparisonDominatorEntry();
+                d.members = new ArrayList<>();
+                ChainLink holder = holderFromChain(entry.referenceChain);
+                if (holder != null) {
+                    d.holderFullType = holder.type;
+                    d.holderType = abbreviateType(holder.type);
+                    d.holderField = holder.field;
+                } else {
+                    d.holderFullType = "(no chain)";
+                    d.holderType = "(no chain)";
+                }
+                return d;
+            });
+            dom.totalBaselineSize += entry.baselineSampledSize;
+            dom.totalCurrentSize += entry.currentSampledSize;
+            dom.members.add(entry);
+        }
+
+        List<ComparisonDominatorEntry> result = new ArrayList<>(groups.values());
+        for (ComparisonDominatorEntry d : result) {
+            d.distinctClasses = (int) d.members.stream()
+                    .map(e -> e.className).distinct().count();
+            if (d.totalBaselineSize > 0) {
+                d.growthRatio = (double) d.totalCurrentSize / d.totalBaselineSize;
+                if (d.growthRatio >= 1.5) {
+                    d.trend = "growing";
+                } else if (d.growthRatio >= 1.3) {
+                    d.trend = "suspicious";
+                } else if (d.growthRatio < 0.7) {
+                    d.trend = "shrinking";
+                } else {
+                    d.trend = "stable";
+                }
+            } else {
+                d.trend = d.totalCurrentSize > 0 ? "new" : "stable";
+            }
+        }
+        result.sort((a, b) -> Long.compare(b.totalCurrentSize, a.totalCurrentSize));
+        for (int i = 0; i < result.size(); i++) {
+            result.get(i).num = i + 1;
+        }
+        return result;
+    }
+
+    private static String extractHolderKey(SampleEntry sample) {
+        return holderKey(sample.referenceChain);
+    }
+
+    private static ChainLink extractHolder(SampleEntry sample) {
+        return holderFromChain(sample.referenceChain);
+    }
+
+    private static String holderKey(List<ChainLink> chain) {
+        ChainLink holder = holderFromChain(chain);
+        if (holder == null) {
+            return "(no chain)";
+        }
+        String key = holder.type != null ? holder.type : "?";
+        if (holder.field != null) {
+            key += "." + holder.field;
+        }
+        return key;
+    }
+
+    private static ChainLink holderFromChain(List<ChainLink> chain) {
+        if (chain == null || chain.size() < 2) {
+            return null;
+        }
+        // walk from the end, skip the GC root entry
+        for (int i = chain.size() - 1; i >= 0; i--) {
+            ChainLink link = chain.get(i);
+            if (link.description != null && link.description.contains("[GC Root")) {
+                continue;
+            }
+            return link;
+        }
+        return chain.get(chain.size() - 1);
+    }
+
+    private void renderDominatorTable(Frame frame, Rect area, List<DominatorEntry> dominators) {
+        List<Row> rows = new ArrayList<>();
+        for (DominatorEntry e : dominators) {
+            String holder = e.holderType != null ? e.holderType : "?";
+            if (e.holderField != null) {
+                holder += "." + e.holderField;
+            }
+            rows.add(Row.from(
+                    rightCell(String.valueOf(e.num), 6),
+                    Cell.from(Span.styled(holder, Style.EMPTY.fg(Theme.accent()))),
+                    rightCell(String.valueOf(e.distinctClasses), 9),
+                    rightCell(String.valueOf(e.totalCount), 9),
+                    rightCell(formatBytes(e.totalSampledSize), 12)));
+        }
+
+        if (rows.isEmpty()) {
+            rows.add(Row.from(
+                    Cell.from(""), Cell.from(Span.styled("No dominator data", Style.EMPTY.dim())),
+                    Cell.from(""), Cell.from(""), Cell.from("")));
+        }
+
+        String agoLabel = "";
+        if (recordingEndTime > 0) {
+            long agoMin = (System.currentTimeMillis() - recordingEndTime) / 60000;
+            if (agoMin >= 1) {
+                agoLabel = " (" + agoMin + "m ago)";
+            }
+        }
+        String title = String.format(" Dominators [%d] duration:%s%s ",
+                dominators.size(), formatDuration(recordingDurationMs), agoLabel);
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        rightCell("#", 6, Style.EMPTY.bold()),
+                        Cell.from(Span.styled("HOLDER", Style.EMPTY.bold())),
+                        rightCell("CLASSES", 9, Style.EMPTY.bold()),
+                        rightCell("OBJECTS", 9, Style.EMPTY.bold()),
+                        rightCell("SAMPLED", 12, Style.EMPTY.bold())))
+                .widths(
+                        Constraint.length(6),
+                        Constraint.fill(),
+                        Constraint.length(9),
+                        Constraint.length(9),
+                        Constraint.length(12))
+                .highlightStyle(Style.EMPTY.fg(Theme.baseFg()).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .build();
+
+        frame.renderStatefulWidget(table, area, tableState);
+    }
+
+    private void renderDominatorDetail(Frame frame, Rect area, List<DominatorEntry> dominators) {
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= dominators.size()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(
+                                    Span.styled(" Select a dominator to see retained objects",
+                                            Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Detail ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        DominatorEntry entry = dominators.get(sel);
+        List<Line> lines = new ArrayList<>();
+
+        // holder info
+        String holderLabel = entry.holderFullType != null ? entry.holderFullType : "?";
+        if (entry.holderField != null) {
+            holderLabel += "." + entry.holderField;
+        }
+        lines.add(Line.from(
+                Span.styled("  Holder:   ", Theme.muted()),
+                Span.styled(holderLabel, Style.EMPTY.fg(Theme.accent()))));
+        lines.add(Line.from(
+                Span.styled("  Objects:  ", Theme.muted()),
+                Span.styled(String.valueOf(entry.totalCount), Style.EMPTY.fg(Theme.baseFg())),
+                Span.styled("    Sampled: ", Theme.muted()),
+                Span.styled(formatBytes(entry.totalSampledSize), Style.EMPTY.fg(Theme.baseFg())),
+                Span.styled("    Classes: ", Theme.muted()),
+                Span.styled(String.valueOf(entry.distinctClasses), Style.EMPTY.fg(Theme.baseFg()))));
+
+        // breakdown by allocation class
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(
+                Span.styled("  Retained Classes:", Theme.muted())));
+
+        List<SampleEntry> sorted = new ArrayList<>(entry.members);
+        sorted.sort((a, b) -> Long.compare(b.sampledSize, a.sampledSize));
+        for (SampleEntry member : sorted) {
+            lines.add(Line.from(
+                    Span.styled("    ", Style.EMPTY),
+                    Span.styled(member.className != null ? member.className : "?", Style.EMPTY.fg(Theme.baseFg())),
+                    Span.styled("  count:", Theme.muted()),
+                    Span.styled(String.valueOf(member.count), Style.EMPTY.fg(Theme.baseFg())),
+                    Span.styled("  sampled:", Theme.muted()),
+                    Span.styled(formatBytes(member.sampledSize), Style.EMPTY.fg(Theme.baseFg()))));
+        }
+
+        // reference chain from the largest member
+        SampleEntry representative = sorted.get(0);
+        if (representative.referenceChain != null && !representative.referenceChain.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled("  Reference Chain (Object → GC Root):", Theme.muted())));
+            for (int i = 0; i < representative.referenceChain.size(); i++) {
+                ChainLink link = representative.referenceChain.get(i);
+                String prefix = i == representative.referenceChain.size() - 1 ? "  └─ " : "  ├─ ";
+                String typeName = link.type != null ? abbreviateType(link.type) : "?";
+                String fieldInfo = link.field != null ? " (field: " + link.field + ")" : "";
+                String descInfo = link.description != null ? " [" + link.description + "]" : "";
+                lines.add(Line.from(
+                        Span.styled(prefix, Style.EMPTY.fg(Theme.accent())),
+                        Span.styled(typeName, Style.EMPTY.fg(Theme.accent())),
+                        Span.styled(fieldInfo, Theme.success()),
+                        Span.styled(descInfo, Style.EMPTY.dim())));
+            }
+        }
+
+        // stack trace from the largest member
+        if (representative.stackTrace != null && !representative.stackTrace.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled("  Allocation Stack Trace:", Theme.muted())));
+            for (StackEntry se : representative.stackTrace) {
+                Style methodStyle = isJdkFrame(se.method) ? Style.EMPTY.dim() : Style.EMPTY.fg(Theme.baseFg());
+                lines.add(Line.from(
+                        Span.styled("    at ", Style.EMPTY.dim()),
+                        Span.styled(se.method, methodStyle),
+                        Span.styled(":" + se.line, Style.EMPTY.dim())));
+            }
+        }
+
+        // apply scroll offset
+        if (detailScroll > 0 && detailScroll < lines.size()) {
+            lines = new ArrayList<>(lines.subList(detailScroll, lines.size()));
+        } else if (detailScroll >= lines.size()) {
+            detailScroll = Math.max(0, lines.size() - 1);
+            if (!lines.isEmpty()) {
+                lines = new ArrayList<>(lines.subList(detailScroll, lines.size()));
+            }
+        }
+
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(lines))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(" Detail ").build())
+                        .build(),
+                area);
+    }
+
+    private void renderComparisonDominatorTable(Frame frame, Rect area, List<ComparisonDominatorEntry> dominators) {
+        List<Row> rows = new ArrayList<>();
+        for (ComparisonDominatorEntry e : dominators) {
+            String holder = e.holderType != null ? e.holderType : "?";
+            if (e.holderField != null) {
+                holder += "." + e.holderField;
+            }
+            String run1 = e.totalBaselineSize > 0 ? formatBytes(e.totalBaselineSize) : "-";
+            String run2 = e.totalCurrentSize > 0 ? formatBytes(e.totalCurrentSize) : "-";
+            String growth = e.growthRatio > 0 ? formatGrowthPercent(e.growthRatio) : "-";
+            rows.add(Row.from(
+                    rightCell(String.valueOf(e.num), 4),
+                    Cell.from(Span.styled(holder, Style.EMPTY.fg(Theme.accent()))),
+                    rightCell(String.valueOf(e.distinctClasses), 7),
+                    rightCell(run1, 10),
+                    rightCell(run2, 10),
+                    rightCell(growth, 8),
+                    Cell.from(trendSpan(e.trend))));
+        }
+
+        String gcLabel = "";
+        if (baselineGcCount > 0 || currentGcCount > 0) {
+            gcLabel = String.format(" gc:%d/%d", baselineGcCount, currentGcCount);
+        }
+        String title = String.format(Locale.US, " Dominators [%d] run1:%s run2:%s ratio:%.1fx%s ",
+                dominators.size(), formatDuration(baselineDurationMs),
+                formatDuration(currentDurationMs), durationRatio, gcLabel);
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        rightCell("#", 4, Style.EMPTY.bold()),
+                        Cell.from(Span.styled("HOLDER", Style.EMPTY.bold())),
+                        rightCell("CLASSES", 7, Style.EMPTY.bold()),
+                        rightCell("RUN1", 10, Style.EMPTY.bold()),
+                        rightCell("RUN2", 10, Style.EMPTY.bold()),
+                        rightCell("GROWTH", 8, Style.EMPTY.bold()),
+                        Cell.from(Span.styled("TREND", Style.EMPTY.bold()))))
+                .widths(
+                        Constraint.length(4),
+                        Constraint.fill(),
+                        Constraint.length(7),
+                        Constraint.length(10),
+                        Constraint.length(10),
+                        Constraint.length(9),
+                        Constraint.length(13))
+                .highlightStyle(Style.EMPTY.fg(Theme.baseFg()).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .build();
+
+        frame.renderStatefulWidget(table, area, tableState);
+    }
+
+    private void renderComparisonDominatorDetail(Frame frame, Rect area, List<ComparisonDominatorEntry> dominators) {
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= dominators.size()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(
+                                    Span.styled(" Select an entry to see details", Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Detail ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        ComparisonDominatorEntry entry = dominators.get(sel);
+        List<Line> lines = new ArrayList<>();
+
+        String holderLabel = entry.holderFullType != null ? entry.holderFullType : "?";
+        if (entry.holderField != null) {
+            holderLabel += "." + entry.holderField;
+        }
+        lines.add(Line.from(
+                Span.styled("  Holder:   ", Theme.muted()),
+                Span.styled(holderLabel, Style.EMPTY.fg(Theme.accent()))));
+        lines.add(Line.from(
+                Span.styled("  Trend:    ", Theme.muted()),
+                trendSpan(entry.trend)));
+        lines.add(Line.from(
+                Span.styled("  Run 1:    ", Theme.muted()),
+                Span.styled(formatBytes(entry.totalBaselineSize), Style.EMPTY.fg(Theme.baseFg())),
+                Span.styled("    Run 2: ", Theme.muted()),
+                Span.styled(formatBytes(entry.totalCurrentSize), Style.EMPTY.fg(Theme.baseFg())),
+                Span.styled("    Classes: ", Theme.muted()),
+                Span.styled(String.valueOf(entry.distinctClasses), Style.EMPTY.fg(Theme.baseFg()))));
+
+        // breakdown by class with trend
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(
+                Span.styled("  Retained Classes:", Theme.muted())));
+
+        List<ComparisonEntry> sorted = new ArrayList<>(entry.members);
+        sorted.sort((a, b) -> Long.compare(b.currentSampledSize, a.currentSampledSize));
+        for (ComparisonEntry member : sorted) {
+            lines.add(Line.from(
+                    Span.styled("    ", Style.EMPTY),
+                    Span.styled(member.className != null ? member.className : "?", Style.EMPTY.fg(Theme.baseFg())),
+                    Span.styled("  run1:", Theme.muted()),
+                    Span.styled(formatBytes(member.baselineSampledSize), Style.EMPTY.fg(Theme.baseFg())),
+                    Span.styled("  run2:", Theme.muted()),
+                    Span.styled(formatBytes(member.currentSampledSize), Style.EMPTY.fg(Theme.baseFg())),
+                    Span.styled("  ", Style.EMPTY),
+                    trendSpan(member.trend)));
+        }
+
+        // reference chain from the largest member
+        ComparisonEntry representative = sorted.get(0);
+        if (representative.referenceChain != null && !representative.referenceChain.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled("  Reference Chain (Object → GC Root):", Theme.muted())));
+            for (int i = 0; i < representative.referenceChain.size(); i++) {
+                ChainLink link = representative.referenceChain.get(i);
+                String prefix = i == representative.referenceChain.size() - 1 ? "  └─ " : "  ├─ ";
+                String typeName = link.type != null ? abbreviateType(link.type) : "?";
+                String fieldInfo = link.field != null ? " (field: " + link.field + ")" : "";
+                String descInfo = link.description != null ? " [" + link.description + "]" : "";
+                lines.add(Line.from(
+                        Span.styled(prefix, Style.EMPTY.fg(Theme.accent())),
+                        Span.styled(typeName, Style.EMPTY.fg(Theme.accent())),
+                        Span.styled(fieldInfo, Theme.success()),
+                        Span.styled(descInfo, Style.EMPTY.dim())));
+            }
+        }
+
+        // apply scroll offset
+        if (detailScroll > 0 && detailScroll < lines.size()) {
+            lines = new ArrayList<>(lines.subList(detailScroll, lines.size()));
+        } else if (detailScroll >= lines.size()) {
+            detailScroll = Math.max(0, lines.size() - 1);
+            if (!lines.isEmpty()) {
+                lines = new ArrayList<>(lines.subList(detailScroll, lines.size()));
+            }
+        }
+
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(lines))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(" Detail ").build())
+                        .build(),
+                area);
+    }
+
     private static Span trendSpan(String trend) {
         if (trend == null) {
             return Span.styled("-", Style.EMPTY.dim());
@@ -722,24 +1183,28 @@ class MemoryLeakTab extends AbstractTab {
         switch (state) {
             case IDLE -> {
                 hint(spans, "Esc", "back");
-                hint(spans, "R", "record");
+                hint(spans, "r", "record");
                 hint(spans, "d", "mode [" + modeLabel + "]");
                 hint(spans, "+/-", "duration [" + duration + "s]");
+                hint(spans, "h", "heap dump");
             }
             case RECORDING -> {
                 hint(spans, "Esc", "back");
                 hint(spans, "X", "stop");
+                hint(spans, "h", "heap dump");
             }
             case HAS_RESULTS -> {
                 hint(spans, "Esc", "back");
-                if (comparisons == null) {
+                if (comparisons == null && !dominatorView) {
                     hint(spans, "s", "sort");
                     hint(spans, "m", "min-size [" + MIN_SIZE_LABELS[minSizeIndex] + "]");
                 }
-                hint(spans, "R", "new recording");
+                hint(spans, "v", dominatorView ? "samples" : "dominators");
+                hint(spans, "r", "new recording");
                 hint(spans, "d", "mode [" + modeLabel + "]");
                 hint(spans, "+/-", "duration [" + duration + "s]");
-                hintLast(spans, "PgUp/Dn", "scroll detail");
+                hint(spans, "h", "heap dump");
+                hintLast(spans, "PgUp/Dn", "detail");
             }
             default -> hintLast(spans, "Esc", "back");
         }
@@ -751,12 +1216,36 @@ class MemoryLeakTab extends AbstractTab {
             return null;
         }
         List<String> items;
-        if (comparisons != null) {
+        String label;
+        if (comparisons != null && dominatorView) {
+            List<ComparisonDominatorEntry> doms = buildComparisonDominators(comparisons);
+            if (doms.isEmpty()) {
+                return null;
+            }
+            items = doms.stream()
+                    .map(e -> {
+                        String h = e.holderType != null ? e.holderType : "?";
+                        return e.holderField != null ? h + "." + e.holderField : h;
+                    }).toList();
+            label = "Comparison Dominators";
+        } else if (comparisons != null) {
             if (comparisons.isEmpty()) {
                 return null;
             }
             items = comparisons.stream()
                     .map(e -> e.className != null ? e.className : "").toList();
+            label = "Memory Leak Comparison";
+        } else if (dominatorView) {
+            List<DominatorEntry> doms = buildDominators(sortedSamples());
+            if (doms.isEmpty()) {
+                return null;
+            }
+            items = doms.stream()
+                    .map(e -> {
+                        String h = e.holderType != null ? e.holderType : "?";
+                        return e.holderField != null ? h + "." + e.holderField : h;
+                    }).toList();
+            label = "Memory Leak Dominators";
         } else {
             List<SampleEntry> visible = sortedSamples();
             if (visible.isEmpty()) {
@@ -764,11 +1253,11 @@ class MemoryLeakTab extends AbstractTab {
             }
             items = visible.stream()
                     .map(e -> e.className != null ? e.className : "").toList();
+            label = "Memory Leak";
         }
         Integer sel = tableState.selected();
         return new SelectionContext(
-                "table", items, sel != null ? sel : -1, items.size(),
-                comparisons != null ? "Memory Leak Comparison" : "Memory Leak");
+                "table", items, sel != null ? sel : -1, items.size(), label);
     }
 
     @Override
@@ -916,23 +1405,25 @@ class MemoryLeakTab extends AbstractTab {
                 which is the most effective way to detect leaks. Press **d**
                 to toggle between **dual** and **single** mode.
 
-                In **dual** mode, pressing **R** runs:
+                In **dual** mode, pressing **r** runs:
                 - **Run 1** at the configured duration (e.g. 60s)
                 - **Run 2** at 2x the duration (e.g. 120s)
 
                 After both complete, a comparison table shows how each class
-                behaved across the two runs. The **GROWTH** column shows the
-                normalized growth as a percentage. For example, +30%% means
-                the class grew 30%% faster than expected from the duration
-                increase alone. Entries under 1KB in both runs are filtered
-                out as noise.
+                behaved across the two runs. The **RUN1** and **RUN2**
+                columns show the raw sampled sizes. For stable objects,
+                the sampled size stays roughly the same regardless of
+                duration. For leaking objects, the sampled size grows
+                because more allocations accumulate over the longer run.
+                The **GROWTH** column shows the percentage change.
+                Entries under 1KB in both runs are filtered out as noise.
 
                 ### Trend Indicators
 
-                - **↑ leak!** (red) — Growth >= +20%%, very likely leak
-                - **↑ leak?** (yellow) — Growth +10%% to +20%%, suspicious
-                - **→ stable** (green) — Growth -20%% to +10%%, normal
-                - **↓** (dim) — Growth < -20%%, shrinking
+                - **↑ leak!** (red) — Growth >= +50%%, very likely leak
+                - **↑ leak?** (yellow) — Growth +30%% to +50%%, suspicious
+                - **→ stable** (green) — Growth -30%% to +30%%, normal
+                - **↓** (dim) — Growth < -30%%, shrinking
                 - **new** (yellow) — Only appeared in Run 2
                 - **gone** (dim) — Only appeared in Run 1
 
@@ -945,6 +1436,19 @@ class MemoryLeakTab extends AbstractTab {
                 not be reliable. JFR sampling is statistical — low sample
                 counts produce noisy results. Re-run with a longer duration
                 to collect more samples.
+
+                ## Dominators View
+
+                Press **v** to toggle between the default **samples** view (grouped by
+                allocation class) and the **dominators** view. The dominators view
+                re-groups results by the **root holder** — the object closest to the
+                GC root in each reference chain. This answers the question: "which
+                Map, cache, or field is accumulating the most objects?"
+
+                Each row shows the holder (e.g. `LeakyCache.cache`), how many distinct
+                classes it retains, the total object count, and the aggregate sampled
+                size. Select a row to see the breakdown by allocation class, the
+                reference chain, and the allocation stack trace.
 
                 ## Comparison With Heap Histogram
 
@@ -961,6 +1465,7 @@ class MemoryLeakTab extends AbstractTab {
                 | R | Start/restart recording |
                 | X | Stop recording early |
                 | d | Toggle single/dual recording mode |
+                | v | Toggle samples/dominators view |
                 | +/- | Adjust recording duration |
                 | Up/Down | Select sample |
                 | s | Cycle sort column (class, size, age) |
@@ -1592,6 +2097,14 @@ class MemoryLeakTab extends AbstractTab {
                         || method.startsWith("jdk.") || method.startsWith("sun.") || method.startsWith("com.sun."));
     }
 
+    private void triggerHeapDump() {
+        TuiHelper.triggerHeapDump(ctx, (msg, error) -> {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept(msg, error);
+            }
+        });
+    }
+
     private static void startDaemonThread(String name, Runnable task) {
         Thread t = new Thread(task);
         t.setDaemon(true);
@@ -1623,6 +2136,30 @@ class MemoryLeakTab extends AbstractTab {
     static class StackEntry {
         String method;
         int line;
+    }
+
+    static class DominatorEntry {
+        int num;
+        String holderType;
+        String holderFullType;
+        String holderField;
+        int totalCount;
+        long totalSampledSize;
+        int distinctClasses;
+        List<SampleEntry> members;
+    }
+
+    static class ComparisonDominatorEntry {
+        int num;
+        String holderType;
+        String holderFullType;
+        String holderField;
+        long totalBaselineSize;
+        long totalCurrentSize;
+        int distinctClasses;
+        String trend;
+        double growthRatio;
+        List<ComparisonEntry> members;
     }
 
     static class ComparisonEntry {

@@ -408,6 +408,30 @@ public interface PqcComponentBuilderFactory {
         }
     
         /**
+         * The NIST parameter set (security level) to use for the configured
+         * signature or key encapsulation algorithm, using the BouncyCastle
+         * parameter-set names: for example ML-DSA-44, ML-DSA-65 or ML-DSA-87
+         * for MLDSA, and ML-KEM-512, ML-KEM-768 or ML-KEM-1024 for MLKEM. Names
+         * are case-insensitive and the underscore form (ml_dsa_87) is accepted
+         * as an alias. When set, the key material is generated with this
+         * parameter set instead of the algorithm default. Not supported for the
+         * stateful signature algorithms (XMSS, XMSSMT, LMS, HSS), for MAYO and
+         * SNOVA, nor for the hybrid operations: for those, register a KeyPair
+         * bean in the registry instead.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param parameterSpec the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder parameterSpec(java.lang.String parameterSpec) {
+            doSetProperty("parameterSpec", parameterSpec);
+            return this;
+        }
+    
+        /**
          * In case there is no signer, we specify an algorithm to build the
          * KeyPair or the Signer.
          * 
@@ -613,6 +637,7 @@ public interface PqcComponentBuilderFactory {
             case "keyRotationSchedulerEnabled": ((PQCComponent) component).setKeyRotationSchedulerEnabled((boolean) value); return true;
             case "keyStore": getOrCreateConfiguration((PQCComponent) component).setKeyStore((java.security.KeyStore) value); return true;
             case "keyStorePassword": getOrCreateConfiguration((PQCComponent) component).setKeyStorePassword((java.lang.String) value); return true;
+            case "parameterSpec": getOrCreateConfiguration((PQCComponent) component).setParameterSpec((java.lang.String) value); return true;
             case "signatureAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSignatureAlgorithm((java.lang.String) value); return true;
             case "signer": getOrCreateConfiguration((PQCComponent) component).setSigner((java.security.Signature) value); return true;
             case "statefulKeyWarningThreshold": getOrCreateConfiguration((PQCComponent) component).setStatefulKeyWarningThreshold((double) value); return true;

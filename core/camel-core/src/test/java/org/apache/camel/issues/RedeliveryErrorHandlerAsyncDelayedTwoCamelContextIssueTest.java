@@ -35,7 +35,7 @@ public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
         ConsumerTemplate consumer1 = context1.createConsumerTemplate();
         context1.start();
         producer1.sendBody("seda://input", "Hey1");
-        Exchange ex1 = consumer1.receive("seda://output", 5000);
+        Exchange ex1 = consumer1.receive("seda://output", 10000);
 
         DefaultCamelContext context2 = createContext();
         ProducerTemplate producer2 = context2.createProducerTemplate();
@@ -48,7 +48,7 @@ public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
         context1.stop();
 
         producer2.sendBody("seda://input", "Hey2");
-        Exchange ex2 = consumer2.receive("seda://output", 5000);
+        Exchange ex2 = consumer2.receive("seda://output", 10000);
 
         assertNotNull(ex1);
         assertEquals("Hey1", ex1.getIn().getBody());

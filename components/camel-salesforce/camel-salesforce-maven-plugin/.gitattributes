@@ -1,0 +1,4 @@
+# CamelSalesforceMojoOutputTest compares codegen output (LF) against golden .java fixtures
+# read as raw UTF-8 bytes. Pin generated fixtures to LF so a Windows checkout
+# (core.autocrlf=true) does not convert them to CRLF and break the assertions.
+src/test/resources/generated/** text eol=lf

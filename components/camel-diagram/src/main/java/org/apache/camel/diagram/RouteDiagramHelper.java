@@ -92,13 +92,13 @@ public final class RouteDiagramHelper {
                             s.load01 = ls.getString("load01");
                             s.load05 = ls.getString("load05");
                             s.load15 = ls.getString("load15");
-                            s.exchangesThroughput = ls.getString("exchangesThroughput");
                             stat = s;
                         } else {
                             // common stats
                             stat = new RouteDiagramLayoutEngine.StatInfo();
                         }
                         node.stat = stat;
+                        stat.exchangesThroughput = ls.getString("exchangesThroughput");
                         // counters default to 0 so a partial statistics object (missing a field) does not NPE on
                         // auto-unboxing into the primitive long fields of StatInfo
                         stat.idleSince = ls.getLongOrDefault("idleSince", 0);

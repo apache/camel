@@ -18,6 +18,7 @@ camel get [options]
 [cols="2,5",options="header"]
 |===
 | Subcommand | Description
+| xref:jbang-commands/camel-jbang-get-activity.adoc[activity] | Get recent completed exchange activity
 | xref:jbang-commands/camel-jbang-get-bean.adoc[bean] | List beans in a running Camel integration
 | xref:jbang-commands/camel-jbang-get-blocked.adoc[blocked] | Get blocked messages of Camel integrations
 | xref:jbang-commands/camel-jbang-get-circuit-breaker.adoc[circuit-breaker] | Get status of Circuit Breaker EIPs

@@ -70,6 +70,7 @@ class InfraBrowserPopup {
     private List<InfraServiceEntry> catalog;
     private InfraServiceEntry selectedService;
     private int implIndex;
+    private int portDialogRow; // 0 = impl, 1 = port
     private TextInputState portState;
 
     private final Supplier<List<InfraInfo>> infraServices;
@@ -193,6 +194,13 @@ class InfraBrowserPopup {
 
     void renderFooter(List<Span> spans) {
         if (showPortDialog) {
+            boolean hasMultiImpl = selectedService != null && selectedService.implementations().size() > 1;
+            if (hasMultiImpl) {
+                TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
+                if (portDialogRow == 0) {
+                    TuiHelper.hint(spans, "Space", "cycle");
+                }
+            }
             TuiHelper.hint(spans, "Enter", "run");
             TuiHelper.hintLast(spans, "Esc", "back");
         } else if (showBrowser) {
@@ -255,8 +263,21 @@ class InfraBrowserPopup {
             launchService();
             return true;
         }
-        if (selectedService != null && selectedService.implementations().size() > 1) {
-            if (ke.isLeft()) {
+        boolean hasMultiImpl = selectedService != null && selectedService.implementations().size() > 1;
+        if (ke.isUp() || ke.isFocusPrevious()) {
+            if (hasMultiImpl && portDialogRow > 0) {
+                portDialogRow--;
+            }
+            return true;
+        }
+        if (ke.isDown() || ke.isFocusNext()) {
+            if (hasMultiImpl && portDialogRow < 1) {
+                portDialogRow++;
+            }
+            return true;
+        }
+        if (portDialogRow == 0 && hasMultiImpl) {
+            if (ke.isLeft() || ke.isChar(' ')) {
                 implIndex = (implIndex - 1 + selectedService.implementations().size())
                             % selectedService.implementations().size();
                 return true;
@@ -265,6 +286,7 @@ class InfraBrowserPopup {
                 implIndex = (implIndex + 1) % selectedService.implementations().size();
                 return true;
             }
+            return true;
         }
         handlePortInput(ke);
         return true;
@@ -300,6 +322,7 @@ class InfraBrowserPopup {
         }
         selectedService = entry;
         implIndex = 0;
+        portDialogRow = entry.implementations().size() > 1 ? 0 : 1;
         portState = new TextInputState("");
         showBrowser = false;
         showPortDialog = true;
@@ -410,26 +433,45 @@ class InfraBrowserPopup {
 
         if (hasMultiImpl) {
             row++;
+            Style implLabelStyle = portDialogRow == 0 ? Style.EMPTY.bold() : Style.EMPTY.dim();
             Rect labelArea = new Rect(ix, row, labelW, 1);
-            frame.renderWidget(Paragraph.from(Line.from(Span.styled("Impl:", Theme.muted()))), labelArea);
-            String impl = selectedService.implementations().get(implIndex);
+            frame.renderWidget(Paragraph.from(Line.from(Span.styled("Impl:", implLabelStyle))), labelArea);
             Rect implArea = new Rect(ix + labelW, row, fieldW, 1);
-            frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled("◀ ", Theme.hintKey()),
-                    Span.raw(impl),
-                    Span.styled(" ▶", Theme.hintKey()))), implArea);
+            List<Span> implSpans = new ArrayList<>();
+            for (int i = 0; i < selectedService.implementations().size(); i++) {
+                if (i > 0) {
+                    implSpans.add(Span.styled(" ", Style.EMPTY));
+                }
+                String label = selectedService.implementations().get(i);
+                if (i == implIndex) {
+                    implSpans.add(Span.styled("[" + label + "]",
+                            portDialogRow == 0 ? Style.EMPTY.bold() : Style.EMPTY));
+                } else {
+                    implSpans.add(Span.styled(" " + label + " ", Style.EMPTY.dim()));
+                }
+            }
+            frame.renderWidget(Paragraph.from(Line.from(implSpans)), implArea);
             row++;
         }
 
         row++;
-        Rect labelArea = new Rect(ix, row, labelW, 1);
-        frame.renderWidget(Paragraph.from(Line.from(Span.styled("Port:", Theme.muted()))), labelArea);
+        Style portLabelStyle = portDialogRow == 1 ? Style.EMPTY.bold() : Style.EMPTY.dim();
+        Rect portLabelArea = new Rect(ix, row, labelW, 1);
+        frame.renderWidget(Paragraph.from(Line.from(Span.styled("Port:", portLabelStyle))), portLabelArea);
         Rect portArea = new Rect(ix + labelW, row, fieldW, 1);
-        TextInput textInput = TextInput.builder()
-                .cursorStyle(Style.EMPTY.reversed())
-                .placeholder("default")
-                .build();
-        frame.renderStatefulWidget(textInput, portArea, portState);
+        if (portDialogRow == 1) {
+            TextInput textInput = TextInput.builder()
+                    .cursorStyle(Style.EMPTY.reversed())
+                    .placeholder("default")
+                    .build();
+            frame.renderStatefulWidget(textInput, portArea, portState);
+        } else {
+            String portText = portState != null ? portState.text() : "";
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled(portText.isEmpty() ? "default" : portText,
+                            portText.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY))),
+                    portArea);
+        }
     }
 
     private void handlePortInput(KeyEvent ke) {
