@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,6 +46,7 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorScriptingCompiler.class);
     private static final AtomicInteger UUID = new AtomicInteger();
+    private final Set<String> compiledClassNames = ConcurrentHashMap.newKeySet();
     private CamelContext camelContext;
     private JavaJoorClassLoader classLoader;
     private Set<String> imports = new TreeSet<>();
@@ -92,7 +94,7 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
             // use work dir for classloader as it writes compiled classes to disk
             CompileStrategy cs = context.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
             if (cs != null && cs.getWorkDir() != null) {
-                classLoader.setCompileDirectory(cs.getWorkDir() + "/joor");
+                classLoader.setCompileDirectory(cs.getWorkDir());
             }
         }
     }
@@ -107,6 +109,15 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
     public JoorScriptingMethod compile(
             CamelContext camelContext, String script, Map<String, Object> bindings, boolean singleQuotes) {
         StopWatch watch = new StopWatch();
+
+        // clean up previously compiled script classes to prevent classloader leak during reloads
+        if (classLoader != null && !compiledClassNames.isEmpty()) {
+            for (String old : compiledClassNames) {
+                LOG.debug("Removing old compiled class: {}", old);
+                classLoader.removeClass(old);
+            }
+            compiledClassNames.clear();
+        }
 
         JoorScriptingMethod answer;
         String className = nextFQN();
@@ -131,6 +142,10 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
             if (clazz != null) {
                 LOG.debug("Compiled to Java class: {}", clazz);
                 answer = (JoorScriptingMethod) clazz.getConstructor(CamelContext.class).newInstance(camelContext);
+                // register compiled class for proper lifecycle management
+                byte[] byteCode = result.getByteCode(className);
+                classLoader.addClass(className, clazz, byteCode);
+                compiledClassNames.add(className);
             } else {
                 answer = null;
             }
