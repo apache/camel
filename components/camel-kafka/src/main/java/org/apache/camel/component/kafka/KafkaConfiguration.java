@@ -449,15 +449,17 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
                 // The saslAuthType just helps set the mechanism and protocol
             }
 
-            // Determine if we should use SSL (check if any SSL properties are set)
-            boolean hasSslConfig = ObjectHelper.isNotEmpty(sslTruststoreLocation)
-                    || ObjectHelper.isNotEmpty(sslKeystoreLocation)
-                    || sslContextParameters != null;
-
-            // For SASL types, default to SSL unless explicitly using SASL_PLAINTEXT
+            // For SASL types, the configurer defaults to useSsl=true (SASL_SSL).
+            // Only downgrade to SASL_PLAINTEXT if the user explicitly requested it.
             if (saslAuthType.isSasl()) {
-                boolean useSsl = !securityProtocol.equals("SASL_PLAINTEXT") && !securityProtocol.equals("PLAINTEXT");
-                configurer.withSsl(useSsl || hasSslConfig || saslAuthType != KafkaAuthType.NONE);
+                if (securityProtocol.equals("SASL_PLAINTEXT")) {
+                    configurer.withSsl(false);
+                }
+            } else if (saslAuthType == KafkaAuthType.NONE) {
+                boolean hasSslConfig = ObjectHelper.isNotEmpty(sslTruststoreLocation)
+                        || ObjectHelper.isNotEmpty(sslKeystoreLocation)
+                        || sslContextParameters != null;
+                configurer.withSsl(hasSslConfig || securityProtocol.equals("SSL"));
             }
 
             // Apply the configuration

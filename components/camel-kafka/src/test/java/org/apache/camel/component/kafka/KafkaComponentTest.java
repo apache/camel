@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -420,6 +421,8 @@ public class KafkaComponentTest {
         assertEquals("SASL_SSL", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
         assertEquals("AWS_MSK_IAM", props.getProperty(SaslConfigs.SASL_MECHANISM));
         assertTrue(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG).contains("IAMLoginModule"));
+        assertEquals("software.amazon.msk.auth.iam.IAMClientCallbackHandler",
+                props.getProperty(SaslConfigs.SASL_CLIENT_CALLBACK_HANDLER_CLASS));
     }
 
     @Test
@@ -444,6 +447,65 @@ public class KafkaComponentTest {
         Properties props = endpoint.getConfiguration().createProducerProperties();
         assertEquals("SSL", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
         assertNull(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+    }
+
+    @Test
+    public void testSaslAuthTypePlainWithExplicitSaslPlaintext() {
+        String uri = "kafka:mytopic?brokers=broker1:12345&saslAuthType=PLAIN"
+                     + "&saslUsername=user&saslPassword=pass&securityProtocol=SASL_PLAINTEXT";
+
+        KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
+
+        Properties props = endpoint.getConfiguration().createProducerProperties();
+        assertEquals("SASL_PLAINTEXT", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        assertEquals("PLAIN", props.getProperty(SaslConfigs.SASL_MECHANISM));
+    }
+
+    @Test
+    public void testSaslAuthTypeKerberosDoesNotThrow() {
+        String uri = "kafka:mytopic?brokers=broker1:12345&saslAuthType=KERBEROS";
+
+        KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
+        assertEquals(KafkaAuthType.KERBEROS, endpoint.getConfiguration().getSaslAuthType());
+
+        Properties props = endpoint.getConfiguration().createProducerProperties();
+        assertEquals("SASL_SSL", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        assertEquals("GSSAPI", props.getProperty(SaslConfigs.SASL_MECHANISM));
+        assertNull(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+    }
+
+    @Test
+    public void testSaslAuthTypeOAuth() {
+        String uri = "kafka:mytopic?brokers=broker1:12345&saslAuthType=OAUTH"
+                     + "&oauthClientId=myClient&oauthClientSecret=mySecret"
+                     + "&oauthTokenEndpointUri=https://auth.example.com/token&oauthScope=kafka";
+
+        KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
+        assertEquals(KafkaAuthType.OAUTH, endpoint.getConfiguration().getSaslAuthType());
+
+        Properties props = endpoint.getConfiguration().createProducerProperties();
+        assertEquals("SASL_SSL", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        assertEquals("OAUTHBEARER", props.getProperty(SaslConfigs.SASL_MECHANISM));
+        assertNotNull(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+        assertTrue(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG).contains("OAuthBearerLoginModule"));
+        assertTrue(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG).contains("clientId=\"myClient\""));
+        assertTrue(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG).contains("scope=\"kafka\""));
+        assertFalse(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG).contains("oauth.token.endpoint.uri"));
+        assertEquals("org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler",
+                props.getProperty(SaslConfigs.SASL_LOGIN_CALLBACK_HANDLER_CLASS));
+        assertEquals("https://auth.example.com/token",
+                props.getProperty(SaslConfigs.SASL_OAUTHBEARER_TOKEN_ENDPOINT_URL));
+    }
+
+    @Test
+    public void testSaslAuthTypeNoneWithExplicitSsl() {
+        String uri = "kafka:mytopic?brokers=broker1:12345&saslAuthType=NONE&securityProtocol=SSL";
+
+        KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
+        assertEquals(KafkaAuthType.NONE, endpoint.getConfiguration().getSaslAuthType());
+
+        Properties props = endpoint.getConfiguration().createProducerProperties();
+        assertEquals("SSL", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
     }
 
     // ========================================================================
