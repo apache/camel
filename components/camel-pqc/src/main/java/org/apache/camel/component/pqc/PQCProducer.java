@@ -42,7 +42,6 @@ import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyMetadata;
 import org.apache.camel.component.pqc.metrics.PQCMetrics;
-import org.apache.camel.component.pqc.metrics.PQCMicrometerMetrics;
 import org.apache.camel.component.pqc.stateful.StatefulKeyState;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
@@ -242,12 +241,18 @@ public class PQCProducer extends DefaultProducer {
 
     private PQCMetrics createMetrics() {
         CamelContext camelContext = getEndpoint().getCamelContext();
-        // Only touch Micrometer if it is actually on the classpath, keeping it an optional dependency
+        // Only touch Micrometer if it is actually on the classpath, keeping it an optional dependency.
+        // Use reflection to avoid a static class reference that GraalVM native image would follow.
         if (camelContext.getClassResolver().resolveClass("io.micrometer.core.instrument.MeterRegistry") == null) {
             return PQCMetrics.NOOP;
         }
         try {
-            return PQCMicrometerMetrics.create(camelContext);
+            Class<?> clazz = camelContext.getClassResolver()
+                    .resolveClass("org.apache.camel.component.pqc.metrics.PQCMicrometerMetrics");
+            if (clazz == null) {
+                return PQCMetrics.NOOP;
+            }
+            return (PQCMetrics) clazz.getMethod("create", CamelContext.class).invoke(null, camelContext);
         } catch (Throwable t) {
             LOG.debug("Micrometer metrics are not available for the PQC producer: {}", t.getMessage());
             return PQCMetrics.NOOP;
