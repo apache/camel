@@ -56,6 +56,30 @@ run the CLI automatically renames a pre-existing global `~/.camel-jbang-user.pro
 `~/.camel-cli.properties` and a pre-existing local `./camel-jbang-user.properties` to
 `./camel-cli.properties`; an existing new file is never overwritten.
 
+==== Camel CLI launcher Java runtime discovery
+
+The self-contained Camel CLI launcher scripts (`bin/camel.sh` and `bin/camel.bat` in the
+`camel-launcher` distribution) now share a single Java runtime discovery contract. Candidates
+are evaluated in this fixed order, and the first one that exists, is executable, and reports a
+Java major version of at least 17 is used:
+
+1. `JAVACMD` (explicit override, unchanged).
+2. `$JAVA_HOME/bin/java` (`%JAVA_HOME%\bin\java.exe` on Windows). This is also how the SDKMAN
+   `java` candidate is honored, since SDKMAN exports `JAVA_HOME`.
+3. The first `java` (`java.exe`) found on `PATH`.
+4. `CAMEL_FALLBACK_JAVA`, a new variable set by package-manager installs when the JDK location
+   is deterministic.
+
+Candidates older than Java 17, missing, non-executable, or with unparseable version output are
+skipped. If none qualify, the launcher now exits nonzero with a diagnostic listing the checked
+sources instead of attempting to run an unsuitable Java.
+
+The obsolete macOS `JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/...` default was
+removed from `camel.sh`; set `JAVA_HOME` or `JAVACMD`, or ensure a Java 17+ `java` is on `PATH`.
+The Gentoo `java-config` auto-detection and the IBM AIX `$JAVA_HOME/jre/sh/java` probe were also
+removed; set `JAVA_HOME` or `JAVACMD` explicitly on those platforms.
+`JAVA_OPTS` handling is unchanged: when unset, the default `-Xmx512m` heap is applied.
+
 === camel-langchain4j-agent
 
 The `Agent.chat()` method return type has changed from `String` to `Result<String>` (from `dev.langchain4j.service.Result`).
