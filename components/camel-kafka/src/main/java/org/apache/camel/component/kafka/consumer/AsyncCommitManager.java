@@ -94,7 +94,10 @@ public class AsyncCommitManager extends AbstractCommitManager {
         if (exception == null) {
             if (offsetRepository != null) {
                 for (var entry : committed.entrySet()) {
-                    saveStateToOffsetRepository(entry.getKey(), entry.getValue().offset(), offsetRepository);
+                    // Store the last read offset (Kafka committed offset - 1) to match
+                    // the contract in OffsetPartitionAssignmentAdapter.resumeFromOffset
+                    // which seeks to state + 1
+                    saveStateToOffsetRepository(entry.getKey(), entry.getValue().offset() - 1, offsetRepository);
                 }
             }
         }
