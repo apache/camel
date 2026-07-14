@@ -75,7 +75,7 @@ public class SyncCommitManager extends AbstractCommitManager {
         consumer.commitSync(offsets, Duration.ofMillis(timeout));
 
         if (offsetRepository != null) {
-            saveStateToOffsetRepository(partition, lastOffset, offsetRepository);
+            saveStateToOffsetRepository(partition, offset, offsetRepository);
         }
 
         offsetCache.removeCommittedEntries(offsets, null);
