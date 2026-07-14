@@ -243,6 +243,28 @@ Scalar value nodes are now sent as a single record. Only container nodes (`Array
 are still split, which is unchanged. Any `convertBodyTo(...)` previously used as a workaround is no
 longer required.
 
+=== camel-kafka - sslEndpointAlgorithm=none now disables hostname verification
+
+Setting `sslEndpointAlgorithm` to `none` or `false` now correctly disables SSL hostname verification
+by setting `ssl.endpoint.identification.algorithm` to an empty string. Previously the property was
+simply omitted, which caused Kafka clients to fall back to their default (`https`), leaving hostname
+verification silently enabled.
+
+=== camel-kafka - Auto-generated groupId shared across consumer threads
+
+When no `groupId` is configured, the auto-generated UUID is now shared across all consumer threads
+(`consumersCount`). Previously each thread received its own random UUID, causing each thread to
+independently consume all partitions, which resulted in every message being processed `consumersCount`
+times.
+
+=== camel-kafka - Batch producer respects endpoint key for plain list elements
+
+The batch producer (when the body is a `List`) now respects the endpoint-configured `key` option for
+elements that do not have a `CamelKafkaKey` header. Previously, elements without the header would
+get a null record key even when `key=fixedKey` was configured on the endpoint. Additionally, plain
+list elements (not `Exchange` or `Message`) are now properly converted to the configured serializer
+type.
+
 === camel-jbang catalog tables fill the terminal width
 
 The `camel catalog` commands (`camel catalog component`, `camel catalog dataformat`,

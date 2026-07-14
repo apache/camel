@@ -63,6 +63,7 @@ public class KafkaConsumer extends DefaultConsumer
     // This list helps to work around the infinite loop of KAFKA-1894
     private final List<KafkaFetchRecords> tasks = new ArrayList<>();
     private volatile boolean stopOffsetRepo;
+    private final String defaultGroupId = UUID.randomUUID().toString();
     private ResumeStrategy resumeStrategy;
     private KafkaConsumerListener consumerListener;
 
@@ -96,10 +97,6 @@ public class KafkaConsumer extends DefaultConsumer
         return (KafkaEndpoint) super.getEndpoint();
     }
 
-    private String randomUUID() {
-        return UUID.randomUUID().toString();
-    }
-
     Properties getProps() {
         KafkaConfiguration configuration = endpoint.getConfiguration();
 
@@ -109,7 +106,7 @@ public class KafkaConsumer extends DefaultConsumer
         ObjectHelper.ifNotEmpty(endpoint.getKafkaClientFactory().getBrokers(configuration),
                 v -> props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, v));
 
-        String groupId = ObjectHelper.supplyIfEmpty(configuration.getGroupId(), this::randomUUID);
+        String groupId = configuration.getGroupId() != null ? configuration.getGroupId() : defaultGroupId;
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
 
         ObjectHelper.ifNotEmpty(configuration.getGroupInstanceId(),

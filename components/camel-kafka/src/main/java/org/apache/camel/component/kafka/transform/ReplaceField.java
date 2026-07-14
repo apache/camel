@@ -46,7 +46,7 @@ public class ReplaceField {
         if (ObjectHelper.isNotEmpty(disabled) && !disabled.equalsIgnoreCase("none")) {
             disabledFields = Arrays.stream(disabled.split(",")).collect(Collectors.toList());
         }
-        if (ObjectHelper.isNotEmpty(disabled)) {
+        if (ObjectHelper.isNotEmpty(renames)) {
             renameFields = Arrays.stream(renames.split(",")).collect(Collectors.toList());
         }
         Map<Object, Object> updatedBody = new HashMap<>();
