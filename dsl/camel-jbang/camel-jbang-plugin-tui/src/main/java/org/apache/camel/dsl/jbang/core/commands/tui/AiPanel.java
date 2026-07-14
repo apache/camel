@@ -16,8 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -383,6 +388,14 @@ class AiPanel {
         if (ke.hasCtrl() && ke.isCharIgnoreCase('u')) {
             statsView = !statsView;
             statsScrollOffset = 0;
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('y')) {
+            copyLastResponseToClipboard();
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('e')) {
+            exportChatToFile();
             return true;
         }
         if (ke.isKey(KeyCode.PAGE_UP)) {
@@ -1065,12 +1078,71 @@ class AiPanel {
         }
         TuiHelper.hint(spans, "Shift+F8", "resize (" + anim.cyclePercent() + "%)");
         TuiHelper.hint(spans, "PgUp/Dn", "scroll");
+        TuiHelper.hint(spans, "Ctrl+Y", "copy");
+        TuiHelper.hint(spans, "Ctrl+E", "export");
         if (!statsView) {
             TuiHelper.hint(spans, "Ctrl+P", "provider");
             if (!thinking.get()) {
                 TuiHelper.hint(spans, "Enter", "send");
             } else {
                 TuiHelper.hint(spans, "Esc/Ctrl+C", "interrupt");
+            }
+        }
+    }
+
+    private void copyLastResponseToClipboard() {
+        for (int i = conversation.size() - 1; i >= 0; i--) {
+            ConversationEntry entry = conversation.get(i);
+            if (entry.role() == AiRole.ASSISTANT && entry.text() != null && !entry.text().isEmpty()) {
+                try {
+                    Toolkit.getDefaultToolkit().getSystemClipboard()
+                            .setContents(new StringSelection(entry.text()), null);
+                    if (mcpFacade != null) {
+                        mcpFacade.showCaption("Copied to clipboard", 3);
+                    }
+                } catch (Exception e) {
+                    if (mcpFacade != null) {
+                        mcpFacade.showCaption("Clipboard not available: " + e.getMessage(), 3);
+                    }
+                }
+                return;
+            }
+        }
+        if (mcpFacade != null) {
+            mcpFacade.showCaption("No AI response to copy", 3);
+        }
+    }
+
+    private void exportChatToFile() {
+        if (conversation.isEmpty()) {
+            if (mcpFacade != null) {
+                mcpFacade.showCaption("No conversation to export", 3);
+            }
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("# Camel TUI AI Chat\n\n");
+        sb.append("_Exported: ").append(LocalDateTime.now().format(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("_\n");
+        for (ConversationEntry entry : conversation) {
+            sb.append("\n---\n\n");
+            switch (entry.role()) {
+                case USER -> sb.append("**You:** ").append(entry.text()).append("\n");
+                case ASSISTANT -> sb.append("**AI:** ").append(entry.text()).append("\n");
+                case ERROR -> sb.append("**Error:** ").append(entry.text()).append("\n");
+                case SYSTEM -> sb.append("_System: ").append(entry.text()).append("_\n");
+            }
+        }
+        try {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+            String filename = "camel-ai-chat-" + timestamp + ".md";
+            Files.writeString(Path.of(filename), sb.toString());
+            if (mcpFacade != null) {
+                mcpFacade.showCaption("Saved: " + filename, 5);
+            }
+        } catch (IOException e) {
+            if (mcpFacade != null) {
+                mcpFacade.showCaption("Export failed: " + e.getMessage(), 3);
             }
         }
     }
