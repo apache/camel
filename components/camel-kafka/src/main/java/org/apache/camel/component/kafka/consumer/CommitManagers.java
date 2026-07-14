@@ -34,21 +34,12 @@ public final class CommitManagers {
         KafkaConfiguration configuration = kafkaConsumer.getEndpoint().getConfiguration();
 
         if (configuration.isAllowManualCommit()) {
-            LOG.debug("Allowing manual commit management");
-            KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
-            if (manualCommitFactory instanceof DefaultKafkaManualAsyncCommitFactory) {
-                LOG.debug("Using an async commit manager for manual commit management");
-                return new AsyncCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
-            } else {
-                if (manualCommitFactory instanceof DefaultKafkaManualCommitFactory) {
-                    LOG.debug("Using a sync commit manager for manual commit management");
-                    return new SyncCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
-                } else {
-                    // This has been the default behavior for Camel
-                    LOG.debug("Using an NO-OP commit manager for manual commit management");
-                    return new NoopCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
-                }
-            }
+            // Manual commit mode: the framework must never auto-commit offsets.
+            // The configured KafkaManualCommitFactory (sync or async) controls how
+            // the route's explicit KafkaManualCommit.commit() call executes — that
+            // is independent of the commit manager selection.
+            LOG.debug("Using a NO-OP commit manager for manual commit management");
+            return new NoopCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
         } else {
             if (configuration.getOffsetRepository() != null) {
                 LOG.debug("Using a commit-to-offset manager for commit management");
