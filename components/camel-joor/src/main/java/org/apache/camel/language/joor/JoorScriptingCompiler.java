@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,7 +46,7 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorScriptingCompiler.class);
     private static final AtomicInteger UUID = new AtomicInteger();
-    private final Set<String> compiledClassNames = new LinkedHashSet<>();
+    private final Set<String> compiledClassNames = ConcurrentHashMap.newKeySet();
     private CamelContext camelContext;
     private JavaJoorClassLoader classLoader;
     private Set<String> imports = new TreeSet<>();

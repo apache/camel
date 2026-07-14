@@ -219,6 +219,9 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
                 try (InputStream is = resourceInputStream(entry.getValue())) {
                     if (is != null) {
                         String content = IOHelper.loadText(is);
+                        for (CompilePreProcessor pre : getCompilePreProcessors()) {
+                            pre.preCompile(getCamelContext(), entry.getKey(), content);
+                        }
                         unit.addClass(entry.getKey(), content);
                         classLoader.removeClass(entry.getKey());
                     }
