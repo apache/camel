@@ -119,80 +119,10 @@ jobs:
           for /f "usebackq delims=" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set "VSINSTALL=%%i"
           call "%VSINSTALL%\VC\Auxiliary\Build\vcvars64.bat"
           mvn -B -ntp -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher -am install -DskipTests -Dcamel.launcher.requireWindowsExe=true
-      - name: Diagnose camel.exe disappearance (temporary, CAMEL-23703 CI investigation)
-        if: always()
-        shell: pwsh
-        run: |
-          Write-Host '--- target/camel.exe on disk after the full build ---'
-          $exe = 'dsl/camel-jbang/camel-launcher/target/camel.exe'
-          if (Test-Path $exe) {
-            Get-Item $exe | Select-Object FullName, Length, CreationTime, LastWriteTime
-          } else {
-            Write-Host "MISSING: $exe does not exist after the build completed"
-          }
-
-          Write-Host '--- dsl/camel-jbang/camel-launcher/target listing ---'
-          Get-ChildItem dsl/camel-jbang/camel-launcher/target | Format-Table Name, Length, LastWriteTime
-
-          Write-Host '--- Windows Defender exclusions ---'
-          try {
-            Get-MpPreference | Select-Object -ExpandProperty ExclusionPath
-          } catch {
-            Write-Host "Get-MpPreference failed: $_"
-          }
-
-          Write-Host '--- Windows Defender threat detections ---'
-          try {
-            Get-MpThreatDetection | Format-Table ThreatID, Resources, InitialDetectionTime
-          } catch {
-            Write-Host "Get-MpThreatDetection failed or found nothing: $_"
-          }
-
-          Write-Host '--- Windows Defender operational log (last 30 minutes, detection/action events) ---'
-          try {
-            Get-WinEvent -FilterHashtable @{
-              LogName   = 'Microsoft-Windows-Windows Defender/Operational'
-              Id        = 1116, 1117
-              StartTime = (Get-Date).AddMinutes(-30)
-            } | Format-Table TimeCreated, Id, Message -Wrap
-          } catch {
-            Write-Host "Get-WinEvent found no matching Defender events: $_"
-          }
-      - name: List archive entries (temporary, CAMEL-23703 CI investigation)
-        if: always()
-        shell: pwsh
-        run: |
-          Write-Host '--- zip entries (full listing) ---'
-          $zip = Get-ChildItem dsl/camel-jbang/camel-launcher/target/camel-launcher-*-bin.zip | Select-Object -First 1
-          if ($zip) {
-            Add-Type -AssemblyName System.IO.Compression.FileSystem
-            $reader = [System.IO.Compression.ZipFile]::OpenRead($zip.FullName)
-            $reader.Entries.FullName | Sort-Object
-            $reader.Dispose()
-          } else {
-            Write-Host "No zip archive found"
-          }
-
-          Write-Host ''
-          Write-Host '--- tar.gz entries (full listing) ---'
-          $tarball = Get-ChildItem dsl/camel-jbang/camel-launcher/target/camel-launcher-*-bin.tar.gz | Select-Object -First 1
-          if ($tarball) {
-            tar -tzf $tarball.FullName | Sort-Object
-          } else {
-            Write-Host "No tar.gz archive found"
-          }
-      - name: Re-run assembly:single with debug logging (temporary, CAMEL-23703 CI investigation)
-        if: always()
-        shell: pwsh
-        run: |
-          mvn -B -ntp -pl dsl/camel-jbang/camel-launcher org.apache.maven.plugins:maven-assembly-plugin:3.8.0:single -X *> assembly-debug.log
-          Write-Host '--- Debug log lines mentioning camel.exe, the fileSet scan, or the archiver ---'
-          Select-String -Path assembly-debug.log -Pattern 'camel\.exe|fileSet|DirectoryScanner|Cannot access|Scanning|addFileSet|Adding|Skipping' |
-            ForEach-Object { $_.Line }
       - name: Assert archive carries bin/camel.exe
         shell: pwsh
         run: |
           $zip = Get-ChildItem dsl/camel-jbang/camel-launcher/target/camel-launcher-*-bin.zip | Select-Object -First 1
           Add-Type -AssemblyName System.IO.Compression.FileSystem
           $names = [System.IO.Compression.ZipFile]::OpenRead($zip.FullName).Entries.FullName
-          if ($names -notcontains 'bin/camel.exe') { throw 'camel.exe missing from launcher archive' }
+          if (-not ($names -like '*/bin/camel.exe')) { throw 'camel.exe missing from launcher archive' }
