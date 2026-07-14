@@ -340,16 +340,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
     @Override
     protected void doStop() throws Exception {
         removeJobInScheduler();
-        if (deleteJob && ObjectHelper.isNotEmpty(customCalendar)) {
-            Scheduler scheduler = getComponent().getScheduler();
-            if (scheduler != null && !scheduler.isShutdown()) {
-                try {
-                    scheduler.deleteCalendar(customCalendarName());
-                } catch (SchedulerException e) {
-                    LOG.debug("Could not delete calendar {}: {}", customCalendarName(), e.getMessage());
-                }
-            }
-        }
     }
 
     private void removeJobInScheduler() throws Exception {
@@ -365,6 +355,13 @@ public class QuartzEndpoint extends DefaultEndpoint {
                 scheduler.unscheduleJob(triggerKey);
 
                 jobAdded.set(false);
+                if (ObjectHelper.isNotEmpty(customCalendar)) {
+                    try {
+                        scheduler.deleteCalendar(customCalendarName());
+                    } catch (SchedulerException e) {
+                        LOG.error("Could not delete calendar {}: {}", customCalendarName(), e.getMessage());
+                    }
+                }
             }
         } else if (pauseJob) {
             pauseTrigger();
