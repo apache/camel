@@ -359,7 +359,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
                     try {
                         scheduler.deleteCalendar(customCalendarName());
                     } catch (SchedulerException e) {
-                    } catch (SchedulerException e) {
                         LOG.warn("Could not delete calendar {}: {}", customCalendarName(), e.getMessage(), e);
                     }
                 }
