@@ -93,6 +93,7 @@ class TabRegistry {
     private SpansTab spansTab;
     private ProcessTab processTab;
     private OverviewTab overviewTab;
+    private KafkaTab kafkaTab;
     private DataSourceTab dataSourceTab;
     private SqlQueryTab sqlQueryTab;
     private SqlTraceTab sqlTraceTab;
@@ -113,6 +114,7 @@ class TabRegistry {
         diagramTab = new DiagramTab(ctx);
         routesTab = new RoutesTab(ctx);
         consumersTab = new ConsumersTab(ctx);
+        kafkaTab = new KafkaTab(ctx);
         dataSourceTab = new DataSourceTab(ctx);
         heapHistogramTab = new HeapHistogramTab(ctx);
         memoryLeakTab = new MemoryLeakTab(ctx);
@@ -161,9 +163,10 @@ class TabRegistry {
                 new MoreTab(TuiIcons.TAB_HEAP, "Heap Histogram", "&Heap Histogram", heapHistogramTab),
                 new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "In&flight", inflightTab),
                 new MoreTab(TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab),
+                new MoreTab(TuiIcons.TAB_KAFKA, "Kafka", "&Kafka", kafkaTab),
                 new MoreTab(TuiIcons.TAB_MAVEN_DEPENDENCIES, "Maven Dependencies", "Maven &Dependencies", mavenDependenciesTab),
                 new MoreTab(TuiIcons.TAB_MEMORY, "Memory", "&Memory", memoryTab),
-                new MoreTab(TuiIcons.TAB_MEMORY_LEAK, "Memory Leak", "Memory Lea&k", memoryLeakTab),
+                new MoreTab(TuiIcons.TAB_MEMORY_LEAK, "Memory Leak", "Memor&y Leak", memoryLeakTab),
                 new MoreTab(TuiIcons.TAB_METRICS, "Metrics", "Metr&ics", metricsTab),
                 new MoreTab(TuiIcons.TAB_SQL_QUERY, "SQL Query", "S&QL Query", sqlQueryTab),
                 new MoreTab(TuiIcons.TAB_SQL_TRACE, "SQL Trace", "SQL T&race", sqlTraceTab),
