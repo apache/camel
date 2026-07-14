@@ -200,7 +200,12 @@ public class PQCProducer extends DefaultProducer {
             throw new IllegalArgumentException("Symmetric Algorithm needs to be specified");
         }
 
-        SecretKey restoredKey = new SecretKeySpec(payload.getEncoded(), getConfiguration().getSymmetricKeyAlgorithm());
+        // Use the mapped JCE algorithm name (as extractEncapsulation does), not the raw enum name: for algorithms
+        // whose enum name differs from the JCE name (for example GOST3412_2015 -> GOST3412-2015) the raw name is not a
+        // resolvable cipher algorithm, so the restored key would carry an unusable algorithm label
+        SecretKey restoredKey = new SecretKeySpec(
+                payload.getEncoded(),
+                PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm());
 
         if (!getConfiguration().isStoreExtractedSecretKeyAsHeader()) {
             exchange.getMessage().setBody(restoredKey, SecretKey.class);
