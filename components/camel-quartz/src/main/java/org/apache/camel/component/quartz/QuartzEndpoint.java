@@ -339,6 +339,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
+        if (ObjectHelper.isNotEmpty(customCalendar)) {
+            getComponent().getScheduler().deleteCalendar(customCalendarName());
+        }
         removeJobInScheduler();
     }
 
