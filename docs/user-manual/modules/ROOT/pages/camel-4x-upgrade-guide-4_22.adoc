@@ -302,13 +302,10 @@ When using `allowManualCommit=true` together with a `DefaultKafkaManualCommitFac
 processed record — even when the route did not call `KafkaManualCommit.commit()`. This defeated the
 purpose of manual commit mode and could cause message loss.
 
-The framework now uses a no-op commit manager when manual commit is enabled, regardless of which
-commit factory is configured. Offsets are only committed when the route explicitly calls
-`KafkaManualCommit.commit()` on the exchange header. The configured factory still controls whether
-that explicit commit executes synchronously or asynchronously.
-
-Users relying on the previous (unintended) auto-commit behavior alongside manual commit should
-remove `allowManualCommit=true` and use Kafka's native auto-commit instead.
+The framework no longer records offsets for auto-commit when manual commit is enabled.
+Offsets are only committed when the route explicitly calls `KafkaManualCommit.commit()` on the
+exchange header. The configured factory still controls whether that explicit commit executes
+synchronously or asynchronously.
 
 === camel-jbang catalog tables fill the terminal width
 

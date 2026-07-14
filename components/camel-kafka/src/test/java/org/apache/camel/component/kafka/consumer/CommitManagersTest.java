@@ -51,23 +51,23 @@ class CommitManagersTest {
     }
 
     @Test
-    void manualCommitWithSyncFactoryUsesNoop() {
+    void manualCommitWithSyncFactoryUsesSync() {
         when(configuration.isAllowManualCommit()).thenReturn(true);
         when(endpoint.getKafkaManualCommitFactory()).thenReturn(new DefaultKafkaManualCommitFactory());
 
         CommitManager cm = CommitManagers.createCommitManager(consumer, kafkaConsumer, "t1", "topic");
 
-        assertInstanceOf(NoopCommitManager.class, cm);
+        assertInstanceOf(SyncCommitManager.class, cm);
     }
 
     @Test
-    void manualCommitWithAsyncFactoryUsesNoop() {
+    void manualCommitWithAsyncFactoryUsesAsync() {
         when(configuration.isAllowManualCommit()).thenReturn(true);
         when(endpoint.getKafkaManualCommitFactory()).thenReturn(new DefaultKafkaManualAsyncCommitFactory());
 
         CommitManager cm = CommitManagers.createCommitManager(consumer, kafkaConsumer, "t1", "topic");
 
-        assertInstanceOf(NoopCommitManager.class, cm);
+        assertInstanceOf(AsyncCommitManager.class, cm);
     }
 
     @Test
