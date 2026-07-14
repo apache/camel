@@ -51,7 +51,7 @@ public class InMemoryKeyLifecycleManager implements KeyLifecycleManager {
 
     @Override
     public KeyPair generateKeyPair(String algorithm, String keyId, Object parameterSpec) throws Exception {
-        LOG.debug("Generating key pair for algorithm: {}, keyId: {}", algorithm, keyId);
+        LOG.info("Generating key pair for algorithm: {}, keyId: {}", algorithm, keyId);
 
         KeyPair keyPair = KeyAlgorithmSupport.generateKeyPair(algorithm, parameterSpec);
 
@@ -59,7 +59,7 @@ public class InMemoryKeyLifecycleManager implements KeyLifecycleManager {
         keyMetadata.setDescription("Generated on " + new Date());
         storeKey(keyId, keyPair, keyMetadata);
 
-        LOG.debug("Generated key pair: {}", keyMetadata);
+        LOG.info("Generated key pair: {}", keyMetadata);
         return keyPair;
     }
 
@@ -135,7 +135,7 @@ public class InMemoryKeyLifecycleManager implements KeyLifecycleManager {
     public void deleteKey(String keyId) {
         keys.remove(keyId);
         metadata.remove(keyId);
-        LOG.debug("Deleted key: {}", keyId);
+        LOG.info("Deleted key: {}", keyId);
     }
 
     @Override
