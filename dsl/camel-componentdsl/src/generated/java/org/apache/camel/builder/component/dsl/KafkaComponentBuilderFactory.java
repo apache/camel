@@ -1578,9 +1578,8 @@ public interface KafkaComponentBuilderFactory {
     
         
         /**
-         * The maximum number of unsent messages that can be queued up the
-         * producer when using async mode before either the producer must be
-         * blocked or data must be dropped.
+         * Deprecated: this option has no effect. Use bufferMemorySize or
+         * maxBlockMs instead.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -1590,6 +1589,7 @@ public interface KafkaComponentBuilderFactory {
          * @param queueBufferingMaxMessages the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default KafkaComponentBuilder queueBufferingMaxMessages(java.lang.Integer queueBufferingMaxMessages) {
             doSetProperty("queueBufferingMaxMessages", queueBufferingMaxMessages);
             return this;

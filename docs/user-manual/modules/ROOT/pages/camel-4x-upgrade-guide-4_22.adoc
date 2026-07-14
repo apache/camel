@@ -289,6 +289,12 @@ get a null record key even when `key=fixedKey` was configured on the endpoint. A
 list elements (not `Exchange` or `Message`) are now properly converted to the configured serializer
 type.
 
+=== camel-kafka - queueBufferingMaxMessages option deprecated
+
+The `queueBufferingMaxMessages` producer option has been deprecated. This option has had no effect
+since the old Scala Kafka producer was removed in Camel 2.17 (CAMEL-9467). Use `bufferMemorySize`
+or `maxBlockMs` instead.
+
 === camel-jbang catalog tables fill the terminal width
 
 The `camel catalog` commands (`camel catalog component`, `camel catalog dataformat`,
