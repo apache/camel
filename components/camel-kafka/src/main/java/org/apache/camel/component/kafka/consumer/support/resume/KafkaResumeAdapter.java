@@ -57,7 +57,7 @@ public class KafkaResumeAdapter implements ResumeAdapter, Deserializable, Cachea
         if (keyObj instanceof String key) {
 
             final String[] keyParts = key.split("/");
-            if (keyParts == null || keyParts.length != 2) {
+            if (keyParts.length == 2) {
 
                 String topic = keyParts[0];
                 int partition = Integer.parseInt(keyParts[1]);
@@ -70,7 +70,7 @@ public class KafkaResumeAdapter implements ResumeAdapter, Deserializable, Cachea
                 }
 
             } else {
-                LOG.warn("Unable to deserialize key '{}' because it has in invalid format and it will be discarded",
+                LOG.warn("Unable to deserialize key '{}' because it has an invalid format and it will be discarded",
                         key);
             }
         } else {
