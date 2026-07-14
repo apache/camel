@@ -127,7 +127,12 @@ jobs:
           set -euo pipefail
           VSINSTALL=$("/c/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe" \
             -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath)
-          VCVARS_ENV=$(cmd //c "call \"$VSINSTALL\\VC\\Auxiliary\\Build\\vcvars64.bat\" && set")
+          # A single quoted "call ... && set" string round-trips through Git Bash's argv
+          # quoting (which backslash-escapes embedded quotes) and cmd.exe's /C parsing
+          # (which does not understand that escaping) mismatched, corrupting the path.
+          # Passing call/path/&&/set as separate argv elements sidesteps the mismatch:
+          # only the space-containing path needs quoting, and it has no embedded quotes.
+          VCVARS_ENV=$(cmd //c call "$VSINSTALL\VC\Auxiliary\Build\vcvars64.bat" "&&" set)
           while IFS='=' read -r name value; do
             [ -n "$name" ] || continue
             export "$name=$value"
