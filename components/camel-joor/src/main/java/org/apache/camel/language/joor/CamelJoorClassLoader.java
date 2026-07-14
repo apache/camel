@@ -53,8 +53,7 @@ public class CamelJoorClassLoader extends URLClassLoader {
         CompileStrategy cs = camelContext.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
         if (cs != null && cs.getWorkDir() != null) {
             try {
-                File dir = new File(cs.getWorkDir() + "/joor");
-                answer.add(dir.toURI().toURL());
+                answer.add(new File(cs.getWorkDir()).toURI().toURL());
             } catch (MalformedURLException e) {
                 // ignore
             }
