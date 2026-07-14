@@ -297,7 +297,7 @@
         <jira-rest-client-api-version>6.0.4</jira-rest-client-api-version>
         <jira-sal-api-version>7.2.1</jira-sal-api-version>
         <jline-version>4.3.1</jline-version>
-        <libthrift-version>0.23.0</libthrift-version>
+        <libthrift-version>0.24.0</libthrift-version>
         <jodatime2-version>2.14.2</jodatime2-version>
         <jolokia-version>2.6.0</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
