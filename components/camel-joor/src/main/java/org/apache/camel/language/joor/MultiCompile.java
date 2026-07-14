@@ -183,7 +183,7 @@ public final class MultiCompile {
             // We need a private-access lookup from the class in that stack frame in order to get
             // private-access to any local interfaces at that location.
             int index = 2;
-            ByteArrayClassLoader c = new ByteArrayClassLoader(fileManager.classes());
+            ByteArrayClassLoader c = new ByteArrayClassLoader(cl, fileManager.classes());
             for (CharSequenceJavaFileObject f : files) {
                 String className = f.getClassName();
 
