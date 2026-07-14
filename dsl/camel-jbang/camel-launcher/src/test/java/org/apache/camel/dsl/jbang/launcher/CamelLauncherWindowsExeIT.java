@@ -55,7 +55,12 @@ class CamelLauncherWindowsExeIT {
         assertNotNull(zip, "camel-launcher-*-bin.zip must be produced by the assembly plugin");
 
         try (ZipFile archive = new ZipFile(zip.toFile())) {
-            ZipEntry entry = archive.getEntry("bin/camel.exe");
+            // maven-assembly-plugin defaults includeBaseDirectory to true, so entries are
+            // nested under camel-launcher-<version>/, not at the archive root.
+            ZipEntry entry = archive.stream()
+                    .filter(e -> e.getName().endsWith("/bin/camel.exe"))
+                    .findFirst()
+                    .orElse(null);
             assertNotNull(entry, "bin/camel.exe must be included in " + zip.getFileName());
             assertTrue(entry.getSize() > 0, "bin/camel.exe must not be empty");
         }
