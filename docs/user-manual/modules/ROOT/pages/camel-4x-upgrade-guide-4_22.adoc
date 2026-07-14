@@ -364,6 +364,13 @@ The clustered route controller property `camel.clustered.controller.initial-dela
 it keeps its `String` type because it supports Camel time patterns (for example `10 seconds`)
 that `Duration` binding does not.
 
+=== camel-core - Multicast UseOriginalAggregationStrategy fix
+
+The Multicast EIP now correctly honors `UseOriginalAggregationStrategy`, consistent with the Splitter
+and Recipient List EIPs. Previously, Multicast did not bind the original exchange on the strategy,
+so the strategy was silently ineffective — especially in error scenarios where the aggregated result
+could overwrite the original exchange body instead of preserving it.
+
 === camel-sql - PostgreSQL aggregation repositories fixed
 
 `PostgresAggregationRepository` and `ClusteredPostgresAggregationRepository` were broken since
