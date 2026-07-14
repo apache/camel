@@ -17,7 +17,10 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -57,14 +60,13 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
-import org.apache.camel.dsl.jbang.core.commands.AskTools;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.util.json.JsonObject;
 
 /**
- * AI prompt panel for the TUI. Communicates directly with an LLM via {@link LlmClient} and uses the same tool
- * definitions as {@code camel ask}. Toggled with F8 when the TUI runs with {@code --mcp} mode.
+ * AI prompt panel for the TUI. Communicates directly with an LLM via {@link LlmClient} and uses TUI-specific tools
+ * backed by {@link McpFacade} for observing and interacting with the monitored Camel integrations. Toggled with F8.
  */
 class AiPanel {
 
@@ -113,7 +115,6 @@ class AiPanel {
     private volatile LlmClient client;
     private List<LlmClient.Message> messages;
     private List<LlmClient.ToolDef> tools;
-    private AskTools askTools;
     private final AtomicBoolean thinking = new AtomicBoolean();
     private volatile Thread agentThread;
     private String initError;
@@ -140,6 +141,12 @@ class AiPanel {
     private AiProviderSwitchPopup.ProviderChoice sessionProviderChoice;
     private List<AiProviderSwitchPopup.ProviderChoice> providerChoicesForTesting;
     private boolean testingClientInjected;
+
+    // MCP facade for TUI tool access from the AI panel
+    private McpFacade mcpFacade;
+    private TuiToolRegistry toolRegistry;
+    private boolean mcpServerActive;
+    private int mcpServerPort;
 
     // Activity log for AI Log popup
     private final List<LogEntry> activityLog = new ArrayList<>();
@@ -168,6 +175,24 @@ class AiPanel {
 
     void setLaunchManager(LaunchManager launchManager) {
         this.launchManager = launchManager;
+        if (toolRegistry != null) {
+            toolRegistry.setLaunchManager(launchManager);
+        }
+    }
+
+    void setMcpFacade(McpFacade mcpFacade) {
+        this.mcpFacade = mcpFacade;
+        if (mcpFacade != null) {
+            this.toolRegistry = new TuiToolRegistry(mcpFacade);
+            if (launchManager != null) {
+                toolRegistry.setLaunchManager(launchManager);
+            }
+        }
+    }
+
+    void setMcpInfo(boolean active, int port) {
+        this.mcpServerActive = active;
+        this.mcpServerPort = port;
     }
 
     synchronized List<LogEntry> getActivityLog() {
@@ -263,10 +288,7 @@ class AiPanel {
             }
             initError = null;
             messages = new ArrayList<>();
-            long pid = ctx != null && ctx.selectedPid != null ? Long.parseLong(ctx.selectedPid) : -1;
-            String name = ctx != null ? ctx.selectedName() : null;
-            askTools = new AskTools(pid);
-            tools = askTools.buildToolDefinitions();
+            tools = buildTuiToolDefinitions();
         } catch (Exception e) {
             initError = "Failed to initialize AI: " + e.getMessage();
             client = null;
@@ -354,6 +376,9 @@ class AiPanel {
             close();
             return true;
         }
+        if (isFunctionKey(ke)) {
+            return false;
+        }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('p') && !thinking.get() && activeCliCommand == null) {
             openProviderSwitch();
             return true;
@@ -361,6 +386,14 @@ class AiPanel {
         if (ke.hasCtrl() && ke.isCharIgnoreCase('u')) {
             statsView = !statsView;
             statsScrollOffset = 0;
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('y')) {
+            copyLastResponseToClipboard();
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('e')) {
+            exportChatToFile();
             return true;
         }
         if (ke.isKey(KeyCode.PAGE_UP)) {
@@ -658,12 +691,9 @@ class AiPanel {
         thinkingStartTime = System.currentTimeMillis();
         thinking.set(true);
 
-        // rebuild tools if target process changed
-        long pid = ctx != null && ctx.selectedPid != null ? Long.parseLong(ctx.selectedPid) : -1;
-        String name = ctx != null ? ctx.selectedName() : null;
-        askTools = new AskTools(pid);
-        tools = askTools.buildToolDefinitions();
-        String systemPrompt = AskTools.buildSystemPrompt(pid, name);
+        // rebuild tools in case mcpFacade was wired after init
+        tools = buildTuiToolDefinitions();
+        String systemPrompt = buildSystemPrompt();
 
         agentThread = new Thread(() -> {
             try {
@@ -726,7 +756,7 @@ class AiPanel {
                         throw new InterruptedException();
                     }
                     log(LogLevel.TOOL, toolCall.name(), toolCall.arguments().toJson());
-                    String result = askTools.executeTool(toolCall.name(), toolCall.arguments());
+                    String result = executeTuiTool(toolCall.name(), toolCall.arguments());
                     log(LogLevel.RESULT, toolCall.name(), result);
                     results.add(new LlmClient.ToolResult(toolCall.id(), result));
                 }
@@ -1046,6 +1076,8 @@ class AiPanel {
         }
         TuiHelper.hint(spans, "Shift+F8", "resize (" + anim.cyclePercent() + "%)");
         TuiHelper.hint(spans, "PgUp/Dn", "scroll");
+        TuiHelper.hint(spans, "Ctrl+Y", "copy");
+        TuiHelper.hint(spans, "Ctrl+E", "export");
         if (!statsView) {
             TuiHelper.hint(spans, "Ctrl+P", "provider");
             if (!thinking.get()) {
@@ -1053,6 +1085,77 @@ class AiPanel {
             } else {
                 TuiHelper.hint(spans, "Esc/Ctrl+C", "interrupt");
             }
+        }
+    }
+
+    private void copyLastResponseToClipboard() {
+        for (int i = conversation.size() - 1; i >= 0; i--) {
+            ConversationEntry entry = conversation.get(i);
+            if (entry.role() == AiRole.ASSISTANT && entry.text() != null && !entry.text().isEmpty()) {
+                try {
+                    copyToSystemClipboard(entry.text());
+                    notify("Copied to clipboard", false);
+                } catch (Exception e) {
+                    notify("Clipboard not available: " + e.getMessage(), true);
+                }
+                return;
+            }
+        }
+        notify("No AI response to copy", true);
+    }
+
+    private static void copyToSystemClipboard(String text) throws IOException {
+        String os = System.getProperty("os.name", "").toLowerCase();
+        String[] cmd;
+        if (os.contains("mac")) {
+            cmd = new String[] { "pbcopy" };
+        } else if (os.contains("win")) {
+            cmd = new String[] { "clip" };
+        } else {
+            cmd = new String[] { "xclip", "-selection", "clipboard" };
+        }
+        Process p = new ProcessBuilder(cmd).start();
+        try (java.io.OutputStream out = p.getOutputStream()) {
+            out.write(text.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        }
+        try {
+            p.waitFor(5, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void exportChatToFile() {
+        if (conversation.isEmpty()) {
+            notify("No conversation to export", true);
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("# Camel TUI AI Chat\n\n");
+        sb.append("_Exported: ").append(LocalDateTime.now().format(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("_\n");
+        for (ConversationEntry entry : conversation) {
+            sb.append("\n---\n\n");
+            switch (entry.role()) {
+                case USER -> sb.append("**You:** ").append(entry.text()).append("\n");
+                case ASSISTANT -> sb.append("**AI:** ").append(entry.text()).append("\n");
+                case ERROR -> sb.append("**Error:** ").append(entry.text()).append("\n");
+                case SYSTEM -> sb.append("_System: ").append(entry.text()).append("_\n");
+            }
+        }
+        try {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+            String filename = "camel-ai-chat-" + timestamp + ".md";
+            Files.writeString(Path.of(filename), sb.toString());
+            notify("Saved: " + filename, false);
+        } catch (IOException e) {
+            notify("Export failed: " + e.getMessage(), true);
+        }
+    }
+
+    private void notify(String message, boolean error) {
+        if (ctx != null && ctx.notificationCallback != null) {
+            ctx.notificationCallback.accept(message, error);
         }
     }
 
@@ -1234,6 +1337,101 @@ class AiPanel {
             }
         }
         frame.renderWidget(Paragraph.from(new dev.tamboui.text.Text(lines, dev.tamboui.layout.Alignment.LEFT)), area);
+    }
+
+    private String buildSystemPrompt() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("You are an Apache Camel assistant running inside the Camel TUI terminal console. ");
+        sb.append("You help users understand and troubleshoot their running Camel integrations.\n\n");
+
+        String selectedName = mcpFacade != null ? mcpFacade.getSelectedIntegrationName() : null;
+        String selectedPid = mcpFacade != null ? mcpFacade.getSelectedPid() : null;
+        if (selectedName != null && selectedPid != null) {
+            sb.append("The user is monitoring: ").append(selectedName);
+            sb.append(" (PID ").append(selectedPid).append(").\n\n");
+        }
+
+        sb.append("You have tui_* tools to observe and interact with the TUI:\n");
+        sb.append("- tui_get_state: see which tab is active and which integration is selected\n");
+        sb.append("- tui_get_table: get structured data from any tab WITHOUT navigating to it ");
+        sb.append("(Memory, Routes, Endpoints, Health, Process, Threads, Metrics, Startup, Heap Histogram, etc.)\n");
+        sb.append("- tui_get_log: read application logs with filtering, WITHOUT navigating to the Log tab\n");
+        sb.append("- tui_get_errors: get error details with stack traces, WITHOUT navigating to the Errors tab\n");
+        sb.append("- tui_get_diagram: view route diagrams as text, WITHOUT navigating to the Diagram tab\n");
+        sb.append("- tui_get_topology: see how routes connect to each other, WITHOUT navigating to the Topology tab\n");
+        sb.append("- tui_get_history: trace exchange processing steps, WITHOUT navigating to the History tab\n");
+        sb.append("- tui_get_spans: OpenTelemetry span data, WITHOUT navigating to the Spans tab\n");
+        sb.append("- tui_navigate: switch tabs, select integrations, select routes ");
+        sb.append("- ONLY use when the user explicitly wants to change the view\n");
+        sb.append("- tui_control: stop/start routes, restart or stop integrations\n");
+        sb.append("- tui_send_message: send test messages to endpoints\n");
+        sb.append("- tui_filter: set or clear text filters on any tab\n");
+        sb.append("- tui_execute_sql: run SQL queries against a DataSource in the integration\n");
+        sb.append("- tui_set_log_level: change the runtime log level\n");
+        sb.append("- tui_draw_shape: draw shapes (box, highlight, arrow, underline, text) on screen to annotate problems\n");
+        sb.append("- tui_draw_clear: clear drawing overlay\n");
+        sb.append("- tui_locate: find elements on screen by text or diagram node ID, returns coordinates for drawing\n");
+        sb.append("- tui_show_caption: display a message to the user on screen\n");
+        sb.append("- tui_action: invoke TUI actions (reset-stats, screenshot, toggle-theme, etc.)\n");
+        sb.append("- tui_get_themes / tui_set_theme: list and switch TUI themes\n");
+        sb.append("- tui_get_files / tui_get_readme: read source files and README from integrations\n");
+        sb.append("- tui_update_row: update a database row via PreparedStatement\n");
+        sb.append("- tui_set_input: set input field values on tabs directly\n");
+        sb.append("- tui_toggle_trace_display: control which sections show in History detail view\n");
+        sb.append("- tui_canvas_open / tui_canvas_close: open/close a blank canvas for free-form drawing\n");
+        sb.append("- tui_animate: run built-in animations on the canvas\n");
+        sb.append("- tui_send_keys: send key presses to the TUI\n");
+        sb.append("- tui_get_events: see recent user interaction events\n");
+        sb.append("- tui_tape_start / tui_tape_stop: record TUI interactions as .tape files\n");
+        sb.append("- tui_wait_for_idle / tui_sleep: timing tools for pacing interactions\n\n");
+        sb.append("Guidelines:\n");
+        sb.append("- NEVER call tui_navigate just to read data ");
+        sb.append("- all tui_get_* tools fetch data directly from any tab without changing the active tab\n");
+        sb.append("- Prefer tui_get_table over tui_get_screen for structured data ");
+        sb.append("- it fetches from any tab directly using the tab parameter, no navigation needed\n");
+        sb.append("- Use tui_get_state first to understand context before acting, if needed\n");
+        sb.append("- Be concise and actionable in your answers\n");
+        sb.append("- When something looks wrong, explain what it means and suggest fixes\n");
+        sb.append("- For stopping routes or applications, use tui_control for graceful shutdown\n");
+        sb.append("- Use tui_locate + tui_draw_shape to visually highlight problems on screen for the user\n");
+        if (mcpServerActive) {
+            sb.append("\nThe TUI MCP server is available at http://localhost:")
+                    .append(mcpServerPort).append("/mcp for external AI agents.");
+        }
+        return sb.toString();
+    }
+
+    private List<LlmClient.ToolDef> buildTuiToolDefinitions() {
+        if (toolRegistry == null) {
+            return List.of();
+        }
+        List<LlmClient.ToolDef> defs = new ArrayList<>();
+        for (TuiToolRegistry.ToolDef td : toolRegistry.getToolDefinitions()) {
+            defs.add(new LlmClient.ToolDef(td.name(), td.description(), td.inputSchema()));
+        }
+        return defs;
+    }
+
+    private String executeTuiTool(String name, JsonObject args) {
+        if (toolRegistry == null) {
+            return "Error: TUI tools not available";
+        }
+        try {
+            return toolRegistry.execute(name, args);
+        } catch (IllegalArgumentException e) {
+            return "Unknown TUI tool: " + name;
+        } catch (Exception e) {
+            return "Error executing " + name + ": " + e.getMessage();
+        }
+    }
+
+    // F8 intentionally excluded — it closes the panel and is handled above
+    private static boolean isFunctionKey(KeyEvent ke) {
+        KeyCode code = ke.code();
+        return code == KeyCode.F1 || code == KeyCode.F2 || code == KeyCode.F3
+                || code == KeyCode.F4 || code == KeyCode.F5 || code == KeyCode.F6
+                || code == KeyCode.F7 || code == KeyCode.F9 || code == KeyCode.F10
+                || code == KeyCode.F11 || code == KeyCode.F12;
     }
 
     private static String toHardBreaks(String text) {

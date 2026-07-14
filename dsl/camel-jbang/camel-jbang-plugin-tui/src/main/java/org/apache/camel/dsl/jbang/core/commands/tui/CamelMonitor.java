@@ -472,6 +472,7 @@ public class CamelMonitor extends CamelCommand {
                         stopSelectedProcess(forceKill);
                     }
                 });
+        aiPanel.setMcpFacade(mcpFacade);
         Path mcpJsonFile = null;
         actionsPopup.setAiActivityLog(aiPanel::getActivityLog);
         if (mcp) {
@@ -488,6 +489,7 @@ public class CamelMonitor extends CamelCommand {
                 mcp = false;
             }
         }
+        aiPanel.setMcpInfo(mcp, mcpPort);
 
         try (var tui = TuiBackendHelper.createTuiRunner()) {
             this.runner = tui;
@@ -613,6 +615,12 @@ public class CamelMonitor extends CamelCommand {
                 }
                 return shellPanel.handleKeyEvent(ke);
             }
+            if (actionsPopup.isVisible()) {
+                return actionsPopup.handleKeyEvent(ke);
+            }
+            if (popupManager.handleKeyEvent(ke, tabRegistry.selectedTabIndex(), TAB_LOG)) {
+                return true;
+            }
             if (aiPanel.isOpen()) {
                 if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
                     if (lastContentArea != null) {
@@ -620,13 +628,9 @@ public class CamelMonitor extends CamelCommand {
                     }
                     return true;
                 }
-                return aiPanel.handleKeyEvent(ke);
-            }
-            if (actionsPopup.isVisible()) {
-                return actionsPopup.handleKeyEvent(ke);
-            }
-            if (popupManager.handleKeyEvent(ke, tabRegistry.selectedTabIndex(), TAB_LOG)) {
-                return true;
+                if (aiPanel.handleKeyEvent(ke)) {
+                    return true;
+                }
             }
             if (handleGlobalKeys(ke, runner)) {
                 return true;

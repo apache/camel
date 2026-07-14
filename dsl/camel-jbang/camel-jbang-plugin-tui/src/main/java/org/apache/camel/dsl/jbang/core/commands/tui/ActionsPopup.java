@@ -283,10 +283,8 @@ class ActionsPopup {
                 Action.STOP_ALL));
         flat.add(null);
         flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.SCREEN_SUBMENU, Action.SETTINGS));
-        if (mcpEnabled) {
-            flat.add(null);
-            flat.add(Action.MCP_SUBMENU);
-        }
+        flat.add(null);
+        flat.add(Action.MCP_SUBMENU);
         flat.add(null);
         flat.add(Action.SHELL);
         return flat;
@@ -308,7 +306,11 @@ class ActionsPopup {
         List<Action> flat = new ArrayList<>();
         flat.add(Action.BACK);
         flat.add(null);
-        flat.addAll(List.of(Action.AI_PROMPT, Action.SETUP_AI, Action.AI_LOG, Action.MCP_INFO, Action.MCP_LOG));
+        flat.addAll(List.of(Action.AI_PROMPT, Action.SETUP_AI, Action.AI_LOG));
+        if (mcpEnabled) {
+            flat.add(null);
+            flat.addAll(List.of(Action.MCP_INFO, Action.MCP_LOG));
+        }
         return flat;
     }
 
@@ -406,10 +408,13 @@ class ActionsPopup {
             labels.add("..");
             labels.add("───");
             labels.add("AI Prompt");
-            labels.add("Setup MCP");
+            labels.add("Setup AI");
             labels.add("AI Log");
-            labels.add("MCP Info");
-            labels.add("MCP Log");
+            if (mcpEnabled) {
+                labels.add("───");
+                labels.add("MCP Info");
+                labels.add("MCP Log");
+            }
             return labels;
         }
         // Main menu
@@ -427,10 +432,8 @@ class ActionsPopup {
         labels.add("Reset Stats");
         labels.add("Screen...");
         labels.add("Settings...");
-        if (mcpEnabled) {
-            labels.add("───");
-            labels.add("AI & MCP...");
-        }
+        labels.add("───");
+        labels.add(mcpEnabled ? "AI & MCP..." : "AI...");
         labels.add("───");
         labels.add("Shell");
         return labels;
@@ -975,11 +978,9 @@ class ActionsPopup {
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.RESET, "Reset Stats")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.COMPUTER, "Screen...")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.SETTINGS, "Settings...")));
-        // Group 3: MCP (conditional)
-        if (mcpEnabled) {
-            items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
-            items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP, "AI & MCP...")));
-        }
+        // Group 3: AI (& MCP when enabled)
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP, mcpEnabled ? "AI & MCP..." : "AI...")));
         // Group 4: Shell
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         items.add(ListItem.from("  >_ Shell (F6)"));
@@ -1055,10 +1056,14 @@ class ActionsPopup {
         items.add(ListItem.from("  .."));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP_BRAIN, "AI Prompt (F8)")));
-        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.README, "Setup MCP")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.README, "Setup AI")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAPTION, "AI Log")));
-        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP, "MCP Info")));
-        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP_LOG, "MCP Log")));
+        if (mcpEnabled) {
+            items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+            items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP, "MCP Info")));
+            items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.MCP_LOG, "MCP Log")));
+        }
+        String title = mcpEnabled ? " AI & MCP " : " AI ";
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Theme.selectionBg())
@@ -1066,7 +1071,7 @@ class ActionsPopup {
                 .scrollMode(ScrollMode.NONE)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" AI & MCP ")
+                        .title(title)
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, actionsMenuState);
