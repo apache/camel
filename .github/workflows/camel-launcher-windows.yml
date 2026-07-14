@@ -158,6 +158,37 @@ jobs:
           } catch {
             Write-Host "Get-WinEvent found no matching Defender events: $_"
           }
+      - name: List archive entries (temporary, CAMEL-23703 CI investigation)
+        if: always()
+        shell: pwsh
+        run: |
+          Write-Host '--- zip entries (full listing) ---'
+          $zip = Get-ChildItem dsl/camel-jbang/camel-launcher/target/camel-launcher-*-bin.zip | Select-Object -First 1
+          if ($zip) {
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            $reader = [System.IO.Compression.ZipFile]::OpenRead($zip.FullName)
+            $reader.Entries.FullName | Sort-Object
+            $reader.Dispose()
+          } else {
+            Write-Host "No zip archive found"
+          }
+
+          Write-Host ''
+          Write-Host '--- tar.gz entries (full listing) ---'
+          $tarball = Get-ChildItem dsl/camel-jbang/camel-launcher/target/camel-launcher-*-bin.tar.gz | Select-Object -First 1
+          if ($tarball) {
+            tar -tzf $tarball.FullName | Sort-Object
+          } else {
+            Write-Host "No tar.gz archive found"
+          }
+      - name: Re-run assembly:single with debug logging (temporary, CAMEL-23703 CI investigation)
+        if: always()
+        shell: pwsh
+        run: |
+          mvn -B -ntp -pl dsl/camel-jbang/camel-launcher org.apache.maven.plugins:maven-assembly-plugin:3.8.0:single -X *> assembly-debug.log
+          Write-Host '--- Debug log lines mentioning camel.exe, the fileSet scan, or the archiver ---'
+          Select-String -Path assembly-debug.log -Pattern 'camel\.exe|fileSet|DirectoryScanner|Cannot access|Scanning|addFileSet|Adding|Skipping' |
+            ForEach-Object { $_.Line }
       - name: Assert archive carries bin/camel.exe
         shell: pwsh
         run: |
