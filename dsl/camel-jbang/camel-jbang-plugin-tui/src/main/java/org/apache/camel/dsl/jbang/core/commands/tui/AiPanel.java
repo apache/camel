@@ -1094,20 +1094,14 @@ class AiPanel {
             if (entry.role() == AiRole.ASSISTANT && entry.text() != null && !entry.text().isEmpty()) {
                 try {
                     copyToSystemClipboard(entry.text());
-                    if (mcpFacade != null) {
-                        mcpFacade.showCaption("Copied to clipboard", 3);
-                    }
+                    notify("Copied to clipboard", false);
                 } catch (Exception e) {
-                    if (mcpFacade != null) {
-                        mcpFacade.showCaption("Clipboard not available: " + e.getMessage(), 3);
-                    }
+                    notify("Clipboard not available: " + e.getMessage(), true);
                 }
                 return;
             }
         }
-        if (mcpFacade != null) {
-            mcpFacade.showCaption("No AI response to copy", 3);
-        }
+        notify("No AI response to copy", true);
     }
 
     private static void copyToSystemClipboard(String text) throws IOException {
@@ -1133,9 +1127,7 @@ class AiPanel {
 
     private void exportChatToFile() {
         if (conversation.isEmpty()) {
-            if (mcpFacade != null) {
-                mcpFacade.showCaption("No conversation to export", 3);
-            }
+            notify("No conversation to export", true);
             return;
         }
         StringBuilder sb = new StringBuilder();
@@ -1155,13 +1147,15 @@ class AiPanel {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
             String filename = "camel-ai-chat-" + timestamp + ".md";
             Files.writeString(Path.of(filename), sb.toString());
-            if (mcpFacade != null) {
-                mcpFacade.showCaption("Saved: " + filename, 5);
-            }
+            notify("Saved: " + filename, false);
         } catch (IOException e) {
-            if (mcpFacade != null) {
-                mcpFacade.showCaption("Export failed: " + e.getMessage(), 3);
-            }
+            notify("Export failed: " + e.getMessage(), true);
+        }
+    }
+
+    private void notify(String message, boolean error) {
+        if (ctx != null && ctx.notificationCallback != null) {
+            ctx.notificationCallback.accept(message, error);
         }
     }
 
