@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.kafka.consumer.support.batching;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -53,16 +55,26 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     private final class CommitSynchronization implements Synchronization {
         private final ExceptionHandler exceptionHandler;
         private final int size;
+        private final Map<TopicPartition, Long> batchOffsets;
 
-        public CommitSynchronization(ExceptionHandler exceptionHandler, int size) {
+        public CommitSynchronization(ExceptionHandler exceptionHandler, int size,
+                                     Map<TopicPartition, Long> batchOffsets) {
             this.exceptionHandler = exceptionHandler;
             this.size = size;
+            this.batchOffsets = batchOffsets;
+        }
+
+        private void commitBatchOffsets() {
+            for (Map.Entry<TopicPartition, Long> entry : batchOffsets.entrySet()) {
+                commitManager.recordOffset(entry.getKey(), entry.getValue());
+                commitManager.commit(entry.getKey());
+            }
         }
 
         @Override
         public void onComplete(Exchange exchange) {
             LOG.debug("Calling commit on {} exchanges using {}", size, commitManager.getClass().getSimpleName());
-            commitManager.commit();
+            commitBatchOffsets();
         }
 
         @Override
@@ -80,7 +92,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
                     // This allows the consumer to move forward and potentially retry the problematic batch
                     LOG.debug("Calling commit on {} exchanges using {} due to breakOnFirstError", size,
                             commitManager.getClass().getSimpleName());
-                    commitManager.commit();
+                    commitBatchOffsets();
                 } else {
                     // Standard error handling - just log and continue (original behavior)
                     exceptionHandler.handleException(
@@ -182,6 +194,21 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         return timeout || interval;
     }
 
+    private Map<TopicPartition, Long> computeBatchOffsets(List<Exchange> exchanges) {
+        Map<TopicPartition, Long> offsets = new HashMap<>();
+        for (Exchange ex : exchanges) {
+            Message msg = ex.getMessage();
+            String topic = (String) msg.getHeader(KafkaConstants.TOPIC);
+            Integer partition = (Integer) msg.getHeader(KafkaConstants.PARTITION);
+            Long offset = (Long) msg.getHeader(KafkaConstants.OFFSET);
+            if (topic != null && partition != null && offset != null) {
+                TopicPartition tp = new TopicPartition(topic, partition);
+                offsets.merge(tp, offset, Math::max);
+            }
+        }
+        return offsets;
+    }
+
     private ProcessingResult processBatch(KafkaConsumer camelKafkaConsumer) {
         intervalWatch.restart();
 
@@ -217,7 +244,9 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     private ProcessingResult autoCommitResultProcessing(
             KafkaConsumer camelKafkaConsumer, Exchange exchange, List<Exchange> exchanges) {
         ExceptionHandler exceptionHandler = camelKafkaConsumer.getExceptionHandler();
-        CommitSynchronization commitSynchronization = new CommitSynchronization(exceptionHandler, exchanges.size());
+        Map<TopicPartition, Long> batchOffsets = computeBatchOffsets(exchanges);
+        CommitSynchronization commitSynchronization
+                = new CommitSynchronization(exceptionHandler, exchanges.size(), batchOffsets);
         exchange.getExchangeExtension().addOnCompletion(commitSynchronization);
         try {
             processor.process(exchange);
