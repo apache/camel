@@ -95,8 +95,8 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
 
     private void initDevSpanExporter() {
         if (isOpenTelemetryAgentPresent()) {
-            if ("jaeger".equals(exportTarget)) {
-                LOG.info("OpenTelemetry Java Agent detected, exporting traces to Jaeger");
+            if (exportTarget != null && !exportTarget.isEmpty()) {
+                LOG.info("OpenTelemetry Java Agent detected, exporting traces externally (target: {})", exportTarget);
                 return;
             }
             LOG.info("OpenTelemetry Java Agent detected, using embedded OTLP receiver");

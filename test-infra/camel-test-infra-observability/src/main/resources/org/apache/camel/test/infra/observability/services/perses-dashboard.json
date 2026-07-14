@@ -1,0 +1,607 @@
+{
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "overview"
+  },
+  "spec": {
+    "display": {
+      "name": "Camel Overview"
+    },
+    "duration": "30m",
+    "layouts": [
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Summary",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0, "y": 0, "width": 4, "height": 4,
+              "content": { "$ref": "#/spec/panels/uptime" }
+            },
+            {
+              "x": 4, "y": 0, "width": 4, "height": 4,
+              "content": { "$ref": "#/spec/panels/runningRoutes" }
+            },
+            {
+              "x": 8, "y": 0, "width": 4, "height": 4,
+              "content": { "$ref": "#/spec/panels/totalExchanges" }
+            },
+            {
+              "x": 12, "y": 0, "width": 4, "height": 4,
+              "content": { "$ref": "#/spec/panels/failedExchanges" }
+            },
+            {
+              "x": 16, "y": 0, "width": 4, "height": 4,
+              "content": { "$ref": "#/spec/panels/inflightExchanges" }
+            },
+            {
+              "x": 20, "y": 0, "width": 4, "height": 4,
+              "content": { "$ref": "#/spec/panels/cpuUsage" }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Exchanges",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0, "y": 0, "width": 8, "height": 8,
+              "content": { "$ref": "#/spec/panels/exchangesRate" }
+            },
+            {
+              "x": 8, "y": 0, "width": 8, "height": 8,
+              "content": { "$ref": "#/spec/panels/exchangesTotal" }
+            },
+            {
+              "x": 16, "y": 0, "width": 8, "height": 8,
+              "content": { "$ref": "#/spec/panels/exchangesFailed" }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Performance",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0, "y": 0, "width": 12, "height": 8,
+              "content": { "$ref": "#/spec/panels/processingTime" }
+            },
+            {
+              "x": 12, "y": 0, "width": 12, "height": 8,
+              "content": { "$ref": "#/spec/panels/processingTimeMax" }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "JVM",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0, "y": 0, "width": 8, "height": 8,
+              "content": { "$ref": "#/spec/panels/jvmMemory" }
+            },
+            {
+              "x": 8, "y": 0, "width": 8, "height": 8,
+              "content": { "$ref": "#/spec/panels/jvmThreads" }
+            },
+            {
+              "x": 16, "y": 0, "width": 8, "height": 8,
+              "content": { "$ref": "#/spec/panels/gcPauses" }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "System",
+            "collapse": {
+              "open": false
+            }
+          },
+          "items": [
+            {
+              "x": 0, "y": 0, "width": 12, "height": 8,
+              "content": { "$ref": "#/spec/panels/cpuTimeline" }
+            },
+            {
+              "x": 12, "y": 0, "width": 12, "height": 8,
+              "content": { "$ref": "#/spec/panels/loadAverage" }
+            }
+          ]
+        }
+      }
+    ],
+    "panels": {
+      "uptime": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "Uptime" },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "format": { "unit": "seconds" },
+              "sparkline": {}
+            }
+          },
+          "queries": [{
+            "kind": "TimeSeriesQuery",
+            "spec": {
+              "plugin": {
+                "kind": "PrometheusTimeSeriesQuery",
+                "spec": { "query": "process_uptime_seconds" }
+              }
+            }
+          }]
+        }
+      },
+      "runningRoutes": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "Running Routes" },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": { "calculation": "last-number", "format": { "unit": "decimal" } }
+          },
+          "queries": [{
+            "kind": "TimeSeriesQuery",
+            "spec": {
+              "plugin": {
+                "kind": "PrometheusTimeSeriesQuery",
+                "spec": { "query": "camel_routes_running_routes" }
+              }
+            }
+          }]
+        }
+      },
+      "totalExchanges": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "Total Exchanges" },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "format": { "unit": "decimal", "shortValues": true },
+              "sparkline": {}
+            }
+          },
+          "queries": [{
+            "kind": "TimeSeriesQuery",
+            "spec": {
+              "plugin": {
+                "kind": "PrometheusTimeSeriesQuery",
+                "spec": { "query": "camel_exchanges_total{eventType=\"context\"}" }
+              }
+            }
+          }]
+        }
+      },
+      "failedExchanges": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "Failed Exchanges" },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "format": { "unit": "decimal" },
+              "sparkline": {}
+            }
+          },
+          "queries": [{
+            "kind": "TimeSeriesQuery",
+            "spec": {
+              "plugin": {
+                "kind": "PrometheusTimeSeriesQuery",
+                "spec": { "query": "camel_exchanges_failed_total{eventType=\"context\"}" }
+              }
+            }
+          }]
+        }
+      },
+      "inflightExchanges": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "Inflight" },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": { "calculation": "last-number", "format": { "unit": "decimal" } }
+          },
+          "queries": [{
+            "kind": "TimeSeriesQuery",
+            "spec": {
+              "plugin": {
+                "kind": "PrometheusTimeSeriesQuery",
+                "spec": { "query": "sum(camel_exchanges_inflight{eventType=\"route\"})" }
+              }
+            }
+          }]
+        }
+      },
+      "cpuUsage": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "CPU Usage" },
+          "plugin": {
+            "kind": "GaugeChart",
+            "spec": {
+              "calculation": "last-number",
+              "format": { "unit": "percent-decimal" },
+              "thresholds": { "steps": [{ "value": 0.7 }, { "value": 0.9 }] }
+            }
+          },
+          "queries": [{
+            "kind": "TimeSeriesQuery",
+            "spec": {
+              "plugin": {
+                "kind": "PrometheusTimeSeriesQuery",
+                "spec": { "query": "process_cpu_usage" }
+              }
+            }
+          }]
+        }
+      },
+      "exchangesRate": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "Throughput (exchanges/s)" },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": { "position": "bottom" },
+              "yAxis": { "format": { "unit": "decimal", "decimalPlaces": 2 } }
+            }
+          },
+          "queries": [{
+            "kind": "TimeSeriesQuery",
+            "spec": {
+              "plugin": {
+                "kind": "PrometheusTimeSeriesQuery",
+                "spec": {
+                  "query": "rate(camel_exchanges_total{eventType=\"route\"}[1m])",
+                  "seriesNameFormat": "{{routeId}}"
+                }
+              }
+            }
+          }]
+        }
+      },
+      "exchangesTotal": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "Exchanges by Route" },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": { "position": "bottom" },
+              "yAxis": { "format": { "unit": "decimal", "shortValues": true } }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "query": "camel_exchanges_succeeded_total{eventType=\"route\"}",
+                    "seriesNameFormat": "{{routeId}} (ok)"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "query": "camel_exchanges_failed_total{eventType=\"route\"}",
+                    "seriesNameFormat": "{{routeId}} (failed)"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "exchangesFailed": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "Failure Rate" },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": { "position": "bottom" },
+              "yAxis": { "format": { "unit": "percent-decimal", "decimalPlaces": 1 } }
+            }
+          },
+          "queries": [{
+            "kind": "TimeSeriesQuery",
+            "spec": {
+              "plugin": {
+                "kind": "PrometheusTimeSeriesQuery",
+                "spec": {
+                  "query": "rate(camel_exchanges_failed_total{eventType=\"route\"}[1m]) / (rate(camel_exchanges_total{eventType=\"route\"}[1m]) > 0)",
+                  "seriesNameFormat": "{{routeId}}"
+                }
+              }
+            }
+          }]
+        }
+      },
+      "processingTime": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "Processing Time (mean)" },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": { "position": "bottom" },
+              "yAxis": { "format": { "unit": "seconds", "decimalPlaces": 3 }, "label": "seconds" }
+            }
+          },
+          "queries": [{
+            "kind": "TimeSeriesQuery",
+            "spec": {
+              "plugin": {
+                "kind": "PrometheusTimeSeriesQuery",
+                "spec": {
+                  "query": "rate(camel_route_policy_seconds_sum{eventType=\"route\"}[1m]) / rate(camel_route_policy_seconds_count{eventType=\"route\"}[1m])",
+                  "seriesNameFormat": "{{routeId}}"
+                }
+              }
+            }
+          }]
+        }
+      },
+      "processingTimeMax": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "Processing Time (max)" },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": { "position": "bottom" },
+              "yAxis": { "format": { "unit": "seconds", "decimalPlaces": 3 }, "label": "seconds" }
+            }
+          },
+          "queries": [{
+            "kind": "TimeSeriesQuery",
+            "spec": {
+              "plugin": {
+                "kind": "PrometheusTimeSeriesQuery",
+                "spec": {
+                  "query": "camel_route_policy_seconds_max{eventType=\"route\"}",
+                  "seriesNameFormat": "{{routeId}}"
+                }
+              }
+            }
+          }]
+        }
+      },
+      "jvmMemory": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "JVM Heap Memory" },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": { "position": "bottom" },
+              "yAxis": { "format": { "unit": "bytes", "shortValues": true } }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "query": "jvm_memory_used_bytes{area=\"heap\"}",
+                    "seriesNameFormat": "Used ({{id}})"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "query": "jvm_memory_max_bytes{area=\"heap\"}",
+                    "seriesNameFormat": "Max ({{id}})"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "jvmThreads": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "JVM Threads" },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": { "position": "bottom" },
+              "yAxis": { "format": { "unit": "decimal" } }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "query": "jvm_threads_live_threads",
+                    "seriesNameFormat": "Live"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "query": "jvm_threads_daemon_threads",
+                    "seriesNameFormat": "Daemon"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "query": "jvm_threads_peak_threads",
+                    "seriesNameFormat": "Peak"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "gcPauses": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "GC Pauses" },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": { "position": "bottom" },
+              "yAxis": { "format": { "unit": "seconds", "decimalPlaces": 3 } }
+            }
+          },
+          "queries": [{
+            "kind": "TimeSeriesQuery",
+            "spec": {
+              "plugin": {
+                "kind": "PrometheusTimeSeriesQuery",
+                "spec": {
+                  "query": "rate(jvm_gc_pause_seconds_sum[1m])",
+                  "seriesNameFormat": "GC pause time/s"
+                }
+              }
+            }
+          }]
+        }
+      },
+      "cpuTimeline": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "CPU Usage" },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": { "position": "bottom" },
+              "yAxis": { "format": { "unit": "percent-decimal" } }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "query": "process_cpu_usage",
+                    "seriesNameFormat": "Process CPU"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "query": "system_cpu_usage",
+                    "seriesNameFormat": "System CPU"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "loadAverage": {
+        "kind": "Panel",
+        "spec": {
+          "display": { "name": "System Load Average (1m)" },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": { "position": "bottom" },
+              "yAxis": { "format": { "unit": "decimal", "decimalPlaces": 2 } }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "query": "system_load_average_1m",
+                    "seriesNameFormat": "Load avg"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "query": "system_cpu_count",
+                    "seriesNameFormat": "CPU cores"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
