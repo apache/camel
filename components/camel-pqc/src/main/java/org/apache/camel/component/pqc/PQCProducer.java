@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.pqc;
 
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.Certificate;
 
@@ -129,7 +130,7 @@ public class PQCProducer extends DefaultProducer {
         String payload = exchange.getMessage().getMandatoryBody(String.class);
 
         signer.initSign(keyPair.getPrivate());
-        signer.update(payload.getBytes());
+        signer.update(payload.getBytes(StandardCharsets.UTF_8));
 
         byte[] signature = signer.sign();
         exchange.getMessage().setHeader(PQCConstants.SIGNATURE, signature);
@@ -140,7 +141,7 @@ public class PQCProducer extends DefaultProducer {
         String payload = exchange.getMessage().getMandatoryBody(String.class);
 
         signer.initVerify(keyPair.getPublic());
-        signer.update(payload.getBytes());
+        signer.update(payload.getBytes(StandardCharsets.UTF_8));
         if (signer.verify(exchange.getMessage().getHeader(PQCConstants.SIGNATURE, byte[].class))) {
             exchange.getMessage().setHeader(PQCConstants.VERIFY, true);
         } else {
