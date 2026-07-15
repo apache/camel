@@ -410,6 +410,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // and then the file name would be changed
         String absoluteFileName = file.getAbsoluteFilePath();
 
+        // snapshot the idempotent key now while the exchange still has pristine file headers;
+        // after routing, headers like CamelFileName may be mutated, causing key mismatch at completion time
+        if (Boolean.TRUE.equals(endpoint.isIdempotent()) && endpoint.getIdempotentKey() != null) {
+            String key = endpoint.getIdempotentKey().evaluate(exchange, String.class);
+            exchange.setProperty(Exchange.FILE_IDEMPOTENT_KEY, key);
+        }
+
         // check if we can begin processing the file
         Exception beginCause = null;
         boolean begin = false;

@@ -160,6 +160,7 @@ public interface Exchange extends VariableAware {
     String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
     String FILE_LOCK_CHANNEL_FILE = "CamelFileLockChannelFile";
     String FILE_EXCHANGE_FILE = "CamelFileExchangeFile";
+    String FILE_IDEMPOTENT_KEY = "CamelFileIdempotentKey";
     String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
 
     String GROUPED_EXCHANGE = "CamelGroupedExchange";
