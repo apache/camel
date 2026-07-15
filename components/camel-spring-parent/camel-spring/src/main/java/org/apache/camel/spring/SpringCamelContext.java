@@ -216,8 +216,10 @@ public class SpringCamelContext extends DefaultCamelContext
 
     @Override
     protected Injector createInjector() {
-        if (applicationContext instanceof ConfigurableApplicationContext) {
-            return new SpringInjector((ConfigurableApplicationContext) applicationContext);
+        if (applicationContext instanceof ConfigurableApplicationContext cac) {
+            SpringInjector answer = new SpringInjector(cac);
+            answer.setCamelContext(this);
+            return answer;
         } else {
             LOG.warn("Cannot use SpringInjector as applicationContext is not a ConfigurableApplicationContext as its: {}",
                     applicationContext);
