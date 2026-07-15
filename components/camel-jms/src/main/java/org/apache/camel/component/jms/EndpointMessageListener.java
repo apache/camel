@@ -213,7 +213,8 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             if (exchange.isRollbackOnly()) {
                 return wrapRuntimeCamelException(new RollbackExchangeException(exchange));
             }
-            if (exchange.isFailed() && exchange.getException() != null && !endpoint.isTransferException()) {
+            if (exchange.isFailed() && exchange.getException() != null
+                    && !(endpoint.isTransferException() && sendReply)) {
                 return wrapRuntimeCamelException(exchange.getException());
             }
             return null;
