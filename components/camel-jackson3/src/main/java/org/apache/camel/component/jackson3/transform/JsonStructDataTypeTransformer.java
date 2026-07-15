@@ -29,6 +29,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
 import org.apache.camel.spi.Transformer;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
 
 /**
@@ -61,7 +62,7 @@ public class JsonStructDataTypeTransformer extends Transformer {
             message.setBody(unmarshalled);
 
             message.setHeader(Exchange.CONTENT_TYPE, MimeType.STRUCT.type());
-        } catch (InvalidPayloadException | ClassNotFoundException e) {
+        } catch (InvalidPayloadException | JacksonException | ClassNotFoundException e) {
             throw new CamelExecutionException("Failed to apply Json input data type on exchange", message.getExchange(), e);
         }
     }
