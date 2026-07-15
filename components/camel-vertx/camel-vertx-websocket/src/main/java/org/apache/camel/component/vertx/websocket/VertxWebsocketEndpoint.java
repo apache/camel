@@ -152,6 +152,16 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
     }
 
     protected WebSocket getWebSocket() throws Exception {
+        return getWebSocket((java.util.function.Consumer<WebSocket>) null);
+    }
+
+    /**
+     * Connects to the WebSocket server, optionally invoking a setup callback on the socket <em>before</em> the blocking
+     * {@code future.get()} returns. This guarantees that any message/close/exception handlers supplied by the callback
+     * are registered atomically with the connection, so no messages sent by the server immediately after the handshake
+     * can be missed.
+     */
+    protected WebSocket getWebSocket(java.util.function.Consumer<WebSocket> setupCallback) throws Exception {
         if (client == null) {
             resolvedClientOptions = configuration.getClientOptions();
             if (resolvedClientOptions == null) {
@@ -171,8 +181,17 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
             CompletableFuture<WebSocket> future = new CompletableFuture<>();
             client.connect(connectOptions).onComplete(result -> {
                 if (result.succeeded()) {
-                    LOG.info("Connected to WebSocket on {}", result.result().remoteAddress());
-                    future.complete(result.result());
+                    WebSocket ws = result.result();
+                    LOG.info("Connected to WebSocket on {}", ws.remoteAddress());
+                    if (setupCallback != null) {
+                        try {
+                            setupCallback.accept(ws);
+                        } catch (Exception e) {
+                            future.completeExceptionally(e);
+                            return;
+                        }
+                    }
+                    future.complete(ws);
                 } else {
                     webSocket = null;
                     future.completeExceptionally(result.cause());
