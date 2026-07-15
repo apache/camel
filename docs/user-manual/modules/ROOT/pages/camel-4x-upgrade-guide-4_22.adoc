@@ -86,9 +86,7 @@ The `camel-launcher` Windows distribution now ships a native x64 `bin/camel.exe`
 alongside `bin/camel.bat`. `camel.exe` is a thin bootstrap: it forwards all
 arguments to the adjacent `camel.bat` (preserving spaces and Unicode) and returns
 its exit code. It exists so package managers that require a genuine executable
-command (such as WinGet's portable installer) can expose `camel` directly. Direct
-users may continue to invoke `bin\camel.bat`; both behave identically. Windows
-ARM64 and x86 are not yet supported.
+users may continue to invoke `bin\camel.bat`; both behave identically.
 
 === camel-langchain4j-agent
 
