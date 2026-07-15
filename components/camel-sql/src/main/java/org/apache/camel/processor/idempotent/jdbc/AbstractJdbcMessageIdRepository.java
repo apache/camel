@@ -25,6 +25,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -140,9 +141,14 @@ public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport imp
             public Boolean doInTransaction(TransactionStatus status) {
                 int count = queryForInt(key);
                 if (count == 0) {
-                    int insertedCount = insert(key);
-                    if (insertedCount != 0) {
-                        return Boolean.TRUE;
+                    try {
+                        int insertedCount = insert(key);
+                        if (insertedCount != 0) {
+                            return Boolean.TRUE;
+                        }
+                    } catch (DuplicateKeyException e) {
+                        // a concurrent insert won the race — the key already exists
+                        return Boolean.FALSE;
                     }
                 }
                 return Boolean.FALSE;
