@@ -209,8 +209,6 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
             subscribe(consumer);
 
             LOG.debug("Loading records from topic {}", resumeStrategyConfiguration.getTopic());
-            consumer.subscribe(Collections.singletonList(resumeStrategyConfiguration.getTopic()));
-
             poll(consumer, latch);
         } catch (WakeupException e) {
             LOG.info("Kafka consumer was interrupted during a blocking call");
@@ -358,7 +356,7 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
 
     @Override
     public ResumeAdapter getAdapter() {
-        if (adapter == null) {
+        if (initLatch != null) {
             waitForInitialization();
         }
 
@@ -405,7 +403,9 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
         } catch (Exception e) {
             LOG.warn("Error closing the Kafka producer: {} (this error will be ignored)", e.getMessage(), e);
         } finally {
-            writeLock.unlock();
+            if (writeLock.isHeldByCurrentThread()) {
+                writeLock.unlock();
+            }
         }
 
         try {
