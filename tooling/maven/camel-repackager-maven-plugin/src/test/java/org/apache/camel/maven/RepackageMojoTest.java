@@ -18,6 +18,9 @@ package org.apache.camel.maven;
 
 import java.io.File;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -60,5 +63,47 @@ public class RepackageMojoTest {
         // are included as separate JARs in BOOT-INF/lib/
 
         assertTrue(true, "Placeholder test - would verify dependency inclusion");
+    }
+
+    @Test
+    public void testCompileScopedJarIsIncluded() {
+        RepackageMojo mojo = new RepackageMojo();
+        Artifact artifact = artifact("org.apache.camel", "camel-jbang-core", "jar", Artifact.SCOPE_COMPILE);
+
+        assertTrue(mojo.includeArtifact(artifact),
+                "a compile-scoped jar dependency must be bundled into BOOT-INF/lib");
+    }
+
+    @Test
+    public void testNonJarArtifactIsExcludedEvenWhenCompileScoped() {
+        // camel-launcher depends on camel-exe:exe purely so the assembly descriptor can stage
+        // bin/camel.exe; it must never end up embedded as a Spring Boot loader library.
+        RepackageMojo mojo = new RepackageMojo();
+        Artifact artifact = artifact("org.apache.camel", "camel-exe", "exe", Artifact.SCOPE_COMPILE);
+
+        assertFalse(mojo.includeArtifact(artifact),
+                "a non-jar artifact (e.g. the native camel-exe:exe bootstrap) must not be bundled into BOOT-INF/lib");
+    }
+
+    @Test
+    public void testProvidedCamelJarIsIncluded() {
+        RepackageMojo mojo = new RepackageMojo();
+        Artifact artifact = artifact("org.apache.camel", "camel-util", "jar", Artifact.SCOPE_PROVIDED);
+
+        assertTrue(mojo.includeArtifact(artifact),
+                "a provided-scope org.apache.camel jar dependency must still be bundled");
+    }
+
+    @Test
+    public void testProvidedNonCamelJarIsExcluded() {
+        RepackageMojo mojo = new RepackageMojo();
+        Artifact artifact = artifact("org.jolokia", "jolokia-agent-jvm", "jar", Artifact.SCOPE_PROVIDED);
+
+        assertFalse(mojo.includeArtifact(artifact),
+                "a provided-scope non-Camel jar dependency must not be bundled");
+    }
+
+    private static Artifact artifact(String groupId, String artifactId, String type, String scope) {
+        return new DefaultArtifact(groupId, artifactId, "1.0", scope, type, null, new DefaultArtifactHandler(type));
     }
 }

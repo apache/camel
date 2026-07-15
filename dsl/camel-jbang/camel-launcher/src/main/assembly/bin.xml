@@ -70,5 +70,13 @@
                 <include>*.*</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>camel.exe</include>
+            </includes>
+            <fileMode>0755</fileMode>
+        </fileSet>
     </fileSets>
 </assembly>

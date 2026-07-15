@@ -129,7 +129,13 @@ public class RepackageMojo extends AbstractMojo {
         }
     }
 
-    private boolean includeArtifact(Artifact artifact) {
+    boolean includeArtifact(Artifact artifact) {
+        // Only jar-type artifacts are valid Spring Boot loader libraries. Non-jar artifacts
+        // (e.g. the native camel-exe:exe bootstrap, which camel-launcher depends on purely to
+        // stage bin/camel.exe via the assembly descriptor) must never be embedded in BOOT-INF/lib.
+        if (!"jar".equals(artifact.getType())) {
+            return false;
+        }
         String scope = artifact.getScope();
         // Include compile and runtime dependencies
         return Artifact.SCOPE_COMPILE.equals(scope) ||
