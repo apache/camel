@@ -58,6 +58,12 @@ class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
     }
 
     @Override
+    protected void doStop() throws Exception {
+        drainAndEvictAll();
+        super.doStop();
+    }
+
+    @Override
     public ReplyHandler put(String key, ReplyHandler value, long timeoutMillis) {
         return super.put(key, value, encode(timeoutMillis));
     }

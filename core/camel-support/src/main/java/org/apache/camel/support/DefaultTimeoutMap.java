@@ -279,26 +279,36 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         schedulePoll();
     }
 
+    /**
+     * Drain all remaining entries from the map, emitting an {@link Listener.Type#Evict} event for each one. Subclasses
+     * that need to notify listeners about leftover entries on shutdown (e.g. reply-manager timeout maps) should call
+     * this from their {@link #doStop()} override before delegating to {@code super.doStop()}.
+     */
+    protected void drainAndEvictAll() {
+        if (map.isEmpty()) {
+            return;
+        }
+        List<TimeoutMapEntry<K, V>> remaining;
+        lock.lock();
+        try {
+            remaining = new ArrayList<>(map.values());
+            map.clear();
+        } finally {
+            lock.unlock();
+        }
+        for (TimeoutMapEntry<K, V> entry : remaining) {
+            emitEvent(Evict, entry.getKey(), entry.getValue());
+        }
+    }
+
     @Override
     protected void doStop() throws Exception {
         if (future != null) {
             future.cancel(false);
             future = null;
         }
-        // drain remaining entries, emitting Evict events so listeners can handle cleanup
-        List<TimeoutMapEntry<K, V>> remaining = List.of();
-        if (!map.isEmpty()) {
-            lock.lock();
-            try {
-                remaining = new ArrayList<>(map.values());
-                map.clear();
-            } finally {
-                lock.unlock();
-            }
-        }
-        for (TimeoutMapEntry<K, V> entry : remaining) {
-            emitEvent(Evict, entry.getKey(), entry.getValue());
-        }
+        // clear map if we stop
+        map.clear();
     }
 
 }
