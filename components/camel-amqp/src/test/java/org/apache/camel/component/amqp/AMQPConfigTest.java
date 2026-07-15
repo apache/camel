@@ -100,10 +100,36 @@ public class AMQPConfigTest {
         JmsConnectionFactory connectionFactory = (JmsConnectionFactory) amqpSslEnabledComponent.getConnectionFactory();
         assertNull(connectionFactory.getUsername());
         assertNull(connectionFactory.getPassword());
-        assertEquals(
-                "amqps://localhost:5672?transport.trustStoreLocation=&transport.trustStoreType=JKS&transport.trustStorePassword=&transport.keyStoreLocation=&transport.keyStoreType=JKS&transport.keyStorePassword=",
-                connectionFactory.getRemoteURI());
+        assertEquals("amqps://localhost:5672", connectionFactory.getRemoteURI());
         assertEquals("topic://", connectionFactory.getTopicPrefix());
+    }
+
+    @Test
+    public void testTrustStoreOnlySslComponent() {
+        AMQPComponent component
+                = contextExtension.getContext().getComponent("amqps-trustonly", AMQPComponent.class);
+        assertTrue(component.getUseSsl());
+        assertEquals("server-ca-truststore.p12", component.getTrustStoreLocation());
+        assertNull(component.getKeyStoreLocation());
+
+        assertTrue(component.getConnectionFactory() instanceof JmsConnectionFactory);
+        JmsConnectionFactory connectionFactory = (JmsConnectionFactory) component.getConnectionFactory();
+        assertEquals(
+                "amqps://localhost:5672?transport.trustStoreLocation=server-ca-truststore.p12&transport.trustStoreType=PKCS12&transport.trustStorePassword=securepass",
+                connectionFactory.getRemoteURI());
+    }
+
+    @Test
+    public void testSslUrlEncodedPassword() {
+        AMQPComponent component
+                = contextExtension.getContext().getComponent("amqps-specialchars", AMQPComponent.class);
+        assertTrue(component.getUseSsl());
+
+        assertTrue(component.getConnectionFactory() instanceof JmsConnectionFactory);
+        JmsConnectionFactory connectionFactory = (JmsConnectionFactory) component.getConnectionFactory();
+        assertEquals(
+                "amqps://localhost:5672?transport.trustStoreLocation=%2Fpath%2Fto%2Fstore.jks&transport.trustStoreType=JKS&transport.trustStorePassword=p%40ss%3Dw%26rd",
+                connectionFactory.getRemoteURI());
     }
 
     @Test
@@ -156,6 +182,19 @@ public class AMQPConfigTest {
         AMQPComponent amqpSslEnabledComponent = new AMQPComponent();
         amqpSslEnabledComponent.setUseSsl(true);
         context.addComponent("amqps-enabled", amqpSslEnabledComponent);
+
+        AMQPComponent amqpTrustOnlyComponent = new AMQPComponent();
+        amqpTrustOnlyComponent.setUseSsl(true);
+        amqpTrustOnlyComponent.setTrustStoreLocation("server-ca-truststore.p12");
+        amqpTrustOnlyComponent.setTrustStorePassword("securepass");
+        amqpTrustOnlyComponent.setTrustStoreType("PKCS12");
+        context.addComponent("amqps-trustonly", amqpTrustOnlyComponent);
+
+        AMQPComponent amqpSpecialCharsComponent = new AMQPComponent();
+        amqpSpecialCharsComponent.setUseSsl(true);
+        amqpSpecialCharsComponent.setTrustStoreLocation("/path/to/store.jks");
+        amqpSpecialCharsComponent.setTrustStorePassword("p@ss=w&rd");
+        context.addComponent("amqps-specialchars", amqpSpecialCharsComponent);
 
         AMQPComponent amqpPortOnlyComponent = new AMQPComponent();
         amqpPortOnlyComponent.setPort(5556);
