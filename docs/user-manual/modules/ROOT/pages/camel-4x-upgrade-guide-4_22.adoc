@@ -436,3 +436,10 @@ The aggregation tables used with these repositories must have the `version BIGIN
 already required by `JdbcAggregationRepository` for reading and updating aggregates. When
 `recoveryByInstance` is enabled, the completed table must have the `instance_id VARCHAR(255)`
 column as documented.
+
+=== camel-sql - Schema-qualified aggregation repository names
+
+The table-name validation in `JdbcAggregationRepository` now accepts schema-qualified names
+such as `myschema.aggregation`. Previously the validation regex only allowed simple identifiers
+(`[a-zA-Z_][a-zA-Z0-9_]*`), rejecting any name containing a dot. Names starting with a digit,
+containing spaces, or with multiple dots (e.g. `catalog.schema.table`) are still rejected.

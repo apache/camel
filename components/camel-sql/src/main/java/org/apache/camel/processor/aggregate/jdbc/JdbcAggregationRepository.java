@@ -240,8 +240,9 @@ public class JdbcAggregationRepository extends ServiceSupport
     }
 
     // Useful to verify if the table name does not contain invalid characters.
+    // Allows simple names (my_table) and schema-qualified names (myschema.my_table).
     protected static void verifyTableName(String tableName) {
-        if (!tableName.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+        if (!tableName.matches("[a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*)?")) {
             throw new IllegalArgumentException("Invalid repository name: " + tableName);
         }
     }
