@@ -49,6 +49,9 @@ file. Each key is read from and written back to the file where it currently live
 the local `./camel-cli.properties` stays local (project override), while every other key defaults to
 the global `~/.camel-cli.properties`.
 
+The Camel TUI (`camel tui`) theme is now backed by CSS stylesheets and ships a switchable light/dark palette.
+Press *F4* to toggle at runtime; the selection is persisted as `camel.tui.theme` in `.camel-cli.properties`.
+
 The Camel CLI user configuration file has been renamed from `camel-jbang-user.properties` to
 `camel-cli.properties` (global `~/.camel-cli.properties`, local `./camel-cli.properties`). The dot
 convention is unchanged: the global file is a hidden dotfile, the local file is visible. On first
