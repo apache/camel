@@ -19,6 +19,7 @@ package org.apache.camel.processor.idempotent.kafka;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.kafka.clients.producer.MockProducer;
@@ -27,6 +28,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -88,7 +90,9 @@ public class KafkaIdempotentRepositoryTest {
         });
         sender.start();
 
-        Thread.sleep(100);
+        await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> sender.getState() == Thread.State.WAITING
+                        || sender.getState() == Thread.State.TIMED_WAITING);
         failingProducer.errorNext(new RuntimeException("Simulated send failure"));
         sender.join(5000);
 
