@@ -87,6 +87,20 @@ public interface ComponentsBuilderFactory {
         return Activemq6ComponentBuilderFactory.activemq6();
     }
     /**
+     * AI Tool (camel-ai-tool)
+     * Framework-agnostic consumer endpoint that registers a Camel route as an
+     * LLM tool in the shared AiToolRegistry.
+     * 
+     * Category: ai
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-ai-tool
+     * 
+     * @return the dsl builder
+     */
+    static AiToolComponentBuilderFactory.AiToolComponentBuilder aiTool() {
+        return AiToolComponentBuilderFactory.aiTool();
+    }
+    /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache Qpid Client.
      * 
