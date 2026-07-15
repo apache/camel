@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.event;
 
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -37,7 +37,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class EventComponent extends DefaultComponent implements ApplicationContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(EventComponent.class);
     private ApplicationContext applicationContext;
-    private final Set<EventEndpoint> endpoints = new LinkedHashSet<>();
+    private final Set<EventEndpoint> endpoints = new CopyOnWriteArraySet<>();
 
     public EventComponent() {
     }
