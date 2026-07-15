@@ -431,6 +431,7 @@
                             <nanorc>CAMEL_PROPERTIES_STYLE</nanorc>
                             <properties>CAMEL_PROPERTIES_STYLE</properties>
                             <proto>SLASHSTAR_STYLE</proto>
+                            <ps1>SCRIPT_STYLE</ps1>
                             <qf.cfg>CAMEL_PROPERTIES_STYLE</qf.cfg>
                             <robot>SCRIPT_STYLE</robot>
                             <rs>DOUBLESLASH_STYLE</rs>
