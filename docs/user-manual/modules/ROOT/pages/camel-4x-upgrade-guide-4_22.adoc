@@ -207,6 +207,16 @@ The pre-sort is applied on the raw file listing before any filtering or eager li
 to combine `preSort=modified` with `eagerMaxMessagesPerPoll=true` and `maxMessagesPerPoll=10` to efficiently
 consume the 10 oldest files without creating Exchange objects for every file on the server.
 
+=== camel-file - forceWrites option deprecated
+
+The `forceWrites` producer option on the File endpoint has been deprecated. This option has had no effect
+since Camel 2.20, when the file-writing implementation was refactored to use `java.nio.file.Files.move()`
+and `Files.copy()` instead of `FileChannel`-based streaming. The `forceWrites` flag was intended to call
+`FileChannel.force(true)` (fsync) after writing, but no write path has invoked it for several major versions.
+
+The default value has been changed from `true` to `false` to reflect the actual behavior. The option will
+be removed in a future release.
+
 === camel-mail - MimeMultipartDataFormat inbound header filtering
 
 When unmarshalling a MIME message with `headersInline=true`, the `mime-multipart` data format now applies a

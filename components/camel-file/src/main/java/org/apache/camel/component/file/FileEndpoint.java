@@ -81,8 +81,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     private boolean probeContentType;
     @UriParam(label = "consumer,advanced")
     private String extendedAttributes;
-    @UriParam(label = "producer,advanced", defaultValue = "true")
-    private boolean forceWrites = true;
+    @Deprecated
+    @UriParam(label = "producer,advanced", defaultValue = "false")
+    private boolean forceWrites;
     @UriParam(label = "producer,advanced")
     private String chmod;
     @UriParam(label = "producer,advanced")
@@ -358,6 +359,10 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         this.directoryMustExist = directoryMustExist;
     }
 
+    /**
+     * @deprecated This option has had no effect since Camel 2.20 and will be removed in a future release.
+     */
+    @Deprecated
     public boolean isForceWrites() {
         return forceWrites;
     }
@@ -365,7 +370,10 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     /**
      * Whether to force syncing, writes to the file system. You can turn this off if you do not want this level of
      * guarantee, for example, if writing to logs / audit logs etc.; this would yield better performance.
+     *
+     * @deprecated This option has had no effect since Camel 2.20 and will be removed in a future release.
      */
+    @Deprecated
     public void setForceWrites(boolean forceWrites) {
         this.forceWrites = forceWrites;
     }
