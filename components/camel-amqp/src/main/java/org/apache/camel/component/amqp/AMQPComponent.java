@@ -112,8 +112,9 @@ public class AMQPComponent extends JmsComponent {
                 connectionFactory.setTopicPrefix("topic://");
             }
             getConfiguration().setConnectionFactory(connectionFactory);
-        } else if (host != null || port != null || getUsername() != null || getPassword() != null || useTopicPrefix != null
-                || useSsl != null) {
+        } else if (getConfiguration().getConnectionFactory() == null
+                && (host != null || port != null || getUsername() != null || getPassword() != null || useTopicPrefix != null
+                        || useSsl != null)) {
             StringBuilder sb = new StringBuilder();
             sb.append(useSsl == Boolean.TRUE ? "amqps://" : "amqp://");
             sb.append(host == null ? AMQP_DEFAULT_HOST : host).append(":").append(port == null ? AMQP_DEFAULT_PORT : port);

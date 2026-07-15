@@ -998,6 +998,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
 
     public void setMessageListenerContainerFactory(MessageListenerContainerFactory messageListenerContainerFactory) {
         configuration.setMessageListenerContainerFactory(messageListenerContainerFactory);
+        configuration.setConsumerType(ConsumerType.Custom);
     }
 
     public boolean isIncludeSentJMSMessageID() {
