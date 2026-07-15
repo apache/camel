@@ -522,7 +522,11 @@ public class FileOperations implements GenericFileOperations<File> {
             try (FileOutputStream fos = new FileOutputStream(target);
                  FileChannel out = fos.getChannel()) {
                 LOG.trace("writeFileByFile using FileChannel: {} -> {}", source, target);
-                channel.transferTo(0, channel.size(), out);
+                long size = channel.size();
+                long position = 0;
+                while (position < size) {
+                    position += channel.transferTo(position, size - position, out);
+                }
             }
         } else {
             // use regular file copy
