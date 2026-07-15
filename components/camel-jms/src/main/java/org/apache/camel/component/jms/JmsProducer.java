@@ -221,6 +221,8 @@ public class JmsProducer extends DefaultAsyncProducer {
             in.setHeader(correlationPropertyToUse, GENERATED_CORRELATION_ID_PREFIX + getUuidGenerator().generateUuid());
         }
 
+        final String[] registeredCorrelationId = new String[1];
+
         MessageCreator messageCreator = new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 Message answer = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
@@ -241,6 +243,7 @@ public class JmsProducer extends DefaultAsyncProducer {
 
                 String correlationId = determineCorrelationId(answer, provisionalCorrelationId);
                 replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
+                registeredCorrelationId[0] = correlationId;
 
                 if (correlationProperty != null) {
                     replyManager.setCorrelationProperty(correlationProperty);
@@ -256,7 +259,13 @@ public class JmsProducer extends DefaultAsyncProducer {
             }
         };
 
-        doSend(exchange, true, destinationName, destination, messageCreator, messageSentCallback);
+        try {
+            doSend(exchange, true, destinationName, destination, messageCreator, messageSentCallback);
+        } catch (Exception e) {
+            // send failed after reply was registered, cancel to prevent double callback on timeout
+            replyManager.cancelCorrelationId(registeredCorrelationId[0]);
+            throw e;
+        }
 
         // continue routing asynchronously (reply will be processed async when its received)
         return false;

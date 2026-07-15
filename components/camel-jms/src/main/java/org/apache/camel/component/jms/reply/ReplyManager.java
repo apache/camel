@@ -102,6 +102,16 @@ public interface ReplyManager extends SessionAwareMessageListener {
     void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout);
 
     /**
+     * Cancels a pending reply correlation, removing it from the correlation map without invoking the callback.
+     * <p/>
+     * This is used when the JMS send fails after the reply has been registered, to prevent the timeout handler from
+     * firing a second callback on an already-completed exchange.
+     *
+     * @param correlationId the correlation id to cancel
+     */
+    void cancelCorrelationId(String correlationId);
+
+    /**
      * Process the reply
      *
      * @param holder containing needed data to process the reply and continue routing

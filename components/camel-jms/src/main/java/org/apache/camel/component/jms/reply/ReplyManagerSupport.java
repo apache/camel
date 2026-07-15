@@ -135,6 +135,16 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         return correlationId;
     }
 
+    @Override
+    public void cancelCorrelationId(String correlationId) {
+        if (correlationId != null && correlation != null) {
+            ReplyHandler handler = correlation.remove(correlationId);
+            if (handler != null) {
+                log.debug("Cancelled reply correlation [{}]", correlationId);
+            }
+        }
+    }
+
     protected abstract ReplyHandler createReplyHandler(
             ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
             String originalCorrelationId, String correlationId, long requestTimeout);
