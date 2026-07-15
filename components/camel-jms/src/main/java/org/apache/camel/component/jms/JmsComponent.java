@@ -1126,7 +1126,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     @Override
     protected void doInit() throws Exception {
         // only attempt to set connection factory if there is no transaction manager
-        if (configuration.getConnectionFactory() == null && configuration.getOrCreateTransactionManager() == null
+        if (configuration.getConnectionFactory() == null && configuration.getTransactionManager() == null
                 && isAllowAutoWiredConnectionFactory()) {
             Set<ConnectionFactory> beans = getCamelContext().getRegistry().findByType(ConnectionFactory.class);
             if (beans.size() == 1) {
