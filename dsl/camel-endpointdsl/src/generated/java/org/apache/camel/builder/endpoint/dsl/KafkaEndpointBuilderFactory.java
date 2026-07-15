@@ -3390,9 +3390,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum number of unsent messages that can be queued up the
-         * producer when using async mode before either the producer must be
-         * blocked or data must be dropped.
+         * Deprecated: this option has no effect. Use bufferMemorySize or
+         * maxBlockMs instead.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3402,14 +3401,14 @@ public interface KafkaEndpointBuilderFactory {
          * @param queueBufferingMaxMessages the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default KafkaEndpointProducerBuilder queueBufferingMaxMessages(Integer queueBufferingMaxMessages) {
             doSetProperty("queueBufferingMaxMessages", queueBufferingMaxMessages);
             return this;
         }
         /**
-         * The maximum number of unsent messages that can be queued up the
-         * producer when using async mode before either the producer must be
-         * blocked or data must be dropped.
+         * Deprecated: this option has no effect. Use bufferMemorySize or
+         * maxBlockMs instead.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3420,6 +3419,7 @@ public interface KafkaEndpointBuilderFactory {
          * @param queueBufferingMaxMessages the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default KafkaEndpointProducerBuilder queueBufferingMaxMessages(String queueBufferingMaxMessages) {
             doSetProperty("queueBufferingMaxMessages", queueBufferingMaxMessages);
             return this;

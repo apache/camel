@@ -180,7 +180,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private Integer workerPoolMaxSize = 20;
 
     // Async producer config
-    @UriParam(label = "producer", defaultValue = "10000")
+    @Deprecated
+    @UriParam(label = "producer", defaultValue = "10000", description = "Deprecated: this option has no effect."
+                                                                        + " Use bufferMemorySize or maxBlockMs instead.")
     private Integer queueBufferingMaxMessages = 10000;
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_SERIALIZER)
     private String valueSerializer = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
@@ -1129,14 +1131,20 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.deliveryTimeoutMs = deliveryTimeoutMs;
     }
 
+    /**
+     * @deprecated This option has no effect since the old Scala Kafka producer was removed (CAMEL-9467). Use
+     *             {@link #setBufferMemorySize(Integer)} or {@link #setMaxBlockMs(Integer)} instead.
+     */
+    @Deprecated
     public Integer getQueueBufferingMaxMessages() {
         return queueBufferingMaxMessages;
     }
 
     /**
-     * The maximum number of unsent messages that can be queued up the producer when using async mode before either the
-     * producer must be blocked or data must be dropped.
+     * @deprecated This option has no effect since the old Scala Kafka producer was removed (CAMEL-9467). Use
+     *             {@link #setBufferMemorySize(Integer)} or {@link #setMaxBlockMs(Integer)} instead.
      */
+    @Deprecated
     public void setQueueBufferingMaxMessages(Integer queueBufferingMaxMessages) {
         this.queueBufferingMaxMessages = queueBufferingMaxMessages;
     }
