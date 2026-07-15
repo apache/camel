@@ -419,12 +419,13 @@ public class EndpointMessageListener implements SessionMessageListener {
                     rce = wrapRuntimeCamelException(new RollbackExchangeException(exchange));
                 } else if (exchange.getException() != null) {
                     // an exception occurred while processing
-                    if (endpoint.isTransferException()) {
+                    if (endpoint.isTransferException() && sendReply) {
                         // send the exception as reply, so null body and set the exception as the cause
                         body = null;
                         cause = exchange.getException();
                     } else {
                         // only throw exception if endpoint is not configured to transfer exceptions back to caller
+                        // or if there is no reply destination to send the exception to
                         // do not send a reply but wrap and rethrow the exception
                         rce = wrapRuntimeCamelException(exchange.getException());
                     }
