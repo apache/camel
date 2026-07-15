@@ -43,4 +43,8 @@ public interface CouchDbInfraService extends InfrastructureService {
     default String connectionBase() {
         return String.format("couchdb:http:%s:%d", host(), port());
     }
+
+    default String uiUrl() {
+        return String.format("http://%s:%d/_utils", host(), port());
+    }
 }

@@ -169,7 +169,6 @@ public class InfraRun extends InfraBaseCommand {
         if (port != null) {
             System.setProperty("camel.infra.port", String.valueOf(port));
         }
-
         Object actualService = cl.loadClass(serviceImpl).newInstance();
 
         // Make sure the actualService can be run with initialize method
@@ -364,4 +363,5 @@ public class InfraRun extends InfraBaseCommand {
     public void setLogToStdout(boolean logToStdout) {
         this.logToStdout = logToStdout;
     }
+
 }

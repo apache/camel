@@ -35,6 +35,7 @@ public final class ContainerEnvironmentUtil {
     public static final String STARTUP_ATTEMPTS_PROPERTY = ".startup.attempts";
     public static final String INFRA_PORT_PROPERTY = "camel.infra.port";
     public static final String INFRA_FIXED_PORT_PROPERTY = "camel.infra.fixedPort";
+
     private static final Logger LOG = LoggerFactory.getLogger(ContainerEnvironmentUtil.class);
     private static final AtomicInteger INSTANCE_COUNTER = new AtomicInteger(0);
 
@@ -106,6 +107,17 @@ public final class ContainerEnvironmentUtil {
             LOG.debug("Service {} will use random ports (camel.infra.fixedPort not set)", cls.getSimpleName());
         }
         return fixedPort;
+    }
+
+    /**
+     * Determines if companion UI containers should be started alongside infrastructure services. Returns true when in
+     * fixed port mode (Camel CLI). This ensures UI containers are never started during tests (which don't set
+     * fixedPort).
+     *
+     * @return true if companion UI containers should be started
+     */
+    public static boolean isWithUi() {
+        return Boolean.parseBoolean(System.getProperty(INFRA_FIXED_PORT_PROPERTY, "false"));
     }
 
     public static String containerName(Class cls) {

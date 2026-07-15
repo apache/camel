@@ -7,7 +7,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-milvus",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "v2.6.20"
+  "serviceVersion" : "v2.6.20",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -17,7 +18,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -27,7 +29,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -37,7 +40,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.iggy.services.IggyInfraService",
   "description" : "Iggy is a persistent message streaming platform",
@@ -47,7 +51,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-iggy",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "0.8.0"
+  "serviceVersion" : "0.8.0",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -57,7 +62,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.zookeeper.services.ZooKeeperInfraService",
   "description" : "Zookeeper is a server for highly reliable distributed coordination of cloud applications",
@@ -67,7 +73,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-zookeeper",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "3.9.5"
+  "serviceVersion" : "3.9.5",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -77,7 +84,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.redis.services.RedisInfraService",
   "description" : "Redis is an open source in-memory data store",
@@ -87,7 +95,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-redis",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "7.4.9-alpine"
+  "serviceVersion" : "7.4.9-alpine",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.elasticsearch.services.ElasticSearchInfraService",
   "description" : "Elasticsearch is a distributed search and analytics engine",
@@ -97,7 +106,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-elasticsearch",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "9.1.0"
+  "serviceVersion" : "9.1.0",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
   "description" : "Apache Kafka, Distributed event streaming platform",
@@ -107,7 +117,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "0.51.0-kafka-4.2.0"
+  "serviceVersion" : "0.51.0-kafka-4.2.0",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
   "description" : "Apache Kafka, Distributed event streaming platform",
@@ -117,7 +128,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "8.3.0"
+  "serviceVersion" : "8.3.0",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.nats.services.NatsInfraService",
   "description" : "NATS is a high-performance messaging system for cloud native applications",
@@ -127,7 +139,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-nats",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "2.14.2"
+  "serviceVersion" : "2.14.2",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -137,7 +150,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.postgres.services.PostgresInfraService",
   "description" : "PostgreSQL is an open source object-relational database",
@@ -147,7 +161,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-postgres",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "17.10-alpine"
+  "serviceVersion" : "17.10-alpine",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
   "description" : "Apache Kafka, Distributed event streaming platform",
@@ -157,7 +172,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "v26.1.12"
+  "serviceVersion" : "v26.1.12",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultInfraService",
   "description" : "HashiCorp Vault is a tool for securely accessing secrets",
@@ -167,7 +183,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-hashicorp-vault",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "2.0.3"
+  "serviceVersion" : "2.0.3",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -177,7 +194,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
   "description" : "Apache Artemis is an open source message broker",
@@ -187,7 +205,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-artemis",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "latest"
+  "serviceVersion" : "latest",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.solr.services.SolrInfraService",
   "description" : "Apache Solr is an open source search platform",
@@ -197,7 +216,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-solr",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "9.10.1-slim"
+  "serviceVersion" : "9.10.1-slim",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.couchbase.services.CouchbaseInfraService",
   "description" : "Couchbase is a distributed NoSQL cloud database",
@@ -207,7 +227,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-couchbase",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "8.0.0"
+  "serviceVersion" : "8.0.0",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -217,7 +238,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.couchdb.services.CouchDbInfraService",
   "description" : "Apache CouchDB is an open source NoSQL document database",
@@ -227,7 +249,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-couchdb",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "3.5.1"
+  "serviceVersion" : "3.5.1",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.keycloak.services.KeycloakInfraService",
   "description" : "Keycloak is an open source identity and access management solution",
@@ -237,7 +260,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-keycloak",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "26.6.4"
+  "serviceVersion" : "26.6.4",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
   "description" : "HiveMQ is an MQTT-based messaging platform for IoT",
@@ -247,7 +271,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-hivemq",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "2025.5"
+  "serviceVersion" : "2025.5",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ibmmq.services.IbmMQInfraService",
   "description" : "IBM MQ is enterprise messaging middleware for reliable communication",
@@ -257,7 +282,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ibmmq",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "9.4.5.0-r2"
+  "serviceVersion" : "9.4.5.0-r2",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -267,7 +293,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.smb.services.SmbLocalContainerInfraService",
   "description" : "Samba provides file sharing services using the SMB protocol",
@@ -277,7 +304,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-smb",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "0.14.0"
+  "serviceVersion" : "0.14.0",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.openldap.services.OpenldapInfraService",
   "description" : "OpenLDAP is an implementation of the Lightweight Directory Access Protocol",
@@ -287,7 +315,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-openldap",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.0"
+  "serviceVersion" : "1.5.0",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.xmpp.services.XmppInfraService",
   "description" : "XMPP is an open communication protocol for messaging",
@@ -297,7 +326,19 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-xmpp",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "0.3"
+  "serviceVersion" : "0.3",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.opensearch.services.OpenSearchInfraService",
+  "description" : "OpenSearch is a distributed search and analytics engine",
+  "implementation" : "org.apache.camel.test.infra.opensearch.services.OpenSearchLocalContainerInfraService",
+  "alias" : [ "opensearch" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-opensearch",
+  "version" : "4.22.0-SNAPSHOT",
+  "serviceVersion" : "3.7.0",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.pulsar.services.PulsarInfraService",
   "description" : "Apache Pulsar is a distributed messaging and streaming platform",
@@ -307,7 +348,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-pulsar",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "4.2.1"
+  "serviceVersion" : "4.2.1",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
   "description" : "Apache Artemis is an open source message broker",
@@ -317,7 +359,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-artemis",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "latest"
+  "serviceVersion" : "latest",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -327,7 +370,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -337,7 +381,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.google.pubsub.services.GooglePubSubInfraService",
   "description" : "Google Cloud Pub/Sub is a messaging service for event-driven systems",
@@ -347,7 +392,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-google-pubsub",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "emulators"
+  "serviceVersion" : "emulators",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.chatscript.services.ChatScriptInfraService",
   "description" : "ChatScript is an open source chatbot engine",
@@ -357,7 +403,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-chatscript",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "latest"
+  "serviceVersion" : "latest",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.arangodb.services.ArangoDBInfraService",
   "description" : "ArangoDB is a multi-model database for high-performance applications.",
@@ -367,7 +414,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-arangodb",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "3.12.5.2"
+  "serviceVersion" : "3.12.5.2",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.ignite.services.IgniteInfraService",
   "description" : "Apache Ignite is a distributed database for high-performance computing",
@@ -377,7 +425,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ignite",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "2.18.0"
+  "serviceVersion" : "2.18.0",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.rabbitmq.services.RabbitMQInfraService",
   "description" : "RabbitMQ is an open source message and streaming broker",
@@ -387,7 +436,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-rabbitmq",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "4.2.5-management"
+  "serviceVersion" : "4.2.5-management",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.mosquitto.services.MosquittoInfraService",
   "description" : "Mosquitto is a message broker that implements MQTT protocol",
@@ -397,7 +447,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-mosquitto",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "2.0.22"
+  "serviceVersion" : "2.0.22",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.neo4j.services.Neo4jInfraService",
   "description" : "Neo4j is a graph database management system",
@@ -407,7 +458,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-neo4j",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "2026.05-community-ubi10"
+  "serviceVersion" : "2026.05-community-ubi10",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.rocketmq.services.RocketMQInfraService",
   "description" : "Apache RocketMQ is a distributed messaging and streaming platform",
@@ -417,7 +469,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-rocketmq",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "5.3.3"
+  "serviceVersion" : "5.3.3",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -427,7 +480,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -437,7 +491,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -447,7 +502,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.cassandra.services.CassandraInfraService",
   "description" : "Apache Cassandra is a distributed NoSQL database",
@@ -457,7 +513,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-cassandra",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "5.0.8"
+  "serviceVersion" : "5.0.8",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -467,7 +524,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.hazelcast.services.HazelcastInfraService",
   "description" : "Hazelcast is a distributed in-memory computing platform",
@@ -477,7 +535,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-hazelcast",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "5.4.0"
+  "serviceVersion" : "5.4.0",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
   "description" : "HiveMQ is an MQTT-based messaging platform for IoT",
@@ -487,7 +546,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-hivemq",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "camel"
+  "serviceVersion" : "camel",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.postgres.services.PostgresInfraService",
   "description" : "PostgreSQL with pgvector extension for vector similarity search",
@@ -497,7 +557,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-postgres",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "pg18"
+  "serviceVersion" : "pg18",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.microprofile.lra.services.MicroprofileLRAInfraService",
   "description" : "Transaction Manager for microservices that is based on the SAGA pattern for distributed transaction.",
@@ -507,7 +568,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-microprofile-lra",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "5.13.1.Final-2.16.6.Final"
+  "serviceVersion" : "5.13.1.Final-2.16.6.Final",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.minio.services.MinioInfraService",
   "description" : "MinIO is a high-performance S3 compatible object storage",
@@ -517,7 +579,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-minio",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "RELEASE.2025-09-07T16-13-09Z-cpuv1"
+  "serviceVersion" : "RELEASE.2025-09-07T16-13-09Z-cpuv1",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
   "description" : "Apache Kafka, Distributed event streaming platform",
@@ -527,7 +590,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "4.3.1"
+  "serviceVersion" : "4.3.1",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
   "description" : "Local Azure services with Azurite",
@@ -537,7 +601,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-azure-storage-queue",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "3.35.0"
+  "serviceVersion" : "3.35.0",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
   "description" : "Embedded SFTP Server",
@@ -547,7 +612,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ftp",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "2.19.0"
+  "serviceVersion" : "2.19.0",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.jaeger.services.JaegerInfraService",
   "description" : "Jaeger is a distributed tracing backend with OTLP collector and UI",
@@ -557,7 +623,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-jaeger",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "2.19.0"
+  "serviceVersion" : "2.19.0",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.infinispan.services.InfinispanInfraService",
   "description" : "Infinispan is a distributed in-memory key/value data store",
@@ -567,7 +634,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-infinispan",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "16.2"
+  "serviceVersion" : "16.2",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.weaviate.services.WeaviateInfraService",
   "description" : "Weaviate is an open source vector database",
@@ -577,7 +645,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-weaviate",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.37.4"
+  "serviceVersion" : "1.37.4",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.consul.services.ConsulInfraService",
   "description" : "Consul is a service networking solution",
@@ -587,7 +656,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-consul",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "2.0.1"
+  "serviceVersion" : "2.0.1",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.qdrant.services.QdrantInfraService",
   "description" : "Qdrant is a vector similarity search engine and database",
@@ -597,7 +667,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-qdrant",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "v1.18.2-unprivileged"
+  "serviceVersion" : "v1.18.2-unprivileged",
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
   "description" : "Embedded FTPS Server",
@@ -607,7 +678,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ftp",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.2.1"
+  "serviceVersion" : "1.2.1",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ollama.services.OllamaInfraService",
   "description" : "Ollama is a tool for running large language models locally",
@@ -617,7 +689,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ollama",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "0.31.2"
+  "serviceVersion" : "0.31.2",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
   "description" : "Local Azure services with Azurite",
@@ -627,7 +700,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-azure-storage-blob",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "3.35.0"
+  "serviceVersion" : "3.35.0",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.docling.services.DoclingInfraService",
   "description" : "Docling is a document processing and conversion toolkit",
@@ -637,7 +711,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-docling",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "v1.26.0"
+  "serviceVersion" : "v1.26.0",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
@@ -647,7 +722,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.5.28"
+  "serviceVersion" : "1.5.28",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.fhir.services.FhirInfraService",
   "description" : "HAPI FHIR RESTful test server",
@@ -657,7 +733,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-fhir",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "v8.10.0-2"
+  "serviceVersion" : "v8.10.0-2",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.pinecone.services.PineconeInfraService",
   "description" : "Pinecone is a vector database for machine learning applications",
@@ -667,7 +744,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-pinecone",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "v1.0.0.rc0"
+  "serviceVersion" : "v1.0.0.rc0",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
   "description" : "Embedded FTP Server",
@@ -677,7 +755,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ftp",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "1.2.1"
+  "serviceVersion" : "1.2.1",
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.mongodb.services.MongoDBInfraService",
   "description" : "MongoDB is a document-oriented NoSQL database",
@@ -687,5 +766,6 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-mongodb",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "7.0.31-jammy"
+  "serviceVersion" : "7.0.31-jammy",
+  "uiSupported" : true
 } ]

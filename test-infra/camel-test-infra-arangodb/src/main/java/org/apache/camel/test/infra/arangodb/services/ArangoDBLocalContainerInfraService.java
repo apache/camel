@@ -26,7 +26,8 @@ import org.slf4j.LoggerFactory;
 
 @InfraService(service = ArangoDBInfraService.class,
               description = "ArangoDB is a multi-model database for high-performance applications.",
-              serviceAlias = "arangodb")
+              serviceAlias = "arangodb",
+              uiSupported = true)
 public class ArangoDBLocalContainerInfraService implements ArangoDBInfraService, ContainerService<ArangoDbContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ArangoDBLocalContainerInfraService.class);
 

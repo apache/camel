@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.opensearch.services;
 
 import java.time.Duration;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
@@ -26,17 +27,27 @@ import org.apache.camel.test.infra.opensearch.common.OpenSearchProperties;
 import org.opensearch.testcontainers.OpensearchContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.Testcontainers;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = OpenSearchInfraService.class,
+              description = "OpenSearch is a distributed search and analytics engine",
+              serviceAlias = { "opensearch" }, uiSupported = true)
 public class OpenSearchLocalContainerInfraService implements OpenSearchInfraService, ContainerService<OpensearchContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(OpenSearchLocalContainerInfraService.class);
     private static final int OPEN_SEARCH_PORT = 9200;
     private static final String USER_NAME = "admin";
     // NOTE: default value used for testing purposes only.
     private static final String PASSWORD = "admin"; // NOSONAR
+
+    private static final String OPENSEARCH_DASHBOARDS_CONTAINER_IMAGE = "opensearch-dashboards.container.image";
+    private static final int OPENSEARCH_DASHBOARDS_PORT = 5601;
+
     private final OpensearchContainer container;
+    private GenericContainer<?> uiContainer;
 
     public OpenSearchLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(OpenSearchLocalContainerInfraService.class,
@@ -112,10 +123,39 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
 
         registerProperties();
         LOG.info("OpenSearch instance running at {}", getHttpHostAddress());
+
+        if (ContainerEnvironmentUtil.isWithUi()) {
+            try {
+                startUiContainer();
+            } catch (Exception e) {
+                LOG.warn("Failed to start OpenSearch Dashboards UI container: {}", e.getMessage());
+            }
+        }
+    }
+
+    private void startUiContainer() {
+        String uiImage = LocalPropertyResolver.getProperty(
+                OpenSearchLocalContainerInfraService.class, OPENSEARCH_DASHBOARDS_CONTAINER_IMAGE);
+        int opensearchPort = ContainerEnvironmentUtil.getConfiguredPort(OPEN_SEARCH_PORT);
+        Testcontainers.exposeHostPorts(opensearchPort);
+
+        uiContainer = new GenericContainer<>(uiImage)
+                .withEnv("OPENSEARCH_HOSTS", "[\"http://host.testcontainers.internal:" + opensearchPort + "\"]")
+                .withEnv("DISABLE_SECURITY_DASHBOARDS_PLUGIN", "true")
+                .withAccessToHost(true);
+        ContainerEnvironmentUtil.configurePort(uiContainer, true, OPENSEARCH_DASHBOARDS_PORT);
+        uiContainer.start();
+
+        LOG.info("OpenSearch Dashboards running at http://{}:{}",
+                uiContainer.getHost(), uiContainer.getMappedPort(OPENSEARCH_DASHBOARDS_PORT));
     }
 
     @Override
     public void shutdown() {
+        if (uiContainer != null) {
+            LOG.info("Shutting down OpenSearch Dashboards container");
+            uiContainer.stop();
+        }
         LOG.info("Stopping the OpenSearch container");
         container.stop();
     }
@@ -133,5 +173,14 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
     @Override
     public String getPassword() {
         return PASSWORD;
+    }
+
+    @Override
+    public String uiUrl() {
+        if (uiContainer != null && uiContainer.isRunning()) {
+            return String.format("http://%s:%d", uiContainer.getHost(),
+                    uiContainer.getMappedPort(OPENSEARCH_DASHBOARDS_PORT));
+        }
+        return null;
     }
 }

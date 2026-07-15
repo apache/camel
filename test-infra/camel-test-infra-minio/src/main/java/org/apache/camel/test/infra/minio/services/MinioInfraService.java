@@ -40,4 +40,8 @@ public interface MinioInfraService extends InfrastructureService {
     default String endpoint() {
         return String.format("http://%s:%d", host(), port());
     }
+
+    default String uiUrl() {
+        return String.format("http://%s:%d", host(), consolePort());
+    }
 }

@@ -64,4 +64,8 @@ public interface PostgresInfraService extends InfrastructureService {
         properties.put("camel.beans.postgresDS.password", password());
         return properties;
     }
+
+    default String uiUrl() {
+        return null;
+    }
 }

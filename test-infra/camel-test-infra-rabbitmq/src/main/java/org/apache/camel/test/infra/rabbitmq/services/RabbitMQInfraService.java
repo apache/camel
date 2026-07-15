@@ -89,4 +89,8 @@ public interface RabbitMQInfraService extends InfrastructureService {
     default String brokerUrl() {
         return String.format("amqp://%s:%d", hostname(), port());
     }
+
+    default String uiUrl() {
+        return managementUri();
+    }
 }

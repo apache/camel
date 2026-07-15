@@ -28,7 +28,7 @@ import org.testcontainers.containers.Network;
 
 @InfraService(service = KafkaInfraService.class,
               description = "Apache Kafka, Distributed event streaming platform",
-              serviceAlias = "kafka", serviceImplementationAlias = "confluent")
+              serviceAlias = "kafka", serviceImplementationAlias = "confluent", uiSupported = true)
 public class ConfluentInfraService implements KafkaInfraService, ContainerService<ConfluentContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ConfluentInfraService.class);
 

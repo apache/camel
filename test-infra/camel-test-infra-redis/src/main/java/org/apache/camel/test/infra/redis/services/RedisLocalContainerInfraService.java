@@ -17,19 +17,25 @@
 package org.apache.camel.test.infra.redis.services;
 
 import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.redis.common.RedisProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.Testcontainers;
+import org.testcontainers.containers.GenericContainer;
 
 @InfraService(service = RedisInfraService.class,
               description = "Redis is an open source in-memory data store",
-              serviceAlias = { "redis" })
+              serviceAlias = { "redis" }, uiSupported = true)
 public class RedisLocalContainerInfraService implements RedisInfraService, ContainerService<RedisContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RedisLocalContainerInfraService.class);
+    private static final String REDIS_COMMANDER_CONTAINER_IMAGE = "redis-commander.container.image";
+    private static final int REDIS_COMMANDER_PORT = 8082;
 
     private final RedisContainer container;
+    private GenericContainer<?> uiContainer;
 
     public RedisLocalContainerInfraService() {
         container = initContainer();
@@ -71,12 +77,43 @@ public class RedisLocalContainerInfraService implements RedisInfraService, Conta
 
         registerProperties();
         LOG.info("Redis instance running at {}", getServiceAddress());
+
+        if (ContainerEnvironmentUtil.isWithUi()) {
+            try {
+                String uiImage = LocalPropertyResolver.getProperty(
+                        RedisLocalContainerInfraService.class, REDIS_COMMANDER_CONTAINER_IMAGE);
+                int redisPort = ContainerEnvironmentUtil.getConfiguredPort(RedisProperties.DEFAULT_PORT);
+                Testcontainers.exposeHostPorts(redisPort);
+                uiContainer = new GenericContainer<>(uiImage)
+                        .withEnv("REDIS_HOSTS", "local:host.testcontainers.internal:" + redisPort)
+                        .withEnv("PORT", String.valueOf(REDIS_COMMANDER_PORT))
+                        .withAccessToHost(true);
+                ContainerEnvironmentUtil.configurePort(uiContainer, true, REDIS_COMMANDER_PORT);
+                uiContainer.start();
+                LOG.info("Redis Commander running at http://{}:{}", uiContainer.getHost(),
+                        uiContainer.getMappedPort(REDIS_COMMANDER_PORT));
+            } catch (Exception e) {
+                LOG.warn("Failed to start Redis Commander UI container: {}", e.getMessage());
+            }
+        }
     }
 
     @Override
     public void shutdown() {
+        if (uiContainer != null) {
+            LOG.info("Stopping the Redis Commander container");
+            uiContainer.stop();
+        }
         LOG.info("Stopping the Redis container");
         container.stop();
+    }
+
+    @Override
+    public String uiUrl() {
+        if (uiContainer != null && uiContainer.isRunning()) {
+            return String.format("http://%s:%d", uiContainer.getHost(), uiContainer.getMappedPort(REDIS_COMMANDER_PORT));
+        }
+        return null;
     }
 
     @Override

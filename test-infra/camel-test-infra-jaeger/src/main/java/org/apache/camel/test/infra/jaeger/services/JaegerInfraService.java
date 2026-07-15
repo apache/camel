@@ -45,4 +45,8 @@ public interface JaegerInfraService extends InfrastructureService {
     default String queryUiUrl() {
         return String.format("http://%s:%d", host(), queryUiPort());
     }
+
+    default String uiUrl() {
+        return queryUiUrl();
+    }
 }

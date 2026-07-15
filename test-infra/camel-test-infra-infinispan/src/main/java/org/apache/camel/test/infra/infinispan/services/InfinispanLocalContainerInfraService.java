@@ -34,7 +34,8 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 @InfraService(service = InfinispanInfraService.class,
               description = "Infinispan is a distributed in-memory key/value data store",
-              serviceAlias = { "infinispan" })
+              serviceAlias = { "infinispan" },
+              uiSupported = true)
 public class InfinispanLocalContainerInfraService implements InfinispanInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "infinispan";
     private static final String DEFAULT_USERNAME = "admin";

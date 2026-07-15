@@ -51,6 +51,10 @@ public interface QdrantInfraService extends InfrastructureService {
         return "";
     }
 
+    default String uiUrl() {
+        return String.format("http://%s:%d/dashboard", getHttpHost(), getHttpPort());
+    }
+
     default HttpResponse<byte[]> put(String path, Map<Object, Object> body) throws Exception {
         final String reqPath = !path.startsWith("/") ? "/" + path : path;
         final String reqUrl = String.format("http://%s:%d%s", getHttpHost(), getHttpPort(), reqPath);

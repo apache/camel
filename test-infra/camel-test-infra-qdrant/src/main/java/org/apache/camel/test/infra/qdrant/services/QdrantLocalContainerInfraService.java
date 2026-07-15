@@ -29,7 +29,8 @@ import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = QdrantInfraService.class,
               description = "Qdrant is a vector similarity search engine and database",
-              serviceAlias = { "qdrant" })
+              serviceAlias = { "qdrant" },
+              uiSupported = true)
 public class QdrantLocalContainerInfraService implements QdrantInfraService, ContainerService<QdrantContainer> {
     public static final int HTTP_PORT = 6333;
     public static final int GRPC_PORT = 6334;

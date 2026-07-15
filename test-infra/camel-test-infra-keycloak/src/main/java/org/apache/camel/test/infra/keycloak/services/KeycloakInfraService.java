@@ -58,4 +58,8 @@ public interface KeycloakInfraService extends InfrastructureService {
     default String password() {
         return getKeycloakPassword();
     }
+
+    default String uiUrl() {
+        return serverUrl() + "/admin";
+    }
 }

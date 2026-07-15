@@ -24,19 +24,25 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.Testcontainers;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = KafkaInfraService.class,
               description = "Apache Kafka, Distributed event streaming platform",
-              serviceAlias = "kafka")
+              serviceAlias = "kafka", uiSupported = true)
 public class ContainerLocalKafkaInfraService implements KafkaInfraService, ContainerService<KafkaContainer> {
     public static final String KAFKA_IMAGE_NAME = LocalPropertyResolver.getProperty(
             ContainerLocalKafkaInfraService.class,
             KafkaProperties.KAFKA_CONTAINER);
 
+    private static final String KAFKA_UI_CONTAINER_IMAGE = "kafka-ui.container.image";
+    private static final int KAFKA_UI_PORT = 9080;
+
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaInfraService.class);
     protected KafkaContainer kafka;
+    private GenericContainer<?> uiContainer;
 
     public ContainerLocalKafkaInfraService() {
         kafka = initContainer();
@@ -87,12 +93,50 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
         registerProperties();
 
         LOG.info("Kafka bootstrap server running at address {}", kafka.getBootstrapServers());
+
+        if (ContainerEnvironmentUtil.isWithUi()) {
+            try {
+                startUiContainer();
+            } catch (Exception e) {
+                LOG.warn("Failed to start Kafka UI container: {}", e.getMessage());
+            }
+        }
+    }
+
+    private void startUiContainer() {
+        String uiImage = LocalPropertyResolver.getProperty(
+                ContainerLocalKafkaInfraService.class, KAFKA_UI_CONTAINER_IMAGE);
+        int kafkaPort = ContainerEnvironmentUtil.getConfiguredPort(9092);
+        Testcontainers.exposeHostPorts(kafkaPort);
+
+        uiContainer = new GenericContainer<>(uiImage)
+                .withEnv("DYNAMIC_CONFIG_ENABLED", "true")
+                .withEnv("KAFKA_CLUSTERS_0_NAME", "camel-infra")
+                .withEnv("KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS", "host.testcontainers.internal:" + kafkaPort)
+                .withEnv("SERVER_PORT", String.valueOf(KAFKA_UI_PORT))
+                .withAccessToHost(true);
+        ContainerEnvironmentUtil.configurePort(uiContainer, true, KAFKA_UI_PORT);
+        uiContainer.start();
+
+        LOG.info("Kafka UI running at http://{}:{}", uiContainer.getHost(), uiContainer.getMappedPort(KAFKA_UI_PORT));
     }
 
     @Override
     public void shutdown() {
+        if (uiContainer != null) {
+            LOG.info("Shutting down Kafka UI container");
+            uiContainer.stop();
+        }
         LOG.info("Shutting down Kafka container");
         kafka.stop();
+    }
+
+    @Override
+    public String uiUrl() {
+        if (uiContainer != null && uiContainer.isRunning()) {
+            return String.format("http://%s:%d", uiContainer.getHost(), uiContainer.getMappedPort(KAFKA_UI_PORT));
+        }
+        return null;
     }
 
     @Override

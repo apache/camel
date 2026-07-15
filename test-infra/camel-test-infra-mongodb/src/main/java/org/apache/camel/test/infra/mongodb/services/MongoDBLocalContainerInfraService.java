@@ -24,16 +24,22 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.mongodb.common.MongoDBProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.Testcontainers;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.mongodb.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = MongoDBInfraService.class,
               description = "MongoDB is a document-oriented NoSQL database",
-              serviceAlias = { "mongodb" })
+              serviceAlias = { "mongodb" }, uiSupported = true)
 public class MongoDBLocalContainerInfraService implements MongoDBInfraService, ContainerService<MongoDBContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBLocalContainerInfraService.class);
     private static final int DEFAULT_MONGODB_PORT = 27017;
+    private static final String MONGO_EXPRESS_CONTAINER_IMAGE = "mongo-express.container.image";
+    private static final int MONGO_EXPRESS_PORT = 8081;
+
     private final MongoDBContainer container;
+    private GenericContainer<?> uiContainer;
 
     public MongoDBLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(MongoDBLocalContainerInfraService.class, MongoDBProperties.MONGODB_CONTAINER));
@@ -87,12 +93,44 @@ public class MongoDBLocalContainerInfraService implements MongoDBInfraService, C
         container.start();
         registerProperties();
         LOG.info("MongoDB service running at {}", container.getReplicaSetUrl());
+
+        if (ContainerEnvironmentUtil.isWithUi()) {
+            try {
+                String uiImage = LocalPropertyResolver.getProperty(
+                        MongoDBLocalContainerInfraService.class, MONGO_EXPRESS_CONTAINER_IMAGE);
+                int mongoPort = ContainerEnvironmentUtil.getConfiguredPort(DEFAULT_MONGODB_PORT);
+                Testcontainers.exposeHostPorts(mongoPort);
+                uiContainer = new GenericContainer<>(uiImage)
+                        .withEnv("ME_CONFIG_MONGODB_URL",
+                                "mongodb://host.testcontainers.internal:" + mongoPort + "/?directConnection=true")
+                        .withEnv("ME_CONFIG_BASICAUTH", "false")
+                        .withAccessToHost(true);
+                ContainerEnvironmentUtil.configurePort(uiContainer, true, MONGO_EXPRESS_PORT);
+                uiContainer.start();
+                LOG.info("Mongo Express running at http://{}:{}", uiContainer.getHost(),
+                        uiContainer.getMappedPort(MONGO_EXPRESS_PORT));
+            } catch (Exception e) {
+                LOG.warn("Failed to start Mongo Express UI container: {}", e.getMessage());
+            }
+        }
     }
 
     @Override
     public void shutdown() {
+        if (uiContainer != null) {
+            LOG.info("Stopping the Mongo Express container");
+            uiContainer.stop();
+        }
         LOG.info("Stopping the MongoDB container");
         container.stop();
+    }
+
+    @Override
+    public String uiUrl() {
+        if (uiContainer != null && uiContainer.isRunning()) {
+            return String.format("http://%s:%d", uiContainer.getHost(), uiContainer.getMappedPort(MONGO_EXPRESS_PORT));
+        }
+        return null;
     }
 
     @Override

@@ -28,4 +28,8 @@ public interface ConsulInfraService extends InfrastructureService {
     String host();
 
     int port();
+
+    default String uiUrl() {
+        return getConsulUrl() + "/ui";
+    }
 }

@@ -28,7 +28,8 @@ import org.slf4j.LoggerFactory;
  */
 @InfraService(service = JaegerInfraService.class,
               description = "Jaeger is a distributed tracing backend with OTLP collector and UI",
-              serviceAlias = { "jaeger" })
+              serviceAlias = { "jaeger" },
+              uiSupported = true)
 public class JaegerLocalContainerInfraService implements JaegerInfraService, ContainerService<JaegerContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(JaegerLocalContainerInfraService.class);
 
