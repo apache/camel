@@ -251,10 +251,8 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
                     // method and rethrow it
                     exchange.setException(rce);
                 } else {
-                    // we were done async, so use the endpoint error handler
-                    if (endpoint.getExceptionHandler() != null) {
-                        endpoint.getExceptionHandler().handleException(rce);
-                    }
+                    // we were done async, so use the consumer error handler
+                    consumer.getExceptionHandler().handleException("Error processing exchange", exchange, rce);
                 }
             }
 
