@@ -147,7 +147,8 @@ public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport imp
                             return Boolean.TRUE;
                         }
                     } catch (DuplicateKeyException e) {
-                        // a concurrent insert won the race — the key already exists
+                        log.debug("Concurrent insert race for key '{}' — another node/thread won, treating as duplicate", key);
+                        status.setRollbackOnly();
                         return Boolean.FALSE;
                     }
                 }
