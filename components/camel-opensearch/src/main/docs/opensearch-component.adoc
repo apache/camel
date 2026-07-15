@@ -406,3 +406,29 @@ MsearchRequest.Builder builder = new MsearchRequest.Builder().index("twitter").s
                 .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
 List<MultiSearchResponseItem<?>> response = template.requestBody("direct:multiSearch", builder, List.class);
 ----
+
+=== Custom OpenSearchClient Example
+
+DeleteIndex operation using a custom OpenSearchClient that uses AWS SDK transport. When both restClient and openSearchClient are present in registry, openSearchClient takes precedence over restClient.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+SdkHttpClient httpClient = ApacheHttpClient.builder().build();
+final ObjectMapper mapper = new ObjectMapper();
+mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+OpenSearchTransport transport = new AwsSdk2Transport(httpClient, host, Region.of(region),AwsSdk2TransportOptions.builder().setCredentials(buildCredentialsProvider()).setMapper(new JacksonJsonpMapper(mapper)).build());
+OpenSearchClient customClient = new OpenSearchClient(transport);
+
+getContext().getRegistry().bind("customClient", customClient);
+
+from("direct:deleteIndex")
+  .to("opensearch://foo?openSearchClient=#customClient");
+
+DeleteIndexRequest.Builder builder = new DeleteIndexRequest.Builder().index("twitter");
+Boolean status = template().requestBody("direct:deleteIndex", builder, Boolean.class);
+----
+

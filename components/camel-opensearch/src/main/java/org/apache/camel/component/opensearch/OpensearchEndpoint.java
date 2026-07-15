@@ -41,7 +41,8 @@ public class OpensearchEndpoint extends DefaultEndpoint implements EndpointServi
 
     private final RestClient client;
 
-    @UriParam(label = "advanced", description = "To use a custom configured OpenSearchClient instance")
+    @UriParam(label = "advanced",
+              description = "To use a custom configured OpenSearchClient instance. When both restClient and openSearchClient are present in the registry, openSearchClient takes precedence over restClient.")
     @Metadata(autowired = true)
     private OpenSearchClient openSearchClient;
 

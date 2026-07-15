@@ -92,18 +92,12 @@ class OpensearchProducer extends DefaultAsyncProducer {
     private volatile RestClient client;
     private Sniffer sniffer;
     private final OpenSearchClient openSearchClient;
-    private boolean isCustomClient;
 
     public OpensearchProducer(OpensearchEndpoint endpoint, OpensearchConfiguration configuration) {
         super(endpoint);
         this.configuration = configuration;
         this.client = endpoint.getClient();
         this.openSearchClient = endpoint.getOpenSearchClient();
-        if(this.openSearchClient != null) {
-            isCustomClient = true;
-        }else{
-            isCustomClient = false;
-        }
     }
 
     private OpensearchOperation resolveOperation(Exchange exchange) {
@@ -164,7 +158,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
         try {
             OpenSearchTransport transport;
             if (openSearchClient == null) {
-                if (configuration.isDisconnect() && client == null && !isCustomClient) {
+                if (configuration.isDisconnect() && client == null) {
                     startClient();
                 }
                 final ObjectMapper mapper = new ObjectMapper();
@@ -447,7 +441,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
             if (ctx.configWaitForActiveShards()) {
                 message.removeHeader(OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS);
             }
-            if (configuration.isDisconnect() && !isCustomClient) {
+            if (configuration.isDisconnect() && openSearchClient == null) {
                 IOHelper.close(ctx.transport());
                 if (configuration.isEnableSniffer()) {
                     IOHelper.close(sniffer);
@@ -464,7 +458,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (!configuration.isDisconnect() && !isCustomClient) {
+        if (!configuration.isDisconnect() && openSearchClient == null) {
             startClient();
         }
     }

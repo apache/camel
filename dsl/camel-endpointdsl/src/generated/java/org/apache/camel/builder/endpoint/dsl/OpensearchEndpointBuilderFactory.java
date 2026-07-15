@@ -616,7 +616,9 @@ public interface OpensearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom configured OpenSearchClient instance.
+         * To use a custom configured OpenSearchClient instance. When both
+         * restClient and openSearchClient are present in the registry,
+         * openSearchClient takes precedence over restClient.
          * 
          * The option is a:
          * <code>org.opensearch.client.opensearch.OpenSearchClient</code> type.
@@ -631,7 +633,9 @@ public interface OpensearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom configured OpenSearchClient instance.
+         * To use a custom configured OpenSearchClient instance. When both
+         * restClient and openSearchClient are present in the registry,
+         * openSearchClient takes precedence over restClient.
          * 
          * The option will be converted to a
          * <code>org.opensearch.client.opensearch.OpenSearchClient</code> type.
