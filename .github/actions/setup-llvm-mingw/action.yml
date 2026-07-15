@@ -1,0 +1,38 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: 'setup-llvm-mingw'
+description: >-
+  Installs a pinned release of llvm-mingw on ubuntu-latest, providing the
+  x86_64-w64-mingw32-clang and aarch64-w64-mingw32-clang cross-compilers
+  used to build camel-x64.exe and camel-arm64.exe.
+
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        VERSION='20260616'
+        SHA256='534b92e067b22a6b4441f48ae9240a3341b17825d04d577eab0cf85c44b4deda'
+        TARBALL="llvm-mingw-${VERSION}-ucrt-ubuntu-22.04-x86_64.tar.xz"
+        INSTALL_DIR="${RUNNER_TEMP}/llvm-mingw"
+        mkdir -p "$INSTALL_DIR"
+        curl -fsSL -o "$TARBALL" \
+          "https://github.com/mstorsjo/llvm-mingw/releases/download/${VERSION}/${TARBALL}"
+        echo "${SHA256}  ${TARBALL}" | sha256sum -c -
+        tar -xf "$TARBALL" -C "$INSTALL_DIR"
+        echo "${INSTALL_DIR}/llvm-mingw-${VERSION}-ucrt-ubuntu-22.04-x86_64/bin" >> "$GITHUB_PATH"
+      shell: bash

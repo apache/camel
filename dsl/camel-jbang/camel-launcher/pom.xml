@@ -334,15 +334,17 @@
 
     <profiles>
         <!--
-            On Windows, copy the native camel.exe artifact from tooling/camel-exe into target/
-            so the assembly descriptor can include it in bin/camel.exe.
+            When camel.exe.build=true, copy the native exe artifacts (x64 + arm64) from
+            tooling/camel-exe into target/ so the assembly descriptor can include them in
+            the distribution archive. Host-OS-independent: works on Linux, macOS, or Windows.
         -->
         <profile>
             <id>include-camel-exe</id>
             <activation>
-                <os>
-                    <family>windows</family>
-                </os>
+                <property>
+                    <name>camel.exe.build</name>
+                    <value>true</value>
+                </property>
             </activation>
             <dependencies>
                 <dependency>
@@ -350,6 +352,14 @@
                     <artifactId>camel-exe</artifactId>
                     <version>${project.version}</version>
                     <type>exe</type>
+                    <classifier>x64</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-exe</artifactId>
+                    <version>${project.version}</version>
+                    <type>exe</type>
+                    <classifier>arm64</classifier>
                 </dependency>
             </dependencies>
             <build>
@@ -359,7 +369,7 @@
                         <artifactId>maven-dependency-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>copy-camel-exe</id>
+                                <id>copy-camel-exe-x64</id>
                                 <phase>generate-resources</phase>
                                 <goals>
                                     <goal>copy</goal>
@@ -371,8 +381,29 @@
                                             <artifactId>camel-exe</artifactId>
                                             <version>${project.version}</version>
                                             <type>exe</type>
+                                            <classifier>x64</classifier>
                                             <outputDirectory>${project.build.directory}</outputDirectory>
-                                            <destFileName>camel.exe</destFileName>
+                                            <destFileName>camel-x64.exe</destFileName>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-camel-exe-arm64</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.apache.camel</groupId>
+                                            <artifactId>camel-exe</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>exe</type>
+                                            <classifier>arm64</classifier>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                            <destFileName>camel-arm64.exe</destFileName>
                                         </artifactItem>
                                     </artifactItems>
                                 </configuration>
@@ -384,15 +415,15 @@
         </profile>
 
         <!--
-            Release gate: fails the build before packaging if camel.exe was not copied into
-            target/. Enabled only when -Dcamel.launcher.requireWindowsExe=true (release job on
-            a Windows x64 host), so ordinary cross-platform dev builds are unaffected.
+            Release gate: fails the build before packaging if the native exe files were
+            not copied into target/. Enabled when -Dcamel.exe.build=true (CI, release builds),
+            so ordinary cross-platform dev builds are unaffected.
         -->
         <profile>
-            <id>require-windows-exe</id>
+            <id>require-native-exe</id>
             <activation>
                 <property>
-                    <name>camel.launcher.requireWindowsExe</name>
+                    <name>camel.exe.build</name>
                     <value>true</value>
                 </property>
             </activation>
@@ -403,7 +434,7 @@
                         <artifactId>maven-enforcer-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>require-camel-exe</id>
+                                <id>require-native-exe-present</id>
                                 <phase>prepare-package</phase>
                                 <goals>
                                     <goal>enforce</goal>
@@ -412,7 +443,8 @@
                                     <rules>
                                         <requireFilesExist>
                                             <files>
-                                                <file>${project.build.directory}/camel.exe</file>
+                                                <file>${project.build.directory}/camel-x64.exe</file>
+                                                <file>${project.build.directory}/camel-arm64.exe</file>
                                             </files>
                                         </requireFilesExist>
                                     </rules>

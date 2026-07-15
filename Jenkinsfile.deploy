@@ -17,7 +17,7 @@
 def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
 def JDK_NAME = env.JDK_NAME ?: 'jdk_25_latest'
 
-def MAVEN_PARAMS = "-U -B -e -fae -V -Dnoassembly "
+def MAVEN_PARAMS = "-U -B -e -fae -V -Dnoassembly -Dcamel.exe.build=true "
 
 pipeline {
 
@@ -55,6 +55,27 @@ pipeline {
            }
         }
 
+        stage('Verify llvm-mingw') {
+            when {
+                anyOf {
+                    branch 'main'
+                    branch 'camel-4.18.x'
+                    branch 'camel-4.14.x'
+                }
+            }
+            steps {
+                sh '''
+                    for compiler in x86_64-w64-mingw32-clang aarch64-w64-mingw32-clang; do
+                        if ! command -v "$compiler" >/dev/null 2>&1; then
+                            echo "ERROR: $compiler not found on PATH."
+                            echo "Install llvm-mingw per docs/user-manual/modules/ROOT/pages/release-guide.adoc"
+                            exit 1
+                        fi
+                    done
+                '''
+            }
+        }
+
         stage('Build & Deploy') {
             when {
                 anyOf {
@@ -89,4 +110,3 @@ pipeline {
         }
     }
 }
-
