@@ -35,6 +35,7 @@ import org.apache.camel.spi.MimeType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.util.ObjectHelper;
 import tools.jackson.core.FormatSchema;
+import tools.jackson.core.JacksonException;
 
 /**
  * Data type able to unmarshal Exchange body to Java object. Supports both Json schema types and uses Jackson object
@@ -71,7 +72,7 @@ public class JsonPojoDataTypeTransformer extends Transformer implements CamelCon
             }
 
             message.setBody(getJavaObject(message, schemaType, schema, contentType));
-        } catch (InvalidPayloadException | IOException | ClassNotFoundException e) {
+        } catch (InvalidPayloadException | IOException | JacksonException | ClassNotFoundException e) {
             throw new CamelExecutionException("Failed to apply Java object data type on exchange", message.getExchange(), e);
         }
     }
