@@ -91,6 +91,20 @@ arguments to the adjacent `camel.bat` (preserving spaces and Unicode) and return
 its exit code. It exists so package managers that require a genuine executable
 users may continue to invoke `bin\camel.bat`; both behave identically.
 
+==== OpenTelemetry agent export target changes
+
+The `--open-telemetry-agent-export` option has been extended with new values and a deprecation:
+
+* `observability` (new) — exports traces to VictoriaTraces and logs to VictoriaLogs
+  when the observability infra stack is running (`camel infra run observability`).
+* `otlp` (new) — generic external OTLP export for traces. Replaces `jaeger` as the
+  recommended value for sending traces to any external OTLP-compatible collector.
+* `jaeger` (deprecated) — still works as an alias for `otlp`. Use `otlp` instead.
+* `tui` (unchanged) — embedded receiver in the TUI (default).
+
+The `camel.opentelemetry2.exportTarget` property in `OpenTelemetryTracer` now accepts any
+non-empty value to signal external export mode (previously only `"jaeger"` was recognized).
+
 === camel-langchain4j-agent
 
 The `Agent.chat()` method return type has changed from `String` to `Result<String>` (from `dev.langchain4j.service.Result`).

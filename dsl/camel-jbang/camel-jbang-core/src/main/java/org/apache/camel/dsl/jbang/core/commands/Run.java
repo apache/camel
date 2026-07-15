@@ -1224,7 +1224,8 @@ public class Run extends CamelCommand {
         if (debugOptions.openTelemetryAgent) {
             dependencies.add("camel:opentelemetry2");
             boolean externalExport = "otlp".equals(debugOptions.openTelemetryAgentExport)
-                    || "jaeger".equals(debugOptions.openTelemetryAgentExport);
+                    || "jaeger".equals(debugOptions.openTelemetryAgentExport)
+                    || "observability".equals(debugOptions.openTelemetryAgentExport);
             if (!externalExport) {
                 dependencies.add("camel:platform-http-main");
                 if (serverOptions.port == -1) {
@@ -2047,8 +2048,9 @@ public class Run extends CamelCommand {
         List<String> jbangArgs = new ArrayList<>();
         jbangArgs.add("jbang");
         jbangArgs.add("run");
-        String forkVersion = camelVersion != null ? camelVersion : new DefaultCamelCatalog().getCatalogVersion();
-        jbangArgs.add("-Dcamel.jbang.version=" + forkVersion);
+        if (camelVersion != null) {
+            jbangArgs.add("-Dcamel.jbang.version=" + camelVersion);
+        }
         if (kameletsVersion != null) {
             if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.16.0")) {
                 jbangArgs.add("-Dcamel-kamelets.version=" + kameletsVersion);
@@ -2089,6 +2091,7 @@ public class Run extends CamelCommand {
                 jbangArgs.add("-Dotel.logs.exporter=otlp");
                 jbangArgs.add(
                         "-Dotel.exporter.otlp.logs.endpoint=http://localhost:9428/insert/opentelemetry/v1/logs");
+                cmds.add("--prop=camel.opentelemetry2.exportTarget=observability");
             } else if (otlpExport) {
                 jbangArgs.add("-Dotel.logs.exporter=none");
                 jbangArgs.add("-Dotel.exporter.otlp.traces.endpoint=http://localhost:4318/v1/traces");
