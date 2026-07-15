@@ -420,7 +420,12 @@ Java::
 SdkHttpClient httpClient = ApacheHttpClient.builder().build();
 final ObjectMapper mapper = new ObjectMapper();
 mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-OpenSearchTransport transport = new AwsSdk2Transport(httpClient, host, Region.of(region),AwsSdk2TransportOptions.builder().setCredentials(buildCredentialsProvider()).setMapper(new JacksonJsonpMapper(mapper)).build());
+OpenSearchTransport transport = new AwsSdk2Transport(
+    httpClient, host, Region.of(region),
+    AwsSdk2TransportOptions.builder()
+        .setCredentials(buildCredentialsProvider())
+        .setMapper(new JacksonJsonpMapper(mapper))
+        .build());
 OpenSearchClient customClient = new OpenSearchClient(transport);
 
 getContext().getRegistry().bind("customClient", customClient);
@@ -428,7 +433,6 @@ getContext().getRegistry().bind("customClient", customClient);
 from("direct:deleteIndex")
   .to("opensearch://foo?openSearchClient=#customClient");
 
-DeleteIndexRequest.Builder builder = new DeleteIndexRequest.Builder().index("twitter");
-Boolean status = template().requestBody("direct:deleteIndex", builder, Boolean.class);
 ----
+====
 
