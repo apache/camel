@@ -102,16 +102,6 @@ public class Splitter extends MulticastProcessor {
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         AggregationStrategy strategy = getAggregationStrategy();
 
-        // set original exchange if not already pre-configured
-        if (strategy instanceof UseOriginalAggregationStrategy original) {
-            // need to create a new private instance, as we can also have concurrency issue so we cannot store state
-            AggregationStrategy clone = original.newInstance(exchange);
-            if (isShareUnitOfWork()) {
-                clone = new ShareUnitOfWorkAggregationStrategy(clone);
-            }
-            setAggregationStrategyOnExchange(exchange, clone);
-        }
-
         // if no custom aggregation strategy is being used then fallback to keep the original
         // and propagate exceptions which is done by a per exchange specific aggregation strategy
         // to ensure it supports async routing

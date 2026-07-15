@@ -13,6 +13,15 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.3 to 4.18.4
 
+=== camel-core - Multicast EIP honors UseOriginalAggregationStrategy
+
+The `UseOriginalAggregationStrategy` binding has been moved from `Splitter` and `RecipientListProcessor`
+into `MulticastProcessor` (their shared base class), so all three EIPs (Multicast, Splitter,
+RecipientList) now consistently bind the original exchange on the strategy. Previously, Multicast
+never called `newInstance(exchange)`, which made the strategy silently ineffective — especially in
+error scenarios where the aggregated result could overwrite the original exchange body instead of
+preserving it.
+
 === camel-azure-servicebus - Camel-managed message lock renewal
 
 When consuming from Azure Service Bus in `PEEK_LOCK` mode with `maxAutoLockRenewDuration > 0`, Camel now
