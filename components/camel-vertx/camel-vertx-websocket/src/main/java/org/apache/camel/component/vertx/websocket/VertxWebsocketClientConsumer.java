@@ -43,7 +43,7 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        configureWebSocketHandlers(getEndpoint().getWebSocket());
+        getEndpoint().getWebSocket(this::configureWebSocketHandlers);
     }
 
     protected void configureWebSocketHandlers(WebSocket webSocket) {
@@ -58,7 +58,7 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
                 Vertx vertx = getEndpoint().getVertx();
                 vertx.setPeriodic(configuration.getReconnectInitialDelay(), configuration.getReconnectInterval(), timerId -> {
                     vertx.executeBlocking(() -> {
-                        configureWebSocketHandlers(getEndpoint().getWebSocket());
+                        getEndpoint().getWebSocket(this::configureWebSocketHandlers);
                         vertx.cancelTimer(timerId);
                         return null;
                     }, false)
