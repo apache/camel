@@ -68,6 +68,17 @@ public class JmsQueueEndpoint extends JmsEndpoint implements JmsBrowsableEndpoin
         queueBrowseStrategy = createQueueBrowseStrategy();
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        if (maximumBrowseSize < 0) {
+            JmsConfiguration config = getConfiguration();
+            if (config != null) {
+                maximumBrowseSize = config.getBrowseLimit();
+            }
+        }
+    }
+
     @ManagedAttribute
     public int getMaximumBrowseSize() {
         return maximumBrowseSize;
