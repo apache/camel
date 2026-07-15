@@ -52,6 +52,8 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
+import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
+import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ErrorHandlerAware;
@@ -308,6 +310,18 @@ public class MulticastProcessor extends BaseProcessorSupport
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        AggregationStrategy strategy = getAggregationStrategy();
+
+        // set original exchange if not already pre-configured
+        if (strategy instanceof UseOriginalAggregationStrategy original) {
+            // need to create a new private instance, as we can also have concurrency issue so we cannot store state
+            AggregationStrategy clone = original.newInstance(exchange);
+            if (isShareUnitOfWork()) {
+                clone = new ShareUnitOfWorkAggregationStrategy(clone);
+            }
+            setAggregationStrategyOnExchange(exchange, clone);
+        }
+
         if (synchronous) {
             try {
                 // force synchronous processing using await manager
