@@ -52,9 +52,6 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
 
-        // No timeout param needed for expectedCount=0 — assertIsSatisfied()
-        // returns immediately when no messages are expected (the default
-        // sleepForEmptyTest=0 is correct here)
         endpoint.assertIsSatisfied();
     }
 
