@@ -37,7 +37,7 @@ import org.springframework.jms.core.JmsOperations;
  */
 @ManagedResource(description = "Managed JMS Queue Endpoint")
 public class ActiveMQQueueEndpoint extends ActiveMQEndpoint implements JmsBrowsableEndpoint, BrowsableEndpoint {
-    private int maximumBrowseSize = 100;
+    private int maximumBrowseSize = -1;
     private final QueueBrowseStrategy queueBrowseStrategy;
 
     public ActiveMQQueueEndpoint(String uri, JmsComponent component, String destination,
@@ -71,6 +71,17 @@ public class ActiveMQQueueEndpoint extends ActiveMQEndpoint implements JmsBrowsa
         super(endpointUri, destination, false);
         setDestinationType("queue");
         queueBrowseStrategy = createQueueBrowseStrategy();
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        if (maximumBrowseSize < 0) {
+            JmsConfiguration config = getConfiguration();
+            if (config != null) {
+                maximumBrowseSize = config.getBrowseLimit();
+            }
+        }
     }
 
     @ManagedAttribute
