@@ -75,10 +75,16 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
                             propagatedHeadersProvider.getHeaders(ex, innerMessage)));
         }
 
+        Object convertedBody = tryConvertToSerializedType(exchange, body, kafkaConfiguration.getValueSerializer());
+        Object key = kafkaConfiguration.getKey() != null
+                ? tryConvertToSerializedType(exchange, kafkaConfiguration.getKey(), kafkaConfiguration.getKeySerializer())
+                : null;
+
         return new KeyValueHolder<>(
                 body,
                 new ProducerRecord<>(
-                        msgTopic, null, null, null, body, propagatedHeadersProvider.getDefaultHeaders()));
+                        msgTopic, null, null, key, convertedBody,
+                        propagatedHeadersProvider.getHeaders(exchange, exchange.getIn())));
     }
 
     private Message getInnerMessage(Object object) {
@@ -116,19 +122,14 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
 
     private Object getInnerKey(Exchange innerExchange, Message innerMessage) {
         Object innerKey = innerMessage.getHeader(KafkaConstants.KEY);
-        if (innerKey != null) {
-
-            innerKey = kafkaConfiguration.getKey() != null ? kafkaConfiguration.getKey() : innerKey;
-
-            if (innerKey != null) {
-                innerKey = tryConvertToSerializedType(innerExchange, innerKey,
-                        kafkaConfiguration.getKeySerializer());
-            }
-
-            return innerKey;
+        if (innerKey == null) {
+            innerKey = kafkaConfiguration.getKey();
         }
-
-        return null;
+        if (innerKey != null) {
+            Exchange ex = innerExchange != null ? innerExchange : exchange;
+            innerKey = tryConvertToSerializedType(ex, innerKey, kafkaConfiguration.getKeySerializer());
+        }
+        return innerKey;
     }
 
     private Integer getInnerPartitionKey(Message innerMessage) {

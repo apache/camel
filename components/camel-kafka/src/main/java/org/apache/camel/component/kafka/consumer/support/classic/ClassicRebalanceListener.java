@@ -51,7 +51,7 @@ public class ClassicRebalanceListener implements ConsumerRebalanceListener {
             LOG.debug("onPartitionsRevoked: {} from {}", threadId, partition.topic());
 
             // only commit offsets if the component has control
-            if (!configuration.getAutoCommitEnable()) {
+            if (!configuration.isAutoCommitEnable()) {
                 commitManager.commit(partition);
             }
         }

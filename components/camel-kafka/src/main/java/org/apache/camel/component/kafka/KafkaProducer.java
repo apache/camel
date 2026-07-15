@@ -29,6 +29,7 @@ import java.util.concurrent.Future;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.kafka.producer.support.DelegatingCallback;
@@ -159,6 +160,8 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     @Override
     @SuppressWarnings("rawtypes")
     protected void doStart() throws Exception {
+        CamelContextAware.trySetCamelContext(configuration.getHeaderSerializer(), getEndpoint().getCamelContext());
+
         Properties props = getProps();
         transactionId = ObjectHelper.isNotEmpty(configuration.getTransactionalId())
                 ? configuration.getTransactionalId() : props.getProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG);
