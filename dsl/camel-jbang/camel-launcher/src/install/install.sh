@@ -89,6 +89,7 @@ sha256() {
 # Reads $manifest_file line by line without ever sourcing, dot-invoking, or eval-ing its content.
 parse_manifest() {
     file="$1"
+    cr=$(printf '\r')
     p_format=""
     p_version=""
     p_tar=""
@@ -99,6 +100,9 @@ parse_manifest() {
     seen_zip=0
     line_count=0
     while IFS='=' read -r key value || [ -n "$key" ]; do
+        # Tolerate a manifest served with CRLF line endings, matching the PowerShell parser.
+        key="${key%"$cr"}"
+        value="${value%"$cr"}"
         line_count=$((line_count + 1))
         [ -n "$key" ] || fail "manifest contains a blank line"
         [ -n "$value" ] || fail "manifest key '$key' has an empty value"
@@ -151,7 +155,8 @@ validate_tar() {
     tar -tzf "$archive" > "$listing" 2>/dev/null || fail "archive is not a valid tar.gz"
 
     verbose_listing="$staging_dir/listing-verbose.txt"
-    tar -tvzf "$archive" > "$verbose_listing" 2>/dev/null || fail "archive is not a valid tar.gz"
+    # LC_ALL=C keeps tar's hard-link annotation as the literal 'link to' string; GNU tar localizes it.
+    LC_ALL=C tar -tvzf "$archive" > "$verbose_listing" 2>/dev/null || fail "archive is not a valid tar.gz"
     # tar -tv renders symlinks as 'name -> target' and hard links as 'name link to target'.
     grep -E -- ' -> | link to ' "$verbose_listing" >/dev/null 2>&1 \
         && fail "archive contains a symbolic or hard link entry, which is not allowed"

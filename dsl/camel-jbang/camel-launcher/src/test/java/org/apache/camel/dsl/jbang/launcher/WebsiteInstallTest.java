@@ -548,9 +548,14 @@ class WebsiteInstallTest {
                 }
                 script.append('\'').append(binDirsForCleanup.get(i).replace("'", "''")).append('\'');
             }
-            script.append("); $path = [Environment]::GetEnvironmentVariable('Path','User'); if ($path) { "
+            // Read and write the user PATH raw (DoNotExpandEnvironmentNames, preserving the value kind) so
+            // the cleanup never flattens existing %VAR% references, mirroring install.ps1's Add-UserPath.
+            script.append("); $k = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true); "
+                          + "if ($k) { $path = $k.GetValue('Path', '', "
+                          + "[Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames); "
+                          + "if ($path) { $kind = $k.GetValueKind('Path'); "
                           + "$kept = ($path -split ';') | Where-Object { $_ -and (-not ($dirs -icontains $_)) }; "
-                          + "[Environment]::SetEnvironmentVariable('Path', ($kept -join ';'), 'User') }");
+                          + "$k.SetValue('Path', ($kept -join ';'), $kind) } $k.Close() }");
             Process cleanup = new ProcessBuilder("powershell", "-NoProfile", "-Command", script.toString())
                     .redirectErrorStream(true).start();
             cleanup.waitFor(30, TimeUnit.SECONDS);
@@ -624,6 +629,46 @@ class WebsiteInstallTest {
             return Arrays.stream(path.split(";"))
                     .filter(entry -> entry.equalsIgnoreCase(dir))
                     .count();
+        }
+
+        // Reads HKCU\Environment\Path without expanding %VAR% references, returning "" when unset.
+        private static String readUserPathRaw() throws Exception {
+            Process p = new ProcessBuilder(
+                    "powershell", "-NoProfile", "-Command",
+                    "$k = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment'); "
+                                                            + "if ($k) { [Console]::Out.Write($k.GetValue('Path', '', "
+                                                            + "[Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)); $k.Close() }")
+                    .start();
+            String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            p.waitFor(30, TimeUnit.SECONDS);
+            return out;
+        }
+
+        // Writes HKCU\Environment\Path as a REG_EXPAND_SZ value; the value is passed via the environment
+        // to avoid any quoting or injection in the PowerShell command line.
+        private static void writeUserPathExpandable(String value) throws Exception {
+            ProcessBuilder pb = new ProcessBuilder(
+                    "powershell", "-NoProfile", "-Command",
+                    "$k = [Microsoft.Win32.Registry]::CurrentUser.CreateSubKey('Environment'); "
+                                                            + "$k.SetValue('Path', $env:CAMEL_TEST_USERPATH, "
+                                                            + "[Microsoft.Win32.RegistryValueKind]::ExpandString); $k.Close()")
+                    .redirectErrorStream(true);
+            pb.environment().put("CAMEL_TEST_USERPATH", value);
+            Process p = pb.start();
+            String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            if (!p.waitFor(30, TimeUnit.SECONDS) || p.exitValue() != 0) {
+                throw new IllegalStateException("failed to seed user PATH: " + out);
+            }
+        }
+
+        private static void deleteUserPath() throws Exception {
+            Process p = new ProcessBuilder(
+                    "powershell", "-NoProfile", "-Command",
+                    "$k = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true); "
+                                                            + "if ($k) { $k.DeleteValue('Path', $false); $k.Close() }")
+                    .redirectErrorStream(true).start();
+            p.getInputStream().readAllBytes();
+            p.waitFor(30, TimeUnit.SECONDS);
         }
 
         @Test
@@ -954,6 +999,55 @@ class WebsiteInstallTest {
                 assertNotEquals(0, r.exit());
                 assertFalse(Files.exists(expectedBinDir(home).resolve("camel.cmd")));
                 assertFalse(Files.exists(versionDir(home, "9.9.9")));
+            }
+        }
+
+        @Test
+        void shimIsWrittenWithoutByteOrderMark(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishLatest(fixture, "1.0.0");
+                assertEquals(0, install(fixture, home, null).exit());
+
+                byte[] shim = Files.readAllBytes(expectedBinDir(home).resolve("camel.cmd"));
+                // A UTF-8 BOM (EF BB BF) prefix makes cmd.exe mis-parse the '@echo off' line and emit a stray
+                // error on every 'camel' invocation, so the generated shim must be written BOM-free.
+                boolean hasBom = shim.length >= 3 && (shim[0] & 0xFF) == 0xEF
+                        && (shim[1] & 0xFF) == 0xBB && (shim[2] & 0xFF) == 0xBF;
+                assertFalse(hasBom, "camel.cmd must not start with a UTF-8 BOM");
+                assertTrue(new String(shim, StandardCharsets.UTF_8).startsWith("@echo off"),
+                        "camel.cmd must start with '@echo off'");
+            }
+        }
+
+        @Test
+        void addUserPathPreservesExistingExpandableReferences(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishLatest(fixture, "1.0.0");
+                String binDir = expectedBinDir(home).toString();
+
+                // Seed the user's PATH with a REG_EXPAND_SZ entry referencing an environment variable, and
+                // snapshot the raw value so it can be restored verbatim afterwards.
+                String sentinel = "%SystemRoot%\\camel-userpath-test";
+                String originalRaw = readUserPathRaw();
+                writeUserPathExpandable(originalRaw.isEmpty() ? sentinel : originalRaw + ";" + sentinel);
+                try {
+                    assertEquals(0, install(fixture, home, null).exit());
+
+                    String afterRaw = readUserPathRaw();
+                    // The installer must append its bin dir without expanding pre-existing %VAR% references.
+                    assertTrue(Arrays.asList(afterRaw.split(";")).contains(sentinel),
+                            "existing %VAR% reference must be preserved unexpanded, was: " + afterRaw);
+                    assertTrue(Arrays.stream(afterRaw.split(";")).anyMatch(e -> e.equalsIgnoreCase(binDir)),
+                            "installer bin dir must be appended to the user PATH");
+                } finally {
+                    if (originalRaw.isEmpty()) {
+                        deleteUserPath();
+                    } else {
+                        writeUserPathExpandable(originalRaw);
+                    }
+                }
             }
         }
     }

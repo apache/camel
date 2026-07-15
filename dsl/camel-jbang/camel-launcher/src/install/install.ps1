@@ -212,25 +212,35 @@ function Set-CamelShim {
     $exePath = Join-Path $targetDir "bin\camel-$arch.exe"
     $shimContent = "@echo off`r`n`"$exePath`" %*`r`nexit /b %ERRORLEVEL%`r`n"
     $tempShim = Join-Path $BinDir ".camel.$PID.tmp.cmd"
-    Set-Content -LiteralPath $tempShim -Value $shimContent -NoNewline -Encoding UTF8
+    # Write without a BOM: Windows PowerShell 5.1's 'Set-Content -Encoding UTF8' prepends one, which
+    # cmd.exe treats as part of the first line, breaking '@echo off' and emitting a stray error.
+    [System.IO.File]::WriteAllText($tempShim, $shimContent, (New-Object System.Text.UTF8Encoding($false)))
     $finalShim = Join-Path $BinDir 'camel.cmd'
     Move-Item -LiteralPath $tempShim -Destination $finalShim -Force
 }
 
 # Adds $Dir once, case-insensitively, to the current user's PATH (registry-level, no elevation) and to
-# this process; the machine PATH is never written.
+# this process; the machine PATH is never written. The value is read and written through the registry
+# with DoNotExpandEnvironmentNames so existing %VAR% references are preserved rather than flattened,
+# and the original value kind (typically REG_EXPAND_SZ) is kept intact.
 function Add-UserPath {
     param([string] $Dir)
 
-    $userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
-    $entries = @()
-    if ($userPath) {
-        $entries = $userPath.Split(';') | Where-Object { $_ -ne '' }
-    }
-    $present = $entries | Where-Object { $_.TrimEnd('\') -ieq $Dir.TrimEnd('\') }
-    if (-not $present) {
-        $newPath = if ($entries.Count -gt 0) { ($entries + $Dir) -join ';' } else { $Dir }
-        [Environment]::SetEnvironmentVariable('Path', $newPath, 'User')
+    $key = [Microsoft.Win32.Registry]::CurrentUser.CreateSubKey('Environment')
+    try {
+        $userPath = $key.GetValue('Path', '', [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+        $kind = if ($userPath) { $key.GetValueKind('Path') } else { [Microsoft.Win32.RegistryValueKind]::ExpandString }
+        $entries = @()
+        if ($userPath) {
+            $entries = $userPath.Split(';') | Where-Object { $_ -ne '' }
+        }
+        $present = $entries | Where-Object { $_.TrimEnd('\') -ieq $Dir.TrimEnd('\') }
+        if (-not $present) {
+            $newPath = if ($entries.Count -gt 0) { ($entries + $Dir) -join ';' } else { $Dir }
+            $key.SetValue('Path', $newPath, $kind)
+        }
+    } finally {
+        $key.Close()
     }
     if (($env:Path -split ';') -notcontains $Dir) {
         $env:Path = "$env:Path;$Dir"
