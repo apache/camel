@@ -428,6 +428,14 @@ The clustered route controller property `camel.clustered.controller.initial-dela
 it keeps its `String` type because it supports Camel time patterns (for example `10 seconds`)
 that `Duration` binding does not.
 
+=== camel-spring-rabbitmq - replyTimeout default aligned
+
+The `replyTimeout` option on the component level has been fixed to default to 30 seconds,
+aligning it with the endpoint-level default that was documented since Camel 3.20.7 / 3.21.
+Previously, the component-level default was still 5 seconds, which would override the
+endpoint's declared 30-second default. If you were relying on the effective 5-second timeout,
+you can restore it by explicitly setting `replyTimeout=5000` on the component or endpoint.
+
 === camel-core - Multicast UseOriginalAggregationStrategy fix
 
 The Multicast EIP now correctly honors `UseOriginalAggregationStrategy`, consistent with the Splitter
