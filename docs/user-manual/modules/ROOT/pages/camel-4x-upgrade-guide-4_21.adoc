@@ -32,9 +32,6 @@ The project exported by `camel export` now includes additional guidance for AI c
 `readme.md` gained a _For AI coding assistants_ section linking to the Apache Camel website LLM index,
 and a new `AGENTS.md` file is generated at the project root. This applies to all runtimes (Camel Main, Spring Boot and Quarkus).
 
-The Camel TUI (`camel tui`) theme is now backed by CSS stylesheets and ships a switchable light/dark palette.
-Press *F4* to toggle at runtime; the selection is persisted as `camel.tui.theme` in `.camel-jbang-user.properties`.
-
 === camel-micrometer
 
 The `MicrometerExchangeEventNotifier` now always includes the `routeId` tag on exchange event metrics.
