@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms.reply;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -143,55 +144,56 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
     @Override
     public void processReply(ReplyHolder holder) {
-        if (holder != null && isRunAllowed()) {
-            try {
-                Exchange exchange = holder.getExchange();
-
-                boolean timeout = holder.isTimeout();
-                if (timeout) {
-                    // timeout occurred do a WARN log so its easier to spot in the logs
-                    if (log.isWarnEnabled()) {
-                        log.warn(
-                                "Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
-                                 + " Setting ExchangeTimedOutException on {} and continue routing.",
-                                holder.getRequestTimeout(), holder.getCorrelationId(), replyTo,
-                                ExchangeHelper.logIds(exchange));
-                    }
-
-                    // no response, so lets set a timed out exception
-                    String msg = "reply message with correlationID: " + holder.getCorrelationId()
-                                 + " not received on destination: " + replyTo;
-                    exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
+        if (holder == null) {
+            return;
+        }
+        try {
+            Exchange exchange = holder.getExchange();
+            if (holder.isTimeout()) {
+                if (isStopping() || isStopped()) {
+                    exchange.setException(new RejectedExecutionException(
+                            "Cannot process JMS reply as the reply manager is shutting down"));
                 } else {
-                    Message message = holder.getMessage();
-                    Session session = holder.getSession();
-                    SjmsMessage response = new SjmsMessage(exchange, message, session, endpoint.getBinding());
-                    // the JmsBinding is designed to be "pull-based": it will populate the Camel message on demand
-                    // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access
-                    // to everything it may need, and can populate headers, properties, etc. accordingly (solves CAMEL-6218).
-                    exchange.setOut(response);
-                    Object body = response.getBody();
-
-                    if (endpoint.isTransferException() && body instanceof Exception exception) {
-                        log.debug("Reply was an Exception. Setting the Exception on the Exchange: {}", body);
-                        // we got an exception back and endpoint was configured to transfer exception
-                        // therefore set response as exception
-                        exchange.setException(exception);
-                    } else {
-                        log.debug("Reply received. OUT message body set to reply payload: {}", body);
-                    }
-
-                    // restore correlation id in case the remote server messed with it
-                    if (holder.getOriginalCorrelationId() != null) {
-                        JmsMessageHelper.setCorrelationId(message, holder.getOriginalCorrelationId());
-                        exchange.getOut().setHeader(SjmsConstants.JMS_CORRELATION_ID, holder.getOriginalCorrelationId());
-                    }
+                    handleTimeout(holder, exchange);
                 }
-            } finally {
-                // notify callback
-                AsyncCallback callback = holder.getCallback();
-                callback.done(false);
+            } else {
+                handleSuccessfulReply(holder, exchange);
             }
+        } finally {
+            holder.getCallback().done(false);
+        }
+    }
+
+    private void handleTimeout(ReplyHolder holder, Exchange exchange) {
+        if (log.isWarnEnabled()) {
+            log.warn(
+                    "Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
+                     + " Setting ExchangeTimedOutException on {} and continue routing.",
+                    holder.getRequestTimeout(), holder.getCorrelationId(), replyTo,
+                    ExchangeHelper.logIds(exchange));
+        }
+        String msg = "reply message with correlationID: " + holder.getCorrelationId()
+                     + " not received on destination: " + replyTo;
+        exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
+    }
+
+    private void handleSuccessfulReply(ReplyHolder holder, Exchange exchange) {
+        Message message = holder.getMessage();
+        Session session = holder.getSession();
+        SjmsMessage response = new SjmsMessage(exchange, message, session, endpoint.getBinding());
+        exchange.setOut(response);
+        Object body = response.getBody();
+
+        if (endpoint.isTransferException() && body instanceof Exception exception) {
+            log.debug("Reply was an Exception. Setting the Exception on the Exchange: {}", body);
+            exchange.setException(exception);
+        } else {
+            log.debug("Reply received. OUT message body set to reply payload: {}", body);
+        }
+
+        if (holder.getOriginalCorrelationId() != null) {
+            JmsMessageHelper.setCorrelationId(message, holder.getOriginalCorrelationId());
+            exchange.getOut().setHeader(SjmsConstants.JMS_CORRELATION_ID, holder.getOriginalCorrelationId());
         }
     }
 

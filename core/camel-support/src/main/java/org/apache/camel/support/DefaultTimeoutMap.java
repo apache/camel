@@ -285,8 +285,20 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
             future.cancel(false);
             future = null;
         }
-        // clear map if we stop
-        map.clear();
+        // drain remaining entries, emitting Evict events so listeners can handle cleanup
+        List<TimeoutMapEntry<K, V>> remaining = List.of();
+        if (!map.isEmpty()) {
+            lock.lock();
+            try {
+                remaining = new ArrayList<>(map.values());
+                map.clear();
+            } finally {
+                lock.unlock();
+            }
+        }
+        for (TimeoutMapEntry<K, V> entry : remaining) {
+            emitEvent(Evict, entry.getKey(), entry.getValue());
+        }
     }
 
 }
