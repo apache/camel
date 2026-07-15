@@ -870,15 +870,15 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     public boolean isAutoCommitEnable() {
-        return offsetRepository == null && autoCommitEnable;
+        return offsetRepository == null && !batching && autoCommitEnable;
     }
 
+    /**
+     * @deprecated use {@link #isAutoCommitEnable()}
+     */
+    @Deprecated(since = "4.22.0")
     public boolean getAutoCommitEnable() {
-        if (!batching) {
-            return autoCommitEnable;
-        }
-
-        return false;
+        return isAutoCommitEnable();
     }
 
     /**

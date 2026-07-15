@@ -62,6 +62,16 @@ class KafkaConfigurationTest {
     }
 
     @Test
+    void batchingDisablesAutoCommit() {
+        KafkaConfiguration config = new KafkaConfiguration();
+        config.setBrokers("localhost:9092");
+        config.setBatching(true);
+
+        Properties props = config.createConsumerProperties();
+        assertEquals(false, props.get(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG));
+    }
+
+    @Test
     void sendBufferBytesAppliedToConsumerWithoutSsl() {
         KafkaConfiguration config = new KafkaConfiguration();
         config.setBrokers("localhost:9092");
