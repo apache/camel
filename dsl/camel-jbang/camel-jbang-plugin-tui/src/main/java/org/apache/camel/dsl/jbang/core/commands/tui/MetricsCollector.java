@@ -469,7 +469,9 @@ class MetricsCollector {
      */
     static String formatThroughput(long scaledValue) {
         double v = scaledValue / (double) THROUGHPUT_SCALE;
-        if (v >= 10) {
+        if (v >= 10_000) {
+            return Math.round(v / 1_000) + "K";
+        } else if (v >= 10) {
             return String.valueOf(Math.round(v));
         } else if (v >= 1) {
             return String.format(Locale.US, "%.1f", v);
