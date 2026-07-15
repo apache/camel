@@ -456,10 +456,8 @@ public class EndpointMessageListener implements SessionMessageListener {
                     // method and rethrow it
                     exchange.setException(rce);
                 } else {
-                    // we were done async, so use the exception handler
-                    if (endpoint.getExceptionHandler() != null) {
-                        endpoint.getExceptionHandler().handleException(rce);
-                    }
+                    // we were done async, so use the consumer exception handler
+                    consumer.getExceptionHandler().handleException("Error processing exchange", exchange, rce);
                 }
             }
 
