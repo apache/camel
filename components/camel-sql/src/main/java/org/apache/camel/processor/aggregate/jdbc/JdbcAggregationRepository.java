@@ -438,12 +438,18 @@ public class JdbcAggregationRepository extends ServiceSupport
                     LOG.debug("Removing key {}", correlationId);
                     String table = getRepositoryName();
                     verifyTableName(table);
-                    jdbcTemplate.update("DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?", // NOSONAR
+                    int deleteCount = jdbcTemplate.update(
+                            "DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?", // NOSONAR
                             correlationId, version);
+                    if (deleteCount != 1) {
+                        throw new OptimisticLockingException();
+                    }
 
                     insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version);
                     LOG.debug("Removed key {}", correlationId);
 
+                } catch (OptimisticLockingException e) {
+                    throw e;
                 } catch (Exception e) {
                     throw new RuntimeException("Error removing key " + correlationId + " from repository " + repositoryName, e);
                 }

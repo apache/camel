@@ -455,3 +455,15 @@ The table-name validation in `JdbcAggregationRepository` now accepts schema-qual
 such as `myschema.aggregation`. Previously the validation regex only allowed simple identifiers
 (`[a-zA-Z_][a-zA-Z0-9_]*`), rejecting any name containing a dot. Names starting with a digit,
 containing spaces, or with multiple dots (e.g. `catalog.schema.table`) are still rejected.
+
+=== camel-sql - New exceptions from aggregation and template parsing
+
+The `remove()` method in `JdbcAggregationRepository` and `ClusteredJdbcAggregationRepository`
+now throws `OptimisticLockingException` when it detects a stale version during the delete.
+Previously a stale remove was silently treated as successful. If your error handling or
+aggregation strategy catches specific exception types around `remove()`, you may need to
+account for `OptimisticLockingException`.
+
+The `TemplateParser` now catches `TokenMgrError` (a JavaCC lexer error) and wraps it in
+`ParseRuntimeException`. Previously a malformed stored-procedure template with characters
+outside the token alphabet would propagate as a raw `java.lang.Error`.
