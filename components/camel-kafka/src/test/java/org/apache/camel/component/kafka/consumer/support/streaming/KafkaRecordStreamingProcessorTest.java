@@ -31,9 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -60,14 +58,14 @@ class KafkaRecordStreamingProcessorTest {
     }
 
     @Test
-    void manualCommitDoesNotRecordOffset() {
+    void manualCommitStillRecordsOffset() {
         when(configuration.isAllowManualCommit()).thenReturn(true);
         when(commitManager.getManualCommit(any(), any(), any())).thenReturn(mock(KafkaManualCommit.class));
 
         KafkaRecordStreamingProcessor proc = new KafkaRecordStreamingProcessor(configuration, processor, commitManager);
         proc.processExchange(kafkaConsumer, topicPartition, false, false, record);
 
-        verify(commitManager, never()).recordOffset(any(), anyLong());
+        verify(commitManager).recordOffset(topicPartition, 42L);
     }
 
     @Test

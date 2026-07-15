@@ -116,7 +116,8 @@ public class KafkaRecordStreamingProcessorFacade extends AbstractKafkaRecordProc
                 }
             }
 
-            if (!result.isBreakOnErrorHit()) {
+            if (!result.isBreakOnErrorHit()
+                    && !camelKafkaConsumer.getEndpoint().getConfiguration().isAllowManualCommit()) {
                 LOG.debug("Committing offset on successful execution");
                 // all records processed from partition so commit them
                 commitManager.commit(partition);

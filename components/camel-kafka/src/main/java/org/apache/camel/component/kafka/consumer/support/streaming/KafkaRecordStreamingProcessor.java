@@ -94,7 +94,7 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
                     consumerRecord.offset());
         }
 
-        if (!result.isBreakOnErrorHit() && !configuration.isAllowManualCommit()) {
+        if (!result.isBreakOnErrorHit()) {
             commitManager.recordOffset(topicPartition, consumerRecord.offset());
         }
 
