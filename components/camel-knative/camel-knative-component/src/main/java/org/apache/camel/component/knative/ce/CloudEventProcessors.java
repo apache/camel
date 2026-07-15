@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.knative.ce;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -52,11 +51,10 @@ public enum CloudEventProcessors implements CloudEventProcessor {
             }
 
             //
-            // Map every remaining field as it is (extensions).
+            // Map every remaining field as it is (extensions), applying the header filter
+            // strategy so internal Camel headers are filtered consistently with binary mode.
             //
-            content.forEach((key, val) -> {
-                message.setHeader(key.toLowerCase(Locale.US), val);
-            });
+            content.forEach((key, val) -> mapExtensionAsHeader(message, exchange, key, val));
         }
     }),
     v1_0_1(new AbstractCloudEventProcessor(CloudEvents.v1_0_1) {
@@ -79,11 +77,10 @@ public enum CloudEventProcessors implements CloudEventProcessor {
             }
 
             //
-            // Map every remaining field as it is (extensions).
+            // Map every remaining field as it is (extensions), applying the header filter
+            // strategy so internal Camel headers are filtered consistently with binary mode.
             //
-            content.forEach((key, val) -> {
-                message.setHeader(key.toLowerCase(Locale.US), val);
-            });
+            content.forEach((key, val) -> mapExtensionAsHeader(message, exchange, key, val));
         }
     }),
     v1_0_2(new AbstractCloudEventProcessor(CloudEvents.v1_0_2) {
@@ -106,11 +103,10 @@ public enum CloudEventProcessors implements CloudEventProcessor {
             }
 
             //
-            // Map every remaining field as it is (extensions).
+            // Map every remaining field as it is (extensions), applying the header filter
+            // strategy so internal Camel headers are filtered consistently with binary mode.
             //
-            content.forEach((key, val) -> {
-                message.setHeader(key.toLowerCase(Locale.US), val);
-            });
+            content.forEach((key, val) -> mapExtensionAsHeader(message, exchange, key, val));
         }
     });
 
