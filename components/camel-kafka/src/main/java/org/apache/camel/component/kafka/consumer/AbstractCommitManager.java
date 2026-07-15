@@ -92,6 +92,11 @@ public abstract class AbstractCommitManager implements CommitManager {
         consumer.commitSync(
                 Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)),
                 Duration.ofMillis(timeout));
+
+        StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
+        if (offsetRepository != null) {
+            saveStateToOffsetRepository(partition, partitionLastOffset, offsetRepository);
+        }
     }
 
     protected void saveStateToOffsetRepository(

@@ -295,6 +295,18 @@ The `queueBufferingMaxMessages` producer option has been deprecated. This option
 since the old Scala Kafka producer was removed in Camel 2.17 (CAMEL-9467). Use `bufferMemorySize`
 or `maxBlockMs` instead.
 
+=== camel-kafka - Manual commit no longer auto-commits offsets
+
+When using `allowManualCommit=true` together with a `DefaultKafkaManualCommitFactory` or
+`DefaultKafkaManualAsyncCommitFactory`, the framework previously auto-committed offsets for every
+processed record — even when the route did not call `KafkaManualCommit.commit()`. This defeated the
+purpose of manual commit mode and could cause message loss.
+
+The framework no longer auto-commits offsets after processing each partition when manual commit
+is enabled. Offsets are only committed when the route explicitly calls `KafkaManualCommit.commit()`
+on the exchange header. The configured factory still controls whether that explicit commit executes
+synchronously or asynchronously.
+
 === camel-jbang catalog tables fill the terminal width
 
 The `camel catalog` commands (`camel catalog component`, `camel catalog dataformat`,
