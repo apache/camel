@@ -69,7 +69,7 @@ if ($CaCertPath) {
 }
 
 # Downloads $Url to $OutFile; used for both the manifest and archive fetches.
-function Get-Manifest {
+function Save-RemoteFile {
     param([string] $Url, [string] $OutFile)
     try {
         Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing | Out-Null
@@ -262,7 +262,7 @@ try {
         $manifestUrl = "$ManifestBaseUrl/latest.properties"
     }
     $manifestFile = Join-Path $stagingRoot 'manifest.properties'
-    Get-Manifest -Url $manifestUrl -OutFile $manifestFile
+    Save-RemoteFile -Url $manifestUrl -OutFile $manifestFile
 
     $manifest = Read-Manifest -Path $manifestFile
     $resolvedVersion = $manifest['version']
@@ -273,7 +273,7 @@ try {
 
     $archiveUrl = "$MavenBaseUrl/$resolvedVersion/camel-launcher-$resolvedVersion-bin.zip"
     $archiveFile = Join-Path $stagingRoot "camel-launcher-$resolvedVersion-bin.zip"
-    Get-Manifest -Url $archiveUrl -OutFile $archiveFile
+    Save-RemoteFile -Url $archiveUrl -OutFile $archiveFile
 
     $actualHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $archiveFile).Hash.ToLowerInvariant()
     if ($actualHash -ne $manifest['zip_sha256']) {

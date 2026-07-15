@@ -37,11 +37,22 @@ is_valid_version() {
     case "$v" in
         '' | .* | *. | *..* | *[!0-9.]*) return 1 ;;
     esac
-    old_ifs="$IFS"
-    IFS=.
-    set -- $v
-    IFS="$old_ifs"
-    [ $# -eq 3 ] && [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ]
+    # The case above guarantees digits and single dots only, with no leading, trailing, or doubled
+    # dot, so a valid X.Y.Z is exactly the value containing two dots (three non-empty components).
+    rest="$v"
+    dots=0
+    while :; do
+        case "$rest" in
+            *.*)
+                dots=$((dots + 1))
+                rest="${rest#*.}"
+                ;;
+            *)
+                break
+                ;;
+        esac
+    done
+    [ "$dots" -eq 2 ]
 }
 
 validate_sha256() {
@@ -157,11 +168,13 @@ validate_tar() {
     verbose_listing="$staging_dir/listing-verbose.txt"
     # LC_ALL=C keeps tar's hard-link annotation as the literal 'link to' string; GNU tar localizes it.
     LC_ALL=C tar -tvzf "$archive" > "$verbose_listing" 2>/dev/null || fail "archive is not a valid tar.gz"
-    # tar -tv renders symlinks as 'name -> target' and hard links as 'name link to target'.
+    # tar -tv renders symlinks as 'name -> target' and hard links as 'name link to target'. Matching
+    # those substrings could in theory over-reject a regular file whose name contains ' -> ' or
+    # ' link to '; that fail-closed bias is deliberate, the release archive never carries such names.
     grep -E -- ' -> | link to ' "$verbose_listing" >/dev/null 2>&1 \
         && fail "archive contains a symbolic or hard link entry, which is not allowed"
 
-    roots=""
+    saw_entry=0
     while IFS= read -r entry; do
         [ -n "$entry" ] || continue
         case "$entry" in
@@ -170,16 +183,15 @@ validate_tar() {
         case "$entry" in
             *"../"* | ".." | *"/..") fail "archive contains a path traversal entry: $entry" ;;
         esac
+        # Every entry must sit under the single expected top-level directory; a differing root means a
+        # stray directory or the wrong version, so reject it directly rather than collecting roots.
         root="${entry%%/*}"
-        case " $roots " in
-            *" $root "*) ;;
-            *) roots="$roots $root" ;;
-        esac
+        [ "$root" = "$expected_root" ] \
+            || fail "archive top-level directory does not match expected version: $root"
+        saw_entry=1
     done < "$listing"
 
-    set -- $roots
-    [ $# -eq 1 ] || fail "archive must contain exactly one top-level directory"
-    [ "$1" = "$expected_root" ] || fail "archive top-level directory does not match expected version: $1"
+    [ "$saw_entry" -eq 1 ] || fail "archive must contain exactly one top-level directory"
 
     grep -Fqx "$expected_root/bin/camel.sh" "$listing" || fail "archive is missing bin/camel.sh"
 }
