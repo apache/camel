@@ -21,9 +21,17 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'tooling/camel-exe/**'
+      - 'dsl/camel-jbang/camel-launcher/**'
+      - '.github/workflows/camel-launcher-windows.yml'
   pull_request:
     branches:
       - main
+    paths:
+      - 'tooling/camel-exe/**'
+      - 'dsl/camel-jbang/camel-launcher/**'
+      - '.github/workflows/camel-launcher-windows.yml'
   workflow_dispatch:
 
 concurrency:
@@ -43,8 +51,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
-          # 50 commits covers any reasonable push batch; PRs fetch the base ref below.
-          fetch-depth: 50
+          fetch-depth: 0
       - id: changes
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
@@ -54,7 +61,6 @@ jobs:
           fi
 
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch origin "${{ github.base_ref }}" --depth=1
             CHANGED="$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)"
           else
             CHANGED="$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}")"
