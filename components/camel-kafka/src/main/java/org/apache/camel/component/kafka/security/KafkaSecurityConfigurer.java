@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka.security;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -23,6 +25,8 @@ import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.common.config.SaslConfigs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Builder for Kafka security configuration.
@@ -66,6 +70,8 @@ import org.apache.kafka.common.config.SaslConfigs;
  * </p>
  */
 public class KafkaSecurityConfigurer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaSecurityConfigurer.class);
 
     private final KafkaAuthType authType;
     private String username;
@@ -347,6 +353,8 @@ public class KafkaSecurityConfigurer {
 
             case KERBEROS:
                 if (ObjectHelper.isEmpty(kerberosPrincipal)) {
+                    LOG.debug(
+                            "Kerberos principal not set; assuming external JAAS configuration (e.g. java.security.auth.login.config)");
                     return null;
                 }
                 validateKerberos();
@@ -411,23 +419,28 @@ public class KafkaSecurityConfigurer {
         }
     }
 
-    private void applySaslProperties(java.util.Map<String, Object> additionalProperties) {
+    private void applySaslProperties(Map<String, Object> additionalProperties) {
+        getSaslCallbackProperties().forEach(additionalProperties::putIfAbsent);
+    }
+
+    private Map<String, String> getSaslCallbackProperties() {
+        Map<String, String> props = new LinkedHashMap<>();
         switch (authType) {
             case OAUTH:
-                additionalProperties.putIfAbsent(SaslConfigs.SASL_LOGIN_CALLBACK_HANDLER_CLASS,
+                props.put(SaslConfigs.SASL_LOGIN_CALLBACK_HANDLER_CLASS,
                         "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler");
                 if (ObjectHelper.isNotEmpty(oauthTokenEndpointUri)) {
-                    additionalProperties.putIfAbsent(SaslConfigs.SASL_OAUTHBEARER_TOKEN_ENDPOINT_URL,
-                            oauthTokenEndpointUri);
+                    props.put(SaslConfigs.SASL_OAUTHBEARER_TOKEN_ENDPOINT_URL, oauthTokenEndpointUri);
                 }
                 break;
             case AWS_MSK_IAM:
-                additionalProperties.putIfAbsent(SaslConfigs.SASL_CLIENT_CALLBACK_HANDLER_CLASS,
+                props.put(SaslConfigs.SASL_CLIENT_CALLBACK_HANDLER_CLASS,
                         "software.amazon.msk.auth.iam.IAMClientCallbackHandler");
                 break;
             default:
                 break;
         }
+        return props;
     }
 
     /**
@@ -448,21 +461,7 @@ public class KafkaSecurityConfigurer {
             if (jaasConfig != null) {
                 props.setProperty(SaslConfigs.SASL_JAAS_CONFIG, jaasConfig);
             }
-            switch (authType) {
-                case OAUTH:
-                    props.setProperty(SaslConfigs.SASL_LOGIN_CALLBACK_HANDLER_CLASS,
-                            "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler");
-                    if (ObjectHelper.isNotEmpty(oauthTokenEndpointUri)) {
-                        props.setProperty(SaslConfigs.SASL_OAUTHBEARER_TOKEN_ENDPOINT_URL, oauthTokenEndpointUri);
-                    }
-                    break;
-                case AWS_MSK_IAM:
-                    props.setProperty(SaslConfigs.SASL_CLIENT_CALLBACK_HANDLER_CLASS,
-                            "software.amazon.msk.auth.iam.IAMClientCallbackHandler");
-                    break;
-                default:
-                    break;
-            }
+            getSaslCallbackProperties().forEach(props::setProperty);
         }
 
         return props;
