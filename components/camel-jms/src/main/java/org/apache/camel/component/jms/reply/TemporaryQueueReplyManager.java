@@ -17,6 +17,8 @@
 package org.apache.camel.component.jms.reply;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.jms.Destination;
 import jakarta.jms.ExceptionListener;
@@ -272,9 +274,15 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     }
 
-    private final class TemporaryReplyQueueDestinationResolver extends ServiceSupport
+    final class TemporaryReplyQueueDestinationResolver extends ServiceSupport
             implements DestinationResolver, NonManagedService {
-        private TemporaryQueue queue;
+        // Use a dedicated lock instead of BaseService.lock to avoid deadlock
+        // during shutdown: BaseService.stop() holds its lock while calling
+        // doStop() -> listenerContainer.destroy() -> doShutdown() which waits
+        // for listener threads to finish. If a listener thread needs to resolve
+        // the destination, it would deadlock trying to acquire BaseService.lock.
+        private final Lock destinationLock = new ReentrantLock();
+        private volatile TemporaryQueue queue;
         private final AtomicBoolean refreshWanted = new AtomicBoolean();
         private final TemporaryQueueResolver custom;
 
@@ -285,26 +293,34 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         @Override
         public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain)
                 throws JMSException {
-            // use a temporary queue to gather the reply message
-            if (queue == null || refreshWanted.get()) {
-                refreshWanted.set(false);
-                if (custom != null) {
-                    if (queue != null) {
-                        // delete previous queue
-                        try {
-                            custom.delete(queue);
-                        } catch (Exception e) {
-                            // ignore
+            // fast path: queue already resolved and no refresh needed
+            TemporaryQueue answer = queue;
+            if (answer != null && !refreshWanted.get()) {
+                return answer;
+            }
+            destinationLock.lock();
+            try {
+                if (queue == null || refreshWanted.get()) {
+                    refreshWanted.set(false);
+                    if (custom != null) {
+                        if (queue != null) {
+                            try {
+                                custom.delete(queue);
+                            } catch (Exception e) {
+                                // ignore
+                            }
                         }
+                        queue = custom.createTemporaryQueue(session);
+                    } else {
+                        queue = session.createTemporaryQueue();
                     }
-                    queue = custom.createTemporaryQueue(session);
-                } else {
-                    queue = session.createTemporaryQueue();
+                    setReplyTo(queue);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Refreshed Temporary ReplyTo Queue. New queue: {}", queue.getQueueName());
+                    }
                 }
-                setReplyTo(queue);
-                if (log.isDebugEnabled()) {
-                    log.debug("Refreshed Temporary ReplyTo Queue. New queue: {}", queue.getQueueName());
-                }
+            } finally {
+                destinationLock.unlock();
             }
             return queue;
         }
@@ -316,17 +332,22 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         @Override
         protected void doStop() throws Exception {
-            if (queue != null) {
-                try {
-                    if (custom != null) {
-                        custom.delete(queue);
-                    } else {
-                        queue.delete();
+            destinationLock.lock();
+            try {
+                if (queue != null) {
+                    try {
+                        if (custom != null) {
+                            custom.delete(queue);
+                        } else {
+                            queue.delete();
+                        }
+                    } catch (Exception e) {
+                        // ignore
                     }
-                } catch (Exception e) {
-                    // ignore
+                    queue = null;
                 }
-                queue = null;
+            } finally {
+                destinationLock.unlock();
             }
         }
     }
