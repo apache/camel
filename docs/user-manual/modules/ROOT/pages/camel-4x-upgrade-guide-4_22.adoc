@@ -240,6 +240,22 @@ but is applied to both consumer and producer Kafka clients. The label has been c
 If you use the Endpoint DSL, the `metadataMaxAgeMs` method has moved from the producer (advanced) builder
 to the common builder.
 
+=== camel-kafka - saslAuthType behavior changes
+
+When `saslAuthType` is set, the generated JAAS configuration and additional SASL properties are now
+applied using `putIfAbsent` semantics, so explicitly configured `saslJaasConfig`, callback handler
+classes, or token endpoint URLs take precedence over the auto-generated values.
+
+For OAuth (`saslAuthType=OAUTH`), the JAAS string now contains only login-module parameters
+(`clientId`, `clientSecret`, `scope`). The `oauth.token.endpoint.uri` and callback handler
+class are set as separate Kafka client properties instead of being embedded in the JAAS string,
+matching the Kafka client's expected configuration format.
+
+For Kerberos (`saslAuthType=KERBEROS`), if the principal is not configured, the configurer now
+assumes an external JAAS configuration (e.g. via `java.security.auth.login.config`) and skips
+JAAS string generation instead of throwing an exception. This supports deployment scenarios
+where Kerberos is configured externally.
+
 === camel-kafka - Producer no longer silently drops scalar Jackson nodes
 
 With `useIterator=true`, the Kafka producer splits an `Iterable` body into one record per element.
