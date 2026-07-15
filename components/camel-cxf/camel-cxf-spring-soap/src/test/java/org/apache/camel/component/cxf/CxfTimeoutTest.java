@@ -45,6 +45,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Tests CXF ReceiveTimeout behavior. The timeout is configured to 100ms in cxfConduitTimeOutContext.xml via a wildcard
+ * http-conduit. However, the JAX-WS server published in {@code @BeforeAll} creates a default CXF Bus without that
+ * configuration. Under CI load, the client conduit can sometimes resolve against the wrong Bus and miss the 100ms
+ * timeout entirely. To make the timeout reliable, each timeout-expecting test method uses {@code TimeoutCxfConfigurer}
+ * to explicitly set the ReceiveTimeout on the conduit, independent of Bus-level configuration.
+ */
 @Isolated
 public class CxfTimeoutTest extends CamelSpringTestSupport {
 
@@ -61,17 +68,21 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
 
     @Test
     public void testInvokingJaxWsServerWithBusUriParams() throws Exception {
-        sendTimeOutMessage("cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter&bus=#cxf");
+        sendTimeOutMessage(
+                "cxf://" + JAXWS_SERVER_ADDRESS
+                           + "?serviceClass=org.apache.hello_world_soap_http.Greeter&bus=#cxf&cxfConfigurer=#timeoutConfigurer");
     }
 
     @Test
     public void testInvokingJaxWsServerWithoutBusUriParams() throws Exception {
-        sendTimeOutMessage("cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter");
+        sendTimeOutMessage(
+                "cxf://" + JAXWS_SERVER_ADDRESS
+                           + "?serviceClass=org.apache.hello_world_soap_http.Greeter&cxfConfigurer=#timeoutConfigurer");
     }
 
     @Test
     public void testInvokingJaxWsServerWithCxfEndpoint() throws Exception {
-        sendTimeOutMessage("cxf://bean:springEndpoint");
+        sendTimeOutMessage("cxf://bean:springEndpoint?cxfConfigurer=#timeoutConfigurer");
     }
 
     @Test
@@ -115,6 +126,31 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         // we can put the http conduit configuration here
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/cxfConduitTimeOutContext.xml");
+    }
+
+    /**
+     * Explicitly sets the 100ms ReceiveTimeout on the conduit so that the timeout is applied regardless of which CXF
+     * Bus the conduit was created from.
+     */
+    public static class TimeoutCxfConfigurer implements CxfConfigurer {
+
+        @Override
+        public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
+            // Do nothing here
+        }
+
+        @Override
+        public void configureClient(Client client) {
+            HTTPConduit conduit = (HTTPConduit) client.getConduit();
+            HTTPClientPolicy policy = new HTTPClientPolicy();
+            policy.setReceiveTimeout(100);
+            conduit.setClient(policy);
+        }
+
+        @Override
+        public void configureServer(Server server) {
+            // Do nothing here
+        }
     }
 
     public static class MyCxfConfigurer implements CxfConfigurer {
