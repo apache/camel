@@ -124,5 +124,10 @@ jobs:
         run: |
           $zip = Get-ChildItem dsl/camel-jbang/camel-launcher/target/camel-launcher-*-bin.zip | Select-Object -First 1
           Add-Type -AssemblyName System.IO.Compression.FileSystem
-          $names = [System.IO.Compression.ZipFile]::OpenRead($zip.FullName).Entries.FullName
-          if (-not ($names -like '*/bin/camel.exe')) { throw 'camel.exe missing from launcher archive' }
+          $archive = [System.IO.Compression.ZipFile]::OpenRead($zip.FullName)
+          try {
+              $names = $archive.Entries.FullName
+              if (-not ($names -like '*/bin/camel.exe')) { throw 'camel.exe missing from launcher archive' }
+          } finally {
+              $archive.Dispose()
+          }

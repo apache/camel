@@ -16,6 +16,8 @@
  */
 package org.apache.camel.tooling.exe;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -116,12 +118,33 @@ class CamelExeBootstrapTest {
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.redirectErrorStream(true);
         Process p = pb.start();
-        String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-        assertTrue(p.waitFor(60, TimeUnit.SECONDS), "camel.exe did not exit in time");
-        Result r = new Result();
-        r.exit = p.exitValue();
-        r.stdout = out;
-        return r;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        // Drain stdout on a background thread: reading it inline would block until the pipe closes
+        // at process exit, making the waitFor timeout below unreachable if camel.exe hangs.
+        Thread drain = new Thread(() -> {
+            try {
+                p.getInputStream().transferTo(out);
+            } catch (IOException e) {
+                // stream closes abruptly when the process is destroyed on timeout below
+            }
+        });
+        drain.start();
+        try {
+            boolean exited = p.waitFor(60, TimeUnit.SECONDS);
+            if (!exited) {
+                p.destroyForcibly();
+            }
+            assertTrue(exited, "camel.exe did not exit in time");
+            drain.join(TimeUnit.SECONDS.toMillis(5));
+            Result r = new Result();
+            r.exit = p.exitValue();
+            r.stdout = out.toString(StandardCharsets.UTF_8);
+            return r;
+        } finally {
+            if (p.isAlive()) {
+                p.destroyForcibly();
+            }
+        }
     }
 
     @Test
