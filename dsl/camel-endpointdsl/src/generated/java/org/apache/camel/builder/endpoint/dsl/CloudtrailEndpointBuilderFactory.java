@@ -59,11 +59,13 @@ public interface CloudtrailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of records that will be fetched in each poll.
+         * Maximum number of records that will be fetched in each lookup page.
+         * Each poll drains all pages, so this controls the page size rather
+         * than the total per poll. AWS allows up to 50.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 1
+         * Default: 50
          * Group: consumer
          * 
          * @param maxResults the value to set
@@ -74,11 +76,13 @@ public interface CloudtrailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of records that will be fetched in each poll.
+         * Maximum number of records that will be fetched in each lookup page.
+         * Each poll drains all pages, so this controls the page size rather
+         * than the total per poll. AWS allows up to 50.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 1
+         * Default: 50
          * Group: consumer
          * 
          * @param maxResults the value to set
