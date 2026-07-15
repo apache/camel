@@ -71,6 +71,8 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
     private boolean deleteJob = true;
     private volatile CronTrigger trigger;
     private volatile JobDetail job;
+    private volatile boolean scheduled;
+    private volatile TriggerKey rescheduleKey;
 
     @Override
     public void onInit(Consumer consumer) {
@@ -100,16 +102,43 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
 
     @Override
     public void startScheduler() {
-        // the quartz component starts the scheduler
+        if (!scheduled) {
+            try {
+                if (rescheduleKey != null) {
+                    LOG.debug("Re-scheduling job: {} with trigger: {}", job, trigger.getKey());
+                    quartzScheduler.rescheduleJob(rescheduleKey, trigger);
+                } else {
+                    LOG.debug("Scheduling job: {} with trigger: {}", job, trigger.getKey());
+                    try {
+                        quartzScheduler.scheduleJob(job, trigger);
+                    } catch (ObjectAlreadyExistsException ex) {
+                        QuartzComponent quartz = getCamelContext().getComponent("quartz", QuartzComponent.class);
+                        if (!(quartz.isClustered())) {
+                            throw ex;
+                        } else {
+                            TriggerKey triggerKey = trigger.getKey();
+                            trigger = (CronTrigger) quartzScheduler.getTrigger(triggerKey);
+                            if (trigger == null) {
+                                throw new SchedulerException("Trigger could not be found in quartz scheduler.");
+                            }
+                        }
+                    }
+                }
+                scheduled = true;
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
+                            trigger.getKey(), trigger.getClass().getSimpleName(),
+                            job.getJobClass().getSimpleName(), trigger.getNextFireTime());
+                }
+            } catch (SchedulerException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
     }
 
     @Override
     public boolean isSchedulerStarted() {
-        try {
-            return quartzScheduler != null && quartzScheduler.isStarted();
-        } catch (SchedulerException e) {
-            return false;
-        }
+        return scheduled;
     }
 
     @Override
@@ -244,9 +273,6 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
                 LOG.debug("Setting user extra triggerParameters {}", copy);
                 PropertyBindingSupport.bindProperties(camelContext, trigger, copy);
             }
-
-            LOG.debug("Scheduling job: {} with trigger: {}", job, trigger.getKey());
-            quartzScheduler.scheduleJob(job, trigger);
         } else {
             checkTriggerIsNonConflicting(existingTrigger);
 
@@ -264,35 +290,9 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
                     .withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone()))
                     .build();
 
-            // Reschedule job if trigger settings were changed
             if (hasTriggerChanged(existingTrigger, trigger)) {
-                LOG.debug("Re-scheduling job: {} with trigger: {}", job, trigger.getKey());
-                quartzScheduler.rescheduleJob(triggerKey, trigger);
-            } else {
-                // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
-                LOG.debug("Scheduling job: {} with trigger: {}", job, trigger.getKey());
-                try {
-                    // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
-                    quartzScheduler.scheduleJob(job, trigger);
-                } catch (ObjectAlreadyExistsException ex) {
-                    // some other VM might may have stored the job & trigger in DB in clustered mode, in the mean time
-                    QuartzComponent quartz = getCamelContext().getComponent("quartz", QuartzComponent.class);
-                    if (!(quartz.isClustered())) {
-                        throw ex;
-                    } else {
-                        trigger = (CronTrigger) quartzScheduler.getTrigger(triggerKey);
-                        if (trigger == null) {
-                            throw new SchedulerException("Trigger could not be found in quartz scheduler.");
-                        }
-                    }
-                }
+                rescheduleKey = triggerKey;
             }
-        }
-
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
-                    trigger.getKey(), trigger.getClass().getSimpleName(),
-                    job.getJobClass().getSimpleName(), trigger.getNextFireTime());
         }
     }
 
@@ -313,6 +313,8 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
                 quartzScheduler.unscheduleJob(trigger.getKey());
             }
         }
+        scheduled = false;
+        rescheduleKey = null;
     }
 
     private void checkTriggerIsNonConflicting(Trigger trigger) {
