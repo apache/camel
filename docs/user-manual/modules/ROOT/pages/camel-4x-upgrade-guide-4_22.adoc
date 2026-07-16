@@ -499,3 +499,18 @@ account for `OptimisticLockingException`.
 The `TemplateParser` now catches `TokenMgrError` (a JavaCC lexer error) and wraps it in
 `ParseRuntimeException`. Previously a malformed stored-procedure template with characters
 outside the token alphabet would propagate as a raw `java.lang.Error`.
+
+=== camel-aws-cloudtrail - consumer event delivery fixed
+
+The CloudTrail consumer previously kept its lookup cursor in a `static` field (shared across all
+cloudtrail consumers in the JVM), issued a single non-paginated `LookupEvents` call with a default
+`maxResults` of `1`, and advanced the cursor by the newest event time plus one second. As a result
+it could silently drop events. The consumer now keeps the cursor per-endpoint, paginates through
+every page of the window, and de-duplicates events by id at the window boundary.
+
+Two behavior changes follow:
+
+* The default `maxResults` is now `50` (the AWS maximum). With pagination this is a page-size hint,
+  not a per-poll cap; set it lower to reduce page sizes.
+* On startup the consumer tails events from the moment it starts, rather than first replaying the
+  single most-recent historical event.
