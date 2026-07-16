@@ -30,6 +30,11 @@
     <artifactId>camel-test-infra-observability</artifactId>
     <name>Camel :: Test Infra :: Observability</name>
 
+    <properties>
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

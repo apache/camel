@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
@@ -125,11 +126,19 @@ public class ObservabilityLocalContainerInfraService
     @Override
     public void shutdown() {
         LOG.info("Stopping observability stack");
-        persesContainer.stop();
-        victoriaLogsContainer.stop();
-        victoriaTracesContainer.stop();
-        prometheusContainer.stop();
-        network.close();
+        safeStop(persesContainer::stop);
+        safeStop(victoriaLogsContainer::stop);
+        safeStop(victoriaTracesContainer::stop);
+        safeStop(prometheusContainer::stop);
+        safeStop(network::close);
+    }
+
+    private void safeStop(Runnable action) {
+        try {
+            action.run();
+        } catch (Exception e) {
+            LOG.warn("Shutdown step failed: {}", e.getMessage());
+        }
     }
 
     @Override
@@ -189,7 +198,7 @@ public class ObservabilityLocalContainerInfraService
     private String loadResource(String name) {
         try (InputStream is = getClass().getResourceAsStream(name)) {
             if (is != null) {
-                return new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                return new String(is.readAllBytes(), StandardCharsets.UTF_8);
             }
         } catch (IOException e) {
             LOG.warn("Failed to load resource {}: {}", name, e.getMessage());
