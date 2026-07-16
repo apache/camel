@@ -71,8 +71,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class SimpleTest extends LanguageTestSupport {
 
-    private static final String INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index 2 out of bounds for length 2";
-
     private static final String BOOKS
             = """
                     {
@@ -443,7 +441,7 @@ public class SimpleTest extends LanguageTestSupport {
                 "Should have thrown an exception");
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-        assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+        assertTrue(cause.getMessage().startsWith("Index: 2, Size: 2 out of bounds with List from bean"));
 
         assertExpression("${exchangeProperty.unknown[cool]}", null);
     }
@@ -463,7 +461,7 @@ public class SimpleTest extends LanguageTestSupport {
                 "Should have thrown an exception");
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-        assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+        assertTrue(cause.getMessage().startsWith("Index: 2, Size: 2 out of bounds with List from bean"));
 
         assertExpression("${exchangeProperty.unknown[cool]}", null);
     }
@@ -961,7 +959,7 @@ public class SimpleTest extends LanguageTestSupport {
                 "Should have thrown an exception");
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-        assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+        assertTrue(cause.getMessage().startsWith("Index: 2, Size: 2 out of bounds with List from bean"));
 
         assertExpression("${header.unknown[cool]}", null);
     }
@@ -980,7 +978,7 @@ public class SimpleTest extends LanguageTestSupport {
                 "Should have thrown an exception");
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-        assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+        assertTrue(cause.getMessage().startsWith("Index: 2, Size: 2 out of bounds with List from bean"));
 
         assertExpression("${header.unknown[cool]}", null);
     }
