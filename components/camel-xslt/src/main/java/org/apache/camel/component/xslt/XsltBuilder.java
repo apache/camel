@@ -50,7 +50,6 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,8 +115,6 @@ public class XsltBuilder implements Processor {
         Message out = exchange.getOut();
         out.copyFrom(exchange.getIn());
 
-        // the underlying input stream, which we need to close to avoid locking files or other resources
-        InputStream is = null;
         try {
             Source source = getSourceHandlerFactory().getSource(exchange, this.source);
 
@@ -133,8 +130,6 @@ public class XsltBuilder implements Processor {
             resultHandler.setBody(out);
         } finally {
             releaseTransformer(transformer, gen);
-            // IOHelper can handle if null
-            IOHelper.close(is);
         }
     }
 
