@@ -431,8 +431,7 @@ OpenSearchClient customClient = new OpenSearchClient(transport);
 getContext().getRegistry().bind("customClient", customClient);
 
 from("direct:deleteIndex")
-  .to("opensearch://foo?openSearchClient=#customClient");
+  .to("opensearch://foo?operation=DeleteIndex&indexName=twitter&openSearchClient=#customClient");
 
 ----
 ====
-
