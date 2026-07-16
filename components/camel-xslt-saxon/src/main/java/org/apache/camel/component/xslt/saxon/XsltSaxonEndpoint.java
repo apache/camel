@@ -55,7 +55,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,31 +186,6 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
      */
     public void setUseJsonBody(boolean useJsonBody) {
         this.useJsonBody = useJsonBody;
-    }
-
-    @Override
-    protected void doInit() throws Exception {
-        super.doInit();
-
-        // the processor is the xslt builder
-        setXslt(createXsltBuilder());
-
-        // must load resource first which sets a template and do a stylesheet compilation to catch errors early
-        // load resource from classpath otherwise load in doStart()
-        if (isContentCache() && ResourceHelper.isClasspathUri(getResourceUri())) {
-            loadResource(getResourceUri(), getXslt());
-        }
-
-        setProcessor(getXslt());
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        if (isContentCache() && !ResourceHelper.isClasspathUri(getResourceUri())) {
-            loadResource(getResourceUri(), getXslt());
-        }
     }
 
     @Override
