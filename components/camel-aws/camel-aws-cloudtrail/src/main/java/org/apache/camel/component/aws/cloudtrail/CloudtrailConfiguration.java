@@ -47,9 +47,11 @@ public class CloudtrailConfiguration implements Cloneable, AwsCommonConfiguratio
     @UriParam(label = "advanced", description = "Amazon Cloudtrail client to use for all requests for this endpoint")
     @Metadata(autowired = true)
     private CloudTrailClient cloudTrailClient;
-    @UriParam(description = "Maximum number of records that will be fetched in each poll",
-              defaultValue = "1")
-    private int maxResults = 1;
+    @UriParam(description = "Maximum number of records that will be fetched in each lookup page. Each poll drains"
+                            + " all pages, so this controls the page size rather than the total per poll. AWS allows"
+                            + " up to 50.",
+              defaultValue = "50")
+    private int maxResults = 50;
     @UriParam(description = "Specify an event source to select events")
     private String eventSource;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
