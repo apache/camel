@@ -514,3 +514,22 @@ Two behavior changes follow:
   not a per-poll cap; set it lower to reduce page sizes.
 * On startup the consumer tails events from the moment it starts, rather than first replaying the
   single most-recent historical event.
+
+=== camel-xslt-saxon - secure processing now applied unconditionally
+
+The `secureProcessing` option (default `true`) is now applied to the Saxon `TransformerFactory`
+unconditionally. Previously it was only set when `saxonExtensionFunctions` was configured,
+meaning the default configuration silently ran without `FEATURE_SECURE_PROCESSING`.
+
+Additionally, the Saxon factory now sets `ACCESS_EXTERNAL_DTD` and `ACCESS_EXTERNAL_STYLESHEET`
+to empty strings (matching the behavior of the plain `xslt` component), restricting
+stylesheet-driven external fetches.
+
+Users of Saxon Professional or Enterprise editions who rely on Java extension functions
+called from XSLT stylesheets must now explicitly set `secureProcessing=false` on the endpoint.
+
+=== camel-xslt / camel-xslt-saxon - transformerFactoryConfigurationStrategy now honored
+
+The `transformerFactoryConfigurationStrategy` option is now applied on all factory creation paths.
+Previously on `xslt-saxon` it was never invoked, and on plain `xslt` it was only invoked when
+`transformerFactoryClass` was explicitly set.
