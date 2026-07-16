@@ -33,6 +33,7 @@ import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.io.input.BoundedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,8 +135,14 @@ public class TarIterator implements Iterator<Message>, Closeable {
                 answer.setHeader(Exchange.FILE_NAME, current.getName());
                 if (current.getSize() > 0) {
                     if (maxDecompressedSize > 0) {
-                        answer.setBody(new MaxDecompressedSizeInputStream(
-                                new TarElementInputStreamWrapper(tarInputStream), maxDecompressedSize));
+                        answer.setBody(BoundedInputStream.builder()
+                                .setInputStream(new TarElementInputStreamWrapper(tarInputStream))
+                                .setMaxCount(maxDecompressedSize)
+                                .setOnMaxCount((max, count) -> {
+                                    throw new IOException(
+                                            "The InputStream entry being decompressed exceeds the maximum allowed size");
+                                })
+                                .get());
                     } else {
                         answer.setBody(new TarElementInputStreamWrapper(tarInputStream));
                     }
