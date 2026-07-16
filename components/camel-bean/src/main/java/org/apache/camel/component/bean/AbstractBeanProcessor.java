@@ -37,9 +37,9 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBeanProcessor.class);
 
     private final BeanHolder beanHolder;
-    private transient Processor processor;
+    private transient volatile Processor processor;
     private transient Object bean;
-    private transient boolean lookupProcessorDone;
+    private transient volatile boolean lookupProcessorDone;
     private final Lock lock = new ReentrantLock();
     private BeanScope scope;
     private String method;
@@ -130,10 +130,15 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
                 if (!lookupProcessorDone) {
                     lock.lock();
                     try {
-                        lookupProcessorDone = true;
-                        // so if there is a custom type converter for the bean to processor
-                        target = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, beanTmp);
-                        processor = target;
+                        if (!lookupProcessorDone) {
+                            // so if there is a custom type converter for the bean to processor
+                            target = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange,
+                                    beanTmp);
+                            processor = target;
+                            lookupProcessorDone = true;
+                        } else {
+                            target = processor;
+                        }
                     } finally {
                         lock.unlock();
                     }
