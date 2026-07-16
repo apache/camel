@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.containers.wait.strategy.WaitAllStrategy;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = MicroprofileLRAInfraService.class,
@@ -70,8 +71,12 @@ public class MicroprofileLRALocalContainerInfraService
                         .withEnv("JAVA_TOOL_OPTIONS",
                                 "-Dcom.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod=2 "
                                                       + "-Dcom.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod=1")
-                        .waitingFor(Wait.forListeningPort())
-                        .waitingFor(Wait.forLogMessage(".*lra-coordinator-quarkus.*Listening on.*", 1));
+                        // Use WaitAllStrategy to combine both checks (the second
+                        // waitingFor() call would silently replace the first)
+                        .waitingFor(new WaitAllStrategy()
+                                .withStrategy(Wait.forListeningPort())
+                                .withStrategy(
+                                        Wait.forLogMessage(".*lra-coordinator-quarkus.*Listening on.*", 1)));
 
                 ContainerEnvironmentUtil.configurePort(this, fixedPort, MicroprofileLRAProperties.DEFAULT_PORT);
             }

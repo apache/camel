@@ -57,7 +57,13 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
 
         TestSupport.sendBody(template, "direct:saga-complete", "hello");
 
-        await().atMost(60, TimeUnit.SECONDS)
+        // The Narayana LRA coordinator retries failed completion callbacks via its
+        // periodic recovery manager. The container is configured to shorten the
+        // recovery period to 2s (via JAVA_TOOL_OPTIONS), but this does not always
+        // take effect (e.g., if the JVM ignores JAVA_TOOL_OPTIONS). In that case,
+        // the default 120s recovery period applies, so we need a timeout that covers
+        // the worst case: default period (120s) + backoff (10s) + margin.
+        await().atMost(180, TimeUnit.SECONDS)
                 .until(() -> complete.getReceivedCounter() >= 1
                         && end.getReceivedCounter() >= 1);
         complete.assertIsSatisfied();

@@ -58,7 +58,11 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
 
     @AfterEach
     public void checkActiveLRAs() throws IOException, InterruptedException {
-        await().atMost(20, SECONDS)
+        // After a test that exercises LRA recovery (e.g., LRAFailuresIT), the
+        // coordinator may need up to one full recovery cycle to close the LRA.
+        // When JAVA_TOOL_OPTIONS takes effect (2s period), this resolves quickly;
+        // when it does not, the default 120s recovery period applies.
+        await().atMost(180, SECONDS)
                 .alias("Some LRA have been left pending")
                 .until(() -> getNumberOfActiveLRAs(), equalTo(activeLRAs));
     }
