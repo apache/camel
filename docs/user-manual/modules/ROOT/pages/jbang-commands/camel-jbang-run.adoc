@@ -63,7 +63,7 @@ camel run [options]
 | `--observe` | Enable observability services (health, metrics, dev console, and lightweight Camel-only tracing in the TUI Spans tab) | false | boolean
 | `--open-api` | Adds an OpenAPI spec from the given file (json or yaml file) |  | String
 | `--open-telemetry-agent` | Enable OpenTelemetry Java Agent for auto-instrumentation of third-party libraries (HTTP clients, JDBC, Kafka clients, gRPC, etc.). Traces are shown in the TUI Spans tab with Camel spans in cyan and 3rd-party agent spans in magenta. | false | boolean
-| `--open-telemetry-agent-export` | Where to export OpenTelemetry Agent traces: tui (embedded receiver in TUI) or jaeger (external Jaeger). With jaeger, start Jaeger first via 'camel infra run jaeger' and view traces at \http://localhost:16686 | tui | String
+| `--open-telemetry-agent-export` | Where to export OpenTelemetry Agent telemetry: tui (embedded receiver in TUI), otlp (external OTLP collector for traces), or observability (full stack with traces and logs). With otlp, start a trace backend first (e.g. 'camel infra run jaeger'). With observability, start the stack via 'camel infra run observability'. The value 'jaeger' is deprecated and works as an alias for 'otlp'. | tui | String
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI | false | boolean
 | `--port` | Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number) |  | int
 | `--profile` | Profile to run (dev, test, prod). | dev | String

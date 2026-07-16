@@ -1223,8 +1223,10 @@ public class Run extends CamelCommand {
         }
         if (debugOptions.openTelemetryAgent) {
             dependencies.add("camel:opentelemetry2");
-            boolean jaegerExport = "jaeger".equals(debugOptions.openTelemetryAgentExport);
-            if (!jaegerExport) {
+            boolean externalExport = "otlp".equals(debugOptions.openTelemetryAgentExport)
+                    || "jaeger".equals(debugOptions.openTelemetryAgentExport)
+                    || "observability".equals(debugOptions.openTelemetryAgentExport);
+            if (!externalExport) {
                 dependencies.add("camel:platform-http-main");
                 if (serverOptions.port == -1) {
                     serverOptions.port = 8080;
@@ -2073,18 +2075,29 @@ public class Run extends CamelCommand {
             cmds.removeIf(a -> a.startsWith("--jvm-args"));
         }
         if (debugOptions.openTelemetryAgent) {
-            boolean jaegerExport = "jaeger".equals(debugOptions.openTelemetryAgentExport);
+            boolean otlpExport = "otlp".equals(debugOptions.openTelemetryAgentExport)
+                    || "jaeger".equals(debugOptions.openTelemetryAgentExport);
+            boolean observabilityExport = "observability".equals(debugOptions.openTelemetryAgentExport);
             jbangArgs.add("--javaagent=io.opentelemetry.javaagent:opentelemetry-javaagent:RELEASE");
             jbangArgs.add("-Dotel.metrics.exporter=none");
-            jbangArgs.add("-Dotel.logs.exporter=none");
             jbangArgs.add("-Dotel.service.name=camel");
             cmds.removeIf(arg -> arg.startsWith("--open-telemetry-agent"));
             cmds.add("--dep=camel:opentelemetry2");
             cmds.add("--prop=camel.opentelemetry2.enabled=true");
-            if (jaegerExport) {
+            if (observabilityExport) {
+                jbangArgs.add("-Dotel.exporter.otlp.protocol=http/protobuf");
+                jbangArgs.add(
+                        "-Dotel.exporter.otlp.traces.endpoint=http://localhost:10428/insert/opentelemetry/v1/traces");
+                jbangArgs.add("-Dotel.logs.exporter=otlp");
+                jbangArgs.add(
+                        "-Dotel.exporter.otlp.logs.endpoint=http://localhost:9428/insert/opentelemetry/v1/logs");
+                cmds.add("--prop=camel.opentelemetry2.exportTarget=observability");
+            } else if (otlpExport) {
+                jbangArgs.add("-Dotel.logs.exporter=none");
                 jbangArgs.add("-Dotel.exporter.otlp.traces.endpoint=http://localhost:4318/v1/traces");
-                cmds.add("--prop=camel.opentelemetry2.exportTarget=jaeger");
+                cmds.add("--prop=camel.opentelemetry2.exportTarget=otlp");
             } else {
+                jbangArgs.add("-Dotel.logs.exporter=none");
                 int port = serverOptions.port > 0 ? serverOptions.port : 8080;
                 jbangArgs.add("-Dotel.exporter.otlp.traces.endpoint=http://localhost:" + port + "/v1/traces");
                 cmds.add("--dep=camel:platform-http-main");
@@ -2821,8 +2834,11 @@ public class Run extends CamelCommand {
         boolean openTelemetryAgent;
 
         @Option(names = { "--open-telemetry-agent-export" }, defaultValue = "tui",
-                description = "Where to export OpenTelemetry Agent traces: tui (embedded receiver in TUI) or jaeger (external Jaeger). "
-                              + "With jaeger, start Jaeger first via 'camel infra run jaeger' and view traces at http://localhost:16686")
+                description = "Where to export OpenTelemetry Agent telemetry: tui (embedded receiver in TUI), "
+                              + "otlp (external OTLP collector for traces), or observability (full stack with traces and logs). "
+                              + "With otlp, start a trace backend first (e.g. 'camel infra run jaeger'). "
+                              + "With observability, start the stack via 'camel infra run observability'. "
+                              + "The value 'jaeger' is deprecated and works as an alias for 'otlp'.")
         String openTelemetryAgentExport = "tui";
     }
 

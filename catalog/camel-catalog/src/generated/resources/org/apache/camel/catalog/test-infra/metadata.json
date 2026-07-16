@@ -208,6 +208,17 @@
   "serviceVersion" : "latest",
   "uiSupported" : false
 }, {
+  "service" : "org.apache.camel.test.infra.observability.services.ObservabilityInfraService",
+  "description" : "Local observability stack (Prometheus + VictoriaTraces + VictoriaLogs + Perses)",
+  "implementation" : "org.apache.camel.test.infra.observability.services.ObservabilityLocalContainerInfraService",
+  "alias" : [ "observability" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-observability",
+  "version" : "4.22.0-SNAPSHOT",
+  "serviceVersion" : null,
+  "uiSupported" : true
+}, {
   "service" : "org.apache.camel.test.infra.solr.services.SolrInfraService",
   "description" : "Apache Solr is an open source search platform",
   "implementation" : "org.apache.camel.test.infra.solr.services.SolrLocalContainerInfraService",
