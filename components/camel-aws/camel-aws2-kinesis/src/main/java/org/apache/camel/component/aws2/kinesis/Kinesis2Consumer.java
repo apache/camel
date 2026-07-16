@@ -19,11 +19,11 @@ package org.apache.camel.component.aws2.kinesis;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayDeque;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -59,11 +59,17 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private static final String UNIX_TIMESTAMP_MILLIS_REGEX = "^\\d{1,13}$";
     private static final String UNIX_TIMESTAMP_DOUBLE_REGEX = "^[-+]?\\d+(\\.\\d+)?([eE][-+]?\\d+)?$";
 
+    // Sentinel stored in currentShardIterators to mark a shard as closed. A closed shard has no next
+    // shard iterator (Kinesis returns null); ConcurrentHashMap forbids null values, so an empty
+    // string is used instead and is treated as "no iterator" by the ObjectHelper.isEmpty checks.
+    private static final String CLOSED_SHARD_ITERATOR = "";
+
     private KinesisConnection connection;
     private ResumeStrategy resumeStrategy;
 
-    private final Map<String, String> currentShardIterators = new java.util.HashMap<>();
-    private final Set<String> warnLogged = new HashSet<>();
+    // Written concurrently from poll()'s parallelStream over the shard list, so both must be thread-safe.
+    private final Map<String, String> currentShardIterators = new ConcurrentHashMap<>();
+    private final Set<String> warnLogged = ConcurrentHashMap.newKeySet();
 
     private volatile List<Shard> currentShardList = List.of();
     private static final String SHARD_MONITOR_EXECUTOR_NAME = "Kinesis_shard_monitor";
@@ -83,7 +89,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     }
 
     public boolean isShardClosed(String shardId) {
-        return currentShardIterators.get(shardId) == null && currentShardIterators.containsKey(shardId);
+        return ObjectHelper.isEmpty(currentShardIterators.get(shardId)) && currentShardIterators.containsKey(shardId);
     }
 
     @Override
@@ -163,8 +169,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         }
 
         if (ObjectHelper.isEmpty(shardIterator)) {
-            // Unable to get an interator so shard must be closed
-            processedExchangeCount.set(0);
+            // Unable to get an iterator so shard must be closed; contribute nothing to the poll count
             return;
         }
 
@@ -197,7 +202,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
 
         try {
             Queue<Exchange> exchanges = createExchanges(shard, result.records());
-            processedExchangeCount.getAndSet(processBatch(CastUtils.cast(exchanges)));
+            processedExchangeCount.addAndGet(processBatch(CastUtils.cast(exchanges)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -210,7 +215,9 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     }
 
     private void updateShardIterator(Shard shard, String nextShardIterator) {
-        currentShardIterators.put(shard.shardId(), nextShardIterator);
+        // A null next shard iterator means the shard is now closed; store the sentinel rather than
+        // null (ConcurrentHashMap forbids null values) so isShardClosed keeps detecting it.
+        currentShardIterators.put(shard.shardId(), nextShardIterator == null ? CLOSED_SHARD_ITERATOR : nextShardIterator);
     }
 
     @Override
