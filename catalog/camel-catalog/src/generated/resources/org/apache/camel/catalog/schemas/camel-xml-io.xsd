@@ -3793,7 +3793,7 @@ Configures the thread execution timeout. Default value is 1 second. Default valu
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Configures the pool size of the thread pool when timeout is enabled. Default value: 10
+Deprecated: Deprecated: no longer in use since the switch to TypedGuard API (CAMEL-21857). Default value: 10
 ]]>
             </xs:documentation>
           </xs:annotation>
