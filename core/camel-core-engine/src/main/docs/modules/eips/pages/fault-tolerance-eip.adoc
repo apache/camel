@@ -255,6 +255,13 @@ Maven users will need to add the following dependency to their pom.xml to use th
 </dependency>
 ----
 
+=== Developer Console
+
+The Fault Tolerance dev console (`fault-tolerance`) displays the circuit breaker state (CLOSED, OPEN, HALF_OPEN)
+for each breaker in the context. Unlike the Resilience4j dev console, it does not show live metrics
+(success/failure counts, failure rate) because the underlying SmallRye Fault Tolerance API does not expose
+per-breaker metric counters.
+
 === Using Fault Tolerance with Spring Boot
 
 This component is **not supported** Spring Boot.
