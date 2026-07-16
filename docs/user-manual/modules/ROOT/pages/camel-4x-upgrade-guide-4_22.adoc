@@ -481,6 +481,17 @@ already required by `JdbcAggregationRepository` for reading and updating aggrega
 `recoveryByInstance` is enabled, the completed table must have the `instance_id VARCHAR(255)`
 column as documented.
 
+=== camel-pqc - String payloads are signed and verified as UTF-8
+
+The `sign`, `verify`, `hybridSign` and `hybridVerify` operations previously encoded a `String`
+message body using the JVM default charset (`String.getBytes()`). The default charset is platform
+dependent, so signing on one JVM and verifying on another with a different default could disagree
+on the bytes of a non-ASCII payload and make verification fail.
+
+`String` bodies are now always encoded as UTF-8. On Java 18 and newer the default charset is
+already UTF-8 (JEP 400), so this is a no-op there; on Java 17 with a non-UTF-8 default, the
+signature of a non-ASCII `String` payload changes. Binary bodies (`byte[]`, `InputStream`) are
+unaffected, as they are signed byte-for-byte.
 === camel-sql - Schema-qualified aggregation repository names
 
 The table-name validation in `JdbcAggregationRepository` now accepts schema-qualified names

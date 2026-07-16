@@ -18,6 +18,7 @@ package org.apache.camel.component.pqc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.util.Arrays;
@@ -514,7 +515,7 @@ public class PQCProducer extends DefaultProducer {
      * Feeds the message body into the given {@link Signature} without materialising the whole payload as a String. A
      * {@code byte[]} body is used directly, an {@link InputStream} body is read in chunks (and reset afterwards when it
      * is a re-readable {@link StreamCache} so downstream processors still see the payload), and any other body type
-     * falls back to its String representation.
+     * falls back to its String representation, encoded as UTF-8.
      */
     private static void updateSignatureFromBody(Signature signature, Message message)
             throws InvalidPayloadException, SignatureException, IOException {
@@ -534,14 +535,17 @@ public class PQCProducer extends DefaultProducer {
                 }
             }
         } else {
-            signature.update(message.getMandatoryBody(String.class).getBytes());
+            // Pin UTF-8: the JVM default charset is platform dependent, so signing and verifying on JVMs with a
+            // different default would disagree on the bytes for a non-ASCII payload
+            signature.update(message.getMandatoryBody(String.class).getBytes(StandardCharsets.UTF_8));
         }
     }
 
     /**
      * Returns the message body as a byte array without a String round-trip when it is already binary. Used by the
      * hybrid operations, which need the whole payload in memory. An {@link InputStream} is fully read (and reset
-     * afterwards when it is a re-readable {@link StreamCache}).
+     * afterwards when it is a re-readable {@link StreamCache}). Any other body type falls back to its String
+     * representation, encoded as UTF-8.
      */
     private static byte[] bodyToByteArray(Message message) throws InvalidPayloadException, IOException {
         Object body = message.getBody();
@@ -556,7 +560,8 @@ public class PQCProducer extends DefaultProducer {
                 }
             }
         } else {
-            return message.getMandatoryBody(String.class).getBytes();
+            // Pin UTF-8, as updateSignatureFromBody does
+            return message.getMandatoryBody(String.class).getBytes(StandardCharsets.UTF_8);
         }
     }
 
