@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.camel.CamelExecutionException;
@@ -24,10 +23,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BeanAmbiguousBodyConversionTest extends ContextTestSupport {
 
@@ -40,9 +39,7 @@ public class BeanAmbiguousBodyConversionTest extends ContextTestSupport {
         Collection<MethodInfo> methods = cause.getMethods();
 
         assertEquals(2, methods.size(), "Should list exactly two distinct candidates");
-        ArrayList<MethodInfo> list = new ArrayList<>(methods);
-        assertTrue(list.get(0) != list.get(1),
-                "The two candidates should be different method instances");
+        assertThat(methods).doesNotHaveDuplicates();
     }
 
     @Override
