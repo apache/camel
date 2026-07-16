@@ -28,13 +28,27 @@ import org.apache.camel.Message;
  */
 public class ZipSplitter implements Expression {
 
+    private static final long DEFAULT_MAXIMUM_DECOMPRESSED_SIZE = 1073741824;
+
+    private long maxDecompressedSize = DEFAULT_MAXIMUM_DECOMPRESSED_SIZE;
+
     public ZipSplitter() {
     }
 
     public Object evaluate(Exchange exchange) {
         Message inputMessage = exchange.getIn();
         InputStream inputStream = inputMessage.getBody(InputStream.class);
-        return new ZipIterator(exchange, inputStream);
+        ZipIterator zipIterator = new ZipIterator(exchange, inputStream);
+        zipIterator.setMaxDecompressedSize(maxDecompressedSize);
+        return zipIterator;
+    }
+
+    public long getMaxDecompressedSize() {
+        return maxDecompressedSize;
+    }
+
+    public void setMaxDecompressedSize(long maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
     }
 
     @Override
