@@ -471,7 +471,15 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             }
         }
         if (getEndpoint().isConsumeDelete()) {
-            return (EntityManager em, Object entityBean, Exchange exchange) -> em.remove(entityBean);
+            return (EntityManager em, Object entityBean, Exchange exchange) -> {
+                if (entityBean != null && !entityBean.getClass().isArray()) {
+                    em.remove(entityBean);
+                } else {
+                    LOG.warn("Cannot auto-delete entity of type {} (e.g. native query result without resultClass)."
+                             + " Set consumeDelete=false or configure a resultClass.",
+                            entityBean != null ? entityBean.getClass().getName() : "null");
+                }
+            };
         }
 
         return (EntityManager em, Object entityBean, Exchange exchange) -> {
