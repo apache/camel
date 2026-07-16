@@ -57,4 +57,8 @@ public interface ObservabilityInfraService extends InfrastructureService {
     default String metricsTarget() {
         return "http://host.docker.internal:9876/observe/metrics";
     }
+
+    default String uiUrl() {
+        return persesUrl();
+    }
 }

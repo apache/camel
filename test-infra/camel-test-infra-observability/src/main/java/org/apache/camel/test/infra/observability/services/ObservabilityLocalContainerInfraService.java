@@ -33,7 +33,8 @@ import org.testcontainers.containers.Network;
 
 @InfraService(service = ObservabilityInfraService.class,
               description = "Local observability stack (Prometheus + VictoriaTraces + VictoriaLogs + Perses)",
-              serviceAlias = { "observability" })
+              serviceAlias = { "observability" },
+              uiSupported = true)
 public class ObservabilityLocalContainerInfraService
         implements ObservabilityInfraService, ContainerService<PrometheusContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ObservabilityLocalContainerInfraService.class);

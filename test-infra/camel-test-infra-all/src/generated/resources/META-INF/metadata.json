@@ -216,7 +216,8 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-observability",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : null
+  "serviceVersion" : null,
+  "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.solr.services.SolrInfraService",
   "description" : "Apache Solr is an open source search platform",
