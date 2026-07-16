@@ -297,6 +297,15 @@ class TarFileDataFormatTest extends CamelTestSupport {
                 () -> template.sendBody("direct:untarMaxDecompressedSize", files));
     }
 
+    @Test
+    void testUntarMaxDecompressedSizeWithIterator() throws Exception {
+        final byte[] files = getTaredText("file");
+
+        // maxDecompressedSize must also be enforced in iterator/splitter mode
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:untarMaxDecompressedSizeIterator", files));
+    }
+
     @AfterEach
     public void cleanOutputDirectory() {
         deleteDirectory(TEST_DIR);
@@ -371,6 +380,15 @@ class TarFileDataFormatTest extends CamelTestSupport {
                 // Only allow 10 bytes to be decompressed
                 maxDecompressedSizeTar.setMaxDecompressedSize(10L);
                 from("direct:untarMaxDecompressedSize").unmarshal(maxDecompressedSizeTar).to("mock:untar");
+
+                TarFileDataFormat maxDecompSizeIterTar = new TarFileDataFormat();
+                maxDecompSizeIterTar.setUsingIterator(true);
+                maxDecompSizeIterTar.setMaxDecompressedSize(10L);
+                from("direct:untarMaxDecompressedSizeIterator")
+                        .unmarshal(maxDecompSizeIterTar)
+                        .split(bodyAs(Iterator.class)).streaming()
+                            .to("mock:untarMaxDecompressedSizeIterator")
+                        .end();
             }
         };
     }

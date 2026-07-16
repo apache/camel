@@ -50,6 +50,7 @@ public class TarIterator implements Iterator<Message>, Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(TarIterator.class);
 
     private final Exchange exchange;
+    private long maxDecompressedSize = -1;
     private volatile TarArchiveInputStream tarInputStream;
     private volatile Message parent;
     private volatile boolean first;
@@ -132,7 +133,12 @@ public class TarIterator implements Iterator<Message>, Closeable {
                 answer.setHeader(TARFILE_ENTRY_NAME_HEADER, current.getName());
                 answer.setHeader(Exchange.FILE_NAME, current.getName());
                 if (current.getSize() > 0) {
-                    answer.setBody(new TarElementInputStreamWrapper(tarInputStream));
+                    if (maxDecompressedSize > 0) {
+                        answer.setBody(new MaxDecompressedSizeInputStream(
+                                new TarElementInputStreamWrapper(tarInputStream), maxDecompressedSize));
+                    } else {
+                        answer.setBody(new TarElementInputStreamWrapper(tarInputStream));
+                    }
                 } else {
                     // Workaround for the case when the entry is zero bytes big
                     answer.setBody(new ByteArrayInputStream(new byte[0]));
@@ -187,5 +193,13 @@ public class TarIterator implements Iterator<Message>, Closeable {
 
     public void setAllowEmptyDirectory(boolean allowEmptyDirectory) {
         this.allowEmptyDirectory = allowEmptyDirectory;
+    }
+
+    public long getMaxDecompressedSize() {
+        return maxDecompressedSize;
+    }
+
+    public void setMaxDecompressedSize(long maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
     }
 }

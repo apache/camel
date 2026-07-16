@@ -257,6 +257,13 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 () -> template.sendBody("direct:unzipMaxDecompressedSize", getZippedText("file")));
     }
 
+    @Test
+    public void testUnzipMaxDecompressedSizeWithIterator() {
+        // maxDecompressedSize must also be enforced in iterator/splitter mode
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:unzipMaxDecompressedSizeIterator", getZippedText("file")));
+    }
+
     @Override
     public void doPostSetup() {
         deleteDirectory(TEST_DIR);
@@ -331,6 +338,15 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 // Only allow 10 bytes to be decompressed
                 maxDecompressedSizeZip.setMaxDecompressedSize(10L);
                 from("direct:unzipMaxDecompressedSize").unmarshal(maxDecompressedSizeZip).to("mock:unzip");
+
+                ZipFileDataFormat maxDecompSizeIterZip = new ZipFileDataFormat();
+                maxDecompSizeIterZip.setUsingIterator(true);
+                maxDecompSizeIterZip.setMaxDecompressedSize(10L);
+                from("direct:unzipMaxDecompressedSizeIterator")
+                        .unmarshal(maxDecompSizeIterZip)
+                        .split(bodyAs(Iterator.class)).streaming()
+                            .to("mock:unzipMaxDecompressedSizeIterator")
+                        .end();
             }
         };
     }
