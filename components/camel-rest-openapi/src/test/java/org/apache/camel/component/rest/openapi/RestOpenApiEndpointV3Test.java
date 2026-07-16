@@ -288,6 +288,70 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
+    public void shouldNotLeakPathParametersAsQueryParameters() {
+        final CamelContext camelContext = mock(CamelContext.class);
+
+        final RestOpenApiComponent component = new RestOpenApiComponent();
+        component.setCamelContext(camelContext);
+
+        // endpoint parameters include two path params and one extra param
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", "1");
+        params.put("orderId", "2");
+        params.put("format", "json");
+
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "uri", "remaining", component, params);
+        endpoint.setHost("http://petstore.openapi.io");
+
+        final OpenAPI openapi = new OpenAPI();
+        final Operation operation = new Operation().operationId("getOrder");
+        operation.addParametersItem(new Parameter().name("userId").in("path").required(true));
+        operation.addParametersItem(new Parameter().name("orderId").in("path").required(true));
+
+        Map<String, Object> result = endpoint.determineEndpointParameters(openapi, operation);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> nested = (Map<String, Object>) result.get("parameters");
+
+        // path params must not leak into nested parameters
+        assertThat(nested).doesNotContainKey("userId");
+        assertThat(nested).doesNotContainKey("orderId");
+        // non-path param must be preserved
+        assertThat(nested).containsEntry("format", "json");
+    }
+
+    @Test
+    public void shouldKeepEndpointParametersWhenNoPathParamClash() {
+        final CamelContext camelContext = mock(CamelContext.class);
+
+        final RestOpenApiComponent component = new RestOpenApiComponent();
+        component.setCamelContext(camelContext);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("verbose", "true");
+        params.put("timeout", "5000");
+
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "uri", "remaining", component, params);
+        endpoint.setHost("http://petstore.openapi.io");
+
+        final OpenAPI openapi = new OpenAPI();
+        final Operation operation = new Operation().operationId("listUsers");
+        operation.addParametersItem(new Parameter().name("page").in("query"));
+        operation.addParametersItem(new Parameter().name("limit").in("query"));
+
+        Map<String, Object> result = endpoint.determineEndpointParameters(openapi, operation);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> nested = (Map<String, Object>) result.get("parameters");
+
+        // no path params in the operation, so all endpoint params should be preserved
+        assertThat(nested).containsEntry("verbose", "true");
+        assertThat(nested).containsEntry("timeout", "5000");
+    }
+
+    @Test
     public void shouldDetermineHostFromRestConfiguration() {
         assertThat(RestOpenApiEndpoint.hostFrom(null)).isNull();
 

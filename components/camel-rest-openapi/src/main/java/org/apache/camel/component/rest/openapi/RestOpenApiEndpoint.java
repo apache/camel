@@ -683,13 +683,12 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (this.parameters != null) {
             if (operation.getParameters() != null) {
                 for (Map.Entry<String, Object> entry : this.parameters.entrySet()) {
-                    for (Parameter param : operation.getParameters()) {
-                        // skip parameters that are part of the operation as path as otherwise
-                        // it will be duplicated as query parameter as well
-                        boolean clash = "path".equals(param.getIn()) && entry.getKey().equals(param.getName());
-                        if (!clash) {
-                            nestedParameters.put(entry.getKey(), entry.getValue());
-                        }
+                    // skip parameters that are part of the operation as path as otherwise
+                    // it will be duplicated as query parameter as well
+                    boolean clash = operation.getParameters().stream()
+                            .anyMatch(p -> "path".equals(p.getIn()) && entry.getKey().equals(p.getName()));
+                    if (!clash) {
+                        nestedParameters.put(entry.getKey(), entry.getValue());
                     }
                 }
             } else {
