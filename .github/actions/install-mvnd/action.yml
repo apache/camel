@@ -15,6 +15,10 @@
 # limitations under the License.
 #
 
+# Use mvnd only for jobs that build a large, parallelizable reactor, where the
+# daemon's concurrent module builds outweigh its cold-start cost. For small
+# reactors (a handful of modules) prefer plain `mvn`: mvnd adds no parallelism
+# benefit there and introduces a daemon startup timeout as a flaky failure mode.
 name: 'install-mvnd'
 description: 'Install the maven daemon'
 inputs:

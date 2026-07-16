@@ -102,12 +102,12 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
           cache: 'maven'
-      - id: install-mvnd
-        uses: ./.github/actions/install-mvnd
       - uses: ./.github/actions/setup-llvm-mingw
       - name: Build and test native camel.exe (x64 + arm64)
+        # Plain mvn: this reactor is only a handful of modules, so the mvnd daemon
+        # brings no parallelism benefit and adds a cold-start failure mode.
         run: |
-          ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd $MVND_OPTS -pl buildingtools,tooling/camel-exe -am verify -Dcamel.exe.build=true -DskipTests
+          mvn -pl buildingtools,tooling/camel-exe -am verify -Dcamel.exe.build=true -DskipTests
       - name: Upload Windows x64 camel.exe
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
