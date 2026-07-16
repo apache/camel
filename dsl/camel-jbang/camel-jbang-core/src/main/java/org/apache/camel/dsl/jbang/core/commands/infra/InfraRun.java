@@ -65,6 +65,10 @@ public class InfraRun extends InfraBaseCommand {
                         description = "Override the default port for the service")
     Integer port;
 
+    @CommandLine.Option(names = { "--no-ui" }, defaultValue = "false",
+                        description = "Do not start companion UI containers")
+    boolean noUi;
+
     public InfraRun(CamelJBangMain main) {
         super(main);
     }
@@ -137,6 +141,9 @@ public class InfraRun extends InfraBaseCommand {
             if (logToStdout) {
                 cmds.add("--log");
             }
+            if (noUi) {
+                cmds.add("--no-ui");
+            }
         }
 
         cmds.remove("--background=true");
@@ -168,6 +175,9 @@ public class InfraRun extends InfraBaseCommand {
         // Set the port property if a specific port was requested
         if (port != null) {
             System.setProperty("camel.infra.port", String.valueOf(port));
+        }
+        if (noUi) {
+            System.setProperty("camel.infra.ui", "false");
         }
         Object actualService = cl.loadClass(serviceImpl).newInstance();
 
@@ -315,6 +325,7 @@ public class InfraRun extends InfraBaseCommand {
             }
             System.clearProperty("camel.infra.port");
             System.clearProperty("camel.infra.fixedPort");
+            System.clearProperty("camel.infra.ui");
         }
     }
 

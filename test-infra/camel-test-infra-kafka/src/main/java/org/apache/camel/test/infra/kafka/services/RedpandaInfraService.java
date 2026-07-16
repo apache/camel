@@ -28,7 +28,7 @@ import org.testcontainers.redpanda.RedpandaContainer;
 
 @InfraService(service = KafkaInfraService.class,
               description = "Apache Kafka, Distributed event streaming platform",
-              serviceAlias = "kafka", serviceImplementationAlias = "redpanda", uiSupported = true)
+              serviceAlias = "kafka", serviceImplementationAlias = "redpanda")
 public class RedpandaInfraService implements KafkaInfraService, ContainerService<RedpandaContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RedpandaInfraService.class);
 

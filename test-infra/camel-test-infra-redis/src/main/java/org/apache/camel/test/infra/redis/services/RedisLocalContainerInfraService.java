@@ -93,7 +93,7 @@ public class RedisLocalContainerInfraService implements RedisInfraService, Conta
                 LOG.info("Redis Commander running at http://{}:{}", uiContainer.getHost(),
                         uiContainer.getMappedPort(REDIS_COMMANDER_PORT));
             } catch (Exception e) {
-                LOG.warn("Failed to start Redis Commander UI container: {}", e.getMessage());
+                LOG.warn("Failed to start Redis Commander UI container: {}", e.getMessage(), e);
             }
         }
     }

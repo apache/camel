@@ -118,7 +118,7 @@
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.22.0-SNAPSHOT",
   "serviceVersion" : "0.51.0-kafka-4.2.0",
-  "uiSupported" : true
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
   "description" : "Apache Kafka, Distributed event streaming platform",
@@ -129,7 +129,7 @@
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.22.0-SNAPSHOT",
   "serviceVersion" : "8.3.0",
-  "uiSupported" : true
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.nats.services.NatsInfraService",
   "description" : "NATS is a high-performance messaging system for cloud native applications",
@@ -173,7 +173,7 @@
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.22.0-SNAPSHOT",
   "serviceVersion" : "v26.1.12",
-  "uiSupported" : true
+  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultInfraService",
   "description" : "HashiCorp Vault is a tool for securely accessing secrets",

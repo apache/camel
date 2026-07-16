@@ -110,7 +110,7 @@ public class MongoDBLocalContainerInfraService implements MongoDBInfraService, C
                 LOG.info("Mongo Express running at http://{}:{}", uiContainer.getHost(),
                         uiContainer.getMappedPort(MONGO_EXPRESS_PORT));
             } catch (Exception e) {
-                LOG.warn("Failed to start Mongo Express UI container: {}", e.getMessage());
+                LOG.warn("Failed to start Mongo Express UI container: {}", e.getMessage(), e);
             }
         }
     }

@@ -24,8 +24,8 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
 import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -39,10 +39,12 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
 
     private static final String KAFKA_UI_CONTAINER_IMAGE = "kafka-ui.container.image";
     private static final int KAFKA_UI_PORT = 9080;
+    private static final String KAFKA_NETWORK_ALIAS = "kafka-broker";
 
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaInfraService.class);
     protected KafkaContainer kafka;
     private GenericContainer<?> uiContainer;
+    private Network uiNetwork;
 
     public ContainerLocalKafkaInfraService() {
         kafka = initContainer();
@@ -61,6 +63,8 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
     }
 
     protected KafkaContainer initContainer() {
+        boolean fixedPort = ContainerEnvironmentUtil.isFixedPort(this.getClass());
+
         class TestInfraKafkaContainer extends KafkaContainer {
             public TestInfraKafkaContainer(boolean fixedPort) {
                 super(DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA_IMAGE_NAME))
@@ -70,7 +74,16 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
             }
         }
 
-        return new TestInfraKafkaContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
+        KafkaContainer container = new TestInfraKafkaContainer(fixedPort);
+
+        if (ContainerEnvironmentUtil.isWithUi()) {
+            uiNetwork = Network.newNetwork();
+            container.withNetwork(uiNetwork)
+                    .withNetworkAliases(KAFKA_NETWORK_ALIAS)
+                    .withListener(KAFKA_NETWORK_ALIAS + ":19092");
+        }
+
+        return container;
     }
 
     public String getBootstrapServers() {
@@ -98,7 +111,7 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
             try {
                 startUiContainer();
             } catch (Exception e) {
-                LOG.warn("Failed to start Kafka UI container: {}", e.getMessage());
+                LOG.warn("Failed to start Kafka UI container: {}", e.getMessage(), e);
             }
         }
     }
@@ -106,15 +119,13 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
     private void startUiContainer() {
         String uiImage = LocalPropertyResolver.getProperty(
                 ContainerLocalKafkaInfraService.class, KAFKA_UI_CONTAINER_IMAGE);
-        int kafkaPort = ContainerEnvironmentUtil.getConfiguredPort(9092);
-        Testcontainers.exposeHostPorts(kafkaPort);
 
         uiContainer = new GenericContainer<>(uiImage)
+                .withNetwork(uiNetwork)
                 .withEnv("DYNAMIC_CONFIG_ENABLED", "true")
                 .withEnv("KAFKA_CLUSTERS_0_NAME", "camel-infra")
-                .withEnv("KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS", "host.testcontainers.internal:" + kafkaPort)
-                .withEnv("SERVER_PORT", String.valueOf(KAFKA_UI_PORT))
-                .withAccessToHost(true);
+                .withEnv("KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS", KAFKA_NETWORK_ALIAS + ":19092")
+                .withEnv("SERVER_PORT", String.valueOf(KAFKA_UI_PORT));
         ContainerEnvironmentUtil.configurePort(uiContainer, true, KAFKA_UI_PORT);
         uiContainer.start();
 

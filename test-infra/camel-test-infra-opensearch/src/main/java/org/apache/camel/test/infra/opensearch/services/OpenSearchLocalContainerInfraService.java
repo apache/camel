@@ -128,7 +128,7 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
             try {
                 startUiContainer();
             } catch (Exception e) {
-                LOG.warn("Failed to start OpenSearch Dashboards UI container: {}", e.getMessage());
+                LOG.warn("Failed to start OpenSearch Dashboards UI container: {}", e.getMessage(), e);
             }
         }
     }
