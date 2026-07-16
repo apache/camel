@@ -27,6 +27,7 @@ import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isHostParam;
 import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isMediaRange;
@@ -200,6 +201,12 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
             restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
             CamelContextAware.trySetCamelContext(restOpenapiProcessorStrategy, getCamelContext());
         }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(restOpenapiProcessorStrategy);
     }
 
     public String getBasePath() {

@@ -75,6 +75,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.processor.RestBindingAdvice;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -183,6 +184,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                             + " endpoint protection.")
     private String oauthProfile;
 
+    private volatile RestOpenApiProcessor openApiProcessor;
+
     public RestOpenApiEndpoint() {
         // help tooling instantiate endpoint
     }
@@ -226,6 +229,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         RestOpenApiProcessor openApiProcessor
                 = new RestOpenApiProcessor(this, doc, path, apiContextPath, restOpenapiProcessorStrategy);
         CamelContextAware.trySetCamelContext(openApiProcessor, getCamelContext());
+        this.openApiProcessor = openApiProcessor;
 
         // use an advice to call the processor that is responsible for routing to the route that matches the
         // operation id, and also do validation of the incoming request
@@ -394,6 +398,13 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                 "The specified operation with ID: `" + operationId
                                            + "` cannot be found in the OpenApi specification loaded from `" + specificationUri
                                            + "`. Operations defined in the specification are: " + supportedOperations);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(openApiProcessor);
+        openApiProcessor = null;
     }
 
     public String getBasePath() {
