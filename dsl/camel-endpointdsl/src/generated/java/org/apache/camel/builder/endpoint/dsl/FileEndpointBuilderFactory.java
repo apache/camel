@@ -3253,12 +3253,13 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer (advanced)
          * 
          * @param forceWrites the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedFileEndpointProducerBuilder forceWrites(boolean forceWrites) {
             doSetProperty("forceWrites", forceWrites);
             return this;
@@ -3271,12 +3272,13 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer (advanced)
          * 
          * @param forceWrites the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedFileEndpointProducerBuilder forceWrites(String forceWrites) {
             doSetProperty("forceWrites", forceWrites);
             return this;
