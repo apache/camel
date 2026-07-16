@@ -254,6 +254,9 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
             return doIgnore(target);
         } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
             throwFileAlreadyExistException(target);
+        } else if (endpoint.getFileExist() == GenericFileExist.Move) {
+            // move any existing file first
+            this.endpoint.getMoveExistingFileStrategy().moveExistingFile(endpoint, operations, target);
         } else if (endpoint.getFileExist() == GenericFileExist.Override) {
             // we override the target so we do this by deleting
             // it so the temp file can be renamed later
