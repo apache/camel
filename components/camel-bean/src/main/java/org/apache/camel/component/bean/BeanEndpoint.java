@@ -112,6 +112,17 @@ public class BeanEndpoint extends DefaultEndpoint {
                 } else {
                     holder = registryBean;
                 }
+            } else if (holder instanceof ConstantTypeBeanHolder typeBeanHolder && scope == BeanScope.Singleton) {
+                // ClassComponent pre-sets a ConstantTypeBeanHolder which creates a new instance per exchange,
+                // so for singleton scope we must cache the bean instance
+                holder = typeBeanHolder.createCacheHolder();
+            } else if (holder instanceof ConstantBeanHolder && scope == BeanScope.Prototype) {
+                // ClassComponent pre-sets a ConstantBeanHolder (single instance) when bean.xxx options are present,
+                // so for prototype scope we must use a type holder that creates new instances per exchange
+                ParameterMappingStrategy strategy
+                        = ParameterMappingStrategyHelper.createParameterMappingStrategy(getCamelContext());
+                BeanComponent bean = getCamelContext().getComponent("bean", BeanComponent.class);
+                holder = new ConstantTypeBeanHolder(holder.getBeanInfo().getType(), getCamelContext(), strategy, bean);
             }
             if (scope == BeanScope.Request) {
                 // wrap in registry scoped
