@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -39,12 +41,15 @@ public class QuartzAddDynamicRouteTest extends BaseQuartzTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute")
+                // use a reasonable interval (200ms) so that the Quartz
+                // scheduler can reliably fire both triggers on loaded CI
+                // machines (2ms was far too tight for reliable scheduling)
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=200&trigger.repeatCount=1").routeId("myRoute")
                         .to("direct:foo");
             }
         });
 
-        resultEndpoint.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
