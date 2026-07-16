@@ -97,6 +97,12 @@ YAML::
 ----
 ====
 
+== Route lifecycle and breaker state
+
+When a route is stopped and started, the circuit breaker state is reset (an OPEN breaker returns to CLOSED)
+and any collected metrics are cleared. This is by design — a route stop/start is a full lifecycle reset,
+equivalent to a fresh boot.
+
 == Circuit Breaker components
 
 Camel provides two implementations of this pattern:
