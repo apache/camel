@@ -1472,7 +1472,8 @@
           "timeoutPoolSize" : {
             "type" : "number",
             "title" : "Timeout Pool Size",
-            "description" : "Configures the pool size of the thread pool when timeout is enabled.",
+            "description" : "Deprecated: no longer in use since the switch to TypedGuard API (CAMEL-21857).",
+            "deprecated" : true,
             "default" : 10
           },
           "typedGuard" : {
