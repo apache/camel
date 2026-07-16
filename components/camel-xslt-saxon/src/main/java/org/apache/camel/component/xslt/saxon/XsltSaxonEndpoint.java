@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -282,9 +283,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         InputStream is = getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, template);
         XsltBuilder builder = createXsltBuilder();
         Source source = new StreamSource(is);
-        if (this.saxonReaderProperties != null) {
-            //for Saxon we need to create XMLReader for the coming source
-            //so that the features configuration can take effect
+        if (!this.saxonReaderProperties.isEmpty()) {
             source = createReaderForSource(source);
         }
         builder.setTransformerSource(source);
@@ -302,23 +301,27 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     protected void loadResource(String resourceUri, XsltBuilder xslt) throws TransformerException, IOException {
         LOG.trace("{} loading schema resource: {}", this, resourceUri);
         Source source = xslt.getUriResolver().resolve(resourceUri, null);
-        if (this.saxonReaderProperties != null) {
-            //for Saxon we need to create XMLReader for the coming source
-            //so that the features configuration can take effect
-            source = createReaderForSource(source);
-        }
         if (source == null) {
             throw new IOException("Cannot load schema resource " + resourceUri);
-        } else {
-            xslt.setTransformerSource(source);
         }
-        // now loaded so clear flag
+        if (!this.saxonReaderProperties.isEmpty()) {
+            source = createReaderForSource(source);
+        }
+        xslt.setTransformerSource(source);
         setCacheCleared(false);
     }
 
     private Source createReaderForSource(Source source) {
+        InputSource inputSource = SAXSource.sourceToInputSource(source);
+        if (inputSource == null) {
+            return source;
+        }
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             SAXParser saxParser = factory.newSAXParser();
             XMLReader xmlReader = saxParser.getXMLReader();
 
@@ -329,7 +332,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                     URI uri = new URI(key);
                     if (value != null
                             && (value.toString().equals("true") || (value.toString().equals("false")))) {
-                        xmlReader.setFeature(uri.toString(), Boolean.valueOf(value.toString()));
+                        xmlReader.setFeature(uri.toString(), Boolean.parseBoolean(value.toString()));
                     } else if (value != null) {
                         xmlReader.setProperty(uri.toString(), value);
                     }
@@ -337,11 +340,10 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                     LOG.debug("{} isn't a valid URI, so ignore it", key);
                 }
             }
-            InputSource inputSource = SAXSource.sourceToInputSource(source);
             return new SAXSource(xmlReader, inputSource);
         } catch (SAXException | ParserConfigurationException e) {
             LOG.info("Can't create XMLReader for source ", e);
-            return null;
+            return source;
         }
     }
 
