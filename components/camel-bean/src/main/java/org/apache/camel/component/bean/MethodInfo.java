@@ -332,6 +332,11 @@ public class MethodInfo {
 
                 //If it's Java 8 async result
                 if (CompletionStage.class.isAssignableFrom(method.getReturnType())) {
+                    if (result == null) {
+                        throw new RuntimeCamelException(
+                                "Bean method " + method.getDeclaringClass().getName() + "." + method.getName()
+                                                        + " returned null CompletionStage");
+                    }
                     CompletionStage<?> completionStage = (CompletionStage<?>) result;
 
                     completionStage
