@@ -196,7 +196,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             pendingExchanges = total - index - 1;
             if (lockEntity(result, batchEntityManager)) {
                 // Run the @PreConsumed callback
-                createPreDeleteHandler().deleteObject(batchEntityManager, result, exchange);
+                getPreDeleteHandler().deleteObject(batchEntityManager, result, exchange);
 
                 // process the current exchange
                 LOG.debug("Processing exchange: {}", exchange);
