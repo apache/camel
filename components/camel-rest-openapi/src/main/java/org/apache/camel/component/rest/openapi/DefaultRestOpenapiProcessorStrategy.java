@@ -83,7 +83,11 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         for (var e : openAPI.getPaths().entrySet()) {
             for (var o : e.getValue().readOperationsMap().entrySet()) {
                 Operation op = o.getValue();
-                String id = op.getOperationId() != null ? op.getOperationId() : generateOperationId(e.getKey(), o.getKey());
+                String id = op.getOperationId();
+                if (id == null) {
+                    id = generateOperationId(e.getKey(), o.getKey());
+                    op.setOperationId(id);
+                }
                 ids.add(component + "://" + id);
             }
         }
