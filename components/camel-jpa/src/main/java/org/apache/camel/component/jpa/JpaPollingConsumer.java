@@ -124,11 +124,11 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
 
     @Override
     public Exchange receive() {
-        // resolve the entity manager before evaluating the expression
-        final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory,
-                getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
-
         Exchange exchange = getEndpoint().createExchange();
+
+        // resolve the entity manager before evaluating the expression
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory,
+                getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
         exchange.getIn().setHeader(JpaConstants.ENTITY_MANAGER, entityManager);
         transactionStrategy.executeInTransaction(new Runnable() {
             @Override
