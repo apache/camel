@@ -30,6 +30,8 @@ import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.common.RuntimeUtil.getPid;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 class LoadTest {
 
@@ -58,8 +60,7 @@ class LoadTest {
                 Thread.sleep(2000);
                 CamelLoadAction load = new CamelLoadAction(new CamelJBangMain());
                 CommandLine.populateCommand(load, getPid(), "--source=src/test/resources/load.yaml");
-                int exit = load.doCall();
-                Assertions.assertEquals(0, exit);
+                load.doCall();
             } catch (Exception e) {
                 // ignore
             }
@@ -72,7 +73,7 @@ class LoadTest {
         Assertions.assertEquals(0, exit);
 
         Path outPath = workingDir.resolve("load.txt");
-        Assertions.assertTrue(Files.exists(outPath));
+        await("load.txt file is created by the launched routes").untilAsserted(() -> assertThat(outPath).exists());
         String data = Files.readString(outPath);
         Assertions.assertEquals("I was loaded", data);
     }
