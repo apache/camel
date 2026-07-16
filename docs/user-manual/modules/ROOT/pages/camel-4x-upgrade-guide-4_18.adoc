@@ -50,6 +50,17 @@ the message, consistent with the inbound header filtering already performed by t
 Ordinary application headers are unaffected. If a route relied on `Camel*` headers being propagated from the MIME
 content, set them explicitly after unmarshalling.
 
+=== camel-knative - structured-mode CloudEvent header filtering
+
+When consuming a CloudEvent in structured content mode (`application/cloudevents+json`), the Knative component now
+applies a `HeaderFilterStrategy` to the event fields (extensions) mapped from the payload onto the Camel message.
+Camel-internal headers (the `Camel*` namespace, matched case-insensitively) present as structured-event fields are
+no longer mapped onto the message, consistent with the inbound header filtering already performed on the binary
+content-mode / HTTP header path.
+
+Ordinary CloudEvent extension attributes are unaffected. If a route relied on `Camel*`-named fields being
+propagated from the structured payload, set them explicitly after consuming the event.
+
 == Upgrading from 4.18.1 to 4.18.3
 
 === camel-jackson - potential breaking change
