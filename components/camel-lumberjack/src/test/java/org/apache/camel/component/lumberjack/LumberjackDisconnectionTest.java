@@ -19,6 +19,7 @@ package org.apache.camel.component.lumberjack;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -76,12 +77,11 @@ public class LumberjackDisconnectionTest extends CamelTestSupport {
      * This processor throws an exception as the fourth message received.
      */
     private static final class ErrorProcessor implements Processor {
-        int count;
+        private final AtomicInteger count = new AtomicInteger();
 
         @Override
         public void process(Exchange exchange) {
-            count++;
-            if (count == 4) {
+            if (count.incrementAndGet() == 4) {
                 throw new RuntimeCamelException("Ooops");
             }
         }
