@@ -81,6 +81,26 @@ public class CsvDataFormatTest {
     }
 
     @Test
+    void shouldResolveFormatByName() throws IOException {
+        try (CsvDataFormat dataFormat = new CsvDataFormat()) {
+            dataFormat.setFormat("MYSQL");
+            dataFormat.start();
+            assertEquals(CSVFormat.MYSQL, dataFormat.getCsvFormat());
+            assertEquals("\t", dataFormat.getActiveFormat().getDelimiterString());
+        }
+    }
+
+    @Test
+    void shouldResolveFormatByNameCaseInsensitive() throws IOException {
+        try (CsvDataFormat dataFormat = new CsvDataFormat()) {
+            dataFormat.setFormat("EXCEL");
+            dataFormat.start();
+            assertEquals(CSVFormat.EXCEL, dataFormat.getCsvFormat());
+            assertEquals(CSVFormat.EXCEL, dataFormat.getActiveFormat());
+        }
+    }
+
+    @Test
     void shouldDisableCommentMarker() throws IOException {
         try (CsvDataFormat defDataFormat = new CsvDataFormat(); CsvDataFormat dataFormat = defDataFormat
                 .setCommentMarkerDisabled(true)
