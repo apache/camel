@@ -120,6 +120,7 @@ public class Sqs2Producer extends DefaultProducer {
         Collection<SendMessageBatchRequestEntry> entries = new ArrayList<>();
         if (exchange.getIn().getBody() instanceof Iterable) {
             Iterable c = exchange.getIn().getBody(Iterable.class);
+            int index = 0;
             for (Object o : c) {
                 String object = (String) o;
                 SendMessageBatchRequestEntry.Builder entry = SendMessageBatchRequestEntry.builder();
@@ -127,7 +128,7 @@ public class Sqs2Producer extends DefaultProducer {
                 entry.messageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
                 entry.messageBody(object);
                 addDelay(entry, exchange);
-                configureFifoAttributes(entry, exchange);
+                configureFifoAttributes(entry, exchange, index++);
                 entries.add(entry.build());
             }
             request.entries(entries);
@@ -137,13 +138,14 @@ public class Sqs2Producer extends DefaultProducer {
         } else if (exchange.getIn().getBody() instanceof String) {
             String c = exchange.getIn().getBody(String.class);
             String[] elements = c.split(getConfiguration().getBatchSeparator());
+            int index = 0;
             for (String o : elements) {
                 SendMessageBatchRequestEntry.Builder entry = SendMessageBatchRequestEntry.builder();
                 entry.id(UUID.randomUUID().toString());
                 entry.messageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
                 entry.messageBody(o);
                 addDelay(entry, exchange);
-                configureFifoAttributes(entry, exchange);
+                configureFifoAttributes(entry, exchange, index++);
                 entries.add(entry.build());
             }
             request.entries(entries);
@@ -216,17 +218,27 @@ public class Sqs2Producer extends DefaultProducer {
         }
     }
 
-    private void configureFifoAttributes(SendMessageBatchRequestEntry.Builder request, Exchange exchange) {
+    private void configureFifoAttributes(SendMessageBatchRequestEntry.Builder request, Exchange exchange, int index) {
         if (getEndpoint().getConfiguration().isFifoQueue()) {
             // use strategies
-            MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
-            String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
-            request.messageGroupId(messageGroupId);
+            if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
+                MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
+                String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
+                request.messageGroupId(messageGroupId);
+            }
 
-            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy
-                    = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
-            String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
-            request.messageDeduplicationId(messageDeduplicationId);
+            if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy())) {
+                MessageDeduplicationIdStrategy messageDeduplicationIdStrategy
+                        = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+                String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
+                // Every entry of a batch is built from the same Exchange, so the strategy returns the
+                // same id for all of them. Append the entry position to give each message in the batch a
+                // distinct, deterministic deduplication id; otherwise a FIFO queue drops all but the
+                // first. A null id (e.g. content-based deduplication) is left unset.
+                if (messageDeduplicationId != null) {
+                    request.messageDeduplicationId(messageDeduplicationId + "-" + index);
+                }
+            }
 
         }
     }
