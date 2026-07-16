@@ -333,7 +333,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
 
         String knownHostsFile = sftpConfig.getKnownHostsFile();
-        if (knownHostsFile == null && sftpConfig.isUseUserKnownHostsFile()) {
+        if (knownHostsFile == null && !isNotEmpty(sftpConfig.getKnownHostsUri())
+                && sftpConfig.getKnownHosts() == null && sftpConfig.isUseUserKnownHostsFile()) {
             knownHostsFile = HomeHelper.resolveHomeDir() + "/.ssh/known_hosts";
             LOG.info("Known host file not configured, using user known host file: {}", knownHostsFile);
         }
