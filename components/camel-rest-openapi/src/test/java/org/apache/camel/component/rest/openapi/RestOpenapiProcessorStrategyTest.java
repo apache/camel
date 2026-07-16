@@ -17,6 +17,7 @@
 package org.apache.camel.component.rest.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -48,6 +49,43 @@ class RestOpenapiProcessorStrategyTest extends ManagedCamelTestSupport {
         assertTrue(ex.getMessage().contains("direct:GENOPID_GET.users"));
         assertTrue(ex.getMessage().contains("direct:GENOPID_GET.user._id_"));
 
+    }
+
+    @Test
+    void testMissingOperationIdSetsGeneratedIdOnOperation() throws Exception {
+        // Add routes matching the generated GENOPID names so validation passes
+        camelContext.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:GENOPID_GET.users").setBody(constant("ok"));
+                from("direct:GENOPID_GET.user._id_").setBody(constant("ok"));
+            }
+        });
+
+        DefaultRestOpenapiProcessorStrategy strategy = new DefaultRestOpenapiProcessorStrategy();
+        strategy.setCamelContext(camelContext);
+        strategy.setMissingOperation("fail");
+
+        OpenAPI openAPI = getOpenApi();
+
+        // Verify operationIds are initially null
+        for (var entry : openAPI.getPaths().entrySet()) {
+            for (Operation op : entry.getValue().readOperations()) {
+                assertNull(op.getOperationId(),
+                        "operationId should be null initially for path: " + entry.getKey());
+            }
+        }
+
+        // Validation should pass since routes match the generated IDs
+        strategy.validateOpenApi(openAPI, null, mock(PlatformHttpConsumerAware.class));
+
+        // Verify generated operationIds were written back to the Operations
+        // so that process() can dispatch to the correct direct endpoint
+        Operation usersOp = openAPI.getPaths().get("/users").getGet();
+        assertEquals("GENOPID_GET.users", usersOp.getOperationId());
+
+        Operation userByIdOp = openAPI.getPaths().get("/user/{id}").getGet();
+        assertEquals("GENOPID_GET.user._id_", userByIdOp.getOperationId());
     }
 
     private OpenAPI getOpenApi() {
