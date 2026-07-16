@@ -21,7 +21,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.message.Message;
 
 /**
- * A Strategy to bind a Camel exchange to a CXF message used by {@link CxfBeanDestination}.
+ * A Strategy to bind a Camel exchange to a CXF message, used by the Camel CXF transport.
  */
 public interface CxfMessageMapper {
 

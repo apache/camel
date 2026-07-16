@@ -212,7 +212,6 @@ public class CxfRsProducer extends DefaultAsyncProducer {
 
         // find out the method which we want to invoke
         JAXRSServiceFactoryBean sfb = cfb.getServiceFactory();
-        sfb.getResourceClasses();
         // check the null body first
         Object[] parameters = null;
         if (inMessage.getBody() != null) {
@@ -465,7 +464,6 @@ public class CxfRsProducer extends DefaultAsyncProducer {
 
         // find out the method which we want to invoke
         JAXRSServiceFactoryBean sfb = cfb.getServiceFactory();
-        sfb.getResourceClasses();
         // check the null body first
         Object[] parameters = null;
         if (inMessage.getBody() != null) {

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -105,7 +106,7 @@ public final class CxfConverter {
 
     @Converter
     public static DataFormat toDataFormat(final String name) {
-        return DataFormat.valueOf(name.toUpperCase());
+        return DataFormat.valueOf(name.toUpperCase(Locale.ROOT));
     }
 
     @Converter(allowNull = true)

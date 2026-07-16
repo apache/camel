@@ -53,7 +53,6 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
-import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.ContextUtils;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.slf4j.Logger;
@@ -93,11 +92,6 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         if (ObjectHelper.isNotEmpty(cxfEndpoint.getPublishedEndpointUrl())) {
             ret.getEndpoint().getEndpointInfo().setProperty("publishedEndpointUrl", cxfEndpoint.getPublishedEndpointUrl());
         }
-
-        final MessageObserver originalOutFaultObserver = ret.getEndpoint().getOutFaultObserver();
-        ret.getEndpoint().setOutFaultObserver(message -> {
-            originalOutFaultObserver.onMessage(message);
-        });
 
         // setup the UnitOfWorkCloserInterceptor for OneWayMessageProcessor
         ret.getEndpoint().getInInterceptors().add(new UnitOfWorkCloserInterceptor(Phase.POST_INVOKE, true));

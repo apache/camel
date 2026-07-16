@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 public class CxfRsInvoker extends JAXRSInvoker {
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsInvoker.class);
-    private static final String SUSPENED = "org.apache.camel.component.cxf.jaxrs.suspend";
+    private static final String SUSPENDED = "org.apache.camel.component.cxf.jaxrs.suspend";
     private final CxfRsConsumer cxfRsConsumer;
     private final CxfRsEndpoint endpoint;
 
@@ -95,7 +95,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 LOG.trace("Suspending continuation of exchangeId: {}", camelExchange.getExchangeId());
                 // The continuation could be called before the suspend is called
                 continuation.suspend(endpoint.getContinuationTimeout());
-                cxfExchange.put(SUSPENED, Boolean.TRUE);
+                cxfExchange.put(SUSPENDED, Boolean.TRUE);
                 continuation.setObject(camelExchange);
                 cxfRsConsumer.getAsyncProcessor().process(camelExchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
@@ -110,7 +110,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 return null;
             }
             if (!continuation.isTimeout() && continuation.isResumed()) {
-                cxfExchange.put(SUSPENED, Boolean.FALSE);
+                cxfExchange.put(SUSPENDED, Boolean.FALSE);
                 org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange) continuation.getObject();
                 try {
                     return returnResponse(cxfExchange, camelExchange);
@@ -120,7 +120,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 }
             } else {
                 if (continuation.isTimeout() || !continuation.isPending()) {
-                    cxfExchange.put(SUSPENED, Boolean.FALSE);
+                    cxfExchange.put(SUSPENDED, Boolean.FALSE);
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange) continuation.getObject();
                     camelExchange.setException(new ExchangeTimedOutException(camelExchange, endpoint.getContinuationTimeout()));
                     try {
