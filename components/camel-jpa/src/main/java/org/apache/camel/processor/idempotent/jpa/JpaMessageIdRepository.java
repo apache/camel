@@ -90,7 +90,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     @Override
     public boolean add(final Exchange exchange, final String messageId) {
         final EntityManager entityManager
-                = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+                = getTargetEntityManager(exchange, entityManagerFactory, false, sharedEntityManager, true);
         // Run this in single transaction.
         final Boolean[] rc = new Boolean[1];
         transactionStrategy.executeInTransaction(() -> {
@@ -139,7 +139,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     @Override
     public boolean contains(final Exchange exchange, final String messageId) {
         final EntityManager entityManager
-                = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+                = getTargetEntityManager(exchange, entityManagerFactory, false, sharedEntityManager, true);
 
         // Run this in single transaction.
         final Boolean[] rc = new Boolean[1];
@@ -181,7 +181,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     @Override
     public boolean remove(final Exchange exchange, final String messageId) {
         final EntityManager entityManager
-                = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+                = getTargetEntityManager(exchange, entityManagerFactory, false, sharedEntityManager, true);
 
         Boolean[] rc = new Boolean[1];
         transactionStrategy.executeInTransaction(() -> {
@@ -231,7 +231,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     @Override
     @ManagedOperation(description = "Clear the store")
     public void clear() {
-        final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager, true);
+        final EntityManager entityManager
+                = getTargetEntityManager(null, entityManagerFactory, false, sharedEntityManager, true);
 
         transactionStrategy.executeInTransaction(() -> {
             if (isJoinTransaction()) {
