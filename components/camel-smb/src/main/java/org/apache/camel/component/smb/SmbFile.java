@@ -85,15 +85,19 @@ public class SmbFile extends GenericFile<FileIdBothDirectoryInformation> {
     }
 
     @Override
-    // NOTE: when the returned object is an InputStream, the client must close it.
     public Object getBody() {
         if (!download) {
             return null;
         }
+        // return the body already stored by the retrieve pipeline (via the binding)
+        Object body = super.getBody();
+        if (body != null) {
+            return body;
+        }
+        // lazy fetch for pollEnrich or other paths that skip retrieveFile
         if (streamDownload) {
             return operations.getBodyAsInputStream(exchange, this.getAbsoluteFilePath());
         } else {
-            // use operations so smb file can be closed
             return operations.getBody(this.getAbsoluteFilePath());
         }
     }
