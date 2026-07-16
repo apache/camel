@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
@@ -63,6 +65,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
     private volatile boolean cacheCleared;
     private volatile XsltBuilder xslt;
+    private final Lock reloadLock = new ReentrantLock();
     private Map<String, Object> parameters;
 
     @UriPath
@@ -147,7 +150,14 @@ public class XsltEndpoint extends ProcessorEndpoint {
             }
         }
         if (!contentCache || cacheCleared) {
-            loadResource(resourceUri, xslt);
+            reloadLock.lock();
+            try {
+                if (!contentCache || cacheCleared) {
+                    loadResource(resourceUri, xslt);
+                }
+            } finally {
+                reloadLock.unlock();
+            }
         }
         super.onExchange(exchange);
     }
