@@ -895,6 +895,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             OpenAPI openAPI, Operation operation, String method, String uriTemplate) {
         DefaultRequestValidator answer = new DefaultRequestValidator();
         answer.setOperation(new RestOpenApiOperation(operation, method, uriTemplate));
+        answer.setEndpointParameters(parameters);
         return answer;
     }
 
