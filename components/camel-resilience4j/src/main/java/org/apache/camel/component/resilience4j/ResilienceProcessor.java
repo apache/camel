@@ -611,8 +611,10 @@ public class ResilienceProcessor extends BaseProcessorSupport
             cause = exchange.getException();
         }
 
-        // and release exchange back in pool
-        processorExchangeFactory.release(exchange);
+        // and release correlated copy back in pool
+        if (copy != null) {
+            processorExchangeFactory.release(copy);
+        }
 
         if (cause != null) {
             // throw exception so resilient4j know it was a failure
