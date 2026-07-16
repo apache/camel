@@ -112,12 +112,10 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     protected void processStrategyCommit(
             GenericFileProcessStrategy<T> processStrategy, Exchange exchange, GenericFile<T> file) {
         if (Boolean.TRUE.equals(endpoint.isIdempotent())) {
-            // use absolute file path as default key, but evaluate if an
-            // expression key was configured
+            // use the poll-time snapshot so header mutations during routing don't cause key mismatch
             String key = absoluteFileName;
             if (endpoint.getIdempotentKey() != null) {
-                Exchange dummy = GenericFileHelper.createDummy(endpoint, exchange, () -> file);
-                key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
+                key = exchange.getProperty(Exchange.FILE_IDEMPOTENT_KEY, absoluteFileName, String.class);
             }
             // only add to idempotent repository if we could process the file
             if (key != null) {
@@ -155,12 +153,10 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         }
 
         if (Boolean.TRUE.equals(endpoint.isIdempotent())) {
-            // use absolute file path as default key, but evaluate if an
-            // expression key was configured
+            // use the poll-time snapshot so header mutations during routing don't cause key mismatch
             String key = absoluteFileName;
             if (endpoint.getIdempotentKey() != null) {
-                Exchange dummy = GenericFileHelper.createDummy(endpoint, exchange, () -> file);
-                key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
+                key = exchange.getProperty(Exchange.FILE_IDEMPOTENT_KEY, absoluteFileName, String.class);
             }
             if (key != null) {
                 endpoint.getIdempotentRepository().remove(key);
