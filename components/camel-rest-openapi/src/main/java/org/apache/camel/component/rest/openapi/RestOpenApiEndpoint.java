@@ -559,8 +559,40 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         boolean hasHost = params.containsKey("host");
         String basePath = determineBasePath(openapi);
         String componentEndpointUri = "rest:" + method + ":" + basePath + ":" + uriTemplate;
+
+        // include all distinguishing options in the URI so each unique combination
+        // gets its own cached endpoint and avoids cross-contamination (CAMEL-24113)
+        StringBuilder query = new StringBuilder();
         if (hasHost) {
-            componentEndpointUri += "?host=" + params.get("host");
+            query.append("host=").append(params.get("host"));
+        }
+        if (params.containsKey("producerComponentName")) {
+            if (!query.isEmpty()) {
+                query.append('&');
+            }
+            query.append("producerComponentName=").append(params.get("producerComponentName"));
+        }
+        if (params.containsKey("consumes")) {
+            if (!query.isEmpty()) {
+                query.append('&');
+            }
+            query.append("consumes=").append(params.get("consumes"));
+        }
+        if (params.containsKey("produces")) {
+            if (!query.isEmpty()) {
+                query.append('&');
+            }
+            query.append("produces=").append(params.get("produces"));
+        }
+        if (params.containsKey("queryParameters")) {
+            if (!query.isEmpty()) {
+                query.append('&');
+            }
+            query.append("queryParameters=")
+                    .append(UnsafeUriCharactersEncoder.encode(params.get("queryParameters").toString()));
+        }
+        if (!query.isEmpty()) {
+            componentEndpointUri += "?" + query;
         }
 
         Endpoint endpoint = camelContext.getEndpoint(componentEndpointUri);
