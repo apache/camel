@@ -32,11 +32,10 @@ import org.springframework.beans.factory.SmartFactoryBean;
 public class SpringBusFactoryBean implements SmartFactoryBean<Bus> {
     private String[] cfgFiles;
     private boolean includeDefaultBus;
-    private SpringBusFactory bf;
 
     @Override
     public Bus getObject() throws Exception {
-        bf = new SpringBusFactory();
+        SpringBusFactory bf = new SpringBusFactory();
         if (cfgFiles != null) {
             return bf.createBus(cfgFiles, includeDefaultBus);
         } else {
