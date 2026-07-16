@@ -96,11 +96,11 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '25'
           cache: 'maven'
       - uses: ./.github/actions/setup-llvm-mingw
       - name: Build and test native camel.exe (x64 + arm64)
@@ -125,11 +125,11 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '25'
           cache: 'maven'
       - name: Download Windows x64 camel.exe
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -149,19 +149,45 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '25'
           cache: 'maven'
-      - id: install-mvnd
-        uses: ./.github/actions/install-mvnd
+      - name: Verify launcher snapshot dependencies are published
+        # Without -am the launcher's upstream modules are not built here; they must
+        # already be deployed as the current version's snapshot on the Apache
+        # snapshot repository. camel-launcher is the terminal module, deployed after
+        # its dependencies, so its presence stands in as a sentinel for the whole
+        # upstream tree. Fail early with a clear message instead of a deep Maven
+        # resolution error mid-build.
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -N)
+          META="https://repository.apache.org/snapshots/org/apache/camel/camel-launcher/${VERSION}/maven-metadata.xml"
+          echo "Checking ${META}"
+          if ! curl -fsSL -o /dev/null "${META}"; then
+            echo "ERROR: camel-launcher ${VERSION} is not on the Apache snapshot repository."
+            echo "This job resolves the launcher's upstream modules from there (no -am build)."
+            echo "Wait for a main-branch snapshot deploy of ${VERSION}, or rebuild with -am."
+            exit 1
+          fi
+          echo "Launcher upstream snapshots for ${VERSION} are available."
       - uses: ./.github/actions/setup-llvm-mingw
       - name: Build launcher with native camel.exe (x64 + arm64)
+        # No -am: build only the listed modules. The launcher's other in-repo
+        # dependencies (camel-jbang-core, its jbang plugins, camel-core, ...) resolve
+        # as the current version's snapshot from Apache snapshots rather than being
+        # rebuilt from source. This PR only touches camel-exe/camel-launcher, so those
+        # upstream snapshots are unchanged, and the job drops from the full launcher
+        # reactor to a handful of modules.
+        #
+        # Plain mvn: once -am is gone this reactor is only a few modules, so the mvnd
+        # daemon brings no parallelism benefit and adds a cold-start failure mode.
+        # -P apache-snapshots is required here so the upstream modules resolve.
         run: |
-          ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd $MVND_OPTS \
-            -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher -am verify \
+          mvn -P apache-snapshots \
+            -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher verify \
             -Dcamel.exe.build=true -DskipTests
       - name: Assert archive carries both exe files
         run: |
