@@ -178,7 +178,13 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         }
         endpoint.setMissingOperation(getMissingOperation());
         endpoint.setMockIncludePattern(getMockIncludePattern());
-        endpoint.setRestOpenapiProcessorStrategy(getRestOpenapiProcessorStrategy());
+        if (restOpenapiProcessorStrategy != null) {
+            endpoint.setRestOpenapiProcessorStrategy(restOpenapiProcessorStrategy);
+        } else {
+            DefaultRestOpenapiProcessorStrategy perEndpoint = new DefaultRestOpenapiProcessorStrategy();
+            CamelContextAware.trySetCamelContext(perEndpoint, getCamelContext());
+            endpoint.setRestOpenapiProcessorStrategy(perEndpoint);
+        }
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -195,10 +201,6 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
                 base = getCamelContext().getCamelContextExtension().getBasePackageScan();
             }
             bindingPackageScan = base;
-        }
-        if (restOpenapiProcessorStrategy == null) {
-            restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
-            CamelContextAware.trySetCamelContext(restOpenapiProcessorStrategy, getCamelContext());
         }
     }
 
