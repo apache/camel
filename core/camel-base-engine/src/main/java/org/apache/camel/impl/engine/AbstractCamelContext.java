@@ -860,8 +860,8 @@ public abstract class AbstractCamelContext extends BaseService
                 if (answer != null) {
                     if (!prototype) {
                         addService(answer);
-                        // register in registry
-                        answer = addEndpointToRegistry(uri, answer);
+                        // register in registry (uri is already normalized above, so avoid normalizing it again)
+                        answer = addEndpointToRegistry(uri, answer, true);
                     } else {
                         addPrototypeService(answer);
                         // if there is endpoint strategies, then use the endpoints they return
@@ -912,6 +912,21 @@ public abstract class AbstractCamelContext extends BaseService
      * @return          the added endpoint
      */
     protected Endpoint addEndpointToRegistry(String uri, Endpoint endpoint) {
+        return addEndpointToRegistry(uri, endpoint, false);
+    }
+
+    /**
+     * Strategy to add the given endpoint to the internal endpoint registry
+     *
+     * @param  uri        uri of the endpoint
+     * @param  endpoint   the endpoint to add
+     * @param  normalized whether the uri is already normalized (for example because it was normalized earlier to do the
+     *                    cache lookup that preceded this call). Re-normalizing an already normalized uri is not
+     *                    idempotent for uris containing a literal {@code %} character, so callers must not normalize
+     *                    twice or the stored key will never match a later lookup key (CAMEL-24171).
+     * @return            the added endpoint
+     */
+    protected Endpoint addEndpointToRegistry(String uri, Endpoint endpoint, boolean normalized) {
         StringHelper.notEmpty(uri, "uri");
         ObjectHelper.notNull(endpoint, "endpoint");
 
@@ -920,7 +935,7 @@ public abstract class AbstractCamelContext extends BaseService
         for (EndpointStrategy strategy : getEndpointStrategies()) {
             endpoint = strategy.registerEndpoint(uri, endpoint);
         }
-        endpoints.put(getEndpointKey(uri, endpoint), endpoint);
+        endpoints.put(getEndpointKey(uri, endpoint, normalized), endpoint);
         return endpoint;
     }
 
@@ -942,11 +957,24 @@ public abstract class AbstractCamelContext extends BaseService
      * @return          the key
      */
     protected NormalizedUri getEndpointKey(String uri, Endpoint endpoint) {
+        return getEndpointKey(uri, endpoint, false);
+    }
+
+    /**
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link DefaultEndpointRegistry}
+     *
+     * @param  uri        the endpoint uri
+     * @param  endpoint   the endpoint
+     * @param  normalized whether the uri is already normalized; see
+     *                    {@link #addEndpointToRegistry(String, Endpoint, boolean)}
+     * @return            the key
+     */
+    protected NormalizedUri getEndpointKey(String uri, Endpoint endpoint, boolean normalized) {
         if (endpoint != null && !endpoint.isSingleton()) {
             int counter = endpointKeyCounter.incrementAndGet();
-            return NormalizedUri.newNormalizedUri(uri + ":" + counter, false);
+            return NormalizedUri.newNormalizedUri(uri + ":" + counter, normalized);
         } else {
-            return NormalizedUri.newNormalizedUri(uri, false);
+            return NormalizedUri.newNormalizedUri(uri, normalized);
         }
     }
 
