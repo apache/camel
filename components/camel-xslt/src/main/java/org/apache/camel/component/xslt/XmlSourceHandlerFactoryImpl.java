@@ -58,12 +58,16 @@ public class XmlSourceHandlerFactoryImpl implements SourceHandlerFactory {
 
     @Override
     public Source getSource(Exchange exchange, Expression source) throws Exception {
+        if (source != null) {
+            Object body = source.evaluate(exchange, Object.class);
+            return getSource(exchange, body);
+        }
         // only convert to input stream if really needed
         if (isInputStreamNeeded(exchange)) {
             InputStream is = exchange.getIn().getBody(InputStream.class);
             return getSource(exchange, is);
         } else {
-            Object body = source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+            Object body = exchange.getMessage().getBody();
             return getSource(exchange, body);
         }
     }
