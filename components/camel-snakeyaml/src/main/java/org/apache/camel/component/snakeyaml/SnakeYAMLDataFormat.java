@@ -134,18 +134,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         if (allowAnyType) {
             typeFilters = "*";
         }
-        if (this.constructor == null) {
-            this.constructor = defaultConstructor(camelContext);
-        }
-        if (this.representer == null) {
-            this.representer = defaultRepresenter();
-        }
-        if (this.dumperOptions == null) {
-            this.dumperOptions = defaultDumperOptions();
-        }
-        if (this.resolver == null) {
-            this.resolver = defaultResolver();
-        }
     }
 
     @Override
@@ -167,7 +155,11 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
             options.setTagInspector(new TrustedTagInspector());
             options.setAllowRecursiveKeys(allowRecursiveKeys);
             options.setMaxAliasesForCollections(maxAliasesForCollections);
-            yaml = new Yaml(constructor, representer, dumperOptions, options, resolver);
+            BaseConstructor c = constructor != null ? constructor : defaultConstructor(camelContext);
+            Representer r = representer != null ? representer : defaultRepresenter();
+            DumperOptions d = dumperOptions != null ? dumperOptions : defaultDumperOptions();
+            Resolver res = resolver != null ? resolver : defaultResolver();
+            yaml = new Yaml(c, r, d, options, res);
             yamlCache.set(new WeakReference<>(yaml));
         }
 
