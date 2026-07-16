@@ -111,11 +111,13 @@ public interface AwsCloudtrailComponentBuilderFactory {
     
         
         /**
-         * Maximum number of records that will be fetched in each poll.
+         * Maximum number of records that will be fetched in each lookup page.
+         * Each poll drains all pages, so this controls the page size rather
+         * than the total per poll. AWS allows up to 50.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 1
+         * Default: 50
          * Group: consumer
          * 
          * @param maxResults the value to set
