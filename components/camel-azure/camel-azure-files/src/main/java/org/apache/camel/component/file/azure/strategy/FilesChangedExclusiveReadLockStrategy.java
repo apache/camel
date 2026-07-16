@@ -55,12 +55,16 @@ public class FilesChangedExclusiveReadLockStrategy implements GenericFileExclusi
             throws Exception {
         LOG.trace("Waiting for exclusive read lock to file: {}", file);
 
+        var budgetBuilder = Budgets.iterationTimeBudget()
+                .withInterval(Duration.ofMillis(checkInterval));
+        if (timeout > 0) {
+            budgetBuilder.withMaxDuration(Duration.ofMillis(timeout));
+        } else {
+            budgetBuilder.withUnlimitedDuration();
+        }
         BlockingTask task = Tasks.foregroundTask()
-                .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofMillis(timeout))
-                        .withInterval(Duration.ofMillis(checkInterval))
-                        .build())
-                .withName("ftp-acquire-exclusive-read-lock")
+                .withBudget(budgetBuilder.build())
+                .withName("azure-files-acquire-exclusive-read-lock")
                 .build();
 
         FilesExclusiveReadLockCheck exclusiveReadLockCheck
