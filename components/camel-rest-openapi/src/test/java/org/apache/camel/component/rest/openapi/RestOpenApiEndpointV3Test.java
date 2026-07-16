@@ -569,6 +569,127 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
+    public void shouldNotCrossContaminateProducersForSameOperation() throws Exception {
+        final CamelContext camelContext = new DefaultCamelContext();
+        camelContext.start();
+
+        try {
+            final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
+            camelContext.addComponent("rest-openapi", component);
+
+            final OpenAPI openapi = new OpenAPI();
+            openapi.addServersItem(new Server().url("http://petstore.example.com"));
+            final Operation operation = new Operation().operationId("findPets");
+
+            // first endpoint: produces JSON
+            final RestOpenApiEndpoint endpoint1 = new RestOpenApiEndpoint(
+                    "rest-openapi:spec#findPets", "spec#findPets", component, Collections.emptyMap());
+            endpoint1.setCamelContext(camelContext);
+            endpoint1.setHost("http://petstore.example.com");
+            endpoint1.setProduces("application/json");
+
+            // second endpoint: produces XML
+            final RestOpenApiEndpoint endpoint2 = new RestOpenApiEndpoint(
+                    "rest-openapi:spec#findPets", "spec#findPets", component, Collections.emptyMap());
+            endpoint2.setCamelContext(camelContext);
+            endpoint2.setHost("http://petstore.example.com");
+            endpoint2.setProduces("application/xml");
+
+            endpoint1.createProducerFor(openapi, operation, "get", "/pets");
+            endpoint2.createProducerFor(openapi, operation, "get", "/pets");
+
+            // the two delegate rest: endpoints must be distinct instances
+            long restEndpointCount = camelContext.getEndpoints().stream()
+                    .filter(e -> e.getEndpointUri().startsWith("rest:"))
+                    .count();
+            assertThat(restEndpointCount)
+                    .as("Two rest-openapi endpoints with different 'produces' should create two distinct rest: delegate endpoints")
+                    .isEqualTo(2);
+
+            // verify each has the correct produces value
+            org.apache.camel.component.rest.RestEndpoint restEp1 = camelContext.getEndpoints().stream()
+                    .filter(e -> e.getEndpointUri().startsWith("rest:"))
+                    .filter(e -> e.getEndpointUri().contains("produces=application/json"))
+                    .map(org.apache.camel.component.rest.RestEndpoint.class::cast)
+                    .findFirst().orElseThrow();
+            assertThat(restEp1.getProduces()).isEqualTo("application/json");
+
+            org.apache.camel.component.rest.RestEndpoint restEp2 = camelContext.getEndpoints().stream()
+                    .filter(e -> e.getEndpointUri().startsWith("rest:"))
+                    .filter(e -> e.getEndpointUri().contains("produces=application/xml"))
+                    .map(org.apache.camel.component.rest.RestEndpoint.class::cast)
+                    .findFirst().orElseThrow();
+            assertThat(restEp2.getProduces()).isEqualTo("application/xml");
+        } finally {
+            camelContext.stop();
+        }
+    }
+
+    @Test
+    public void shouldNotCrossContaminateQueryParameters() throws Exception {
+        final CamelContext camelContext = new DefaultCamelContext();
+        camelContext.start();
+
+        try {
+            final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
+            camelContext.addComponent("rest-openapi", component);
+
+            final OpenAPI openapi = new OpenAPI();
+            openapi.addServersItem(new Server().url("http://petstore.example.com"));
+            final Operation operation = new Operation().operationId("findPetsByStatus");
+
+            // first endpoint: status=available
+            Map<String, Object> params1 = new HashMap<>();
+            params1.put("status", "available");
+            final RestOpenApiEndpoint endpoint1 = new RestOpenApiEndpoint(
+                    "rest-openapi:spec#findPetsByStatus", "spec#findPetsByStatus", component, params1);
+            endpoint1.setCamelContext(camelContext);
+            endpoint1.setHost("http://petstore.example.com");
+
+            // second endpoint: status=sold
+            Map<String, Object> params2 = new HashMap<>();
+            params2.put("status", "sold");
+            final RestOpenApiEndpoint endpoint2 = new RestOpenApiEndpoint(
+                    "rest-openapi:spec#findPetsByStatus", "spec#findPetsByStatus", component, params2);
+            endpoint2.setCamelContext(camelContext);
+            endpoint2.setHost("http://petstore.example.com");
+
+            // add a query parameter to the operation
+            operation.addParametersItem(new Parameter().name("status").in("query").required(true));
+
+            endpoint1.createProducerFor(openapi, operation, "get", "/pet/findByStatus");
+            endpoint2.createProducerFor(openapi, operation, "get", "/pet/findByStatus");
+
+            // verify two distinct delegate endpoints
+            long restEndpointCount = camelContext.getEndpoints().stream()
+                    .filter(e -> e.getEndpointUri().startsWith("rest:"))
+                    .count();
+            assertThat(restEndpointCount)
+                    .as("Two rest-openapi endpoints with different queryParameters should create two distinct rest: delegate endpoints")
+                    .isEqualTo(2);
+
+            // verify each has the correct query parameter value
+            org.apache.camel.component.rest.RestEndpoint restEp1 = camelContext.getEndpoints().stream()
+                    .filter(e -> e.getEndpointUri().startsWith("rest:"))
+                    .filter(e -> e instanceof org.apache.camel.component.rest.RestEndpoint)
+                    .map(org.apache.camel.component.rest.RestEndpoint.class::cast)
+                    .filter(e -> e.getQueryParameters() != null && e.getQueryParameters().contains("status=available"))
+                    .findFirst().orElseThrow();
+            assertThat(restEp1.getQueryParameters()).contains("status=available");
+
+            org.apache.camel.component.rest.RestEndpoint restEp2 = camelContext.getEndpoints().stream()
+                    .filter(e -> e.getEndpointUri().startsWith("rest:"))
+                    .filter(e -> e instanceof org.apache.camel.component.rest.RestEndpoint)
+                    .map(org.apache.camel.component.rest.RestEndpoint.class::cast)
+                    .filter(e -> e.getQueryParameters() != null && e.getQueryParameters().contains("status=sold"))
+                    .findFirst().orElseThrow();
+            assertThat(restEp2.getQueryParameters()).contains("status=sold");
+        } finally {
+            camelContext.stop();
+        }
+    }
+
+    @Test
     public void shouldUseDefaultSpecificationUri() {
         final RestOpenApiComponent component = new RestOpenApiComponent();
 
