@@ -35,7 +35,8 @@ import org.testcontainers.utility.DockerImageName;
 @InfraService(service = HashicorpVaultInfraService.class,
               description = "HashiCorp Vault is a tool for securely accessing secrets",
               serviceAlias = "hashicorp",
-              serviceImplementationAlias = "vault")
+              serviceImplementationAlias = "vault",
+              uiSupported = true)
 public class HashicorpVaultLocalContainerInfraService
         implements HashicorpVaultInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "hashicorp-vault";

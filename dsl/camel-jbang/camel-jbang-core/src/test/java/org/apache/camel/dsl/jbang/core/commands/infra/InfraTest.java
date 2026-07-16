@@ -77,7 +77,7 @@ public class InfraTest extends CamelCommandBaseTestSupport {
         String rawServiceData = "{\"host\":\"localhost\",\"port\":61616}";
         Object serviceData = InfraBaseCommand.parseServiceData(rawServiceData);
 
-        InfraBaseDTO dto = new InfraBaseDTO("artemis", "amqp", "AMQP broker", serviceData);
+        InfraBaseDTO dto = new InfraBaseDTO("artemis", "amqp", "AMQP broker", serviceData, true);
         String json = Jsoner.serialize(List.of(dto.toMap()));
 
         // serviceData is embedded as a nested JSON object (so --json is machine-parseable), not a string-escaped blob
@@ -93,7 +93,7 @@ public class InfraTest extends CamelCommandBaseTestSupport {
         // unparseable content is dropped rather than emitted as an escaped string
         Assertions.assertThat(serviceData).isNull();
 
-        InfraBaseDTO dto = new InfraBaseDTO("artemis", "amqp", "AMQP broker", serviceData);
+        InfraBaseDTO dto = new InfraBaseDTO("artemis", "amqp", "AMQP broker", serviceData, true);
         String json = Jsoner.serialize(List.of(dto.toMap()));
 
         Assertions.assertThat(json).contains("\"alias\":\"artemis\"");

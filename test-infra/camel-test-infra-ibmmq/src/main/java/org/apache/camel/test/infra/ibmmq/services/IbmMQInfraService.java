@@ -48,4 +48,8 @@ public interface IbmMQInfraService extends InfrastructureService {
     default String brokerUrl() {
         return String.format("amqp://%s:%d", host(), port());
     }
+
+    default String uiUrl() {
+        return null;
+    }
 }

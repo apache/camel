@@ -81,4 +81,13 @@ public @interface InfraService {
      * @return
      */
     String serviceVersion() default "";
+
+    /**
+     * Whether this service supports a web UI (built-in or via companion container).
+     *
+     * When true, the service interface should provide a {@code uiUrl()} method that returns the UI URL when available.
+     *
+     * @return true if the service has UI support
+     */
+    boolean uiSupported() default false;
 }

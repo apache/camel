@@ -40,4 +40,8 @@ public interface MongoDBInfraService extends InfrastructureService {
     default String hosts() {
         return getConnectionAddress();
     }
+
+    default String uiUrl() {
+        return null;
+    }
 }

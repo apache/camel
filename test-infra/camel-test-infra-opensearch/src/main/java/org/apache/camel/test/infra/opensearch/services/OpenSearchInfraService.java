@@ -32,4 +32,8 @@ public interface OpenSearchInfraService extends InfrastructureService {
     String getUsername();
 
     String getPassword();
+
+    default String uiUrl() {
+        return null;
+    }
 }

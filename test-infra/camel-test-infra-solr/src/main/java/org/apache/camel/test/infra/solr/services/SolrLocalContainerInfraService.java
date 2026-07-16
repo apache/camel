@@ -25,7 +25,8 @@ import org.slf4j.LoggerFactory;
 
 @InfraService(service = SolrInfraService.class,
               description = "Apache Solr is an open source search platform",
-              serviceAlias = { "solr" })
+              serviceAlias = { "solr" },
+              uiSupported = true)
 public class SolrLocalContainerInfraService implements SolrInfraService, ContainerService<SolrContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrLocalContainerInfraService.class);

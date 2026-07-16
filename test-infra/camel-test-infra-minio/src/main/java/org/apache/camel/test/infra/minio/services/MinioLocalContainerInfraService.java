@@ -30,7 +30,8 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 
 @InfraService(service = MinioInfraService.class,
               description = "MinIO is a high-performance S3 compatible object storage",
-              serviceAlias = { "minio" })
+              serviceAlias = { "minio" },
+              uiSupported = true)
 public class MinioLocalContainerInfraService implements MinioInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "minio";
     private static final String ACCESS_KEY = System.getProperty(MinioProperties.ACCESS_KEY, "testAccessKey");

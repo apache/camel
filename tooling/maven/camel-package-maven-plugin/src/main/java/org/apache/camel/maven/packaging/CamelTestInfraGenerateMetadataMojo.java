@@ -119,6 +119,8 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
                     infrastructureServiceModel.setDescription(av.asString());
                 } else if (av.name().equals("serviceVersion")) {
                     annotationServiceVersion = av.asString();
+                } else if (av.name().equals("uiSupported")) {
+                    infrastructureServiceModel.setUiSupported(av.asBoolean());
                 }
             }
 
@@ -378,6 +380,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         private String artifactId;
         private String version;
         private String serviceVersion;
+        private boolean uiSupported;
 
         public String getService() {
             return service;
@@ -449,6 +452,14 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
 
         public void setServiceVersion(String serviceVersion) {
             this.serviceVersion = serviceVersion;
+        }
+
+        public boolean isUiSupported() {
+            return uiSupported;
+        }
+
+        public void setUiSupported(boolean uiSupported) {
+            this.uiSupported = uiSupported;
         }
     }
 }

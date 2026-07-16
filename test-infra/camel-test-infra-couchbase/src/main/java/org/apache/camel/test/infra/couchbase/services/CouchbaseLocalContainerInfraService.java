@@ -37,7 +37,8 @@ import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = CouchbaseInfraService.class,
               description = "Couchbase is a distributed NoSQL cloud database",
-              serviceAlias = { "couchbase" })
+              serviceAlias = { "couchbase" },
+              uiSupported = true)
 public class CouchbaseLocalContainerInfraService implements CouchbaseInfraService, ContainerService<CouchbaseContainer> {
 
     private class CustomCouchbaseContainer extends CouchbaseContainer {

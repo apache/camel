@@ -167,6 +167,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
                 if (service.aliasImplementation() != null) {
                     services.get(alias).getAliasImplementation().addAll(service.aliasImplementation());
                 }
+                if (service.uiSupported()) {
+                    services.get(alias).setUiSupported(true);
+                }
             }
         }
 
@@ -182,7 +185,8 @@ public abstract class InfraBaseCommand extends CamelCommand {
                             .sorted()
                             .collect(Collectors.joining(", ")),
                     entry.getValue().getDescription(),
-                    getServiceData(entry.getKey(), pid)));
+                    getServiceData(entry.getKey(), pid),
+                    entry.getValue().isUiSupported()));
         }
 
         rows.sort(Comparator.comparing(InfraList.Row::alias));
@@ -195,7 +199,7 @@ public abstract class InfraBaseCommand extends CamelCommand {
                     Jsoner.serialize(
                             rows.stream().map(row -> new InfraBaseDTO(
                                     row.alias, row.aliasImplementation, row.description,
-                                    parseServiceData(row.serviceData())))
+                                    parseServiceData(row.serviceData()), row.uiSupported()))
                                     .map(InfraBaseDTO::toMap)
                                     .collect(Collectors.toList())));
         } else {
@@ -204,19 +208,22 @@ public abstract class InfraBaseCommand extends CamelCommand {
             // IMPLEMENTATION is capped and SERVICE_DATA keeps a compact fixed width; both truncate with an ellipsis
             // instead of overflowing the terminal (the full, structured service data is available via --json).
             int serviceDataWidth = 30;
+            int uiWidth = 4;
             int aliasWidth = width + 2;
             int pidWidth = showPidColumn()
                     ? CamelTableColumns.measure("PID", Integer.MAX_VALUE, rows, r -> r.pid) : 0;
             int implWidth = CamelTableColumns.measure("IMPLEMENTATION", 35, rows, Row::aliasImplementation);
-            int overhead = TerminalWidthHelper.noBorderOverhead(showPidColumn() ? 5 : 4);
+            int overhead = TerminalWidthHelper.noBorderOverhead(showPidColumn() ? 6 : 5);
             int descWidth = CamelTableColumns.lastColumnWidth(
-                    tw, overhead, pidWidth, aliasWidth, implWidth, serviceDataWidth);
+                    tw, overhead, pidWidth, aliasWidth, implWidth, uiWidth, serviceDataWidth);
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").visible(showPidColumn()).headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("ALIAS").minWidth(aliasWidth).dataAlign(HorizontalAlign.LEFT)
                             .with(Row::alias),
                     new Column().header("IMPLEMENTATION").maxWidth(implWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .dataAlign(HorizontalAlign.LEFT).with(Row::aliasImplementation),
+                    new Column().header("UI").maxWidth(uiWidth).dataAlign(HorizontalAlign.CENTER)
+                            .with(r -> r.uiSupported() ? "x" : ""),
                     CamelTableColumns.lastText("DESCRIPTION", descWidth).with(Row::description),
                     new Column().header("SERVICE_DATA").maxWidth(serviceDataWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .dataAlign(HorizontalAlign.LEFT).with(Row::serviceData))));
@@ -286,15 +293,18 @@ public abstract class InfraBaseCommand extends CamelCommand {
             String groupId,
             String artifactId,
             String version,
-            String serviceVersion) {
+            String serviceVersion,
+            boolean uiSupported) {
     }
 
-    record Row(String pid, String alias, String aliasImplementation, String description, String serviceData) {
+    record Row(String pid, String alias, String aliasImplementation, String description, String serviceData,
+            boolean uiSupported) {
     }
 
     private static class InfraServiceAlias {
         private final String description;
         private final Set<String> aliasImplementation = new HashSet<>();
+        private boolean uiSupported;
 
         public InfraServiceAlias(String description) {
             this.description = description;
@@ -306,6 +316,14 @@ public abstract class InfraBaseCommand extends CamelCommand {
 
         public Set<String> getAliasImplementation() {
             return aliasImplementation;
+        }
+
+        public boolean isUiSupported() {
+            return uiSupported;
+        }
+
+        public void setUiSupported(boolean uiSupported) {
+            this.uiSupported = uiSupported;
         }
     }
 }

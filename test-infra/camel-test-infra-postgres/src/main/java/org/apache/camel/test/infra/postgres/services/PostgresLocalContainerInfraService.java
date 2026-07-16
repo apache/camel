@@ -25,20 +25,31 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.postgres.common.PostgresProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.Testcontainers;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.images.builder.Transferable;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = PostgresInfraService.class,
               description = "PostgreSQL is an open source object-relational database",
-              serviceAlias = { "postgres" })
+              serviceAlias = { "postgres" }, uiSupported = true)
 public class PostgresLocalContainerInfraService implements PostgresInfraService, ContainerService<PostgreSQLContainer> {
 
     public static final String DEFAULT_POSTGRES_CONTAINER
             = LocalPropertyResolver.getProperty(PostgresLocalContainerInfraService.class,
                     PostgresProperties.POSTGRES_CONTAINER);
+
+    private static final String PGADMIN_CONTAINER_IMAGE = "pgadmin.container.image";
+    private static final int PGADMIN_PORT = 5050;
+    private static final String PGADMIN_EMAIL = "admin@camel.apache.org";
+    // NOTE: default value used for local development only
+    private static final String PGADMIN_PASSWORD = "admin"; // NOSONAR
+
     private static final Logger LOG = LoggerFactory.getLogger(PostgresLocalContainerInfraService.class);
     private final PostgreSQLContainer container;
+    private GenericContainer<?> uiContainer;
 
     public PostgresLocalContainerInfraService() {
         this(DEFAULT_POSTGRES_CONTAINER);
@@ -96,10 +107,54 @@ public class PostgresLocalContainerInfraService implements PostgresInfraService,
 
         registerProperties();
         LOG.info("Postgres instance running at {}", getServiceAddress());
+
+        if (ContainerEnvironmentUtil.isWithUi()) {
+            try {
+                startUiContainer();
+            } catch (Exception e) {
+                LOG.warn("Failed to start pgAdmin UI container: {}", e.getMessage(), e);
+            }
+        }
+    }
+
+    private void startUiContainer() {
+        String uiImage = LocalPropertyResolver.getProperty(
+                PostgresLocalContainerInfraService.class, PGADMIN_CONTAINER_IMAGE);
+        int pgPort = ContainerEnvironmentUtil.getConfiguredPort(5432);
+        Testcontainers.exposeHostPorts(pgPort);
+
+        String serversJson = String.format(
+                "{\"Servers\":{\"1\":{\"Name\":\"camel-infra\",\"Group\":\"Servers\","
+                                           + "\"Host\":\"host.testcontainers.internal\",\"Port\":%d,"
+                                           + "\"MaintenanceDB\":\"postgres\",\"Username\":\"%s\","
+                                           + "\"PassFile\":\"/tmp/pgpassfile\",\"SSLMode\":\"prefer\"}}}",
+                pgPort, container.getUsername());
+        String pgpassFile = String.format(
+                "host.testcontainers.internal:%d:postgres:%s:%s",
+                pgPort, container.getUsername(), container.getPassword());
+
+        uiContainer = new GenericContainer<>(uiImage)
+                .withEnv("PGADMIN_DEFAULT_EMAIL", PGADMIN_EMAIL)
+                .withEnv("PGADMIN_DEFAULT_PASSWORD", PGADMIN_PASSWORD)
+                .withEnv("PGADMIN_LISTEN_PORT", String.valueOf(PGADMIN_PORT))
+                .withEnv("PGADMIN_CONFIG_SERVER_MODE", "False")
+                .withEnv("PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED", "False")
+                .withCopyToContainer(Transferable.of(serversJson), "/pgadmin4/servers.json")
+                .withCopyToContainer(Transferable.of(pgpassFile, 0600), "/tmp/pgpassfile")
+                .withAccessToHost(true);
+        ContainerEnvironmentUtil.configurePort(uiContainer, true, PGADMIN_PORT);
+        uiContainer.start();
+
+        LOG.info("pgAdmin running at http://{}:{} (email: {}, password: {})",
+                uiContainer.getHost(), uiContainer.getMappedPort(PGADMIN_PORT), PGADMIN_EMAIL, PGADMIN_PASSWORD);
     }
 
     @Override
     public void shutdown() {
+        if (uiContainer != null) {
+            LOG.info("Shutting down pgAdmin container");
+            uiContainer.stop();
+        }
         LOG.info("Stopping the Postgres container");
         container.stop();
     }
@@ -132,5 +187,13 @@ public class PostgresLocalContainerInfraService implements PostgresInfraService,
     @Override
     public String password() {
         return container.getPassword();
+    }
+
+    @Override
+    public String uiUrl() {
+        if (uiContainer != null && uiContainer.isRunning()) {
+            return String.format("http://%s:%d", uiContainer.getHost(), uiContainer.getMappedPort(PGADMIN_PORT));
+        }
+        return null;
     }
 }

@@ -33,4 +33,7 @@ public interface KafkaInfraService extends InfrastructureService {
 
     String brokers();
 
+    default String uiUrl() {
+        return null;
+    }
 }

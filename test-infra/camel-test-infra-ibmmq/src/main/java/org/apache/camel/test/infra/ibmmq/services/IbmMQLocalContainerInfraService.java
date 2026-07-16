@@ -39,7 +39,8 @@ import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = IbmMQInfraService.class,
               description = "IBM MQ is enterprise messaging middleware for reliable communication",
-              serviceAlias = "ibmmq")
+              serviceAlias = "ibmmq",
+              uiSupported = true)
 public class IbmMQLocalContainerInfraService implements IbmMQInfraService, ContainerService<GenericContainer<?>> {
 
     public static final String CONTAINER_NAME = "ibmmq";
@@ -147,5 +148,10 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
     @Override
     public int listenerPort() {
         return container.getMappedPort(MQ_LISTENER_PORT);
+    }
+
+    @Override
+    public String uiUrl() {
+        return String.format("https://%s:%d/ibmmq/console", container.getHost(), container.getMappedPort(WEB_CONSOLE_PORT));
     }
 }

@@ -30,7 +30,8 @@ import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = Neo4jInfraService.class,
               description = "Neo4j is a graph database management system",
-              serviceAlias = { "neo4j" })
+              serviceAlias = { "neo4j" },
+              uiSupported = true)
 public class Neo4jLocalContainerInfraService implements Neo4jInfraService, ContainerService<Neo4jContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Neo4jLocalContainerInfraService.class);
@@ -109,5 +110,10 @@ public class Neo4jLocalContainerInfraService implements Neo4jInfraService, Conta
     @Override
     public String getNeo4jDatabasePassword() {
         return container.getAdminPassword();
+    }
+
+    @Override
+    public String uiUrl() {
+        return String.format("http://%s:%d", container.getHost(), container.getMappedPort(7474));
     }
 }

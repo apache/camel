@@ -39,4 +39,8 @@ public interface SolrInfraService extends InfrastructureService {
     default int port() {
         return getPort();
     }
+
+    default String uiUrl() {
+        return String.format("http://%s:%d/solr", host(), port());
+    }
 }

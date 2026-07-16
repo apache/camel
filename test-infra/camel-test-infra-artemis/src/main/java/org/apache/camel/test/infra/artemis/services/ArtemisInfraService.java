@@ -59,6 +59,10 @@ public interface ArtemisInfraService extends InfrastructureService {
         System.setProperty(ArtemisProperties.ARTEMIS_PASSWORD, password());
     }
 
+    default String uiUrl() {
+        return null;
+    }
+
     void restart();
 
     long countMessages(String queue) throws Exception;

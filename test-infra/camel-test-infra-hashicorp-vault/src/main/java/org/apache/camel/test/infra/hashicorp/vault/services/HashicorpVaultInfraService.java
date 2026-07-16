@@ -32,4 +32,8 @@ public interface HashicorpVaultInfraService extends InfrastructureService {
     default String scheme() {
         return "http";
     }
+
+    default String uiUrl() {
+        return String.format("%s://%s:%d/ui", scheme(), host(), port());
+    }
 }

@@ -58,4 +58,8 @@ public interface ArangoDBInfraService extends InfrastructureService {
     default String password() {
         return "";
     }
+
+    default String uiUrl() {
+        return String.format("http://%s:%d", host(), port());
+    }
 }

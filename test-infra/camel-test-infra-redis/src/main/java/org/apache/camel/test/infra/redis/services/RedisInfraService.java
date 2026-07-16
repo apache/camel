@@ -35,4 +35,8 @@ public interface RedisInfraService extends InfrastructureService {
     default String endpointUri() {
         return String.format("spring-redis:%s:%d", host(), port());
     }
+
+    default String uiUrl() {
+        return null;
+    }
 }
