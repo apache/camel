@@ -39,7 +39,7 @@ include::partial$eip-exchangeProperties.adoc[]
 Below is an example route showing a circuit breaker endpoint that protects against
 slow operation by falling back to the in-lined fallback route.
 
-By default, the timeout request is just *1000ms, so the HTTP endpoint has to be fairly quick to succeed.
+In this example, the circuit breaker protects against slow operation by falling back to the in-lined fallback route.
 
 [tabs]
 ====

@@ -100,6 +100,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         if (!parseBoolean(config.getBulkheadEnabled(), false)) {
             return;
         }
+        target.setBulkheadEnabled(true);
         target.setBulkheadMaxConcurrentCalls(parseInt(config.getBulkheadMaxConcurrentCalls(), 10));
         target.setBulkheadWaitingTaskQueue(parseInt(config.getBulkheadWaitingTaskQueue(), 10));
     }

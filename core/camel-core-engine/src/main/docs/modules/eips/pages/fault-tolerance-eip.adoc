@@ -12,7 +12,7 @@ The Fault Tolerance EIP supports two options which are listed below:
 |===
 | Name | Description | Default | Type
 | *faultToleranceConfiguration* | Configure the Fault Tolerance EIP. When the configuration is complete, use `end()` to return to the Fault Tolerance EIP. |  | `FaultToleranceConfigurationDefinition`
-| *faultToleranceConfigurationRef* | Refers to a Fault Tolerance configuration to use for configuring the Fault Tolerance EIP. |  | String
+| *configuration* | Refers to a Fault Tolerance configuration (by name) to use for configuring the Fault Tolerance EIP. |  | String
 |===
 
 See xref:faultToleranceConfiguration-eip.adoc[Fault Tolerance Configuration] for all the configuration options
@@ -66,14 +66,14 @@ YAML::
       steps:
         - circuitBreaker:
             steps:
+              - to:
+                  uri: http://fooservice.com/faulty
               - onFallback:
                   steps:
                     - transform:
                         expression:
                           constant:
                             expression: Fallback message
-              - to:
-                  uri: http://fooservice.com/faulty
         - to:
             uri: mock:result
 ----
@@ -82,7 +82,9 @@ YAML::
 In case the calling the downstream HTTP service is failing, and an exception is thrown,
 then the circuit breaker will react and execute the fallback route instead.
 
-If there was no fallback, then the circuit breaker will throw an exception.
+If there is no fallback and the protected processor fails, the circuit breaker will throw an exception.
+However, when the circuit breaker is open and rejects a call, the message continues routing unchanged
+(no exception is thrown).
 
 TIP: For more information about fallback, see xref:onFallback-eip.adoc[onFallback].
 
