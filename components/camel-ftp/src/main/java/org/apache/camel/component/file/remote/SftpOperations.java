@@ -33,7 +33,6 @@ import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.time.Duration;
 import java.util.Base64;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.locks.Lock;
@@ -230,19 +229,6 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
         SftpConfiguration sftpConfig = (SftpConfiguration) configuration;
 
-        if (isNotEmpty(sftpConfig.getCiphers())) {
-            LOG.debug("Using ciphers: {}", sftpConfig.getCiphers());
-            Hashtable<String, String> ciphers = new Hashtable<>();
-            ciphers.put("cipher.s2c", sftpConfig.getCiphers());
-            ciphers.put("cipher.c2s", sftpConfig.getCiphers());
-            JSch.setConfig(ciphers);
-        }
-
-        if (isNotEmpty(sftpConfig.getKeyExchangeProtocols())) {
-            LOG.debug("Using KEX: {}", sftpConfig.getKeyExchangeProtocols());
-            JSch.setConfig("kex", sftpConfig.getKeyExchangeProtocols());
-        }
-
         // Resolve certificate bytes once — used for both identity loading and key type detection
         byte[] certData = resolveCertificateBytes(sftpConfig);
 
@@ -344,6 +330,17 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
 
         final Session session = jsch.getSession(configuration.getUsername(), configuration.getHost(), configuration.getPort());
+
+        if (isNotEmpty(sftpConfig.getCiphers())) {
+            LOG.debug("Using ciphers: {}", sftpConfig.getCiphers());
+            session.setConfig("cipher.s2c", sftpConfig.getCiphers());
+            session.setConfig("cipher.c2s", sftpConfig.getCiphers());
+        }
+
+        if (isNotEmpty(sftpConfig.getKeyExchangeProtocols())) {
+            LOG.debug("Using KEX: {}", sftpConfig.getKeyExchangeProtocols());
+            session.setConfig("kex", sftpConfig.getKeyExchangeProtocols());
+        }
 
         if (isNotEmpty(sftpConfig.getStrictHostKeyChecking())) {
             LOG.debug("Using StrictHostKeyChecking: {}", sftpConfig.getStrictHostKeyChecking());
