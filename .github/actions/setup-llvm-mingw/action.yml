@@ -25,14 +25,6 @@ runs:
   using: "composite"
   steps:
     - run: |
-        VERSION='20260616'
-        SHA256='534b92e067b22a6b4441f48ae9240a3341b17825d04d577eab0cf85c44b4deda'
-        TARBALL="llvm-mingw-${VERSION}-ucrt-ubuntu-22.04-x86_64.tar.xz"
-        INSTALL_DIR="${RUNNER_TEMP}/llvm-mingw"
-        mkdir -p "$INSTALL_DIR"
-        curl -fsSL -o "$TARBALL" \
-          "https://github.com/mstorsjo/llvm-mingw/releases/download/${VERSION}/${TARBALL}"
-        echo "${SHA256}  ${TARBALL}" | sha256sum -c -
-        tar -xf "$TARBALL" -C "$INSTALL_DIR"
-        echo "${INSTALL_DIR}/llvm-mingw-${VERSION}-ucrt-ubuntu-22.04-x86_64/bin" >> "$GITHUB_PATH"
+        BIN_DIR="$("${GITHUB_ACTION_PATH}/install-llvm-mingw.sh" "${RUNNER_TEMP}/llvm-mingw")"
+        echo "${BIN_DIR}" >> "$GITHUB_PATH"
       shell: bash

@@ -55,7 +55,7 @@ pipeline {
            }
         }
 
-        stage('Verify llvm-mingw') {
+        stage('Setup llvm-mingw') {
             when {
                 anyOf {
                     branch 'main'
@@ -64,11 +64,29 @@ pipeline {
                 }
             }
             steps {
+                script {
+                    // Prefer an agent-provided llvm-mingw when the cross-compilers are already
+                    // on PATH; otherwise download the pinned, SHA256-verified toolchain into a
+                    // persistent cache so snapshot deploys don't require it to be pre-provisioned.
+                    // The install script is the single source of truth shared with
+                    // .github/actions/setup-llvm-mingw/action.yml.
+                    env.LLVM_MINGW_BIN = sh(
+                        returnStdout: true,
+                        script: '''
+                            set -eo pipefail
+                            if command -v x86_64-w64-mingw32-clang >/dev/null 2>&1 \
+                                    && command -v aarch64-w64-mingw32-clang >/dev/null 2>&1; then
+                                dirname "$(command -v x86_64-w64-mingw32-clang)"
+                            else
+                                ./.github/actions/setup-llvm-mingw/install-llvm-mingw.sh "$HOME/.cache/llvm-mingw"
+                            fi
+                        '''
+                    ).trim()
+                }
                 sh '''
                     for compiler in x86_64-w64-mingw32-clang aarch64-w64-mingw32-clang; do
-                        if ! command -v "$compiler" >/dev/null 2>&1; then
-                            echo "ERROR: $compiler not found on PATH."
-                            echo "Install llvm-mingw per docs/user-manual/modules/ROOT/pages/release-guide.adoc"
+                        if ! [ -x "${LLVM_MINGW_BIN}/${compiler}" ]; then
+                            echo "ERROR: $compiler not found under ${LLVM_MINGW_BIN}."
                             exit 1
                         fi
                     done
@@ -85,7 +103,7 @@ pipeline {
                 }
             }
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dquickly clean deploy"
+                sh "PATH=\"${LLVM_MINGW_BIN}:\$PATH\" ./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dquickly clean deploy"
             }
         }
 

@@ -14,11 +14,14 @@ ApacheCon, for instance).
 * Make sure you have the correct maven configuration in `~/.m2/settings.xml`.
 * You may want to get familiar with the release settings in the parent Apache POM.
 * Make sure you are using the expected supported Java version.
-* Install https://github.com/mstorsjo/llvm-mingw/releases/tag/20260616[llvm-mingw 20260616] and
-add its `bin/` directory to `PATH`. This provides the `x86_64-w64-mingw32-clang` and
-`aarch64-w64-mingw32-clang` cross-compilers used to build the native `camel-x64.exe` and
-`camel-arm64.exe` Windows bootstraps. The `-Prelease` Maven profile activates the cross-compile
-automatically; a missing toolchain causes a loud build failure (never a silent skip).
+* The `-Prelease` Maven profile cross-compiles the native `camel-x64.exe` and `camel-arm64.exe`
+Windows bootstraps using the `x86_64-w64-mingw32-clang` and `aarch64-w64-mingw32-clang` compilers
+from https://github.com/mstorsjo/llvm-mingw/releases/tag/20260616[llvm-mingw 20260616]. For a
+local release, install that toolchain and add its `bin/` directory to `PATH`; a missing toolchain
+causes a loud build failure (never a silent skip). The CI snapshot-deploy pipeline
+(`Jenkinsfile.deploy`) reuses an agent-provided toolchain when it is already on `PATH` and
+otherwise downloads the pinned, SHA256-verified copy automatically, so no manual provisioning of
+the Jenkins agents is required.
 
 [[ReleaseGuide-GPG]]
 == GPG setup
