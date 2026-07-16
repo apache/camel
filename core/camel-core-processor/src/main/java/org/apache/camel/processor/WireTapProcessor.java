@@ -264,6 +264,8 @@ public class WireTapProcessor extends BaseProcessorSupport
         Exchange target = processorExchangeFactory.createCorrelatedCopy(exchange, false);
         // should not be correlated, but we needed to copy without handover
         target.removeProperty(ExchangePropertyKey.CORRELATION_ID);
+        // do not share JPA EntityManager as wire tap runs asynchronously and EM is not thread-safe (CAMEL-22534)
+        target.removeProperty(Exchange.JPA_ENTITY_MANAGER);
         // set MEP to InOnly as this wire tap is a fire and forget
         target.setPattern(ExchangePattern.InOnly);
         // move OUT to IN if needed

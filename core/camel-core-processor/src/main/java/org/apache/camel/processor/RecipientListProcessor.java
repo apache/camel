@@ -287,6 +287,10 @@ public class RecipientListProcessor extends MulticastProcessor {
         // copy exchange, and do not share the unit of work
         Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
         copy.getExchangeExtension().setTransacted(exchange.isTransacted());
+        if (isParallelProcessing()) {
+            // do not share JPA EntityManager in parallel mode as it is not thread-safe (CAMEL-22534)
+            copy.removeProperty(Exchange.JPA_ENTITY_MANAGER);
+        }
 
         // If we are in a transaction, set TRANSACTION_CONTEXT_DATA property for new exchanges to share txData
         // during the transaction.
