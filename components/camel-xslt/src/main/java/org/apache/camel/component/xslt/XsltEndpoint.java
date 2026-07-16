@@ -451,17 +451,17 @@ public class XsltEndpoint extends ProcessorEndpoint {
                         TransformerFactory.class, XsltComponent.class.getClassLoader());
                 LOG.debug("Using TransformerFactoryClass {}", factoryClass);
                 factory = injector.newInstance(factoryClass);
-
-                final TransformerFactoryConfigurationStrategy tfConfigStrategy = transformerFactoryConfigurationStrategy != null
-                        ? transformerFactoryConfigurationStrategy
-                        : ((XsltComponent) getComponent()).getTransformerFactoryConfigurationStrategy();
-                if (tfConfigStrategy != null) {
-                    tfConfigStrategy.configure(factory, this);
-                }
             }
         }
 
         if (factory != null) {
+            final TransformerFactoryConfigurationStrategy tfConfigStrategy = transformerFactoryConfigurationStrategy != null
+                    ? transformerFactoryConfigurationStrategy
+                    : ((XsltComponent) getComponent()).getTransformerFactoryConfigurationStrategy();
+            if (tfConfigStrategy != null) {
+                tfConfigStrategy.configure(factory, this);
+            }
+
             LOG.debug("Using TransformerFactory {}", factory);
             xslt.setTransformerFactory(factory);
         }

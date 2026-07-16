@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -45,6 +46,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy;
 import org.apache.camel.component.xslt.XsltBuilder;
 import org.apache.camel.component.xslt.XsltEndpoint;
 import org.apache.camel.spi.ClassResolver;
@@ -225,28 +227,40 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         TransformerFactory factory = getTransformerFactory();
         if (factory == null) {
             if (getTransformerFactoryClass() == null) {
-                // create new saxon factory
                 factory = new TransformerFactoryImpl();
             } else {
-                // provide the class loader of this component to work in OSGi environments
                 Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(getTransformerFactoryClass(),
                         TransformerFactory.class, XsltSaxonComponent.class.getClassLoader());
                 LOG.debug("Using TransformerFactoryClass {}", factoryClass);
                 factory = injector.newInstance(factoryClass);
             }
+
+            if (factory instanceof TransformerFactoryImpl tf) {
+                XsltSaxonHelper.configureSecureProcessing(tf, secureProcessing);
+                XsltSaxonHelper.registerSaxonConfiguration(tf, saxonConfiguration);
+                XsltSaxonHelper.registerSaxonConfigurationProperties(tf, saxonConfigurationProperties);
+                XsltSaxonHelper.registerSaxonExtensionFunctions(tf, saxonExtensionFunctions);
+            }
+
+            try {
+                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            } catch (IllegalArgumentException e) {
+                LOG.debug("TransformerFactory does not support {}", XMLConstants.ACCESS_EXTERNAL_DTD);
+            }
+            try {
+                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            } catch (IllegalArgumentException e) {
+                LOG.debug("TransformerFactory does not support {}", XMLConstants.ACCESS_EXTERNAL_STYLESHEET);
+            }
+
+            final TransformerFactoryConfigurationStrategy strategy = getTransformerFactoryConfigurationStrategy();
+            if (strategy != null) {
+                strategy.configure(factory, this);
+            }
         }
 
-        if (factory instanceof TransformerFactoryImpl) {
-            TransformerFactoryImpl tf = (TransformerFactoryImpl) factory;
-            XsltSaxonHelper.registerSaxonConfiguration(tf, saxonConfiguration);
-            XsltSaxonHelper.registerSaxonConfigurationProperties(tf, saxonConfigurationProperties);
-            XsltSaxonHelper.registerSaxonExtensionFunctions(tf, saxonExtensionFunctions, secureProcessing);
-        }
-
-        if (factory != null) {
-            LOG.debug("Using TransformerFactory {}", factory);
-            xslt.setTransformerFactory(factory);
-        }
+        LOG.debug("Using TransformerFactory {}", factory);
+        xslt.setTransformerFactory(factory);
         if (getResultHandlerFactory() != null) {
             xslt.setResultHandlerFactory(getResultHandlerFactory());
         }
