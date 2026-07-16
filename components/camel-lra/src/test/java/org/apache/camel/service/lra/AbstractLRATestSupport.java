@@ -36,7 +36,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Base class for LRA based tests.
@@ -59,12 +58,33 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
     @AfterEach
     public void checkActiveLRAs() throws IOException, InterruptedException {
         // After a test that exercises LRA recovery (e.g., LRAFailuresIT), the
-        // coordinator may need up to one full recovery cycle to close the LRA.
-        // When JAVA_TOOL_OPTIONS takes effect (2s period), this resolves quickly;
-        // when it does not, the default 120s recovery period applies.
-        await().atMost(180, SECONDS)
+        // coordinator may need a recovery cycle to close the LRA. Trigger
+        // recovery explicitly rather than waiting for the periodic scan
+        // (default period: 120s).
+        await().atMost(60, SECONDS)
+                .pollInterval(2, SECONDS)
+                .pollDelay(1, SECONDS)
                 .alias("Some LRA have been left pending")
-                .until(() -> getNumberOfActiveLRAs(), equalTo(activeLRAs));
+                .until(() -> {
+                    triggerRecovery();
+                    return getNumberOfActiveLRAs() == activeLRAs;
+                });
+    }
+
+    /**
+     * Triggers a recovery scan on the LRA coordinator via its REST endpoint.
+     */
+    protected void triggerRecovery() {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(service.getServiceAddress() + "/lra-coordinator/recovery"))
+                    .GET()
+                    .build();
+            client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+            // Best-effort — the periodic recovery manager will eventually run
+        }
     }
 
     @Override

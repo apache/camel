@@ -66,8 +66,12 @@ public class MicroprofileLRALocalContainerInfraService
 
                 withNetworkAliases(networkAlias)
                         // Shorten the Narayana recovery period so that failed LRA
-                        // participant callbacks are retried quickly in tests
-                        // (default: periodicRecoveryPeriod=120s, recoveryBackoffPeriod=10s).
+                        // participant callbacks are retried quickly in tests.
+                        // The default is periodicRecoveryPeriod=120s, recoveryBackoffPeriod=10s.
+                        // The container's Dockerfile sets JAVA_OPTS_APPEND with host
+                        // binding and log manager; we must not overwrite it. Use
+                        // JAVA_TOOL_OPTIONS (always processed by the JVM at startup)
+                        // to inject additional system properties.
                         .withEnv("JAVA_TOOL_OPTIONS",
                                 "-Dcom.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod=2 "
                                                       + "-Dcom.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod=1")

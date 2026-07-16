@@ -57,15 +57,19 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
 
         TestSupport.sendBody(template, "direct:saga-complete", "hello");
 
-        // The Narayana LRA coordinator retries failed completion callbacks via its
-        // periodic recovery manager. The container is configured to shorten the
-        // recovery period to 2s (via JAVA_TOOL_OPTIONS), but this does not always
-        // take effect (e.g., if the JVM ignores JAVA_TOOL_OPTIONS). In that case,
-        // the default 120s recovery period applies, so we need a timeout that covers
-        // the worst case: default period (120s) + backoff (10s) + margin.
-        await().atMost(180, TimeUnit.SECONDS)
-                .until(() -> complete.getReceivedCounter() >= 1
-                        && end.getReceivedCounter() >= 1);
+        // The Narayana LRA coordinator retries failed completion callbacks via
+        // its periodic recovery manager (default: every 120s). Rather than wait
+        // for the next periodic scan, explicitly trigger recovery via the
+        // coordinator's REST endpoint. Poll because the completion failure may
+        // not yet be recorded when the first trigger fires.
+        await().atMost(60, TimeUnit.SECONDS)
+                .pollInterval(2, TimeUnit.SECONDS)
+                .pollDelay(1, TimeUnit.SECONDS)
+                .until(() -> {
+                    triggerRecovery();
+                    return complete.getReceivedCounter() >= 1
+                            && end.getReceivedCounter() >= 1;
+                });
         complete.assertIsSatisfied();
         end.assertIsSatisfied();
     }
