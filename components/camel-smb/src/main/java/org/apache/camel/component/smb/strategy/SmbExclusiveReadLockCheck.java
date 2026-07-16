@@ -84,7 +84,7 @@ public class SmbExclusiveReadLockCheck {
 
         String path = file.getParent();
         if (operations instanceof SmbOperations smbOperations) {
-            return smbOperations.listFiles(path, file.getFileName());
+            return smbOperations.listFiles(path, file.getFileNameOnly());
         }
         return operations.listFiles(path);
     }
