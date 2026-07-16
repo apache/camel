@@ -107,9 +107,11 @@ public final class LumberjackServer {
             // Wait for the channel to be indeed closed before shutting the groups & service
             channel.close().sync();
         } finally {
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
-            executorService.shutdownGracefully();
+            // Await graceful shutdown of all thread groups so the port is fully released
+            // before the next test (or consumer restart) binds a new server
+            bossGroup.shutdownGracefully().syncUninterruptibly();
+            workerGroup.shutdownGracefully().syncUninterruptibly();
+            executorService.shutdownGracefully().syncUninterruptibly();
         }
 
         LOG.info("LUMBERJACK server is stopped (host={}, port={}).", host, port);
