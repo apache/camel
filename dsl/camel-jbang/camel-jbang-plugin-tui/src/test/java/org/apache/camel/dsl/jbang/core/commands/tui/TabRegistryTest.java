@@ -82,8 +82,8 @@ class TabRegistryTest {
     }
 
     @Test
-    void moreTabsHasTwentyOneEntries() {
-        assertEquals(21, registry.moreTabs().size());
+    void moreTabsHasTwentyTwoEntries() {
+        assertEquals(22, registry.moreTabs().size());
     }
 
     @Test
@@ -109,8 +109,8 @@ class TabRegistryTest {
         // MORE_SHORTCUTS array carried before the MoreTab refactor. A label edit that repoints a key must fail here.
         List<Character> shortcuts = registry.moreTabs().stream().map(TabRegistry.MoreTab::shortcut).toList();
         assertEquals(
-                List.of('B', 'W', 'C', 'A', 'G', 'N', 'V', 'E', 'H', 'F', 'J', 'D', 'M', 'K', 'I', 'Q', 'R', 'O', 'P', 'S',
-                        'T'),
+                List.of('B', 'W', 'C', 'A', 'G', 'N', 'V', 'E', 'H', 'F', 'J', 'K', 'D', 'M', 'Y', 'I', 'Q', 'R', 'O', 'P',
+                        'S', 'T'),
                 shortcuts, "More tab shortcut letters must match the historical sequence");
     }
 

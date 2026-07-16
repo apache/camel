@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.integration.spring.tx;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.MethodOrderer;
@@ -44,10 +45,13 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
     @Order(1)
     @Test
     public void testRouteId() throws Exception {
+        // Wait for the JMS consumer route to be fully subscribed to the broker
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "myCoolRoute");
+
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:RouteIdTransactedTest", "Hello World");
+        template.sendBody("activemq:queue:RouteIdTransactedIT", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
@@ -58,10 +62,13 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
     @Order(2)
     @Test
     public void testRouteIdFailed() throws Exception {
+        // Wait for the JMS consumer route to be fully subscribed to the broker
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "myCoolRoute");
+
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:RouteIdTransactedTest", "Kaboom");
+        template.sendBody("activemq:queue:RouteIdTransactedIT", "Kaboom");
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
@@ -74,7 +81,7 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:RouteIdTransactedTest?transacted=true").id("myCoolRoute")
+                from("activemq:queue:RouteIdTransactedIT?transacted=true").id("myCoolRoute")
                         .onException(IllegalArgumentException.class).handled(true).to("log:bar").to("mock:error").end()
                         .transacted()
                         .choice()

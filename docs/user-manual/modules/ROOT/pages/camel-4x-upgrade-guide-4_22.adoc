@@ -49,6 +49,9 @@ file. Each key is read from and written back to the file where it currently live
 the local `./camel-cli.properties` stays local (project override), while every other key defaults to
 the global `~/.camel-cli.properties`.
 
+The Camel TUI (`camel tui`) theme is now backed by CSS stylesheets and ships a switchable light/dark palette.
+Press *F4* to toggle at runtime; the selection is persisted as `camel.tui.theme` in `.camel-cli.properties`.
+
 The Camel CLI user configuration file has been renamed from `camel-jbang-user.properties` to
 `camel-cli.properties` (global `~/.camel-cli.properties`, local `./camel-cli.properties`). The dot
 convention is unchanged: the global file is a hidden dotfile, the local file is visible. On first
@@ -79,6 +82,14 @@ removed from `camel.sh`; set `JAVA_HOME` or `JAVACMD`, or ensure a Java 17+ `jav
 The Gentoo `java-config` auto-detection and the IBM AIX `$JAVA_HOME/jre/sh/java` probe were also
 removed; set `JAVA_HOME` or `JAVACMD` explicitly on those platforms.
 `JAVA_OPTS` handling is unchanged: when unset, the default `-Xmx512m` heap is applied.
+
+==== Native `camel.exe` in the launcher distribution
+
+The `camel-launcher` Windows distribution now ships a native x64 `bin/camel.exe`
+alongside `bin/camel.bat`. `camel.exe` is a thin bootstrap: it forwards all
+arguments to the adjacent `camel.bat` (preserving spaces and Unicode) and returns
+its exit code. It exists so package managers that require a genuine executable
+users may continue to invoke `bin\camel.bat`; both behave identically.
 
 === camel-langchain4j-agent
 
@@ -196,6 +207,16 @@ The pre-sort is applied on the raw file listing before any filtering or eager li
 to combine `preSort=modified` with `eagerMaxMessagesPerPoll=true` and `maxMessagesPerPoll=10` to efficiently
 consume the 10 oldest files without creating Exchange objects for every file on the server.
 
+=== camel-file - forceWrites option deprecated
+
+The `forceWrites` producer option on the File endpoint has been deprecated. This option has had no effect
+since Camel 2.20, when the file-writing implementation was refactored to use `java.nio.file.Files.move()`
+and `Files.copy()` instead of `FileChannel`-based streaming. The `forceWrites` flag was intended to call
+`FileChannel.force(true)` (fsync) after writing, but no write path has invoked it for several major versions.
+
+The default value has been changed from `true` to `false` to reflect the actual behavior. The option will
+be removed in a future release.
+
 === camel-mail - MimeMultipartDataFormat inbound header filtering
 
 When unmarshalling a MIME message with `headersInline=true`, the `mime-multipart` data format now applies a
@@ -205,6 +226,17 @@ the message, consistent with the inbound header filtering already performed by t
 
 Ordinary application headers are unaffected. If a route relied on `Camel*` headers being propagated from the MIME
 content, set them explicitly after unmarshalling.
+
+=== camel-knative - structured-mode CloudEvent header filtering
+
+When consuming a CloudEvent in structured content mode (`application/cloudevents+json`), the Knative component now
+applies a `HeaderFilterStrategy` to the event fields (extensions) mapped from the payload onto the Camel message.
+Camel-internal headers (the `Camel*` namespace, matched case-insensitively) present as structured-event fields are
+no longer mapped onto the message, consistent with the inbound header filtering already performed on the binary
+content-mode / HTTP header path.
+
+Ordinary CloudEvent extension attributes are unaffected. If a route relied on `Camel*`-named fields being
+propagated from the structured payload, set them explicitly after consuming the event.
 
 === camel-pinecone
 
@@ -232,6 +264,22 @@ but is applied to both consumer and producer Kafka clients. The label has been c
 If you use the Endpoint DSL, the `metadataMaxAgeMs` method has moved from the producer (advanced) builder
 to the common builder.
 
+=== camel-kafka - saslAuthType behavior changes
+
+When `saslAuthType` is set, the generated JAAS configuration and additional SASL properties are now
+applied using `putIfAbsent` semantics, so explicitly configured `saslJaasConfig`, callback handler
+classes, or token endpoint URLs take precedence over the auto-generated values.
+
+For OAuth (`saslAuthType=OAUTH`), the JAAS string now contains only login-module parameters
+(`clientId`, `clientSecret`, `scope`). The `oauth.token.endpoint.uri` and callback handler
+class are set as separate Kafka client properties instead of being embedded in the JAAS string,
+matching the Kafka client's expected configuration format.
+
+For Kerberos (`saslAuthType=KERBEROS`), if the principal is not configured, the configurer now
+assumes an external JAAS configuration (e.g. via `java.security.auth.login.config`) and skips
+JAAS string generation instead of throwing an exception. This supports deployment scenarios
+where Kerberos is configured externally.
+
 === camel-kafka - Producer no longer silently drops scalar Jackson nodes
 
 With `useIterator=true`, the Kafka producer splits an `Iterable` body into one record per element.
@@ -242,6 +290,46 @@ discarding the message with no exception or log.
 Scalar value nodes are now sent as a single record. Only container nodes (`ArrayNode`, `ObjectNode`)
 are still split, which is unchanged. Any `convertBodyTo(...)` previously used as a workaround is no
 longer required.
+
+=== camel-kafka - sslEndpointAlgorithm=none now disables hostname verification
+
+Setting `sslEndpointAlgorithm` to `none` or `false` now correctly disables SSL hostname verification
+by setting `ssl.endpoint.identification.algorithm` to an empty string. Previously the property was
+simply omitted, which caused Kafka clients to fall back to their default (`https`), leaving hostname
+verification silently enabled.
+
+=== camel-kafka - Auto-generated groupId shared across consumer threads
+
+When no `groupId` is configured, the auto-generated UUID is now shared across all consumer threads
+(`consumersCount`). Previously each thread received its own random UUID, causing each thread to
+independently consume all partitions, which resulted in every message being processed `consumersCount`
+times.
+
+=== camel-kafka - Batch producer respects endpoint key for plain list elements
+
+The batch producer (when the body is a `List`) now respects the endpoint-configured `key` option for
+elements that do not have a `CamelKafkaKey` header. Previously, elements without the header would
+get a null record key even when `key=fixedKey` was configured on the endpoint. Additionally, plain
+list elements (not `Exchange` or `Message`) are now properly converted to the configured serializer
+type.
+
+=== camel-kafka - queueBufferingMaxMessages option deprecated
+
+The `queueBufferingMaxMessages` producer option has been deprecated. This option has had no effect
+since the old Scala Kafka producer was removed in Camel 2.17 (CAMEL-9467). Use `bufferMemorySize`
+or `maxBlockMs` instead.
+
+=== camel-kafka - Manual commit no longer auto-commits offsets
+
+When using `allowManualCommit=true` together with a `DefaultKafkaManualCommitFactory` or
+`DefaultKafkaManualAsyncCommitFactory`, the framework previously auto-committed offsets for every
+processed record — even when the route did not call `KafkaManualCommit.commit()`. This defeated the
+purpose of manual commit mode and could cause message loss.
+
+The framework no longer auto-commits offsets after processing each partition when manual commit
+is enabled. Offsets are only committed when the route explicitly calls `KafkaManualCommit.commit()`
+on the exchange header. The configured factory still controls whether that explicit commit executes
+synchronously or asynchronously.
 
 === camel-jbang catalog tables fill the terminal width
 
@@ -364,6 +452,21 @@ The clustered route controller property `camel.clustered.controller.initial-dela
 it keeps its `String` type because it supports Camel time patterns (for example `10 seconds`)
 that `Duration` binding does not.
 
+=== camel-spring-rabbitmq - replyTimeout default aligned
+
+The `replyTimeout` option on the component level has been fixed to default to 30 seconds,
+aligning it with the endpoint-level default that was documented since Camel 3.20.7 / 3.21.
+Previously, the component-level default was still 5 seconds, which would override the
+endpoint's declared 30-second default. If you were relying on the effective 5-second timeout,
+you can restore it by explicitly setting `replyTimeout=5000` on the component or endpoint.
+
+=== camel-core - Multicast UseOriginalAggregationStrategy fix
+
+The Multicast EIP now correctly honors `UseOriginalAggregationStrategy`, consistent with the Splitter
+and Recipient List EIPs. Previously, Multicast did not bind the original exchange on the strategy,
+so the strategy was silently ineffective — especially in error scenarios where the aggregated result
+could overwrite the original exchange body instead of preserving it.
+
 === camel-sql - PostgreSQL aggregation repositories fixed
 
 `PostgresAggregationRepository` and `ClusteredPostgresAggregationRepository` were broken since
@@ -389,3 +492,36 @@ on the bytes of a non-ASCII payload and make verification fail.
 already UTF-8 (JEP 400), so this is a no-op there; on Java 17 with a non-UTF-8 default, the
 signature of a non-ASCII `String` payload changes. Binary bodies (`byte[]`, `InputStream`) are
 unaffected, as they are signed byte-for-byte.
+=== camel-sql - Schema-qualified aggregation repository names
+
+The table-name validation in `JdbcAggregationRepository` now accepts schema-qualified names
+such as `myschema.aggregation`. Previously the validation regex only allowed simple identifiers
+(`[a-zA-Z_][a-zA-Z0-9_]*`), rejecting any name containing a dot. Names starting with a digit,
+containing spaces, or with multiple dots (e.g. `catalog.schema.table`) are still rejected.
+
+=== camel-sql - New exceptions from aggregation and template parsing
+
+The `remove()` method in `JdbcAggregationRepository` and `ClusteredJdbcAggregationRepository`
+now throws `OptimisticLockingException` when it detects a stale version during the delete.
+Previously a stale remove was silently treated as successful. If your error handling or
+aggregation strategy catches specific exception types around `remove()`, you may need to
+account for `OptimisticLockingException`.
+
+The `TemplateParser` now catches `TokenMgrError` (a JavaCC lexer error) and wraps it in
+`ParseRuntimeException`. Previously a malformed stored-procedure template with characters
+outside the token alphabet would propagate as a raw `java.lang.Error`.
+
+=== camel-aws-cloudtrail - consumer event delivery fixed
+
+The CloudTrail consumer previously kept its lookup cursor in a `static` field (shared across all
+cloudtrail consumers in the JVM), issued a single non-paginated `LookupEvents` call with a default
+`maxResults` of `1`, and advanced the cursor by the newest event time plus one second. As a result
+it could silently drop events. The consumer now keeps the cursor per-endpoint, paginates through
+every page of the window, and de-duplicates events by id at the window boundary.
+
+Two behavior changes follow:
+
+* The default `maxResults` is now `50` (the AWS maximum). With pagination this is a page-size hint,
+  not a per-poll cap; set it lower to reduce page sizes.
+* On startup the consumer tails events from the moment it starts, rather than first replaying the
+  single most-recent historical event.

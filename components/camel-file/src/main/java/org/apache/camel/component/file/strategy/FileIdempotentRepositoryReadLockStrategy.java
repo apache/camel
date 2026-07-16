@@ -95,7 +95,8 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport
     public void releaseExclusiveReadLockOnAbort(
             GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
             throws Exception {
-        // noop
+        String key = asKey(exchange, file);
+        idempotentRepository.remove(exchange, key);
     }
 
     @Override
@@ -276,9 +277,12 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport
     }
 
     protected String asKey(Exchange exchange, GenericFile<File> file) {
-        // use absolute file path as default key, but evaluate if an expression
-        // key was configured
-        String key = file.getAbsoluteFilePath();
+        // use the copy from absolute path as that was the original path of the
+        // file when the lock was acquired
+        // for example if the file consumer uses preMove then the file is moved
+        // and therefore has another name that would no longer match
+        String key = file.getCopyFromAbsoluteFilePath() != null
+                ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
         if (endpoint.getIdempotentKey() != null) {
             Exchange dummy = GenericFileHelper.createDummy(endpoint, exchange, () -> file);
             key = endpoint.getIdempotentKey().evaluate(dummy, String.class);

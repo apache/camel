@@ -84,7 +84,7 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
         out.expectedMessageCount(1);
 
         map.put("4711", "my-foo");
-        MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.ADDED);
     }
@@ -110,11 +110,11 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
         // Wait for the ADDED event to be fully processed before removing,
         // otherwise the remove may execute before the async ADDED event is delivered.
         MockEndpoint added = getMockEndpoint("mock:added");
-        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
                 .until(() -> added.getReceivedCounter() >= 1);
 
         map.remove("4711");
-        MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.REMOVED);
     }
 

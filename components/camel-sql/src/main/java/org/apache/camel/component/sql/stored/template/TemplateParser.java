@@ -22,6 +22,7 @@ import org.apache.camel.component.sql.stored.template.ast.ParseRuntimeException;
 import org.apache.camel.component.sql.stored.template.ast.Template;
 import org.apache.camel.component.sql.stored.template.generated.ParseException;
 import org.apache.camel.component.sql.stored.template.generated.SSPTParser;
+import org.apache.camel.component.sql.stored.template.generated.TokenMgrError;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
 
@@ -41,6 +42,8 @@ public class TemplateParser {
 
         } catch (ParseException parseException) {
             throw new ParseRuntimeException(parseException);
+        } catch (TokenMgrError tokenMgrError) {
+            throw new ParseRuntimeException(tokenMgrError);
         }
     }
 

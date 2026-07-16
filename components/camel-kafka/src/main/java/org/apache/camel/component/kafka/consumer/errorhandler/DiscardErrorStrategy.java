@@ -40,6 +40,6 @@ public class DiscardErrorStrategy implements PollExceptionStrategy {
         LOG.warn("Requesting the consumer to discard the message and continue to the next based on polling exception strategy");
 
         // skip this poison message and seek to the next message
-        SeekUtil.seekToNextOffset(consumer, partitionLastOffset);
+        SeekUtil.seekToNextOffset(consumer, exception);
     }
 }

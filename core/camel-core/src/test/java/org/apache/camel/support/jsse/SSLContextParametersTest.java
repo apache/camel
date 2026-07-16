@@ -986,7 +986,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_21)
+    @EnabledForJreRange(min = JRE.JAVA_21, max = JRE.JAVA_25)
     public void testSignatureSchemesFilter() throws Exception {
         // Note: SSLParameters.getSignatureSchemes() returns null by default (unlike getNamedGroups()),
         // so filters operate on explicitly provided schemes rather than JDK defaults.
@@ -1045,6 +1045,68 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         assertEquals(0, getSignatureSchemes(engine.getSSLParameters()).length);
         assertEquals(0, getSignatureSchemes(socket.getSSLParameters()).length);
         assertEquals(0, getSignatureSchemes(serverSocket.getSSLParameters()).length);
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_26)
+    public void testSignatureSchemesFilter_postJDK26() throws Exception {
+        // Note: SSLParameters.getSignatureSchemes() returns non-null by default (unlike on JDK 25-)
+
+        // default - no filter, keeps defaults (null)
+        SSLContextParameters scp = new SSLContextParameters();
+        SSLContext context = scp.createSSLContext(null);
+
+        SSLEngine engine = context.createSSLEngine();
+        SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
+        SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
+
+        assertNotNull(getSignatureSchemes(engine.getSSLParameters()));
+        assertNotNull(getSignatureSchemes(socket.getSSLParameters()));
+        assertNotNull(getSignatureSchemes(serverSocket.getSSLParameters()));
+
+        int defaultSignatureSchemeNumber = getSignatureSchemes(engine.getSSLParameters()).length;
+
+        // empty filter - no includes means no schemes match (empty array)
+        FilterParameters filter = new FilterParameters();
+        scp.setSignatureSchemesFilter(filter);
+        context = scp.createSSLContext(null);
+        engine = context.createSSLEngine();
+        socket = (SSLSocket) context.getSocketFactory().createSocket();
+        serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
+
+        assertEquals(0, getSignatureSchemes(engine.getSSLParameters()).length);
+        assertEquals(0, getSignatureSchemes(socket.getSSLParameters()).length);
+        assertEquals(0, getSignatureSchemes(serverSocket.getSSLParameters()).length);
+
+        // explicit schemes override filter - filter ignored when schemes are set
+        SignatureSchemesParameters ssp = new SignatureSchemesParameters();
+        List<String> allSchemes = new LinkedList<>();
+        allSchemes.add("ecdsa_secp256r1_sha256");
+        allSchemes.add("ecdsa_secp384r1_sha384");
+        allSchemes.add("rsa_pss_rsae_sha256");
+        allSchemes.add("ed25519");
+        ssp.setSignatureScheme(allSchemes);
+        scp.setSignatureSchemes(ssp);
+
+        filter.getInclude().add("ecdsa_.*");
+        context = scp.createSSLContext(null);
+        engine = context.createSSLEngine();
+
+        // explicit schemes take precedence over filter
+        assertEquals(4, getSignatureSchemes(engine.getSSLParameters()).length);
+
+        // clear explicit schemes, keep filter - now filter applies to JDK defaults
+        scp.setSignatureSchemes(null);
+        filter.getInclude().clear();
+        filter.getInclude().add(".*");
+        context = scp.createSSLContext(null);
+        engine = context.createSSLEngine();
+        socket = (SSLSocket) context.getSocketFactory().createSocket();
+        serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
+
+        assertEquals(defaultSignatureSchemeNumber, getSignatureSchemes(engine.getSSLParameters()).length);
+        assertEquals(defaultSignatureSchemeNumber, getSignatureSchemes(socket.getSSLParameters()).length);
+        assertEquals(defaultSignatureSchemeNumber, getSignatureSchemes(serverSocket.getSSLParameters()).length);
     }
 
     @Test

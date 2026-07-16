@@ -240,8 +240,9 @@ public class JdbcAggregationRepository extends ServiceSupport
     }
 
     // Useful to verify if the table name does not contain invalid characters.
+    // Allows simple names (my_table) and schema-qualified names (myschema.my_table).
     protected static void verifyTableName(String tableName) {
-        if (!tableName.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+        if (!tableName.matches("[a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*)?")) {
             throw new IllegalArgumentException("Invalid repository name: " + tableName);
         }
     }
@@ -437,12 +438,18 @@ public class JdbcAggregationRepository extends ServiceSupport
                     LOG.debug("Removing key {}", correlationId);
                     String table = getRepositoryName();
                     verifyTableName(table);
-                    jdbcTemplate.update("DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?", // NOSONAR
+                    int deleteCount = jdbcTemplate.update(
+                            "DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?", // NOSONAR
                             correlationId, version);
+                    if (deleteCount != 1) {
+                        throw new OptimisticLockingException();
+                    }
 
                     insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version);
                     LOG.debug("Removed key {}", correlationId);
 
+                } catch (OptimisticLockingException e) {
+                    throw e;
                 } catch (Exception e) {
                     throw new RuntimeException("Error removing key " + correlationId + " from repository " + repositoryName, e);
                 }

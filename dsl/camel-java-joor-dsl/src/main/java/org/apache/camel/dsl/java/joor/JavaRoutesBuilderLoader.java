@@ -158,7 +158,7 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
                             // inject context and resource
                             CamelContextAware.trySetCamelContext(obj, getCamelContext());
-                            ResourceAware.trySetResource(obj, nameToResource.remove(className));
+                            ResourceAware.trySetResource(obj, nameToResource.get(className));
                         }
                     } catch (Exception e) {
                         throw new RuntimeCamelException("Cannot create instance of class: " + className, e);
@@ -212,6 +212,25 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
             }
         }
 
+        // During hot-reload only the changed file is passed in, but all Java files
+        // must be recompiled together so class identity is consistent across classloaders
+        for (Map.Entry<String, Resource> entry : nameToResource.entrySet()) {
+            if (!unit.getInput().containsKey(entry.getKey())) {
+                try (InputStream is = resourceInputStream(entry.getValue())) {
+                    if (is != null) {
+                        String content = IOHelper.loadText(is);
+                        for (CompilePreProcessor pre : getCompilePreProcessors()) {
+                            pre.preCompile(getCamelContext(), entry.getKey(), content);
+                        }
+                        unit.addClass(entry.getKey(), content);
+                        classLoader.removeClass(entry.getKey());
+                    }
+                } catch (Exception e) {
+                    LOG.debug("Could not read previously compiled resource: {}", entry.getValue(), e);
+                }
+            }
+        }
+
         // include classloader from Camel, so we can load any already compiled and loaded classes
         ClassLoader parent = resolveParentClassLoader();
         if (parent instanceof URLClassLoader ucl) {
@@ -227,7 +246,8 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
         // remember the last loaded resource-set if route reloading is enabled
         if (getCamelContext().hasService(RouteWatcherReloadStrategy.class) != null) {
-            getCamelContext().getRegistry().bind(RouteWatcherReloadStrategy.RELOAD_RESOURCES, nameToResource.values());
+            getCamelContext().getRegistry().bind(RouteWatcherReloadStrategy.RELOAD_RESOURCES,
+                    new ArrayList<>(nameToResource.values()));
         }
 
         for (String className : result.getClassNames()) {

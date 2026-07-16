@@ -97,8 +97,8 @@ abstract class BaseManualCommitTestSupport extends BaseKafkaTestSupport {
 
         final String state = Awaitility.await().until(() -> stateRepository.getState(topic + "/0"),
                 Matchers.notNullValue());
-        // We send 5 records initially, so we expect the offset to be 5 after first step execution
-        assertEquals("5", state, "5 messages were sent in the first step, therefore the offset should be 5");
+        // We send 5 records (offsets 0-4), so we expect the last read offset (4) to be stored
+        assertEquals("4", state, "5 messages were sent in the first step, therefore the last read offset should be 4");
 
         // Second step: We shut down our route, we expect nothing will be recovered by our route
         contextExtension.getContext().getRouteController().stopRoute("foo");

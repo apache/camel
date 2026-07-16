@@ -382,6 +382,9 @@ final class StatusParser {
             }
         }
 
+        // Parse Kafka consumers
+        parseKafkaSection(root, info);
+
         // Parse error count from error registry
         JsonObject errorsObj = (JsonObject) root.get("errors");
         if (errorsObj != null) {
@@ -994,6 +997,42 @@ final class StatusParser {
             Object fr = bj.get("failureRate");
             cb.failureRate = fr instanceof Number n ? n.doubleValue() : -1;
             info.circuitBreakers.add(cb);
+        }
+    }
+
+    private static void parseKafkaSection(JsonObject root, IntegrationInfo info) {
+        JsonObject kafkaObj = (JsonObject) root.get("kafka");
+        if (kafkaObj == null) {
+            return;
+        }
+        JsonArray consumers = (JsonArray) kafkaObj.get("kafkaConsumers");
+        if (consumers == null) {
+            return;
+        }
+        for (Object c : consumers) {
+            JsonObject cj = (JsonObject) c;
+            String routeId = cj.getString("routeId");
+            String uri = cj.getString("uri");
+            JsonArray workers = (JsonArray) cj.get("workers");
+            if (workers != null) {
+                for (Object w : workers) {
+                    JsonObject wo = (JsonObject) w;
+                    KafkaConsumerInfo ki = new KafkaConsumerInfo();
+                    ki.routeId = routeId;
+                    ki.uri = uri;
+                    ki.threadId = wo.getString("threadId");
+                    ki.state = wo.getString("state");
+                    ki.lastError = wo.getString("lastError");
+                    ki.groupId = wo.getString("groupId");
+                    ki.groupInstanceId = wo.getString("groupInstanceId");
+                    ki.memberId = wo.getString("memberId");
+                    ki.generationId = wo.getIntegerOrDefault("generationId", 0);
+                    ki.lastTopic = wo.getString("lastTopic");
+                    ki.lastPartition = wo.getIntegerOrDefault("lastPartition", 0);
+                    ki.lastOffset = wo.getLongOrDefault("lastOffset", 0);
+                    info.kafkaConsumers.add(ki);
+                }
+            }
         }
     }
 

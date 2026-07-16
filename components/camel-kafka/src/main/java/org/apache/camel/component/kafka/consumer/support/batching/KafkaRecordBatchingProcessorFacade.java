@@ -52,7 +52,14 @@ public class KafkaRecordBatchingProcessorFacade extends AbstractKafkaRecordProce
         logRecords(allRecords);
         Set<TopicPartition> partitions = allRecords.partitions();
         LOG.debug("Poll received records on {} partitions", partitions.size());
-        return kafkaRecordProcessor.processExchange(camelKafkaConsumer, allRecords);
+        ProcessingResult result = kafkaRecordProcessor.processExchange(camelKafkaConsumer, allRecords);
+
+        // Flush any manually recorded offsets to Kafka for each partition
+        for (TopicPartition partition : partitions) {
+            commitManager.commit(partition);
+        }
+
+        return result;
     }
 
 }

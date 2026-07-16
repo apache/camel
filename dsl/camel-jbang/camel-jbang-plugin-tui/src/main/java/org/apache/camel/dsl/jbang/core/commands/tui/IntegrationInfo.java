@@ -83,6 +83,7 @@ class IntegrationInfo {
     final List<HealthCheckInfo> healthChecks = new ArrayList<>();
     final List<EndpointInfo> endpoints = new ArrayList<>();
     final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
+    final List<KafkaConsumerInfo> kafkaConsumers = new ArrayList<>();
     int errorCount;
     volatile List<ErrorInfo> errors = new ArrayList<>();
     volatile List<ActivityEntry> activity = List.of();

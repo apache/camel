@@ -382,13 +382,15 @@ class McpFacade {
     // ---- Data access ----
 
     JsonObject getTableData(String tabName) {
+        MonitorTab tab;
         if (tabName != null && !tabName.isBlank()) {
-            String switched = navigateToTab(tabName);
-            if (switched == null) {
+            tab = tabRegistry.findTabByName(tabName);
+            if (tab == null) {
                 return null;
             }
+        } else {
+            tab = bridge.activeTab();
         }
-        MonitorTab tab = bridge.activeTab();
         return tab != null ? tab.getTableDataAsJson() : null;
     }
 

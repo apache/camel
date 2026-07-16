@@ -30,6 +30,11 @@ final class ByteArrayClassLoader extends ClassLoader {
         this.classes = classes;
     }
 
+    public ByteArrayClassLoader(ClassLoader parent, Map<String, byte[]> classes) {
+        super(parent);
+        this.classes = classes;
+    }
+
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         byte[] bytes = classes.get(name);

@@ -59,7 +59,9 @@ public class MessageTimestampRouter {
         for (String key : splittedKeys) {
             if (ObjectHelper.isNotEmpty(key)) {
                 rawTimestamp = body.get(key);
-                break;
+                if (rawTimestamp != null) {
+                    break;
+                }
             }
         }
         Long timestamp = null;
@@ -67,7 +69,7 @@ public class MessageTimestampRouter {
                 && !timestampKeyFormat.equalsIgnoreCase("timestamp")) {
             final SimpleDateFormat timestampKeyFmt = new SimpleDateFormat(timestampKeyFormat);
             timestampKeyFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-            timestamp = timestampKeyFmt.parse((String) rawTimestamp).getTime();
+            timestamp = timestampKeyFmt.parse(rawTimestamp.toString()).getTime();
         } else if (ObjectHelper.isNotEmpty(rawTimestamp)) {
             timestamp = Long.parseLong(rawTimestamp.toString());
         }

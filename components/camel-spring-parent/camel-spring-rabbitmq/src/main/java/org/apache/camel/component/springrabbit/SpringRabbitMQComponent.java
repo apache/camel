@@ -67,10 +67,10 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "advanced",
               description = "To use a custom MessagePropertiesConverter so you can be in control how to map to/from a org.springframework.amqp.core.MessageProperties.")
     private MessagePropertiesConverter messagePropertiesConverter;
-    @Metadata(label = "producer", javaType = "java.time.Duration", defaultValue = "5000",
+    @Metadata(label = "producer", javaType = "java.time.Duration", defaultValue = "30000",
               description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging."
-                            + " The default value is 5 seconds. A negative value indicates an indefinite timeout.")
-    private long replyTimeout = 5000;
+                            + " The default value is 30 seconds. A negative value indicates an indefinite timeout.")
+    private long replyTimeout = 30000;
     @Metadata(label = "consumer", description = "The name of the dead letter exchange")
     private String deadLetterExchange;
     @Metadata(label = "consumer", description = "The name of the dead letter queue")

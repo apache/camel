@@ -495,11 +495,11 @@ public interface SpringRabbitmqComponentBuilderFactory {
         /**
          * Specify the timeout in milliseconds to be used when waiting for a
          * reply message when doing request/reply messaging. The default value
-         * is 5 seconds. A negative value indicates an indefinite timeout.
+         * is 30 seconds. A negative value indicates an indefinite timeout.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 30000
          * Group: producer
          * 
          * @param replyTimeout the value to set

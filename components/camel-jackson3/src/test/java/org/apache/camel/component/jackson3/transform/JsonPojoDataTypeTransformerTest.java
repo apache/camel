@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.jackson3.transform;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jackson3.SchemaHelper;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -110,6 +111,17 @@ class JsonPojoDataTypeTransformerTest {
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
         Assertions.assertEquals("Donald", exchange.getMessage().getBody(Person.class).name());
         Assertions.assertEquals(19, exchange.getMessage().getBody(Person.class).age());
+    }
+
+    @Test
+    void shouldWrapMalformedJsonInCamelExecutionException() {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
+        exchange.getMessage().setBody("{ this is no json }");
+
+        Assertions.assertThrows(CamelExecutionException.class,
+                () -> transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY));
     }
 
     @Test

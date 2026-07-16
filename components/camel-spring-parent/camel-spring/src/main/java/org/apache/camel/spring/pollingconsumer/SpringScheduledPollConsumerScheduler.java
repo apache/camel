@@ -69,12 +69,15 @@ public class SpringScheduledPollConsumerScheduler extends ServiceSupport
 
     @Override
     public void startScheduler() {
-        // we start the scheduler in doStart
+        if (future == null) {
+            LOG.debug("Scheduling cron trigger {}", getCron());
+            future = taskScheduler.schedule(runnable, trigger);
+        }
     }
 
     @Override
     public boolean isSchedulerStarted() {
-        return taskScheduler != null && !taskScheduler.getScheduledExecutor().isShutdown();
+        return future != null && !future.isCancelled();
     }
 
     @Override
@@ -126,8 +129,6 @@ public class SpringScheduledPollConsumerScheduler extends ServiceSupport
             destroyTaskScheduler = true;
         }
 
-        LOG.debug("Scheduling cron trigger {}", getCron());
-        future = taskScheduler.schedule(runnable, trigger);
     }
 
     @Override

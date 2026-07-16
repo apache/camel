@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.springrabbit;
 
+import java.util.Arrays;
+
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -39,7 +41,8 @@ public class DefaultListenerContainerFactory implements ListenerContainerFactory
         }
 
         if (endpoint.getQueues() != null) {
-            listener.setQueueNames(endpoint.getQueues().split(","));
+            listener.setQueueNames(
+                    Arrays.stream(endpoint.getQueues().split(",")).map(String::trim).toArray(String[]::new));
         }
         listener.setAcknowledgeMode(endpoint.getAcknowledgeMode());
         listener.setExclusive(endpoint.isExclusive());

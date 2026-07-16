@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 public class BeanProcessor extends ServiceSupport implements AsyncProcessor, ErrorHandlerAware, IdAware {
@@ -124,7 +125,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor, Err
 
     @Override
     protected void doInit() throws Exception {
-        delegate.init();
+        ServiceHelper.initService(delegate);
     }
 
     @Override
@@ -139,17 +140,17 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor, Err
 
     @Override
     protected void doStart() throws Exception {
-        delegate.start();
+        ServiceHelper.startService(delegate);
     }
 
     @Override
     protected void doStop() throws Exception {
-        delegate.doStop();
+        ServiceHelper.stopService(delegate);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        delegate.shutdown();
+        ServiceHelper.stopAndShutdownService(delegate);
     }
 
     @Override

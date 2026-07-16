@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -57,7 +58,7 @@ public abstract class JmsRouteTest extends AbstractJMSTest {
         sendExchange("");
         sendExchange(null);
 
-        resultEndpoint.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     protected void assertSendAndReceiveBody(Object expectedBody) throws InterruptedException {
@@ -66,7 +67,7 @@ public abstract class JmsRouteTest extends AbstractJMSTest {
 
         sendExchange(expectedBody);
 
-        resultEndpoint.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     protected void sendExchange(final Object expectedBody) {
@@ -85,8 +86,8 @@ public abstract class JmsRouteTest extends AbstractJMSTest {
 
         return new RouteBuilder() {
             public void configure() {
-                from(startEndpointUri).to(endEndpointUri);
-                from(endEndpointUri).to("mock:result");
+                from(startEndpointUri).routeId("jmsRoute1").to(endEndpointUri);
+                from(endEndpointUri).routeId("jmsRoute2").to("mock:result");
             }
         };
     }
@@ -103,5 +104,8 @@ public abstract class JmsRouteTest extends AbstractJMSTest {
         consumer = camelContextExtension.getConsumerTemplate();
 
         resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+
+        // Wait for the JMS consumer routes to be fully subscribed to the broker
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "jmsRoute1", "jmsRoute2");
     }
 }

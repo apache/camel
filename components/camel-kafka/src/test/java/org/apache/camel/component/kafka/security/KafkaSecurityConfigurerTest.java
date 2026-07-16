@@ -231,8 +231,9 @@ public class KafkaSecurityConfigurerTest {
         assertTrue(jaasConfig.contains("org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required"));
         assertTrue(jaasConfig.contains("clientId=\"my-client\""));
         assertTrue(jaasConfig.contains("clientSecret=\"my-secret\""));
-        assertTrue(jaasConfig.contains("oauth.token.endpoint.uri=\"https://auth.example.com/token\""));
-        assertTrue(jaasConfig.contains("oauth.scope=\"kafka\""));
+        assertTrue(jaasConfig.contains("scope=\"kafka\""));
+        assertFalse(jaasConfig.contains("oauth.token.endpoint.uri"));
+        assertFalse(jaasConfig.contains("oauth.scope"));
     }
 
     @Test
@@ -464,6 +465,84 @@ public class KafkaSecurityConfigurerTest {
         assertEquals("PLAINTEXT", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
         assertNull(props.getProperty(SaslConfigs.SASL_MECHANISM));
         assertNull(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+    }
+
+    // ========================================================================
+    // Kerberos without principal (external JAAS) tests
+    // ========================================================================
+
+    @Test
+    public void testBuildJaasConfigKerberosNoPrincipal() {
+        KafkaSecurityConfigurer configurer = KafkaSecurityConfigurer.forAuthType(KafkaAuthType.KERBEROS);
+        assertNull(configurer.buildJaasConfig());
+    }
+
+    @Test
+    public void testKerberosNoPrincipalSetsProtocolAndMechanism() {
+        KafkaConfiguration config = new KafkaConfiguration();
+        KafkaSecurityConfigurer.forAuthType(KafkaAuthType.KERBEROS)
+                .configure(config);
+
+        assertEquals("SASL_SSL", config.getSecurityProtocol());
+        assertEquals("GSSAPI", config.getSaslMechanism());
+        assertNull(config.getSaslJaasConfig());
+    }
+
+    // ========================================================================
+    // Callback handler and additional SASL properties tests
+    // ========================================================================
+
+    @Test
+    public void testToPropertiesOAuthIncludesCallbackHandler() {
+        Properties props = KafkaSecurityConfigurer.oauth("client", "secret", "https://auth.example.com/token")
+                .toProperties();
+
+        assertEquals("org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler",
+                props.getProperty(SaslConfigs.SASL_LOGIN_CALLBACK_HANDLER_CLASS));
+        assertEquals("https://auth.example.com/token",
+                props.getProperty(SaslConfigs.SASL_OAUTHBEARER_TOKEN_ENDPOINT_URL));
+    }
+
+    @Test
+    public void testToPropertiesAwsMskIamIncludesCallbackHandler() {
+        Properties props = KafkaSecurityConfigurer.awsMskIam().toProperties();
+
+        assertEquals("software.amazon.msk.auth.iam.IAMClientCallbackHandler",
+                props.getProperty(SaslConfigs.SASL_CLIENT_CALLBACK_HANDLER_CLASS));
+    }
+
+    @Test
+    public void testConfigureOAuthSetsCallbackHandler() {
+        KafkaConfiguration config = new KafkaConfiguration();
+        KafkaSecurityConfigurer.oauth("client", "secret", "https://auth.example.com/token")
+                .configure(config);
+
+        assertEquals("org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler",
+                config.getAdditionalProperties().get(SaslConfigs.SASL_LOGIN_CALLBACK_HANDLER_CLASS));
+        assertEquals("https://auth.example.com/token",
+                config.getAdditionalProperties().get(SaslConfigs.SASL_OAUTHBEARER_TOKEN_ENDPOINT_URL));
+    }
+
+    @Test
+    public void testConfigureAwsMskIamSetsCallbackHandler() {
+        KafkaConfiguration config = new KafkaConfiguration();
+        KafkaSecurityConfigurer.awsMskIam()
+                .configure(config);
+
+        assertEquals("software.amazon.msk.auth.iam.IAMClientCallbackHandler",
+                config.getAdditionalProperties().get(SaslConfigs.SASL_CLIENT_CALLBACK_HANDLER_CLASS));
+    }
+
+    @Test
+    public void testConfigureOAuthDoesNotOverrideUserCallbackHandler() {
+        KafkaConfiguration config = new KafkaConfiguration();
+        config.getAdditionalProperties().put(SaslConfigs.SASL_LOGIN_CALLBACK_HANDLER_CLASS, "com.custom.MyHandler");
+
+        KafkaSecurityConfigurer.oauth("client", "secret", "https://auth.example.com/token")
+                .configure(config);
+
+        assertEquals("com.custom.MyHandler",
+                config.getAdditionalProperties().get(SaslConfigs.SASL_LOGIN_CALLBACK_HANDLER_CLASS));
     }
 
     // ========================================================================

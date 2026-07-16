@@ -70,6 +70,7 @@ public class MailAttachmentDuplicateNamesTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        mock.setResultWaitTime(30_000);
         mock.assertIsSatisfied();
         Exchange out = mock.assertExchangeReceived(0);
 

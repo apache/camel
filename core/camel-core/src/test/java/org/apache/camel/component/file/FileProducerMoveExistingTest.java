@@ -107,14 +107,21 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         template.sendBodyAndHeader(
                 fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false"),
                 "Second File", Exchange.FILE_NAME, filename);
-        // we should be okay as we will just delete any existing file
-        template.sendBodyAndHeader(
-                fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false"),
-                "Third File", Exchange.FILE_NAME, filename);
 
-        // we could  write the new file so the old context should be moved
-        assertFileExists(testFile(filename), "Third File");
-        // and the renamed file should not be overridden
+        // should fail because the move destination already exists and eagerDeleteTargetFile=false
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
+            template.sendBodyAndHeader(
+                    fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false"),
+                    "Third File", Exchange.FILE_NAME, filename);
+        }, "Should have thrown an exception");
+
+        GenericFileOperationFailedException cause
+                = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+        assertTrue(cause.getMessage().startsWith("Cannot move existing file"));
+
+        // we could not write the new file so the previous content should be there
+        assertFileExists(testFile(filename), "Second File");
+        // and the renamed file should be untouched
         assertFileExists(testFile("renamed-" + filename), "First File");
     }
 

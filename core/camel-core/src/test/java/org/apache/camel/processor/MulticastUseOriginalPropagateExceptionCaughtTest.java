@@ -45,6 +45,8 @@ public class MulticastUseOriginalPropagateExceptionCaughtTest extends ContextTes
 
         assertEquals(1, getMockEndpoint("mock:result").getReceivedExchanges().size());
         Exchange exchange = getMockEndpoint("mock:result").getReceivedExchanges().get(0);
+        // verify original body is preserved
+        assertEquals(body, exchange.getIn().getBody(String.class));
         Exception exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(exception);
         Throwable rootCause = exception;

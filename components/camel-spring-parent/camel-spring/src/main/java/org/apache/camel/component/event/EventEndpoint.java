@@ -134,8 +134,10 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
     public void consumerStopped(EventConsumer consumer) {
         lock.lock();
         try {
-            getComponent().consumerStopped(this);
             getLoadBalancer().removeProcessor(consumer.getAsyncProcessor());
+            if (getLoadBalancer().getProcessors().isEmpty()) {
+                getComponent().consumerStopped(this);
+            }
         } finally {
             lock.unlock();
         }

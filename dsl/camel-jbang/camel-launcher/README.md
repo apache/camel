@@ -16,6 +16,22 @@ This will create:
 1. A self-executing JAR (`camel-launcher-<version>.jar`) in the `target` directory using Spring Boot's nested JAR structure
 2. Distribution archives (`camel-launcher-<version>-bin.zip` and `camel-launcher-<version>-bin.tar.gz`) in the `target` directory
 
+On Windows, the distribution archives also include `bin/camel.exe`, a native bootstrap built by
+[`tooling/camel-exe`](../../../tooling/camel-exe). Release builds on a Windows x64 host run an integration test during `verify` that asserts
+`target/camel.exe` is staged and `bin/camel.exe` is present in the assembled ZIP:
+
+```bash
+mvn -pl tooling/camel-exe,dsl/camel-jbang/camel-launcher -am verify -Dcamel.launcher.requireWindowsExe=true
+```
+
+To build and test only the native bootstrap:
+
+```bash
+mvn -pl tooling/camel-exe verify -Dcamel.exe.requireWindowsExe=true
+```
+
+See [`tooling/camel-exe/src/main/native/README.md`](../../../tooling/camel-exe/src/main/native/README.md) for MSVC requirements.
+
 ## Usage
 
 ### Using the JAR directly
@@ -47,7 +63,11 @@ java -jar camel-launcher-<version>.jar run hello.java
    
    # On Windows
    bin\camel.bat [command] [options]
+   bin\camel.exe [command] [options]
    ```
+
+   `camel.exe` and `camel.bat` behave identically on Windows; `camel.exe` exists for package managers
+   (such as WinGet) that require a genuine executable command.
 
 ## Benefits
 

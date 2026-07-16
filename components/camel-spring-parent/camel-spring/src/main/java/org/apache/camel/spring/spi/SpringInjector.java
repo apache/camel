@@ -19,6 +19,8 @@ package org.apache.camel.spring.spi;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Injector;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -29,6 +31,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class SpringInjector implements Injector {
     private final ConfigurableApplicationContext applicationContext;
+    private CamelContext camelContext;
     private int autowireMode = AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
     private boolean dependencyCheck;
 
@@ -58,6 +61,8 @@ public class SpringInjector implements Injector {
                 Object obj = fm.invoke(null);
                 answer = type.cast(obj);
             }
+            // inject camel context if needed
+            CamelContextAware.trySetCamelContext(answer, camelContext);
         } catch (Exception e) {
             throw new RuntimeCamelException("Error invoking factory method: " + factoryMethod + " on class: " + target, e);
         }
@@ -94,6 +99,14 @@ public class SpringInjector implements Injector {
 
     public void setDependencyCheck(boolean dependencyCheck) {
         this.dependencyCheck = dependencyCheck;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public ConfigurableApplicationContext getApplicationContext() {

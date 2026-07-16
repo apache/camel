@@ -93,6 +93,7 @@ class TabRegistry {
     private SpansTab spansTab;
     private ProcessTab processTab;
     private OverviewTab overviewTab;
+    private KafkaTab kafkaTab;
     private DataSourceTab dataSourceTab;
     private SqlQueryTab sqlQueryTab;
     private SqlTraceTab sqlTraceTab;
@@ -113,6 +114,7 @@ class TabRegistry {
         diagramTab = new DiagramTab(ctx);
         routesTab = new RoutesTab(ctx);
         consumersTab = new ConsumersTab(ctx);
+        kafkaTab = new KafkaTab(ctx);
         dataSourceTab = new DataSourceTab(ctx);
         heapHistogramTab = new HeapHistogramTab(ctx);
         memoryLeakTab = new MemoryLeakTab(ctx);
@@ -161,9 +163,10 @@ class TabRegistry {
                 new MoreTab(TuiIcons.TAB_HEAP, "Heap Histogram", "&Heap Histogram", heapHistogramTab),
                 new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "In&flight", inflightTab),
                 new MoreTab(TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab),
+                new MoreTab(TuiIcons.TAB_KAFKA, "Kafka", "&Kafka", kafkaTab),
                 new MoreTab(TuiIcons.TAB_MAVEN_DEPENDENCIES, "Maven Dependencies", "Maven &Dependencies", mavenDependenciesTab),
                 new MoreTab(TuiIcons.TAB_MEMORY, "Memory", "&Memory", memoryTab),
-                new MoreTab(TuiIcons.TAB_MEMORY_LEAK, "Memory Leak", "Memory Lea&k", memoryLeakTab),
+                new MoreTab(TuiIcons.TAB_MEMORY_LEAK, "Memory Leak", "Memor&y Leak", memoryLeakTab),
                 new MoreTab(TuiIcons.TAB_METRICS, "Metrics", "Metr&ics", metricsTab),
                 new MoreTab(TuiIcons.TAB_SQL_QUERY, "SQL Query", "S&QL Query", sqlQueryTab),
                 new MoreTab(TuiIcons.TAB_SQL_TRACE, "SQL Trace", "SQL T&race", sqlTraceTab),
@@ -189,6 +192,15 @@ class TabRegistry {
             case TAB_MORE -> activeMoreTab;
             default -> null;
         };
+    }
+
+    MonitorTab findTabByName(String name) {
+        for (TabEntry entry : allTabEntries()) {
+            if (entry.name().equalsIgnoreCase(name)) {
+                return entry.tab();
+            }
+        }
+        return null;
     }
 
     MonitorTab getActiveMoreTab() {
@@ -350,7 +362,12 @@ class TabRegistry {
 
     // ---- Tab entries for Go-to and MCP ----
 
-    record TabEntry(String icon, String name, String description, String shortcut, int tabIndex, int moreIndex) {
+    record TabEntry(String icon, String name, String description, String shortcut, int tabIndex, int moreIndex,
+            MonitorTab tab) {
+
+        TabEntry(String icon, String name, String description, String shortcut, int tabIndex, int moreIndex) {
+            this(icon, name, description, shortcut, tabIndex, moreIndex, null);
+        }
     }
 
     /**
@@ -398,20 +415,23 @@ class TabRegistry {
 
     List<TabEntry> allTabEntries() {
         List<TabEntry> entries = new ArrayList<>();
-        entries.add(new TabEntry(icon(TAB_OVERVIEW), "Overview", overviewTab.description(), "1", TAB_OVERVIEW, -1));
-        entries.add(new TabEntry(icon(TAB_LOG), "Log", logTab.description(), "2", TAB_LOG, -1));
-        entries.add(new TabEntry(icon(TAB_ACTIVITY), "Activity", activityTab.description(), "3", TAB_ACTIVITY, -1));
-        entries.add(new TabEntry(icon(TAB_DIAGRAM), "Diagram", diagramTab.description(), "4", TAB_DIAGRAM, -1));
-        entries.add(new TabEntry(icon(TAB_ROUTES), "Routes", routesTab.description(), "5", TAB_ROUTES, -1));
-        entries.add(new TabEntry(icon(TAB_ENDPOINTS), "Endpoints", endpointsTab.description(), "6", TAB_ENDPOINTS, -1));
-        entries.add(new TabEntry(icon(TAB_HTTP), "HTTP", httpTab.description(), "7", TAB_HTTP, -1));
-        entries.add(new TabEntry(icon(TAB_HISTORY), "Inspect", historyTab.description(), "8", TAB_HISTORY, -1));
-        entries.add(new TabEntry(icon(TAB_ERRORS), "Errors", errorsTab.description(), "9", TAB_ERRORS, -1));
+        entries.add(
+                new TabEntry(icon(TAB_OVERVIEW), "Overview", overviewTab.description(), "1", TAB_OVERVIEW, -1, overviewTab));
+        entries.add(new TabEntry(icon(TAB_LOG), "Log", logTab.description(), "2", TAB_LOG, -1, logTab));
+        entries.add(
+                new TabEntry(icon(TAB_ACTIVITY), "Activity", activityTab.description(), "3", TAB_ACTIVITY, -1, activityTab));
+        entries.add(new TabEntry(icon(TAB_DIAGRAM), "Diagram", diagramTab.description(), "4", TAB_DIAGRAM, -1, diagramTab));
+        entries.add(new TabEntry(icon(TAB_ROUTES), "Routes", routesTab.description(), "5", TAB_ROUTES, -1, routesTab));
+        entries.add(new TabEntry(
+                icon(TAB_ENDPOINTS), "Endpoints", endpointsTab.description(), "6", TAB_ENDPOINTS, -1, endpointsTab));
+        entries.add(new TabEntry(icon(TAB_HTTP), "HTTP", httpTab.description(), "7", TAB_HTTP, -1, httpTab));
+        entries.add(new TabEntry(icon(TAB_HISTORY), "Inspect", historyTab.description(), "8", TAB_HISTORY, -1, historyTab));
+        entries.add(new TabEntry(icon(TAB_ERRORS), "Errors", errorsTab.description(), "9", TAB_ERRORS, -1, errorsTab));
         for (int i = 0; i < moreTabs.size(); i++) {
             MoreTab mt = moreTabs.get(i);
             entries.add(new TabEntry(
                     mt.icon(), mt.name(), mt.tab().description(), String.valueOf(mt.shortcut()),
-                    TAB_MORE, i));
+                    TAB_MORE, i, mt.tab()));
         }
         return entries;
     }

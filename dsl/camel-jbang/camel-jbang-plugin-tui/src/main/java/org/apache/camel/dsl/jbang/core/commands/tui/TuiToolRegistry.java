@@ -201,9 +201,13 @@ class TuiToolRegistry {
                 List.of("keys"))));
         tools.add(toToolDef(toolDef(
                 "tui_get_options",
-                "Returns all available tabs and integrations. "
-                                   + "Use this to discover what tabs exist and which integrations are running "
-                                   + "before navigating. Also returns the current selection.",
+                "IMPORTANT: Call this FIRST before any other tui_ tool when starting a new task. "
+                                   + "Returns all available tabs with descriptions and running integrations. "
+                                   + "Each tab description says what data it provides — match the user's question "
+                                   + "keywords to tab descriptions to find the right data source in one step "
+                                   + "(e.g. 'kafka offset' → find Kafka tab → tui_get_table(tab='Kafka')). "
+                                   + "This avoids wasting calls piecing data from logs, spans, and endpoints "
+                                   + "when a dedicated tab already has exactly the needed information.",
                 Map.of())));
         tools.add(toToolDef(toolDef(
                 "tui_wait_for_idle",
@@ -342,11 +346,14 @@ class TuiToolRegistry {
 
         tools.add(toToolDef(toolDef(
                 "tui_get_table",
-                "Returns the currently visible table data as structured JSON with typed values. "
+                "Returns structured JSON table data for any tab — the primary way to read tab data. "
                                  + "Much more reliable than parsing screen text. "
-                                 + "Returns tab name, rows array with all fields, totalRows, and selectedIndex.",
+                                 + "Returns tab name, rows array with all fields, totalRows, and selectedIndex. "
+                                 + "Tip: call tui_get_options first to discover all available tab names "
+                                 + "and their descriptions, so you pick the right tab in one call.",
                 Map.of("tab", propDef("string",
-                        "Tab name to get data from (e.g. 'Routes', 'Endpoints', 'Activity'). "
+                        "Tab name to get data from (e.g. 'Routes', 'Endpoints', 'Kafka'). "
+                                                + "Use tui_get_options to discover available tab names. "
                                                 + "If omitted, uses the active tab.")))));
         tools.add(toToolDef(toolDef(
                 "tui_action",
