@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.smallrye.faulttolerance.api.CircuitBreakerMaintenance;
 import io.smallrye.faulttolerance.api.CircuitBreakerState;
@@ -231,6 +232,10 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
         // run this as if we run inside try / catch so there is no regular Camel error handler
         exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
         CircuitBreakerTask task = (CircuitBreakerTask) taskFactory.acquire(exchange, callback);
+        // guard to prevent the worker thread from writing results back to the original exchange
+        // after a timeout has triggered fallback processing on the caller thread
+        AtomicBoolean exchangeWriteGuard = new AtomicBoolean(false);
+        task.exchangeWriteGuard = exchangeWriteGuard;
         CircuitBreakerFallbackTask fallbackTask = null;
 
         try {
@@ -238,6 +243,8 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
             try {
                 typedGuard.call(task);
             } catch (Exception e) {
+                // prevent the worker thread from writing results back to the exchange
+                exchangeWriteGuard.set(true);
                 // Do fallback if applicable. Note that a fallback handler is not configured on the TypedGuard builder
                 // and is instead invoked manually here since we need access to the message exchange on each FaultToleranceProcessor.process call
                 if (fallbackProcessor != null) {
@@ -387,6 +394,7 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     private final class CircuitBreakerTask implements PooledExchangeTask, Callable<Exchange> {
 
         private Exchange exchange;
+        private AtomicBoolean exchangeWriteGuard;
 
         @Override
         public void prepare(Exchange exchange, AsyncCallback callback) {
@@ -397,6 +405,7 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
         @Override
         public void reset() {
             this.exchange = null;
+            this.exchangeWriteGuard = null;
         }
 
         @Override
@@ -436,21 +445,25 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
                 // process the processor until its fully done
                 processor.process(copy);
 
-                // handle the processing result
-                if (copy.getException() != null) {
-                    exchange.setException(copy.getException());
-                } else {
-                    // copy the result as it's regarded as success
-                    ExchangeHelper.copyResults(exchange, copy);
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
-                    String state = getCircuitBreakerState();
-                    if (state != null) {
-                        exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, state);
+                // handle the processing result, but only write back if the fallback has not taken over
+                if (exchangeWriteGuard == null || exchangeWriteGuard.compareAndSet(false, true)) {
+                    if (copy.getException() != null) {
+                        exchange.setException(copy.getException());
+                    } else {
+                        // copy the result as it's regarded as success
+                        ExchangeHelper.copyResults(exchange, copy);
+                        exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
+                        exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                        String state = getCircuitBreakerState();
+                        if (state != null) {
+                            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, state);
+                        }
                     }
                 }
             } catch (Exception e) {
-                exchange.setException(e);
+                if (exchangeWriteGuard == null || exchangeWriteGuard.compareAndSet(false, true)) {
+                    exchange.setException(e);
+                }
             } finally {
                 // must done uow
                 UnitOfWorkHelper.doneUow(uow, copy);
