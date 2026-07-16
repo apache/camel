@@ -295,7 +295,7 @@ public class SoapDataFormat extends DataFormatDefinition {
          * problematic header.
          */
         public Builder ignoreUnmarshalledHeaders(boolean ignoreUnmarshalledHeaders) {
-            return ignoreUnmarshalledHeaders(Boolean.valueOf(ignoreUnmarshalledHeaders));
+            return ignoreUnmarshalledHeaders(Boolean.toString(ignoreUnmarshalledHeaders));
         }
 
         /**
