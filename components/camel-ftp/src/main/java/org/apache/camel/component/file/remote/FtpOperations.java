@@ -442,7 +442,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         if (is != null) {
             try {
                 IOHelper.close(is);
-                client.completePendingCommand();
+                boolean ok = client.completePendingCommand();
+                if (!ok) {
+                    throw new GenericFileOperationFailedException(
+                            client.getReplyCode(), client.getReplyString());
+                }
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
@@ -482,9 +486,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             log.trace("Client retrieveFile: {}", remoteName);
             if (endpoint.getConfiguration().isStreamDownload()) {
                 InputStream is = client.retrieveFileStream(remoteName);
-                target.setBody(is);
-                exchange.getIn().setHeader(FtpConstants.REMOTE_FILE_INPUT_STREAM, is);
-                result = true;
+                if (is != null) {
+                    target.setBody(is);
+                    exchange.getIn().setHeader(FtpConstants.REMOTE_FILE_INPUT_STREAM, is);
+                }
+                result = is != null;
             } else {
                 // read the entire file into memory in the byte array
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
