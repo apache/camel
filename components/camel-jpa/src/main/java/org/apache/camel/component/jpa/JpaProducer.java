@@ -145,22 +145,21 @@ public class JpaProducer extends DefaultProducer {
     public boolean isUseExecuteUpdate() {
         if (useExecuteUpdate == null) {
             if (query != null) {
-                if (query.regionMatches(true, 0, "select", 0, 6)) {
-                    useExecuteUpdate = false;
-                } else {
-                    useExecuteUpdate = true;
-                }
+                useExecuteUpdate = isUpdateQuery(query);
             } else if (nativeQuery != null) {
-                if (nativeQuery.regionMatches(true, 0, "select", 0, 6)) {
-                    useExecuteUpdate = false;
-                } else {
-                    useExecuteUpdate = true;
-                }
+                useExecuteUpdate = isUpdateQuery(nativeQuery);
             } else {
                 useExecuteUpdate = false;
             }
         }
         return useExecuteUpdate;
+    }
+
+    private static boolean isUpdateQuery(String queryText) {
+        String trimmed = queryText.stripLeading();
+        return trimmed.regionMatches(true, 0, "insert", 0, 6)
+                || trimmed.regionMatches(true, 0, "update", 0, 6)
+                || trimmed.regionMatches(true, 0, "delete", 0, 6);
     }
 
     @Override

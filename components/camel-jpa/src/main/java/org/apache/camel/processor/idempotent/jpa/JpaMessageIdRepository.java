@@ -107,14 +107,20 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                     processed.setCreatedAt(new Date());
                     entityManager.persist(processed);
                     entityManager.flush();
-                    entityManager.close();
                     rc[0] = Boolean.TRUE;
                 } else {
                     rc[0] = Boolean.FALSE;
                 }
             } catch (Exception ex) {
-                String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
-                throw new PersistenceException(contextInfo, ex);
+                if (isConstraintViolation(ex)) {
+                    // concurrent insert of the same messageId detected via unique constraint
+                    // treat as duplicate rather than failing the exchange
+                    LOG.debug("Duplicate message detected during concurrent insert: {}", messageId);
+                    rc[0] = Boolean.FALSE;
+                } else {
+                    String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
+                    throw new PersistenceException(contextInfo, ex);
+                }
             } finally {
                 try {
                     if (entityManager.isOpen()) {
@@ -300,6 +306,20 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
 
     public void setSharedEntityManager(boolean sharedEntityManager) {
         this.sharedEntityManager = sharedEntityManager;
+    }
+
+    private static boolean isConstraintViolation(Exception ex) {
+        Throwable cause = ex;
+        while (cause != null) {
+            if (cause instanceof java.sql.SQLIntegrityConstraintViolationException) {
+                return true;
+            }
+            if (cause instanceof jakarta.persistence.EntityExistsException) {
+                return true;
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 
     @Override
