@@ -201,7 +201,13 @@ public class SmbOperations implements SmbFileOperations {
 
     @Override
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
-        return share.fileExists(name);
+        connectIfNecessary();
+        try {
+            return share.fileExists(name);
+        } catch (SMBRuntimeException smbre) {
+            safeDisconnect(smbre);
+            throw smbre;
+        }
     }
 
     @Override
@@ -526,6 +532,7 @@ public class SmbOperations implements SmbFileOperations {
 
     @Override
     public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+        connectIfNecessary();
         ByteArrayInputStream bis = new ByteArrayInputStream(payload.getBytes());
         try {
             try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.FILE_WRITE_DATA),
