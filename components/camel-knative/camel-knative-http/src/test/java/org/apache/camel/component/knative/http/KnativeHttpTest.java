@@ -381,6 +381,61 @@ public class KnativeHttpTest {
 
     @ParameterizedTest
     @EnumSource(CloudEvents.class)
+    void testConsumeStructuredContentFiltersInternalHeaders(CloudEvent ce) throws Exception {
+        configureKnativeComponent(
+                context,
+                ce,
+                sourceEndpoint(
+                        "myEndpoint",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("knative:endpoint/myEndpoint")
+                    .to("mock:ce");
+        });
+
+        context.start();
+
+        MockEndpoint mock = context.getEndpoint("mock:ce", MockEndpoint.class);
+        mock.expectedBodiesReceived("test");
+        mock.expectedMessageCount(1);
+        // a regular CloudEvent extension must still be propagated as a message header
+        mock.expectedHeaderReceived("myextension", "myvalue");
+        // an extension that resolves to an internal Camel header must be filtered out and must not
+        // be able to inject a framework control header (headers are matched case-insensitively)
+        mock.expectedMessagesMatches(e -> e.getMessage().getHeader(Exchange.FILE_NAME) == null);
+
+        if (Objects.equals(CloudEvents.v1_0.version(), ce.version())
+                || Objects.equals(CloudEvents.v1_0_1.version(), ce.version())
+                || Objects.equals(CloudEvents.v1_0_2.version(), ce.version())) {
+            given()
+                    .contentType(Knative.MIME_STRUCTURED_CONTENT_MODE)
+                    .body(
+                            Map.of(
+                                    "specversion", ce.version(),
+                                    "type", "org.apache.camel.event",
+                                    "id", "myEventID",
+                                    "source", "/somewhere",
+                                    "datacontenttype", "text/plain",
+                                    "myextension", "myvalue",
+                                    "camelfilename", "injected.txt",
+                                    "data", "test"),
+                            ObjectMapperType.JACKSON_2)
+                    .when()
+                    .post()
+                    .then()
+                    .statusCode(200);
+        } else {
+            throw new IllegalArgumentException("Unknown CloudEvent spec: " + ce.version());
+        }
+
+        mock.assertIsSatisfied();
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
     void testConsumeContent(CloudEvent ce) throws Exception {
         configureKnativeComponent(
                 context,
