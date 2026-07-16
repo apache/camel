@@ -311,6 +311,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         for (GenericFile file : files) {
             String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
+            if (endpoint.isIdempotentEager() && endpoint.getIdempotentRepository() != null) {
+                removeExcessiveIdempotentFile(file, null);
+            }
         }
     }
 
