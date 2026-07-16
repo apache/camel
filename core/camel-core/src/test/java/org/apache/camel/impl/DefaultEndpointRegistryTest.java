@@ -102,6 +102,32 @@ public class DefaultEndpointRegistryTest {
         ctx.stop();
     }
 
+    // Testing the issue https://issues.apache.org/jira/browse/CAMEL-24171
+    @Test
+    public void testGetEndpointIsCachedForUriContainingPercentCharacter() {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.start();
+
+        // A % anywhere in the query string makes EndpointHelper.normalizeEndpointUri() non-idempotent:
+        // running it twice turns %41 into %2541 instead of leaving it alone. doGetEndpoint() normalizes
+        // the uri once for the cache lookup (NormalizedUri.newNormalizedUri(uri, true) - "already normalized").
+        // But on a cache miss it hands that *already normalized* uri to addEndpointToRegistry(), which calls
+        // getEndpointKey(uri, endpoint) -> NormalizedUri.newNormalizedUri(uri, false) - "not normalized yet,
+        // please normalize" - normalizing it a second time before storing it. The stored key (double
+        // normalized) then never matches the lookup key computed on a later call (single normalized), so a
+        // brand-new Endpoint (with its own doStart()) gets created on every single call instead of the
+        // cached singleton being reused.
+        String uri = "controlbus:route?routeId=RAW(%41)&action=status";
+
+        Endpoint first = ctx.getEndpoint(uri);
+        Endpoint second = ctx.getEndpoint(uri);
+
+        Assertions.assertSame(first, second,
+                "getEndpoint(uri) must return the cached singleton instance on a second call with the identical uri");
+        Assertions.assertEquals(1, ctx.getEndpoints().size(),
+                "the endpoint registry must not accumulate a new entry on every call for the same uri");
+    }
+
     @Test
     public void testMigration() {
         DefaultCamelContext ctx = new DefaultCamelContext();
