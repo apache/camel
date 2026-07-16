@@ -23,6 +23,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.quartz.CronTrigger;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -37,6 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// Run in isolation to prevent JMX MBean name collisions with concurrent
+// test classes that create CamelContexts with the same management name
+@Isolated
 public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
 
     private static AbstractXmlApplicationContext db;

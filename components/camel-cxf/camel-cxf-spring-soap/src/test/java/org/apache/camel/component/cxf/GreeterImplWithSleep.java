@@ -23,7 +23,11 @@ public class GreeterImplWithSleep extends GreeterImpl {
     @Override
     public String greetMe(String hi) {
         try {
-            Thread.sleep(2000);
+            // Sleep well beyond the 100ms ReceiveTimeout configured in
+            // cxfConduitTimeOutContext.xml to reliably trigger a timeout.
+            // A 2s sleep was too close under CI load — the HTTP response
+            // could occasionally beat the timeout timer.
+            Thread.sleep(10000);
         } catch (Exception ignore) {
 
         }
