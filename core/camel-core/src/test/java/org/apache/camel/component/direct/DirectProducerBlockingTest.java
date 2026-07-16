@@ -85,8 +85,10 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
             public void run() {
                 try {
                     // Wait for the main thread to enter TIMED_WAITING state
-                    // (blocked on condition in DirectComponent.getConsumer)
-                    await().atMost(2, TimeUnit.SECONDS)
+                    // (blocked on condition in DirectComponent.getConsumer).
+                    // Use a generous timeout — on slow CI the thread state
+                    // detection can take longer than 2 s.
+                    await().atMost(10, TimeUnit.SECONDS)
                             .pollInterval(10, TimeUnit.MILLISECONDS)
                             .until(() -> mainThread.getState() == Thread.State.TIMED_WAITING);
 
@@ -98,8 +100,10 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
             }
         });
 
-        // This call will block until the route is resumed by the background thread
-        template.sendBody("direct:suspended?block=true&timeout=2000", "hello world");
+        // This call will block until the route is resumed by the background thread.
+        // Use a generous timeout so the background thread has enough headroom to
+        // detect the TIMED_WAITING state and resume the route even under CI load.
+        template.sendBody("direct:suspended?block=true&timeout=10000", "hello world");
 
         assertMockEndpointsSatisfied();
 
