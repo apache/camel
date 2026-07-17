@@ -281,6 +281,9 @@ public class Sqs2Producer extends DefaultProducer {
     }
 
     private void addDelay(SendMessageRequest.Builder request, Exchange exchange) {
+        if (getEndpoint().getConfiguration().isDelayQueue() || getEndpoint().getConfiguration().isFifoQueue()) {
+            return;
+        }
         Integer headerValue = exchange.getIn().getHeader(Sqs2Constants.DELAY_HEADER, Integer.class);
         Integer delayValue;
         if (ObjectHelper.isEmpty(headerValue)) {
@@ -297,6 +300,9 @@ public class Sqs2Producer extends DefaultProducer {
     }
 
     private void addDelay(SendMessageBatchRequestEntry.Builder request, Exchange exchange) {
+        if (getEndpoint().getConfiguration().isDelayQueue() || getEndpoint().getConfiguration().isFifoQueue()) {
+            return;
+        }
         Integer headerValue = exchange.getIn().getHeader(Sqs2Constants.DELAY_HEADER, Integer.class);
         Integer delayValue;
         if (ObjectHelper.isEmpty(headerValue)) {
