@@ -158,6 +158,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         return doFinalize(exchange, CamelSagaStep::getCompensation, "compensation")
                 .thenApply(res -> {
                     currentStatus.set(Status.COMPENSATED);
+                    sagaService.removeSaga(sagaId);
                     return res;
                 });
     }
@@ -166,6 +167,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         return doFinalize(exchange, CamelSagaStep::getCompletion, "completion")
                 .thenApply(res -> {
                     currentStatus.set(Status.COMPLETED);
+                    sagaService.removeSaga(sagaId);
                     return res;
                 });
     }

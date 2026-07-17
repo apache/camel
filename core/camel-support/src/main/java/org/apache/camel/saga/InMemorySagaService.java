@@ -61,6 +61,10 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
         return CompletableFuture.completedFuture(coordinators.get(id));
     }
 
+    void removeSaga(String sagaId) {
+        coordinators.remove(sagaId);
+    }
+
     @Override
     public void registerStep(CamelSagaStep step) {
         // do nothing
