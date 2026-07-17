@@ -43,7 +43,7 @@ public class BlobChangeFeedOperations {
         final OffsetDateTime endTime = configurationOptionsProxy.getChangeFeedEndTime(exchange);
         final Context context = configurationOptionsProxy.getChangeFeedContext(exchange);
 
-        if (ObjectHelper.isEmpty(startTime) || ObjectHelper.isEmpty(endTime)) {
+        if (ObjectHelper.isEmpty(startTime) && ObjectHelper.isEmpty(endTime)) {
             return BlobOperationResponse.create(getEvents());
         } else {
             return BlobOperationResponse.create(getEvents(startTime, endTime, context));
