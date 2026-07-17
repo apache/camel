@@ -711,7 +711,9 @@ Sagas are long-running actions, but this does not mean that they should not have
 
 [NOTE]
 ====
-The Saga EIP implementation may have a default timeout set on all Sagas that don't specify it explicitly
+There is no default timeout on Sagas.
+If no timeout is specified, a Saga may remain open indefinitely in the case of failure.
+Always set an explicit timeout, especially when using `MANUAL` completion mode.
 ====
 
 When the timeout expires, the Saga EIP will decide to *cancel the Saga* (and compensate all participants), unless a different decision has been taken before.

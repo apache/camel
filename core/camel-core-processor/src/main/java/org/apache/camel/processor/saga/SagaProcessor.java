@@ -19,7 +19,6 @@ package org.apache.camel.processor.saga;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -45,7 +44,7 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
     private String routeId;
     private String stepId;
 
-    protected SagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
+    protected SagaProcessor(Processor childProcessor, CamelSagaService sagaService,
                             SagaCompletionMode completionMode, CamelSagaStep step) {
         super(ObjectHelper.notNull(childProcessor, "childProcessor"));
         this.sagaService = ObjectHelper.notNull(sagaService, "sagaService");
@@ -143,7 +142,7 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
 
     @Override
     public String toString() {
-        return "id";
+        return id;
     }
 
     @Override
@@ -166,7 +165,12 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
                 callback.done(false);
             }
         } else {
-            code.run();
+            try {
+                code.run();
+            } catch (Exception e) {
+                exchange.setException(e);
+                callback.done(false);
+            }
         }
     }
 

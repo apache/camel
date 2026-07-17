@@ -18,12 +18,12 @@ package org.apache.camel.saga;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -92,10 +92,9 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
                             values.put(entry.getKey(), value);
                         }
                     } catch (Exception ex) {
-                        return CompletableFuture.supplyAsync(() -> {
-                            throw new RuntimeCamelException(
-                                    "Cannot evaluate saga option '" + entry.getKey() + "'", ex);
-                        });
+                        return CompletableFuture.failedFuture(
+                                new RuntimeCamelException(
+                                        "Cannot evaluate saga option '" + entry.getKey() + "'", ex));
                     }
                 }
             }
@@ -103,12 +102,13 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         this.enlistments.add(new StepEnlistment(step, values));
 
         if (step.getTimeoutInMilliseconds().isPresent()) {
-            sagaService.getExecutorService().schedule(() -> {
+            ScheduledFuture<?> timeoutFuture = sagaService.getExecutorService().schedule(() -> {
                 boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPENSATING);
                 if (doAction) {
                     doCompensate(exchange);
                 }
             }, step.getTimeoutInMilliseconds().get(), TimeUnit.MILLISECONDS);
+            timeoutFutures.add(timeoutFuture);
         }
 
         return CompletableFuture.completedFuture(null);
@@ -119,6 +119,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPENSATING);
 
         if (doAction) {
+            cancelTimeouts();
             return doCompensate(exchange).thenApply(res -> {
                 if (!res) {
                     throw new RuntimeCamelException(
@@ -143,6 +144,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPLETING);
 
         if (doAction) {
+            cancelTimeouts();
             return doComplete(exchange).thenApply(res -> {
                 if (!res) {
                     throw new RuntimeCamelException(
@@ -164,19 +166,23 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
 
     public CompletableFuture<Boolean> doCompensate(final Exchange exchange) {
         return doFinalize(exchange, CamelSagaStep::getCompensation, "compensation")
-                .thenApply(res -> {
+                .whenComplete((res, ex) -> {
+                    if (ex != null || !Boolean.TRUE.equals(res)) {
+                        LOG.warn("Saga {} compensation did not fully succeed — manual intervention may be needed", sagaId);
+                    }
                     currentStatus.set(Status.COMPENSATED);
                     sagaService.removeSaga(sagaId);
-                    return res;
                 });
     }
 
     public CompletableFuture<Boolean> doComplete(final Exchange exchange) {
         return doFinalize(exchange, CamelSagaStep::getCompletion, "completion")
-                .thenApply(res -> {
+                .whenComplete((res, ex) -> {
+                    if (ex != null || !Boolean.TRUE.equals(res)) {
+                        LOG.warn("Saga {} completion did not fully succeed — manual intervention may be needed", sagaId);
+                    }
                     currentStatus.set(Status.COMPLETED);
                     sagaService.removeSaga(sagaId);
-                    return res;
                 });
     }
 
@@ -254,6 +260,13 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             answer.getMessage().setHeader(entry.getKey(), entry.getValue());
         }
         return answer;
+    }
+
+    private void cancelTimeouts() {
+        for (ScheduledFuture<?> future : timeoutFutures) {
+            future.cancel(false);
+        }
+        timeoutFutures.clear();
     }
 
     private <T> List<T> reversed(List<T> list) {

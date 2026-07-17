@@ -110,7 +110,7 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
         camelSagaService.registerStep(step);
 
-        SagaProcessor answer = new SagaProcessorBuilder().camelContext(camelContext).childProcessor(childProcessor)
+        SagaProcessor answer = new SagaProcessorBuilder().childProcessor(childProcessor)
                 .sagaService(camelSagaService).step(step)
                 .propagation(propagation).completionMode(completionMode).build();
         answer.setDisabled(isDisabled(camelContext, definition));

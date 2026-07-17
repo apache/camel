@@ -125,7 +125,8 @@ public class LRAClient implements Closeable {
 
             String lraEndpoint = lra.toString();
             if (step.getTimeoutInMilliseconds().isPresent()) {
-                lraEndpoint = lraEndpoint + "?" + HEADER_TIME_LIMIT + "=" + step.getTimeoutInMilliseconds().get();
+                String separator = lraEndpoint.contains("?") ? "&" : "?";
+                lraEndpoint = lraEndpoint + separator + HEADER_TIME_LIMIT + "=" + step.getTimeoutInMilliseconds().get();
             }
             HttpRequest request = prepareRequest(URI.create(lraEndpoint), exchange)
                     .setHeader(HEADER_LINK, link.toString())
@@ -138,8 +139,10 @@ public class LRAClient implements Closeable {
         }, sagaService.getExecutorService())
                 .thenCompose(Function.identity())
                 .thenApply(response -> {
-                    if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-                        throw new RuntimeCamelException("Cannot join LRA");
+                    int status = response.statusCode();
+                    if (status >= HttpURLConnection.HTTP_BAD_REQUEST) {
+                        throw new RuntimeCamelException(
+                                "Cannot join LRA " + lra + " (HTTP " + status + "): " + response.body());
                     }
 
                     return null;
@@ -155,8 +158,10 @@ public class LRAClient implements Closeable {
         CompletableFuture<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         return future.thenApply(response -> {
-            if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-                throw new RuntimeCamelException("Cannot complete LRA");
+            int status = response.statusCode();
+            if (status >= HttpURLConnection.HTTP_BAD_REQUEST) {
+                throw new RuntimeCamelException(
+                        "Cannot complete LRA " + lra + " (HTTP " + status + "): " + response.body());
             }
 
             return null;
@@ -172,8 +177,10 @@ public class LRAClient implements Closeable {
         CompletableFuture<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         return future.thenApply(response -> {
-            if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-                throw new RuntimeCamelException("Cannot compensate LRA");
+            int status = response.statusCode();
+            if (status >= HttpURLConnection.HTTP_BAD_REQUEST) {
+                throw new RuntimeCamelException(
+                        "Cannot compensate LRA " + lra + " (HTTP " + status + "): " + response.body());
             }
 
             return null;
