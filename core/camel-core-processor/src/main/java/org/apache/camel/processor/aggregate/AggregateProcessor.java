@@ -923,6 +923,9 @@ public class AggregateProcessor extends BaseProcessorSupport
 
     private void aggregateCompletionCounter(Exchange exchange) {
         String completedBy = exchange.getProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, String.class);
+        if (completedBy == null) {
+            return;
+        }
         switch (completedBy) {
             case COMPLETED_BY_INTERVAL:
                 completedByInterval.incrementAndGet();
@@ -1396,40 +1399,45 @@ public class AggregateProcessor extends BaseProcessorSupport
 
             LOG.trace("Starting completion interval task");
 
-            // trigger completion for all in the repository
-            Set<String> keys = aggregationRepository.getKeys();
+            // must catch and log exception otherwise the executor will not schedule next interval task
+            try {
+                // trigger completion for all in the repository
+                Set<String> keys = aggregationRepository.getKeys();
 
-            if (keys != null && !keys.isEmpty()) {
-                // must acquire the shared aggregation lock to be able to trigger interval completion
-                lock.lock();
-                try {
-                    for (String key : keys) {
-                        boolean stolenInterval = false;
-                        Exchange exchange = aggregationRepository.get(camelContext, key);
-                        if (exchange == null) {
-                            stolenInterval = true;
-                        } else {
-                            LOG.trace("Completion interval triggered for correlation key: {}", key);
-                            // indicate it was completed by interval
-                            exchange.setProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, COMPLETED_BY_INTERVAL);
-                            try {
-                                Exchange answer = onCompletion(key, exchange, exchange, false, false);
-                                if (answer != null) {
-                                    onSubmitCompletion(key, answer);
-                                }
-                            } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
+                if (keys != null && !keys.isEmpty()) {
+                    // must acquire the shared aggregation lock to be able to trigger interval completion
+                    lock.lock();
+                    try {
+                        for (String key : keys) {
+                            boolean stolenInterval = false;
+                            Exchange exchange = aggregationRepository.get(camelContext, key);
+                            if (exchange == null) {
                                 stolenInterval = true;
+                            } else {
+                                LOG.trace("Completion interval triggered for correlation key: {}", key);
+                                // indicate it was completed by interval
+                                exchange.setProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, COMPLETED_BY_INTERVAL);
+                                try {
+                                    Exchange answer = onCompletion(key, exchange, exchange, false, false);
+                                    if (answer != null) {
+                                        onSubmitCompletion(key, answer);
+                                    }
+                                } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
+                                    stolenInterval = true;
+                                }
+                            }
+                            if (optimisticLocking && stolenInterval) {
+                                LOG.debug(
+                                        "Another Camel instance has already processed this interval aggregation for exchange with correlation id: {}",
+                                        key);
                             }
                         }
-                        if (optimisticLocking && stolenInterval) {
-                            LOG.debug(
-                                    "Another Camel instance has already processed this interval aggregation for exchange with correlation id: {}",
-                                    key);
-                        }
+                    } finally {
+                        lock.unlock();
                     }
-                } finally {
-                    lock.unlock();
                 }
+            } catch (Exception e) {
+                LOG.warn("Error during completion interval task. This exception is ignored.", e);
             }
 
             LOG.trace("Completion interval task complete");
@@ -1549,6 +1557,9 @@ public class AggregateProcessor extends BaseProcessorSupport
                         lock.unlock();
                     }
                 }
+            } catch (Exception e) {
+                // must catch and log exception otherwise the executor will not schedule next recover task
+                LOG.warn("Error during recover task. This exception is ignored.", e);
             } finally {
                 recoveryInProgress.set(false);
                 inProgressCompleteExchangesForRecoveryTask.clear();
