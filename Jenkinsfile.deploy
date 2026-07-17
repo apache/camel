@@ -17,7 +17,7 @@
 def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
 def JDK_NAME = env.JDK_NAME ?: 'jdk_25_latest'
 
-def MAVEN_PARAMS = "-U -B -e -fae -V -Dnoassembly -Dcamel.exe.build=true "
+def MAVEN_PARAMS = "-U -B -e -fae -V -Dnoassembly "
 
 pipeline {
 
@@ -59,8 +59,7 @@ pipeline {
             when {
                 anyOf {
                     branch 'main'
-                    branch 'camel-4.18.x'
-                    branch 'camel-4.14.x'
+                    branch 'camel-4.22.x'
                 }
             }
             steps {
@@ -103,7 +102,15 @@ pipeline {
                 }
             }
             steps {
-                sh "PATH=\"${LLVM_MINGW_BIN}:\$PATH\" ./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dquickly clean deploy"
+                script {
+                    // The native camel.exe cross-compile only exists on main and the upcoming
+                    // camel-4.22.x LTS. Older LTS branches still deploy their snapshots, but
+                    // without the native build (no -Dcamel.exe.build and no llvm-mingw on PATH).
+                    def nativeExe = env.BRANCH_NAME in ['main', 'camel-4.22.x']
+                    def exeParams = nativeExe ? '-Dcamel.exe.build=true ' : ''
+                    def pathPrefix = nativeExe ? "PATH=\"${env.LLVM_MINGW_BIN}:\$PATH\" " : ''
+                    sh "${pathPrefix}./mvnw $MAVEN_PARAMS ${exeParams}-Pdeploy,apache-snapshots -Dquickly clean deploy"
+                }
             }
         }
 
