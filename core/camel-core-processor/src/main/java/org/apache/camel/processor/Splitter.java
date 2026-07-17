@@ -290,6 +290,10 @@ public class Splitter extends MulticastProcessor {
         private final Exchange original;
         // tracks individual (raw) item count, independent of grouping
         private final AtomicInteger rawItemCount = new AtomicInteger();
+        // tracks whether the primary (processing) iterator has been created;
+        // subsequent iterators (e.g. the drain in MulticastProcessor.doDone)
+        // must not update the watermark count (CAMEL-24139)
+        private boolean primaryIteratorCreated;
 
         private SplitterIterable(Exchange exchange, Object value) {
             this.original = exchange;
@@ -349,6 +353,11 @@ public class Splitter extends MulticastProcessor {
 
         @Override
         public Iterator<ProcessorExchangePair> iterator() {
+            // only the first (primary) iterator tracks watermark count;
+            // subsequent iterators (drain in doDone) must not inflate it (CAMEL-24139)
+            boolean isPrimary = !primaryIteratorCreated;
+            primaryIteratorCreated = true;
+
             return new Iterator<>() {
                 private final Processor processor = getProcessors().iterator().next();
                 private int index;
@@ -365,14 +374,6 @@ public class Splitter extends MulticastProcessor {
                     if (!answer) {
                         // we are now closed
                         closed = true;
-                        // store raw item count for watermark tracking (guard against
-                        // re-iteration in MulticastProcessor.doDone which re-creates
-                        // the iterator to release exchanges).
-                        // Use rawItemCount (individual items) not index (which counts chunks when group > 0)
-                        if (resumeStrategy != null && watermarkKey != null && watermarkExpression == null
-                                && original.getProperty(SPLIT_WATERMARK_COUNT) == null) {
-                            original.setProperty(SPLIT_WATERMARK_COUNT, rawItemCount.get());
-                        }
                         // nothing more so we need to close the expression value in case it needs to be
                         try {
                             close();
@@ -421,6 +422,11 @@ public class Splitter extends MulticastProcessor {
                                 = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
                         if (tracker != null) {
                             tracker.incrementTotalItems();
+                        }
+                        // eagerly update watermark count for items actually routed (primary iterator only)
+                        // so the drain loop in MulticastProcessor.doDone cannot inflate it (CAMEL-24139)
+                        if (isPrimary && resumeStrategy != null && watermarkKey != null && watermarkExpression == null) {
+                            original.setProperty(SPLIT_WATERMARK_COUNT, rawItemCount.get());
                         }
                         return createProcessorExchangePair(index++, processor, newExchange, route);
                     } else {
