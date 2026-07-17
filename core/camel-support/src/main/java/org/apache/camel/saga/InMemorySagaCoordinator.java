@@ -123,14 +123,20 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPENSATING);
 
         if (doAction) {
-            doCompensate(exchange);
-        } else {
-            Status status = currentStatus.get();
-            if (status != Status.COMPENSATING && status != Status.COMPENSATED) {
-                CompletableFuture<Void> res = new CompletableFuture<>();
-                res.completeExceptionally(new IllegalStateException("Cannot compensate: status is " + status));
-                return res;
-            }
+            return doCompensate(exchange).thenApply(res -> {
+                if (!res) {
+                    throw new RuntimeCamelException(
+                            "Unable to compensate all required steps of the saga " + sagaId);
+                }
+                return null;
+            });
+        }
+
+        Status status = currentStatus.get();
+        if (status != Status.COMPENSATING && status != Status.COMPENSATED) {
+            CompletableFuture<Void> res = new CompletableFuture<>();
+            res.completeExceptionally(new IllegalStateException("Cannot compensate: status is " + status));
+            return res;
         }
 
         return CompletableFuture.completedFuture(null);
@@ -141,14 +147,20 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPLETING);
 
         if (doAction) {
-            doComplete(exchange);
-        } else {
-            Status status = currentStatus.get();
-            if (status != Status.COMPLETING && status != Status.COMPLETED) {
-                CompletableFuture<Void> res = new CompletableFuture<>();
-                res.completeExceptionally(new IllegalStateException("Cannot complete: status is " + status));
-                return res;
-            }
+            return doComplete(exchange).thenApply(res -> {
+                if (!res) {
+                    throw new RuntimeCamelException(
+                            "Unable to complete all required steps of the saga " + sagaId);
+                }
+                return null;
+            });
+        }
+
+        Status status = currentStatus.get();
+        if (status != Status.COMPLETING && status != Status.COMPLETED) {
+            CompletableFuture<Void> res = new CompletableFuture<>();
+            res.completeExceptionally(new IllegalStateException("Cannot complete: status is " + status));
+            return res;
         }
 
         return CompletableFuture.completedFuture(null);
