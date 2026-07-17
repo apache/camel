@@ -611,6 +611,14 @@ Two behavior changes follow:
 * On startup the consumer tails events from the moment it starts, rather than first replaying the
   single most-recent historical event.
 
+=== camel-aws2-sqs - per-message delay skipped for delay queues and FIFO queues
+
+The SQS producer no longer sets per-message `DelaySeconds` when `delayQueue=true` (delay is queue-level)
+or when the queue is FIFO (AWS rejects per-message delay with `InvalidParameterValue`). Previously the
+`CamelAwsSqsDelayHeader` header was applied unconditionally, which could cause AWS errors on FIFO queues
+and was redundant on delay queues. If your route relied on per-message delay overrides on a delay queue,
+the override will now be silently ignored.
+
 === camel-xslt-saxon - secure processing now applied unconditionally
 
 The `secureProcessing` option (default `true`) is now applied to the Saxon `TransformerFactory`
