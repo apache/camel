@@ -53,7 +53,7 @@ public class ServicebusCloudEventDataTypeTransformer extends Transformer {
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
         if (message.getHeaders().containsKey(ServiceBusConstants.CONTENT_TYPE)) {
             headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE,
-                    message.getHeaders().containsKey(ServiceBusConstants.CONTENT_TYPE));
+                    message.getHeader(ServiceBusConstants.CONTENT_TYPE));
         } else {
             headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);
         }

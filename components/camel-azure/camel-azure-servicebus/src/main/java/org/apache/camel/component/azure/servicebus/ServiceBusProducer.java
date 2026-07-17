@@ -43,6 +43,7 @@ public class ServiceBusProducer extends DefaultProducer {
     private final Map<ServiceBusProducerOperationDefinition, Consumer<Exchange>> operationsToExecute
             = new EnumMap<>(ServiceBusProducerOperationDefinition.class);
     private ServiceBusSenderClient client;
+    private boolean clientCloseable;
     private ServiceBusConfigurationOptionsProxy configurationOptionsProxy;
     private ServiceBusSenderOperations serviceBusSenderOperations;
 
@@ -67,9 +68,13 @@ public class ServiceBusProducer extends DefaultProducer {
         super.doStart();
 
         // create the senderClient
-        client = getConfiguration().getSenderClient() != null
-                ? getConfiguration().getSenderClient()
-                : getEndpoint().getServiceBusClientFactory().createServiceBusSenderClient(getConfiguration());
+        if (getConfiguration().getSenderClient() != null) {
+            client = getConfiguration().getSenderClient();
+            clientCloseable = false;
+        } else {
+            client = getEndpoint().getServiceBusClientFactory().createServiceBusSenderClient(getConfiguration());
+            clientCloseable = true;
+        }
 
         // create the operations
         serviceBusSenderOperations = new ServiceBusSenderOperations(client);
@@ -99,9 +104,9 @@ public class ServiceBusProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (client != null) {
-            // shutdown client
+        if (clientCloseable && client != null) {
             client.close();
+            client = null;
         }
 
         super.doStop();
@@ -128,6 +133,8 @@ public class ServiceBusProducer extends DefaultProducer {
                     = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
             if (applicationProperties == null) {
                 applicationProperties = new HashMap<>();
+            } else {
+                applicationProperties = new HashMap<>(applicationProperties);
             }
             propagateHeaders(exchange, applicationProperties);
             final String correlationId = exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
@@ -159,6 +166,8 @@ public class ServiceBusProducer extends DefaultProducer {
                     = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
             if (applicationProperties == null) {
                 applicationProperties = new HashMap<>();
+            } else {
+                applicationProperties = new HashMap<>(applicationProperties);
             }
             propagateHeaders(exchange, applicationProperties);
             final String correlationId = exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
