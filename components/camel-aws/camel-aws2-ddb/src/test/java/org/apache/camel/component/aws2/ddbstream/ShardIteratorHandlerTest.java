@@ -24,11 +24,15 @@ import org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamI
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.dynamodb.model.SequenceNumberRange;
+import software.amazon.awssdk.services.dynamodb.model.Shard;
+import software.amazon.awssdk.services.dynamodb.model.ShardIteratorType;
 
 import static org.apache.camel.component.aws2.ddbstream.ShardFixtures.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ShardIteratorHandlerTest extends CamelTestSupport {
 
@@ -156,6 +160,107 @@ class ShardIteratorHandlerTest extends CamelTestSupport {
         endpoint.doStart();
 
         assertThrows(IllegalArgumentException.class, () -> underTest.getShardIterators());
+    }
+
+    @Test
+    void shouldDiscoverNewShardsAfterResharding() throws Exception {
+        // Fresh mock with only two active shards
+        AmazonDDBStreamsClientMock reshardingMock = new AmazonDDBStreamsClientMock();
+        component.getConfiguration().setAmazonDynamoDbStreamsClient(reshardingMock);
+
+        Shard shardA = Shard.builder()
+                .shardId("SHARD_A")
+                .sequenceNumberRange(SequenceNumberRange.builder()
+                        .startingSequenceNumber("100").build())
+                .build();
+        Shard shardB = Shard.builder()
+                .shardId("SHARD_B")
+                .sequenceNumberRange(SequenceNumberRange.builder()
+                        .startingSequenceNumber("200").build())
+                .build();
+        String iterA = STREAM_ARN + "|iter-A";
+        String iterB = STREAM_ARN + "|iter-B";
+
+        reshardingMock.setMockedShardAndIteratorResponse(shardA, iterA);
+        reshardingMock.setMockedShardAndIteratorResponse(shardB, iterB);
+
+        component.getConfiguration().setStreamIteratorType(StreamIteratorType.FROM_LATEST);
+        Ddb2StreamEndpoint endpoint = (Ddb2StreamEndpoint) component.createEndpoint("aws2-ddbstreams://myTable");
+        ShardIteratorHandler underTest = new ShardIteratorHandler(endpoint);
+        endpoint.doStart();
+
+        // Initial poll: both leaves are returned
+        Map<String, String> iter1 = underTest.getShardIterators();
+        assertEquals(2, iter1.size());
+        assertTrue(iter1.containsKey("SHARD_A"));
+        assertTrue(iter1.containsKey("SHARD_B"));
+
+        // Shard A closes (consumer drained it)
+        underTest.updateShardIterator("SHARD_A", null);
+
+        // Simulate resharding: A becomes closed, children A1 and A2 appear
+        Shard closedA = Shard.builder()
+                .shardId("SHARD_A")
+                .sequenceNumberRange(SequenceNumberRange.builder()
+                        .startingSequenceNumber("100").endingSequenceNumber("150").build())
+                .build();
+        Shard shardA1 = Shard.builder()
+                .shardId("SHARD_A1")
+                .parentShardId("SHARD_A")
+                .sequenceNumberRange(SequenceNumberRange.builder()
+                        .startingSequenceNumber("151").build())
+                .build();
+        Shard shardA2 = Shard.builder()
+                .shardId("SHARD_A2")
+                .parentShardId("SHARD_A")
+                .sequenceNumberRange(SequenceNumberRange.builder()
+                        .startingSequenceNumber("152").build())
+                .build();
+        String iterA1 = STREAM_ARN + "|iter-A1";
+        String iterA2 = STREAM_ARN + "|iter-A2";
+        reshardingMock.setMockedShardAndIteratorResponse(closedA, iterA);
+        reshardingMock.setMockedShardAndIteratorResponse(shardA1, iterA1);
+        reshardingMock.setMockedShardAndIteratorResponse(shardA2, iterA2);
+
+        // Next poll: tree is refreshed, children of A are discovered
+        Map<String, String> iter2 = underTest.getShardIterators();
+        assertEquals(3, iter2.size());
+        assertTrue(iter2.containsKey("SHARD_A1"));
+        assertTrue(iter2.containsKey("SHARD_A2"));
+        assertTrue(iter2.containsKey("SHARD_B"));
+        assertFalse(iter2.containsKey("SHARD_A"));
+    }
+
+    @Test
+    void shouldReturnDefensiveCopyOfShardIterators() throws Exception {
+        component.getConfiguration().setStreamIteratorType(StreamIteratorType.FROM_LATEST);
+        Ddb2StreamEndpoint endpoint = (Ddb2StreamEndpoint) component.createEndpoint("aws2-ddbstreams://myTable");
+        ShardIteratorHandler underTest = new ShardIteratorHandler(endpoint);
+        endpoint.doStart();
+
+        Map<String, String> first = underTest.getShardIterators();
+        Map<String, String> second = underTest.getShardIterators();
+
+        // Mutating the returned map must not affect internal state
+        first.put("EXTRA_SHARD", "EXTRA_ITERATOR");
+        assertFalse(second.containsKey("EXTRA_SHARD"));
+    }
+
+    @Test
+    void shouldUseTrimHorizonWhenSequenceNumberIsNull() throws Exception {
+        component.getConfiguration().setStreamIteratorType(StreamIteratorType.FROM_LATEST);
+        Ddb2StreamEndpoint endpoint = (Ddb2StreamEndpoint) component.createEndpoint("aws2-ddbstreams://myTable");
+        ShardIteratorHandler underTest = new ShardIteratorHandler(endpoint);
+        endpoint.doStart();
+
+        underTest.getShardIterators();
+        dynamoDbStreamsClient.getShardIteratorRequests().clear();
+
+        underTest.requestFreshShardIterator(SHARD_3.shardId(), null);
+
+        assertEquals(1, dynamoDbStreamsClient.getShardIteratorRequests().size());
+        assertEquals(ShardIteratorType.TRIM_HORIZON,
+                dynamoDbStreamsClient.getShardIteratorRequests().get(0).shardIteratorType());
     }
 
 }

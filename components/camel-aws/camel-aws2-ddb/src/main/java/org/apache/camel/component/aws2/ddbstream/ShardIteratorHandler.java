@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.aws2.ddbstream;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType;
 import org.slf4j.Logger;
@@ -38,6 +41,7 @@ class ShardIteratorHandler {
 
     private final Ddb2StreamEndpoint endpoint;
     private final ShardTree shardTree = new ShardTree();
+    private final Set<String> pendingClosedShards = new HashSet<>();
 
     private String streamArn;
     private Map<String, String> currentShardIterators = new HashMap<>();
@@ -52,13 +56,17 @@ class ShardIteratorHandler {
         }
         // Either return cached ones or get new ones via GetShardIterator requests.
         if (currentShardIterators.isEmpty()) {
-            DescribeStreamResponse streamDescriptionResult
-                    = getClient().describeStream(DescribeStreamRequest.builder().streamArn(streamArn).build());
-            shardTree.populate(streamDescriptionResult.streamDescription().shards());
+            shardTree.populate(describeStreamPaginated());
 
             StreamIteratorType streamIteratorType = getEndpoint().getConfiguration().getStreamIteratorType();
             currentShardIterators = getCurrentShardIterators(streamIteratorType);
         } else {
+            // Refresh the shard tree when any tracked shard has closed, so that
+            // children created by DynamoDB's shard rotation become visible.
+            if (!pendingClosedShards.isEmpty()) {
+                shardTree.populate(describeStreamPaginated());
+            }
+
             Map<String, String> childShardIterators = new HashMap<>();
             for (Entry<String, String> currentShardIterator : currentShardIterators.entrySet()) {
                 List<Shard> children = shardTree.getChildren(currentShardIterator.getKey());
@@ -71,28 +79,58 @@ class ShardIteratorHandler {
                     }
                 }
             }
+
+            for (String closedShardId : pendingClosedShards) {
+                for (Shard child : shardTree.getChildren(closedShardId)) {
+                    if (!childShardIterators.containsKey(child.shardId())) {
+                        String shardIterator = getShardIterator(child.shardId(), ShardIteratorType.TRIM_HORIZON);
+                        childShardIterators.put(child.shardId(), shardIterator);
+                    }
+                }
+            }
+            pendingClosedShards.clear();
+
             currentShardIterators = childShardIterators;
         }
         LOG.trace("Shard Iterators are: {}", currentShardIterators);
-        return currentShardIterators;
+        return new HashMap<>(currentShardIterators);
     }
 
     void updateShardIterator(String shardId, String nextShardIterator) {
         if (nextShardIterator == null) { // Shard has become inactive and all records have been consumed.
             currentShardIterators.remove(shardId);
+            pendingClosedShards.add(shardId);
         } else {
             currentShardIterators.put(shardId, nextShardIterator);
         }
     }
 
     String requestFreshShardIterator(String shardId, String lastSeenSequenceNumber) {
-        String shardIterator = getShardIterator(shardId, ShardIteratorType.AFTER_SEQUENCE_NUMBER, lastSeenSequenceNumber);
+        ShardIteratorType type = lastSeenSequenceNumber != null
+                ? ShardIteratorType.AFTER_SEQUENCE_NUMBER
+                : ShardIteratorType.TRIM_HORIZON;
+        String shardIterator = getShardIterator(shardId, type, lastSeenSequenceNumber);
         currentShardIterators.put(shardId, shardIterator);
         return shardIterator;
     }
 
     Ddb2StreamEndpoint getEndpoint() {
         return endpoint;
+    }
+
+    private List<Shard> describeStreamPaginated() {
+        List<Shard> allShards = new ArrayList<>();
+        String lastEvaluatedShardId = null;
+        do {
+            DescribeStreamRequest.Builder builder = DescribeStreamRequest.builder().streamArn(streamArn);
+            if (lastEvaluatedShardId != null) {
+                builder.exclusiveStartShardId(lastEvaluatedShardId);
+            }
+            DescribeStreamResponse response = getClient().describeStream(builder.build());
+            allShards.addAll(response.streamDescription().shards());
+            lastEvaluatedShardId = response.streamDescription().lastEvaluatedShardId();
+        } while (lastEvaluatedShardId != null);
+        return allShards;
     }
 
     private String getStreamArn() {
