@@ -203,7 +203,8 @@ public class SubscriptionHelper extends ServiceSupport {
                 if (toSubscribe != null) {
                     LOG.info("Subscribing to channels: {}", toSubscribe);
                     for (var channelName : toSubscribe) {
-                        for (var consumer : channelToConsumers.get(channelName)) {
+                        var consumers = channelToConsumers.getOrDefault(channelName, emptySet());
+                        for (var consumer : consumers) {
                             subscribe(consumer);
                         }
                     }
@@ -592,6 +593,7 @@ public class SubscriptionHelper extends ServiceSupport {
                 consumers.remove(consumer);
                 if (consumers.isEmpty()) {
                     channelToConsumers.remove(channelName);
+                    channelsToSubscribe.remove(channelName);
                 }
             }
             final ClientSessionChannel.MessageListener listener = consumerToListener.remove(consumer);

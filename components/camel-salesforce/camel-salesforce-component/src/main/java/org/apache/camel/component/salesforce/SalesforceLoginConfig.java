@@ -270,7 +270,7 @@ public class SalesforceLoginConfig {
     public String toString() {
         return "SalesforceLoginConfig[" + "instanceUrl= '" + instanceUrl + "', loginUrl='" + loginUrl + '\'' + ","
                + "clientId='" + clientId + '\'' + ", clientSecret='********'"
-               + ", refreshToken='" + refreshToken + '\'' + ", userName='" + userName + '\'' + ", password=********'"
+               + ", refreshToken='********'" + ", userName='" + userName + '\'' + ", password=********'"
                + ", keystore=********', audience='" + jwtAudience + '\'' + ","
                + ", lazyLogin=" + lazyLogin + ']';
     }

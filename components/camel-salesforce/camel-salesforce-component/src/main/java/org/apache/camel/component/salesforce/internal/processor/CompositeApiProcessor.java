@@ -115,6 +115,9 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
 
                 out.copyFromWithNewBody(in, response);
                 out.getHeaders().putAll(headers);
+                if (exception != null) {
+                    exchange.setException(exception);
+                }
             }
         } finally {
             // notify callback that exchange is done
@@ -136,6 +139,9 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
 
                 out.copyFromWithNewBody(in, response);
                 out.getHeaders().putAll(headers);
+                if (exception != null) {
+                    exchange.setException(exception);
+                }
             }
         } finally {
             // notify callback that exchange is done
@@ -157,6 +163,9 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
 
                 out.copyFromWithNewBody(in, response);
                 out.getHeaders().putAll(headers);
+                if (exception != null) {
+                    exchange.setException(exception);
+                }
             }
         } finally {
             // notify callback that exchange is done

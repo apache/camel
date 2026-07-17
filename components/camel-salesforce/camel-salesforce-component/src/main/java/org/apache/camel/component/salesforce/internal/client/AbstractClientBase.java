@@ -190,6 +190,11 @@ public abstract class AbstractClientBase extends ServiceSupport
             final List<ByteBuffer> buffers = new ArrayList<>();
             while (true) {
                 Content.Chunk chunk = inputStreamRequestContent.read();
+                if (Content.Chunk.isFailure(chunk)) {
+                    chunk.release();
+                    throw new RuntimeException(
+                            new IOException("Failed to buffer request content", chunk.getFailure()));
+                }
                 if (chunk.isLast()) {
                     break;
                 } else {
