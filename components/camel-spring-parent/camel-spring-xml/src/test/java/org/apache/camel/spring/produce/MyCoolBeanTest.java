@@ -23,6 +23,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 @ContextConfiguration
 @ExtendWith(SpringExtension.class)
 public class MyCoolBeanTest {
@@ -31,8 +33,10 @@ public class MyCoolBeanTest {
     ApplicationContext applicationContext;
 
     @Test
-    public void testProducerTemplate() throws Exception {
-        MyCoolBean cool = applicationContext.getBean("cool", MyCoolBean.class);
-        cool.sendMsg();
+    public void testProducerTemplate() {
+        assertDoesNotThrow(() -> {
+            MyCoolBean cool = applicationContext.getBean("cool", MyCoolBean.class);
+            cool.sendMsg();
+        });
     }
 }

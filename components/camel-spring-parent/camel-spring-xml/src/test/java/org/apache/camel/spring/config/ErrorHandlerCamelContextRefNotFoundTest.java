@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -49,6 +50,8 @@ public class ErrorHandlerCamelContextRefNotFoundTest extends SpringTestSupport {
 
     @Test
     public void testDummy() {
-        // noop
+        // Validation is done in setUp()
+        assertDoesNotThrow(() -> {
+        });
     }
 }

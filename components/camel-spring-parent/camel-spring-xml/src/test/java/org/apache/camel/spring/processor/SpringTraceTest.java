@@ -22,6 +22,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 @ContextConfiguration
 public class SpringTraceTest extends SpringRunWithTestSupport {
 
@@ -29,8 +31,10 @@ public class SpringTraceTest extends SpringRunWithTestSupport {
     protected ProducerTemplate camelTemplate;
 
     @Test
-    public void testTracing() throws Exception {
-        camelTemplate.sendBody("Hello");
-        camelTemplate.sendBody(1234);
+    public void testTracing() {
+        assertDoesNotThrow(() -> {
+            camelTemplate.sendBody("Hello");
+            camelTemplate.sendBody(1234);
+        });
     }
 }

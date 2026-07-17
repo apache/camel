@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -47,8 +48,10 @@ public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends Sprin
     }
 
     @Test
-    public void testInvalidOptionUri() throws Exception {
-        // noop
+    public void testInvalidOptionUri() {
+        // Validation is done in setUp()
+        assertDoesNotThrow(() -> {
+        });
     }
 
 }

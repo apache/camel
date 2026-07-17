@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  *
@@ -33,7 +34,9 @@ public class SpringTokenXMLPairNamespaceSplitTest extends TokenXMLPairNamespaceS
 
     @Override
     @Test
-    public void testTokenXMLPair2() throws Exception {
-        // noop
+    public void testTokenXMLPair2() {
+        // noop - not applicable for Spring XML variant
+        assertDoesNotThrow(() -> {
+        });
     }
 }

@@ -32,6 +32,8 @@ import org.springframework.ws.pox.dom.DomPoxMessageFactory;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     private BasicMessageFilter filter;
@@ -46,23 +48,28 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testNulls() throws Exception {
-        filter.filterConsumer(null, null);
-        filter.filterProducer(null, null);
+    public void testNulls() {
+        assertDoesNotThrow(() -> {
+            filter.filterConsumer(null, null);
+            filter.filterProducer(null, null);
+        });
     }
 
     @Test
-    public void testNullsWithExchange() throws Exception {
-        filter.filterConsumer(exchange, null);
-        filter.filterProducer(exchange, null);
+    public void testNullsWithExchange() {
+        assertDoesNotThrow(() -> {
+            filter.filterConsumer(exchange, null);
+            filter.filterProducer(exchange, null);
+        });
     }
 
     @Test
-    public void nonSoapMessageShouldBeSkipped() throws Exception {
-        DomPoxMessage domPoxMessage = new DomPoxMessageFactory().createWebServiceMessage();
-        filter.filterConsumer(exchange, domPoxMessage);
-        filter.filterProducer(exchange, domPoxMessage);
-
+    public void nonSoapMessageShouldBeSkipped() {
+        assertDoesNotThrow(() -> {
+            DomPoxMessage domPoxMessage = new DomPoxMessageFactory().createWebServiceMessage();
+            filter.filterConsumer(exchange, domPoxMessage);
+            filter.filterProducer(exchange, domPoxMessage);
+        });
     }
 
     @Test

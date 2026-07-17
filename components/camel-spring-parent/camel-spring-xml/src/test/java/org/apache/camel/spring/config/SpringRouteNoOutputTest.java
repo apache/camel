@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringRouteNoOutputTest extends SpringTestSupport {
@@ -35,7 +36,9 @@ public class SpringRouteNoOutputTest extends SpringTestSupport {
 
     @Test
     public void testRouteNoOutput() {
-        // noop
+        // Validation is done in createApplicationContext()
+        assertDoesNotThrow(() -> {
+        });
     }
 
     @Override

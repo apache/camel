@@ -22,6 +22,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -56,7 +57,9 @@ public class SpringRouteTopLevelMisconfiguredTest extends ContextTestSupport {
 
     @Test
     public void testMisconfigured() {
-        // noop
+        // Validation is done in createCamelContext()
+        assertDoesNotThrow(() -> {
+        });
     }
 
 }

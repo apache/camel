@@ -41,6 +41,7 @@ import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.query.LdapQuery;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -95,7 +96,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoDNForFunctionDrivenOperation() throws Exception {
+    public void testNoDNForFunctionDrivenOperation() {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
@@ -104,7 +105,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
 
         when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.FUNCTION_DRIVEN);
 
-        processBody(exchange, in, body);
+        assertDoesNotThrow(() -> processBody(exchange, in, body));
     }
 
     private void processBody(Exchange exchange, Message message, Map<String, Object> body) throws Exception {

@@ -20,11 +20,13 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class RabbitMQProducerSimpleIT extends RabbitMQITSupport {
 
     @Test
-    public void testProducer() throws Exception {
-        template.sendBody("direct:start", "Hello World");
+    public void testProducer() {
+        assertDoesNotThrow(() -> template.sendBody("direct:start", "Hello World"));
     }
 
     @Override
