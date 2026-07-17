@@ -20,11 +20,25 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import org.apache.camel.Message;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public final class GsonUtil {
     private static final Gson GSON = new Gson();
 
+    // Filters internal Camel headers (Camel*/camel*) embedded in the IronMQ message envelope, consistent with how
+    // other consumers apply a HeaderFilterStrategy to externally supplied headers. On this branch the in-direction
+    // Camel* filter must be set explicitly, since DefaultHeaderFilterStrategy does not filter Camel* inbound by
+    // default.
+    private static final HeaderFilterStrategy HEADER_FILTER_STRATEGY = createHeaderFilterStrategy();
+
     private GsonUtil() {
+    }
+
+    private static HeaderFilterStrategy createHeaderFilterStrategy() {
+        DefaultHeaderFilterStrategy strategy = new DefaultHeaderFilterStrategy();
+        strategy.setInFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
+        return strategy;
     }
 
     static class IronMqMessage {
@@ -57,7 +71,8 @@ public final class GsonUtil {
             for (Map.Entry<String, Object> entry : ironMqMessage.getHeaders().entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
-                if (target.getHeader(key) == null) {
+                if (target.getHeader(key) == null
+                        && !HEADER_FILTER_STRATEGY.applyFilterToExternalHeaders(key, value, target.getExchange())) {
                     target.setHeader(key, value);
                 }
             }
