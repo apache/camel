@@ -11,8 +11,8 @@ The Resilience4j EIP supports two options which are listed below:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resilienceConfiguration* | Configure the Resilience EIP. When the configuration is complete, use `end()` to return to the Resilience EIP. |  | Resilience4jConfigurationDefinition
-| *resilienceConfigurationRef* | Refers to a Resilience configuration to use for configuring the Resilience EIP. |  | String
+| *resilience4jConfiguration* | Configure the Resilience EIP. When the configuration is complete, use `end()` to return to the Resilience EIP. |  | Resilience4jConfigurationDefinition
+| *configuration* | Refers to a Resilience configuration (by name) to use for configuring the Resilience EIP. |  | String
 |===
 
 NOTE: See xref:resilience4jConfiguration-eip.adoc[Resilience4j Configuration] for all the configuration options
@@ -82,7 +82,9 @@ YAML::
 In case the calling the downstream HTTP service is failing, and an exception is thrown,
 then the circuit breaker will react and execute the fallback route instead.
 
-If there was no fallback, then the circuit breaker will throw an exception.
+If there is no fallback and the protected processor fails, the circuit breaker will throw an exception.
+However, when the circuit breaker is open and rejects a call, the message continues routing unchanged
+(no exception is thrown) unless `throwExceptionWhenHalfOpenOrOpenState` is enabled.
 
 TIP: For more information about fallback, see xref:onFallback-eip.adoc[onFallback].
 

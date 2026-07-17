@@ -315,7 +315,7 @@ public class ResilienceProcessor extends BaseProcessorSupport
     @ManagedAttribute(description = "Returns the current number of successful calls which were slower than a certain threshold.")
     public int getNumberOfSlowSuccessfulCalls() {
         if (circuitBreaker != null) {
-            return circuitBreaker.getMetrics().getNumberOfSlowCalls();
+            return circuitBreaker.getMetrics().getNumberOfSlowSuccessfulCalls();
         } else {
             return 0;
         }

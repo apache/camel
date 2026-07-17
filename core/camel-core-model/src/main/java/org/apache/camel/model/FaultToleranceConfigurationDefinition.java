@@ -166,16 +166,18 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
-     * Configures the pool size of the thread pool when timeout is enabled. Default value is 10.
+     * @deprecated No longer in use since the switch to TypedGuard API (CAMEL-21857).
      */
+    @Deprecated(since = "4.22.0")
     public FaultToleranceConfigurationDefinition timeoutPoolSize(int poolSize) {
         setTimeoutPoolSize(Integer.toString(poolSize));
         return this;
     }
 
     /**
-     * Configures the pool size of the thread pool when timeout is enabled. Supports property placeholders.
+     * @deprecated No longer in use since the switch to TypedGuard API (CAMEL-21857).
      */
+    @Deprecated(since = "4.22.0")
     public FaultToleranceConfigurationDefinition timeoutPoolSize(String poolSize) {
         setTimeoutPoolSize(poolSize);
         return this;
