@@ -22,7 +22,7 @@ import com.azure.core.management.profile.AzureProfile;
 import com.azure.identity.ClientSecretCredentialBuilder;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.resourcemanager.appservice.AppServiceManager;
-import org.apache.camel.component.azure.functions.CredentialType;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.component.azure.functions.FunctionsConfiguration;
 import org.apache.camel.util.ObjectHelper;
 

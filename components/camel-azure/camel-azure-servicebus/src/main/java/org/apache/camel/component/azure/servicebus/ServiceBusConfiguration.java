@@ -29,6 +29,7 @@ import com.azure.messaging.servicebus.ServiceBusTransactionContext;
 import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import com.azure.messaging.servicebus.models.SubQueue;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.spi.*;
 
 @UriParams

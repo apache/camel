@@ -224,6 +224,26 @@ The new behavior activates automatically when all of the following are true:
 No configuration changes are required. The existing `maxAutoLockRenewDuration` option controls how long
 Camel will continue renewing a message's lock.
 
+=== camel-azure - component-specific CredentialType enums removed
+
+The component-specific `CredentialType` enums, deprecated since Camel 4.19.0, have been removed in favor of the
+shared `org.apache.camel.component.azure.common.CredentialType` enum from `camel-azure-common`:
+
+- `org.apache.camel.component.azure.cosmosdb.CredentialType`
+- `org.apache.camel.component.azure.eventgrid.CredentialType`
+- `org.apache.camel.component.azure.eventhubs.CredentialType`
+- `org.apache.camel.component.file.azure.CredentialType` (camel-azure-files)
+- `org.apache.camel.component.azure.functions.CredentialType`
+- `org.apache.camel.component.azure.key.vault.CredentialType`
+- `org.apache.camel.component.azure.servicebus.CredentialType`
+- `org.apache.camel.component.azure.storage.blob.CredentialType`
+- `org.apache.camel.component.azure.storage.datalake.CredentialType`
+- `org.apache.camel.component.azure.storage.queue.CredentialType`
+
+Endpoint URIs are unaffected: the credential type option values keep the same names. Java code that imports one of
+the removed enums — including typed Endpoint DSL calls such as `credentialType(CredentialType)` — must switch the
+import to `org.apache.camel.component.azure.common.CredentialType`.
+
 === camel-debezium
 
 The `camel-debezium` component has upgraded from Debezium 3.5.2 to 3.6.0.

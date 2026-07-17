@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.eventgrid;
 import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
