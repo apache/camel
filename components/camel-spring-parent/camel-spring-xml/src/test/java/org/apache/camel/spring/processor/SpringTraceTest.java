@@ -26,6 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 @ContextConfiguration
 public class SpringTraceTest extends SpringRunWithTestSupport {
 
@@ -35,6 +38,11 @@ public class SpringTraceTest extends SpringRunWithTestSupport {
     @Test
     public void testTracing() throws Exception {
         CamelContext camelContext = camelTemplate.getCamelContext();
+
+        // Verify that tracing is enabled by the Spring XML configuration (trace="true")
+        assertEquals(Boolean.TRUE, camelContext.isTracing(), "Tracing should be enabled");
+        assertNotNull(camelContext.getTracer(), "Tracer should be available");
+
         MockEndpoint mock = camelContext.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(2);
 
