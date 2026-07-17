@@ -107,7 +107,7 @@ public final class PGPDataFormatUtil {
      *             {@link #findPrivateKeyWithKeyId(long, String, PGPPassphraseAccessor, String, PGPSecretKeyRingCollection)}
      *             instead (note the uppercase 'K' in 'KeyId').
      */
-    @Deprecated(since = "4.11")
+    @Deprecated(since = "4.22")
     public static PGPPrivateKey findPrivateKeyWithkeyId(
             long keyid, String passphrase, PGPPassphraseAccessor passphraseAccessor,
             String provider, PGPSecretKeyRingCollection pgpSec)
