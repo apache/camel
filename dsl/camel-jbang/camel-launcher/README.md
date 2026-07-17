@@ -25,7 +25,7 @@ that both files are staged and present in the assembled ZIP:
 mvn -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher -am verify -Dcamel.exe.build=true
 ```
 
-To build and test only the native bootstrap:
+To build and test only the native bootstraps:
 
 ```bash
 mvn -pl buildingtools,tooling/camel-exe -am verify -Dcamel.exe.build=true
@@ -63,9 +63,11 @@ java -jar camel-launcher-<version>.jar run hello.java
    # On Unix/Linux
    ./bin/camel.sh [command] [options]
    
-   # On Windows
+   # On Windows (x64)
    bin\camel.bat [command] [options]
    bin\camel-x64.exe [command] [options]
+
+   # On Windows (arm64)
    bin\camel-arm64.exe [command] [options]
    ```
 
@@ -107,3 +109,43 @@ camel-launcher-<version>.jar
 ```
 
 This structure provides better performance and reliability compared to traditional fat JARs where all classes are merged together.
+
+## Packaging (JReleaser)
+
+The `jreleaser.yml` in this module configures distribution packaging for Homebrew, SDKMAN,
+WinGet, Scoop, and Chocolatey. Custom templates live under
+`src/jreleaser/distributions/camel-cli/<packager>/`.
+
+### Homebrew Maven Central URL convention
+
+Homebrew's `FormulaAudit::Urls` rubocop
+([source](https://docs.brew.sh/rubydoc/RuboCop/Cop/UrlHelper.html)) requires Maven Central
+artifacts to use the `search.maven.org` redirector URL instead of `repo1.maven.org`:
+
+```
+# Required by Homebrew:
+https://search.maven.org/remotecontent?filepath=org/apache/camel/camel-launcher/VERSION/FILE
+
+# NOT accepted (triggers brew audit failure):
+https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/VERSION/FILE
+```
+
+Both resolve to the same artifact — `search.maven.org/remotecontent` simply redirects to
+`repo1.maven.org/maven2`. This rule applies **only to Homebrew**; the other packagers
+(SDKMAN, WinGet, Scoop, Chocolatey) use `repo1.maven.org` directly.
+
+### Native bootstrap executables
+
+The distribution zip ships `camel-x64.exe` and `camel-arm64.exe` for WinGet, which requires a
+genuine portable executable per architecture (see the WinGet `installer.yaml.tpl` override).
+
+Chocolatey and Scoop use `camel.bat` as their entry point instead. Their custom templates
+remove both exe files during install to avoid exposing unused executables on PATH.
+
+### Chocolatey ARM64
+
+Native ARM64 support in Chocolatey is not yet available. Tracking issue:
+https://github.com/chocolatey/choco/issues/1803
+
+Until resolved, the Chocolatey package runs x64 via `camel.bat` on both x64 and ARM64 Windows
+(ARM64 Windows transparently emulates x64 executables).

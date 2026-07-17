@@ -55,6 +55,7 @@
         <commons-codec-version>1.22.0</commons-codec-version>
         <jcl-over-slf4j-version>${slf4j-version}</jcl-over-slf4j-version>
         <commonmark-version>0.29.0</commonmark-version>
+        <jreleaser-plugin-version>1.25.0</jreleaser-plugin-version>
     </properties>
 
     <dependencyManagement>
@@ -328,6 +329,58 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <!--
+                JReleaser drives package-manager distribution (Homebrew, SDKMAN, WinGet, Scoop,
+                Chocolatey). It is intentionally NOT bound to any lifecycle phase and is
+                non-inherited: ordinary Camel builds never prepare or publish packages. The
+                camel-package.sh / camel-package.bat entry points invoke its goals explicitly.
+            -->
+            <plugin>
+                <groupId>org.jreleaser</groupId>
+                <artifactId>jreleaser-maven-plugin</artifactId>
+                <version>${jreleaser-plugin-version}</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <configFile>${project.basedir}/jreleaser.yml</configFile>
+                    <gitRootSearch>true</gitRootSearch>
+                </configuration>
+            </plugin>
+            <!--
+                license-maven-plugin's default .bat header style does not recognize a header
+                that follows a leading `@echo off` line (unlike its shebang-aware .sh handling),
+                so `license:format` keeps prepending a duplicate header on every run. The file
+                already carries a correct, manually-verified header, so it is excluded here
+                rather than reordering `@echo off` out of the required first line.
+
+                None of the distribution templates have a recognized comment-style mapping for
+                their compound extension (license:format only inspects the final extension,
+                ".tpl", which is unmapped), so they fail outright rather than being reformatted.
+                formula.rb.tpl, installer.yaml.tpl, and both chocolatey*.ps1.tpl files already
+                carry a manually verified, language-appropriate (#) header, so they are excluded
+                here instead of adding a repo-wide ".tpl" mapping that would assume a single
+                comment style for every future template of any language. manifest.json.tpl is
+                excluded for a different reason: JSON has no comment syntax at all, so no header
+                can be embedded; the repo-wide "**/*.json" exclude in the root pom does not reach
+                it because its final extension is ".tpl", not ".json".
+            -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <licenseSets>
+                        <licenseSet>
+                            <excludes combine.children="append">
+                                <exclude>src/jreleaser/bin/camel-package.bat</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/brew/formula.rb.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/winget/installer.yaml.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/chocolatey/tools/chocolateyinstall.ps1.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/chocolatey/tools/chocolateyuninstall.ps1.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/scoop/manifest.json.tpl</exclude>
+                            </excludes>
+                        </licenseSet>
+                    </licenseSets>
+                </configuration>
             </plugin>
         </plugins>
     </build>
