@@ -417,10 +417,13 @@ public class Splitter extends MulticastProcessor {
                             in.setBody(part);
                         }
                         // track total items for SplitResult (works in both streaming and non-streaming mode)
-                        SplitFailureTracker tracker
-                                = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
-                        if (tracker != null) {
-                            tracker.incrementTotalItems();
+                        // only when THIS splitter has thresholds configured to avoid corrupting an outer tracker
+                        if (errorThreshold > 0 || maxFailedRecords > 0) {
+                            SplitFailureTracker tracker
+                                    = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
+                            if (tracker != null) {
+                                tracker.incrementTotalItems();
+                            }
                         }
                         return createProcessorExchangePair(index++, processor, newExchange, route);
                     } else {
@@ -542,6 +545,11 @@ public class Splitter extends MulticastProcessor {
 
     @Override
     protected boolean shouldContinueOnFailure(Exchange subExchange, Exchange original, int index) {
+        // only honor the tracker when THIS splitter has thresholds configured,
+        // otherwise a leaked tracker from an outer split would silently swallow inner failures
+        if (errorThreshold <= 0 && maxFailedRecords <= 0) {
+            return super.shouldContinueOnFailure(subExchange, original, index);
+        }
         SplitFailureTracker tracker = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
         if (tracker == null) {
             return super.shouldContinueOnFailure(subExchange, original, index);
