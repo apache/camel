@@ -339,6 +339,28 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
     }
 
     @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        if (ObjectHelper.isNotEmpty(timeoutExtender)) {
+            timeoutExtender.cancel();
+            timeoutExtender = null;
+        }
+        if (ObjectHelper.isNotEmpty(scheduledFuture)) {
+            scheduledFuture.cancel(true);
+            scheduledFuture = null;
+        }
+        if (ObjectHelper.isNotEmpty(scheduledExecutor)) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(scheduledExecutor);
+            scheduledExecutor = null;
+        }
+        if (ObjectHelper.isNotEmpty(pollingTask)) {
+            pollingTask.close();
+            pollingTask = null;
+        }
+    }
+
+    @Override
     protected void doShutdown() throws Exception {
         if (ObjectHelper.isNotEmpty(timeoutExtender)) {
             timeoutExtender.cancel();
@@ -594,6 +616,10 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
             final PollingContext context = new PollingContext();
             final List<software.amazon.awssdk.services.sqs.model.Message> messages = poll(context);
+            if (context.isQueueMissing() && context.hasErrors()) {
+                context.rethrowIfFirstErrorIsRuntimeException();
+                throw new IOException("Queue %s does not exist".formatted(queueName), context.firstError());
+            }
             if (context.errorCount() == numberOfRequestsPerPoll) {
                 if (context.errorCount() == 1) {
                     context.rethrowIfFirstErrorIsRuntimeException();
