@@ -63,7 +63,11 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointSer
     private AWS2S3Configuration configuration;
     @UriParam(label = "consumer", defaultValue = "10")
     private int maxMessagesPerPoll = 10;
-    @UriParam(label = "consumer", defaultValue = "60")
+    @Deprecated
+    @UriParam(label = "consumer", defaultValue = "60",
+              description = "Set the maxConnections parameter in the S3 client configuration. This option is"
+                            + " deprecated and has no effect. Use the httpClientBuilder option on the S3 client"
+                            + " configuration to customize the HTTP client connection pool.")
     private int maxConnections = 50 + maxMessagesPerPoll;
     @UriParam(label = "consumer,advanced", description = "A pluggable in-progress repository "
                                                          + "org.apache.camel.spi.IdempotentRepository. The in-progress repository is used to account the current in "
@@ -229,13 +233,18 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointSer
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
+    /**
+     * @deprecated This option has no effect and will be removed in a future release.
+     */
+    @Deprecated
     public int getMaxConnections() {
         return maxConnections;
     }
 
     /**
-     * Set the maxConnections parameter in the S3 client configuration
+     * @deprecated This option has no effect and will be removed in a future release.
      */
+    @Deprecated
     public void setMaxConnections(int maxConnections) {
         this.maxConnections = maxConnections;
     }
