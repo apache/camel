@@ -493,7 +493,7 @@ public class KameletMain extends MainCommandLineSupport {
         TransactedDownloader.registerDownloadReifiers(this);
 
         // in case we use saga
-        SagaDownloader.registerDownloadReifiers(this);
+        SagaDownloader.registerDownloadReifiers();
 
         // if transforming DSL then disable processors as we just want to work on the model (not runtime processors)
         if (transform) {

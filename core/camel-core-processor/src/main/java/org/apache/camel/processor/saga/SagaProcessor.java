@@ -19,7 +19,6 @@ package org.apache.camel.processor.saga;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -30,7 +29,6 @@ import org.apache.camel.saga.CamelSagaStep;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.StepIdAware;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -46,7 +44,7 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
     private String routeId;
     private String stepId;
 
-    protected SagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
+    protected SagaProcessor(Processor childProcessor, CamelSagaService sagaService,
                             SagaCompletionMode completionMode, CamelSagaStep step) {
         super(ObjectHelper.notNull(childProcessor, "childProcessor"));
         this.sagaService = ObjectHelper.notNull(sagaService, "sagaService");
@@ -144,7 +142,7 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
 
     @Override
     public String toString() {
-        return "id";
+        return id;
     }
 
     @Override
@@ -167,19 +165,13 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
                 callback.done(false);
             }
         } else {
-            code.run();
+            try {
+                code.run();
+            } catch (Exception e) {
+                exchange.setException(e);
+                callback.done(false);
+            }
         }
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        ServiceHelper.startService(sagaService);
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        ServiceHelper.stopService(sagaService);
-    }
 }
