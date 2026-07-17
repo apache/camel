@@ -207,7 +207,7 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
      *
      * @param exchange the exchange
      */
-    private void processCommit(final Exchange exchange, final EventContext eventContext) {
+    private synchronized void processCommit(final Exchange exchange, final EventContext eventContext) {
         if (lastTask == null || lastTask.isExpired()) {
             lastTask = new EventHubsCheckpointUpdaterTask(eventContext, processedEvents);
             // delegate the checkpoint update to a dedicated Thread
@@ -230,7 +230,7 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
                 }
                 eventContext.updateCheckpointAsync()
                         .subscribe(unused -> LOG.debug("Processed one event..."),
-                                error -> LOG.debug("Error when updating Checkpoint: {}", error.getMessage()),
+                                error -> LOG.warn("Error when updating Checkpoint: {}", error.getMessage(), error),
                                 () -> {
                                     LOG.debug("Checkpoint updated.");
                                 });
