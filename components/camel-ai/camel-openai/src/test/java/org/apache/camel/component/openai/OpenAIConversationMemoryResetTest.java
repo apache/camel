@@ -31,19 +31,11 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Reproducer for the documented conversation history reset: "When systemMessage is set and conversationMemory is
- * enabled, the conversation history is reset" (openai-mcp.adoc, and the systemMessage option description in
- * OpenAIConfiguration).
- *
- * <p>
- * The reset in {@code OpenAIProducer.buildMessages} calls {@code in.removeHeader(conversationHistoryProperty)}, but the
- * conversation history is stored as an exchange <b>property</b>, not a header — so the reset never has any effect and
- * stale history keeps being sent to the model.
+ * Verifies the documented conversation history reset: "When systemMessage is set and conversationMemory is enabled, the
+ * conversation history is reset" (openai-mcp.adoc, and the systemMessage option description in OpenAIConfiguration).
  */
 public class OpenAIConversationMemoryResetTest extends CamelTestSupport {
 
@@ -84,24 +76,19 @@ public class OpenAIConversationMemoryResetTest extends CamelTestSupport {
             e.getIn().setBody("hello");
         });
 
-        assertNull(result.getException());
+        assertThat(result.getException()).isNull();
 
         String request = requestBody.get();
-        assertNotNull(request, "The mock should have captured the chat completion request");
+        assertThat(request)
+                .as("The mock should have captured the chat completion request")
+                .isNotNull();
 
         JsonNode messages = MAPPER.readTree(request).get("messages");
-        assertNotNull(messages);
+        assertThat(messages).isNotNull();
 
-        boolean staleEntryPresent = false;
-        for (JsonNode message : messages) {
-            if ("stale-history-entry".equals(message.path("content").asText())) {
-                staleEntryPresent = true;
-            }
-        }
-
-        assertFalse(staleEntryPresent,
-                "systemMessage + conversationMemory=true is documented to reset the conversation history, "
-                                       + "so the stale history entry must not be sent to the model. Request was: "
-                                       + request);
+        assertThat(messages)
+                .as("systemMessage + conversationMemory=true is documented to reset the conversation history, "
+                    + "so the stale history entry must not be sent to the model. Request was: %s", request)
+                .noneMatch(message -> "stale-history-entry".equals(message.path("content").asText()));
     }
 }

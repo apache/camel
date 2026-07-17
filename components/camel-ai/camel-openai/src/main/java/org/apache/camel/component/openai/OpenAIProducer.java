@@ -207,6 +207,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         Message in = exchange.getIn();
         List<ChatCompletionMessageParam> messages = new ArrayList<>();
 
+        exchange.removeProperty(PENDING_USER_MESSAGE);
+
         // If a system message is configured and conversation memory is enabled, reset
         // history
         if (ObjectHelper.isNotEmpty(config.getSystemMessage()) && config.isConversationMemory()) {

@@ -27,19 +27,12 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Reproducer for the conversation memory contract documented in openai-component.adoc ("Conversation Memory (Per
- * Exchange)"): with {@code conversationMemory=true}, a second call on the same Exchange must send the previous
- * <b>user</b> turn to the model, not only the previous assistant turn.
- *
- * <p>
- * Currently {@code OpenAIProducer.updateConversationHistory} only appends the assistant response to the history
- * property, so user messages are silently dropped from the conversation sent on subsequent turns.
+ * Verifies the conversation memory contract documented in openai-component.adoc ("Conversation Memory (Per Exchange)"):
+ * with {@code conversationMemory=true}, a second call on the same Exchange must send the previous <b>user</b> turn to
+ * the model, not only the previous assistant turn.
  */
 public class OpenAIConversationMemoryUserMessageTest extends CamelTestSupport {
 
@@ -77,33 +70,26 @@ public class OpenAIConversationMemoryUserMessageTest extends CamelTestSupport {
     void conversationHistoryMustIncludePreviousUserMessage() throws Exception {
         Exchange result = template.request("direct:conversation", e -> e.getIn().setBody("My name is Alice"));
 
-        assertNull(result.getException());
-        assertEquals("Your name is Alice.", result.getMessage().getBody(String.class));
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("Your name is Alice.");
 
         String request = secondRequestBody.get();
-        assertNotNull(request, "The mock should have captured the second chat completion request");
+        assertThat(request)
+                .as("The mock should have captured the second chat completion request")
+                .isNotNull();
 
         JsonNode messages = MAPPER.readTree(request).get("messages");
-        assertNotNull(messages);
+        assertThat(messages).isNotNull();
 
-        boolean previousUserTurnPresent = false;
-        boolean previousAssistantTurnPresent = false;
-        for (JsonNode message : messages) {
-            String role = message.path("role").asText();
-            String content = message.path("content").asText();
-            if ("user".equals(role) && "My name is Alice".equals(content)) {
-                previousUserTurnPresent = true;
-            }
-            if ("assistant".equals(role) && "Nice to meet you!".equals(content)) {
-                previousAssistantTurnPresent = true;
-            }
-        }
-
-        assertTrue(previousAssistantTurnPresent,
-                "The previous assistant turn must be part of the conversation history sent to the model");
-        assertTrue(previousUserTurnPresent,
-                "The previous user turn must be part of the conversation history sent to the model, "
-                                            + "otherwise the model sees assistant answers without the questions that produced them. Request was: "
-                                            + request);
+        assertThat(messages)
+                .as("The previous assistant turn must be part of the conversation history sent to the model")
+                .anyMatch(message -> "assistant".equals(message.path("role").asText())
+                        && "Nice to meet you!".equals(message.path("content").asText()));
+        assertThat(messages)
+                .as("The previous user turn must be part of the conversation history sent to the model, "
+                    + "otherwise the model sees assistant answers without the questions that produced them. Request was: %s",
+                        request)
+                .anyMatch(message -> "user".equals(message.path("role").asText())
+                        && "My name is Alice".equals(message.path("content").asText()));
     }
 }

@@ -122,6 +122,18 @@ String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 ----
 
+=== camel-openai
+
+The `conversationMemory` feature on the `chat-completion` operation has two behavior fixes:
+
+* User messages are now stored in the `CamelOpenAIConversationHistory` exchange property (configurable via
+  `conversationHistoryProperty`) alongside assistant responses. Previously only assistant turns were appended,
+  so code that reads the history property directly will see roughly twice as many entries (alternating user
+  and assistant messages) compared to Camel 4.21 and earlier.
+* When `systemMessage` is set together with `conversationMemory=true`, the conversation history is now
+  correctly cleared via `exchange.removeProperty()`. Previously `removeHeader()` was used on a property that
+  is stored as an exchange property, so the documented reset had no effect and stale history was kept.
+
 === camel-management - Throughput MBean attribute uses EWMA smoothing
 
 The `Throughput` attribute on the `ManagedPerformanceCounter` JMX MBean now reports an EWMA
