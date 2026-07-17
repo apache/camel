@@ -332,6 +332,9 @@ public class MulticastProcessor extends BaseProcessorSupport
                 clone = new ShareUnitOfWorkAggregationStrategy(clone);
             }
             setAggregationStrategyOnExchange(exchange, clone);
+        } else if (isShareUnitOfWork() && strategy != null
+                && !(strategy instanceof ShareUnitOfWorkAggregationStrategy)) {
+            setAggregationStrategyOnExchange(exchange, new ShareUnitOfWorkAggregationStrategy(strategy));
         }
 
         if (synchronous) {
