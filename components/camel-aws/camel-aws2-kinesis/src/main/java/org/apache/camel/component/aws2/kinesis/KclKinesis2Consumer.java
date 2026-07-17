@@ -92,6 +92,12 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getDynamoDbAsyncClient())) {
             DynamoDbAsyncClientBuilder clientBuilder = DynamoDbAsyncClient.builder();
             if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
+                    && ObjectHelper.isNotEmpty(configuration.getSecretKey())
+                    && ObjectHelper.isNotEmpty(configuration.getSessionToken())) {
+                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider
+                        .create(AwsSessionCredentials.create(configuration.getAccessKey(), configuration.getSecretKey(),
+                                configuration.getSessionToken())));
+            } else if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
                     && ObjectHelper.isNotEmpty(configuration.getSecretKey())) {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey())));
@@ -99,12 +105,6 @@ public class KclKinesis2Consumer extends DefaultConsumer {
                 clientBuilder = clientBuilder
                         .credentialsProvider(
                                 ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
-            } else if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
-                    && ObjectHelper.isNotEmpty(configuration.getSecretKey())
-                    && ObjectHelper.isNotEmpty(configuration.getSessionToken())) {
-                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider
-                        .create(AwsSessionCredentials.create(configuration.getAccessKey(), configuration.getSecretKey(),
-                                configuration.getSessionToken())));
             }
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                 clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
@@ -117,6 +117,12 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getCloudWatchAsyncClient())) {
             CloudWatchAsyncClientBuilder clientBuilder = CloudWatchAsyncClient.builder();
             if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
+                    && ObjectHelper.isNotEmpty(configuration.getSecretKey())
+                    && ObjectHelper.isNotEmpty(configuration.getSessionToken())) {
+                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider
+                        .create(AwsSessionCredentials.create(configuration.getAccessKey(), configuration.getSecretKey(),
+                                configuration.getSessionToken())));
+            } else if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
                     && ObjectHelper.isNotEmpty(configuration.getSecretKey())) {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey())));
@@ -124,12 +130,6 @@ public class KclKinesis2Consumer extends DefaultConsumer {
                 clientBuilder = clientBuilder
                         .credentialsProvider(
                                 ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
-            } else if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
-                    && ObjectHelper.isNotEmpty(configuration.getSecretKey())
-                    && ObjectHelper.isNotEmpty(configuration.getSessionToken())) {
-                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider
-                        .create(AwsSessionCredentials.create(configuration.getAccessKey(), configuration.getSecretKey(),
-                                configuration.getSessionToken())));
             }
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                 clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
@@ -193,16 +193,19 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         public void processRecords(ProcessRecordsInput processRecordsInput) {
             try {
                 LOG.debug("Processing {} record(s)", processRecordsInput.records().size());
-                processRecordsInput.records()
-                        .forEach(r -> {
-                            try {
-                                processor.process(createExchange(r, shardId));
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-            } catch (Throwable t) {
-                LOG.error("Caught throwable while processing records. Aborting.");
+                for (KinesisClientRecord record : processRecordsInput.records()) {
+                    processor.process(createExchange(record, shardId));
+                }
+                // Checkpoint only after the whole batch has been processed successfully, so that a
+                // processing failure leaves the records to be redelivered from the last checkpoint
+                // rather than being silently skipped.
+                processRecordsInput.checkpointer().checkpoint();
+            } catch (ShutdownException | InvalidStateException e) {
+                LOG.warn("Unable to checkpoint after processing Kinesis records", e);
+            } catch (Exception e) {
+                // Do not checkpoint: let KCL redeliver this batch from the last successful checkpoint.
+                KclKinesis2Consumer.this.getExceptionHandler()
+                        .handleException("Error while processing Kinesis records; batch will be retried", e);
             }
         }
 
