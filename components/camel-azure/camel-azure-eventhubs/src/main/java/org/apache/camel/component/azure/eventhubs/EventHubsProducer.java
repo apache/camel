@@ -27,6 +27,7 @@ import org.apache.camel.support.DefaultAsyncProducer;
 public class EventHubsProducer extends DefaultAsyncProducer {
 
     private EventHubProducerAsyncClient producerAsyncClient;
+    private boolean clientCloseable;
     private EventHubsProducerOperations producerOperations;
 
     public EventHubsProducer(final Endpoint endpoint) {
@@ -40,8 +41,10 @@ public class EventHubsProducer extends DefaultAsyncProducer {
         EventHubsConfiguration configuration = getConfiguration();
         producerAsyncClient = configuration.getProducerAsyncClient();
         if (producerAsyncClient == null) {
-            // create the client
             producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
+            clientCloseable = true;
+        } else {
+            clientCloseable = false;
         }
 
         // create our operations
@@ -62,8 +65,7 @@ public class EventHubsProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (producerAsyncClient != null) {
-            // shutdown async client
+        if (clientCloseable && producerAsyncClient != null) {
             producerAsyncClient.close();
             producerAsyncClient = null;
         }
