@@ -23,6 +23,7 @@ import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -131,7 +132,7 @@ public class SObjectNodeTest extends CompositeTestBase {
 
     @Test
     public void shouldCreateNodeWithoutChildRecords() {
-        new SObjectNode(new SObjectTree(), simpleAccount);
+        assertDoesNotThrow(() -> new SObjectNode(new SObjectTree(), simpleAccount));
     }
 
     @Test

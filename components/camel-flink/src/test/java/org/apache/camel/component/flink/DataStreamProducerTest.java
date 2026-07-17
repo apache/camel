@@ -30,6 +30,8 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class DataStreamProducerTest extends CamelTestSupport {
 
     static StreamExecutionEnvironment streamExecutionEnvironment = Flinks.createStreamExecutionEnvironment();
@@ -41,14 +43,16 @@ public class DataStreamProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteDataStreamCallback() {
-        template.sendBodyAndHeader(flinkDataStreamUri, null, FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
-                new VoidDataStreamCallback() {
-                    @Override
-                    public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
-                        // Just verify the callback is executed
-                        ds.print();
-                    }
-                });
+        assertDoesNotThrow(() -> {
+            template.sendBodyAndHeader(flinkDataStreamUri, null, FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
+                    new VoidDataStreamCallback() {
+                        @Override
+                        public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
+                            // Just verify the callback is executed
+                            ds.print();
+                        }
+                    });
+        });
     }
 
     @Test

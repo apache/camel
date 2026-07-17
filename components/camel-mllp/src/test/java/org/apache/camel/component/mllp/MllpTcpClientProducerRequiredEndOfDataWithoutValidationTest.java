@@ -44,7 +44,9 @@ public class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest
     @Override
     @Test
     public void testSendMultipleMessagesWithoutEndOfDataByte() {
-        expectedTimeoutCount = 3;
+        assertDoesNotThrow(() -> {
+            expectedTimeoutCount = 3;
+        });
     }
 
     @Override

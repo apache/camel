@@ -25,42 +25,50 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 @DirtiesContext
 public class SnakeYAMLSpringTest extends CamelSpringTestSupport {
     @Test
-    public void testMarshalAndUnmarshalMap() throws Exception {
-        Map<String, String> in = new HashMap<>();
-        in.put("name", "Camel");
+    public void testMarshalAndUnmarshalMap() {
+        assertDoesNotThrow(() -> {
+            Map<String, String> in = new HashMap<>();
+            in.put("name", "Camel");
 
-        SnakeYAMLTestHelper.marshalAndUnmarshal(
-                context(),
-                SnakeYAMLTestHelper.createTestMap(),
-                "mock:reverse",
-                "direct:in",
-                "direct:back",
-                "{name: Camel}");
+            SnakeYAMLTestHelper.marshalAndUnmarshal(
+                    context(),
+                    SnakeYAMLTestHelper.createTestMap(),
+                    "mock:reverse",
+                    "direct:in",
+                    "direct:back",
+                    "{name: Camel}");
+        });
     }
 
     @Test
-    public void testMarshalAndUnmarshalPojo() throws Exception {
-        SnakeYAMLTestHelper.marshalAndUnmarshal(
-                context(),
-                SnakeYAMLTestHelper.createTestPojo(),
-                "mock:reversePojo",
-                "direct:inPojo",
-                "direct:backPojo",
-                "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}");
+    public void testMarshalAndUnmarshalPojo() {
+        assertDoesNotThrow(() -> {
+            SnakeYAMLTestHelper.marshalAndUnmarshal(
+                    context(),
+                    SnakeYAMLTestHelper.createTestPojo(),
+                    "mock:reversePojo",
+                    "direct:inPojo",
+                    "direct:backPojo",
+                    "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}");
+        });
     }
 
     @Test
-    public void testMarshalAndUnmarshalPojoWithPrettyFlow() throws Exception {
-        SnakeYAMLTestHelper.marshalAndUnmarshal(
-                context(),
-                SnakeYAMLTestHelper.createTestPojo(),
-                "mock:reversePojoWithPrettyFlow",
-                "direct:inPojoWithPrettyFlow",
-                "direct:backPojoWithPrettyFlow",
-                "!!org.apache.camel.component.snakeyaml.model.TestPojo {\n  name: Camel\n}");
+    public void testMarshalAndUnmarshalPojoWithPrettyFlow() {
+        assertDoesNotThrow(() -> {
+            SnakeYAMLTestHelper.marshalAndUnmarshal(
+                    context(),
+                    SnakeYAMLTestHelper.createTestPojo(),
+                    "mock:reversePojoWithPrettyFlow",
+                    "direct:inPojoWithPrettyFlow",
+                    "direct:backPojoWithPrettyFlow",
+                    "!!org.apache.camel.component.snakeyaml.model.TestPojo {\n  name: Camel\n}");
+        });
     }
 
     @Override

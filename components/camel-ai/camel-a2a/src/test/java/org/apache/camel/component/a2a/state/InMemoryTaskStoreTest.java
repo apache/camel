@@ -44,6 +44,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class InMemoryTaskStoreTest {
     private InMemoryTaskStore store;
@@ -174,12 +175,14 @@ class InMemoryTaskStoreTest {
 
     @Test
     void subscribeAndUnsubscribe() {
-        store.put("t1", createTask("t1", TaskState.WORKING));
-        A2AStreamEmitter emitter = createNoOpEmitter();
-        A2ATaskSubscriber subscriber = new StreamSubscriber(emitter);
+        assertDoesNotThrow(() -> {
+            store.put("t1", createTask("t1", TaskState.WORKING));
+            A2AStreamEmitter emitter = createNoOpEmitter();
+            A2ATaskSubscriber subscriber = new StreamSubscriber(emitter);
 
-        store.addSubscriber("t1", subscriber);
-        store.removeSubscriber("t1", subscriber);
+            store.addSubscriber("t1", subscriber);
+            store.removeSubscriber("t1", subscriber);
+        });
     }
 
     @Test

@@ -25,6 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
 
 public class Plc4XProducerTest {
@@ -50,35 +51,40 @@ public class Plc4XProducerTest {
     }
 
     @Test
-    public void process() throws Exception {
-        when(testExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
-        sut.process(testExchange);
-        when(testExchange.getPattern()).thenReturn(ExchangePattern.InOut);
-        sut.process(testExchange);
-        when(testExchange.getIn().getBody()).thenReturn(2);
-
+    public void process() {
+        assertDoesNotThrow(() -> {
+            when(testExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
+            sut.process(testExchange);
+            when(testExchange.getPattern()).thenReturn(ExchangePattern.InOut);
+            sut.process(testExchange);
+            when(testExchange.getIn().getBody()).thenReturn(2);
+        });
     }
 
     @Test
     public void processAsync() {
-        sut.process(testExchange, doneSync -> {
-        });
-        when(testExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
-        sut.process(testExchange, doneSync -> {
-        });
-        when(testExchange.getPattern()).thenReturn(ExchangePattern.InOut);
-        sut.process(testExchange, doneSync -> {
+        assertDoesNotThrow(() -> {
+            sut.process(testExchange, doneSync -> {
+            });
+            when(testExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
+            sut.process(testExchange, doneSync -> {
+            });
+            when(testExchange.getPattern()).thenReturn(ExchangePattern.InOut);
+            sut.process(testExchange, doneSync -> {
+            });
         });
     }
 
     @Test
-    public void doStop() throws Exception {
-        sut.doStop();
+    public void doStop() {
+        assertDoesNotThrow(() -> sut.doStop());
     }
 
     @Test
-    public void doStopOpenRequest() throws Exception {
-        sut.openRequests.incrementAndGet();
-        sut.doStop();
+    public void doStopOpenRequest() {
+        assertDoesNotThrow(() -> {
+            sut.openRequests.incrementAndGet();
+            sut.doStop();
+        });
     }
 }

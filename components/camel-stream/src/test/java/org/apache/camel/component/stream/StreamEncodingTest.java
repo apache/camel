@@ -20,6 +20,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 /**
  * Unit test for encoding option
  */
@@ -27,10 +29,12 @@ public class StreamEncodingTest extends CamelTestSupport {
 
     @Test
     public void testStringContent() {
-        // include a UTF-8 char in the text \u0E08 is a Thai elephant
-        String body = "Hello Thai Elephant \u0E08";
+        assertDoesNotThrow(() -> {
+            // include a UTF-8 char in the text \u0E08 is a Thai elephant
+            String body = "Hello Thai Elephant \u0E08";
 
-        template.sendBody("direct:in", body);
+            template.sendBody("direct:in", body);
+        });
     }
 
     @Override

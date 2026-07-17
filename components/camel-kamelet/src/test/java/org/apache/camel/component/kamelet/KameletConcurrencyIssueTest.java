@@ -26,13 +26,17 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 @Disabled("Manual test")
 public class KameletConcurrencyIssueTest extends CamelTestSupport {
 
     @Test
-    public void testConcurrency() throws Exception {
-        // check there are no exception throw during creating kamelets
-        Thread.sleep(120000);
+    public void testConcurrency() {
+        assertDoesNotThrow(() -> {
+            // check there are no exception throw during creating kamelets
+            Thread.sleep(120000);
+        });
     }
 
     @Override

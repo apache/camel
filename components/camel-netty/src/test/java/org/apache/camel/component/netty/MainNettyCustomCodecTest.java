@@ -21,6 +21,8 @@ import org.apache.camel.main.Main;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class MainNettyCustomCodecTest extends BaseNettyTest {
 
     // use reaadble bytes
@@ -28,37 +30,40 @@ public class MainNettyCustomCodecTest extends BaseNettyTest {
     private byte[] data = new byte[] { 65, 66, 67, 68, 69, 70, 71, 72, 73 };
 
     @Test
-    public void testMain() throws Exception {
-        Main main = new Main();
-        main.bind("myCustomDecoder", MyCustomCodec.createMyCustomDecoder());
-        main.bind("myCustomDecoder2", MyCustomCodec.createMyCustomDecoder2());
-        main.bind("myCustomEncoder", MyCustomCodec.createMyCustomEncoder());
-        main.addInitialProperty("camel.component.netty.encoders", "#myCustomEncoder");
-        main.addInitialProperty("camel.component.netty.decoders", "#myCustomDecoder,#myCustomDecoder2");
-        main.configure().addRoutesBuilder(new RouteBuilder() {
-            @Override
-            public void configure() {
-                String uri = "netty:tcp://localhost:" + getPort() + "?disconnect=true&sync=false&allowDefaultCodec=false";
+    public void testMain() {
+        assertDoesNotThrow(() -> {
+            Main main = new Main();
+            main.bind("myCustomDecoder", MyCustomCodec.createMyCustomDecoder());
+            main.bind("myCustomDecoder2", MyCustomCodec.createMyCustomDecoder2());
+            main.bind("myCustomEncoder", MyCustomCodec.createMyCustomEncoder());
+            main.addInitialProperty("camel.component.netty.encoders", "#myCustomEncoder");
+            main.addInitialProperty("camel.component.netty.decoders", "#myCustomDecoder,#myCustomDecoder2");
+            main.configure().addRoutesBuilder(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    String uri
+                            = "netty:tcp://localhost:" + getPort() + "?disconnect=true&sync=false&allowDefaultCodec=false";
 
-                from(uri).to("log:input")
-                        .process(e -> {
-                            byte[] local = e.getMessage().getBody(byte[].class);
-                            boolean eq = ObjectHelper.equalByteArray(data, local);
-                            if (!eq) {
-                                throw new IllegalArgumentException("Data received is not as expected");
-                            }
-                        });
+                    from(uri).to("log:input")
+                            .process(e -> {
+                                byte[] local = e.getMessage().getBody(byte[].class);
+                                boolean eq = ObjectHelper.equalByteArray(data, local);
+                                if (!eq) {
+                                    throw new IllegalArgumentException("Data received is not as expected");
+                                }
+                            });
 
-                from("timer:once?repeatCount=1")
-                        .setBody().constant(data_eol) // include null terminator
-                        .to(uri);
-            }
+                    from("timer:once?repeatCount=1")
+                            .setBody().constant(data_eol) // include null terminator
+                            .to(uri);
+                }
+            });
+            main.configure().withDurationMaxMessages(2);
+            main.configure().withDurationMaxSeconds(5);
+            main.run();
+
+            main.stop();
         });
-        main.configure().withDurationMaxMessages(2);
-        main.configure().withDurationMaxSeconds(5);
-        main.run();
-
-        main.stop();
     }
 
 }

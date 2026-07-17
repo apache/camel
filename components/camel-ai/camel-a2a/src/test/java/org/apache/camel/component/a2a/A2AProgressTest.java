@@ -35,6 +35,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * Tests for {@link A2AProgress} safety behavior. The full store integration (findStore via endpoint) is covered by
@@ -59,37 +60,47 @@ class A2AProgressTest {
 
     @Test
     void emitWithoutTaskIdDoesNotThrow() {
-        Exchange exchange = new DefaultExchange(context);
-        A2AProgress.emit(exchange, "safe message");
+        assertDoesNotThrow(() -> {
+            Exchange exchange = new DefaultExchange(context);
+            A2AProgress.emit(exchange, "safe message");
+        });
     }
 
     @Test
     void emitWithoutStoreDoesNotThrow() {
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(A2AConstants.TASK_ID, "t1");
-        A2AProgress.emit(exchange, "safe message");
+        assertDoesNotThrow(() -> {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setHeader(A2AConstants.TASK_ID, "t1");
+            A2AProgress.emit(exchange, "safe message");
+        });
     }
 
     @Test
     void emitWithExplicitStateDoesNotThrow() {
-        Exchange exchange = new DefaultExchange(context);
-        A2AProgress.emit(exchange, TaskState.INPUT_REQUIRED, "need info");
+        assertDoesNotThrow(() -> {
+            Exchange exchange = new DefaultExchange(context);
+            A2AProgress.emit(exchange, TaskState.INPUT_REQUIRED, "need info");
+        });
     }
 
     @Test
     void emitArtifactWithoutStoreDoesNotThrow() {
-        Exchange exchange = new DefaultExchange(context);
-        A2AProgress.emitArtifact(exchange, Artifact.builder().name("test").build(), false, true);
+        assertDoesNotThrow(() -> {
+            Exchange exchange = new DefaultExchange(context);
+            A2AProgress.emitArtifact(exchange, Artifact.builder().name("test").build(), false, true);
+        });
     }
 
     @Test
     void emitMessageWithoutStoreDoesNotThrow() {
-        Exchange exchange = new DefaultExchange(context);
-        Message msg = Message.builder()
-                .role(Message.Role.ROLE_AGENT)
-                .parts(List.of(new TextPart("hello")))
-                .build();
-        A2AProgress.emitMessage(exchange, msg);
+        assertDoesNotThrow(() -> {
+            Exchange exchange = new DefaultExchange(context);
+            Message msg = Message.builder()
+                    .role(Message.Role.ROLE_AGENT)
+                    .parts(List.of(new TextPart("hello")))
+                    .build();
+            A2AProgress.emitMessage(exchange, msg);
+        });
     }
 
     @Test

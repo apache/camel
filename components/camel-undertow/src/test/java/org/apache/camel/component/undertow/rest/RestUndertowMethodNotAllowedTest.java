@@ -23,6 +23,7 @@ import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -40,8 +41,10 @@ public class RestUndertowMethodNotAllowedTest extends BaseUndertowTest {
 
     @Test
     public void testGetMethodAllowed() {
-        template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD,
-                "GET");
+        assertDoesNotThrow(() -> {
+            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD,
+                    "GET");
+        });
     }
 
     @Override

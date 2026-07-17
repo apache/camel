@@ -34,6 +34,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -96,8 +97,10 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testDeleteFolder() {
-        // using String message body for single parameter "folderId"
-        requestBody("direct://DELETEFOLDER", testFolder.getID());
+        assertDoesNotThrow(() -> {
+            // using String message body for single parameter "folderId"
+            requestBody("direct://DELETEFOLDER", testFolder.getID());
+        });
     }
 
     @Test

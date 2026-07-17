@@ -20,6 +20,7 @@ import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BlobConsumerTest extends CamelTestSupport {
@@ -41,61 +42,65 @@ class BlobConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    void testMoveAfterReadWithDestinationContainerShouldNotFail() throws Exception {
-        context.getRegistry().bind("creds", storageSharedKeyCredential());
+    void testMoveAfterReadWithDestinationContainerShouldNotFail() {
+        assertDoesNotThrow(() -> {
+            context.getRegistry().bind("creds", storageSharedKeyCredential());
 
-        final BlobEndpoint endpoint = (BlobEndpoint) context
-                .getEndpoint(
-                        "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL"
-                             + "&moveAfterRead=true&destinationContainer=archive");
+            final BlobEndpoint endpoint = (BlobEndpoint) context
+                    .getEndpoint(
+                            "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL"
+                                 + "&moveAfterRead=true&destinationContainer=archive");
 
-        BlobConsumer consumer = (BlobConsumer) endpoint.createConsumer(exchange -> {
-        });
+            BlobConsumer consumer = (BlobConsumer) endpoint.createConsumer(exchange -> {
+            });
 
-        // Should not throw - the consumer should start successfully
-        // We can't fully test the move functionality without a real Azure connection,
-        // but at least validation should pass
-        try {
-            consumer.start();
-        } catch (Exception e) {
-            // Expected to fail later when trying to connect to Azure, but not on validation
-            if (e instanceof IllegalArgumentException) {
-                throw e;
-            }
-        } finally {
+            // Should not throw - the consumer should start successfully
+            // We can't fully test the move functionality without a real Azure connection,
+            // but at least validation should pass
             try {
-                consumer.stop();
-            } catch (Exception ignored) {
+                consumer.start();
+            } catch (Exception e) {
+                // Expected to fail later when trying to connect to Azure, but not on validation
+                if (e instanceof IllegalArgumentException) {
+                    throw e;
+                }
+            } finally {
+                try {
+                    consumer.stop();
+                } catch (Exception ignored) {
+                }
             }
-        }
+        });
     }
 
     @Test
-    void testDeleteAfterReadConfigured() throws Exception {
-        context.getRegistry().bind("creds", storageSharedKeyCredential());
+    void testDeleteAfterReadConfigured() {
+        assertDoesNotThrow(() -> {
+            context.getRegistry().bind("creds", storageSharedKeyCredential());
 
-        final BlobEndpoint endpoint = (BlobEndpoint) context
-                .getEndpoint(
-                        "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL"
-                             + "&deleteAfterRead=true");
+            final BlobEndpoint endpoint = (BlobEndpoint) context
+                    .getEndpoint(
+                            "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL"
+                                 + "&deleteAfterRead=true");
 
-        BlobConsumer consumer = (BlobConsumer) endpoint.createConsumer(exchange -> {
-        });
+            BlobConsumer consumer = (BlobConsumer) endpoint.createConsumer(exchange -> {
+            });
 
-        // Should start without validation errors - deleteAfterRead doesn't require extra config
-        try {
-            consumer.start();
-        } catch (Exception e) {
-            // Expected to fail later when trying to connect to Azure, but not on validation
-            if (e instanceof IllegalArgumentException) {
-                throw e;
-            }
-        } finally {
+            // Should start without validation errors - deleteAfterRead doesn't require extra config
             try {
-                consumer.stop();
-            } catch (Exception ignored) {
+                consumer.start();
+            } catch (Exception e) {
+                // Expected to fail later when trying to connect to Azure, but not on validation
+                if (e instanceof IllegalArgumentException) {
+                    throw e;
+                }
+            } finally {
+                try {
+                    consumer.stop();
+                } catch (Exception ignored) {
+                }
             }
-        }
+        });
     }
 
     private StorageSharedKeyCredential storageSharedKeyCredential() {

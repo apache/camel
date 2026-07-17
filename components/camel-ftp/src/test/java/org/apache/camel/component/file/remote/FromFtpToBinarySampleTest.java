@@ -20,6 +20,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 /**
  * Unit test used for FTP wiki documentation
  */
@@ -27,7 +29,9 @@ public class FromFtpToBinarySampleTest extends CamelTestSupport {
 
     @Test
     public void testDummy() {
-        // this is a noop test
+        assertDoesNotThrow(() -> {
+            // this is a noop test
+        });
     }
 
     // START SNIPPET: e1

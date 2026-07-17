@@ -37,6 +37,7 @@ import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -105,9 +106,11 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
     }
 
     @Test
-    public void schemaValidationDisabledServerTest() throws Exception {
-        // invoke the service with a non-valid message
-        invokeService(serviceAddressValidationDisabled, RandomStringUtils.secure().next(40, true, true));
+    public void schemaValidationDisabledServerTest() {
+        assertDoesNotThrow(() -> {
+            // invoke the service with a non-valid message
+            invokeService(serviceAddressValidationDisabled, RandomStringUtils.secure().next(40, true, true));
+        });
     }
 
     @Test

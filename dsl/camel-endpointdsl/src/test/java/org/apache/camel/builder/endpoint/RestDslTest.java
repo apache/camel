@@ -23,6 +23,8 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class RestDslTest extends BaseEndpointDslTest {
 
     @RegisterExtension
@@ -44,21 +46,23 @@ public class RestDslTest extends BaseEndpointDslTest {
     }
 
     @Test
-    public void testRestDsl() throws Exception {
-        context.start();
+    public void testRestDsl() {
+        assertDoesNotThrow(() -> {
+            context.start();
 
-        context.addRoutes(new EndpointRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                rest("/api")
-                    .get("name").to(direct("username").advanced().lazyStartProducer(true));
+            context.addRoutes(new EndpointRouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    rest("/api")
+                        .get("name").to(direct("username").advanced().lazyStartProducer(true));
 
-                from(direct("username"))
-                        .setBody(constant("scott"));
-            }
+                    from(direct("username"))
+                            .setBody(constant("scott"));
+                }
+            });
+
+            context.stop();
         });
-
-        context.stop();
     }
 
 }

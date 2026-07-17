@@ -88,11 +88,13 @@ class TokenCacheFactoryTest {
 
     @Test
     void testNoOpCacheClear() {
-        TokenCache cache = TokenCacheFactory.createCache(TokenCacheType.NONE, 60, 0, false);
+        assertDoesNotThrow(() -> {
+            TokenCache cache = TokenCacheFactory.createCache(TokenCacheType.NONE, 60, 0, false);
 
-        // Should not throw exception
-        cache.clear();
-        cache.remove("any-token");
-        cache.close();
+            // Should not throw exception
+            cache.clear();
+            cache.remove("any-token");
+            cache.close();
+        });
     }
 }

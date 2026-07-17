@@ -25,6 +25,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GroovyLogEipTest extends CamelTestSupport {
@@ -38,7 +39,9 @@ public class GroovyLogEipTest extends CamelTestSupport {
 
     @Test
     public void testLogOkay() {
-        template.sendBody("direct:start", 3);
+        assertDoesNotThrow(() -> {
+            template.sendBody("direct:start", 3);
+        });
     }
 
     @Test

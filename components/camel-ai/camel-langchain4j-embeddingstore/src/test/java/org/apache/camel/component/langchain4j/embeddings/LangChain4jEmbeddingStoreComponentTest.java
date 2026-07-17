@@ -29,6 +29,8 @@ import org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddin
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
 
     @Override
@@ -52,15 +54,15 @@ public class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
 
     @Test
     public void testSimpleEmbedding() {
+        assertDoesNotThrow(() -> {
+            EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
 
-        EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+            TextSegment segment1 = TextSegment.from("I like football.");
+            Embedding testEmbedding = embeddingModel.embed(segment1).content();
 
-        TextSegment segment1 = TextSegment.from("I like football.");
-        Embedding testEmbedding = embeddingModel.embed(segment1).content();
-
-        Message first = fluentTemplate.to("langchain4j-embeddingstore:first")
-                .withBody(testEmbedding)
-                .request(Message.class);
-
+            Message first = fluentTemplate.to("langchain4j-embeddingstore:first")
+                    .withBody(testEmbedding)
+                    .request(Message.class);
+        });
     }
 }

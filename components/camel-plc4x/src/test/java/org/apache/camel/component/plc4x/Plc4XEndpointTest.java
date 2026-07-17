@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
 
 public class Plc4XEndpointTest {
@@ -57,10 +58,12 @@ public class Plc4XEndpointTest {
 
     @Test
     public void doStopBadConnection() throws Exception {
-        PlcConnection plcConnectionMock = mock(PlcConnection.class);
-        sut.connection = plcConnectionMock;
-        doThrow(new RuntimeException("oh noes")).when(plcConnectionMock).close();
-        sut.doStop();
+        assertDoesNotThrow(() -> {
+            PlcConnection plcConnectionMock = mock(PlcConnection.class);
+            sut.connection = plcConnectionMock;
+            doThrow(new RuntimeException("oh noes")).when(plcConnectionMock).close();
+            sut.doStop();
+        });
     }
 
 }

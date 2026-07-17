@@ -20,6 +20,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 /**
  * Unit test for System.err
  */
@@ -27,12 +29,12 @@ public class StreamSystemErrTest extends CamelTestSupport {
 
     @Test
     public void testStringContent() {
-        template.sendBody("direct:in", "Hello Text World\n");
+        assertDoesNotThrow(() -> template.sendBody("direct:in", "Hello Text World\n"));
     }
 
     @Test
     public void testBinaryContent() {
-        template.sendBody("direct:in", "Hello Bytes World\n".getBytes());
+        assertDoesNotThrow(() -> template.sendBody("direct:in", "Hello Bytes World\n".getBytes()));
     }
 
     @Override

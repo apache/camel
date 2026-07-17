@@ -37,6 +37,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class XmlToYamlTest {
 
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
@@ -46,17 +48,19 @@ public class XmlToYamlTest {
     @ParameterizedTest
     @MethodSource("routes")
     @DisplayName("Test xml to yaml for <routes>")
-    void testRoutes(String xml) throws Exception {
-        try (InputStream is = new FileInputStream("../camel-xml-io/src/test/resources/" + xml)) {
-            RoutesDefinition expected = new ModelParser(is, NAMESPACE).parseRoutesDefinition().get();
-            YamlModelWriter writer = new YamlModelWriter();
-            List<JsonObject> roots = new ArrayList<>();
-            for (RouteDefinition route : expected.getRoutes()) {
-                roots.add(writer.writeRouteDefinition(route));
+    void testRoutes(String xml) {
+        assertDoesNotThrow(() -> {
+            try (InputStream is = new FileInputStream("../camel-xml-io/src/test/resources/" + xml)) {
+                RoutesDefinition expected = new ModelParser(is, NAMESPACE).parseRoutesDefinition().get();
+                YamlModelWriter writer = new YamlModelWriter();
+                List<JsonObject> roots = new ArrayList<>();
+                for (RouteDefinition route : expected.getRoutes()) {
+                    roots.add(writer.writeRouteDefinition(route));
+                }
+                String out = writer.printAsYaml(roots);
+                LOG.info("xml={}\n{}\n", xml, out);
             }
-            String out = writer.printAsYaml(roots);
-            LOG.info("xml={}\n{}\n", xml, out);
-        }
+        });
     }
 
     private static Stream<Arguments> routes() {

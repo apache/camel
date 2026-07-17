@@ -36,6 +36,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -247,11 +248,13 @@ public class ParserTest extends CamelTestSupport {
 
     @Test
     public void examplesSyntaxTest() {
-        parser.parseTemplate("SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers.num2},OUT INTEGER resultofsub)");
-        parser.parseTemplate("MYFUNC('param1' java.sql.Types.INTEGER(10) ${header.srcValue})");
-        parser.parseTemplate("MYFUNC('param1' 100 'mytypename' ${header.srcValue})");
-        parser.parseTemplate("MYFUNC(OUT java.sql.Types.DECIMAL(10) outheader1)");
-        parser.parseTemplate("MYFUNC(OUT java.sql.Types.NUMERIC(10) 'mytype' outheader1)");
+        assertDoesNotThrow(() -> {
+            parser.parseTemplate("SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers.num2},OUT INTEGER resultofsub)");
+            parser.parseTemplate("MYFUNC('param1' java.sql.Types.INTEGER(10) ${header.srcValue})");
+            parser.parseTemplate("MYFUNC('param1' 100 'mytypename' ${header.srcValue})");
+            parser.parseTemplate("MYFUNC(OUT java.sql.Types.DECIMAL(10) outheader1)");
+            parser.parseTemplate("MYFUNC(OUT java.sql.Types.NUMERIC(10) 'mytype' outheader1)");
+        });
     }
 
 }

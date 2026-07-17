@@ -18,6 +18,7 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -40,9 +41,11 @@ public class VersionTest {
 
     @Test
     public void shouldObserveApiLimits() {
-        V34_0.requireAtLeast(34, 0);
-        V34_0.requireAtLeast(33, 9);
-        V35_0.requireAtLeast(34, 0);
+        assertDoesNotThrow(() -> {
+            V34_0.requireAtLeast(34, 0);
+            V34_0.requireAtLeast(33, 9);
+            V35_0.requireAtLeast(34, 0);
+        });
     }
 
     @Test

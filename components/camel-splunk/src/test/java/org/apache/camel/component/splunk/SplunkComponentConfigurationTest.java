@@ -21,6 +21,7 @@ import com.splunk.Service;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -63,14 +64,16 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerWithAnonymousAccess() throws Exception {
-        SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
-        component.setSplunkConfigurationFactory(parameters -> new SplunkConfiguration());
+    public void createProducerWithAnonymousAccess() {
+        assertDoesNotThrow(() -> {
+            SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
+            component.setSplunkConfigurationFactory(parameters -> new SplunkConfiguration());
 
-        SplunkEndpoint endpoint = (SplunkEndpoint) component.createEndpoint("splunk://test");
-        SplunkConnectionFactory scf = endpoint.getConfiguration().getConnectionFactory();
-        //following call with fail with "Missing username or password, without fix of CAMEL-16313,
-        scf.createService(context);
+            SplunkEndpoint endpoint = (SplunkEndpoint) component.createEndpoint("splunk://test");
+            SplunkConnectionFactory scf = endpoint.getConfiguration().getConnectionFactory();
+            //following call with fail with "Missing username or password, without fix of CAMEL-16313,
+            scf.createService(context);
+        });
     }
 
     @Test

@@ -30,6 +30,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -70,13 +71,17 @@ public class Dhis2DeleteTestCase {
 
     @Test
     public void testResourceGivenMapOfListsQueryParams() {
-        Dhis2Delete dhis2Delete = new Dhis2Delete(dhis2Client);
-        dhis2Delete.resource(null, null, Map.of("foo", List.of("bar")));
+        assertDoesNotThrow(() -> {
+            Dhis2Delete dhis2Delete = new Dhis2Delete(dhis2Client);
+            dhis2Delete.resource(null, null, Map.of("foo", List.of("bar")));
+        });
     }
 
     @Test
     public void testResourceGivenMapOfStringsQueryParams() {
-        Dhis2Delete dhis2Delete = new Dhis2Delete(dhis2Client);
-        dhis2Delete.resource(null, null, Map.of("foo", "bar"));
+        assertDoesNotThrow(() -> {
+            Dhis2Delete dhis2Delete = new Dhis2Delete(dhis2Client);
+            dhis2Delete.resource(null, null, Map.of("foo", "bar"));
+        });
     }
 }

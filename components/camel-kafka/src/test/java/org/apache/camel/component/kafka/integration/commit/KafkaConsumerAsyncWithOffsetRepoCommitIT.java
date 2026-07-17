@@ -26,6 +26,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KafkaConsumerAsyncWithOffsetRepoCommitIT extends BaseManualCommitTestSupport {
@@ -66,8 +67,8 @@ public class KafkaConsumerAsyncWithOffsetRepoCommitIT extends BaseManualCommitTe
 
     @DisplayName("Tests that the offset repository gets updated when using in conjunction with the Async commit manager")
     @Test
-    public void kafkaManualCommitWithOffsetRepo() throws Exception {
-        kafkaManualCommitTestWithStateRepository(TOPIC, stateRepository);
+    public void kafkaManualCommitWithOffsetRepo() {
+        assertDoesNotThrow(() -> kafkaManualCommitTestWithStateRepository(TOPIC, stateRepository));
     }
 
 }

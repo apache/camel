@@ -25,6 +25,7 @@ import org.apache.camel.component.workday.producer.WorkdayCommonAPIProducer;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -121,18 +122,20 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerCurrenciesValidConfiguration() throws Exception {
-        WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
+    public void createProducerCurrenciesValidConfiguration() {
+        assertDoesNotThrow(() -> {
+            WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
-        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
-                .createEndpoint("workday:commonAPI:/currencies?" + "host=impl.workday.com" + "&tenant=camel"
-                                + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
-                                + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
-                                + "&format=json");
+            WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
+                    .createEndpoint("workday:commonAPI:/currencies?" + "host=impl.workday.com" + "&tenant=camel"
+                                    + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+                                    + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
+                                    + "&format=json");
 
-        WorkdayCommonAPIProducer workdayProducer = new WorkdayCommonAPIProducer(workdayEndpoint);
+            WorkdayCommonAPIProducer workdayProducer = new WorkdayCommonAPIProducer(workdayEndpoint);
 
-        workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration());
+            workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration());
+        });
     }
 
     @Test

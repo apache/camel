@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("Run manually to check how the MX parser works")
@@ -136,24 +137,26 @@ public class ParserTest {
     }
 
     @Test
-    public void parseTheEdge() throws XmlPullParserException, IOException {
-        StringBuilder sb = new StringBuilder(256);
-        sb.append("<?xml version='1.0'?>\n");
-        sb.append("<!--\n");
-        for (int i = sb.toString().length() + 4 - 2; i < 8 * 1024; i += 4) {
-            sb.append("abc\n");
-        }
-        sb.append("-->\n");
-        sb.append("<root><child a=\"b\" /></root>\n");
-        BaseParser p = new BaseParser(new StringReader(sb.toString()));
-        MXParser xpp = p.parser;
-        int eventType = xpp.getEventType();
-        while (eventType != MXParser.END_DOCUMENT) {
-            eventType = xpp.next();
-            if (eventType == MXParser.START_TAG) {
-                LOG.debug(xpp.getName());
+    public void parseTheEdge() {
+        assertDoesNotThrow(() -> {
+            StringBuilder sb = new StringBuilder(256);
+            sb.append("<?xml version='1.0'?>\n");
+            sb.append("<!--\n");
+            for (int i = sb.toString().length() + 4 - 2; i < 8 * 1024; i += 4) {
+                sb.append("abc\n");
             }
-        }
+            sb.append("-->\n");
+            sb.append("<root><child a=\"b\" /></root>\n");
+            BaseParser p = new BaseParser(new StringReader(sb.toString()));
+            MXParser xpp = p.parser;
+            int eventType = xpp.getEventType();
+            while (eventType != MXParser.END_DOCUMENT) {
+                eventType = xpp.next();
+                if (eventType == MXParser.START_TAG) {
+                    LOG.debug(xpp.getName());
+                }
+            }
+        });
     }
 
 }

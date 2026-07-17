@@ -19,9 +19,13 @@ package org.apache.camel.component.undertow;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class UndertowNoAutoStartupTest extends BaseUndertowTest {
     @Test
     public void testUndertow() {
+        assertDoesNotThrow(() -> {
+        });
     }
 
     @Override

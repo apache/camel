@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
 
 class Plc4XConsumerTest {
@@ -82,8 +83,8 @@ class Plc4XConsumerTest {
     }
 
     @Test
-    void doStop() throws Exception {
-        consumer.doStop();
+    void doStop() {
+        assertDoesNotThrow(() -> consumer.doStop());
     }
 
 }

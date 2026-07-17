@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class PooledExecutorTest {
     static final int THREAD_COUNT = 2;
     Logger log = LoggerFactory.getLogger(this.getClass());
@@ -45,15 +47,17 @@ public class PooledExecutorTest {
      * @throws Exception in the event of a test error.
      */
     @Test
-    public void testAddRunnable() throws Exception {
-        int runnableCount = 3;
-        int runCount = 5;
+    public void testAddRunnable() {
+        assertDoesNotThrow(() -> {
+            int runnableCount = 3;
+            int runCount = 5;
 
-        log.info("Starting first set of runnables");
-        startRunnables(runnableCount, runCount);
+            log.info("Starting first set of runnables");
+            startRunnables(runnableCount, runCount);
 
-        log.info("Starting second set of runnables");
-        startRunnables(runnableCount, runCount);
+            log.info("Starting second set of runnables");
+            startRunnables(runnableCount, runCount);
+        });
     }
 
     void startRunnables(int runnableCount, int runCount) {

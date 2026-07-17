@@ -20,16 +20,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class StreamRouteBuilderTest extends CamelTestSupport {
 
     @Test
     public void testStringContent() {
-        template.sendBody("direct:start", "this is text\n");
+        assertDoesNotThrow(() -> template.sendBody("direct:start", "this is text\n"));
     }
 
     @Test
     public void testBinaryContent() {
-        template.sendBody("direct:start", "This is bytes\n".getBytes());
+        assertDoesNotThrow(() -> template.sendBody("direct:start", "This is bytes\n".getBytes()));
     }
 
     @Override

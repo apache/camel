@@ -21,6 +21,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class QuartzComponentTest extends BaseQuartzTest {
@@ -44,9 +45,11 @@ public class QuartzComponentTest extends BaseQuartzTest {
 
     @Test
     public void testQuartzComponent() {
-        QuartzComponent comp = new QuartzComponent(context);
-        comp.start();
-        comp.stop();
+        assertDoesNotThrow(() -> {
+            QuartzComponent comp = new QuartzComponent(context);
+            comp.start();
+            comp.stop();
+        });
     }
 
 }
