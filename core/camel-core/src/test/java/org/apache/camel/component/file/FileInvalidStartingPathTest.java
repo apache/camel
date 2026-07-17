@@ -42,7 +42,8 @@ public class FileInvalidStartingPathTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint(
                 fileUri("?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt"));
         assertNotNull(endpoint, "Endpoint should be resolved for a valid starting path");
-        assertInstanceOf(FileEndpoint.class, endpoint);
+        FileEndpoint fileEndpoint = assertInstanceOf(FileEndpoint.class, endpoint);
+        assertNotNull(fileEndpoint.getFileName(), "FileEndpoint should have a fileName expression set");
     }
 
 }

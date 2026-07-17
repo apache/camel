@@ -83,6 +83,8 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         File[] files = testDirectory().toFile().listFiles();
         Assertions.assertNotNull(files, "Test directory should contain files");
         Assertions.assertTrue(files.length > 0, "A file should have been created with an auto-generated name");
+        String content = new String(java.nio.file.Files.readAllBytes(files[0].toPath()));
+        Assertions.assertEquals("Bye World", content, "File content should match the body that was sent");
     }
 
     @Override

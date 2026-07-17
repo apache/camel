@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -49,6 +50,8 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
         assertNotNull(endpoint, "Endpoint should be created with a custom SchemaFactory");
         ValidatorEndpoint ve = assertInstanceOf(ValidatorEndpoint.class, endpoint);
         assertNotNull(ve.getSchemaFactory(), "Endpoint should have the custom SchemaFactory configured");
+        assertFalse(ve.getSchemaFactory().getFeature(XMLConstants.FEATURE_SECURE_PROCESSING),
+                "Custom SchemaFactory should have FEATURE_SECURE_PROCESSING set to false");
     }
 
 }
