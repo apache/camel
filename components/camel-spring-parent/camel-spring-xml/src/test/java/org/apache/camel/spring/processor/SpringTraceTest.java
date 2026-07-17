@@ -16,13 +16,15 @@
  */
 package org.apache.camel.spring.processor;
 
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ContextConfiguration
 public class SpringTraceTest extends SpringRunWithTestSupport {
@@ -30,11 +32,17 @@ public class SpringTraceTest extends SpringRunWithTestSupport {
     @Autowired
     protected ProducerTemplate camelTemplate;
 
+    @Autowired
+    protected CamelContext camelContext;
+
     @Test
-    public void testTracing() {
-        assertDoesNotThrow(() -> {
-            camelTemplate.sendBody("Hello");
-            camelTemplate.sendBody(1234);
-        });
+    public void testTracing() throws Exception {
+        MockEndpoint mock = camelContext.getEndpoint("mock:result", MockEndpoint.class);
+        mock.expectedMessageCount(2);
+
+        camelTemplate.sendBody("Hello");
+        camelTemplate.sendBody(1234);
+
+        MockEndpoint.assertIsSatisfied(camelContext, 10, TimeUnit.SECONDS);
     }
 }

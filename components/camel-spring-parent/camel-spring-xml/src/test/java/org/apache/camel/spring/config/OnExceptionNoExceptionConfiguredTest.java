@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OnExceptionNoExceptionConfiguredTest extends SpringTestSupport {
@@ -30,9 +29,7 @@ public class OnExceptionNoExceptionConfiguredTest extends SpringTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        assertThrows(Exception.class, () -> {
-            super.setUp();
-        });
+        // Do NOT call super.setUp() — this test validates that context creation fails
     }
 
     @Override
@@ -41,9 +38,9 @@ public class OnExceptionNoExceptionConfiguredTest extends SpringTestSupport {
     }
 
     @Test
-    public void testDummy() {
-        // Validation is done in setUp()
-        assertDoesNotThrow(() -> {
+    public void testOnExceptionNoExceptionConfigured() throws Exception {
+        assertThrows(Exception.class, () -> {
+            super.setUp();
         });
     }
 }
