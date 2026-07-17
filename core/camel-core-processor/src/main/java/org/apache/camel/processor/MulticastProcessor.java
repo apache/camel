@@ -505,33 +505,38 @@ public class MulticastProcessor extends BaseProcessorSupport
         }
 
         protected void timeout() {
+            // use lock() instead of tryLock() because timeout is a one-shot scheduled task
+            // if tryLock fails (lock held by aggregate), the timeout would be silently lost
+            // and the exchange would hang forever (CAMEL-24142)
             Lock lock = this.lock;
-            if (lock.tryLock()) {
-                try {
-                    while (nbAggregated.get() < nbExchangeSent.get()) {
-                        Exchange exchange = completion.pollUnordered();
-                        int index = exchange != null ? getExchangeIndex(exchange) : nbExchangeSent.get();
-                        while (nbAggregated.get() < index) {
-                            int idx = nbAggregated.getAndIncrement();
-                            AggregationStrategy strategy = getAggregationStrategy(null);
-                            if (strategy != null) {
-                                strategy.timeout(result.get() != null ? result.get() : original,
-                                        idx, nbExchangeSent.get(), timeout);
-                            }
-                        }
-                        if (exchange != null) {
-                            doAggregate(result, exchange, original);
-                            nbAggregated.incrementAndGet();
+            lock.lock();
+            try {
+                if (done.get()) {
+                    return;
+                }
+                while (nbAggregated.get() < nbExchangeSent.get()) {
+                    Exchange exchange = completion.pollUnordered();
+                    int index = exchange != null ? getExchangeIndex(exchange) : nbExchangeSent.get();
+                    while (nbAggregated.get() < index) {
+                        int idx = nbAggregated.getAndIncrement();
+                        AggregationStrategy strategy = getAggregationStrategy(null);
+                        if (strategy != null) {
+                            strategy.timeout(result.get() != null ? result.get() : original,
+                                    idx, nbExchangeSent.get(), timeout);
                         }
                     }
-                    doTimeoutDone(result.get(), true);
-                } catch (Exception e) {
-                    original.setException(e);
-                    // and do the done work
-                    doTimeoutDone(null, false);
-                } finally {
-                    lock.unlock();
+                    if (exchange != null) {
+                        doAggregate(result, exchange, original);
+                        nbAggregated.incrementAndGet();
+                    }
                 }
+                doTimeoutDone(result.get(), true);
+            } catch (Exception e) {
+                original.setException(e);
+                // and do the done work
+                doTimeoutDone(null, false);
+            } finally {
+                lock.unlock();
             }
         }
 
