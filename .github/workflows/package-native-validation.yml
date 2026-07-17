@@ -1,0 +1,219 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the specific language governing permissions and
+# limitations under the License.
+#
+
+name: Package-native validation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dsl/camel-jbang/camel-launcher/**'
+      - 'tooling/camel-exe/**'
+      - '.github/workflows/package-native-validation.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'dsl/camel-jbang/camel-launcher/**'
+      - 'tooling/camel-exe/**'
+      - '.github/workflows/package-native-validation.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ── macOS / Linux (POSIX validators) ──────────────────────────────
+  posix-validator:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      # ubuntu-latest ships Homebrew (Linuxbrew) preinstalled but not on PATH (confirmed
+      # via actions/runner-images' Ubuntu readme: "Homebrew is preinstalled on image but
+      # not added to PATH", installed under /home/linuxbrew). Without this, `command -v
+      # brew` in camel-validate.sh's host-gate fails on Linux and the Homebrew validator
+      # silently SKIPs there, leaving macos-latest as the only leg that actually exercises
+      # it. macos-latest already has Homebrew on PATH by default, so this step is a no-op
+      # there.
+      - name: Add Linuxbrew to PATH (preinstalled but not on PATH on ubuntu-latest)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          {
+            echo "/home/linuxbrew/.linuxbrew/bin"
+            echo "/home/linuxbrew/.linuxbrew/sbin"
+          } >> "$GITHUB_PATH"
+          {
+            echo "HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew"
+            echo "HOMEBREW_CELLAR=/home/linuxbrew/.linuxbrew/Cellar"
+            echo "HOMEBREW_REPOSITORY=/home/linuxbrew/.linuxbrew/Homebrew"
+          } >> "$GITHUB_ENV"
+
+      # SDKMAN is not preinstalled on ubuntu-latest (confirmed via actions/runner-images
+      # Ubuntu 24.04 readme). Without it, camel-validate.sh's SDKMAN validator SKIPs at
+      # the host-gate. Installing it here makes `sdk` available for validation; the init
+      # script is sourced in the validate step since SDKMAN is a bash function, not a
+      # standalone binary, so GITHUB_PATH alone cannot expose it.
+      - name: Install SDKMAN!
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          curl -s "https://get.sdkman.io" | bash
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Build camel-launcher distribution
+        shell: bash
+        run: |
+          mvn -B -ntp -pl buildingtools,dsl/camel-jbang/camel-launcher -am install -DskipTests
+
+      - name: Stage a synthetic release version for offline validation
+        shell: bash
+        run: |
+          cd dsl/camel-jbang/camel-launcher
+          REAL_VERSION=$(mvn -q -B -ntp org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate \
+            -Dexpression=project.version -DforceStdout)
+          TEST_VERSION="${REAL_VERSION%-SNAPSHOT}"
+          echo "TEST_VERSION=$TEST_VERSION" >> "$GITHUB_ENV"
+          cp -p "target/camel-launcher-$REAL_VERSION-bin.tar.gz" "target/camel-launcher-$TEST_VERSION-bin.tar.gz"
+          cp -p "target/camel-launcher-$REAL_VERSION-bin.zip" "target/camel-launcher-$TEST_VERSION-bin.zip"
+
+      - name: Prepare packages (stable, offline, synthetic release version)
+        shell: bash
+        run: |
+          cd dsl/camel-jbang/camel-launcher
+          CAMEL_PACKAGE_TEST_MODE=true CAMEL_PACKAGE_TEST_VERSION="$TEST_VERSION" \
+            sh src/jreleaser/bin/camel-package.sh prepare --channel stable
+
+      - name: Validate Homebrew + SDKMAN (host-gated)
+        shell: bash
+        run: |
+          cd dsl/camel-jbang/camel-launcher
+          CAMEL_PACKAGE_TEST_MODE=true CAMEL_PACKAGE_TEST_VERSION="$TEST_VERSION" \
+            sh src/jreleaser/bin/camel-validate.sh all
+
+      - name: Run POSIX validator unit tests
+        shell: bash
+        run: |
+          cd dsl/camel-jbang/camel-launcher
+          mvn -B -ntp test -pl . -Dtest=ValidatePosixTest
+
+  # ── Build distribution with native exe on Linux ──────────────────
+  build-launcher:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - uses: ./.github/actions/setup-llvm-mingw
+
+      - name: Build camel-launcher distribution (with native exe, x64 + arm64)
+        run: |
+          mvn -B -ntp -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher \
+            -am install -DskipTests -Dcamel.exe.build=true
+
+      - name: Stage a synthetic release version for offline validation
+        run: |
+          cd dsl/camel-jbang/camel-launcher
+          REAL_VERSION=$(mvn -q -B -ntp org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate \
+            -Dexpression=project.version -DforceStdout)
+          TEST_VERSION="${REAL_VERSION%-SNAPSHOT}"
+          echo "TEST_VERSION=$TEST_VERSION" >> "$GITHUB_ENV"
+          cp -p "target/camel-launcher-$REAL_VERSION-bin.tar.gz" "target/camel-launcher-$TEST_VERSION-bin.tar.gz"
+          cp -p "target/camel-launcher-$REAL_VERSION-bin.zip" "target/camel-launcher-$TEST_VERSION-bin.zip"
+
+      - name: Upload distribution for Windows validation
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: launcher-dist
+          path: |
+            dsl/camel-jbang/camel-launcher/target/camel-launcher-*-bin.zip
+            dsl/camel-jbang/camel-launcher/target/camel-launcher-*-bin.tar.gz
+          retention-days: 1
+
+    outputs:
+      test-version: ${{ env.TEST_VERSION }}
+
+  # ── Windows (WinGet / Scoop / Chocolatey validators) ─────────────
+  windows-validator:
+    needs: build-launcher
+    if: ${{ needs.build-launcher.result == 'success' }}
+    runs-on: windows-2022
+    env:
+      TEST_VERSION: ${{ needs.build-launcher.outputs.test-version }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Download distribution from build job
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: launcher-dist
+          path: dsl/camel-jbang/camel-launcher/target
+
+      - name: Prepare packages (stable, offline, synthetic release version)
+        shell: cmd
+        run: |
+          cd dsl\camel-jbang\camel-launcher
+          set CAMEL_PACKAGE_TEST_MODE=true
+          set CAMEL_PACKAGE_TEST_VERSION=%TEST_VERSION%
+          call src\jreleaser\bin\camel-package.bat prepare --channel stable
+
+      - name: Validate WinGet + Scoop + Chocolatey (host-gated)
+        shell: cmd
+        run: |
+          cd dsl\camel-jbang\camel-launcher
+          call src\jreleaser\bin\camel-validate.bat all
+
+      - name: Run Windows validator unit tests
+        shell: bash
+        run: |
+          cd dsl/camel-jbang/camel-launcher
+          mvn -B -ntp test -pl . -Dtest=ValidateWindowsTest

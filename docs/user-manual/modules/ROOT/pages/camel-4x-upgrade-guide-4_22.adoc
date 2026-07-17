@@ -159,6 +159,15 @@ Installation is always per-user and never requires elevation or `sudo`:
 Previously installed version directories are left in place after an upgrade or downgrade and
 must be removed manually. Reinstalling the same version replaces that version directory.
 
+==== Camel CLI package-native validation (maintainers)
+
+The `camel-launcher` module adds offline package-native validators
+(`src/jreleaser/bin/camel-validate.sh` and `camel-validate.bat`) that install each
+generated package, assert `camel version` and an offline `camel init`, then
+uninstall. Each validator self-skips when its package manager is absent, so the
+same entry point runs on macOS, Linux, and Windows x64 CI. Validation performs no
+remote publication and calls no SDKMAN Vendor API; that is the `publish` workflow.
+
 === camel-langchain4j-agent
 
 The `Agent.chat()` method return type has changed from `String` to `Result<String>` (from `dev.langchain4j.service.Result`).
