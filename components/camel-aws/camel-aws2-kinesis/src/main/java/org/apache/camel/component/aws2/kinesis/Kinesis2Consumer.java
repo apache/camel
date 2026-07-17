@@ -341,7 +341,19 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     }
 
     private KinesisResumeAction resolveResumeAction(String shardId, GetShardIteratorRequest.Builder req) {
-        KinesisResumeAction action = new KinesisResumeAction(req);
+        KinesisResumeAction template = getEndpoint().getCamelContext().getRegistry()
+                .lookupByNameAndType(Kinesis2Constants.RESUME_ACTION, KinesisResumeAction.class);
+        KinesisResumeAction action;
+        if (ObjectHelper.isEmpty(template)) {
+            action = new KinesisResumeAction(req);
+        } else {
+            try {
+                action = template.getClass().getDeclaredConstructor().newInstance();
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+            action.setBuilder(req);
+        }
         action.setShardId(shardId);
         action.setStreamName(getEndpoint().getConfiguration().getStreamName());
         return action;
