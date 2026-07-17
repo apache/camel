@@ -333,6 +333,7 @@ public class MulticastProcessor extends BaseProcessorSupport
             }
             setAggregationStrategyOnExchange(exchange, clone);
         } else if (isShareUnitOfWork() && strategy != null
+                // wrap here (not in the reifier) so the UseOriginal instanceof check above sees the unwrapped strategy
                 && !(strategy instanceof ShareUnitOfWorkAggregationStrategy)) {
             setAggregationStrategyOnExchange(exchange, new ShareUnitOfWorkAggregationStrategy(strategy));
         }
