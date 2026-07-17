@@ -23,6 +23,7 @@ public class FastjsonDataFormatConfigurer extends org.apache.camel.support.compo
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("ContentTypeHeader", boolean.class);
+        map.put("PrettyPrint", boolean.class);
         map.put("UnmarshalType", java.lang.Class.class);
         ALL_OPTIONS = map;
     }
@@ -33,6 +34,8 @@ public class FastjsonDataFormatConfigurer extends org.apache.camel.support.compo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "contenttypeheader":
         case "contentTypeHeader": target.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
+        case "prettyprint":
+        case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         case "unmarshaltype":
         case "unmarshalType": target.setUnmarshalType(property(camelContext, java.lang.Class.class, value)); return true;
         default: return false;
@@ -49,6 +52,8 @@ public class FastjsonDataFormatConfigurer extends org.apache.camel.support.compo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "contenttypeheader":
         case "contentTypeHeader": return boolean.class;
+        case "prettyprint":
+        case "prettyPrint": return boolean.class;
         case "unmarshaltype":
         case "unmarshalType": return java.lang.Class.class;
         default: return null;
@@ -61,6 +66,8 @@ public class FastjsonDataFormatConfigurer extends org.apache.camel.support.compo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "contenttypeheader":
         case "contentTypeHeader": return target.isContentTypeHeader();
+        case "prettyprint":
+        case "prettyPrint": return target.isPrettyPrint();
         case "unmarshaltype":
         case "unmarshalType": return target.getUnmarshalType();
         default: return null;
