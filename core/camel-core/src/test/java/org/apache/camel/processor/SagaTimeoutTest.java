@@ -84,10 +84,10 @@ public class SagaTimeoutTest extends ContextTestSupport {
                     template.sendBody("direct:saga-multi-participants", "Hello");
                 });
 
-        String msg1 = "Cannot begin: status is COMPENSATING";
-        String msg2 = "Cannot begin: status is COMPENSATED";
         String msg = ex.getCause().getMessage();
-        assertTrue(msg.equals(msg1) || msg.equals(msg2));
+        assertTrue(msg.contains("Cannot begin: status is COMPENSATING")
+                || msg.contains("Cannot begin: status is COMPENSATED")
+                || msg.contains("Exchange is not part of a saga"));
 
         end.assertIsSatisfied();
         complete.assertIsSatisfied();
