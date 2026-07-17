@@ -137,8 +137,12 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             lock.lock();
             try {
                 if (ObjectHelper.isNotEmpty(uploadAggregate)) {
-                    uploadPart(uploadAggregate);
-                    completeUpload(uploadAggregate);
+                    try {
+                        uploadPart(uploadAggregate);
+                        completeUpload(uploadAggregate);
+                    } catch (Exception e) {
+                        LOG.warn("Error during timeout-triggered upload flush for {}", uploadAggregate.dynamicKeyName, e);
+                    }
                     uploadAggregate = null;
                 }
 
@@ -148,8 +152,12 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     for (Map.Entry<Long, UploadState> entry : timestampBasedUploads.entrySet()) {
                         UploadState state = entry.getValue();
                         if (ObjectHelper.isNotEmpty(state) && state.buffer.size() > 0) {
-                            uploadPart(state);
-                            completeUpload(state);
+                            try {
+                                uploadPart(state);
+                                completeUpload(state);
+                            } catch (Exception e) {
+                                LOG.warn("Error during timeout-triggered upload flush for {}", state.dynamicKeyName, e);
+                            }
                             keysToRemove.add(entry.getKey());
                         }
                     }
@@ -178,10 +186,15 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         byte[] b;
         int maxRead = (getConfiguration().isMultiPartUpload()
                 ? Math.toIntExact(getConfiguration().getPartSize()) : getConfiguration().getBufferSize());
-        if (uploadAggregate != null) {
-            uploadAggregate.index++;
-            maxRead -= uploadAggregate.buffer.size();
-            maxRead = Math.max(1, maxRead);
+        lock.lock();
+        try {
+            if (uploadAggregate != null) {
+                uploadAggregate.index++;
+                maxRead -= uploadAggregate.buffer.size();
+                maxRead = Math.max(1, maxRead);
+            }
+        } finally {
+            lock.unlock();
         }
 
         while ((b = AWS2S3Utils.toByteArray(is, maxRead)) != null && b.length > 0) {
