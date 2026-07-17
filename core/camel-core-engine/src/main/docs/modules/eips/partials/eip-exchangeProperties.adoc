@@ -10,7 +10,7 @@ ifeval::[{optioncount} == 0]
 The {doctitle} eip has no exchange properties.
 endif::[]
 ifeval::[{optioncount} != 0]
-The {doctitle} eip supports {optioncount} exchange properties, which are listed below.
+The {doctitle} eip supports the following exchange properties which are listed below.
 
 The exchange properties are set on the `Exchange` by the EIP, unless otherwise specified in the description.
 This means those properties are available after this EIP has completed processing the `Exchange`.

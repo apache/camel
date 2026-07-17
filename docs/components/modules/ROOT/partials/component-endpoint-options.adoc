@@ -8,11 +8,11 @@
 |util.valueAsString(value.defaultValue) \
 |util.javaSimpleName(value.javaType)
 include::jsonpath$example$json/{shortname}.json[query='$.component',formats='name,scheme,pascalcasescheme=util.pascalCase(scheme),syntax,apiSyntax', requires={requires}]
-include::jsonpathcount$example$json/{shortname}.json[queries='propertycount=nodes$.componentProperties.*,pathparametercount=nodes$.properties[?(@.kind=="path")],queryparametercount=nodes$.properties[?(@.kind=="parameter")],apicount=nodes$.apis.*']
+include::jsonpathcount$example$json/{shortname}.json[queries='pathparametercount=nodes$.properties[?(@.kind=="path")],queryparametercount=nodes$.properties[?(@.kind=="parameter")],apicount=nodes$.apis.*']
 
 == Component Options
 
-The {doctitle} component supports {propertycount} options, which are listed below.
+The {doctitle} component supports the following options which are listed below.
 
 [{tablespec}]
 |===
@@ -34,7 +34,7 @@ The {doctitle} endpoint is configured using URI syntax:
 
 With the following _path_ and _query_ parameters:
 
-=== Path Parameters ({pathparametercount} parameters)
+=== Path Parameters
 
 ifeval::[{pathparametercount} == 0]
 The {doctitle} endpoint has no path parameters.
@@ -51,7 +51,7 @@ jsonpathTable::example$json/{shortname}.json['nodes$.properties[?(@.kind=="path"
 endif::[]
 
 [#_query_parameters]
-=== Query Parameters ({queryparametercount} parameters)
+=== Query Parameters
 
 ifeval::[{queryparametercount} == 0]
 The {doctitle} endpoint has no _query_ parameters.

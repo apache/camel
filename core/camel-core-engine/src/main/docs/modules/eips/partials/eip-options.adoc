@@ -4,13 +4,8 @@
 |util.valueAsString(value.defaultValue) \
 |util.javaSimpleName(value.javaType)'
 :requires: 'util=util/jsonpath-util.js'
-include::jsonpathcount$example$json/{shortname}.json[queries='optioncount=nodes$.properties[?(@.displayName!="Id" && @.displayName!="Description" && @.displayName!="Expression" && @.displayName!="Outputs")]']
 
-ifeval::[{optioncount} == 0]
-The {doctitle} eip has no options.
-endif::[]
-ifeval::[{optioncount} != 0]
-The {doctitle} eip supports {optioncount} options, which are listed below.
+The {doctitle} eip supports the following options which are listed below.
 
 
 [{tablespec}]
@@ -19,5 +14,3 @@ The {doctitle} eip supports {optioncount} options, which are listed below.
 |===
 
 jsonpathTable::example$json/{shortname}.json['nodes$.properties[?(@.displayName!="Id")]',{cellformats},{requires}]
-endif::[]
-
