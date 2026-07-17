@@ -29,6 +29,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.kinesis.lifecycle.events.ProcessRecordsInput;
 import software.amazon.kinesis.processor.RecordProcessorCheckpointer;
 import software.amazon.kinesis.retrieval.KinesisClientRecord;
@@ -54,6 +55,8 @@ public class KclKinesis2ConsumerRecordProcessingTest {
     private RecordProcessorCheckpointer checkpointer;
     @Mock
     private KinesisClientRecord record;
+    @Mock
+    private KinesisClient kinesisClient;
 
     private final DefaultCamelContext context = new DefaultCamelContext();
     private KclKinesis2Consumer.CamelKinesisRecordProcessor recordProcessor;
@@ -65,6 +68,8 @@ public class KclKinesis2ConsumerRecordProcessingTest {
         Kinesis2Configuration configuration = new Kinesis2Configuration();
         configuration.setStreamName("stream");
         configuration.setApplicationName("app");
+        // Provide a client so the endpoint does not build a real AWS client (which needs a region) on start.
+        configuration.setAmazonKinesisClient(kinesisClient);
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint("aws2-kinesis:stream", configuration, component);
         endpoint.start();
         KclKinesis2Consumer consumer = new KclKinesis2Consumer(endpoint, processor);
