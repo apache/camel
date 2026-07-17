@@ -31,6 +31,7 @@ import org.apache.camel.maven.htmlxlsx.model.TestResult;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -180,16 +181,19 @@ public class CoverageResultsProcessorTest {
                 () -> assertEquals(3, result.getEipStatisticMap().size()));
     }
 
+    @Disabled("TODO: implement test")
     @Test
     public void testGenerateChildEipStatistics() {
 
     }
 
+    @Disabled("TODO: implement test")
     @Test
     public void testGenerateExcel() {
 
     }
 
+    @Disabled("TODO: implement test")
     @Test
     public void testGenerateHtml() {
 
@@ -261,6 +265,7 @@ public class CoverageResultsProcessorTest {
                 () -> assertEquals(indexPath().getPath(), result));
     }
 
+    @Disabled("TODO: implement test")
     @Test
     public void testAddToRouteTotals() {
 
@@ -296,6 +301,7 @@ public class CoverageResultsProcessorTest {
                 () -> assertEquals(1, routeStatisticMap.size()));
     }
 
+    @Disabled("TODO: implement test")
     @Test
     public void testRecalculate() {
 
