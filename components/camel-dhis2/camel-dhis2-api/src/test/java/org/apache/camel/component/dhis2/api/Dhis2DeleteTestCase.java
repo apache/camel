@@ -30,7 +30,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -71,17 +71,15 @@ public class Dhis2DeleteTestCase {
 
     @Test
     public void testResourceGivenMapOfListsQueryParams() {
-        assertDoesNotThrow(() -> {
-            Dhis2Delete dhis2Delete = new Dhis2Delete(dhis2Client);
-            dhis2Delete.resource(null, null, Map.of("foo", List.of("bar")));
-        });
+        Dhis2Delete dhis2Delete = new Dhis2Delete(dhis2Client);
+        InputStream result = dhis2Delete.resource(null, null, Map.of("foo", List.of("bar")));
+        assertNotNull(result, "resource() should return a non-null InputStream");
     }
 
     @Test
     public void testResourceGivenMapOfStringsQueryParams() {
-        assertDoesNotThrow(() -> {
-            Dhis2Delete dhis2Delete = new Dhis2Delete(dhis2Client);
-            dhis2Delete.resource(null, null, Map.of("foo", "bar"));
-        });
+        Dhis2Delete dhis2Delete = new Dhis2Delete(dhis2Client);
+        InputStream result = dhis2Delete.resource(null, null, Map.of("foo", "bar"));
+        assertNotNull(result, "resource() should return a non-null InputStream");
     }
 }

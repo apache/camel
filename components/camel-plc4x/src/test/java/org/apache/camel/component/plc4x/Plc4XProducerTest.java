@@ -25,7 +25,8 @@ import org.apache.camel.ExchangePattern;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class Plc4XProducerTest {
@@ -51,40 +52,39 @@ public class Plc4XProducerTest {
     }
 
     @Test
-    public void process() {
-        assertDoesNotThrow(() -> {
-            when(testExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
-            sut.process(testExchange);
-            when(testExchange.getPattern()).thenReturn(ExchangePattern.InOut);
-            sut.process(testExchange);
-            when(testExchange.getIn().getBody()).thenReturn(2);
-        });
+    public void process() throws Exception {
+        when(testExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
+        sut.process(testExchange);
+        when(testExchange.getPattern()).thenReturn(ExchangePattern.InOut);
+        sut.process(testExchange);
+
+        assertNotNull(sut, "Producer should remain valid after processing");
     }
 
     @Test
-    public void processAsync() {
-        assertDoesNotThrow(() -> {
-            sut.process(testExchange, doneSync -> {
-            });
-            when(testExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
-            sut.process(testExchange, doneSync -> {
-            });
-            when(testExchange.getPattern()).thenReturn(ExchangePattern.InOut);
-            sut.process(testExchange, doneSync -> {
-            });
+    public void processAsync() throws Exception {
+        sut.process(testExchange, doneSync -> {
         });
+        when(testExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
+        sut.process(testExchange, doneSync -> {
+        });
+        when(testExchange.getPattern()).thenReturn(ExchangePattern.InOut);
+        sut.process(testExchange, doneSync -> {
+        });
+
+        assertNotNull(sut, "Producer should remain valid after async processing");
     }
 
     @Test
-    public void doStop() {
-        assertDoesNotThrow(() -> sut.doStop());
+    public void doStop() throws Exception {
+        sut.doStop();
+        assertEquals(0, sut.openRequests.get(), "Open requests should be zero after stop");
     }
 
     @Test
-    public void doStopOpenRequest() {
-        assertDoesNotThrow(() -> {
-            sut.openRequests.incrementAndGet();
-            sut.doStop();
-        });
+    public void doStopOpenRequest() throws Exception {
+        sut.openRequests.incrementAndGet();
+        assertEquals(1, sut.openRequests.get(), "Open requests should be one before stop");
+        sut.doStop();
     }
 }

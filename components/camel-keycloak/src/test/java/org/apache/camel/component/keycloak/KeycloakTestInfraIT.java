@@ -1470,36 +1470,37 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(90)
     void testCleanupAuthorizationResources() {
-        assertDoesNotThrow(() -> {
-            // Cleanup is automatic when client is deleted, but we can try explicit cleanup
-            if (testResourceId != null && testClientUuid != null) {
-                try {
-                    Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
-                    exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
-                    exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
-                    exchange.getIn().setHeader(KeycloakConstants.RESOURCE_ID, testResourceId);
+        // Cleanup is automatic when client is deleted, but we can try explicit cleanup
+        if (testResourceId != null && testClientUuid != null) {
+            try {
+                Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+                exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+                exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
+                exchange.getIn().setHeader(KeycloakConstants.RESOURCE_ID, testResourceId);
 
-                    template.send("direct:deleteResource", exchange);
-                    log.info("Deleted resource: {}", TEST_RESOURCE_NAME);
-                } catch (Exception e) {
-                    log.warn("Failed to delete resource {}: {}", TEST_RESOURCE_NAME, e.getMessage());
-                }
+                template.send("direct:deleteResource", exchange);
+                log.info("Deleted resource: {}", TEST_RESOURCE_NAME);
+            } catch (Exception e) {
+                log.warn("Failed to delete resource {}: {}", TEST_RESOURCE_NAME, e.getMessage());
             }
+        }
 
-            if (testPolicyId != null && testClientUuid != null) {
-                try {
-                    Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
-                    exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
-                    exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
-                    exchange.getIn().setHeader(KeycloakConstants.POLICY_ID, testPolicyId);
+        if (testPolicyId != null && testClientUuid != null) {
+            try {
+                Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+                exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+                exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
+                exchange.getIn().setHeader(KeycloakConstants.POLICY_ID, testPolicyId);
 
-                    template.send("direct:deleteResourcePolicy", exchange);
-                    log.info("Deleted policy: {}", TEST_POLICY_NAME);
-                } catch (Exception e) {
-                    log.warn("Failed to delete policy {}: {}", TEST_POLICY_NAME, e.getMessage());
-                }
+                template.send("direct:deleteResourcePolicy", exchange);
+                log.info("Deleted policy: {}", TEST_POLICY_NAME);
+            } catch (Exception e) {
+                log.warn("Failed to delete policy {}: {}", TEST_POLICY_NAME, e.getMessage());
             }
-        });
+        }
+
+        assertTrue(context.getStatus().isStarted(),
+                "CamelContext should still be running after authorization resource cleanup");
     }
 
     @Test

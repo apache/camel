@@ -26,8 +26,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Run manually to check how the MX parser works")
 public class ParserTest {
@@ -137,26 +137,33 @@ public class ParserTest {
     }
 
     @Test
-    public void parseTheEdge() {
-        assertDoesNotThrow(() -> {
-            StringBuilder sb = new StringBuilder(256);
-            sb.append("<?xml version='1.0'?>\n");
-            sb.append("<!--\n");
-            for (int i = sb.toString().length() + 4 - 2; i < 8 * 1024; i += 4) {
-                sb.append("abc\n");
-            }
-            sb.append("-->\n");
-            sb.append("<root><child a=\"b\" /></root>\n");
-            BaseParser p = new BaseParser(new StringReader(sb.toString()));
-            MXParser xpp = p.parser;
-            int eventType = xpp.getEventType();
-            while (eventType != MXParser.END_DOCUMENT) {
-                eventType = xpp.next();
-                if (eventType == MXParser.START_TAG) {
-                    LOG.debug(xpp.getName());
+    public void parseTheEdge() throws XmlPullParserException, IOException {
+        StringBuilder sb = new StringBuilder(256);
+        sb.append("<?xml version='1.0'?>\n");
+        sb.append("<!--\n");
+        for (int i = sb.toString().length() + 4 - 2; i < 8 * 1024; i += 4) {
+            sb.append("abc\n");
+        }
+        sb.append("-->\n");
+        sb.append("<root><child a=\"b\" /></root>\n");
+        BaseParser p = new BaseParser(new StringReader(sb.toString()));
+        MXParser xpp = p.parser;
+        assertNotNull(xpp);
+        String rootName = null;
+        String childAttr = null;
+        int eventType = xpp.getEventType();
+        while (eventType != MXParser.END_DOCUMENT) {
+            eventType = xpp.next();
+            if (eventType == MXParser.START_TAG) {
+                if ("root".equals(xpp.getName())) {
+                    rootName = xpp.getName();
+                } else if ("child".equals(xpp.getName())) {
+                    childAttr = xpp.getAttributeValue(null, "a");
                 }
             }
-        });
+        }
+        assertEquals("root", rootName, "Parser should find the root element after a large comment block");
+        assertEquals("b", childAttr, "Parser should correctly read attributes near buffer boundary");
     }
 
 }

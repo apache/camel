@@ -37,7 +37,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XmlToYamlTest {
 
@@ -48,19 +49,21 @@ public class XmlToYamlTest {
     @ParameterizedTest
     @MethodSource("routes")
     @DisplayName("Test xml to yaml for <routes>")
-    void testRoutes(String xml) {
-        assertDoesNotThrow(() -> {
-            try (InputStream is = new FileInputStream("../camel-xml-io/src/test/resources/" + xml)) {
-                RoutesDefinition expected = new ModelParser(is, NAMESPACE).parseRoutesDefinition().get();
-                YamlModelWriter writer = new YamlModelWriter();
-                List<JsonObject> roots = new ArrayList<>();
-                for (RouteDefinition route : expected.getRoutes()) {
-                    roots.add(writer.writeRouteDefinition(route));
-                }
-                String out = writer.printAsYaml(roots);
-                LOG.info("xml={}\n{}\n", xml, out);
+    void testRoutes(String xml) throws Exception {
+        try (InputStream is = new FileInputStream("../camel-xml-io/src/test/resources/" + xml)) {
+            RoutesDefinition expected = new ModelParser(is, NAMESPACE).parseRoutesDefinition().get();
+            assertNotNull(expected, "Parsed routes definition should not be null for " + xml);
+            assertFalse(expected.getRoutes().isEmpty(), "Routes should not be empty for " + xml);
+            YamlModelWriter writer = new YamlModelWriter();
+            List<JsonObject> roots = new ArrayList<>();
+            for (RouteDefinition route : expected.getRoutes()) {
+                roots.add(writer.writeRouteDefinition(route));
             }
-        });
+            String out = writer.printAsYaml(roots);
+            assertNotNull(out, "YAML output should not be null for " + xml);
+            assertFalse(out.isEmpty(), "YAML output should not be empty for " + xml);
+            LOG.info("xml={}\n{}\n", xml, out);
+        }
     }
 
     private static Stream<Arguments> routes() {

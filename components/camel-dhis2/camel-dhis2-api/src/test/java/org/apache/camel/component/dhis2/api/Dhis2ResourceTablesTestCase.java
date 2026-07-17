@@ -32,8 +32,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -75,11 +75,12 @@ public class Dhis2ResourceTablesTestCase {
     @Test
     @Timeout(5)
     public void testAnalyticsDoesNotBlockGivenAsyncIsTrue() {
-        assertDoesNotThrow(() -> {
-            Dhis2ResourceTables dhis2ResourceTables = new Dhis2ResourceTables(dhis2Client);
-            dhis2ResourceTables.analytics(ThreadLocalRandom.current().nextBoolean(),
-                    ThreadLocalRandom.current().nextBoolean(),
-                    ThreadLocalRandom.current().nextInt(), ThreadLocalRandom.current().nextInt(), true);
-        });
+        Dhis2ResourceTables dhis2ResourceTables = new Dhis2ResourceTables(dhis2Client);
+        dhis2ResourceTables.analytics(ThreadLocalRandom.current().nextBoolean(),
+                ThreadLocalRandom.current().nextBoolean(),
+                ThreadLocalRandom.current().nextInt(), ThreadLocalRandom.current().nextInt(), true);
+
+        verify(dhis2Client).post("resourceTables/analytics");
+        verify(postOperation).transfer();
     }
 }

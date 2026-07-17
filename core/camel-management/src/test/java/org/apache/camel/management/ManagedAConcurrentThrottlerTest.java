@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
@@ -45,8 +44,8 @@ public class ManagedAConcurrentThrottlerTest extends AbstractManagedThrottlerTes
 
     @DisabledOnOs(OS.WINDOWS)
     @Test
-    public void testThrottleVisibleViaJmx() {
-        assertDoesNotThrow(() -> super.runTestThrottleAsyncVisibleViaJmx());
+    public void testThrottleVisibleViaJmx() throws Exception {
+        super.runTestThrottleAsyncVisibleViaJmx();
     }
 
     @Override

@@ -39,7 +39,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.MockedStatic;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -48,6 +47,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -121,13 +121,13 @@ public class SmppConsumerTest {
     }
 
     @Test
-    public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() {
-        assertDoesNotThrow(() -> {
-            when(endpoint.getConnectionString())
-                    .thenReturn("smpp://smppclient@localhost:2775");
+    public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
+        when(endpoint.getConnectionString())
+                .thenReturn("smpp://smppclient@localhost:2775");
 
-            consumer.doStop();
-        });
+        consumer.doStop();
+
+        verify(session, never()).unbindAndClose();
     }
 
     @Test

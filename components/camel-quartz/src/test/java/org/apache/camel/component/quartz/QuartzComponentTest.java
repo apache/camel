@@ -21,7 +21,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class QuartzComponentTest extends BaseQuartzTest {
@@ -44,12 +44,13 @@ public class QuartzComponentTest extends BaseQuartzTest {
     }
 
     @Test
-    public void testQuartzComponent() {
-        assertDoesNotThrow(() -> {
-            QuartzComponent comp = new QuartzComponent(context);
-            comp.start();
-            comp.stop();
-        });
+    public void testQuartzComponent() throws Exception {
+        QuartzComponent comp = new QuartzComponent(context);
+        comp.start();
+
+        assertNotNull(comp.getScheduler(), "Scheduler should be created after start");
+
+        comp.stop();
     }
 
 }

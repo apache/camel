@@ -21,7 +21,8 @@ import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyEnricherLeakTest extends BaseNettyTestSupport {
 
@@ -31,51 +32,50 @@ public class NettyEnricherLeakTest extends BaseNettyTestSupport {
     }
 
     @Test
-    public void leakNoTest() {
-        assertDoesNotThrow(() -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+    public void leakNoTest() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
-                    from("netty-http:http://localhost:" + getPort() + "/test")
-                            .transform().simple("${body}");
+                from("netty-http:http://localhost:" + getPort() + "/test")
+                        .transform().simple("${body}");
 
-                    from("direct:outer")
-                            .to("netty-http:http://localhost:" + getPort() + "/test?disconnect=true");
-                }
-            });
-            context.start();
-
-            ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
-            for (int i = 0; i < 10; ++i) {
-                template.requestBody("direct:outer", "input", String.class);
+                from("direct:outer")
+                        .to("netty-http:http://localhost:" + getPort() + "/test?disconnect=true");
             }
         });
+        context.start();
+
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        for (int i = 0; i < 10; ++i) {
+            String result = template.requestBody("direct:outer", "input", String.class);
+            assertNotNull(result, "Response should not be null on iteration " + i);
+            assertEquals("input", result, "Response body should echo the input on iteration " + i);
+        }
     }
 
     @Test
-    public void leakTest() {
-        assertDoesNotThrow(() -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+    public void leakTest() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
-                    from("netty-http:http://localhost:" + getPort() + "/test")
-                            .transform().simple("${body}");
+                from("netty-http:http://localhost:" + getPort() + "/test")
+                        .transform().simple("${body}");
 
-                    from("direct:outer")
-                            .enrich("netty-http:http://localhost:" + getPort() + "/test?disconnect=true",
-                                    AggregationStrategies.string(), false, false);
-                }
-            });
-            context.start();
-
-            ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
-            for (int i = 0; i < 10; ++i) {
-                template.requestBody("direct:outer", "input", String.class);
+                from("direct:outer")
+                        .enrich("netty-http:http://localhost:" + getPort() + "/test?disconnect=true",
+                                AggregationStrategies.string(), false, false);
             }
         });
+        context.start();
+
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        for (int i = 0; i < 10; ++i) {
+            String result = template.requestBody("direct:outer", "input", String.class);
+            assertNotNull(result, "Response should not be null on iteration " + i);
+        }
     }
 }

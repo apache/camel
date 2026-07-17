@@ -44,7 +44,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class InMemoryTaskStoreTest {
     private InMemoryTaskStore store;
@@ -175,14 +174,16 @@ class InMemoryTaskStoreTest {
 
     @Test
     void subscribeAndUnsubscribe() {
-        assertDoesNotThrow(() -> {
-            store.put("t1", createTask("t1", TaskState.WORKING));
-            A2AStreamEmitter emitter = createNoOpEmitter();
-            A2ATaskSubscriber subscriber = new StreamSubscriber(emitter);
+        store.put("t1", createTask("t1", TaskState.WORKING));
+        A2AStreamEmitter emitter = createNoOpEmitter();
+        A2ATaskSubscriber subscriber = new StreamSubscriber(emitter);
 
-            store.addSubscriber("t1", subscriber);
-            store.removeSubscriber("t1", subscriber);
-        });
+        store.addSubscriber("t1", subscriber);
+        store.removeSubscriber("t1", subscriber);
+
+        // Task should still be intact after subscribe/unsubscribe cycle
+        assertThat(store.get("t1")).isNotNull();
+        assertThat(store.get("t1").status().state()).isEqualTo(TaskState.WORKING);
     }
 
     @Test

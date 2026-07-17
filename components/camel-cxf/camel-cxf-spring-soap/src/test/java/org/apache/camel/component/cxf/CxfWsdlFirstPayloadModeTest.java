@@ -24,8 +24,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
 
@@ -45,9 +45,8 @@ public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
     @Override
     @Test
     public void testInvokingServiceWithCamelProducer() {
-        assertDoesNotThrow(() -> {
-            // this test does not apply to PAYLOAD mode
-        });
+        // this test does not apply to PAYLOAD mode; override to verify context is still valid
+        assertNotNull(context, "CamelContext should be available even though this test is not applicable to PAYLOAD mode");
     }
 
     @Override

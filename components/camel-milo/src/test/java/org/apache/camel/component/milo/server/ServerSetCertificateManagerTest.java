@@ -28,7 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test setting the certificate manager
@@ -61,8 +62,9 @@ public class ServerSetCertificateManagerTest extends AbstractMiloServerTest {
 
     @Test
     public void shouldStart() {
-        assertDoesNotThrow(() -> {
-            // Verifies that the server starts successfully during setup
-        });
+        // Verifies that the server starts successfully during setup
+        assertNotNull(context, "CamelContext should have been created");
+        assertTrue(context.getStatus().isStarted(), "CamelContext should be started");
+        assertNotNull(context.getComponent("milo-server"), "milo-server component should be registered");
     }
 }

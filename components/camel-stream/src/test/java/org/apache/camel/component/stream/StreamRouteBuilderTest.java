@@ -16,22 +16,28 @@
  */
 package org.apache.camel.component.stream;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class StreamRouteBuilderTest extends CamelTestSupport {
 
     @Test
     public void testStringContent() {
-        assertDoesNotThrow(() -> template.sendBody("direct:start", "this is text\n"));
+        Exchange result = template.send("direct:start", exchange -> exchange.getIn().setBody("this is text\n"));
+        assertNotNull(result);
+        assertNull(result.getException(), "Sending string content should not cause an exception");
     }
 
     @Test
     public void testBinaryContent() {
-        assertDoesNotThrow(() -> template.sendBody("direct:start", "This is bytes\n".getBytes()));
+        Exchange result = template.send("direct:start", exchange -> exchange.getIn().setBody("This is bytes\n".getBytes()));
+        assertNotNull(result);
+        assertNull(result.getException(), "Sending binary content should not cause an exception");
     }
 
     @Override

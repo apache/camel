@@ -40,7 +40,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -413,28 +412,30 @@ class MavenDownloaderImplTest {
 
     @Test
     @EnabledIfSystemProperty(named = "enableMavenDownloaderTests", matches = "true")
-    void testApacheSnapshots() {
-        assertDoesNotThrow(() -> {
-            try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
-                downloader.setMavenCentralEnabled(true);
-                downloader.setMavenApacheSnapshotEnabled(true);
-                downloader.build();
+    void testApacheSnapshots() throws Exception {
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(true);
+            downloader.setMavenApacheSnapshotEnabled(true);
+            downloader.build();
 
-                // Try to resolve a recent Camel SNAPSHOT (may not always be available)
-                // This test verifies that Apache Snapshots repository can be used
-                try {
-                    downloader.resolveAvailableVersions(
-                            "org.apache.camel",
-                            "camel-core",
-                            "https://repository.apache.org/snapshots");
-                    // If this succeeds, Apache Snapshots is accessible
-                } catch (MavenResolutionException e) {
-                    // This may fail if there are no snapshots or network issues
-                    // Just log and continue
-                    LOG.warn("Could not access Apache Snapshots: {}", e.getMessage());
-                }
+            assertNotNull(downloader.getRepositoryResolver(),
+                    "Repository resolver should be initialized with Apache Snapshots enabled");
+
+            // Try to resolve a recent Camel SNAPSHOT (may not always be available)
+            // This test verifies that Apache Snapshots repository can be used
+            try {
+                List<MavenGav> versions = downloader.resolveAvailableVersions(
+                        "org.apache.camel",
+                        "camel-core",
+                        "https://repository.apache.org/snapshots");
+                // If this succeeds, Apache Snapshots is accessible
+                assertNotNull(versions, "Resolved versions list should not be null");
+            } catch (MavenResolutionException e) {
+                // This may fail if there are no snapshots or network issues
+                // Just log and continue
+                LOG.warn("Could not access Apache Snapshots: {}", e.getMessage());
             }
-        });
+        }
     }
 
     @Test
@@ -542,17 +543,16 @@ class MavenDownloaderImplTest {
     }
 
     @Test
-    void testDisableSettings() {
-        assertDoesNotThrow(() -> {
-            try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
-                // Setting to "false" disables settings.xml processing
-                downloader.setMavenSettingsLocation("false");
-                downloader.build();
+    void testDisableSettings() throws Exception {
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            // Setting to "false" disables settings.xml processing
+            downloader.setMavenSettingsLocation("false");
+            downloader.build();
 
-                // Should still work with default configuration
-                // This is tested in offline mode to avoid network dependency
-            }
-        });
+            // Verify the downloader built successfully without settings.xml
+            assertNotNull(downloader.getRepositoryResolver(),
+                    "Repository resolver should be initialized even with settings.xml disabled");
+        }
     }
 
     @Test

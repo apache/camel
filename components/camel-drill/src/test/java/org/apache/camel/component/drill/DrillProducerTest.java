@@ -27,7 +27,7 @@ import org.apache.camel.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -115,14 +115,15 @@ class DrillProducerTest {
     }
 
     @Test
-    void testDoStopHandlesNullConnection() {
-        assertDoesNotThrow(() -> {
-            DrillProducer producer = new DrillProducer(endpoint);
-            setConnection(producer, null);
+    void testDoStopHandlesNullConnection() throws Exception {
+        DrillProducer producer = new DrillProducer(endpoint);
+        setConnection(producer, null);
 
-            // should not throw
-            producer.doStop();
-        });
+        // should not throw
+        producer.doStop();
+
+        // Verify producer handled null connection gracefully and remains functional
+        assertNotNull(producer.getEndpoint(), "producer endpoint should remain valid after doStop with null connection");
     }
 
     private void setConnection(DrillProducer producer, Connection conn) throws Exception {

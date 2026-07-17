@@ -20,26 +20,26 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestUndertowProducerEncodingTest extends BaseUndertowTest {
 
     @Test
     public void testSelect() {
-        assertDoesNotThrow(() -> {
-            template.sendBody("rest:get:bw-web-api/v1/objects/timesheets?companyId=RD&select=personId,personName",
-                    "Hello World");
-        });
+        Object result = template.requestBody(
+                "rest:get:bw-web-api/v1/objects/timesheets?companyId=RD&select=personId,personName",
+                "Hello World");
+        assertNotNull(result, "Request with select parameter should complete successfully");
     }
 
     @Test
     public void testFilter() {
-        assertDoesNotThrow(() -> {
-            template.sendBody("rest:get:bw-web-api/v1/objects/timesheets?companyId=RD&select=personId,personName"
-                              + "&filter=date(time/date) ge 2020-06-01 and personId eq 'R10019'",
-                    "Bye World");
-        });
+        Object result = template.requestBody(
+                "rest:get:bw-web-api/v1/objects/timesheets?companyId=RD&select=personId,personName"
+                                             + "&filter=date(time/date) ge 2020-06-01 and personId eq 'R10019'",
+                "Bye World");
+        assertNotNull(result, "Request with filter parameter should complete successfully");
     }
 
     @Override

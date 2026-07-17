@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.Exchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.flink.api.common.RuntimeExecutionMode;
 import org.apache.flink.configuration.ExecutionOptions;
@@ -30,7 +31,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DataStreamProducerTest extends CamelTestSupport {
 
@@ -43,16 +44,16 @@ public class DataStreamProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteDataStreamCallback() {
-        assertDoesNotThrow(() -> {
-            template.sendBodyAndHeader(flinkDataStreamUri, null, FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
+        Exchange result = template.send(flinkDataStreamUri, exchange -> {
+            exchange.getIn().setHeader(FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
                     new VoidDataStreamCallback() {
                         @Override
                         public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
-                            // Just verify the callback is executed
                             ds.print();
                         }
                     });
         });
+        assertNull(result.getException(), "DataStream callback should execute without error");
     }
 
     @Test

@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
     private static final String PAYLOAD
@@ -38,8 +38,7 @@ public class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
 
     @Test
     public void testTransformWithDefaultNamespace() {
-        assertDoesNotThrow(() -> {
-            template.sendBody("direct:start", PAYLOAD);
-        });
+        Object result = template.requestBody("direct:start", PAYLOAD);
+        assertNotNull(result, "XSLT transformation with default namespace should produce output");
     }
 }

@@ -35,7 +35,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * Tests for {@link A2AProgress} safety behavior. The full store integration (findStore via endpoint) is covered by
@@ -60,47 +59,52 @@ class A2AProgressTest {
 
     @Test
     void emitWithoutTaskIdDoesNotThrow() {
-        assertDoesNotThrow(() -> {
-            Exchange exchange = new DefaultExchange(context);
-            A2AProgress.emit(exchange, "safe message");
-        });
+        Exchange exchange = new DefaultExchange(context);
+        A2AProgress.emit(exchange, "safe message");
+        // emit is a safe no-op when there is no task context
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage()).isNotNull();
     }
 
     @Test
     void emitWithoutStoreDoesNotThrow() {
-        assertDoesNotThrow(() -> {
-            Exchange exchange = new DefaultExchange(context);
-            exchange.getMessage().setHeader(A2AConstants.TASK_ID, "t1");
-            A2AProgress.emit(exchange, "safe message");
-        });
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader(A2AConstants.TASK_ID, "t1");
+        A2AProgress.emit(exchange, "safe message");
+        // emit is a safe no-op when no task store is available
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage().getHeader(A2AConstants.TASK_ID)).isEqualTo("t1");
     }
 
     @Test
     void emitWithExplicitStateDoesNotThrow() {
-        assertDoesNotThrow(() -> {
-            Exchange exchange = new DefaultExchange(context);
-            A2AProgress.emit(exchange, TaskState.INPUT_REQUIRED, "need info");
-        });
+        Exchange exchange = new DefaultExchange(context);
+        A2AProgress.emit(exchange, TaskState.INPUT_REQUIRED, "need info");
+        // emit with explicit state is a safe no-op when there is no task context
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage()).isNotNull();
     }
 
     @Test
     void emitArtifactWithoutStoreDoesNotThrow() {
-        assertDoesNotThrow(() -> {
-            Exchange exchange = new DefaultExchange(context);
-            A2AProgress.emitArtifact(exchange, Artifact.builder().name("test").build(), false, true);
-        });
+        Exchange exchange = new DefaultExchange(context);
+        A2AProgress.emitArtifact(exchange, Artifact.builder().name("test").build(), false, true);
+        // emitArtifact is a safe no-op when there is no task context
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage()).isNotNull();
     }
 
     @Test
     void emitMessageWithoutStoreDoesNotThrow() {
-        assertDoesNotThrow(() -> {
-            Exchange exchange = new DefaultExchange(context);
-            Message msg = Message.builder()
-                    .role(Message.Role.ROLE_AGENT)
-                    .parts(List.of(new TextPart("hello")))
-                    .build();
-            A2AProgress.emitMessage(exchange, msg);
-        });
+        Exchange exchange = new DefaultExchange(context);
+        Message msg = Message.builder()
+                .role(Message.Role.ROLE_AGENT)
+                .parts(List.of(new TextPart("hello")))
+                .build();
+        A2AProgress.emitMessage(exchange, msg);
+        // emitMessage is a safe no-op when there is no task context
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage()).isNotNull();
     }
 
     @Test

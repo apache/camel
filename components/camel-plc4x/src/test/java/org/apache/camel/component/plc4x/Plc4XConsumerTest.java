@@ -27,7 +27,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
 
 class Plc4XConsumerTest {
@@ -83,8 +82,9 @@ class Plc4XConsumerTest {
     }
 
     @Test
-    void doStop() {
-        assertDoesNotThrow(() -> consumer.doStop());
+    void doStop() throws Exception {
+        consumer.doStop();
+        assertFalse(consumer.isStarted(), "Consumer should not be started after doStop");
     }
 
 }

@@ -24,7 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PooledExecutorTest {
     static final int THREAD_COUNT = 2;
@@ -48,16 +49,17 @@ public class PooledExecutorTest {
      */
     @Test
     public void testAddRunnable() {
-        assertDoesNotThrow(() -> {
-            int runnableCount = 3;
-            int runCount = 5;
+        int runnableCount = 3;
+        int runCount = 5;
 
-            log.info("Starting first set of runnables");
-            startRunnables(runnableCount, runCount);
+        log.info("Starting first set of runnables");
+        startRunnables(runnableCount, runCount);
 
-            log.info("Starting second set of runnables");
-            startRunnables(runnableCount, runCount);
-        });
+        log.info("Starting second set of runnables");
+        startRunnables(runnableCount, runCount);
+
+        assertNotNull(instance.executor, "Executor should still be active after submitting runnables");
+        assertFalse(instance.executor.isShutdown(), "Executor should not be shut down after submitting runnables");
     }
 
     void startRunnables(int runnableCount, int runCount) {

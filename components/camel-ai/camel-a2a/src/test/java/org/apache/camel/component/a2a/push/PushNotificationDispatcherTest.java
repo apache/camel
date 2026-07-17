@@ -41,7 +41,6 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class PushNotificationDispatcherTest {
 
@@ -262,17 +261,18 @@ class PushNotificationDispatcherTest {
     }
 
     @Test
-    void dispatchSkipsWhenNoConfigs() {
-        assertDoesNotThrow(() -> {
-            dispatcher = new PushNotificationDispatcher(
-                    HttpClient.newHttpClient(), store, 0, 1000, executor, true);
+    void dispatchSkipsWhenNoConfigs() throws Exception {
+        dispatcher = new PushNotificationDispatcher(
+                HttpClient.newHttpClient(), store, 0, 1000, executor, true);
 
-            TaskStatusUpdateEvent event = TaskStatusUpdateEvent.builder()
-                    .taskId("task-1")
-                    .status(new TaskStatus(TaskState.COMPLETED))
-                    .build();
-            dispatcher.dispatch("task-1", StreamResponse.ofStatusUpdate(event));
-        });
+        TaskStatusUpdateEvent event = TaskStatusUpdateEvent.builder()
+                .taskId("task-1")
+                .status(new TaskStatus(TaskState.COMPLETED))
+                .build();
+        dispatcher.dispatch("task-1", StreamResponse.ofStatusUpdate(event));
+
+        // No push configs registered, so no work should have been dispatched
+        assertThat(pendingWork(dispatcher)).isEqualTo(0);
     }
 
     @Test

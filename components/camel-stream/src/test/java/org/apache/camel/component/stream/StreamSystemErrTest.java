@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.stream;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test for System.err
@@ -29,12 +31,16 @@ public class StreamSystemErrTest extends CamelTestSupport {
 
     @Test
     public void testStringContent() {
-        assertDoesNotThrow(() -> template.sendBody("direct:in", "Hello Text World\n"));
+        Exchange result = template.send("direct:in", exchange -> exchange.getIn().setBody("Hello Text World\n"));
+        assertNotNull(result);
+        assertNull(result.getException(), "Sending string content to stream:err should not cause an exception");
     }
 
     @Test
     public void testBinaryContent() {
-        assertDoesNotThrow(() -> template.sendBody("direct:in", "Hello Bytes World\n".getBytes()));
+        Exchange result = template.send("direct:in", exchange -> exchange.getIn().setBody("Hello Bytes World\n".getBytes()));
+        assertNotNull(result);
+        assertNull(result.getException(), "Sending binary content to stream:err should not cause an exception");
     }
 
     @Override

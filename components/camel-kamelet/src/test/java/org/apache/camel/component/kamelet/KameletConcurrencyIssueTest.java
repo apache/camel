@@ -26,17 +26,18 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Manual test")
 public class KameletConcurrencyIssueTest extends CamelTestSupport {
 
     @Test
-    public void testConcurrency() {
-        assertDoesNotThrow(() -> {
-            // check there are no exception throw during creating kamelets
-            Thread.sleep(120000);
-        });
+    public void testConcurrency() throws Exception {
+        assertFalse(context.getRoutes().isEmpty(), "Routes should be started for concurrency test");
+        // check there are no exceptions thrown during creating kamelets
+        Thread.sleep(120000);
+        assertTrue(context.getStatus().isStarted(), "CamelContext should still be running after concurrency test");
     }
 
     @Override

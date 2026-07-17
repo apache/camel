@@ -23,7 +23,8 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestDslTest extends BaseEndpointDslTest {
 
@@ -46,23 +47,24 @@ public class RestDslTest extends BaseEndpointDslTest {
     }
 
     @Test
-    public void testRestDsl() {
-        assertDoesNotThrow(() -> {
-            context.start();
+    public void testRestDsl() throws Exception {
+        context.start();
 
-            context.addRoutes(new EndpointRouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    rest("/api")
-                        .get("name").to(direct("username").advanced().lazyStartProducer(true));
+        context.addRoutes(new EndpointRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                rest("/api")
+                    .get("name").to(direct("username").advanced().lazyStartProducer(true));
 
-                    from(direct("username"))
-                            .setBody(constant("scott"));
-                }
-            });
-
-            context.stop();
+                from(direct("username"))
+                        .setBody(constant("scott"));
+            }
         });
+
+        assertFalse(context.getRoutes().isEmpty(), "Routes should have been added via REST DSL");
+        assertTrue(context.getStatus().isStarted(), "Context should be started");
+
+        context.stop();
     }
 
 }

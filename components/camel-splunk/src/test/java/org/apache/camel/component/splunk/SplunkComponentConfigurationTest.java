@@ -21,9 +21,9 @@ import com.splunk.Service;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -64,16 +64,17 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerWithAnonymousAccess() {
-        assertDoesNotThrow(() -> {
-            SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
-            component.setSplunkConfigurationFactory(parameters -> new SplunkConfiguration());
+    public void createProducerWithAnonymousAccess() throws Exception {
+        SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
+        component.setSplunkConfigurationFactory(parameters -> new SplunkConfiguration());
 
-            SplunkEndpoint endpoint = (SplunkEndpoint) component.createEndpoint("splunk://test");
-            SplunkConnectionFactory scf = endpoint.getConfiguration().getConnectionFactory();
-            //following call with fail with "Missing username or password, without fix of CAMEL-16313,
-            scf.createService(context);
-        });
+        SplunkEndpoint endpoint = (SplunkEndpoint) component.createEndpoint("splunk://test");
+        assertNotNull(endpoint);
+        SplunkConnectionFactory scf = endpoint.getConfiguration().getConnectionFactory();
+        assertNotNull(scf);
+        // Following call would fail with "Missing username or password" without fix of CAMEL-16313
+        Service service = scf.createService(context);
+        assertNotNull(service);
     }
 
     @Test

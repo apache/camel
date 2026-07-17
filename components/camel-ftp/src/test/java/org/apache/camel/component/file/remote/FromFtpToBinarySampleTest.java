@@ -20,7 +20,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test used for FTP wiki documentation
@@ -29,9 +30,9 @@ public class FromFtpToBinarySampleTest extends CamelTestSupport {
 
     @Test
     public void testDummy() {
-        assertDoesNotThrow(() -> {
-            // this is a noop test
-        });
+        // this is a noop test - verify the route builder configured the route correctly
+        assertNotNull(context, "CamelContext should be initialized");
+        assertEquals(1, context.getRoutes().size(), "Route builder should configure exactly one route");
     }
 
     // START SNIPPET: e1
