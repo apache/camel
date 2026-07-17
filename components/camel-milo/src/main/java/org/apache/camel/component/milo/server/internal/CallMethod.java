@@ -20,7 +20,7 @@ package org.apache.camel.component.milo.server.internal;
 import org.eclipse.milo.opcua.sdk.core.ValueRanks;
 import org.eclipse.milo.opcua.sdk.server.methods.AbstractMethodInvocationHandler;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
-import org.eclipse.milo.opcua.stack.core.NodeIds0;
+import org.eclipse.milo.opcua.stack.core.NodeIds;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.structured.Argument;
@@ -31,14 +31,14 @@ public class CallMethod extends AbstractMethodInvocationHandler {
 
     public static final Argument IN = new Argument(
             "in",
-            NodeIds0.String,
+            NodeIds.String,
             ValueRanks.Scalar,
             null,
             new LocalizedText("A value."));
 
     public static final Argument OUT = new Argument(
             "out",
-            NodeIds0.String,
+            NodeIds.String,
             ValueRanks.Scalar,
             null,
             new LocalizedText("A value."));
