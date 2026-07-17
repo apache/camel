@@ -32,11 +32,9 @@ public class SpringTraceTest extends SpringRunWithTestSupport {
     @Autowired
     protected ProducerTemplate camelTemplate;
 
-    @Autowired
-    protected CamelContext camelContext;
-
     @Test
     public void testTracing() throws Exception {
+        CamelContext camelContext = camelTemplate.getCamelContext();
         MockEndpoint mock = camelContext.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(2);
 
