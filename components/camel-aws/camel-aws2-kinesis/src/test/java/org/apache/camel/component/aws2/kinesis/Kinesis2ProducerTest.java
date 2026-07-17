@@ -36,6 +36,7 @@ import software.amazon.awssdk.services.kinesis.model.PutRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsResultEntry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -142,5 +143,24 @@ public class Kinesis2ProducerTest {
         assertEquals("key-A", entries.get(0).partitionKey());
         assertEquals("fallback-key", entries.get(1).partitionKey());
         assertEquals("fallback-key", entries.get(2).partitionKey());
+    }
+
+    @Test
+    public void batchWithFewerPartitionKeysAndNoFallbackThrows() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEYS,
+                Arrays.asList("key-A"));
+        exchange.getIn().setBody(Arrays.asList("record1", "record2", "record3"));
+
+        assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
+    }
+
+    @Test
+    public void batchWithEmptyPartitionKeysListThrows() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEYS, List.of());
+        exchange.getIn().setBody(Arrays.asList("record1"));
+
+        assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
     }
 }

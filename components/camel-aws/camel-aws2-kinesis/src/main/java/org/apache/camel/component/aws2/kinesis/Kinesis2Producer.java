@@ -79,6 +79,8 @@ public class Kinesis2Producer extends DefaultProducer {
         Object partitionKey = exchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEY);
         if (partitionKeys == null) {
             ensurePartitionKeyNotNull(partitionKey);
+        } else if (partitionKeys.isEmpty()) {
+            throw new IllegalArgumentException("CamelAwsKinesisPartitionKeys header must not be empty");
         }
         List<List<PutRecordsRequestEntry>> requestBatchList
                 = createRequestBatchList(exchange, partitionKey, partitionKeys);
@@ -127,6 +129,7 @@ public class Kinesis2Producer extends DefaultProducer {
             if (partitionKeys != null && index < partitionKeys.size()) {
                 key = partitionKeys.get(index);
             } else {
+                ensurePartitionKeyNotNull(partitionKey);
                 key = partitionKey.toString();
             }
 
