@@ -56,7 +56,8 @@ public class ApicurioRegistryLocalContainerInfraService
         return new GenericContainer<>(imageName)
                 .withNetworkAliases(containerName)
                 .withExposedPorts(ApicurioRegistryProperties.DEFAULT_PORT)
-                .waitingFor(Wait.forHttp("/health").forPort(ApicurioRegistryProperties.DEFAULT_PORT).forStatusCode(200));
+                .waitingFor(Wait.forHttp("/apis/registry/v3/system/info")
+                        .forPort(ApicurioRegistryProperties.DEFAULT_PORT).forStatusCode(200));
     }
 
     @Override
