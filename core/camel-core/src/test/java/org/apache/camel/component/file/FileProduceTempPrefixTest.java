@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
 import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
@@ -76,7 +77,12 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
 
     @Test
     public void testTempPrefixUUIDFilename() {
-        Assertions.assertDoesNotThrow(() -> template.sendBody("direct:a", "Bye World"));
+        template.sendBody("direct:a", "Bye World");
+
+        // When no FILE_NAME header is set, the producer creates a file with an auto-generated UUID name
+        File[] files = testDirectory().toFile().listFiles();
+        Assertions.assertNotNull(files, "Test directory should contain files");
+        Assertions.assertTrue(files.length > 0, "A file should have been created with an auto-generated name");
     }
 
     @Override

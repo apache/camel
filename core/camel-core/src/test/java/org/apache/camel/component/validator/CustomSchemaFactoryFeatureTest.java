@@ -20,9 +20,12 @@ import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     // Need to bind the CustomerSchemaFactory
@@ -37,14 +40,15 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
 
     // just inject the SchemaFactory as we want
     @Test
-    public void testCustomSchemaFactory() {
-        Assertions.assertDoesNotThrow(() -> {
-            ValidatorComponent v = new ValidatorComponent();
-            v.setCamelContext(context);
-            v.init();
-            v.createEndpoint(
-                    "validator:org/apache/camel/component/validator/unsecuredSchema.xsd?schemaFactory=#MySchemaFactory");
-        });
+    public void testCustomSchemaFactory() throws Exception {
+        ValidatorComponent v = new ValidatorComponent();
+        v.setCamelContext(context);
+        v.init();
+        Endpoint endpoint = v.createEndpoint(
+                "validator:org/apache/camel/component/validator/unsecuredSchema.xsd?schemaFactory=#MySchemaFactory");
+        assertNotNull(endpoint, "Endpoint should be created with a custom SchemaFactory");
+        ValidatorEndpoint ve = assertInstanceOf(ValidatorEndpoint.class, endpoint);
+        assertNotNull(ve.getSchemaFactory(), "Endpoint should have the custom SchemaFactory configured");
     }
 
 }

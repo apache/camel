@@ -17,10 +17,12 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -37,8 +39,10 @@ public class FileInvalidStartingPathTest extends ContextTestSupport {
 
     @Test
     public void testValidStartingPath() {
-        assertDoesNotThrow(() -> context.getEndpoint(
-                fileUri("?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt")));
+        Endpoint endpoint = context.getEndpoint(
+                fileUri("?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt"));
+        assertNotNull(endpoint, "Endpoint should be resolved for a valid starting path");
+        assertInstanceOf(FileEndpoint.class, endpoint);
     }
 
 }
