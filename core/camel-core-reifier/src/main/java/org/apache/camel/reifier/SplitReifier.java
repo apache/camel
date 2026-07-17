@@ -29,7 +29,6 @@ import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
-import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.resume.ResumeStrategy;
 
 public class SplitReifier extends ExpressionReifier<SplitDefinition> {
@@ -182,10 +181,6 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         }
 
         CamelContextAware.trySetCamelContext(strategy, camelContext);
-        if (strategy != null && parseBoolean(definition.getShareUnitOfWork(), false)) {
-            // wrap strategy in share unit of work
-            strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
-        }
 
         return strategy;
     }

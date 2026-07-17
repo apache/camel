@@ -32,7 +32,6 @@ import org.apache.camel.processor.EvaluateExpressionProcessor;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
-import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 public class RecipientListReifier extends ProcessorReifier<RecipientListDefinition<?>> {
@@ -153,11 +152,6 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
             strategy = new UseLatestAggregationStrategy();
         }
         CamelContextAware.trySetCamelContext(strategy, camelContext);
-
-        if (parseBoolean(definition.getShareUnitOfWork(), false)) {
-            // wrap strategy in share unit of work
-            strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
-        }
 
         return strategy;
     }
