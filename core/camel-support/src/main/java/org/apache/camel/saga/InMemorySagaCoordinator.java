@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -57,16 +56,14 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     private final CamelContext camelContext;
     private final InMemorySagaService sagaService;
     private final String sagaId;
-    private final List<CamelSagaStep> steps;
-    private final Map<CamelSagaStep, Map<String, Object>> optionValues;
+    private final List<StepEnlistment> enlistments;
     private final AtomicReference<Status> currentStatus;
 
     public InMemorySagaCoordinator(CamelContext camelContext, InMemorySagaService sagaService, String sagaId) {
         this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
         this.sagaService = ObjectHelper.notNull(sagaService, "sagaService");
         this.sagaId = ObjectHelper.notNull(sagaId, "sagaId");
-        this.steps = new CopyOnWriteArrayList<>();
-        this.optionValues = new ConcurrentHashMap<>();
+        this.enlistments = new CopyOnWriteArrayList<>();
         this.currentStatus = new AtomicReference<>(Status.RUNNING);
     }
 
@@ -84,27 +81,26 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             return res;
         }
 
-        this.steps.add(step);
-
+        Map<String, Object> values = new HashMap<>();
         if (!step.getOptions().isEmpty()) {
-            optionValues.putIfAbsent(step, new ConcurrentHashMap<>());
-            Map<String, Object> values = optionValues.computeIfAbsent(step, k -> new HashMap<>());
-            for (String option : step.getOptions().keySet()) {
-                Expression expression = step.getOptions().get(option);
+            for (Map.Entry<String, Expression> entry : step.getOptions().entrySet()) {
+                Expression expression = entry.getValue();
                 if (expression != null) {
                     try {
                         Object value = expression.evaluate(exchange, Object.class);
                         if (value != null) {
-                            values.put(option, value);
+                            values.put(entry.getKey(), value);
                         }
                     } catch (Exception ex) {
                         return CompletableFuture.supplyAsync(() -> {
-                            throw new RuntimeCamelException("Cannot evaluate saga option '" + option + "'", ex);
+                            throw new RuntimeCamelException(
+                                    "Cannot evaluate saga option '" + entry.getKey() + "'", ex);
                         });
                     }
                 }
             }
         }
+        this.enlistments.add(new StepEnlistment(step, values));
 
         if (step.getTimeoutInMilliseconds().isPresent()) {
             sagaService.getExecutorService().schedule(() -> {
@@ -174,11 +170,11 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             final Exchange exchange,
             Function<CamelSagaStep, Optional<Endpoint>> endpointExtractor, String description) {
         CompletableFuture<Boolean> result = CompletableFuture.completedFuture(true);
-        for (CamelSagaStep step : reversed(steps)) {
-            Optional<Endpoint> endpoint = endpointExtractor.apply(step);
+        for (StepEnlistment enlistment : reversed(enlistments)) {
+            Optional<Endpoint> endpoint = endpointExtractor.apply(enlistment.step);
             if (endpoint.isPresent()) {
                 result = result.thenCompose(
-                        prevResult -> doFinalize(exchange, endpoint.get(), step, 0, description)
+                        prevResult -> doFinalize(exchange, endpoint.get(), enlistment, 0, description)
                                 .thenApply(res -> prevResult && res));
             }
         }
@@ -192,11 +188,11 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     }
 
     private CompletableFuture<Boolean> doFinalize(
-            Exchange exchange, Endpoint endpoint, CamelSagaStep step, int doneAttempts, String description) {
-        Exchange target = createExchange(exchange, endpoint, step);
+            Exchange exchange, Endpoint endpoint, StepEnlistment enlistment, int doneAttempts, String description) {
+        Exchange target = createExchange(exchange, endpoint, enlistment);
 
         return CompletableFuture.supplyAsync(() -> {
-            Exchange res = camelContext.createFluentProducerTemplate().to(endpoint).withExchange(target).send();
+            Exchange res = sagaService.getProducerTemplate().send(endpoint, target);
             Exception ex = res.getException();
             if (ex != null) {
                 throw new RuntimeCamelException(res.getException());
@@ -215,7 +211,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             } else {
                 CompletableFuture<Boolean> future = new CompletableFuture<>();
                 sagaService.getExecutorService().schedule(() -> {
-                    doFinalize(target, endpoint, step, currentAttempt, description).whenComplete((res, ex) -> {
+                    doFinalize(target, endpoint, enlistment, currentAttempt, description).whenComplete((res, ex) -> {
                         if (ex != null) {
                             future.completeExceptionally(ex);
                         } else {
@@ -229,7 +225,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     }
 
     @SuppressWarnings("deprecation")
-    private Exchange createExchange(Exchange parent, Endpoint endpoint, CamelSagaStep step) {
+    private Exchange createExchange(Exchange parent, Endpoint endpoint, StepEnlistment enlistment) {
         Exchange answer = endpoint.createExchange();
         answer.getMessage().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, getId());
         answer.getExchangeExtension().setSagaLongRunningAction(getId());
@@ -240,11 +236,8 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             answer.setProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN, span);
         }
 
-        Map<String, Object> values = optionValues.get(step);
-        if (values != null) {
-            for (Map.Entry<String, Object> entry : values.entrySet()) {
-                answer.getMessage().setHeader(entry.getKey(), entry.getValue());
-            }
+        for (Map.Entry<String, Object> entry : enlistment.optionValues.entrySet()) {
+            answer.getMessage().setHeader(entry.getKey(), entry.getValue());
         }
         return answer;
     }
@@ -253,5 +246,15 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         List<T> reversed = new ArrayList<>(list);
         Collections.reverse(reversed);
         return reversed;
+    }
+
+    private static class StepEnlistment {
+        final CamelSagaStep step;
+        final Map<String, Object> optionValues;
+
+        StepEnlistment(CamelSagaStep step, Map<String, Object> optionValues) {
+            this.step = step;
+            this.optionValues = optionValues;
+        }
     }
 }

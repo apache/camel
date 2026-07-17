@@ -16,13 +16,18 @@
  */
 package org.apache.camel.processor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.SagaPropagation;
 import org.apache.camel.saga.InMemorySagaService;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class SagaOptionsTest extends ContextTestSupport {
@@ -60,6 +65,27 @@ public class SagaOptionsTest extends ContextTestSupport {
         compensate.assertIsSatisfied();
     }
 
+    @Test
+    public void testOptionsPreservedOnRepeatedEnlistment() throws Exception {
+        MockEndpoint compensate = getMockEndpoint("mock:compensate");
+        compensate.expectedMessageCount(2);
+
+        try {
+            template.sendBody("direct:workflow-repeated", "go");
+            fail("Should throw an exception");
+        } catch (Exception ex) {
+            // OK
+        }
+
+        compensate.assertIsSatisfied();
+
+        List<String> itemIds = compensate.getReceivedExchanges().stream()
+                .map(e -> e.getMessage().getHeader("itemId", String.class))
+                .sorted()
+                .collect(Collectors.toList());
+        assertEquals(List.of("item-A", "item-B"), itemIds);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
 
@@ -68,6 +94,20 @@ public class SagaOptionsTest extends ContextTestSupport {
             public void configure() throws Exception {
 
                 context.addService(new InMemorySagaService());
+
+                from("direct:workflow-repeated").saga()
+                        .setHeader("itemId", constant("item-A"))
+                        .to("direct:enlistItem")
+                        .setHeader("itemId", constant("item-B"))
+                        .to("direct:enlistItem")
+                        .process(ex -> {
+                            throw new RuntimeException("forced failure");
+                        });
+
+                from("direct:enlistItem").saga().propagation(SagaPropagation.MANDATORY)
+                        .option("itemId", header("itemId"))
+                        .compensation("mock:compensate")
+                        .log("Enlisted ${header.itemId}");
 
                 from("direct:workflow").saga().option("id", constant("myheader")).option("name", header("myname"))
                         .completion("mock:complete").compensation("mock:compensate")
