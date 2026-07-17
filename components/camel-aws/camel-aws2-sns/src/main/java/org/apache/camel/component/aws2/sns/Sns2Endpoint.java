@@ -140,8 +140,11 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
             if (configuration.isServerSideEncryptionEnabled()) {
                 if (ObjectHelper.isNotEmpty(configuration.getKmsMasterKeyId())) {
                     attributes.put("KmsMasterKeyId", configuration.getKmsMasterKeyId());
-                    builder.attributes(attributes);
+                } else {
+                    throw new IllegalArgumentException(
+                            "The option kmsMasterKeyId is required when serverSideEncryptionEnabled is true");
                 }
+                builder.attributes(attributes);
             }
 
             if (configuration.isFifoTopic()) {
@@ -173,14 +176,14 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         }
 
         if (configuration.isSubscribeSNStoSQS()) {
-            if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getQueueArn()))) {
+            if (ObjectHelper.isNotEmpty(configuration.getQueueArn())) {
                 SubscribeResponse resp = snsClient.subscribe(SubscribeRequest.builder().topicArn(configuration.getTopicArn())
                         .protocol("sqs").endpoint(configuration.getQueueArn())
                         .returnSubscriptionArn(true).build());
                 LOG.trace("Subscription of SQS Queue to SNS Topic done with Amazon resource name: {}", resp.subscriptionArn());
             } else {
                 throw new IllegalArgumentException(
-                        "Using the SubscribeSNStoSQS option require both AmazonSQSClient and Queue URL options");
+                        "Using the SubscribeSNStoSQS option requires the queueArn option to be set");
             }
         }
 
