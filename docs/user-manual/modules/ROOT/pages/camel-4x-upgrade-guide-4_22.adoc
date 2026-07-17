@@ -105,6 +105,47 @@ The `--open-telemetry-agent-export` option has been extended with new values and
 The `camel.opentelemetry2.exportTarget` property in `OpenTelemetryTracer` now accepts any
 non-empty value to signal external export mode (previously only `"jaeger"` was recognized).
 
+==== Website installers for the Camel CLI
+
+Two canonical installer scripts are now available for installing the
+xref:camel-jbang-launcher.adoc[Camel CLI Launcher] without a package manager:
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh
+----
+
+[source,powershell]
+----
+irm https://camel.apache.org/install.ps1 | iex
+----
+
+With no arguments, both installers resolve and install the latest published release. An exact
+version can be requested instead with `--version X.Y.Z` (`install.sh`) or `-Version X.Y.Z`
+(`install.ps1`); the requested version is validated and matched against the fetched manifest
+before anything is downloaded.
+
+Both installers download the release archive from Maven Central, verify it against a SHA-256
+recorded in a signed-path manifest before extracting it, and reject archives containing absolute
+paths, `../` traversal, escaping symlinks/reparse points, or more than one top-level directory.
+The staged launcher is then run once to confirm a Java 17+ runtime can be discovered (see
+"Camel CLI launcher Java runtime discovery" above); if that check fails, the previously active
+installation, if any, is left untouched and the installer exits nonzero.
+
+Installation is always per-user and never requires elevation or `sudo`:
+
+* POSIX (`install.sh`) installs under `${XDG_DATA_HOME:-$HOME/.local/share}/camel-cli/versions/<version>`
+  and activates it via a symlink at `$HOME/.local/bin/camel`. The installer never writes to shell
+  profile files (`.bashrc`, `.profile`, etc.); if `$HOME/.local/bin` is not already on `PATH`, it
+  prints guidance instead.
+* Windows (`install.ps1`) installs under `%LOCALAPPDATA%\Apache Camel\cli\versions\<version>` and
+  activates it via a `camel.cmd` shim at `%LOCALAPPDATA%\Apache Camel\bin\camel.cmd` that delegates
+  to the staged `camel-x64.exe` or `camel-arm64.exe` (auto-detected). The bin directory is added
+  once, case-insensitively, to the current user's `PATH`; the machine `PATH` is never modified.
+
+Previously installed version directories are left in place after an upgrade or downgrade and
+must be removed manually. Reinstalling the same version replaces that version directory.
+
 === camel-langchain4j-agent
 
 The `Agent.chat()` method return type has changed from `String` to `Result<String>` (from `dev.langchain4j.service.Result`).
