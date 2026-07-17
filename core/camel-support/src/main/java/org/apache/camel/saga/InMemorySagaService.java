@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -40,6 +41,8 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
     private final Map<String, CamelSagaCoordinator> coordinators = new ConcurrentHashMap<>();
 
     private ScheduledExecutorService executorService;
+
+    private ProducerTemplate producerTemplate;
 
     private int maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS;
 
@@ -72,10 +75,17 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
             this.executorService = camelContext.getExecutorServiceManager()
                     .newDefaultScheduledThreadPool(this, "saga");
         }
+        if (this.producerTemplate == null) {
+            this.producerTemplate = camelContext.createProducerTemplate();
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
+        if (this.producerTemplate != null) {
+            this.producerTemplate.stop();
+            this.producerTemplate = null;
+        }
         if (this.executorService != null) {
             camelContext.getExecutorServiceManager().shutdownGraceful(this.executorService);
             this.executorService = null;
@@ -84,6 +94,10 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
 
     public ScheduledExecutorService getExecutorService() {
         return executorService;
+    }
+
+    public ProducerTemplate getProducerTemplate() {
+        return producerTemplate;
     }
 
     @Override
