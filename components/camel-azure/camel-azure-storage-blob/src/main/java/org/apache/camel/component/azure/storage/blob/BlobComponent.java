@@ -91,7 +91,9 @@ public class BlobComponent extends HealthCheckComponent {
                     configuration.setCredentialType(AZURE_IDENTITY);
                 }
             } else {
-                configuration.setCredentialType(CredentialType.SHARED_KEY_CREDENTIAL);
+                if (configuration.getCredentialType() == null) {
+                    configuration.setCredentialType(CredentialType.SHARED_KEY_CREDENTIAL);
+                }
             }
         }
     }
