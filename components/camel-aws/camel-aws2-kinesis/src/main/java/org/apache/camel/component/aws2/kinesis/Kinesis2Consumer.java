@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.kinesis;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -42,13 +43,12 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
-import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorResponse;
 import software.amazon.awssdk.services.kinesis.model.ListShardsRequest;
+import software.amazon.awssdk.services.kinesis.model.ListShardsResponse;
 import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.Shard;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
@@ -105,40 +105,19 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                 return 0;
             }
 
-            var request = DescribeStreamRequest
-                    .builder()
-                    .streamName(getEndpoint().getConfiguration().getStreamName())
-                    .build();
-            DescribeStreamResponse response;
-            if (getEndpoint().getConfiguration().isAsyncClient()) {
-                try {
-                    response = connection
-                            .getAsyncClient(getEndpoint())
-                            .describeStream(request)
-                            .get();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return 0;
-                } catch (ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                response = connection
-                        .getClient(getEndpoint())
-                        .describeStream(request);
-            }
-
-            var shard = response
-                    .streamDescription()
-                    .shards()
-                    .stream()
-                    .filter(shardItem -> shardItem
-                            .shardId()
-                            .equalsIgnoreCase(getEndpoint()
-                                    .getConfiguration()
-                                    .getShardId()))
+            // Use the cached shard list from ShardMonitor instead of calling DescribeStream
+            // on every poll. ShardMonitor uses ListShards (paginated, 100 TPS limit) vs
+            // DescribeStream (unpaginated, 10 TPS limit).
+            Shard shard = getCurrentShardList().stream()
+                    .filter(s -> s.shardId().equalsIgnoreCase(shardId))
                     .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("The shard can't be found"));
+                    .orElse(null);
+
+            if (shard == null) {
+                LOG.warn("Configured shardId {} not found in shard list for stream {}",
+                        shardId, getEndpoint().getConfiguration().getStreamName());
+                return 0;
+            }
 
             fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount);
 
@@ -471,33 +450,42 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         }
 
         private List<Shard> getShardList(final KinesisConnection kinesisConnection) {
-            var request = ListShardsRequest
-                    .builder()
-                    .streamName(getEndpoint().getConfiguration().getStreamName())
-                    .build();
+            List<Shard> allShards = new ArrayList<>();
+            String nextToken = null;
 
-            List<Shard> shardList;
-            if (getEndpoint().getConfiguration().isAsyncClient()) {
-                try {
-                    shardList = kinesisConnection
-                            .getAsyncClient(getEndpoint())
-                            .listShards(request)
-                            .get()
-                            .shards();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException(e);
-                } catch (ExecutionException e) {
-                    throw new RuntimeException(e);
+            do {
+                ListShardsRequest.Builder requestBuilder = ListShardsRequest.builder();
+                if (nextToken != null) {
+                    requestBuilder.nextToken(nextToken);
+                } else {
+                    requestBuilder.streamName(getEndpoint().getConfiguration().getStreamName());
                 }
-            } else {
-                shardList = kinesisConnection
-                        .getClient(getEndpoint())
-                        .listShards(request)
-                        .shards();
-            }
+                ListShardsRequest request = requestBuilder.build();
 
-            return shardList;
+                ListShardsResponse response;
+                if (getEndpoint().getConfiguration().isAsyncClient()) {
+                    try {
+                        response = kinesisConnection
+                                .getAsyncClient(getEndpoint())
+                                .listShards(request)
+                                .get();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        throw new RuntimeException(e);
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    response = kinesisConnection
+                            .getClient(getEndpoint())
+                            .listShards(request);
+                }
+
+                allShards.addAll(response.shards());
+                nextToken = response.nextToken();
+            } while (nextToken != null);
+
+            return allShards;
         }
     }
 }

@@ -73,10 +73,15 @@ public class Kinesis2Producer extends DefaultProducer {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void sendBatchRecords(Exchange exchange) {
+        List<String> partitionKeys = exchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEYS, List.class);
         Object partitionKey = exchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEY);
-        ensurePartitionKeyNotNull(partitionKey);
-        List<List<PutRecordsRequestEntry>> requestBatchList = createRequestBatchList(exchange, partitionKey);
+        if (partitionKeys == null) {
+            ensurePartitionKeyNotNull(partitionKey);
+        }
+        List<List<PutRecordsRequestEntry>> requestBatchList
+                = createRequestBatchList(exchange, partitionKey, partitionKeys);
         int totalRecordCount = 0;
         int totalFailedCount = 0;
         for (List<PutRecordsRequestEntry> requestBatch : requestBatchList) {
@@ -98,9 +103,11 @@ public class Kinesis2Producer extends DefaultProducer {
         message.setHeader(Kinesis2Constants.FAILED_RECORD_COUNT, totalFailedCount);
     }
 
-    private List<List<PutRecordsRequestEntry>> createRequestBatchList(Exchange exchange, Object partitionKey) {
+    private List<List<PutRecordsRequestEntry>> createRequestBatchList(
+            Exchange exchange, Object partitionKey, List<String> partitionKeys) {
         List<List<PutRecordsRequestEntry>> requestBatchList = new ArrayList<>();
         List<PutRecordsRequestEntry> requestBatch = new ArrayList<>(MAX_BATCH_SIZE);
+        int index = 0;
         for (Object record : exchange.getIn().getBody(Iterable.class)) {
             SdkBytes sdkBytes;
             if (record instanceof byte[] bytes) {
@@ -116,15 +123,23 @@ public class Kinesis2Producer extends DefaultProducer {
                         "Record type not supported. Must be byte[], ByteBuffer, InputStream or UTF-8 String");
             }
 
+            String key;
+            if (partitionKeys != null && index < partitionKeys.size()) {
+                key = partitionKeys.get(index);
+            } else {
+                key = partitionKey.toString();
+            }
+
             PutRecordsRequestEntry putRecordsRequestEntry = PutRecordsRequestEntry.builder()
                     .data(sdkBytes)
-                    .partitionKey(partitionKey.toString())
+                    .partitionKey(key)
                     .build();
             requestBatch.add(putRecordsRequestEntry);
             if (requestBatch.size() == MAX_BATCH_SIZE) {
                 requestBatchList.add(requestBatch);
                 requestBatch = new ArrayList<>(MAX_BATCH_SIZE);
             }
+            index++;
         }
         if (!requestBatch.isEmpty()) {
             requestBatchList.add(requestBatch);
