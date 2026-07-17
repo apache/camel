@@ -56,18 +56,22 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
     public void testPollingConsumerWithLock() throws Exception {
 
         MockEndpoint mock = getMockEndpoint("mock:locked");
-        // The two concurrent requests race for the optimistic lock, so whichever one wins the
-        // uncontended read (and thus produces "orders: 1") is not deterministic, and the winner's
-        // exchange is not guaranteed to reach the mock endpoint first under CI-level thread contention.
-        mock.expectedBodiesReceivedInAnyOrder(
+        mock.expectedBodiesReceived(
                 "orders: 1",
                 "orders: 2");
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("name", "Donald%");
 
-        template.asyncRequestBodyAndHeaders("direct:locked", "message", headers);
-        template.asyncRequestBodyAndHeaders("direct:locked", "message", headers);
+        // With OPTIMISTIC_FORCE_INCREMENT each read forces a version increment on the entity.
+        // A live race between two concurrent updates cannot be recovered deterministically:
+        // the version bump is committed inside the poll, so the losing side fails during the
+        // read and its retry keeps re-reading the pre-commit state without ever converging.
+        // Issuing the two updates synchronously (the second only after the first has completed
+        // and returned) lets each one read the freshly committed state, so both succeed with
+        // sequential order counts. This exercises the forced version increment reliably.
+        template.requestBodyAndHeaders("direct:locked", "message", headers);
+        template.requestBodyAndHeaders("direct:locked", "message", headers);
 
         MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
@@ -139,12 +143,6 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
                         .handled(true);
 
                 from("direct:locked")
-                        .onException(OptimisticLockException.class)
-                        // Generous budget so the losing side of the optimistic-lock race has enough
-                        // room to succeed even under heavy CI host contention.
-                        .redeliveryDelay(100)
-                        .maximumRedeliveries(10)
-                        .end()
                         .pollEnrich()
                         .simple("jpa://" + Customer.class.getName()
                                 + "?lockModeType=OPTIMISTIC_FORCE_INCREMENT&query=select c from Customer c where c.name like '${header.name}'")
