@@ -144,9 +144,25 @@ public class SubscriptionHelper extends ServiceSupport {
                         }
                     }
                 }
-                // failed, so keep trying
-                LOG.debug("Handshake failed, so try again.");
-                client.handshake();
+                // failed, so keep trying with backoff
+                final long backoff = handshakeBackoff.getAndAdd(backoffIncrement);
+                if (backoff > maxBackoff) {
+                    LOG.error("Handshake retry aborted after exceeding {} msecs backoff", maxBackoff);
+                } else {
+                    LOG.debug("Pausing for {} msecs before handshake retry", backoff);
+                    if (backoff > 0) {
+                        Tasks.foregroundTask()
+                                .withBudget(Budgets.iterationBudget()
+                                        .withMaxIterations(1)
+                                        .withInitialDelay(Duration.ofMillis(backoff))
+                                        .withInterval(Duration.ZERO)
+                                        .build())
+                                .withName("SalesforceHandshakeRetryDelay")
+                                .build()
+                                .run(component.getCamelContext(), () -> true);
+                    }
+                    client.handshake();
+                }
             } else if (!channelToConsumers.isEmpty()) {
                 channelsLock.lock();
                 try {

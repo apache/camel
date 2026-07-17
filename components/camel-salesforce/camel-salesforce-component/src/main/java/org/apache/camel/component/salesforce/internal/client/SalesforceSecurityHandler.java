@@ -171,16 +171,19 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
                 // Salesforce will allow successful login with an expired password, but any subsequent
                 // API calls will fail with a 401 and message about expired password.
                 // It's fatal. User must reset password.
-                List<RestError> errors = Collections.emptyList();
-                try {
-                    errors = client.readErrorsFrom(getContentAsInputStream(), objectMapper);
-                } catch (IOException e) {
-                    LOG.warn("Unable to deserialize errors from response body.");
-                }
-                if (errors.stream().anyMatch(error -> EXPIRED_PASSWORD_CODE.equals(error.getErrorCode()))) {
-                    SalesforceException salesforceException = createSalesforceException(client, status);
-                    forwardFailureComplete(request, null, response, salesforceException);
-                    return;
+                // Note: client may be null for CometD streaming requests
+                if (client != null) {
+                    List<RestError> errors = Collections.emptyList();
+                    try {
+                        errors = client.readErrorsFrom(getContentAsInputStream(), objectMapper);
+                    } catch (IOException e) {
+                        LOG.warn("Unable to deserialize errors from response body.");
+                    }
+                    if (errors.stream().anyMatch(error -> EXPIRED_PASSWORD_CODE.equals(error.getErrorCode()))) {
+                        SalesforceException salesforceException = createSalesforceException(client, status);
+                        forwardFailureComplete(request, null, response, salesforceException);
+                        return;
+                    }
                 }
 
                 // REST token expiry
@@ -213,10 +216,12 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
 
         private SalesforceException createSalesforceException(AbstractClientBase client, int statusCode) {
             List<RestError> restErrors = Collections.emptyList();
-            try {
-                restErrors = client.readErrorsFrom(getContentAsInputStream(), new ObjectMapper());
-            } catch (IOException e) {
-                LOG.warn("Unable to deserialize errors from response body.");
+            if (client != null) {
+                try {
+                    restErrors = client.readErrorsFrom(getContentAsInputStream(), new ObjectMapper());
+                } catch (IOException e) {
+                    LOG.warn("Unable to deserialize errors from response body.");
+                }
             }
             return new SalesforceException(restErrors, statusCode);
         }

@@ -342,8 +342,12 @@ public class PubSubApiClient extends ServiceSupport {
                 String errorCode = "";
                 LOG.error("Trailers:");
                 if (trailers != null) {
-                    trailers.keys().forEach(trailer -> LOG.error("Trailer: {}, Value: {}", trailer,
-                            trailers.get(Metadata.Key.of(trailer, Metadata.ASCII_STRING_MARSHALLER))));
+                    trailers.keys().forEach(trailer -> {
+                        if (!trailer.endsWith(Metadata.BINARY_HEADER_SUFFIX)) {
+                            LOG.error("Trailer: {}, Value: {}", trailer,
+                                    trailers.get(Metadata.Key.of(trailer, Metadata.ASCII_STRING_MARSHALLER)));
+                        }
+                    });
                     errorCode = trailers.get(Metadata.Key.of("error-code", Metadata.ASCII_STRING_MARSHALLER));
                 }
                 if (errorCode != null) {
@@ -383,12 +387,21 @@ public class PubSubApiClient extends ServiceSupport {
         }
 
         private void resubscribeOnError() {
+            if (isStoppingOrStopped() || channel == null || channel.isShutdown()) {
+                LOG.debug("Client is stopping or channel is shut down, skipping resubscribe");
+                return;
+            }
             try {
                 LOG.debug("Will attempt resubscribe in {} ms", reconnectDelay);
                 Thread.sleep(reconnectDelay);
-                reconnectDelay = reconnectDelay + backoffIncrement;
+                reconnectDelay = Math.min(reconnectDelay + backoffIncrement, maxBackoff);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
+                return;
+            }
+            if (isStoppingOrStopped() || channel == null || channel.isShutdown()) {
+                LOG.debug("Client is stopping or channel is shut down, skipping resubscribe");
+                return;
             }
             if (replayId != null) {
                 subscribe(consumer, ReplayPreset.CUSTOM, replayId, fallbackToLatestReplayId);
