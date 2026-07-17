@@ -43,6 +43,10 @@ public class QueueClientWrapper {
         return client.createWithResponse(metadata, timeout, Context.NONE);
     }
 
+    public void createIfNotExists(Map<String, String> metadata, Duration timeout) {
+        client.createIfNotExists();
+    }
+
     public Response<Void> delete(Duration timeout) {
         return client.deleteWithResponse(timeout, Context.NONE);
     }

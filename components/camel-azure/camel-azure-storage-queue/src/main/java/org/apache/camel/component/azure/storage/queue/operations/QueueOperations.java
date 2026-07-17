@@ -82,7 +82,9 @@ public class QueueOperations {
         final boolean queueCreated = configurationOptionsProxy.isCreateQueue(exchange);
 
         if (queueCreated) {
-            createQueue(exchange);
+            final Map<String, String> metadata = configurationOptionsProxy.getMetadata(exchange);
+            final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
+            client.createIfNotExists(metadata, timeout);
         }
 
         final String text = exchange.getIn().getBody(String.class);
