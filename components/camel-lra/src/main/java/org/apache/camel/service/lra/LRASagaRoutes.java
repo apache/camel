@@ -69,8 +69,8 @@ public class LRASagaRoutes extends RouteBuilder {
             // first, split by parameter separator '&'
             // then collect the map with the variable name '[0]' and value '[1]', both url decoded
             result = Arrays.stream(queryStr.split("&")).collect(
-                    Collectors.toMap(element -> decode(saveArrayAccess(element.split("="), 0)),
-                            element -> decode(saveArrayAccess(element.split("="), 1))));
+                    Collectors.toMap(element -> decode(saveArrayAccess(element.split("=", 2), 0)),
+                            element -> decode(saveArrayAccess(element.split("=", 2), 1))));
 
         } else {
             LOG.debug("query param is empty, nothing to parse.");
