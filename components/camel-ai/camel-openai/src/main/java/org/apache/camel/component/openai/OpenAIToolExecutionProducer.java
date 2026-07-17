@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.models.chat.completions.ChatCompletion;
 import com.openai.models.chat.completions.ChatCompletionAssistantMessageParam;
@@ -155,7 +156,7 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
                 } else {
                     resultContent = extractTextContent(toolResult.content());
                 }
-            } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            } catch (JsonProcessingException e) {
                 LOG.warn("Invalid tool arguments for '{}': {}", toolName, argsJson, e);
                 resultContent = "Error: invalid tool arguments: " + e.getMessage();
             } catch (Exception e) {

@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.core.JsonField;
 import com.openai.core.JsonValue;
@@ -534,7 +535,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                             allReturnDirect = false;
                         }
                     }
-                } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+                } catch (JsonProcessingException e) {
                     LOG.warn("Invalid tool arguments for '{}': {}", toolName, argsJson, e);
                     resultContent = "Error: invalid tool arguments: " + e.getMessage();
                     allReturnDirect = false;
