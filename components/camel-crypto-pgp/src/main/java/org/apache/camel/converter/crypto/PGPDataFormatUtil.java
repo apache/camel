@@ -102,19 +102,6 @@ public final class PGPDataFormatUtil {
         return findPrivateKeyWithKeyId(keyid, passphrase, passphraseAccessor, provider, pgpSec);
     }
 
-    /**
-     * @deprecated Use
-     *             {@link #findPrivateKeyWithKeyId(long, String, PGPPassphraseAccessor, String, PGPSecretKeyRingCollection)}
-     *             instead (note the uppercase 'K' in 'KeyId').
-     */
-    @Deprecated(since = "4.22")
-    public static PGPPrivateKey findPrivateKeyWithkeyId(
-            long keyid, String passphrase, PGPPassphraseAccessor passphraseAccessor,
-            String provider, PGPSecretKeyRingCollection pgpSec)
-            throws PGPException {
-        return findPrivateKeyWithKeyId(keyid, passphrase, passphraseAccessor, provider, pgpSec);
-    }
-
     public static PGPPrivateKey findPrivateKeyWithKeyId(
             long keyid, String passphrase, PGPPassphraseAccessor passphraseAccessor,
             String provider, PGPSecretKeyRingCollection pgpSec)
