@@ -18,6 +18,7 @@ package org.apache.camel.saga;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -57,6 +58,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     private final InMemorySagaService sagaService;
     private final String sagaId;
     private final List<StepEnlistment> enlistments;
+    private final List<ScheduledFuture<?>> timeoutFutures;
     private final AtomicReference<Status> currentStatus;
 
     public InMemorySagaCoordinator(CamelContext camelContext, InMemorySagaService sagaService, String sagaId) {
@@ -64,6 +66,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         this.sagaService = ObjectHelper.notNull(sagaService, "sagaService");
         this.sagaId = ObjectHelper.notNull(sagaId, "sagaId");
         this.enlistments = new CopyOnWriteArrayList<>();
+        this.timeoutFutures = new CopyOnWriteArrayList<>();
         this.currentStatus = new AtomicReference<>(Status.RUNNING);
     }
 
