@@ -31,7 +31,7 @@ public class MDCErrorHandlerTest extends ContextTestSupport {
 
     @Test
     public void testMDC() {
-        template.sendBody("direct:start", "Hello World");
+        Assertions.assertDoesNotThrow(() -> template.sendBody("direct:start", "Hello World"));
     }
 
     @Override

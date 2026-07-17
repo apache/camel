@@ -20,6 +20,7 @@ import java.net.UnknownHostException;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class InetAddressUtilTest {
@@ -36,6 +37,6 @@ public class InetAddressUtilTest {
 
     @Test
     public void testGetLocalHostNameSafe() {
-        InetAddressUtil.getLocalHostNameSafe();
+        assertDoesNotThrow(() -> InetAddressUtil.getLocalHostNameSafe());
     }
 }

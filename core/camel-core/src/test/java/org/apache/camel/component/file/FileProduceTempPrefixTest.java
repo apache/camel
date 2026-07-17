@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -75,7 +76,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
 
     @Test
     public void testTempPrefixUUIDFilename() {
-        template.sendBody("direct:a", "Bye World");
+        Assertions.assertDoesNotThrow(() -> template.sendBody("direct:a", "Bye World"));
     }
 
     @Override

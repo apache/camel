@@ -52,10 +52,12 @@ public class IOHelperTest {
     }
 
     @Test
-    public void testCopyAndCloseInput() throws Exception {
-        InputStream is = new ByteArrayInputStream("Hello".getBytes());
-        OutputStream os = new ByteArrayOutputStream();
-        IOHelper.copyAndCloseInput(is, os, 256);
+    public void testCopyAndCloseInput() {
+        assertDoesNotThrow(() -> {
+            InputStream is = new ByteArrayInputStream("Hello".getBytes());
+            OutputStream os = new ByteArrayOutputStream();
+            IOHelper.copyAndCloseInput(is, os, 256);
+        });
     }
 
     @Test

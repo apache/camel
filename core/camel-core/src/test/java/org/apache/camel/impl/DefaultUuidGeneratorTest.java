@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class DefaultUuidGeneratorTest {
@@ -41,16 +42,18 @@ public class DefaultUuidGeneratorTest {
 
     @Test
     public void testPerformance() {
-        UuidGenerator uuidGenerator = new DefaultUuidGenerator();
-        StopWatch watch = new StopWatch();
+        assertDoesNotThrow(() -> {
+            UuidGenerator uuidGenerator = new DefaultUuidGenerator();
+            StopWatch watch = new StopWatch();
 
-        LOG.info("First id: {}", uuidGenerator.generateUuid());
-        for (int i = 0; i < 500000; i++) {
-            uuidGenerator.generateUuid();
-        }
-        LOG.info("Last id: {}", uuidGenerator.generateUuid());
+            LOG.info("First id: {}", uuidGenerator.generateUuid());
+            for (int i = 0; i < 500000; i++) {
+                uuidGenerator.generateUuid();
+            }
+            LOG.info("Last id: {}", uuidGenerator.generateUuid());
 
-        LOG.info("Took {}", TimeUtils.printDuration(watch.taken(), true));
+            LOG.info("Took {}", TimeUtils.printDuration(watch.taken(), true));
+        });
     }
 
 }

@@ -21,6 +21,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
@@ -36,11 +37,14 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
 
     // just inject the SchemaFactory as we want
     @Test
-    public void testCustomSchemaFactory() throws Exception {
-        ValidatorComponent v = new ValidatorComponent();
-        v.setCamelContext(context);
-        v.init();
-        v.createEndpoint("validator:org/apache/camel/component/validator/unsecuredSchema.xsd?schemaFactory=#MySchemaFactory");
+    public void testCustomSchemaFactory() {
+        Assertions.assertDoesNotThrow(() -> {
+            ValidatorComponent v = new ValidatorComponent();
+            v.setCamelContext(context);
+            v.init();
+            v.createEndpoint(
+                    "validator:org/apache/camel/component/validator/unsecuredSchema.xsd?schemaFactory=#MySchemaFactory");
+        });
     }
 
 }

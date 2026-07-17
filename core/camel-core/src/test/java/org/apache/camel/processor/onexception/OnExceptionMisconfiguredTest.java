@@ -131,72 +131,78 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    public void testOnExceptionNotMisconfigured() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                onException().handled(true);
+    public void testOnExceptionNotMisconfigured() {
+        assertDoesNotThrow(() -> {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    onException().handled(true);
 
-                from("direct:start").to("mock:result");
-            }
+                    from("direct:start").to("mock:result");
+                }
+            });
+            context.start();
         });
-        context.start();
-        // okay
     }
 
     @Test
-    public void testOnExceptionNotMisconfigured2() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                onException().continued(true);
+    public void testOnExceptionNotMisconfigured2() {
+        assertDoesNotThrow(() -> {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    onException().continued(true);
 
-                from("direct:start").to("mock:result");
-            }
+                    from("direct:start").to("mock:result");
+                }
+            });
+            context.start();
         });
-        context.start();
-        // okay
     }
 
     @Test
-    public void testOnExceptionNotMisconfigured3() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                onException(Exception.class).handled(true);
+    public void testOnExceptionNotMisconfigured3() {
+        assertDoesNotThrow(() -> {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    onException(Exception.class).handled(true);
 
-                from("direct:start").to("mock:result");
-            }
+                    from("direct:start").to("mock:result");
+                }
+            });
+            context.start();
         });
-        context.start();
-        // okay
     }
 
     @Test
-    public void testOnExceptionNotMisconfigured4() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                onException(Exception.class).continued(true);
+    public void testOnExceptionNotMisconfigured4() {
+        assertDoesNotThrow(() -> {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    onException(Exception.class).continued(true);
 
-                from("direct:start").to("mock:result");
-            }
+                    from("direct:start").to("mock:result");
+                }
+            });
+            context.start();
         });
-        context.start();
-        // okay
     }
 
     @Test
-    public void testOnExceptionNotMisconfigured5() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:start").onException(SOAPException.class).onException(IOException.class).to("mock:error").end()
-                        .to("mock:result");
-            }
+    public void testOnExceptionNotMisconfigured5() {
+        assertDoesNotThrow(() -> {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start").onException(SOAPException.class).onException(IOException.class).to("mock:error")
+                            .end()
+                            .to("mock:result");
+                }
+            });
+            context.start();
         });
-        context.start();
-        // okay
     }
 
 }

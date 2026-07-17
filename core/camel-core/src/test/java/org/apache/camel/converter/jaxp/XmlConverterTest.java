@@ -44,6 +44,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.xml.BytesSource;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -54,9 +55,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class XmlConverterTest extends ContextTestSupport {
 
     @Test
-    public void testToResultNoSource() throws Exception {
-        XmlConverter conv = new XmlConverter();
-        conv.toResult(null, null);
+    public void testToResultNoSource() {
+        assertDoesNotThrow(() -> {
+            XmlConverter conv = new XmlConverter();
+            conv.toResult(null, null);
+        });
     }
 
     @Test

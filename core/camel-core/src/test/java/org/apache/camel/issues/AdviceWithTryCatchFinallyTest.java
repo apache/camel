@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.AdviceWith.adviceWith;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
 
@@ -30,13 +31,15 @@ public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAdviceTryCatchFinally() throws Exception {
-        context.addRoutes(createRouteBuilder());
+    public void testAdviceTryCatchFinally() {
+        assertDoesNotThrow(() -> {
+            context.addRoutes(createRouteBuilder());
 
-        adviceWith(context, "my-route", a -> a.weaveById("replace-me")
-                .replace().to("mock:replaced"));
+            adviceWith(context, "my-route", a -> a.weaveById("replace-me")
+                    .replace().to("mock:replaced"));
 
-        context.start();
+            context.start();
+        });
     }
 
     @Override

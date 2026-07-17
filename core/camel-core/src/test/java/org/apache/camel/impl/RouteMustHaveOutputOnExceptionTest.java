@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
@@ -30,16 +31,18 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
     }
 
     @Test
-    public void testValid() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:start").onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(2)
-                        .backOffMultiplier(1.5).handled(true).delay(1000)
-                        .log("Halting for some time").to("mock:halt").end().end().to("mock:result");
-            }
+    public void testValid() {
+        assertDoesNotThrow(() -> {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start").onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(2)
+                            .backOffMultiplier(1.5).handled(true).delay(1000)
+                            .log("Halting for some time").to("mock:halt").end().end().to("mock:result");
+                }
+            });
+            context.start();
         });
-        context.start();
     }
 
     @Test

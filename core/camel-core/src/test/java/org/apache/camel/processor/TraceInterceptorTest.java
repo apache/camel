@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class TraceInterceptorTest extends ContextTestSupport {
@@ -27,8 +28,10 @@ public class TraceInterceptorTest extends ContextTestSupport {
     // START SNIPPET: e1
     @Test
     public void testSendingSomeMessages() {
-        template.sendBodyAndHeader("direct:start", "Hello London", "to", "James");
-        template.sendBodyAndHeader("direct:start", "This is Copenhagen calling", "from", "Claus");
+        Assertions.assertDoesNotThrow(() -> {
+            template.sendBodyAndHeader("direct:start", "Hello London", "to", "James");
+            template.sendBodyAndHeader("direct:start", "This is Copenhagen calling", "from", "Claus");
+        });
     }
 
     @Override

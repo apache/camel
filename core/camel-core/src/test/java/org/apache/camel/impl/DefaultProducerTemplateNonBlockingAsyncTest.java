@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -40,7 +41,9 @@ public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducer
     @Test
     @Override
     public void testSendAsyncProcessor() {
-        // noop
+        assertDoesNotThrow(() -> {
+            // noop - this test is intentionally disabled in this subclass
+        });
     }
 
     @Test

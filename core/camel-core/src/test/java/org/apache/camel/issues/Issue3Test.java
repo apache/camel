@@ -30,7 +30,7 @@ public class Issue3Test extends ContextTestSupport {
 
     @Test
     public void testIssue() {
-        sendBody(fromQueue, "cluster!");
+        assertDoesNotThrow(() -> sendBody(fromQueue, "cluster!"));
     }
 
     @Override

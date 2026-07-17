@@ -22,6 +22,7 @@ import org.apache.camel.spi.ThreadPoolProfile;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.Abort;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,14 +31,14 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
     final ThreadPoolProfile threadPoolProfile = new ThreadPoolProfile("poll");
 
     @Test
-    public void testCreateRouteIfNoInvalidOptions() throws Exception {
-        context.addRoutes(new RouteBuilder() {
+    public void testCreateRouteIfNoInvalidOptions() {
+        assertDoesNotThrow(() -> context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
                 from("direct:start").threads().executorService(threadPoolProfile.getId()).to("mock:test");
             }
-        });
+        }));
     }
 
     @Test
@@ -57,14 +58,14 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPassIfThreadNameWithoutExecutorServiceRef() throws Exception {
-        context.addRoutes(new RouteBuilder() {
+    public void testPassIfThreadNameWithoutExecutorServiceRef() {
+        assertDoesNotThrow(() -> context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
                 from("direct:start").threads().threadName("foo").to("mock:test");
             }
-        });
+        }));
     }
 
     @Test

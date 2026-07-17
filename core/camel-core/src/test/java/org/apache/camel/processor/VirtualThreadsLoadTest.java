@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -140,6 +141,8 @@ public class VirtualThreadsLoadTest extends ContextTestSupport {
         System.out.println("Virtual threads: " + System.getProperty("camel.threads.virtual.enabled", "false"));
         System.out.println("Thread-per-task mode: " + VIRTUAL_THREAD_PER_TASK);
         System.out.println();
+
+        Assertions.assertTrue(completed, "Not all messages processed within timeout");
     }
 
     @Override
