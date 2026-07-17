@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class PubSubApiProcessor extends AbstractSalesforceProcessor {
 
-    private final Logger LOG = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(PubSubApiProcessor.class);
     private final String topic;
     private PubSubApiClient pubSubClient;
 
