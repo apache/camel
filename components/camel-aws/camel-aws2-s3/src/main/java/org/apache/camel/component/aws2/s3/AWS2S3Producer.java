@@ -42,7 +42,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.AwsResponse;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -642,6 +644,17 @@ public class AWS2S3Producer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(ifUnmodifiedSince)) {
                 req.ifUnmodifiedSince(ifUnmodifiedSince);
             }
+            if (getConfiguration().isUseCustomerKey()) {
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
+                    req.sseCustomerKey(getConfiguration().getCustomerKeyId());
+                }
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
+                    req.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
+                }
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
+                    req.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
+                }
+            }
             ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
             Message message = getMessageForResponse(exchange);
@@ -677,6 +690,17 @@ public class AWS2S3Producer extends DefaultProducer {
 
             GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(keyName)
                     .range("bytes=" + Long.parseLong(rangeStart) + "-" + Long.parseLong(rangeEnd));
+            if (getConfiguration().isUseCustomerKey()) {
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
+                    req.sseCustomerKey(getConfiguration().getCustomerKeyId());
+                }
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
+                    req.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
+                }
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
+                    req.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
+                }
+            }
             ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
             Message message = getMessageForResponse(exchange);
@@ -1089,12 +1113,23 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         S3Presigner.Builder builder = S3Presigner.builder();
-        builder.credentialsProvider(
-                getConfiguration().isUseDefaultCredentialsProvider()
-                        ? DefaultCredentialsProvider.create() : StaticCredentialsProvider.create(
-                                AwsBasicCredentials.create(getConfiguration().getAccessKey(),
-                                        getConfiguration().getSecretKey())))
-                .region(Region.of(getConfiguration().getRegion()));
+        if (getConfiguration().isUseDefaultCredentialsProvider()) {
+            builder.credentialsProvider(DefaultCredentialsProvider.create());
+        } else if (getConfiguration().isUseProfileCredentialsProvider()) {
+            builder.credentialsProvider(
+                    ProfileCredentialsProvider.create(getConfiguration().getProfileCredentialsName()));
+        } else if (getConfiguration().isUseSessionCredentials()) {
+            builder.credentialsProvider(StaticCredentialsProvider.create(
+                    AwsSessionCredentials.create(getConfiguration().getAccessKey(),
+                            getConfiguration().getSecretKey(), getConfiguration().getSessionToken())));
+        } else {
+            builder.credentialsProvider(StaticCredentialsProvider.create(
+                    AwsBasicCredentials.create(getConfiguration().getAccessKey(),
+                            getConfiguration().getSecretKey())));
+        }
+        if (ObjectHelper.isNotEmpty(getConfiguration().getRegion())) {
+            builder.region(Region.of(getConfiguration().getRegion()));
+        }
 
         if (getConfiguration().isForcePathStyle()) {
             builder.serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build());

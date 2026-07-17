@@ -219,8 +219,8 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
             List<?> values = (List<?>) value;
 
             if (values.isEmpty()) {
-                return AttributeValue.builder().ss().build();
-            } else if (values.get(0) instanceof Integer) {
+                return AttributeValue.builder().l(List.of()).build();
+            } else if (values.get(0) instanceof Number) {
                 return AttributeValue.builder().ns(values.stream().map(Object::toString).collect(Collectors.toList())).build();
             } else {
                 return AttributeValue.builder().ss(values.stream().map(Object::toString).collect(Collectors.toList())).build();
