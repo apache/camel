@@ -210,7 +210,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         Exchange target = createExchange(exchange, endpoint, step);
 
         return CompletableFuture.supplyAsync(() -> {
-            Exchange res = camelContext.createFluentProducerTemplate().to(endpoint).withExchange(target).send();
+            Exchange res = sagaService.getProducerTemplate().send(endpoint, target);
             Exception ex = res.getException();
             if (ex != null) {
                 throw new RuntimeCamelException(res.getException());
