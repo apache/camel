@@ -479,7 +479,11 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
         if (sObjectBase != null) {
             oldValue = getAndClearPropertyValue(sObjectBase, sObjectExtIdName);
-            sObjectExtIdValue = oldValue.toString();
+            if (oldValue != null) {
+                sObjectExtIdValue = oldValue.toString();
+            } else {
+                sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, USE_BODY, NOT_OPTIONAL);
+            }
         } else {
             sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, USE_BODY, NOT_OPTIONAL);
         }
@@ -508,7 +512,11 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
         if (sObjectBase != null) {
             oldValue = getAndClearPropertyValue(sObjectBase, sObjectExtIdName);
-            sObjectExtIdValue = oldValue.toString();
+            if (oldValue != null) {
+                sObjectExtIdValue = oldValue.toString();
+            } else {
+                sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, IGNORE_BODY, NOT_OPTIONAL);
+            }
             // clear base object fields, which cannot be updated
             sObjectBase.clearBaseFields();
         } else {
@@ -536,7 +544,11 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         String sObjectExtIdValue;
         if (sObjectBase != null) {
             oldValue = getAndClearPropertyValue(sObjectBase, sObjectExtIdName);
-            sObjectExtIdValue = oldValue.toString();
+            if (oldValue != null) {
+                sObjectExtIdValue = oldValue.toString();
+            } else {
+                sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, USE_BODY, NOT_OPTIONAL);
+            }
         } else {
             sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, USE_BODY, NOT_OPTIONAL);
         }
@@ -546,8 +558,8 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 new RestClient.ResponseCallback() {
                     @Override
                     public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
-                        processResponse(exchange, response, headers, exception, callback);
                         restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                        processResponse(exchange, response, headers, exception, callback);
                     }
                 });
     }

@@ -186,9 +186,8 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
                 // REST token expiry
                 LOG.warn("Retrying on Salesforce authentication error [{}]: [{}]", status, reason);
 
-                // remember original request and send a relogin request in
-                // current conversation
-                retryLogin(request, retries);
+                // coordinated re-login and retry via session.login() on worker pool
+                retryLogin(request, retries, client);
 
             } else if (status < HttpStatus.OK_200 || status >= HttpStatus.MULTIPLE_CHOICES_300) {
 
@@ -202,7 +201,7 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
 
                     // retry Bulk API call
                     LOG.warn("Retrying on Bulk API Salesforce authentication error [{}]: [{}]", status, reason);
-                    retryLogin(request, retries);
+                    retryLogin(request, retries, client);
 
                 } else {
 
@@ -236,13 +235,21 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
                     && "InvalidSessionId".equals(e.getErrors().get(0).getErrorCode());
         }
 
-        private void retryLogin(HttpRequest request, Integer retries) {
-
+        private void retryLogin(HttpRequest request, Integer retries, AbstractClientBase client) {
             final HttpConversation conversation = request.getConversation();
-            // remember the original request to resend
-            conversation.setAttribute(AUTHENTICATION_REQUEST_ATTRIBUTE, request);
 
-            retryRequest((HttpRequest) session.getLoginRequest(conversation), null, retries, conversation, false);
+            // use session.login() on worker pool for single-flight coordination:
+            // concurrent 401s share one login instead of each firing its own
+            httpClient.getWorkerPool().execute(() -> {
+                try {
+                    session.login(session.getAccessToken());
+                } catch (SalesforceException e) {
+                    LOG.error("Login failed during authentication retry", e);
+                    forwardFailureComplete(request, null, null, e);
+                    return;
+                }
+                retryRequest(request, client, retries, conversation, true);
+            });
         }
 
         private void retryRequest(
@@ -255,8 +262,9 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             if (copy) {
                 newRequest = httpClient.copyRequest(request, request.getURI());
                 final Request.Content body = newRequest.getBody();
-                if (body != null) {
-                    body.rewind();
+                if (body != null && !body.rewind()) {
+                    LOG.warn("Request body cannot be replayed for authentication retry (content type: {})",
+                            body.getContentType());
                 }
                 newRequest.method(request.getMethod());
                 newRequest.headers(headers -> {

@@ -101,10 +101,6 @@ public class PubSubApiClient extends ServiceSupport {
     private ManagedChannel channel;
     private boolean usePlainTextConnection = false;
 
-    private ReplayPreset initialReplayPreset;
-    private String initialReplayId;
-    private boolean fallbackToLatestReplayId;
-
     public PubSubApiClient(SalesforceSession session, SalesforceLoginConfig loginConfig, String pubSubHost,
                            int pubSubPort, long backoffIncrement, long maxBackoff, boolean allowUseProxyServer) {
         this.session = session;
@@ -151,9 +147,6 @@ public class PubSubApiClient extends ServiceSupport {
     public void subscribe(
             PubSubApiConsumer consumer, ReplayPreset replayPreset, String initialReplayId, boolean fallbackToLatestReplayId) {
         LOG.debug("Starting subscribe {}", consumer.getTopic());
-        this.initialReplayPreset = replayPreset;
-        this.initialReplayId = initialReplayId;
-        this.fallbackToLatestReplayId = fallbackToLatestReplayId;
         if (replayPreset == ReplayPreset.CUSTOM && initialReplayId == null) {
             throw new RuntimeException("initialReplayId is required for ReplayPreset.CUSTOM");
         }
@@ -164,7 +157,8 @@ public class PubSubApiClient extends ServiceSupport {
             replayId = base64DecodeToByteString(initialReplayId);
         }
         LOG.info("Subscribing to topic: {}.", topic);
-        final FetchResponseObserver responseObserver = new FetchResponseObserver(consumer);
+        final FetchResponseObserver responseObserver
+                = new FetchResponseObserver(consumer, replayPreset, initialReplayId, fallbackToLatestReplayId);
         StreamObserver<FetchRequest> serverStream = asyncStub.subscribe(responseObserver);
         LOG.info("Subscribe successful.");
         responseObserver.setServerStream(serverStream);
@@ -292,13 +286,20 @@ public class PubSubApiClient extends ServiceSupport {
         private final PubSubApiConsumer consumer;
         private final Map<String, Class<?>> eventClassMap;
         private final Class<?> pojoClass;
+        private final String initialReplayId;
+        private final boolean fallbackToLatestReplayId;
+        private ReplayPreset initialReplayPreset;
         private String replayId;
         private StreamObserver<FetchRequest> serverStream;
 
-        public FetchResponseObserver(PubSubApiConsumer consumer) {
+        public FetchResponseObserver(PubSubApiConsumer consumer, ReplayPreset initialReplayPreset,
+                                     String initialReplayId, boolean fallbackToLatestReplayId) {
             this.consumer = consumer;
             this.eventClassMap = consumer.getEventClassMap();
             this.pojoClass = consumer.getPojoClass();
+            this.initialReplayPreset = initialReplayPreset;
+            this.initialReplayId = initialReplayId;
+            this.fallbackToLatestReplayId = fallbackToLatestReplayId;
         }
 
         @Override
@@ -315,7 +316,9 @@ public class PubSubApiClient extends ServiceSupport {
                 try {
                     processEvent(fetchResponse.getRpcId(), ce);
                 } catch (Exception e) {
-                    LOG.error(e.toString(), e);
+                    LOG.error("Failed to process event on topic {}: {}", topic, e.getMessage(), e);
+                    consumer.getExceptionHandler().handleException(
+                            "Failed to process Pub/Sub event on topic " + topic, e);
                 }
             }
             replayId = base64EncodeByteString(fetchResponse.getLatestReplayId());
@@ -366,6 +369,8 @@ public class PubSubApiClient extends ServiceSupport {
                                 consumer.getExceptionHandler().handleException(new InvalidReplayIdException(
                                         "Corrupt replay id: " + currReplayId,
                                         currReplayId));
+                                replayId = null;
+                                return;
                             }
                         }
                         default -> LOG.error("unexpected errorCode: {}", errorCode);

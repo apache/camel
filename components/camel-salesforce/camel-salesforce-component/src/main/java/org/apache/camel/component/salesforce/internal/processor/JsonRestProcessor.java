@@ -219,8 +219,10 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             String msg = "Error parsing JSON response: " + e.getMessage();
             exchange.setException(new SalesforceException(msg, e));
         } finally {
-            // cleanup temporary exchange headers
+            // cleanup temporary exchange properties
             exchange.removeProperty(RESPONSE_CLASS);
+            exchange.removeProperty(RESPONSE_CLASS_DEFERRED);
+            exchange.removeProperty(RESPONSE_CLASS_PREFIX);
             exchange.removeProperty(RESPONSE_TYPE);
 
             // consume response entity
