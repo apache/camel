@@ -286,6 +286,24 @@ class SplitterWatermarkTest extends ContextTestSupport {
                 "Watermark should not be updated when processing is aborted");
     }
 
+    @Test
+    void testIndexBasedWatermarkNoUpdateOnHandledAbort() throws Exception {
+        // CAMEL-24139: streaming split + stopOnException + handled(true) should NOT
+        // advance the watermark past items that were never routed
+        MockEndpoint mock = getMockEndpoint("mock:handled-abort");
+        mock.expectedBodiesReceived("a");
+
+        template.sendBody("direct:handled-abort", Arrays.asList("a", "FAIL", "c", "d", "e"));
+
+        mock.assertIsSatisfied();
+
+        // items "a" (index 0) and "FAIL" (index 1) were both consumed and routed;
+        // watermark must cover them but NOT the unrouted items c, d, e
+        String watermark = store.get("handledAbortJob");
+        assertNotNull(watermark, "Watermark should be set for routed items");
+        assertEquals("1", watermark, "Watermark should cover items 0-1 (routed), not 0-4 (entire stream)");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -373,6 +391,18 @@ class SplitterWatermarkTest extends ContextTestSupport {
                             }
                         })
                         .to("mock:abort-val-wm");
+
+                from("direct:handled-abort")
+                        .onException(IllegalArgumentException.class).handled(true).end()
+                        .split(body()).streaming().stopOnException()
+                        .resumeStrategy(strategy, "handledAbortJob")
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("FAIL".equals(body)) {
+                                throw new IllegalArgumentException("Simulated failure");
+                            }
+                        })
+                        .to("mock:handled-abort");
             }
         };
     }
