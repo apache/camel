@@ -99,10 +99,23 @@ public final class PGPDataFormatUtil {
         PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(
                 PGPUtil.getDecoderStream(keyringInput),
                 new BcKeyFingerprintCalculator());
-        return findPrivateKeyWithkeyId(keyid, passphrase, passphraseAccessor, provider, pgpSec);
+        return findPrivateKeyWithKeyId(keyid, passphrase, passphraseAccessor, provider, pgpSec);
     }
 
+    /**
+     * @deprecated Use
+     *             {@link #findPrivateKeyWithKeyId(long, String, PGPPassphraseAccessor, String, PGPSecretKeyRingCollection)}
+     *             instead (note the uppercase 'K' in 'KeyId').
+     */
+    @Deprecated(since = "4.11")
     public static PGPPrivateKey findPrivateKeyWithkeyId(
+            long keyid, String passphrase, PGPPassphraseAccessor passphraseAccessor,
+            String provider, PGPSecretKeyRingCollection pgpSec)
+            throws PGPException {
+        return findPrivateKeyWithKeyId(keyid, passphrase, passphraseAccessor, provider, pgpSec);
+    }
+
+    public static PGPPrivateKey findPrivateKeyWithKeyId(
             long keyid, String passphrase, PGPPassphraseAccessor passphraseAccessor,
             String provider, PGPSecretKeyRingCollection pgpSec)
             throws PGPException {
