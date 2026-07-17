@@ -76,7 +76,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     }
 
     @Test
-    public void testTempPrefixUUIDFilename() {
+    public void testTempPrefixUUIDFilename() throws Exception {
         template.sendBody("direct:a", "Bye World");
 
         // When no FILE_NAME header is set, the producer creates a file with an auto-generated UUID name
