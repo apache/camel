@@ -72,6 +72,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(OpenAIProducer.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final Pattern THINK_PATTERN = Pattern.compile("^\\s*<think>(.*?)</think>\\s*", Pattern.DOTALL);
+    private static final String PENDING_USER_MESSAGE = "CamelOpenAIPendingUserMessage";
 
     public OpenAIProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -209,7 +210,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         // If a system message is configured and conversation memory is enabled, reset
         // history
         if (ObjectHelper.isNotEmpty(config.getSystemMessage()) && config.isConversationMemory()) {
-            in.removeHeader(config.getConversationHistoryProperty());
+            exchange.removeProperty(config.getConversationHistoryProperty());
         }
 
         String systemPrompt = in.getHeader(OpenAIConstants.SYSTEM_MESSAGE, String.class);
@@ -235,6 +236,9 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         ChatCompletionMessageParam userMessage = buildUserMessage(in, config);
         if (userMessage != null) {
             messages.add(userMessage);
+            if (config.isConversationMemory()) {
+                exchange.setProperty(PENDING_USER_MESSAGE, userMessage);
+            }
         }
 
         if (messages.isEmpty()) {
@@ -658,6 +662,15 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         }
     }
 
+    private void appendPendingUserMessageToHistory(Exchange exchange, List<ChatCompletionMessageParam> history) {
+        ChatCompletionMessageParam pendingUserMessage
+                = exchange.getProperty(PENDING_USER_MESSAGE, ChatCompletionMessageParam.class);
+        if (pendingUserMessage != null) {
+            history.add(pendingUserMessage);
+            exchange.removeProperty(PENDING_USER_MESSAGE);
+        }
+    }
+
     private void updateConversationHistory(
             Exchange exchange, ChatCompletionCreateParams params,
             ChatCompletion response) {
@@ -673,6 +686,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         if (history == null) {
             history = new ArrayList<>();
         }
+
+        appendPendingUserMessageToHistory(exchange, history);
 
         // Add assistant response to history
         String assistantContent = response.choices().get(0).message().content().orElse("");
@@ -700,6 +715,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         if (history == null) {
             history = new ArrayList<>();
         }
+
+        appendPendingUserMessageToHistory(exchange, history);
 
         // Add all intermediate agentic messages (assistant+toolCalls, tool responses)
         history.addAll(agenticMessages);
@@ -732,6 +749,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         if (history == null) {
             history = new ArrayList<>();
         }
+
+        appendPendingUserMessageToHistory(exchange, history);
 
         // Add all intermediate agentic messages
         history.addAll(agenticMessages);
