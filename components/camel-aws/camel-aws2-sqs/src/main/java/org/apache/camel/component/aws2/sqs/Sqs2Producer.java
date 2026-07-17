@@ -63,10 +63,6 @@ public class Sqs2Producer extends DefaultProducer {
 
     public Sqs2Producer(Sqs2Endpoint endpoint) {
         super(endpoint);
-        if (endpoint.getConfiguration().isFifoQueue()
-                && ObjectHelper.isEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
-            throw new IllegalArgumentException("messageGroupIdStrategy must be set for FIFO queues.");
-        }
     }
 
     @Override
@@ -98,6 +94,10 @@ public class Sqs2Producer extends DefaultProducer {
     }
 
     public void processSingleMessage(final Exchange exchange) {
+        if (getEndpoint().getConfiguration().isFifoQueue()
+                && ObjectHelper.isEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
+            throw new IllegalArgumentException("messageGroupIdStrategy must be set for FIFO queues.");
+        }
         String body = exchange.getIn().getBody(String.class);
         SendMessageRequest.Builder request = SendMessageRequest.builder().queueUrl(getQueueUrl()).messageBody(body);
         request.messageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
@@ -117,6 +117,10 @@ public class Sqs2Producer extends DefaultProducer {
     }
 
     private void sendBatchMessage(SqsClient amazonSQS, Exchange exchange) {
+        if (getEndpoint().getConfiguration().isFifoQueue()
+                && ObjectHelper.isEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
+            throw new IllegalArgumentException("messageGroupIdStrategy must be set for FIFO queues.");
+        }
         SendMessageBatchRequest.Builder request = SendMessageBatchRequest.builder().queueUrl(getQueueUrl());
         Collection<SendMessageBatchRequestEntry> entries = new ArrayList<>();
         if (exchange.getIn().getBody() instanceof Iterable) {
