@@ -677,8 +677,7 @@ The `azure-eventhubs` producer now applies a `DefaultHeaderFilterStrategy` to th
 case-insensitively) are no longer forwarded to Azure Event Hubs, consistent with the inbound header
 filtering performed by other components.
 
-Ordinary application headers are unaffected. To restore the previous pass-through behavior, set
-`headerFilterStrategy=#none` on the component or endpoint.
+Ordinary application headers are unaffected.
 
 === camel-azure-storage-datalake - openInputStream no longer uses Blob Query API
 
