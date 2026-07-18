@@ -52,8 +52,11 @@ public final class BlobStreamAndLength {
         }
 
         if (body instanceof InputStream) {
-            return new BlobStreamAndLength(
-                    (InputStream) body, blobSize != null ? blobSize : BlobUtils.getInputStreamLength((InputStream) body));
+            InputStream is = (InputStream) body;
+            if (blobSize == null && !is.markSupported()) {
+                is = new BufferedInputStream(is);
+            }
+            return new BlobStreamAndLength(is, blobSize != null ? blobSize : BlobUtils.getInputStreamLength(is));
         }
         if (body instanceof File) {
             return new BlobStreamAndLength(new BufferedInputStream(new FileInputStream((File) body)), ((File) body).length());
@@ -71,7 +74,11 @@ public final class BlobStreamAndLength {
             throw new IllegalArgumentException("Unsupported blob type:" + body.getClass().getName());
         }
 
-        return new BlobStreamAndLength(inputStream, blobSize != null ? blobSize : BlobUtils.getInputStreamLength(inputStream));
+        InputStream is = inputStream;
+        if (blobSize == null && !is.markSupported()) {
+            is = new BufferedInputStream(is);
+        }
+        return new BlobStreamAndLength(is, blobSize != null ? blobSize : BlobUtils.getInputStreamLength(is));
     }
 
     public InputStream getInputStream() {

@@ -124,7 +124,7 @@ public class BlobConfigurationOptionsProxy {
             final PageRange pageRange = getPageRange(exchange);
             if (pageRange != null) {
                 final long blobOffset = pageRange.getStart();
-                final long dataCount = pageRange.getEnd() - pageRange.getStart();
+                final long dataCount = pageRange.getEnd() - pageRange.getStart() + 1;
 
                 return new BlobRange(blobOffset, dataCount);
             }
