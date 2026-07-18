@@ -29,8 +29,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Reproducer for a robustness gap: a chat completion response with an empty {@code choices} array fails the exchange
@@ -79,10 +78,9 @@ public class OpenAIEmptyChoicesResponseTest extends CamelTestSupport {
     void emptyChoicesMustFailWithMeaningfulException() {
         Exchange result = template.request("direct:chat", e -> e.getIn().setBody("hello"));
 
-        assertNotNull(result.getException(), "An empty choices array cannot produce a response body");
-        assertFalse(result.getException() instanceof IndexOutOfBoundsException,
-                "An empty choices array must surface as a meaningful exception describing the malformed "
-                                                                                + "provider response, not a raw IndexOutOfBoundsException. Got: "
-                                                                                + result.getException());
+        assertThat(result.getException())
+                .as("An empty choices array cannot produce a response body")
+                .isNotNull()
+                .isNotInstanceOf(IndexOutOfBoundsException.class);
     }
 }
