@@ -122,6 +122,14 @@ String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 ----
 
+=== camel-langchain4j-chat
+
+The helper classes `OpenAiChatLanguageModelBuilder` and `HugginFaceChatLanguageModelBuilder` have been removed.
+They were not wired into the component; the `chatModel` is autowired instead.
+
+If you used these helpers directly, configure your `ChatModel` with LangChain4j's own builders or Spring Boot starters
+and inject it into the component.
+
 === camel-management - Throughput MBean attribute uses EWMA smoothing
 
 The `Throughput` attribute on the `ManagedPerformanceCounter` JMX MBean now reports an EWMA
