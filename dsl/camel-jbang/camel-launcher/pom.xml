@@ -37,7 +37,7 @@
     <properties>
         <firstVersion>4.13.0</firstVersion>
         <label>jbang</label>
-        <supportLevel>Preview</supportLevel>
+        <supportLevel>Stable</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
 
         <!-- Dependency versions -->

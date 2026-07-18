@@ -9,9 +9,6 @@ with your routes. No more black box.
 
 image::jbang/camel-tui-topology-overview.svg[TUI Overview showing multiple routes]
 
-NOTE: This module is in *Preview* status. The TUI is designed for development and prototyping,
-not production monitoring.
-
 == Getting Started
 
 You can start using the TUI in two ways: with your own route, or by running one of the built-in examples.
