@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.openai.models.chat.completions.ChatCompletionAssistantMessageParam;
+import com.openai.models.chat.completions.ChatCompletionContentPart;
 import com.openai.models.chat.completions.ChatCompletionMessageParam;
 import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import com.openai.models.chat.completions.ChatCompletionToolMessageParam;
@@ -28,7 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Applies sliding-window limits to exchange-scoped OpenAI conversation history.
+ * Applies sliding-window limits to exchange-scoped OpenAI conversation history. Trimming removes whole segments from
+ * the oldest side so assistant tool-call blocks stay paired with their tool result messages.
  */
 final class OpenAIConversationHistoryTrimmer {
 
@@ -50,19 +52,28 @@ final class OpenAIConversationHistoryTrimmer {
             return history;
         }
 
-        List<ChatCompletionMessageParam> trimmed = new ArrayList<>(history);
-        int originalSize = trimmed.size();
+        int originalSize = history.size();
+        List<Segment> segments = buildSegments(history);
+        int firstSegment = 0;
 
-        if (maxMessages > 0 && trimmed.size() > maxMessages) {
-            trimmed = new ArrayList<>(trimmed.subList(trimmed.size() - maxMessages, trimmed.size()));
+        if (maxMessages > 0) {
+            firstSegment = findFirstSegmentForMessageLimit(segments, maxMessages);
         }
 
         if (maxTokens > 0) {
-            while (trimmed.size() > 1 && estimateTokens(trimmed) > maxTokens) {
-                trimmed.remove(0);
-            }
-            if (trimmed.size() == 1 && estimateTokens(trimmed) > maxTokens) {
-                trimmed.clear();
+            firstSegment = Math.max(firstSegment,
+                    findFirstSegmentForTokenLimit(history, segments, maxTokens));
+        }
+
+        List<ChatCompletionMessageParam> trimmed;
+        if (firstSegment >= segments.size()) {
+            trimmed = List.of();
+        } else {
+            Segment first = segments.get(firstSegment);
+            Segment last = segments.get(segments.size() - 1);
+            trimmed = new ArrayList<>(history.subList(first.start, last.end + 1));
+            if (maxTokens > 0 && estimateTokens(trimmed) > maxTokens) {
+                trimmed = List.of();
             }
         }
 
@@ -75,11 +86,72 @@ final class OpenAIConversationHistoryTrimmer {
     }
 
     static int estimateTokens(List<ChatCompletionMessageParam> messages) {
+        return estimateTokens(messages, 0, messages.size());
+    }
+
+    private static int estimateTokens(List<ChatCompletionMessageParam> messages, int from, int to) {
         int chars = 0;
-        for (ChatCompletionMessageParam message : messages) {
-            chars += estimateMessageChars(message);
+        for (int i = from; i < to; i++) {
+            chars += estimateMessageChars(messages.get(i));
         }
+        return tokensFromChars(chars);
+    }
+
+    private static int tokensFromChars(int chars) {
         return (chars + CHARS_PER_TOKEN - 1) / CHARS_PER_TOKEN;
+    }
+
+    private static int findFirstSegmentForMessageLimit(List<Segment> segments, int maxMessages) {
+        int firstSegment = segments.size() - 1;
+        int messageCount = segments.get(firstSegment).messageCount();
+        while (firstSegment > 0) {
+            Segment previous = segments.get(firstSegment - 1);
+            int nextCount = messageCount + previous.messageCount();
+            if (nextCount > maxMessages) {
+                break;
+            }
+            firstSegment--;
+            messageCount = nextCount;
+        }
+        return firstSegment;
+    }
+
+    private static int findFirstSegmentForTokenLimit(
+            List<ChatCompletionMessageParam> history, List<Segment> segments, int maxTokens) {
+        for (int firstSegment = 0; firstSegment < segments.size(); firstSegment++) {
+            Segment first = segments.get(firstSegment);
+            Segment last = segments.get(segments.size() - 1);
+            if (estimateTokens(history, first.start, last.end + 1) <= maxTokens) {
+                return firstSegment;
+            }
+        }
+        return segments.size();
+    }
+
+    private static List<Segment> buildSegments(List<ChatCompletionMessageParam> history) {
+        List<Segment> segments = new ArrayList<>();
+        int index = 0;
+        while (index < history.size()) {
+            ChatCompletionMessageParam message = history.get(index);
+            if (isAssistantWithToolCalls(message)) {
+                int end = index;
+                while (end + 1 < history.size() && history.get(end + 1).tool().isPresent()) {
+                    end++;
+                }
+                segments.add(new Segment(index, end));
+                index = end + 1;
+            } else {
+                segments.add(new Segment(index, index));
+                index++;
+            }
+        }
+        return segments;
+    }
+
+    private static boolean isAssistantWithToolCalls(ChatCompletionMessageParam message) {
+        return message.assistant()
+                .map(assistant -> !assistant.toolCalls().orElse(List.of()).isEmpty())
+                .orElse(false);
     }
 
     private static int estimateMessageChars(ChatCompletionMessageParam message) {
@@ -99,7 +171,7 @@ final class OpenAIConversationHistoryTrimmer {
         }
         if (content.isArrayOfContentParts()) {
             return content.asArrayOfContentParts().stream()
-                    .mapToInt(part -> part.text().map(text -> text.text().length()).orElse(0))
+                    .mapToInt(OpenAIConversationHistoryTrimmer::estimateContentPartChars)
                     .sum();
         }
         return 0;
@@ -130,5 +202,30 @@ final class OpenAIConversationHistoryTrimmer {
                     .sum();
         }
         return 0;
+    }
+
+    private static int estimateContentPartChars(ChatCompletionContentPart part) {
+        int chars = 0;
+        if (part.text().isPresent()) {
+            chars += part.asText().text().length();
+        }
+        if (part.imageUrl().isPresent()) {
+            chars += part.asImageUrl().imageUrl().url().length();
+        }
+        return chars;
+    }
+
+    private static final class Segment {
+        private final int start;
+        private final int end;
+
+        private Segment(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        private int messageCount() {
+            return end - start + 1;
+        }
     }
 }

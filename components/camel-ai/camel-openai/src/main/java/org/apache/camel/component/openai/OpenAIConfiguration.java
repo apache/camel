@@ -87,13 +87,16 @@ public class OpenAIConfiguration implements Cloneable {
     @UriParam(defaultValue = "0")
     @Metadata(description = "When conversationMemory is enabled, retain at most this many messages in the exchange "
                             + "conversation history. System and developer messages are prepended separately and are not "
-                            + "stored in history. When 0, no message limit is applied.")
+                            + "stored in history. Assistant tool-call blocks are kept intact and may retain slightly "
+                            + "more than this limit to preserve tool result pairing. When 0, no message limit is applied.")
     private int maxHistoryMessages;
 
     @UriParam(defaultValue = "0")
     @Metadata(description = "When conversationMemory is enabled, trim conversation history using a token estimate "
-                            + "(character count / 4). Oldest messages are dropped first until the estimated tokens are "
-                            + "within this limit. When 0, no token limit is applied.")
+                            + "(character count / 4, including image payload size for multi-modal user messages). "
+                            + "Oldest segments are dropped first until the estimated tokens are within this limit. "
+                            + "Assistant tool-call blocks are removed as a unit with their tool results. When 0, "
+                            + "no token limit is applied.")
     private int maxHistoryTokens;
 
     @UriParam

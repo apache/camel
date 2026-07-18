@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.openai.models.chat.completions.ChatCompletionAssistantMessageParam;
+import com.openai.models.chat.completions.ChatCompletionContentPart;
+import com.openai.models.chat.completions.ChatCompletionContentPartImage;
+import com.openai.models.chat.completions.ChatCompletionContentPartText;
 import com.openai.models.chat.completions.ChatCompletionMessageFunctionToolCall;
 import com.openai.models.chat.completions.ChatCompletionMessageParam;
 import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
@@ -113,8 +116,59 @@ class OpenAIConversationHistoryTrimmerTest {
 
         List<ChatCompletionMessageParam> trimmed = OpenAIConversationHistoryTrimmer.trim(history, config(0, 10));
 
+        assertThat(trimmed).isEmpty();
+    }
+
+    @Test
+    void trimShouldKeepAssistantToolCallBlockIntactWhenMessageLimitWouldSplitIt() {
+        List<ChatCompletionMessageParam> history = List.of(
+                userMessage("older"),
+                assistantMessage("older-reply"),
+                userMessage("latest"),
+                assistantWithToolCall("call-1"),
+                toolMessage("tool-result"),
+                assistantMessage("final-reply"));
+
+        List<ChatCompletionMessageParam> trimmed = OpenAIConversationHistoryTrimmer.trim(history, config(2, 0));
+
         assertThat(trimmed).hasSize(1);
-        assertThat(extractText(trimmed.get(0))).isEqualTo("tool-result");
+        assertThat(trimmed.get(0).assistant()).isPresent();
+        assertThat(extractText(trimmed.get(0))).isEqualTo("final-reply");
+        assertThat(trimmed.stream().noneMatch(message -> message.tool().isPresent())).isTrue();
+    }
+
+    @Test
+    void trimShouldRetainAssistantAndToolResultsAsOneSegment() {
+        List<ChatCompletionMessageParam> history = List.of(
+                assistantWithToolCall("call-1"),
+                toolMessage("tool-result"));
+
+        List<ChatCompletionMessageParam> trimmed = OpenAIConversationHistoryTrimmer.trim(history, config(2, 0));
+
+        assertThat(trimmed).hasSize(2);
+        assertThat(trimmed.get(0).assistant()).isPresent();
+        assertThat(trimmed.get(1).tool()).isPresent();
+    }
+
+    @Test
+    void estimateTokensShouldIncludeImagePayloadSize() {
+        String imageUrl = "data:image/png;base64," + repeat('x', 400);
+        ChatCompletionMessageParam imageMessage = ChatCompletionMessageParam.ofUser(
+                ChatCompletionUserMessageParam.builder()
+                        .content(ChatCompletionUserMessageParam.Content.ofArrayOfContentParts(List.of(
+                                ChatCompletionContentPart.ofText(
+                                        ChatCompletionContentPartText.builder().text("describe").build()),
+                                ChatCompletionContentPart.ofImageUrl(
+                                        ChatCompletionContentPartImage.builder()
+                                                .imageUrl(ChatCompletionContentPartImage.ImageUrl.builder()
+                                                        .url(imageUrl)
+                                                        .build())
+                                                .build()))))
+                        .build());
+
+        int tokens = OpenAIConversationHistoryTrimmer.estimateTokens(List.of(imageMessage));
+
+        assertThat(tokens).isGreaterThan(100);
     }
 
     private static OpenAIConfiguration config(int maxHistoryMessages, int maxHistoryTokens) {
@@ -135,6 +189,21 @@ class OpenAIConversationHistoryTrimmerTest {
         return ChatCompletionMessageParam.ofAssistant(
                 ChatCompletionAssistantMessageParam.builder()
                         .content(ChatCompletionAssistantMessageParam.Content.ofText(text))
+                        .build());
+    }
+
+    private static ChatCompletionMessageParam assistantWithToolCall(String toolCallId) {
+        return ChatCompletionMessageParam.ofAssistant(
+                ChatCompletionAssistantMessageParam.builder()
+                        .toolCalls(List.of(
+                                ChatCompletionMessageToolCall.ofFunction(
+                                        ChatCompletionMessageFunctionToolCall.builder()
+                                                .id(toolCallId)
+                                                .function(ChatCompletionMessageFunctionToolCall.Function.builder()
+                                                        .name("lookup")
+                                                        .arguments("{}")
+                                                        .build())
+                                                .build())))
                         .build());
     }
 
