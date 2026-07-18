@@ -20,10 +20,10 @@ import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -38,12 +38,10 @@ public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducer
         template.start();
     }
 
+    @Disabled("Not applicable for non-blocking async mode")
     @Test
     @Override
     public void testSendAsyncProcessor() {
-        assertDoesNotThrow(() -> {
-            // noop - this test is intentionally disabled in this subclass
-        });
     }
 
     @Test
