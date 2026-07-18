@@ -64,7 +64,8 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
 
     @Test
     public void testSendEventWithSpecificPartition() {
-        final EventHubsProducerOperations operations = new EventHubsProducerOperations(producerAsyncClient, configuration);
+        final EventHubsProducerOperations operations
+                = new EventHubsProducerOperations(producerAsyncClient, configuration, null);
         final String firstPartition = producerAsyncClient.getPartitionIds().blockLast();
         final Exchange exchange = new DefaultExchange(context);
 
@@ -96,7 +97,8 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
 
     @Test
     public void testIterableExchangesSendEventsWithSpecificPartition() {
-        final EventHubsProducerOperations operations = new EventHubsProducerOperations(producerAsyncClient, configuration);
+        final EventHubsProducerOperations operations
+                = new EventHubsProducerOperations(producerAsyncClient, configuration, null);
         final String firstPartition = producerAsyncClient.getPartitionIds().blockLast();
 
         final Exchange exchange1 = new DefaultExchange(context);
@@ -144,7 +146,8 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
 
     @Test
     public void testIterableStringSendEventsWithSpecificPartition() {
-        final EventHubsProducerOperations operations = new EventHubsProducerOperations(producerAsyncClient, configuration);
+        final EventHubsProducerOperations operations
+                = new EventHubsProducerOperations(producerAsyncClient, configuration, null);
         final String firstPartition = producerAsyncClient.getPartitionIds().blockLast();
 
         final List<String> messages = new LinkedList<>();
