@@ -203,6 +203,10 @@ class OpenAIClientConfigurationTest extends CamelTestSupport {
         return endpoint;
     }
 
+    /**
+     * Reads the SDK's {@link ClientOptions} via reflection. Coupled to the OpenAI Java SDK internal field name
+     * {@code clientOptions}; tests may need updating if the SDK renames it.
+     */
     private static ClientOptions clientOptions(OpenAIClient client) throws Exception {
         Field field = client.getClass().getDeclaredField("clientOptions");
         field.setAccessible(true);

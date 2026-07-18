@@ -49,7 +49,7 @@ public class OpenAIConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "0")
     @Metadata(description = "HTTP request timeout in milliseconds for the OpenAI SDK client. "
-                            + "When 0, the SDK default (10 minutes) is used.")
+                            + "When 0 or negative, the SDK default (10 minutes) is used.")
     private long requestTimeout;
 
     @UriParam(defaultValue = "2")
