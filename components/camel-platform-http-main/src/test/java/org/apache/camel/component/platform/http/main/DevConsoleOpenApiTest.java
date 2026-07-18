@@ -25,6 +25,7 @@ import java.net.http.HttpResponse;
 import org.apache.camel.CamelContext;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.console.ApiDevConsole;
 import org.apache.camel.impl.console.ContextDevConsole;
 import org.apache.camel.impl.console.DefaultDevConsoleRegistry;
 import org.apache.camel.impl.console.RouteDevConsole;
@@ -55,6 +56,7 @@ class DevConsoleOpenApiTest {
         camelContext.setDevConsole(true);
 
         DefaultDevConsoleRegistry registry = new DefaultDevConsoleRegistry(camelContext);
+        registry.register(new ApiDevConsole());
         registry.register(new ContextDevConsole());
         registry.register(new RouteDevConsole());
         camelContext.getCamelContextExtension().addContextPlugin(DevConsoleRegistry.class, registry);
@@ -92,9 +94,12 @@ class DevConsoleOpenApiTest {
         assertEquals(200, response.statusCode());
         assertTrue(response.headers().firstValue("content-type").orElse("").contains("application/json"));
 
+        // the dev console handler wraps output under the console id
         Object parsed = Jsoner.deserialize(response.body());
         assertTrue(parsed instanceof JsonObject);
-        JsonObject root = (JsonObject) parsed;
+        JsonObject wrapper = (JsonObject) parsed;
+        JsonObject root = wrapper.getJsonObject("api");
+        assertNotNull(root, "Response should contain 'api' key with OpenAPI spec");
 
         assertEquals("3.0.3", root.getString("openapi"));
 
@@ -106,7 +111,8 @@ class DevConsoleOpenApiTest {
         JsonObject paths = root.getJsonObject("paths");
         assertNotNull(paths);
 
-        // should have context and route consoles (sorted alphabetically)
+        // should have api, context and route consoles
+        assertNotNull(paths.get("/q/dev/api"), "Should have api console path");
         assertNotNull(paths.get("/q/dev/context"), "Should have context console path");
         assertNotNull(paths.get("/q/dev/route"), "Should have route console path");
 

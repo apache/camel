@@ -43,7 +43,6 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -995,19 +994,6 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
     }
 
     protected void setupDevConsole() {
-        // api must be registered before the wildcard route
-        Route api = router.route("/q/dev/api");
-        api.method(HttpMethod.GET);
-        api.produces("application/json");
-        final String[] cachedApi = new String[1];
-        api.handler(ctx -> {
-            if (cachedApi[0] == null) {
-                cachedApi[0] = buildDevConsoleOpenApi();
-            }
-            ctx.response().putHeader("content-type", "application/json");
-            ctx.end(cachedApi[0]);
-        });
-
         Route dev = router.route("/q/dev");
         dev.method(HttpMethod.GET).method(HttpMethod.POST);
         dev.produces("text/plain");
@@ -1158,125 +1144,6 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
 
         platformHttpComponent.addHttpManagementEndpoint("/q/dev", "GET,POST", null,
                 "text/plain,application/json", null);
-        platformHttpComponent.addHttpManagementEndpoint("/q/dev/api", "GET", null,
-                "application/json", null);
-    }
-
-    protected String buildDevConsoleOpenApi() {
-        JsonObject root = new JsonObject();
-        root.put("openapi", "3.0.3");
-
-        JsonObject info = new JsonObject();
-        info.put("title", "Camel Dev Console API");
-        info.put("version", camelContext.getVersion());
-        root.put("info", info);
-
-        JsonObject paths = new JsonObject();
-
-        DevConsoleRegistry dcr = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
-        if (dcr != null && dcr.isEnabled()) {
-            // sort consoles alphabetically by ID
-            List<DevConsole> consoles = dcr.stream()
-                    .sorted((a, b) -> a.getId().compareToIgnoreCase(b.getId()))
-                    .toList();
-
-            for (DevConsole console : consoles) {
-                String id = console.getId();
-                JsonObject pathItem = new JsonObject();
-                JsonObject post = new JsonObject();
-                post.put("summary", console.getDisplayName());
-                post.put("description", console.getDescription());
-                post.put("operationId", id);
-
-                // build request body schema from console metadata
-                JsonObject requestBody = buildConsoleRequestBody(id);
-                if (requestBody != null) {
-                    post.put("requestBody", requestBody);
-                }
-
-                JsonObject responses = new JsonObject();
-                JsonObject ok = new JsonObject();
-                ok.put("description", console.getDisplayName() + " output");
-                JsonObject responseContent = new JsonObject();
-                responseContent.put("application/json", new JsonObject());
-                ok.put("content", responseContent);
-                responses.put("200", ok);
-                post.put("responses", responses);
-
-                pathItem.put("post", post);
-                paths.put("/q/dev/" + id, pathItem);
-            }
-        }
-
-        root.put("paths", paths);
-        return Jsoner.prettyPrint(root.toJson());
-    }
-
-    private JsonObject buildConsoleRequestBody(String consoleId) {
-        try {
-            String json = ((CatalogCamelContext) camelContext).getDevConsoleParameterJsonSchema(consoleId);
-            if (json == null) {
-                return null;
-            }
-            Object parsed = Jsoner.deserialize(json);
-            if (!(parsed instanceof JsonObject jo)) {
-                return null;
-            }
-            Object optionsObj = jo.get("options");
-            if (!(optionsObj instanceof JsonObject options) || options.isEmpty()) {
-                return null;
-            }
-
-            JsonObject properties = new JsonObject();
-            JsonArray required = new JsonArray();
-            for (Map.Entry<String, Object> entry : options.entrySet()) {
-                String name = entry.getKey();
-                if (!(entry.getValue() instanceof JsonObject opt)) {
-                    continue;
-                }
-                JsonObject prop = new JsonObject();
-                String type = opt.getString("type");
-                if (type != null) {
-                    prop.put("type", type);
-                }
-                String description = opt.getString("description");
-                if (description != null) {
-                    prop.put("description", description);
-                }
-                Object defaultValue = opt.get("defaultValue");
-                if (defaultValue != null) {
-                    prop.put("default", defaultValue);
-                }
-                Object enumValues = opt.get("enum");
-                if (enumValues instanceof JsonArray ea && !ea.isEmpty()) {
-                    prop.put("enum", enumValues);
-                }
-                properties.put(name, prop);
-
-                Boolean req = opt.getBoolean("required");
-                if (req != null && req) {
-                    required.add(name);
-                }
-            }
-
-            JsonObject schema = new JsonObject();
-            schema.put("type", "object");
-            schema.put("properties", properties);
-            if (!required.isEmpty()) {
-                schema.put("required", required);
-            }
-
-            JsonObject mediaType = new JsonObject();
-            mediaType.put("schema", schema);
-            JsonObject content = new JsonObject();
-            content.put("application/json", mediaType);
-            JsonObject requestBody = new JsonObject();
-            requestBody.put("content", content);
-            return requestBody;
-        } catch (Exception e) {
-            LOG.debug("Failed to load dev console schema for: {}", consoleId, e);
-            return null;
-        }
     }
 
     protected void doSend(RoutingContext ctx) {
