@@ -66,6 +66,17 @@ all available shards (multiple shards consumption) of Amazon Kinesis, therefore,
 property in the DSL configuration empty, then it'll consume all available shards
 otherwise only the specified shard corresponding to the shardId will be consumed.
 
+=== Custom Resume Action
+
+The consumer supports a custom `KinesisResumeAction` for controlling where each shard starts reading
+(e.g., resuming from a persisted sequence number). Register a subclass in the Camel registry under the
+key `CamelKinesisDbResumeAction`.
+
+The consumer creates a separate instance per shard via reflection to avoid concurrent mutation when
+multiple shards are processed in parallel. Because of this, custom subclasses *must* provide a
+public no-arg constructor. Per-shard state (`builder`, `shardId`, `streamName`) is injected via
+setters after construction.
+
 === Batch Producer
 
 This component implements the Batch Producer.
