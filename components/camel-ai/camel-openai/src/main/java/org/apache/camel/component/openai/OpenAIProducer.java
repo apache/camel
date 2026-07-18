@@ -272,11 +272,16 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             return;
         }
 
-        List<ChatCompletionMessageParam> history = in.getExchange().getProperty(
+        Exchange exchange = in.getExchange();
+        List<ChatCompletionMessageParam> history = exchange.getProperty(
                 config.getConversationHistoryProperty(),
                 List.class);
         if (history != null) {
-            messages.addAll(history);
+            List<ChatCompletionMessageParam> trimmed = OpenAIConversationHistoryTrimmer.trim(history, config);
+            if (trimmed.size() != history.size()) {
+                exchange.setProperty(config.getConversationHistoryProperty(), trimmed);
+            }
+            messages.addAll(trimmed);
         }
     }
 
@@ -726,7 +731,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                         .build());
 
         history.add(assistantMessage);
-        exchange.setProperty(config.getConversationHistoryProperty(), history);
+        exchange.setProperty(config.getConversationHistoryProperty(),
+                OpenAIConversationHistoryTrimmer.trim(history, config));
     }
 
     private void updateConversationHistory(
@@ -758,9 +764,10 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                         .build());
         history.add(assistantMessage);
 
-        exchange.setProperty(config.getConversationHistoryProperty(), history);
+        List<ChatCompletionMessageParam> trimmed = OpenAIConversationHistoryTrimmer.trim(history, config);
+        exchange.setProperty(config.getConversationHistoryProperty(), trimmed);
         LOG.debug("Updated conversation history with {} agentic messages + final response, total entries: {}",
-                agenticMessages.size(), history.size());
+                agenticMessages.size(), trimmed.size());
     }
 
     private void updateConversationHistory(
@@ -791,9 +798,10 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                         .build());
         history.add(assistantMessage);
 
-        exchange.setProperty(config.getConversationHistoryProperty(), history);
+        List<ChatCompletionMessageParam> trimmed = OpenAIConversationHistoryTrimmer.trim(history, config);
+        exchange.setProperty(config.getConversationHistoryProperty(), trimmed);
         LOG.debug("Updated conversation history with {} agentic messages + returnDirect result, total entries: {}",
-                agenticMessages.size(), history.size());
+                agenticMessages.size(), trimmed.size());
     }
 
     private ResponseFormatJsonSchema.JsonSchema.Schema buildSchemaFromJson(String jsonSchemaString) throws Exception {

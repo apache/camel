@@ -60,6 +60,10 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "jsonSchema": target.getConfiguration().setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxhistorymessages":
+        case "maxHistoryMessages": target.getConfiguration().setMaxHistoryMessages(property(camelContext, int.class, value)); return true;
+        case "maxhistorytokens":
+        case "maxHistoryTokens": target.getConfiguration().setMaxHistoryTokens(property(camelContext, int.class, value)); return true;
         case "maxtokens":
         case "maxTokens": target.getConfiguration().setMaxTokens(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxtooliterations":
@@ -157,6 +161,10 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "jsonSchema": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxhistorymessages":
+        case "maxHistoryMessages": return int.class;
+        case "maxhistorytokens":
+        case "maxHistoryTokens": return int.class;
         case "maxtokens":
         case "maxTokens": return java.lang.Integer.class;
         case "maxtooliterations":
@@ -255,6 +263,10 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "jsonSchema": return target.getConfiguration().getJsonSchema();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxhistorymessages":
+        case "maxHistoryMessages": return target.getConfiguration().getMaxHistoryMessages();
+        case "maxhistorytokens":
+        case "maxHistoryTokens": return target.getConfiguration().getMaxHistoryTokens();
         case "maxtokens":
         case "maxTokens": return target.getConfiguration().getMaxTokens();
         case "maxtooliterations":
