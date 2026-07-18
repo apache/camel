@@ -557,6 +557,17 @@ Previously, the component-level default was still 5 seconds, which would overrid
 endpoint's declared 30-second default. If you were relying on the effective 5-second timeout,
 you can restore it by explicitly setting `replyTimeout=5000` on the component or endpoint.
 
+=== camel-spring-rabbitmq - queue durable default changed to true
+
+The queue `durable` default has been changed from `false` to `true` when using `autoDeclare`.
+This aligns queues with the exchange default (which was already `durable=true`) and with RabbitMQ 4.3+
+which no longer permits non-durable, non-exclusive queues by default (the `transient_nonexcl_queues`
+deprecated feature is now denied by default).
+
+If you were relying on non-durable queues, you can restore the previous behavior by explicitly
+setting `arg.queue.durable=false&arg.queue.exclusive=true` on the endpoint URI. Note that
+RabbitMQ 4.3+ requires non-durable queues to also be exclusive.
+
 === camel-core - Multicast UseOriginalAggregationStrategy fix
 
 The Multicast EIP now correctly honors `UseOriginalAggregationStrategy`, consistent with the Splitter

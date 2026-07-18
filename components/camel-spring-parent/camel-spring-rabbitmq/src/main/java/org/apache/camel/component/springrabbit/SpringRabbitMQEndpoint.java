@@ -754,7 +754,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                 queue = queue.trim();
                 Map<String, Object> map = getQueueArgs();
                 prepareDeadLetterQueueArgs(map);
-                boolean durable = parseArgsBoolean(map, "durable", "false");
+                boolean durable = parseArgsBoolean(map, "durable", "true");
                 boolean autoDelete = parseArgsBoolean(map, "autoDelete", autoDeleteDefault);
                 boolean exclusive = parseArgsBoolean(map, "exclusive", "false");
 
