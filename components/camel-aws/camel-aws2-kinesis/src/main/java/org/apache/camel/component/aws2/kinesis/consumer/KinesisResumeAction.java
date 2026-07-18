@@ -21,6 +21,9 @@ import org.apache.camel.resume.ResumeAction;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
+/**
+ * Subclasses must provide a public no-arg constructor — the consumer creates per-shard instances via reflection.
+ */
 public class KinesisResumeAction implements ResumeAction {
 
     private GetShardIteratorRequest.Builder builder;
