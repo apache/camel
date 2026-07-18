@@ -42,7 +42,7 @@ public final class OpenAIConstants {
     public static final String MAX_TOKENS = "CamelOpenAIMaxTokens";
     @Metadata(description = "Whether to stream the response back incrementally", javaType = "Boolean")
     public static final String STREAMING = "CamelOpenAIStreaming";
-    @Metadata(description = "The Java class to use for structured output parsing", javaType = "Class")
+    @Metadata(description = "The Java class name (FQCN) to use for structured output parsing", javaType = "String")
     public static final String OUTPUT_CLASS = "CamelOpenAIOutputClass";
     @Metadata(description = "The JSON schema to use for structured output validation", javaType = "String")
     public static final String JSON_SCHEMA = "CamelOpenAIJsonSchema";
