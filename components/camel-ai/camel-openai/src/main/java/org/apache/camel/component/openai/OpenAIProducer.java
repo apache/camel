@@ -55,6 +55,7 @@ import com.openai.models.completions.CompletionUsage;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
@@ -441,14 +442,15 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             exchange.setProperty(OpenAIConstants.RESPONSE, response);
         }
 
-        if (isToolCallsFinishReason(response.choices().get(0))) {
-            exchange.getMessage().setBody(response.choices().get(0).message().toolCalls());
+        ChatCompletion.Choice choice = requireFirstChoice(exchange, response);
+        if (isToolCallsFinishReason(choice)) {
+            exchange.getMessage().setBody(choice.message().toolCalls());
         } else {
-            String content = response.choices().get(0).message().content().orElse("");
+            String content = choice.message().content().orElse("");
             content = processThinkingContent(exchange, content, config);
             exchange.getMessage().setBody(content);
-            extractReasoningContent(exchange, response.choices().get(0).message());
-            extractAdditionalResponseHeaders(exchange, response.choices().get(0).message());
+            extractReasoningContent(exchange, choice.message());
+            extractAdditionalResponseHeaders(exchange, choice.message());
         }
         setResponseHeaders(exchange.getMessage(), response);
         updateConversationHistory(exchange, params, response);
@@ -471,7 +473,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         while (iteration < maxIterations) {
             ChatCompletion response = getEndpoint().getClient().chat().completions().create(paramsBuilder.build());
-            ChatCompletion.Choice choice = response.choices().get(0);
+            ChatCompletion.Choice choice = requireFirstChoice(exchange, response);
 
             if (!isToolCallsFinishReason(choice)) {
                 // Final LLM response
@@ -636,6 +638,14 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             }
         });
 
+    }
+
+    private static ChatCompletion.Choice requireFirstChoice(Exchange exchange, ChatCompletion response)
+            throws CamelExchangeException {
+        if (response.choices().isEmpty()) {
+            throw new CamelExchangeException("OpenAI response contained no choices", exchange);
+        }
+        return response.choices().get(0);
     }
 
     private static boolean isToolCallsFinishReason(ChatCompletion.Choice choice) {
