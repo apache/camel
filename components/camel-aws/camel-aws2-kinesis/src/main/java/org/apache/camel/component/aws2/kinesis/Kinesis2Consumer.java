@@ -347,11 +347,8 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         if (ObjectHelper.isEmpty(template)) {
             action = new KinesisResumeAction(req);
         } else {
-            try {
-                action = template.getClass().getDeclaredConstructor().newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
-            }
+            action = (KinesisResumeAction) getEndpoint().getCamelContext().getInjector()
+                    .newInstance(template.getClass());
             action.setBuilder(req);
         }
         action.setShardId(shardId);
