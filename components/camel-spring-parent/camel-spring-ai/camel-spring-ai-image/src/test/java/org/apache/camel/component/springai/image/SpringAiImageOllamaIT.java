@@ -28,6 +28,7 @@ import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
@@ -38,9 +39,9 @@ import org.springframework.ai.image.ImageModel;
 import org.springframework.ai.openai.OpenAiImageModel;
 import org.springframework.ai.openai.OpenAiImageOptions;
 import org.springframework.ai.openai.api.OpenAiImageApi;
-import org.springframework.ai.retry.RetryUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.RestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,6 +56,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * converter that supports this media type.
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Disabled unless running in CI")
+@Timeout(180)
 public class SpringAiImageOllamaIT extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringAiImageOllamaIT.class);
@@ -100,7 +102,13 @@ public class SpringAiImageOllamaIT extends CamelTestSupport {
                 .model(IMAGE_MODEL_NAME)
                 .build();
 
-        imageModel = new OpenAiImageModel(imageApi, defaultOptions, RetryUtils.DEFAULT_RETRY_TEMPLATE);
+        // Disable Spring AI default exponential backoff retries in ITs: a failing Ollama call would
+        // otherwise block CI for many minutes (see CAMEL-23215).
+        RetryTemplate noRetryTemplate = RetryTemplate.builder()
+                .maxAttempts(1)
+                .build();
+
+        imageModel = new OpenAiImageModel(imageApi, defaultOptions, noRetryTemplate);
         LOG.info("ImageModel initialized successfully");
     }
 
