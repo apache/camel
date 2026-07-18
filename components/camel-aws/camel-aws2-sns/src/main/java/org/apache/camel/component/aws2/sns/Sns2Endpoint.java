@@ -149,6 +149,9 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
             if (configuration.isFifoTopic()) {
                 attributes.put("FifoTopic", "true");
+                if (configuration.getMessageDeduplicationIdStrategy() instanceof NullMessageDeduplicationIdStrategy) {
+                    attributes.put("ContentBasedDeduplication", "true");
+                }
                 builder.attributes(attributes);
             }
 

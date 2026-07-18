@@ -214,7 +214,11 @@ public class AWS2S3Producer extends DefaultProducer {
         if (contentLength == 0 || contentLength < partSize) {
             // optimize to do a single op if content length is known and < part size
             LOG.debug("Payload size < partSize ({} > {}). Uploading payload in single operation", contentLength, partSize);
-            doPutObject(exchange, objectMetadata, filePayload, inputStream, contentLength);
+            try {
+                doPutObject(exchange, objectMetadata, filePayload, inputStream, contentLength);
+            } finally {
+                IOHelper.close(inputStream);
+            }
             return;
         }
 
@@ -224,7 +228,7 @@ public class AWS2S3Producer extends DefaultProducer {
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         CreateMultipartUploadRequest.Builder createMultipartUploadRequest
-                = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName);
+                = CreateMultipartUploadRequest.builder().bucket(bucketName).key(keyName);
 
         String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
         if (ObjectHelper.isNotEmpty(storageClass)) {
@@ -279,7 +283,7 @@ public class AWS2S3Producer extends DefaultProducer {
             for (int part = 1; position < contentLength; part++) {
                 partSize = Math.min(partSize, contentLength - position);
 
-                UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName())
+                UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(bucketName)
                         .key(keyName).uploadId(initResponse.uploadId())
                         .partNumber(part).build();
 
@@ -295,7 +299,7 @@ public class AWS2S3Producer extends DefaultProducer {
             LOG.debug("Completing multi-part upload for {}", keyName);
             CompletedMultipartUpload completeMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
             CompleteMultipartUploadRequest.Builder compRequestBuilder = CompleteMultipartUploadRequest.builder()
-                    .multipartUpload(completeMultipartUpload).bucket(getConfiguration().getBucketName()).key(keyName)
+                    .multipartUpload(completeMultipartUpload).bucket(bucketName).key(keyName)
                     .uploadId(initResponse.uploadId());
             if (getConfiguration().isConditionalWritesEnabled()) {
                 compRequestBuilder.ifNoneMatch("*");
@@ -304,7 +308,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
         } catch (Exception e) {
             getEndpoint().getS3Client()
-                    .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
+                    .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(bucketName)
                             .key(keyName).uploadId(initResponse.uploadId()).build());
             throw e;
         } finally {
@@ -616,7 +620,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 ResponseInputStream<GetObjectResponse> res
                         = s3Client.getObject(req, ResponseTransformer.toInputStream());
                 Message message = getMessageForResponse(exchange);
-                if (!getConfiguration().isIgnoreBody()) {
+                if (getConfiguration().isIgnoreBody()) {
+                    IOHelper.close(res);
+                } else {
                     message.setBody(res);
                 }
                 populateMetadata(res, message);
@@ -658,7 +664,9 @@ public class AWS2S3Producer extends DefaultProducer {
             ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
             Message message = getMessageForResponse(exchange);
-            if (!getConfiguration().isIgnoreBody()) {
+            if (getConfiguration().isIgnoreBody()) {
+                IOHelper.close(res);
+            } else {
                 message.setBody(res);
             }
             populateMetadata(res, message);

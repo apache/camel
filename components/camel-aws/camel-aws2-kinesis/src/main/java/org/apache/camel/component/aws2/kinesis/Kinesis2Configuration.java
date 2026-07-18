@@ -68,7 +68,7 @@ public class Kinesis2Configuration implements Cloneable, AwsCommonConfiguration 
                             + " In case of ignore a WARN message will be logged once and the consumer will not process new messages until restarted,"
                             + "in case of silent there will be no logging and the consumer will not process new messages until restarted,"
                             + "in case of fail a ReachedClosedStateException will be thrown")
-    private Kinesis2ShardClosedStrategyEnum shardClosed;
+    private Kinesis2ShardClosedStrategyEnum shardClosed = Kinesis2ShardClosedStrategyEnum.ignore;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
               description = "To define a proxy protocol when instantiating the Kinesis client")
     private Protocol proxyProtocol = Protocol.HTTPS;

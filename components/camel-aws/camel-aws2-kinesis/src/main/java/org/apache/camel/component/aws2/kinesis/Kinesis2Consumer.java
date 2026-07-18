@@ -43,6 +43,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.services.kinesis.model.ExpiredIteratorException;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
@@ -152,31 +153,25 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             return;
         }
 
-        GetRecordsRequest req = GetRecordsRequest
-                .builder()
-                .shardIterator(shardIterator)
-                .limit(getEndpoint()
-                        .getConfiguration()
-                        .getMaxResultsPerRequest())
-                .build();
-
         GetRecordsResponse result;
-        if (getEndpoint().getConfiguration().isAsyncClient()) {
+        try {
+            result = getRecords(shardIterator, kinesisConnection);
+        } catch (ExpiredIteratorException e) {
+            LOG.warn("Shard iterator expired for shard {} on stream {}, requesting a fresh one",
+                    shard.shardId(), getEndpoint().getConfiguration().getStreamName());
+            currentShardIterators.remove(shard.shardId());
             try {
-                result = kinesisConnection
-                        .getAsyncClient(getEndpoint())
-                        .getRecords(req)
-                        .get();
-            } catch (InterruptedException e) {
+                shardIterator = getShardIterator(shard, kinesisConnection);
+            } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(ie);
+            } catch (ExecutionException ee) {
+                throw new RuntimeException(ee);
             }
-        } else {
-            result = kinesisConnection
-                    .getClient(getEndpoint())
-                    .getRecords(req);
+            if (ObjectHelper.isEmpty(shardIterator)) {
+                return;
+            }
+            result = getRecords(shardIterator, kinesisConnection);
         }
 
         try {
@@ -191,6 +186,37 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         // we left off, however, I don't know what happens to subsequent
         // exchanges when an earlier exchange fails.
         updateShardIterator(shard, result.nextShardIterator());
+    }
+
+    private GetRecordsResponse getRecords(String shardIterator, KinesisConnection kinesisConnection) {
+        GetRecordsRequest req = GetRecordsRequest
+                .builder()
+                .shardIterator(shardIterator)
+                .limit(getEndpoint()
+                        .getConfiguration()
+                        .getMaxResultsPerRequest())
+                .build();
+
+        if (getEndpoint().getConfiguration().isAsyncClient()) {
+            try {
+                return kinesisConnection
+                        .getAsyncClient(getEndpoint())
+                        .getRecords(req)
+                        .get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                if (e.getCause() instanceof ExpiredIteratorException ex) {
+                    throw ex;
+                }
+                throw new RuntimeException(e);
+            }
+        } else {
+            return kinesisConnection
+                    .getClient(getEndpoint())
+                    .getRecords(req);
+        }
     }
 
     private void updateShardIterator(Shard shard, String nextShardIterator) {
@@ -315,15 +341,16 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     }
 
     private KinesisResumeAction resolveResumeAction(String shardId, GetShardIteratorRequest.Builder req) {
-        KinesisResumeAction action
-                = getEndpoint().getCamelContext().getRegistry().lookupByNameAndType(Kinesis2Constants.RESUME_ACTION,
-                        KinesisResumeAction.class);
-        if (ObjectHelper.isEmpty(action)) {
+        KinesisResumeAction template = getEndpoint().getCamelContext().getRegistry()
+                .lookupByNameAndType(Kinesis2Constants.RESUME_ACTION, KinesisResumeAction.class);
+        KinesisResumeAction action;
+        if (ObjectHelper.isEmpty(template)) {
             action = new KinesisResumeAction(req);
         } else {
+            action = (KinesisResumeAction) getEndpoint().getCamelContext().getInjector()
+                    .newInstance(template.getClass());
             action.setBuilder(req);
         }
-
         action.setShardId(shardId);
         action.setStreamName(getEndpoint().getConfiguration().getStreamName());
         return action;
