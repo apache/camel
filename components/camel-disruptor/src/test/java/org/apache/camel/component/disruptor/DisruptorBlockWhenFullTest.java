@@ -44,7 +44,11 @@ public class DisruptorBlockWhenFullTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(DEFAULT_URI).delay(DELAY).to(MOCK_URI);
+                // syncDelayed() is required so the consumer blocks for
+                // the full delay inside onEvent(), keeping the ring buffer
+                // full long enough for the "exception when full" test to
+                // hit InsufficientCapacityException reliably.
+                from(DEFAULT_URI).delay(DELAY).syncDelayed().to(MOCK_URI);
             }
         };
     }
