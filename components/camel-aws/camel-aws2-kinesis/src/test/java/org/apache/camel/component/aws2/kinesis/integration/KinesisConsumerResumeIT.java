@@ -77,11 +77,11 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
         }
     }
 
-    static class TestResumeAction extends KinesisResumeAction {
+    public static class TestResumeAction extends KinesisResumeAction {
         private static volatile List<PutRecordsResponse> previousRecords;
         private static volatile int expectedCount;
 
-        TestResumeAction() {
+        public TestResumeAction() {
         }
 
         public static void setPreviousRecords(List<PutRecordsResponse> records) {
