@@ -19,9 +19,13 @@ package org.apache.camel.component.openai;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.modelcontextprotocol.client.McpSyncClient;
+import io.modelcontextprotocol.spec.McpSchema;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
@@ -30,14 +34,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
- * Reproducer for a robustness gap: a chat completion response with an empty {@code choices} array fails the exchange
- * with a raw {@code IndexOutOfBoundsException} because {@code OpenAIProducer.processNonStreamingSimple} dereferences
- * {@code response.choices().get(0)} unguarded — while {@code setResponseHeaders} in the same class does guard against
- * empty choices. Empty {@code choices} payloads are known in the OpenAI-compatible ecosystem from the streaming side
- * (Azure OpenAI content-filter chunks, OpenRouter usage-only final chunks); for non-streaming this is defensive
- * hardening against misbehaving compatible shims/proxies, which should surface as a meaningful exception.
+ * Verifies that a chat completion response with an empty {@code choices} array fails the exchange with a meaningful
+ * {@link CamelExchangeException} in both the simple and agentic non-streaming paths.
  */
 public class OpenAIEmptyChoicesResponseTest extends CamelTestSupport {
 
@@ -46,19 +49,7 @@ public class OpenAIEmptyChoicesResponseTest extends CamelTestSupport {
     @RegisterExtension
     public OpenAIMock openAIMock = new OpenAIMock().builder()
             .when("hello")
-            .thenRespondWith((exchange, input) -> {
-                try {
-                    Map<String, Object> completion = new HashMap<>();
-                    completion.put("id", UUID.randomUUID().toString());
-                    completion.put("choices", List.of());
-                    completion.put("created", System.currentTimeMillis() / 1000L);
-                    completion.put("model", "openai-mock");
-                    completion.put("object", "chat.completion");
-                    return MAPPER.writeValueAsString(completion);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            })
+            .thenRespondWith((exchange, input) -> emptyChoicesCompletionJson())
             .end()
             .build();
 
@@ -70,6 +61,10 @@ public class OpenAIEmptyChoicesResponseTest extends CamelTestSupport {
                 from("direct:chat")
                         .to("openai:chat-completion?model=gpt-5&apiKey=dummy&baseUrl="
                             + openAIMock.getBaseUrl() + "/v1");
+
+                from("direct:mcp-chat")
+                        .to("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true&baseUrl="
+                            + openAIMock.getBaseUrl() + "/v1");
             }
         };
     }
@@ -80,7 +75,64 @@ public class OpenAIEmptyChoicesResponseTest extends CamelTestSupport {
 
         assertThat(result.getException())
                 .as("An empty choices array cannot produce a response body")
-                .isNotNull()
-                .isNotInstanceOf(IndexOutOfBoundsException.class);
+                .isInstanceOf(CamelExchangeException.class)
+                .hasMessageContaining("no choices");
+    }
+
+    @Test
+    void emptyChoicesInAgenticPathMustFailWithMeaningfulException() {
+        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true&baseUrl="
+                             + openAIMock.getBaseUrl() + "/v1";
+
+        Map<String, McpSyncClient> toolClients = new HashMap<>();
+        toolClients.put("get_weather", createMockMcpClient("Sunny, 22°C"));
+        injectMcpTools(endpointUri, toolClients);
+
+        Exchange result = template.request("direct:mcp-chat", e -> e.getIn().setBody("hello"));
+
+        assertThat(result.getException())
+                .as("An empty choices array cannot produce a response body in the agentic path")
+                .isInstanceOf(CamelExchangeException.class)
+                .hasMessageContaining("no choices");
+    }
+
+    private static String emptyChoicesCompletionJson() {
+        try {
+            Map<String, Object> completion = new HashMap<>();
+            completion.put("id", UUID.randomUUID().toString());
+            completion.put("choices", List.of());
+            completion.put("created", System.currentTimeMillis() / 1000L);
+            completion.put("model", "openai-mock");
+            completion.put("object", "chat.completion");
+            return MAPPER.writeValueAsString(completion);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private McpSyncClient createMockMcpClient(String resultText) {
+        McpSyncClient client = mock(McpSyncClient.class);
+        McpSchema.CallToolResult result = McpSchema.CallToolResult.builder()
+                .content(List.of(new McpSchema.TextContent(null, resultText, null)))
+                .isError(false)
+                .build();
+        when(client.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(result);
+        return client;
+    }
+
+    private void injectMcpTools(String endpointKey, Map<String, McpSyncClient> toolClients) {
+        OpenAIEndpoint endpoint = context.getEndpoint(endpointKey, OpenAIEndpoint.class);
+
+        List<McpSchema.Tool> mcpTools = toolClients.keySet().stream()
+                .map(name -> McpSchema.Tool.builder(name, Map.of("type", "object"))
+                        .description("Mock tool: " + name)
+                        .build())
+                .toList();
+
+        endpoint.setMcpToolState(new McpToolState(
+                McpToolConverter.convert(mcpTools),
+                toolClients,
+                Map.of(),
+                Set.of()));
     }
 }
