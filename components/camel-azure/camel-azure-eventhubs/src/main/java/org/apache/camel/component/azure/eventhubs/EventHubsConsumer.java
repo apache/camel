@@ -95,7 +95,9 @@ public class EventHubsConsumer extends DefaultConsumer {
         message.setBody(eventContext.getEventData().getBody());
         // set headers
         message.setHeader(EventHubsConstants.PARTITION_ID, eventContext.getPartitionContext().getPartitionId());
-        message.setHeader(EventHubsConstants.PARTITION_KEY, eventContext.getEventData().getPartitionKey());
+        if (eventContext.getEventData().getPartitionKey() != null) {
+            message.setHeader(EventHubsConstants.PARTITION_KEY, eventContext.getEventData().getPartitionKey());
+        }
         message.setHeader(EventHubsConstants.OFFSET, eventContext.getEventData().getOffset());
         message.setHeader(EventHubsConstants.ENQUEUED_TIME, eventContext.getEventData().getEnqueuedTime());
         message.setHeader(EventHubsConstants.SEQUENCE_NUMBER, eventContext.getEventData().getSequenceNumber());
