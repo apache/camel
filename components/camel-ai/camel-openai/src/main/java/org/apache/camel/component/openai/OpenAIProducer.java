@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.core.JsonField;
 import com.openai.core.JsonValue;
@@ -524,10 +525,10 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 }
 
                 LOG.debug("Executing MCP tool '{}' with args: {}", toolName, argsJson);
-                Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
                 String resultContent;
 
                 try {
+                    Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
                     McpSchema.CallToolResult toolResult
                             = getEndpoint().callTool(mcpClient, toolName, argsMap);
 
@@ -540,6 +541,10 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                             allReturnDirect = false;
                         }
                     }
+                } catch (JsonProcessingException e) {
+                    LOG.warn("Invalid tool arguments for '{}': {}", toolName, argsJson, e);
+                    resultContent = "Error: invalid tool arguments: " + e.getMessage();
+                    allReturnDirect = false;
                 } catch (Exception e) {
                     LOG.warn("MCP tool '{}' execution failed: {}", toolName, e.getMessage(), e);
                     resultContent = "Error: Tool execution failed: " + e.getMessage();
