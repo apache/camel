@@ -40,7 +40,10 @@ public class ApiDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        return doCallJson(options).toJson();
+        if (cachedOpenApi == null) {
+            cachedOpenApi = buildOpenApi();
+        }
+        return cachedOpenApi;
     }
 
     @Override
