@@ -34,6 +34,16 @@ content-mode / HTTP header path.
 Ordinary CloudEvent extension attributes are unaffected. If a route relied on `Camel*`-named fields being
 propagated from the structured payload, set them explicitly after consuming the event.
 
+=== camel-azure-eventhubs - producer now filters Camel-internal headers
+
+The `azure-eventhubs` producer now applies a `DefaultHeaderFilterStrategy` to the headers copied onto
+`EventData` application properties. Camel-internal headers (the `Camel*` namespace, matched
+case-insensitively) are no longer forwarded to Azure Event Hubs, consistent with the inbound header
+filtering performed by other components.
+
+Ordinary application headers are unaffected. To restore the previous pass-through behavior, set
+`headerFilterStrategy=#none` on the component or endpoint.
+
 == Upgrading from 4.14.3 to 4.14.8
 
 === camel-jackson - potential breaking change
