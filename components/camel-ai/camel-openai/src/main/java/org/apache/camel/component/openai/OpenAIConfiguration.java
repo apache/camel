@@ -240,7 +240,7 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "The algorithm used by the trust manager factory for SSL connections")
     private String sslTrustmanagerAlgorithm = "PKIX";
 
-    @UriParam(label = "security", defaultValue = "https", security = "insecure:ssl")
+    @UriParam(label = "security", defaultValue = "https", security = "insecure:ssl", insecureValue = "none")
     @Metadata(description = "The endpoint identification algorithm to validate the server hostname using the server certificate. "
                             + "Set to an empty string or 'none' to disable hostname verification")
     private String sslEndpointAlgorithm = "https";
