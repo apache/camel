@@ -16,20 +16,25 @@
  */
 package org.apache.camel.spring.processor;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringRouteTopLevelMisconfiguredTest extends ContextTestSupport {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
+        // Do NOT call super.setUp() — this test validates that context creation fails
+    }
+
+    @Test
+    public void testMisconfigured() throws Exception {
         RuntimeCamelException e1 = assertThrows(RuntimeCamelException.class, () -> {
             createSpringCamelContext(this,
                     "org/apache/camel/spring/processor/SpringRouteTopLevelOnExceptionMisconfiguredTest.xml");
@@ -50,16 +55,6 @@ public class SpringRouteTopLevelMisconfiguredTest extends ContextTestSupport {
         });
         IllegalArgumentException iae3 = assertIsInstanceOf(IllegalArgumentException.class, e3.getCause());
         assertTrue(iae3.getMessage().startsWith("The output must be added as top-level on the route."));
-
-        // return a working context instead, to let this test pass
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/convertBody.xml");
-    }
-
-    @Test
-    public void testMisconfigured() {
-        // Validation is done in createCamelContext()
-        assertDoesNotThrow(() -> {
-        });
     }
 
 }

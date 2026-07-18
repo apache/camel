@@ -23,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,6 +31,11 @@ public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSup
     @Override
     @BeforeEach
     public void setUp() throws Exception {
+        // Do NOT call super.setUp() — this test validates that context creation fails
+    }
+
+    @Test
+    public void testDummy() throws Exception {
         Exception e = assertThrows(Exception.class, () -> {
             super.setUp();
         });
@@ -39,13 +43,6 @@ public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSup
         IllegalArgumentException ie = assertIsInstanceOf(IllegalArgumentException.class, fe.getCause());
         assertTrue(ie.getMessage().startsWith(
                 "Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: LoadBalanceType[RoundRobinLoadBalancer"));
-    }
-
-    @Test
-    public void testDummy() {
-        // Validation is done in setUp()
-        assertDoesNotThrow(() -> {
-        });
     }
 
     @Override

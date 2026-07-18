@@ -16,20 +16,25 @@
  */
 package org.apache.camel.spring.processor;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
+        // Do NOT call super.setUp() — this test validates that context creation fails
+    }
+
+    @Test
+    public void testTryCatchMisconfigured() throws Exception {
         Exception e1 = assertThrows(Exception.class, () -> {
             createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryCatchMisconfiguredTest.xml");
         });
@@ -45,16 +50,6 @@ public class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
         FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e2);
         IllegalArgumentException iae2 = assertIsInstanceOf(IllegalArgumentException.class, ftcre.getCause());
         assertEquals("This doFinally should have a doTry as its parent on DoFinally[[to[mock:finally]]]", iae2.getMessage());
-
-        // return a working context instead, to let this test pass
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/convertBody.xml");
-    }
-
-    @Test
-    public void testTryCatchMisconfigured() {
-        // Validation is done in createCamelContext()
-        assertDoesNotThrow(() -> {
-        });
     }
 
 }

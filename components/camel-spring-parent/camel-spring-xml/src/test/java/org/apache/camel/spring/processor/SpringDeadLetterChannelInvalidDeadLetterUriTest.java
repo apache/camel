@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -39,6 +38,11 @@ public class SpringDeadLetterChannelInvalidDeadLetterUriTest extends SpringTestS
     @Override
     @BeforeEach
     public void setUp() throws Exception {
+        // Do NOT call super.setUp() — this test validates that context creation fails
+    }
+
+    @Test
+    public void testInvalidUri() throws Exception {
         Exception e = assertThrows(Exception.class, () -> {
             super.setUp();
         });
@@ -47,13 +51,6 @@ public class SpringDeadLetterChannelInvalidDeadLetterUriTest extends SpringTestS
         assertEquals(
                 "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.",
                 cause.getMessage());
-    }
-
-    @Test
-    public void testInvalidUri() {
-        // Validation is done in setUp()
-        assertDoesNotThrow(() -> {
-        });
     }
 
 }
