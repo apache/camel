@@ -102,16 +102,21 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
 
     @Test
     public void testRemove() throws InterruptedException {
-        MockEndpoint out = getMockEndpoint("mock:removed");
-        out.expectedMessageCount(1);
-
         map.put("4711", "my-foo");
 
-        // Wait for the ADDED event to be fully processed before removing,
-        // otherwise the remove may execute before the async ADDED event is delivered.
+        // Wait for the ADDED event to be fully processed. Since events for
+        // key "4711" are dispatched in partition order within Hazelcast's
+        // event system, any stale REMOVED events from resetState()'s clear()
+        // are guaranteed to have been delivered by the time we see the ADDED.
         MockEndpoint added = getMockEndpoint("mock:added");
         Awaitility.await().atMost(10, TimeUnit.SECONDS)
                 .until(() -> added.getReceivedCounter() >= 1);
+
+        // Reset mock:removed to discard any stale REMOVED events that leaked
+        // from clear(), then set the expectation for the test's own remove.
+        MockEndpoint out = getMockEndpoint("mock:removed");
+        out.reset();
+        out.expectedMessageCount(1);
 
         map.remove("4711");
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);

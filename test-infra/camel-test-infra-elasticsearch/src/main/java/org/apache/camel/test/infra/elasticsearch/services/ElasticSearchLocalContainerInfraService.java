@@ -77,6 +77,10 @@ public class ElasticSearchLocalContainerInfraService
 
                 withPassword(PASSWORD);
 
+                // Disable disk watermarks to prevent "disk usage exceeded flood-stage watermark"
+                // errors when running on CI machines with limited disk space
+                withEnv("cluster.routing.allocation.disk.threshold_enabled", "false");
+
                 ContainerEnvironmentUtil.configurePort(this, fixedPort, ELASTIC_SEARCH_PORT);
 
                 setWaitStrategy(

@@ -36,7 +36,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Base class for LRA based tests.
@@ -58,9 +57,34 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
 
     @AfterEach
     public void checkActiveLRAs() throws IOException, InterruptedException {
-        await().atMost(20, SECONDS)
+        // After a test that exercises LRA recovery (e.g., LRAFailuresIT), the
+        // coordinator may need a recovery cycle to close the LRA. Trigger
+        // recovery explicitly rather than waiting for the periodic scan
+        // (default period: 120s).
+        await().atMost(60, SECONDS)
+                .pollInterval(2, SECONDS)
+                .pollDelay(1, SECONDS)
                 .alias("Some LRA have been left pending")
-                .until(() -> getNumberOfActiveLRAs(), equalTo(activeLRAs));
+                .until(() -> {
+                    triggerRecovery();
+                    return getNumberOfActiveLRAs() == activeLRAs;
+                });
+    }
+
+    /**
+     * Triggers a recovery scan on the LRA coordinator via its REST endpoint.
+     */
+    protected void triggerRecovery() {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(service.getServiceAddress() + "/lra-coordinator/recovery"))
+                    .GET()
+                    .build();
+            client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+            // Best-effort — the periodic recovery manager will eventually run
+        }
     }
 
     @Override
