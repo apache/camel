@@ -834,6 +834,7 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(APEX_URL, apexUrl);
         // apexQueryParams are handled explicitly in AbstractRestProcessor
         valueMap.put(COMPOSITE_METHOD, compositeMethod);
+        valueMap.put(ALL_OR_NONE, allOrNone);
         valueMap.put(LIMIT, limit);
         valueMap.put(APPROVAL, approval);
         valueMap.put(EVENT_NAME, eventName);
@@ -869,7 +870,7 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(INITIAL_REPLAY_ID_MAP, initialReplayIdMap);
 
         // add Pub/Sub API properties
-        valueMap.put(REPLAY_PRESET, initialReplayIdMap);
+        valueMap.put(REPLAY_PRESET, replayPreset);
         valueMap.put(PUB_SUB_DESERIALIZE_TYPE, pubSubDeserializeType);
         valueMap.put(PUB_SUB_POJO_CLASS, pubSubPojoClass);
 

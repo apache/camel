@@ -243,7 +243,8 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         Class<?> responseClass;
         try (final JsonParser parser = new JsonFactory().createParser(responseEntity)) {
             String type = null;
-            while (parser.nextToken() != JsonToken.END_OBJECT) {
+            JsonToken token;
+            while ((token = parser.nextToken()) != null && token != JsonToken.END_OBJECT) {
                 String propName = parser.currentName();
                 if ("type".equals(propName)) {
                     parser.nextToken();
@@ -251,10 +252,13 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                     break;
                 }
             }
+            if (type == null) {
+                return null;
+            }
             String prefix = exchange.getProperty(RESPONSE_CLASS_PREFIX, "", String.class);
             responseClass = getSObjectClass(prefix + type, null);
-        } catch (IOException | SalesforceException exc) {
-            throw new RuntimeException(exc);
+        } catch (SalesforceException exc) {
+            throw new IOException("Failed to detect SObject response class", exc);
         } finally {
             responseEntity.reset();
         }

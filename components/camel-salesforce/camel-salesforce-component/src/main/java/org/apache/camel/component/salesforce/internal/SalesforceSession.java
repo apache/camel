@@ -91,7 +91,7 @@ public class SalesforceSession extends ServiceSupport {
 
     private final CamelContext camelContext;
     private final AtomicBoolean loggingIn = new AtomicBoolean();
-    private CountDownLatch latch = new CountDownLatch(1);
+    private volatile CountDownLatch latch = new CountDownLatch(1);
 
     public SalesforceSession(CamelContext camelContext, SalesforceHttpClient httpClient, long timeout,
                              SalesforceLoginConfig config) {
@@ -113,11 +113,7 @@ public class SalesforceSession extends ServiceSupport {
         // if another thread is logging in, we will just wait until it's successful
         if (!loggingIn.compareAndSet(false, true)) {
             LOG.debug("waiting on login from another thread");
-            // TODO: This is janky
             try {
-                while (latch == null) {
-                    Thread.sleep(100);
-                }
                 latch.await();
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
