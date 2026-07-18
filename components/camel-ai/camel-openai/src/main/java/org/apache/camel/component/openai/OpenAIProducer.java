@@ -76,6 +76,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     private static final Pattern THINK_PATTERN = Pattern.compile("^\\s*<think>(.*?)</think>\\s*", Pattern.DOTALL);
     private static final String PENDING_USER_MESSAGE = "CamelOpenAIPendingUserMessage";
 
+    private Class<?> outputClassResolved;
+
     public OpenAIProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
     }
@@ -83,6 +85,11 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         OpenAIConfiguration config = getEndpoint().getConfiguration();
+
+        if (ObjectHelper.isNotEmpty(config.getOutputClass())) {
+            outputClassResolved = getEndpoint().getCamelContext().getClassResolver()
+                    .resolveMandatoryClass(config.getOutputClass());
+        }
 
         if (ObjectHelper.isNotEmpty(config.getJsonSchema())) {
             String resolved = getEndpoint().getCamelContext().resolvePropertyPlaceholders(config.getJsonSchema());
@@ -160,10 +167,15 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         // Structured output handling
         if (ObjectHelper.isNotEmpty(outputClass)) {
-            Class<?> responseClass = getEndpoint().getCamelContext().getClassResolver().resolveClass(outputClass);
-            if (responseClass != null) {
-                paramsBuilder.responseFormat(responseClass);
+            Class<?> responseClass;
+            String headerOutputClass = in.getHeader(OpenAIConstants.OUTPUT_CLASS, String.class);
+            if (ObjectHelper.isNotEmpty(headerOutputClass)) {
+                responseClass = getEndpoint().getCamelContext().getClassResolver()
+                        .resolveMandatoryClass(headerOutputClass);
+            } else {
+                responseClass = outputClassResolved;
             }
+            paramsBuilder.responseFormat(responseClass);
         } else if (ObjectHelper.isNotEmpty(jsonSchema)) {
             // Build OpenAI JSON schema response format from provided schema string
             try {
