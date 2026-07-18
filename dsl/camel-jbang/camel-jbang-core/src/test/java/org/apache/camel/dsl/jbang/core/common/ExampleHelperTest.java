@@ -42,6 +42,22 @@ class ExampleHelperTest {
     }
 
     @Test
+    void shouldFindExampleByShortName() {
+        List<JsonObject> catalog = ExampleHelper.loadCatalog();
+        JsonObject entry = ExampleHelper.findExample(catalog, "circuit-breaker");
+        assertNotNull(entry);
+        assertEquals("eip/circuit-breaker", entry.getString("name"));
+    }
+
+    @Test
+    void shouldFindExampleByShortNameGroovy() {
+        List<JsonObject> catalog = ExampleHelper.loadCatalog();
+        JsonObject entry = ExampleHelper.findExample(catalog, "groovy");
+        assertNotNull(entry);
+        assertEquals("language/groovy", entry.getString("name"));
+    }
+
+    @Test
     void shouldReturnNullForUnknownExample() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
         JsonObject entry = ExampleHelper.findExample(catalog, "does-not-exist");
@@ -161,5 +177,9 @@ class ExampleHelperTest {
         assertTrue(names.contains("eip/circuit-breaker"));
         assertTrue(names.contains("messaging/mqtt"));
         assertTrue(names.contains("cloud/aws-sqs"));
+        // short names should also be included
+        assertTrue(names.contains("circuit-breaker"));
+        assertTrue(names.contains("mqtt"));
+        assertTrue(names.contains("aws-sqs"));
     }
 }
