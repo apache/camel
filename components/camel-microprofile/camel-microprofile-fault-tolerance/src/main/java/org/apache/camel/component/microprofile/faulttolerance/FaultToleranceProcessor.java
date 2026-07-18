@@ -382,6 +382,16 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     }
 
     @Override
+    protected void doSuspend() throws Exception {
+        // noop - preserve circuit breaker state across suspend/resume
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        // noop - circuit breaker state was preserved during suspend
+    }
+
+    @Override
     protected void doStop() throws Exception {
         if (shutdownExecutorService && executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
