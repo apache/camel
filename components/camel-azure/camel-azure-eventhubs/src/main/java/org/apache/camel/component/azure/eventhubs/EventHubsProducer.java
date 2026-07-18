@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
 import org.apache.camel.component.azure.eventhubs.operations.EventHubsProducerOperations;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
 
 public class EventHubsProducer extends DefaultAsyncProducer {
@@ -48,7 +49,9 @@ public class EventHubsProducer extends DefaultAsyncProducer {
         }
 
         // create our operations
-        producerOperations = new EventHubsProducerOperations(producerAsyncClient, getConfiguration());
+        HeaderFilterStrategy headerFilterStrategy
+                = ((EventHubsComponent) getEndpoint().getComponent()).getHeaderFilterStrategy();
+        producerOperations = new EventHubsProducerOperations(producerAsyncClient, getConfiguration(), headerFilterStrategy);
     }
 
     @Override

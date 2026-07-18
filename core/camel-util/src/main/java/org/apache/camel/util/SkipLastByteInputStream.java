@@ -23,7 +23,10 @@ import java.io.InputStream;
 /**
  * An {@link InputStream} that skips the last byte of the underlying delegate {@link InputStream} if the last byte is
  * equal to the given {@code matchLast} value.
+ *
+ * @deprecated No longer used. Will be removed in a future version.
  */
+@Deprecated
 public class SkipLastByteInputStream extends BufferedInputStream {
 
     private final byte matchLast;

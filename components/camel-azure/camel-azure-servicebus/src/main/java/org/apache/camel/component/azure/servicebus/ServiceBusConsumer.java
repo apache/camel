@@ -119,18 +119,30 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
 
     private void processMessage(ServiceBusReceivedMessageContext messageContext) {
         pendingExchanges.incrementAndGet();
-        final ServiceBusReceivedMessage message = messageContext.getMessage();
-        final Exchange exchange = createServiceBusExchange(message);
-        final ConsumerOnCompletion onCompletion = new ConsumerOnCompletion(messageContext);
-        // add exchange callback
-        exchange.getExchangeExtension().addOnCompletion(onCompletion);
-        // track for Camel-managed lock renewal
-        if (lockRenewer != null) {
-            lockRenewer.add(exchange, message);
+        try {
+            final ServiceBusReceivedMessage message = messageContext.getMessage();
+            final Exchange exchange = createServiceBusExchange(message);
+            final ConsumerOnCompletion onCompletion = new ConsumerOnCompletion(messageContext);
+            // add exchange callback
+            exchange.getExchangeExtension().addOnCompletion(onCompletion);
+            // track for Camel-managed lock renewal
+            if (lockRenewer != null) {
+                lockRenewer.add(exchange, message);
+            }
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            getAsyncProcessor().process(exchange, cb);
+        } catch (Exception e) {
+            pendingExchanges.decrementAndGet();
+            if (getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK) {
+                try {
+                    messageContext.abandon();
+                } catch (Exception abandonEx) {
+                    // ignore
+                }
+            }
+            getExceptionHandler().handleException("Error processing Service Bus message", e);
         }
-        // use default consumer callback
-        AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        getAsyncProcessor().process(exchange, cb);
     }
 
     private void processError(ServiceBusErrorContext errorContext) {

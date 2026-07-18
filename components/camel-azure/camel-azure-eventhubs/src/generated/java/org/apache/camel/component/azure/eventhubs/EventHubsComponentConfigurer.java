@@ -61,6 +61,8 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.eventhubs.CredentialType.class, value)); return true;
         case "eventposition":
         case "eventPosition": getOrCreateConfiguration(target).setEventPosition(property(camelContext, java.util.Map.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "partitionid":
@@ -120,6 +122,8 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "credentialType": return org.apache.camel.component.azure.eventhubs.CredentialType.class;
         case "eventposition":
         case "eventPosition": return java.util.Map.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "partitionid":
@@ -175,6 +179,8 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "credentialType": return getOrCreateConfiguration(target).getCredentialType();
         case "eventposition":
         case "eventPosition": return getOrCreateConfiguration(target).getEventPosition();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "partitionid":

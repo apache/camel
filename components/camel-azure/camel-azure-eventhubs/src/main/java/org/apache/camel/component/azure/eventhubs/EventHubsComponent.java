@@ -22,7 +22,7 @@ import com.azure.identity.DefaultAzureCredential;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * Azure EventHubs component
  */
 @Component("azure-eventhubs")
-public class EventHubsComponent extends DefaultComponent {
+public class EventHubsComponent extends HeaderFilterStrategyComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventHubsComponent.class);
 

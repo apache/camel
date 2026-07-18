@@ -811,7 +811,10 @@ public class BlobOperations {
         final BlobHttpHeaders blobHttpHeaders = configurationProxy.getBlobHttpHeaders(exchange);
         final Map<String, String> metadata = configurationProxy.getMetadata(exchange);
         final AccessTier accessTier = configurationProxy.getAccessTier(exchange);
-        final BlobRequestConditions blobRequestConditions = configurationProxy.getBlobRequestConditions(exchange);
+        BlobRequestConditions blobRequestConditions = configurationProxy.getBlobRequestConditions(exchange);
+        if (blobRequestConditions == null) {
+            blobRequestConditions = new BlobRequestConditions();
+        }
         final Duration timeout = configurationProxy.getTimeout(exchange);
         final byte[] contentMD5 = configurationProxy.getContentMd5(exchange);
 
@@ -839,9 +842,6 @@ public class BlobOperations {
     }
 
     private BlobLeaseClient acquireLeaseIfConfigured(BlobRequestConditions requestConditions, Exchange exchange) {
-        if (requestConditions == null) {
-            requestConditions = new BlobRequestConditions();
-        }
         if (requestConditions.getLeaseId() == null && configurationProxy.getLeaseBlob(exchange)) {
             BlobLeaseClient leaseClient = client.getLeaseClient();
             Integer leaseDurationInSeconds = configurationProxy.getLeaseDurationInSeconds(exchange);

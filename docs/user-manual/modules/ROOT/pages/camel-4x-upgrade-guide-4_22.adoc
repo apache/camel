@@ -670,6 +670,29 @@ compensation/completion outcome will now wait for finalization and may see excep
 that were previously swallowed. If your route relies on fire-and-forget saga finalization,
 consider using `MANUAL` completion mode instead.
 
+=== camel-azure-eventhubs - producer now filters Camel-internal headers
+
+The `azure-eventhubs` producer now applies a `DefaultHeaderFilterStrategy` to the headers copied onto
+`EventData` application properties. Camel-internal headers (the `Camel*` namespace, matched
+case-insensitively) are no longer forwarded to Azure Event Hubs, consistent with the inbound header
+filtering performed by other components.
+
+Ordinary application headers are unaffected.
+
+=== camel-azure-storage-datalake - openInputStream no longer uses Blob Query API
+
+The `getFile` operation on the Data Lake consumer/producer now uses the standard
+`client.openInputStream().getInputStream()` instead of `client.openQueryInputStream("SELECT * from BlobStorage")`.
+The previous implementation relied on the Blob Query API, which had known issues requiring a
+`SkipLastByteInputStream` workaround. The `SkipLastByteInputStream` class in `camel-util` has been
+deprecated and will be removed in a future version.
+
+=== camel-azure-storage-blob - page-blob range calculation corrected
+
+The page-blob `getRange` calculation has been corrected from `end - start` to `end - start + 1`, since
+Azure page blob ranges are inclusive on both ends. If you had a workaround adjusting the range values to
+compensate for this off-by-one, it should be removed.
+
 === camel-xslt / camel-xslt-saxon - transformerFactoryConfigurationStrategy now honored
 
 The `transformerFactoryConfigurationStrategy` option is now applied on all factory creation paths.
