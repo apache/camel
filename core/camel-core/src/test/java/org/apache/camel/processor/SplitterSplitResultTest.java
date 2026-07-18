@@ -136,8 +136,9 @@ class SplitterSplitResultTest extends ContextTestSupport {
 
     @Test
     void testSplitResultConstructorWithNullFailures() {
-        SplitResult result = new SplitResult(5, 0, null, false);
+        SplitResult result = new SplitResult(5, 5, 0, null, false);
         assertEquals(5, result.getTotalItems());
+        assertEquals(5, result.getProcessedItems());
         assertEquals(0, result.getFailureCount());
         assertEquals(5, result.getSuccessCount());
         assertFalse(result.isAborted());

@@ -100,8 +100,10 @@ class SplitterErrorThresholdTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:parallel-split");
         mock.expectedMinimumMessageCount(0);
 
+        // 3 failures out of 5 items = 60% failure rate, exceeds 50% threshold
+        // regardless of parallel completion order
         Exchange result = template.send("direct:parallel",
-                e -> e.getIn().setBody(Arrays.asList("FAIL", "FAIL", "a", "b", "c")));
+                e -> e.getIn().setBody(Arrays.asList("FAIL", "FAIL", "FAIL", "a", "b")));
 
         mock.assertIsSatisfied();
 

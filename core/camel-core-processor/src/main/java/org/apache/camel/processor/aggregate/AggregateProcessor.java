@@ -212,6 +212,7 @@ public class AggregateProcessor extends BaseProcessorSupport
             completedByStrategy.set(0);
             completedByTimeout.set(0);
             completedByPredicate.set(0);
+            completedByInterval.set(0);
             completedByBatchConsumer.set(0);
             completedByForce.set(0);
             discarded.set(0);
@@ -404,9 +405,14 @@ public class AggregateProcessor extends BaseProcessorSupport
                     long delay = optimisticLockRetryPolicy.getDelay(attempt);
                     if (delay > 0) {
                         int nextAttempt = attempt;
-                        getOptimisticLockingExecutorService().schedule(
-                                () -> doInOptimisticLock(exchange, key, callback, nextAttempt, false), delay,
-                                TimeUnit.MILLISECONDS);
+                        getOptimisticLockingExecutorService().schedule(() -> {
+                            try {
+                                doInOptimisticLock(exchange, key, callback, nextAttempt, false);
+                            } catch (Exception t) {
+                                exchange.setException(t);
+                                callback.done(false);
+                            }
+                        }, delay, TimeUnit.MILLISECONDS);
                         return false;
                     }
                 } else {

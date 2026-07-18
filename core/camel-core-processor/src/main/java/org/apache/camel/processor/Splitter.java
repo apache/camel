@@ -55,6 +55,7 @@ import org.apache.camel.support.resume.OffsetKeys;
 import org.apache.camel.support.resume.Offsets;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -318,7 +319,15 @@ public class Splitter extends MulticastProcessor {
                     storedIndex = readCurrentWatermark();
                 }
                 if (storedIndex != null) {
-                    int skipTo = Integer.parseInt(storedIndex);
+                    int skipTo;
+                    try {
+                        skipTo = Integer.parseInt(storedIndex);
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeCamelException(
+                                "Watermark value '" + storedIndex + "' under key '" + watermarkKey
+                                                        + "' is not a valid integer",
+                                e);
+                    }
                     while (rawIterator.hasNext() && skipCount <= skipTo) {
                         rawIterator.next();
                         skipCount++;
@@ -550,6 +559,15 @@ public class Splitter extends MulticastProcessor {
     }
 
     @Override
+    protected void afterSend(ProcessorExchangePair pair, StopWatch watch) {
+        super.afterSend(pair, watch);
+        SplitFailureTracker tracker = pair.getExchange().getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
+        if (tracker != null) {
+            tracker.incrementProcessedItems();
+        }
+    }
+
+    @Override
     protected boolean shouldContinueOnFailure(Exchange subExchange, Exchange original, int index) {
         // only honor the tracker when THIS splitter has thresholds configured,
         // otherwise a leaked tracker from an outer split would silently swallow inner failures
@@ -561,31 +579,43 @@ public class Splitter extends MulticastProcessor {
             return super.shouldContinueOnFailure(subExchange, original, index);
         }
 
-        // record the failure
-        tracker.recordFailure(index, subExchange.getException());
-
-        // check if we've exceeded the max failed records
-        if (maxFailedRecords > 0 && tracker.getFailureCount() >= maxFailedRecords) {
+        // a deliberate .stop() or rollback in the child route is not a failure —
+        // honor the stop/rollback semantics without inflating the failure count
+        if (subExchange.isRouteStop() || subExchange.isRollbackOnly() || subExchange.isRollbackOnlyLast()) {
             return false;
         }
-        // check if we've exceeded the error ratio threshold
-        if (errorThreshold > 0) {
-            double ratio = (double) tracker.getFailureCount() / (index + 1);
-            if (ratio >= errorThreshold) {
+
+        // only record actual unhandled exceptions as failures — error-handler-handled
+        // exceptions should not inflate the failure count
+        boolean hasException = subExchange.getException() != null;
+        if (hasException) {
+            tracker.recordFailure(index, subExchange.getException());
+
+            // check if we've exceeded the max failed records
+            if (maxFailedRecords > 0 && tracker.getFailureCount() >= maxFailedRecords) {
                 return false;
             }
-        }
+            // check if we've exceeded the error ratio threshold
+            if (errorThreshold > 0) {
+                int processed = tracker.getProcessedItems();
+                if (processed > 0) {
+                    double ratio = (double) tracker.getFailureCount() / processed;
+                    if (ratio >= errorThreshold) {
+                        return false;
+                    }
+                }
+            }
 
-        // Continue processing — clear the exception from the sub-exchange so that aggregation
-        // proceeds normally. The failure is already recorded in the tracker above, so the
-        // SplitResult will still contain the failure details even though the exception is cleared.
-        subExchange.setException(null);
+            // continue processing — clear the exception so aggregation proceeds normally
+            subExchange.setException(null);
+        }
         return true;
     }
 
     static final class SplitFailureTracker {
         private final AtomicInteger failureCount = new AtomicInteger();
         private final AtomicInteger totalItems = new AtomicInteger();
+        private final AtomicInteger processedItems = new AtomicInteger();
         private final CopyOnWriteArrayList<SplitResult.Failure> failures = new CopyOnWriteArrayList<>();
 
         void recordFailure(int index, Exception exception) {
@@ -597,8 +627,16 @@ public class Splitter extends MulticastProcessor {
             totalItems.incrementAndGet();
         }
 
+        void incrementProcessedItems() {
+            processedItems.incrementAndGet();
+        }
+
         int getTotalItems() {
             return totalItems.get();
+        }
+
+        int getProcessedItems() {
+            return processedItems.get();
         }
 
         int getFailureCount() {
@@ -722,8 +760,9 @@ public class Splitter extends MulticastProcessor {
         }
 
         boolean aborted = exchange.getException() != null;
-        SplitResult result
-                = new SplitResult(tracker.getTotalItems(), tracker.getFailureCount(), tracker.getFailures(), aborted);
+        SplitResult result = new SplitResult(
+                tracker.getTotalItems(), tracker.getProcessedItems(),
+                tracker.getFailureCount(), tracker.getFailures(), aborted);
         exchange.setProperty(ExchangePropertyKey.SPLIT_RESULT, result);
 
         // remove internal tracker
