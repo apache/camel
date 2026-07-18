@@ -414,6 +414,26 @@ The `camel infra list` table now sizes its `DESCRIPTION` column to the terminal 
 the `IMPLEMENTATION` and `SERVICE_DATA` columns with an ellipsis instead of letting the raw service
 data overflow the terminal. The complete, structured service data remains available via `--json`.
 
+=== camel-aws2-kinesis - Fixed-shardId consumer no longer calls DescribeStream on every poll
+
+The Kinesis consumer with a configured `shardId` previously called the `DescribeStream` API on every
+poll cycle to locate the shard, risking AWS rate limits (10 TPS per account) and failing for streams
+with more than 100 shards (no pagination). The consumer now uses the same cached shard list from the
+`ShardMonitor` background thread that the multi-shard path already uses. The `ShardMonitor` uses the
+`ListShards` API (paginated, 100 TPS limit) and now paginates through all pages, supporting streams
+with any number of shards.
+
+This is a transparent performance improvement with no configuration changes required.
+
+=== camel-aws2-kinesis - Per-record partition keys in batch producer
+
+The batch producer (body is an `Iterable`) previously applied a single `CamelAwsKinesisPartitionKey`
+header to all records, routing them all to the same shard. A new `CamelAwsKinesisPartitionKeys` header
+(`List<String>`) is now supported: when set, each record in the batch is assigned the partition key at
+the corresponding index. If the list has fewer entries than records, the remaining records fall back to
+the single `CamelAwsKinesisPartitionKey` header. The existing single-key behavior is unchanged when
+the new header is not set.
+
 === camel-azure-storage-blob / camel-azure-storage-datalake - download contained within fileDir
 
 When `fileDir` is configured, the Azure Storage Blob and DataLake consumers now ensure the downloaded

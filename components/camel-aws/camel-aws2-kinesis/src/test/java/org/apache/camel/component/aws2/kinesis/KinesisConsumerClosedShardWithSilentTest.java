@@ -35,7 +35,6 @@ import org.mockito.quality.Strictness;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
-import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
@@ -46,12 +45,12 @@ import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.SequenceNumberRange;
 import software.amazon.awssdk.services.kinesis.model.Shard;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
-import software.amazon.awssdk.services.kinesis.model.StreamDescription;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -127,20 +126,12 @@ public class KinesisConsumerClosedShardWithSilentTest {
     }
 
     @Test
-    public void itDoesNotMakeADescribeStreamRequestIfShardIdIsSet() throws Exception {
-
-        SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
-        Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
-        ArrayList<Shard> shardList = new ArrayList<>();
-        shardList.add(shard);
-
-        when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
-                .thenReturn(DescribeStreamResponse.builder()
-                        .streamDescription(StreamDescription.builder().shards(shardList).build()).build());
-
+    public void itUsesShardMonitorCacheNotDescribeStreamForFixedShardId() throws Exception {
         underTest.getEndpoint().getConfiguration().setShardId("shardId");
 
         underTest.poll();
+
+        verify(kinesisClient, never()).describeStream(any(DescribeStreamRequest.class));
 
         final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
                 = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
