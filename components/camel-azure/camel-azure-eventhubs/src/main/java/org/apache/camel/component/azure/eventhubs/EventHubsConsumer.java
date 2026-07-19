@@ -82,6 +82,10 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
             processorClient.stop();
         }
 
+        processedEventsByPartition.clear();
+        scheduledTasksByPartition.clear();
+        checkpointTasksByPartition.clear();
+
         // shutdown camel consumer
         super.doStop();
     }
