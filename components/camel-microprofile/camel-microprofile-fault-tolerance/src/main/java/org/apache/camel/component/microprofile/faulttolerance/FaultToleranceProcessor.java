@@ -35,6 +35,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.Suspendable;
 import org.apache.camel.Traceable;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -62,7 +63,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed FaultTolerance Processor")
 public class FaultToleranceProcessor extends BaseProcessorSupport
-        implements CamelContextAware, Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+        implements CamelContextAware, Navigate<Processor>, Traceable, IdAware, RouteIdAware, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(FaultToleranceProcessor.class);
 
@@ -379,6 +380,16 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
         }
 
         ServiceHelper.startService(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        // noop - preserve circuit breaker state across suspend/resume
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        // noop - circuit breaker state was preserved during suspend
     }
 
     @Override
