@@ -438,6 +438,38 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum cumulative prompt plus completion tokens allowed across the
+         * MCP agentic loop. When 0, no token budget is enforced.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param maxAgenticTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder maxAgenticTokens(long maxAgenticTokens) {
+            doSetProperty("maxAgenticTokens", maxAgenticTokens);
+            return this;
+        }
+        /**
+         * Maximum cumulative prompt plus completion tokens allowed across the
+         * MCP agentic loop. When 0, no token budget is enforced.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param maxAgenticTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder maxAgenticTokens(String maxAgenticTokens) {
+            doSetProperty("maxAgenticTokens", maxAgenticTokens);
+            return this;
+        }
+        /**
          * Maximum number of tokens to generate.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
