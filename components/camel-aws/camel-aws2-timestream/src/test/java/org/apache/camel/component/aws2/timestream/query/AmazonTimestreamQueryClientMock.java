@@ -24,7 +24,16 @@ import software.amazon.awssdk.services.timestreamquery.model.*;
 
 public class AmazonTimestreamQueryClientMock implements TimestreamQueryClient {
 
+    private CreateScheduledQueryRequest lastCreateScheduledQueryRequest;
+
     public AmazonTimestreamQueryClientMock() {
+    }
+
+    /**
+     * The last request passed to {@link #createScheduledQuery}, so tests can assert how it was built.
+     */
+    public CreateScheduledQueryRequest getLastCreateScheduledQueryRequest() {
+        return lastCreateScheduledQueryRequest;
     }
 
     @Override
@@ -47,6 +56,7 @@ public class AmazonTimestreamQueryClientMock implements TimestreamQueryClient {
 
     @Override
     public CreateScheduledQueryResponse createScheduledQuery(CreateScheduledQueryRequest createScheduledQueryRequest) {
+        this.lastCreateScheduledQueryRequest = createScheduledQueryRequest;
         CreateScheduledQueryResponse.Builder result = CreateScheduledQueryResponse.builder();
         result.arn("aws-timestream:test:scheduled-query:arn");
         return result.build();
