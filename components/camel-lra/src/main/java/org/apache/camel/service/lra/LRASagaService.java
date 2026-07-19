@@ -79,13 +79,19 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
 
     @Override
     public void registerStep(CamelSagaStep step) {
-        // Register which uris should be exposed
-        step.getCompensation().map(Endpoint::getEndpointUri).map(this.sagaURIs::add);
-        step.getCompletion().map(Endpoint::getEndpointUri).map(this.sagaURIs::add);
+        step.getCompensation().map(Endpoint::getEndpointUri).ifPresent(this.sagaURIs::add);
+        step.getCompletion().map(Endpoint::getEndpointUri).ifPresent(this.sagaURIs::add);
     }
 
     @Override
     protected void doStart() throws Exception {
+        if (coordinatorUrl == null) {
+            throw new IllegalStateException("coordinatorUrl must be configured on the LRA saga service");
+        }
+        if (localParticipantUrl == null) {
+            throw new IllegalStateException("localParticipantUrl must be configured on the LRA saga service");
+        }
+
         if (this.executorService == null) {
             this.executorService = camelContext.getExecutorServiceManager()
                     .newDefaultScheduledThreadPool(this, "saga-lra");
@@ -120,6 +126,8 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+        // Routes must be added here (not in doStart) so they are registered before CamelContext
+        // starts its routes — otherwise the REST DSL endpoints won't bind to the HTTP server.
         if (this.routes == null) {
             this.routes = new LRASagaRoutes(this);
             try {

@@ -39,7 +39,7 @@ public class JacksonXMLDataFormatReifier extends DataFormatReifier<JacksonXMLDat
         properties.put("collectionType", or(definition.getCollectionType(), definition.getCollectionTypeName()));
         properties.put("useList", definition.getUseList());
         properties.put("enableJaxbAnnotationModule", definition.getEnableJaxbAnnotationModule());
-        properties.put("modulesClassNames", definition.getModuleClassNames());
+        properties.put("moduleClassNames", definition.getModuleClassNames());
         properties.put("moduleRefs", definition.getModuleRefs());
         properties.put("enableFeatures", definition.getEnableFeatures());
         properties.put("disableFeatures", definition.getDisableFeatures());

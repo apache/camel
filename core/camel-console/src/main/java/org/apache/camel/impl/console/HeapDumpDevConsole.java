@@ -39,11 +39,11 @@ public class HeapDumpDevConsole extends AbstractDevConsole {
 
     private static final DateTimeFormatter TIMESTAMP = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
 
-    @Metadata(label = "action", description = "File name for the heap dump (without .hprof extension)",
+    @Metadata(label = "query", description = "File name for the heap dump (without .hprof extension)",
               javaType = "java.lang.String")
     public static final String NAME = "name";
 
-    @Metadata(label = "action", description = "Whether to dump only live objects (default true)",
+    @Metadata(label = "query", description = "Whether to dump only live objects (default true)",
               defaultValue = "true", javaType = "java.lang.Boolean")
     public static final String LIVE = "live";
 

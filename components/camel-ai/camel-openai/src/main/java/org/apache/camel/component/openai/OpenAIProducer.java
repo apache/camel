@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.core.JsonField;
 import com.openai.core.JsonValue;
@@ -54,6 +55,7 @@ import com.openai.models.completions.CompletionUsage;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
@@ -72,6 +74,9 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(OpenAIProducer.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final Pattern THINK_PATTERN = Pattern.compile("^\\s*<think>(.*?)</think>\\s*", Pattern.DOTALL);
+    private static final String PENDING_USER_MESSAGE = "CamelOpenAIPendingUserMessage";
+
+    private Class<?> outputClassResolved;
 
     public OpenAIProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -80,6 +85,11 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         OpenAIConfiguration config = getEndpoint().getConfiguration();
+
+        if (ObjectHelper.isNotEmpty(config.getOutputClass())) {
+            outputClassResolved = getEndpoint().getCamelContext().getClassResolver()
+                    .resolveMandatoryClass(config.getOutputClass());
+        }
 
         if (ObjectHelper.isNotEmpty(config.getJsonSchema())) {
             String resolved = getEndpoint().getCamelContext().resolvePropertyPlaceholders(config.getJsonSchema());
@@ -157,10 +167,15 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         // Structured output handling
         if (ObjectHelper.isNotEmpty(outputClass)) {
-            Class<?> responseClass = getEndpoint().getCamelContext().getClassResolver().resolveClass(outputClass);
-            if (responseClass != null) {
-                paramsBuilder.responseFormat(responseClass);
+            Class<?> responseClass;
+            String headerOutputClass = in.getHeader(OpenAIConstants.OUTPUT_CLASS, String.class);
+            if (ObjectHelper.isNotEmpty(headerOutputClass)) {
+                responseClass = getEndpoint().getCamelContext().getClassResolver()
+                        .resolveMandatoryClass(headerOutputClass);
+            } else {
+                responseClass = outputClassResolved;
             }
+            paramsBuilder.responseFormat(responseClass);
         } else if (ObjectHelper.isNotEmpty(jsonSchema)) {
             // Build OpenAI JSON schema response format from provided schema string
             try {
@@ -206,10 +221,12 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         Message in = exchange.getIn();
         List<ChatCompletionMessageParam> messages = new ArrayList<>();
 
+        exchange.removeProperty(PENDING_USER_MESSAGE);
+
         // If a system message is configured and conversation memory is enabled, reset
         // history
         if (ObjectHelper.isNotEmpty(config.getSystemMessage()) && config.isConversationMemory()) {
-            in.removeHeader(config.getConversationHistoryProperty());
+            exchange.removeProperty(config.getConversationHistoryProperty());
         }
 
         String systemPrompt = in.getHeader(OpenAIConstants.SYSTEM_MESSAGE, String.class);
@@ -235,6 +252,9 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         ChatCompletionMessageParam userMessage = buildUserMessage(in, config);
         if (userMessage != null) {
             messages.add(userMessage);
+            if (config.isConversationMemory()) {
+                exchange.setProperty(PENDING_USER_MESSAGE, userMessage);
+            }
         }
 
         if (messages.isEmpty()) {
@@ -434,14 +454,15 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             exchange.setProperty(OpenAIConstants.RESPONSE, response);
         }
 
-        if (isToolCallsFinishReason(response.choices().get(0))) {
-            exchange.getMessage().setBody(response.choices().get(0).message().toolCalls());
+        ChatCompletion.Choice choice = requireFirstChoice(exchange, response);
+        if (isToolCallsFinishReason(choice)) {
+            exchange.getMessage().setBody(choice.message().toolCalls());
         } else {
-            String content = response.choices().get(0).message().content().orElse("");
+            String content = choice.message().content().orElse("");
             content = processThinkingContent(exchange, content, config);
             exchange.getMessage().setBody(content);
-            extractReasoningContent(exchange, response.choices().get(0).message());
-            extractAdditionalResponseHeaders(exchange, response.choices().get(0).message());
+            extractReasoningContent(exchange, choice.message());
+            extractAdditionalResponseHeaders(exchange, choice.message());
         }
         setResponseHeaders(exchange.getMessage(), response);
         updateConversationHistory(exchange, params, response);
@@ -464,7 +485,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         while (iteration < maxIterations) {
             ChatCompletion response = getEndpoint().getClient().chat().completions().create(paramsBuilder.build());
-            ChatCompletion.Choice choice = response.choices().get(0);
+            ChatCompletion.Choice choice = requireFirstChoice(exchange, response);
 
             if (!isToolCallsFinishReason(choice)) {
                 // Final LLM response
@@ -518,10 +539,10 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 }
 
                 LOG.debug("Executing MCP tool '{}' with args: {}", toolName, argsJson);
-                Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
                 String resultContent;
 
                 try {
+                    Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
                     McpSchema.CallToolResult toolResult
                             = getEndpoint().callTool(mcpClient, toolName, argsMap);
 
@@ -534,6 +555,10 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                             allReturnDirect = false;
                         }
                     }
+                } catch (JsonProcessingException e) {
+                    LOG.warn("Invalid tool arguments for '{}': {}", toolName, argsJson, e);
+                    resultContent = "Error: invalid tool arguments: " + e.getMessage();
+                    allReturnDirect = false;
                 } catch (Exception e) {
                     LOG.warn("MCP tool '{}' execution failed: {}", toolName, e.getMessage(), e);
                     resultContent = "Error: Tool execution failed: " + e.getMessage();
@@ -627,6 +652,14 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     }
 
+    private static ChatCompletion.Choice requireFirstChoice(Exchange exchange, ChatCompletion response)
+            throws CamelExchangeException {
+        if (response.choices().isEmpty()) {
+            throw new CamelExchangeException("OpenAI response contained no choices", exchange);
+        }
+        return response.choices().get(0);
+    }
+
     private static boolean isToolCallsFinishReason(ChatCompletion.Choice choice) {
         JsonField<ChatCompletion.Choice.FinishReason> field = choice._finishReason();
         return field.asKnown()
@@ -658,6 +691,15 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         }
     }
 
+    private void appendPendingUserMessageToHistory(Exchange exchange, List<ChatCompletionMessageParam> history) {
+        ChatCompletionMessageParam pendingUserMessage
+                = exchange.getProperty(PENDING_USER_MESSAGE, ChatCompletionMessageParam.class);
+        if (pendingUserMessage != null) {
+            history.add(pendingUserMessage);
+            exchange.removeProperty(PENDING_USER_MESSAGE);
+        }
+    }
+
     private void updateConversationHistory(
             Exchange exchange, ChatCompletionCreateParams params,
             ChatCompletion response) {
@@ -673,6 +715,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         if (history == null) {
             history = new ArrayList<>();
         }
+
+        appendPendingUserMessageToHistory(exchange, history);
 
         // Add assistant response to history
         String assistantContent = response.choices().get(0).message().content().orElse("");
@@ -700,6 +744,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         if (history == null) {
             history = new ArrayList<>();
         }
+
+        appendPendingUserMessageToHistory(exchange, history);
 
         // Add all intermediate agentic messages (assistant+toolCalls, tool responses)
         history.addAll(agenticMessages);
@@ -732,6 +778,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         if (history == null) {
             history = new ArrayList<>();
         }
+
+        appendPendingUserMessageToHistory(exchange, history);
 
         // Add all intermediate agentic messages
         history.addAll(agenticMessages);

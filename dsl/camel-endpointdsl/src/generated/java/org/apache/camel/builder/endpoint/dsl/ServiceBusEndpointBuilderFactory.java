@@ -524,7 +524,11 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets the connection string for a Service Bus namespace or a specific
-         * Service Bus resource.
+         * Service Bus resource. Connection strings commonly contain characters
+         * with a special meaning in URIs (the SharedAccessKey is a Base64 value
+         * that may contain plus, slash or equals characters): when configuring
+         * the connection string directly in an endpoint URI, wrap the value
+         * with RAW() so it is not URI-decoded.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1128,7 +1132,11 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets the connection string for a Service Bus namespace or a specific
-         * Service Bus resource.
+         * Service Bus resource. Connection strings commonly contain characters
+         * with a special meaning in URIs (the SharedAccessKey is a Base64 value
+         * that may contain plus, slash or equals characters): when configuring
+         * the connection string directly in an endpoint URI, wrap the value
+         * with RAW() so it is not URI-decoded.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1488,7 +1496,11 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets the connection string for a Service Bus namespace or a specific
-         * Service Bus resource.
+         * Service Bus resource. Connection strings commonly contain characters
+         * with a special meaning in URIs (the SharedAccessKey is a Base64 value
+         * that may contain plus, slash or equals characters): when configuring
+         * the connection string directly in an endpoint URI, wrap the value
+         * with RAW() so it is not URI-decoded.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

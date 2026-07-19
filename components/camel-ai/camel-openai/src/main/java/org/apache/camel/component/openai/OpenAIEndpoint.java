@@ -193,18 +193,17 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             McpSchema.ListToolsResult toolsResult = mcpClient.listTools();
             List<McpSchema.Tool> serverTools = toolsResult.tools();
 
-            tools.addAll(McpToolConverter.convert(serverTools));
-
             for (McpSchema.Tool tool : serverTools) {
                 if (toolClientMap.putIfAbsent(tool.name(), mcpClient) != null) {
                     LOG.warn("Duplicate MCP tool name '{}' from server '{}', using first registered", tool.name(),
                             serverName);
                 } else {
                     toolToServerName.put(tool.name(), serverName);
-                }
+                    tools.addAll(McpToolConverter.convert(List.of(tool)));
 
-                if (isReturnDirect(tool)) {
-                    returnDirectTools.add(tool.name());
+                    if (isReturnDirect(tool)) {
+                        returnDirectTools.add(tool.name());
+                    }
                 }
             }
 
@@ -379,12 +378,17 @@ public class OpenAIEndpoint extends DefaultEndpoint {
                 newToolToServer.keySet().removeIf(oldServerTools::contains);
                 newReturnDirect.removeIf(oldServerTools::contains);
 
-                newTools.addAll(McpToolConverter.convert(tools));
                 for (McpSchema.Tool tool : tools) {
-                    newClientMap.put(tool.name(), newClient);
-                    newToolToServer.put(tool.name(), serverName);
-                    if (isReturnDirect(tool)) {
-                        newReturnDirect.add(tool.name());
+                    if (newClientMap.containsKey(tool.name())) {
+                        LOG.warn("Duplicate MCP tool name '{}' from server '{}', using first registered", tool.name(),
+                                serverName);
+                    } else {
+                        newTools.addAll(McpToolConverter.convert(List.of(tool)));
+                        newClientMap.put(tool.name(), newClient);
+                        newToolToServer.put(tool.name(), serverName);
+                        if (isReturnDirect(tool)) {
+                            newReturnDirect.add(tool.name());
+                        }
                     }
                 }
 

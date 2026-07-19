@@ -37,6 +37,7 @@ public class SoapDataFormatReifier extends DataFormatReifier<SoapDataFormat> {
         properties.put("namespacePrefix", asRef(definition.getNamespacePrefix()));
         properties.put("schema", definition.getSchema());
         properties.put("contextPath", definition.getContextPath());
+        properties.put("ignoreUnmarshalledHeaders", definition.getIgnoreUnmarshalledHeaders());
     }
 
 }

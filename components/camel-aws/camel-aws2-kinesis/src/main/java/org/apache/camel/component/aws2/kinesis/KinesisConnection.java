@@ -73,11 +73,18 @@ public class KinesisConnection implements Closeable {
 
     @Override
     public void close() throws IOException {
-        if (ObjectHelper.isNotEmpty(kinesisClient)) {
-            kinesisClient.close();
-        }
-        if (ObjectHelper.isNotEmpty(kinesisAsyncClient)) {
-            kinesisAsyncClient.close();
+        lock.lock();
+        try {
+            if (ObjectHelper.isNotEmpty(kinesisClient)) {
+                kinesisClient.close();
+                kinesisClient = null;
+            }
+            if (ObjectHelper.isNotEmpty(kinesisAsyncClient)) {
+                kinesisAsyncClient.close();
+                kinesisAsyncClient = null;
+            }
+        } finally {
+            lock.unlock();
         }
     }
 }

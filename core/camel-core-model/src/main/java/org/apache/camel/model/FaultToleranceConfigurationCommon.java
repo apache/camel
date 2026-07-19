@@ -57,7 +57,9 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     private String timeoutDuration;
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer",
-              description = "Configures the pool size of the thread pool when timeout is enabled.")
+              description = "Deprecated: no longer in use since the switch to TypedGuard API (CAMEL-21857).",
+              deprecationNote = "No longer in use")
+    @Deprecated(since = "4.22.0")
     private String timeoutPoolSize;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
@@ -156,10 +158,12 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         this.timeoutDuration = timeoutDuration;
     }
 
+    @Deprecated(since = "4.22.0")
     public String getTimeoutPoolSize() {
         return timeoutPoolSize;
     }
 
+    @Deprecated(since = "4.22.0")
     public void setTimeoutPoolSize(String timeoutPoolSize) {
         this.timeoutPoolSize = timeoutPoolSize;
     }

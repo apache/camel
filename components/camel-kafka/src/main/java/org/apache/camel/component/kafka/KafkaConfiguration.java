@@ -308,7 +308,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common,security")
     private String sslCipherSuites;
     // ssl.endpoint.identification.algorithm
-    @UriParam(label = "common,security", defaultValue = "https")
+    @UriParam(label = "common,security", defaultValue = "https", security = "insecure:ssl", insecureValue = "none")
     private String sslEndpointAlgorithm = SslConfigs.DEFAULT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM;
     // ssl.keymanager.algorithm
     @UriParam(label = "common,security", defaultValue = "SunX509")

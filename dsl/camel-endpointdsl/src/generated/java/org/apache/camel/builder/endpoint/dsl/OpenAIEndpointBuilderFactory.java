@@ -1294,9 +1294,9 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIStreaming";
         }
         /**
-         * The Java class to use for structured output parsing.
+         * The Java class name (FQCN) to use for structured output parsing.
          * 
-         * The option is a: {@code Class} type.
+         * The option is a: {@code String} type.
          * 
          * Group: producer
          * 

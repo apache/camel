@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
@@ -37,7 +38,11 @@ public final class BlobBlock {
     }
 
     public static BlobBlock createBlobBlock(final String blockId, final InputStream inputStream) throws IOException {
-        return createBlobBlock(blockId, BlobUtils.getInputStreamLength(inputStream), inputStream);
+        InputStream is = inputStream;
+        if (!is.markSupported()) {
+            is = new BufferedInputStream(is);
+        }
+        return createBlobBlock(blockId, BlobUtils.getInputStreamLength(is), is);
     }
 
     public static BlobBlock createBlobBlock(final String blockId, final long size, final InputStream inputStream) {

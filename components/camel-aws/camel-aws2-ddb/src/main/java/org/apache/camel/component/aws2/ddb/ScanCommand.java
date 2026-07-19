@@ -39,7 +39,8 @@ public class ScanCommand extends AbstractDdbCommand {
                 .limit(determineLimit())
                 .exclusiveStartKey(determineExclusiveStartKey())
                 .attributesToGet(determineAttributeNames())
-                .scanFilter(determineScanFilter());
+                .scanFilter(determineScanFilter())
+                .consistentRead(determineConsistentRead());
 
         // Check if we have set an Index Name
         String indexName = determineIndexName();

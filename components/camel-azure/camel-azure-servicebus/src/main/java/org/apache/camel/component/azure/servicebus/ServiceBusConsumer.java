@@ -55,6 +55,7 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
     private static final int LOCK_RENEW_INTERVAL_SECONDS = 10;
 
     private ServiceBusProcessorClient client;
+    private boolean clientCloseable;
     private ServiceBusReceiverAsyncClient renewalClient;
     private LockRenewer lockRenewer;
     private final AtomicInteger pendingExchanges = new AtomicInteger();
@@ -75,8 +76,15 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
 
         LOG.debug("Creating connection to Azure ServiceBus");
 
+        // close any previously created client (e.g. on route restart after doStop)
+        if (clientCloseable && client != null) {
+            client.close();
+            client = null;
+        }
+
         client = getConfiguration().getProcessorClient();
         if (client == null) {
+            clientCloseable = true;
             // create client as per sessions
             if (Boolean.FALSE.equals(getConfiguration().isSessionEnabled())) {
                 client = getEndpoint().getServiceBusClientFactory().createServiceBusProcessorClient(getConfiguration(),
@@ -85,6 +93,8 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
                 client = getEndpoint().getServiceBusClientFactory().createServiceBusSessionProcessorClient(getConfiguration(),
                         this::processMessage, this::processError);
             }
+        } else {
+            clientCloseable = false;
         }
 
         client.start();
@@ -109,18 +119,30 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
 
     private void processMessage(ServiceBusReceivedMessageContext messageContext) {
         pendingExchanges.incrementAndGet();
-        final ServiceBusReceivedMessage message = messageContext.getMessage();
-        final Exchange exchange = createServiceBusExchange(message);
-        final ConsumerOnCompletion onCompletion = new ConsumerOnCompletion(messageContext);
-        // add exchange callback
-        exchange.getExchangeExtension().addOnCompletion(onCompletion);
-        // track for Camel-managed lock renewal
-        if (lockRenewer != null) {
-            lockRenewer.add(exchange, message);
+        try {
+            final ServiceBusReceivedMessage message = messageContext.getMessage();
+            final Exchange exchange = createServiceBusExchange(message);
+            final ConsumerOnCompletion onCompletion = new ConsumerOnCompletion(messageContext);
+            // add exchange callback
+            exchange.getExchangeExtension().addOnCompletion(onCompletion);
+            // track for Camel-managed lock renewal
+            if (lockRenewer != null) {
+                lockRenewer.add(exchange, message);
+            }
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            getAsyncProcessor().process(exchange, cb);
+        } catch (Exception e) {
+            pendingExchanges.decrementAndGet();
+            if (getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK) {
+                try {
+                    messageContext.abandon();
+                } catch (Exception abandonEx) {
+                    // ignore
+                }
+            }
+            getExceptionHandler().handleException("Error processing Service Bus message", e);
         }
-        // use default consumer callback
-        AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        getAsyncProcessor().process(exchange, cb);
     }
 
     private void processError(ServiceBusErrorContext errorContext) {
@@ -144,9 +166,13 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             renewalClient = null;
         }
         if (client != null) {
-            // stop accepting new messages but keep the connection open
-            // so that in-flight exchanges can still complete/abandon messages
-            client.stop();
+            if (clientCloseable) {
+                client.close();
+                client = null;
+            } else {
+                // user-provided client: stop accepting messages but don't close
+                client.stop();
+            }
         }
 
         // shutdown camel consumer
@@ -164,9 +190,9 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             renewalClient.close();
             renewalClient = null;
         }
-        if (client != null) {
-            // close the client after all in-flight exchanges have completed
+        if (clientCloseable && client != null) {
             client.close();
+            client = null;
         }
 
         super.doShutdown();

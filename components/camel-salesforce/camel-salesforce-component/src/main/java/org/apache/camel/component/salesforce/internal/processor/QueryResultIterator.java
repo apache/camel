@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RuntimeCamelException;
@@ -63,15 +65,19 @@ public class QueryResultIterator<T extends AbstractSObjectBase> implements Itera
         } else if (!queryRecords.getDone()) {
             final CountDownLatch latch = new CountDownLatch(1);
             List<T> valueHolder = new ArrayList<>();
+            AtomicReference<Exception> errorHolder = new AtomicReference<>();
 
             restClient.queryMore(queryRecords.getNextRecordsUrl(), requestHeaders, (response, headers, exception) -> {
                 try {
+                    if (exception != null) {
+                        errorHolder.set(exception);
+                        return;
+                    }
                     queryRecords = objectMapper.readValue(response, responseClass);
                     iterator = queryRecords.getRecords().iterator();
                     valueHolder.add(iterator.next());
-                    latch.countDown();
-                } catch (IOException e) {
-                    throw new RuntimeCamelException(e);
+                } catch (Exception e) {
+                    errorHolder.set(e);
                 } finally {
                     if (response != null) {
                         try {
@@ -79,10 +85,17 @@ public class QueryResultIterator<T extends AbstractSObjectBase> implements Itera
                         } catch (IOException ignored) {
                         }
                     }
+                    latch.countDown();
                 }
             });
             try {
-                latch.await();
+                if (!latch.await(30, TimeUnit.SECONDS)) {
+                    throw new RuntimeCamelException("Timeout waiting for Salesforce queryMore response");
+                }
+                Exception error = errorHolder.get();
+                if (error != null) {
+                    throw new RuntimeCamelException("Failed to fetch next page of Salesforce query results", error);
+                }
                 return valueHolder.get(0);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

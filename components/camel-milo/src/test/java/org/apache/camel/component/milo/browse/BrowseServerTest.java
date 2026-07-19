@@ -34,7 +34,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.milo.AbstractMiloServerTest;
 import org.apache.camel.component.milo.MiloConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.eclipse.milo.opcua.stack.core.NodeIds0;
+import org.eclipse.milo.opcua.stack.core.NodeIds;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.structured.BrowseResult;
@@ -354,7 +354,7 @@ public class BrowseServerTest extends AbstractMiloServerTest {
         mock5.expectedMessagesMatches(assertPredicate(e -> assertBrowseResult(e.getMessage(), "Root")));
         producer5.send(ExchangeBuilder.anExchange(context)
                 .withHeader(MiloConstants.HEADER_NODE_IDS,
-                        Collections.singletonList(NodeIds0.TypesFolder.toParseableString()))
+                        Collections.singletonList(NodeIds.TypesFolder.toParseableString()))
                 .build());
         assertIsSatisfied(5, TimeUnit.SECONDS, mock5);
     }
@@ -390,7 +390,7 @@ public class BrowseServerTest extends AbstractMiloServerTest {
         mock7.setExpectedCount(1);
         mock7.expectedMessagesMatches(assertPredicate(e -> assertBrowseResults(e.getMessage(), 1, 0)));
         producer7.send(ExchangeBuilder.anExchange(context)
-                .withHeader(MiloConstants.HEADER_NODE_IDS, Collections.singletonList(NodeIds0.String.toParseableString()))
+                .withHeader(MiloConstants.HEADER_NODE_IDS, Collections.singletonList(NodeIds.String.toParseableString()))
                 .build());
         assertIsSatisfied(5, TimeUnit.SECONDS, mock7);
     }

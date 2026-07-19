@@ -55,6 +55,7 @@ import org.apache.camel.support.resume.OffsetKeys;
 import org.apache.camel.support.resume.Offsets;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -290,6 +291,10 @@ public class Splitter extends MulticastProcessor {
         private final Exchange original;
         // tracks individual (raw) item count, independent of grouping
         private final AtomicInteger rawItemCount = new AtomicInteger();
+        // tracks whether the primary (processing) iterator has been created;
+        // subsequent iterators (e.g. the drain in MulticastProcessor.doDone)
+        // must not update the watermark count (CAMEL-24139)
+        private boolean primaryIteratorCreated;
 
         private SplitterIterable(Exchange exchange, Object value) {
             this.original = exchange;
@@ -314,7 +319,15 @@ public class Splitter extends MulticastProcessor {
                     storedIndex = readCurrentWatermark();
                 }
                 if (storedIndex != null) {
-                    int skipTo = Integer.parseInt(storedIndex);
+                    int skipTo;
+                    try {
+                        skipTo = Integer.parseInt(storedIndex);
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeCamelException(
+                                "Watermark value '" + storedIndex + "' under key '" + watermarkKey
+                                                        + "' is not a valid integer",
+                                e);
+                    }
                     while (rawIterator.hasNext() && skipCount <= skipTo) {
                         rawIterator.next();
                         skipCount++;
@@ -349,6 +362,11 @@ public class Splitter extends MulticastProcessor {
 
         @Override
         public Iterator<ProcessorExchangePair> iterator() {
+            // only the first (primary) iterator tracks watermark count;
+            // subsequent iterators (drain in doDone) must not inflate it (CAMEL-24139)
+            boolean isPrimary = !primaryIteratorCreated;
+            primaryIteratorCreated = true;
+
             return new Iterator<>() {
                 private final Processor processor = getProcessors().iterator().next();
                 private int index;
@@ -365,14 +383,6 @@ public class Splitter extends MulticastProcessor {
                     if (!answer) {
                         // we are now closed
                         closed = true;
-                        // store raw item count for watermark tracking (guard against
-                        // re-iteration in MulticastProcessor.doDone which re-creates
-                        // the iterator to release exchanges).
-                        // Use rawItemCount (individual items) not index (which counts chunks when group > 0)
-                        if (resumeStrategy != null && watermarkKey != null && watermarkExpression == null
-                                && original.getProperty(SPLIT_WATERMARK_COUNT) == null) {
-                            original.setProperty(SPLIT_WATERMARK_COUNT, rawItemCount.get());
-                        }
                         // nothing more so we need to close the expression value in case it needs to be
                         try {
                             close();
@@ -417,10 +427,18 @@ public class Splitter extends MulticastProcessor {
                             in.setBody(part);
                         }
                         // track total items for SplitResult (works in both streaming and non-streaming mode)
-                        SplitFailureTracker tracker
-                                = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
-                        if (tracker != null) {
-                            tracker.incrementTotalItems();
+                        // only when THIS splitter has thresholds configured to avoid corrupting an outer tracker
+                        if (errorThreshold > 0 || maxFailedRecords > 0) {
+                            SplitFailureTracker tracker
+                                    = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
+                            if (tracker != null) {
+                                tracker.incrementTotalItems();
+                            }
+                        }
+                        // eagerly update watermark count for items actually routed (primary iterator only)
+                        // so the drain loop in MulticastProcessor.doDone cannot inflate it (CAMEL-24139)
+                        if (isPrimary && resumeStrategy != null && watermarkKey != null && watermarkExpression == null) {
+                            original.setProperty(SPLIT_WATERMARK_COUNT, rawItemCount.get());
                         }
                         return createProcessorExchangePair(index++, processor, newExchange, route);
                     } else {
@@ -541,37 +559,63 @@ public class Splitter extends MulticastProcessor {
     }
 
     @Override
+    protected void afterSend(ProcessorExchangePair pair, StopWatch watch) {
+        super.afterSend(pair, watch);
+        SplitFailureTracker tracker = pair.getExchange().getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
+        if (tracker != null) {
+            tracker.incrementProcessedItems();
+        }
+    }
+
+    @Override
     protected boolean shouldContinueOnFailure(Exchange subExchange, Exchange original, int index) {
+        // only honor the tracker when THIS splitter has thresholds configured,
+        // otherwise a leaked tracker from an outer split would silently swallow inner failures
+        if (errorThreshold <= 0 && maxFailedRecords <= 0) {
+            return super.shouldContinueOnFailure(subExchange, original, index);
+        }
         SplitFailureTracker tracker = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
         if (tracker == null) {
             return super.shouldContinueOnFailure(subExchange, original, index);
         }
 
-        // record the failure
-        tracker.recordFailure(index, subExchange.getException());
-
-        // check if we've exceeded the max failed records
-        if (maxFailedRecords > 0 && tracker.getFailureCount() >= maxFailedRecords) {
+        // a deliberate .stop() or rollback in the child route is not a failure —
+        // honor the stop/rollback semantics without inflating the failure count
+        if (subExchange.isRouteStop() || subExchange.isRollbackOnly() || subExchange.isRollbackOnlyLast()) {
             return false;
         }
-        // check if we've exceeded the error ratio threshold
-        if (errorThreshold > 0) {
-            double ratio = (double) tracker.getFailureCount() / (index + 1);
-            if (ratio >= errorThreshold) {
+
+        // only record actual unhandled exceptions as failures — error-handler-handled
+        // exceptions should not inflate the failure count
+        boolean hasException = subExchange.getException() != null;
+        if (hasException) {
+            tracker.recordFailure(index, subExchange.getException());
+
+            // check if we've exceeded the max failed records
+            if (maxFailedRecords > 0 && tracker.getFailureCount() >= maxFailedRecords) {
                 return false;
             }
-        }
+            // check if we've exceeded the error ratio threshold
+            if (errorThreshold > 0) {
+                int processed = tracker.getProcessedItems();
+                if (processed > 0) {
+                    double ratio = (double) tracker.getFailureCount() / processed;
+                    if (ratio >= errorThreshold) {
+                        return false;
+                    }
+                }
+            }
 
-        // Continue processing — clear the exception from the sub-exchange so that aggregation
-        // proceeds normally. The failure is already recorded in the tracker above, so the
-        // SplitResult will still contain the failure details even though the exception is cleared.
-        subExchange.setException(null);
+            // continue processing — clear the exception so aggregation proceeds normally
+            subExchange.setException(null);
+        }
         return true;
     }
 
     static final class SplitFailureTracker {
         private final AtomicInteger failureCount = new AtomicInteger();
         private final AtomicInteger totalItems = new AtomicInteger();
+        private final AtomicInteger processedItems = new AtomicInteger();
         private final CopyOnWriteArrayList<SplitResult.Failure> failures = new CopyOnWriteArrayList<>();
 
         void recordFailure(int index, Exception exception) {
@@ -583,8 +627,16 @@ public class Splitter extends MulticastProcessor {
             totalItems.incrementAndGet();
         }
 
+        void incrementProcessedItems() {
+            processedItems.incrementAndGet();
+        }
+
         int getTotalItems() {
             return totalItems.get();
+        }
+
+        int getProcessedItems() {
+            return processedItems.get();
         }
 
         int getFailureCount() {
@@ -708,8 +760,9 @@ public class Splitter extends MulticastProcessor {
         }
 
         boolean aborted = exchange.getException() != null;
-        SplitResult result
-                = new SplitResult(tracker.getTotalItems(), tracker.getFailureCount(), tracker.getFailures(), aborted);
+        SplitResult result = new SplitResult(
+                tracker.getTotalItems(), tracker.getProcessedItems(),
+                tracker.getFailureCount(), tracker.getFailures(), aborted);
         exchange.setProperty(ExchangePropertyKey.SPLIT_RESULT, result);
 
         // remove internal tracker

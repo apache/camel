@@ -227,13 +227,15 @@ public class CronScheduledRoutePolicyTest {
             });
             context.start();
 
-            startedLatch.await(5000, TimeUnit.SECONDS);
+            // wait for the */3 cron to start the route (was 5000 SECONDS — a typo)
+            assertTrue(startedLatch.await(30, TimeUnit.SECONDS), "Route should have been started by cron");
 
             ServiceStatus startedStatus = context.getRouteController().getRouteStatus("test");
             assertTrue(startedStatus == ServiceStatus.Started || startedStatus == ServiceStatus.Starting);
             template.sendBody("direct:start", "Ready or not, Here, I come");
 
-            stoppedLatch.await(5000, TimeUnit.SECONDS);
+            // wait for the */6 cron to stop the route
+            assertTrue(stoppedLatch.await(30, TimeUnit.SECONDS), "Route should have been stopped by cron");
 
             ServiceStatus stoppedStatus = context.getRouteController().getRouteStatus("test");
             assertTrue(stoppedStatus == ServiceStatus.Stopped || stoppedStatus == ServiceStatus.Stopping);

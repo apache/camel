@@ -13,8 +13,6 @@ Camel applications — without you having to copy-paste anything.
 Built on https://quarkus.io/[Quarkus] with the
 https://docs.quarkiverse.io/quarkus-mcp-server/dev/index.html[quarkus-mcp-server] extension.
 
-NOTE: This module is in *Preview* status since Camel 4.18.
-
 == Getting Started
 
 The quickest way to get started:

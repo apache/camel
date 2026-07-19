@@ -105,8 +105,8 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     protected void doInit() throws Exception {
         super.doInit();
 
-        if (csvFormat == null && format != null) {
-            csvFormat = CSVFormat.valueOf(format);
+        if (format != null) {
+            csvFormat = resolveFormat(format);
         }
         if (csvFormat == null) {
             csvFormat = CSVFormat.DEFAULT;
@@ -119,6 +119,19 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     @Override
     protected void doStop() throws Exception {
         // noop
+    }
+
+    private static CSVFormat resolveFormat(String name) {
+        // The model advertises uppercase names (EXCEL, INFORMIX_UNLOAD) but
+        // commons-csv Predefined uses CamelCase (Excel, InformixUnload).
+        // Match by stripping underscores and comparing case-insensitively.
+        String normalized = name.replace("_", "");
+        for (CSVFormat.Predefined p : CSVFormat.Predefined.values()) {
+            if (p.name().equalsIgnoreCase(normalized)) {
+                return p.getFormat();
+            }
+        }
+        throw new IllegalArgumentException("Unknown CSV format: " + name);
     }
 
     CSVFormat getActiveFormat() {

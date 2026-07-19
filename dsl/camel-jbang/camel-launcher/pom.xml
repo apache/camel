@@ -37,7 +37,7 @@
     <properties>
         <firstVersion>4.13.0</firstVersion>
         <label>jbang</label>
-        <supportLevel>Preview</supportLevel>
+        <supportLevel>Stable</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
 
         <!-- Dependency versions -->
@@ -281,6 +281,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>${commons-compress-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

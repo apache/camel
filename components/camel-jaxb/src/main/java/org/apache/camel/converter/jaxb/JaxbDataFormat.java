@@ -290,9 +290,11 @@ public class JaxbDataFormat extends ServiceSupport
     private Object toElement(
             Object graph, String partClassFromHeader, String partNamespaceFromHeader, QName partNamespaceOnDataFormat)
             throws JAXBException {
+        Class<?> effectivePartClass = partClass;
         if (partClassFromHeader != null) {
             try {
-                partClass = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
+                effectivePartClass
+                        = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
             } catch (ClassNotFoundException e) {
                 throw new JAXBException(e);
             }
@@ -300,7 +302,7 @@ public class JaxbDataFormat extends ServiceSupport
         if (partNamespaceFromHeader != null) {
             partNamespaceOnDataFormat = QName.valueOf(partNamespaceFromHeader);
         }
-        return new JAXBElement<>(partNamespaceOnDataFormat, (Class<Object>) partClass, graph);
+        return new JAXBElement<>(partNamespaceOnDataFormat, (Class<Object>) effectivePartClass, graph);
     }
 
     private boolean asXmlStreamWriter(Exchange exchange) {
@@ -330,16 +332,17 @@ public class JaxbDataFormat extends ServiceSupport
                 }
             }
             String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
-            if (partClass != null || partClassFromHeader != null) {
-                // partial unmarshalling
-                if (partClassFromHeader != null) {
-                    try {
-                        partClass = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
-                    } catch (ClassNotFoundException e) {
-                        throw new JAXBException(e);
-                    }
+            Class<?> effectivePartClass = partClass;
+            if (partClassFromHeader != null) {
+                try {
+                    effectivePartClass
+                            = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
+                } catch (ClassNotFoundException e) {
+                    throw new JAXBException(e);
                 }
-                answer = createUnmarshaller().unmarshal(xmlReader, partClass);
+            }
+            if (effectivePartClass != null) {
+                answer = createUnmarshaller().unmarshal(xmlReader, effectivePartClass);
             } else {
                 answer = createUnmarshaller().unmarshal(xmlReader);
             }

@@ -40,12 +40,14 @@ public final class SplitResult {
     }
 
     private final int totalItems;
+    private final int processedItems;
     private final int failureCount;
     private final List<Failure> failures;
     private final boolean aborted;
 
-    public SplitResult(int totalItems, int failureCount, List<Failure> failures, boolean aborted) {
+    public SplitResult(int totalItems, int processedItems, int failureCount, List<Failure> failures, boolean aborted) {
         this.totalItems = totalItems;
+        this.processedItems = processedItems;
         this.failureCount = failureCount;
         this.failures = failures != null ? Collections.unmodifiableList(failures) : Collections.emptyList();
         this.aborted = aborted;
@@ -60,10 +62,19 @@ public final class SplitResult {
     }
 
     /**
+     * The number of items that were actually processed. After an abort, this may be less than {@code getTotalItems()}.
+     *
+     * @since 4.22
+     */
+    public int getProcessedItems() {
+        return processedItems;
+    }
+
+    /**
      * The number of items that completed successfully.
      */
     public int getSuccessCount() {
-        return totalItems - failureCount;
+        return processedItems - failureCount;
     }
 
     /**
@@ -90,6 +101,7 @@ public final class SplitResult {
     @Override
     public String toString() {
         return "SplitResult[total=" + totalItems
+               + ", processed=" + processedItems
                + ", success=" + getSuccessCount()
                + ", failures=" + failureCount
                + ", aborted=" + aborted + "]";

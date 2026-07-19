@@ -64,8 +64,15 @@ public final class ExampleHelper {
     }
 
     public static JsonObject findExample(List<JsonObject> catalog, String name) {
+        // first try exact match (e.g. "language/groovy")
         for (JsonObject entry : catalog) {
             if (name.equals(entry.getString("name"))) {
+                return entry;
+            }
+        }
+        // then try matching by short name without category prefix (e.g. "groovy" matches "language/groovy")
+        for (JsonObject entry : catalog) {
+            if (name.equals(getShortName(entry))) {
                 return entry;
             }
         }
@@ -75,7 +82,12 @@ public final class ExampleHelper {
     public static List<String> getExampleNames(List<JsonObject> catalog) {
         List<String> names = new ArrayList<>();
         for (JsonObject entry : catalog) {
-            names.add(entry.getString("name"));
+            String name = entry.getString("name");
+            names.add(name);
+            String shortName = getShortName(entry);
+            if (!shortName.equals(name)) {
+                names.add(shortName);
+            }
         }
         return names;
     }

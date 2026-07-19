@@ -612,8 +612,7 @@ public class ServiceBusConsumerTest {
         consumer.doStop();
 
         verify(renewalClient).close();
-        verify(client).stop();
-        verify(client, never()).close();
+        verify(client).close();
     }
 
     @Test
@@ -703,7 +702,18 @@ public class ServiceBusConsumerTest {
     }
 
     @Test
-    void doStopStopsClientWithoutClosing() throws Exception {
+    void doStopClosesInternallyCreatedClient() throws Exception {
+        ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
+        consumer.doStart();
+
+        consumer.doStop();
+
+        verify(client).close();
+    }
+
+    @Test
+    void doStopStopsUserProvidedClientWithoutClosing() throws Exception {
+        when(configuration.getProcessorClient()).thenReturn(client);
         ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
         consumer.doStart();
 
@@ -714,13 +724,24 @@ public class ServiceBusConsumerTest {
     }
 
     @Test
-    void doShutdownClosesClient() throws Exception {
+    void doShutdownClosesInternallyCreatedClient() throws Exception {
         ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
         consumer.doStart();
 
         consumer.doShutdown();
 
         verify(client).close();
+    }
+
+    @Test
+    void doShutdownDoesNotCloseUserProvidedClient() throws Exception {
+        when(configuration.getProcessorClient()).thenReturn(client);
+        ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
+        consumer.doStart();
+
+        consumer.doShutdown();
+
+        verify(client, never()).close();
     }
 
     private void configureMockMessage() {

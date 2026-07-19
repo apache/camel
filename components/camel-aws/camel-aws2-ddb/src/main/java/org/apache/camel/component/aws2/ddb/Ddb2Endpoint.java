@@ -171,10 +171,10 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint implements EndpointServi
                 return true;
             }
             LOG.trace("Table [{}] not active yet", tableName);
+        } catch (ResourceNotFoundException e) {
+            // table may not be visible yet due to eventual consistency
         } catch (AwsServiceException ase) {
-            if (!ase.getMessage().contains("ResourceNotFoundException")) {
-                throw ase;
-            }
+            throw ase;
         }
         return false;
     }

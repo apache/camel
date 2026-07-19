@@ -49,6 +49,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.Suspendable;
 import org.apache.camel.Traceable;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
@@ -75,7 +76,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed Resilience Processor")
 public class ResilienceProcessor extends BaseProcessorSupport
-        implements CamelContextAware, Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+        implements CamelContextAware, Navigate<Processor>, Traceable, IdAware, RouteIdAware, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResilienceProcessor.class);
 
@@ -174,6 +175,16 @@ public class ResilienceProcessor extends BaseProcessorSupport
             bulkhead = bulkheadRegistry.bulkhead(id, bulkheadConfig);
         }
         ServiceHelper.startService(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        // noop - preserve circuit breaker state across suspend/resume
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        // noop - circuit breaker state was preserved during suspend
     }
 
     @Override
@@ -315,7 +326,7 @@ public class ResilienceProcessor extends BaseProcessorSupport
     @ManagedAttribute(description = "Returns the current number of successful calls which were slower than a certain threshold.")
     public int getNumberOfSlowSuccessfulCalls() {
         if (circuitBreaker != null) {
-            return circuitBreaker.getMetrics().getNumberOfSlowCalls();
+            return circuitBreaker.getMetrics().getNumberOfSlowSuccessfulCalls();
         } else {
             return 0;
         }

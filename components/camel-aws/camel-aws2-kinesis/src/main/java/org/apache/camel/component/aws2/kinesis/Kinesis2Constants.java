@@ -41,6 +41,14 @@ public interface Kinesis2Constants {
     @Metadata(description = "The shard ID of the shard where the data record was placed.", javaType = "String")
     String SHARD_ID = "CamelAwsKinesisShardId";
 
+    @Metadata(label = "producer",
+              description = "A list of partition keys for batch operations. When set, each record in the batch "
+                            + "is assigned the partition key at the corresponding index, allowing records to be routed "
+                            + "to different shards. If not set, the single CamelAwsKinesisPartitionKey header is used "
+                            + "for all records.",
+              javaType = "List<String>")
+    String PARTITION_KEYS = "CamelAwsKinesisPartitionKeys";
+
     // Batch operation response metadata
     @Metadata(label = "producer",
               description = "The number of records that failed in a batch put operation.", javaType = "Integer")

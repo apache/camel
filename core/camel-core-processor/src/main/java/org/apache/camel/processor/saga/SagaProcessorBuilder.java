@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.saga;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
@@ -25,8 +24,6 @@ import org.apache.camel.saga.CamelSagaStep;
  * Builder of Saga processors.
  */
 public class SagaProcessorBuilder {
-
-    private CamelContext camelContext;
 
     private Processor childProcessor;
 
@@ -39,11 +36,6 @@ public class SagaProcessorBuilder {
     private SagaCompletionMode completionMode;
 
     public SagaProcessorBuilder() {
-    }
-
-    public SagaProcessorBuilder camelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-        return this;
     }
 
     public SagaProcessorBuilder childProcessor(Processor childProcessor) {
@@ -78,17 +70,17 @@ public class SagaProcessorBuilder {
 
         switch (propagation) {
             case REQUIRED:
-                return new RequiredSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
+                return new RequiredSagaProcessor(childProcessor, sagaService, completionMode, step);
             case REQUIRES_NEW:
-                return new RequiresNewSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
+                return new RequiresNewSagaProcessor(childProcessor, sagaService, completionMode, step);
             case SUPPORTS:
-                return new SupportsSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
+                return new SupportsSagaProcessor(childProcessor, sagaService, completionMode, step);
             case NOT_SUPPORTED:
-                return new NotSupportedSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
+                return new NotSupportedSagaProcessor(childProcessor, sagaService, completionMode, step);
             case NEVER:
-                return new NeverSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
+                return new NeverSagaProcessor(childProcessor, sagaService, completionMode, step);
             case MANDATORY:
-                return new MandatorySagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
+                return new MandatorySagaProcessor(childProcessor, sagaService, completionMode, step);
             default:
                 throw new IllegalStateException("Unsupported propagation mode: " + propagation);
         }

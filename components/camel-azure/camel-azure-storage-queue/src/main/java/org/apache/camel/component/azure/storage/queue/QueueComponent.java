@@ -73,7 +73,9 @@ public class QueueComponent extends HealthCheckComponent {
                     configuration.setCredentialType(CredentialType.SHARED_ACCOUNT_KEY);
                 }
             } else {
-                configuration.setCredentialType(CredentialType.SHARED_KEY_CREDENTIAL);
+                if (configuration.getCredentialType() == null) {
+                    configuration.setCredentialType(CredentialType.SHARED_KEY_CREDENTIAL);
+                }
             }
         }
 

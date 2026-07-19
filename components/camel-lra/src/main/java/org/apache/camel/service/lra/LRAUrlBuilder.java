@@ -16,6 +16,8 @@
  */
 package org.apache.camel.service.lra;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
@@ -93,7 +95,7 @@ public class LRAUrlBuilder {
         } else {
             copy.query += "&";
         }
-        copy.query += toNonnullString(key) + "=" + toNonnullString(value);
+        copy.query += encode(toNonnullString(key)) + "=" + encode(toNonnullString(value));
         return copy;
     }
 
@@ -114,6 +116,10 @@ public class LRAUrlBuilder {
             second = second.substring(1);
         }
         return first + "/" + second;
+    }
+
+    private String encode(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
     private String toNonnullString(Object obj) {

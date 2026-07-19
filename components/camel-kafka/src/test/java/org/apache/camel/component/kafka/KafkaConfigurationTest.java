@@ -19,11 +19,14 @@ package org.apache.camel.component.kafka;
 import java.util.Properties;
 
 import org.apache.camel.spi.StateRepository;
+import org.apache.camel.util.SecurityUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.config.SslConfigs;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 class KafkaConfigurationTest {
@@ -48,6 +51,13 @@ class KafkaConfigurationTest {
 
         Properties consumerProps = config.createConsumerProperties();
         assertEquals("", consumerProps.get(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG));
+    }
+
+    @Test
+    void sslEndpointAlgorithmNoneIsInsecureConfiguration() {
+        assertTrue(SecurityUtils.isInsecureValue("camel.component.kafka.sslEndpointAlgorithm", "none"));
+        assertTrue(SecurityUtils.isInsecureValue("camel.component.kafka.sslEndpointAlgorithm", "false"));
+        assertFalse(SecurityUtils.isInsecureValue("camel.component.kafka.sslEndpointAlgorithm", "https"));
     }
 
     @Test

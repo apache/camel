@@ -2890,6 +2890,22 @@ public interface Kinesis2EndpointBuilderFactory {
             return "CamelAwsKinesisShardId";
         }
         /**
+         * A list of partition keys for batch operations. When set, each record
+         * in the batch is assigned the partition key at the corresponding
+         * index, allowing records to be routed to different shards. If not set,
+         * the single CamelAwsKinesisPartitionKey header is used for all
+         * records.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsKinesisPartitionKeys}.
+         */
+        public String awsKinesisPartitionKeys() {
+            return "CamelAwsKinesisPartitionKeys";
+        }
+        /**
          * The number of records that failed in a batch put operation.
          * 
          * The option is a: {@code Integer} type.

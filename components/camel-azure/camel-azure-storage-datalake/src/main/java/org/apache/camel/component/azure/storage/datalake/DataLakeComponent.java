@@ -71,12 +71,14 @@ public class DataLakeComponent extends HealthCheckComponent {
                     configuration.setCredentialType(CredentialType.CLIENT_SECRET);
                 }
             } else {
-                if (configuration.getSharedKeyCredential() != null) {
-                    configuration.setCredentialType(CredentialType.SHARED_KEY_CREDENTIAL);
-                } else if (configuration.getSasCredential() != null) {
-                    configuration.setCredentialType(CredentialType.AZURE_SAS);
-                } else if (configuration.getClientSecretCredential() != null) {
-                    configuration.setCredentialType(CredentialType.CLIENT_SECRET);
+                if (configuration.getCredentialType() == null) {
+                    if (configuration.getSharedKeyCredential() != null) {
+                        configuration.setCredentialType(CredentialType.SHARED_KEY_CREDENTIAL);
+                    } else if (configuration.getSasCredential() != null) {
+                        configuration.setCredentialType(CredentialType.AZURE_SAS);
+                    } else if (configuration.getClientSecretCredential() != null) {
+                        configuration.setCredentialType(CredentialType.CLIENT_SECRET);
+                    }
                 }
             }
         }

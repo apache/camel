@@ -68,6 +68,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3Consumer.class);
 
     private String marker;
+    private boolean markerIsContinuationToken = true;
     private transient String s3ConsumerToString;
 
     public AWS2S3Consumer(AWS2S3Endpoint endpoint, Processor processor) {
@@ -125,8 +126,20 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         } else if (fileName != null) {
             LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
 
+            GetObjectRequest.Builder getRequest = GetObjectRequest.builder().bucket(bucketName).key(fileName);
+            if (getConfiguration().isUseCustomerKey()) {
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
+                    getRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
+                }
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
+                    getRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
+                }
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
+                    getRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
+                }
+            }
             ResponseInputStream<GetObjectResponse> s3Object
-                    = getAmazonS3Client().getObject(GetObjectRequest.builder().bucket(bucketName).key(fileName).build());
+                    = getAmazonS3Client().getObject(getRequest.build());
             exchanges = createExchanges(s3Object, fileName);
         } else {
             LOG.trace("Queueing objects in bucket [{}]...", bucketName);
@@ -147,26 +160,35 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             // continue from where we left last time
             if (marker != null) {
                 LOG.trace("Resuming from marker: {}", marker);
-                listObjectsRequest.continuationToken(marker);
+                if (markerIsContinuationToken) {
+                    listObjectsRequest.continuationToken(marker);
+                } else {
+                    listObjectsRequest.startAfter(marker);
+                }
             }
 
             ListObjectsV2Response listObjects = getAmazonS3Client().listObjectsV2(listObjectsRequest.build());
 
             if (Boolean.TRUE.equals(listObjects.isTruncated())) {
                 String next = listObjects.nextContinuationToken();
-                if (next == null && listObjects.hasContents() && ObjectHelper.isEmpty(listObjects.prefix())) {
-                    // fallback to use last key from the returned list of objects
+                if (next != null) {
+                    markerIsContinuationToken = true;
+                } else if (listObjects.hasContents()) {
+                    // S3-compatible stores may omit nextContinuationToken;
+                    // fall back to startAfter with the last returned key
                     int size = listObjects.contents().size();
                     if (size > 0) {
                         S3Object last = listObjects.contents().get(size - 1);
                         next = last.key();
                     }
+                    markerIsContinuationToken = false;
                 }
                 marker = next;
-                LOG.trace("Returned list is truncated, so setting next continuation token: {}", marker);
+                LOG.trace("Returned list is truncated, so setting next marker: {}", marker);
             } else {
                 // no more data so clear marker
                 marker = null;
+                markerIsContinuationToken = true;
             }
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Found {} objects in bucket [{}]...", listObjects.contents().size(), bucketName);
@@ -364,8 +386,10 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 builder.append(AWS2S3Utils.evaluateDestinationBucketSuffix(exchange, getConfiguration()));
 
                 String destinationKey = builder.toString();
-                if (getConfiguration().isRemovePrefixOnMove()) {
-                    destinationKey = destinationKey.replaceFirst(getConfiguration().getPrefix(), "");
+                if (getConfiguration().isRemovePrefixOnMove()
+                        && ObjectHelper.isNotEmpty(getConfiguration().getPrefix())
+                        && destinationKey.startsWith(getConfiguration().getPrefix())) {
+                    destinationKey = destinationKey.substring(getConfiguration().getPrefix().length());
                 }
 
                 getAmazonS3Client().copyObject(CopyObjectRequest.builder().destinationKey(destinationKey)

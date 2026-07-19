@@ -93,7 +93,12 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
 
     @Test
     public void testAsyncSedaBlockingWhenFull() throws Exception {
-        getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 1);
+        // Use expectedMinimumMessageCount instead of setExpectedMessageCount:
+        // with blockWhenFull=true and async sends, all messages eventually
+        // arrive at the mock (they block and wait for queue space rather
+        // than failing). An exact-count assertion races against the
+        // remaining messages still flowing through the 130ms delay pipeline.
+        getMockEndpoint(MOCK_URI).expectedMinimumMessageCount(QUEUE_SIZE + 1);
 
         SedaEndpoint seda = context.getEndpoint(BLOCK_WHEN_FULL_URI, SedaEndpoint.class);
         assertEquals(QUEUE_SIZE, seda.getQueue().remainingCapacity());

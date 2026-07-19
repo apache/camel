@@ -28,13 +28,27 @@ import org.apache.camel.Message;
  */
 public class TarSplitter implements Expression {
 
+    private static final long DEFAULT_MAXIMUM_DECOMPRESSED_SIZE = 1073741824;
+
+    private long maxDecompressedSize = DEFAULT_MAXIMUM_DECOMPRESSED_SIZE;
+
     public TarSplitter() {
     }
 
     public Object evaluate(Exchange exchange) {
         Message inputMessage = exchange.getIn();
         InputStream inputStream = inputMessage.getBody(InputStream.class);
-        return new TarIterator(exchange, inputStream);
+        TarIterator tarIterator = new TarIterator(exchange, inputStream);
+        tarIterator.setMaxDecompressedSize(maxDecompressedSize);
+        return tarIterator;
+    }
+
+    public long getMaxDecompressedSize() {
+        return maxDecompressedSize;
+    }
+
+    public void setMaxDecompressedSize(long maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
     }
 
     @Override

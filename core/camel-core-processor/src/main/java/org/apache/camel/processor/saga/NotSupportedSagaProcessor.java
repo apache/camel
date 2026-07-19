@@ -17,7 +17,6 @@
 package org.apache.camel.processor.saga;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.saga.CamelSagaService;
@@ -28,9 +27,9 @@ import org.apache.camel.saga.CamelSagaStep;
  */
 public class NotSupportedSagaProcessor extends SagaProcessor {
 
-    public NotSupportedSagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
+    public NotSupportedSagaProcessor(Processor childProcessor, CamelSagaService sagaService,
                                      SagaCompletionMode completionMode, CamelSagaStep step) {
-        super(camelContext, childProcessor, sagaService, completionMode, step);
+        super(childProcessor, sagaService, completionMode, step);
         if (!step.isEmpty()) {
             throw new IllegalArgumentException("Saga configuration is not allowed when propagation is set to NOT_SUPPORTED");
         }
