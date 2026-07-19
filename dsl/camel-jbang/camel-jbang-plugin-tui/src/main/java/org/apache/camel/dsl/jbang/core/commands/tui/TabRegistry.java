@@ -367,6 +367,10 @@ class TabRegistry {
         return mavenDependenciesTab;
     }
 
+    CatalogTab catalogTab() {
+        return catalogTab;
+    }
+
     CveAuditTab cveAuditTab() {
         return cveAuditTab;
     }

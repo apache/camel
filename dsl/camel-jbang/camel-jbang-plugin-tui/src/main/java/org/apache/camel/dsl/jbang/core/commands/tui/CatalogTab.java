@@ -103,6 +103,10 @@ class CatalogTab extends AbstractTableTab {
         }
     }
 
+    boolean isFilterInputActive() {
+        return filterInputActive;
+    }
+
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         if (filterInputActive) {
