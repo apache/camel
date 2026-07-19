@@ -519,12 +519,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
      */
     protected void enrichParentPom(Map<String, Object> model) {
         if (parentPom != null) {
-            String[] parts = parentPom.split(":");
-            if (parts.length == 3) {
-                model.put("ParentGroupId", parts[0]);
-                model.put("ParentArtifactId", parts[1]);
-                model.put("ParentVersion", parts[2]);
-            }
+            MavenGav gav = MavenGav.parseStrictGav(parentPom);
+            model.put("ParentGroupId", gav.getGroupId());
+            model.put("ParentArtifactId", gav.getArtifactId());
+            model.put("ParentVersion", gav.getVersion());
         }
     }
 

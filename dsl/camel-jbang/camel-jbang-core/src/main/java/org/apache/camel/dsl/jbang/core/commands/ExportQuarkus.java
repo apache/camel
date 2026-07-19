@@ -72,11 +72,13 @@ class ExportQuarkus extends Export {
 
     @Override
     public Integer export() throws Exception {
-        String[] ids = gav.split(":");
-        if (ids.length != 3) {
+        try {
+            MavenGav.parseStrictGav(gav);
+        } catch (IllegalArgumentException e) {
             printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
+        String[] ids = gav.split(":");
 
         exportBaseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
         Path profile = exportBaseDir.resolve("application.properties");
