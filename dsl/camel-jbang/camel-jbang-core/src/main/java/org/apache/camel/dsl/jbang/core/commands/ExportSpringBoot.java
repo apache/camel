@@ -62,6 +62,14 @@ class ExportSpringBoot extends Export {
             printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
+        if (parentPom != null) {
+            try {
+                MavenGav.parseStrictGav(parentPom);
+            } catch (IllegalArgumentException e) {
+                printer().printErr("--parent-pom must be in syntax: groupId:artifactId:version");
+                return 1;
+            }
+        }
         String[] ids = gav.split(":");
 
         exportBaseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
