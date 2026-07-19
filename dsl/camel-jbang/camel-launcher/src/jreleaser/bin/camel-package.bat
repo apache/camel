@@ -19,6 +19,16 @@ setlocal enabledelayedexpansion
 set "SCRIPT_DIR=%~dp0"
 set "SUPPORTED_LTS=%SCRIPT_DIR%..\supported-lts.yml"
 
+@REM Tests may point this at a synthetic LTS allowlist so expiry-date assertions don't ride on
+@REM real production supportEnds dates (mirrors CAMEL_PACKAGE_TEST_VERSION further below).
+if not "%CAMEL_PACKAGE_TEST_SUPPORTED_LTS%"=="" (
+  if not "%CAMEL_PACKAGE_TEST_MODE%"=="true" (
+    echo Error: CAMEL_PACKAGE_TEST_SUPPORTED_LTS requires CAMEL_PACKAGE_TEST_MODE=true. 1>&2
+    exit /b 2
+  )
+  set "SUPPORTED_LTS=%CAMEL_PACKAGE_TEST_SUPPORTED_LTS%"
+)
+
 set "SUBCOMMAND=%~1"
 if "%SUBCOMMAND%"=="" goto usage
 shift
@@ -51,6 +61,15 @@ if /I "%CHANNEL%"=="lts" if "%LTS_LINE%"=="" (
 )
 
 if not "%LTS_LINE%"=="" (
+  if not exist "%SUPPORTED_LTS%" (
+    echo Error: supported LTS metadata is not readable: %SUPPORTED_LTS% 1>&2
+    exit /b 1
+  )
+  findstr /r /c:"^[ ][ ]*-[ ][ ]*line:" /c:"^-[ ][ ]*line:" "%SUPPORTED_LTS%" >nul
+  if errorlevel 1 (
+    echo Error: supported LTS metadata is malformed: %SUPPORTED_LTS% 1>&2
+    exit /b 1
+  )
   set "SUPPORT_ENDS="
   for /f "usebackq tokens=1,2,3" %%a in ("%SUPPORTED_LTS%") do (
     if "%%a"=="-" if "%%b"=="line:" ( set "CUR=%%c" & set "CUR=!CUR:"=!" )
@@ -60,8 +79,16 @@ if not "%LTS_LINE%"=="" (
     echo Error: '%LTS_LINE%' is not a supported LTS line ^(see supported-lts.yml^). 1>&2
     exit /b 2
   )
-  for /f "tokens=2 delims==" %%d in ('wmic os get localdatetime /format:list') do set "DT=%%d"
-  set "TODAY=!DT:~0,4!-!DT:~4,2!-!DT:~6,2!"
+  REM wmic is deprecated/removed on newer Windows (24H2+); a missing wmic previously left TODAY
+  REM empty and silently skipped this check instead of failing. PowerShell is present on every
+  REM supported Windows version, and the findstr guard below fails loudly if it ever isn't.
+  set "TODAY="
+  for /f "usebackq delims=" %%d in (`powershell -NoProfile -Command "(Get-Date).ToString('yyyy-MM-dd')"`) do set "TODAY=%%d"
+  echo !TODAY!| findstr /r "^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$" >nul
+  if errorlevel 1 (
+    echo Error: could not resolve today's date via PowerShell ^(got '!TODAY!'^). 1>&2
+    exit /b 1
+  )
   if "!TODAY!" GTR "!SUPPORT_ENDS!" (
     echo Error: LTS line '%LTS_LINE%' support ended on !SUPPORT_ENDS!. 1>&2
     exit /b 2
@@ -79,9 +106,10 @@ if /I "%CHANNEL%"=="stable" (
 ) else (
   REM Homebrew's own versioned-formula convention names the *file* "camel@X.Y.rb" but the
   REM Ruby *class* "CamelATxy" (dot removed) - e.g. real homebrew-core "python@3.11.rb"
-  REM contains "class PythonAT311". JReleaser 1.25.0 does not apply this convention itself
+  REM contains "class PythonAT311". As of the pinned JReleaser plugin version in pom.xml,
+  REM JReleaser does not apply this convention itself
   REM (a literal formulaName "camel@4.20" renders invalid Ruby and a wrong output filename;
-  REM empirically confirmed). BREW_CLASS below is passed as formulaName instead, and
+  REM BREW_CLASS below is passed as formulaName instead, and
   REM JReleaser's kebab-cased output file is renamed to the real "camel@X.Y.rb" after
   REM packaging - see the rename step below the mvn invocation.
   set "PACKAGERS=brew,sdkman,winget,chocolatey"
@@ -124,7 +152,16 @@ if not "%CAMEL_PACKAGE_TEST_VERSION%"=="" (
   )
   set "PROJECT_VERSION=%CAMEL_PACKAGE_TEST_VERSION%"
 ) else (
+  set "PROJECT_VERSION="
   for /f "usebackq delims=" %%v in (`mvn -q -B -ntp -f "%MODULE_DIR%\pom.xml" org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate -Dexpression=project.version -DforceStdout`) do set "PROJECT_VERSION=%%v"
+  if errorlevel 1 (
+    echo Error: could not resolve project.version via Maven. 1>&2
+    exit /b 1
+  )
+  if "!PROJECT_VERSION!"=="" (
+    echo Error: could not resolve project.version via Maven. 1>&2
+    exit /b 1
+  )
 )
 
 if "!PROJECT_VERSION:~-8!"=="SNAPSHOT" (
@@ -191,7 +228,7 @@ if errorlevel 1 (
 @REM which becomes the generated Ruby class name directly, so this must be BREW_CLASS (a
 @REM valid Ruby class name), not the human-facing BREW_FORMULA. JReleaser's `Env.` template
 @REM prefix resolves real OS environment variables, not Maven -D system properties, so this
-@REM must be a real env var. Verified empirically with `jreleaser:prepare`.
+@REM must be a real env var.
 set "CAMEL_PKG_BREW_FORMULA=!BREW_CLASS!"
 
 @REM Non-empty only for a versioned formula (e.g. "camel@4.20"); formula.rb.tpl uses
@@ -215,21 +252,20 @@ if "%JRELEASER_GITHUB_TOKEN%"=="" set "JRELEASER_GITHUB_TOKEN=dry-run-placeholde
 @REM !PROJECT_VERSION! above (which only governs our own SNAPSHOT guard, artifact lookup, and the
 @REM website manifest). What actually gates every packager above (`active: RELEASE`) is
 @REM JReleaser's own snapshot detection, which matches the *real* POM version against
-@REM `jreleaser.project.snapshot.pattern` (default `.*-SNAPSHOT`) - so on `main` (always SNAPSHOT)
-@REM every packager would otherwise be silently skipped even once our own guard above has been
-@REM satisfied via a CAMEL_PACKAGE_TEST_VERSION override. We override that pattern to something
-@REM that can never match, so JReleaser treats the real POM version as a release too. This is a
-@REM no-op for genuine non-snapshot releases (the pattern already wouldn't have matched).
-@REM Empirically verified with a real (non-stubbed) jreleaser:prepare/package dry run.
+@REM `jreleaser.project.snapshot.pattern` (default `.*-SNAPSHOT`) - so test-mode runs from
+@REM a SNAPSHOT checkout would otherwise skip every packager even once our own guard has been
+@REM satisfied via a CAMEL_PACKAGE_TEST_VERSION override. In that one case, override the pattern
+@REM to something that can never match, so JReleaser treats the real POM version as a release too.
+set "SNAPSHOT_PATTERN_ARG="
+if "%CAMEL_PACKAGE_TEST_MODE%"=="true" if not "%CAMEL_PACKAGE_TEST_VERSION%"=="" set "SNAPSHOT_PATTERN_ARG=-Djreleaser.project.snapshot.pattern=CAMEL_LAUNCHER_NEVER_MATCH_SNAPSHOT_PATTERN"
 echo Preparing packages for channel '%CHANNEL%' ^(packagers: !PACKAGERS!^)...
-call mvn -B -ntp -f "%MODULE_DIR%\pom.xml" -Djreleaser.distributions=camel-cli -Djreleaser.packagers=!PACKAGERS! -Djreleaser.project.snapshot.pattern=CAMEL_LAUNCHER_NEVER_MATCH_SNAPSHOT_PATTERN jreleaser:config jreleaser:prepare jreleaser:package -Djreleaser.dry.run=true
+call mvn -B -ntp -f "%MODULE_DIR%\pom.xml" -Djreleaser.distributions=camel-cli -Djreleaser.packagers=!PACKAGERS! !SNAPSHOT_PATTERN_ARG! jreleaser:config jreleaser:prepare jreleaser:package -Djreleaser.dry.run=true
 if errorlevel 1 exit /b %ERRORLEVEL%
 
 @REM Homebrew's own versioned-formula convention names the *file* "camel@X.Y.rb" but
-@REM JReleaser 1.25.0 derives the output filename from formulaName's literal text
+@REM the pinned JReleaser plugin derives the output filename from formulaName's literal text
 @REM (kebab-casing our "CamelAT420" class name to "camel-at-420.rb"), not from Homebrew's
-@REM file-naming rule. Empirically verified: formulaName "CamelAT420" produces exactly one
-@REM file, Formula\camel-at-420.rb, whose *content* (class name) is already correct - only
+@REM file-naming rule. The generated formula content already has the correct class name, so only
 @REM the filename needs fixing up here.
 if /I "%CHANNEL%"=="lts" (
   set "BREW_FORMULA_DIR=%MODULE_DIR%\target\jreleaser\package\camel-cli\brew\Formula"
@@ -244,12 +280,22 @@ if /I "%CHANNEL%"=="lts" (
       echo Error: expected exactly one generated Homebrew formula file in !BREW_FORMULA_DIR!, found multiple. 1>&2
       exit /b 1
     )
-    if not "!GENERATED_FILE!"=="" if /I not "!GENERATED_FILE!"=="!BREW_FORMULA_DIR!\!BREW_FORMULA!.rb" (
+    if "!GENERATED_FILE!"=="" (
+      echo Error: expected exactly one generated Homebrew formula file in !BREW_FORMULA_DIR!, found none. 1>&2
+      exit /b 1
+    )
+    if /I not "!GENERATED_FILE!"=="!BREW_FORMULA_DIR!\!BREW_FORMULA!.rb" (
       move /y "!GENERATED_FILE!" "!BREW_FORMULA_DIR!\!BREW_FORMULA!.rb" >nul
+      if errorlevel 1 (
+        echo Error: failed to rename generated Homebrew formula to !BREW_FORMULA!.rb. 1>&2
+        exit /b 1
+      )
       echo Renamed generated Homebrew formula to Homebrew's versioned-formula file convention: !BREW_FORMULA!.rb
     )
   )
 )
+@REM The POSIX wrapper has a Homebrew-only test-mode patch after packaging. That patch is not
+@REM duplicated here because Homebrew package validation runs on macOS/Linux, not Windows.
 exit /b 0
 
 :usage

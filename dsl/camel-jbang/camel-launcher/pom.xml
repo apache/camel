@@ -353,16 +353,12 @@
                 already carries a correct, manually-verified header, so it is excluded here
                 rather than reordering `@echo off` out of the required first line.
 
-                None of the distribution templates have a recognized comment-style mapping for
-                their compound extension (license:format only inspects the final extension,
-                ".tpl", which is unmapped), so they fail outright rather than being reformatted.
-                formula.rb.tpl, installer.yaml.tpl, and both chocolatey*.ps1.tpl files already
-                carry a manually verified, language-appropriate (#) header, so they are excluded
-                here instead of adding a repo-wide ".tpl" mapping that would assume a single
-                comment style for every future template of any language. manifest.json.tpl is
-                excluded for a different reason: JSON has no comment syntax at all, so no header
-                can be embedded; the repo-wide "**/*.json" exclude in the root pom does not reach
-                it because its final extension is ".tpl", not ".json".
+                The distribution templates all end in ".tpl", which license-maven-plugin does
+                not map to a comment style when failIfUnknown is enabled. They are excluded here
+                instead of adding a repo-wide ".tpl" mapping that would assume a single comment
+                style for templates of different languages. The JSON template is included in the
+                same exclude set because the root "**/*.json" exclude does not reach a file whose
+                final extension is ".tpl".
             -->
             <plugin>
                 <groupId>com.mycila</groupId>

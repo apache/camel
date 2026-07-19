@@ -63,8 +63,10 @@ java -jar camel-launcher-<version>.jar run hello.java
    # On Unix/Linux
    ./bin/camel.sh [command] [options]
    
-   # On Windows (x64)
+   # On Windows (x64 or arm64)
    bin\camel.bat [command] [options]
+
+   # On Windows (x64)
    bin\camel-x64.exe [command] [options]
 
    # On Windows (arm64)
@@ -147,5 +149,7 @@ remove both exe files during install to avoid exposing unused executables on PAT
 Native ARM64 support in Chocolatey is not yet available. Tracking issue:
 https://github.com/chocolatey/choco/issues/1803
 
-Until resolved, the Chocolatey package runs x64 via `camel.bat` on both x64 and ARM64 Windows
-(ARM64 Windows transparently emulates x64 executables).
+Until resolved, the Chocolatey package uses `camel.bat` as its entry point on both x64 and ARM64
+Windows. `camel.bat` is architecture-neutral (it only needs a Java runtime, not a native
+executable), so this works without emulation; it just means Chocolatey isn't yet shipping a
+genuine per-architecture executable the way WinGet does.

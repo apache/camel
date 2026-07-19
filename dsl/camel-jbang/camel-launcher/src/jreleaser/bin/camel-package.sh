@@ -22,6 +22,16 @@ SCRIPT_DIR=`CDPATH= cd -- "$(dirname -- "$0")" && pwd`
 MODULE_DIR=`CDPATH= cd -- "$SCRIPT_DIR/../../.." && pwd`
 SUPPORTED_LTS="$SCRIPT_DIR/../supported-lts.yml"
 
+# Tests may point this at a synthetic LTS allowlist so expiry-date assertions don't ride on
+# real production supportEnds dates (mirrors CAMEL_PACKAGE_TEST_VERSION further below).
+if [ -n "${CAMEL_PACKAGE_TEST_SUPPORTED_LTS:-}" ]; then
+  if [ "${CAMEL_PACKAGE_TEST_MODE:-}" != "true" ]; then
+    echo "Error: CAMEL_PACKAGE_TEST_SUPPORTED_LTS requires CAMEL_PACKAGE_TEST_MODE=true." 1>&2
+    exit 2
+  fi
+  SUPPORTED_LTS="$CAMEL_PACKAGE_TEST_SUPPORTED_LTS"
+fi
+
 usage() {
   echo "Usage: camel-package.sh <prepare|publish> --channel <stable|lts> [--lts-line X.Y] [--print-plan]" 1>&2
   exit 2
@@ -60,6 +70,14 @@ fi
 
 # Validate --lts-line against the allowlist and its support-end date.
 if [ -n "$LTS_LINE" ]; then
+  if [ ! -r "$SUPPORTED_LTS" ]; then
+    echo "Error: supported LTS metadata is not readable: $SUPPORTED_LTS" 1>&2
+    exit 1
+  fi
+  if ! grep -Eq '^[[:space:]]*-[[:space:]]+line:' "$SUPPORTED_LTS"; then
+    echo "Error: supported LTS metadata is malformed: $SUPPORTED_LTS" 1>&2
+    exit 1
+  fi
   today=`date +%F`
   supported_ends=`awk -v line="$LTS_LINE" '
     $1 == "-" && $2 == "line:" { cur = $3; gsub(/"/, "", cur) }
@@ -88,11 +106,12 @@ if [ "$CHANNEL" = "stable" ]; then
 else
   # Homebrew's own versioned-formula convention names the *file* "camel@X.Y.rb" but the
   # Ruby *class* "CamelATxy" (dot removed) - e.g. real homebrew-core "python@3.11.rb"
-  # contains "class PythonAT311". JReleaser 1.25.0 does not apply this convention itself:
+  # contains "class PythonAT311". As of the pinned JReleaser plugin version in pom.xml,
+  # JReleaser does not apply this convention itself:
   # a literal formulaName "camel@4.20" renders invalid Ruby (`class Camel@4.20 < Formula`)
-  # and a wrong output filename ("20.rb"); empirically confirmed. So BREW_CLASS below is
+  # and a wrong output filename ("20.rb"). So BREW_CLASS below is
   # passed as formulaName (giving valid Ruby), and JReleaser's output file (itself
-  # kebab-cased from that class name, e.g. "camel-at-420.rb"; also empirically confirmed)
+  # kebab-cased from that class name, e.g. "camel-at-420.rb")
   # is renamed to the real "camel@X.Y.rb" after packaging - see the rename step below the
   # mvn invocation.
   PACKAGERS="brew,sdkman,winget,chocolatey"
@@ -199,7 +218,7 @@ fi
 # this must be BREW_CLASS (a valid Ruby class name), not the human-facing BREW_FORMULA.
 # JReleaser's `Env.` template prefix resolves real OS environment variables
 # (java.lang.System#getenv), not Maven -D system properties, so this must be
-# exported rather than passed as -D. Verified empirically with `jreleaser:prepare`.
+# exported rather than passed as -D.
 export CAMEL_PKG_BREW_FORMULA="$BREW_CLASS"
 
 # Non-empty only for a versioned formula (e.g. "camel@4.20"); formula.rb.tpl uses
@@ -227,26 +246,27 @@ export JRELEASER_GITHUB_TOKEN
 # $PROJECT_VERSION above (which only governs our own SNAPSHOT guard, artifact lookup, and the
 # website manifest). What actually gates every packager above (`active: RELEASE`) is JReleaser's
 # own snapshot detection, which matches the *real* POM version against
-# `jreleaser.project.snapshot.pattern` (default `.*-SNAPSHOT`) - so on `main` (always SNAPSHOT)
-# every packager would otherwise be silently skipped even once our own guard above has been
-# satisfied via a CAMEL_PACKAGE_TEST_VERSION override. We override that pattern to something
-# that can never match, so JReleaser treats the real POM version as a release too. This is a
-# no-op for genuine non-snapshot releases (the pattern already wouldn't have matched). Empirically
-# verified with a real (non-stubbed) `jreleaser:prepare`/`package` dry run.
+# `jreleaser.project.snapshot.pattern` (default `.*-SNAPSHOT`) - so test-mode runs from
+# a SNAPSHOT checkout would otherwise skip every packager even once our own guard has been
+# satisfied via a CAMEL_PACKAGE_TEST_VERSION override. In that one case, override the pattern
+# to something that can never match, so JReleaser treats the real POM version as a release too.
+SNAPSHOT_PATTERN_ARG=""
+if [ "${CAMEL_PACKAGE_TEST_MODE:-}" = "true" ] && [ -n "${CAMEL_PACKAGE_TEST_VERSION:-}" ]; then
+  SNAPSHOT_PATTERN_ARG='-Djreleaser.project.snapshot.pattern=CAMEL_LAUNCHER_NEVER_MATCH_SNAPSHOT_PATTERN'
+fi
 echo "Preparing packages for channel '$CHANNEL' (packagers: $PACKAGERS)..."
 mvn -B -ntp -f "$MODULE_DIR/pom.xml" \
   -Djreleaser.distributions=camel-cli \
   -Djreleaser.packagers="$PACKAGERS" \
-  -Djreleaser.project.snapshot.pattern="CAMEL_LAUNCHER_NEVER_MATCH_SNAPSHOT_PATTERN" \
+  $SNAPSHOT_PATTERN_ARG \
   jreleaser:config jreleaser:prepare jreleaser:package \
   -Djreleaser.dry.run=true
 
 # Homebrew's own versioned-formula convention names the *file* "camel@X.Y.rb" but
-# JReleaser 1.25.0 derives the output filename from formulaName's literal text
+# the pinned JReleaser plugin derives the output filename from formulaName's literal text
 # (kebab-casing our "CamelAT420" class name to "camel-at-420.rb"), not from Homebrew's
-# file-naming rule. Empirically verified (real jreleaser:package dry run): formulaName
-# "CamelAT420" produces exactly one file, Formula/camel-at-420.rb, whose *content* (class
-# name) is already correct - only the filename needs fixing up here.
+# file-naming rule. The generated formula content already has the correct class name, so only
+# the filename needs fixing up here.
 if [ "$CHANNEL" = "lts" ]; then
   brew_formula_dir="$MODULE_DIR/target/jreleaser/package/camel-cli/brew/Formula"
   if [ -d "$brew_formula_dir" ]; then
@@ -259,7 +279,11 @@ if [ "$CHANNEL" = "lts" ]; then
       fi
       generated_file="$f"
     done
-    if [ -n "$generated_file" ] && [ "$generated_file" != "$brew_formula_dir/$BREW_FORMULA.rb" ]; then
+    if [ -z "$generated_file" ]; then
+      echo "Error: expected exactly one generated Homebrew formula file in $brew_formula_dir, found none." 1>&2
+      exit 1
+    fi
+    if [ "$generated_file" != "$brew_formula_dir/$BREW_FORMULA.rb" ]; then
       mv -f "$generated_file" "$brew_formula_dir/$BREW_FORMULA.rb"
       echo "Renamed generated Homebrew formula to Homebrew's versioned-formula file convention: $BREW_FORMULA.rb"
     fi
@@ -275,9 +299,7 @@ fi
 # released really is published there. In test mode, projectVersion is a synthetic
 # placeholder (CAMEL_PACKAGE_TEST_VERSION) that is never actually published anywhere, so
 # a real `brew install` always 404s at the download step. This was never exposed before
-# because two earlier bugs (wrong output path, then Homebrew rejecting bare-file-path
-# installs) failed before validation ever reached the download; both are now fixed,
-# surfacing this as the next real blocker. Empirically confirmed on this machine.
+# because earlier Homebrew validation failures happened before validation reached the download.
 #
 # Rather than standing up a local HTTP mirror, we patch the *generated formula file*
 # in place (never jreleaser.yml/formula.rb.tpl, which stay correct for real releases) so
@@ -289,7 +311,7 @@ fi
 #
 # This intentionally does not exercise *this build's own* zip/tar.gz - camel-validate.sh's
 # "local" archive check covers that separately, without going through any package manager.
-if [ "${CAMEL_PACKAGE_TEST_MODE:-}" = "true" ]; then
+if [ "${CAMEL_PACKAGE_TEST_MODE:-}" = "true" ] && [ -n "${CAMEL_PACKAGE_TEST_VERSION:-}" ]; then
   brew_formula_dir="$MODULE_DIR/target/jreleaser/package/camel-cli/brew/Formula"
   formula_file="$brew_formula_dir/$BREW_FORMULA.rb"
   if [ -f "$formula_file" ]; then
@@ -319,10 +341,13 @@ if [ "${CAMEL_PACKAGE_TEST_MODE:-}" = "true" ]; then
       exit 1
     fi
     rm -f "$known_good_download"
+    if [ -z "$known_good_sha256" ]; then
+      echo "Error: could not compute sha256 for the known-good artifact." 1>&2
+      exit 1
+    fi
 
     # Also patches the `test do` block's assert_match: JReleaser bakes {{projectVersion}}
-    # in there too (the real POM SNAPSHOT version, per the note above the mvn invocation -
-    # empirically confirmed: it was NOT the synthetic CAMEL_PACKAGE_TEST_VERSION either),
+    # in there too (the real POM SNAPSHOT version, per the note above the mvn invocation),
     # so `brew test` would otherwise assert the wrong string against the real installed
     # binary's actual `--version` output.
     tmp_formula=$(mktemp)

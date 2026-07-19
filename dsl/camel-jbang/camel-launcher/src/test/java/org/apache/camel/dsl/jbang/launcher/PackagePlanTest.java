@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HexFormat;
@@ -55,6 +56,13 @@ class PackagePlanTest {
 
     static final Path MODULE_DIR = Paths.get("").toAbsolutePath();
     static final String TEST_VERSION = "9.9.9";
+    static final Path PACKAGE_DIR = MODULE_DIR.resolve("target/jreleaser/package");
+
+    // Synthetic LTS allowlist (see supported-lts-test-fixture.yml), decoupled from the real
+    // supported-lts.yml so LTS-expiry assertions never expire on their own wall-clock date.
+    static final Path SUPPORTED_LTS_FIXTURE = MODULE_DIR.resolve("src/test/resources/supported-lts-test-fixture.yml");
+    static final String LTS_LINE_FUTURE = "9.9";
+    static final String LTS_LINE_EXPIRED = "1.0";
 
     static final class Result {
         int exit;
@@ -74,11 +82,19 @@ class PackagePlanTest {
         return MODULE_DIR.resolve("target/jreleaser/website");
     }
 
+    Map<String, String> supportedLtsFixtureEnv() {
+        Map<String, String> env = new LinkedHashMap<>();
+        env.put("CAMEL_PACKAGE_TEST_MODE", "true");
+        env.put("CAMEL_PACKAGE_TEST_SUPPORTED_LTS", SUPPORTED_LTS_FIXTURE.toString());
+        return env;
+    }
+
     @AfterEach
     void cleanupFixtures() throws IOException {
         Files.deleteIfExists(MODULE_DIR.resolve("target/camel-launcher-" + TEST_VERSION + "-bin.tar.gz"));
         Files.deleteIfExists(MODULE_DIR.resolve("target/camel-launcher-" + TEST_VERSION + "-bin.zip"));
         deleteRecursively(websiteDir());
+        deleteRecursively(PACKAGE_DIR);
     }
 
     static void deleteRecursively(Path dir) throws IOException {
@@ -99,6 +115,42 @@ class PackagePlanTest {
     static String sha256Hex(Path file) throws Exception {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         return HexFormat.of().formatHex(md.digest(Files.readAllBytes(file)));
+    }
+
+    @Test
+    void productionSupportedLtsEntryIsDocumentedBeforeExpiry() throws Exception {
+        String supportedLts = Files.readString(MODULE_DIR.resolve("src/jreleaser/supported-lts.yml"), StandardCharsets.UTF_8);
+
+        assertTrue(supportedLts.contains("line: \"4.22\""), supportedLts);
+        assertTrue(supportedLts.contains("supportEnds: \"2027-09-30\""),
+                "The real 4.22 LTS entry is intentionally checked here, but plan tests use a synthetic future-dated"
+                                                                         + " fixture so they do not expire on 2027-10-01.");
+        assertTrue(LocalDate.parse("2027-09-30").isAfter(LocalDate.parse("2026-07-19")),
+                "Update this test when changing the documented 4.22 support window.");
+    }
+
+    @Test
+    void windowsWrapperChecksMavenAndFormulaRenameFailures() throws Exception {
+        String script = Files.readString(MODULE_DIR.resolve("src/jreleaser/bin/camel-package.bat"), StandardCharsets.UTF_8);
+
+        assertTrue(script.contains("Error: could not resolve project.version via Maven."), script);
+        assertTrue(script.contains("Error: failed to rename generated Homebrew formula"), script);
+        assertTrue(script.contains("Error: supported LTS metadata is malformed"), script);
+    }
+
+    @Test
+    void nativeExeRemovalTemplatesFailWhenFilesCannotBeRemoved() throws Exception {
+        String chocolatey = Files.readString(MODULE_DIR.resolve(
+                "src/jreleaser/distributions/camel-cli/chocolatey/tools/chocolateyinstall.ps1.tpl"),
+                StandardCharsets.UTF_8);
+        String scoop = Files.readString(
+                MODULE_DIR.resolve("src/jreleaser/distributions/camel-cli/scoop/manifest.json.tpl"),
+                StandardCharsets.UTF_8);
+
+        assertFalse(chocolatey.contains("-ErrorAction SilentlyContinue"), chocolatey);
+        assertFalse(scoop.contains("-ErrorAction SilentlyContinue"), scoop);
+        assertTrue(chocolatey.contains("-ErrorAction Stop"), chocolatey);
+        assertTrue(scoop.contains("-ErrorAction Stop"), scoop);
     }
 
     // ── POSIX (camel-package.sh) ──────────────────────────────────────
@@ -148,6 +200,45 @@ class PackagePlanTest {
             return env;
         }
 
+        private Map<String, String> envWithMvnStubProducingFormula(Path tmp, Path recordFile, String formulaName)
+                throws IOException {
+            Path stubDir = tmp.resolve("stub-bin");
+            Files.createDirectories(stubDir);
+            Path formulaDir = PACKAGE_DIR.resolve("camel-cli/brew/Formula");
+            Path mvnStub = stubDir.resolve("mvn");
+            Files.writeString(mvnStub,
+                    "#!/bin/sh\n"
+                                       + "case \"$*\" in\n"
+                                       + "  *evaluate*) printf '%s\\n' '" + TEST_VERSION + "' ; exit 0 ;;\n"
+                                       + "esac\n"
+                                       + "printf '%s\\n' \"$*\" >> \"" + recordFile + "\"\n"
+                                       + "mkdir -p \"" + formulaDir + "\"\n"
+                                       + "cat > \"" + formulaDir.resolve(formulaName) + "\" <<'EOF'\n"
+                                       + "  url \"https://example.invalid/original.zip\"\n"
+                                       + "  version \"" + TEST_VERSION + "\"\n"
+                                       + "  sha256 \"original\"\n"
+                                       + "  assert_match \"" + TEST_VERSION + "\", output\n"
+                                       + "EOF\n"
+                                       + "exit 0\n",
+                    StandardCharsets.UTF_8);
+            assertTrue(mvnStub.toFile().setExecutable(true));
+
+            Map<String, String> env = new LinkedHashMap<>();
+            env.put("PATH", stubDir + File.pathSeparator + System.getenv("PATH"));
+            return env;
+        }
+
+        private void addFailingCurlStub(Path tmp, Map<String, String> env, Path curlRecordFile) throws IOException {
+            Path stubDir = tmp.resolve("curl-stub-bin");
+            Files.createDirectories(stubDir);
+            Path curlStub = stubDir.resolve("curl");
+            Files.writeString(curlStub,
+                    "#!/bin/sh\nprintf '%s\\n' \"$*\" >> \"" + curlRecordFile + "\"\nexit 99\n",
+                    StandardCharsets.UTF_8);
+            assertTrue(curlStub.toFile().setExecutable(true));
+            env.put("PATH", stubDir + File.pathSeparator + env.getOrDefault("PATH", System.getenv("PATH")));
+        }
+
         @Test
         void stableSelectsAllFivePackagersWithSdkmanDefault() throws Exception {
             Result r = run("prepare", "--channel", "stable", "--print-plan");
@@ -167,27 +258,30 @@ class PackagePlanTest {
 
         @Test
         void stableWithLtsAddsVersionedBrewFormula() throws Exception {
-            Result r = run("prepare", "--channel", "stable", "--lts-line", "4.18", "--print-plan");
+            Result r = run(supportedLtsFixtureEnv(), "prepare", "--channel", "stable", "--lts-line", LTS_LINE_FUTURE,
+                    "--print-plan");
 
             assertEquals(0, r.exit, r.stderr);
             assertTrue(r.stdout.contains("CHANNEL=stable"), r.stdout);
-            assertTrue(r.stdout.contains("LTS_LINE=4.18"), r.stdout);
+            assertTrue(r.stdout.contains("LTS_LINE=" + LTS_LINE_FUTURE), r.stdout);
             assertTrue(r.stdout.contains("PACKAGERS=brew,sdkman,winget,scoop,chocolatey"), r.stdout);
-            assertTrue(r.stdout.contains("BREW_LTS_FORMULA=camel@4.18"), r.stdout);
+            assertTrue(r.stdout.contains("BREW_LTS_FORMULA=camel@" + LTS_LINE_FUTURE), r.stdout);
             assertTrue(r.stdout.contains("SDKMAN_DEFAULT=true"), r.stdout);
         }
 
         @Test
         void ltsSelectsFourPackagersExcludingScoopWithSdkmanNotDefault() throws Exception {
-            Result r = run("prepare", "--channel", "lts", "--lts-line", "4.18", "--print-plan");
+            // Deliberately reads the real production supported-lts.yml (no CAMEL_PACKAGE_TEST_SUPPORTED_LTS
+            // override) so an accidental deletion/typo of the real "4.22" entry is caught here.
+            Result r = run("prepare", "--channel", "lts", "--lts-line", "4.22", "--print-plan");
 
             assertEquals(0, r.exit, r.stderr);
             assertTrue(r.stdout.contains("CHANNEL=lts"), r.stdout);
             assertTrue(r.stdout.contains("PACKAGERS=brew,sdkman,winget,chocolatey"), r.stdout);
             assertFalse(r.stdout.contains("scoop"), "LTS maintenance excludes Scoop: " + r.stdout);
-            assertTrue(r.stdout.contains("BREW_FORMULA=camel@4.18"),
+            assertTrue(r.stdout.contains("BREW_FORMULA=camel@4.22"),
                     "LTS produces a versioned brew formula: " + r.stdout);
-            assertTrue(r.stdout.contains("BREW_CLASS=CamelAT418"),
+            assertTrue(r.stdout.contains("BREW_CLASS=CamelAT422"),
                     "LTS formulaName must be a valid Ruby class name, pre-converted to Homebrew's AT convention: "
                                                                    + r.stdout);
             assertTrue(r.stdout.contains("SDKMAN_DEFAULT=false"), r.stdout);
@@ -210,6 +304,28 @@ class PackagePlanTest {
             assertEquals(2, r.exit);
             assertTrue(r.stderr.toLowerCase().contains("not a supported lts line")
                     || r.stderr.contains("3.14"), r.stderr);
+        }
+
+        @Test
+        void rejectsExpiredLtsLine() throws Exception {
+            Result r = run(supportedLtsFixtureEnv(), "prepare", "--channel", "lts", "--lts-line", LTS_LINE_EXPIRED,
+                    "--print-plan");
+
+            assertEquals(2, r.exit);
+            assertTrue(r.stderr.toLowerCase().contains("support ended") || r.stderr.contains(LTS_LINE_EXPIRED),
+                    r.stderr);
+        }
+
+        @Test
+        void rejectsMalformedSupportedLtsMetadata() throws Exception {
+            Map<String, String> env = new LinkedHashMap<>();
+            env.put("CAMEL_PACKAGE_TEST_MODE", "true");
+            env.put("CAMEL_PACKAGE_TEST_SUPPORTED_LTS", MODULE_DIR.resolve("src/test/resources/bad.yaml").toString());
+
+            Result r = run(env, "prepare", "--channel", "lts", "--lts-line", LTS_LINE_FUTURE, "--print-plan");
+
+            assertEquals(1, r.exit);
+            assertTrue(r.stderr.toLowerCase().contains("malformed"), r.stderr);
         }
 
         @Test
@@ -257,6 +373,9 @@ class PackagePlanTest {
                     "the JReleaser (stubbed mvn) step must be reached once staging succeeds");
             String recorded = Files.readString(recordFile, StandardCharsets.UTF_8);
             assertTrue(recorded.contains("jreleaser:config"), recorded);
+            assertTrue(recorded.contains("jreleaser:package"), recorded);
+            assertTrue(recorded.contains("-Djreleaser.packagers=brew,sdkman,winget,scoop,chocolatey"), recorded);
+            assertTrue(recorded.contains("-Djreleaser.project.snapshot.pattern="), recorded);
         }
 
         @Test
@@ -265,14 +384,54 @@ class PackagePlanTest {
             writeReleaseFixture("-bin.zip", "fixture-zip-lts");
             Path recordFile = tmp.resolve("mvn-calls.txt");
             Map<String, String> env = testModeEnvWithMvnStub(tmp, recordFile);
+            env.putAll(supportedLtsFixtureEnv());
 
-            Result r = run(env, "prepare", "--channel", "lts", "--lts-line", "4.18");
+            Result r = run(env, "prepare", "--channel", "lts", "--lts-line", LTS_LINE_FUTURE);
 
             assertEquals(0, r.exit, r.stderr);
             assertTrue(Files.exists(websiteDir().resolve("camel-cli/releases/" + TEST_VERSION + ".properties")));
             assertFalse(Files.exists(websiteDir().resolve("camel-cli/releases/latest.properties")),
                     "LTS prepare must not create or modify latest.properties");
             assertTrue(Files.exists(recordFile));
+        }
+
+        @Test
+        void ltsPrepareRenamesGeneratedHomebrewFormula(@TempDir Path tmp) throws Exception {
+            writeReleaseFixture("-bin.tar.gz", "fixture-tar-lts");
+            writeReleaseFixture("-bin.zip", "fixture-zip-lts");
+            Path recordFile = tmp.resolve("mvn-calls.txt");
+            Map<String, String> env = envWithMvnStubProducingFormula(tmp, recordFile, "camel-at-99.rb");
+            env.put("CAMEL_PACKAGE_TEST_MODE", "true");
+            env.put("CAMEL_PACKAGE_TEST_VERSION", TEST_VERSION);
+            env.putAll(supportedLtsFixtureEnv());
+
+            Result r = run(env, "prepare", "--channel", "lts", "--lts-line", LTS_LINE_FUTURE);
+
+            assertEquals(0, r.exit, r.stderr);
+            Path formulaDir = PACKAGE_DIR.resolve("camel-cli/brew/Formula");
+            assertFalse(Files.exists(formulaDir.resolve("camel-at-99.rb")),
+                    "JReleaser's generated LTS filename must not be left behind");
+            assertTrue(Files.exists(formulaDir.resolve("camel@" + LTS_LINE_FUTURE + ".rb")),
+                    "LTS Homebrew formula must use Homebrew's versioned-formula filename");
+        }
+
+        @Test
+        void testModeWithoutSyntheticVersionDoesNotPatchGeneratedHomebrewFormula(@TempDir Path tmp) throws Exception {
+            writeReleaseFixture("-bin.tar.gz", "fixture-tar");
+            writeReleaseFixture("-bin.zip", "fixture-zip");
+            Path recordFile = tmp.resolve("mvn-calls.txt");
+            Path curlRecordFile = tmp.resolve("curl-calls.txt");
+            Map<String, String> env = envWithMvnStubProducingFormula(tmp, recordFile, "camel.rb");
+            env.put("CAMEL_PACKAGE_TEST_MODE", "true");
+            addFailingCurlStub(tmp, env, curlRecordFile);
+
+            Result r = run(env, "prepare", "--channel", "stable");
+
+            assertEquals(0, r.exit, r.stderr);
+            assertFalse(Files.exists(curlRecordFile),
+                    "Formula patching must require CAMEL_PACKAGE_TEST_VERSION, not CAMEL_PACKAGE_TEST_MODE alone");
+            Path formulaFile = PACKAGE_DIR.resolve("camel-cli/brew/Formula/camel.rb");
+            assertTrue(Files.readString(formulaFile, StandardCharsets.UTF_8).contains("version \"" + TEST_VERSION + "\""));
         }
 
         @Test
@@ -376,14 +535,16 @@ class PackagePlanTest {
 
         @Test
         void ltsExcludesScoopWithSdkmanNotDefault() throws Exception {
-            Result r = run("prepare", "--channel", "lts", "--lts-line", "4.18", "--print-plan");
+            // Deliberately reads the real production supported-lts.yml (no CAMEL_PACKAGE_TEST_SUPPORTED_LTS
+            // override) so an accidental deletion/typo of the real "4.22" entry is caught here.
+            Result r = run("prepare", "--channel", "lts", "--lts-line", "4.22", "--print-plan");
 
             assertEquals(0, r.exit, r.stderr);
             assertTrue(r.stdout.contains("PACKAGERS=brew,sdkman,winget,chocolatey"), r.stdout);
             assertFalse(r.stdout.contains("scoop"), r.stdout);
-            assertTrue(r.stdout.contains("BREW_FORMULA=camel@4.18"),
+            assertTrue(r.stdout.contains("BREW_FORMULA=camel@4.22"),
                     "LTS produces a versioned brew formula: " + r.stdout);
-            assertTrue(r.stdout.contains("BREW_CLASS=CamelAT418"),
+            assertTrue(r.stdout.contains("BREW_CLASS=CamelAT422"),
                     "LTS formulaName must be a valid Ruby class name, pre-converted to Homebrew's AT convention: "
                                                                    + r.stdout);
             assertTrue(r.stdout.contains("SDKMAN_DEFAULT=false"), r.stdout);
@@ -393,6 +554,14 @@ class PackagePlanTest {
         @Test
         void rejectsUnsupportedLtsLine() throws Exception {
             Result r = run("prepare", "--channel", "lts", "--lts-line", "3.14", "--print-plan");
+
+            assertEquals(2, r.exit);
+        }
+
+        @Test
+        void rejectsExpiredLtsLine() throws Exception {
+            Result r = run(supportedLtsFixtureEnv(), "prepare", "--channel", "lts", "--lts-line", LTS_LINE_EXPIRED,
+                    "--print-plan");
 
             assertEquals(2, r.exit);
         }
@@ -427,6 +596,9 @@ class PackagePlanTest {
                     "the JReleaser (stubbed mvn) step must be reached once staging succeeds");
             String recorded = Files.readString(recordFile, StandardCharsets.UTF_8);
             assertTrue(recorded.contains("jreleaser:config"), recorded);
+            assertTrue(recorded.contains("jreleaser:package"), recorded);
+            assertTrue(recorded.contains("-Djreleaser.packagers=brew,sdkman,winget,scoop,chocolatey"), recorded);
+            assertTrue(recorded.contains("-Djreleaser.project.snapshot.pattern="), recorded);
         }
 
         @Test
@@ -435,8 +607,9 @@ class PackagePlanTest {
             writeReleaseFixture("-bin.zip", "fixture-zip-lts");
             Path recordFile = tmp.resolve("mvn-calls.txt");
             Map<String, String> env = testModeEnvWithMvnStub(tmp, recordFile);
+            env.putAll(supportedLtsFixtureEnv());
 
-            Result r = run(env, "prepare", "--channel", "lts", "--lts-line", "4.18");
+            Result r = run(env, "prepare", "--channel", "lts", "--lts-line", LTS_LINE_FUTURE);
 
             assertEquals(0, r.exit, r.stderr);
             assertTrue(Files.exists(websiteDir().resolve("camel-cli/releases/" + TEST_VERSION + ".properties")));

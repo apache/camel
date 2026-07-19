@@ -15,13 +15,16 @@
 # limitations under the License.
 #
 
-# NOTE: field names and packager semantics verified against the JReleaser 1.25.0
-# reference (ctx7 docs, cross-checked with `mvn help:describe` and actual
-# `jreleaser:prepare` dry-run output against the pinned plugin JAR) before
-# authoring this file. Key findings that shaped this configuration:
-#   - `type: JAVA_BINARY` (not BINARY): Homebrew's automatic `openjdk` dependency is
-#     documented as applying to "applicable Java distributions"; confirmed the
-#     generated formula includes `depends_on "openjdk@17"`.
+# NOTE: field names and packager semantics were checked against the pinned JReleaser Maven
+# plugin version in pom.xml before authoring this file. Key findings that shaped this
+# configuration:
+#   - `type: JAVA_BINARY` (not BINARY): this distribution is a Java application, so using
+#     JReleaser's Java distribution type keeps packager behavior aligned with that runtime.
+#     formula.rb.tpl explicitly declares `depends_on "openjdk"`; it is unpinned because a
+#     numbered formula can be retired from homebrew-core over time, while unpinned resolves
+#     to a currently installable JDK that still satisfies this project's Java 17+ minimum.
+#     The launcher's own JAVACMD/JAVA_HOME/PATH lookup order means this Homebrew dependency
+#     is a self-contained fallback, not the enforced runtime, so pinning buys nothing.
 #   - SDKMAN has no boolean "default" flag; `command: MAJOR` publishes and sets the
 #     new version as the candidate default, `command: MINOR` publishes without
 #     moving the default. SDKMAN produces no local `prepare` output (API-only), so
@@ -30,9 +33,9 @@
 #     not Maven -D system properties, so the wrappers export CAMEL_PKG_* before
 #     invoking JReleaser. Enum-typed fields (active, sdkman.command) are parsed
 #     before Mustache templates resolve, so `{{ Env.X }}` cannot be used on them.
-#   - Artifact paths are relative to the repo root: empirically (mvn jreleaser:config),
-#     the JReleaser Maven plugin's basedir defaults to the multi-module reactor root,
-#     not this file's directory, unlike the standalone JReleaser CLI.
+#   - Artifact paths are relative to the repo root: the JReleaser Maven plugin's basedir
+#     defaults to the multi-module reactor root, not this file's directory, unlike the
+#     standalone JReleaser CLI.
 #   - Per-channel packager selection (e.g. excluding `scoop` on the `lts` channel)
 #     is done via the jreleaser:prepare/jreleaser:package Mojo's own
 #     `-Djreleaser.packagers` include filter, not via a templated `active` field.
@@ -53,15 +56,13 @@
 # a separate `--channel lts --lts-line X.Y` run to produce the versioned formula
 # on its own in the meantime.
 #
-# JReleaser does not apply Homebrew's "AT" naming convention to `formulaName`
-# itself: empirically confirmed (jreleaser:prepare with
-# CAMEL_PKG_BREW_FORMULA=camel@4.20) that a literal "camel@4.20" renders an
-# invalid Ruby class (`class Camel@4.20 < Formula`) and a wrong output filename
-# (`20.rb` instead of `camel@4.20.rb`). `camel-package.sh`/`camel-package.bat`
-# work around this by passing the already-converted class name (e.g.
-# "CamelAT420") as CAMEL_PKG_BREW_FORMULA, then renaming JReleaser's kebab-cased
-# output file (e.g. "camel-at-420.rb") to the real "camel@4.20.rb" after
-# packaging.
+# As of the pinned JReleaser plugin version, Homebrew's "AT" naming convention is not
+# applied to `formulaName` itself: a literal "camel@4.20" renders an invalid Ruby class
+# (`class Camel@4.20 < Formula`) and a wrong output filename (`20.rb` instead of
+# `camel@4.20.rb`). `camel-package.sh`/`camel-package.bat` work around this by passing
+# the already-converted class name (e.g. "CamelAT420") as CAMEL_PKG_BREW_FORMULA, then
+# renaming JReleaser's kebab-cased output file (e.g. "camel-at-420.rb") to the real
+# "camel@4.20.rb" after packaging.
 
 project:
   name: camel-cli

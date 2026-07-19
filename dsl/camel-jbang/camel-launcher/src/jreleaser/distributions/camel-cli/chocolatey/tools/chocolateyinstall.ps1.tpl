@@ -33,7 +33,11 @@ Install-ChocolateyZipPackage `
 # per-architecture exe selection. Native ARM64 support in Chocolatey is pending:
 # https://github.com/chocolatey/choco/issues/1803
 $bin = Join-Path $app_home 'bin'
-Remove-Item (Join-Path $bin 'camel-x64.exe') -Force -ErrorAction SilentlyContinue
-Remove-Item (Join-Path $bin 'camel-arm64.exe') -Force -ErrorAction SilentlyContinue
+foreach ($native_exe in @('camel-x64.exe', 'camel-arm64.exe')) {
+    $native_path = Join-Path $bin $native_exe
+    if (Test-Path -LiteralPath $native_path) {
+        Remove-Item -LiteralPath $native_path -Force -ErrorAction Stop
+    }
+}
 
 Install-BinFile -Name '{{distributionExecutableName}}' -Path $app_exe
