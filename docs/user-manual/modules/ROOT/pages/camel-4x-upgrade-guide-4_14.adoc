@@ -34,6 +34,16 @@ content-mode / HTTP header path.
 Ordinary CloudEvent extension attributes are unaffected. If a route relied on `Camel*`-named fields being
 propagated from the structured payload, set them explicitly after consuming the event.
 
+=== camel-ironmq - message envelope header filtering
+
+When consuming a message with `preserveHeaders=true`, the IronMQ consumer now applies a `HeaderFilterStrategy` to
+the header entries embedded in the JSON message envelope before mapping them onto the Camel message. Camel-internal
+headers (the `Camel*` namespace, matched case-insensitively) present in the envelope are no longer mapped onto the
+message, consistent with the inbound header filtering performed by other consumers.
+
+Ordinary application headers are unaffected. If a route relied on `Camel*` headers being propagated from the
+message envelope, set them explicitly after consuming the message.
+
 === camel-azure-eventhubs - producer now filters Camel-internal headers
 
 The `azure-eventhubs` producer now applies a `DefaultHeaderFilterStrategy` to the headers copied onto
