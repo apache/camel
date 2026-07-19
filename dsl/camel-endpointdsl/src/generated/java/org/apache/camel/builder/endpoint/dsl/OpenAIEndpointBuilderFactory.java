@@ -438,6 +438,86 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * When conversationMemory is enabled, retain at most this many messages
+         * in the exchange conversation history. System and developer messages
+         * are prepended separately and are not stored in history. Assistant
+         * tool-call blocks are kept intact and may retain slightly more than
+         * this limit to preserve tool result pairing. When 0, no message limit
+         * is applied.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param maxHistoryMessages the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder maxHistoryMessages(int maxHistoryMessages) {
+            doSetProperty("maxHistoryMessages", maxHistoryMessages);
+            return this;
+        }
+        /**
+         * When conversationMemory is enabled, retain at most this many messages
+         * in the exchange conversation history. System and developer messages
+         * are prepended separately and are not stored in history. Assistant
+         * tool-call blocks are kept intact and may retain slightly more than
+         * this limit to preserve tool result pairing. When 0, no message limit
+         * is applied.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param maxHistoryMessages the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder maxHistoryMessages(String maxHistoryMessages) {
+            doSetProperty("maxHistoryMessages", maxHistoryMessages);
+            return this;
+        }
+        /**
+         * When conversationMemory is enabled, trim conversation history using a
+         * token estimate (character count / 4, including image payload size for
+         * multi-modal user messages). Oldest segments are dropped first until
+         * the estimated tokens are within this limit. Assistant tool-call
+         * blocks are removed as a unit with their tool results. When 0, no
+         * token limit is applied.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param maxHistoryTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder maxHistoryTokens(int maxHistoryTokens) {
+            doSetProperty("maxHistoryTokens", maxHistoryTokens);
+            return this;
+        }
+        /**
+         * When conversationMemory is enabled, trim conversation history using a
+         * token estimate (character count / 4, including image payload size for
+         * multi-modal user messages). Oldest segments are dropped first until
+         * the estimated tokens are within this limit. Assistant tool-call
+         * blocks are removed as a unit with their tool results. When 0, no
+         * token limit is applied.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param maxHistoryTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder maxHistoryTokens(String maxHistoryTokens) {
+            doSetProperty("maxHistoryTokens", maxHistoryTokens);
+            return this;
+        }
+        /**
          * Maximum number of tokens to generate.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
