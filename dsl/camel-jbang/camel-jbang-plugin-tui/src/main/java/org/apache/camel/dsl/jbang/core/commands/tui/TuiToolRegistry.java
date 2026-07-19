@@ -562,8 +562,12 @@ class TuiToolRegistry {
                         "kind", propDef("string",
                                 "Artifact kind: component, dataformat, or language. "
                                                   + "If omitted, auto-detects by trying component first, then dataformat, then language."),
+                        "includeOptions", propDef("boolean",
+                                "Whether to include configuration options in the response (default: true). "
+                                                             + "Set to false for a lightweight response with just metadata."),
                         "optionsFilter", propDef("string",
-                                "Filter options by keyword in name or description (case-insensitive substring match)")),
+                                "Filter options by keyword in name or description (case-insensitive substring match). "
+                                                           + "Only used when includeOptions is true.")),
                 List.of("name"))));
 
         // --- Example tools ---
@@ -1616,6 +1620,7 @@ class TuiToolRegistry {
         }
         String kind = args.get("kind") instanceof String v ? v : null;
         String optionsFilter = args.get("optionsFilter") instanceof String v ? v : null;
+        boolean includeOptions = !Boolean.FALSE.equals(args.get("includeOptions"));
 
         String version = facade.getSelectedCamelVersion();
         try {
@@ -1623,7 +1628,7 @@ class TuiToolRegistry {
             if (catalog == null) {
                 return "{\"error\": \"Could not load catalog" + (version != null ? " for version " + version : "") + "\"}";
             }
-            return buildCatalogDocResult(catalog, name, kind, optionsFilter);
+            return buildCatalogDocResult(catalog, name, kind, optionsFilter, includeOptions);
         } catch (Exception e) {
             JsonObject err = new JsonObject();
             err.put("error", "Failed to load catalog: " + e.getMessage());
@@ -1631,13 +1636,14 @@ class TuiToolRegistry {
         }
     }
 
-    private String buildCatalogDocResult(CamelCatalog catalog, String name, String kind, String optionsFilter) {
+    private String buildCatalogDocResult(
+            CamelCatalog catalog, String name, String kind, String optionsFilter, boolean includeOptions) {
         String lowerFilter = optionsFilter != null ? optionsFilter.toLowerCase() : null;
 
         if (kind == null || "component".equals(kind)) {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
-                return buildComponentDocJson(cm, lowerFilter);
+                return buildComponentDocJson(cm, lowerFilter, includeOptions);
             }
             if (kind != null) {
                 return "{\"error\": \"Component not found: " + name + "\"}";
@@ -1646,7 +1652,7 @@ class TuiToolRegistry {
         if (kind == null || "dataformat".equals(kind)) {
             DataFormatModel dm = catalog.dataFormatModel(name);
             if (dm != null) {
-                return buildDataFormatDocJson(dm, lowerFilter);
+                return buildDataFormatDocJson(dm, lowerFilter, includeOptions);
             }
             if (kind != null) {
                 return "{\"error\": \"Data format not found: " + name + "\"}";
@@ -1655,7 +1661,7 @@ class TuiToolRegistry {
         if (kind == null || "language".equals(kind)) {
             LanguageModel lm = catalog.languageModel(name);
             if (lm != null) {
-                return buildLanguageDocJson(lm, lowerFilter);
+                return buildLanguageDocJson(lm, lowerFilter, includeOptions);
             }
             if (kind != null) {
                 return "{\"error\": \"Language not found: " + name + "\"}";
@@ -1664,7 +1670,7 @@ class TuiToolRegistry {
         return "{\"error\": \"Artifact not found: " + name + "\"}";
     }
 
-    private String buildComponentDocJson(ComponentModel model, String filter) {
+    private String buildComponentDocJson(ComponentModel model, String filter, boolean includeOptions) {
         JsonObject result = new JsonObject();
         result.put("kind", "component");
         result.put("name", model.getScheme());
@@ -1682,27 +1688,29 @@ class TuiToolRegistry {
         result.put("groupId", model.getGroupId());
         result.put("artifactId", model.getArtifactId());
 
-        JsonArray options = new JsonArray();
-        if (model.getComponentOptions() != null) {
-            for (BaseOptionModel opt : model.getComponentOptions()) {
-                if (matchesOptionFilter(opt, filter)) {
-                    options.add(optionToJson(opt, "component"));
+        if (includeOptions) {
+            JsonArray options = new JsonArray();
+            if (model.getComponentOptions() != null) {
+                for (BaseOptionModel opt : model.getComponentOptions()) {
+                    if (matchesOptionFilter(opt, filter)) {
+                        options.add(optionToJson(opt, "component"));
+                    }
                 }
             }
-        }
-        if (model.getEndpointOptions() != null) {
-            for (BaseOptionModel opt : model.getEndpointOptions()) {
-                if (matchesOptionFilter(opt, filter)) {
-                    options.add(optionToJson(opt, "endpoint"));
+            if (model.getEndpointOptions() != null) {
+                for (BaseOptionModel opt : model.getEndpointOptions()) {
+                    if (matchesOptionFilter(opt, filter)) {
+                        options.add(optionToJson(opt, "endpoint"));
+                    }
                 }
             }
+            result.put("options", options);
+            result.put("matchedOptions", options.size());
         }
-        result.put("options", options);
-        result.put("matchedOptions", options.size());
         return Jsoner.serialize(result);
     }
 
-    private String buildDataFormatDocJson(DataFormatModel model, String filter) {
+    private String buildDataFormatDocJson(DataFormatModel model, String filter, boolean includeOptions) {
         JsonObject result = new JsonObject();
         result.put("kind", "dataformat");
         result.put("name", model.getName());
@@ -1715,20 +1723,22 @@ class TuiToolRegistry {
         result.put("groupId", model.getGroupId());
         result.put("artifactId", model.getArtifactId());
 
-        JsonArray options = new JsonArray();
-        if (model.getOptions() != null) {
-            for (BaseOptionModel opt : model.getOptions()) {
-                if (matchesOptionFilter(opt, filter)) {
-                    options.add(optionToJson(opt, null));
+        if (includeOptions) {
+            JsonArray options = new JsonArray();
+            if (model.getOptions() != null) {
+                for (BaseOptionModel opt : model.getOptions()) {
+                    if (matchesOptionFilter(opt, filter)) {
+                        options.add(optionToJson(opt, null));
+                    }
                 }
             }
+            result.put("options", options);
+            result.put("matchedOptions", options.size());
         }
-        result.put("options", options);
-        result.put("matchedOptions", options.size());
         return Jsoner.serialize(result);
     }
 
-    private String buildLanguageDocJson(LanguageModel model, String filter) {
+    private String buildLanguageDocJson(LanguageModel model, String filter, boolean includeOptions) {
         JsonObject result = new JsonObject();
         result.put("kind", "language");
         result.put("name", model.getName());
@@ -1741,16 +1751,18 @@ class TuiToolRegistry {
         result.put("groupId", model.getGroupId());
         result.put("artifactId", model.getArtifactId());
 
-        JsonArray options = new JsonArray();
-        if (model.getOptions() != null) {
-            for (BaseOptionModel opt : model.getOptions()) {
-                if (matchesOptionFilter(opt, filter)) {
-                    options.add(optionToJson(opt, null));
+        if (includeOptions) {
+            JsonArray options = new JsonArray();
+            if (model.getOptions() != null) {
+                for (BaseOptionModel opt : model.getOptions()) {
+                    if (matchesOptionFilter(opt, filter)) {
+                        options.add(optionToJson(opt, null));
+                    }
                 }
             }
+            result.put("options", options);
+            result.put("matchedOptions", options.size());
         }
-        result.put("options", options);
-        result.put("matchedOptions", options.size());
         return Jsoner.serialize(result);
     }
 
