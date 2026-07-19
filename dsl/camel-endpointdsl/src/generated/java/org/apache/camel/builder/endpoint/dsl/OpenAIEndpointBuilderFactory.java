@@ -1512,6 +1512,43 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIMcpReturnDirect";
         }
         /**
+         * Cumulative prompt tokens consumed across all agentic loop iterations.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIAgenticPromptTokens}.
+         */
+        public String openAIAgenticPromptTokens() {
+            return "CamelOpenAIAgenticPromptTokens";
+        }
+        /**
+         * Cumulative completion tokens consumed across all agentic loop
+         * iterations.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIAgenticCompletionTokens}.
+         */
+        public String openAIAgenticCompletionTokens() {
+            return "CamelOpenAIAgenticCompletionTokens";
+        }
+        /**
+         * Cumulative total tokens consumed across all agentic loop iterations.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIAgenticTotalTokens}.
+         */
+        public String openAIAgenticTotalTokens() {
+            return "CamelOpenAIAgenticTotalTokens";
+        }
+        /**
          * The complete OpenAI response object.
          * 
          * The option is a: {@code com.openai.models.ChatCompletion} type.
