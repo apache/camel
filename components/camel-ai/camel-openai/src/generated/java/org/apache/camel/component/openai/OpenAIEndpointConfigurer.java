@@ -60,6 +60,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "jsonSchema": target.getConfiguration().setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxagentictokens":
+        case "maxAgenticTokens": target.getConfiguration().setMaxAgenticTokens(property(camelContext, long.class, value)); return true;
         case "maxtokens":
         case "maxTokens": target.getConfiguration().setMaxTokens(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxtooliterations":
@@ -157,6 +159,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "jsonSchema": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxagentictokens":
+        case "maxAgenticTokens": return long.class;
         case "maxtokens":
         case "maxTokens": return java.lang.Integer.class;
         case "maxtooliterations":
@@ -255,6 +259,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "jsonSchema": return target.getConfiguration().getJsonSchema();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxagentictokens":
+        case "maxAgenticTokens": return target.getConfiguration().getMaxAgenticTokens();
         case "maxtokens":
         case "maxTokens": return target.getConfiguration().getMaxTokens();
         case "maxtooliterations":

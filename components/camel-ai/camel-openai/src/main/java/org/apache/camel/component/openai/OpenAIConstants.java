@@ -84,6 +84,12 @@ public final class OpenAIConstants {
                             + "rather than from the LLM",
               javaType = "Boolean")
     public static final String MCP_RETURN_DIRECT = "CamelOpenAIMcpReturnDirect";
+    @Metadata(description = "Cumulative prompt tokens consumed across all agentic loop iterations", javaType = "Long")
+    public static final String AGENTIC_PROMPT_TOKENS = "CamelOpenAIAgenticPromptTokens";
+    @Metadata(description = "Cumulative completion tokens consumed across all agentic loop iterations", javaType = "Long")
+    public static final String AGENTIC_COMPLETION_TOKENS = "CamelOpenAIAgenticCompletionTokens";
+    @Metadata(description = "Cumulative total tokens consumed across all agentic loop iterations", javaType = "Long")
+    public static final String AGENTIC_TOTAL_TOKENS = "CamelOpenAIAgenticTotalTokens";
 
     // Output Exchange Properties
     @Metadata(description = "The complete OpenAI response object", javaType = "com.openai.models.ChatCompletion")

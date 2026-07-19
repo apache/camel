@@ -34,6 +34,9 @@ import com.sun.net.httpserver.HttpExchange;
  * Builder class for creating different types of OpenAI API mock responses.
  */
 public class ResponseBuilder {
+    static final int DEFAULT_PROMPT_TOKENS = 10;
+    static final int DEFAULT_COMPLETION_TOKENS = 5;
+
     private final ObjectMapper objectMapper;
 
     public ResponseBuilder(ObjectMapper objectMapper) {
@@ -45,6 +48,12 @@ public class ResponseBuilder {
     }
 
     public String createSimpleTextResponse(String content, String reasoningContent) throws Exception {
+        return createSimpleTextResponse(content, reasoningContent, DEFAULT_PROMPT_TOKENS, DEFAULT_COMPLETION_TOKENS);
+    }
+
+    public String createSimpleTextResponse(
+            String content, String reasoningContent, int promptTokens, int completionTokens)
+            throws Exception {
         Map<String, Object> responseMessage = createBaseMessage();
         responseMessage.put("content", content);
         if (reasoningContent != null) {
@@ -52,18 +61,24 @@ public class ResponseBuilder {
         }
 
         Map<String, Object> choice = createBaseChoice("stop", responseMessage);
-        Map<String, Object> chatCompletion = createBaseChatCompletion(choice);
+        Map<String, Object> chatCompletion = createBaseChatCompletion(choice, promptTokens, completionTokens);
 
         return objectMapper.writeValueAsString(chatCompletion);
     }
 
     public String createToolCallResponse(String content, List<ToolCallDefinition> toolCalls) throws Exception {
+        return createToolCallResponse(content, toolCalls, DEFAULT_PROMPT_TOKENS, DEFAULT_COMPLETION_TOKENS);
+    }
+
+    public String createToolCallResponse(
+            String content, List<ToolCallDefinition> toolCalls, int promptTokens, int completionTokens)
+            throws Exception {
         Map<String, Object> responseMessage = createBaseMessage();
         responseMessage.put("content", content);
         responseMessage.put("tool_calls", buildToolCallsList(toolCalls));
 
         Map<String, Object> choice = createBaseChoice("tool_calls", responseMessage);
-        Map<String, Object> chatCompletion = createBaseChatCompletion(choice);
+        Map<String, Object> chatCompletion = createBaseChatCompletion(choice, promptTokens, completionTokens);
 
         return objectMapper.writeValueAsString(chatCompletion);
     }
@@ -71,6 +86,14 @@ public class ResponseBuilder {
     public String createFinalToolResponse(
             JsonNode messagesNode, String fallbackContent, String toolContentResponse,
             String reasoningContent)
+            throws Exception {
+        return createFinalToolResponse(messagesNode, fallbackContent, toolContentResponse, reasoningContent,
+                DEFAULT_PROMPT_TOKENS, DEFAULT_COMPLETION_TOKENS);
+    }
+
+    public String createFinalToolResponse(
+            JsonNode messagesNode, String fallbackContent, String toolContentResponse,
+            String reasoningContent, int promptTokens, int completionTokens)
             throws Exception {
         Map<String, Object> responseMessage = createBaseMessage();
 
@@ -89,7 +112,7 @@ public class ResponseBuilder {
         }
 
         Map<String, Object> choice = createBaseChoice("stop", responseMessage);
-        Map<String, Object> chatCompletion = createBaseChatCompletion(choice);
+        Map<String, Object> chatCompletion = createBaseChatCompletion(choice, promptTokens, completionTokens);
         chatCompletion.put("history", messagesNode);
 
         return objectMapper.writeValueAsString(chatCompletion);
@@ -127,12 +150,22 @@ public class ResponseBuilder {
     }
 
     private Map<String, Object> createBaseChatCompletion(Map<String, Object> choice) {
+        return createBaseChatCompletion(choice, DEFAULT_PROMPT_TOKENS, DEFAULT_COMPLETION_TOKENS);
+    }
+
+    private Map<String, Object> createBaseChatCompletion(
+            Map<String, Object> choice, int promptTokens, int completionTokens) {
         Map<String, Object> chatCompletion = new HashMap<>();
         chatCompletion.put("id", UUID.randomUUID().toString());
         chatCompletion.put("choices", Collections.singletonList(choice));
         chatCompletion.put("created", System.currentTimeMillis() / 1000L);
         chatCompletion.put("model", "openai-mock");
         chatCompletion.put("object", "chat.completion");
+        Map<String, Object> usage = new HashMap<>();
+        usage.put("prompt_tokens", promptTokens);
+        usage.put("completion_tokens", completionTokens);
+        usage.put("total_tokens", promptTokens + completionTokens);
+        chatCompletion.put("usage", usage);
         return chatCompletion;
     }
 

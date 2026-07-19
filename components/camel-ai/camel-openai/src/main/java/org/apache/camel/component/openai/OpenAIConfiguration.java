@@ -128,6 +128,11 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Maximum number of tool call loop iterations to prevent infinite loops")
     private int maxToolIterations = 50;
 
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "Maximum cumulative prompt plus completion tokens allowed across the MCP agentic loop. "
+                            + "When 0, no token budget is enforced.")
+    private long maxAgenticTokens;
+
     @UriParam(defaultValue = "true")
     @Metadata(description = "When true and MCP servers are configured, automatically execute tool calls "
                             + "and loop back to the model. When false, tool calls are returned as the message body for manual handling.")
@@ -483,6 +488,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setMaxToolIterations(int maxToolIterations) {
         this.maxToolIterations = maxToolIterations;
+    }
+
+    public long getMaxAgenticTokens() {
+        return maxAgenticTokens;
+    }
+
+    public void setMaxAgenticTokens(long maxAgenticTokens) {
+        this.maxAgenticTokens = maxAgenticTokens;
     }
 
     public boolean isAutoToolExecution() {

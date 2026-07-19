@@ -481,10 +481,15 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         List<ChatCompletionMessageParam> agenticMessages = new ArrayList<>();
         List<String> toolCallsLog = new ArrayList<>();
+        OpenAIAgenticTokenTracker tokenTracker = new OpenAIAgenticTokenTracker();
         int iteration = 0;
 
         while (iteration < maxIterations) {
             ChatCompletion response = getEndpoint().getClient().chat().completions().create(paramsBuilder.build());
+            tokenTracker.addUsage(response);
+            setAgenticTokenHeaders(exchange.getMessage(), tokenTracker);
+            enforceAgenticTokenBudget(config, tokenTracker, iteration);
+
             ChatCompletion.Choice choice = requireFirstChoice(exchange, response);
 
             if (!isToolCallsFinishReason(choice)) {
@@ -604,6 +609,24 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         throw new IllegalStateException(
                 "Max tool iterations (%d) exceeded. Tools called: %s".formatted(maxIterations, toolCallsLog));
+    }
+
+    private void setAgenticTokenHeaders(Message message, OpenAIAgenticTokenTracker tokenTracker) {
+        message.setHeader(OpenAIConstants.AGENTIC_PROMPT_TOKENS, tokenTracker.getPromptTokens());
+        message.setHeader(OpenAIConstants.AGENTIC_COMPLETION_TOKENS, tokenTracker.getCompletionTokens());
+        message.setHeader(OpenAIConstants.AGENTIC_TOTAL_TOKENS, tokenTracker.getTotalTokens());
+    }
+
+    private void enforceAgenticTokenBudget(
+            OpenAIConfiguration config, OpenAIAgenticTokenTracker tokenTracker, int iteration) {
+        long maxAgenticTokens = config.getMaxAgenticTokens();
+        if (maxAgenticTokens <= 0 || tokenTracker.getTotalTokens() <= maxAgenticTokens) {
+            return;
+        }
+        throw new IllegalStateException(
+                "Max agentic tokens (%d) exceeded at iteration %d. Cumulative usage: prompt=%d, completion=%d, total=%d"
+                        .formatted(maxAgenticTokens, iteration, tokenTracker.getPromptTokens(),
+                                tokenTracker.getCompletionTokens(), tokenTracker.getTotalTokens()));
     }
 
     private String extractTextContent(List<McpSchema.Content> contents) {
