@@ -156,7 +156,7 @@ class TabRegistry {
         moreTabs = List.of(
                 new MoreTab(TuiIcons.TAB_BEANS, "Beans", "&Beans", beansTab),
                 new MoreTab(TuiIcons.TAB_BROWSE, "Browse", "Bro&wse", browseTab),
-                new MoreTab(TuiIcons.TAB_CATALOG, "Catalog", "Catal&og", catalogTab),
+                new MoreTab(TuiIcons.TAB_CATALOG, "Catalog", "Cata&log", catalogTab),
                 new MoreTab(TuiIcons.TAB_CIRCUIT_BREAKER, "Circuit Breaker", "&Circuit Breaker", circuitBreakerTab),
                 new MoreTab(TuiIcons.TAB_CLASSPATH, "Classpath", "Cl&asspath", classpathTab),
                 new MoreTab(TuiIcons.TAB_CONFIGURATION, "Configuration", "Confi&guration", configurationTab),

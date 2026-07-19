@@ -28,6 +28,7 @@ import dev.tamboui.style.Style;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -1670,6 +1671,28 @@ class TuiToolRegistry {
         return "{\"error\": \"Artifact not found: " + name + "\"}";
     }
 
+    @SuppressWarnings("unchecked")
+    private static void addCommonModelFields(JsonObject result, BaseModel<?> model) {
+        if (model.getFirstVersion() != null) {
+            result.put("since", model.getFirstVersion());
+        }
+        if (model.getSupportLevel() != null) {
+            result.put("supportLevel", model.getSupportLevel().name());
+        }
+        if (model.isNativeSupported()) {
+            result.put("nativeSupported", true);
+        }
+        if (model.isDeprecated()) {
+            result.put("deprecated", true);
+            if (model.getDeprecatedSince() != null) {
+                result.put("deprecatedSince", model.getDeprecatedSince());
+            }
+            if (model.getDeprecationNote() != null) {
+                result.put("deprecationNote", model.getDeprecationNote());
+            }
+        }
+    }
+
     private String buildComponentDocJson(ComponentModel model, String filter, boolean includeOptions) {
         JsonObject result = new JsonObject();
         result.put("kind", "component");
@@ -1679,14 +1702,15 @@ class TuiToolRegistry {
         if (model.getLabel() != null) {
             result.put("label", model.getLabel());
         }
-        result.put("deprecated", model.isDeprecated());
         if (model.getSyntax() != null) {
             result.put("syntax", model.getSyntax());
         }
         result.put("consumerOnly", model.isConsumerOnly());
         result.put("producerOnly", model.isProducerOnly());
+        result.put("remote", model.isRemote());
         result.put("groupId", model.getGroupId());
         result.put("artifactId", model.getArtifactId());
+        addCommonModelFields(result, model);
 
         if (includeOptions) {
             JsonArray options = new JsonArray();
@@ -1719,9 +1743,9 @@ class TuiToolRegistry {
         if (model.getLabel() != null) {
             result.put("label", model.getLabel());
         }
-        result.put("deprecated", model.isDeprecated());
         result.put("groupId", model.getGroupId());
         result.put("artifactId", model.getArtifactId());
+        addCommonModelFields(result, model);
 
         if (includeOptions) {
             JsonArray options = new JsonArray();
@@ -1747,9 +1771,9 @@ class TuiToolRegistry {
         if (model.getLabel() != null) {
             result.put("label", model.getLabel());
         }
-        result.put("deprecated", model.isDeprecated());
         result.put("groupId", model.getGroupId());
         result.put("artifactId", model.getArtifactId());
+        addCommonModelFields(result, model);
 
         if (includeOptions) {
             JsonArray options = new JsonArray();

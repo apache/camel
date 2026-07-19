@@ -380,7 +380,12 @@ class CatalogTab extends AbstractTableTab {
                 entry.description = model.getDescription() != null ? model.getDescription() : "";
                 entry.label = model.getLabel();
                 entry.artifactId = model.getArtifactId();
+                entry.firstVersion = model.getFirstVersion();
+                entry.supportLevel = model.getSupportLevel() != null ? model.getSupportLevel().name() : null;
+                entry.nativeSupported = model.isNativeSupported();
                 entry.deprecated = model.isDeprecated();
+                entry.deprecatedSince = model.getDeprecatedSince();
+                entry.deprecationNote = model.getDeprecationNote();
                 entries.add(entry);
             } catch (Exception e) {
                 // skip unparseable entries
@@ -532,8 +537,23 @@ class CatalogTab extends AbstractTableTab {
                 row.put("label", e.label);
             }
             row.put("artifactId", e.artifactId);
+            if (e.firstVersion != null) {
+                row.put("since", e.firstVersion);
+            }
+            if (e.supportLevel != null) {
+                row.put("supportLevel", e.supportLevel);
+            }
+            if (e.nativeSupported) {
+                row.put("nativeSupported", true);
+            }
             if (e.deprecated) {
                 row.put("deprecated", true);
+                if (e.deprecatedSince != null) {
+                    row.put("deprecatedSince", e.deprecatedSince);
+                }
+                if (e.deprecationNote != null) {
+                    row.put("deprecationNote", e.deprecationNote);
+                }
             }
             rows.add(row);
         }
@@ -553,6 +573,11 @@ class CatalogTab extends AbstractTableTab {
         String description;
         String label;
         String artifactId;
+        String firstVersion;
+        String supportLevel;
+        boolean nativeSupported;
         boolean deprecated;
+        String deprecatedSince;
+        String deprecationNote;
     }
 }
