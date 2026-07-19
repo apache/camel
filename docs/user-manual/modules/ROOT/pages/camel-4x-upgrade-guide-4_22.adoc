@@ -15,6 +15,9 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 === camel-jbang
 
+The Camel JBang CLI (Camel CLI) and TUI have been promoted from _Preview_ to _Stable_ support level.
+The MCP Server has also been promoted to _Stable_.
+
 The Camel JBang CLI now automatic resolves quarkus version to use,
 instead of hardcoded `3.33.1.1` (https://github.com/apache/camel/commit/d1f4713ebdf787ab04a31c50a6f07e3ca66f0c2b).
 

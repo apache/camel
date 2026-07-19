@@ -36,7 +36,7 @@
     <properties>
         <firstVersion>4.21.0</firstVersion>
         <label>jbang,mcp,ai</label>
-        <supportLevel>Preview</supportLevel>
+        <supportLevel>Stable</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
     </properties>
 
