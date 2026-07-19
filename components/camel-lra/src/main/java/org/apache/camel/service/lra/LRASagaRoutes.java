@@ -18,7 +18,10 @@ package org.apache.camel.service.lra;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
@@ -44,7 +47,7 @@ public class LRASagaRoutes extends RouteBuilder {
         rest(sagaService.getLocalParticipantContextPath())
                 .put(PARTICIPANT_PATH_COMPENSATE).to("direct:lra-compensation");
         from("direct:lra-compensation").routeId("lra-compensation")
-                .process(this::verifyRequest)
+                .process(this::verifyCompensationRequest)
                 .choice()
                 .when(header(URL_COMPENSATION_KEY).isNotNull())
                 .toD("${header." + URL_COMPENSATION_KEY + "}")
@@ -53,7 +56,7 @@ public class LRASagaRoutes extends RouteBuilder {
         rest(sagaService.getLocalParticipantContextPath())
                 .put(PARTICIPANT_PATH_COMPLETE).to("direct:lra-completion");
         from("direct:lra-completion").routeId("lra-completion")
-                .process(this::verifyRequest)
+                .process(this::verifyCompletionRequest)
                 .choice()
                 .when(header(URL_COMPLETION_KEY).isNotNull())
                 .toD("${header." + URL_COMPLETION_KEY + "}")
@@ -93,47 +96,49 @@ public class LRASagaRoutes extends RouteBuilder {
         return URLDecoder.decode(encodedString, StandardCharsets.UTF_8);
     }
 
+    private void verifyCompensationRequest(Exchange exchange) {
+        verifyRequest(exchange, true);
+    }
+
+    private void verifyCompletionRequest(Exchange exchange) {
+        verifyRequest(exchange, false);
+    }
+
     /**
-     * Check if the request is pointing to an allowed URI to prevent unauthorized remote uri invocation
+     * Check if the request is pointing to an allowed URI to prevent unauthorized remote uri invocation. Validates only
+     * the URI relevant to the callback type against the corresponding allowlist.
      */
-    private void verifyRequest(Exchange exchange) {
+    private void verifyRequest(Exchange exchange, boolean isCompensation) {
         if (exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION) == null) {
             throw new IllegalArgumentException("Missing " + Exchange.SAGA_LONG_RUNNING_ACTION + " header in received request");
         }
 
-        Set<String> usedURIs = new HashSet<>();
         String compensationURI = exchange.getIn().getHeader(URL_COMPENSATION_KEY, String.class);
-        if (compensationURI != null) {
-            usedURIs.add(compensationURI);
-        }
         String completionURI = exchange.getIn().getHeader(URL_COMPLETION_KEY, String.class);
-        if (completionURI != null) {
-            usedURIs.add(completionURI);
-        }
 
         // CAMEL-17751: Extract URIs from the CamelHttpQuery header
-        if (usedURIs.isEmpty()) {
+        if (compensationURI == null && completionURI == null) {
             Map<String, String> queryParams
                     = parseQuery(exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class));
 
             if (!queryParams.isEmpty()) {
-
                 if (queryParams.get(URL_COMPENSATION_KEY) != null) {
                     compensationURI = queryParams.get(URL_COMPENSATION_KEY);
-                    usedURIs.add(compensationURI);
                     exchange.getIn().setHeader(URL_COMPENSATION_KEY, compensationURI);
                 }
-
                 if (queryParams.get(URL_COMPLETION_KEY) != null) {
                     completionURI = queryParams.get(URL_COMPLETION_KEY);
-                    usedURIs.add(completionURI);
                     exchange.getIn().setHeader(URL_COMPLETION_KEY, completionURI);
                 }
             }
         }
 
-        for (String uri : usedURIs) {
-            if (!sagaService.getRegisteredURIs().contains(uri)) {
+        String uri = isCompensation ? compensationURI : completionURI;
+        if (uri != null) {
+            Set<String> allowedURIs = isCompensation
+                    ? sagaService.getRegisteredCompensationURIs()
+                    : sagaService.getRegisteredCompletionURIs();
+            if (!allowedURIs.contains(uri)) {
                 throw new IllegalArgumentException("URI " + uri + " is not allowed");
             }
         }

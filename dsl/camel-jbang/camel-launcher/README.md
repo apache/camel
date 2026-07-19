@@ -16,21 +16,23 @@ This will create:
 1. A self-executing JAR (`camel-launcher-<version>.jar`) in the `target` directory using Spring Boot's nested JAR structure
 2. Distribution archives (`camel-launcher-<version>-bin.zip` and `camel-launcher-<version>-bin.tar.gz`) in the `target` directory
 
-On Windows, the distribution archives also include `bin/camel.exe`, a native bootstrap built by
-[`tooling/camel-exe`](../../../tooling/camel-exe). Release builds on a Windows x64 host run an integration test during `verify` that asserts
-`target/camel.exe` is staged and `bin/camel.exe` is present in the assembled ZIP:
+When `-Dcamel.exe.build=true` is enabled, the distribution archives also include native Windows bootstraps built by
+[`tooling/camel-exe`](../../../tooling/camel-exe): `bin/camel-x64.exe` and `bin/camel-arm64.exe`.
+Release builds use llvm-mingw to cross-compile both executables on Linux. The launcher module verifies during `verify`
+that both files are staged and present in the assembled ZIP:
 
 ```bash
-mvn -pl tooling/camel-exe,dsl/camel-jbang/camel-launcher -am verify -Dcamel.launcher.requireWindowsExe=true
+mvn -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher -am verify -Dcamel.exe.build=true
 ```
 
 To build and test only the native bootstrap:
 
 ```bash
-mvn -pl tooling/camel-exe verify -Dcamel.exe.requireWindowsExe=true
+mvn -pl buildingtools,tooling/camel-exe -am verify -Dcamel.exe.build=true
 ```
 
-See [`tooling/camel-exe/src/main/native/README.md`](../../../tooling/camel-exe/src/main/native/README.md) for MSVC requirements.
+See [`tooling/camel-exe/src/main/native/README.md`](../../../tooling/camel-exe/src/main/native/README.md) for
+llvm-mingw requirements.
 
 ## Usage
 
@@ -63,10 +65,11 @@ java -jar camel-launcher-<version>.jar run hello.java
    
    # On Windows
    bin\camel.bat [command] [options]
-   bin\camel.exe [command] [options]
+   bin\camel-x64.exe [command] [options]
+   bin\camel-arm64.exe [command] [options]
    ```
 
-   `camel.exe` and `camel.bat` behave identically on Windows; `camel.exe` exists for package managers
+   The native executables and `camel.bat` behave identically on Windows; the native executables exist for package managers
    (such as WinGet) that require a genuine executable command.
 
 ## Benefits

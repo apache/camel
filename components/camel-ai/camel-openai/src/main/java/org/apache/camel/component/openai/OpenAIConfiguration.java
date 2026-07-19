@@ -47,6 +47,23 @@ public class OpenAIConfiguration implements Cloneable {
               defaultValue = ClientOptions.PRODUCTION_URL)
     private String baseUrl = ClientOptions.PRODUCTION_URL;
 
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "HTTP request timeout in milliseconds for the OpenAI SDK client. "
+                            + "When 0 or negative, the SDK default (10 minutes) is used.")
+    private long requestTimeout;
+
+    @UriParam(defaultValue = "2")
+    @Metadata(description = "Maximum number of times the OpenAI SDK client retries failed requests. "
+                            + "The SDK retry is rate-limit aware (honors Retry-After on 429).")
+    private int maxRetries = 2;
+
+    @UriParam(prefix = "additionalHeader.", multiValue = true)
+    @Metadata(description = "Additional HTTP request headers to send with every API call "
+                            + "(e.g. additionalHeader.OpenAI-Organization=my-org or additionalHeader.api-key=secret). "
+                            + "Values may contain secrets.",
+              security = "secret")
+    private Map<String, Object> additionalHeader;
+
     @UriParam
     @Metadata(description = "The model to use for chat completion")
     private String model;
@@ -282,6 +299,30 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    public long getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public int getMaxRetries() {
+        return maxRetries;
+    }
+
+    public void setMaxRetries(int maxRetries) {
+        this.maxRetries = maxRetries;
+    }
+
+    public Map<String, Object> getAdditionalHeader() {
+        return additionalHeader;
+    }
+
+    public void setAdditionalHeader(Map<String, Object> additionalHeader) {
+        this.additionalHeader = additionalHeader;
     }
 
     public String getModel() {

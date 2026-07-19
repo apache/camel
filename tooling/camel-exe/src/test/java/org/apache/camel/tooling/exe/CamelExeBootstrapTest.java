@@ -35,13 +35,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Windows-only behavioral test for the native camel.exe bootstrap. Requires the build-windows-exe profile to have
- * produced target/camel.exe; the test fails loudly if it is missing so a broken native build does not pass silently.
+ * Windows-only behavioral test for the native camel.exe bootstrap. Requires the build-native-exe profile to have
+ * produced the platform-appropriate exe (target/camel-x64.exe on x86_64, target/camel-arm64.exe on aarch64); the test
+ * fails loudly if it is missing so a broken native build does not pass silently.
  */
 @EnabledOnOs(OS.WINDOWS)
 class CamelExeBootstrapTest {
 
-    private static final Path BUILT_EXE = Paths.get("target/camel.exe");
+    private static final String EXE_ARCH = "aarch64".equals(System.getProperty("os.arch")) ? "arm64" : "x64";
+    private static final Path BUILT_EXE = Paths.get("target/camel-" + EXE_ARCH + ".exe");
     private static final String CAPTURED_ARGS_FILE = "camel-args.txt";
     private static final String CAPTURE_ARGS_SCRIPT = "capture-arg.ps1";
 
@@ -98,8 +100,8 @@ class CamelExeBootstrapTest {
 
     private Path stagedExe(Path dir) throws Exception {
         assertTrue(Files.exists(BUILT_EXE),
-                "target/camel.exe must be built by the build-windows-exe profile before this test");
-        Path exe = dir.resolve("camel.exe");
+                BUILT_EXE + " must be built by the build-native-exe profile before this test");
+        Path exe = dir.resolve(BUILT_EXE.getFileName().toString());
         Files.copy(BUILT_EXE, exe);
         return exe;
     }

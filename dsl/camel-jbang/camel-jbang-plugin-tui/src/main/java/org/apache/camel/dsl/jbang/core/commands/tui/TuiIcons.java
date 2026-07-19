@@ -126,6 +126,7 @@ final class TuiIcons {
     // ---- More submenu tabs ----
     static final String TAB_BEANS = JAVA;
     static final String TAB_BROWSE = MESSAGE;
+    static final String TAB_CATALOG = "📖";
     static final String TAB_CIRCUIT_BREAKER = "⚡";
     static final String TAB_CLASSPATH = BUNDLED;
     static final String TAB_CONFIGURATION = DOCUMENT;

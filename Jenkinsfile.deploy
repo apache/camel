@@ -55,6 +55,44 @@ pipeline {
            }
         }
 
+        stage('Setup llvm-mingw') {
+            when {
+                anyOf {
+                    branch 'main'
+                    branch 'camel-4.22.x'
+                }
+            }
+            steps {
+                script {
+                    // Prefer an agent-provided llvm-mingw when the cross-compilers are already
+                    // on PATH; otherwise download the pinned, SHA256-verified toolchain into a
+                    // persistent cache so snapshot deploys don't require it to be pre-provisioned.
+                    // The install script is the single source of truth shared with
+                    // .github/actions/setup-llvm-mingw/action.yml.
+                    env.LLVM_MINGW_BIN = sh(
+                        returnStdout: true,
+                        script: '''
+                            set -eo pipefail
+                            if command -v x86_64-w64-mingw32-clang >/dev/null 2>&1 \
+                                    && command -v aarch64-w64-mingw32-clang >/dev/null 2>&1; then
+                                dirname "$(command -v x86_64-w64-mingw32-clang)"
+                            else
+                                ./.github/actions/setup-llvm-mingw/install-llvm-mingw.sh "$HOME/.cache/llvm-mingw"
+                            fi
+                        '''
+                    ).trim()
+                }
+                sh '''
+                    for compiler in x86_64-w64-mingw32-clang aarch64-w64-mingw32-clang; do
+                        if ! [ -x "${LLVM_MINGW_BIN}/${compiler}" ]; then
+                            echo "ERROR: $compiler not found under ${LLVM_MINGW_BIN}."
+                            exit 1
+                        fi
+                    done
+                '''
+            }
+        }
+
         stage('Build & Deploy') {
             when {
                 anyOf {
@@ -64,7 +102,15 @@ pipeline {
                 }
             }
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dquickly clean deploy"
+                script {
+                    // The native camel.exe cross-compile only exists on main and the upcoming
+                    // camel-4.22.x LTS. Older LTS branches still deploy their snapshots, but
+                    // without the native build (no -Dcamel.exe.build and no llvm-mingw on PATH).
+                    def nativeExe = env.BRANCH_NAME in ['main', 'camel-4.22.x']
+                    def exeParams = nativeExe ? '-Dcamel.exe.build=true ' : ''
+                    def pathPrefix = nativeExe ? "PATH=\"${env.LLVM_MINGW_BIN}:\$PATH\" " : ''
+                    sh "${pathPrefix}./mvnw $MAVEN_PARAMS ${exeParams}-Pdeploy,apache-snapshots -Dquickly clean deploy"
+                }
             }
         }
 
@@ -89,4 +135,3 @@ pipeline {
         }
     }
 }
-
