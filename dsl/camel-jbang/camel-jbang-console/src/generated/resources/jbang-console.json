@@ -7,7 +7,7 @@
     "deprecated": false,
     "firstVersion": "3.21.0",
     "label": "jbang",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jbang-console",
     "version": "4.22.0-SNAPSHOT"
