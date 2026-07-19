@@ -82,6 +82,7 @@ class TabRegistry {
     private ConfigurationTab configurationTab;
     private BeansTab beansTab;
     private BrowseTab browseTab;
+    private CatalogTab catalogTab;
     private ClasspathTab classpathTab;
     private MavenDependenciesTab mavenDependenciesTab;
     private CveAuditTab cveAuditTab;
@@ -132,6 +133,7 @@ class TabRegistry {
         configurationTab = new ConfigurationTab(ctx);
         beansTab = new BeansTab(ctx);
         browseTab = new BrowseTab(ctx);
+        catalogTab = new CatalogTab(ctx);
         classpathTab = new ClasspathTab(ctx);
         mavenDependenciesTab = new MavenDependenciesTab(ctx);
         cveAuditTab = new CveAuditTab(ctx);
@@ -149,31 +151,40 @@ class TabRegistry {
             sqlQueryTab.setInputValue("sql", sql);
         });
 
-        // Single source of truth for the More submenu: icon, programmatic name, mnemonic label and tab instance.
-        // Order defines the More popup index used by selectMoreTab(int).
+        // Single source of truth for the More submenu: icon, programmatic name, mnemonic label, tab instance, and group.
+        // Tabs are ordered by group (Routing, Observability, Data, JVM, Project), alphabetically within each group.
+        // The group field drives divider rendering in the More popup.
         moreTabs = List.of(
-                new MoreTab(TuiIcons.TAB_BEANS, "Beans", "&Beans", beansTab),
-                new MoreTab(TuiIcons.TAB_BROWSE, "Browse", "Bro&wse", browseTab),
-                new MoreTab(TuiIcons.TAB_CIRCUIT_BREAKER, "Circuit Breaker", "&Circuit Breaker", circuitBreakerTab),
-                new MoreTab(TuiIcons.TAB_CLASSPATH, "Classpath", "Cl&asspath", classpathTab),
-                new MoreTab(TuiIcons.TAB_CONFIGURATION, "Configuration", "Confi&guration", configurationTab),
-                new MoreTab(TuiIcons.TAB_CONSUMERS, "Consumers", "Co&nsumers", consumersTab),
-                new MoreTab(TuiIcons.TAB_CVE_AUDIT, "CVE Audit", "C&VE Audit", cveAuditTab),
-                new MoreTab(TuiIcons.TAB_HEALTH, "Health", "H&ealth", healthTab),
-                new MoreTab(TuiIcons.TAB_HEAP, "Heap Histogram", "&Heap Histogram", heapHistogramTab),
-                new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "In&flight", inflightTab),
-                new MoreTab(TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab),
-                new MoreTab(TuiIcons.TAB_KAFKA, "Kafka", "&Kafka", kafkaTab),
-                new MoreTab(TuiIcons.TAB_MAVEN_DEPENDENCIES, "Maven Dependencies", "Maven &Dependencies", mavenDependenciesTab),
-                new MoreTab(TuiIcons.TAB_MEMORY, "Memory", "&Memory", memoryTab),
-                new MoreTab(TuiIcons.TAB_MEMORY_LEAK, "Memory Leak", "Memor&y Leak", memoryLeakTab),
-                new MoreTab(TuiIcons.TAB_METRICS, "Metrics", "Metr&ics", metricsTab),
-                new MoreTab(TuiIcons.TAB_SQL_QUERY, "SQL Query", "S&QL Query", sqlQueryTab),
-                new MoreTab(TuiIcons.TAB_SQL_TRACE, "SQL Trace", "SQL T&race", sqlTraceTab),
-                new MoreTab(TuiIcons.TAB_SPANS, "Spans", "&OTel Spans", spansTab),
-                new MoreTab(TuiIcons.TAB_PROCESS, "Process", "&Process", processTab),
-                new MoreTab(TuiIcons.TAB_STARTUP, "Startup", "&Startup", startupTab),
-                new MoreTab(TuiIcons.TAB_THREADS, "Threads", "&Threads", threadsTab));
+                // Routing
+                new MoreTab(TuiIcons.TAB_BROWSE, "Browse", "Bro&wse", browseTab, "Routing"),
+                new MoreTab(TuiIcons.TAB_CIRCUIT_BREAKER, "Circuit Breaker", "&Circuit Breaker", circuitBreakerTab, "Routing"),
+                new MoreTab(TuiIcons.TAB_CONSUMERS, "Consumers", "Co&nsumers", consumersTab, "Routing"),
+                new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "In&flight", inflightTab, "Routing"),
+                // Observability
+                new MoreTab(TuiIcons.TAB_HEALTH, "Health", "H&ealth", healthTab, "Observability"),
+                new MoreTab(TuiIcons.TAB_METRICS, "Metrics", "Metr&ics", metricsTab, "Observability"),
+                new MoreTab(TuiIcons.TAB_SPANS, "Spans", "&OTel Spans", spansTab, "Observability"),
+                // Data
+                new MoreTab(TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab, "Data"),
+                new MoreTab(TuiIcons.TAB_KAFKA, "Kafka", "&Kafka", kafkaTab, "Data"),
+                new MoreTab(TuiIcons.TAB_SQL_QUERY, "SQL Query", "S&QL Query", sqlQueryTab, "Data"),
+                new MoreTab(TuiIcons.TAB_SQL_TRACE, "SQL Trace", "SQL T&race", sqlTraceTab, "Data"),
+                // JVM
+                new MoreTab(TuiIcons.TAB_CLASSPATH, "Classpath", "Cl&asspath", classpathTab, "JVM"),
+                new MoreTab(TuiIcons.TAB_HEAP, "Heap Histogram", "&Heap Histogram", heapHistogramTab, "JVM"),
+                new MoreTab(TuiIcons.TAB_MEMORY, "Memory", "&Memory", memoryTab, "JVM"),
+                new MoreTab(TuiIcons.TAB_MEMORY_LEAK, "Memory Leak", "Memor&y Leak", memoryLeakTab, "JVM"),
+                new MoreTab(TuiIcons.TAB_PROCESS, "Process", "&Process", processTab, "JVM"),
+                new MoreTab(TuiIcons.TAB_STARTUP, "Startup", "&Startup", startupTab, "JVM"),
+                new MoreTab(TuiIcons.TAB_THREADS, "Threads", "&Threads", threadsTab, "JVM"),
+                // Project
+                new MoreTab(TuiIcons.TAB_BEANS, "Beans", "&Beans", beansTab, "Project"),
+                new MoreTab(TuiIcons.TAB_CATALOG, "Catalog", "Cata&log", catalogTab, "Project"),
+                new MoreTab(TuiIcons.TAB_CONFIGURATION, "Configuration", "Confi&guration", configurationTab, "Project"),
+                new MoreTab(TuiIcons.TAB_CVE_AUDIT, "CVE Audit", "C&VE Audit", cveAuditTab, "Project"),
+                new MoreTab(
+                        TuiIcons.TAB_MAVEN_DEPENDENCIES, "Maven Dependencies", "Maven &Dependencies", mavenDependenciesTab,
+                        "Project"));
     }
 
     // ---- Tab access ----
@@ -356,6 +367,10 @@ class TabRegistry {
         return mavenDependenciesTab;
     }
 
+    CatalogTab catalogTab() {
+        return catalogTab;
+    }
+
     CveAuditTab cveAuditTab() {
         return cveAuditTab;
     }
@@ -376,7 +391,11 @@ class TabRegistry {
      * shortcut letter and its highlight offset are derived from {@code label} via
      * {@link TuiIcons#mnemonicIndex(String)}, so there is no separate index or shortcut list to keep aligned.
      */
-    record MoreTab(String icon, String name, String label, MonitorTab tab) {
+    record MoreTab(String icon, String name, String label, MonitorTab tab, String group) {
+
+        MoreTab(String icon, String name, String label, MonitorTab tab) {
+            this(icon, name, label, tab, null);
+        }
 
         MoreTab {
             int i = TuiIcons.mnemonicIndex(label);

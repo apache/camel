@@ -189,6 +189,14 @@ class McpFacade {
         return info != null ? info.name : null;
     }
 
+    String getSelectedCamelVersion() {
+        if (ctx == null) {
+            return null;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.camelVersion : null;
+    }
+
     int getIntegrationCount() {
         List<IntegrationInfo> list = data.get();
         return (int) list.stream().filter(i -> !i.vanishing).count();
