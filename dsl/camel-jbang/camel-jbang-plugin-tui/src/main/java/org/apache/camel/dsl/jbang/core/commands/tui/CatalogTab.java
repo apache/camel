@@ -62,6 +62,7 @@ class CatalogTab extends AbstractTableTab {
     private TextInputState filterInputState = new TextInputState("");
     private String filterTerm;
     private int scopeIndex;
+    private boolean fullCatalog;
     private List<CatalogEntry> allEntries = Collections.emptyList();
     private List<CatalogEntry> filteredEntries = Collections.emptyList();
     private String lastPid;
@@ -120,6 +121,12 @@ class CatalogTab extends AbstractTableTab {
         if (ke.isCharIgnoreCase('f')) {
             scopeIndex = (scopeIndex + 1) % SCOPES.length;
             refilter();
+            return true;
+        }
+        if (ke.isCharIgnoreCase('a')) {
+            fullCatalog = !fullCatalog;
+            dataLoaded = false;
+            loadCatalogData();
             return true;
         }
         return false;
@@ -215,7 +222,7 @@ class CatalogTab extends AbstractTableTab {
 
         String scope = SCOPES[scopeIndex];
         boolean filtered = filterTerm != null || !"all".equals(scope);
-        StringBuilder title = new StringBuilder(" Catalog ");
+        StringBuilder title = new StringBuilder(fullCatalog ? " Full Catalog " : " Catalog ");
         title.append('[');
         if (filtered) {
             title.append(filteredEntries.size()).append('/').append(allEntries.size());
@@ -264,6 +271,7 @@ class CatalogTab extends AbstractTableTab {
         }
         hint(spans, "Esc", filterTerm != null ? "clear" : "back");
         hint(spans, "s", "sort");
+        hint(spans, "a", fullCatalog ? "app only" : "all");
         hint(spans, "f", "scope [" + SCOPES[scopeIndex] + "]");
         if (filterTerm != null) {
             spans.add(Span.styled("  /", Theme.label().bold()));
@@ -303,18 +311,21 @@ class CatalogTab extends AbstractTableTab {
             return;
         }
 
+        boolean full = fullCatalog;
         ctx.runner.scheduler().execute(() -> {
             try {
-                DependencyLoader.LoadResult result = DependencyLoader.loadDependencies(info);
-                if (result.error() != null && result.entries().isEmpty()) {
-                    applyResult(Collections.emptyList(), result.error());
-                    return;
-                }
-
-                Set<String> appArtifacts = new HashSet<>();
-                for (DependencyLoader.DepEntry dep : result.entries()) {
-                    if (dep.isCamel()) {
-                        appArtifacts.add(dep.groupId() + ":" + dep.artifactId());
+                Set<String> appArtifacts = null;
+                if (!full) {
+                    DependencyLoader.LoadResult result = DependencyLoader.loadDependencies(info);
+                    if (result.error() != null && result.entries().isEmpty()) {
+                        applyResult(Collections.emptyList(), result.error());
+                        return;
+                    }
+                    appArtifacts = new HashSet<>();
+                    for (DependencyLoader.DepEntry dep : result.entries()) {
+                        if (dep.isCamel()) {
+                            appArtifacts.add(dep.groupId() + ":" + dep.artifactId());
+                        }
                     }
                 }
 
@@ -356,18 +367,21 @@ class CatalogTab extends AbstractTableTab {
                 if (model == null) {
                     continue;
                 }
-                String ga = model.getGroupId() + ":" + model.getArtifactId();
-                if (appArtifacts.contains(ga)) {
-                    CatalogEntry entry = new CatalogEntry();
-                    entry.name = model.getName();
-                    entry.kind = kind;
-                    entry.title = model.getTitle() != null ? model.getTitle() : name;
-                    entry.description = model.getDescription() != null ? model.getDescription() : "";
-                    entry.label = model.getLabel();
-                    entry.artifactId = model.getArtifactId();
-                    entry.deprecated = model.isDeprecated();
-                    entries.add(entry);
+                if (appArtifacts != null) {
+                    String ga = model.getGroupId() + ":" + model.getArtifactId();
+                    if (!appArtifacts.contains(ga)) {
+                        continue;
+                    }
                 }
+                CatalogEntry entry = new CatalogEntry();
+                entry.name = model.getName();
+                entry.kind = kind;
+                entry.title = model.getTitle() != null ? model.getTitle() : name;
+                entry.description = model.getDescription() != null ? model.getDescription() : "";
+                entry.label = model.getLabel();
+                entry.artifactId = model.getArtifactId();
+                entry.deprecated = model.isDeprecated();
+                entries.add(entry);
             } catch (Exception e) {
                 // skip unparseable entries
             }
@@ -445,9 +459,10 @@ class CatalogTab extends AbstractTableTab {
         return """
                 # Catalog
 
-                The Catalog tab shows which Camel catalog artifacts (components, data
-                formats, languages, and others) the running integration uses, based on
-                its declared Maven dependencies.
+                The Catalog tab shows Camel catalog artifacts (components, data formats,
+                languages, and others). By default it shows only artifacts used by the
+                running integration (matched via Maven dependencies). Press `a` to toggle
+                to the full catalog showing all available artifacts.
 
                 For each Camel dependency in the integration, the tab cross-references
                 the Camel catalog to identify all artifacts provided by that dependency.
@@ -463,6 +478,13 @@ class CatalogTab extends AbstractTableTab {
                 - **LABEL** — Category labels (e.g., "messaging", "scheduling", "transformation")
 
                 Deprecated artifacts are shown dimmed with a "(deprecated)" suffix.
+
+                ## Mode
+
+                Press `a` to toggle between:
+
+                - **app only** — show only artifacts from the integration's dependencies (default)
+                - **all** — show the full Camel catalog
 
                 ## Scope
 
@@ -483,6 +505,7 @@ class CatalogTab extends AbstractTableTab {
 
                 - `s` — cycle sort column (name, kind, title)
                 - `S` — reverse sort order
+                - `a` — toggle app only / full catalog
                 - `f` — cycle scope
                 - `/` — open filter
                 - `Esc` — clear filter or back
