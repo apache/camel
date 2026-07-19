@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -39,6 +40,8 @@ import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 
 /**
  * Manages the switch-integration, more-tabs, and kill-confirm popups. Extracted from {@link CamelMonitor} to reduce
@@ -72,6 +75,7 @@ class PopupManager {
     // "More" dropdown state
     private boolean showMorePopup;
     private final ListState morePopupState = new ListState();
+    private final ScrollbarState moreScrollbarState = new ScrollbarState();
     private int lastMoreSelection;
     private Line[] currentTabLabels;
 
@@ -92,8 +96,58 @@ class PopupManager {
         this.callbacks = callbacks;
     }
 
-    private int moreTabCount() {
-        return moreTabsSupplier.get().size();
+    private List<TabRegistry.MoreTab> buildMoreVisualList() {
+        List<TabRegistry.MoreTab> tabs = moreTabsSupplier.get();
+        List<TabRegistry.MoreTab> visual = new ArrayList<>();
+        String currentGroup = null;
+        for (TabRegistry.MoreTab tab : tabs) {
+            String group = tab.group();
+            if (group != null && !group.equals(currentGroup)) {
+                if (currentGroup != null) {
+                    visual.add(null);
+                }
+                currentGroup = group;
+            }
+            visual.add(tab);
+        }
+        return visual;
+    }
+
+    private int moreVisualCount() {
+        return buildMoreVisualList().size();
+    }
+
+    private boolean isMoreDividerIndex(int visualIndex) {
+        List<TabRegistry.MoreTab> visual = buildMoreVisualList();
+        return visualIndex >= 0 && visualIndex < visual.size() && visual.get(visualIndex) == null;
+    }
+
+    private int visualToMoreIndex(int visualIndex) {
+        List<TabRegistry.MoreTab> visual = buildMoreVisualList();
+        if (visualIndex < 0 || visualIndex >= visual.size() || visual.get(visualIndex) == null) {
+            return -1;
+        }
+        int moreIndex = 0;
+        for (int i = 0; i < visualIndex; i++) {
+            if (visual.get(i) != null) {
+                moreIndex++;
+            }
+        }
+        return moreIndex;
+    }
+
+    private int moreToVisualIndex(int moreIndex) {
+        List<TabRegistry.MoreTab> visual = buildMoreVisualList();
+        int count = 0;
+        for (int i = 0; i < visual.size(); i++) {
+            if (visual.get(i) != null) {
+                if (count == moreIndex) {
+                    return i;
+                }
+                count++;
+            }
+        }
+        return 0;
     }
 
     // ---- State queries ----
@@ -162,9 +216,10 @@ class PopupManager {
         showKillConfirm = true;
     }
 
-    void selectMorePopupEntry(int index) {
-        morePopupState.select(index);
-        lastMoreSelection = index;
+    void selectMorePopupEntry(int moreIndex) {
+        int visualIndex = moreToVisualIndex(moreIndex);
+        morePopupState.select(visualIndex);
+        lastMoreSelection = visualIndex;
     }
 
     // ---- Key handling ----
@@ -190,47 +245,71 @@ class PopupManager {
             showMorePopup = false;
             return true;
         }
+        int total = moreVisualCount();
         if (ke.isUp()) {
-            morePopupState.selectPrevious();
+            navigateMorePopup(-1, total);
             return true;
         }
         if (ke.isDown()) {
-            morePopupState.selectNext(moreTabCount());
+            navigateMorePopup(1, total);
             return true;
         }
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
             for (int i = 0; i < 5; i++) {
-                morePopupState.selectPrevious();
+                navigateMorePopup(-1, total);
             }
             return true;
         }
         if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
             for (int i = 0; i < 5; i++) {
-                morePopupState.selectNext(moreTabCount());
+                navigateMorePopup(1, total);
             }
             return true;
         }
         if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
             morePopupState.selectFirst();
+            if (isMoreDividerIndex(0)) {
+                navigateMorePopup(1, total);
+            }
             return true;
         }
         if (ke.isEnd() || ke.isKey(KeyCode.END)) {
-            morePopupState.selectLast(moreTabCount());
+            morePopupState.selectLast(total);
+            if (isMoreDividerIndex(total - 1)) {
+                navigateMorePopup(-1, total);
+            }
             return true;
         }
         int shortcutSel = morePopupShortcut(ke);
         if (shortcutSel >= 0) {
-            morePopupState.select(shortcutSel);
+            int visualSel = moreToVisualIndex(shortcutSel);
+            morePopupState.select(visualSel);
         }
         if (ke.isConfirm() || shortcutSel >= 0) {
-            showMorePopup = false;
-            Integer sel = shortcutSel >= 0 ? shortcutSel : morePopupState.selected();
-            if (sel != null) {
-                callbacks.selectMoreTab(sel);
+            Integer visualSel = shortcutSel >= 0 ? moreToVisualIndex(shortcutSel) : morePopupState.selected();
+            if (visualSel != null && !isMoreDividerIndex(visualSel)) {
+                showMorePopup = false;
+                int moreIdx = visualToMoreIndex(visualSel);
+                if (moreIdx >= 0) {
+                    callbacks.selectMoreTab(moreIdx);
+                }
             }
             return true;
         }
         return true;
+    }
+
+    private void navigateMorePopup(int direction, int total) {
+        Integer current = morePopupState.selected();
+        int next = (current != null ? current : 0) + direction;
+        next = Math.max(0, Math.min(next, total - 1));
+        while (isMoreDividerIndex(next) && next > 0 && next < total - 1) {
+            next += direction;
+        }
+        next = Math.max(0, Math.min(next, total - 1));
+        if (!isMoreDividerIndex(next)) {
+            morePopupState.select(next);
+        }
     }
 
     private boolean handleSwitchPopupKeys(KeyEvent ke, int selectedTab, int tabLog) {
@@ -312,33 +391,37 @@ class PopupManager {
         }
         boolean inside = TuiHelper.contains(lastMorePopupRect, me.x(), me.y());
 
-        // Click outside the popup closes it
         if (me.isClick() && !inside) {
             showMorePopup = false;
             return true;
         }
         if (!inside) {
-            return true; // consume but ignore drags/scrolls outside
+            return true;
         }
-        // Inside the popup: items start at y+1 (after border top row) and each is 1 row
-        int itemIndex = me.y() - lastMorePopupRect.y() - 1; // -1 for top border
-        if (itemIndex < 0 || itemIndex >= moreTabCount()) {
-            return true; // click on border area
+        int total = moreVisualCount();
+        int itemIndex = me.y() - lastMorePopupRect.y() - 1;
+        if (itemIndex < 0 || itemIndex >= total) {
+            return true;
         }
         if (me.kind() == MouseEventKind.SCROLL_UP) {
-            morePopupState.selectPrevious();
+            navigateMorePopup(-1, total);
             return true;
         }
         if (me.kind() == MouseEventKind.SCROLL_DOWN) {
-            morePopupState.selectNext(moreTabCount());
+            navigateMorePopup(1, total);
+            return true;
+        }
+        if (isMoreDividerIndex(itemIndex)) {
             return true;
         }
         if (me.isClick()) {
             showMorePopup = false;
-            callbacks.selectMoreTab(itemIndex);
+            int moreIdx = visualToMoreIndex(itemIndex);
+            if (moreIdx >= 0) {
+                callbacks.selectMoreTab(moreIdx);
+            }
             return true;
         }
-        // Hover/move: highlight the item under the cursor
         if (me.kind() == MouseEventKind.MOVE || me.kind() == MouseEventKind.DRAG) {
             morePopupState.select(itemIndex);
             return true;
@@ -393,10 +476,9 @@ class PopupManager {
     // ---- Rendering ----
 
     void renderMorePopup(Frame frame, Rect area) {
-        int popupW = 28;
-        int itemCount = moreTabCount();
+        int popupW = 30;
+        int itemCount = moreVisualCount();
         int popupH = Math.min(itemCount + 2, area.height());
-        // Position just below the More tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
         Line[] tabLabels = currentTabLabels;
@@ -429,23 +511,47 @@ class PopupManager {
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, morePopupState);
+
+        int visibleRows = Math.max(1, popup.height() - 2);
+        if (itemCount > visibleRows) {
+            Integer sel = morePopupState.selected();
+            moreScrollbarState
+                    .contentLength(itemCount)
+                    .viewportContentLength(visibleRows)
+                    .position(sel != null ? sel : 0);
+            frame.renderStatefulWidget(Scrollbar.builder().build(), popup, moreScrollbarState);
+        }
     }
 
     private ListItem[] morePopupItems(Style keyStyle) {
-        List<TabRegistry.MoreTab> tabs = moreTabsSupplier.get();
-        ListItem[] items = new ListItem[tabs.size()];
-        for (int i = 0; i < tabs.size(); i++) {
-            TabRegistry.MoreTab tab = tabs.get(i);
-            String name = tab.displayName();
-            String prefix = TuiIcons.indent(tab.icon());
-            int keyPos = tab.mnemonicIndex();
-            if (keyPos >= 0 && keyPos < name.length()) {
-                items[i] = ListItem.from(Line.from(
-                        Span.raw(prefix + name.substring(0, keyPos)),
-                        Span.styled(String.valueOf(name.charAt(keyPos)), keyStyle),
-                        Span.raw(name.substring(keyPos + 1))));
+        List<TabRegistry.MoreTab> visual = buildMoreVisualList();
+        ListItem[] items = new ListItem[visual.size()];
+        String currentGroup = null;
+        for (int i = 0; i < visual.size(); i++) {
+            TabRegistry.MoreTab tab = visual.get(i);
+            if (tab == null) {
+                String nextGroup = null;
+                for (int j = i + 1; j < visual.size(); j++) {
+                    if (visual.get(j) != null) {
+                        nextGroup = visual.get(j).group();
+                        break;
+                    }
+                }
+                String label = nextGroup != null ? nextGroup : "";
+                String divider = "  ─── " + label + " " + "─".repeat(Math.max(1, 20 - label.length()));
+                items[i] = ListItem.from(divider).style(Style.EMPTY.dim());
             } else {
-                items[i] = ListItem.from(prefix + name);
+                String name = tab.displayName();
+                String prefix = TuiIcons.indent(tab.icon());
+                int keyPos = tab.mnemonicIndex();
+                if (keyPos >= 0 && keyPos < name.length()) {
+                    items[i] = ListItem.from(Line.from(
+                            Span.raw(prefix + name.substring(0, keyPos)),
+                            Span.styled(String.valueOf(name.charAt(keyPos)), keyStyle),
+                            Span.raw(name.substring(keyPos + 1))));
+                } else {
+                    items[i] = ListItem.from(prefix + name);
+                }
             }
         }
         return items;
