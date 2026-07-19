@@ -141,15 +141,6 @@ Both resolve to the same artifact — `search.maven.org/remotecontent` simply re
 The distribution zip ships `camel-x64.exe` and `camel-arm64.exe` for WinGet, which requires a
 genuine portable executable per architecture (see the WinGet `installer.yaml.tpl` override).
 
-Chocolatey and Scoop use `camel.bat` as their entry point instead. Their custom templates
-remove both exe files during install to avoid exposing unused executables on PATH.
-
-### Chocolatey ARM64
-
-Native ARM64 support in Chocolatey is not yet available. Tracking issue:
-https://github.com/chocolatey/choco/issues/1803
-
-Until resolved, the Chocolatey package uses `camel.bat` as its entry point on both x64 and ARM64
-Windows. `camel.bat` is architecture-neutral (it only needs a Java runtime, not a native
-executable), so this works without emulation; it just means Chocolatey isn't yet shipping a
-genuine per-architecture executable the way WinGet does.
+Chocolatey and Scoop use `camel.bat` as their entry point instead (it needs only a JRE, so it is
+architecture-neutral and requires no per-architecture binary). Their custom templates remove both
+exe files during install to avoid exposing unused executables on PATH.
