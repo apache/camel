@@ -160,6 +160,10 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
             this.client.close();
             this.client = null;
         }
+        if (this.lifecycleStrategy != null) {
+            camelContext.getLifecycleStrategies().remove(this.lifecycleStrategy);
+            this.lifecycleStrategy = null;
+        }
         compensationURIs.clear();
         completionURIs.clear();
         stepsByRouteId.clear();
