@@ -38,7 +38,7 @@
     <properties>
         <firstVersion>4.18.0</firstVersion>
         <label>jbang,mcp,ai</label>
-        <supportLevel>Preview</supportLevel>
+        <supportLevel>Stable</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
         <!-- Build uber-jar for easy JBang execution -->
         <quarkus.package.jar.type>uber-jar</quarkus.package.jar.type>

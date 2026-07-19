@@ -69,7 +69,7 @@ public final class SecurityUtils {
         map.put("objectmessageenabled", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("sendenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("skiptlsverify", new SecurityOption(INSECURE_SSL, "true"));
-        map.put("sslendpointalgorithm", new SecurityOption(INSECURE_SSL, ""));
+        map.put("sslendpointalgorithm", new SecurityOption(INSECURE_SSL, "none"));
         map.put("stricthostkeychecking", new SecurityOption(INSECURE_SSL, ""));
         map.put("tls", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("transferexception", new SecurityOption(INSECURE_SERIALIZATION, "true"));
@@ -124,7 +124,19 @@ public final class SecurityUtils {
         if (option == null) {
             return false;
         }
-        return String.valueOf(value).equalsIgnoreCase(option.insecureValue());
+        String v = String.valueOf(value);
+        if (INSECURE_SSL.equals(option.category()) && "sslendpointalgorithm".equals(normalizeOptionName(text))) {
+            return v.isEmpty() || "none".equalsIgnoreCase(v) || "false".equalsIgnoreCase(v);
+        }
+        return v.equalsIgnoreCase(option.insecureValue());
+    }
+
+    private static String normalizeOptionName(String text) {
+        int lastPeriod = text.lastIndexOf('.');
+        if (lastPeriod >= 0) {
+            text = text.substring(lastPeriod + 1);
+        }
+        return text.toLowerCase(Locale.ENGLISH).replace("-", "");
     }
 
     /**
