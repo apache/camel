@@ -19,7 +19,7 @@ package org.apache.camel.component.file;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * The work is for example to move the processed file into a backup folder, delete the file or in case of processing
  * failure do a rollback.
  */
-public class GenericFileOnCompletion<T> implements Synchronization {
+public class GenericFileOnCompletion<T> implements SynchronizationVetoable {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileOnCompletion.class);
     private final GenericFileEndpoint<T> endpoint;
@@ -63,6 +63,16 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     @Override
     public void onFailure(Exchange exchange) {
         onCompletion(exchange);
+    }
+
+    @Override
+    public boolean allowHandover() {
+        return endpoint.isStreamDownload();
+    }
+
+    @Override
+    public void beforeHandover(Exchange target) {
+        // noop
     }
 
     public ExceptionHandler getExceptionHandler() {

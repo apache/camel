@@ -298,6 +298,16 @@ and `Files.copy()` instead of `FileChannel`-based streaming. The `forceWrites` f
 The default value has been changed from `true` to `false` to reflect the actual behavior. The option will
 be removed in a future release.
 
+=== camel-file / camel-ftp / camel-sftp / camel-smb - streamDownload with async endpoints
+
+When `streamDownload=true`, file-based consumers now allow their on-completion logic to hand over to downstream
+threads (for example when routing to `seda:` or `jms:`). This keeps the downloaded stream open until the downstream
+route has finished reading it, instead of closing it immediately on the consumer poll thread.
+
+Because handover defers commit/rollback (move, delete, idempotent confirmation, and stream release), file handles and
+remote connections may stay open longer while the downstream queue is busy. This only applies when `streamDownload=true`;
+routes without stream download keep the previous on-completion timing.
+
 === camel-mail - MimeMultipartDataFormat inbound header filtering
 
 When unmarshalling a MIME message with `headersInline=true`, the `mime-multipart` data format now applies a

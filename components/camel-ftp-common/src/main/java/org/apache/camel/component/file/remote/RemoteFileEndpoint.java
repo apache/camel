@@ -121,6 +121,11 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
     }
 
     @Override
+    public boolean isStreamDownload() {
+        return getConfiguration().isStreamDownload();
+    }
+
+    @Override
     public Map<String, String> getServiceMetadata() {
         if (getConfiguration().getUsername() != null) {
             return Map.of("username", getConfiguration().getUsername());

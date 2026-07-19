@@ -1625,6 +1625,16 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.synchronous = synchronous;
     }
 
+    /**
+     * Whether the consumer streams file content as an {@link java.io.InputStream} body instead of loading it into
+     * memory first. Remote file components (FTP, SFTP, SMB, etc.) override this when {@code streamDownload=true}.
+     *
+     * @since 4.22
+     */
+    public boolean isStreamDownload() {
+        return false;
+    }
+
     public String getChecksumFileAlgorithm() {
         return checksumFileAlgorithm;
     }

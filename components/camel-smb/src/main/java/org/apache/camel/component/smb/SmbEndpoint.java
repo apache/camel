@@ -128,6 +128,11 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
         return configuration;
     }
 
+    @Override
+    public boolean isStreamDownload() {
+        return configuration.isStreamDownload();
+    }
+
     /**
      * Default Existing File Move Strategy
      *
