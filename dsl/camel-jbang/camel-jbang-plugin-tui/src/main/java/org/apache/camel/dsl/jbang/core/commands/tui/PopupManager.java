@@ -255,15 +255,11 @@ class PopupManager {
             return true;
         }
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            for (int i = 0; i < 5; i++) {
-                navigateMorePopup(-1, total);
-            }
+            navigateMorePopupToSection(-1, total);
             return true;
         }
         if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            for (int i = 0; i < 5; i++) {
-                navigateMorePopup(1, total);
-            }
+            navigateMorePopupToSection(1, total);
             return true;
         }
         if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
@@ -309,6 +305,22 @@ class PopupManager {
         next = Math.max(0, Math.min(next, total - 1));
         if (!isMoreDividerIndex(next)) {
             morePopupState.select(next);
+        }
+    }
+
+    private void navigateMorePopupToSection(int direction, int total) {
+        Integer current = morePopupState.selected();
+        int pos = current != null ? current : 0;
+        pos += direction;
+        while (pos > 0 && pos < total - 1 && !isMoreDividerIndex(pos)) {
+            pos += direction;
+        }
+        if (isMoreDividerIndex(pos)) {
+            pos += direction;
+        }
+        pos = Math.max(0, Math.min(pos, total - 1));
+        if (!isMoreDividerIndex(pos)) {
+            morePopupState.select(pos);
         }
     }
 
