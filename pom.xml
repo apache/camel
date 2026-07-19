@@ -749,6 +749,7 @@
             </activation>
             <properties>
                 <skipTests>true</skipTests>
+                <camel.exe.build>true</camel.exe.build>
             </properties>
             <build>
                 <plugins>

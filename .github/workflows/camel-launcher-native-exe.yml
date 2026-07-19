@@ -1,0 +1,202 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Cross-compiles camel.exe (x64 + arm64) on Linux using clang/llvm-mingw.
+# Transitional safety net, remove once a real release has exercised the
+# -Prelease auto-trigger path successfully.
+name: Camel launcher native exe build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'tooling/camel-exe/**'
+      - 'dsl/camel-jbang/camel-launcher/**'
+      - '.github/actions/setup-llvm-mingw/**'
+      - '.github/workflows/camel-launcher-native-exe.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'tooling/camel-exe/**'
+      - 'dsl/camel-jbang/camel-launcher/**'
+      - '.github/actions/setup-llvm-mingw/**'
+      - '.github/workflows/camel-launcher-native-exe.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      camel-exe: ${{ steps.changes.outputs.camel-exe }}
+      camel-launcher: ${{ steps.changes.outputs.camel-launcher }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - id: changes
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "camel-exe=true" >> "$GITHUB_OUTPUT"
+            echo "camel-launcher=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CHANGED="$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)"
+          else
+            CHANGED="$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}")"
+          fi
+
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          camel_exe=false
+          camel_launcher=false
+
+          if echo "$CHANGED" | grep -qE '^(tooling/camel-exe/|\.github/actions/setup-llvm-mingw/|\.github/workflows/camel-launcher-native-exe\.yml)'; then
+            camel_exe=true
+          fi
+
+          if echo "$CHANGED" | grep -qE '^(dsl/camel-jbang/camel-launcher/|tooling/camel-exe/|\.github/actions/setup-llvm-mingw/|\.github/workflows/camel-launcher-native-exe\.yml)'; then
+            camel_launcher=true
+          fi
+
+          echo "camel-exe=$camel_exe" >> "$GITHUB_OUTPUT"
+          echo "camel-launcher=$camel_launcher" >> "$GITHUB_OUTPUT"
+
+  camel-exe:
+    needs: detect-changes
+    if: github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.camel-exe == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Set up JDK 25
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+      - uses: ./.github/actions/setup-llvm-mingw
+      - name: Build and test native camel.exe (x64 + arm64)
+        # Plain mvn: this reactor is only a handful of modules, so the mvnd daemon
+        # brings no parallelism benefit and adds a cold-start failure mode.
+        run: |
+          mvn -pl buildingtools,tooling/camel-exe -am verify -Dcamel.exe.build=true -DskipTests
+      - name: Upload Windows x64 camel.exe
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: camel-x64-exe
+          path: tooling/camel-exe/target/camel-x64.exe
+          if-no-files-found: error
+
+  camel-exe-windows-smoke:
+    needs:
+      - detect-changes
+      - camel-exe
+    if: github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.camel-exe == 'true'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Set up JDK 25
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+      - name: Download Windows x64 camel.exe
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: camel-x64-exe
+          path: tooling/camel-exe/target
+      - name: Smoke test Windows x64 camel.exe
+        shell: bash
+        run: |
+          mvn -B -ntp -pl buildingtools,tooling/camel-exe -am test -Dtest=CamelExeBootstrapTest -Dsurefire.failIfNoSpecifiedTests=false
+
+  camel-launcher-native:
+    needs: detect-changes
+    if: github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.camel-launcher == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Set up JDK 25
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+      - name: Verify launcher snapshot dependencies are published
+        # Without -am the launcher's upstream modules are not built here; they must
+        # already be deployed as the current version's snapshot on the Apache
+        # snapshot repository. camel-launcher is the terminal module, deployed after
+        # its dependencies, so its presence stands in as a sentinel for the whole
+        # upstream tree. Fail early with a clear message instead of a deep Maven
+        # resolution error mid-build.
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -N)
+          META="https://repository.apache.org/snapshots/org/apache/camel/camel-launcher/${VERSION}/maven-metadata.xml"
+          echo "Checking ${META}"
+          if ! curl -fsSL -o /dev/null "${META}"; then
+            echo "ERROR: camel-launcher ${VERSION} is not on the Apache snapshot repository."
+            echo "This job resolves the launcher's upstream modules from there (no -am build)."
+            echo "Wait for a main-branch snapshot deploy of ${VERSION}, or rebuild with -am."
+            exit 1
+          fi
+          echo "Launcher upstream snapshots for ${VERSION} are available."
+      - uses: ./.github/actions/setup-llvm-mingw
+      - name: Build launcher with native camel.exe (x64 + arm64)
+        # No -am: build only the listed modules. The launcher's other in-repo
+        # dependencies (camel-jbang-core, its jbang plugins, camel-core, ...) resolve
+        # as the current version's snapshot from Apache snapshots rather than being
+        # rebuilt from source. This PR only touches camel-exe/camel-launcher, so those
+        # upstream snapshots are unchanged, and the job drops from the full launcher
+        # reactor to a handful of modules.
+        #
+        # Plain mvn: once -am is gone this reactor is only a few modules, so the mvnd
+        # daemon brings no parallelism benefit and adds a cold-start failure mode.
+        # -P apache-snapshots is required here so the upstream modules resolve.
+        run: |
+          mvn -P apache-snapshots \
+            -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher verify \
+            -Dcamel.exe.build=true -DskipTests
+      - name: Assert archive carries both exe files
+        run: |
+          ZIP=$(find dsl/camel-jbang/camel-launcher/target -maxdepth 1 -name 'camel-launcher-*-bin.zip' -print -quit)
+          echo "Checking archive: $ZIP"
+          ENTRIES=$(unzip -l "$ZIP" | grep -Ec '/bin/camel-(x64|arm64)\.exe$')
+          if [ "$ENTRIES" -ne 2 ]; then
+            echo "ERROR: expected both bin/camel-x64.exe and bin/camel-arm64.exe in archive"
+            unzip -l "$ZIP" | grep -i exe
+            exit 1
+          fi
+          echo "Both bin/camel-x64.exe and bin/camel-arm64.exe found in archive"
