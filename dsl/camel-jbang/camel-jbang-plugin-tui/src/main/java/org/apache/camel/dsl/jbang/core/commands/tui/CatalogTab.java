@@ -180,7 +180,7 @@ class CatalogTab extends AbstractTableTab {
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled("  Loading catalog...", Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" Catalog ").build())
+                                    .title(fullCatalog ? " Catalog [All] " : " Catalog [App] ").build())
                             .build(),
                     area);
             return;
@@ -192,7 +192,7 @@ class CatalogTab extends AbstractTableTab {
                             .text(Text.from(Line.from(
                                     Span.styled("  " + errorMessage, Theme.error()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" Catalog ").build())
+                                    .title(fullCatalog ? " Catalog [All] " : " Catalog [App] ").build())
                             .build(),
                     area);
             return;
@@ -226,7 +226,7 @@ class CatalogTab extends AbstractTableTab {
 
         String scope = SCOPES[scopeIndex];
         boolean filtered = filterTerm != null || !"all".equals(scope);
-        StringBuilder title = new StringBuilder(fullCatalog ? " Full Catalog " : " Catalog ");
+        StringBuilder title = new StringBuilder(fullCatalog ? " Catalog [All] " : " Catalog [App] ");
         title.append('[');
         if (filtered) {
             title.append(filteredEntries.size()).append('/').append(allEntries.size());
