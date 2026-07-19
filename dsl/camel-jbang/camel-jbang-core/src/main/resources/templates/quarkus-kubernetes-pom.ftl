@@ -22,6 +22,15 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+[#if ParentGroupId??]
+    <parent>
+        <groupId>[=ParentGroupId]</groupId>
+        <artifactId>[=ParentArtifactId]</artifactId>
+        <version>[=ParentVersion]</version>
+        <relativePath/>
+    </parent>
+
+[/#if]
     <groupId>[=GroupId]</groupId>
     <artifactId>[=ArtifactId]</artifactId>
     <version>[=Version]</version>

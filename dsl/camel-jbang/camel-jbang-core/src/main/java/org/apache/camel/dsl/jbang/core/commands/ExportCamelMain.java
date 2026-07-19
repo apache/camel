@@ -217,6 +217,7 @@ class ExportCamelMain extends Export {
         model.put("Repositories", buildRepositoryList(repos));
         model.put("Dependencies", buildDependencyList(deps));
         model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
+        enrichParentPom(model);
 
         // kubernetes/docker properties
         enrichKubernetesModel(model, settings, profile);

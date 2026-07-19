@@ -135,6 +135,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
     protected String gav;
 
+    @CommandLine.Option(names = { "--parent-pom" }, description = "The Maven parent POM group:artifact:version")
+    protected String parentPom;
+
     @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     protected List<String> excludes = new ArrayList<>();
 
@@ -514,6 +517,17 @@ public abstract class ExportBaseCommand extends CamelCommand {
     /**
      * Formats build properties as XML property lines for inclusion in POM templates.
      */
+    protected void enrichParentPom(Map<String, Object> model) {
+        if (parentPom != null) {
+            String[] parts = parentPom.split(":");
+            if (parts.length == 3) {
+                model.put("ParentGroupId", parts[0]);
+                model.put("ParentArtifactId", parts[1]);
+                model.put("ParentVersion", parts[2]);
+            }
+        }
+    }
+
     protected String formatBuildProperties() {
         Properties properties = mapBuildProperties();
 
