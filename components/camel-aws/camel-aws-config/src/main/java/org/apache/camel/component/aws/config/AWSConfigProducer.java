@@ -285,7 +285,8 @@ public class AWSConfigProducer extends DefaultProducer {
         } else {
             DeleteConformancePackRequest.Builder builder = DeleteConformancePackRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_NAME))) {
-                String conformancePackName = exchange.getIn().getHeader(AWSConfigConstants.RULE_NAME, String.class);
+                String conformancePackName
+                        = exchange.getIn().getHeader(AWSConfigConstants.CONFORMACE_PACK_NAME, String.class);
                 builder.conformancePackName(conformancePackName);
             } else {
                 throw new IllegalArgumentException("Conformance Pack Name must be specified");
