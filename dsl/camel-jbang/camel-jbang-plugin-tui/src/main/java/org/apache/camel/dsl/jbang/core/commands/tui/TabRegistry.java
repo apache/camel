@@ -82,6 +82,7 @@ class TabRegistry {
     private ConfigurationTab configurationTab;
     private BeansTab beansTab;
     private BrowseTab browseTab;
+    private CatalogTab catalogTab;
     private ClasspathTab classpathTab;
     private MavenDependenciesTab mavenDependenciesTab;
     private CveAuditTab cveAuditTab;
@@ -132,6 +133,7 @@ class TabRegistry {
         configurationTab = new ConfigurationTab(ctx);
         beansTab = new BeansTab(ctx);
         browseTab = new BrowseTab(ctx);
+        catalogTab = new CatalogTab(ctx);
         classpathTab = new ClasspathTab(ctx);
         mavenDependenciesTab = new MavenDependenciesTab(ctx);
         cveAuditTab = new CveAuditTab(ctx);
@@ -154,6 +156,7 @@ class TabRegistry {
         moreTabs = List.of(
                 new MoreTab(TuiIcons.TAB_BEANS, "Beans", "&Beans", beansTab),
                 new MoreTab(TuiIcons.TAB_BROWSE, "Browse", "Bro&wse", browseTab),
+                new MoreTab(TuiIcons.TAB_CATALOG, "Catalog", "Catal&og", catalogTab),
                 new MoreTab(TuiIcons.TAB_CIRCUIT_BREAKER, "Circuit Breaker", "&Circuit Breaker", circuitBreakerTab),
                 new MoreTab(TuiIcons.TAB_CLASSPATH, "Classpath", "Cl&asspath", classpathTab),
                 new MoreTab(TuiIcons.TAB_CONFIGURATION, "Configuration", "Confi&guration", configurationTab),

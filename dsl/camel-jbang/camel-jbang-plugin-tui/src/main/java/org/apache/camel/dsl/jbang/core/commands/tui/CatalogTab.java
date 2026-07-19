@@ -1,0 +1,535 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.core.commands.tui;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import dev.tamboui.layout.Constraint;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Style;
+import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.Line;
+import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.block.Block;
+import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.input.TextInputState;
+import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.table.Cell;
+import dev.tamboui.widgets.table.Row;
+import dev.tamboui.widgets.table.Table;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.tooling.model.ArtifactModel;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
+
+/**
+ * TUI tab showing Camel catalog artifacts (components, data formats, languages, others) that the running integration
+ * uses, based on its declared Maven dependencies.
+ */
+class CatalogTab extends AbstractTableTab {
+
+    private static final String[] SCOPES = { "all", "component", "dataformat", "language", "other" };
+
+    private final AtomicBoolean loading = new AtomicBoolean(false);
+
+    private boolean filterInputActive;
+    private TextInputState filterInputState = new TextInputState("");
+    private String filterTerm;
+    private int scopeIndex;
+    private List<CatalogEntry> allEntries = Collections.emptyList();
+    private List<CatalogEntry> filteredEntries = Collections.emptyList();
+    private String lastPid;
+    private String errorMessage;
+    private boolean dataLoaded;
+
+    CatalogTab(MonitorContext ctx) {
+        super(ctx, "name", "kind", "title");
+    }
+
+    @Override
+    public void onTabSelected() {
+        String pid = ctx.selectedPid;
+        if (pid != null && !pid.equals(lastPid)) {
+            lastPid = pid;
+            allEntries = Collections.emptyList();
+            dataLoaded = false;
+        }
+        if (!dataLoaded) {
+            loadCatalogData();
+        }
+    }
+
+    @Override
+    public void onIntegrationChanged() {
+        allEntries = Collections.emptyList();
+        filteredEntries = Collections.emptyList();
+        filterTerm = null;
+        filterInputActive = false;
+        scopeIndex = 0;
+        lastPid = null;
+        errorMessage = null;
+        dataLoaded = false;
+        loading.set(false);
+        if (ctx.selectedPid != null) {
+            lastPid = ctx.selectedPid;
+            loadCatalogData();
+        }
+    }
+
+    @Override
+    public boolean handleKeyEvent(KeyEvent ke) {
+        if (filterInputActive) {
+            return handleFilterInput(ke);
+        }
+        return super.handleKeyEvent(ke);
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isChar('/')) {
+            filterInputActive = true;
+            filterInputState = new TextInputState(filterTerm != null ? filterTerm : "");
+            return true;
+        }
+        if (ke.isCharIgnoreCase('f')) {
+            scopeIndex = (scopeIndex + 1) % SCOPES.length;
+            refilter();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleFilterInput(KeyEvent ke) {
+        if (ke.isKey(KeyCode.ESCAPE)) {
+            filterInputActive = false;
+            return true;
+        }
+        if (ke.isConfirm()) {
+            String text = filterInputState.text().trim();
+            filterTerm = text.isEmpty() ? null : text;
+            filterInputActive = false;
+            refilter();
+            return true;
+        }
+        FormHelper.handleTextInput(ke, filterInputState);
+        return true;
+    }
+
+    @Override
+    public boolean handleEscape() {
+        if (filterTerm != null) {
+            filterTerm = null;
+            refilter();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected int getRowCount() {
+        return filteredEntries.size();
+    }
+
+    @Override
+    public void render(Frame frame, Rect area) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            renderNoSelection(frame, area);
+            return;
+        }
+
+        if (loading.get() && allEntries.isEmpty()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(Span.styled("  Loading catalog...", Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Catalog ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        if (errorMessage != null && allEntries.isEmpty()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(
+                                    Span.styled("  " + errorMessage, Theme.error()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Catalog ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        renderContent(frame, area, info);
+    }
+
+    @Override
+    protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
+        List<CatalogEntry> sorted = new ArrayList<>(filteredEntries);
+        sorted.sort(this::sortEntry);
+
+        List<Row> rows = new ArrayList<>();
+        for (CatalogEntry entry : sorted) {
+            Style nameStyle = entry.deprecated
+                    ? Theme.error().dim()
+                    : Style.EMPTY.fg(Theme.accent());
+            String name = entry.deprecated ? entry.name + " (deprecated)" : entry.name;
+            Style kindStyle = kindStyle(entry.kind);
+            rows.add(Row.from(
+                    Cell.from(Span.styled(" " + name, nameStyle)),
+                    Cell.from(Span.styled(entry.kind, kindStyle)),
+                    Cell.from(entry.title),
+                    Cell.from(Span.styled(entry.label != null ? entry.label : "", Style.EMPTY.dim()))));
+        }
+
+        if (rows.isEmpty() && dataLoaded) {
+            rows.add(emptyRow("No catalog entries found", 4));
+        }
+
+        String scope = SCOPES[scopeIndex];
+        boolean filtered = filterTerm != null || !"all".equals(scope);
+        StringBuilder title = new StringBuilder(" Catalog ");
+        title.append('[');
+        if (filtered) {
+            title.append(filteredEntries.size()).append('/').append(allEntries.size());
+        } else {
+            title.append(filteredEntries.size());
+        }
+        title.append(']');
+        if (!"all".equals(scope)) {
+            title.append(" scope:").append(scope);
+        }
+        if (filterTerm != null) {
+            title.append(" filter:\"").append(filterTerm).append('"');
+        }
+        title.append(' ');
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        Cell.from(Span.styled(" " + sortLabel("NAME", "name"), sortStyle("name"))),
+                        Cell.from(Span.styled(sortLabel("KIND", "kind"), sortStyle("kind"))),
+                        Cell.from(Span.styled(sortLabel("TITLE", "title"), sortStyle("title"))),
+                        Cell.from(Span.styled("LABEL", Style.EMPTY.bold()))))
+                .widths(
+                        Constraint.length(30),
+                        Constraint.length(12),
+                        Constraint.length(30),
+                        Constraint.fill())
+                .highlightStyle(Theme.selectionBg())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .title(title.toString()).build())
+                .build();
+
+        lastTableArea = area;
+        frame.renderStatefulWidget(table, area, tableState);
+        renderScrollbar(frame, sorted.size());
+    }
+
+    @Override
+    public void renderFooter(List<Span> spans) {
+        if (filterInputActive) {
+            spans.add(Span.styled(" /", Theme.label().bold()));
+            spans.add(Span.raw(filterInputState.text() + "█  "));
+            hint(spans, "Enter", "filter");
+            hintLast(spans, "Esc", "cancel");
+            return;
+        }
+        hint(spans, "Esc", filterTerm != null ? "clear" : "back");
+        hint(spans, "s", "sort");
+        hint(spans, "f", "scope [" + SCOPES[scopeIndex] + "]");
+        if (filterTerm != null) {
+            spans.add(Span.styled("  /", Theme.label().bold()));
+            spans.add(Span.raw("\"" + filterTerm + "\"  "));
+        } else {
+            hint(spans, "/", "filter");
+        }
+        hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
+    }
+
+    private int sortEntry(CatalogEntry a, CatalogEntry b) {
+        int result = switch (sort) {
+            case "kind" -> a.kind.compareToIgnoreCase(b.kind);
+            case "title" -> a.title.compareToIgnoreCase(b.title);
+            default -> a.name.compareToIgnoreCase(b.name); // "name"
+        };
+        return sortReversed ? -result : result;
+    }
+
+    private static Style kindStyle(String kind) {
+        return switch (kind) {
+            case "component" -> Style.EMPTY.fg(Theme.accent());
+            case "dataformat" -> Theme.success();
+            case "language" -> Theme.warning();
+            default -> Style.EMPTY.dim();
+        };
+    }
+
+    // ---- Data Loading ----
+
+    private void loadCatalogData() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || ctx.runner == null) {
+            return;
+        }
+        if (!loading.compareAndSet(false, true)) {
+            return;
+        }
+
+        ctx.runner.scheduler().execute(() -> {
+            try {
+                DependencyLoader.LoadResult result = DependencyLoader.loadDependencies(info);
+                if (result.error() != null && result.entries().isEmpty()) {
+                    applyResult(Collections.emptyList(), result.error());
+                    return;
+                }
+
+                Set<String> appArtifacts = new HashSet<>();
+                for (DependencyLoader.DepEntry dep : result.entries()) {
+                    if (dep.isCamel()) {
+                        appArtifacts.add(dep.groupId() + ":" + dep.artifactId());
+                    }
+                }
+
+                CamelCatalog catalog = CatalogLoader.loadCatalog(null, info.camelVersion, true);
+                if (catalog == null) {
+                    applyResult(Collections.emptyList(), "Could not load catalog for version " + info.camelVersion);
+                    return;
+                }
+
+                List<CatalogEntry> entries = new ArrayList<>();
+                collectArtifacts(catalog, "component", catalog.findComponentNames(), appArtifacts, entries);
+                collectArtifacts(catalog, "dataformat", catalog.findDataFormatNames(), appArtifacts, entries);
+                collectArtifacts(catalog, "language", catalog.findLanguageNames(), appArtifacts, entries);
+                collectArtifacts(catalog, "other", catalog.findOtherNames(), appArtifacts, entries);
+
+                entries.sort((a, b) -> a.name.compareToIgnoreCase(b.name));
+                applyResult(entries, null);
+            } catch (Exception e) {
+                applyResult(Collections.emptyList(), "Error: " + e.getMessage());
+            } finally {
+                loading.set(false);
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void collectArtifacts(
+            CamelCatalog catalog, String kind, List<String> names,
+            Set<String> appArtifacts, List<CatalogEntry> entries) {
+        for (String name : names) {
+            try {
+                ArtifactModel<?> model = (ArtifactModel<?>) switch (kind) {
+                    case "component" -> catalog.componentModel(name);
+                    case "dataformat" -> catalog.dataFormatModel(name);
+                    case "language" -> catalog.languageModel(name);
+                    case "other" -> catalog.otherModel(name);
+                    default -> null;
+                };
+                if (model == null) {
+                    continue;
+                }
+                String ga = model.getGroupId() + ":" + model.getArtifactId();
+                if (appArtifacts.contains(ga)) {
+                    CatalogEntry entry = new CatalogEntry();
+                    entry.name = model.getName();
+                    entry.kind = kind;
+                    entry.title = model.getTitle() != null ? model.getTitle() : name;
+                    entry.description = model.getDescription() != null ? model.getDescription() : "";
+                    entry.label = model.getLabel();
+                    entry.artifactId = model.getArtifactId();
+                    entry.deprecated = model.isDeprecated();
+                    entries.add(entry);
+                }
+            } catch (Exception e) {
+                // skip unparseable entries
+            }
+        }
+    }
+
+    private void applyResult(List<CatalogEntry> entries, String error) {
+        if (ctx.runner == null) {
+            return;
+        }
+        ctx.runner.runOnRenderThread(() -> {
+            allEntries = entries;
+            errorMessage = error;
+            dataLoaded = true;
+            refilter();
+        });
+    }
+
+    private void refilter() {
+        List<CatalogEntry> result = new ArrayList<>();
+        String ft = filterTerm != null ? filterTerm.toLowerCase() : null;
+        String scope = SCOPES[scopeIndex];
+        for (CatalogEntry entry : allEntries) {
+            if (!"all".equals(scope) && !scope.equals(entry.kind)) {
+                continue;
+            }
+            if (ft != null
+                    && !entry.name.toLowerCase().contains(ft)
+                    && !entry.title.toLowerCase().contains(ft)
+                    && !(entry.label != null && entry.label.toLowerCase().contains(ft))) {
+                continue;
+            }
+            result.add(entry);
+        }
+        filteredEntries = result;
+        if (!filteredEntries.isEmpty()) {
+            tableState.select(0);
+        }
+    }
+
+    @Override
+    public boolean setFilter(String filter) {
+        filterTerm = filter != null && !filter.isEmpty() ? filter : null;
+        refilter();
+        return true;
+    }
+
+    @Override
+    public boolean setInputValue(String field, String value) {
+        if ("filter".equals(field)) {
+            return setFilter(value);
+        }
+        return false;
+    }
+
+    @Override
+    public SelectionContext getSelectionContext() {
+        if (filteredEntries.isEmpty()) {
+            return null;
+        }
+        List<CatalogEntry> sorted = new ArrayList<>(filteredEntries);
+        sorted.sort(this::sortEntry);
+        List<String> items = sorted.stream().map(e -> e.name).toList();
+        Integer sel = tableState.selected();
+        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Catalog");
+    }
+
+    @Override
+    public String description() {
+        return "Camel catalog artifacts used by the integration";
+    }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Catalog
+
+                The Catalog tab shows which Camel catalog artifacts (components, data
+                formats, languages, and others) the running integration uses, based on
+                its declared Maven dependencies.
+
+                For each Camel dependency in the integration, the tab cross-references
+                the Camel catalog to identify all artifacts provided by that dependency.
+                For example, `camel-core` provides the `direct`, `seda`, `timer`, `bean`,
+                `log`, and `mock` components, while `camel-kafka` provides the `kafka`
+                component.
+
+                ## Table Columns
+
+                - **NAME** — The catalog artifact name (e.g., `kafka`, `timer`, `json-jackson`)
+                - **KIND** — The artifact type: `component`, `dataformat`, `language`, or `other`
+                - **TITLE** — Human-readable title (e.g., "Apache Kafka", "Timer")
+                - **LABEL** — Category labels (e.g., "messaging", "scheduling", "transformation")
+
+                Deprecated artifacts are shown dimmed with a "(deprecated)" suffix.
+
+                ## Scope
+
+                Press `f` to cycle the scope filter:
+
+                - **all** — show all catalog artifacts (default)
+                - **component** — show only components
+                - **dataformat** — show only data formats
+                - **language** — show only expression languages
+                - **other** — show only miscellaneous artifacts
+
+                ## Filter
+
+                Press `/` to open the filter input. Type a search term and press
+                `Enter` to filter by substring match on name, title, or label.
+
+                ## Keys
+
+                - `s` — cycle sort column (name, kind, title)
+                - `S` — reverse sort order
+                - `f` — cycle scope
+                - `/` — open filter
+                - `Esc` — clear filter or back
+                """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        if (filteredEntries.isEmpty()) {
+            return null;
+        }
+        List<CatalogEntry> sorted = new ArrayList<>(filteredEntries);
+        sorted.sort(this::sortEntry);
+        JsonObject result = new JsonObject();
+        result.put("tab", "Catalog");
+        JsonArray rows = new JsonArray();
+        for (CatalogEntry e : sorted) {
+            JsonObject row = new JsonObject();
+            row.put("name", e.name);
+            row.put("kind", e.kind);
+            row.put("title", e.title);
+            row.put("description", e.description);
+            if (e.label != null) {
+                row.put("label", e.label);
+            }
+            row.put("artifactId", e.artifactId);
+            if (e.deprecated) {
+                row.put("deprecated", true);
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", sorted.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
+    }
+
+    // ---- Data Class ----
+
+    static class CatalogEntry {
+        String name;
+        String kind;
+        String title;
+        String description;
+        String label;
+        String artifactId;
+        boolean deprecated;
+    }
+}
