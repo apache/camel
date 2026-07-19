@@ -104,6 +104,12 @@ class SecurityUtilsTest {
         assertTrue(SecurityUtils.isInsecureValue("camel.ssl.hostnameVerification", "false"));
         assertFalse(SecurityUtils.isInsecureValue("camel.ssl.hostnameVerification", "true"));
 
+        // sslEndpointAlgorithm=none/false/empty disables hostname verification
+        assertTrue(SecurityUtils.isInsecureValue("camel.component.kafka.sslEndpointAlgorithm", "none"));
+        assertTrue(SecurityUtils.isInsecureValue("camel.component.kafka.sslEndpointAlgorithm", "false"));
+        assertTrue(SecurityUtils.isInsecureValue("camel.component.kafka.sslEndpointAlgorithm", ""));
+        assertFalse(SecurityUtils.isInsecureValue("camel.component.kafka.sslEndpointAlgorithm", "https"));
+
         // unknown option is never insecure
         assertFalse(SecurityUtils.isInsecureValue("camel.component.http.port", "8080"));
     }
