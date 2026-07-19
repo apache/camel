@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.tamboui.layout.Constraint;
+import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -70,7 +71,7 @@ class CatalogTab extends AbstractTableTab {
     private boolean dataLoaded;
 
     CatalogTab(MonitorContext ctx) {
-        super(ctx, "name", "kind", "title");
+        super(ctx, "name", "kind", "description");
     }
 
     @Override
@@ -206,6 +207,14 @@ class CatalogTab extends AbstractTableTab {
         List<CatalogEntry> sorted = new ArrayList<>(filteredEntries);
         sorted.sort(this::sortEntry);
 
+        List<Rect> chunks = Layout.vertical()
+                .constraints(Constraint.fill(), Constraint.percentage(30))
+                .split(area);
+        renderTable(frame, chunks.get(0), sorted);
+        renderDetail(frame, chunks.get(1), sorted);
+    }
+
+    private void renderTable(Frame frame, Rect area, List<CatalogEntry> sorted) {
         List<Row> rows = new ArrayList<>();
         for (CatalogEntry entry : sorted) {
             Style nameStyle = entry.deprecated
@@ -216,7 +225,7 @@ class CatalogTab extends AbstractTableTab {
             rows.add(Row.from(
                     Cell.from(Span.styled(" " + name, nameStyle)),
                     Cell.from(Span.styled(entry.kind, kindStyle)),
-                    Cell.from(entry.title),
+                    Cell.from(Span.styled(entry.description, Style.EMPTY.dim())),
                     Cell.from(Span.styled(entry.label != null ? entry.label : "", Style.EMPTY.dim()))));
         }
 
@@ -225,11 +234,15 @@ class CatalogTab extends AbstractTableTab {
         }
 
         String scope = SCOPES[scopeIndex];
-        boolean filtered = filterTerm != null || !"all".equals(scope);
+        boolean scoped = !"all".equals(scope);
+        boolean filtered = filterTerm != null || scoped;
+        long scopeTotal = scoped
+                ? allEntries.stream().filter(e -> scope.equals(e.kind)).count()
+                : allEntries.size();
         StringBuilder title = new StringBuilder(fullCatalog ? " Catalog [All] " : " Catalog [App] ");
         title.append('[');
         if (filtered) {
-            title.append(filteredEntries.size()).append('/').append(allEntries.size());
+            title.append(filteredEntries.size()).append('/').append(scopeTotal);
         } else {
             title.append(filteredEntries.size());
         }
@@ -247,13 +260,13 @@ class CatalogTab extends AbstractTableTab {
                 .header(Row.from(
                         Cell.from(Span.styled(" " + sortLabel("NAME", "name"), sortStyle("name"))),
                         Cell.from(Span.styled(sortLabel("KIND", "kind"), sortStyle("kind"))),
-                        Cell.from(Span.styled(sortLabel("TITLE", "title"), sortStyle("title"))),
+                        Cell.from(Span.styled(sortLabel("DESCRIPTION", "description"), sortStyle("description"))),
                         Cell.from(Span.styled("LABEL", Style.EMPTY.bold()))))
                 .widths(
-                        Constraint.length(30),
+                        Constraint.length(28),
                         Constraint.length(12),
-                        Constraint.length(30),
-                        Constraint.fill())
+                        Constraint.fill(),
+                        Constraint.length(20))
                 .highlightStyle(Theme.selectionBg())
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(title.toString()).build())
@@ -262,6 +275,93 @@ class CatalogTab extends AbstractTableTab {
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
         renderScrollbar(frame, sorted.size());
+    }
+
+    private void renderDetail(Frame frame, Rect area, List<CatalogEntry> sorted) {
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= sorted.size()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(Span.styled(" Select an artifact", Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Detail ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        CatalogEntry entry = sorted.get(sel);
+        String title = " " + entry.name + " ";
+
+        List<Line> lines = new ArrayList<>();
+        addDetailField(lines, "Title", entry.title, area.width());
+        addDetailField(lines, "Description", entry.description, area.width());
+        addDetailField(lines, "Kind", entry.kind, area.width());
+        String maven = entry.groupId + ":" + entry.artifactId;
+        if (entry.version != null) {
+            maven += ":" + entry.version;
+        }
+        addDetailField(lines, "Maven", maven, area.width());
+        if (entry.firstVersion != null) {
+            addDetailField(lines, "Since", entry.firstVersion, area.width());
+        }
+        if (entry.supportLevel != null) {
+            addDetailField(lines, "Support Level", entry.supportLevel, area.width());
+        }
+        if (entry.nativeSupported) {
+            addDetailField(lines, "Native", "supported", area.width());
+        }
+        if (entry.label != null) {
+            addDetailField(lines, "Labels", entry.label, area.width());
+        }
+        if (entry.deprecated) {
+            String depText = "true";
+            if (entry.deprecatedSince != null) {
+                depText += " (since " + entry.deprecatedSince + ")";
+            }
+            if (entry.deprecationNote != null) {
+                depText += " — " + entry.deprecationNote;
+            }
+            addDetailField(lines, "Deprecated", depText, area.width());
+        }
+
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(lines))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(title).build())
+                        .build(),
+                area);
+    }
+
+    private void addDetailField(List<Line> lines, String label, String value, int width) {
+        if (value == null || value.isEmpty()) {
+            return;
+        }
+        String prefix = "  " + label + ": ";
+        int maxValueLen = width - prefix.length() - 2;
+        if (maxValueLen <= 0) {
+            maxValueLen = 40;
+        }
+        if (value.length() <= maxValueLen) {
+            lines.add(Line.from(
+                    Span.styled(prefix, Style.EMPTY.dim()),
+                    Span.styled(value, Style.EMPTY.fg(Theme.baseFg()))));
+        } else {
+            lines.add(Line.from(Span.styled(prefix, Style.EMPTY.dim())));
+            int indent = 6;
+            String indentStr = " ".repeat(indent);
+            int wrapWidth = width - indent - 2;
+            if (wrapWidth <= 0) {
+                wrapWidth = 40;
+            }
+            int pos = 0;
+            while (pos < value.length()) {
+                int lineEnd = Math.min(pos + wrapWidth, value.length());
+                lines.add(Line.from(Span.styled(indentStr + value.substring(pos, lineEnd), Style.EMPTY.fg(Theme.baseFg()))));
+                pos = lineEnd;
+            }
+        }
     }
 
     @Override
@@ -289,7 +389,7 @@ class CatalogTab extends AbstractTableTab {
     private int sortEntry(CatalogEntry a, CatalogEntry b) {
         int result = switch (sort) {
             case "kind" -> a.kind.compareToIgnoreCase(b.kind);
-            case "title" -> a.title.compareToIgnoreCase(b.title);
+            case "description" -> a.description.compareToIgnoreCase(b.description);
             default -> a.name.compareToIgnoreCase(b.name); // "name"
         };
         return sortReversed ? -result : result;
@@ -383,7 +483,9 @@ class CatalogTab extends AbstractTableTab {
                 entry.title = model.getTitle() != null ? model.getTitle() : name;
                 entry.description = model.getDescription() != null ? model.getDescription() : "";
                 entry.label = model.getLabel();
+                entry.groupId = model.getGroupId();
                 entry.artifactId = model.getArtifactId();
+                entry.version = model.getVersion();
                 entry.firstVersion = model.getFirstVersion();
                 entry.supportLevel = model.getSupportLevel() != null ? model.getSupportLevel().name() : null;
                 entry.nativeSupported = model.isNativeSupported();
@@ -420,6 +522,7 @@ class CatalogTab extends AbstractTableTab {
             if (ft != null
                     && !entry.name.toLowerCase().contains(ft)
                     && !entry.title.toLowerCase().contains(ft)
+                    && !entry.description.toLowerCase().contains(ft)
                     && !(entry.label != null && entry.label.toLowerCase().contains(ft))) {
                 continue;
             }
@@ -483,7 +586,7 @@ class CatalogTab extends AbstractTableTab {
 
                 - **NAME** — The catalog artifact name (e.g., `kafka`, `timer`, `json-jackson`)
                 - **KIND** — The artifact type: `component`, `dataformat`, `language`, or `other`
-                - **TITLE** — Human-readable title (e.g., "Apache Kafka", "Timer")
+                - **DESCRIPTION** — Short description of the artifact
                 - **LABEL** — Category labels (e.g., "messaging", "scheduling", "transformation")
 
                 Deprecated artifacts are shown dimmed with a "(deprecated)" suffix.
@@ -512,7 +615,7 @@ class CatalogTab extends AbstractTableTab {
 
                 ## Keys
 
-                - `s` — cycle sort column (name, kind, title)
+                - `s` — cycle sort column (name, kind, description)
                 - `S` — reverse sort order
                 - `a` — toggle app only / full catalog
                 - `f` — cycle scope
@@ -576,7 +679,9 @@ class CatalogTab extends AbstractTableTab {
         String title;
         String description;
         String label;
+        String groupId;
         String artifactId;
+        String version;
         String firstVersion;
         String supportLevel;
         boolean nativeSupported;
