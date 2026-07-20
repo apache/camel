@@ -191,7 +191,7 @@ jobs:
             -Dcamel.exe.build=true -DskipTests
       - name: Assert archive carries both exe files
         run: |
-          ZIP=$(find dsl/camel-jbang/camel-launcher/target -maxdepth 1 -name 'camel-launcher-*-bin.zip' -print -quit)
+          ZIP=$(find dsl/camel-jbang/camel-launcher/target -maxdepth 1 -name 'camel-launcher-*-winget-bin.zip' -print -quit)
           echo "Checking archive: $ZIP"
           ENTRIES=$(unzip -l "$ZIP" | grep -Ec '/bin/camel-(x64|arm64)\.exe$')
           if [ "$ENTRIES" -ne 2 ]; then
@@ -200,3 +200,32 @@ jobs:
             exit 1
           fi
           echo "Both bin/camel-x64.exe and bin/camel-arm64.exe found in archive"
+      - name: Verify reproducible native executables and WinGet archive
+        run: |
+          HASH_FILE="$RUNNER_TEMP/winget-first-build.sha256"
+          sha256sum \
+            tooling/camel-exe/target/camel-x64.exe \
+            tooling/camel-exe/target/camel-arm64.exe \
+            dsl/camel-jbang/camel-launcher/target/camel-launcher-*-winget-bin.zip \
+            > "$HASH_FILE"
+
+          mvn -P apache-snapshots \
+            -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher clean verify \
+            -Dcamel.exe.build=true -DskipTests
+
+          sha256sum --check "$HASH_FILE"
+      - name: Verify WinGet archive is not deployed by Maven
+        run: |
+          MAVEN_REPO="$RUNNER_TEMP/winget-maven-repo"
+          mvn -P apache-snapshots \
+            -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher deploy \
+            -Dcamel.exe.build=true -DskipTests \
+            -DaltSnapshotDeploymentRepository="winget-check::file://$MAVEN_REPO"
+
+          DEPLOYED_WINGET_FILES=$(find "$MAVEN_REPO" -type f \
+            \( -name '*-winget-bin.zip' -o -name '*-winget-bin.zip.sha1' \) -print)
+          if [ -n "$DEPLOYED_WINGET_FILES" ]; then
+            echo "ERROR: Maven deployed the local-only WinGet payload:"
+            echo "$DEPLOYED_WINGET_FILES"
+            exit 1
+          fi

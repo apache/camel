@@ -44,5 +44,11 @@ Release and integration builds that produce the WinGet launcher ZIP also build t
 mvn -pl tooling/camel-exe,dsl/camel-jbang/camel-launcher -am verify -Dcamel.exe.build=true
 ```
 
+The native launcher workflow runs this build twice from clean output directories and compares the
+SHA-256 values of `camel-x64.exe`, `camel-arm64.exe`, and the WinGet ZIP. It also deploys the reactor
+to a temporary file repository and fails if Maven publishes the WinGet ZIP or a corresponding
+`.sha1` sidecar. A checksum difference is a release failure and must be investigated before changing
+compiler or linker flags.
+
 See [src/main/native/README.md](src/main/native/README.md) for toolchain setup, compiler
 flags, and the release-gate profile.

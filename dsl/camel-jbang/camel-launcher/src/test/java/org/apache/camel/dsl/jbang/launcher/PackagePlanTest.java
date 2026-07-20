@@ -180,6 +180,20 @@ class PackagePlanTest {
     }
 
     @Test
+    void nativeWorkflowChecksReproducibilityAndMavenExclusion() throws Exception {
+        String workflow = Files.readString(
+                MODULE_DIR.resolve("../../../.github/workflows/camel-launcher-native-exe.yml").normalize(),
+                StandardCharsets.UTF_8);
+
+        assertTrue(workflow.contains("-name 'camel-launcher-*-winget-bin.zip'"), workflow);
+        assertTrue(workflow.contains("sha256sum --check \"$HASH_FILE\""), workflow);
+        assertTrue(workflow.contains("-DaltSnapshotDeploymentRepository=\"winget-check::file://$MAVEN_REPO\""),
+                workflow);
+        assertTrue(workflow.contains("-name '*-winget-bin.zip'"), workflow);
+        assertTrue(workflow.contains("-name '*-winget-bin.zip.sha1'"), workflow);
+    }
+
+    @Test
     void websiteWindowsInstallerUsesArchitectureNeutralBatchLauncher() throws Exception {
         String installer = Files.readString(MODULE_DIR.resolve("src/install/install.ps1"), StandardCharsets.UTF_8);
 
