@@ -141,7 +141,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         for (String s : data) {
 
             // Get KeyValuePair
-            String[] keyValuePair = s.split(getKeyValuePairSeparator());
+            String[] keyValuePair = s.split(getKeyValuePairSeparator(), 2);
 
             // Extract only if value is populated in key:value pair in incoming message.
             if (keyValuePair.length > 1) {

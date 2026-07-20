@@ -408,7 +408,7 @@ public class YAMLDataFormat extends DataFormatDefinition {
          * Set the types SnakeYAML is allowed to un-marshall.
          */
         public Builder typeFilter(Class<?>... typeFilter) {
-            StringJoiner sj = new StringJoiner(".");
+            StringJoiner sj = new StringJoiner(",");
             for (Class<?> c : typeFilter) {
                 sj.add(c.getName());
             }

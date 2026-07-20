@@ -30,7 +30,7 @@ public class JacksonXMLDataFormatReifier extends DataFormatReifier<JacksonXMLDat
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("xmlMapper", definition.getXmlMapper());
+        properties.put("xmlMapper", asRef(definition.getXmlMapper()));
         properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
         properties.put("jsonView", or(definition.getJsonView(), definition.getJsonViewTypeName()));
         properties.put("prettyPrint", definition.getPrettyPrint());
