@@ -165,9 +165,16 @@ case "$PROJECT_VERSION" in
     ;;
 esac
 
+if [ -n "${CAMEL_PACKAGE_TEST_WINGET_REMOTE:-}" ] && [ "${CAMEL_PACKAGE_TEST_MODE:-}" != "true" ]; then
+  echo "Error: CAMEL_PACKAGE_TEST_WINGET_REMOTE requires CAMEL_PACKAGE_TEST_MODE=true." 1>&2
+  exit 2
+fi
+
 # Locate the release artifacts and canonical website installer sources.
 TAR="$MODULE_DIR/target/camel-launcher-$PROJECT_VERSION-bin.tar.gz"
 ZIP="$MODULE_DIR/target/camel-launcher-$PROJECT_VERSION-bin.zip"
+WINGET_ZIP="$MODULE_DIR/target/camel-launcher-$PROJECT_VERSION-winget-bin.zip"
+WINGET_URL="https://archive.apache.org/dist/camel/apache-camel/$PROJECT_VERSION/$(basename -- "$WINGET_ZIP")"
 INSTALL_SH_SRC="$MODULE_DIR/src/install/install.sh"
 INSTALL_PS1_SRC="$MODULE_DIR/src/install/install.ps1"
 
@@ -179,6 +186,10 @@ if [ ! -f "$ZIP" ]; then
   echo "Error: release ZIP not found: $ZIP" 1>&2
   exit 1
 fi
+if [ ! -f "$WINGET_ZIP" ]; then
+  echo "Error: WinGet release ZIP not found: $WINGET_ZIP" 1>&2
+  exit 1
+fi
 if [ ! -f "$INSTALL_SH_SRC" ]; then
   echo "Error: installer source not found: $INSTALL_SH_SRC" 1>&2
   exit 1
@@ -187,6 +198,27 @@ if [ ! -f "$INSTALL_PS1_SRC" ]; then
   echo "Error: installer source not found: $INSTALL_PS1_SRC" 1>&2
   exit 1
 fi
+
+archived_winget=$(mktemp)
+cleanup_archived_winget() {
+  rm -f "$archived_winget"
+}
+trap cleanup_archived_winget EXIT
+
+if [ -n "${CAMEL_PACKAGE_TEST_WINGET_REMOTE:-}" ]; then
+  cp "$CAMEL_PACKAGE_TEST_WINGET_REMOTE" "$archived_winget"
+elif ! curl -fsSL -o "$archived_winget" "$WINGET_URL"; then
+  echo "Error: archived WinGet payload is not available at $WINGET_URL" 1>&2
+  exit 1
+fi
+
+if ! cmp -s "$WINGET_ZIP" "$archived_winget"; then
+  echo "Error: local WinGet ZIP does not match the archived WinGet payload at $WINGET_URL" 1>&2
+  exit 1
+fi
+
+cleanup_archived_winget
+trap - EXIT
 
 # Recreate only the prepared website staging directory (leave the rest of target/jreleaser alone).
 WEBSITE_DIR="$MODULE_DIR/target/jreleaser/website"

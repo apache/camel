@@ -39,10 +39,10 @@
 #   - Per-channel packager selection (e.g. excluding `scoop` on the `lts` channel)
 #     is done via the jreleaser:prepare/jreleaser:package Mojo's own
 #     `-Djreleaser.packagers` include filter, not via a templated `active` field.
-#   - Every packager overrides `downloadUrl` to the Maven Central coordinates
-#     (matching Phase 3A's installers and docs/getting-started.adoc); JReleaser's
-#     default download URL points at a GitHub release asset, which this project
-#     does not publish artifacts to.
+#   - Each packager overrides `downloadUrl`; the standard launcher archives use
+#     Maven Central, while the dedicated WinGet payload uses the Apache archive.
+#     JReleaser's default download URL points at a GitHub release asset, which
+#     this project does not publish artifacts to.
 #   - `project.vendor` and each distribution's `tags` are required fields in
 #     practice (validation fails without them) despite docs implying defaults.
 # This file renders no package content itself; per-packager overrides live under
@@ -147,7 +147,7 @@ distributions:
       - path: "dsl/camel-jbang/camel-launcher/target/camel-launcher-{{projectVersion}}-winget-bin.zip"
     winget:
       active: RELEASE
-      downloadUrl: "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/{{projectVersion}}/{{artifactFile}}"
+      downloadUrl: "https://archive.apache.org/dist/camel/apache-camel/{{projectVersion}}/{{artifactFile}}"
       # Keep the templates under camel-cli so both distributions share the existing package identity.
       templateDirectory: "dsl/camel-jbang/camel-launcher/src/jreleaser/distributions/camel-cli/winget"
       package:

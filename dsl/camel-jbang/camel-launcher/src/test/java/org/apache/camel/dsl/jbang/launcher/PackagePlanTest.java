@@ -67,6 +67,10 @@ class PackagePlanTest {
         return file;
     }
 
+    Path writeWingetFixture(String content) throws IOException {
+        return writeReleaseFixture("-winget-bin.zip", content);
+    }
+
     Path websiteDir() {
         return MODULE_DIR.resolve("target/jreleaser/website");
     }
@@ -82,6 +86,7 @@ class PackagePlanTest {
     void cleanupFixtures() throws IOException {
         Files.deleteIfExists(MODULE_DIR.resolve("target/camel-launcher-" + TEST_VERSION + "-bin.tar.gz"));
         Files.deleteIfExists(MODULE_DIR.resolve("target/camel-launcher-" + TEST_VERSION + "-bin.zip"));
+        Files.deleteIfExists(MODULE_DIR.resolve("target/camel-launcher-" + TEST_VERSION + "-winget-bin.zip"));
         deleteRecursively(websiteDir());
         deleteRecursively(PACKAGE_DIR);
     }
@@ -172,10 +177,15 @@ class PackagePlanTest {
     @Test
     void wingetUsesDedicatedJreleaserDistribution() throws Exception {
         String config = Files.readString(MODULE_DIR.resolve("jreleaser.yml"), StandardCharsets.UTF_8);
+        int wingetStart = config.indexOf("  camel-cli-winget:");
 
-        assertTrue(config.contains("camel-cli-winget:"), config);
-        assertTrue(config.contains("camel-launcher-{{projectVersion}}-winget-bin.zip"), config);
-        assertFalse(config.substring(config.indexOf("camel-cli:"), config.indexOf("camel-cli-winget:"))
+        assertTrue(wingetStart >= 0, config);
+        String wingetDistribution = config.substring(wingetStart);
+        assertTrue(wingetDistribution.contains("camel-launcher-{{projectVersion}}-winget-bin.zip"), config);
+        assertTrue(wingetDistribution.contains(
+                "https://archive.apache.org/dist/camel/apache-camel/{{projectVersion}}/{{artifactFile}}"), config);
+        assertFalse(wingetDistribution.contains("repo1.maven.org"), wingetDistribution);
+        assertFalse(config.substring(config.indexOf("camel-cli:"), wingetStart)
                 .contains("winget:"), "the public distribution must not generate the WinGet package");
     }
 
@@ -222,6 +232,12 @@ class PackagePlanTest {
 
         assertTrue(winget.contains("winget-manifest.installer.1.12.0.schema.json"), winget);
         assertTrue(winget.contains("ManifestVersion: 1.12.0"), winget);
+        assertTrue(winget.contains("Architecture: x64"), winget);
+        assertTrue(winget.contains("Architecture: arm64"), winget);
+        assertTrue(winget.contains("bin\\camel-x64.exe"), winget);
+        assertTrue(winget.contains("bin\\camel-arm64.exe"), winget);
+        assertEquals(2, winget.split("InstallerSha256: \\{\\{distributionChecksumSha256\\}\\}", -1).length - 1,
+                "both architecture entries must use the checksum of the same approved ZIP");
     }
 
     private static final Path SCRIPT = Paths.get("src/jreleaser/bin/camel-package.sh");
@@ -264,9 +280,11 @@ class PackagePlanTest {
                 StandardCharsets.UTF_8);
         assertTrue(mvnStub.toFile().setExecutable(true));
 
+        Path winget = writeWingetFixture("fixture-winget");
         Map<String, String> env = new LinkedHashMap<>();
         env.put("CAMEL_PACKAGE_TEST_MODE", "true");
         env.put("CAMEL_PACKAGE_TEST_VERSION", TEST_VERSION);
+        env.put("CAMEL_PACKAGE_TEST_WINGET_REMOTE", winget.toString());
         env.put("PATH", stubDir + File.pathSeparator + System.getenv("PATH"));
         return env;
     }
@@ -294,7 +312,9 @@ class PackagePlanTest {
                 StandardCharsets.UTF_8);
         assertTrue(mvnStub.toFile().setExecutable(true));
 
+        Path winget = writeWingetFixture("fixture-winget");
         Map<String, String> env = new LinkedHashMap<>();
+        env.put("CAMEL_PACKAGE_TEST_WINGET_REMOTE", winget.toString());
         env.put("PATH", stubDir + File.pathSeparator + System.getenv("PATH"));
         return env;
     }
@@ -313,7 +333,26 @@ class PackagePlanTest {
                 StandardCharsets.UTF_8);
         assertTrue(mvnStub.toFile().setExecutable(true));
 
-        return Map.of("PATH", stubDir + File.pathSeparator + System.getenv("PATH"));
+        Path winget = writeWingetFixture("fixture-winget");
+        Path curlRecord = tmp.resolve("archive-curl.txt");
+        Path curlStub = stubDir.resolve("curl");
+        Files.writeString(curlStub,
+                "#!/bin/sh\n"
+                                    + "printf '%s\\n' \"$*\" >> \"" + curlRecord + "\"\n"
+                                    + "output=''\n"
+                                    + "previous=''\n"
+                                    + "for argument in \"$@\"; do\n"
+                                    + "  if [ \"$previous\" = '-o' ]; then output=$argument; fi\n"
+                                    + "  previous=$argument\n"
+                                    + "done\n"
+                                    + "[ -n \"$output\" ] || exit 98\n"
+                                    + "cp \"" + winget + "\" \"$output\"\n",
+                StandardCharsets.UTF_8);
+        assertTrue(curlStub.toFile().setExecutable(true));
+
+        Map<String, String> env = new LinkedHashMap<>();
+        env.put("PATH", stubDir + File.pathSeparator + System.getenv("PATH"));
+        return env;
     }
 
     private void addFailingCurlStub(Path tmp, Map<String, String> env, Path curlRecordFile) throws IOException {
@@ -479,6 +518,71 @@ class PackagePlanTest {
         assertFalse(recorded.contains("<>"),
                 "production prepare must omit the unused snapshot-pattern argument:\n" + recorded);
         assertTrue(recorded.contains("<-Djreleaser.distributions=camel-cli,camel-cli-winget>"), recorded);
+    }
+
+    @Test
+    void productionPrepareVerifiesTheArchivedWingetPayload(@TempDir Path tmp) throws Exception {
+        writeReleaseFixture("-bin.tar.gz", "fixture-tar");
+        writeReleaseFixture("-bin.zip", "fixture-zip");
+        Path recordFile = tmp.resolve("mvn-calls.txt");
+
+        Result r = run(productionStyleEnvWithMvnStub(tmp, recordFile), "prepare", "--channel", "stable");
+
+        assertEquals(0, r.exit, r.stderr);
+        String curlCalls = Files.readString(tmp.resolve("archive-curl.txt"), StandardCharsets.UTF_8);
+        assertTrue(curlCalls.contains("https://archive.apache.org/dist/camel/apache-camel/" + TEST_VERSION
+                                      + "/camel-launcher-" + TEST_VERSION + "-winget-bin.zip"),
+                curlCalls);
+        assertTrue(Files.exists(recordFile), "JReleaser must run after the byte comparison succeeds");
+    }
+
+    @Test
+    void prepareRejectsAnArchivedWingetPayloadWithDifferentBytes(@TempDir Path tmp) throws Exception {
+        writeReleaseFixture("-bin.tar.gz", "fixture-tar");
+        writeReleaseFixture("-bin.zip", "fixture-zip");
+        Path remote = tmp.resolve("remote-winget.zip");
+        Files.writeString(remote, "different-remote-winget", StandardCharsets.UTF_8);
+        Path recordFile = tmp.resolve("mvn-calls.txt");
+        Map<String, String> env = testModeEnvWithMvnStub(tmp, recordFile);
+        writeWingetFixture("local-winget");
+        env.put("CAMEL_PACKAGE_TEST_WINGET_REMOTE", remote.toString());
+
+        Result r = run(env, "prepare", "--channel", "stable");
+
+        assertNotEquals(0, r.exit);
+        assertTrue(r.stderr.contains("does not match the archived WinGet payload"), r.stderr);
+        assertFalse(Files.exists(recordFile), "JReleaser must not run after a byte mismatch");
+    }
+
+    @Test
+    void wingetRemoteOverrideRequiresExplicitTestMode(@TempDir Path tmp) throws Exception {
+        writeReleaseFixture("-bin.tar.gz", "fixture-tar");
+        writeReleaseFixture("-bin.zip", "fixture-zip");
+        Path recordFile = tmp.resolve("mvn-calls.txt");
+        Map<String, String> env = new LinkedHashMap<>(productionStyleEnvWithMvnStub(tmp, recordFile));
+        env.put("CAMEL_PACKAGE_TEST_WINGET_REMOTE", writeWingetFixture("fixture-winget").toString());
+
+        Result r = run(env, "prepare", "--channel", "stable");
+
+        assertEquals(2, r.exit);
+        assertTrue(r.stderr.contains("CAMEL_PACKAGE_TEST_WINGET_REMOTE requires CAMEL_PACKAGE_TEST_MODE=true"),
+                r.stderr);
+        assertFalse(Files.exists(recordFile));
+    }
+
+    @Test
+    void missingWingetPayloadFailsBeforeJReleaser(@TempDir Path tmp) throws Exception {
+        writeReleaseFixture("-bin.tar.gz", "fixture-tar");
+        writeReleaseFixture("-bin.zip", "fixture-zip");
+        Path recordFile = tmp.resolve("mvn-calls.txt");
+        Map<String, String> env = testModeEnvWithMvnStub(tmp, recordFile);
+        Files.delete(MODULE_DIR.resolve("target/camel-launcher-" + TEST_VERSION + "-winget-bin.zip"));
+
+        Result r = run(env, "prepare", "--channel", "stable");
+
+        assertNotEquals(0, r.exit);
+        assertTrue(r.stderr.contains("WinGet release ZIP not found"), r.stderr);
+        assertFalse(Files.exists(recordFile));
     }
 
     @Test

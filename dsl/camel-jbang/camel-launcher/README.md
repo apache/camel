@@ -130,8 +130,9 @@ https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/VERSION/FILE
 ```
 
 Both resolve to the same artifact — `search.maven.org/remotecontent` simply redirects to
-`repo1.maven.org/maven2`. This rule applies **only to Homebrew**; the other packagers
-(SDKMAN, WinGet, Scoop, Chocolatey) use `repo1.maven.org` directly.
+`repo1.maven.org/maven2`. This rule applies **only to Homebrew**. SDKMAN, Scoop, and Chocolatey
+use `repo1.maven.org` directly. WinGet uses the immutable Apache archive URL because its dedicated
+ZIP is an Apache distribution payload and is not published to Maven Central.
 
 ### Native bootstrap executables
 
@@ -139,6 +140,9 @@ The dedicated `camel-launcher-<version>-winget-bin.zip` ships `camel-x64.exe` an
 `camel-arm64.exe` for WinGet, which requires a genuine portable executable per architecture
 (see the WinGet `installer.yaml.tpl` override). The public ZIP and TAR archives do not contain
 these WinGet-specific executables.
+
+Before JReleaser prepares the WinGet manifest, `camel-package.sh` downloads the versioned Apache
+archive URL and fails unless its bytes exactly match the local WinGet ZIP.
 
 Chocolatey and Scoop use `camel.bat` as their entry point instead (it needs only a JRE, so it is
 architecture-neutral and requires no per-architecture binary).
