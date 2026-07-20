@@ -18,10 +18,10 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.AdviceWith.adviceWith;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
 
@@ -39,8 +39,15 @@ public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
 
         context.start();
 
-        assertTrue(context.getRouteController().getRouteStatus("my-route").isStarted(),
-                "Route 'my-route' should be started after advice");
+        MockEndpoint mockReplaced = getMockEndpoint("mock:replaced");
+        mockReplaced.expectedMessageCount(1);
+
+        MockEndpoint mockReplaceMe = getMockEndpoint("mock:replace-me");
+        mockReplaceMe.expectedMessageCount(0);
+
+        template.sendBody("direct:start", "Hello World");
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

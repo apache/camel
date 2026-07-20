@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     // Need to bind the CustomerSchemaFactory
@@ -42,6 +43,8 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     // just inject the SchemaFactory as we want
     @Test
     public void testCustomSchemaFactory() throws Exception {
+        SchemaFactory registeredFactory = (SchemaFactory) context.getRegistry().lookupByName("MySchemaFactory");
+
         ValidatorComponent v = new ValidatorComponent();
         v.setCamelContext(context);
         v.init();
@@ -50,6 +53,8 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
         assertNotNull(endpoint, "Endpoint should be created with a custom SchemaFactory");
         ValidatorEndpoint ve = assertInstanceOf(ValidatorEndpoint.class, endpoint);
         assertNotNull(ve.getSchemaFactory(), "Endpoint should have the custom SchemaFactory configured");
+        assertSame(registeredFactory, ve.getSchemaFactory(),
+                "Endpoint should use the same SchemaFactory instance that was registered");
         assertFalse(ve.getSchemaFactory().getFeature(XMLConstants.FEATURE_SECURE_PROCESSING),
                 "Custom SchemaFactory should have FEATURE_SECURE_PROCESSING set to false");
     }

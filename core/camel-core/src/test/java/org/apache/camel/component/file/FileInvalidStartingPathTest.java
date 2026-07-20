@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,6 +45,11 @@ public class FileInvalidStartingPathTest extends ContextTestSupport {
         assertNotNull(endpoint, "Endpoint should be resolved for a valid starting path");
         FileEndpoint fileEndpoint = assertInstanceOf(FileEndpoint.class, endpoint);
         assertNotNull(fileEndpoint.getFileName(), "FileEndpoint should have a fileName expression set");
+        assertNotNull(fileEndpoint.getConfiguration().getDirectory(),
+                "FileEndpoint should have a directory configured");
+        assertEquals("${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt",
+                fileEndpoint.getFileName().toString(),
+                "FileEndpoint fileName expression should match the configured value");
     }
 
 }

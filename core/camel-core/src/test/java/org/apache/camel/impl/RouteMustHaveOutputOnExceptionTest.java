@@ -18,9 +18,9 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
@@ -31,18 +31,23 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
     }
 
     @Test
-    public void testValid() {
-        assertDoesNotThrow(() -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start").onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(2)
-                            .backOffMultiplier(1.5).handled(true).delay(1000)
-                            .log("Halting for some time").to("mock:halt").end().end().to("mock:result");
-                }
-            });
-            context.start();
+    public void testValid() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(2)
+                        .backOffMultiplier(1.5).handled(true).delay(1000)
+                        .log("Halting for some time").to("mock:halt").end().end().to("mock:result");
+            }
         });
+        context.start();
+
+        MockEndpoint mockResult = getMockEndpoint("mock:result");
+        mockResult.expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        mockResult.assertIsSatisfied();
     }
 
     @Test

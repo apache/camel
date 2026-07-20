@@ -16,15 +16,20 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for file producer option tempPrefix
@@ -80,11 +85,14 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         template.sendBody("direct:a", "Bye World");
 
         // When no FILE_NAME header is set, the producer creates a file with an auto-generated UUID name
-        File[] files = testDirectory().toFile().listFiles();
-        Assertions.assertNotNull(files, "Test directory should contain files");
-        Assertions.assertTrue(files.length > 0, "A file should have been created with an auto-generated name");
-        String content = new String(java.nio.file.Files.readAllBytes(files[0].toPath()));
-        Assertions.assertEquals("Bye World", content, "File content should match the body that was sent");
+        List<Path> files;
+        try (Stream<Path> stream = Files.list(testDirectory())) {
+            files = stream.toList();
+        }
+        assertNotNull(files, "Test directory should contain files");
+        assertEquals(1, files.size(), "exactly one file should have been created");
+        String content = Files.readString(files.get(0));
+        assertEquals("Bye World", content, "File content should match the body that was sent");
     }
 
     @Override

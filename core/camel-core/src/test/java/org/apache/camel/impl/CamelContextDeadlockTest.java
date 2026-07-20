@@ -19,7 +19,6 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.component.direct.DirectComponent;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -28,24 +27,22 @@ public class CamelContextDeadlockTest {
     @Timeout(5)
     @Test
     public void testComponentDeadlock() {
-        Assertions.assertDoesNotThrow(() -> {
-            CamelContext context = new DefaultCamelContext();
-            context.getRegistry().bind("sql-connector", new DirectComponent() {
-                @Override
-                protected void doStart() throws Exception {
-                    Component delegate = new DirectComponent();
+        CamelContext context = new DefaultCamelContext();
+        context.getRegistry().bind("sql-connector", new DirectComponent() {
+            @Override
+            protected void doStart() throws Exception {
+                Component delegate = new DirectComponent();
 
-                    getCamelContext().removeComponent("sql-connector-component");
-                    getCamelContext().addService(delegate, true, true);
-                    getCamelContext().addComponent("sql-connector-component", delegate);
+                getCamelContext().removeComponent("sql-connector-component");
+                getCamelContext().addService(delegate, true, true);
+                getCamelContext().addComponent("sql-connector-component", delegate);
 
-                    super.doStart();
-                }
-            });
-
-            context.start();
-            context.getComponent("sql-connector", true, true);
-            context.stop();
+                super.doStart();
+            }
         });
+
+        context.start();
+        context.getComponent("sql-connector", true, true);
+        context.stop();
     }
 }
