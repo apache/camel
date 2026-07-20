@@ -267,12 +267,14 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                 = (org.apache.cxf.message.Message) exchange.getIn().getHeader(CxfConstants.CAMEL_CXF_MESSAGE);
         if (cxfMessage != null) {
             String requestURL = (String) cxfMessage.get("org.apache.cxf.request.uri");
-            String matrixParam = null;
-            int matrixStart = requestURL.indexOf(';');
-            int matrixEnd = requestURL.indexOf('?') > -1 ? requestURL.indexOf('?') : requestURL.length();
+            int matrixEnd = requestURL.indexOf('?');
+            if (matrixEnd < 0) {
+                matrixEnd = requestURL.length();
+            }
+            int matrixStart = requestURL.substring(0, matrixEnd).indexOf(';');
             Map<String, String> maps = null;
             if (matrixStart > 0) {
-                matrixParam = requestURL.substring(matrixStart + 1, matrixEnd);
+                String matrixParam = requestURL.substring(matrixStart + 1, matrixEnd);
                 maps = getMatrixParametersFromMatrixString(matrixParam, ExchangeHelper.getCharsetName(exchange));
             }
             if (maps != null) {
@@ -506,13 +508,9 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             throws UnsupportedEncodingException {
         for (String param : queryString.split("&")) {
             String[] pair = param.split("=", 2);
-            if (pair.length == 2) {
-                String name = URLDecoder.decode(pair[0], charset);
-                String value = URLDecoder.decode(pair[1], charset);
-                client.query(name, value);
-            } else {
-                throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
-            }
+            String name = URLDecoder.decode(pair[0], charset);
+            String value = pair.length == 2 ? URLDecoder.decode(pair[1], charset) : "";
+            client.query(name, value);
         }
     }
 
@@ -570,14 +568,13 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             throws UnsupportedEncodingException {
         Map<String, String> answer = new LinkedHashMap<>();
         for (String param : matrixString.split(";")) {
-            String[] pair = param.split("=", 2);
-            if (pair.length == 2) {
-                String name = URLDecoder.decode(pair[0], charset);
-                String value = URLDecoder.decode(pair[1], charset);
-                answer.put(name, value);
-            } else {
-                throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
+            if (param.isEmpty()) {
+                continue;
             }
+            String[] pair = param.split("=", 2);
+            String name = URLDecoder.decode(pair[0], charset);
+            String value = pair.length == 2 ? URLDecoder.decode(pair[1], charset) : "";
+            answer.put(name, value);
         }
         return answer;
     }
