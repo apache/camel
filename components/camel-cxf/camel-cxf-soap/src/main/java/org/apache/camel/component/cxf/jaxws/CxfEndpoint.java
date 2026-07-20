@@ -137,7 +137,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
 
     @UriParam(label = "advanced")
-    protected Bus bus;
+    protected volatile Bus bus;
     @UriParam(label = "advanced")
     protected boolean defaultBus;
     protected volatile boolean createBus;

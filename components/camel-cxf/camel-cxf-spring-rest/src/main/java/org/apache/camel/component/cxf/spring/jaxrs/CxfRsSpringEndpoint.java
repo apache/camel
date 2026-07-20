@@ -48,14 +48,24 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
             setBeanId(beanIdAware.getBeanId());
         }
 
-        ApplicationContext applicationContext = ((SpringCamelContext) getCamelContext()).getApplicationContext();
-        configurer = new ConfigurerImpl(applicationContext);
+        if (getCamelContext() instanceof SpringCamelContext springCamelContext) {
+            ApplicationContext applicationContext = springCamelContext.getApplicationContext();
+            configurer = new ConfigurerImpl(applicationContext);
+        }
     }
 
     @Override
     protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
         checkBeanType(bean, JAXRSServerFactoryBean.class);
         return (JAXRSServerFactoryBean) bean;
+    }
+
+    @Override
+    protected void setupJAXRSServerFactoryBean(JAXRSServerFactoryBean sfb) {
+        if (sfb instanceof SpringJAXRSServerFactoryBean springBean) {
+            springBean.setPerformInvocation(isPerformInvocation());
+        }
+        super.setupJAXRSServerFactoryBean(sfb);
     }
 
     @Override
@@ -67,7 +77,9 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     @Override
     protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
         // apply Spring bean config first so URI options can override
-        configurer.configureBean(beanId, cfb);
+        if (configurer != null) {
+            configurer.configureBean(beanId, cfb);
+        }
         if (getModelRef() != null) {
             cfb.setModelRef(getModelRef());
         }
