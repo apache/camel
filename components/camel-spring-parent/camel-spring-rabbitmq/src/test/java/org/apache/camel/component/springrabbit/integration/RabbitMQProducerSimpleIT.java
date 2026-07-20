@@ -16,17 +16,21 @@
  */
 package org.apache.camel.component.springrabbit.integration;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RabbitMQProducerSimpleIT extends RabbitMQITSupport {
 
     @Test
     public void testProducer() {
-        assertDoesNotThrow(() -> template.sendBody("direct:start", "Hello World"));
+        Exchange result = template.send("direct:start", e -> e.getMessage().setBody("Hello World"));
+        assertFalse(result.isFailed(), "Exchange should complete without error");
+        assertNull(result.getException(), "Exchange should have no exception");
     }
 
     @Override

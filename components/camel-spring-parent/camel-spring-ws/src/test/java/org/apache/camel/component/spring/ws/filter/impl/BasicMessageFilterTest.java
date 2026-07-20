@@ -57,19 +57,28 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     @Test
     public void testNullsWithExchange() {
-        assertDoesNotThrow(() -> {
-            filter.filterConsumer(exchange, null);
-            filter.filterProducer(exchange, null);
-        });
+        // capture exchange state before filtering with null message
+        int headerCountBefore = exchange.getIn().getHeaders().size();
+        Object bodyBefore = exchange.getIn().getBody();
+
+        filter.filterConsumer(exchange, null);
+        filter.filterProducer(exchange, null);
+
+        // verify the exchange was not modified when message is null
+        Assertions.assertThat(exchange.getIn().getHeaders()).hasSize(headerCountBefore);
+        Assertions.assertThat(exchange.getIn().getBody()).isEqualTo(bodyBefore);
     }
 
     @Test
     public void nonSoapMessageShouldBeSkipped() {
-        assertDoesNotThrow(() -> {
-            DomPoxMessage domPoxMessage = new DomPoxMessageFactory().createWebServiceMessage();
-            filter.filterConsumer(exchange, domPoxMessage);
-            filter.filterProducer(exchange, domPoxMessage);
-        });
+        DomPoxMessage domPoxMessage = new DomPoxMessageFactory().createWebServiceMessage();
+
+        filter.filterConsumer(exchange, domPoxMessage);
+        filter.filterProducer(exchange, domPoxMessage);
+
+        // verify the exchange headers were not modified for non-SOAP messages
+        Assertions.assertThat(exchange.getIn().getHeader("foo")).isEqualTo("abc");
+        Assertions.assertThat(exchange.getIn().getHeader("bar")).isEqualTo(123);
     }
 
     @Test

@@ -23,7 +23,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
 @ExtendWith(SpringExtension.class)
@@ -34,9 +34,9 @@ public class MyCoolBeanTest {
 
     @Test
     public void testProducerTemplate() {
-        assertDoesNotThrow(() -> {
-            MyCoolBean cool = applicationContext.getBean("cool", MyCoolBean.class);
-            cool.sendMsg();
-        });
+        MyCoolBean cool = applicationContext.getBean("cool", MyCoolBean.class);
+        assertNotNull(cool, "MyCoolBean should be resolved from application context");
+        assertNotNull(cool.producer, "ProducerTemplate should be injected via @Produce annotation");
+        cool.sendMsg();
     }
 }

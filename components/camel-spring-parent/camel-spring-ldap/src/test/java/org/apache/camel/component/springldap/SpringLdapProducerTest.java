@@ -41,7 +41,6 @@ import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.query.LdapQuery;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -96,16 +95,20 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoDNForFunctionDrivenOperation() {
+    public void testNoDNForFunctionDrivenOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
+        @SuppressWarnings("unchecked")
+        BiFunction<LdapOperations, Object, ?> function = mock(BiFunction.class);
+
         Map<String, Object> body = new HashMap<>();
-        body.put(SpringLdapProducer.FUNCTION, mock(BiFunction.class));
+        body.put(SpringLdapProducer.FUNCTION, function);
 
         when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.FUNCTION_DRIVEN);
 
-        assertDoesNotThrow(() -> processBody(exchange, in, body));
+        processBody(exchange, in, body);
+        verify(function).apply(eq(ldapTemplate), isNull());
     }
 
     private void processBody(Exchange exchange, Message message, Map<String, Object> body) throws Exception {
