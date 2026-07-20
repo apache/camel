@@ -44,6 +44,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -505,5 +506,24 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         CxfOperationException cxfOperationException = CxfOperationException.class.cast(exchange.getException());
 
         assertEquals(422, cxfOperationException.getStatusCode(), "CXF operation exception has correct response code");
+    }
+
+    @Test
+    public void testAsyncProxyProducerServerErrorMappedToCxfOperationException() {
+        Exchange exchange = template.send("direct://proxy", newExchange -> {
+            newExchange.setPattern(ExchangePattern.InOut);
+            Message inMessage = newExchange.getIn();
+            inMessage.setHeader(CxfConstants.OPERATION_NAME, "getCustomer");
+            inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
+            // pass an invalid id that causes NumberFormatException on the server (500 error),
+            // which the proxy client receives as a WebApplicationException through failed()
+            inMessage.setBody("invalid");
+        });
+
+        assertNotNull(exchange.getException(), "Expect an exception on the exchange");
+        assertInstanceOf(CxfOperationException.class, exchange.getException(),
+                "Async proxy producer should map WebApplicationException to CxfOperationException");
+        CxfOperationException coe = (CxfOperationException) exchange.getException();
+        assertEquals(500, coe.getStatusCode(), "Status code should be 500");
     }
 }

@@ -746,17 +746,19 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         }
 
         private void fail(Throwable throwable) {
-            if (throwable.getClass().isInstance(WebApplicationException.class)) {
-                final WebApplicationException cast = WebApplicationException.class.cast(throwable);
-                final Response response = cast.getResponse();
+            if (throwable instanceof WebApplicationException wae) {
+                Response response = wae.getResponse();
                 if (shouldHandleError(response)) {
                     handleError(response);
+                } else {
+                    exchange.setException(throwable);
                 }
-            } else if (throwable.getClass().isInstance(ResponseProcessingException.class)) {
-                final ResponseProcessingException cast = ResponseProcessingException.class.cast(throwable);
-                final Response response = cast.getResponse();
+            } else if (throwable instanceof ResponseProcessingException rpe) {
+                Response response = rpe.getResponse();
                 if (shouldHandleError(response)) {
                     handleError(response);
+                } else {
+                    exchange.setException(throwable);
                 }
             } else {
                 exchange.setException(throwable);
@@ -839,17 +841,19 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         }
 
         private void fail(Throwable throwable) {
-            if (throwable.getClass().isInstance(WebApplicationException.class)) {
-                final WebApplicationException cast = WebApplicationException.class.cast(throwable);
-                final Response response = cast.getResponse();
+            if (throwable instanceof WebApplicationException wae) {
+                Response response = wae.getResponse();
                 if (shouldHandleError(response)) {
                     handleError(response);
+                } else {
+                    exchange.setException(throwable);
                 }
-            } else if (throwable.getClass().isInstance(ResponseProcessingException.class)) {
-                final ResponseProcessingException cast = ResponseProcessingException.class.cast(throwable);
-                final Response response = cast.getResponse();
+            } else if (throwable instanceof ResponseProcessingException rpe) {
+                Response response = rpe.getResponse();
                 if (shouldHandleError(response)) {
                     handleError(response);
+                } else {
+                    exchange.setException(throwable);
                 }
             } else {
                 exchange.setException(throwable);
