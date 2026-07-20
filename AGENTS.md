@@ -148,6 +148,37 @@ When merging a PR, an agent MUST perform the following steps **in order**:
   - Avoid usage of deprecated code
 - Changes should aim to preserve or improve overall code quality.
 
+### Assertions: Use AssertJ When Possible
+
+Prefer [AssertJ](https://assertj.github.io/doc/) assertions over JUnit assertions in test code.
+AssertJ is already available as a test dependency in the project and provides more readable,
+fluent assertions with better failure messages.
+
+**Examples:**
+
+```java
+// Preferred — AssertJ:
+assertThat(result).isEqualTo("expected");
+assertThat(list).hasSize(3).contains("a", "b");
+assertThat(exception).isInstanceOf(IOException.class).hasMessageContaining("timeout");
+assertThat(exchange.getIn().getBody(String.class)).startsWith("Hello");
+
+// Avoid — JUnit:
+assertEquals("expected", result);
+assertEquals(3, list.size());
+assertTrue(list.contains("a"));
+```
+
+**Rules:**
+
+- New test code SHOULD use AssertJ assertions (`assertThat(...)`) instead of JUnit assertions
+  (`assertEquals`, `assertTrue`, `assertFalse`, `assertNotNull`, etc.).
+- When modifying existing test code that uses JUnit assertions, migrate touched assertions to
+  AssertJ where it improves readability. No need to migrate the entire file.
+- Do NOT mix AssertJ and JUnit assertions in the same test method — pick one style per method.
+- `MockEndpoint.assertIsSatisfied()` and other Camel-specific assertion methods are NOT JUnit
+  assertions — keep using them as-is.
+
 ### Asynchronous Testing: Use Awaitility Instead of Thread.sleep
 
 Do **NOT** use `Thread.sleep()` in test code. It leads to flaky, slow, and non-deterministic tests.
