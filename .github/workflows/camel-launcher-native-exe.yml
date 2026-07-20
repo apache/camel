@@ -174,6 +174,14 @@ jobs:
           fi
           echo "Launcher upstream snapshots for ${VERSION} are available."
       - uses: ./.github/actions/setup-llvm-mingw
+      - name: Install the launcher's in-repo build plugins
+        # camel-repackager-maven-plugin builds the launcher's self-executing JAR. It is not in the
+        # -pl list below, so without this step Maven resolves it from the Apache snapshot repository
+        # and any change made to it in this PR is silently not exercised. Maven cannot consume a
+        # plugin produced by the same reactor invocation, hence the separate install.
+        run: |
+          mvn -P apache-snapshots -B -ntp \
+            -pl tooling/maven/camel-repackager-maven-plugin install -DskipTests
       - name: Build launcher with native camel.exe (x64 + arm64)
         # No -am: build only the listed modules. The launcher's other in-repo
         # dependencies (camel-jbang-core, its jbang plugins, camel-core, ...) resolve
@@ -232,6 +240,15 @@ jobs:
             echo "=== differing WinGet archive entries ==="
             ZIP=$(find dsl/camel-jbang/camel-launcher/target -maxdepth 1 -name '*-winget-bin.zip' -print -quit)
             diff <(unzip -v "$FIRST_BUILD"/*-winget-bin.zip) <(unzip -v "$ZIP") || true
+
+            # The launcher JAR is itself an archive, so a CRC change above says nothing about which of
+            # its thousands of entries moved. Unpack both and diff one level down.
+            echo "=== differing entries inside the launcher JAR ==="
+            unzip -qo "$FIRST_BUILD"/*-winget-bin.zip '*/bin/camel-launcher-*.jar' -d "$RUNNER_TEMP/jar-first"
+            unzip -qo "$ZIP" '*/bin/camel-launcher-*.jar' -d "$RUNNER_TEMP/jar-second"
+            diff <(unzip -v "$(find "$RUNNER_TEMP/jar-first" -name '*.jar' -print -quit)") \
+                 <(unzip -v "$(find "$RUNNER_TEMP/jar-second" -name '*.jar' -print -quit)") \
+              | head -60 || true
             exit 1
           fi
       - name: Verify WinGet archive is not deployed by Maven

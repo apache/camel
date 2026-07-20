@@ -49,7 +49,7 @@ public class RepackageMojo extends AbstractMojo {
      * The Maven project.
      */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
+    protected MavenProject project;
 
     /**
      * The source JAR file to repackage. If not specified, uses the project's main artifact.
@@ -61,31 +61,31 @@ public class RepackageMojo extends AbstractMojo {
      * The main class to use for the executable JAR.
      */
     @Parameter(required = true)
-    private String mainClass;
+    protected String mainClass;
 
     /**
      * The output directory for the repackaged JAR.
      */
     @Parameter(defaultValue = "${project.build.directory}")
-    private File outputDirectory;
+    protected File outputDirectory;
 
     /**
      * The final name of the repackaged JAR (without extension).
      */
     @Parameter(defaultValue = "${project.build.finalName}")
-    private String finalName;
+    protected String finalName;
 
     /**
      * Whether to backup the source JAR.
      */
     @Parameter(defaultValue = "true")
-    private boolean backupSource;
+    protected boolean backupSource;
 
     /**
      * Timestamp for reproducible output, either formatted as ISO-8601 or as seconds since the epoch.
      */
     @Parameter(defaultValue = "${project.build.outputTimestamp}")
-    private String outputTimestamp;
+    protected String outputTimestamp;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
