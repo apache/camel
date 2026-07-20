@@ -46,12 +46,7 @@
         <http-conf:client ReceiveTimeout="100"/>
     </http-conf:conduit>
 
-    <!-- Explicit timeout configurer to guarantee ReceiveTimeout=100ms is applied
-         regardless of CXF Bus lifecycle (the wildcard http-conf:conduit configuration
-         above may not be picked up if the conduit resolves against the wrong Bus) -->
-    <bean id="timeoutConfigurer" class="org.apache.camel.component.cxf.CxfTimeoutTest$TimeoutCxfConfigurer"/>
-
-    <!-- setup the CxfEndpointConfigurer bean here (overrides timeout to 60s for the configurer test) -->
+    <!-- setup the CxfEndpointConfigurer bean here -->
     <bean id="myConfigurer" class="org.apache.camel.component.cxf.CxfTimeoutTest$MyCxfConfigurer"/>
 
     <bean id="defaultHostnameVerifier" class="org.apache.cxf.transport.https.httpclient.DefaultHostnameVerifier"/>
@@ -63,12 +58,12 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="noErrorHandler">
         <route errorHandlerRef="noErrorHandler">
             <from uri="direct:start"/>
-            <to uri="cxf:bean:springEndpoint?sslContextParameters=#mySslContext&amp;hostnameVerifier=#defaultHostnameVerifier&amp;cxfConfigurer=#timeoutConfigurer"/>
+            <to uri="cxf:bean:springEndpoint?sslContextParameters=#mySslContext&amp;hostnameVerifier=#defaultHostnameVerifier"/>
         </route>
 
         <route>
             <from uri="direct:doCatch"/>
-            <to uri="cxf:bean:springEndpoint?cxfConfigurer=#timeoutConfigurer"/>
+            <to uri="cxf:bean:springEndpoint"/>
         </route>
     </camelContext>
 
