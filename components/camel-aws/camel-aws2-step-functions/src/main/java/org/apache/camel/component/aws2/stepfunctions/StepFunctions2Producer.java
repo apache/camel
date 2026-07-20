@@ -633,6 +633,10 @@ public class StepFunctions2Producer extends DefaultProducer {
             }
         } else {
             ListExecutionsRequest.Builder builder = ListExecutionsRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN))) {
+                String stateMachineArn = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN, String.class);
+                builder.stateMachineArn(stateMachineArn);
+            }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTIONS_MAX_RESULTS))) {
                 int maxRes = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTIONS_MAX_RESULTS, Integer.class);
                 builder.maxResults(maxRes);
