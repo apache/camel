@@ -481,40 +481,6 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of times the OpenAI SDK client retries failed
-         * requests. The SDK retry is rate-limit aware (honors Retry-After on
-         * 429).
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 2
-         * Group: producer
-         * 
-         * @param maxRetries the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder maxRetries(int maxRetries) {
-            doSetProperty("maxRetries", maxRetries);
-            return this;
-        }
-        /**
-         * Maximum number of times the OpenAI SDK client retries failed
-         * requests. The SDK retry is rate-limit aware (honors Retry-After on
-         * 429).
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 2
-         * Group: producer
-         * 
-         * @param maxRetries the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder maxRetries(String maxRetries) {
-            doSetProperty("maxRetries", maxRetries);
-            return this;
-        }
-        /**
          * Maximum cumulative prompt plus completion tokens allowed across the
          * MCP agentic loop. When 0 or negative, no token budget is enforced.
          * Enforcement runs after each API call that requests further tool
@@ -554,6 +520,40 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder maxAgenticTokens(String maxAgenticTokens) {
             doSetProperty("maxAgenticTokens", maxAgenticTokens);
+            return this;
+        }
+        /**
+         * Maximum number of times the OpenAI SDK client retries failed
+         * requests. The SDK retry is rate-limit aware (honors Retry-After on
+         * 429).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: producer
+         * 
+         * @param maxRetries the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder maxRetries(int maxRetries) {
+            doSetProperty("maxRetries", maxRetries);
+            return this;
+        }
+        /**
+         * Maximum number of times the OpenAI SDK client retries failed
+         * requests. The SDK retry is rate-limit aware (honors Retry-After on
+         * 429).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: producer
+         * 
+         * @param maxRetries the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder maxRetries(String maxRetries) {
+            doSetProperty("maxRetries", maxRetries);
             return this;
         }
         /**
@@ -1558,9 +1558,9 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIFinishReason";
         }
         /**
-         * The number of tokens used in the prompt.
+         * The number of tokens used in the prompt for the latest API call.
          * 
-         * The option is a: {@code Integer} type.
+         * The option is a: {@code Long} type.
          * 
          * Group: producer
          * 
@@ -1570,9 +1570,9 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIPromptTokens";
         }
         /**
-         * The number of tokens used in the completion.
+         * The number of tokens used in the completion for the latest API call.
          * 
-         * The option is a: {@code Integer} type.
+         * The option is a: {@code Long} type.
          * 
          * Group: producer
          * 
@@ -1582,9 +1582,10 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAICompletionTokens";
         }
         /**
-         * The total number of tokens used (prompt completion).
+         * The total number of tokens used (prompt completion) for the latest
+         * API call.
          * 
-         * The option is a: {@code Integer} type.
+         * The option is a: {@code Long} type.
          * 
          * Group: producer
          * 
@@ -1631,8 +1632,7 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIMcpReturnDirect";
         }
         /**
-         * Cumulative prompt tokens consumed across all agentic loop
-         * iterations.
+         * Cumulative prompt tokens consumed across all agentic loop iterations.
          * 
          * The option is a: {@code Long} type.
          * 
