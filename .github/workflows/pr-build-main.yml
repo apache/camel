@@ -24,7 +24,11 @@ on:
     # CI-only changes don't need a full build. Use workflow_dispatch to
     # test CI changes: gh workflow run "Build and test" -f pr_number=XXXX -f pr_ref=branch-name
     paths-ignore:
+      - .claude-plugin/**
+      - .idea/**
       - .github/**
+      - .oss-ai-helper-rules/**
+      - AGENTS.md
       - README.md
       - SECURITY.md
       - Jenkinsfile
