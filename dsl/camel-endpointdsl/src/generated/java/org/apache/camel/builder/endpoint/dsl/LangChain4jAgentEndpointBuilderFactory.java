@@ -559,7 +559,8 @@ public interface LangChain4jAgentEndpointBuilderFactory {
         /**
          * RAG sources retrieved during agent invocation.
          * 
-         * The option is a: {@code java.util.List<dev.langchain4j.rag.content.Content>} type.
+         * The option is a: {@code
+         * java.util.List<dev.langchain4j.rag.content.Content>} type.
          * 
          * Group: producer
          * 
@@ -571,11 +572,13 @@ public interface LangChain4jAgentEndpointBuilderFactory {
         /**
          * Tool executions performed during agent invocation.
          * 
-         * The option is a: {@code java.util.List<dev.langchain4j.service.tool.ToolExecution>} type.
+         * The option is a: {@code
+         * java.util.List<dev.langchain4j.service.tool.ToolExecution>} type.
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code LangChain4jAgentToolExecutions}.
+         * @return the name of the header {@code
+         * LangChain4jAgentToolExecutions}.
          */
         public String langChain4jAgentToolExecutions() {
             return "CamelLangChain4jAgentToolExecutions";
