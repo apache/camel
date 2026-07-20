@@ -137,7 +137,7 @@ public class JmsConfiguration implements Cloneable {
     private String clientId;
     @UriParam(description = "The durable subscriber name for specifying durable topic subscriptions. The clientId option must be configured as well.")
     private String durableSubscriptionName;
-    @UriParam(label = "consumer,advanced",
+    @UriParam(defaultValue = "true", label = "consumer,advanced",
               description = "Specifies whether the listener session should be exposed when consuming messages.")
     private boolean exposeListenerSession = true;
     @UriParam(label = "consumer,advanced",
