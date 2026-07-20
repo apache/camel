@@ -45,6 +45,7 @@ import software.amazon.awssdk.services.securityhub.model.BatchUpdateFindingsRequ
 import software.amazon.awssdk.services.securityhub.model.BatchUpdateFindingsResponse;
 import software.amazon.awssdk.services.securityhub.model.DescribeHubRequest;
 import software.amazon.awssdk.services.securityhub.model.DescribeHubResponse;
+import software.amazon.awssdk.services.securityhub.model.GetFindingAggregatorRequest;
 import software.amazon.awssdk.services.securityhub.model.GetFindingHistoryRequest;
 import software.amazon.awssdk.services.securityhub.model.GetFindingHistoryResponse;
 import software.amazon.awssdk.services.securityhub.model.GetFindingsRequest;
@@ -93,6 +94,9 @@ public class SecurityHubProducer extends DefaultProducer {
                 break;
             case listEnabledProductsForImport:
                 listEnabledProductsForImport(getEndpoint().getSecurityHubClient(), exchange);
+                break;
+            case getFindingAggregator:
+                getFindingAggregator(getEndpoint().getSecurityHubClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -290,6 +294,25 @@ public class SecurityHubProducer extends DefaultProducer {
                 (GetFindingHistoryResponse response, Message message) -> {
                     message.setHeader(SecurityHubConstants.NEXT_TOKEN, response.nextToken());
                 });
+    }
+
+    private void getFindingAggregator(SecurityHubClient securityHubClient, Exchange exchange)
+            throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                GetFindingAggregatorRequest.class,
+                securityHubClient::getFindingAggregator,
+                () -> {
+                    String findingAggregatorArn
+                            = exchange.getIn().getHeader(SecurityHubConstants.FINDING_AGGREGATOR_ARN, String.class);
+                    if (ObjectHelper.isEmpty(findingAggregatorArn)) {
+                        throw new IllegalArgumentException("Finding Aggregator ARN must be specified");
+                    }
+                    GetFindingAggregatorRequest.Builder builder = GetFindingAggregatorRequest.builder();
+                    builder.findingAggregatorArn(findingAggregatorArn);
+                    return securityHubClient.getFindingAggregator(builder.build());
+                },
+                "Get Finding Aggregator");
     }
 
     private void describeHub(SecurityHubClient securityHubClient, Exchange exchange) throws InvalidPayloadException {
