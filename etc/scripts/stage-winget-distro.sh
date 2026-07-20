@@ -67,7 +67,14 @@ mkdir -p "$WORK_DIR"
 svn checkout --depth immediates "$DIST_DEV_REPO" "$SVN_DIR"
 mkdir "$CANDIDATE_DIR"
 cp -p "$ZIP" "$CANDIDATE_DIR/$FILE_NAME"
-gpg --batch --verbose --armor --detach-sign \
+# Signs with gpg's default key, matching maven-gpg-plugin's behaviour for the rest of the
+# release. Release managers holding more than one key select theirs with CAMEL_GPG_KEY, the
+# equivalent of maven-gpg-plugin's gpg.keyname.
+GPG_KEY_ARGS=()
+if [ -n "${CAMEL_GPG_KEY:-}" ]; then
+  GPG_KEY_ARGS=(--local-user "$CAMEL_GPG_KEY")
+fi
+gpg --batch --verbose --armor --detach-sign "${GPG_KEY_ARGS[@]}" \
   --output "$CANDIDATE_DIR/$FILE_NAME.asc" "$CANDIDATE_DIR/$FILE_NAME"
 (
   cd "$CANDIDATE_DIR"
@@ -83,3 +90,8 @@ echo "cd $SVN_DIR"
 echo "svn status"
 echo "svn commit -m \"Apache Camel $VERSION WinGet RC$CANDIDATE\""
 echo "Candidate URL after commit: $DIST_DEV_REPO/$CANDIDATE_NAME/"
+echo
+# release-distro.sh requires this digest to promote the candidate, so it has to travel with the
+# vote: the RC number alone cannot distinguish an approved candidate from a superseded one.
+echo "Include this digest in the vote email; release-distro.sh requires it to promote the candidate:"
+echo "  SHA-512 ($FILE_NAME): $(awk '{print $1}' "$CANDIDATE_DIR/$FILE_NAME.sha512")"

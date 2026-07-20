@@ -19,16 +19,17 @@
 VERSION=${1}
 DOWNLOAD=${2:-/tmp/camel-release}
 WINGET_CANDIDATE=${3:-}
+WINGET_SHA512=${4:-}
 mkdir -p ${DOWNLOAD} 2>/dev/null
 
 # The following component contain schema definitions that must be published
 RUNDIR=$(cd ${0%/*} && echo $PWD)
 DIST_REPO="https://dist.apache.org/repos/dist/release/camel/apache-camel/"
-DIST_DEV_REPO="https://dist.apache.org/repos/dist/dev/camel/apache-camel/"
+DIST_DEV_REPO="https://dist.apache.org/repos/dist/dev/camel/apache-camel"
 
 if [ -z "${VERSION}" -o ! -d "${DOWNLOAD}" ]
 then
- echo "Usage: release-distro.sh <camel-version> [temp-directory] [winget-candidate]"
+ echo "Usage: release-distro.sh <camel-version> [temp-directory] [winget-candidate] [winget-sha512]"
  exit 1
 fi
 case "${WINGET_CANDIDATE}" in
@@ -40,6 +41,22 @@ esac
 if [ -n "${WINGET_CANDIDATE}" ] && [ "${WINGET_CANDIDATE}" -lt 1 ]; then
   echo "Error: winget-candidate must be a positive integer."
   exit 1
+fi
+# The candidate number alone cannot prove the right candidate was promoted: every RC directory
+# carries its own self-consistent .sha512 and .asc, so exporting rc3 when the vote approved rc4
+# passes both checks. The approved digest comes from the vote email and is the only input that
+# distinguishes them, so it is mandatory whenever a candidate is promoted.
+if [ -n "${WINGET_CANDIDATE}" ]; then
+  case "${WINGET_SHA512}" in
+    *[!0-9a-fA-F]* | "")
+      echo "Error: winget-sha512 (the approved SHA-512 from the vote email) is required with winget-candidate."
+      exit 1
+      ;;
+  esac
+  if [ ${#WINGET_SHA512} -ne 128 ]; then
+    echo "Error: winget-sha512 must be a 128-character SHA-512 hex digest."
+    exit 1
+  fi
 fi
 
 echo "################################################################################"
@@ -77,6 +94,14 @@ if [ -n "${WINGET_CANDIDATE}" ]; then
       exit 1
     fi
   done
+  ACTUAL_SHA512=$(sha512sum "${WINGET_NAME}" | awk '{print $1}')
+  if [ "$(echo "${ACTUAL_SHA512}" | tr 'A-Z' 'a-z')" != "$(echo "${WINGET_SHA512}" | tr 'A-Z' 'a-z')" ]; then
+    echo "Error: exported WinGet candidate does not match the SHA-512 approved in the vote."
+    echo "  approved: ${WINGET_SHA512}"
+    echo "  exported: ${ACTUAL_SHA512} (from ${WINGET_RC_URL})"
+    echo "Check that rc${WINGET_CANDIDATE} is the candidate the vote actually approved."
+    exit 1
+  fi
   if ! sha512sum -c "${WINGET_NAME}.sha512"; then
     echo "Error: approved WinGet candidate SHA-512 verification failed."
     exit 1

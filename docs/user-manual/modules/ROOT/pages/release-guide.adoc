@@ -269,6 +269,10 @@ candidate with the same candidate number used in the vote:
 and `.sha512`, and include the resulting `dist/dev` candidate URL together with the Nexus staging
 repository URL in the vote email. The WinGet ZIP is not present in the Nexus staging repository.
 
+* The script prints the candidate's SHA-512 digest. **Include it in the vote email**: promotion
+requires it, because the candidate number on its own cannot distinguish the approved candidate from
+a superseded one (each RC directory carries its own self-consistent `.sha512` and `.asc`).
+
 
 . Close the Apache staging repository:
 
@@ -398,11 +402,14 @@ This will release the artifacts.
 . Copy distribution to Apache website:
 
   cd ${CAMEL_ROOT_DIR}/etc/scripts
-  ./release-distro.sh <Camel version> <temp-directory> <WinGet candidate number>
+  ./release-distro.sh <Camel version> <temp-directory> <WinGet candidate number> <WinGet SHA-512>
 
 * The script exports the voted WinGet ZIP, signature, and SHA-512 checksum from `dist/dev`, verifies
 them, and adds the exact files to the local `dist/release` working copy. It does not rebuild the ZIP.
 Review and commit the combined working copy using the commands printed by the script.
+
+* `<WinGet SHA-512>` is the digest from the vote email. Promotion aborts if the exported candidate
+does not match it, which is what stops a superseded RC from being promoted by mistake.
 
 * After the release is available from
 `https://archive.apache.org/dist/camel/apache-camel/<Camel version>/`, run the JReleaser package

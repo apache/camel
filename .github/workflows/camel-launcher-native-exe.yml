@@ -222,8 +222,9 @@ jobs:
             -Dcamel.exe.build=true -DskipTests \
             -DaltSnapshotDeploymentRepository="winget-check::file://$MAVEN_REPO"
 
-          DEPLOYED_WINGET_FILES=$(find "$MAVEN_REPO" -type f \
-            \( -name '*-winget-bin.zip' -o -name '*-winget-bin.zip.sha1' \) -print)
+          # Matches the ZIP and every sidecar Maven may generate alongside it
+          # (.sha1, .md5, .sha256, .sha512, .asc), not just the two seen locally.
+          DEPLOYED_WINGET_FILES=$(find "$MAVEN_REPO" -type f -name '*-winget-bin.zip*' -print)
           if [ -n "$DEPLOYED_WINGET_FILES" ]; then
             echo "ERROR: Maven deployed the local-only WinGet payload:"
             echo "$DEPLOYED_WINGET_FILES"
