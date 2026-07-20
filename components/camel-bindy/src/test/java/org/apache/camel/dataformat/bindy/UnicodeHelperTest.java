@@ -206,6 +206,21 @@ public class UnicodeHelperTest {
         assertEquals(3, lh3.indexOf("m̂", 2));
     }
 
+    @Test
+    public void testIndexOfAtEndOfString() {
+        UnicodeHelper lh = new UnicodeHelper("ab|", Method.CODEPOINTS);
+        assertEquals(2, lh.indexOf("|"));
+
+        UnicodeHelper lh2 = new UnicodeHelper("abc|", Method.CODEPOINTS);
+        assertEquals(3, lh2.indexOf("|"));
+
+        UnicodeHelper lh3 = new UnicodeHelper("|", Method.CODEPOINTS);
+        assertEquals(0, lh3.indexOf("|"));
+
+        UnicodeHelper lh4 = new UnicodeHelper("ab|", Method.GRAPHEME);
+        assertEquals(2, lh4.indexOf("|"));
+    }
+
     private static String cps2String(final int... cps) {
         final StringBuilder buf = new StringBuilder();
         for (int cp : cps) {

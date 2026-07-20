@@ -124,7 +124,7 @@ public class UnicodeHelper implements Serializable {
 
         final int len = new UnicodeHelper(str, method).length();
 
-        for (int index = fromIndex; index + len < length(); index++) {
+        for (int index = fromIndex; index + len <= length(); index++) {
             if (str.equals(input.substring(splitted.get(index), splitted.get(index + len)))) {
                 return index;
             }

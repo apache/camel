@@ -182,7 +182,8 @@ public class ProtobufDataFormat extends ServiceSupport
         Builder builder = defaultInstance.newBuilderForType();
 
         if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_JSON)) {
-            JsonFormat.parser().ignoringUnknownFields().merge(new InputStreamReader(inputStream), builder);
+            JsonFormat.parser().ignoringUnknownFields().merge(new InputStreamReader(inputStream, StandardCharsets.UTF_8),
+                    builder);
         } else if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_NATIVE)) {
             builder = defaultInstance.newBuilderForType().mergeFrom(inputStream);
         } else {
