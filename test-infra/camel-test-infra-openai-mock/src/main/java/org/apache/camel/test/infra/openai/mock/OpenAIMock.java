@@ -76,8 +76,10 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
         server = HttpServer.create(new InetSocketAddress(0), 0);
         server.createContext("/",
                 new OpenAIMockServerHandler(
-                        expectations, embeddingExpectations, audioTranscriptionExpectations,
-                        audioTranslationExpectations, speechExpectations, objectMapper));
+                        new OpenAIMockExpectations(
+                                expectations, embeddingExpectations, audioTranscriptionExpectations,
+                                audioTranslationExpectations, speechExpectations),
+                        objectMapper));
 
         executor = Executors.newSingleThreadExecutor();
         server.setExecutor(executor);

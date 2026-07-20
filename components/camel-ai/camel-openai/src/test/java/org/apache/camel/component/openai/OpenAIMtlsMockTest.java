@@ -36,6 +36,7 @@ import com.sun.net.httpserver.HttpsServer;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.openai.mock.MockExpectation;
+import org.apache.camel.test.infra.openai.mock.OpenAIMockExpectations;
 import org.apache.camel.test.infra.openai.mock.OpenAIMockServerHandler;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
@@ -95,7 +96,7 @@ class OpenAIMtlsMockTest extends CamelTestSupport {
         expectations.add(expectation);
 
         httpsServer.createContext("/",
-                new OpenAIMockServerHandler(expectations, List.of(), List.of(), List.of(), List.of(), new ObjectMapper()));
+                new OpenAIMockServerHandler(OpenAIMockExpectations.ofChat(expectations), new ObjectMapper()));
 
         executor = Executors.newSingleThreadExecutor();
         httpsServer.setExecutor(executor);
@@ -260,7 +261,7 @@ class OpenAIMtlsMockTest extends CamelTestSupport {
         expectations.add(expectation);
 
         server.createContext("/",
-                new OpenAIMockServerHandler(expectations, List.of(), List.of(), List.of(), List.of(), new ObjectMapper()));
+                new OpenAIMockServerHandler(OpenAIMockExpectations.ofChat(expectations), new ObjectMapper()));
 
         server.setExecutor(Executors.newSingleThreadExecutor());
         server.start();

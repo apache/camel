@@ -451,3 +451,8 @@ from("direct:speak")
 === Audio Speech Output
 
 The message body is the generated audio as a `byte[]`. The `Content-Type` header is set according to `speechResponseFormat` (e.g., `audio/mpeg` for `mp3`, `audio/wav` for `wav`).
+
+[NOTE]
+====
+The generated audio is fully buffered into a `byte[]` in memory. This is fine for typical short text-to-speech responses, but be mindful of heap usage when synthesizing very large inputs (e.g., book-length narration).
+====

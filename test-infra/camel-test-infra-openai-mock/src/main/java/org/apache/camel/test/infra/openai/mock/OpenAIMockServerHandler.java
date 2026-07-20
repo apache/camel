@@ -18,7 +18,6 @@ package org.apache.camel.test.infra.openai.mock;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -34,19 +33,14 @@ public class OpenAIMockServerHandler implements HttpHandler {
     private final AudioTranscriptionRequestHandler audioTranslationRequestHandler;
     private final SpeechRequestHandler speechRequestHandler;
 
-    public OpenAIMockServerHandler(List<MockExpectation> expectations,
-                                   List<EmbeddingExpectation> embeddingExpectations,
-                                   List<AudioTranscriptionExpectation> audioTranscriptionExpectations,
-                                   List<AudioTranscriptionExpectation> audioTranslationExpectations,
-                                   List<SpeechExpectation> speechExpectations,
-                                   ObjectMapper objectMapper) {
-        this.chatRequestHandler = new RequestHandler(expectations, objectMapper);
-        this.embeddingRequestHandler = new EmbeddingRequestHandler(embeddingExpectations, objectMapper);
+    public OpenAIMockServerHandler(OpenAIMockExpectations expectations, ObjectMapper objectMapper) {
+        this.chatRequestHandler = new RequestHandler(expectations.chat(), objectMapper);
+        this.embeddingRequestHandler = new EmbeddingRequestHandler(expectations.embeddings(), objectMapper);
         this.audioTranscriptionRequestHandler
-                = new AudioTranscriptionRequestHandler(audioTranscriptionExpectations, objectMapper);
+                = new AudioTranscriptionRequestHandler(expectations.transcriptions(), objectMapper);
         this.audioTranslationRequestHandler
-                = new AudioTranscriptionRequestHandler(audioTranslationExpectations, objectMapper);
-        this.speechRequestHandler = new SpeechRequestHandler(speechExpectations);
+                = new AudioTranscriptionRequestHandler(expectations.translations(), objectMapper);
+        this.speechRequestHandler = new SpeechRequestHandler(expectations.speeches());
     }
 
     @Override

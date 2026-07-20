@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.openai.mock;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -40,24 +41,44 @@ public class SpeechRequestHandler {
     }
 
     public void handleRequest(HttpExchange exchange) throws IOException {
-        // consume the request body
-        try (InputStream requestBody = exchange.getRequestBody()) {
-            requestBody.readAllBytes();
-        }
-        LOG.debug("Processing audio speech request (call #{})", callIndex);
+        try {
+            // consume the request body
+            try (InputStream requestBody = exchange.getRequestBody()) {
+                requestBody.readAllBytes();
+            }
+            LOG.debug("Processing audio speech request (call #{})", callIndex);
 
-        if (expectations.isEmpty()) {
-            throw new IllegalStateException("No audio speech expectations configured");
-        }
+            if (expectations.isEmpty()) {
+                throw new IllegalStateException("No audio speech expectations configured");
+            }
 
-        SpeechExpectation expectation = expectations.get(callIndex % expectations.size());
-        callIndex++;
+            SpeechExpectation expectation = expectations.get(callIndex % expectations.size());
+            callIndex++;
 
-        byte[] audioData = expectation.getAudioData();
-        exchange.getResponseHeaders().set("Content-Type", expectation.getContentType());
-        exchange.sendResponseHeaders(200, audioData.length);
-        try (OutputStream os = exchange.getResponseBody()) {
-            os.write(audioData);
+            byte[] audioData = expectation.getAudioData();
+            if (audioData == null) {
+                throw new IllegalStateException("No audio data configured for speech expectation");
+            }
+            exchange.getResponseHeaders().set("Content-Type", expectation.getContentType());
+            exchange.sendResponseHeaders(200, audioData.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(audioData);
+            }
+        } catch (Exception e) {
+            String errorMessage = "Error processing audio speech request: " + e.getMessage();
+            LOG.error(errorMessage, e);
+            String jsonError = String.format(
+                    "{\"error\": {\"message\": \"%s\", \"type\": \"invalid_request_error\"}}", errorMessage);
+            byte[] errorBytes = jsonError.getBytes(StandardCharsets.UTF_8);
+            try {
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
+                exchange.sendResponseHeaders(500, errorBytes.length);
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write(errorBytes);
+                }
+            } catch (IOException ignored) {
+                // headers may already be sent
+            }
         }
     }
 }
