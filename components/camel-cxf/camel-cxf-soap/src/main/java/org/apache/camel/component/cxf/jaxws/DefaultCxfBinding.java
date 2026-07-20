@@ -473,8 +473,14 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
         propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange,
                 responseContext);
-        if (cxfExchange.getOutMessage() != null) {
-            cxfExchange.getOutMessage().put(CxfConstants.PROTOCOL_HEADERS, responseContext.get(CxfConstants.PROTOCOL_HEADERS));
+        Object protocolHeaders = responseContext.get(CxfConstants.PROTOCOL_HEADERS);
+        if (protocolHeaders != null) {
+            // Store on the CXF exchange so headers survive into the fault path
+            // (the out message does not exist yet at this point)
+            cxfExchange.put(CxfConstants.PROTOCOL_HEADERS, protocolHeaders);
+            if (cxfExchange.getOutMessage() != null) {
+                cxfExchange.getOutMessage().put(CxfConstants.PROTOCOL_HEADERS, protocolHeaders);
+            }
         }
     }
 
@@ -866,7 +872,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 if (part.charAt(0) == '\"') {
                     result = part.substring(1, part.length() - 1);
                 } else {
-                    result = part.substring(5);
+                    result = part;
                 }
                 break;
             }

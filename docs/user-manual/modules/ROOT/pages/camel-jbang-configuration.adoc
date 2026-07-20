@@ -4,7 +4,7 @@ This page covers configuring the Camel CLI — available options, configuration 
 
 // jbang options: START
 == Camel CLI configurations
-The camel.jbang supports 48 options, which are listed below.
+The camel.jbang supports 49 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -43,6 +43,7 @@ The camel.jbang supports 48 options, which are listed below.
 | *camel.jbang.metrics* | Metrics (Micrometer and Prometheus) at /observe/metrics on local HTTP server (port 8080 by default) when running standalone Camel | false | boolean
 | *camel.jbang.openApi* | File name of open-api spec file (JSON or YAML) to generate routes from the swagger/openapi API spec file. |  | String
 | *camel.jbang.packageScanJars* | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI | false | boolean
+| *camel.jbang.parentPom* | Parent POM coordinate (groupId:artifactId:version) to use in the exported project |  | String
 | *camel.jbang.prompt* | Allow user to type in required parameters in prompt if not present in application | false | boolean
 | *camel.jbang.quarkusArtifactId* | artifactId of Quarkus Platform BOM |  | String
 | *camel.jbang.quarkusExtensionRegistryBaseUri* | The base URI of Quarkus Extension Registry |  | String

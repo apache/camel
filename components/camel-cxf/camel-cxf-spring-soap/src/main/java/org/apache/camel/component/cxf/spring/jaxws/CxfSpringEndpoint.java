@@ -273,8 +273,8 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
         applicationContext = ctx;
 
         if (bus == null) {
-            createBus = true;
             bus = BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx);
+            enableSpringBusShutdownGracefully(bus);
         }
     }
 
@@ -313,10 +313,14 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
                 && applicationContext instanceof AbstractApplicationContext abstractApplicationContext) {
             ApplicationListener cxfSpringBusListener = null;
             for (ApplicationListener listener : abstractApplicationContext.getApplicationListeners()) {
-
-                if (listener.getClass().getName().indexOf("org.apache.cxf.bus.spring.SpringBus") >= 0) {
+                // match by identity to ensure we remove the listener for this specific bus
+                if (listener == springBus) {
                     cxfSpringBusListener = listener;
+                    break;
                 }
+            }
+            if (cxfSpringBusListener == null) {
+                return;
             }
             ApplicationEventMulticaster aem = applicationContext
                     .getBean(AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME,
@@ -324,35 +328,32 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
             aem.removeApplicationListener(cxfSpringBusListener);
 
             abstractApplicationContext.addApplicationListener((final ApplicationEvent event) -> {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        if (event instanceof ContextClosedEvent && bus.getState() == BusState.RUNNING) {
-
-                            try {
-                                boolean done = false;
-                                ShutdownStrategy shutdownStrategy = ((DefaultCamelContext) getCamelContext())
-                                        .getShutdownStrategy();
-                                while (!done && !shutdownStrategy.hasTimeoutOccurred()) {
-                                    int inflight = getCamelContext().getInflightRepository().size();
-                                    if (inflight != 0) {
-                                        Thread.sleep(1000);
-                                    } else {
-                                        done = true;
-                                    }
+                if (event instanceof ContextClosedEvent && bus.getState() == BusState.RUNNING) {
+                    // only spawn a thread for shutdown to wait for in-flight exchanges
+                    new Thread(() -> {
+                        try {
+                            boolean done = false;
+                            ShutdownStrategy shutdownStrategy = ((DefaultCamelContext) getCamelContext())
+                                    .getShutdownStrategy();
+                            while (!done && !shutdownStrategy.hasTimeoutOccurred()) {
+                                int inflight = getCamelContext().getInflightRepository().size();
+                                if (inflight != 0) {
+                                    Thread.sleep(1000);
+                                } else {
+                                    done = true;
                                 }
-                            } catch (InterruptedException e) {
-                                LOG.info("Interrupted while enabling graceful SpringBus shutdown");
-                                Thread.currentThread().interrupt();
-                            } catch (Exception e) {
-                                LOG.debug("Error when enabling SpringBus shutdown gracefully", e);
                             }
-                            springBus.onApplicationEvent(event);
-                        } else {
-                            springBus.onApplicationEvent(event);
+                        } catch (InterruptedException e) {
+                            LOG.info("Interrupted while enabling graceful SpringBus shutdown");
+                            Thread.currentThread().interrupt();
+                        } catch (Exception e) {
+                            LOG.debug("Error when enabling SpringBus shutdown gracefully", e);
                         }
-                    }
-                }.start();
+                        springBus.onApplicationEvent(event);
+                    }).start();
+                } else {
+                    springBus.onApplicationEvent(event);
+                }
             });
         }
 

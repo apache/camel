@@ -267,12 +267,14 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                 = (org.apache.cxf.message.Message) exchange.getIn().getHeader(CxfConstants.CAMEL_CXF_MESSAGE);
         if (cxfMessage != null) {
             String requestURL = (String) cxfMessage.get("org.apache.cxf.request.uri");
-            String matrixParam = null;
-            int matrixStart = requestURL.indexOf(';');
-            int matrixEnd = requestURL.indexOf('?') > -1 ? requestURL.indexOf('?') : requestURL.length();
+            int matrixEnd = requestURL.indexOf('?');
+            if (matrixEnd < 0) {
+                matrixEnd = requestURL.length();
+            }
+            int matrixStart = requestURL.substring(0, matrixEnd).indexOf(';');
             Map<String, String> maps = null;
             if (matrixStart > 0) {
-                matrixParam = requestURL.substring(matrixStart + 1, matrixEnd);
+                String matrixParam = requestURL.substring(matrixStart + 1, matrixEnd);
                 maps = getMatrixParametersFromMatrixString(matrixParam, ExchangeHelper.getCharsetName(exchange));
             }
             if (maps != null) {
@@ -506,13 +508,9 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             throws UnsupportedEncodingException {
         for (String param : queryString.split("&")) {
             String[] pair = param.split("=", 2);
-            if (pair.length == 2) {
-                String name = URLDecoder.decode(pair[0], charset);
-                String value = URLDecoder.decode(pair[1], charset);
-                client.query(name, value);
-            } else {
-                throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
-            }
+            String name = URLDecoder.decode(pair[0], charset);
+            String value = pair.length == 2 ? URLDecoder.decode(pair[1], charset) : "";
+            client.query(name, value);
         }
     }
 
@@ -570,14 +568,13 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             throws UnsupportedEncodingException {
         Map<String, String> answer = new LinkedHashMap<>();
         for (String param : matrixString.split(";")) {
-            String[] pair = param.split("=", 2);
-            if (pair.length == 2) {
-                String name = URLDecoder.decode(pair[0], charset);
-                String value = URLDecoder.decode(pair[1], charset);
-                answer.put(name, value);
-            } else {
-                throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
+            if (param.isEmpty()) {
+                continue;
             }
+            String[] pair = param.split("=", 2);
+            String name = URLDecoder.decode(pair[0], charset);
+            String value = pair.length == 2 ? URLDecoder.decode(pair[1], charset) : "";
+            answer.put(name, value);
         }
         return answer;
     }
@@ -650,7 +647,19 @@ public class CxfRsProducer extends DefaultAsyncProducer {
 
             for (Map.Entry<String, List<Object>> entry : resp.getMetadata().entrySet()) {
                 LOG.trace("Parse external header {}={}", entry.getKey(), entry.getValue());
-                answer.put(entry.getKey(), entry.getValue().get(0).toString());
+                List<Object> values = entry.getValue();
+                if (values.size() == 1) {
+                    answer.put(entry.getKey(), values.get(0).toString());
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < values.size(); i++) {
+                        if (i > 0) {
+                            sb.append(", ");
+                        }
+                        sb.append(values.get(i));
+                    }
+                    answer.put(entry.getKey(), sb.toString());
+                }
             }
         }
 
@@ -704,6 +713,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                 // handle cookies
                 saveCookies(exchange, client, cxfRsEndpoint.getCookieHandler());
                 if (!exchange.getPattern().isOutCapable()) {
+                    response.close();
                     return;
                 }
 
@@ -746,17 +756,19 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         }
 
         private void fail(Throwable throwable) {
-            if (throwable.getClass().isInstance(WebApplicationException.class)) {
-                final WebApplicationException cast = WebApplicationException.class.cast(throwable);
-                final Response response = cast.getResponse();
+            if (throwable instanceof WebApplicationException wae) {
+                Response response = wae.getResponse();
                 if (shouldHandleError(response)) {
                     handleError(response);
+                } else {
+                    exchange.setException(throwable);
                 }
-            } else if (throwable.getClass().isInstance(ResponseProcessingException.class)) {
-                final ResponseProcessingException cast = ResponseProcessingException.class.cast(throwable);
-                final Response response = cast.getResponse();
+            } else if (throwable instanceof ResponseProcessingException rpe) {
+                Response response = rpe.getResponse();
                 if (shouldHandleError(response)) {
                     handleError(response);
+                } else {
+                    exchange.setException(throwable);
                 }
             } else {
                 exchange.setException(throwable);
@@ -807,6 +819,9 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                     return;
                 }
                 if (!exchange.getPattern().isOutCapable()) {
+                    if (response != null) {
+                        response.close();
+                    }
                     return;
                 }
 
@@ -839,17 +854,19 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         }
 
         private void fail(Throwable throwable) {
-            if (throwable.getClass().isInstance(WebApplicationException.class)) {
-                final WebApplicationException cast = WebApplicationException.class.cast(throwable);
-                final Response response = cast.getResponse();
+            if (throwable instanceof WebApplicationException wae) {
+                Response response = wae.getResponse();
                 if (shouldHandleError(response)) {
                     handleError(response);
+                } else {
+                    exchange.setException(throwable);
                 }
-            } else if (throwable.getClass().isInstance(ResponseProcessingException.class)) {
-                final ResponseProcessingException cast = ResponseProcessingException.class.cast(throwable);
-                final Response response = cast.getResponse();
+            } else if (throwable instanceof ResponseProcessingException rpe) {
+                Response response = rpe.getResponse();
                 if (shouldHandleError(response)) {
                     handleError(response);
+                } else {
+                    exchange.setException(throwable);
                 }
             } else {
                 exchange.setException(throwable);

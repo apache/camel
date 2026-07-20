@@ -60,7 +60,7 @@ public final class CxfMessageHelper {
             answer.setContent(InputStream.class, body);
         } else if (message.getBody() != null) {
             // fallback and set the body as what it is
-            answer.setContent(Object.class, body);
+            answer.setContent(Object.class, message.getBody());
         }
 
         answer.putAll(message.getHeaders());

@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import jakarta.xml.ws.WebFault;
 
@@ -151,6 +152,8 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
 
     private class CxfConsumerInvoker implements Invoker {
 
+        private static final String COMPLETED = "org.apache.camel.component.cxf.jaxws.completed";
+
         private final CxfEndpoint endpoint;
 
         CxfConsumerInvoker(CxfEndpoint endpoint) {
@@ -180,8 +183,11 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
                 if (continuation.isNew()) {
                     final org.apache.camel.Exchange camelExchange = prepareCamelExchange(cxfExchange);
 
-                    // Now we don't set up the timeout value
                     LOG.trace("Suspending continuation of exchangeId: {}", camelExchange.getExchangeId());
+
+                    // guard so exactly one of {timeout, async completion} owns the response and UoW lifecycle
+                    final AtomicBoolean completed = new AtomicBoolean(false);
+                    cxfExchange.put(COMPLETED, completed);
 
                     // The continuation could be called before the suspend is called
                     continuation.suspend(cxfEndpoint.getContinuationTimeout());
@@ -193,9 +199,16 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
                         public void done(boolean doneSync) {
                             // make sure the continuation resume will not be called before the suspend method in other thread
                             synchronized (continuation) {
-                                LOG.trace("Resuming continuation of exchangeId: {}", camelExchange.getExchangeId());
-                                // resume processing after both, sync and async callbacks
-                                continuation.resume();
+                                if (completed.compareAndSet(false, true)) {
+                                    LOG.trace("Resuming continuation of exchangeId: {}", camelExchange.getExchangeId());
+                                    // resume processing after both, sync and async callbacks
+                                    continuation.resume();
+                                } else {
+                                    // timeout already sent the response; close the UoW now that the worker has finished
+                                    LOG.trace("Timeout already handled response for exchangeId: {}; closing UoW",
+                                            camelExchange.getExchangeId());
+                                    CxfConsumer.this.doneUoW(camelExchange);
+                                }
                             }
                         }
                     });
@@ -210,16 +223,23 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
                     }
 
                 } else if (continuation.isTimeout() || !continuation.isResumed() && !continuation.isPending()) {
-                    org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange) continuation.getObject();
-                    try {
-                        if (!continuation.isPending()) {
-                            camelExchange.setException(
-                                    new ExchangeTimedOutException(camelExchange, cxfEndpoint.getContinuationTimeout()));
+                    AtomicBoolean completed = (AtomicBoolean) cxfExchange.get(COMPLETED);
+                    if (completed != null && completed.compareAndSet(false, true)) {
+                        org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange) continuation.getObject();
+                        try {
+                            if (!continuation.isPending()) {
+                                camelExchange.setException(
+                                        new ExchangeTimedOutException(camelExchange, cxfEndpoint.getContinuationTimeout()));
+                            }
+                            setResponseBack(cxfExchange, camelExchange);
+                            // detach so UnitOfWorkCloserInterceptor won't close UoW;
+                            // the late async callback will close it after the worker finishes
+                            cxfExchange.put(org.apache.camel.Exchange.class, null);
+                        } catch (Exception ex) {
+                            cxfExchange.put(org.apache.camel.Exchange.class, null);
+                            CxfConsumer.this.doneUoW(camelExchange);
+                            throw ex;
                         }
-                        setResponseBack(cxfExchange, camelExchange);
-                    } catch (Exception ex) {
-                        CxfConsumer.this.doneUoW(camelExchange);
-                        throw ex;
                     }
                 }
             }

@@ -41,13 +41,17 @@ public class BigDecimalFormatFactory extends AbstractFormatFactory {
         return new BigDecimalFormat(
                 formattingOptions.isImpliedDecimalSeparator(),
                 formattingOptions.getPrecision(),
+                formattingOptions.getRounding(),
                 formattingOptions.getLocale());
     }
 
     private static class BigDecimalFormat extends AbstractNumberFormat<BigDecimal> {
 
-        BigDecimalFormat(boolean impliedDecimalPosition, int precision, Locale locale) {
+        private final String rounding;
+
+        BigDecimalFormat(boolean impliedDecimalPosition, int precision, String rounding, Locale locale) {
             super(impliedDecimalPosition, precision, locale);
+            this.rounding = rounding;
         }
 
         @Override
@@ -64,7 +68,7 @@ public class BigDecimalFormatFactory extends AbstractFormatFactory {
                 result = result.divide(BigDecimal.valueOf(super.getMultiplier()), super.getPrecision(), RoundingMode.HALF_EVEN);
             } else {
                 if (super.getPrecision() != -1) {
-                    result = result.setScale(super.getPrecision());
+                    result = result.setScale(super.getPrecision(), RoundingMode.valueOf(rounding));
                 }
             }
             return result;

@@ -483,7 +483,8 @@ use "default" to use platform default locale.
 the field in the CSV generated (output message) must be different compare to input position (pos). See the pos
 parameter.
 
-| precision | int |  | 0 | precision of the {@link java.math.BigDecimal} number to be created
+| precision | int |  | -1 a| precision of the {@link java.math.BigDecimal} number to be created. Use -1 (default) to preserve the original
+scale from the input.
 
 | required | boolean |  | false | Indicates if the field is mandatory
 
@@ -1346,7 +1347,7 @@ to @Message.continueParseOnFailure.
 | position | int |  | 0 a| Position of the field in the message generated - must be used when the position of the key/tag in the FIX message
 must be different
 
-| precision | int |  | 0 | precision of the BigDecimal number to be created
+| precision | int |  | -1 | precision of the BigDecimal number to be created. Use -1 (default) to preserve the original scale from the input.
 
 | required | boolean |  | false | Indicates if the field is mandatory
 

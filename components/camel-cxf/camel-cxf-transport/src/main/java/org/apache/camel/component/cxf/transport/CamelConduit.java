@@ -47,6 +47,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     private final EndpointInfo endpointInfo;
     private String targetCamelEndpointUri;
     private final Producer producer;
+    private volatile boolean closed;
     private ProducerTemplate camelTemplate;
     private final Bus bus;
     private final HeaderFilterStrategy headerFilterStrategy;
@@ -92,9 +93,11 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         return camelContext;
     }
 
-    // prepare the message for send out , not actually send out the message
     @Override
     public void prepare(Message message) throws IOException {
+        if (closed) {
+            throw new IOException("CamelConduit is already closed");
+        }
         LOG.trace("CamelConduit send message");
         CamelOutputStream os = new CamelOutputStream(
                 this.targetCamelEndpointUri,
@@ -107,8 +110,8 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
     @Override
     public void close() {
+        closed = true;
         LOG.trace("CamelConduit closed ");
-        // shutdown the producer
         try {
             producer.stop();
         } catch (Exception e) {

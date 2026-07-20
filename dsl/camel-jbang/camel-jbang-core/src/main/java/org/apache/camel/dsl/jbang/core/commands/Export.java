@@ -51,6 +51,7 @@ import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_S
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_SETTINGS_SECURITY;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_WRAPPER;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.OPEN_API;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.PARENT_POM;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.SPRING_BOOT_VERSION;
 
 @Command(name = "export",
@@ -190,6 +191,7 @@ public class Export extends ExportBaseCommand {
                 this.runtime = RuntimeType.fromValue(rt);
             }
             this.gav = props.getProperty(GAV, this.gav);
+            this.parentPom = props.getProperty(PARENT_POM, this.parentPom);
             // allow configuring versions from profile
             this.javaVersion = props.getProperty(JAVA_VERSION, this.javaVersion);
             this.camelVersion = props.getProperty(CAMEL_VERSION, this.camelVersion);
@@ -234,6 +236,7 @@ public class Export extends ExportBaseCommand {
         cmd.managementPort = this.managementPort;
         cmd.observe = this.observe;
         cmd.gav = this.gav;
+        cmd.parentPom = this.parentPom;
         cmd.mavenSettings = this.mavenSettings;
         cmd.mavenSettingsSecurity = this.mavenSettingsSecurity;
         cmd.mavenCentralEnabled = this.mavenCentralEnabled;

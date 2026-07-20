@@ -68,7 +68,7 @@
         <apacheds-version>2.0.0.AM27</apacheds-version>
         <apache-drill-version>1.22.0</apache-drill-version>
         <arangodb-java-version>7.26.0</arangodb-java-version>
-        <as2-lib-version>5.1.7</as2-lib-version>
+        <as2-lib-version>5.1.8</as2-lib-version>
         <ascii-table-version>1.12.1</ascii-table-version>
         <asm-version>9.10.1</asm-version>
         <asn1bean-version>1.14.0</asn1bean-version>
@@ -80,7 +80,7 @@
         <avro-ipc-jetty-version>1.12.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.1</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.48.2</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.48.3</aws-java-sdk2-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.38</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
@@ -166,7 +166,7 @@
         <rewrite-maven-plugin-version>6.44.0</rewrite-maven-plugin-version>
         <ftpserver-version>1.2.1</ftpserver-version>
         <freemarker-version>2.3.34</freemarker-version>
-        <fory-version>1.3.0</fory-version>
+        <fory-version>1.4.0</fory-version>
         <j8583-version>3.0.1</j8583-version>
         <jakarta-jms-api-version>3.1.0</jakarta-jms-api-version>
         <jakarta-persistence-api-version>3.2.0</jakarta-persistence-api-version>
@@ -321,7 +321,7 @@
 
         <!-- NullAway / Error Prone (used by -Pnullcheck profile, requires JDK 21+) -->
         <error-prone-version>2.50.0</error-prone-version>
-        <nullaway-version>0.13.7</nullaway-version>
+        <nullaway-version>0.13.8</nullaway-version>
         <jt400-version>21.0.6</jt400-version>
         <jte-version>3.2.4</jte-version>
         <junit-jupiter-version>5.14.4</junit-jupiter-version>
@@ -334,10 +334,10 @@
         <keycloak-client-version>26.0.8</keycloak-client-version>
         <kubernetes-client-version>7.8.0</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
-        <langchain4j-version>1.17.2</langchain4j-version>
+        <langchain4j-version>1.18.0</langchain4j-version>
         <!-- remove this one when all langchain4j artifacts are made final -->
-        <langchain4j-beta-version>1.17.2-beta27</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
-        <langchain4j-community-version>1.17.2-beta27</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community--> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
+        <langchain4j-beta-version>1.18.0-beta28</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
+        <langchain4j-community-version>1.18.0-beta28</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community--> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
         <leveldb-version>0.12</leveldb-version>
@@ -402,7 +402,7 @@
         <ognl-version>3.4.11</ognl-version>
         <mcp-java-sdk-version>2.0.0</mcp-java-sdk-version>
         <openai-java-version>4.43.0</openai-java-version>
-        <openapi-generator-version>7.23.0</openapi-generator-version>
+        <openapi-generator-version>7.24.0</openapi-generator-version>
         <openjpa-version>4.1.1</openjpa-version>
         <opensearch-rest-client-version>3.7.0</opensearch-rest-client-version>
         <opensearch-java-client-version>3.9.0</opensearch-java-client-version>

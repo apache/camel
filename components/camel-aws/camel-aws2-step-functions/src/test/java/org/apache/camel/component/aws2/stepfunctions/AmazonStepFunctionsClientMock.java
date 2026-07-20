@@ -25,7 +25,16 @@ import software.amazon.awssdk.services.sfn.model.*;
 
 public class AmazonStepFunctionsClientMock implements SfnClient {
 
+    private ListExecutionsRequest lastListExecutionsRequest;
+
     public AmazonStepFunctionsClientMock() {
+    }
+
+    /**
+     * The last request passed to {@link #listExecutions}, so tests can assert how it was built.
+     */
+    public ListExecutionsRequest getLastListExecutionsRequest() {
+        return lastListExecutionsRequest;
     }
 
     @Override
@@ -102,6 +111,7 @@ public class AmazonStepFunctionsClientMock implements SfnClient {
 
     @Override
     public ListExecutionsResponse listExecutions(ListExecutionsRequest listExecutionsRequest) {
+        this.lastListExecutionsRequest = listExecutionsRequest;
         ListExecutionsResponse.Builder result = ListExecutionsResponse.builder();
         List<ExecutionListItem> executionListItems = new ArrayList<>();
         executionListItems.add(ExecutionListItem.builder().executionArn("aws:sfn-execution::test-arn").build());

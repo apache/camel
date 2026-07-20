@@ -545,7 +545,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -553,7 +554,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.servicebus.CredentialType credentialType) {
+        default ServiceBusEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -561,7 +562,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1153,7 +1155,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1161,7 +1164,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointProducerBuilder credentialType(org.apache.camel.component.azure.servicebus.CredentialType credentialType) {
+        default ServiceBusEndpointProducerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -1169,7 +1172,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1517,7 +1521,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1525,7 +1530,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointBuilder credentialType(org.apache.camel.component.azure.servicebus.CredentialType credentialType) {
+        default ServiceBusEndpointBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -1533,7 +1538,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CONNECTION_STRING
          * Group: security

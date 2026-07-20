@@ -68,6 +68,10 @@ public final class CamelJBangConstants {
               javaType = "String")
     public static final String GAV = "camel.jbang.gav";
 
+    @Metadata(description = "Parent POM coordinate (groupId:artifactId:version) to use in the exported project",
+              javaType = "String")
+    public static final String PARENT_POM = "camel.jbang.parentPom";
+
     @Metadata(description = "Java version",
               javaType = "String", enums = "21", defaultValue = "21")
     public static final String JAVA_VERSION = "camel.jbang.javaVersion";

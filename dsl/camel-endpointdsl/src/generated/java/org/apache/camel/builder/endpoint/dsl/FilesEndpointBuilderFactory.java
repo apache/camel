@@ -47,7 +47,7 @@ public interface FilesEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.azure.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -56,7 +56,7 @@ public interface FilesEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default FilesEndpointConsumerBuilder credentialType(org.apache.camel.component.file.azure.CredentialType credentialType) {
+        default FilesEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -64,7 +64,7 @@ public interface FilesEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.azure.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -2721,7 +2721,7 @@ public interface FilesEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.azure.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -2730,7 +2730,7 @@ public interface FilesEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default FilesEndpointProducerBuilder credentialType(org.apache.camel.component.file.azure.CredentialType credentialType) {
+        default FilesEndpointProducerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -2738,7 +2738,7 @@ public interface FilesEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.azure.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -3727,7 +3727,7 @@ public interface FilesEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.azure.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -3736,7 +3736,7 @@ public interface FilesEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default FilesEndpointBuilder credentialType(org.apache.camel.component.file.azure.CredentialType credentialType) {
+        default FilesEndpointBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -3744,7 +3744,7 @@ public interface FilesEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.azure.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY

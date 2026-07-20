@@ -45,8 +45,6 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.HttpHeaderHelper;
-import org.apache.cxf.jaxrs.client.AbstractClient;
-import org.apache.cxf.jaxrs.client.ClientState;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.apache.cxf.jaxrs.model.OperationResourceInfoStack;
@@ -63,8 +61,6 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfRsBinding.class);
 
     private HeaderFilterStrategy headerFilterStrategy;
-
-    private String contentLanguage;
 
     public DefaultCxfRsBinding() {
     }
@@ -127,10 +123,11 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     private static void setProtocolHeaders(org.apache.cxf.message.Exchange cxfExchange, Message response) {
         Map<String, Object> headers
                 = CastUtils.cast((Map<?, ?>) response.getHeader(CxfConstants.PROTOCOL_HEADERS));
-        if (!ObjectHelper.isEmpty(cxfExchange) && !ObjectHelper.isEmpty(cxfExchange.getOutMessage())) {
-            cxfExchange.getOutMessage().putIfAbsent(CxfConstants.PROTOCOL_HEADERS,
-                    new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
+        if (cxfExchange == null || cxfExchange.getOutMessage() == null) {
+            return;
         }
+        cxfExchange.getOutMessage().putIfAbsent(CxfConstants.PROTOCOL_HEADERS,
+                new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
         final Map<String, List<String>> cxfHeaders = CastUtils
                 .cast((Map<?, ?>) cxfExchange.getOutMessage().get(CxfConstants.PROTOCOL_HEADERS));
 
@@ -271,30 +268,15 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             contentType = MediaType.WILDCARD;
         }
         String contentEncoding = camelMessage.getHeader(CxfConstants.CONTENT_ENCODING, String.class);
-        if (webClient != null && contentLanguage == null) {
-            try {
-                Method getStateMethod = AbstractClient.class.getDeclaredMethod("getState");
-                getStateMethod.setAccessible(true);
-                ClientState clientState = (ClientState) getStateMethod.invoke(webClient);
-                if (clientState.getRequestHeaders().containsKey(HttpHeaders.CONTENT_LANGUAGE)) {
-                    contentLanguage = clientState.getRequestHeaders()
-                            .getFirst(HttpHeaders.CONTENT_LANGUAGE);
-                    if (contentLanguage != null) {
-                        return Entity.entity(body, new Variant(
-                                MediaType.valueOf(contentType),
-                                // TODO Update once baseline is Java 21
-                                // Locale.of(contentLanguage),
-                                new Locale(contentLanguage),
-                                contentEncoding));
-                    }
-                }
-            } catch (Exception ex) {
-                LOG.warn(
-                        "Cannot retrieve CONTENT_LANGUAGE from WebClient. This exception is ignored, and US Locale will be used",
-                        ex);
+        if (webClient != null) {
+            String contentLanguage = webClient.getHeaders().getFirst(HttpHeaders.CONTENT_LANGUAGE);
+            if (contentLanguage != null) {
+                return Entity.entity(body, new Variant(
+                        MediaType.valueOf(contentType),
+                        new Locale(contentLanguage),
+                        contentEncoding));
             }
         }
-        contentLanguage = Locale.US.getLanguage();
         return Entity.entity(body, new Variant(MediaType.valueOf(contentType), Locale.US, contentEncoding));
     }
 
@@ -329,8 +311,8 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
                 /* Ignore HTTP/2 pseudo headers such as :status */
                 continue;
             } else {
-                // just put the first String element, as the complex one is filtered
-                camelMessage.setHeader(entry.getKey(), entry.getValue().get(0));
+                List<String> values = entry.getValue();
+                camelMessage.setHeader(entry.getKey(), values.size() == 1 ? values.get(0) : values);
             }
             continue;
         }

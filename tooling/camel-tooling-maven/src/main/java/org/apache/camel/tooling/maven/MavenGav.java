@@ -42,6 +42,23 @@ public final class MavenGav {
         return parseGav(gav, null);
     }
 
+    /**
+     * Parses a strict {@code groupId:artifactId:version} GAV string. Unlike {@link #parseGav(String)}, this method
+     * requires exactly three colon-separated parts and throws if the input does not match.
+     *
+     * @param  gav                      the GAV string in {@code groupId:artifactId:version} format
+     * @return                          a new {@link MavenGav}
+     * @throws IllegalArgumentException if the input does not contain exactly three colon-separated parts
+     */
+    public static MavenGav parseStrictGav(String gav) {
+        String[] parts = gav.split(":");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException(
+                    "Expected groupId:artifactId:version, got: " + gav);
+        }
+        return fromCoordinates(parts[0], parts[1], parts[2], null, null);
+    }
+
     public static MavenGav fromCoordinates(
             String groupId, String artifactId, String version, String packaging,
             String classifier) {

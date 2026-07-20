@@ -23,6 +23,40 @@ Notes:
 - The `--profile` option is not supported when exporting to Quarkus.
 - For Spring Boot, you can override versions with `--camel-spring-boot-version`.
 
+=== Exporting with a parent POM
+
+When organizations run many Camel integrations, they typically use a parent POM to standardize
+plugin versions, required extensions, and common dependencies. Use `--parent-pom` to set the
+parent POM in the exported project:
+
+[source,bash]
+----
+camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --parent-pom=com.ourorg:camel-parent:1.0
+----
+
+This generates the `<parent>` block in the exported `pom.xml`:
+
+[source,xml]
+----
+<parent>
+    <groupId>com.ourorg</groupId>
+    <artifactId>camel-parent</artifactId>
+    <version>1.0</version>
+    <relativePath/>
+</parent>
+----
+
+For Spring Boot, specifying `--parent-pom` replaces the default `spring-boot-starter-parent`.
+The Spring Boot BOM (`spring-boot-dependencies`) remains in `<dependencyManagement>`, so version
+management continues to work.
+
+You can also configure this in `application.properties`:
+
+[source,properties]
+----
+camel.jbang.parentPom=com.ourorg:camel-parent:1.0
+----
+
 === Exporting with Java Agent included
 
 NOTE: Only `camel-main` runtime supports Java Agents.

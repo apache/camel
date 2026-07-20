@@ -54,6 +54,7 @@ camel dependency list [options]
 | `--output` | Output format (gav, maven, jbang) | gav | String
 | `--package-name` | For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. Use false to turn off and not include package name in the Java source files. |  | String
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI | false | boolean
+| `--parent-pom` | The Maven parent POM group:artifact:version |  | String
 | `--port` | Embeds a local HTTP server on this port |  | int
 | `--profile` | Profile to export (dev, test, prod). |  | String
 | `--prop,--property` | Camel application properties, ex. --property=prop1=foo |  | String

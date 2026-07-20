@@ -35,6 +35,7 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.ObjectHelper;
 
@@ -51,11 +52,21 @@ class ExportCamelMain extends Export {
 
     @Override
     public Integer export() throws Exception {
-        String[] ids = gav.split(":");
-        if (ids.length != 3) {
+        try {
+            MavenGav.parseStrictGav(gav);
+        } catch (IllegalArgumentException e) {
             printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
+        if (parentPom != null) {
+            try {
+                MavenGav.parseStrictGav(parentPom);
+            } catch (IllegalArgumentException e) {
+                printer().printErr("--parent-pom must be in syntax: groupId:artifactId:version");
+                return 1;
+            }
+        }
+        String[] ids = gav.split(":");
 
         // the settings file has information what to export
         Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
@@ -217,6 +228,7 @@ class ExportCamelMain extends Export {
         model.put("Repositories", buildRepositoryList(repos));
         model.put("Dependencies", buildDependencyList(deps));
         model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
+        enrichParentPom(model);
 
         // kubernetes/docker properties
         enrichKubernetesModel(model, settings, profile);

@@ -43,7 +43,7 @@ public abstract class AbstractNumberFormat<T extends Number> implements Format<T
      */
     protected AbstractNumberFormat(boolean impliedDecimalPosition, int precision, Locale locale) {
         this.impliedDecimalPosition = impliedDecimalPosition;
-        this.precision = precision > 0 ? precision : 0;
+        this.precision = precision;
         this.format = null;
         this.multiplier = 1;
 
@@ -58,8 +58,8 @@ public abstract class AbstractNumberFormat<T extends Number> implements Format<T
         if (this.impliedDecimalPosition) {
             this.format.setMinimumFractionDigits(0);
             this.format.setMaximumFractionDigits(0);
-            this.multiplier = Math.pow(10D, precision);
-        } else {
+            this.multiplier = Math.pow(10D, Math.max(precision, 0));
+        } else if (this.precision >= 0) {
             this.format.setMinimumFractionDigits(this.precision);
             this.format.setMaximumFractionDigits(this.precision);
         }

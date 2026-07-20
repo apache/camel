@@ -17,9 +17,11 @@
 package org.apache.camel.component.cxf.spring;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.Bus.BusState;
 import org.apache.cxf.binding.soap.SoapBindingFactory;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringBusFactoryBeanTest extends AbstractSpringBeanTestSupport {
@@ -39,6 +41,23 @@ public class SpringBusFactoryBeanTest extends AbstractSpringBeanTestSupport {
 
         SoapBindingFactory soapBindingFactory = bus.getExtension(SoapBindingFactory.class);
         assertNotNull(soapBindingFactory, "You should find the factory here");
+    }
+
+    @Test
+    public void testBusShutdownOnContextClose() {
+        Bus bus = ctx.getBean("cxfBus", Bus.class);
+        assertNotNull(bus);
+
+        // bus should be running while context is open
+        assertEquals(BusState.RUNNING, bus.getState());
+
+        // closing the context must shut down the bus via DisposableBean.destroy()
+        ctx.close();
+        assertEquals(BusState.SHUTDOWN, bus.getState(),
+                "Bus must be shut down after application context close");
+
+        // prevent tearDown from closing again
+        ctx = null;
     }
 
 }
