@@ -65,7 +65,7 @@
                 single flat classpath. The generate plugin drags in commonmark 0.21.0 (via openapi-generator),
                 while the tui plugin (via tamboui-markdown) needs commonmark 0.28.0 and its renderer.markdown
                 classes that do not exist in 0.21.0. Without this pin Maven mediation keeps the older 0.21.0
-                core next to the 0.28.0 extensions, which makes the TUI markdown help throw NoClassDefFoundError.
+                core next to the 0.28.0 extensions, which makes the TUI Markdown help throw NoClassDefFoundError.
                 Pin the core to 0.28.0 so it matches the commonmark-ext-* modules; openapi-generator only uses
                 the stable Parser/HtmlRenderer APIs, which are unchanged in 0.28.0.
             -->

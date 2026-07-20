@@ -107,7 +107,7 @@ jobs:
         # Plain mvn: this reactor is only a handful of modules, so the mvnd daemon
         # brings no parallelism benefit and adds a cold-start failure mode.
         run: |
-          mvn -pl buildingtools,tooling/camel-exe -am verify -Dcamel.exe.build=true -DskipTests
+          mvn -B -pl buildingtools,tooling/camel-exe -am verify -Dcamel.exe.build=true -DskipTests
       - name: Upload Windows x64 camel.exe
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -139,7 +139,8 @@ jobs:
       - name: Smoke test Windows x64 camel.exe
         shell: bash
         run: |
-          mvn -B -ntp -pl buildingtools,tooling/camel-exe -am test -Dtest=CamelExeBootstrapTest -Dsurefire.failIfNoSpecifiedTests=false
+          mvn -B -ntp -pl buildingtools,tooling/camel-exe -am test \
+            -Dtest=CamelExeBootstrapTest -Dsurefire.failIfNoSpecifiedTests=false
 
   camel-launcher-native:
     needs: detect-changes
@@ -178,9 +179,9 @@ jobs:
         # camel-repackager-maven-plugin builds the launcher's self-executing JAR. It is not in the
         # -pl list below, so without this step Maven resolves it from the Apache snapshot repository
         # and any change made to it in this PR is silently not exercised. Maven cannot consume a
-        # plugin produced by the same reactor invocation, hence the separate install.
+        # plugin produced by the same reactor invocation, hence the separate installation.
         run: |
-          mvn -P apache-snapshots -B -ntp \
+          mvn -B -P apache-snapshots -ntp \
             -pl tooling/maven/camel-repackager-maven-plugin install -DskipTests
       - name: Build launcher with native camel.exe (x64 + arm64)
         # No -am: build only the listed modules. The launcher's other in-repo
@@ -194,7 +195,7 @@ jobs:
         # daemon brings no parallelism benefit and adds a cold-start failure mode.
         # -P apache-snapshots is required here so the upstream modules resolve.
         run: |
-          mvn -P apache-snapshots \
+          mvn -B -P apache-snapshots \
             -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher verify \
             -Dcamel.exe.build=true -DskipTests
       - name: Assert archive carries both exe files
@@ -225,7 +226,7 @@ jobs:
              tooling/camel-exe/target/camel-arm64.exe \
              dsl/camel-jbang/camel-launcher/target/camel-launcher-*-winget-bin.zip "$FIRST_BUILD"
 
-          mvn -P apache-snapshots \
+          mvn -B -P apache-snapshots \
             -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher clean verify \
             -Dcamel.exe.build=true -DskipTests
 
@@ -254,7 +255,7 @@ jobs:
       - name: Verify WinGet archive is not deployed by Maven
         run: |
           MAVEN_REPO="$RUNNER_TEMP/winget-maven-repo"
-          mvn -P apache-snapshots \
+          mvn -B -P apache-snapshots \
             -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher deploy \
             -Dcamel.exe.build=true -DskipTests \
             -DaltSnapshotDeploymentRepository="winget-check::file://$MAVEN_REPO"
