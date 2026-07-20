@@ -22,8 +22,8 @@ import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.identity.DefaultAzureCredentialBuilder;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration;
-import org.apache.camel.component.azure.cosmosdb.CredentialType;
 import org.apache.camel.util.ObjectHelper;
 
 public final class CosmosDbClientFactory {

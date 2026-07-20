@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 import com.azure.identity.IntelliJCredentialBuilder;
 import com.azure.messaging.eventhubs.models.ErrorContext;
 import com.azure.messaging.eventhubs.models.EventContext;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
 import org.junit.jupiter.api.Test;
 

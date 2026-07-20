@@ -50,7 +50,7 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "connecttimeout":
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "credentialtype":
-        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.file.azure.CredentialType.class, value)); return true;
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "delete": target.setDelete(property(camelContext, boolean.class, value)); return true;
         case "disconnect": target.setDisconnect(property(camelContext, boolean.class, value)); return true;
@@ -232,7 +232,7 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "connecttimeout":
         case "connectTimeout": return int.class;
         case "credentialtype":
-        case "credentialType": return org.apache.camel.component.file.azure.CredentialType.class;
+        case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "delay": return long.class;
         case "delete": return boolean.class;
         case "disconnect": return boolean.class;
