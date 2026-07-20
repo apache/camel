@@ -66,11 +66,21 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
 
     @Override
     protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
+        // apply Spring bean config first so URI options can override
         configurer.configureBean(beanId, cfb);
-        // support to call the configurer here
-        getNullSafeCxfRsEndpointConfigurer().configure(cfb);
-        cfb.setAddress(address);
+        if (getModelRef() != null) {
+            cfb.setModelRef(getModelRef());
+        }
+        if (getResourceClasses() != null && !getResourceClasses().isEmpty()) {
+            cfb.setResourceClass(getResourceClasses().get(0));
+            cfb.getServiceFactory().setResourceClasses(getResourceClasses());
+        }
+        setupCommonFactoryProperties(cfb);
         cfb.setThreadSafe(true);
+        getNullSafeCxfRsEndpointConfigurer().configure(cfb);
+        if (address != null) {
+            cfb.setAddress(address);
+        }
     }
 
     @Override
