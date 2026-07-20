@@ -308,6 +308,7 @@ public class StepFunctions2ProducerTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.listExecutions);
+                exchange.getIn().setHeader(StepFunctions2Constants.STATE_MACHINE_ARN, "aws:sfn::test-state-machine");
             }
         });
 
@@ -316,6 +317,8 @@ public class StepFunctions2ProducerTest extends CamelTestSupport {
         ListExecutionsResponse resultGet = (ListExecutionsResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.executions().size());
         assertEquals("aws:sfn-execution::test-arn", resultGet.executions().get(0).executionArn());
+        // ListExecutions requires the state machine ARN; it must be taken from the header.
+        assertEquals("aws:sfn::test-state-machine", clientMock.getLastListExecutionsRequest().stateMachineArn());
     }
 
     @Test
