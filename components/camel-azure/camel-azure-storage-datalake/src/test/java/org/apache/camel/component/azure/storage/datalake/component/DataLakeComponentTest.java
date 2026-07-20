@@ -19,7 +19,7 @@ package org.apache.camel.component.azure.storage.datalake.component;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.file.datalake.DataLakeServiceClientBuilder;
 import org.apache.camel.Producer;
-import org.apache.camel.component.azure.storage.datalake.CredentialType;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration;
 import org.apache.camel.component.azure.storage.datalake.DataLakeEndpoint;
 import org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition;

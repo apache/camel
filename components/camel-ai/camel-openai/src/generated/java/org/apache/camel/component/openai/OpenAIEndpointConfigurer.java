@@ -25,6 +25,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": target.getConfiguration().setAdditionalBodyProperty(property(camelContext, java.util.Map.class, value)); return true;
+        case "additionalheader":
+        case "additionalHeader": target.getConfiguration().setAdditionalHeader(property(camelContext, java.util.Map.class, value)); return true;
         case "additionalresponseheader":
         case "additionalResponseHeader": target.getConfiguration().setAdditionalResponseHeader(property(camelContext, java.util.Map.class, value)); return true;
         case "apikey":
@@ -62,6 +64,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxagentictokens":
         case "maxAgenticTokens": target.getConfiguration().setMaxAgenticTokens(property(camelContext, long.class, value)); return true;
+        case "maxretries":
+        case "maxRetries": target.getConfiguration().setMaxRetries(property(camelContext, int.class, value)); return true;
         case "maxtokens":
         case "maxTokens": target.getConfiguration().setMaxTokens(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxtooliterations":
@@ -79,6 +83,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "outputclass":
         case "outputClass": target.getConfiguration().setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "sslendpointalgorithm":
@@ -124,6 +130,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return java.util.Map.class;
+        case "additionalheader":
+        case "additionalHeader": return java.util.Map.class;
         case "additionalresponseheader":
         case "additionalResponseHeader": return java.util.Map.class;
         case "apikey":
@@ -161,6 +169,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": return boolean.class;
         case "maxagentictokens":
         case "maxAgenticTokens": return long.class;
+        case "maxretries":
+        case "maxRetries": return int.class;
         case "maxtokens":
         case "maxTokens": return java.lang.Integer.class;
         case "maxtooliterations":
@@ -178,6 +188,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": return java.lang.String.class;
         case "outputclass":
         case "outputClass": return java.lang.String.class;
+        case "requesttimeout":
+        case "requestTimeout": return long.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "sslendpointalgorithm":
@@ -224,6 +236,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return target.getConfiguration().getAdditionalBodyProperty();
+        case "additionalheader":
+        case "additionalHeader": return target.getConfiguration().getAdditionalHeader();
         case "additionalresponseheader":
         case "additionalResponseHeader": return target.getConfiguration().getAdditionalResponseHeader();
         case "apikey":
@@ -261,6 +275,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxagentictokens":
         case "maxAgenticTokens": return target.getConfiguration().getMaxAgenticTokens();
+        case "maxretries":
+        case "maxRetries": return target.getConfiguration().getMaxRetries();
         case "maxtokens":
         case "maxTokens": return target.getConfiguration().getMaxTokens();
         case "maxtooliterations":
@@ -278,6 +294,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "outputclass":
         case "outputClass": return target.getConfiguration().getOutputClass();
+        case "requesttimeout":
+        case "requestTimeout": return target.getConfiguration().getRequestTimeout();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "sslendpointalgorithm":
@@ -323,6 +341,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return java.lang.Object.class;
+        case "additionalheader":
+        case "additionalHeader": return java.lang.Object.class;
         case "additionalresponseheader":
         case "additionalResponseHeader": return java.lang.Object.class;
         case "mcpserver":

@@ -71,6 +71,14 @@ marked ready for review.
 - Request review from **at least 2 relevant committers** using `gh pr edit --add-reviewer`.
 - When all comments on the Pull Request are addressed (by providing a fix or providing more explanation) and the PR checks are green, re-request review on existing reviewers so that they are aware that the new changeset is ready to be reviewed.
 
+### Doing a review
+
+When an AI agent is doing a review:
+
+- Wait until PR checks are green as they will already catch most trivial issues using less resources
+- It must challenge the code and ensure that it respects all conventions
+- For Dependabot PRs, either do not review them or be able to do a real review: check for deprecated APIs, removed features, or breaking changes in the changelog
+
 ### Merge Requirements
 
 - An agent MUST NOT merge a PR if there are any **unresolved review conversations**.

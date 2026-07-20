@@ -102,16 +102,24 @@
 
     <profiles>
         <!--
-            Compiles the native x64 camel.exe bootstrap with the Microsoft C/C++ Build Tools.
-            Activates automatically on Windows; requires cl.exe on PATH (run from a developer
-            command prompt / after vcvars64.bat). Non-Windows builds skip this and omit camel.exe.
+            Cross-compiles camel.exe for Windows x64 and arm64 using clang from the
+            llvm-mingw toolchain. Host-OS-independent: runs on Linux, macOS, or Windows
+            wherever llvm-mingw is installed.
+
+            Activation:
+              - Plain 'mvn clean install' (any OS): no-op, unaffected.
+              - '-Dcamel.exe.build=true' (CI, manual): attempts the cross-compile,
+                requires llvm-mingw on PATH.
+              - '-Prelease' (real releases): auto-triggers via the release profile
+                setting camel.exe.build=true.
         -->
         <profile>
-            <id>build-windows-exe</id>
+            <id>build-native-exe</id>
             <activation>
-                <os>
-                    <family>windows</family>
-                </os>
+                <property>
+                    <name>camel.exe.build</name>
+                    <value>true</value>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -120,25 +128,44 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>compile-camel-exe</id>
+                                <id>compile-camel-exe-x64</id>
                                 <phase>generate-test-resources</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>cl.exe</executable>
+                                    <executable>x86_64-w64-mingw32-clang</executable>
                                     <arguments>
-                                        <argument>/nologo</argument>
-                                        <argument>/W4</argument>
-                                        <argument>/O1</argument>
-                                        <argument>/MT</argument>
-                                        <argument>/Brepro</argument>
-                                        <argument>/Fe:${project.build.directory}\camel.exe</argument>
-                                        <argument>/Fo:${project.build.directory}\camel.obj</argument>
-                                        <argument>${project.basedir}\src\main\native\camel.c</argument>
-                                        <argument>/link</argument>
-                                        <argument>/Brepro</argument>
-                                        <argument>/SUBSYSTEM:CONSOLE</argument>
+                                        <argument>-Wall</argument>
+                                        <argument>-Wextra</argument>
+                                        <argument>-O1</argument>
+                                        <argument>-static</argument>
+                                        <argument>-mconsole</argument>
+                                        <argument>-municode</argument>
+                                        <argument>-o</argument>
+                                        <argument>${project.build.directory}/camel-x64.exe</argument>
+                                        <argument>${project.basedir}/src/main/native/camel.c</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>compile-camel-exe-arm64</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>aarch64-w64-mingw32-clang</executable>
+                                    <arguments>
+                                        <argument>-Wall</argument>
+                                        <argument>-Wextra</argument>
+                                        <argument>-O1</argument>
+                                        <argument>-static</argument>
+                                        <argument>-mconsole</argument>
+                                        <argument>-municode</argument>
+                                        <argument>-o</argument>
+                                        <argument>${project.build.directory}/camel-arm64.exe</argument>
+                                        <argument>${project.basedir}/src/main/native/camel.c</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -149,7 +176,7 @@
                         <artifactId>build-helper-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>attach-camel-exe</id>
+                                <id>attach-camel-exe-x64</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>attach-artifact</goal>
@@ -157,8 +184,25 @@
                                 <configuration>
                                     <artifacts>
                                         <artifact>
-                                            <file>${project.build.directory}/camel.exe</file>
+                                            <file>${project.build.directory}/camel-x64.exe</file>
                                             <type>exe</type>
+                                            <classifier>x64</classifier>
+                                        </artifact>
+                                    </artifacts>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>attach-camel-exe-arm64</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>attach-artifact</goal>
+                                </goals>
+                                <configuration>
+                                    <artifacts>
+                                        <artifact>
+                                            <file>${project.build.directory}/camel-arm64.exe</file>
+                                            <type>exe</type>
+                                            <classifier>arm64</classifier>
                                         </artifact>
                                     </artifacts>
                                 </configuration>
@@ -170,15 +214,15 @@
         </profile>
 
         <!--
-            Release gate: fails the build before packaging if the native camel.exe was not
-            produced. Enabled only when -Dcamel.exe.requireWindowsExe=true (release job on
-            a Windows x64 host), so ordinary cross-platform dev builds are unaffected.
+            Release gate: fails the build before packaging if the native exe files were
+            not produced. Enabled only when -Dcamel.exe.build=true (CI, release builds),
+            so ordinary cross-platform dev builds are unaffected.
         -->
         <profile>
-            <id>require-windows-exe</id>
+            <id>require-native-exe</id>
             <activation>
                 <property>
-                    <name>camel.exe.requireWindowsExe</name>
+                    <name>camel.exe.build</name>
                     <value>true</value>
                 </property>
             </activation>
@@ -198,7 +242,8 @@
                                     <rules>
                                         <requireFilesExist>
                                             <files>
-                                                <file>${project.build.directory}/camel.exe</file>
+                                                <file>${project.build.directory}/camel-x64.exe</file>
+                                                <file>${project.build.directory}/camel-arm64.exe</file>
                                             </files>
                                         </requireFilesExist>
                                     </rules>

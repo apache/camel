@@ -125,7 +125,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.datalake.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -133,7 +134,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default DataLakeEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.storage.datalake.CredentialType credentialType) {
+        default DataLakeEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -141,7 +142,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.storage.datalake.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -1549,7 +1551,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.datalake.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -1557,7 +1560,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default DataLakeEndpointProducerBuilder credentialType(org.apache.camel.component.azure.storage.datalake.CredentialType credentialType) {
+        default DataLakeEndpointProducerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -1565,7 +1568,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.storage.datalake.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -2409,7 +2413,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.datalake.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -2417,7 +2422,7 @@ public interface DataLakeEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default DataLakeEndpointBuilder credentialType(org.apache.camel.component.azure.storage.datalake.CredentialType credentialType) {
+        default DataLakeEndpointBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -2425,7 +2430,8 @@ public interface DataLakeEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.storage.datalake.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CLIENT_SECRET
          * Group: common

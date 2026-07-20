@@ -130,14 +130,22 @@ class CamelOutputStream extends CachedOutputStream {
             try {
                 syncInvoke(exchange);
             } catch (Exception e) {
-                ((PhaseInterceptorChain) outMessage.getInterceptorChain()).abort();
                 outMessage.setContent(Exception.class, e);
-                ((PhaseInterceptorChain) outMessage.getInterceptorChain()).unwind(outMessage);
-                MessageObserver mo = outMessage.getInterceptorChain().getFaultObserver();
+                if (outMessage.getInterceptorChain() instanceof PhaseInterceptorChain chain) {
+                    chain.abort();
+                    chain.unwind(outMessage);
+                }
+                MessageObserver mo = outMessage.getInterceptorChain() != null
+                        ? outMessage.getInterceptorChain().getFaultObserver()
+                        : null;
                 if (mo == null) {
                     mo = outMessage.getExchange().get(MessageObserver.class);
                 }
-                mo.onMessage(outMessage);
+                if (mo != null) {
+                    mo.onMessage(outMessage);
+                } else {
+                    LOG.error("No fault observer available to handle transport error", e);
+                }
             }
         };
 

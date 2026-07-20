@@ -77,7 +77,8 @@ public class RepackageMojoTest {
     @Test
     public void testNonJarArtifactIsExcludedEvenWhenCompileScoped() {
         // camel-launcher depends on camel-exe:exe purely so the assembly descriptor can stage
-        // bin/camel.exe; it must never end up embedded as a Spring Boot loader library.
+        // bin/camel-x64.exe and bin/camel-arm64.exe; it must never end up embedded as a Spring
+        // Boot loader library.
         RepackageMojo mojo = new RepackageMojo();
         Artifact artifact = artifact("org.apache.camel", "camel-exe", "exe", Artifact.SCOPE_COMPILE);
 

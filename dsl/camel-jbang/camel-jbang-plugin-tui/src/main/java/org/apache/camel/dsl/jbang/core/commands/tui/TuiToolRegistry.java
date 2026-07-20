@@ -25,7 +25,14 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.tooling.model.BaseModel;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -127,6 +134,7 @@ class TuiToolRegistry {
             case "tui_canvas_close" -> callCanvasClose();
             case "tui_animate" -> callAnimate(args);
             case "tui_animate_status" -> callAnimateStatus(args);
+            case "tui_catalog_doc" -> callCatalogDoc(args);
             case "tui_list_examples" -> callListExamples(args);
             case "tui_run_example" -> callRunExample(args);
             default -> throw new IllegalArgumentException("Unknown tool: " + name);
@@ -540,6 +548,28 @@ class TuiToolRegistry {
                                 "Single diagram node ID to locate (routeId or nodeId)."),
                         "nodes", propDef("array",
                                 "Array of diagram node IDs to locate. Returns individual rects plus combined bounds.")))));
+
+        // --- Catalog tools ---
+
+        tools.add(toToolDef(toolDef(
+                "tui_catalog_doc",
+                "Get documentation for a Camel catalog artifact (component, data format, language) "
+                                   + "including description, options, and Maven coordinates. "
+                                   + "Use optionsFilter to search options by keyword (e.g., 'security', 'ssl', 'timeout'). "
+                                   + "This enables queries like 'what options are there on kafka about security'. "
+                                   + "Uses the Camel version from the selected integration.",
+                Map.of("name", propDef("string",
+                        "Artifact name (e.g., kafka, json-jackson, simple, timer)"),
+                        "kind", propDef("string",
+                                "Artifact kind: component, dataformat, or language. "
+                                                  + "If omitted, auto-detects by trying component first, then dataformat, then language."),
+                        "includeOptions", propDef("boolean",
+                                "Whether to include configuration options in the response (default: true). "
+                                                             + "Set to false for a lightweight response with just metadata."),
+                        "optionsFilter", propDef("string",
+                                "Filter options by keyword in name or description (case-insensitive substring match). "
+                                                           + "Only used when includeOptions is true.")),
+                List.of("name"))));
 
         // --- Example tools ---
 
@@ -1582,6 +1612,219 @@ class TuiToolRegistry {
             return DrawOverlay.generateText(x, y, text != null ? text : "", color);
         }
         return DrawOverlay.generateShape(shape, x, y, width, height, length, color);
+    }
+
+    private String callCatalogDoc(Map<String, Object> args) {
+        String name = args.get("name") instanceof String v ? v : null;
+        if (name == null || name.isEmpty()) {
+            return "{\"error\": \"'name' parameter is required\"}";
+        }
+        String kind = args.get("kind") instanceof String v ? v : null;
+        String optionsFilter = args.get("optionsFilter") instanceof String v ? v : null;
+        boolean includeOptions = !Boolean.FALSE.equals(args.get("includeOptions"));
+
+        String version = facade.getSelectedCamelVersion();
+        try {
+            CamelCatalog catalog = CatalogLoader.loadCatalog(null, version, true);
+            if (catalog == null) {
+                return "{\"error\": \"Could not load catalog" + (version != null ? " for version " + version : "") + "\"}";
+            }
+            return buildCatalogDocResult(catalog, name, kind, optionsFilter, includeOptions);
+        } catch (Exception e) {
+            JsonObject err = new JsonObject();
+            err.put("error", "Failed to load catalog: " + e.getMessage());
+            return Jsoner.serialize(err);
+        }
+    }
+
+    private String buildCatalogDocResult(
+            CamelCatalog catalog, String name, String kind, String optionsFilter, boolean includeOptions) {
+        String lowerFilter = optionsFilter != null ? optionsFilter.toLowerCase() : null;
+
+        if (kind == null || "component".equals(kind)) {
+            ComponentModel cm = catalog.componentModel(name);
+            if (cm != null) {
+                return buildComponentDocJson(cm, lowerFilter, includeOptions);
+            }
+            if (kind != null) {
+                return "{\"error\": \"Component not found: " + name + "\"}";
+            }
+        }
+        if (kind == null || "dataformat".equals(kind)) {
+            DataFormatModel dm = catalog.dataFormatModel(name);
+            if (dm != null) {
+                return buildDataFormatDocJson(dm, lowerFilter, includeOptions);
+            }
+            if (kind != null) {
+                return "{\"error\": \"Data format not found: " + name + "\"}";
+            }
+        }
+        if (kind == null || "language".equals(kind)) {
+            LanguageModel lm = catalog.languageModel(name);
+            if (lm != null) {
+                return buildLanguageDocJson(lm, lowerFilter, includeOptions);
+            }
+            if (kind != null) {
+                return "{\"error\": \"Language not found: " + name + "\"}";
+            }
+        }
+        return "{\"error\": \"Artifact not found: " + name + "\"}";
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void addCommonModelFields(JsonObject result, BaseModel<?> model) {
+        if (model.getFirstVersion() != null) {
+            result.put("since", model.getFirstVersion());
+        }
+        if (model.getSupportLevel() != null) {
+            result.put("supportLevel", model.getSupportLevel().name());
+        }
+        if (model.isNativeSupported()) {
+            result.put("nativeSupported", true);
+        }
+        if (model.isDeprecated()) {
+            result.put("deprecated", true);
+            if (model.getDeprecatedSince() != null) {
+                result.put("deprecatedSince", model.getDeprecatedSince());
+            }
+            if (model.getDeprecationNote() != null) {
+                result.put("deprecationNote", model.getDeprecationNote());
+            }
+        }
+    }
+
+    private String buildComponentDocJson(ComponentModel model, String filter, boolean includeOptions) {
+        JsonObject result = new JsonObject();
+        result.put("kind", "component");
+        result.put("name", model.getScheme());
+        result.put("title", model.getTitle());
+        result.put("description", model.getDescription());
+        if (model.getLabel() != null) {
+            result.put("label", model.getLabel());
+        }
+        if (model.getSyntax() != null) {
+            result.put("syntax", model.getSyntax());
+        }
+        result.put("consumerOnly", model.isConsumerOnly());
+        result.put("producerOnly", model.isProducerOnly());
+        result.put("remote", model.isRemote());
+        result.put("groupId", model.getGroupId());
+        result.put("artifactId", model.getArtifactId());
+        addCommonModelFields(result, model);
+
+        if (includeOptions) {
+            JsonArray options = new JsonArray();
+            if (model.getComponentOptions() != null) {
+                for (BaseOptionModel opt : model.getComponentOptions()) {
+                    if (matchesOptionFilter(opt, filter)) {
+                        options.add(optionToJson(opt, "component"));
+                    }
+                }
+            }
+            if (model.getEndpointOptions() != null) {
+                for (BaseOptionModel opt : model.getEndpointOptions()) {
+                    if (matchesOptionFilter(opt, filter)) {
+                        options.add(optionToJson(opt, "endpoint"));
+                    }
+                }
+            }
+            result.put("options", options);
+            result.put("matchedOptions", options.size());
+        }
+        return Jsoner.serialize(result);
+    }
+
+    private String buildDataFormatDocJson(DataFormatModel model, String filter, boolean includeOptions) {
+        JsonObject result = new JsonObject();
+        result.put("kind", "dataformat");
+        result.put("name", model.getName());
+        result.put("title", model.getTitle());
+        result.put("description", model.getDescription());
+        if (model.getLabel() != null) {
+            result.put("label", model.getLabel());
+        }
+        result.put("groupId", model.getGroupId());
+        result.put("artifactId", model.getArtifactId());
+        addCommonModelFields(result, model);
+
+        if (includeOptions) {
+            JsonArray options = new JsonArray();
+            if (model.getOptions() != null) {
+                for (BaseOptionModel opt : model.getOptions()) {
+                    if (matchesOptionFilter(opt, filter)) {
+                        options.add(optionToJson(opt, null));
+                    }
+                }
+            }
+            result.put("options", options);
+            result.put("matchedOptions", options.size());
+        }
+        return Jsoner.serialize(result);
+    }
+
+    private String buildLanguageDocJson(LanguageModel model, String filter, boolean includeOptions) {
+        JsonObject result = new JsonObject();
+        result.put("kind", "language");
+        result.put("name", model.getName());
+        result.put("title", model.getTitle());
+        result.put("description", model.getDescription());
+        if (model.getLabel() != null) {
+            result.put("label", model.getLabel());
+        }
+        result.put("groupId", model.getGroupId());
+        result.put("artifactId", model.getArtifactId());
+        addCommonModelFields(result, model);
+
+        if (includeOptions) {
+            JsonArray options = new JsonArray();
+            if (model.getOptions() != null) {
+                for (BaseOptionModel opt : model.getOptions()) {
+                    if (matchesOptionFilter(opt, filter)) {
+                        options.add(optionToJson(opt, null));
+                    }
+                }
+            }
+            result.put("options", options);
+            result.put("matchedOptions", options.size());
+        }
+        return Jsoner.serialize(result);
+    }
+
+    private static boolean matchesOptionFilter(BaseOptionModel opt, String filter) {
+        if (filter == null) {
+            return true;
+        }
+        return (opt.getName() != null && opt.getName().toLowerCase().contains(filter))
+                || (opt.getDescription() != null && opt.getDescription().toLowerCase().contains(filter))
+                || (opt.getGroup() != null && opt.getGroup().toLowerCase().contains(filter))
+                || (opt.getLabel() != null && opt.getLabel().toLowerCase().contains(filter));
+    }
+
+    private static JsonObject optionToJson(BaseOptionModel opt, String scope) {
+        JsonObject o = new JsonObject();
+        o.put("name", opt.getName());
+        o.put("description", opt.getDescription());
+        o.put("type", opt.getType());
+        o.put("required", opt.isRequired());
+        if (opt.getDefaultValue() != null) {
+            o.put("defaultValue", opt.getDefaultValue().toString());
+        }
+        if (opt.getGroup() != null) {
+            o.put("group", opt.getGroup());
+        }
+        if (scope != null) {
+            o.put("scope", scope);
+        }
+        if (opt.isDeprecated()) {
+            o.put("deprecated", true);
+        }
+        if (opt.isSecret()) {
+            o.put("secret", true);
+        }
+        if (opt.getEnums() != null && !opt.getEnums().isEmpty()) {
+            o.put("enumValues", toJsonArray(opt.getEnums()));
+        }
+        return o;
     }
 
     @SuppressWarnings("unchecked")

@@ -95,6 +95,7 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
         CamelSagaStep step = new CamelSagaStep(
                 compensationEndpoint, completionEndpoint, optionsMap,
                 parseDuration(timeout));
+        step.setRouteId(route.getRouteId());
 
         SagaPropagation propagation = parse(SagaPropagation.class, definition.getPropagation());
         if (propagation == null) {

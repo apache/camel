@@ -47,7 +47,7 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "closeStreamAfterRead": getOrCreateConfiguration(target).setCloseStreamAfterRead(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration.class, value)); return true;
         case "credentialtype":
-        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.storage.datalake.CredentialType.class, value)); return true;
+        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "datacount":
         case "dataCount": getOrCreateConfiguration(target).setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
         case "directoryname":
@@ -124,7 +124,7 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "closeStreamAfterRead": return java.lang.Boolean.class;
         case "configuration": return org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration.class;
         case "credentialtype":
-        case "credentialType": return org.apache.camel.component.azure.storage.datalake.CredentialType.class;
+        case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "datacount":
         case "dataCount": return java.lang.Long.class;
         case "directoryname":

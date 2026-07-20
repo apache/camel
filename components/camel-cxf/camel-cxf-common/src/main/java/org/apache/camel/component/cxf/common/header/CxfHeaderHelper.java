@@ -104,7 +104,12 @@ public final class CxfHeaderHelper {
 
             LOG.trace("Propagate Camel header: {}={} as {}", entry.getKey(), entry.getValue(), cxfHeaderName);
 
-            requestHeaders.put(cxfHeaderName, Arrays.asList(entry.getValue().toString()));
+            Object values = entry.getValue();
+            if (values instanceof List<?>) {
+                requestHeaders.put(cxfHeaderName, CastUtils.cast((List<?>) values, String.class));
+            } else {
+                requestHeaders.put(cxfHeaderName, Arrays.asList(values.toString()));
+            }
         });
     }
 
@@ -191,8 +196,8 @@ public final class CxfHeaderHelper {
 
             LOG.trace("Populate external header: {}={} as {}", entry.getKey(), entry.getValue(), camelHeaderName);
             if (!camelHeaderName.startsWith(":")) {
-                ///* Ignore HTTP/2 pseudo headers such as :status */
-                camelHeaders.put(camelHeaderName, entry.getValue().get(0));
+                List<Object> values = entry.getValue();
+                camelHeaders.put(camelHeaderName, values.size() == 1 ? values.get(0) : values);
             }
         });
     }

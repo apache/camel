@@ -86,6 +86,49 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Additional HTTP request headers to send with every API call (e.g.
+         * additionalHeader.OpenAI-Organization=my-org or
+         * additionalHeader.api-key=secret). Values may contain secrets. This is
+         * a multi-value option with prefix: additionalHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalHeader(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: producer
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder additionalHeader(String key, Object value) {
+            doSetMultiValueProperty("additionalHeader", "additionalHeader." + key, value);
+            return this;
+        }
+        /**
+         * Additional HTTP request headers to send with every API call (e.g.
+         * additionalHeader.OpenAI-Organization=my-org or
+         * additionalHeader.api-key=secret). Values may contain secrets. This is
+         * a multi-value option with prefix: additionalHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalHeader(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: producer
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder additionalHeader(Map values) {
+            doSetMultiValueProperties("additionalHeader", "additionalHeader.", values);
+            return this;
+        }
+        /**
          * Map additional fields from the response message to Camel headers. The
          * key is the field name in the API response, the value is the Camel
          * header name (e.g.
@@ -438,8 +481,47 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of times the OpenAI SDK client retries failed
+         * requests. The SDK retry is rate-limit aware (honors Retry-After on
+         * 429).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: producer
+         * 
+         * @param maxRetries the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder maxRetries(int maxRetries) {
+            doSetProperty("maxRetries", maxRetries);
+            return this;
+        }
+        /**
+         * Maximum number of times the OpenAI SDK client retries failed
+         * requests. The SDK retry is rate-limit aware (honors Retry-After on
+         * 429).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: producer
+         * 
+         * @param maxRetries the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder maxRetries(String maxRetries) {
+            doSetProperty("maxRetries", maxRetries);
+            return this;
+        }
+        /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0, no token budget is enforced.
+         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * Enforcement runs after each API call that requests further tool
+         * execution, so actual spend may exceed the configured budget by up to
+         * one call (typically the largest, as the prompt grows each iteration).
+         * A final text response is returned even when cumulative usage exceeds
+         * the budget.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -455,7 +537,12 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * Maximum cumulative prompt plus completion tokens allowed across the
-         * MCP agentic loop. When 0, no token budget is enforced.
+         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * Enforcement runs after each API call that requests further tool
+         * execution, so actual spend may exceed the configured budget by up to
+         * one call (typically the largest, as the prompt grows each iteration).
+         * A final text response is returned even when cumulative usage exceeds
+         * the budget.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -687,6 +774,38 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder outputClass(String outputClass) {
             doSetProperty("outputClass", outputClass);
+            return this;
+        }
+        /**
+         * HTTP request timeout in milliseconds for the OpenAI SDK client. When
+         * 0 or negative, the SDK default (10 minutes) is used.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder requestTimeout(long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * HTTP request timeout in milliseconds for the OpenAI SDK client. When
+         * 0 or negative, the SDK default (10 minutes) is used.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder requestTimeout(String requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -1512,7 +1631,8 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIMcpReturnDirect";
         }
         /**
-         * Cumulative prompt tokens consumed across all agentic loop iterations.
+         * Cumulative prompt tokens consumed across all agentic loop
+         * iterations.
          * 
          * The option is a: {@code Long} type.
          * 

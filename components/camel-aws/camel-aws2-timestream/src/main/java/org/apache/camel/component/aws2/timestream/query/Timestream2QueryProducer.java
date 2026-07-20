@@ -199,11 +199,6 @@ public class Timestream2QueryProducer extends DefaultProducer {
                         = ErrorReportConfiguration.builder().s3Configuration(s3Configuration.build()).build();
                 builder.errorReportConfiguration(errorReportConfiguration);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_EXECUTION_ROLE_ARN))) {
-                String roleArn
-                        = exchange.getIn().getHeader(Timestream2Constants.SCHEDULED_QUERY_EXECUTION_ROLE_ARN, String.class);
-                builder.scheduledQueryExecutionRoleArn(roleArn);
-            }
 
             TargetConfiguration.Builder targetConfiguration = TargetConfiguration.builder();
             TimestreamConfiguration.Builder timestreamConfigBuilder = TimestreamConfiguration.builder();
@@ -217,7 +212,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.TIME_COLUMN))) {
                 String timeColumn = exchange.getIn().getHeader(Timestream2Constants.TIME_COLUMN, String.class);
-                timestreamConfigBuilder.tableName(timeColumn);
+                timestreamConfigBuilder.timeColumn(timeColumn);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Timestream2Constants.MEASURE_NAME_COLUMN))) {
                 String measureNameColumn = exchange.getIn().getHeader(Timestream2Constants.MEASURE_NAME_COLUMN, String.class);

@@ -128,16 +128,18 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
      */
     private void add(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        Embedding embedding = null;
-        TextSegment text = null;
-        String id = null;
 
-        if (in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING) != null) {
-            embedding = in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class);
+        if (in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING) == null) {
+            throw new NoSuchHeaderException(
+                    "The embedding is a required header for ADD operations", exchange,
+                    LangChain4jEmbeddingsHeaders.EMBEDDING);
         }
 
+        Embedding embedding = in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class);
+        String id;
+
         if (in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT) != null) {
-            text = in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class);
+            TextSegment text = in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class);
             id = getEndpoint().getConfiguration().getEmbeddingStore().add(embedding, text);
         } else {
             id = getEndpoint().getConfiguration().getEmbeddingStore().add(embedding);

@@ -152,8 +152,7 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
         if (answer == null) {
             answer = camelExchange.getFromEndpoint().getEndpointUri();
             // remove leading scheme before the http(s) transport so we build a correct base path
-            answer = answer.replaceFirst("^\\w+:http", "http");
-            answer = answer.replaceFirst("^\\w+:https", "https");
+            answer = answer.replaceFirst("^\\w+:(https?)", "$1");
         }
 
         return answer;

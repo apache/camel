@@ -446,9 +446,25 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
         builder.baseUrl(ObjectHelper.notNullOrEmpty(configuration.getBaseUrl(), "baseUrl"));
 
+        configureHttpClient(builder);
         configureSsl(builder);
 
         return builder.build();
+    }
+
+    private void configureHttpClient(OpenAIOkHttpClient.Builder builder) {
+        if (configuration.getRequestTimeout() > 0) {
+            builder.timeout(Duration.ofMillis(configuration.getRequestTimeout()));
+        }
+        builder.maxRetries(configuration.getMaxRetries());
+        Map<String, Object> additionalHeaders = configuration.getAdditionalHeader();
+        if (additionalHeaders != null) {
+            additionalHeaders.forEach((name, value) -> {
+                if (value != null) {
+                    builder.putHeader(name, value.toString());
+                }
+            });
+        }
     }
 
     private void configureSsl(OpenAIOkHttpClient.Builder builder) throws Exception {

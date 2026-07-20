@@ -56,11 +56,21 @@ class ExportSpringBoot extends Export {
 
     @Override
     public Integer export() throws Exception {
-        String[] ids = gav.split(":");
-        if (ids.length != 3) {
+        try {
+            MavenGav.parseStrictGav(gav);
+        } catch (IllegalArgumentException e) {
             printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
+        if (parentPom != null) {
+            try {
+                MavenGav.parseStrictGav(parentPom);
+            } catch (IllegalArgumentException e) {
+                printer().printErr("--parent-pom must be in syntax: groupId:artifactId:version");
+                return 1;
+            }
+        }
+        String[] ids = gav.split(":");
 
         exportBaseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
         Path profile = exportBaseDir.resolve("application.properties");
@@ -228,6 +238,7 @@ class ExportSpringBoot extends Export {
         model.put("Repositories", buildRepositoryList(repos));
         model.put("Dependencies", depList);
         model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
+        enrichParentPom(model);
 
         String context = TemplateHelper.processTemplate(pomTemplateName, model);
         IOHelper.writeText(context, Files.newOutputStream(pom));

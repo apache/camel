@@ -26,43 +26,52 @@ import java.util.zip.ZipFile;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Release gate for the native {@code camel.exe} packaged into the launcher distribution. Runs during {@code verify}
- * when {@code -Dcamel.launcher.requireWindowsExe=true} is set on a Windows x64 host.
+ * Release gate for the native exe files (x64 + arm64) packaged into the launcher distribution. Runs during
+ * {@code verify} when {@code -Dcamel.exe.build=true} is set. Cross-compiled from any host OS via clang/llvm-mingw.
  */
-@EnabledOnOs(OS.WINDOWS)
-@EnabledIfSystemProperty(named = "camel.launcher.requireWindowsExe", matches = "true")
-class CamelLauncherWindowsExeIT {
+@EnabledIfSystemProperty(named = "camel.exe.build", matches = "true")
+class CamelLauncherNativeExeIT {
 
     private static final Path TARGET = Paths.get("target");
-    private static final Path STAGED_EXE = TARGET.resolve("camel.exe");
+    private static final Path STAGED_X64 = TARGET.resolve("camel-x64.exe");
+    private static final Path STAGED_ARM64 = TARGET.resolve("camel-arm64.exe");
 
     @Test
-    void stagedCamelExeExists() {
-        assertTrue(Files.isRegularFile(STAGED_EXE),
-                "target/camel.exe must be present before packaging the launcher distribution");
+    void stagedCamelExeX64Exists() {
+        assertTrue(Files.isRegularFile(STAGED_X64),
+                "target/camel-x64.exe must be present before packaging the launcher distribution");
     }
 
     @Test
-    void binArchiveIncludesCamelExe() throws IOException {
+    void stagedCamelExeArm64Exists() {
+        assertTrue(Files.isRegularFile(STAGED_ARM64),
+                "target/camel-arm64.exe must be present before packaging the launcher distribution");
+    }
+
+    @Test
+    void binArchiveIncludesBothExeFiles() throws IOException {
         Path zip = findBinZip();
         assertNotNull(zip, "camel-launcher-*-bin.zip must be produced by the assembly plugin");
 
         try (ZipFile archive = new ZipFile(zip.toFile())) {
-            // maven-assembly-plugin defaults includeBaseDirectory to true, so entries are
-            // nested under camel-launcher-<version>/, not at the archive root.
-            ZipEntry entry = archive.stream()
-                    .filter(e -> e.getName().endsWith("/bin/camel.exe"))
+            ZipEntry x64 = archive.stream()
+                    .filter(e -> e.getName().endsWith("/bin/camel-x64.exe"))
                     .findFirst()
                     .orElse(null);
-            assertNotNull(entry, "bin/camel.exe must be included in " + zip.getFileName());
-            assertTrue(entry.getSize() > 0, "bin/camel.exe must not be empty");
+            assertNotNull(x64, "bin/camel-x64.exe must be included in " + zip.getFileName());
+            assertTrue(x64.getSize() > 0, "bin/camel-x64.exe must not be empty");
+
+            ZipEntry arm64 = archive.stream()
+                    .filter(e -> e.getName().endsWith("/bin/camel-arm64.exe"))
+                    .findFirst()
+                    .orElse(null);
+            assertNotNull(arm64, "bin/camel-arm64.exe must be included in " + zip.getFileName());
+            assertTrue(arm64.getSize() > 0, "bin/camel-arm64.exe must not be empty");
         }
     }
 

@@ -21,8 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  *
  */
@@ -35,10 +33,9 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
 
-        // wait for the file consumer to pick up and process the file before asserting
-        assertTrue(oneExchangeDone.matchesWaitTime(), "Exchange should have completed");
-
         assertMockEndpointsSatisfied();
+
+        oneExchangeDone.matchesWaitTime();
 
         assertFileNotExists(testFile("hello.xml"));
         assertFileExists(testFile("ok/hello.xml"));
@@ -52,10 +49,9 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
         // the last tag is not ended properly
         template.sendBodyAndHeader(fileUri(), "<hello>world!</hello", Exchange.FILE_NAME, "hello2.xml");
 
-        // wait for the file consumer to pick up and process the file before asserting
-        assertTrue(oneExchangeDone.matchesWaitTime(), "Exchange should have completed");
-
         assertMockEndpointsSatisfied();
+
+        oneExchangeDone.matchesWaitTime();
 
         assertFileNotExists(testFile("hello2.xml"));
         assertFileExists(testFile("error/hello2.xml"));

@@ -223,6 +223,10 @@ public final class CxfConverter {
             Response response = (Response) value;
             Object entity = response.getEntity();
 
+            if (entity == null) {
+                return (T) MISS_VALUE;
+            }
+
             TypeConverter tc = registry.lookup(type, entity.getClass());
             if (tc != null) {
                 return tc.convertTo(type, exchange, entity);

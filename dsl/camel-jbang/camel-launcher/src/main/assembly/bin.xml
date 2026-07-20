@@ -74,7 +74,8 @@
             <directory>${project.build.directory}</directory>
             <outputDirectory>bin</outputDirectory>
             <includes>
-                <include>camel.exe</include>
+                <include>camel-x64.exe</include>
+                <include>camel-arm64.exe</include>
             </includes>
             <fileMode>0755</fileMode>
         </fileSet>

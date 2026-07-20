@@ -114,4 +114,15 @@ public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
         assertTrue(out.contains("The OUT message was not received within: 5000 millis."));
     }
 
+    @Test
+    public void testTimeoutThenNormalRequest() throws Exception {
+        // first request times out
+        String out = template.requestBodyAndHeader("direct:start", "Bye World", "priority", "slow", String.class);
+        assertTrue(out.contains("The OUT message was not received within: 5000 millis."));
+
+        // subsequent normal request must succeed without state corruption
+        Object out2 = template.requestBody("direct:start", "Hello World", String.class);
+        assertEquals(ECHO_BOOLEAN_RESPONSE, out2);
+    }
+
 }

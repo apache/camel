@@ -88,11 +88,22 @@ removed; set `JAVA_HOME` or `JAVACMD` explicitly on those platforms.
 
 ==== Native `camel.exe` in the launcher distribution
 
-The `camel-launcher` Windows distribution now ships a native x64 `bin/camel.exe`
-alongside `bin/camel.bat`. `camel.exe` is a thin bootstrap: it forwards all
-arguments to the adjacent `camel.bat` (preserving spaces and Unicode) and returns
-its exit code. It exists so package managers that require a genuine executable
-users may continue to invoke `bin\camel.bat`; both behave identically.
+The `camel-launcher` distribution now ships two native Windows executables:
+`bin/camel-x64.exe` (x86_64) and `bin/camel-arm64.exe` (aarch64), alongside
+`bin/camel.bat`. Both are thin bootstraps: they forward all arguments to the
+adjacent `camel.bat` (preserving spaces and Unicode) and return its exit code.
+They exist so package managers that require a genuine executable (such as WinGet)
+work correctly. Users may continue to invoke `bin\camel.bat`; all three behave
+identically.
+
+The native executables are now cross-compiled from any host OS using
+https://github.com/mstorsjo/llvm-mingw[clang/llvm-mingw], replacing the previous
+MSVC-only build that required a Windows host. The build is activated by
+`-Dcamel.exe.build=true` or `-Prelease` and requires `llvm-mingw` on `PATH`.
+
+If you have tooling that referenced `bin/camel.exe`, update it to use
+`bin/camel-x64.exe` (for x86_64 Windows) or `bin/camel-arm64.exe` (for ARM64
+Windows).
 
 ==== OpenTelemetry agent export target changes
 
@@ -166,6 +177,13 @@ String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 ----
 
+=== camel-langchain4j-chat
+
+The helper classes `OpenAiChatLanguageModelBuilder` and `HugginFaceChatLanguageModelBuilder` have been removed.
+They were not wired into the component; the `chatModel` is autowired instead.
+
+If you used these helpers directly, configure your `ChatModel` with LangChain4j's own builders or Spring Boot starters
+and inject it into the component.
 === camel-openai
 
 The `conversationMemory` feature on the `chat-completion` operation has two behavior fixes:
@@ -205,6 +223,26 @@ The new behavior activates automatically when all of the following are true:
 
 No configuration changes are required. The existing `maxAutoLockRenewDuration` option controls how long
 Camel will continue renewing a message's lock.
+
+=== camel-azure - component-specific CredentialType enums removed
+
+The component-specific `CredentialType` enums, deprecated since Camel 4.19.0, have been removed in favor of the
+shared `org.apache.camel.component.azure.common.CredentialType` enum from `camel-azure-common`:
+
+- `org.apache.camel.component.azure.cosmosdb.CredentialType`
+- `org.apache.camel.component.azure.eventgrid.CredentialType`
+- `org.apache.camel.component.azure.eventhubs.CredentialType`
+- `org.apache.camel.component.file.azure.CredentialType` (camel-azure-files)
+- `org.apache.camel.component.azure.functions.CredentialType`
+- `org.apache.camel.component.azure.key.vault.CredentialType`
+- `org.apache.camel.component.azure.servicebus.CredentialType`
+- `org.apache.camel.component.azure.storage.blob.CredentialType`
+- `org.apache.camel.component.azure.storage.datalake.CredentialType`
+- `org.apache.camel.component.azure.storage.queue.CredentialType`
+
+Endpoint URIs are unaffected: the credential type option values keep the same names. Java code that imports one of
+the removed enums — including typed Endpoint DSL calls such as `credentialType(CredentialType)` — must switch the
+import to `org.apache.camel.component.azure.common.CredentialType`.
 
 === camel-debezium
 
@@ -706,6 +744,19 @@ deprecated and will be removed in a future version.
 The page-blob `getRange` calculation has been corrected from `end - start` to `end - start + 1`, since
 Azure page blob ranges are inclusive on both ends. If you had a workaround adjusting the range values to
 compensate for this off-by-one, it should be removed.
+
+=== camel-bindy - BigDecimal precision default changed
+
+The `@DataField.precision()` attribute default has changed from `0` to `-1` (meaning "unset").
+Previously, a `BigDecimal` field without an explicit `precision` would throw `ArithmeticException`
+on unmarshal when the input had decimal places, and silently truncated decimals to zero on marshal.
+With this fix, omitting `precision` preserves the original scale from the input value.
+
+The `@DataField.rounding()` attribute is now honored for `BigDecimal` fields that do not use a `pattern`.
+Previously it was only applied when a `pattern` was specified.
+
+If you relied on the implicit `precision=0` behavior to round `BigDecimal` values to integers,
+add `precision = 0` explicitly to your `@DataField` annotation.
 
 === camel-xslt / camel-xslt-saxon - transformerFactoryConfigurationStrategy now honored
 

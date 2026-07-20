@@ -163,10 +163,6 @@ public class ProtobufSchemaResolver implements SchemaResolver, Processor {
             }
         }
 
-        if (answer != null) {
-            this.schema = answer;
-        }
-
         return answer;
     }
 }
