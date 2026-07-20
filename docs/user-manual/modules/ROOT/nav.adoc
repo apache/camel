@@ -8,6 +8,7 @@
 ** xref:camel-jbang.adoc[Camel CLI]
 *** xref:jbang-commands/camel-jbang-commands.adoc[Camel CLI Command Reference]
 *** xref:camel-jbang-launcher.adoc[Camel CLI Launcher]
+*** xref:camel-jbang-launcher-install.adoc[Installing the Camel CLI Launcher]
 *** xref:camel-jbang-kubernetes.adoc[Camel Kubernetes Plugin]
 *** xref:camel-jbang-test.adoc[Camel Testing Plugin]
 *** xref:camel-jbang-tui.adoc[Camel TUI]

@@ -1,0 +1,134 @@
+= Installing the Camel CLI Launcher
+
+*Available as of Camel 4.22*
+
+The xref:camel-jbang-launcher.adoc[Camel CLI Launcher] can be installed with a single command
+using the canonical installer scripts, `install.sh` (POSIX) and `install.ps1` (Windows). The
+scripts download the launcher distribution, verify it, and put a `camel` command on your `PATH`,
+without JBang and without a package manager.
+
+Installation is always per-user and never requires `sudo` or elevation.
+
+== Quick install (latest release)
+
+On Linux and macOS:
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh
+----
+
+On Windows (PowerShell):
+
+[source,powershell]
+----
+irm https://camel.apache.org/install.ps1 | iex
+----
+
+With no arguments, both installers resolve and install the latest published release. After the
+install completes, verify it:
+
+[source,bash]
+----
+camel version
+----
+
+NOTE: On Linux and macOS, if `$HOME/.local/bin` is not already on your `PATH`, the installer prints
+guidance instead of editing your shell profile. Add that directory to your `PATH` and restart the
+shell. On Windows, the installer adds its bin directory to your user `PATH` automatically; open a
+new terminal to pick it up.
+
+== Installing a specific version
+
+Request an exact version with `--version` (`install.sh`) or `-Version` (`install.ps1`). The
+requested version is validated and matched against the fetched manifest before anything is
+downloaded.
+
+On Linux and macOS, pass the argument through to the piped shell with `-s --`:
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version 4.22.0
+----
+
+On Windows, download the script first, then run it with the parameter:
+
+[source,powershell]
+----
+irm https://camel.apache.org/install.ps1 -OutFile install.ps1
+.\install.ps1 -Version 4.22.0
+----
+
+== What the installer does
+
+Both installers perform the same verified install:
+
+* Fetch the release manifest over HTTPS from `https://camel.apache.org/camel-cli/releases`.
+* Download the launcher archive from Maven Central
+  (`install.sh` downloads the `.tar.gz`, `install.ps1` the `.zip`).
+* Verify the archive against the SHA-256 checksum recorded in the manifest before extracting it.
+* Reject any archive that contains an absolute path, `../` traversal, an escaping
+  symlink/reparse-point entry, or more than one top-level directory.
+* Run the freshly staged launcher once (`camel version`) to confirm a Java 17+ runtime can be
+  discovered. If that check fails, the previously active installation, if any, is left untouched
+  and the installer exits nonzero.
+
+== Requirements
+
+* A Java 17+ runtime available at install and run time. The launcher locates Java from
+  `JAVACMD`, `JAVA_HOME`, or `PATH`.
+* Linux and macOS: `curl` or `wget`; `tar`; and one of `sha256sum`, `shasum`, or `openssl`.
+* Windows: PowerShell 5.1 or later (`Invoke-WebRequest`, `Expand-Archive`, `Get-FileHash`).
+
+== Where the CLI is installed
+
+Each installed version lives in its own directory, so multiple versions can coexist:
+
+[cols="1,3", options="header"]
+|===
+| Platform | Location
+
+| Linux / macOS
+| Versions under `${XDG_DATA_HOME:-$HOME/.local/share}/camel-cli/versions/<version>`, activated
+  through a symlink at `$HOME/.local/bin/camel`.
+
+| Windows
+| Versions under `%LOCALAPPDATA%\Apache Camel\cli\versions\<version>`, activated through a
+  `camel.cmd` shim at `%LOCALAPPDATA%\Apache Camel\bin\camel.cmd`.
+|===
+
+== Upgrading and switching versions
+
+Re-run the installer to install a newer release (no arguments for the latest, or `--version` /
+`-Version` for a specific one). The most recently installed version becomes the one the `camel`
+command runs.
+
+Earlier version directories are left in place after an upgrade or downgrade and must be removed
+manually. Reinstalling the same version replaces that version's directory.
+
+== Uninstalling
+
+The installers do not modify shell profiles or the machine `PATH`, so removal is a matter of
+deleting the per-user files:
+
+On Linux and macOS:
+
+[source,bash]
+----
+rm -f "$HOME/.local/bin/camel"
+rm -rf "${XDG_DATA_HOME:-$HOME/.local/share}/camel-cli"
+----
+
+On Windows, remove the install directory and drop its bin directory from your user `PATH`:
+
+[source,powershell]
+----
+Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Apache Camel"
+----
+
+== See also
+
+* xref:camel-jbang-launcher.adoc[Camel CLI Launcher] — the distribution the installers install.
+* xref:camel-jbang-installation.adoc[Camel CLI - Installation Options] — installing via JBang,
+  version pinning, the Camel Wrapper, and the container image.
+* xref:camel-jbang-getting-started.adoc[Getting Started] — the standard JBang-based install.
