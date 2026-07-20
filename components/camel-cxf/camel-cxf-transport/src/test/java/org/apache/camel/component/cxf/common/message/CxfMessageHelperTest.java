@@ -42,6 +42,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfMessageHelperTest {
@@ -103,6 +105,33 @@ public class CxfMessageHelperTest {
         List<String> values = headers.get(name);
         assertTrue(values != null && values.size() == 1, "The entry must be available");
         assertEquals(values.get(0), value, "The value must match");
+    }
+
+    @Test
+    public void testGetCxfInMessageWithPojoBody() throws Exception {
+        HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
+        Exchange exchange = new DefaultExchange(context);
+
+        Object pojo = List.of("item1", "item2");
+        exchange.getIn().setBody(pojo);
+
+        Message message = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, exchange, false);
+
+        assertNull(message.getContent(InputStream.class), "POJO should not be convertible to InputStream");
+        assertSame(pojo, message.getContent(Object.class), "Fallback must set the original POJO body");
+    }
+
+    @Test
+    public void testGetCxfInMessageWithNullBody() throws Exception {
+        HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
+        Exchange exchange = new DefaultExchange(context);
+
+        exchange.getIn().setBody(null);
+
+        Message message = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, exchange, false);
+
+        assertNull(message.getContent(InputStream.class), "Null body should produce no InputStream content");
+        assertNull(message.getContent(Object.class), "Null body should produce no Object content");
     }
 
     private String toString(InputStream is) throws IOException {
