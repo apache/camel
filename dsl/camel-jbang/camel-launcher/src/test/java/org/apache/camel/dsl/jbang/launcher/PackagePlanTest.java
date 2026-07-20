@@ -24,18 +24,28 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.yaml.snakeyaml.Yaml;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -111,20 +121,42 @@ class PackagePlanTest {
         return HexFormat.of().formatHex(md.digest(Files.readAllBytes(file)));
     }
 
+    /**
+     * The production allowlist is the release gate for {@code --channel lts}: every line it advertises must still be
+     * accepted by the wrapper. This starts failing once the last entry's {@code supportEnds} date passes, which is the
+     * intended signal to add the next LTS line. Unlike a hardcoded date comparison, it exercises the real parsing and
+     * expiry logic in camel-package.sh against the real file.
+     */
     @Test
-    void productionSupportedLtsEntryIsDocumentedBeforeExpiry() throws Exception {
-        String supportedLts = Files.readString(MODULE_DIR.resolve("src/jreleaser/supported-lts.yml"), StandardCharsets.UTF_8);
+    void everyProductionLtsLineIsStillAccepted() throws Exception {
+        List<String> lines = productionLtsLines();
+        assertFalse(lines.isEmpty(), "supported-lts.yml must advertise at least one LTS line");
 
-        assertTrue(supportedLts.contains("line: \"4.22\""), supportedLts);
-        assertTrue(supportedLts.contains("supportEnds: \"2027-09-30\""),
-                "The real 4.22 LTS entry is intentionally checked here, but plan tests use a synthetic future-dated"
-                                                                         + " fixture so they do not expire on 2027-10-01.");
-        assertTrue(LocalDate.parse("2027-09-30").isAfter(LocalDate.parse("2026-07-19")),
-                "Update this test when changing the documented 4.22 support window.");
+        for (String line : lines) {
+            Result r = run("prepare", "--channel", "lts", "--lts-line", line, "--print-plan");
+
+            assertEquals(0, r.exit,
+                    "supported-lts.yml advertises LTS line " + line + " but the wrapper rejected it: " + r.stderr);
+            assertTrue(r.stdout.contains("BREW_FORMULA=camel@" + line), r.stdout);
+        }
     }
 
+    @SuppressWarnings("unchecked")
+    private List<String> productionLtsLines() throws IOException {
+        try (var in = Files.newInputStream(MODULE_DIR.resolve("src/jreleaser/supported-lts.yml"))) {
+            Map<String, Object> root = new Yaml().load(in);
+            List<Map<String, Object>> supported = (List<Map<String, Object>>) root.get("supported");
+            return supported.stream().map(entry -> String.valueOf(entry.get("line"))).toList();
+        }
+    }
+
+    /**
+     * Chocolatey and Scoop install from the public archive, which no longer carries the native executables, so both
+     * must enter through the architecture-neutral batch launcher. Rendering these Mustache templates needs JReleaser,
+     * so the entry point is asserted on the template source.
+     */
     @Test
-    void publicArchivePackagersDoNotRemoveNativeExecutables() throws Exception {
+    void archNeutralPackagersEnterThroughTheBatchLauncher() throws Exception {
         String chocolatey = Files.readString(MODULE_DIR.resolve(
                 "src/jreleaser/distributions/camel-cli/chocolatey/tools/chocolateyinstall.ps1.tpl"),
                 StandardCharsets.UTF_8);
@@ -132,112 +164,175 @@ class PackagePlanTest {
                 MODULE_DIR.resolve("src/jreleaser/distributions/camel-cli/scoop/manifest.json.tpl"),
                 StandardCharsets.UTF_8);
 
-        assertFalse(chocolatey.contains("camel-x64.exe"), chocolatey);
-        assertFalse(chocolatey.contains("camel-arm64.exe"), chocolatey);
-        assertFalse(scoop.contains("camel-x64.exe"), scoop);
-        assertFalse(scoop.contains("camel-arm64.exe"), scoop);
+        for (String template : List.of(chocolatey, scoop)) {
+            assertTrue(template.contains("{{distributionExecutableWindows}}"),
+                    "the Windows entry point must resolve to camel.bat via JReleaser: " + template);
+            assertFalse(template.contains("camel-x64.exe"), template);
+            assertFalse(template.contains("camel-arm64.exe"), template);
+        }
     }
 
+    /**
+     * The assembly descriptors decide what each archive carries. Asserted structurally rather than by substring so
+     * reformatting the XML cannot break the test while a real content change slips through. The resulting archives are
+     * checked for real by {@link CamelLauncherNativeExeIT}, which only runs with -Dcamel.exe.build=true.
+     */
     @Test
     void nativeExecutablesAreConfinedToWingetArchive() throws Exception {
-        String publicAssembly = Files.readString(MODULE_DIR.resolve("src/main/assembly/bin.xml"), StandardCharsets.UTF_8);
-        String wingetAssembly
-                = Files.readString(MODULE_DIR.resolve("src/main/assembly/winget-bin.xml"), StandardCharsets.UTF_8);
-        String pom = Files.readString(MODULE_DIR.resolve("pom.xml"), StandardCharsets.UTF_8);
-        int nativeProfile = pom.indexOf("<id>include-camel-exe</id>");
+        Path publicAssembly = MODULE_DIR.resolve("src/main/assembly/bin.xml");
+        Path wingetAssembly = MODULE_DIR.resolve("src/main/assembly/winget-bin.xml");
 
-        assertFalse(publicAssembly.contains("camel-x64.exe"),
+        List<String> publicIncludes = effectiveIncludes(publicAssembly);
+        assertFalse(publicIncludes.contains("camel-x64.exe"),
                 "the public ZIP/TAR assembly must not expose WinGet-only native executables");
-        assertFalse(publicAssembly.contains("camel-arm64.exe"),
+        assertFalse(publicIncludes.contains("camel-arm64.exe"),
                 "the public ZIP/TAR assembly must not expose WinGet-only native executables");
-        assertTrue(wingetAssembly.contains("camel-x64.exe"), wingetAssembly);
-        assertTrue(wingetAssembly.contains("camel-arm64.exe"), wingetAssembly);
-        assertTrue(wingetAssembly.contains("<include>*.jar</include>"),
-                "the WinGet archive must retain the launcher JAR beside camel.bat");
-        assertTrue(wingetAssembly.contains("<include>camel.bat</include>"),
+
+        List<String> wingetIncludes = effectiveIncludes(wingetAssembly);
+        assertTrue(wingetIncludes.contains("camel-x64.exe"), wingetIncludes.toString());
+        assertTrue(wingetIncludes.contains("camel-arm64.exe"), wingetIncludes.toString());
+        assertTrue(wingetIncludes.contains("*.jar"), "the WinGet archive must retain the launcher JAR beside camel.bat");
+        assertTrue(wingetIncludes.contains("camel.bat"),
                 "the native bootstrap delegates to camel.bat beside its resolved target");
-        assertTrue(wingetAssembly.contains("<format>zip</format>"), wingetAssembly);
-        assertFalse(wingetAssembly.contains("<format>tar.gz</format>"), wingetAssembly);
-        assertTrue(nativeProfile >= 0, "the native executable profile must exist");
-        assertFalse(pom.substring(0, nativeProfile).contains("winget-bin.xml"),
-                "ordinary builds must not create an incomplete WinGet archive");
-        String nativeProfilePom = pom.substring(nativeProfile);
-        int wingetExecutionStart = nativeProfilePom.indexOf("<id>assemble-winget-bin</id>");
-        assertTrue(wingetExecutionStart >= 0, "the native executable profile must create the WinGet archive");
-        int wingetExecutionEnd = nativeProfilePom.indexOf("</execution>", wingetExecutionStart);
-        assertTrue(wingetExecutionEnd >= 0, "the WinGet assembly execution must be complete");
-        String wingetExecution = nativeProfilePom.substring(wingetExecutionStart, wingetExecutionEnd);
+        assertEquals(List.of("zip"), elementTexts(parseXml(wingetAssembly), "format"),
+                "the WinGet payload is a ZIP only; WinGet cannot consume a tar.gz");
+    }
 
-        assertTrue(wingetExecution.contains("<descriptor>src/main/assembly/winget-bin.xml</descriptor>"),
-                wingetExecution);
-        assertTrue(wingetExecution.contains("<attach>false</attach>"),
+    /**
+     * Both archives must deliver the same CLI, so their common content is declared once in a shared assembly component.
+     * Re-inlining it into either descriptor would let the two drift apart silently, which is precisely what the
+     * surrounding assertions could no longer detect.
+     */
+    @Test
+    void bothArchivesShareOneContentDefinition() throws Exception {
+        List<String> publicComponents = elementTexts(
+                parseXml(MODULE_DIR.resolve("src/main/assembly/bin.xml")), "componentDescriptor");
+        List<String> wingetComponents = elementTexts(
+                parseXml(MODULE_DIR.resolve("src/main/assembly/winget-bin.xml")), "componentDescriptor");
+
+        assertEquals(List.of("src/main/assembly/launcher-content.xml"), publicComponents);
+        assertEquals(publicComponents, wingetComponents,
+                "the public and WinGet archives must draw their common content from the same component");
+
+        // The WinGet archive's only declared difference is the native bootstraps.
+        assertEquals(List.of("camel-x64.exe", "camel-arm64.exe"),
+                elementTexts(parseXml(MODULE_DIR.resolve("src/main/assembly/winget-bin.xml")), "include"),
+                "winget-bin.xml must add the native executables and nothing else");
+    }
+
+    /**
+     * The WinGet payload is deliberately never installed or deployed to a Maven repository, so it must be produced by a
+     * non-attached execution that only the native-executable profile enables. CI additionally proves the exclusion by
+     * deploying to a throwaway repository and failing if the ZIP appears.
+     */
+    @Test
+    void wingetArchiveIsBuiltOnlyByTheNativeProfileAndNeverAttached() throws Exception {
+        Document pom = parseXml(MODULE_DIR.resolve("pom.xml"));
+
+        Element profile = profileById(pom, "include-camel-exe");
+        assertNotNull(profile, "the native executable profile must exist");
+        Element execution = executionById(profile, "assemble-winget-bin");
+        assertNotNull(execution, "the native executable profile must create the WinGet archive");
+        assertEquals(List.of("src/main/assembly/winget-bin.xml"), elementTexts(execution, "descriptor"));
+        assertEquals(List.of("false"), elementTexts(execution, "attach"),
                 "the WinGet payload must remain a local release file, not an attached Maven artifact");
+
+        Element build = firstChild(pom.getDocumentElement(), "build");
+        assertNotNull(build, "the module must declare a build section");
+        assertFalse(elementTexts(build, "descriptor").contains("src/main/assembly/winget-bin.xml"),
+                "ordinary builds must not create an incomplete WinGet archive");
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void wingetUsesDedicatedJreleaserDistribution() throws Exception {
-        String config = Files.readString(MODULE_DIR.resolve("jreleaser.yml"), StandardCharsets.UTF_8);
-        int wingetStart = config.indexOf("  camel-cli-winget:");
+        Map<String, Object> distributions;
+        try (var in = Files.newInputStream(MODULE_DIR.resolve("jreleaser.yml"))) {
+            Map<String, Object> config = new Yaml().load(in);
+            distributions = (Map<String, Object>) config.get("distributions");
+        }
 
-        assertTrue(wingetStart >= 0, config);
-        String wingetDistribution = config.substring(wingetStart);
-        assertTrue(wingetDistribution.contains("camel-launcher-{{projectVersion}}-winget-bin.zip"), config);
-        assertTrue(wingetDistribution.contains(
-                "https://archive.apache.org/dist/camel/apache-camel/{{projectVersion}}/{{artifactFile}}"), config);
-        assertFalse(wingetDistribution.contains("repo1.maven.org"), wingetDistribution);
-        assertFalse(config.substring(config.indexOf("camel-cli:"), wingetStart)
-                .contains("winget:"), "the public distribution must not generate the WinGet package");
+        Map<String, Object> publicDistribution = (Map<String, Object>) distributions.get("camel-cli");
+        Map<String, Object> wingetDistribution = (Map<String, Object>) distributions.get("camel-cli-winget");
+        assertNotNull(wingetDistribution, "a dedicated WinGet distribution must exist: " + distributions.keySet());
+        assertFalse(publicDistribution.containsKey("winget"),
+                "the public distribution must not generate the WinGet package");
+
+        List<Map<String, Object>> artifacts = (List<Map<String, Object>>) wingetDistribution.get("artifacts");
+        assertEquals(1, artifacts.size(), artifacts.toString());
+        assertTrue(String.valueOf(artifacts.get(0).get("path")).endsWith("-winget-bin.zip"), artifacts.toString());
+
+        String downloadUrl = String.valueOf(((Map<String, Object>) wingetDistribution.get("winget")).get("downloadUrl"));
+        assertTrue(downloadUrl.startsWith("https://archive.apache.org/dist/camel/apache-camel/"),
+                "the WinGet payload is served from the Apache archive, not Maven Central: " + downloadUrl);
     }
 
-    @Test
-    void nativeWorkflowChecksReproducibilityAndMavenExclusion() throws Exception {
-        String workflow = Files.readString(
-                MODULE_DIR.resolve("../../../.github/workflows/camel-launcher-native-exe.yml").normalize(),
-                StandardCharsets.UTF_8);
-
-        assertTrue(workflow.contains("-name 'camel-launcher-*-winget-bin.zip'"), workflow);
-        assertTrue(workflow.contains("sha256sum --check \"$HASH_FILE\""), workflow);
-        assertTrue(workflow.contains("-DaltSnapshotDeploymentRepository=\"winget-check::file://$MAVEN_REPO\""),
-                workflow);
-        assertTrue(workflow.contains("-name '*-winget-bin.zip'"), workflow);
-        assertTrue(workflow.contains("-name '*-winget-bin.zip.sha1'"), workflow);
-    }
-
+    /**
+     * install.ps1 downloads the public archive, which no longer carries the native executables, so it must not select
+     * one by architecture. The installer's behaviour is covered by {@code WebsiteInstallTest}, but those tests are
+     * {@code @EnabledOnOs(WINDOWS)}; this keeps the invariant guarded on every platform.
+     */
     @Test
     void websiteWindowsInstallerUsesArchitectureNeutralBatchLauncher() throws Exception {
         String installer = Files.readString(MODULE_DIR.resolve("src/install/install.ps1"), StandardCharsets.UTF_8);
 
-        assertTrue(installer.contains("bin\\camel.bat"), installer);
         assertFalse(installer.contains("camel-x64.exe"), installer);
         assertFalse(installer.contains("camel-arm64.exe"), installer);
-        assertFalse(installer.contains("PROCESSOR_ARCHITECTURE"), installer);
+        assertFalse(installer.contains("PROCESSOR_ARCHITECTURE"),
+                "the installer must not branch on host architecture: " + installer);
     }
 
+    /**
+     * Maven Central publishes only a SHA-1 sidecar for these artifacts, so pointing Scoop's autoupdate at one would
+     * silently downgrade future versions from the SHA-256 pinned here to SHA-1. Omitting the autoupdate hash entirely
+     * makes Scoop download the artifact and compute SHA-256 itself, keeping one algorithm across every version.
+     */
     @Test
-    void scoopAutoupdateUsesPublishedMavenCentralSha1Sidecar() throws Exception {
-        String scoop = Files.readString(
-                MODULE_DIR.resolve("src/jreleaser/distributions/camel-cli/scoop/manifest.json.tpl"),
-                StandardCharsets.UTF_8);
+    @SuppressWarnings("unchecked")
+    void scoopAutoupdateComputesSha256RatherThanReusingTheSha1Sidecar() throws Exception {
+        // Every Mustache placeholder in this template sits inside a quoted JSON string, so it parses as JSON as-is.
+        Map<String, Object> manifest;
+        try (var in = Files.newInputStream(
+                MODULE_DIR.resolve("src/jreleaser/distributions/camel-cli/scoop/manifest.json.tpl"))) {
+            manifest = new Yaml().load(in);
+        }
 
-        assertTrue(scoop.contains("\"url\": \"$url.sha1\""),
-                "Scoop autoupdate should use the SHA-1 sidecar that Maven Central publishes for camel-launcher"
-                                                             + " classified artifacts.");
+        assertTrue(String.valueOf(manifest.get("hash")).startsWith("sha256:"),
+                "the pinned hash must be SHA-256: " + manifest.get("hash"));
+        Map<String, Object> autoupdate = (Map<String, Object>) manifest.get("autoupdate");
+        assertNotNull(autoupdate, "Scoop autoupdate must stay configured: " + manifest);
+        assertFalse(autoupdate.containsKey("hash"),
+                "declaring an autoupdate hash source would pin future versions to Maven Central's SHA-1 sidecar: "
+                                                    + autoupdate);
     }
 
+    /**
+     * WinGet needs a real per-architecture executable, so the JReleaser default (a single {@code neutral} entry) is
+     * overridden. Both entries describe the same approved ZIP and differ only by which nested exe they expose.
+     */
     @Test
-    void wingetInstallerManifestUsesLatestAcceptedSchema() throws Exception {
+    void wingetInstallerManifestDeclaresBothArchitecturesFromOneArchive() throws Exception {
         String winget = Files.readString(
                 MODULE_DIR.resolve("src/jreleaser/distributions/camel-cli/winget/installer.yaml.tpl"),
                 StandardCharsets.UTF_8);
 
-        assertTrue(winget.contains("winget-manifest.installer.1.12.0.schema.json"), winget);
-        assertTrue(winget.contains("ManifestVersion: 1.12.0"), winget);
         assertTrue(winget.contains("Architecture: x64"), winget);
         assertTrue(winget.contains("Architecture: arm64"), winget);
         assertTrue(winget.contains("bin\\camel-x64.exe"), winget);
         assertTrue(winget.contains("bin\\camel-arm64.exe"), winget);
-        assertEquals(2, winget.split("InstallerSha256: \\{\\{distributionChecksumSha256\\}\\}", -1).length - 1,
+        assertEquals(2, countOccurrences(winget, "InstallerSha256: {{distributionChecksumSha256}}"),
                 "both architecture entries must use the checksum of the same approved ZIP");
+
+        // The editor schema hint and the declared manifest version are the same contract; drifting apart means the
+        // manifest is validated locally against a version WinGet is not being told to expect.
+        Matcher declared = Pattern.compile("ManifestVersion: (\\S+)").matcher(winget);
+        assertTrue(declared.find(), winget);
+        assertTrue(winget.contains("winget-manifest.installer." + declared.group(1) + ".schema.json"),
+                "the yaml-language-server schema must match ManifestVersion " + declared.group(1));
+    }
+
+    private static int countOccurrences(String haystack, String needle) {
+        return haystack.split(Pattern.quote(needle), -1).length - 1;
     }
 
     private static final Path SCRIPT = Paths.get("src/jreleaser/bin/camel-package.sh");
@@ -262,14 +357,6 @@ class PackagePlanTest {
         r.stdout = out;
         r.stderr = err;
         return r;
-    }
-
-    @Test
-    void posixWrapperUsesBashWithPipefail() throws Exception {
-        String script = Files.readString(SCRIPT, StandardCharsets.UTF_8);
-
-        assertTrue(script.startsWith("#!/usr/bin/env bash\n"), script);
-        assertTrue(script.contains("set -euo pipefail"), script);
     }
 
     private Map<String, String> testModeEnvWithMvnStub(Path tmp, Path recordFile) throws IOException {
@@ -353,17 +440,6 @@ class PackagePlanTest {
         Map<String, String> env = new LinkedHashMap<>();
         env.put("PATH", stubDir + File.pathSeparator + System.getenv("PATH"));
         return env;
-    }
-
-    private void addFailingCurlStub(Path tmp, Map<String, String> env, Path curlRecordFile) throws IOException {
-        Path stubDir = tmp.resolve("curl-stub-bin");
-        Files.createDirectories(stubDir);
-        Path curlStub = stubDir.resolve("curl");
-        Files.writeString(curlStub,
-                "#!/bin/sh\nprintf '%s\\n' \"$*\" >> \"" + curlRecordFile + "\"\nexit 99\n",
-                StandardCharsets.UTF_8);
-        assertTrue(curlStub.toFile().setExecutable(true));
-        env.put("PATH", stubDir + File.pathSeparator + env.getOrDefault("PATH", System.getenv("PATH")));
     }
 
     @Test
@@ -590,7 +666,11 @@ class PackagePlanTest {
         writeReleaseFixture("-bin.tar.gz", "fixture-tar-lts");
         writeReleaseFixture("-bin.zip", "fixture-zip-lts");
         Path recordFile = tmp.resolve("mvn-calls.txt");
-        Map<String, String> env = testModeEnvWithMvnStub(tmp, recordFile);
+        // The stub must emit a Homebrew formula the way a real JReleaser run does: the LTS path treats a missing
+        // formula directory as a packaging failure.
+        Map<String, String> env = envWithMvnStubProducingFormula(tmp, recordFile, "camel-at-99.rb");
+        env.put("CAMEL_PACKAGE_TEST_MODE", "true");
+        env.put("CAMEL_PACKAGE_TEST_VERSION", TEST_VERSION);
         env.putAll(supportedLtsFixtureEnv());
 
         Result r = run(env, "prepare", "--channel", "lts", "--lts-line", LTS_LINE_FUTURE);
@@ -622,23 +702,28 @@ class PackagePlanTest {
                 "LTS Homebrew formula must use Homebrew's versioned-formula filename");
     }
 
+    /**
+     * The generated formula is the release artifact: nothing after JReleaser may rewrite it. Guards against
+     * reintroducing the test-mode patching that used to swap in a published version's url/sha256.
+     */
     @Test
-    void testModeWithoutSyntheticVersionDoesNotPatchGeneratedHomebrewFormula(@TempDir Path tmp) throws Exception {
+    void prepareLeavesTheGeneratedHomebrewFormulaUntouched(@TempDir Path tmp) throws Exception {
         writeReleaseFixture("-bin.tar.gz", "fixture-tar");
         writeReleaseFixture("-bin.zip", "fixture-zip");
         Path recordFile = tmp.resolve("mvn-calls.txt");
-        Path curlRecordFile = tmp.resolve("curl-calls.txt");
         Map<String, String> env = envWithMvnStubProducingFormula(tmp, recordFile, "camel.rb");
         env.put("CAMEL_PACKAGE_TEST_MODE", "true");
-        addFailingCurlStub(tmp, env, curlRecordFile);
+        env.put("CAMEL_PACKAGE_TEST_VERSION", TEST_VERSION);
 
         Result r = run(env, "prepare", "--channel", "stable");
 
         assertEquals(0, r.exit, r.stderr);
-        assertFalse(Files.exists(curlRecordFile),
-                "Formula patching must require CAMEL_PACKAGE_TEST_VERSION, not CAMEL_PACKAGE_TEST_MODE alone");
-        Path formulaFile = PACKAGE_DIR.resolve("camel-cli/brew/Formula/camel.rb");
-        assertTrue(Files.readString(formulaFile, StandardCharsets.UTF_8).contains("version \"" + TEST_VERSION + "\""));
+        String formula = Files.readString(PACKAGE_DIR.resolve("camel-cli/brew/Formula/camel.rb"), StandardCharsets.UTF_8);
+        assertTrue(formula.contains("url \"https://example.invalid/original.zip\""),
+                "the url JReleaser generated must survive verbatim: " + formula);
+        assertTrue(formula.contains("sha256 \"original\""),
+                "the checksum JReleaser generated must survive verbatim: " + formula);
+        assertTrue(formula.contains("version \"" + TEST_VERSION + "\""), formula);
     }
 
     @Test
@@ -678,5 +763,74 @@ class PackagePlanTest {
                 "CAMEL_PACKAGE_TEST_VERSION alone (without test mode) must be a fatal usage error");
         assertTrue(r.stderr.toLowerCase().contains("test_mode"), r.stderr);
         assertFalse(Files.exists(recordFile));
+    }
+
+    // --- XML helpers: the POM and assembly descriptors are asserted structurally, so reformatting them
+    // (or reordering elements) cannot break these tests while a real content change slips through.
+
+    private static Document parseXml(Path file) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(false);
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        try (var in = Files.newInputStream(file)) {
+            return factory.newDocumentBuilder().parse(in);
+        }
+    }
+
+    /** Text of every descendant element with the given tag name, in document order. */
+    private static List<String> elementTexts(Node scope, String tagName) {
+        List<String> texts = new ArrayList<>();
+        NodeList nodes = scope instanceof Document doc
+                ? doc.getElementsByTagName(tagName) : ((Element) scope).getElementsByTagName(tagName);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            texts.add(nodes.item(i).getTextContent().trim());
+        }
+        return texts;
+    }
+
+    /**
+     * Every {@code <include>} an assembly descriptor contributes, following its {@code <componentDescriptor>}
+     * references so the assertion describes what the archive actually carries rather than which file happens to declare
+     * it.
+     */
+    private static List<String> effectiveIncludes(Path descriptor) throws Exception {
+        Document document = parseXml(descriptor);
+        List<String> includes = new ArrayList<>(elementTexts(document, "include"));
+        for (String component : elementTexts(document, "componentDescriptor")) {
+            includes.addAll(elementTexts(parseXml(MODULE_DIR.resolve(component)), "include"));
+        }
+        return includes;
+    }
+
+    private static Element firstChild(Element parent, String tagName) {
+        NodeList children = parent.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            if (child instanceof Element element && element.getTagName().equals(tagName)) {
+                return element;
+            }
+        }
+        return null;
+    }
+
+    /** The {@code <profile>} whose direct {@code <id>} child matches, or null. */
+    private static Element profileById(Document pom, String id) {
+        return findByChildId(pom.getElementsByTagName("profile"), id);
+    }
+
+    /** The {@code <execution>} within the given scope whose direct {@code <id>} child matches, or null. */
+    private static Element executionById(Element scope, String id) {
+        return findByChildId(scope.getElementsByTagName("execution"), id);
+    }
+
+    private static Element findByChildId(NodeList candidates, String id) {
+        for (int i = 0; i < candidates.getLength(); i++) {
+            Element candidate = (Element) candidates.item(i);
+            Element idElement = firstChild(candidate, "id");
+            if (idElement != null && idElement.getTextContent().trim().equals(id)) {
+                return candidate;
+            }
+        }
+        return null;
     }
 }

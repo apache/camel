@@ -17,6 +17,14 @@
     limitations under the License.
 
 -->
+<!--
+    The WinGet-only launcher distribution, released through the Apache distribution archive
+    rather than Maven Central (the assembly execution sets attach=false).
+
+    Identical to the public archive except for the native Windows bootstraps below: WinGet needs
+    a genuine per-architecture executable, because a .bat cannot back its portable camel.exe
+    symlink. ZIP only, since WinGet cannot consume a tar.gz.
+-->
 <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
@@ -24,51 +32,10 @@
     <formats>
         <format>zip</format>
     </formats>
-    <dependencySets>
-        <dependencySet>
-            <outputDirectory>bin</outputDirectory>
-            <includes>
-                <include>org.jolokia:jolokia-agent-jvm:jar:javaagent</include>
-            </includes>
-            <useProjectArtifact>false</useProjectArtifact>
-        </dependencySet>
-    </dependencySets>
+    <componentDescriptors>
+        <componentDescriptor>src/main/assembly/launcher-content.xml</componentDescriptor>
+    </componentDescriptors>
     <fileSets>
-        <fileSet>
-            <directory>${project.basedir}</directory>
-            <outputDirectory></outputDirectory>
-            <includes>
-                <include>README*</include>
-                <include>LICENSE*</include>
-                <include>NOTICE*</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.build.directory}</directory>
-            <outputDirectory>bin</outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-            <excludes>
-                <exclude>original-*.jar</exclude>
-            </excludes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/main/resources/bin</directory>
-            <outputDirectory>bin</outputDirectory>
-            <includes>
-                <include>camel.sh</include>
-                <include>camel.bat</include>
-            </includes>
-            <fileMode>0755</fileMode>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/examples</directory>
-            <outputDirectory>examples</outputDirectory>
-            <includes>
-                <include>*.*</include>
-            </includes>
-        </fileSet>
         <fileSet>
             <directory>${project.build.directory}</directory>
             <outputDirectory>bin</outputDirectory>
