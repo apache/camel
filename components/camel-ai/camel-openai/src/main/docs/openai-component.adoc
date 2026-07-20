@@ -2,7 +2,7 @@
 :doctitle: OpenAI
 :shortname: openai
 :artifactid: camel-openai
-:description: OpenAI endpoint for chat completion, embeddings, and audio transcription.
+:description: OpenAI endpoint for chat completion, embeddings, audio transcription, audio translation, and text-to-speech.
 :since: 4.17
 :supportlevel: Stable
 :tabs-sync-option:
@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The OpenAI component provides integration with OpenAI and OpenAI-compatible APIs for chat completion, text embeddings, and audio transcription using the official openai-java SDK.
+The OpenAI component provides integration with OpenAI and OpenAI-compatible APIs for chat completion, text embeddings, audio transcription, audio translation, and text-to-speech using the official openai-java SDK.
 
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 
@@ -41,6 +41,8 @@ Supported operations:
 * `embeddings` - Generate vector embeddings from text for semantic search and RAG applications
 * `tool-execution` - Execute MCP tool calls from a stored chat completion response (used in manual tool loops)
 * `audio-transcription` - Transcribe audio files to text using speech-to-text models (e.g., Whisper, GPT-4o Transcribe)
+* `audio-translation` - Transcribe and translate audio files into English text (e.g., Whisper)
+* `audio-speech` - Synthesize spoken audio from text using text-to-speech models (e.g., gpt-4o-mini-tts, tts-1)
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -1013,10 +1015,10 @@ For more details on specific features, see:
 The component may throw the following exceptions:
 
 * `IllegalArgumentException`:
-  ** When an invalid operation is specified (supported: `chat-completion`, `embeddings`, `tool-execution`, `audio-transcription`)
+  ** When an invalid operation is specified (supported: `chat-completion`, `embeddings`, `tool-execution`, `audio-transcription`, `audio-translation`, `audio-speech`)
   ** When message body or user message is missing
+  ** When the audio model is missing (audio-transcription, audio-translation) or the speech model is missing (audio-speech)
   ** When image file is provided without userMessage (chat-completion)
   ** When unsupported file type is provided (only text and image files are supported)
   ** When invalid JSON schema string is provided
 * API-specific exceptions from the OpenAI SDK for network errors, authentication failures, rate limiting, etc.
-

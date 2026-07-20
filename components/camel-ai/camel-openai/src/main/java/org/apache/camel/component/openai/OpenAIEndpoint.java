@@ -65,7 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OpenAI endpoint for chat completion, embeddings, and audio transcription.
+ * OpenAI endpoint for chat completion, embeddings, audio transcription, audio translation, and text-to-speech.
  */
 @UriEndpoint(firstVersion = "4.17.0",
              scheme = "openai",
@@ -80,7 +80,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = true,
-              description = "The operation to perform: 'chat-completion', 'embeddings', 'tool-execution', or 'audio-transcription'")
+              description = "The operation to perform: 'chat-completion', 'embeddings', 'tool-execution', "
+                            + "'audio-transcription', 'audio-translation', or 'audio-speech'")
     private OpenAIOperations operation;
 
     @UriParam
@@ -107,6 +108,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             case embeddings -> new OpenAIEmbeddingsProducer(this);
             case toolExecution -> new OpenAIToolExecutionProducer(this);
             case audioTranscription -> new OpenAIAudioTranscriptionProducer(this);
+            case audioTranslation -> new OpenAIAudioTranslationProducer(this);
+            case audioSpeech -> new OpenAIAudioSpeechProducer(this);
         };
     }
 

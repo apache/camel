@@ -297,3 +297,157 @@ YAML::
 ====
 Some local servers require the model parameter to be a path (e.g., `./models/granite-speech-4.1-2b-8bit`). Refer to your server's documentation for the expected model identifier format.
 ====
+
+== Audio Translation Operation
+
+The `audio-translation` operation transcribes audio in any supported language and translates it into English text using OpenAI's `POST /v1/audio/translations` endpoint. It mirrors the transcription operation and accepts the same body types.
+
+=== Basic Audio Translation
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox/voicemail?noop=true")
+    .to("openai:audio-translation?audioModel=whisper-1")
+    .log("English transcript: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox/voicemail?noop=true"/>
+  <to uri="openai:audio-translation?audioModel=whisper-1"/>
+  <log message="English transcript: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox/voicemail?noop=true
+      steps:
+        - to:
+            uri: openai:audio-translation
+            parameters:
+              audioModel: whisper-1
+        - log:
+            message: "English transcript: ${body}"
+----
+====
+
+=== Input Handling
+
+The audio translation operation accepts the same message body types as transcription:
+
+* `java.io.File` - Audio file reference
+* `java.nio.file.Path` - Path to an audio file
+* `java.io.InputStream` - Audio data stream
+* `byte[]` - Raw audio bytes
+
+=== Audio Translation Parameters
+
+[cols="1,1,1,3"]
+|===
+| Parameter | Type | Default | Description
+
+| `audioModel` | String | | The model to use (e.g., `whisper-1`). Required.
+| `audioPrompt` | String | | Optional text to guide the model's style. Should be in English.
+| `audioResponseFormat` | String | `json` | Output format: `json`, `text`, `srt`, `verbose_json`, `vtt`.
+| `audioTemperature` | Double | | Sampling temperature (0.0 to 1.0).
+|===
+
+NOTE: The translation operation always outputs English text, so it does not accept an `audioLanguage` parameter.
+
+=== Audio Translation Output Headers
+
+[cols="1,1,3"]
+|===
+| Header | Type | Description
+
+| `CamelOpenAIAudioDuration` | Double | Duration of the audio in seconds (verbose_json only)
+| `CamelOpenAIAudioDetectedLanguage` | String | Source language detected in the audio (verbose_json only)
+|===
+
+== Audio Speech (Text-to-Speech) Operation
+
+The `audio-speech` operation synthesizes spoken audio from text using OpenAI's `POST /v1/audio/speech` endpoint. The message body is the input text, and the produced body is the generated audio as a `byte[]`. The `Content-Type` header is set based on the selected response format, so the result chains naturally into `file:`, object storage, or messaging endpoints.
+
+=== Basic Text-to-Speech
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:speak")
+    .to("openai:audio-speech?speechModel=gpt-4o-mini-tts&speechVoice=alloy&speechResponseFormat=mp3")
+    .to("file:out?fileName=answer.mp3");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:speak"/>
+  <to uri="openai:audio-speech?speechModel=gpt-4o-mini-tts&amp;speechVoice=alloy&amp;speechResponseFormat=mp3"/>
+  <to uri="file:out?fileName=answer.mp3"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:speak
+      steps:
+        - to:
+            uri: openai:audio-speech
+            parameters:
+              speechModel: gpt-4o-mini-tts
+              speechVoice: alloy
+              speechResponseFormat: mp3
+        - to:
+            uri: file:out?fileName=answer.mp3
+----
+====
+
+=== Chaining Chat Completion into Speech
+
+Turn an LLM answer into an mp3 and drop it on object storage:
+
+[source,java]
+----
+from("direct:speak")
+    .to("openai:chat-completion?model=gpt-5")
+    .to("openai:audio-speech?speechModel=gpt-4o-mini-tts&speechVoice=alloy&speechResponseFormat=mp3")
+    .to("aws2-s3://announcements?keyName=answer-${exchangeId}.mp3");
+----
+
+=== Audio Speech Parameters
+
+[cols="1,1,1,3"]
+|===
+| Parameter | Type | Default | Description
+
+| `speechModel` | String | | The model to use (e.g., `gpt-4o-mini-tts`, `tts-1`, `tts-1-hd`). Required.
+| `speechVoice` | String | `alloy` | The voice to use (e.g., `alloy`, `echo`, `fable`, `onyx`, `nova`, `shimmer`).
+| `speechResponseFormat` | String | `mp3` | Audio format: `mp3`, `opus`, `aac`, `flac`, `wav`, `pcm`.
+| `speechSpeed` | Double | | Playback speed from 0.25 to 4.0 (1.0 is normal).
+| `speechInstructions` | String | | Optional instructions to control the voice. Does not work with `tts-1` or `tts-1-hd`.
+|===
+
+=== Audio Speech Output
+
+The message body is the generated audio as a `byte[]`. The `Content-Type` header is set according to `speechResponseFormat` (e.g., `audio/mpeg` for `mp3`, `audio/wav` for `wav`).

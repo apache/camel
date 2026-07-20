@@ -767,6 +767,98 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Optional instructions to control the voice of the generated audio.
+         * Does not work with tts-1 or tts-1-hd.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param speechInstructions the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder speechInstructions(String speechInstructions) {
+            doSetProperty("speechInstructions", speechInstructions);
+            return this;
+        }
+        /**
+         * The model to use for text-to-speech (e.g., gpt-4o-mini-tts, tts-1,
+         * tts-1-hd).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param speechModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder speechModel(String speechModel) {
+            doSetProperty("speechModel", speechModel);
+            return this;
+        }
+        /**
+         * The audio format for text-to-speech output.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: mp3
+         * Group: producer
+         * 
+         * @param speechResponseFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder speechResponseFormat(String speechResponseFormat) {
+            doSetProperty("speechResponseFormat", speechResponseFormat);
+            return this;
+        }
+        /**
+         * The speed of the generated audio, from 0.25 to 4.0 where 1.0 is
+         * normal speed.
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param speechSpeed the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder speechSpeed(Double speechSpeed) {
+            doSetProperty("speechSpeed", speechSpeed);
+            return this;
+        }
+        /**
+         * The speed of the generated audio, from 0.25 to 4.0 where 1.0 is
+         * normal speed.
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param speechSpeed the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder speechSpeed(String speechSpeed) {
+            doSetProperty("speechSpeed", speechSpeed);
+            return this;
+        }
+        /**
+         * The voice to use for text-to-speech (e.g., alloy, echo, fable,
+         * onyx, nova, shimmer). See the OpenAI documentation for the full
+         * list of supported voices.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: alloy
+         * Group: producer
+         * 
+         * @param speechVoice the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder speechVoice(String speechVoice) {
+            doSetProperty("speechVoice", speechVoice);
+            return this;
+        }
+        /**
          * Store the full response in the exchange property
          * 'CamelOpenAIResponse' in non-streaming mode.
          * 
@@ -1229,8 +1321,8 @@ public interface OpenAIEndpointBuilderFactory {
     public interface OpenAIBuilders {
         /**
          * OpenAI (camel-openai)
-         * OpenAI endpoint for chat completion, embeddings, and audio
-         * transcription.
+         * OpenAI endpoint for chat completion, embeddings, audio
+         * transcription, audio translation, and text-to-speech.
          * 
          * Category: ai
          * Since: 4.17
@@ -1243,8 +1335,8 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * OpenAI (camel-openai)
-         * OpenAI endpoint for chat completion, embeddings, and audio
-         * transcription.
+         * OpenAI endpoint for chat completion, embeddings, audio
+         * transcription, audio translation, and text-to-speech.
          * 
          * Category: ai
          * Since: 4.17
@@ -1254,9 +1346,11 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'embeddings',
-         * 'tool-execution', or 'audio-transcription'
-         * There are 4 enums and the value can be one of: chat-completion,
-         * embeddings, tool-execution, audio-transcription
+         * 'tool-execution', 'audio-transcription', 'audio-translation', or
+         * 'audio-speech'
+         * There are 6 enums and the value can be one of: chat-completion,
+         * embeddings, tool-execution, audio-transcription, audio-translation,
+         * audio-speech
          * 
          * @param path operation
          * @return the dsl builder
@@ -1266,8 +1360,8 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * OpenAI (camel-openai)
-         * OpenAI endpoint for chat completion, embeddings, and audio
-         * transcription.
+         * OpenAI endpoint for chat completion, embeddings, audio
+         * transcription, audio translation, and text-to-speech.
          * 
          * Category: ai
          * Since: 4.17
@@ -1277,9 +1371,11 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'embeddings',
-         * 'tool-execution', or 'audio-transcription'
-         * There are 4 enums and the value can be one of: chat-completion,
-         * embeddings, tool-execution, audio-transcription
+         * 'tool-execution', 'audio-transcription', 'audio-translation', or
+         * 'audio-speech'
+         * There are 6 enums and the value can be one of: chat-completion,
+         * embeddings, tool-execution, audio-transcription, audio-translation,
+         * audio-speech
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -1795,6 +1891,71 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIAudioDetectedLanguage() {
             return "CamelOpenAIAudioDetectedLanguage";
+        }
+        /**
+         * The model to use for text-to-speech (e.g., gpt-4o-mini-tts, tts-1,
+         * tts-1-hd).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAISpeechModel}.
+         */
+        public String openAISpeechModel() {
+            return "CamelOpenAISpeechModel";
+        }
+        /**
+         * The voice to use for the generated audio (e.g., alloy, echo,
+         * fable, onyx, nova, shimmer).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAISpeechVoice}.
+         */
+        public String openAISpeechVoice() {
+            return "CamelOpenAISpeechVoice";
+        }
+        /**
+         * The audio format for text-to-speech output (mp3, opus, aac, flac,
+         * wav, pcm).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAISpeechResponseFormat}.
+         */
+        public String openAISpeechResponseFormat() {
+            return "CamelOpenAISpeechResponseFormat";
+        }
+        /**
+         * The speed of the generated audio (0.25 to 4.0, where 1.0 is normal
+         * speed).
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAISpeechSpeed}.
+         */
+        public String openAISpeechSpeed() {
+            return "CamelOpenAISpeechSpeed";
+        }
+        /**
+         * Optional instructions to control the voice of the generated audio
+         * (does not work with tts-1 or tts-1-hd).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAISpeechInstructions}.
+         */
+        public String openAISpeechInstructions() {
+            return "CamelOpenAISpeechInstructions";
         }
     }
     static OpenAIEndpointBuilder endpointBuilder(String componentName, String path) {

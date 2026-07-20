@@ -16,24 +16,20 @@
  */
 package org.apache.camel.component.openai;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.openai.models.audio.AudioResponseFormat;
-import com.openai.models.audio.transcriptions.TranscriptionCreateParams;
-import com.openai.models.audio.transcriptions.TranscriptionCreateResponse;
-import com.openai.models.audio.transcriptions.TranscriptionVerbose;
+import com.openai.models.audio.translations.TranslationCreateParams;
+import com.openai.models.audio.translations.TranslationCreateResponse;
+import com.openai.models.audio.translations.TranslationVerbose;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * OpenAI producer for audio transcription.
+ * OpenAI producer for audio translation (transcribe-and-translate to English).
  */
-public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
+public class OpenAIAudioTranslationProducer extends DefaultProducer {
 
-    public OpenAIAudioTranscriptionProducer(OpenAIEndpoint endpoint) {
+    public OpenAIAudioTranslationProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
     }
 
@@ -54,60 +50,41 @@ public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
                     "Audio model must be specified via audioModel parameter or CamelOpenAIAudioModel header");
         }
 
-        String language = OpenAIAudioSupport.resolveParameter(in, OpenAIConstants.AUDIO_LANGUAGE,
-                config.getAudioLanguage(), String.class);
         String responseFormat = OpenAIAudioSupport.resolveParameter(in, OpenAIConstants.AUDIO_RESPONSE_FORMAT,
                 config.getAudioResponseFormat(), String.class);
         Double temperature = OpenAIAudioSupport.resolveParameter(in, OpenAIConstants.AUDIO_TEMPERATURE,
                 config.getAudioTemperature(), Double.class);
         String prompt = OpenAIAudioSupport.resolveParameter(in, OpenAIConstants.AUDIO_PROMPT, config.getAudioPrompt(),
                 String.class);
-        String timestampGranularities = OpenAIAudioSupport.resolveParameter(in,
-                OpenAIConstants.AUDIO_TIMESTAMP_GRANULARITIES, config.getAudioTimestampGranularities(), String.class);
 
-        TranscriptionCreateParams.Builder paramsBuilder = TranscriptionCreateParams.builder()
+        TranslationCreateParams.Builder paramsBuilder = TranslationCreateParams.builder()
                 .model(model);
 
         OpenAIAudioSupport.applyFileInput(in, paramsBuilder::file, paramsBuilder::file);
 
-        if (ObjectHelper.isNotEmpty(language)) {
-            paramsBuilder.language(language);
-        }
         if (ObjectHelper.isNotEmpty(prompt)) {
             paramsBuilder.prompt(prompt);
         }
         if (ObjectHelper.isNotEmpty(responseFormat)) {
-            paramsBuilder.responseFormat(AudioResponseFormat.of(responseFormat));
+            paramsBuilder.responseFormat(TranslationCreateParams.ResponseFormat.of(responseFormat));
         }
         if (temperature != null) {
             paramsBuilder.temperature(temperature);
         }
-        if (ObjectHelper.isNotEmpty(timestampGranularities)) {
-            List<TranscriptionCreateParams.TimestampGranularity> granularities = new ArrayList<>();
-            for (String g : timestampGranularities.split(",")) {
-                String trimmed = g.trim();
-                if (!trimmed.isEmpty()) {
-                    granularities.add(TranscriptionCreateParams.TimestampGranularity.of(trimmed));
-                }
-            }
-            if (!granularities.isEmpty()) {
-                paramsBuilder.timestampGranularities(granularities);
-            }
-        }
 
-        TranscriptionCreateParams params = paramsBuilder.build();
-        TranscriptionCreateResponse response = getEndpoint().getClient()
-                .audio().transcriptions().create(params);
+        TranslationCreateParams params = paramsBuilder.build();
+        TranslationCreateResponse response = getEndpoint().getClient()
+                .audio().translations().create(params);
 
         Message out = exchange.getMessage();
 
         if (response.isVerbose()) {
-            TranscriptionVerbose verbose = response.asVerbose();
+            TranslationVerbose verbose = response.asVerbose();
             out.setBody(verbose.text());
             out.setHeader(OpenAIConstants.AUDIO_DURATION, verbose.duration());
             out.setHeader(OpenAIConstants.AUDIO_DETECTED_LANGUAGE, verbose.language());
-        } else if (response.isTranscription()) {
-            out.setBody(response.asTranscription().text());
+        } else if (response.isTranslation()) {
+            out.setBody(response.asTranslation().text());
         } else {
             out.setBody(response.toString());
         }

@@ -31,15 +31,22 @@ public class OpenAIMockServerHandler implements HttpHandler {
     private final RequestHandler chatRequestHandler;
     private final EmbeddingRequestHandler embeddingRequestHandler;
     private final AudioTranscriptionRequestHandler audioTranscriptionRequestHandler;
+    private final AudioTranscriptionRequestHandler audioTranslationRequestHandler;
+    private final SpeechRequestHandler speechRequestHandler;
 
     public OpenAIMockServerHandler(List<MockExpectation> expectations,
                                    List<EmbeddingExpectation> embeddingExpectations,
                                    List<AudioTranscriptionExpectation> audioTranscriptionExpectations,
+                                   List<AudioTranscriptionExpectation> audioTranslationExpectations,
+                                   List<SpeechExpectation> speechExpectations,
                                    ObjectMapper objectMapper) {
         this.chatRequestHandler = new RequestHandler(expectations, objectMapper);
         this.embeddingRequestHandler = new EmbeddingRequestHandler(embeddingExpectations, objectMapper);
         this.audioTranscriptionRequestHandler
                 = new AudioTranscriptionRequestHandler(audioTranscriptionExpectations, objectMapper);
+        this.audioTranslationRequestHandler
+                = new AudioTranscriptionRequestHandler(audioTranslationExpectations, objectMapper);
+        this.speechRequestHandler = new SpeechRequestHandler(speechExpectations);
     }
 
     @Override
@@ -47,10 +54,18 @@ public class OpenAIMockServerHandler implements HttpHandler {
         if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
             try {
                 String path = exchange.getRequestURI().getPath();
+
+                if (path.endsWith("/audio/speech")) {
+                    speechRequestHandler.handleRequest(exchange);
+                    return;
+                }
+
                 String response;
 
                 if (path.endsWith("/audio/transcriptions")) {
                     response = audioTranscriptionRequestHandler.handleRequest(exchange);
+                } else if (path.endsWith("/audio/translations")) {
+                    response = audioTranslationRequestHandler.handleRequest(exchange);
                 } else if (path.endsWith("/embeddings")) {
                     response = embeddingRequestHandler.handleRequest(exchange);
                 } else {
