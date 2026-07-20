@@ -107,6 +107,13 @@ public class Timestream2QueryProducerTest extends CamelTestSupport {
 
         CreateScheduledQueryResponse resultGet = (CreateScheduledQueryResponse) exchange.getIn().getBody();
         assertEquals("aws-timestream:test:scheduled-query:arn", resultGet.arn());
+
+        // The time-column header must land in timeColumn and must not overwrite the table name.
+        TimestreamConfiguration timestreamConfiguration
+                = clientMock.getLastCreateScheduledQueryRequest().targetConfiguration().timestreamConfiguration();
+        assertEquals("TESTDB", timestreamConfiguration.databaseName());
+        assertEquals("TESTTABLE", timestreamConfiguration.tableName());
+        assertEquals("time", timestreamConfiguration.timeColumn());
     }
 
     @Test
