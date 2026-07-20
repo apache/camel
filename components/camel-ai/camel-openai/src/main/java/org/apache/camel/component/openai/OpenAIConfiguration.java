@@ -112,7 +112,8 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "When conversationMemory is enabled, trim conversation history using a token estimate "
                             + "(character count / 4, including image payload size for multi-modal user messages). "
                             + "Oldest segments are dropped first until the estimated tokens are within this limit. "
-                            + "Assistant tool-call blocks are removed as a unit with their tool results. When 0, "
+                            + "Assistant tool-call blocks are removed as a unit with their tool results. The most recent "
+                            + "segment is always retained, even when it alone exceeds this limit. When 0, "
                             + "no token limit is applied.")
     private int maxHistoryTokens;
 

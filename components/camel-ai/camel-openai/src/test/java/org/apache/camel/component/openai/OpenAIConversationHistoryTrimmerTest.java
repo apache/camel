@@ -116,7 +116,48 @@ class OpenAIConversationHistoryTrimmerTest {
 
         List<ChatCompletionMessageParam> trimmed = OpenAIConversationHistoryTrimmer.trim(history, config(0, 10));
 
-        assertThat(trimmed).isEmpty();
+        assertThat(trimmed).hasSize(2);
+        assertThat(trimmed.get(0).assistant()).isPresent();
+        assertThat(trimmed.get(1).tool()).isPresent();
+    }
+
+    @Test
+    void trimShouldReturnMutableListThatSupportsSubsequentAdds() {
+        List<ChatCompletionMessageParam> history = List.of(
+                userMessage(repeat('a', 40)),
+                assistantMessage(repeat('b', 40)),
+                userMessage(repeat('c', 40)));
+
+        List<ChatCompletionMessageParam> trimmed = OpenAIConversationHistoryTrimmer.trim(history, config(0, 15));
+
+        trimmed.add(userMessage("next"));
+
+        assertThat(trimmed).hasSize(2);
+        assertThat(extractText(trimmed.get(0))).isEqualTo(repeat('c', 40));
+        assertThat(extractText(trimmed.get(1))).isEqualTo("next");
+    }
+
+    @Test
+    void trimShouldReturnMutableEmptyListForEmptyHistory() {
+        List<ChatCompletionMessageParam> trimmed
+                = OpenAIConversationHistoryTrimmer.trim(new ArrayList<>(), config(0, 10));
+
+        trimmed.add(userMessage("one"));
+
+        assertThat(trimmed).hasSize(1);
+    }
+
+    @Test
+    void trimShouldRetainLastSegmentWhenItAloneExceedsTokenLimit() {
+        List<ChatCompletionMessageParam> history = List.of(
+                userMessage("older"),
+                assistantMessage("older-reply"),
+                userMessage(repeat('x', 80)));
+
+        List<ChatCompletionMessageParam> trimmed = OpenAIConversationHistoryTrimmer.trim(history, config(0, 10));
+
+        assertThat(trimmed).hasSize(1);
+        assertThat(extractText(trimmed.get(0))).isEqualTo(repeat('x', 80));
     }
 
     @Test

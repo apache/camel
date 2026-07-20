@@ -42,8 +42,11 @@ final class OpenAIConversationHistoryTrimmer {
 
     static List<ChatCompletionMessageParam> trim(
             List<ChatCompletionMessageParam> history, OpenAIConfiguration config) {
-        if (history == null || history.isEmpty()) {
-            return history;
+        if (history == null) {
+            return null;
+        }
+        if (history.isEmpty()) {
+            return new ArrayList<>();
         }
 
         int maxMessages = config.getMaxHistoryMessages();
@@ -67,14 +70,11 @@ final class OpenAIConversationHistoryTrimmer {
 
         List<ChatCompletionMessageParam> trimmed;
         if (firstSegment >= segments.size()) {
-            trimmed = List.of();
+            trimmed = new ArrayList<>();
         } else {
             Segment first = segments.get(firstSegment);
             Segment last = segments.get(segments.size() - 1);
             trimmed = new ArrayList<>(history.subList(first.start, last.end + 1));
-            if (maxTokens > 0 && estimateTokens(trimmed) > maxTokens) {
-                trimmed = List.of();
-            }
         }
 
         int dropped = originalSize - trimmed.size();
@@ -90,15 +90,22 @@ final class OpenAIConversationHistoryTrimmer {
     }
 
     private static int estimateTokens(List<ChatCompletionMessageParam> messages, int from, int to) {
-        int chars = 0;
+        long chars = 0;
         for (int i = from; i < to; i++) {
             chars += estimateMessageChars(messages.get(i));
         }
         return tokensFromChars(chars);
     }
 
-    private static int tokensFromChars(int chars) {
-        return (chars + CHARS_PER_TOKEN - 1) / CHARS_PER_TOKEN;
+    private static int tokensFromChars(long chars) {
+        if (chars <= 0) {
+            return 0;
+        }
+        long maxChars = (long) Integer.MAX_VALUE * CHARS_PER_TOKEN;
+        if (chars > maxChars) {
+            return Integer.MAX_VALUE;
+        }
+        return (int) ((chars + CHARS_PER_TOKEN - 1) / CHARS_PER_TOKEN);
     }
 
     private static int findFirstSegmentForMessageLimit(List<Segment> segments, int maxMessages) {
@@ -118,14 +125,24 @@ final class OpenAIConversationHistoryTrimmer {
 
     private static int findFirstSegmentForTokenLimit(
             List<ChatCompletionMessageParam> history, List<Segment> segments, int maxTokens) {
+        int lastSegment = segments.size() - 1;
+        Segment last = segments.get(lastSegment);
+        int lastSegmentTokens = estimateTokens(history, last.start, last.end + 1);
+        if (lastSegmentTokens > maxTokens) {
+            LOG.warn(
+                    "Last conversation segment alone exceeds maxHistoryTokens (estimated {} > {}); "
+                     + "retaining it anyway",
+                    lastSegmentTokens, maxTokens);
+            return lastSegment;
+        }
+
         for (int firstSegment = 0; firstSegment < segments.size(); firstSegment++) {
             Segment first = segments.get(firstSegment);
-            Segment last = segments.get(segments.size() - 1);
             if (estimateTokens(history, first.start, last.end + 1) <= maxTokens) {
                 return firstSegment;
             }
         }
-        return segments.size();
+        return lastSegment;
     }
 
     private static List<Segment> buildSegments(List<ChatCompletionMessageParam> history) {
