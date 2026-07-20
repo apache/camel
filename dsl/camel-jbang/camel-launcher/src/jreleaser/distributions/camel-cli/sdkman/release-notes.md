@@ -18,9 +18,9 @@
 <!--
     As of the pinned JReleaser plugin version, the SDKMAN packager has no local template
     extension point. It only exposes `packagers.sdkman.releaseNotesUrl`, and candidate
-    publication happens through SDKMAN's Vendor API at publish time (Phase 5), not
-    `prepare`. This file is not consumed by JReleaser; it holds the required note text
-    for Phase 5 to include when composing the SDKMAN release announcement.
+    publication happens through SDKMAN's Vendor API at publish time, not `prepare`.
+    This file is not consumed by JReleaser; it holds the required note text for the
+    `publish` implementation to include when composing the SDKMAN release announcement.
 -->
 
 Apache Camel CLI requires Java 17 or newer. If you do not already have a

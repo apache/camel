@@ -144,8 +144,12 @@ if [ "$PRINT_PLAN" -eq 1 ]; then
 fi
 
 if [ "$SUBCOMMAND" = "publish" ]; then
-  # Publication is implemented in Phase 5.
-  echo "Error: 'publish' is not yet implemented (Phase 5)." 1>&2
+  # Publication is intentionally unimplemented: where each packager's artifacts get
+  # pushed (e.g. Homebrew to the project's own tap vs. homebrew-core) is a decision
+  # for the Apache Camel PMC, not something this script should default on its own.
+  # This also covers the Homebrew dual-formula gap noted in jreleaser.yml above -
+  # both are blocked on that same publish-destination decision.
+  echo "Error: 'publish' is not yet implemented; awaiting a PMC decision on publish destinations." 1>&2
   exit 2
 fi
 

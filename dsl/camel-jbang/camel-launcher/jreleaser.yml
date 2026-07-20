@@ -28,7 +28,7 @@
 #   - SDKMAN has no boolean "default" flag; `command: MAJOR` publishes and sets the
 #     new version as the candidate default, `command: MINOR` publishes without
 #     moving the default. SDKMAN produces no local `prepare` output (API-only), so
-#     channel-specific MAJOR/MINOR selection only matters at Phase 5 publish time.
+#     channel-specific MAJOR/MINOR selection only matters once `publish` is implemented.
 #   - `{{ Env.X }}` reads real OS environment variables (java.lang.System#getenv),
 #     not Maven -D system properties, so the wrappers export CAMEL_PKG_* before
 #     invoking JReleaser. Enum-typed fields (active, sdkman.command) are parsed
@@ -52,9 +52,12 @@
 # versioned Homebrew formula (`camel@X.Y`) alongside the unversioned `camel`
 # formula. This file declares only one `brew` packager per distribution, so today
 # it only ever produces the single formula selected by CAMEL_PKG_BREW_FORMULA.
-# Producing both formulae from one release is deferred to a follow-up task; use
-# a separate `--channel lts --lts-line X.Y` run to produce the versioned formula
-# on its own in the meantime.
+# Producing both formulae from one release depends on the same publish-destination
+# decision `publish` itself is waiting on (see camel-package.sh) - whether the
+# versioned formula goes to this project's own tap or homebrew-core affects how
+# it can be produced alongside the unversioned one. Until that's settled, use a
+# separate `--channel lts --lts-line X.Y` run to produce the versioned formula
+# on its own.
 #
 # As of the pinned JReleaser plugin version, Homebrew's "AT" naming convention is not
 # applied to `formulaName` itself: a literal "camel@4.20" renders an invalid Ruby class
@@ -129,7 +132,7 @@ distributions:
       candidate: camel
       downloadUrl: "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/{{projectVersion}}/{{artifactFile}}"
       # command (MAJOR/MINOR) defaults to MAJOR here (correct for `stable`); see the
-      # NOTE above on why per-channel selection is deferred to Phase 5 publish.
+      # NOTE above on why per-channel selection only matters once `publish` is implemented.
     scoop:
       active: RELEASE
       downloadUrl: "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/{{projectVersion}}/{{artifactFile}}"
