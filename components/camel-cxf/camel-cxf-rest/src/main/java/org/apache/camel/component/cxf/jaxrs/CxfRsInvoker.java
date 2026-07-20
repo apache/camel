@@ -182,7 +182,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
             Exchange cxfExchange, Method method,
             Object[] paramArray, Object response) {
         ExchangePattern ep = ExchangePattern.InOut;
-        if (method.getReturnType() == Void.class) {
+        if (method.getReturnType() == Void.TYPE || method.getReturnType() == Void.class) {
             ep = ExchangePattern.InOnly;
         }
         final org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);

@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.spring.jaxrs;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.component.cxf.common.NullFaultListener;
 import org.apache.camel.component.cxf.jaxrs.BeanIdAware;
@@ -104,6 +105,15 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean
                 loggingFeature = new LoggingFeature();
             }
             getFeatures().add(loggingFeature);
+        }
+    }
+
+    @Override
+    public void setProperties(Map<String, Object> properties) {
+        if (this.getProperties() != null && properties != null) {
+            this.getProperties().putAll(properties);
+        } else {
+            super.setProperties(properties);
         }
     }
 

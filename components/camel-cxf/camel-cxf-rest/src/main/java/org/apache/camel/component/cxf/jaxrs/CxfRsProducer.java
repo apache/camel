@@ -647,7 +647,19 @@ public class CxfRsProducer extends DefaultAsyncProducer {
 
             for (Map.Entry<String, List<Object>> entry : resp.getMetadata().entrySet()) {
                 LOG.trace("Parse external header {}={}", entry.getKey(), entry.getValue());
-                answer.put(entry.getKey(), entry.getValue().get(0).toString());
+                List<Object> values = entry.getValue();
+                if (values.size() == 1) {
+                    answer.put(entry.getKey(), values.get(0).toString());
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < values.size(); i++) {
+                        if (i > 0) {
+                            sb.append(", ");
+                        }
+                        sb.append(values.get(i));
+                    }
+                    answer.put(entry.getKey(), sb.toString());
+                }
             }
         }
 
@@ -701,6 +713,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                 // handle cookies
                 saveCookies(exchange, client, cxfRsEndpoint.getCookieHandler());
                 if (!exchange.getPattern().isOutCapable()) {
+                    response.close();
                     return;
                 }
 
@@ -806,6 +819,9 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                     return;
                 }
                 if (!exchange.getPattern().isOutCapable()) {
+                    if (response != null) {
+                        response.close();
+                    }
                     return;
                 }
 
