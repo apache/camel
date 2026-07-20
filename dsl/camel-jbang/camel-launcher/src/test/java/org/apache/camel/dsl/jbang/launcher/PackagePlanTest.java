@@ -153,6 +153,27 @@ class PackagePlanTest {
         assertTrue(scoop.contains("-ErrorAction Stop"), scoop);
     }
 
+    @Test
+    void scoopAutoupdateUsesPublishedMavenCentralSha1Sidecar() throws Exception {
+        String scoop = Files.readString(
+                MODULE_DIR.resolve("src/jreleaser/distributions/camel-cli/scoop/manifest.json.tpl"),
+                StandardCharsets.UTF_8);
+
+        assertTrue(scoop.contains("\"url\": \"$url.sha1\""),
+                "Scoop autoupdate should use the SHA-1 sidecar that Maven Central publishes for camel-launcher"
+                                                             + " classified artifacts.");
+    }
+
+    @Test
+    void wingetInstallerManifestUsesLatestAcceptedSchema() throws Exception {
+        String winget = Files.readString(
+                MODULE_DIR.resolve("src/jreleaser/distributions/camel-cli/winget/installer.yaml.tpl"),
+                StandardCharsets.UTF_8);
+
+        assertTrue(winget.contains("winget-manifest.installer.1.12.0.schema.json"), winget);
+        assertTrue(winget.contains("ManifestVersion: 1.12.0"), winget);
+    }
+
     // ── POSIX (camel-package.sh) ──────────────────────────────────────
 
     @Nested
@@ -167,7 +188,7 @@ class PackagePlanTest {
 
         private Result run(Map<String, String> extraEnv, String... args) throws Exception {
             List<String> cmd = new ArrayList<>();
-            cmd.add("/bin/sh");
+            cmd.add("bash");
             cmd.add(SCRIPT.toString());
             for (String a : args) {
                 cmd.add(a);
@@ -183,6 +204,14 @@ class PackagePlanTest {
             r.stdout = out;
             r.stderr = err;
             return r;
+        }
+
+        @Test
+        void posixWrapperUsesBashWithPipefail() throws Exception {
+            String script = Files.readString(SCRIPT, StandardCharsets.UTF_8);
+
+            assertTrue(script.startsWith("#!/usr/bin/env bash\n"), script);
+            assertTrue(script.contains("set -euo pipefail"), script);
         }
 
         private Map<String, String> testModeEnvWithMvnStub(Path tmp, Path recordFile) throws IOException {

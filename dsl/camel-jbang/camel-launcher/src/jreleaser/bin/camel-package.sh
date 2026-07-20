@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-set -eu
+set -euo pipefail
 
-SCRIPT_DIR=`CDPATH= cd -- "$(dirname -- "$0")" && pwd`
-MODULE_DIR=`CDPATH= cd -- "$SCRIPT_DIR/../../.." && pwd`
+SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+MODULE_DIR=$(CDPATH='' cd -- "$SCRIPT_DIR/../../.." && pwd)
 SUPPORTED_LTS="$SCRIPT_DIR/../supported-lts.yml"
 
 # Tests may point this at a synthetic LTS allowlist so expiry-date assertions don't ride on
@@ -78,17 +78,17 @@ if [ -n "$LTS_LINE" ]; then
     echo "Error: supported LTS metadata is malformed: $SUPPORTED_LTS" 1>&2
     exit 1
   fi
-  today=`date +%F`
-  supported_ends=`awk -v line="$LTS_LINE" '
+  today=$(date +%F)
+  supported_ends=$(awk -v line="$LTS_LINE" '
     $1 == "-" && $2 == "line:" { cur = $3; gsub(/"/, "", cur) }
     $1 == "supportEnds:" && cur == line { v = $2; gsub(/"/, "", v); print v; exit }
-  ' "$SUPPORTED_LTS"`
+  ' "$SUPPORTED_LTS")
   if [ -z "$supported_ends" ]; then
     echo "Error: '$LTS_LINE' is not a supported LTS line (see supported-lts.yml)." 1>&2
     exit 2
   fi
   # ISO-8601 dates compare correctly as strings.
-  if [ "$today" \> "$supported_ends" ]; then
+  if expr "$today" \> "$supported_ends" > /dev/null; then
     echo "Error: LTS line '$LTS_LINE' support ended on $supported_ends." 1>&2
     exit 2
   fi
@@ -154,8 +154,8 @@ if [ -n "${CAMEL_PACKAGE_TEST_VERSION:-}" ]; then
   fi
   PROJECT_VERSION="$CAMEL_PACKAGE_TEST_VERSION"
 else
-  PROJECT_VERSION=`mvn -q -B -ntp -f "$MODULE_DIR/pom.xml" org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate \
-    -Dexpression=project.version -DforceStdout`
+  PROJECT_VERSION=$(mvn -q -B -ntp -f "$MODULE_DIR/pom.xml" org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate \
+    -Dexpression=project.version -DforceStdout)
 fi
 
 case "$PROJECT_VERSION" in
@@ -258,7 +258,7 @@ echo "Preparing packages for channel '$CHANNEL' (packagers: $PACKAGERS)..."
 mvn -B -ntp -f "$MODULE_DIR/pom.xml" \
   -Djreleaser.distributions=camel-cli \
   -Djreleaser.packagers="$PACKAGERS" \
-  $SNAPSHOT_PATTERN_ARG \
+  "$SNAPSHOT_PATTERN_ARG" \
   jreleaser:config jreleaser:prepare jreleaser:package \
   -Djreleaser.dry.run=true
 

@@ -16,7 +16,7 @@
 #
 
 # {{jreleaserCreationStamp}}
-# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.9.0.schema.json
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.12.0.schema.json
 #
 # Overrides the default JReleaser java-binary/winget template (which declares a single
 # Architecture: neutral entry) to declare per-architecture installers for x64 and arm64.
@@ -89,4 +89,4 @@ Installers:
       {{/wingetHasPackageDependencies}}
     {{/wingetHasDependencies}}
 ManifestType: installer
-ManifestVersion: 1.9.0
+ManifestVersion: 1.12.0

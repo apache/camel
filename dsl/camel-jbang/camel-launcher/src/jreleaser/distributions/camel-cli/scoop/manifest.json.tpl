@@ -22,7 +22,7 @@
         "url": "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/$version/camel-launcher-$version-bin.zip",
         "extract_dir": "camel-launcher-$version",
         "hash": {
-            "url": "$url.sha512"
+            "url": "$url.sha1"
         }
     }
 }
