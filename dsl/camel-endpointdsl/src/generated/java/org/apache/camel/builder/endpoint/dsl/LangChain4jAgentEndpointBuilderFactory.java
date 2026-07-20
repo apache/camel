@@ -556,6 +556,30 @@ public interface LangChain4jAgentEndpointBuilderFactory {
         public String langChain4jAgentTotalTokenCount() {
             return "CamelLangChain4jAgentTotalTokenCount";
         }
+        /**
+         * RAG sources retrieved during agent invocation.
+         * 
+         * The option is a: {@code java.util.List<dev.langchain4j.rag.content.Content>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jAgentSources}.
+         */
+        public String langChain4jAgentSources() {
+            return "CamelLangChain4jAgentSources";
+        }
+        /**
+         * Tool executions performed during agent invocation.
+         * 
+         * The option is a: {@code java.util.List<dev.langchain4j.service.tool.ToolExecution>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jAgentToolExecutions}.
+         */
+        public String langChain4jAgentToolExecutions() {
+            return "CamelLangChain4jAgentToolExecutions";
+        }
     }
     static LangChain4jAgentEndpointBuilder endpointBuilder(String componentName, String path) {
         class LangChain4jAgentEndpointBuilderImpl extends AbstractEndpointBuilder implements LangChain4jAgentEndpointBuilder, AdvancedLangChain4jAgentEndpointBuilder {

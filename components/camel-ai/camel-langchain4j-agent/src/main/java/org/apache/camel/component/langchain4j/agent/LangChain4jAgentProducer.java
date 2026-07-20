@@ -128,10 +128,10 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         ToolProvider toolProvider = createComposedToolProvider(tags, exchange);
         Result<String> result = agent.chat(aiAgentBody, toolProvider);
         exchange.getMessage().setBody(result.content());
-        populateTokenUsageHeaders(result, exchange);
+        populateResultHeaders(result, exchange);
     }
 
-    private void populateTokenUsageHeaders(Result<String> result, Exchange exchange) {
+    private void populateResultHeaders(Result<String> result, Exchange exchange) {
         Message message = exchange.getMessage();
 
         if (result.finishReason() != null) {
@@ -142,6 +142,14 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             message.setHeader(Headers.INPUT_TOKEN_COUNT, result.tokenUsage().inputTokenCount());
             message.setHeader(Headers.OUTPUT_TOKEN_COUNT, result.tokenUsage().outputTokenCount());
             message.setHeader(Headers.TOTAL_TOKEN_COUNT, result.tokenUsage().totalTokenCount());
+        }
+
+        if (result.sources() != null && !result.sources().isEmpty()) {
+            message.setHeader(Headers.SOURCES, result.sources());
+        }
+
+        if (result.toolExecutions() != null && !result.toolExecutions().isEmpty()) {
+            message.setHeader(Headers.TOOL_EXECUTIONS, result.toolExecutions());
         }
     }
 

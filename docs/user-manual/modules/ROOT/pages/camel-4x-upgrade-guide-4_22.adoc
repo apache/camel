@@ -177,6 +177,11 @@ String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 ----
 
+When RAG or tools are used, the agent producer also exposes `CamelLangChain4jAgentSources`
+(`List<dev.langchain4j.rag.content.Content>`) and `CamelLangChain4jAgentToolExecutions`
+(`List<dev.langchain4j.service.tool.ToolExecution>`) as exchange headers when present in the
+`Result`.
+
 === camel-openai
 
 The `conversationMemory` feature on the `chat-completion` operation has two behavior fixes:
