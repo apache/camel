@@ -44,14 +44,14 @@ public class RestModelConverters {
     private static final ModelConverters MODEL31_CONVERTERS;
 
     static {
-        MODEL31_CONVERTERS = ModelConverters.getInstance(true);
+        MODEL31_CONVERTERS = new ModelConverters(true);
         MODEL31_CONVERTERS.addConverter(new ClassNameExtensionModelResolver(new FqnModelResolver(true)));
     }
 
     private static final ModelConverters MODEL30_CONVERTERS;
 
     static {
-        MODEL30_CONVERTERS = ModelConverters.getInstance();
+        MODEL30_CONVERTERS = new ModelConverters();
         MODEL30_CONVERTERS.addConverter(new ClassNameExtensionModelResolver(new FqnModelResolver()));
     }
 
