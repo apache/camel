@@ -450,7 +450,7 @@ from("direct:speak")
 
 === Audio Speech Output
 
-The message body is the generated audio as a `byte[]`. The `Content-Type` header is set according to `speechResponseFormat` (e.g., `audio/mpeg` for `mp3`, `audio/wav` for `wav`).
+The message body is the generated audio as a `byte[]`. The `Content-Type` header is taken from the HTTP response when present, otherwise derived from `speechResponseFormat` (e.g., `audio/mpeg` for `mp3`, `audio/wav` for `wav`).
 
 [NOTE]
 ====

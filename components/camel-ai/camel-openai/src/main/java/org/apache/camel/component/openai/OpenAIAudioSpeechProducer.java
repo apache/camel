@@ -17,6 +17,7 @@
 package org.apache.camel.component.openai;
 
 import java.io.InputStream;
+import java.util.List;
 
 import com.openai.core.http.HttpResponse;
 import com.openai.models.audio.speech.SpeechCreateParams;
@@ -84,14 +85,27 @@ public class OpenAIAudioSpeechProducer extends DefaultProducer {
         SpeechCreateParams params = paramsBuilder.build();
 
         byte[] audio;
+        String contentType;
         try (HttpResponse response = getEndpoint().getClient().audio().speech().create(params);
              InputStream body = response.body()) {
             audio = body.readAllBytes();
+            contentType = resolveContentType(response, responseFormat);
         }
 
         Message out = exchange.getMessage();
         out.setBody(audio);
-        out.setHeader(Exchange.CONTENT_TYPE, contentTypeFor(responseFormat));
+        out.setHeader(Exchange.CONTENT_TYPE, contentType);
+    }
+
+    private static String resolveContentType(HttpResponse response, String responseFormat) {
+        List<String> values = response.headers().values("Content-Type");
+        if (values != null && !values.isEmpty()) {
+            String header = values.get(0);
+            if (ObjectHelper.isNotEmpty(header)) {
+                return header;
+            }
+        }
+        return contentTypeFor(responseFormat);
     }
 
     private static String contentTypeFor(String responseFormat) {

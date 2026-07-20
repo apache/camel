@@ -22,6 +22,8 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,17 +36,20 @@ public class SpeechRequestHandler {
     private static final Logger LOG = LoggerFactory.getLogger(SpeechRequestHandler.class);
 
     private final List<SpeechExpectation> expectations;
+    private final ObjectMapper objectMapper;
     private int callIndex = 0;
 
-    public SpeechRequestHandler(List<SpeechExpectation> expectations) {
+    public SpeechRequestHandler(List<SpeechExpectation> expectations, ObjectMapper objectMapper) {
         this.expectations = expectations;
+        this.objectMapper = objectMapper;
     }
 
     public void handleRequest(HttpExchange exchange) throws IOException {
         try {
             // consume the request body
-            try (InputStream requestBody = exchange.getRequestBody()) {
-                requestBody.readAllBytes();
+            byte[] requestBody;
+            try (InputStream requestStream = exchange.getRequestBody()) {
+                requestBody = requestStream.readAllBytes();
             }
             LOG.debug("Processing audio speech request (call #{})", callIndex);
 
@@ -59,7 +64,8 @@ public class SpeechRequestHandler {
             if (audioData == null) {
                 throw new IllegalStateException("No audio data configured for speech expectation");
             }
-            exchange.getResponseHeaders().set("Content-Type", expectation.getContentType());
+            String contentType = resolveContentType(requestBody, expectation);
+            exchange.getResponseHeaders().set("Content-Type", contentType);
             exchange.sendResponseHeaders(200, audioData.length);
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(audioData);
@@ -80,5 +86,40 @@ public class SpeechRequestHandler {
                 // headers may already be sent
             }
         }
+    }
+
+    private String resolveContentType(byte[] requestBody, SpeechExpectation expectation) {
+        if (expectation.isExplicitContentType()) {
+            return expectation.getContentType();
+        }
+        String responseFormat = extractResponseFormat(requestBody);
+        if (responseFormat != null) {
+            return contentTypeFor(responseFormat);
+        }
+        return expectation.getContentType();
+    }
+
+    private String extractResponseFormat(byte[] requestBody) {
+        try {
+            JsonNode node = objectMapper.readTree(requestBody);
+            JsonNode format = node.get("response_format");
+            if (format != null && !format.isNull()) {
+                return format.asText();
+            }
+        } catch (IOException e) {
+            LOG.debug("Could not parse speech request body for response_format", e);
+        }
+        return null;
+    }
+
+    private static String contentTypeFor(String responseFormat) {
+        return switch (responseFormat.toLowerCase()) {
+            case "opus" -> "audio/opus";
+            case "aac" -> "audio/aac";
+            case "flac" -> "audio/flac";
+            case "wav" -> "audio/wav";
+            case "pcm" -> "audio/pcm";
+            default -> "audio/mpeg";
+        };
     }
 }

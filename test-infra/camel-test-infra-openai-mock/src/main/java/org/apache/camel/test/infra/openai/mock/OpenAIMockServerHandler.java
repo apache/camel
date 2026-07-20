@@ -40,7 +40,7 @@ public class OpenAIMockServerHandler implements HttpHandler {
                 = new AudioTranscriptionRequestHandler(expectations.transcriptions(), objectMapper);
         this.audioTranslationRequestHandler
                 = new AudioTranscriptionRequestHandler(expectations.translations(), objectMapper);
-        this.speechRequestHandler = new SpeechRequestHandler(expectations.speeches());
+        this.speechRequestHandler = new SpeechRequestHandler(expectations.speeches(), objectMapper);
     }
 
     @Override

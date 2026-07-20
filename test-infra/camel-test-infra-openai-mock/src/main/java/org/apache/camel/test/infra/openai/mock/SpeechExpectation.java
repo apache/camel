@@ -24,6 +24,7 @@ public class SpeechExpectation {
 
     private byte[] audioData;
     private String contentType = "audio/mpeg";
+    private boolean explicitContentType;
 
     public byte[] getAudioData() {
         return audioData;
@@ -39,5 +40,10 @@ public class SpeechExpectation {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
+        this.explicitContentType = true;
+    }
+
+    public boolean isExplicitContentType() {
+        return explicitContentType;
     }
 }
