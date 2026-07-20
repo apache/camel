@@ -77,19 +77,16 @@ class GenericFileOnCompletionHandoverTest {
 
     @Test
     void allowHandoverWhenStreamDownloadEnabled() {
-        when(endpoint.isStreamDownload()).thenReturn(true);
         assertTrue(createCompletion(true).allowHandover());
     }
 
     @Test
     void denyHandoverWhenStreamDownloadDisabled() {
-        when(endpoint.isStreamDownload()).thenReturn(false);
         assertFalse(createCompletion(false).allowHandover());
     }
 
     @Test
     void unitOfWorkHandoversCompletionWhenStreamDownload() throws Exception {
-        when(endpoint.isStreamDownload()).thenReturn(true);
         when(endpoint.isIdempotent()).thenReturn(false);
         when(endpoint.getInProgressRepository()).thenReturn(new MemoryIdempotentRepository());
 
@@ -115,7 +112,6 @@ class GenericFileOnCompletionHandoverTest {
 
     @Test
     void unitOfWorkDoesNotHandoverCompletionWhenNotStreamDownload() throws Exception {
-        when(endpoint.isStreamDownload()).thenReturn(false);
         when(endpoint.isIdempotent()).thenReturn(false);
         when(endpoint.getInProgressRepository()).thenReturn(new MemoryIdempotentRepository());
 
@@ -139,7 +135,6 @@ class GenericFileOnCompletionHandoverTest {
 
     @Test
     void correlatedCopyHandoversStreamDownloadCompletion() throws Exception {
-        when(endpoint.isStreamDownload()).thenReturn(true);
         when(endpoint.isIdempotent()).thenReturn(false);
         when(endpoint.getInProgressRepository()).thenReturn(new MemoryIdempotentRepository());
 

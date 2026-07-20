@@ -72,7 +72,7 @@ public class GenericFileOnCompletion<T> implements SynchronizationVetoable {
 
     @Override
     public void beforeHandover(Exchange target) {
-        // noop
+        // no state transformation needed; the stream is already on the exchange body
     }
 
     public ExceptionHandler getExceptionHandler() {
