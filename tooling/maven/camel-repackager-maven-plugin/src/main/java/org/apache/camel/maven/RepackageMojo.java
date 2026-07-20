@@ -18,8 +18,10 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.attribute.FileTime;
 import java.util.Set;
 
+import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -79,6 +81,12 @@ public class RepackageMojo extends AbstractMojo {
     @Parameter(defaultValue = "true")
     private boolean backupSource;
 
+    /**
+     * Timestamp for reproducible output, either formatted as ISO-8601 or as seconds since the epoch.
+     */
+    @Parameter(defaultValue = "${project.build.outputTimestamp}")
+    private String outputTimestamp;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
@@ -94,13 +102,28 @@ public class RepackageMojo extends AbstractMojo {
             repackager.setMainClass(mainClass);
 
             File targetFile = getTargetFile();
-            repackager.repackage(targetFile, this::getLibraries);
+            // The last-modified time drives both halves of a reproducible JAR: it pins every entry's
+            // timestamp, and a non-null value additionally switches BOOT-INF/lib from insertion order
+            // (which follows the dependency set's iteration order) to a sorted map. Omitting it makes
+            // consecutive builds of the same source differ, which in turn breaks the SHA-256 published
+            // for the launcher distribution.
+            repackager.repackage(targetFile, this::getLibraries, parseOutputTimestamp(outputTimestamp));
 
             getLog().info("Successfully created self-executing JAR: " + targetFile);
 
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to repackage JAR", e);
         }
+    }
+
+    /**
+     * Resolves the configured {@code project.build.outputTimestamp} into the last-modified time to stamp on the
+     * repackaged JAR, or {@code null} when reproducible output is not configured.
+     */
+    static FileTime parseOutputTimestamp(String outputTimestamp) {
+        return MavenArchiver.parseBuildOutputTimestamp(outputTimestamp)
+                .map(FileTime::from)
+                .orElse(null);
     }
 
     private File getSourceJar() {

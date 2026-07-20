@@ -209,12 +209,13 @@ jobs:
             dsl/camel-jbang/camel-launcher/target/camel-launcher-*-winget-bin.zip \
             > "$HASH_FILE"
 
-          # 'clean verify' wipes target, so keep the first-build executables around;
-          # on a mismatch the differing byte offsets say far more than a bare FAILED.
+          # 'clean verify' wipes target, so keep the first-build outputs around; on a mismatch the
+          # differing byte offsets and zip entry listing say far more than a bare FAILED.
           FIRST_BUILD="$RUNNER_TEMP/winget-first-build"
           mkdir -p "$FIRST_BUILD"
           cp tooling/camel-exe/target/camel-x64.exe \
-             tooling/camel-exe/target/camel-arm64.exe "$FIRST_BUILD"
+             tooling/camel-exe/target/camel-arm64.exe \
+             dsl/camel-jbang/camel-launcher/target/camel-launcher-*-winget-bin.zip "$FIRST_BUILD"
 
           mvn -P apache-snapshots \
             -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher clean verify \
@@ -226,6 +227,11 @@ jobs:
               cmp -l "$FIRST_BUILD/camel-${ARCH}.exe" \
                      "tooling/camel-exe/target/camel-${ARCH}.exe" | head -40 || true
             done
+            # 'unzip -v' lists each entry's CRC and timestamp, so the diff distinguishes an entry
+            # whose contents changed from one that merely got a new modification time.
+            echo "=== differing WinGet archive entries ==="
+            ZIP=$(find dsl/camel-jbang/camel-launcher/target -maxdepth 1 -name '*-winget-bin.zip' -print -quit)
+            diff <(unzip -v "$FIRST_BUILD"/*-winget-bin.zip) <(unzip -v "$ZIP") || true
             exit 1
           fi
       - name: Verify WinGet archive is not deployed by Maven
