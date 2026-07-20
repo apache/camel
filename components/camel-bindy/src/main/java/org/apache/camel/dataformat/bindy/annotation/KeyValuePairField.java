@@ -70,11 +70,11 @@ public @interface KeyValuePairField {
     int position() default 0;
 
     /**
-     * precision of the BigDecimal number to be created
+     * precision of the BigDecimal number to be created. Use -1 (default) to preserve the original scale from the input.
      *
      * @return int
      */
-    int precision() default 0;
+    int precision() default -1;
 
     /**
      * Indicates if the field is mandatory
