@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.produce;
 
+import org.apache.camel.CamelContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ContextConfiguration
 @ExtendWith(SpringExtension.class)
@@ -37,6 +40,17 @@ public class MyCoolBeanTest {
         MyCoolBean cool = applicationContext.getBean("cool", MyCoolBean.class);
         assertNotNull(cool, "MyCoolBean should be resolved from application context");
         assertNotNull(cool.producer, "ProducerTemplate should be injected via @Produce annotation");
+
+        // Verify the @Produce annotation correctly wired the template to log:foo
+        assertNotNull(cool.producer.getDefaultEndpoint(), "Default endpoint should be configured via @Produce");
+        assertEquals("log://foo", cool.producer.getDefaultEndpoint().getEndpointUri(),
+                "ProducerTemplate should target log:foo");
+
+        // Verify the CamelContext is started (required for message delivery)
+        CamelContext camelContext = applicationContext.getBean(CamelContext.class);
+        assertTrue(camelContext.getStatus().isStarted(), "CamelContext should be started");
+
+        // Send message — verifies the @Produce-injected template can deliver to log:foo
         cool.sendMsg();
     }
 }
