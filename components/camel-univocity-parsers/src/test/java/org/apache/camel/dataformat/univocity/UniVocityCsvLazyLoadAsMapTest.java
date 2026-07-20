@@ -17,7 +17,9 @@
 package org.apache.camel.dataformat.univocity;
 
 import java.io.Closeable;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -73,7 +75,7 @@ public class UniVocityCsvLazyLoadAsMapTest extends CamelTestSupport {
         Object body = mock.getExchanges().get(0).getIn().getBody();
         // The seda consumer already consumed the iterator into a list via the processor
         @SuppressWarnings("unchecked")
-        java.util.List<Map<String, String>> rows = (java.util.List<Map<String, String>>) body;
+        List<Map<String, String>> rows = (List<Map<String, String>>) body;
         assertEquals(2, rows.size());
         assertEquals(asMap("X", "10", "Y", "20"), rows.get(0));
         assertEquals(asMap("X", "30", "Y", "40"), rows.get(1));
@@ -120,7 +122,7 @@ public class UniVocityCsvLazyLoadAsMapTest extends CamelTestSupport {
                         .process(exchange -> {
                             // Consume iterator on seda thread (different from parsing thread)
                             Iterator<?> it = (Iterator<?>) exchange.getIn().getBody();
-                            java.util.List<Map<String, String>> rows = new java.util.ArrayList<>();
+                            List<Map<String, String>> rows = new ArrayList<>();
                             while (it.hasNext()) {
                                 @SuppressWarnings("unchecked")
                                 Map<String, String> row = (Map<String, String>) it.next();
