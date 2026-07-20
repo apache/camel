@@ -161,10 +161,6 @@ public class AvroSchemaResolver implements SchemaResolver, Processor {
             }
         }
 
-        if (answer != null) {
-            this.schema = answer;
-        }
-
         return answer;
     }
 }
