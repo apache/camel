@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -56,9 +57,7 @@ class WebsiteManifestGeneratorTest {
         List<String> cmd = new ArrayList<>();
         cmd.add(javaBin);
         cmd.add(GENERATOR.toString());
-        for (String a : args) {
-            cmd.add(a);
-        }
+        Collections.addAll(cmd, args);
         Process p = new ProcessBuilder(cmd).start();
         String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         String err = new String(p.getErrorStream().readAllBytes(), StandardCharsets.UTF_8);

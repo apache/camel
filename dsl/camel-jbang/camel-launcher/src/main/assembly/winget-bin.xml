@@ -18,21 +18,32 @@
 
 -->
 <!--
-    The public launcher distribution, published to Maven Central.
+    The WinGet-only launcher distribution, released through the Apache distribution archive
+    rather than Maven Central (the assembly execution sets attach=false).
 
-    Deliberately carries no native Windows bootstraps: camel-x64.exe and camel-arm64.exe are
-    needed only by WinGet and ship in winget-bin.xml instead. Windows users of this archive
-    invoke bin\camel.bat.
+    Identical to the public archive except for the native Windows bootstraps below: WinGet needs
+    a genuine per-architecture executable, because a .bat cannot back its portable camel.exe
+    symlink. ZIP only, since WinGet cannot consume a tar.gz.
 -->
 <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
-    <id>bin</id>
+    <id>winget-bin</id>
     <formats>
         <format>zip</format>
-        <format>tar.gz</format>
     </formats>
     <componentDescriptors>
         <componentDescriptor>src/main/assembly/launcher-content.xml</componentDescriptor>
     </componentDescriptors>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>camel-x64.exe</include>
+                <include>camel-arm64.exe</include>
+            </includes>
+            <fileMode>0755</fileMode>
+        </fileSet>
+    </fileSets>
 </assembly>

@@ -970,10 +970,10 @@ class WebsiteInstallTest {
         }
 
         @Test
-        void rejectsArchiveMissingCamelExe(@TempDir Path temp) throws Exception {
+        void rejectsArchiveMissingCamelBat(@TempDir Path temp) throws Exception {
             try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
                 Path home = Files.createDirectory(temp.resolve("home"));
-                Path zip = fixture.safeZipMissingCamelExe("9.9.9");
+                Path zip = fixture.safeZipMissingCamelBat("9.9.9");
                 Path tar = fixture.safeTar("9.9.9");
                 publishRelease(fixture, "9.9.9", tar, zip);
                 fixture.publishManifest("/camel-cli/releases/9.9.9.properties", "9.9.9", tar, zip);

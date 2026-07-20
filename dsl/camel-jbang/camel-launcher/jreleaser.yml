@@ -1,0 +1,163 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# NOTE: field names and packager semantics were checked against the pinned JReleaser Maven
+# plugin version in pom.xml before authoring this file. Key findings that shaped this
+# configuration:
+#   - `type: JAVA_BINARY` (not BINARY): this distribution is a Java application, so using
+#     JReleaser's Java distribution type keeps packager behavior aligned with that runtime.
+#     formula.rb.tpl explicitly declares `depends_on "openjdk"`; it is unpinned because a
+#     numbered formula can be retired from homebrew-core over time, while unpinned resolves
+#     to a currently installable JDK that still satisfies this project's Java 17+ minimum.
+#     The launcher's own JAVACMD/JAVA_HOME/PATH lookup order means this Homebrew dependency
+#     is a self-contained fallback, not the enforced runtime, so pinning buys nothing.
+#   - SDKMAN has no boolean "default" flag; `command: MAJOR` publishes and sets the
+#     new version as the candidate default, `command: MINOR` publishes without
+#     moving the default. SDKMAN produces no local `prepare` output (API-only), so
+#     channel-specific MAJOR/MINOR selection only matters once `publish` is implemented.
+#   - `{{ Env.X }}` reads real OS environment variables (java.lang.System#getenv),
+#     not Maven -D system properties, so the wrappers export CAMEL_PKG_* before
+#     invoking JReleaser. Enum-typed fields (active, sdkman.command) are parsed
+#     before Mustache templates resolve, so `{{ Env.X }}` cannot be used on them.
+#   - Artifact paths are relative to the repo root: the JReleaser Maven plugin's basedir
+#     defaults to the multi-module reactor root, not this file's directory, unlike the
+#     standalone JReleaser CLI.
+#   - Per-channel packager selection (e.g. excluding `scoop` on the `lts` channel)
+#     is done via the jreleaser:prepare/jreleaser:package Mojo's own
+#     `-Djreleaser.packagers` include filter, not via a templated `active` field.
+#   - Each packager overrides `downloadUrl`; the standard launcher archives use
+#     Maven Central, while the dedicated WinGet payload uses the Apache archive.
+#     JReleaser's default download URL points at a GitHub release asset, which
+#     this project does not publish artifacts to.
+#   - `project.vendor` and each distribution's `tags` are required fields in
+#     practice (validation fails without them) despite docs implying defaults.
+# This file renders no package content itself; per-packager overrides live under
+# src/jreleaser/distributions/camel-cli/<packager>/.
+#
+# KNOWN GAP: `--channel stable --lts-line X.Y` is specified to also publish a
+# versioned Homebrew formula (`camel@X.Y`) alongside the unversioned `camel`
+# formula. This file declares only one `brew` packager per distribution, so today
+# it only ever produces the single formula selected by CAMEL_PKG_BREW_FORMULA.
+# Producing both formulae from one release depends on the same publish-destination
+# decision `publish` itself is waiting on (see camel-package.sh) - whether the
+# versioned formula goes to this project's own tap or homebrew-core affects how
+# it can be produced alongside the unversioned one. Until that's settled, use a
+# separate `--channel lts --lts-line X.Y` run to produce the versioned formula
+# on its own.
+#
+# As of the pinned JReleaser plugin version, Homebrew's "AT" naming convention is not
+# applied to `formulaName` itself: a literal "camel@4.20" renders an invalid Ruby class
+# (`class Camel@4.20 < Formula`) and a wrong output filename (`20.rb` instead of
+# `camel@4.20.rb`). `camel-package.sh` works around this by passing
+# the already-converted class name (e.g. "CamelAT420") as CAMEL_PKG_BREW_FORMULA, then
+# renaming JReleaser's kebab-cased output file (e.g. "camel-at-420.rb") to the real
+# "camel@4.20.rb" after packaging.
+
+project:
+  name: camel-cli
+  description: Apache Camel CLI
+  links:
+    homepage: https://camel.apache.org/
+  authors:
+    - The Apache Camel Team
+  license: Apache-2.0
+  vendor: The Apache Software Foundation
+  icons:
+    - url: https://raw.githubusercontent.com/apache/camel/main/docs/img/logo64-d.png
+      width: 64
+      height: 64
+      primary: true
+    # width/height are mandatory on every icon, not just the primary one: JReleaser fails
+    # validation in `jreleaser:config` with "project.icons[n].width must not be null" otherwise.
+    # These are the real dimensions of logo-medium-d.png.
+    - url: https://raw.githubusercontent.com/apache/camel/main/docs/img/logo-medium-d.png
+      width: 500
+      height: 145
+  languages:
+    java:
+      groupId: org.apache.camel
+      version: 17
+
+distributions:
+  # The public distribution deliberately excludes the native Windows bootstraps. They are only
+  # needed by WinGet and live in the dedicated camel-cli-winget distribution below.
+  camel-cli:
+    type: JAVA_BINARY
+    tags:
+      - cli
+    executable:
+      name: camel
+      # The zip/tar bin/ directory ships `camel.sh` (Unix) and `camel.bat` (Windows) per
+      # src/main/assembly/bin.xml; without this, `distributionExecutableUnix`
+      # defaults to the bare distribution name ("camel"), which does not exist on disk and
+      # produces a broken symlink in the Homebrew/Scoop/Chocolatey templates. Windows already
+      # defaults correctly to `bat`.
+      unixExtension: sh
+    artifacts:
+      - path: "dsl/camel-jbang/camel-launcher/target/camel-launcher-{{projectVersion}}-bin.zip"
+    brew:
+      active: RELEASE
+      formulaName: "{{ Env.CAMEL_PKG_BREW_FORMULA }}"
+      # Homebrew's FormulaAudit::Urls cop requires the search.maven.org redirector
+      # for Maven Central artifacts (not repo1.maven.org); see url_helper.rb in
+      # Homebrew/brew. The other packagers keep repo1.maven.org (no such rule).
+      downloadUrl: "https://search.maven.org/remotecontent?filepath=org/apache/camel/camel-launcher/{{projectVersion}}/{{artifactFile}}"
+      # templateDirectory defaults to "src/jreleaser/distributions/#{distribution.name}/brew"
+      # resolved against the JReleaser basedir, which is the multi-module reactor root (see
+      # NOTE above), not this module's directory. Empirically confirmed (jreleaser:prepare
+      # trace.log): without this override the module's formula.rb.tpl is silently ignored
+      # and JReleaser falls back to its embedded default template.
+      templateDirectory: "dsl/camel-jbang/camel-launcher/src/jreleaser/distributions/camel-cli/brew"
+      extraProperties:
+        # Non-empty only for versioned formulae (e.g. "camel@4.20"); used by
+        # formula.rb.tpl as a Mustache truthiness check (empty string == falsy)
+        # to add `keg_only :versioned_formula` and its PATH caveat.
+        versionedFormula: "{{ Env.CAMEL_PKG_BREW_VERSIONED }}"
+    sdkman:
+      active: RELEASE
+      candidate: camel
+      downloadUrl: "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/{{projectVersion}}/{{artifactFile}}"
+      # command (MAJOR/MINOR) defaults to MAJOR here (correct for `stable`); see the
+      # NOTE above on why per-channel selection only matters once `publish` is implemented.
+    scoop:
+      active: RELEASE
+      downloadUrl: "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/{{projectVersion}}/{{artifactFile}}"
+      templateDirectory: "dsl/camel-jbang/camel-launcher/src/jreleaser/distributions/camel-cli/scoop"
+    chocolatey:
+      active: RELEASE
+      packageName: camel
+      iconUrl: 'https://raw.githubusercontent.com/apache/camel/main/docs/img/logo64-d.png'
+      remoteBuild: true
+      downloadUrl: "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/{{projectVersion}}/{{artifactFile}}"
+      templateDirectory: "dsl/camel-jbang/camel-launcher/src/jreleaser/distributions/camel-cli/chocolatey"
+  camel-cli-winget:
+    type: JAVA_BINARY
+    tags:
+      - cli
+    executable:
+      name: camel
+      unixExtension: sh
+    artifacts:
+      - path: "dsl/camel-jbang/camel-launcher/target/camel-launcher-{{projectVersion}}-winget-bin.zip"
+    winget:
+      active: RELEASE
+      downloadUrl: "https://archive.apache.org/dist/camel/apache-camel/{{projectVersion}}/{{artifactFile}}"
+      # Keep the templates under camel-cli so both distributions share the existing package identity.
+      templateDirectory: "dsl/camel-jbang/camel-launcher/src/jreleaser/distributions/camel-cli/winget"
+      package:
+        identifier: Apache.CamelCLI
+        name: Camel CLI

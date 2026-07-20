@@ -208,6 +208,24 @@ class CamelExeBootstrapTest {
     }
 
     @Test
+    void resolvesCamelBatBesideTargetWhenLaunchedThroughSymlink(@TempDir Path base) throws Exception {
+        Path packageDir = base.resolve("package/bin");
+        Files.createDirectories(packageDir);
+        fakeBat(packageDir, 0);
+        Path target = stagedExe(packageDir);
+
+        Path linksDir = base.resolve("links");
+        Files.createDirectories(linksDir);
+        Path link = linksDir.resolve("camel.exe");
+        Files.createSymbolicLink(link, target);
+
+        Result r = run(link, "version");
+
+        assertEquals(0, r.exit, r.stdout);
+        assertTrue(r.stdout.contains("ARG=version"), r.stdout);
+    }
+
+    @Test
     void failsGracefullyWhenCamelBatIsMissing(@TempDir Path dir) throws Exception {
         Path exe = stagedExe(dir);
 

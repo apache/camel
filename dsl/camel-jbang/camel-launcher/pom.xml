@@ -55,6 +55,7 @@
         <commons-codec-version>1.22.0</commons-codec-version>
         <jcl-over-slf4j-version>${slf4j-version}</jcl-over-slf4j-version>
         <commonmark-version>0.29.0</commonmark-version>
+        <jreleaser-plugin-version>1.25.0</jreleaser-plugin-version>
     </properties>
 
     <dependencyManagement>
@@ -64,7 +65,7 @@
                 single flat classpath. The generate plugin drags in commonmark 0.21.0 (via openapi-generator),
                 while the tui plugin (via tamboui-markdown) needs commonmark 0.28.0 and its renderer.markdown
                 classes that do not exist in 0.21.0. Without this pin Maven mediation keeps the older 0.21.0
-                core next to the 0.28.0 extensions, which makes the TUI markdown help throw NoClassDefFoundError.
+                core next to the 0.28.0 extensions, which makes the TUI Markdown help throw NoClassDefFoundError.
                 Pin the core to 0.28.0 so it matches the commonmark-ext-* modules; openapi-generator only uses
                 the stable Parser/HtmlRenderer APIs, which are unchanged in 0.28.0.
             -->
@@ -329,14 +330,57 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--
+                JReleaser drives package-manager distribution (Homebrew, SDKMAN, WinGet, Scoop,
+                Chocolatey). It is intentionally NOT bound to any lifecycle phase and is
+                non-inherited: ordinary Camel builds never prepare or publish packages. The
+                camel-package.sh entry point invokes its goals explicitly.
+            -->
+            <plugin>
+                <groupId>org.jreleaser</groupId>
+                <artifactId>jreleaser-maven-plugin</artifactId>
+                <version>${jreleaser-plugin-version}</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <configFile>${project.basedir}/jreleaser.yml</configFile>
+                    <gitRootSearch>true</gitRootSearch>
+                </configuration>
+            </plugin>
+            <!--
+                The distribution templates all end in ".tpl", which license-maven-plugin does
+                not map to a comment style when failIfUnknown is enabled. They are excluded here
+                instead of adding a repo-wide ".tpl" mapping that would assume a single comment
+                style for templates of different languages. The JSON template is included in the
+                same exclude set because the root "**/*.json" exclude does not reach a file whose
+                final extension is ".tpl".
+            -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <licenseSets>
+                        <licenseSet>
+                            <excludes combine.children="append">
+                                <exclude>src/jreleaser/distributions/camel-cli/brew/formula.rb.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/winget/installer.yaml.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/winget/locale.yaml.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/winget/version.yaml.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/chocolatey/tools/chocolateyinstall.ps1.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/chocolatey/tools/chocolateyuninstall.ps1.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/scoop/manifest.json.tpl</exclude>
+                            </excludes>
+                        </licenseSet>
+                    </licenseSets>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <profiles>
         <!--
             When camel.exe.build=true, copy the native exe artifacts (x64 + arm64) from
-            tooling/camel-exe into target/ so the assembly descriptor can include them in
-            the distribution archive. Host-OS-independent: works on Linux, macOS, or Windows.
+            tooling/camel-exe into target/ so the WinGet assembly descriptor can include them in
+            its dedicated distribution archive. Host-OS-independent: works on Linux, macOS, or Windows.
         -->
         <profile>
             <id>include-camel-exe</id>
@@ -364,6 +408,25 @@
             </dependencies>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>assemble-winget-bin</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <attach>false</attach>
+                                    <descriptors combine.self="override">
+                                        <descriptor>src/main/assembly/winget-bin.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
