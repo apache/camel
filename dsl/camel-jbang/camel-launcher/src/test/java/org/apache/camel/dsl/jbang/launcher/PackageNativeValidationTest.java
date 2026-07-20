@@ -38,11 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Host-gated orchestration tests for the POSIX validator dispatcher and assertion library. Runs on macOS and Linux
- * (disabled on Windows).
+ * Host-gated orchestration tests for the POSIX package-native validator dispatcher and assertion library. Runs on macOS
+ * and Linux (disabled on Windows).
  */
 @DisabledOnOs(OS.WINDOWS)
-class ValidatePosixTest {
+class PackageNativeValidationTest {
 
     private static final Path MODULE_DIR = Path.of("src").toAbsolutePath();
     private static final Path LIB = MODULE_DIR.resolve("jreleaser/bin/lib/assert-camel-cli.sh");
@@ -79,7 +79,8 @@ class ValidatePosixTest {
                 PosixFilePermission.OWNER_EXECUTE));
         String script = ". " + LIB.toAbsolutePath() + "; assert_camel_cli '" + fake + "' '" + tmp + "'";
         Result r = sh(null, List.of("ASSERT_INIT_FIXTURE=" + FIXTURE.toAbsolutePath()), script);
-        assertFalse(r.out().contains("PASS"), "assertion must fail on wrong init content");
+        assertTrue(r.exit() != 0, r.out());
+        assertFalse(r.out().contains("PASS"), r.out());
     }
 
     @Test
@@ -90,16 +91,21 @@ class ValidatePosixTest {
     }
 
     @Test
-    void absentManagersSelfSkip() throws Exception {
-        Result r = sh(null, noPackageManagerEnv());
-        assertEquals(0, r.exit(), "should exit 0 with self-skips (output: [" + r.out() + "])");
+    void unavailablePackageManagersSelfSkip() throws Exception {
+        Result r = validateWithNoPackageManagers();
+        assertEquals(0, r.exit(), r.out());
+        assertTrue(r.out().contains("SKIP:"), r.out());
     }
 
     @Test
-    void validateAllSucceedsOnNoManagers() throws Exception {
-        Result r = sh(null, noPackageManagerEnv());
-        assertEquals(0, r.exit(),
-                "all should succeed (with skips) when no package managers are present; output: [" + r.out() + "]");
+    void validateAllSucceedsWhenPackageManagersAreUnavailable() throws Exception {
+        Result r = validateWithNoPackageManagers();
+        assertEquals(0, r.exit(), r.out());
+        assertTrue(r.out().contains("SKIP:"), r.out());
+    }
+
+    private static Result validateWithNoPackageManagers() throws Exception {
+        return sh(null, noPackageManagerEnv(), "/bin/bash " + VALIDATE.toAbsolutePath() + " all");
     }
 
     private static List<String> noPackageManagerEnv() {
@@ -111,14 +117,12 @@ class ValidatePosixTest {
         return List.of(
                 "PATH=" + filtered,
                 "HOME=" + System.getProperty("java.io.tmpdir"),
-                "SDKMAN_DIR=/nonexistent-sdkman");
+                "SDKMAN_DIR=/nonexistent-sdkman",
+                "CAMEL_PACKAGE_TEST_MODE=true",
+                "CAMEL_PACKAGE_TEST_VERSION=4.22.0");
     }
 
     private Path writeFakeCamel(Path dir) throws IOException {
-        // The init case derives the generated class name from the requested filename, like the
-        // real CLI does, instead of always emitting the fixture verbatim: this lets the test
-        // catch a filename/fixture drift (e.g. a caller requesting "Sample.java" against a
-        // fixture hardcoded to class "hello") rather than always trivially matching.
         String body = "#!/bin/sh\n"
                       + "case \"$1\" in\n"
                       + "  --version) echo 'Apache Camel 4.22.0'; exit 0 ;;\n"
@@ -136,7 +140,7 @@ class ValidatePosixTest {
         return fake;
     }
 
-    private Result sh(Path cwd, List<String> envOverrides, String... commands) throws Exception {
+    private static Result sh(Path cwd, List<String> envOverrides, String... commands) throws Exception {
         ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", String.join(" && ", commands));
         if (cwd != null) {
             pb.directory(cwd.toFile());

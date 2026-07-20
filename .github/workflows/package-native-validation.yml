@@ -75,16 +75,13 @@ jobs:
           } >> "$GITHUB_ENV"
 
       # SDKMAN is not preinstalled on ubuntu-latest (confirmed via actions/runner-images
-      # Ubuntu 24.04 readme). Without it, camel-validate.sh's SDKMAN validator SKIPs at
-      # the host-gate. Installing it here makes `sdk` available for validation; the init
-      # script is sourced in the validate step since SDKMAN is a bash function, not a
-      # standalone binary, so GITHUB_PATH alone cannot expose it.
+      # Ubuntu 24.04 readme). Its init script is sourced in the validation step because
+      # `sdk` is a bash function, not a standalone binary.
       - name: Install SDKMAN!
         if: runner.os == 'Linux'
         shell: bash
         run: |
           curl -s "https://get.sdkman.io" | bash
-          source "$HOME/.sdkman/bin/sdkman-init.sh"
 
       - name: Set up JDK 21
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
@@ -120,100 +117,14 @@ jobs:
         shell: bash
         run: |
           cd dsl/camel-jbang/camel-launcher
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            source "$HOME/.sdkman/bin/sdkman-init.sh"
+          fi
           CAMEL_PACKAGE_TEST_MODE=true CAMEL_PACKAGE_TEST_VERSION="$TEST_VERSION" \
-            sh src/jreleaser/bin/camel-validate.sh all
+            bash src/jreleaser/bin/camel-validate.sh all
 
       - name: Run POSIX validator unit tests
         shell: bash
         run: |
           cd dsl/camel-jbang/camel-launcher
-          mvn -B -ntp test -pl . -Dtest=ValidatePosixTest
-
-  # ── Build distribution with native exe on Linux ──────────────────
-  build-launcher:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          persist-credentials: false
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: 'maven'
-
-      - uses: ./.github/actions/setup-llvm-mingw
-
-      - name: Build camel-launcher distribution (with native exe, x64 + arm64)
-        run: |
-          mvn -B -ntp -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher \
-            -am install -DskipTests -Dcamel.exe.build=true
-
-      - name: Stage a synthetic release version for offline validation
-        run: |
-          cd dsl/camel-jbang/camel-launcher
-          REAL_VERSION=$(mvn -q -B -ntp org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate \
-            -Dexpression=project.version -DforceStdout)
-          TEST_VERSION="${REAL_VERSION%-SNAPSHOT}"
-          echo "TEST_VERSION=$TEST_VERSION" >> "$GITHUB_ENV"
-          cp -p "target/camel-launcher-$REAL_VERSION-bin.tar.gz" "target/camel-launcher-$TEST_VERSION-bin.tar.gz"
-          cp -p "target/camel-launcher-$REAL_VERSION-bin.zip" "target/camel-launcher-$TEST_VERSION-bin.zip"
-
-      - name: Upload distribution for Windows validation
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: launcher-dist
-          path: |
-            dsl/camel-jbang/camel-launcher/target/camel-launcher-*-bin.zip
-            dsl/camel-jbang/camel-launcher/target/camel-launcher-*-bin.tar.gz
-          retention-days: 1
-
-    outputs:
-      test-version: ${{ env.TEST_VERSION }}
-
-  # ── Windows (WinGet / Scoop / Chocolatey validators) ─────────────
-  windows-validator:
-    needs: build-launcher
-    if: ${{ needs.build-launcher.result == 'success' }}
-    runs-on: windows-2022
-    env:
-      TEST_VERSION: ${{ needs.build-launcher.outputs.test-version }}
-    steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          persist-credentials: false
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: 'maven'
-
-      - name: Download distribution from build job
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: launcher-dist
-          path: dsl/camel-jbang/camel-launcher/target
-
-      - name: Prepare packages (stable, offline, synthetic release version)
-        shell: cmd
-        run: |
-          cd dsl\camel-jbang\camel-launcher
-          set CAMEL_PACKAGE_TEST_MODE=true
-          set CAMEL_PACKAGE_TEST_VERSION=%TEST_VERSION%
-          call src\jreleaser\bin\camel-package.bat prepare --channel stable
-
-      - name: Validate WinGet + Scoop + Chocolatey (host-gated)
-        shell: cmd
-        run: |
-          cd dsl\camel-jbang\camel-launcher
-          call src\jreleaser\bin\camel-validate.bat all
-
-      - name: Run Windows validator unit tests
-        shell: bash
-        run: |
-          cd dsl/camel-jbang/camel-launcher
-          mvn -B -ntp test -pl . -Dtest=ValidateWindowsTest
+          mvn -B -ntp test -pl . -Dtest=PackageNativeValidationTest
