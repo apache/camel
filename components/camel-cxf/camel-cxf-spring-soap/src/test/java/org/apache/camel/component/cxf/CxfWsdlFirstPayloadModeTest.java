@@ -21,11 +21,11 @@ import jakarta.xml.ws.Endpoint;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
 
@@ -42,11 +42,10 @@ public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstBeansPayloadMode.xml");
     }
 
+    @Disabled("Test does not apply to PAYLOAD mode")
     @Override
     @Test
     public void testInvokingServiceWithCamelProducer() {
-        // this test does not apply to PAYLOAD mode; override to verify context is still valid
-        assertNotNull(context, "CamelContext should be available even though this test is not applicable to PAYLOAD mode");
     }
 
     @Override

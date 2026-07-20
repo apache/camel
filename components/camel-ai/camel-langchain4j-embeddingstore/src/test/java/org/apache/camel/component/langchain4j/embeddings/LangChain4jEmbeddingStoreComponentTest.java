@@ -29,6 +29,7 @@ import org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddin
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
@@ -59,10 +60,12 @@ public class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
         TextSegment segment1 = TextSegment.from("I like football.");
         Embedding testEmbedding = embeddingModel.embed(segment1).content();
         assertNotNull(testEmbedding, "embedding model should produce a non-null embedding");
+        assertFalse(testEmbedding.vectorAsList().isEmpty(), "embedding vector should not be empty");
 
         Message first = fluentTemplate.to("langchain4j-embeddingstore:first")
                 .withBody(testEmbedding)
                 .request(Message.class);
         assertNotNull(first, "response message should not be null");
+        assertNotNull(first.getBody(), "response body should not be null");
     }
 }

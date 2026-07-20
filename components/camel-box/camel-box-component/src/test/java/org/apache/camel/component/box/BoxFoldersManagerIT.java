@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.box.sdk.BoxAPIConnection;
+import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxSharedLink;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for {@link BoxFoldersManager} APIs.
@@ -99,6 +101,16 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
         assertNotNull(testFolder.getID(), "test folder should have an ID before deletion");
         // using String message body for single parameter "folderId"
         requestBody("direct://DELETEFOLDER", testFolder.getID());
+
+        // Verify the folder no longer exists (same pattern as BoxFilesManagerIT.testDeleteFileMetadata)
+        try {
+            testFolder.getInfo();
+        } catch (BoxAPIException e) {
+            if (e.getResponseCode() == 404) {
+                return;
+            }
+        }
+        fail("deleteFolder folder still accessible");
     }
 
     @Test

@@ -37,11 +37,11 @@ import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfSchemaValidationTest extends CamelTestSupport {
 
@@ -105,14 +105,12 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
     }
 
     @Test
-    public void schemaValidationDisabledServerTest() throws Exception {
+    public void schemaValidationDisabledServerTest() {
         String longPersonId = RandomStringUtils.secure().next(40, true, true);
         // invoke the service with a non-valid message; should succeed when validation is disabled
-        invokeService(serviceAddressValidationDisabled, longPersonId);
-        // Verify the personId exceeded the schema maxLength constraint (30 chars),
-        // confirming that schema validation was indeed disabled for this endpoint
-        assertTrue(longPersonId.length() > 30,
-                "personId should exceed schema maxLength to confirm validation is disabled");
+        // (the positive counterpart to schemaValidationEnabledServerTest which asserts SOAPFaultException)
+        assertDoesNotThrow(() -> invokeService(serviceAddressValidationDisabled, longPersonId),
+                "Service invocation with a personId exceeding maxLength should succeed when validation is disabled");
     }
 
     @Test

@@ -30,8 +30,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,16 +72,20 @@ public class Dhis2PostTestCase {
     }
 
     @Test
-    public void testResourceGivenMapOfListsQueryParams() {
+    public void testResourceGivenMapOfListsQueryParams() throws Exception {
         Dhis2Post dhis2Post = new Dhis2Post(dhis2Client);
         InputStream result = dhis2Post.resource(null, null, Map.of("foo", List.of("bar")));
         assertNotNull(result, "resource() should return a non-null InputStream");
+        assertEquals(0, result.readAllBytes().length, "response body should be empty");
+        verify(dhis2Client).post(any());
     }
 
     @Test
-    public void testResourceGivenMapOfStringsQueryParams() {
+    public void testResourceGivenMapOfStringsQueryParams() throws Exception {
         Dhis2Post dhis2Post = new Dhis2Post(dhis2Client);
         InputStream result = dhis2Post.resource(null, null, Map.of("foo", "bar"));
         assertNotNull(result, "resource() should return a non-null InputStream");
+        assertEquals(0, result.readAllBytes().length, "response body should be empty");
+        verify(dhis2Client).post(any());
     }
 }

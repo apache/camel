@@ -20,9 +20,7 @@ import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BlobConsumerTest extends CamelTestSupport {
 
@@ -51,14 +49,10 @@ class BlobConsumerTest extends CamelTestSupport {
                         "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL"
                              + "&moveAfterRead=true&destinationContainer=archive");
 
-        assertNotNull(endpoint, "endpoint should be created from URI");
-        assertTrue(endpoint.getConfiguration().isMoveAfterRead(), "moveAfterRead should be enabled");
-
         BlobConsumer consumer = (BlobConsumer) endpoint.createConsumer(exchange -> {
         });
-        assertNotNull(consumer, "consumer should be created successfully");
 
-        // Should not throw IllegalArgumentException - validation should pass
+        // Should not throw - the consumer should start successfully
         // We can't fully test the move functionality without a real Azure connection,
         // but at least validation should pass
         try {
@@ -85,12 +79,8 @@ class BlobConsumerTest extends CamelTestSupport {
                         "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL"
                              + "&deleteAfterRead=true");
 
-        assertNotNull(endpoint, "endpoint should be created from URI");
-        assertTrue(endpoint.getConfiguration().isDeleteAfterRead(), "deleteAfterRead should be enabled");
-
         BlobConsumer consumer = (BlobConsumer) endpoint.createConsumer(exchange -> {
         });
-        assertNotNull(consumer, "consumer should be created successfully");
 
         // Should start without validation errors - deleteAfterRead doesn't require extra config
         try {

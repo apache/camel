@@ -18,6 +18,7 @@ package org.apache.camel.component.flink;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -32,6 +33,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataStreamProducerTest extends CamelTestSupport {
 
@@ -44,16 +46,19 @@ public class DataStreamProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteDataStreamCallback() {
+        AtomicBoolean callbackExecuted = new AtomicBoolean(false);
         Exchange result = template.send(flinkDataStreamUri, exchange -> {
             exchange.getIn().setHeader(FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
                     new VoidDataStreamCallback() {
                         @Override
                         public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
                             ds.print();
+                            callbackExecuted.set(true);
                         }
                     });
         });
         assertNull(result.getException(), "DataStream callback should execute without error");
+        assertTrue(callbackExecuted.get(), "DataStream callback should have been executed");
     }
 
     @Test

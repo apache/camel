@@ -38,12 +38,17 @@ import org.apache.camel.component.a2a.model.TaskStatus;
 import org.apache.camel.component.a2a.model.TaskStatusUpdateEvent;
 import org.apache.camel.component.a2a.model.TextPart;
 import org.apache.camel.component.a2a.streaming.A2AStreamEmitter;
+import org.apache.camel.component.a2a.streaming.A2ATaskSubscriber;
 import org.apache.camel.component.a2a.streaming.StreamSubscriber;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 class InMemoryTaskStoreTest {
     private InMemoryTaskStore store;
@@ -175,11 +180,15 @@ class InMemoryTaskStoreTest {
     @Test
     void subscribeAndUnsubscribe() {
         store.put("t1", createTask("t1", TaskState.WORKING));
-        A2AStreamEmitter emitter = createNoOpEmitter();
-        A2ATaskSubscriber subscriber = new StreamSubscriber(emitter);
+        A2ATaskSubscriber subscriber = mock(A2ATaskSubscriber.class);
 
         store.addSubscriber("t1", subscriber);
         store.removeSubscriber("t1", subscriber);
+
+        // After removal, notifying should NOT reach the removed subscriber
+        StreamResponse event = mock(StreamResponse.class);
+        store.notifySubscribers("t1", event);
+        verify(subscriber, never()).onEvent(any(), any());
 
         // Task should still be intact after subscribe/unsubscribe cycle
         assertThat(store.get("t1")).isNotNull();
