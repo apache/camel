@@ -338,7 +338,11 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
             modelName = "org.apache.camel.model.ProcessDefinition";
         }
 
-        EipModel m = allModels.get(modelName);
+        EipModel em = allModels.get(modelName);
+        if (em == null && modelName.endsWith("Common")) {
+            em = allModels.get(modelName.replace("Common", "Definition"));
+        }
+        final EipModel m = em;
         if (m != null) {
             // special for DSL where XML vs YAML have different names, and we must use as-is due to JAXB @XmlType propOrder
             final Map<String, String> alias = Map.of(
