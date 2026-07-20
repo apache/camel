@@ -68,11 +68,12 @@ public final class OpenAIConstants {
     public static final String RESPONSE_ID = "CamelOpenAIResponseId";
     @Metadata(description = "The reason the completion finished (e.g., stop, length, content_filter)", javaType = "String")
     public static final String FINISH_REASON = "CamelOpenAIFinishReason";
-    @Metadata(description = "The number of tokens used in the prompt", javaType = "Integer")
+    @Metadata(description = "The number of tokens used in the prompt for the latest API call", javaType = "Long")
     public static final String PROMPT_TOKENS = "CamelOpenAIPromptTokens";
-    @Metadata(description = "The number of tokens used in the completion", javaType = "Integer")
+    @Metadata(description = "The number of tokens used in the completion for the latest API call", javaType = "Long")
     public static final String COMPLETION_TOKENS = "CamelOpenAICompletionTokens";
-    @Metadata(description = "The total number of tokens used (prompt + completion)", javaType = "Integer")
+    @Metadata(description = "The total number of tokens used (prompt + completion) for the latest API call",
+              javaType = "Long")
     public static final String TOTAL_TOKENS = "CamelOpenAITotalTokens";
 
     // MCP Tool Call Headers

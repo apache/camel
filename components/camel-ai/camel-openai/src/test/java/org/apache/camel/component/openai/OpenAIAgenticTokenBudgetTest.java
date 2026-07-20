@@ -34,6 +34,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class OpenAIAgenticTokenBudgetTest extends CamelTestSupport {
@@ -51,6 +53,24 @@ class OpenAIAgenticTokenBudgetTest extends CamelTestSupport {
             .withParam("city", "Paris")
             .replyWith("Should not reach this response")
             .end()
+            .when("expensive direct answer")
+            .withUsage(70, 50)
+            .replyWith("Direct answer over budget")
+            .end()
+            .when("at budget boundary")
+            .withUsage(60, 40)
+            .invokeTool("get_weather")
+            .withParam("city", "London")
+            .replyWith("The weather in London is sunny.")
+            .end()
+            .when("accumulate over budget")
+            .withUsage(40, 10)
+            .invokeTool("get_weather")
+            .withParam("city", "A")
+            .andThenInvokeTool("get_weather")
+            .withParam("city", "B")
+            .replyWith("Should not reach this response")
+            .end()
             .build();
 
     @Override
@@ -65,6 +85,14 @@ class OpenAIAgenticTokenBudgetTest extends CamelTestSupport {
                 from("direct:agentic-token-budget")
                         .to("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
                             + "&maxAgenticTokens=100&maxToolIterations=5&baseUrl=" + base);
+
+                from("direct:agentic-token-budget-boundary")
+                        .to("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                            + "&maxAgenticTokens=100&maxToolIterations=5&baseUrl=" + base);
+
+                from("direct:agentic-token-budget-multi")
+                        .to("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                            + "&maxAgenticTokens=80&maxToolIterations=5&baseUrl=" + base);
             }
         };
     }
@@ -100,6 +128,57 @@ class OpenAIAgenticTokenBudgetTest extends CamelTestSupport {
                 .contains("completion=50")
                 .contains("total=120");
         assertThat(result.getMessage().getHeader(OpenAIConstants.AGENTIC_TOTAL_TOKENS, Long.class)).isEqualTo(120L);
+    }
+
+    @Test
+    void finalAnswerOverBudgetShouldStillReturnResponse() {
+        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                             + "&maxAgenticTokens=100&maxToolIterations=5&baseUrl="
+                             + tokenMock.getBaseUrl() + "/v1";
+        injectMcpTools(endpointUri, createWeatherToolClients());
+
+        Exchange result = template.request("direct:agentic-token-budget",
+                e -> e.getIn().setBody("expensive direct answer"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("Direct answer over budget");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.AGENTIC_TOTAL_TOKENS, Long.class)).isEqualTo(120L);
+    }
+
+    @Test
+    void maxAgenticTokensAtExactBoundaryShouldAllowLoopToContinue() {
+        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                             + "&maxAgenticTokens=100&maxToolIterations=5&baseUrl="
+                             + tokenMock.getBaseUrl() + "/v1";
+        injectMcpTools(endpointUri, createWeatherToolClients());
+
+        Exchange result = template.request("direct:agentic-token-budget-boundary",
+                e -> e.getIn().setBody("at budget boundary"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("The weather in London is sunny.");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.AGENTIC_TOTAL_TOKENS, Long.class)).isEqualTo(200L);
+    }
+
+    @Test
+    void maxAgenticTokensShouldStopAfterMultipleIterations() {
+        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                             + "&maxAgenticTokens=80&maxToolIterations=5&baseUrl="
+                             + tokenMock.getBaseUrl() + "/v1";
+        McpSyncClient weatherClient = createMockMcpClient("Sunny, 22°C");
+        Map<String, McpSyncClient> toolClients = Map.of("get_weather", weatherClient);
+        injectMcpTools(endpointUri, toolClients);
+
+        Exchange result = template.request("direct:agentic-token-budget-multi",
+                e -> e.getIn().setBody("accumulate over budget"));
+
+        assertThat(result.getException()).isNotNull();
+        assertInstanceOf(IllegalStateException.class, result.getException());
+        assertThat(result.getException().getMessage())
+                .contains("Max agentic tokens (80) exceeded at iteration 1")
+                .contains("total=100");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.AGENTIC_TOTAL_TOKENS, Long.class)).isEqualTo(100L);
+        verify(weatherClient, times(1)).callTool(any(McpSchema.CallToolRequest.class));
     }
 
     private Map<String, McpSyncClient> createWeatherToolClients() {

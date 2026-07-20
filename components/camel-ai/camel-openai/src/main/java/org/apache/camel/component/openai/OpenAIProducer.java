@@ -488,7 +488,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             ChatCompletion response = getEndpoint().getClient().chat().completions().create(paramsBuilder.build());
             tokenTracker.addUsage(response);
             setAgenticTokenHeaders(exchange.getMessage(), tokenTracker);
-            enforceAgenticTokenBudget(config, tokenTracker, iteration);
 
             ChatCompletion.Choice choice = requireFirstChoice(exchange, response);
 
@@ -511,6 +510,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 updateConversationHistory(exchange, agenticMessages, response);
                 return;
             }
+
+            enforceAgenticTokenBudget(config, tokenTracker, iteration);
 
             iteration++;
             LOG.debug("Iteration {}: model requested {} tool call(s)", iteration,

@@ -130,7 +130,10 @@ public class OpenAIConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "0")
     @Metadata(description = "Maximum cumulative prompt plus completion tokens allowed across the MCP agentic loop. "
-                            + "When 0, no token budget is enforced.")
+                            + "When 0 or negative, no token budget is enforced. Enforcement runs after each API call "
+                            + "that requests further tool execution, so actual spend may exceed the configured budget "
+                            + "by up to one call (typically the largest, as the prompt grows each iteration). "
+                            + "A final text response is returned even when cumulative usage exceeds the budget.")
     private long maxAgenticTokens;
 
     @UriParam(defaultValue = "true")
