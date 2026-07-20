@@ -331,6 +331,27 @@ class PackagePlanTest {
                 "the yaml-language-server schema must match ManifestVersion " + declared.group(1));
     }
 
+    /**
+     * WinGet validates the installer, locale, and version manifests as one set, so JReleaser must not fall back to
+     * embedded templates that declare an older schema version than the custom installer template.
+     */
+    @Test
+    void wingetManifestTemplatesUseTheSameCurrentSchemaVersion() throws Exception {
+        Path wingetTemplates = MODULE_DIR.resolve("src/jreleaser/distributions/camel-cli/winget");
+
+        for (String templateName : List.of("installer.yaml.tpl", "locale.yaml.tpl", "version.yaml.tpl")) {
+            Path template = wingetTemplates.resolve(templateName);
+            assertTrue(Files.isRegularFile(template), "WinGet manifest template must be overridden: " + template);
+
+            String manifest = Files.readString(template, StandardCharsets.UTF_8);
+            Matcher declared = Pattern.compile("ManifestVersion: (\\S+)").matcher(manifest);
+            assertTrue(declared.find(), manifest);
+            assertEquals("1.12.0", declared.group(1), "unexpected WinGet schema version in " + template);
+            assertTrue(manifest.contains("." + declared.group(1) + ".schema.json"),
+                    "the yaml-language-server schema must match ManifestVersion in " + template);
+        }
+    }
+
     private static int countOccurrences(String haystack, String needle) {
         return haystack.split(Pattern.quote(needle), -1).length - 1;
     }

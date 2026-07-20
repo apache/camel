@@ -363,6 +363,8 @@
                             <excludes combine.children="append">
                                 <exclude>src/jreleaser/distributions/camel-cli/brew/formula.rb.tpl</exclude>
                                 <exclude>src/jreleaser/distributions/camel-cli/winget/installer.yaml.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/winget/locale.yaml.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/winget/version.yaml.tpl</exclude>
                                 <exclude>src/jreleaser/distributions/camel-cli/chocolatey/tools/chocolateyinstall.ps1.tpl</exclude>
                                 <exclude>src/jreleaser/distributions/camel-cli/chocolatey/tools/chocolateyuninstall.ps1.tpl</exclude>
                                 <exclude>src/jreleaser/distributions/camel-cli/scoop/manifest.json.tpl</exclude>
