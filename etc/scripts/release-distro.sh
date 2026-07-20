@@ -18,16 +18,28 @@
 
 VERSION=${1}
 DOWNLOAD=${2:-/tmp/camel-release}
+WINGET_CANDIDATE=${3:-}
 mkdir -p ${DOWNLOAD} 2>/dev/null
 
 # The following component contain schema definitions that must be published
 RUNDIR=$(cd ${0%/*} && echo $PWD)
 DIST_REPO="https://dist.apache.org/repos/dist/release/camel/apache-camel/"
+DIST_DEV_REPO="https://dist.apache.org/repos/dist/dev/camel/apache-camel/"
 
 if [ -z "${VERSION}" -o ! -d "${DOWNLOAD}" ]
 then
- echo "Usage: release-distro.sh <camel-version> [temp-directory]"
+ echo "Usage: release-distro.sh <camel-version> [temp-directory] [winget-candidate]"
  exit 1
+fi
+case "${WINGET_CANDIDATE}" in
+ *[!0-9]*)
+   echo "Error: winget-candidate must be a positive integer."
+   exit 1
+   ;;
+esac
+if [ -n "${WINGET_CANDIDATE}" ] && [ "${WINGET_CANDIDATE}" -lt 1 ]; then
+  echo "Error: winget-candidate must be a positive integer."
+  exit 1
 fi
 
 echo "################################################################################"
@@ -54,6 +66,26 @@ cd "${DOWNLOAD_LOCATION}"
 for file in *.pom *.tar.gz *.zip; do
   [ -f "${file}" ] && sha512sum "${file}" > "${file}.sha512"
 done
+
+if [ -n "${WINGET_CANDIDATE}" ]; then
+  WINGET_NAME="camel-launcher-${VERSION}-winget-bin.zip"
+  WINGET_RC_URL="${DIST_DEV_REPO}/${VERSION}-rc${WINGET_CANDIDATE}"
+  for suffix in "" ".asc" ".sha512"; do
+    if ! svn export "${WINGET_RC_URL}/${WINGET_NAME}${suffix}" \
+        "${DOWNLOAD_LOCATION}/${WINGET_NAME}${suffix}"; then
+      echo "Error: could not export approved WinGet candidate file ${WINGET_NAME}${suffix}."
+      exit 1
+    fi
+  done
+  if ! sha512sum -c "${WINGET_NAME}.sha512"; then
+    echo "Error: approved WinGet candidate SHA-512 verification failed."
+    exit 1
+  fi
+  if ! gpg --verify "${WINGET_NAME}.asc" "${WINGET_NAME}"; then
+    echo "Error: approved WinGet candidate signature verification failed."
+    exit 1
+  fi
+fi
 
 echo "################################################################################"
 echo "                         RESET GROUP PERMISSIONS                                "

@@ -256,6 +256,19 @@ Complete the following steps to create a new Camel release:
 
   $ ./mvnw release:perform -Prelease
 
+. Stage the WinGet payload in the Apache development distribution repository:
+
+* `release:perform` builds the non-attached WinGet ZIP in its release checkout. Prepare the
+candidate with the same candidate number used in the vote:
+
+  cd ${CAMEL_ROOT_DIR}/etc/scripts
+  ./stage-winget-distro.sh <Camel version> <candidate number> \
+    ${CAMEL_ROOT_DIR}/target/checkout/dsl/camel-jbang/camel-launcher/target/camel-launcher-<Camel version>-winget-bin.zip
+
+* Review the printed `svn status`, commit the working copy only after checking the ZIP, `.asc`,
+and `.sha512`, and include the resulting `dist/dev` candidate URL together with the Nexus staging
+repository URL in the vote email. The WinGet ZIP is not present in the Nexus staging repository.
+
 
 . Close the Apache staging repository:
 
@@ -385,7 +398,21 @@ This will release the artifacts.
 . Copy distribution to Apache website:
 
   cd ${CAMEL_ROOT_DIR}/etc/scripts
-  ./release-distro.sh <Camel version>
+  ./release-distro.sh <Camel version> <temp-directory> <WinGet candidate number>
+
+* The script exports the voted WinGet ZIP, signature, and SHA-512 checksum from `dist/dev`, verifies
+them, and adds the exact files to the local `dist/release` working copy. It does not rebuild the ZIP.
+Review and commit the combined working copy using the commands printed by the script.
+
+* After the release is available from
+`https://archive.apache.org/dist/camel/apache-camel/<Camel version>/`, run the JReleaser package
+preparation. WinGet preparation fails until the archived ZIP is available and byte-identical to the
+approved local ZIP.
+
+* Remove the promoted candidate after the release copy is committed:
+
+  svn rm https://dist.apache.org/repos/dist/dev/camel/apache-camel/<Camel version>-rc<WinGet candidate number> \
+    -m "Remove promoted Apache Camel <Camel version> WinGet candidate"
 
 . Copy SBOMs to Apache website:
 
