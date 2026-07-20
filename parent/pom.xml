@@ -166,7 +166,7 @@
         <rewrite-maven-plugin-version>6.44.0</rewrite-maven-plugin-version>
         <ftpserver-version>1.2.1</ftpserver-version>
         <freemarker-version>2.3.34</freemarker-version>
-        <fory-version>1.3.0</fory-version>
+        <fory-version>1.4.0</fory-version>
         <j8583-version>3.0.1</j8583-version>
         <jakarta-jms-api-version>3.1.0</jakarta-jms-api-version>
         <jakarta-persistence-api-version>3.2.0</jakarta-persistence-api-version>
