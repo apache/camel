@@ -30,7 +30,7 @@ public class AwsVaultConfiguration extends VaultConfiguration {
     private @Nullable String accessKey;
     @Metadata(security = "secret")
     private @Nullable String secretKey;
-    @Metadata
+    @Metadata(required = true)
     private @Nullable String region;
     @Metadata
     private boolean defaultCredentialsProvider;

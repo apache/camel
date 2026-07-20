@@ -26,13 +26,13 @@ import org.jspecify.annotations.Nullable;
  */
 public class HashicorpVaultConfiguration extends VaultConfiguration {
 
-    @Metadata(security = "secret")
+    @Metadata(required = true, security = "secret")
     private @Nullable String token;
-    @Metadata
+    @Metadata(required = true)
     private @Nullable String host;
-    @Metadata
+    @Metadata(required = true)
     private @Nullable String port;
-    @Metadata
+    @Metadata(required = true)
     private @Nullable String scheme;
     @Metadata
     private boolean cloud;

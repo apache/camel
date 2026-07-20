@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
  */
 public class AzureVaultConfiguration extends VaultConfiguration {
 
-    @Metadata
+    @Metadata(required = true)
     private @Nullable String vaultName;
     @Metadata(security = "secret")
     private @Nullable String clientId;
