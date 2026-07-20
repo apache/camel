@@ -999,18 +999,18 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     }
     protected void doWriteFaultToleranceConfigurationCommonAttributes(JsonObject jo, FaultToleranceConfigurationCommon def) {
         doWriteIdentifiedTypeAttributes(jo, def);
-        doWriteAttribute(jo, "typedGuard", def.getTypedGuard(), null);
         doWriteAttribute(jo, "delay", def.getDelay(), "5000");
+        doWriteAttribute(jo, "bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
+        doWriteAttribute(jo, "typedGuard", def.getTypedGuard(), null);
+        doWriteAttribute(jo, "failureRatio", def.getFailureRatio(), "50");
+        doWriteAttribute(jo, "timeoutDuration", def.getTimeoutDuration(), "1000");
+        doWriteAttribute(jo, "timeoutEnabled", def.getTimeoutEnabled(), "false");
+        doWriteAttribute(jo, "timeoutPoolSize", def.getTimeoutPoolSize(), "10");
         doWriteAttribute(jo, "successThreshold", def.getSuccessThreshold(), "1");
         doWriteAttribute(jo, "requestVolumeThreshold", def.getRequestVolumeThreshold(), "20");
-        doWriteAttribute(jo, "failureRatio", def.getFailureRatio(), "50");
-        doWriteAttribute(jo, "timeoutEnabled", def.getTimeoutEnabled(), "false");
-        doWriteAttribute(jo, "timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute(jo, "timeoutPoolSize", def.getTimeoutPoolSize(), "10");
-        doWriteAttribute(jo, "bulkheadEnabled", def.getBulkheadEnabled(), "false");
         doWriteAttribute(jo, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
-        doWriteAttribute(jo, "bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
         doWriteAttribute(jo, "threadOffloadExecutorService", def.getThreadOffloadExecutorService(), null);
+        doWriteAttribute(jo, "bulkheadEnabled", def.getBulkheadEnabled(), "false");
     }
     protected JsonObject doWriteFaultToleranceConfigurationCommon(FaultToleranceConfigurationCommon def) {
         JsonObject jo = new JsonObject();
@@ -1500,27 +1500,30 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     }
     protected void doWriteResilience4jConfigurationCommonAttributes(JsonObject jo, Resilience4jConfigurationCommon def) {
         doWriteIdentifiedTypeAttributes(jo, def);
-        doWriteAttribute(jo, "circuitBreaker", def.getCircuitBreaker(), null);
-        doWriteAttribute(jo, "config", def.getConfig(), null);
-        doWriteAttribute(jo, "failureRateThreshold", def.getFailureRateThreshold(), "50");
-        doWriteAttribute(jo, "permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), "10");
-        doWriteAttribute(jo, "throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), "false");
-        doWriteAttribute(jo, "slidingWindowSize", def.getSlidingWindowSize(), "100");
-        doWriteAttribute(jo, "slidingWindowType", def.getSlidingWindowType(), "COUNT_BASED");
-        doWriteAttribute(jo, "minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "100");
-        doWriteAttribute(jo, "writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
-        doWriteAttribute(jo, "waitDurationInOpenState", def.getWaitDurationInOpenState(), "60");
-        doWriteAttribute(jo, "automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
-        doWriteAttribute(jo, "slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
-        doWriteAttribute(jo, "slowCallDurationThreshold", def.getSlowCallDurationThreshold(), "60");
-        doWriteAttribute(jo, "bulkheadEnabled", def.getBulkheadEnabled(), "false");
-        doWriteAttribute(jo, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
         doWriteAttribute(jo, "bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
+        doWriteAttribute(jo, "timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "true");
+        doWriteAttribute(jo, "minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "100");
+        doWriteAttribute(jo, "slidingWindowSynchronizationStrategy", def.getSlidingWindowSynchronizationStrategy(), "SYNCHRONIZED");
+        doWriteAttribute(jo, "timeoutDuration", def.getTimeoutDuration(), "1000");
+        doWriteAttribute(jo, "permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), "10");
+        doWriteAttribute(jo, "slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
+        doWriteAttribute(jo, "bulkheadFairCallHandlingEnabled", def.getBulkheadFairCallHandlingEnabled(), "true");
+        doWriteAttribute(jo, "circuitBreaker", def.getCircuitBreaker(), null);
+        doWriteAttribute(jo, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
+        doWriteAttribute(jo, "bulkheadEnabled", def.getBulkheadEnabled(), "false");
+        doWriteAttribute(jo, "maxWaitDurationInHalfOpenState", def.getMaxWaitDurationInHalfOpenState(), "0");
+        doWriteAttribute(jo, "failureRateThreshold", def.getFailureRateThreshold(), "50");
+        doWriteAttribute(jo, "slowCallDurationThreshold", def.getSlowCallDurationThreshold(), "60000");
         doWriteAttribute(jo, "timeoutEnabled", def.getTimeoutEnabled(), "false");
         doWriteAttribute(jo, "timeoutExecutorService", def.getTimeoutExecutorService(), null);
-        doWriteAttribute(jo, "timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute(jo, "timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "true");
+        doWriteAttribute(jo, "throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), "false");
         doWriteAttribute(jo, "micrometerEnabled", def.getMicrometerEnabled(), "false");
+        doWriteAttribute(jo, "writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
+        doWriteAttribute(jo, "automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
+        doWriteAttribute(jo, "slidingWindowSize", def.getSlidingWindowSize(), "100");
+        doWriteAttribute(jo, "config", def.getConfig(), null);
+        doWriteAttribute(jo, "slidingWindowType", def.getSlidingWindowType(), "COUNT_BASED");
+        doWriteAttribute(jo, "waitDurationInOpenState", def.getWaitDurationInOpenState(), "60000");
     }
     protected void doWriteResilience4jConfigurationCommonElements(JsonObject jo, Resilience4jConfigurationCommon def) {
         doWriteStringList(jo, null, "ignoreException", def.getIgnoreExceptions());

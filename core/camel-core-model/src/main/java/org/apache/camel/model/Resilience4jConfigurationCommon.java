@@ -63,6 +63,12 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
                             + " Sliding window can either be count-based or time-based.")
     private String slidingWindowType;
     @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "SYNCHRONIZED", enums = "LOCK_FREE,SYNCHRONIZED",
+              description = "Configures the synchronization strategy for the sliding window."
+                            + " LOCK_FREE uses a CAS-based lock-free algorithm for better performance under high concurrency."
+                            + " SYNCHRONIZED uses blocking locks with lower memory allocation.")
+    private String slidingWindowSynchronizationStrategy;
+    @XmlAttribute
     @Metadata(defaultValue = "100", javaType = "java.lang.Integer",
               description = "Configures the minimum number of calls which are required (per sliding window period) before the CircuitBreaker can calculate the error rate.")
     private String minimumNumberOfCalls;
@@ -72,21 +78,29 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
                             + " This may be used to reduce log spam when the circuit breaker is open.")
     private String writableStackTraceEnabled;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "60", javaType = "java.lang.Integer",
-              description = "Configures the wait duration (in seconds) which specifies how long the CircuitBreaker should stay open, before it switches to half open.")
+    @Metadata(label = "advanced", defaultValue = "60000", javaType = "java.time.Duration",
+              description = "Configures the wait duration which specifies how long the CircuitBreaker should stay open, before it switches to half open."
+                            + " The default is 60 seconds.")
     private String waitDurationInOpenState;
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean",
               description = "Enables automatic transition from OPEN to HALF_OPEN state once the waitDurationInOpenState has passed.")
     private String automaticTransitionFromOpenToHalfOpenEnabled;
     @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "0", javaType = "java.time.Duration",
+              description = "Configures the maximum wait duration which controls how long the CircuitBreaker should stay in Half Open state,"
+                            + " before it switches to open. Value 0 means circuit breaker will wait in half open state"
+                            + " until all permitted calls have been completed.")
+    private String maxWaitDurationInHalfOpenState;
+    @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "100", javaType = "java.lang.Float",
               description = "Configures a threshold in percentage. The CircuitBreaker considers a call as slow when the call duration is greater than slowCallDurationThreshold."
                             + " When the percentage of slow calls is equal or greater the threshold, the CircuitBreaker transitions to open and starts short-circuiting calls.")
     private String slowCallRateThreshold;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "60", javaType = "java.lang.Integer",
-              description = "Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls percentage.")
+    @Metadata(label = "advanced", defaultValue = "60000", javaType = "java.time.Duration",
+              description = "Configures the duration threshold above which calls are considered as slow and increase the slow calls percentage."
+                            + " The default is 60 seconds.")
     private String slowCallDurationThreshold;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
@@ -97,9 +111,16 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
               description = "Configures the max amount of concurrent calls the bulkhead will support.")
     private String bulkheadMaxConcurrentCalls;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "0", javaType = "java.lang.Integer",
-              description = "Configures a maximum amount of time which the calling thread will wait to enter the bulkhead.")
+    @Metadata(label = "advanced", defaultValue = "0", javaType = "java.time.Duration",
+              description = "Configures a maximum amount of time which the calling thread will wait to enter the bulkhead."
+                            + " The default is 0 (no waiting).")
     private String bulkheadMaxWaitDuration;
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Configures whether the bulkhead uses a fair calling strategy."
+                            + " When enabled (default), a fair strategy guarantees the order of incoming requests (FIFO)."
+                            + " When disabled, no ordering is guaranteed and may improve throughput.")
+    private String bulkheadFairCallHandlingEnabled;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
               description = "Whether timeout is enabled or not on the circuit breaker.")
@@ -109,7 +130,7 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
               description = "References to a custom thread pool to use when timeout is enabled (uses ForkJoinPool.commonPool() by default).")
     private String timeoutExecutorService;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.lang.Integer",
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration",
               description = "Configures the thread execution timeout. Default value is 1 second.")
     private String timeoutDuration;
     @XmlAttribute
@@ -118,7 +139,9 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     private String timeoutCancelRunningFuture;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
-              description = "Whether to enable collecting statistics using Micrometer. This requires adding camel-resilience4j-micrometer JAR to the classpath.")
+              description = "Whether to enable collecting statistics using Micrometer for all circuit breaker instances."
+                            + " This is a global setting (configure via camel.resilience4j.micrometerEnabled=true)"
+                            + " and requires adding camel-resilience4j-micrometer JAR to the classpath.")
     private String micrometerEnabled;
     @XmlElement(name = "recordException")
     @Metadata(label = "advanced",
@@ -142,15 +165,18 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
         this.throwExceptionWhenHalfOpenOrOpenState = source.throwExceptionWhenHalfOpenOrOpenState;
         this.slidingWindowSize = source.slidingWindowSize;
         this.slidingWindowType = source.slidingWindowType;
+        this.slidingWindowSynchronizationStrategy = source.slidingWindowSynchronizationStrategy;
         this.minimumNumberOfCalls = source.minimumNumberOfCalls;
         this.writableStackTraceEnabled = source.writableStackTraceEnabled;
         this.waitDurationInOpenState = source.waitDurationInOpenState;
         this.automaticTransitionFromOpenToHalfOpenEnabled = source.automaticTransitionFromOpenToHalfOpenEnabled;
+        this.maxWaitDurationInHalfOpenState = source.maxWaitDurationInHalfOpenState;
         this.slowCallRateThreshold = source.slowCallRateThreshold;
         this.slowCallDurationThreshold = source.slowCallDurationThreshold;
         this.bulkheadEnabled = source.bulkheadEnabled;
         this.bulkheadMaxConcurrentCalls = source.bulkheadMaxConcurrentCalls;
         this.bulkheadMaxWaitDuration = source.bulkheadMaxWaitDuration;
+        this.bulkheadFairCallHandlingEnabled = source.bulkheadFairCallHandlingEnabled;
         this.timeoutEnabled = source.timeoutEnabled;
         this.micrometerEnabled = source.micrometerEnabled;
         this.timeoutExecutorService = source.timeoutExecutorService;
@@ -223,6 +249,14 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
         this.slidingWindowType = slidingWindowType;
     }
 
+    public String getSlidingWindowSynchronizationStrategy() {
+        return slidingWindowSynchronizationStrategy;
+    }
+
+    public void setSlidingWindowSynchronizationStrategy(String slidingWindowSynchronizationStrategy) {
+        this.slidingWindowSynchronizationStrategy = slidingWindowSynchronizationStrategy;
+    }
+
     public String getMinimumNumberOfCalls() {
         return minimumNumberOfCalls;
     }
@@ -253,6 +287,14 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     public void setAutomaticTransitionFromOpenToHalfOpenEnabled(String automaticTransitionFromOpenToHalfOpenEnabled) {
         this.automaticTransitionFromOpenToHalfOpenEnabled = automaticTransitionFromOpenToHalfOpenEnabled;
+    }
+
+    public String getMaxWaitDurationInHalfOpenState() {
+        return maxWaitDurationInHalfOpenState;
+    }
+
+    public void setMaxWaitDurationInHalfOpenState(String maxWaitDurationInHalfOpenState) {
+        this.maxWaitDurationInHalfOpenState = maxWaitDurationInHalfOpenState;
     }
 
     public String getSlowCallRateThreshold() {
@@ -293,6 +335,14 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     public void setBulkheadMaxWaitDuration(String bulkheadMaxWaitDuration) {
         this.bulkheadMaxWaitDuration = bulkheadMaxWaitDuration;
+    }
+
+    public String getBulkheadFairCallHandlingEnabled() {
+        return bulkheadFairCallHandlingEnabled;
+    }
+
+    public void setBulkheadFairCallHandlingEnabled(String bulkheadFairCallHandlingEnabled) {
+        this.bulkheadFairCallHandlingEnabled = bulkheadFairCallHandlingEnabled;
     }
 
     public String getTimeoutEnabled() {

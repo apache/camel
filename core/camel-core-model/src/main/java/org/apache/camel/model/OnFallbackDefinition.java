@@ -46,7 +46,9 @@ public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbac
     private ProcessorDefinition<?> parent;
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean",
+              deprecationNote = "Not supported by any circuit breaker implementation.",
               description = "Whether the fallback goes over the network. If so, the fallback is executed on a separate thread-pool to avoid exhausting the main thread-pool.")
+    @Deprecated(since = "4.22", forRemoval = true)
     private String fallbackViaNetwork;
     @XmlElementRef
     @Metadata(description = "The processing steps to execute as fallback.")
@@ -105,10 +107,12 @@ public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbac
                 .collect(Collectors.joining(",", name + "[", "]"));
     }
 
+    @Deprecated(since = "4.22", forRemoval = true)
     public String getFallbackViaNetwork() {
         return fallbackViaNetwork;
     }
 
+    @Deprecated(since = "4.22", forRemoval = true)
     public void setFallbackViaNetwork(String fallbackViaNetwork) {
         this.fallbackViaNetwork = fallbackViaNetwork;
     }

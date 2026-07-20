@@ -796,15 +796,18 @@ public class ModelParser extends BaseParser {
         return (def, key, val) -> switch (key) {
             case "automaticTransitionFromOpenToHalfOpenEnabled": def.setAutomaticTransitionFromOpenToHalfOpenEnabled(val); yield true;
             case "bulkheadEnabled": def.setBulkheadEnabled(val); yield true;
+            case "bulkheadFairCallHandlingEnabled": def.setBulkheadFairCallHandlingEnabled(val); yield true;
             case "bulkheadMaxConcurrentCalls": def.setBulkheadMaxConcurrentCalls(val); yield true;
             case "bulkheadMaxWaitDuration": def.setBulkheadMaxWaitDuration(val); yield true;
             case "circuitBreaker": def.setCircuitBreaker(val); yield true;
             case "config": def.setConfig(val); yield true;
             case "failureRateThreshold": def.setFailureRateThreshold(val); yield true;
+            case "maxWaitDurationInHalfOpenState": def.setMaxWaitDurationInHalfOpenState(val); yield true;
             case "micrometerEnabled": def.setMicrometerEnabled(val); yield true;
             case "minimumNumberOfCalls": def.setMinimumNumberOfCalls(val); yield true;
             case "permittedNumberOfCallsInHalfOpenState": def.setPermittedNumberOfCallsInHalfOpenState(val); yield true;
             case "slidingWindowSize": def.setSlidingWindowSize(val); yield true;
+            case "slidingWindowSynchronizationStrategy": def.setSlidingWindowSynchronizationStrategy(val); yield true;
             case "slidingWindowType": def.setSlidingWindowType(val); yield true;
             case "slowCallDurationThreshold": def.setSlowCallDurationThreshold(val); yield true;
             case "slowCallRateThreshold": def.setSlowCallRateThreshold(val); yield true;

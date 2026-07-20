@@ -772,3 +772,43 @@ add `precision = 0` explicitly to your `@DataField` annotation.
 The `transformerFactoryConfigurationStrategy` option is now applied on all factory creation paths.
 Previously on `xslt-saxon` it was never invoked, and on plain `xslt` it was only invoked when
 `transformerFactoryClass` was explicitly set.
+
+=== Circuit Breaker EIP - onFallbackViaNetwork deprecated
+
+The `onFallbackViaNetwork()` DSL method and the `fallbackViaNetwork` option on `onFallback` have been
+deprecated for removal. This was a Hystrix-era concept that has never been supported by any current
+circuit breaker implementation — both `camel-resilience4j` and `camel-microprofile-fault-tolerance`
+throw `UnsupportedOperationException` at route initialization when it is enabled.
+Use `onFallback()` instead.
+
+=== camel-resilience4j - Duration options now use Camel duration format
+
+The following Resilience4j configuration options now use `java.time.Duration` type instead of plain integers,
+and accept Camel duration expressions (e.g. `60s`, `1m`, `PT1M`) as well as plain millisecond values:
+
+- `waitDurationInOpenState` — previously accepted seconds (default `60`), now accepts millis or duration strings (default `60000` or `60s`)
+- `slowCallDurationThreshold` — previously accepted seconds (default `60`), now accepts millis or duration strings (default `60000` or `60s`)
+- `timeoutDuration` — unchanged (was already millis, default `1000`)
+- `bulkheadMaxWaitDuration` — unchanged (was already millis, default `0`)
+
+If you configured `waitDurationInOpenState` or `slowCallDurationThreshold` with a plain integer meaning seconds,
+you must update the value to use a duration suffix (e.g. `60s`) or convert to milliseconds (e.g. `60000`).
+
+For example:
+[source,java]
+----
+// Before (seconds):
+.waitDurationInOpenState(60)
+
+// After (millis):
+.waitDurationInOpenState(60000)
+
+// Or using duration string:
+.waitDurationInOpenState("60s")
+----
+
+=== camel-resilience4j - Vavr dependency removed
+
+The `io.vavr:vavr` and `io.vavr:vavr-match` runtime dependencies have been removed from
+`camel-resilience4j`. The single internal usage of Vavr's `Try` monad has been replaced with a
+plain try-catch. This eliminates two transitive runtime JARs. No user-facing behavior change.

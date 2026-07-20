@@ -10622,7 +10622,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
-                    @YamlProperty(name = "fallbackViaNetwork", type = "boolean", defaultValue = "false", description = "Whether the fallback goes over the network. If so, the fallback is executed on a separate thread-pool to avoid exhausting the main thread-pool.", displayName = "Fallback Via Network"),
+                    @YamlProperty(name = "fallbackViaNetwork", type = "boolean", deprecated = true, defaultValue = "false", description = "Whether the fallback goes over the network. If so, the fallback is executed on a separate thread-pool to avoid exhausting the main thread-pool.", displayName = "Fallback Via Network"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
@@ -13886,27 +13886,30 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "automaticTransitionFromOpenToHalfOpenEnabled", type = "boolean", defaultValue = "false", description = "Enables automatic transition from OPEN to HALF_OPEN state once the waitDurationInOpenState has passed.", displayName = "Automatic Transition From Open To Half Open Enabled"),
                     @YamlProperty(name = "bulkheadEnabled", type = "boolean", defaultValue = "false", description = "Whether bulkhead is enabled or not on the circuit breaker.", displayName = "Bulkhead Enabled"),
+                    @YamlProperty(name = "bulkheadFairCallHandlingEnabled", type = "boolean", defaultValue = "true", description = "Configures whether the bulkhead uses a fair calling strategy. When enabled (default), a fair strategy guarantees the order of incoming requests (FIFO). When disabled, no ordering is guaranteed and may improve throughput.", displayName = "Bulkhead Fair Call Handling Enabled"),
                     @YamlProperty(name = "bulkheadMaxConcurrentCalls", type = "number", defaultValue = "25", description = "Configures the max amount of concurrent calls the bulkhead will support.", displayName = "Bulkhead Max Concurrent Calls"),
-                    @YamlProperty(name = "bulkheadMaxWaitDuration", type = "number", defaultValue = "0", description = "Configures a maximum amount of time which the calling thread will wait to enter the bulkhead.", displayName = "Bulkhead Max Wait Duration"),
+                    @YamlProperty(name = "bulkheadMaxWaitDuration", type = "string", defaultValue = "0", description = "Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. The default is 0 (no waiting).", displayName = "Bulkhead Max Wait Duration"),
                     @YamlProperty(name = "circuitBreaker", type = "string", description = "Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the registry. When using this, then any other circuit breaker options are not in use.", displayName = "Circuit Breaker"),
                     @YamlProperty(name = "config", type = "string", description = "Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance to lookup and use from the registry.", displayName = "Config"),
                     @YamlProperty(name = "failureRateThreshold", type = "number", defaultValue = "50", description = "Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls.", displayName = "Failure Rate Threshold"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "ignoreException", type = "array:string", description = "Configure a list of exceptions that are ignored and neither count as a failure nor success. Any exception matching or inheriting from one of the list will not count as a failure nor success, even if the exception is part of recordExceptions.", displayName = "Ignore Exception"),
-                    @YamlProperty(name = "micrometerEnabled", type = "boolean", defaultValue = "false", description = "Whether to enable collecting statistics using Micrometer. This requires adding camel-resilience4j-micrometer JAR to the classpath.", displayName = "Micrometer Enabled"),
+                    @YamlProperty(name = "maxWaitDurationInHalfOpenState", type = "string", defaultValue = "0", description = "Configures the maximum wait duration which controls how long the CircuitBreaker should stay in Half Open state, before it switches to open. Value 0 means circuit breaker will wait in half open state until all permitted calls have been completed.", displayName = "Max Wait Duration In Half Open State"),
+                    @YamlProperty(name = "micrometerEnabled", type = "boolean", defaultValue = "false", description = "Whether to enable collecting statistics using Micrometer for all circuit breaker instances. This is a global setting (configure via camel.resilience4j.micrometerEnabled=true) and requires adding camel-resilience4j-micrometer JAR to the classpath.", displayName = "Micrometer Enabled"),
                     @YamlProperty(name = "minimumNumberOfCalls", type = "number", defaultValue = "100", description = "Configures the minimum number of calls which are required (per sliding window period) before the CircuitBreaker can calculate the error rate.", displayName = "Minimum Number Of Calls"),
                     @YamlProperty(name = "permittedNumberOfCallsInHalfOpenState", type = "number", defaultValue = "10", description = "Configures the number of permitted calls when the CircuitBreaker is half open.", displayName = "Permitted Number Of Calls In Half Open State"),
                     @YamlProperty(name = "recordException", type = "array:string", description = "Configure a list of exceptions that are recorded as a failure and thus increase the failure rate. Any exception matching or inheriting from one of the list counts as a failure, unless explicitly ignored via ignoreExceptions.", displayName = "Record Exception"),
                     @YamlProperty(name = "slidingWindowSize", type = "number", defaultValue = "100", description = "Configures the size of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. Sliding window can either be count-based or time-based.", displayName = "Sliding Window Size"),
+                    @YamlProperty(name = "slidingWindowSynchronizationStrategy", type = "enum:LOCK_FREE,SYNCHRONIZED", defaultValue = "SYNCHRONIZED", description = "Configures the synchronization strategy for the sliding window. LOCK_FREE uses a CAS-based lock-free algorithm for better performance under high concurrency. SYNCHRONIZED uses blocking locks with lower memory allocation.", displayName = "Sliding Window Synchronization Strategy"),
                     @YamlProperty(name = "slidingWindowType", type = "enum:TIME_BASED,COUNT_BASED", defaultValue = "COUNT_BASED", description = "Configures the type of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. Sliding window can either be count-based or time-based.", displayName = "Sliding Window Type"),
-                    @YamlProperty(name = "slowCallDurationThreshold", type = "number", defaultValue = "60", description = "Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls percentage.", displayName = "Slow Call Duration Threshold"),
+                    @YamlProperty(name = "slowCallDurationThreshold", type = "string", defaultValue = "60000", description = "Configures the duration threshold above which calls are considered as slow and increase the slow calls percentage. The default is 60 seconds.", displayName = "Slow Call Duration Threshold"),
                     @YamlProperty(name = "slowCallRateThreshold", type = "number", defaultValue = "100", description = "Configures a threshold in percentage. The CircuitBreaker considers a call as slow when the call duration is greater than slowCallDurationThreshold. When the percentage of slow calls is equal or greater the threshold, the CircuitBreaker transitions to open and starts short-circuiting calls.", displayName = "Slow Call Rate Threshold"),
                     @YamlProperty(name = "throwExceptionWhenHalfOpenOrOpenState", type = "boolean", defaultValue = "false", description = "Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected because the circuit breaker is half open or open.", displayName = "Throw Exception When Half Open Or Open State"),
                     @YamlProperty(name = "timeoutCancelRunningFuture", type = "boolean", defaultValue = "true", description = "Configures whether cancel is called on the running future. Defaults to true.", displayName = "Timeout Cancel Running Future"),
-                    @YamlProperty(name = "timeoutDuration", type = "number", defaultValue = "1000", description = "Configures the thread execution timeout. Default value is 1 second.", displayName = "Timeout Duration"),
+                    @YamlProperty(name = "timeoutDuration", type = "string", defaultValue = "1000", description = "Configures the thread execution timeout. Default value is 1 second.", displayName = "Timeout Duration"),
                     @YamlProperty(name = "timeoutEnabled", type = "boolean", defaultValue = "false", description = "Whether timeout is enabled or not on the circuit breaker.", displayName = "Timeout Enabled"),
                     @YamlProperty(name = "timeoutExecutorService", type = "string", description = "References to a custom thread pool to use when timeout is enabled (uses ForkJoinPool.commonPool() by default).", displayName = "Timeout Executor Service"),
-                    @YamlProperty(name = "waitDurationInOpenState", type = "number", defaultValue = "60", description = "Configures the wait duration (in seconds) which specifies how long the CircuitBreaker should stay open, before it switches to half open.", displayName = "Wait Duration In Open State"),
+                    @YamlProperty(name = "waitDurationInOpenState", type = "string", defaultValue = "60000", description = "Configures the wait duration which specifies how long the CircuitBreaker should stay open, before it switches to half open. The default is 60 seconds.", displayName = "Wait Duration In Open State"),
                     @YamlProperty(name = "writableStackTraceEnabled", type = "boolean", defaultValue = "true", description = "Enables writable stack traces. When set to false, Exception.getStackTrace returns a zero length array. This may be used to reduce log spam when the circuit breaker is open.", displayName = "Writable Stack Trace Enabled")
             }
     )
@@ -13933,6 +13936,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "bulkheadEnabled": {
                     String val = asText(node);
                     target.setBulkheadEnabled(val);
+                    break;
+                }
+                case "bulkheadFairCallHandlingEnabled": {
+                    String val = asText(node);
+                    target.setBulkheadFairCallHandlingEnabled(val);
                     break;
                 }
                 case "bulkheadMaxConcurrentCalls": {
@@ -13970,6 +13978,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setIgnoreExceptions(val);
                     break;
                 }
+                case "maxWaitDurationInHalfOpenState": {
+                    String val = asText(node);
+                    target.setMaxWaitDurationInHalfOpenState(val);
+                    break;
+                }
                 case "micrometerEnabled": {
                     String val = asText(node);
                     target.setMicrometerEnabled(val);
@@ -13993,6 +14006,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "slidingWindowSize": {
                     String val = asText(node);
                     target.setSlidingWindowSize(val);
+                    break;
+                }
+                case "slidingWindowSynchronizationStrategy": {
+                    String val = asText(node);
+                    target.setSlidingWindowSynchronizationStrategy(val);
                     break;
                 }
                 case "slidingWindowType": {
