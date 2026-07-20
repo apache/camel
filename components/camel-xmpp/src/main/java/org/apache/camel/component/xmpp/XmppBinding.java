@@ -24,9 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
-import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.StandardExtensionElement;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
@@ -135,8 +135,8 @@ public class XmppBinding {
         if (jpe instanceof JivePropertiesExtension) {
             extractHeadersFrom((JivePropertiesExtension) jpe, exchange, answer);
         }
-        if (jpe instanceof DefaultExtensionElement) {
-            extractHeadersFrom((DefaultExtensionElement) jpe, exchange, answer);
+        if (jpe instanceof StandardExtensionElement) {
+            extractHeadersFrom((StandardExtensionElement) jpe, exchange, answer);
         }
 
         if (stanza instanceof Message) {
@@ -165,9 +165,10 @@ public class XmppBinding {
         }
     }
 
-    private void extractHeadersFrom(DefaultExtensionElement jpe, Exchange exchange, Map<String, Object> answer) {
-        for (String name : jpe.getNames()) {
-            Object value = jpe.getValue(name);
+    private void extractHeadersFrom(StandardExtensionElement jpe, Exchange exchange, Map<String, Object> answer) {
+        for (StandardExtensionElement element : jpe.getElements()) {
+            String name = element.getElementName();
+            Object value = element.getText();
             if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                 answer.put(name, value);
             }
