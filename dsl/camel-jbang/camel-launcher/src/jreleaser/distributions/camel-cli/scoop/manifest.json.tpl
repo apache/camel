@@ -1,9 +1,9 @@
 {
     "version": "{{projectVersion}}",
     "description": "{{projectDescription}}",
-    "homepage": "{{projectLinkHomepage}}",
+    "homepage": "{{{projectLinkHomepage}}}",
     "license": "{{projectLicense}}",
-    "url": "{{distributionUrl}}",
+    "url": "{{{distributionUrl}}}",
     "hash": "sha256:{{distributionChecksumSha256}}",
     "extract_dir": "{{distributionArtifactRootEntryName}}",
     "bin": "bin\\{{distributionExecutableWindows}}",
@@ -19,9 +19,6 @@
     },
     "autoupdate": {
         "url": "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/$version/camel-launcher-$version-bin.zip",
-        "extract_dir": "camel-launcher-$version",
-        "hash": {
-            "url": "$url.sha1"
-        }
+        "extract_dir": "camel-launcher-$version"
     }
 }

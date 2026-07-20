@@ -78,7 +78,12 @@ project:
       width: 64
       height: 64
       primary: true
+    # width/height are mandatory on every icon, not just the primary one: JReleaser fails
+    # validation in `jreleaser:config` with "project.icons[n].width must not be null" otherwise.
+    # These are the real dimensions of logo-medium-d.png.
     - url: https://raw.githubusercontent.com/apache/camel/main/docs/img/logo-medium-d.png
+      width: 500
+      height: 145
   languages:
     java:
       groupId: org.apache.camel

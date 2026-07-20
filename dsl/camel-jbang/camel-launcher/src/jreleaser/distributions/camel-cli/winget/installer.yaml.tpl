@@ -30,7 +30,7 @@ PackageVersion: {{wingetPackageVersion}}
 ReleaseDate: {{wingetReleaseDate}}
 Installers:
   - Architecture: x64
-    InstallerUrl: {{distributionUrl}}
+    InstallerUrl: {{{distributionUrl}}}
     InstallerSha256: {{distributionChecksumSha256}}
     InstallerType: zip
     NestedInstallerType: portable
@@ -60,7 +60,7 @@ Installers:
       {{/wingetHasPackageDependencies}}
     {{/wingetHasDependencies}}
   - Architecture: arm64
-    InstallerUrl: {{distributionUrl}}
+    InstallerUrl: {{{distributionUrl}}}
     InstallerSha256: {{distributionChecksumSha256}}
     InstallerType: zip
     NestedInstallerType: portable

@@ -124,10 +124,17 @@ static wchar_t *get_exe_dir(void) {
     if (modulePath == NULL) {
         return NULL;
     }
+    /*
+     * Symlink resolution only matters when WinGet installed us behind its camel.exe alias.
+     * If it fails (the module cannot be opened for FILE_READ_ATTRIBUTES, or the final path
+     * cannot be read), fall back to the module path: for a directly-invoked exe, as shipped
+     * by Chocolatey or a manual extract, that is already the correct location of camel.bat.
+     */
     wchar_t *buf = get_final_path(modulePath);
-    free(modulePath);
     if (buf == NULL) {
-        return NULL;
+        buf = modulePath;
+    } else {
+        free(modulePath);
     }
     wchar_t *slash = wcsrchr(buf, L'\\');
     if (slash == NULL) {

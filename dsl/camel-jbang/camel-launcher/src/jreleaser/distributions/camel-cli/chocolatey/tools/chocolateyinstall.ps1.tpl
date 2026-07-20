@@ -23,7 +23,7 @@ $app_exe = Join-Path $app_home 'bin/{{distributionExecutableWindows}}'
 
 Install-ChocolateyZipPackage `
     -PackageName '{{chocolateyPackageName}}' `
-    -Url '{{distributionUrl}}' `
+    -Url '{{{distributionUrl}}}' `
     -Checksum '{{distributionChecksumSha256}}' `
     -ChecksumType 'sha256' `
     -UnzipLocation $package

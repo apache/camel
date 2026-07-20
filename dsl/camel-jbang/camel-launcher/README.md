@@ -134,6 +134,12 @@ Both resolve to the same artifact — `search.maven.org/remotecontent` simply re
 use `repo1.maven.org` directly. WinGet uses the immutable Apache archive URL because its dedicated
 ZIP is an Apache distribution payload and is not published to Maven Central.
 
+Because that redirector URL carries a query string, the templates render every URL with Mustache's
+triple-brace form (`{{{distributionUrl}}}`). JReleaser HTML-escapes the ordinary double-brace form,
+which rewrites the `=` in `?filepath=` as `&#61;` and produces a URL Homebrew cannot download. The
+other packagers use path-only URLs today and would not notice the difference, but they use the
+unescaped form too so that adding a query parameter later cannot silently break them.
+
 ### Native bootstrap executables
 
 The dedicated `camel-launcher-<version>-winget-bin.zip` ships `camel-x64.exe` and

@@ -49,10 +49,17 @@ case "$SUBCOMMAND" in
   *) echo "Error: unknown subcommand '$SUBCOMMAND'." 1>&2; usage ;;
 esac
 
+# Each value-taking option checks for its value before shifting past it: a bare
+# `shift 2` with only one argument left fails, and `set -e` would then kill the script
+# silently with exit 1 instead of reporting the usage error.
+require_value() {
+  [ $# -ge 2 ] || { echo "Error: '$1' requires a value." 1>&2; usage; }
+}
+
 while [ $# -gt 0 ]; do
   case "$1" in
-    --channel) CHANNEL="${2:-}"; shift 2 ;;
-    --lts-line) LTS_LINE="${2:-}"; shift 2 ;;
+    --channel) require_value "$@"; CHANNEL="$2"; shift 2 ;;
+    --lts-line) require_value "$@"; LTS_LINE="$2"; shift 2 ;;
     --print-plan) PRINT_PLAN=1; shift ;;
     *) echo "Error: unknown argument '$1'." 1>&2; usage ;;
   esac
@@ -301,94 +308,28 @@ mvn -B -ntp -f "$MODULE_DIR/pom.xml" \
 # the filename needs fixing up here.
 if [ "$CHANNEL" = "lts" ]; then
   brew_formula_dir="$MODULE_DIR/target/jreleaser/package/camel-cli/brew/Formula"
-  if [ -d "$brew_formula_dir" ]; then
-    generated_file=""
-    for f in "$brew_formula_dir"/*.rb; do
-      [ -e "$f" ] || continue
-      if [ -n "$generated_file" ]; then
-        echo "Error: expected exactly one generated Homebrew formula file in $brew_formula_dir, found multiple." 1>&2
-        exit 1
-      fi
-      generated_file="$f"
-    done
-    if [ -z "$generated_file" ]; then
-      echo "Error: expected exactly one generated Homebrew formula file in $brew_formula_dir, found none." 1>&2
-      exit 1
-    fi
-    if [ "$generated_file" != "$brew_formula_dir/$BREW_FORMULA.rb" ]; then
-      mv -f "$generated_file" "$brew_formula_dir/$BREW_FORMULA.rb"
-      echo "Renamed generated Homebrew formula to Homebrew's versioned-formula file convention: $BREW_FORMULA.rb"
-    fi
+  # `brew` is always in $PACKAGERS for this channel, so a missing output directory means
+  # JReleaser's layout changed and the rename below silently stopped happening. Fail rather
+  # than ship a formula under JReleaser's kebab-cased filename.
+  if [ ! -d "$brew_formula_dir" ]; then
+    echo "Error: no generated Homebrew formula directory at $brew_formula_dir." 1>&2
+    exit 1
   fi
-fi
-
-# ----------------------------------------------------------------------------
-# TEST-MODE HACK: swap the Homebrew formula's download to a real, already-published
-# camel-launcher release instead of this run's synthetic/SNAPSHOT-derived version.
-#
-# Every packager's downloadUrl (jreleaser.yml) points at the real Maven Central
-# coordinates for {{projectVersion}}. That is correct in production - the version being
-# released really is published there. In test mode, projectVersion is a synthetic
-# placeholder (CAMEL_PACKAGE_TEST_VERSION) that is never actually published anywhere, so
-# a real `brew install` always 404s at the download step. This was never exposed before
-# because earlier Homebrew validation failures happened before validation reached the download.
-#
-# Rather than standing up a local HTTP mirror, we patch the *generated formula file*
-# in place (never jreleaser.yml/formula.rb.tpl, which stay correct for real releases) so
-# its url/version/sha256 describe a real, currently-published camel-launcher release.
-# That lets `brew install`/`brew test` genuinely download, checksum-verify, install, and
-# run a real artifact end-to-end in CI. camel-validate.sh's Homebrew validator reads the
-# formula's own `version` line for its post-install assertion (rather than assuming the
-# build's synthetic version), so it stays correct against whatever version this lands on.
-#
-# This intentionally does not exercise *this build's own* zip/tar.gz - camel-validate.sh's
-# "local" archive check covers that separately, without going through any package manager.
-if [ "${CAMEL_PACKAGE_TEST_MODE:-}" = "true" ] && [ -n "${CAMEL_PACKAGE_TEST_VERSION:-}" ]; then
-  brew_formula_dir="$MODULE_DIR/target/jreleaser/package/camel-cli/brew/Formula"
-  formula_file="$brew_formula_dir/$BREW_FORMULA.rb"
-  if [ -f "$formula_file" ]; then
-    command -v curl >/dev/null 2>&1 || { echo "Error: curl is required to patch the test-mode Homebrew formula." 1>&2; exit 1; }
-
-    known_good_version=$(curl -fsSL "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/maven-metadata.xml" \
-      | sed -n 's/.*<release>\(.*\)<\/release>.*/\1/p')
-    if [ -z "$known_good_version" ]; then
-      echo "Error: could not resolve a known-good camel-launcher release version from Maven Central." 1>&2
+  generated_file=""
+  for f in "$brew_formula_dir"/*.rb; do
+    [ -e "$f" ] || continue
+    if [ -n "$generated_file" ]; then
+      echo "Error: expected exactly one generated Homebrew formula file in $brew_formula_dir, found multiple." 1>&2
       exit 1
     fi
-
-    known_good_url="https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/$known_good_version/camel-launcher-$known_good_version-bin.zip"
-    known_good_download=$(mktemp)
-    if ! curl -fsSL -o "$known_good_download" "$known_good_url"; then
-      rm -f "$known_good_download"
-      echo "Error: could not download known-good artifact at $known_good_url" 1>&2
-      exit 1
-    fi
-    if command -v sha256sum >/dev/null 2>&1; then
-      known_good_sha256=$(sha256sum "$known_good_download" | awk '{print $1}')
-    elif command -v shasum >/dev/null 2>&1; then
-      known_good_sha256=$(shasum -a 256 "$known_good_download" | awk '{print $1}')
-    else
-      rm -f "$known_good_download"
-      echo "Error: sha256sum or shasum is required to hash the known-good artifact." 1>&2
-      exit 1
-    fi
-    rm -f "$known_good_download"
-    if [ -z "$known_good_sha256" ]; then
-      echo "Error: could not compute sha256 for the known-good artifact." 1>&2
-      exit 1
-    fi
-
-    # Also patches the `test do` block's assert_match: JReleaser bakes {{projectVersion}}
-    # in there too (the real POM SNAPSHOT version, per the note above the mvn invocation),
-    # so `brew test` would otherwise assert the wrong string against the real installed
-    # binary's actual `--version` output.
-    tmp_formula=$(mktemp)
-    sed -e "s#^\(  url \).*#\1\"$known_good_url\"#" \
-        -e "s#^\(  version \).*#\1\"$known_good_version\"#" \
-        -e "s#^\(  sha256 \).*#\1\"$known_good_sha256\"#" \
-        -e "s#assert_match \"[^\"]*\", output#assert_match \"$known_good_version\", output#" \
-        "$formula_file" > "$tmp_formula"
-    mv "$tmp_formula" "$formula_file"
-    echo "TEST MODE: patched $formula_file to install real published camel-launcher $known_good_version (was synthetic $PROJECT_VERSION) - see the comment above this block for why."
+    generated_file="$f"
+  done
+  if [ -z "$generated_file" ]; then
+    echo "Error: expected exactly one generated Homebrew formula file in $brew_formula_dir, found none." 1>&2
+    exit 1
+  fi
+  if [ "$generated_file" != "$brew_formula_dir/$BREW_FORMULA.rb" ]; then
+    mv -f "$generated_file" "$brew_formula_dir/$BREW_FORMULA.rb"
+    echo "Renamed generated Homebrew formula to Homebrew's versioned-formula file convention: $BREW_FORMULA.rb"
   fi
 fi
