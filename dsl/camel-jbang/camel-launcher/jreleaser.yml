@@ -59,7 +59,7 @@
 # As of the pinned JReleaser plugin version, Homebrew's "AT" naming convention is not
 # applied to `formulaName` itself: a literal "camel@4.20" renders an invalid Ruby class
 # (`class Camel@4.20 < Formula`) and a wrong output filename (`20.rb` instead of
-# `camel@4.20.rb`). `camel-package.sh`/`camel-package.bat` work around this by passing
+# `camel@4.20.rb`). `camel-package.sh` works around this by passing
 # the already-converted class name (e.g. "CamelAT420") as CAMEL_PKG_BREW_FORMULA, then
 # renaming JReleaser's kebab-cased output file (e.g. "camel-at-420.rb") to the real
 # "camel@4.20.rb" after packaging.
