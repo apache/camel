@@ -497,6 +497,16 @@ by the file-based consumers (see the `localWorkDirectory` note in the 4.21 upgra
 Ordinary object names are unaffected. A name that resolves outside `fileDir` is now rejected with an
 `IllegalArgumentException`.
 
+=== camel-xmpp - Smack upgraded to 4.4
+
+The camel-xmpp component has upgraded Smack from 4.3.5 to 4.4.8. The `smack-java7` module no longer exists in
+Smack 4.4 and has been replaced by `smack-java8` (relevant if you declared it explicitly alongside camel-xmpp).
+When extracting headers from a stanza whose JiveProperties extension is not parsed by a registered provider,
+the unparsed extension is now represented by Smack's `StandardExtensionElement` (the replacement for the removed
+`DefaultExtensionElement`); flat child elements are mapped to headers as before. See the
+https://github.com/igniterealtime/Smack/wiki/Smack-4.4-Readme[Smack 4.4 readme] for behavioral changes in the
+Smack library itself.
+
 === camel-weaviate - potential breaking change
 
 The Weaviate Java client has been upgraded from v5 (`io.weaviate:client`) to v6 (`io.weaviate:client6`).
