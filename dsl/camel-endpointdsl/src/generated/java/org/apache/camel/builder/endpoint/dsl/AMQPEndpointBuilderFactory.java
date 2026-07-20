@@ -1177,7 +1177,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer (advanced)
          * 
          * @param exposeListenerSession the value to set
@@ -1193,7 +1193,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer (advanced)
          * 
          * @param exposeListenerSession the value to set
