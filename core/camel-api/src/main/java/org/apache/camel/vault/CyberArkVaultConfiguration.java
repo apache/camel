@@ -26,9 +26,9 @@ import org.jspecify.annotations.Nullable;
  */
 public class CyberArkVaultConfiguration extends VaultConfiguration {
 
-    @Metadata
+    @Metadata(required = true)
     private @Nullable String url;
-    @Metadata
+    @Metadata(required = true)
     private @Nullable String account;
     @Metadata(security = "secret")
     private @Nullable String username;

@@ -28,7 +28,7 @@ public class GcpVaultConfiguration extends VaultConfiguration {
 
     @Metadata(security = "secret")
     private @Nullable String serviceAccountKey;
-    @Metadata
+    @Metadata(required = true)
     private @Nullable String projectId;
     @Metadata
     private boolean useDefaultInstance;
