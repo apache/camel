@@ -21,16 +21,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class Issue3Test extends ContextTestSupport {
     protected final String fromQueue = "direct:A";
 
     @Test
-    public void testIssue() {
-        assertDoesNotThrow(() -> sendBody(fromQueue, "cluster!"));
+    public void testIssue() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("cluster!");
+
+        sendBody(fromQueue, "cluster!");
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -51,7 +59,7 @@ public class Issue3Test extends ContextTestSupport {
                         boolean isDebug2 = in.getHeader("someproperty", boolean.class);
                         assertFalse(isDebug2);
                     }
-                });
+                }).to("mock:result");
             }
         };
     }

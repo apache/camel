@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.AdviceWith.adviceWith;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
 
@@ -31,15 +31,16 @@ public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAdviceTryCatchFinally() {
-        assertDoesNotThrow(() -> {
-            context.addRoutes(createRouteBuilder());
+    public void testAdviceTryCatchFinally() throws Exception {
+        context.addRoutes(createRouteBuilder());
 
-            adviceWith(context, "my-route", a -> a.weaveById("replace-me")
-                    .replace().to("mock:replaced"));
+        adviceWith(context, "my-route", a -> a.weaveById("replace-me")
+                .replace().to("mock:replaced"));
 
-            context.start();
-        });
+        context.start();
+
+        assertTrue(context.getRouteController().getRouteStatus("my-route").isStarted(),
+                "Route 'my-route' should be started after advice");
     }
 
     @Override

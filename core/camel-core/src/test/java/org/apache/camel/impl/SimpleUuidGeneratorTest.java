@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleUuidGeneratorTest {
@@ -40,18 +39,20 @@ public class SimpleUuidGeneratorTest {
 
     @Test
     public void testPerformance() {
-        assertDoesNotThrow(() -> {
-            SimpleUuidGenerator uuidGenerator = new SimpleUuidGenerator();
-            StopWatch watch = new StopWatch();
+        SimpleUuidGenerator uuidGenerator = new SimpleUuidGenerator();
+        StopWatch watch = new StopWatch();
+        int count = 500000;
 
-            LOG.info("First id: {}", uuidGenerator.generateUuid());
-            for (int i = 0; i < 500000; i++) {
-                uuidGenerator.generateUuid();
-            }
-            LOG.info("Last id: {}", uuidGenerator.generateUuid());
+        String first = uuidGenerator.generateUuid();
+        for (int i = 0; i < count; i++) {
+            uuidGenerator.generateUuid();
+        }
+        String last = uuidGenerator.generateUuid();
 
-            LOG.info("Took {}", TimeUtils.printDuration(watch.taken(), true));
-        });
+        LOG.info("Took {}", TimeUtils.printDuration(watch.taken(), true));
+        // SimpleUuidGenerator is sequential, so the last id should be count + 2
+        assertEquals(String.valueOf(count + 2), last);
+        assertEquals("1", first);
     }
 
 }

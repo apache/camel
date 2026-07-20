@@ -32,26 +32,27 @@ public class RouteHealthCheckTest {
     private static final String TEST_ROUTE_ID = "Test-Route";
 
     @Test
-    public void testDoCallDoesNotHaveNPEWhenJmxDisabled() {
-        Assertions.assertDoesNotThrow(() -> {
-            CamelContext context = new DefaultCamelContext();
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:input").id(TEST_ROUTE_ID).log("Message");
-                }
-            });
-            context.start();
-
-            Route route = context.getRoute(TEST_ROUTE_ID);
-
-            RouteHealthCheck healthCheck = new RouteHealthCheck(route);
-            final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(healthCheck);
-
-            healthCheck.doCall(builder, Collections.emptyMap());
-
-            context.stop();
+    public void testDoCallDoesNotHaveNPEWhenJmxDisabled() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:input").id(TEST_ROUTE_ID).log("Message");
+            }
         });
+        context.start();
+
+        Route route = context.getRoute(TEST_ROUTE_ID);
+
+        RouteHealthCheck healthCheck = new RouteHealthCheck(route);
+        final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(healthCheck);
+
+        healthCheck.doCall(builder, Collections.emptyMap());
+        HealthCheck.Result result = builder.build();
+
+        Assertions.assertEquals(HealthCheck.State.UP, result.getState());
+
+        context.stop();
     }
 
     @Test
