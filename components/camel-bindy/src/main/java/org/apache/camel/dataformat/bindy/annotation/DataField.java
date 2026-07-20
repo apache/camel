@@ -86,9 +86,10 @@ public @interface DataField {
     char paddingChar() default ' ';
 
     /**
-     * precision of the {@link java.math.BigDecimal} number to be created
+     * precision of the {@link java.math.BigDecimal} number to be created. Use -1 (default) to preserve the original
+     * scale from the input.
      */
-    int precision() default 0;
+    int precision() default -1;
 
     /**
      * Position of the field in the output message generated (should start from 1). Must be used when the position of

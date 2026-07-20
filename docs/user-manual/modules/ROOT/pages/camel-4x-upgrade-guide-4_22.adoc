@@ -725,6 +725,19 @@ The page-blob `getRange` calculation has been corrected from `end - start` to `e
 Azure page blob ranges are inclusive on both ends. If you had a workaround adjusting the range values to
 compensate for this off-by-one, it should be removed.
 
+=== camel-bindy - BigDecimal precision default changed
+
+The `@DataField.precision()` attribute default has changed from `0` to `-1` (meaning "unset").
+Previously, a `BigDecimal` field without an explicit `precision` would throw `ArithmeticException`
+on unmarshal when the input had decimal places, and silently truncated decimals to zero on marshal.
+With this fix, omitting `precision` preserves the original scale from the input value.
+
+The `@DataField.rounding()` attribute is now honored for `BigDecimal` fields that do not use a `pattern`.
+Previously it was only applied when a `pattern` was specified.
+
+If you relied on the implicit `precision=0` behavior to round `BigDecimal` values to integers,
+add `precision = 0` explicitly to your `@DataField` annotation.
+
 === camel-xslt / camel-xslt-saxon - transformerFactoryConfigurationStrategy now honored
 
 The `transformerFactoryConfigurationStrategy` option is now applied on all factory creation paths.
