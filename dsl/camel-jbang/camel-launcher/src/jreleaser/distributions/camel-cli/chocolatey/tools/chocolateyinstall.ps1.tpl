@@ -28,17 +28,4 @@ Install-ChocolateyZipPackage `
     -ChecksumType 'sha256' `
     -UnzipLocation $package
 
-# Remove native bootstrap executables shipped in the distribution zip; Chocolatey
-# uses camel.bat (shimmed via Install-BinFile below), which is architecture-neutral
-# and needs no per-architecture binary. Chocolatey's packaging framework cannot yet
-# declare/select per-architecture exe variants the way WinGet does:
-# https://github.com/chocolatey/choco/issues/1803
-$bin = Join-Path $app_home 'bin'
-foreach ($native_exe in @('camel-x64.exe', 'camel-arm64.exe')) {
-    $native_path = Join-Path $bin $native_exe
-    if (Test-Path -LiteralPath $native_path) {
-        Remove-Item -LiteralPath $native_path -Force -ErrorAction Stop
-    }
-}
-
 Install-BinFile -Name '{{distributionExecutableName}}' -Path $app_exe

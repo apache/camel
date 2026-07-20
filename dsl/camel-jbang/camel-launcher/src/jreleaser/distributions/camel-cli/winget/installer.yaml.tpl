@@ -20,9 +20,10 @@
 #
 # Overrides the default JReleaser java-binary/winget template (which declares a single
 # Architecture: neutral entry) to declare per-architecture installers for x64 and arm64.
-# The camel-launcher distribution zip ships both camel-x64.exe and camel-arm64.exe in
-# bin/ (see src/main/assembly/bin.xml), so each architecture entry selects the correct
-# native exe via NestedInstallerFiles/RelativeFilePath.
+# The dedicated WinGet distribution zip ships both camel-x64.exe and camel-arm64.exe in
+# bin/ (see src/main/assembly/winget-bin.xml), so each architecture entry selects the correct
+# native exe via NestedInstallerFiles/RelativeFilePath. WinGet keeps the complete extracted
+# archive; NestedInstallerFiles selects the file exposed through the portable camel.exe alias.
 
 PackageIdentifier: {{wingetPackageIdentifier}}
 PackageVersion: {{wingetPackageVersion}}

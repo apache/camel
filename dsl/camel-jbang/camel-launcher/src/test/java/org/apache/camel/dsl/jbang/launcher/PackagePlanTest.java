@@ -119,7 +119,7 @@ class PackagePlanTest {
     }
 
     @Test
-    void nativeExeRemovalTemplatesFailWhenFilesCannotBeRemoved() throws Exception {
+    void publicArchivePackagersDoNotRemoveNativeExecutables() throws Exception {
         String chocolatey = Files.readString(MODULE_DIR.resolve(
                 "src/jreleaser/distributions/camel-cli/chocolatey/tools/chocolateyinstall.ps1.tpl"),
                 StandardCharsets.UTF_8);
@@ -127,10 +127,57 @@ class PackagePlanTest {
                 MODULE_DIR.resolve("src/jreleaser/distributions/camel-cli/scoop/manifest.json.tpl"),
                 StandardCharsets.UTF_8);
 
-        assertFalse(chocolatey.contains("-ErrorAction SilentlyContinue"), chocolatey);
-        assertFalse(scoop.contains("-ErrorAction SilentlyContinue"), scoop);
-        assertTrue(chocolatey.contains("-ErrorAction Stop"), chocolatey);
-        assertTrue(scoop.contains("-ErrorAction Stop"), scoop);
+        assertFalse(chocolatey.contains("camel-x64.exe"), chocolatey);
+        assertFalse(chocolatey.contains("camel-arm64.exe"), chocolatey);
+        assertFalse(scoop.contains("camel-x64.exe"), scoop);
+        assertFalse(scoop.contains("camel-arm64.exe"), scoop);
+    }
+
+    @Test
+    void nativeExecutablesAreConfinedToWingetArchive() throws Exception {
+        String publicAssembly = Files.readString(MODULE_DIR.resolve("src/main/assembly/bin.xml"), StandardCharsets.UTF_8);
+        String wingetAssembly
+                = Files.readString(MODULE_DIR.resolve("src/main/assembly/winget-bin.xml"), StandardCharsets.UTF_8);
+        String pom = Files.readString(MODULE_DIR.resolve("pom.xml"), StandardCharsets.UTF_8);
+        int nativeProfile = pom.indexOf("<id>include-camel-exe</id>");
+
+        assertFalse(publicAssembly.contains("camel-x64.exe"),
+                "the public ZIP/TAR assembly must not expose WinGet-only native executables");
+        assertFalse(publicAssembly.contains("camel-arm64.exe"),
+                "the public ZIP/TAR assembly must not expose WinGet-only native executables");
+        assertTrue(wingetAssembly.contains("camel-x64.exe"), wingetAssembly);
+        assertTrue(wingetAssembly.contains("camel-arm64.exe"), wingetAssembly);
+        assertTrue(wingetAssembly.contains("<include>*.jar</include>"),
+                "the WinGet archive must retain the launcher JAR beside camel.bat");
+        assertTrue(wingetAssembly.contains("<include>camel.bat</include>"),
+                "the native bootstrap delegates to camel.bat beside its resolved target");
+        assertTrue(wingetAssembly.contains("<format>zip</format>"), wingetAssembly);
+        assertFalse(wingetAssembly.contains("<format>tar.gz</format>"), wingetAssembly);
+        assertTrue(nativeProfile >= 0, "the native executable profile must exist");
+        assertFalse(pom.substring(0, nativeProfile).contains("winget-bin.xml"),
+                "ordinary builds must not create an incomplete WinGet archive");
+        assertTrue(pom.substring(nativeProfile).contains("winget-bin.xml"),
+                "the native executable profile must create the WinGet archive");
+    }
+
+    @Test
+    void wingetUsesDedicatedJreleaserDistribution() throws Exception {
+        String config = Files.readString(MODULE_DIR.resolve("jreleaser.yml"), StandardCharsets.UTF_8);
+
+        assertTrue(config.contains("camel-cli-winget:"), config);
+        assertTrue(config.contains("camel-launcher-{{projectVersion}}-winget-bin.zip"), config);
+        assertFalse(config.substring(config.indexOf("camel-cli:"), config.indexOf("camel-cli-winget:"))
+                .contains("winget:"), "the public distribution must not generate the WinGet package");
+    }
+
+    @Test
+    void websiteWindowsInstallerUsesArchitectureNeutralBatchLauncher() throws Exception {
+        String installer = Files.readString(MODULE_DIR.resolve("src/install/install.ps1"), StandardCharsets.UTF_8);
+
+        assertTrue(installer.contains("bin\\camel.bat"), installer);
+        assertFalse(installer.contains("camel-x64.exe"), installer);
+        assertFalse(installer.contains("camel-arm64.exe"), installer);
+        assertFalse(installer.contains("PROCESSOR_ARCHITECTURE"), installer);
     }
 
     @Test
@@ -227,6 +274,23 @@ class PackagePlanTest {
         Map<String, String> env = new LinkedHashMap<>();
         env.put("PATH", stubDir + File.pathSeparator + System.getenv("PATH"));
         return env;
+    }
+
+    private Map<String, String> productionStyleEnvWithMvnStub(Path tmp, Path recordFile) throws IOException {
+        Path stubDir = tmp.resolve("stub-bin");
+        Files.createDirectories(stubDir);
+        Path mvnStub = stubDir.resolve("mvn");
+        Files.writeString(mvnStub,
+                "#!/bin/sh\n"
+                                   + "case \"$*\" in\n"
+                                   + "  *evaluate*) printf '%s\\n' '" + TEST_VERSION + "' ; exit 0 ;;\n"
+                                   + "esac\n"
+                                   + "printf '<%s>\\n' \"$@\" > \"" + recordFile + "\"\n"
+                                   + "exit 0\n",
+                StandardCharsets.UTF_8);
+        assertTrue(mvnStub.toFile().setExecutable(true));
+
+        return Map.of("PATH", stubDir + File.pathSeparator + System.getenv("PATH"));
     }
 
     private void addFailingCurlStub(Path tmp, Map<String, String> env, Path curlRecordFile) throws IOException {
@@ -377,6 +441,21 @@ class PackagePlanTest {
         assertTrue(recorded.contains("jreleaser:package"), recorded);
         assertTrue(recorded.contains("-Djreleaser.packagers=brew,sdkman,winget,scoop,chocolatey"), recorded);
         assertTrue(recorded.contains("-Djreleaser.project.snapshot.pattern="), recorded);
+    }
+
+    @Test
+    void productionPrepareDoesNotPassAnEmptyMavenArgument(@TempDir Path tmp) throws Exception {
+        writeReleaseFixture("-bin.tar.gz", "fixture-tar");
+        writeReleaseFixture("-bin.zip", "fixture-zip");
+        Path recordFile = tmp.resolve("mvn-args.txt");
+
+        Result r = run(productionStyleEnvWithMvnStub(tmp, recordFile), "prepare", "--channel", "stable");
+
+        assertEquals(0, r.exit, r.stderr);
+        String recorded = Files.readString(recordFile, StandardCharsets.UTF_8);
+        assertFalse(recorded.contains("<>"),
+                "production prepare must omit the unused snapshot-pattern argument:\n" + recorded);
+        assertTrue(recorded.contains("<-Djreleaser.distributions=camel-cli,camel-cli-winget>"), recorded);
     }
 
     @Test

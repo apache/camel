@@ -17,10 +17,11 @@
 /*
  * camel.exe - minimal WinGet-compatible bootstrap for the Camel CLI launcher.
  *
- * It locates the camel.bat sitting in the same directory, forwards the caller's
- * exact command-line tail (preserving Unicode and Windows quoting), inherits the
- * standard streams, and returns the child process exit code. It performs NO Java
- * discovery and NO Camel option parsing; that all lives in camel.bat.
+ * It resolves its final target when launched through a WinGet symlink, locates
+ * the camel.bat sitting beside that target, forwards the caller's exact
+ * command-line tail (preserving Unicode and Windows quoting), inherits the
+ * standard streams, and returns the child process exit code. It performs NO
+ * Java discovery and NO Camel option parsing; that all lives in camel.bat.
  */
 
 #include <windows.h>
@@ -51,12 +52,11 @@ static LPWSTR skip_argv0(LPWSTR cmd) {
 }
 
 /*
- * Return a heap-allocated wide string holding the directory that contains this
- * exe, or NULL on failure. The caller must free() the result. Uses a doubling
- * loop so paths beyond MAX_PATH (260) work on Windows 10+ with long-path
- * support enabled.
+ * Return a heap-allocated wide string holding this exe's module path, or NULL
+ * on failure. The caller must free() the result. Uses a doubling loop so paths
+ * beyond MAX_PATH (260) work on Windows 10+ with long-path support enabled.
  */
-static wchar_t *get_exe_dir(void) {
+static wchar_t *get_module_path(void) {
     DWORD bufSize = MAX_PATH;
     wchar_t *buf = (wchar_t *) malloc(bufSize * sizeof(wchar_t));
     if (buf == NULL) {
@@ -78,6 +78,56 @@ static wchar_t *get_exe_dir(void) {
             return NULL;
         }
         buf = tmp;
+    }
+    return buf;
+}
+
+/* Resolve WinGet's camel.exe symlink to the extracted executable path. */
+static wchar_t *get_final_path(const wchar_t *modulePath) {
+    HANDLE file = CreateFileW(modulePath, FILE_READ_ATTRIBUTES,
+                              FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                              NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (file == INVALID_HANDLE_VALUE) {
+        return NULL;
+    }
+
+    DWORD size = GetFinalPathNameByHandleW(file, NULL, 0, FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
+    if (size == 0) {
+        CloseHandle(file);
+        return NULL;
+    }
+    wchar_t *buf = (wchar_t *) malloc(size * sizeof(wchar_t));
+    if (buf == NULL) {
+        CloseHandle(file);
+        return NULL;
+    }
+    DWORD n = GetFinalPathNameByHandleW(file, buf, size, FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
+    CloseHandle(file);
+    if (n == 0 || n >= size) {
+        free(buf);
+        return NULL;
+    }
+
+    size_t len = wcslen(buf);
+    if (wcsncmp(buf, L"\\\\?\\UNC\\", 8) == 0) {
+        memmove(buf + 2, buf + 8, (len - 7) * sizeof(wchar_t));
+        buf[0] = L'\\';
+        buf[1] = L'\\';
+    } else if (wcsncmp(buf, L"\\\\?\\", 4) == 0) {
+        memmove(buf, buf + 4, (len - 3) * sizeof(wchar_t));
+    }
+    return buf;
+}
+
+static wchar_t *get_exe_dir(void) {
+    wchar_t *modulePath = get_module_path();
+    if (modulePath == NULL) {
+        return NULL;
+    }
+    wchar_t *buf = get_final_path(modulePath);
+    free(modulePath);
+    if (buf == NULL) {
+        return NULL;
     }
     wchar_t *slash = wcsrchr(buf, L'\\');
     if (slash == NULL) {

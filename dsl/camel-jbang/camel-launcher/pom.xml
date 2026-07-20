@@ -377,8 +377,8 @@
     <profiles>
         <!--
             When camel.exe.build=true, copy the native exe artifacts (x64 + arm64) from
-            tooling/camel-exe into target/ so the assembly descriptor can include them in
-            the distribution archive. Host-OS-independent: works on Linux, macOS, or Windows.
+            tooling/camel-exe into target/ so the WinGet assembly descriptor can include them in
+            its dedicated distribution archive. Host-OS-independent: works on Linux, macOS, or Windows.
         -->
         <profile>
             <id>include-camel-exe</id>
@@ -406,6 +406,24 @@
             </dependencies>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>assemble-winget-bin</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors combine.self="override">
+                                        <descriptor>src/main/assembly/winget-bin.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>

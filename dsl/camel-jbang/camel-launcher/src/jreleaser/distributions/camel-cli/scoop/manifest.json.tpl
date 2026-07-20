@@ -7,7 +7,6 @@
     "hash": "sha256:{{distributionChecksumSha256}}",
     "extract_dir": "{{distributionArtifactRootEntryName}}",
     "bin": "bin\\{{distributionExecutableWindows}}",
-    "post_install": "foreach ($native_exe in @('camel-x64.exe', 'camel-arm64.exe')) { $native_path = Join-Path \"$dir\\bin\" $native_exe; if (Test-Path -LiteralPath $native_path) { Remove-Item -LiteralPath $native_path -Force -ErrorAction Stop } }",
     "suggest": {
         "JDK": [
             "java/oraclejdk",

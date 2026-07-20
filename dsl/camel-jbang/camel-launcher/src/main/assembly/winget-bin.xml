@@ -20,10 +20,9 @@
 <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
-    <id>bin</id>
+    <id>winget-bin</id>
     <formats>
         <format>zip</format>
-        <format>tar.gz</format>
     </formats>
     <dependencySets>
         <dependencySet>
@@ -69,6 +68,15 @@
             <includes>
                 <include>*.*</include>
             </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>camel-x64.exe</include>
+                <include>camel-arm64.exe</include>
+            </includes>
+            <fileMode>0755</fileMode>
         </fileSet>
     </fileSets>
 </assembly>

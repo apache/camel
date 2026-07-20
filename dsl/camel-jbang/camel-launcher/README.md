@@ -16,10 +16,11 @@ This will create:
 1. A self-executing JAR (`camel-launcher-<version>.jar`) in the `target` directory using Spring Boot's nested JAR structure
 2. Distribution archives (`camel-launcher-<version>-bin.zip` and `camel-launcher-<version>-bin.tar.gz`) in the `target` directory
 
-When `-Dcamel.exe.build=true` is enabled, the distribution archives also include native Windows bootstraps built by
+When `-Dcamel.exe.build=true` is enabled, Maven also creates a WinGet-only archive,
+`camel-launcher-<version>-winget-bin.zip`, containing the native Windows bootstraps built by
 [`tooling/camel-exe`](../../../tooling/camel-exe): `bin/camel-x64.exe` and `bin/camel-arm64.exe`.
 Release builds use llvm-mingw to cross-compile both executables on Linux. The launcher module verifies during `verify`
-that both files are staged and present in the assembled ZIP:
+that both files are staged, absent from the public archives, and present in the WinGet ZIP:
 
 ```bash
 mvn -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher -am verify -Dcamel.exe.build=true
@@ -63,18 +64,12 @@ java -jar camel-launcher-<version>.jar run hello.java
    # On Unix/Linux
    ./bin/camel.sh [command] [options]
    
-   # On Windows (x64 or arm64)
+   # On Windows
    bin\camel.bat [command] [options]
-
-   # On Windows (x64)
-   bin\camel-x64.exe [command] [options]
-
-   # On Windows (arm64)
-   bin\camel-arm64.exe [command] [options]
    ```
 
-   The native executables and `camel.bat` behave identically on Windows; the native executables exist for package managers
-   (such as WinGet) that require a genuine executable command.
+   The native executables are confined to the WinGet-only archive. WinGet selects the executable matching the host
+   architecture and exposes it as `camel.exe`.
 
 ## Benefits
 
@@ -138,9 +133,10 @@ Both resolve to the same artifact — `search.maven.org/remotecontent` simply re
 
 ### Native bootstrap executables
 
-The distribution zip ships `camel-x64.exe` and `camel-arm64.exe` for WinGet, which requires a
-genuine portable executable per architecture (see the WinGet `installer.yaml.tpl` override).
+The dedicated `camel-launcher-<version>-winget-bin.zip` ships `camel-x64.exe` and
+`camel-arm64.exe` for WinGet, which requires a genuine portable executable per architecture
+(see the WinGet `installer.yaml.tpl` override). The public ZIP and TAR archives do not contain
+these WinGet-specific executables.
 
 Chocolatey and Scoop use `camel.bat` as their entry point instead (it needs only a JRE, so it is
-architecture-neutral and requires no per-architecture binary). Their custom templates remove both
-exe files during install to avoid exposing unused executables on PATH.
+architecture-neutral and requires no per-architecture binary).

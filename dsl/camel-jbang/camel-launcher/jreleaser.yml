@@ -43,7 +43,7 @@
 #     (matching Phase 3A's installers and docs/getting-started.adoc); JReleaser's
 #     default download URL points at a GitHub release asset, which this project
 #     does not publish artifacts to.
-#   - `project.vendor` and `distributions.camel-cli.tags` are required fields in
+#   - `project.vendor` and each distribution's `tags` are required fields in
 #     practice (validation fails without them) despite docs implying defaults.
 # This file renders no package content itself; per-packager overrides live under
 # src/jreleaser/distributions/camel-cli/<packager>/.
@@ -85,14 +85,16 @@ project:
       version: 17
 
 distributions:
+  # The public distribution deliberately excludes the native Windows bootstraps. They are only
+  # needed by WinGet and live in the dedicated camel-cli-winget distribution below.
   camel-cli:
     type: JAVA_BINARY
     tags:
       - cli
     executable:
       name: camel
-      # The zip/tar bin/ directory ships `camel.sh` (Unix) and `camel.bat`/`camel-x64.exe`/`camel-arm64.exe`
-      # (Windows) per src/main/assembly/bin.xml; without this, `distributionExecutableUnix`
+      # The zip/tar bin/ directory ships `camel.sh` (Unix) and `camel.bat` (Windows) per
+      # src/main/assembly/bin.xml; without this, `distributionExecutableUnix`
       # defaults to the bare distribution name ("camel"), which does not exist on disk and
       # produces a broken symlink in the Homebrew/Scoop/Chocolatey templates. Windows already
       # defaults correctly to `bat`.
@@ -123,15 +125,6 @@ distributions:
       downloadUrl: "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/{{projectVersion}}/{{artifactFile}}"
       # command (MAJOR/MINOR) defaults to MAJOR here (correct for `stable`); see the
       # NOTE above on why per-channel selection is deferred to Phase 5 publish.
-    winget:
-      active: RELEASE
-      downloadUrl: "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/{{projectVersion}}/{{artifactFile}}"
-      # Same basedir-resolution issue as brew (see the templateDirectory comment above):
-      # without this override, JReleaser silently ignores the module's installer.yaml.tpl.
-      templateDirectory: "dsl/camel-jbang/camel-launcher/src/jreleaser/distributions/camel-cli/winget"
-      package:
-        identifier: Apache.CamelCLI
-        name: Camel CLI
     scoop:
       active: RELEASE
       downloadUrl: "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/{{projectVersion}}/{{artifactFile}}"
@@ -143,3 +136,20 @@ distributions:
       remoteBuild: true
       downloadUrl: "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/{{projectVersion}}/{{artifactFile}}"
       templateDirectory: "dsl/camel-jbang/camel-launcher/src/jreleaser/distributions/camel-cli/chocolatey"
+  camel-cli-winget:
+    type: JAVA_BINARY
+    tags:
+      - cli
+    executable:
+      name: camel
+      unixExtension: sh
+    artifacts:
+      - path: "dsl/camel-jbang/camel-launcher/target/camel-launcher-{{projectVersion}}-winget-bin.zip"
+    winget:
+      active: RELEASE
+      downloadUrl: "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/{{projectVersion}}/{{artifactFile}}"
+      # Keep the templates under camel-cli so both distributions share the existing package identity.
+      templateDirectory: "dsl/camel-jbang/camel-launcher/src/jreleaser/distributions/camel-cli/winget"
+      package:
+        identifier: Apache.CamelCLI
+        name: Camel CLI

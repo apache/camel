@@ -255,19 +255,20 @@ final class WebsiteInstallerFixture implements AutoCloseable {
         List<ArchiveEntrySpec> entries = List.of(
                 ArchiveEntrySpec.dir(root + "/"),
                 ArchiveEntrySpec.dir(root + "/bin/"),
-                ArchiveEntrySpec.file(root + "/bin/camel.bat", batScript(version).getBytes(StandardCharsets.UTF_8), false));
+                ArchiveEntrySpec.file(root + "/bin/camel.bat", batScript(version, 0).getBytes(StandardCharsets.UTF_8),
+                        false));
         Path archive = Files.createTempFile(tempDir, "missing-camel-sh-", "-" + version + ".tar.gz");
         writeTarGz(archive, entries);
         return archive;
     }
 
-    Path safeZipMissingCamelExe(String version) throws Exception {
+    Path safeZipMissingCamelBat(String version) throws Exception {
         String root = "camel-launcher-" + version;
         List<ArchiveEntrySpec> entries = List.of(
                 ArchiveEntrySpec.dir(root + "/"),
                 ArchiveEntrySpec.dir(root + "/bin/"),
-                ArchiveEntrySpec.file(root + "/bin/camel.bat", batScript(version).getBytes(StandardCharsets.UTF_8), false));
-        Path archive = Files.createTempFile(tempDir, "missing-camel-exe-", "-" + version + ".zip");
+                ArchiveEntrySpec.file(root + "/bin/camel.sh", shScript(version, 0).getBytes(StandardCharsets.UTF_8), true));
+        Path archive = Files.createTempFile(tempDir, "missing-camel-bat-", "-" + version + ".zip");
         writeZip(archive, entries);
         return archive;
     }
@@ -295,15 +296,12 @@ final class WebsiteInstallerFixture implements AutoCloseable {
     private static List<ArchiveEntrySpec> launcherEntries(String version, int versionExitCode) throws Exception {
         String root = "camel-launcher-" + version;
         byte[] sh = shScript(version, versionExitCode).getBytes(StandardCharsets.UTF_8);
-        byte[] bat = batScript(version).getBytes(StandardCharsets.UTF_8);
-        byte[] exe = exeExecutable(version, versionExitCode);
+        byte[] bat = batScript(version, versionExitCode).getBytes(StandardCharsets.UTF_8);
         return List.of(
                 ArchiveEntrySpec.dir(root + "/"),
                 ArchiveEntrySpec.dir(root + "/bin/"),
                 ArchiveEntrySpec.file(root + "/bin/camel.sh", sh, true),
-                ArchiveEntrySpec.file(root + "/bin/camel.bat", bat, false),
-                ArchiveEntrySpec.file(root + "/bin/camel-x64.exe", exe, true),
-                ArchiveEntrySpec.file(root + "/bin/camel-arm64.exe", exe, true));
+                ArchiveEntrySpec.file(root + "/bin/camel.bat", bat, false));
     }
 
     private static String shScript(String version, int versionExitCode) {
@@ -316,68 +314,12 @@ final class WebsiteInstallerFixture implements AutoCloseable {
                + "echo \"Camel " + version + "\"\n";
     }
 
-    private static String batScript(String version) {
+    private static String batScript(String version, int versionExitCode) {
         return "@echo off\r\n"
-               + "if \"%~1\"==\"version\" (echo Camel " + version + "& exit /b 0)\r\n"
+               + "if \"%~1\"==\"version\" (echo Camel " + version + "& exit /b " + versionExitCode + ")\r\n"
                + "if \"%~1\"==\"echo-args\" (shift & echo %*& exit /b 0)\r\n"
                + "if \"%~1\"==\"exit-code\" (exit /b %2)\r\n"
                + "echo Camel " + version + "\r\n";
-    }
-
-    /**
-     * On Windows, install.ps1 executes the staged {@code camel-x64.exe} directly by path to verify Java 17+ before
-     * activation, so the fixture entry must be a genuine PE, not placeholder text. It is compiled on the fly with the
-     * .NET Framework compiler that ships with every Windows Powershell 5.1+ install (via {@code Add-Type}), mirroring
-     * the runtime keystore generation already used for the HTTPS fixture: nothing binary is committed. Off Windows the
-     * bytes are never executed, only checked for presence in the archive.
-     */
-    private static byte[] exeExecutable(String version, int versionExitCode) throws IOException, InterruptedException {
-        if (!FakeJava.WINDOWS) {
-            return ("camel-launcher-" + version + "-test-exe\n").getBytes(StandardCharsets.UTF_8);
-        }
-        Path source = Files.createTempFile("camel-test-launcher-", ".cs");
-        Path output = Files.createTempFile("camel-test-launcher-", ".exe");
-        Files.delete(output);
-        try {
-            String csharp = "using System;\n"
-                            + "class Program {\n"
-                            + "    static int Main(string[] args) {\n"
-                            + "        if (args.Length > 0 && args[0] == \"version\") {\n"
-                            + "            Console.WriteLine(\"Camel " + version + "\");\n"
-                            + "            return " + versionExitCode + ";\n"
-                            + "        }\n"
-                            + "        if (args.Length > 0 && args[0] == \"echo-args\") {\n"
-                            + "            Console.WriteLine(string.Join(\" \", args, 1, args.Length - 1));\n"
-                            + "            return 0;\n"
-                            + "        }\n"
-                            + "        if (args.Length > 1 && args[0] == \"exit-code\") {\n"
-                            + "            return int.Parse(args[1]);\n"
-                            + "        }\n"
-                            + "        Console.WriteLine(\"Camel " + version + "\");\n"
-                            + "        return 0;\n"
-                            + "    }\n"
-                            + "}\n";
-            Files.writeString(source, csharp, StandardCharsets.UTF_8);
-
-            String psCommand = "Add-Type -OutputType ConsoleApplication -Language CSharp "
-                               + "-OutputAssembly '" + output + "' "
-                               + "-TypeDefinition (Get-Content -Raw -LiteralPath '" + source + "')";
-            ProcessBuilder pb = new ProcessBuilder("powershell", "-NoProfile", "-NonInteractive", "-Command", psCommand);
-            pb.redirectErrorStream(true);
-            Process process = pb.start();
-            String log = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            if (!process.waitFor(60, TimeUnit.SECONDS)) {
-                process.destroyForcibly();
-                throw new IllegalStateException("compiling test camel.exe did not finish in time");
-            }
-            if (process.exitValue() != 0 || !Files.exists(output)) {
-                throw new IllegalStateException("failed to compile test camel.exe: " + log);
-            }
-            return Files.readAllBytes(output);
-        } finally {
-            Files.deleteIfExists(source);
-            Files.deleteIfExists(output);
-        }
     }
 
     private void writeTarGz(Path archive, List<ArchiveEntrySpec> entries) throws IOException {

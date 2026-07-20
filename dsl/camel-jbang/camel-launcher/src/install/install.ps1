@@ -139,8 +139,7 @@ function Test-ArchiveEntry {
     $zip = [System.IO.Compression.ZipFile]::OpenRead($ArchivePath)
     try {
         $roots = New-Object 'System.Collections.Generic.HashSet[string]'
-        $foundX64 = $false
-        $foundArm64 = $false
+        $foundBatchLauncher = $false
         foreach ($entry in $zip.Entries) {
             $name = $entry.FullName
             if ([string]::IsNullOrEmpty($name)) {
@@ -159,11 +158,8 @@ function Test-ArchiveEntry {
                 Fail "archive contains a symbolic link or reparse point entry, which is not allowed"
             }
             [void]$roots.Add($segments[0])
-            if ($normalized -eq "$expectedRoot/bin/camel-x64.exe") {
-                $foundX64 = $true
-            }
-            if ($normalized -eq "$expectedRoot/bin/camel-arm64.exe") {
-                $foundArm64 = $true
+            if ($normalized -eq "$expectedRoot/bin/camel.bat") {
+                $foundBatchLauncher = $true
             }
         }
         if ($roots.Count -ne 1) {
@@ -172,11 +168,8 @@ function Test-ArchiveEntry {
         if (-not $roots.Contains($expectedRoot)) {
             Fail "archive top-level directory does not match expected version: $($roots -join ',')"
         }
-        if (-not $foundX64) {
-            Fail "archive is missing bin\camel-x64.exe"
-        }
-        if (-not $foundArm64) {
-            Fail "archive is missing bin\camel-arm64.exe"
+        if (-not $foundBatchLauncher) {
+            Fail "archive is missing bin\camel.bat"
         }
     } finally {
         $zip.Dispose()
@@ -186,9 +179,9 @@ function Test-ArchiveEntry {
 # Runs the freshly staged upstream launcher; a nonzero exit (e.g. no Java 17+ available) aborts the
 # install and leaves the previously active installation untouched.
 function Test-StagedLauncher {
-    param([string] $ExePath)
+    param([string] $LauncherPath)
     try {
-        & $ExePath 'version' *> $null
+        & $LauncherPath 'version' *> $null
     } catch {
         Fail "staged launcher failed verification (Java 17+ required)"
     }
@@ -208,9 +201,8 @@ function Set-CamelShim {
     Move-Item -LiteralPath $StagedRoot -Destination $targetDir
 
     New-Item -ItemType Directory -Force -Path $BinDir | Out-Null
-    $arch = if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { 'arm64' } else { 'x64' }
-    $exePath = Join-Path $targetDir "bin\camel-$arch.exe"
-    $shimContent = "@echo off`r`n`"$exePath`" %*`r`nexit /b %ERRORLEVEL%`r`n"
+    $launcherPath = Join-Path $targetDir 'bin\camel.bat'
+    $shimContent = "@echo off`r`ncall `"$launcherPath`" %*`r`nexit /b %ERRORLEVEL%`r`n"
     $tempShim = Join-Path $BinDir ".camel.$PID.tmp.cmd"
     # Write without a BOM: Windows PowerShell 5.1's 'Set-Content -Encoding UTF8' prepends one, which
     # cmd.exe treats as part of the first line, breaking '@echo off' and emitting a stray error.
@@ -286,9 +278,8 @@ try {
     Expand-Archive -LiteralPath $archiveFile -DestinationPath $extractDir -Force
 
     $stagedRoot = Join-Path $extractDir "camel-launcher-$resolvedVersion"
-    $arch = if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { 'arm64' } else { 'x64' }
-    $stagedExe = Join-Path $stagedRoot "bin\camel-$arch.exe"
-    Test-StagedLauncher -ExePath $stagedExe
+    $stagedLauncher = Join-Path $stagedRoot 'bin\camel.bat'
+    Test-StagedLauncher -LauncherPath $stagedLauncher
 
     Set-CamelShim -Version $resolvedVersion -StagedRoot $stagedRoot
     Add-UserPath -Dir $BinDir

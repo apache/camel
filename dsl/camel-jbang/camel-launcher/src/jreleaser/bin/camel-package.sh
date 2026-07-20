@@ -250,15 +250,15 @@ export JRELEASER_GITHUB_TOKEN
 # a SNAPSHOT checkout would otherwise skip every packager even once our own guard has been
 # satisfied via a CAMEL_PACKAGE_TEST_VERSION override. In that one case, override the pattern
 # to something that can never match, so JReleaser treats the real POM version as a release too.
-SNAPSHOT_PATTERN_ARG=""
+SNAPSHOT_PATTERN_ARGS=()
 if [ "${CAMEL_PACKAGE_TEST_MODE:-}" = "true" ] && [ -n "${CAMEL_PACKAGE_TEST_VERSION:-}" ]; then
-  SNAPSHOT_PATTERN_ARG='-Djreleaser.project.snapshot.pattern=CAMEL_LAUNCHER_NEVER_MATCH_SNAPSHOT_PATTERN'
+  SNAPSHOT_PATTERN_ARGS=(-Djreleaser.project.snapshot.pattern=CAMEL_LAUNCHER_NEVER_MATCH_SNAPSHOT_PATTERN)
 fi
 echo "Preparing packages for channel '$CHANNEL' (packagers: $PACKAGERS)..."
 mvn -B -ntp -f "$MODULE_DIR/pom.xml" \
-  -Djreleaser.distributions=camel-cli \
+  -Djreleaser.distributions=camel-cli,camel-cli-winget \
   -Djreleaser.packagers="$PACKAGERS" \
-  "$SNAPSHOT_PATTERN_ARG" \
+  "${SNAPSHOT_PATTERN_ARGS[@]}" \
   jreleaser:config jreleaser:prepare jreleaser:package \
   -Djreleaser.dry.run=true
 
