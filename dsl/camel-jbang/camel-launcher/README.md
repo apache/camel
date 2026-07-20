@@ -19,6 +19,8 @@ This will create:
 When `-Dcamel.exe.build=true` is enabled, Maven also creates a WinGet-only archive,
 `camel-launcher-<version>-winget-bin.zip`, containing the native Windows bootstraps built by
 [`tooling/camel-exe`](../../../tooling/camel-exe): `bin/camel-x64.exe` and `bin/camel-arm64.exe`.
+The assembly uses `attach=false`, so the ZIP remains in this module's `target` directory for the
+Apache distribution release flow and is not installed or deployed to a Maven repository.
 Release builds use llvm-mingw to cross-compile both executables on Linux. The launcher module verifies during `verify`
 that both files are staged, absent from the public archives, and present in the WinGet ZIP:
 

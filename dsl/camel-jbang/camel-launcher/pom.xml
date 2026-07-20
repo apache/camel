@@ -417,6 +417,7 @@
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
+                                    <attach>false</attach>
                                     <descriptors combine.self="override">
                                         <descriptor>src/main/assembly/winget-bin.xml</descriptor>
                                     </descriptors>

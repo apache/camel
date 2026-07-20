@@ -156,8 +156,17 @@ class PackagePlanTest {
         assertTrue(nativeProfile >= 0, "the native executable profile must exist");
         assertFalse(pom.substring(0, nativeProfile).contains("winget-bin.xml"),
                 "ordinary builds must not create an incomplete WinGet archive");
-        assertTrue(pom.substring(nativeProfile).contains("winget-bin.xml"),
-                "the native executable profile must create the WinGet archive");
+        String nativeProfilePom = pom.substring(nativeProfile);
+        int wingetExecutionStart = nativeProfilePom.indexOf("<id>assemble-winget-bin</id>");
+        assertTrue(wingetExecutionStart >= 0, "the native executable profile must create the WinGet archive");
+        int wingetExecutionEnd = nativeProfilePom.indexOf("</execution>", wingetExecutionStart);
+        assertTrue(wingetExecutionEnd >= 0, "the WinGet assembly execution must be complete");
+        String wingetExecution = nativeProfilePom.substring(wingetExecutionStart, wingetExecutionEnd);
+
+        assertTrue(wingetExecution.contains("<descriptor>src/main/assembly/winget-bin.xml</descriptor>"),
+                wingetExecution);
+        assertTrue(wingetExecution.contains("<attach>false</attach>"),
+                "the WinGet payload must remain a local release file, not an attached Maven artifact");
     }
 
     @Test
