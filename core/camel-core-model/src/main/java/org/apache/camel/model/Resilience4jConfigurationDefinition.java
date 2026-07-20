@@ -235,7 +235,10 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     /**
      * Configures the wait duration (in millis) which specifies how long the CircuitBreaker should stay open, before it
      * switches to half open. Default value is 60 seconds (60000 millis).
+     *
+     * @deprecated Use {@link #waitDurationInOpenState(String)} with a Camel duration expression (e.g. "60s", "1m").
      */
+    @Deprecated(since = "4.22", forRemoval = true)
     public Resilience4jConfigurationDefinition waitDurationInOpenState(int waitDurationInOpenState) {
         setWaitDurationInOpenState(Integer.toString(waitDurationInOpenState));
         return this;
@@ -311,7 +314,10 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     /**
      * Configures the duration threshold (in millis) above which calls are considered as slow and increase the slow
      * calls percentage. Default value is 60 seconds (60000 millis).
+     *
+     * @deprecated Use {@link #slowCallDurationThreshold(String)} with a Camel duration expression (e.g. "60s", "1m").
      */
+    @Deprecated(since = "4.22", forRemoval = true)
     public Resilience4jConfigurationDefinition slowCallDurationThreshold(int slowCallDurationThreshold) {
         setSlowCallDurationThreshold(Integer.toString(slowCallDurationThreshold));
         return this;
@@ -366,7 +372,10 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * Note: for threads running on an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration to 0
      * is highly recommended. Blocking an event-loop thread will most likely have a negative effect on application
      * throughput.
+     *
+     * @deprecated Use {@link #bulkheadMaxWaitDuration(String)} with a Camel duration expression (e.g. "500ms", "5s").
      */
+    @Deprecated(since = "4.22", forRemoval = true)
     public Resilience4jConfigurationDefinition bulkheadMaxWaitDuration(int bulkheadMaxWaitDuration) {
         setBulkheadMaxWaitDuration(Integer.toString(bulkheadMaxWaitDuration));
         return this;
@@ -425,7 +434,10 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
 
     /**
      * Configures the thread execution timeout (in millis). Default value is 1000 millis (1 second).
+     *
+     * @deprecated Use {@link #timeoutDuration(String)} with a Camel duration expression (e.g. "1s", "500ms").
      */
+    @Deprecated(since = "4.22", forRemoval = true)
     public Resilience4jConfigurationDefinition timeoutDuration(int timeoutDuration) {
         setTimeoutDuration(Integer.toString(timeoutDuration));
         return this;

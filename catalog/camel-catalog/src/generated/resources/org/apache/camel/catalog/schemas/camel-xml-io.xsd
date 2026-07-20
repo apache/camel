@@ -3564,6 +3564,17 @@ closed. Sliding window can either be count-based or time-based. Default value: C
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="slidingWindowSynchronizationStrategy" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Configures the synchronization strategy for the sliding window. LOCK_FREE uses a CAS-based lock-free algorithm for
+better performance under high concurrency. SYNCHRONIZED uses blocking locks with lower memory allocation. Default value:
+SYNCHRONIZED
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="minimumNumberOfCalls" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -3588,8 +3599,8 @@ to reduce log spam when the circuit breaker is open. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Configures the wait duration (in seconds) which specifies how long the CircuitBreaker should stay open, before it
-switches to half open. Default value: 60
+Configures the wait duration which specifies how long the CircuitBreaker should stay open, before it switches to half
+open. The default is 60 seconds. Default value: 60000
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3600,6 +3611,17 @@ switches to half open. Default value: 60
 <![CDATA[
 Enables automatic transition from OPEN to HALF_OPEN state once the waitDurationInOpenState has passed. Default value:
 false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="maxWaitDurationInHalfOpenState" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Configures the maximum wait duration which controls how long the CircuitBreaker should stay in Half Open state, before
+it switches to open. Value 0 means circuit breaker will wait in half open state until all permitted calls have been
+completed. Default value: 0
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3619,8 +3641,8 @@ transitions to open and starts short-circuiting calls. Default value: 100
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls
-percentage. Default value: 60
+Configures the duration threshold above which calls are considered as slow and increase the slow calls percentage. The
+default is 60 seconds. Default value: 60000
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3647,7 +3669,19 @@ Configures the max amount of concurrent calls the bulkhead will support. Default
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. Default value: 0
+Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. The default is 0 (no
+waiting). Default value: 0
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="bulkheadFairCallHandlingEnabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Configures whether the bulkhead uses a fair calling strategy. When enabled (default), a fair strategy guarantees the
+order of incoming requests (FIFO). When disabled, no ordering is guaranteed and may improve throughput. Default value:
+true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3692,7 +3726,8 @@ Configures whether cancel is called on the running future. Defaults to true. Def
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to enable collecting statistics using Micrometer. This requires adding camel-resilience4j-micrometer JAR to the
+Whether to enable collecting statistics using Micrometer for all circuit breaker instances. This is a global setting
+(configure via camel.resilience4j.micrometerEnabled=true) and requires adding camel-resilience4j-micrometer JAR to the
 classpath. Default value: false
 ]]>
             </xs:documentation>
@@ -3919,8 +3954,8 @@ References a custom thread pool to use when offloading a guarded action to anoth
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether the fallback goes over the network. If so, the fallback is executed on a separate thread-pool to avoid
-exhausting the main thread-pool. Default value: false
+Deprecated: Whether the fallback goes over the network. If so, the fallback is executed on a separate thread-pool to
+avoid exhausting the main thread-pool. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>

@@ -794,7 +794,7 @@ and accept Camel duration expressions (e.g. `60s`, `1m`, `PT1M`) as well as plai
 If you configured `waitDurationInOpenState` or `slowCallDurationThreshold` with a plain integer meaning seconds,
 you must update the value to use a duration suffix (e.g. `60s`) or convert to milliseconds (e.g. `60000`).
 
-For example:
+*Java DSL:*
 [source,java]
 ----
 // Before (seconds):
@@ -803,8 +803,27 @@ For example:
 // After (millis):
 .waitDurationInOpenState(60000)
 
-// Or using duration string:
+// Or using duration string (preferred):
 .waitDurationInOpenState("60s")
+----
+
+The `int` overloads for `waitDurationInOpenState(int)`, `slowCallDurationThreshold(int)`,
+`timeoutDuration(int)`, and `bulkheadMaxWaitDuration(int)` have been deprecated. Use the
+`String` overloads with Camel duration expressions instead.
+
+*Application properties (camel-main, Spring Boot, Quarkus):*
+
+If you configure circuit breaker settings via `application.properties`, the same migration applies:
+[source,properties]
+----
+# Before (seconds):
+camel.resilience4j.waitDurationInOpenState = 60
+
+# After (duration string):
+camel.resilience4j.waitDurationInOpenState = 60s
+
+# Or milliseconds:
+camel.resilience4j.waitDurationInOpenState = 60000
 ----
 
 === camel-resilience4j - Vavr dependency removed
