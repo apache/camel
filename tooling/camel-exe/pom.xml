@@ -110,8 +110,10 @@
               - Plain 'mvn clean install' (any OS): no-op, unaffected.
               - '-Dcamel.exe.build=true' (CI, manual): attempts the cross-compile,
                 requires llvm-mingw on PATH.
-              - '-Prelease' (real releases): auto-triggers via the release profile
-                setting camel.exe.build=true.
+              - Real releases: maven-release-plugin passes -Dcamel.exe.build=true in its
+                <arguments>, alongside -Prelease. '-Prelease' on its own is NOT enough:
+                the release profile sets camel.exe.build as a project property, and Maven's
+                property activator only reads user and system properties.
         -->
         <profile>
             <id>build-native-exe</id>

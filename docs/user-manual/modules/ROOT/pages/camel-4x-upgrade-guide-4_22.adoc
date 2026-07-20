@@ -101,7 +101,8 @@ to invoke `bin\camel.bat`.
 The native executables are now cross-compiled from any host OS using
 https://github.com/mstorsjo/llvm-mingw[clang/llvm-mingw], replacing the previous
 MSVC-only build that required a Windows host. The build is activated by
-`-Dcamel.exe.build=true` or `-Prelease` and requires `llvm-mingw` on `PATH`.
+`-Dcamel.exe.build=true` and requires `llvm-mingw` on `PATH`. Release builds get this
+from `maven-release-plugin`, which passes it alongside `-Prelease`.
 
 ==== OpenTelemetry agent export target changes
 
