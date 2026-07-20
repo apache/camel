@@ -144,6 +144,14 @@
                                         <argument>-static</argument>
                                         <argument>-mconsole</argument>
                                         <argument>-municode</argument>
+                                        <!--
+                                            The PE format carries a mandatory TimeDateStamp, which lld fills
+                                            with the current wall-clock time unless told otherwise. That alone
+                                            makes two identical builds produce different bytes, and the
+                                            difference propagates into the WinGet archive and its published
+                                            SHA-256. Pin the stamp to 0 so the executables are reproducible.
+                                        -->
+                                        <argument>-Wl,--no-insert-timestamp</argument>
                                         <argument>-o</argument>
                                         <argument>${project.build.directory}/camel-x64.exe</argument>
                                         <argument>${project.basedir}/src/main/native/camel.c</argument>
@@ -165,6 +173,8 @@
                                         <argument>-static</argument>
                                         <argument>-mconsole</argument>
                                         <argument>-municode</argument>
+                                        <!-- See the x64 execution above for why the PE timestamp is pinned. -->
+                                        <argument>-Wl,--no-insert-timestamp</argument>
                                         <argument>-o</argument>
                                         <argument>${project.build.directory}/camel-arm64.exe</argument>
                                         <argument>${project.basedir}/src/main/native/camel.c</argument>

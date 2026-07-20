@@ -209,11 +209,25 @@ jobs:
             dsl/camel-jbang/camel-launcher/target/camel-launcher-*-winget-bin.zip \
             > "$HASH_FILE"
 
+          # 'clean verify' wipes target, so keep the first-build executables around;
+          # on a mismatch the differing byte offsets say far more than a bare FAILED.
+          FIRST_BUILD="$RUNNER_TEMP/winget-first-build"
+          mkdir -p "$FIRST_BUILD"
+          cp tooling/camel-exe/target/camel-x64.exe \
+             tooling/camel-exe/target/camel-arm64.exe "$FIRST_BUILD"
+
           mvn -P apache-snapshots \
             -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher clean verify \
             -Dcamel.exe.build=true -DskipTests
 
-          sha256sum --check "$HASH_FILE"
+          if ! sha256sum --check "$HASH_FILE"; then
+            for ARCH in x64 arm64; do
+              echo "=== differing bytes in camel-${ARCH}.exe (first 40) ==="
+              cmp -l "$FIRST_BUILD/camel-${ARCH}.exe" \
+                     "tooling/camel-exe/target/camel-${ARCH}.exe" | head -40 || true
+            done
+            exit 1
+          fi
       - name: Verify WinGet archive is not deployed by Maven
         run: |
           MAVEN_REPO="$RUNNER_TEMP/winget-maven-repo"
