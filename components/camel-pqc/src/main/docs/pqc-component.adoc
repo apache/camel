@@ -178,7 +178,7 @@ the registry - for example a `SimpleMeterRegistry`, or the registry provided by 
 
 The PQC component documentation is split into focused sub-pages:
 
-* xref:others:pqc-key-lifecycle.adoc[Key Lifecycle Management] - Key generation, storage, rotation, expiration, revocation, and format conversion with FileBasedKeyLifecycleManager, InMemoryKeyLifecycleManager, HashiCorp Vault, and AWS Secrets Manager implementations
+* xref:others:pqc-key-lifecycle.adoc[Key Lifecycle Management] - Key generation, storage, rotation, expiration, revocation, and format conversion with FileBasedKeyLifecycleManager, InMemoryKeyLifecycleManager, HashiCorp Vault, AWS Secrets Manager, and Azure Key Vault implementations
 * xref:others:pqc-hybrid.adoc[Hybrid Cryptography] - Combining classical and post-quantum algorithms for defense-in-depth, including wire format v2
 * xref:dataformats:pqc-dataformat.adoc[PQC DataFormat] - DataFormat for quantum-resistant encryption/decryption using KEM
 
