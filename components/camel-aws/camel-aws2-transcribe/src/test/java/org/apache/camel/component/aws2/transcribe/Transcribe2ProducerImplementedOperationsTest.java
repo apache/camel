@@ -40,7 +40,7 @@ import software.amazon.awssdk.services.transcribe.model.TagResourceResponse;
 import software.amazon.awssdk.services.transcribe.model.UntagResourceRequest;
 import software.amazon.awssdk.services.transcribe.model.UntagResourceResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -69,9 +69,9 @@ public class Transcribe2ProducerImplementedOperationsTest extends CamelTestSuppo
         ArgumentCaptor<CreateVocabularyFilterRequest> captor
                 = ArgumentCaptor.forClass(CreateVocabularyFilterRequest.class);
         verify(transcribeClient).createVocabularyFilter(captor.capture());
-        assertEquals("my-filter", captor.getValue().vocabularyFilterName());
-        assertEquals("en-US", captor.getValue().languageCodeAsString());
-        assertEquals(List.of("foo", "bar"), captor.getValue().words());
+        assertThat(captor.getValue().vocabularyFilterName()).isEqualTo("my-filter");
+        assertThat(captor.getValue().languageCodeAsString()).isEqualTo("en-US");
+        assertThat(captor.getValue().words()).containsExactly("foo", "bar");
     }
 
     @Test
@@ -86,8 +86,8 @@ public class Transcribe2ProducerImplementedOperationsTest extends CamelTestSuppo
 
         ArgumentCaptor<ListVocabularyFiltersRequest> captor = ArgumentCaptor.forClass(ListVocabularyFiltersRequest.class);
         verify(transcribeClient).listVocabularyFilters(captor.capture());
-        assertEquals("prod", captor.getValue().nameContains());
-        assertEquals(25, captor.getValue().maxResults());
+        assertThat(captor.getValue().nameContains()).isEqualTo("prod");
+        assertThat(captor.getValue().maxResults()).isEqualTo(25);
     }
 
     @Test
@@ -104,10 +104,10 @@ public class Transcribe2ProducerImplementedOperationsTest extends CamelTestSuppo
 
         ArgumentCaptor<CreateLanguageModelRequest> captor = ArgumentCaptor.forClass(CreateLanguageModelRequest.class);
         verify(transcribeClient).createLanguageModel(captor.capture());
-        assertEquals("my-model", captor.getValue().modelName());
-        assertEquals("WideBand", captor.getValue().baseModelNameAsString());
-        assertEquals("s3://bucket/training", captor.getValue().inputDataConfig().s3Uri());
-        assertEquals("arn:aws:iam::1:role/r", captor.getValue().inputDataConfig().dataAccessRoleArn());
+        assertThat(captor.getValue().modelName()).isEqualTo("my-model");
+        assertThat(captor.getValue().baseModelNameAsString()).isEqualTo("WideBand");
+        assertThat(captor.getValue().inputDataConfig().s3Uri()).isEqualTo("s3://bucket/training");
+        assertThat(captor.getValue().inputDataConfig().dataAccessRoleArn()).isEqualTo("arn:aws:iam::1:role/r");
     }
 
     @Test
@@ -127,11 +127,11 @@ public class Transcribe2ProducerImplementedOperationsTest extends CamelTestSuppo
         ArgumentCaptor<StartMedicalTranscriptionJobRequest> captor
                 = ArgumentCaptor.forClass(StartMedicalTranscriptionJobRequest.class);
         verify(transcribeClient).startMedicalTranscriptionJob(captor.capture());
-        assertEquals("job-1", captor.getValue().medicalTranscriptionJobName());
-        assertEquals("s3://bucket/audio.wav", captor.getValue().media().mediaFileUri());
-        assertEquals("out-bucket", captor.getValue().outputBucketName());
-        assertEquals("PRIMARYCARE", captor.getValue().specialtyAsString());
-        assertEquals("DICTATION", captor.getValue().typeAsString());
+        assertThat(captor.getValue().medicalTranscriptionJobName()).isEqualTo("job-1");
+        assertThat(captor.getValue().media().mediaFileUri()).isEqualTo("s3://bucket/audio.wav");
+        assertThat(captor.getValue().outputBucketName()).isEqualTo("out-bucket");
+        assertThat(captor.getValue().specialtyAsString()).isEqualTo("PRIMARYCARE");
+        assertThat(captor.getValue().typeAsString()).isEqualTo("DICTATION");
     }
 
     @Test
@@ -146,10 +146,10 @@ public class Transcribe2ProducerImplementedOperationsTest extends CamelTestSuppo
 
         ArgumentCaptor<TagResourceRequest> captor = ArgumentCaptor.forClass(TagResourceRequest.class);
         verify(transcribeClient).tagResource(captor.capture());
-        assertEquals("arn:aws:transcribe:::job/j", captor.getValue().resourceArn());
-        assertEquals(1, captor.getValue().tags().size());
-        assertEquals("env", captor.getValue().tags().get(0).key());
-        assertEquals("prod", captor.getValue().tags().get(0).value());
+        assertThat(captor.getValue().resourceArn()).isEqualTo("arn:aws:transcribe:::job/j");
+        assertThat(captor.getValue().tags()).hasSize(1);
+        assertThat(captor.getValue().tags().get(0).key()).isEqualTo("env");
+        assertThat(captor.getValue().tags().get(0).value()).isEqualTo("prod");
     }
 
     @Test
@@ -164,7 +164,7 @@ public class Transcribe2ProducerImplementedOperationsTest extends CamelTestSuppo
 
         ArgumentCaptor<UntagResourceRequest> captor = ArgumentCaptor.forClass(UntagResourceRequest.class);
         verify(transcribeClient).untagResource(captor.capture());
-        assertEquals(List.of("env", "team"), captor.getValue().tagKeys());
+        assertThat(captor.getValue().tagKeys()).containsExactly("env", "team");
     }
 
     @Test
@@ -177,7 +177,7 @@ public class Transcribe2ProducerImplementedOperationsTest extends CamelTestSuppo
 
         ArgumentCaptor<ListTagsForResourceRequest> captor = ArgumentCaptor.forClass(ListTagsForResourceRequest.class);
         verify(transcribeClient).listTagsForResource(captor.capture());
-        assertEquals("arn:aws:transcribe:::job/j", captor.getValue().resourceArn());
+        assertThat(captor.getValue().resourceArn()).isEqualTo("arn:aws:transcribe:::job/j");
     }
 
     @Override
