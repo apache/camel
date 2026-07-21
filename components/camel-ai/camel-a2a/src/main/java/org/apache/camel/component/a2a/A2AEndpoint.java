@@ -53,6 +53,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
+import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,6 +90,7 @@ public class A2AEndpoint extends DefaultEndpoint {
     private ScheduledExecutorService pushDispatcherExecutor;
     private ExecutorService httpClientExecutor;
     private HttpClient httpClient;
+    private CloseableHttpAsyncClient pushWebhookHttpClient;
     private Map<String, A2AExtensionHandler> extensionHandlers = Map.of();
     private boolean producerCreated;
     private boolean consumerCreated;
@@ -180,8 +185,10 @@ public class A2AEndpoint extends DefaultEndpoint {
             if (initializeConsumerServices) {
                 pushDispatcherExecutor = getCamelContext().getExecutorServiceManager()
                         .newScheduledThreadPool(this, "A2APushDispatcher", 4);
+                pushWebhookHttpClient = createPushWebhookHttpClient();
+                pushWebhookHttpClient.start();
                 pushDispatcher = new PushNotificationDispatcher(
-                        createHttpClient(HttpClient.Redirect.NEVER), taskStore,
+                        pushWebhookHttpClient, taskStore,
                         configuration.getPushRetryAttempts(),
                         configuration.getPushRetryBackoffMs(),
                         pushDispatcherExecutor,
@@ -251,6 +258,20 @@ public class A2AEndpoint extends DefaultEndpoint {
                 .build();
     }
 
+    /**
+     * Creates the client used to deliver push notifications to caller-registered webhooks. Redirects are never
+     * followed: a redirect would be resolved and connected to by the client itself, escaping the SSRF validation
+     * applied to the registered URL. The dispatcher pins each request to the address it validated.
+     */
+    private CloseableHttpAsyncClient createPushWebhookHttpClient() {
+        return HttpAsyncClients.custom()
+                .disableRedirectHandling()
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setConnectTimeout(Timeout.ofMilliseconds(configuration.getConnectTimeout()))
+                        .build())
+                .build();
+    }
+
     private void cleanupEndpointResources() {
         if (taskStoreOwned && taskStore != null) {
             try {
@@ -263,6 +284,14 @@ public class A2AEndpoint extends DefaultEndpoint {
             pushDispatcher.shutdown();
         }
         pushDispatcher = null;
+        if (pushWebhookHttpClient != null) {
+            try {
+                pushWebhookHttpClient.close();
+            } catch (Exception e) {
+                LOG.debug("Error closing A2A push webhook HTTP client: {}", e.getMessage());
+            }
+            pushWebhookHttpClient = null;
+        }
         if (pushDispatcherExecutor != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(pushDispatcherExecutor);
             pushDispatcherExecutor = null;

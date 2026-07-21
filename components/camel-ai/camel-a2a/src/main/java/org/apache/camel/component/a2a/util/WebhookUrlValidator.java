@@ -46,6 +46,22 @@ public final class WebhookUrlValidator {
      * @throws IllegalArgumentException if the URL is invalid or unsafe
      */
     public static void validate(String url, boolean allowLocal) {
+        validateAndResolve(url, allowLocal);
+    }
+
+    /**
+     * Validates a webhook URL for SSRF protection and returns the address the host resolved to during validation.
+     * <p>
+     * Callers that go on to open a connection should connect to the returned address rather than letting the HTTP
+     * client resolve the hostname again, otherwise the address that was validated and the address actually connected to
+     * can differ for the same hostname (DNS rebinding), defeating the checks performed here.
+     *
+     * @param  url                      the URL to validate
+     * @param  allowLocal               whether to permit loopback/localhost addresses (dev mode)
+     * @return                          the validated address the host resolved to
+     * @throws IllegalArgumentException if the URL is invalid or unsafe
+     */
+    public static InetAddress validateAndResolve(String url, boolean allowLocal) {
         if (url == null || url.isBlank()) {
             throw new IllegalArgumentException("Webhook URL must not be null or empty");
         }
@@ -92,7 +108,7 @@ public final class WebhookUrlValidator {
                                                    + ". Set allowLocalWebhookUrls=true for local development.");
             }
             // Loopback allowed — skip remaining network checks, permit HTTP
-            return;
+            return address;
         }
 
         // Non-loopback: require HTTPS
@@ -112,6 +128,8 @@ public final class WebhookUrlValidator {
             throw new IllegalArgumentException(
                     "Webhook URL must not point to a site-local/private address (SSRF protection): " + host);
         }
+
+        return address;
     }
 
     private static boolean isPrivateIpv6(String host) {
