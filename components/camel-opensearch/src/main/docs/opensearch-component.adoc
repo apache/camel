@@ -406,3 +406,22 @@ MsearchRequest.Builder builder = new MsearchRequest.Builder().index("twitter").s
                 .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
 List<MultiSearchResponseItem<?>> response = template.requestBody("direct:multiSearch", builder, List.class);
 ----
+
+=== Custom OpenSearchClient Example
+
+You can provide a pre-configured `OpenSearchClient` instance instead of letting the component
+build one from host addresses. This is useful when you need a custom transport, for example
+when connecting to AWS OpenSearch Service with IAM-based authentication.
+
+._Java-only: programmatic CamelContext configuration_
+[source,java]
+----
+// Build a custom OpenSearchClient (e.g., with AWS SDK transport)
+OpenSearchClient customClient = new OpenSearchClient(myCustomTransport);
+
+// Bind it to the registry so it can be autowired
+context.getRegistry().bind("myOpenSearchClient", customClient);
+----
+
+The component will automatically pick up the `OpenSearchClient` from the registry via autowiring.
+When both a `RestClient` and an `OpenSearchClient` are available, the `OpenSearchClient` takes precedence.
