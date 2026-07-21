@@ -66,14 +66,14 @@ class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void testEmptyExchange() throws Exception {
+    public void testEmptyExchange() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         assertThrows(UnsupportedOperationException.class,
                 () -> ldapProducer.process(exchange));
     }
 
     @Test
-    void testWrongBodyType() throws Exception {
+    public void testWrongBodyType() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
         in.setBody("");
@@ -84,7 +84,7 @@ class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void testNoDN() throws Exception {
+    public void testNoDN() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
@@ -118,7 +118,7 @@ class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void testEmptyDN() throws Exception {
+    public void testEmptyDN() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
@@ -130,7 +130,7 @@ class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void testNullDN() throws Exception {
+    public void testNullDN() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
@@ -142,7 +142,7 @@ class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void testNullOperation() throws Exception {
+    public void testNullOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
@@ -154,7 +154,7 @@ class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void testSearch() throws Exception {
+    public void testSearch() throws Exception {
         String dn = "some dn";
         String filter = "filter";
         Integer scope = SearchControls.SUBTREE_SCOPE;
@@ -174,7 +174,7 @@ class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void testBind() throws Exception {
+    public void testBind() throws Exception {
         String dn = "some dn";
         BasicAttributes attributes = new BasicAttributes();
 
@@ -192,7 +192,7 @@ class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void testUnbind() throws Exception {
+    public void testUnbind() throws Exception {
         String dn = "some dn";
 
         Exchange exchange = new DefaultExchange(context);
@@ -208,7 +208,7 @@ class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void testAuthenticate() throws Exception {
+    public void testAuthenticate() throws Exception {
         String dn = "cn=dn";
         String filter = "filter";
         String password = "password";
@@ -228,7 +228,7 @@ class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void testModifyAttributes() throws Exception {
+    public void testModifyAttributes() throws Exception {
         String dn = "cn=dn";
         ModificationItem[] modificationItems
                 = new ModificationItem[] { new ModificationItem(DirContext.ADD_ATTRIBUTE, new BasicAttribute("key", "value")) };
@@ -247,7 +247,7 @@ class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void testFunctionDriven() throws Exception {
+    public void testFunctionDriven() throws Exception {
         String dn = "cn=dn";
 
         Exchange exchange = new DefaultExchange(context);

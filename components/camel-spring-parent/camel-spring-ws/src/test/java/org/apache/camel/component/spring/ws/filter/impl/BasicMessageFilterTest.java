@@ -38,7 +38,7 @@ class BasicMessageFilterTest extends ExchangeTestSupport {
     private SoapMessage message;
 
     @BeforeEach
-    void before() {
+    public void before() {
         filter = new BasicMessageFilter();
         SaajSoapMessageFactory saajSoapMessageFactory = new SaajSoapMessageFactory();
         saajSoapMessageFactory.afterPropertiesSet();
@@ -79,7 +79,7 @@ class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    void withoutHeader() throws Exception {
+    public void withoutHeader() throws Exception {
         exchange.getIn().getHeaders().clear();
         exchange.getOut().getHeaders().clear();
 
@@ -100,7 +100,7 @@ class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    void removeCamelInternalHeaderAttributes() throws Exception {
+    public void removeCamelInternalHeaderAttributes() throws Exception {
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO, "mustBeRemoved");
@@ -122,7 +122,7 @@ class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    void consumerWithHeader() throws Exception {
+    public void consumerWithHeader() throws Exception {
         exchange.getOut().getHeaders().put("headerAttributeKey", "testAttributeValue");
         exchange.getOut().getHeaders().put("headerAttributeElement", new QName("http://shouldBeInHeader", "myElement"));
         filter.filterConsumer(exchange, message);
@@ -137,7 +137,7 @@ class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    void producerWithHeader() throws Exception {
+    public void producerWithHeader() throws Exception {
         // foo is already in the header.in from the parent ExchangeTestSupport
         exchange.getIn().getHeaders().put("headerAttributeKey", "testAttributeValue");
         exchange.getIn().getHeaders().put("headerAttributeElement", new QName("http://shouldBeInHeader", "myElement"));
@@ -154,7 +154,7 @@ class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    void withoutAttachment() throws Exception {
+    public void withoutAttachment() throws Exception {
         filter.filterConsumer(exchange, message);
         filter.filterProducer(exchange, message);
 
@@ -162,7 +162,7 @@ class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    void producerWithAttachment() throws Exception {
+    public void producerWithAttachment() throws Exception {
         exchange.getIn(AttachmentMessage.class).addAttachment("testAttachment",
                 new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 
@@ -173,7 +173,7 @@ class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    void consumerWithAttachment() throws Exception {
+    public void consumerWithAttachment() throws Exception {
         exchange.getMessage(AttachmentMessage.class).addAttachment("testAttachment",
                 new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 

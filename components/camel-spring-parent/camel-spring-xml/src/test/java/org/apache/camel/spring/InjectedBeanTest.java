@@ -28,7 +28,7 @@ class InjectedBeanTest extends SpringTestSupport {
     protected InjectedBean bean;
 
     @Test
-    void testInjectionPoints() throws Exception {
+    public void testInjectionPoints() throws Exception {
         log.info("getFieldInjectedEndpoint()         = {}", bean.getFieldInjectedEndpoint());
         log.info("getPropertyInjectedEndpoint()      = {}", bean.getPropertyInjectedEndpoint());
 
