@@ -25,6 +25,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.opensearch.client.RestClient;
+import org.opensearch.client.opensearch.OpenSearchClient;
 
 /**
  * Send requests to OpenSearch via Java Client API.
@@ -38,12 +39,14 @@ public class OpensearchEndpoint extends DefaultEndpoint implements EndpointServi
     private final OpensearchConfiguration configuration;
 
     private final RestClient client;
+    private OpenSearchClient openSearchClient;
 
     public OpensearchEndpoint(String uri, OpensearchComponent component, OpensearchConfiguration config,
-                              RestClient client) {
+                              RestClient client, OpenSearchClient openSearchClient) {
         super(uri, component);
         this.configuration = config;
         this.client = client;
+        this.openSearchClient = openSearchClient;
     }
 
     public OpensearchConfiguration getConfiguration() {
@@ -62,6 +65,14 @@ public class OpensearchEndpoint extends DefaultEndpoint implements EndpointServi
 
     public RestClient getClient() {
         return client;
+    }
+
+    public OpenSearchClient getOpenSearchClient() {
+        return openSearchClient;
+    }
+
+    public void setOpenSearchClient(OpenSearchClient openSearchClient) {
+        this.openSearchClient = openSearchClient;
     }
 
     @Override

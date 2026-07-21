@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -57,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * </pre>
  */
 @Disabled("Manual load test - run explicitly for benchmarking")
-public class VirtualThreadsLoadTest extends ContextTestSupport {
+class VirtualThreadsLoadTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(VirtualThreadsLoadTest.class);
 
@@ -85,7 +86,7 @@ public class VirtualThreadsLoadTest extends ContextTestSupport {
     }
 
     @Test
-    public void testHighConcurrencyWithSimulatedIO() throws Exception {
+    void testHighConcurrencyWithSimulatedIO() throws Exception {
         completionLatch = new CountDownLatch(TOTAL_MESSAGES);
         processedCount.reset();
 
@@ -140,6 +141,8 @@ public class VirtualThreadsLoadTest extends ContextTestSupport {
         System.out.println("Virtual threads: " + System.getProperty("camel.threads.virtual.enabled", "false"));
         System.out.println("Thread-per-task mode: " + VIRTUAL_THREAD_PER_TASK);
         System.out.println();
+
+        Assertions.assertTrue(completed, "Not all messages processed within timeout");
     }
 
     @Override

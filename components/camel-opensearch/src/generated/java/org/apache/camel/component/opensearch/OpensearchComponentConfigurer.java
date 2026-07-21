@@ -38,6 +38,8 @@ public class OpensearchComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxretrytimeout":
         case "maxRetryTimeout": target.setMaxRetryTimeout(property(camelContext, int.class, value)); return true;
+        case "opensearchclient":
+        case "openSearchClient": target.setOpenSearchClient(property(camelContext, org.opensearch.client.opensearch.OpenSearchClient.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "sniffafterfailuredelay":
         case "sniffAfterFailureDelay": target.setSniffAfterFailureDelay(property(camelContext, int.class, value)); return true;
@@ -56,7 +58,7 @@ public class OpensearchComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"client"};
+        return new String[]{"client", "openSearchClient"};
     }
 
     @Override
@@ -77,6 +79,8 @@ public class OpensearchComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": return boolean.class;
         case "maxretrytimeout":
         case "maxRetryTimeout": return int.class;
+        case "opensearchclient":
+        case "openSearchClient": return org.opensearch.client.opensearch.OpenSearchClient.class;
         case "password": return java.lang.String.class;
         case "sniffafterfailuredelay":
         case "sniffAfterFailureDelay": return int.class;
@@ -112,6 +116,8 @@ public class OpensearchComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxretrytimeout":
         case "maxRetryTimeout": return target.getMaxRetryTimeout();
+        case "opensearchclient":
+        case "openSearchClient": return target.getOpenSearchClient();
         case "password": return target.getPassword();
         case "sniffafterfailuredelay":
         case "sniffAfterFailureDelay": return target.getSniffAfterFailureDelay();
