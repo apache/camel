@@ -1906,18 +1906,18 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteFaultToleranceConfigurationCommonAttributes(StringBuilder sb, FaultToleranceConfigurationCommon def) {
         doWriteIdentifiedTypeAttributes(sb, def);
-        doWriteAttribute(sb, "delay", def.getDelay(), "5000");
-        doWriteAttribute(sb, "bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
         doWriteAttribute(sb, "typedGuard", def.getTypedGuard(), null);
-        doWriteAttribute(sb, "failureRatio", def.getFailureRatio(), "50");
-        doWriteAttribute(sb, "timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute(sb, "timeoutEnabled", def.getTimeoutEnabled(), "false");
-        doWriteAttribute(sb, "timeoutPoolSize", def.getTimeoutPoolSize(), "10");
+        doWriteAttribute(sb, "delay", def.getDelay(), "5000");
         doWriteAttribute(sb, "successThreshold", def.getSuccessThreshold(), "1");
         doWriteAttribute(sb, "requestVolumeThreshold", def.getRequestVolumeThreshold(), "20");
-        doWriteAttribute(sb, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
-        doWriteAttribute(sb, "threadOffloadExecutorService", def.getThreadOffloadExecutorService(), null);
+        doWriteAttribute(sb, "failureRatio", def.getFailureRatio(), "50");
+        doWriteAttribute(sb, "timeoutEnabled", def.getTimeoutEnabled(), "false");
+        doWriteAttribute(sb, "timeoutDuration", def.getTimeoutDuration(), "1000");
+        doWriteAttribute(sb, "timeoutPoolSize", def.getTimeoutPoolSize(), "10");
         doWriteAttribute(sb, "bulkheadEnabled", def.getBulkheadEnabled(), "false");
+        doWriteAttribute(sb, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
+        doWriteAttribute(sb, "bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
+        doWriteAttribute(sb, "threadOffloadExecutorService", def.getThreadOffloadExecutorService(), null);
     }
     protected void doWriteFaultToleranceConfigurationCommon(StringBuilder sb, FaultToleranceConfigurationCommon def) {
         doWriteFaultToleranceConfigurationCommonAttributes(sb, def);
@@ -2311,27 +2311,27 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteResilience4jConfigurationCommonAttributes(StringBuilder sb, Resilience4jConfigurationCommon def) {
         doWriteIdentifiedTypeAttributes(sb, def);
+        doWriteAttribute(sb, "circuitBreaker", def.getCircuitBreaker(), null);
+        doWriteAttribute(sb, "config", def.getConfig(), null);
         doWriteAttribute(sb, "failureRateThreshold", def.getFailureRateThreshold(), "50");
-        doWriteAttribute(sb, "bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
-        doWriteAttribute(sb, "slowCallDurationThreshold", def.getSlowCallDurationThreshold(), "60");
-        doWriteAttribute(sb, "timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "true");
-        doWriteAttribute(sb, "minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "100");
-        doWriteAttribute(sb, "timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute(sb, "timeoutEnabled", def.getTimeoutEnabled(), "false");
-        doWriteAttribute(sb, "timeoutExecutorService", def.getTimeoutExecutorService(), null);
         doWriteAttribute(sb, "permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), "10");
         doWriteAttribute(sb, "throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), "false");
-        doWriteAttribute(sb, "slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
-        doWriteAttribute(sb, "micrometerEnabled", def.getMicrometerEnabled(), "false");
-        doWriteAttribute(sb, "writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
-        doWriteAttribute(sb, "automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
-        doWriteAttribute(sb, "circuitBreaker", def.getCircuitBreaker(), null);
         doWriteAttribute(sb, "slidingWindowSize", def.getSlidingWindowSize(), "100");
-        doWriteAttribute(sb, "config", def.getConfig(), null);
-        doWriteAttribute(sb, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
         doWriteAttribute(sb, "slidingWindowType", def.getSlidingWindowType(), "COUNT_BASED");
-        doWriteAttribute(sb, "bulkheadEnabled", def.getBulkheadEnabled(), "false");
+        doWriteAttribute(sb, "minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "100");
+        doWriteAttribute(sb, "writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
         doWriteAttribute(sb, "waitDurationInOpenState", def.getWaitDurationInOpenState(), "60");
+        doWriteAttribute(sb, "automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
+        doWriteAttribute(sb, "slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
+        doWriteAttribute(sb, "slowCallDurationThreshold", def.getSlowCallDurationThreshold(), "60");
+        doWriteAttribute(sb, "bulkheadEnabled", def.getBulkheadEnabled(), "false");
+        doWriteAttribute(sb, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
+        doWriteAttribute(sb, "bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
+        doWriteAttribute(sb, "timeoutEnabled", def.getTimeoutEnabled(), "false");
+        doWriteAttribute(sb, "timeoutExecutorService", def.getTimeoutExecutorService(), null);
+        doWriteAttribute(sb, "timeoutDuration", def.getTimeoutDuration(), "1000");
+        doWriteAttribute(sb, "timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "true");
+        doWriteAttribute(sb, "micrometerEnabled", def.getMicrometerEnabled(), "false");
     }
     protected void doWriteResilience4jConfigurationCommonElements(StringBuilder sb, Resilience4jConfigurationCommon def) {
         doWriteStringList(sb, null, "ignoreException", def.getIgnoreExceptions());

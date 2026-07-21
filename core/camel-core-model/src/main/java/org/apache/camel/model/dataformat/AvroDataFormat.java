@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
           description = "Serialize and deserialize messages using Apache Avro binary data format")
 @XmlRootElement(name = "avro")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AvroDataFormat extends DataFormatDefinition {
+public class AvroDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
 
     @XmlTransient
     private Class<?> unmarshalType;

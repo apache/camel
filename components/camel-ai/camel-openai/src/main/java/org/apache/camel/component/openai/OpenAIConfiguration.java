@@ -101,6 +101,22 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Exchange property name for storing conversation history")
     private String conversationHistoryProperty = "CamelOpenAIConversationHistory";
 
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "When conversationMemory is enabled, retain at most this many messages in the exchange "
+                            + "conversation history. System and developer messages are prepended separately and are not "
+                            + "stored in history. Assistant tool-call blocks are kept intact and may retain slightly "
+                            + "more than this limit to preserve tool result pairing. When 0, no message limit is applied.")
+    private int maxHistoryMessages;
+
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "When conversationMemory is enabled, trim conversation history using a token estimate "
+                            + "(character count / 4, including image payload size for multi-modal user messages). "
+                            + "Oldest segments are dropped first until the estimated tokens are within this limit. "
+                            + "Assistant tool-call blocks are removed as a unit with their tool results. The most recent "
+                            + "segment is always retained, even when it alone exceeds this limit. When 0, "
+                            + "no token limit is applied.")
+    private int maxHistoryTokens;
+
     @UriParam
     @Metadata(description = "Default user message text to use when no prompt is provided", largeInput = true)
     private String userMessage;
@@ -404,6 +420,22 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setConversationHistoryProperty(String conversationHistoryProperty) {
         this.conversationHistoryProperty = conversationHistoryProperty;
+    }
+
+    public int getMaxHistoryMessages() {
+        return maxHistoryMessages;
+    }
+
+    public void setMaxHistoryMessages(int maxHistoryMessages) {
+        this.maxHistoryMessages = maxHistoryMessages;
+    }
+
+    public int getMaxHistoryTokens() {
+        return maxHistoryTokens;
+    }
+
+    public void setMaxHistoryTokens(int maxHistoryTokens) {
+        this.maxHistoryTokens = maxHistoryTokens;
     }
 
     public String getUserMessage() {

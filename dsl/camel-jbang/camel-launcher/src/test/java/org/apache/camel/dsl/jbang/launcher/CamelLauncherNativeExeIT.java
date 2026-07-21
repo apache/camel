@@ -28,10 +28,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Release gate for the native exe files (x64 + arm64) packaged into the launcher distribution. Runs during
+ * Release gate for the native exe files (x64 + arm64) packaged only into the WinGet launcher distribution. Runs during
  * {@code verify} when {@code -Dcamel.exe.build=true} is set. Cross-compiled from any host OS via clang/llvm-mingw.
  */
 @EnabledIfSystemProperty(named = "camel.exe.build", matches = "true")
@@ -44,19 +45,19 @@ class CamelLauncherNativeExeIT {
     @Test
     void stagedCamelExeX64Exists() {
         assertTrue(Files.isRegularFile(STAGED_X64),
-                "target/camel-x64.exe must be present before packaging the launcher distribution");
+                "target/camel-x64.exe must be present before packaging the WinGet launcher distribution");
     }
 
     @Test
     void stagedCamelExeArm64Exists() {
         assertTrue(Files.isRegularFile(STAGED_ARM64),
-                "target/camel-arm64.exe must be present before packaging the launcher distribution");
+                "target/camel-arm64.exe must be present before packaging the WinGet launcher distribution");
     }
 
     @Test
-    void binArchiveIncludesBothExeFiles() throws IOException {
-        Path zip = findBinZip();
-        assertNotNull(zip, "camel-launcher-*-bin.zip must be produced by the assembly plugin");
+    void wingetArchiveIncludesBothExeFiles() throws IOException {
+        Path zip = findBinZip(true);
+        assertNotNull(zip, "camel-launcher-*-winget-bin.zip must be produced by the assembly plugin");
 
         try (ZipFile archive = new ZipFile(zip.toFile())) {
             ZipEntry x64 = archive.stream()
@@ -75,10 +76,26 @@ class CamelLauncherNativeExeIT {
         }
     }
 
-    private static Path findBinZip() throws IOException {
+    @Test
+    void publicArchiveExcludesNativeExeFiles() throws IOException {
+        Path zip = findBinZip(false);
+        assertNotNull(zip, "camel-launcher-*-bin.zip must be produced by the assembly plugin");
+
+        try (ZipFile archive = new ZipFile(zip.toFile())) {
+            assertNull(findEntry(archive, "/bin/camel-x64.exe"), "public ZIP must not include camel-x64.exe");
+            assertNull(findEntry(archive, "/bin/camel-arm64.exe"), "public ZIP must not include camel-arm64.exe");
+        }
+    }
+
+    private static ZipEntry findEntry(ZipFile archive, String suffix) {
+        return archive.stream().filter(e -> e.getName().endsWith(suffix)).findFirst().orElse(null);
+    }
+
+    private static Path findBinZip(boolean winget) throws IOException {
         try (Stream<Path> paths = Files.list(TARGET)) {
             return paths
                     .filter(p -> p.getFileName().toString().matches("camel-launcher-.*-bin\\.zip"))
+                    .filter(p -> p.getFileName().toString().contains("-winget-bin.zip") == winget)
                     .findFirst()
                     .orElse(null);
         }

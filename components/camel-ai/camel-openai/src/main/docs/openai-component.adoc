@@ -674,6 +674,8 @@ The JSON schema must be a valid JSON object. Invalid schema strings will result 
 
 When `conversationMemory=true`, the component maintains conversation history in the `CamelOpenAIConversationHistory` exchange property (configurable via `conversationHistoryProperty` option). This history is scoped to a single Exchange and allows multi-turn conversations within a route.
 
+Use `maxHistoryMessages` and `maxHistoryTokens` to bound how much history is retained in that property. Oldest conversation segments are dropped first; assistant tool-call blocks are always removed together with their tool results. The most recent segment is always kept, even when it alone exceeds `maxHistoryMessages` or `maxHistoryTokens`. Token limits use a character-count / 4 estimate (including image payload size for multi-modal user messages).
+
 IMPORTANT:
 
 * Conversation history is automatically updated with each assistant response for **non-streaming** responses only

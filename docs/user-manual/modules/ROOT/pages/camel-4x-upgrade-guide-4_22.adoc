@@ -86,24 +86,23 @@ The Gentoo `java-config` auto-detection and the IBM AIX `$JAVA_HOME/jre/sh/java`
 removed; set `JAVA_HOME` or `JAVACMD` explicitly on those platforms.
 `JAVA_OPTS` handling is unchanged: when unset, the default `-Xmx512m` heap is applied.
 
-==== Native `camel.exe` in the launcher distribution
+==== Native `camel.exe` in the WinGet package
 
-The `camel-launcher` distribution now ships two native Windows executables:
-`bin/camel-x64.exe` (x86_64) and `bin/camel-arm64.exe` (aarch64), alongside
-`bin/camel.bat`. Both are thin bootstraps: they forward all arguments to the
-adjacent `camel.bat` (preserving spaces and Unicode) and return its exit code.
-They exist so package managers that require a genuine executable (such as WinGet)
-work correctly. Users may continue to invoke `bin\camel.bat`; all three behave
-identically.
+The WinGet package now ships two native Windows executables: `bin/camel-x64.exe`
+(x86_64) and `bin/camel-arm64.exe` (aarch64), alongside `bin/camel.bat`. Both are
+thin bootstraps: they forward all arguments to the adjacent `camel.bat` (preserving
+spaces and Unicode) and return its exit code. WinGet selects the executable matching
+the host architecture and exposes it as `camel.exe`.
+
+The public `camel-launcher-<version>-bin.zip` and `.tar.gz` archives do not contain
+these WinGet-specific executables. Windows users of those archives should continue
+to invoke `bin\camel.bat`.
 
 The native executables are now cross-compiled from any host OS using
 https://github.com/mstorsjo/llvm-mingw[clang/llvm-mingw], replacing the previous
 MSVC-only build that required a Windows host. The build is activated by
-`-Dcamel.exe.build=true` or `-Prelease` and requires `llvm-mingw` on `PATH`.
-
-If you have tooling that referenced `bin/camel.exe`, update it to use
-`bin/camel-x64.exe` (for x86_64 Windows) or `bin/camel-arm64.exe` (for ARM64
-Windows).
+`-Dcamel.exe.build=true` and requires `llvm-mingw` on `PATH`. Release builds get this
+from `maven-release-plugin`, which passes it alongside `-Prelease`.
 
 ==== OpenTelemetry agent export target changes
 
@@ -154,7 +153,7 @@ Installation is always per-user and never requires elevation or `sudo`:
   prints guidance instead.
 * Windows (`install.ps1`) installs under `%LOCALAPPDATA%\Apache Camel\cli\versions\<version>` and
   activates it via a `camel.cmd` shim at `%LOCALAPPDATA%\Apache Camel\bin\camel.cmd` that delegates
-  to the staged `camel-x64.exe` or `camel-arm64.exe` (auto-detected). The bin directory is added
+  to the staged `camel.bat`. The bin directory is added
   once, case-insensitively, to the current user's `PATH`; the machine `PATH` is never modified.
 
 Previously installed version directories are left in place after an upgrade or downgrade and
@@ -176,6 +175,11 @@ String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 // After
 Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 ----
+
+When RAG or tools are used, the agent producer also exposes `CamelLangChain4jAgentSources`
+(`List<dev.langchain4j.rag.content.Content>`) and `CamelLangChain4jAgentToolExecutions`
+(`List<dev.langchain4j.service.tool.ToolExecution>`) as exchange headers when present in the
+`Result`.
 
 === camel-langchain4j-chat
 
@@ -262,6 +266,47 @@ The following 10 Oracle connector options have been removed by Debezium 3.6.0 an
 * `logMiningScnGapDetectionTimeIntervalMaxMs`
 
 If you use any of these options, remove them from your configuration as they will cause errors.
+
+=== camel-spring-ai-chat
+
+==== Camel route tools now use ai-tool
+
+The `spring-ai-chat` producer now discovers Camel route tools from the `ai-tool` component
+(`AiToolRegistry`) instead of the `spring-ai-tools` component (`CamelToolExecutorCache`).
+
+Migrate your tool definition routes from `spring-ai-tools:` to `ai-tool:`:
+
+[source,java]
+----
+// Before (no longer works with spring-ai-chat)
+from("spring-ai-tools:weather?tags=weather&description=Get current weather for a city&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22°C\"}"));
+
+// After
+from("ai-tool:weather?tags=weather&description=Get current weather for a city&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22°C\"}"));
+----
+
+The `spring-ai-chat` producer endpoint is unchanged — only the tool consumer routes need
+to be migrated:
+
+[source,java]
+----
+from("direct:chat")
+    .to("spring-ai-chat:weatherChat?tags=weather&chatModel=#chatModel");
+----
+
+Add the `camel-ai-tool` dependency to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-tool</artifactId>
+</dependency>
+----
+
+The `camel-spring-ai-tools` dependency is no longer required by `camel-spring-ai-chat`.
 
 === camel-fory with JDK 25+ - Breaking change
 
@@ -496,6 +541,16 @@ by the file-based consumers (see the `localWorkDirectory` note in the 4.21 upgra
 
 Ordinary object names are unaffected. A name that resolves outside `fileDir` is now rejected with an
 `IllegalArgumentException`.
+
+=== camel-xmpp - Smack upgraded to 4.4
+
+The camel-xmpp component has upgraded Smack from 4.3.5 to 4.4.8. The `smack-java7` module no longer exists in
+Smack 4.4 and has been replaced by `smack-java8` (relevant if you declared it explicitly alongside camel-xmpp).
+When extracting headers from a stanza whose JiveProperties extension is not parsed by a registered provider,
+the unparsed extension is now represented by Smack's `StandardExtensionElement` (the replacement for the removed
+`DefaultExtensionElement`); flat child elements are mapped to headers as before. See the
+https://github.com/igniterealtime/Smack/wiki/Smack-4.4-Readme[Smack 4.4 readme] for behavioral changes in the
+Smack library itself.
 
 === camel-weaviate - potential breaking change
 

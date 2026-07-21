@@ -618,8 +618,16 @@
                         <useReleaseProfile>false</useReleaseProfile>
                         <preparationGoals>clean install</preparationGoals>
                         <goals>deploy</goals>
-                        <!-- The profile we want to use when doing the release -->
-                        <arguments>-Prelease</arguments>
+                        <!--
+                            The profile we want to use when doing the release.
+                            camel.exe.build must be passed as a real user property: the release
+                            profile below sets it in <properties>, but Maven's property activator
+                            only reads user and system properties, so a profile that sets it cannot
+                            activate the profiles that are triggered by it (include-camel-exe in
+                            camel-launcher, build-native-exe in camel-exe). Without this, a release
+                            build produces no native Windows executables and no WinGet payload.
+                        -->
+                        <arguments>-Prelease -Dcamel.exe.build=true</arguments>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
                 </plugin>
@@ -749,6 +757,13 @@
             </activation>
             <properties>
                 <skipTests>true</skipTests>
+                <!--
+                    Read by plugin configuration only. Setting it here does NOT activate the
+                    profiles keyed on camel.exe.build; those need it as a user property, which
+                    maven-release-plugin's <arguments> passes explicitly. A build invoked as
+                    'mvn -Prelease' by hand must also pass -Dcamel.exe.build=true to get the
+                    native Windows executables.
+                -->
                 <camel.exe.build>true</camel.exe.build>
             </properties>
             <build>

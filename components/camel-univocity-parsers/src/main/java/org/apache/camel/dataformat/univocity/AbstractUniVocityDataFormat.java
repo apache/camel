@@ -99,7 +99,6 @@ public abstract class AbstractUniVocityDataFormat<
         }
 
         P parser = createParser(parserSettings);
-        // univocity-parsers is responsible for closing the reader, even in case of error
         Reader reader = new InputStreamReader(stream, getCharsetName(exchange));
         return unmarshaller.unmarshal(reader, parser, headerRowProcessor);
     }

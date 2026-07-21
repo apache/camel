@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dataformat.univocity;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,31 +84,20 @@ final class Unmarshaller<P extends AbstractParser<?>> {
      * @param <E> Row class
      * @param <P> Parser class
      */
-    private abstract static class RowIterator<E, P extends AbstractParser<?>> implements Iterator<E> {
+    private abstract static class RowIterator<E, P extends AbstractParser<?>> implements Iterator<E>, Closeable {
         private final P parser;
         private String[] row;
 
-        /**
-         * Creates a new instance.
-         *
-         * @param parser parser to use
-         */
         protected RowIterator(P parser) {
             this.parser = parser;
             row = this.parser.parseNext();
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public final boolean hasNext() {
             return row != null;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public final E next() {
             if (row == null) {
@@ -118,20 +109,16 @@ final class Unmarshaller<P extends AbstractParser<?>> {
             return result;
         }
 
-        /**
-         * Warning: it always throws an {@code UnsupportedOperationException}
-         */
         @Override
         public final void remove() {
             throw new UnsupportedOperationException();
         }
 
-        /**
-         * Converts the rows into the expected object.
-         *
-         * @param  row row to convert
-         * @return     converted row
-         */
+        @Override
+        public void close() throws IOException {
+            parser.stopParsing();
+        }
+
         protected abstract E convertRow(String[] row);
     }
 
@@ -141,18 +128,11 @@ final class Unmarshaller<P extends AbstractParser<?>> {
      * @param <P> Parser class
      */
     private static final class ListRowIterator<P extends AbstractParser<?>> extends RowIterator<List<String>, P> {
-        /**
-         * Creates a new instance.
-         *
-         * @param parser parser to use
-         */
+
         protected ListRowIterator(P parser) {
             super(parser);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         protected List<String> convertRow(String[] row) {
             return Arrays.asList(row);
@@ -165,26 +145,16 @@ final class Unmarshaller<P extends AbstractParser<?>> {
      * @param <P> Parser class
      */
     private static class MapRowIterator<P extends AbstractParser<?>> extends RowIterator<Map<String, String>, P> {
-        private final HeaderRowProcessor headerRowProcessor;
+        // Captured eagerly on the parsing thread to avoid ThreadLocal cross-thread issues
+        private final String[] headers;
 
-        /**
-         * Creates a new instance
-         *
-         * @param parser             parser to use
-         * @param headerRowProcessor row processor to use in order to retrieve the headers
-         */
         protected MapRowIterator(P parser, HeaderRowProcessor headerRowProcessor) {
             super(parser);
-            this.headerRowProcessor = headerRowProcessor;
+            this.headers = headerRowProcessor.getHeaders();
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         protected Map<String, String> convertRow(String[] row) {
-            String[] headers = headerRowProcessor.getHeaders();
-
             int size = Math.min(row.length, headers.length);
             Map<String, String> result = new LinkedHashMap<>(size);
             for (int i = 0; i < size; i++) {
