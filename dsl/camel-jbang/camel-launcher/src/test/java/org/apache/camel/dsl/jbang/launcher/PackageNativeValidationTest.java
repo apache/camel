@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.launcher;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -197,6 +198,57 @@ class PackageNativeValidationTest {
         assertThat(bad.out()).contains("uninstall left behind");
     }
 
+    @Test
+    void homebrewValidatorFailsWhenAuditStrictReportsIssues(@TempDir Path tmp) throws Exception {
+        // The PR's own hardening goal is making `brew audit --strict` a hard gate; pin that a nonzero
+        // audit exit propagates as a FAIL and a nonzero overall exit, not a warning.
+        Path fakeBinDir = Files.createDirectory(tmp.resolve("fake-bin"));
+        writeFakeBrew(fakeBinDir.resolve("brew"));
+        Path target = Files.createDirectory(tmp.resolve("target"));
+        Path tapDir = Files.createDirectory(tmp.resolve("tap"));
+        stageHomebrewFormula(target, "camel-launcher-9.9.9-bin.tar.gz");
+
+        Result r = sh(null, List.of(
+                "PATH=" + fakeBinDir.toAbsolutePath() + File.pathSeparator + System.getenv("PATH"),
+                "CAMEL_PACKAGE_TEST_MODE=true",
+                "CAMEL_PACKAGE_TEST_VERSION=" + VERSION,
+                "CAMEL_VALIDATE_TARGET_DIR=" + target.toAbsolutePath(),
+                "FAKE_BREW_TAP_DIR=" + tapDir.toAbsolutePath(),
+                "FAKE_BREW_AUDIT_RC=1",
+                "FAKE_BREW_AUDIT_OUTPUT=Error: FormulaAudit/Foo: fake audit issue"),
+                "/bin/bash " + VALIDATE.toAbsolutePath() + " homebrew");
+
+        assertThat(r.exit()).as(r.out()).isNotZero();
+        assertThat(r.out()).contains("FAIL: homebrew audit --strict reported issues (exit 1)");
+    }
+
+    @Test
+    void homebrewValidatorSkipsWhenJavaDependencyMissing(@TempDir Path tmp) throws Exception {
+        // A `brew install` failure caused by a missing/incompatible Java on the host is an environment
+        // limitation, not a defect in the generated formula, and must SKIP (exit 0), not FAIL - this pins
+        // the classification heuristic so a real regression can't get silently downgraded the same way.
+        Path fakeBinDir = Files.createDirectory(tmp.resolve("fake-bin"));
+        writeFakeBrew(fakeBinDir.resolve("brew"));
+        Path target = Files.createDirectory(tmp.resolve("target"));
+        Path tapDir = Files.createDirectory(tmp.resolve("tap"));
+        stageHomebrewFormula(target, "camel-launcher-9.9.9-bin.tar.gz");
+
+        Result r = sh(null, List.of(
+                "PATH=" + fakeBinDir.toAbsolutePath() + File.pathSeparator + System.getenv("PATH"),
+                "CAMEL_PACKAGE_TEST_MODE=true",
+                "CAMEL_PACKAGE_TEST_VERSION=" + VERSION,
+                "CAMEL_VALIDATE_TARGET_DIR=" + target.toAbsolutePath(),
+                "FAKE_BREW_TAP_DIR=" + tapDir.toAbsolutePath(),
+                "FAKE_BREW_INSTALL_RC=1",
+                "FAKE_BREW_INSTALL_OUTPUT=Error: no suitable java version found, please install java"),
+                "/bin/bash " + VALIDATE.toAbsolutePath() + " homebrew");
+
+        assertThat(r.exit()).as(r.out()).isZero();
+        assertThat(r.out())
+                .contains("SKIP: homebrew install could not resolve a Java dependency")
+                .doesNotContain("FAIL");
+    }
+
     // ---------- helpers ----------
 
     /** Body of a conformant fake `camel` CLI: reports {@code version} and generates the fixture route on init. */
@@ -213,6 +265,49 @@ class PackageNativeValidationTest {
 
     private static Path writeFakeCamel(Path file, String version) throws IOException {
         return writeExecutable(file, fakeCamelBody(version));
+    }
+
+    /**
+     * A fake {@code brew} that stands in for Homebrew in {@code validate_homebrew} so its SKIP-vs-FAIL classification
+     * heuristics can be pinned without needing a real Homebrew install. Behavior for the {@code audit} and
+     * {@code install} subcommands is driven by {@code FAKE_BREW_AUDIT_RC}/{@code
+     * FAKE_BREW_AUDIT_OUTPUT} and {@code FAKE_BREW_INSTALL_RC}/{@code FAKE_BREW_INSTALL_OUTPUT}; the tap directory it
+     * reports is {@code FAKE_BREW_TAP_DIR}. Every other subcommand it needs (tap-new, untap, style, uninstall) just
+     * succeeds.
+     */
+    private static Path writeFakeBrew(Path file) throws IOException {
+        return writeExecutable(file, "#!/bin/sh\n"
+                                     + "case \"$1\" in\n"
+                                     + "    tap-new) mkdir -p \"$FAKE_BREW_TAP_DIR/Formula\"; exit 0 ;;\n"
+                                     + "    --repository) echo \"$FAKE_BREW_TAP_DIR\"; exit 0 ;;\n"
+                                     + "    untap) exit 0 ;;\n"
+                                     + "    style) exit 0 ;;\n"
+                                     + "    audit)\n"
+                                     + "        [ -n \"$FAKE_BREW_AUDIT_OUTPUT\" ] && echo \"$FAKE_BREW_AUDIT_OUTPUT\"\n"
+                                     + "        exit \"${FAKE_BREW_AUDIT_RC:-0}\" ;;\n"
+                                     + "    install)\n"
+                                     + "        [ -n \"$FAKE_BREW_INSTALL_OUTPUT\" ] && echo \"$FAKE_BREW_INSTALL_OUTPUT\"\n"
+                                     + "        exit \"${FAKE_BREW_INSTALL_RC:-0}\" ;;\n"
+                                     + "    uninstall) exit 0 ;;\n"
+                                     + "    *) exit 0 ;;\n"
+                                     + "esac\n");
+    }
+
+    /**
+     * Stages {@code <targetDir>/jreleaser/package/camel-cli/brew/Formula/camel.rb} (the path {@code validate_homebrew}
+     * reads) plus a same-named dummy archive under {@code targetDir}, so the script's real {@code sed}-based url/sha256
+     * rewrite for the offline install has something to operate on.
+     */
+    private static void stageHomebrewFormula(Path targetDir, String archiveBasename) throws Exception {
+        Path formulaDir = Files.createDirectories(targetDir.resolve("jreleaser/package/camel-cli/brew/Formula"));
+        Files.writeString(targetDir.resolve(archiveBasename), "dummy archive content");
+        String formula = "class Camel < Formula\n"
+                         + "  url \"https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/9.9.9/"
+                         + archiveBasename + "\"\n"
+                         + "  sha256 \"" + "0".repeat(64) + "\"\n"
+                         + "  version \"9.9.9\"\n"
+                         + "end\n";
+        Files.writeString(formulaDir.resolve("camel.rb"), formula);
     }
 
     private static Path writeExecutable(Path file, String body) throws IOException {

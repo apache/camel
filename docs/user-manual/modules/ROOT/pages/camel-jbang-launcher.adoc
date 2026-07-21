@@ -8,6 +8,8 @@ Download from https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/[Ma
 
 == Install script (recommended)
 
+*Available as of Camel 4.22*
+
 The easiest way to install the launcher is the install script, which downloads, verifies, and puts
 a `camel` command on your `PATH`:
 

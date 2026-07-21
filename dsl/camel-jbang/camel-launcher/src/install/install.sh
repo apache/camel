@@ -75,9 +75,9 @@ fetch() {
         fi
     elif command -v wget >/dev/null 2>&1; then
         if [ -n "$ca_cert" ]; then
-            wget -q --ca-certificate="$ca_cert" -O "$outfile" "$url"
+            wget -nv --ca-certificate="$ca_cert" -O "$outfile" "$url"
         else
-            wget -q -O "$outfile" "$url"
+            wget -nv -O "$outfile" "$url"
         fi
     else
         fail "curl or wget is required to install the Camel CLI"
@@ -169,11 +169,12 @@ validate_tar() {
     expected_root="camel-launcher-$version"
 
     listing="$staging_dir/listing.txt"
-    tar -tzf "$archive" > "$listing" 2>/dev/null || fail "archive is not a valid tar.gz"
+    tar_err=$(tar -tzf "$archive" 2>&1 1>"$listing") || fail "archive is not a valid tar.gz${tar_err:+: $tar_err}"
 
     verbose_listing="$staging_dir/listing-verbose.txt"
     # LC_ALL=C keeps tar's hard-link annotation as the literal 'link to' string; GNU tar localizes it.
-    LC_ALL=C tar -tvzf "$archive" > "$verbose_listing" 2>/dev/null || fail "archive is not a valid tar.gz"
+    tar_err=$(LC_ALL=C tar -tvzf "$archive" 2>&1 1>"$verbose_listing") \
+        || fail "archive is not a valid tar.gz${tar_err:+: $tar_err}"
     # tar -tv renders symlinks as 'name -> target' and hard links as 'name link to target'. Matching
     # those substrings could in theory over-reject a regular file whose name contains ' -> ' or
     # ' link to '; that fail-closed bias is deliberate, the release archive never carries such names.

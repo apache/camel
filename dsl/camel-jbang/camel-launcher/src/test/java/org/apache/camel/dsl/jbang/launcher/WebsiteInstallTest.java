@@ -48,6 +48,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -214,7 +215,7 @@ class WebsiteInstallTest {
 
                 WebsiteInstallerFixture.Result r = install(fixture, home, null);
 
-                assertEquals(0, r.exit(), r.stderr());
+                assertThat(r.exit()).as(r.stderr()).isZero();
                 assertVersionInstalled(home, "1.2.3");
             }
         }
@@ -740,7 +741,7 @@ class WebsiteInstallTest {
 
                 WebsiteInstallerFixture.Result r = install(fixture, home, null);
 
-                assertEquals(0, r.exit(), r.stderr());
+                assertThat(r.exit()).as(r.stderr()).isZero();
                 assertVersionInstalled(home, "1.2.3");
             }
         }
