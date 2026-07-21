@@ -114,6 +114,12 @@ parse_manifest() {
         # Tolerate a manifest served with CRLF line endings, matching the PowerShell parser.
         key="${key%"$cr"}"
         value="${value%"$cr"}"
+        # Skip comment lines (properties-style '#', and the '##' ASF license header the website's
+        # manifest generator prepends). They carry no data, so they are neither counted toward the
+        # required line total nor validated as key=value pairs. Blank lines are still rejected below.
+        case "$key" in
+            \#*) continue ;;
+        esac
         line_count=$((line_count + 1))
         [ -n "$key" ] || fail "manifest contains a blank line"
         [ -n "$value" ] || fail "manifest key '$key' has an empty value"

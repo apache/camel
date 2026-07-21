@@ -36,14 +36,14 @@ else
 fi
 
 if [ -n "$_raw_source" ]; then
-    _ASSERT_LIB_DIR=$(CDPATH= cd -- "$(dirname -- "$_raw_source")" && pwd)
+    _ASSERT_LIB_DIR=$(CDPATH='' cd -- "$(dirname -- "$_raw_source")" && pwd)
 else
-    _ASSERT_LIB_DIR=$(CDPATH= cd -- "$(dirname -- "${0:-.}")" && pwd)
+    _ASSERT_LIB_DIR=$(CDPATH='' cd -- "$(dirname -- "${0:-.}")" && pwd)
 fi
 unset _raw_source
 
 assertion_pass() { echo "PASS: $1"; }
-assertion_fail()  { echo "FAIL: $1"; assertion_error=1; return 1; }
+assertion_fail()  { echo "FAIL: $1"; return 1; }
 
 assert_camel_version() {
     local actual="$1" expected="$2"
@@ -98,13 +98,15 @@ assert_camel_cli() {
     local _orig_dir
     _orig_dir=$(pwd)
 
-    # Step 1: version check
+    # Step 1: version check. When an expected version is given, a mismatch is a real failure
+    # that must propagate out of this wrapper (empty output stays a soft skip - the caller may
+    # be validating a CLI that cannot print a version on this host).
     local camv_output
     camv_output=$("$CAMELCMD" --version 2>/dev/null) || true
     if [ -z "$camv_output" ]; then
         echo "WARN: camel version returned empty output (skipped)"
     elif [ -n "$EXPECTED_VERSION" ]; then
-        assert_camel_version "$camv_output" "$EXPECTED_VERSION"
+        assert_camel_version "$camv_output" "$EXPECTED_VERSION" || return 1
     else
         echo "INFO: camel version reported: $camv_output (no expected version given, skipping comparison)"
     fi
@@ -114,11 +116,11 @@ assert_camel_cli() {
     cd "$WORKDIR" || { echo "FAIL: cannot cd to $WORKDIR"; return 1; }
     if [ -f hello.java ]; then rm -f hello.java; fi
     if "$CAMELCMD" init hello.java >/dev/null 2>&1; then
-        assert_init_content "$WORKDIR" "hello.java" || { echo "FAIL: generated route missing expected content"; cd "$_orig_dir"; return 1; }
+        assert_init_content "$WORKDIR" "hello.java" || { echo "FAIL: generated route missing expected content"; cd "$_orig_dir" || exit; return 1; }
     else
         echo "WARN: camel init failed (skipped)"
     fi
-    cd "$_orig_dir"
+    cd "$_orig_dir" || exit
 
     # Step 3: assert the executable exists
     if [ -x "$CAMELCMD" ]; then

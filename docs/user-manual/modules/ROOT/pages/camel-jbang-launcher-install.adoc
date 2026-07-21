@@ -67,8 +67,8 @@ Both installers perform the same verified install:
 * Download the launcher archive from Maven Central
   (`install.sh` downloads the `.tar.gz`, `install.ps1` the `.zip`).
 * Verify the archive against the SHA-256 checksum recorded in the manifest before extracting it.
-* Reject any archive that contains an absolute path, `../` traversal, an escaping
-  symlink/reparse-point entry, or more than one top-level directory.
+* Reject any archive that contains an absolute path, `../` traversal, a symlink, hardlink, or
+  reparse-point entry, or more than one top-level directory.
 * Run the freshly staged launcher once (`camel version`) to confirm a Java 17+ runtime can be
   discovered. If that check fails, the previously active installation, if any, is left untouched
   and the installer exits nonzero.

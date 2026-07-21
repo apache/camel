@@ -60,6 +60,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class WebsiteInstallTest {
 
+    // A representative ASF license header (as WebsiteManifestGenerator now prepends), including '##'
+    // lines and a bare '##' line, used to verify the installers skip comment lines in a manifest.
+    static final String MANIFEST_LICENSE_HEADER
+            = "## ---------------------------------------------------------------------------\n"
+              + "## Licensed to the Apache Software Foundation (ASF) under one or more\n"
+              + "## contributor license agreements.  See the NOTICE file distributed with\n"
+              + "##\n"
+              + "## limitations under the License.\n"
+              + "## ---------------------------------------------------------------------------\n";
+
     static void publishLatest(WebsiteInstallerFixture fixture, String version) throws Exception {
         Path tar = fixture.safeTar(version);
         Path zip = fixture.safeZip(version);
@@ -187,6 +197,25 @@ class WebsiteInstallTest {
 
                 assertEquals(0, r.exit(), r.stderr());
                 assertVersionInstalled(home, "2.5.0");
+            }
+        }
+
+        @Test
+        void installsWhenManifestCarriesLicenseHeader(@TempDir Path temp) throws Exception {
+            // The website's manifest generator prepends an ASF license header; install.sh must skip
+            // those comment lines and still install successfully.
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                Path tar = fixture.safeTar("1.2.3");
+                Path zip = fixture.safeZip("1.2.3");
+                publishRelease(fixture, "1.2.3", tar, zip);
+                fixture.publishManifest("/camel-cli/releases/latest.properties", "1.2.3", tar, zip,
+                        MANIFEST_LICENSE_HEADER);
+
+                WebsiteInstallerFixture.Result r = install(fixture, home, null);
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertVersionInstalled(home, "1.2.3");
             }
         }
 
@@ -694,6 +723,25 @@ class WebsiteInstallTest {
 
                 assertEquals(0, r.exit(), r.stderr());
                 assertVersionInstalled(home, "2.5.0");
+            }
+        }
+
+        @Test
+        void installsWhenManifestCarriesLicenseHeader(@TempDir Path temp) throws Exception {
+            // The website's manifest generator prepends an ASF license header; install.ps1 must skip
+            // those comment lines and still install successfully.
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                Path tar = fixture.safeTar("1.2.3");
+                Path zip = fixture.safeZip("1.2.3");
+                publishRelease(fixture, "1.2.3", tar, zip);
+                fixture.publishManifest("/camel-cli/releases/latest.properties", "1.2.3", tar, zip,
+                        MANIFEST_LICENSE_HEADER);
+
+                WebsiteInstallerFixture.Result r = install(fixture, home, null);
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertVersionInstalled(home, "1.2.3");
             }
         }
 

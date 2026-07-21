@@ -82,7 +82,10 @@ function Save-RemoteFile {
 function Read-Manifest {
     param([string] $Path)
 
-    $lines = @(Get-Content -LiteralPath $Path -Encoding UTF8)
+    # Drop comment lines (properties-style '#', and the '##' ASF license header the website's manifest
+    # generator prepends) before validation; they carry no data. Blank lines are kept so they still
+    # trip the exactly-four-lines / blank-line checks below.
+    $lines = @(Get-Content -LiteralPath $Path -Encoding UTF8 | Where-Object { -not $_.StartsWith('#') })
     if ($lines.Count -ne 4) {
         Fail "manifest must contain exactly four lines"
     }

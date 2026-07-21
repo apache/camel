@@ -191,7 +191,13 @@ final class WebsiteInstallerFixture implements AutoCloseable {
     }
 
     void publishManifest(String urlPath, String version, Path tar, Path zip) throws Exception {
-        String manifest = "format=1\n"
+        publishManifest(urlPath, version, tar, zip, "");
+    }
+
+    /** Publishes a manifest optionally prefixed with a comment {@code header}, to exercise comment tolerance. */
+    void publishManifest(String urlPath, String version, Path tar, Path zip, String header) throws Exception {
+        String manifest = header
+                          + "format=1\n"
                           + "version=" + version + "\n"
                           + "tar_sha256=" + sha256Hex(tar) + "\n"
                           + "zip_sha256=" + sha256Hex(zip) + "\n";
