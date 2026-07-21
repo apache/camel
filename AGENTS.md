@@ -244,6 +244,42 @@ await().atMost(10, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() >= 2)
 - Use `untilAsserted` or `until` with a clear predicate — do not replace a sleep with a
   busy-wait loop.
 
+### Test Visibility: Drop `public` From Test Classes and Methods
+
+JUnit 5 does **not** require test classes or test methods to be `public` — package-private
+(the default, no modifier) is sufficient and preferred. Removing the unnecessary `public`
+qualifier reduces visual noise and follows modern JUnit 5 conventions.
+
+**Examples:**
+
+```java
+// Preferred — package-private (no modifier):
+class MyComponentTest extends CamelTestSupport {
+    @Test
+    void testSendMessage() { ... }
+
+    @Override
+    void configure() throws Exception { ... }
+}
+
+// Avoid — unnecessary public:
+public class MyComponentTest extends CamelTestSupport {
+    @Test
+    public void testSendMessage() { ... }
+}
+```
+
+**Rules:**
+
+- New test classes and test methods MUST NOT use the `public` modifier.
+- When modifying an existing test file, remove the `public` modifier from the class declaration
+  and from any test methods you touch. Do NOT sweep the entire file — only change what you are
+  already modifying.
+- `@BeforeAll`, `@AfterAll`, `@BeforeEach`, `@AfterEach`, and `@Override` methods follow the
+  same rule: drop `public` when adding or modifying them.
+- Do NOT create a standalone PR solely to remove `public` from test files in bulk — apply the
+  convention incrementally as part of other work.
+
 ### Issue Investigation (Before Implementation)
 
 Before implementing a fix for a JIRA issue, **thoroughly investigate** the issue's validity and context.
