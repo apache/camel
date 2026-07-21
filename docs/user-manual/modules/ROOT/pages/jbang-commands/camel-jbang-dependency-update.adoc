@@ -65,6 +65,7 @@ camel dependency update [options]
 | `--quarkus-version` | version of Quarkus Platform BOM; the default value is looked up in Quarkus Extension Registry |  | String
 | `--quiet` | Will be quiet, only print when error occurs | false | boolean
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
+| `--resource-dir,--resource-dirs` | Additional resource directories to include in src/main/resources (recursive, preserving structure) |  | List
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
 | `--scan-routes` | Sync dependencies from route definitions. Only manages org.apache.camel dependencies, preserving non-Camel dependencies. Removes unused Camel dependencies. |  | boolean
 | `--skip-plugins` | Skip plugins during export | false | boolean

@@ -207,6 +207,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
+    @CommandLine.Option(names = { "--resource-dir", "--resource-dirs" },
+                        description = "Additional resource directories to include in src/main/resources (recursive, preserving structure)",
+                        split = ",")
+    List<String> resourceDirs = new ArrayList<>();
+
     @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
                         description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI")
     boolean packageScanJars;
@@ -482,6 +487,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 "info",
                 verbose,
                 skipPlugins,
+                resourceDirs,
                 quarkusPlatformBoms.quarkusCamelBom().getGroupId(),
                 quarkusPlatformBoms.quarkusCamelBom().getArtifactId(),
                 quarkusPlatformBoms.quarkusCamelBom().getVersion());

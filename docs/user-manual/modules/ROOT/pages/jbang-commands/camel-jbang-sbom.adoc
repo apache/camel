@@ -66,6 +66,7 @@ camel sbom [options]
 | `--quarkus-version` | version of Quarkus Platform BOM; the default value is looked up in Quarkus Extension Registry |  | String
 | `--quiet` | Will be quiet, only print when error occurs | false | boolean
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
+| `--resource-dir,--resource-dirs` | Additional resource directories to include in src/main/resources (recursive, preserving structure) |  | List
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
 | `--sbom-format` | The SBOM format, possible values are cyclonedx or spdx | CYCLONEDX_FORMAT | String
 | `--sbom-output-format` | The SBOM output format, possible values are json or xml | SBOM_JSON_FORMAT | String
