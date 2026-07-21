@@ -23,9 +23,8 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
 public class OpenAIAudioTranslationVerboseMockTest extends CamelTestSupport {
 
@@ -57,10 +56,12 @@ public class OpenAIAudioTranslationVerboseMockTest extends CamelTestSupport {
         Exchange result = template.request("direct:translate-verbose",
                 e -> e.getIn().setBody(new byte[] { 0x00, 0x01, 0x02 }));
 
-        assertNotNull(result);
-        assertNull(result.getException());
-        assertEquals(TRANSLATION_TEXT, result.getMessage().getBody(String.class));
-        assertEquals(5.2, result.getMessage().getHeader(OpenAIConstants.AUDIO_DURATION, Double.class), 0.001);
-        assertEquals("fr", result.getMessage().getHeader(OpenAIConstants.AUDIO_DETECTED_LANGUAGE, String.class));
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo(TRANSLATION_TEXT);
+        assertThat(result.getMessage().getHeader(OpenAIConstants.AUDIO_DURATION, Double.class))
+                .isCloseTo(5.2, within(0.001));
+        assertThat(result.getMessage().getHeader(OpenAIConstants.AUDIO_DETECTED_LANGUAGE, String.class))
+                .isEqualTo("fr");
     }
 }

@@ -25,11 +25,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class OpenAIAudioSpeechMockTest extends CamelTestSupport {
 
@@ -66,28 +62,28 @@ public class OpenAIAudioSpeechMockTest extends CamelTestSupport {
     void testSpeechReturnsAudioBytes() {
         Exchange result = template.request("direct:speak", e -> e.getIn().setBody("Hello from Apache Camel"));
 
-        assertNotNull(result);
-        assertNull(result.getException());
-        assertArrayEquals(AUDIO_DATA, result.getMessage().getBody(byte[].class));
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(byte[].class)).isEqualTo(AUDIO_DATA);
     }
 
     @Test
     void testSpeechSetsContentType() {
         Exchange result = template.request("direct:speak", e -> e.getIn().setBody("Hello"));
 
-        assertNotNull(result);
-        assertNull(result.getException());
-        assertEquals("audio/mpeg", result.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getHeader(Exchange.CONTENT_TYPE)).isEqualTo("audio/mpeg");
     }
 
     @Test
     void testSpeechWavContentType() {
         Exchange result = template.request("direct:speak-wav", e -> e.getIn().setBody("Hello"));
 
-        assertNotNull(result);
-        assertNull(result.getException());
-        assertEquals("audio/wav", result.getMessage().getHeader(Exchange.CONTENT_TYPE));
-        assertArrayEquals(AUDIO_DATA, result.getMessage().getBody(byte[].class));
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getHeader(Exchange.CONTENT_TYPE)).isEqualTo("audio/wav");
+        assertThat(result.getMessage().getBody(byte[].class)).isEqualTo(AUDIO_DATA);
     }
 
     @Test
@@ -101,29 +97,29 @@ public class OpenAIAudioSpeechMockTest extends CamelTestSupport {
             e.getIn().setHeader(OpenAIConstants.SPEECH_INSTRUCTIONS, "Speak cheerfully");
         });
 
-        assertNotNull(result);
-        assertNull(result.getException());
-        assertArrayEquals(AUDIO_DATA, result.getMessage().getBody(byte[].class));
-        assertEquals("audio/flac", result.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(byte[].class)).isEqualTo(AUDIO_DATA);
+        assertThat(result.getMessage().getHeader(Exchange.CONTENT_TYPE)).isEqualTo("audio/flac");
     }
 
     @Test
     void testSpeechMissingModel() {
         Exchange result = template.request("direct:speak-no-model", e -> e.getIn().setBody("Hello"));
 
-        assertNotNull(result);
-        assertNotNull(result.getException());
-        assertTrue(result.getException() instanceof IllegalArgumentException);
-        assertTrue(result.getException().getMessage().contains("Speech model must be specified"));
+        assertThat(result).isNotNull();
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Speech model must be specified");
     }
 
     @Test
     void testSpeechMissingInput() {
         Exchange result = template.request("direct:speak", e -> e.getIn().setBody(null));
 
-        assertNotNull(result);
-        assertNotNull(result.getException());
-        assertTrue(result.getException() instanceof IllegalArgumentException);
-        assertTrue(result.getException().getMessage().contains("input text"));
+        assertThat(result).isNotNull();
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("input text");
     }
 }

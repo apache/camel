@@ -32,10 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class OpenAIAudioTranslationMockTest extends CamelTestSupport {
 
@@ -79,9 +76,9 @@ public class OpenAIAudioTranslationMockTest extends CamelTestSupport {
 
         Exchange result = template.request("direct:translate", e -> e.getIn().setBody(audioFile));
 
-        assertNotNull(result);
-        assertNull(result.getException());
-        assertEquals(TRANSLATION_TEXT, result.getMessage().getBody(String.class));
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo(TRANSLATION_TEXT);
     }
 
     @Test
@@ -90,9 +87,9 @@ public class OpenAIAudioTranslationMockTest extends CamelTestSupport {
 
         Exchange result = template.request("direct:translate", e -> e.getIn().setBody(audioBytes));
 
-        assertNotNull(result);
-        assertNull(result.getException());
-        assertEquals(TRANSLATION_TEXT, result.getMessage().getBody(String.class));
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo(TRANSLATION_TEXT);
     }
 
     @Test
@@ -101,9 +98,9 @@ public class OpenAIAudioTranslationMockTest extends CamelTestSupport {
 
         Exchange result = template.request("direct:translate", e -> e.getIn().setBody(audioStream));
 
-        assertNotNull(result);
-        assertNull(result.getException());
-        assertEquals(TRANSLATION_TEXT, result.getMessage().getBody(String.class));
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo(TRANSLATION_TEXT);
     }
 
     @Test
@@ -113,9 +110,9 @@ public class OpenAIAudioTranslationMockTest extends CamelTestSupport {
 
         Exchange result = template.request("direct:translate", e -> e.getIn().setBody(audioPath));
 
-        assertNotNull(result);
-        assertNull(result.getException());
-        assertEquals(TRANSLATION_TEXT, result.getMessage().getBody(String.class));
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo(TRANSLATION_TEXT);
     }
 
     @Test
@@ -129,9 +126,9 @@ public class OpenAIAudioTranslationMockTest extends CamelTestSupport {
             e.getIn().setHeader(OpenAIConstants.AUDIO_TEMPERATURE, 0.2);
         });
 
-        assertNotNull(result);
-        assertNull(result.getException());
-        assertEquals(TRANSLATION_TEXT, result.getMessage().getBody(String.class));
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo(TRANSLATION_TEXT);
     }
 
     @Test
@@ -151,9 +148,9 @@ public class OpenAIAudioTranslationMockTest extends CamelTestSupport {
 
         Exchange result = template.request("direct:translate-no-model", e -> e.getIn().setBody(audioBytes));
 
-        assertNotNull(result);
-        assertNotNull(result.getException());
-        assertTrue(result.getException() instanceof IllegalArgumentException);
-        assertTrue(result.getException().getMessage().contains("Audio model must be specified"));
+        assertThat(result).isNotNull();
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Audio model must be specified");
     }
 }
