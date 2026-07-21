@@ -519,6 +519,14 @@ The `camel infra list` table now sizes its `DESCRIPTION` column to the terminal 
 the `IMPLEMENTATION` and `SERVICE_DATA` columns with an ellipsis instead of letting the raw service
 data overflow the terminal. The complete, structured service data remains available via `--json`.
 
+=== camel-jsonpath
+
+The `writeAsString` option now correctly serializes single JSON object results (Maps) to a JSON String.
+Previously, a JsonPath expression evaluating to a JSON object (e.g. `$.args`) with `writeAsString=true`
+would return a `java.util.Map` with individually stringified values instead of a valid JSON String.
+If you were relying on the old behavior to split a Map result, change the expression to use a wildcard
+(e.g. `$.content.*` instead of `$.content`) to get a splittable list of JSON strings.
+
 === camel-aws2-kinesis - Fixed-shardId consumer no longer calls DescribeStream on every poll
 
 The Kinesis consumer with a configured `shardId` previously called the `DescribeStream` API on every
