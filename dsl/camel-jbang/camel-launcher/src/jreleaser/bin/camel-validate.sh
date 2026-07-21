@@ -103,12 +103,22 @@ done
 
 case "$COMMAND" in help) usage ;; esac
 
+case "$CHANNEL" in
+  stable|lts) ;;
+  *) echo "Error: --channel must be 'stable' or 'lts' (got '$CHANNEL')." >&2; usage ;;
+esac
+
+if [ "$CHANNEL" = "lts" ] && [ -z "$LTS_LINE" ]; then
+    echo "Error: --channel lts requires --lts-line X.Y." >&2
+    usage
+fi
+
 # ---------- sourcing ----------
 
 . "$LIB_DIR/assert-camel-cli.sh"
 
 # ---------- shared temp workspace ----------
-# Used by every validator (homebrew, sdkman); created once and cleaned on exit. Kept at script
+# Used by every validator (local, homebrew, sdkman); created once and cleaned on exit. Kept at script
 # scope (not local to a validator) so both functions and the EXIT trap can see it under 'set -u'.
 TMPDIR_BASE=$(mktemp -d)
 
@@ -285,10 +295,11 @@ validate_homebrew() {
         if echo "$brew_output" | grep -Eqi "no suitable java"; then
             # A missing/incompatible Java dependency is a host-resolution limitation, not a
             # defect in the generated formula; nothing was installed, so there is nothing
-            # left to validate.
+            # left to validate. Still propagate $rc: an audit failure recorded above is a real
+            # defect and must not be masked just because install itself couldn't proceed.
             echo "SKIP: homebrew install could not resolve a Java dependency on this host:"
             echo "$brew_output"
-            return 0
+            return "$rc"
         fi
         if [ "${CAMEL_PACKAGE_TEST_MODE:-}" != "true" ] \
                 && echo "$brew_output" | grep -Eqi "Failed to download resource|curl: \("; then
@@ -296,10 +307,11 @@ validate_homebrew() {
             # its Central coordinate, the fetch cannot succeed regardless of whether the formula
             # is correct, so treat it as an environment limitation. In test mode the url was
             # rewritten to a local file:// archive above, so a download failure there is a
-            # genuine defect and falls through to FAIL below.
+            # genuine defect and falls through to FAIL below. Propagate $rc for the same reason
+            # as the Java-dependency SKIP above: an already-recorded audit failure must survive.
             echo "SKIP: homebrew install could not download the release artifact (not published yet, expected for an unpublished release):"
             echo "$brew_output"
-            return 0
+            return "$rc"
         fi
         echo "FAIL: homebrew install failed (exit $install_rc):"
         echo "$brew_output"
@@ -328,7 +340,9 @@ validate_homebrew() {
     else
         camv_output=$(camel --version 2>/dev/null) || true
         if [ -z "$camv_output" ]; then
-            echo "FAIL: 'camel --version' returned empty output after install"
+            local camv_err=""
+            camv_err=$(camel --version 2>&1 >/dev/null) || true
+            echo "FAIL: 'camel --version' returned empty output after install${camv_err:+ (stderr: $camv_err)}"
             rc=1
         else
             assert_camel_version "$camv_output" "$expected_version" && \
@@ -342,11 +356,14 @@ validate_homebrew() {
     if ! command -v camel >/dev/null 2>&1; then
         echo "FAIL: camel not available for init test (install reported success but binary is missing)"
         rc=1
-    elif ! (cd "$init_dir" && camel init hello.java >/dev/null 2>&1); then
-        echo "FAIL: camel init failed after a successful homebrew install"
-        rc=1
     else
-        assert_init_content "$init_dir" "hello.java" || rc=1
+        local init_err=""
+        if ! init_err=$(cd "$init_dir" && camel init hello.java 2>&1 >/dev/null); then
+            echo "FAIL: camel init failed after a successful homebrew install${init_err:+: $init_err}"
+            rc=1
+        else
+            assert_init_content "$init_dir" "hello.java" || rc=1
+        fi
     fi
 
     # Step 5: Uninstall (tap-qualified name, matching the install above; the tap itself is
@@ -419,17 +436,33 @@ validate_local_archive() {
     local camv_output=""
     camv_output=$("$camel_sh" --version 2>/dev/null) || true
     if [ -z "$camv_output" ]; then
-        echo "FAIL: 'camel.sh --version' returned empty output"
+        local camv_err=""
+        camv_err=$("$camel_sh" --version 2>&1 >/dev/null) || true
+        echo "FAIL: 'camel.sh --version' returned empty output${camv_err:+ (stderr: $camv_err)}"
         rc=1
     else
-        assert_camel_version "$camv_output" "$RESOLVED_VERSION" && \
-            echo "PASS: local archive version OK" || rc=1
+        # In test mode this archive can be a byte-for-byte copy of a real SNAPSHOT build, staged
+        # under a -SNAPSHOT-stripped filename (see the CI workflow's "stage a synthetic release
+        # version" step, which `cp`s the archive rather than rebuilding it). The binary's embedded
+        # catalog version is whatever the real build produced, so it genuinely reports
+        # "$RESOLVED_VERSION-SNAPSHOT" there, not "$RESOLVED_VERSION" - confirmed empirically
+        # against a real build. A non-test release never runs in a SNAPSHOT state, so only test
+        # mode accepts the suffixed form.
+        local actual_ver
+        actual_ver=$(echo "$camv_output" | head -n 1 | awk '{print $NF}')
+        if [ "${CAMEL_PACKAGE_TEST_MODE:-}" = "true" ] && [ "$actual_ver" = "${RESOLVED_VERSION}-SNAPSHOT" ]; then
+            echo "PASS: local archive version OK (test-mode staged archive reports its real build version '$actual_ver')"
+        else
+            assert_camel_version "$camv_output" "$RESOLVED_VERSION" && \
+                echo "PASS: local archive version OK" || rc=1
+        fi
     fi
 
     local init_dir="$TMPDIR_BASE/local-archive-init"
     mkdir -p "$init_dir"
-    if ! (cd "$init_dir" && "$camel_sh" init hello.java >/dev/null 2>&1); then
-        echo "FAIL: camel init failed against the locally extracted archive"
+    local init_err=""
+    if ! init_err=$(cd "$init_dir" && "$camel_sh" init hello.java 2>&1 >/dev/null); then
+        echo "FAIL: camel init failed against the locally extracted archive${init_err:+: $init_err}"
         rc=1
     else
         assert_init_content "$init_dir" "hello.java" || rc=1
@@ -517,10 +550,11 @@ validate_sdkman() {
     local init_dir="$TMPDIR_BASE/init-test-sdkman"
     mkdir -p "$init_dir"
     if command -v camel >/dev/null 2>&1; then
-        if cd "$init_dir" && camel init hello.java >/dev/null 2>&1; then
+        local init_err=""
+        if init_err=$(cd "$init_dir" && camel init hello.java 2>&1 >/dev/null); then
             assert_init_content "$init_dir" "hello.java" || rc=1
         else
-            echo "WARN: camel init skipped (not installed via SDKMAN)"
+            echo "WARN: camel init skipped (not installed via SDKMAN)${init_err:+ (stderr: $init_err)}"
         fi
     else
         echo "WARN: camel not available for init test via SDKMAN (skipped)"

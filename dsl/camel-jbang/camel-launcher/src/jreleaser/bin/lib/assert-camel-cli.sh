@@ -20,7 +20,7 @@
 # Shared POSIX assertions for camel-validate.sh / assertion library tests
 #
 # Usage (caller must source this file):
-#   assert_camel_version <actual_output> <expected_version>    -- exits 1 on mismatch
+#   assert_camel_version <actual_output> <expected_version>    -- returns 1 on mismatch
 #   assert_init_content <directory> <filename>                 -- verifies content matches fixture
 #   assert_uninstalled <path_or_prefix ...>                    -- each must not exist after uninstall
 #   assert_camel_cli <camel-cmd> <workdir> [expected-version] -- full version+init assertion wrapper
@@ -104,7 +104,9 @@ assert_camel_cli() {
     local camv_output
     camv_output=$("$CAMELCMD" --version 2>/dev/null) || true
     if [ -z "$camv_output" ]; then
-        echo "WARN: camel version returned empty output (skipped)"
+        local camv_err=""
+        camv_err=$("$CAMELCMD" --version 2>&1 >/dev/null) || true
+        echo "WARN: camel version returned empty output (skipped)${camv_err:+ (stderr: $camv_err)}"
     elif [ -n "$EXPECTED_VERSION" ]; then
         assert_camel_version "$camv_output" "$EXPECTED_VERSION" || return 1
     else
@@ -112,21 +114,29 @@ assert_camel_cli() {
     fi
 
     # Step 2: init content check. Uses "hello.java" (not an arbitrary name) because the
-    # fixture's class name is derived from this filename, same as the real POSIX validators.
+    # fixture's class name is derived from this filename, same as the real POSIX validators. A
+    # failing init is a genuine defect, not something to warn past - matches the inline validators
+    # in camel-validate.sh, which FAIL on the same condition.
     cd "$WORKDIR" || { echo "FAIL: cannot cd to $WORKDIR"; return 1; }
     if [ -f hello.java ]; then rm -f hello.java; fi
-    if "$CAMELCMD" init hello.java >/dev/null 2>&1; then
+    local init_err=""
+    if init_err=$("$CAMELCMD" init hello.java 2>&1 >/dev/null); then
         assert_init_content "$WORKDIR" "hello.java" || { echo "FAIL: generated route missing expected content"; cd "$_orig_dir" || exit; return 1; }
     else
-        echo "WARN: camel init failed (skipped)"
+        echo "FAIL: camel init failed${init_err:+: $init_err}"
+        cd "$_orig_dir" || exit
+        return 1
     fi
     cd "$_orig_dir" || exit
 
-    # Step 3: assert the executable exists
+    # Step 3: assert the executable exists. A binary that isn't executable at this point is a
+    # real defect (everything above only worked because a shell can still run a non-executable
+    # script via an interpreter shebang search in some environments), not a soft skip.
     if [ -x "$CAMELCMD" ]; then
         assertion_pass "camel CLI executable found"
     else
-        echo "WARN: camel CLI not executable at '$CAMELCMD' (skipped)"
+        echo "FAIL: camel CLI not executable at '$CAMELCMD'"
+        return 1
     fi
 
     return 0

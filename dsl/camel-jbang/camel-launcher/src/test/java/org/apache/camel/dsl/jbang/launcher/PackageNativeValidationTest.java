@@ -184,6 +184,32 @@ class PackageNativeValidationTest {
     }
 
     @Test
+    void allDispatcherAggregatesAFailureAcrossValidators(@TempDir Path target) throws Exception {
+        // Unlike dispatcherPropagatesValidatorFailure above (which calls the `local` validator
+        // directly), this drives main()'s actual `all` dispatch: validate_local_archive || rc=1;
+        // validate_homebrew || rc=1; validate_sdkman || rc=1. Nothing is staged for homebrew/SDKMAN,
+        // so they SKIP - proving the local FAIL doesn't short-circuit the remaining legs and still
+        // survives to the aggregated exit code.
+        stageLocalArchive(target, "9.9.9");
+        Result r = sh(null, List.of(
+                "ASSERT_INIT_FIXTURE=" + FIXTURE.toAbsolutePath(),
+                "CAMEL_PACKAGE_TEST_MODE=true",
+                "CAMEL_PACKAGE_TEST_VERSION=" + VERSION,
+                "CAMEL_VALIDATE_TARGET_DIR=" + target.toAbsolutePath()),
+                "/bin/bash " + VALIDATE.toAbsolutePath() + " all");
+
+        assertThat(r.exit()).as(r.out()).isNotZero();
+        assertThat(r.out())
+                .contains("camel version mismatch")
+                .contains("FAIL")
+                .contains("SKIP: homebrew formula not found")
+                // `sdk` is a shell function sourced from sdkman-init.sh, not a PATH binary, so a bare
+                // subprocess (this test's `sh`, and CI's separate "Run POSIX validator unit tests" step)
+                // always hits the host-gate SKIP rather than the descriptor-not-found one.
+                .contains("SKIP: sdkman not available");
+    }
+
+    @Test
     void assertUninstalledFlagsLeftoverButPassesWhenAbsent(@TempDir Path tmp) throws Exception {
         // Exercise the multi-arg assert_uninstalled helper directly: all-absent passes, a leftover fails.
         Path present = Files.writeString(tmp.resolve("leftover"), "x");
@@ -247,6 +273,38 @@ class PackageNativeValidationTest {
         assertThat(r.out())
                 .contains("SKIP: homebrew install could not resolve a Java dependency")
                 .doesNotContain("FAIL");
+    }
+
+    @Test
+    void homebrewAuditFailureSurvivesASubsequentInstallSkip(@TempDir Path tmp) throws Exception {
+        // A failed `brew audit --strict` is a real formula defect (see
+        // homebrewValidatorFailsWhenAuditStrictReportsIssues above). If install *also* hits an
+        // unrelated environment limitation (missing Java) afterwards, that SKIP must not erase the
+        // already-recorded audit failure - the two conditions are independent and both can be true at
+        // once. Pins the fix for validate_homebrew's SKIP branches returning the accumulated $rc
+        // instead of an unconditional 0.
+        Path fakeBinDir = Files.createDirectory(tmp.resolve("fake-bin"));
+        writeFakeBrew(fakeBinDir.resolve("brew"));
+        Path target = Files.createDirectory(tmp.resolve("target"));
+        Path tapDir = Files.createDirectory(tmp.resolve("tap"));
+        stageHomebrewFormula(target, "camel-launcher-9.9.9-bin.tar.gz");
+
+        Result r = sh(null, List.of(
+                "PATH=" + fakeBinDir.toAbsolutePath() + File.pathSeparator + System.getenv("PATH"),
+                "CAMEL_PACKAGE_TEST_MODE=true",
+                "CAMEL_PACKAGE_TEST_VERSION=" + VERSION,
+                "CAMEL_VALIDATE_TARGET_DIR=" + target.toAbsolutePath(),
+                "FAKE_BREW_TAP_DIR=" + tapDir.toAbsolutePath(),
+                "FAKE_BREW_AUDIT_RC=1",
+                "FAKE_BREW_AUDIT_OUTPUT=Error: FormulaAudit/Foo: fake audit issue",
+                "FAKE_BREW_INSTALL_RC=1",
+                "FAKE_BREW_INSTALL_OUTPUT=Error: no suitable java version found, please install java"),
+                "/bin/bash " + VALIDATE.toAbsolutePath() + " homebrew");
+
+        assertThat(r.exit()).as(r.out()).isNotZero();
+        assertThat(r.out())
+                .contains("FAIL: homebrew audit --strict reported issues (exit 1)")
+                .contains("SKIP: homebrew install could not resolve a Java dependency");
     }
 
     // ---------- helpers ----------
