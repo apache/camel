@@ -22,27 +22,29 @@ import org.apache.camel.spi.ThreadPoolProfile;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.Abort;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ThreadsInvalidConfigTest extends ContextTestSupport {
+class ThreadsInvalidConfigTest extends ContextTestSupport {
 
     final ThreadPoolProfile threadPoolProfile = new ThreadPoolProfile("poll");
 
     @Test
-    public void testCreateRouteIfNoInvalidOptions() {
-        assertDoesNotThrow(() -> context.addRoutes(new RouteBuilder() {
+    void testCreateRouteIfNoInvalidOptions() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
                 from("direct:start").threads().executorService(threadPoolProfile.getId()).to("mock:test");
             }
-        }));
+        });
+        assertEquals(1, context.getRoutes().size(), "Route should be created when no invalid options are set");
     }
 
     @Test
-    public void testFailIfThreadNameAndExecutorServiceRef() {
+    void testFailIfThreadNameAndExecutorServiceRef() {
         Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -52,24 +54,24 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
             }
         }));
 
-        boolean b = exception.getCause() instanceof IllegalArgumentException;
-        assertTrue(b);
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
         assertTrue(exception.getCause().getMessage().startsWith("ThreadName"));
     }
 
     @Test
-    public void testPassIfThreadNameWithoutExecutorServiceRef() {
-        assertDoesNotThrow(() -> context.addRoutes(new RouteBuilder() {
+    void testPassIfThreadNameWithoutExecutorServiceRef() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
                 from("direct:start").threads().threadName("foo").to("mock:test");
             }
-        }));
+        });
+        assertEquals(1, context.getRoutes().size(), "Route should be created with threadName and no executorServiceRef");
     }
 
     @Test
-    public void testFailIfPoolSizeAndExecutorServiceRef() {
+    void testFailIfPoolSizeAndExecutorServiceRef() {
         Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -78,13 +80,12 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
             }
         }));
 
-        boolean b = exception.getCause() instanceof IllegalArgumentException;
-        assertTrue(b);
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
         assertTrue(exception.getCause().getMessage().startsWith("PoolSize"));
     }
 
     @Test
-    public void testFailIfMaxPoolSizeAndExecutorServiceRef() {
+    void testFailIfMaxPoolSizeAndExecutorServiceRef() {
         Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -93,13 +94,12 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
             }
         }));
 
-        boolean b = exception.getCause() instanceof IllegalArgumentException;
-        assertTrue(b);
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
         assertTrue(exception.getCause().getMessage().startsWith("MaxPoolSize"));
     }
 
     @Test
-    public void testFailIfKeepAliveTimeAndExecutorServiceRef() {
+    void testFailIfKeepAliveTimeAndExecutorServiceRef() {
         Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -109,13 +109,12 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
             }
         }));
 
-        boolean b = exception.getCause() instanceof IllegalArgumentException;
-        assertTrue(b);
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
         assertTrue(exception.getCause().getMessage().startsWith("KeepAliveTime"));
     }
 
     @Test
-    public void testFailIfMaxQueueSizeAndExecutorServiceRef() {
+    void testFailIfMaxQueueSizeAndExecutorServiceRef() {
         Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -125,13 +124,12 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
             }
         }));
 
-        boolean b = exception.getCause() instanceof IllegalArgumentException;
-        assertTrue(b);
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
         assertTrue(exception.getCause().getMessage().startsWith("MaxQueueSize"));
     }
 
     @Test
-    public void testFailIfRejectedPolicyAndExecutorServiceRef() {
+    void testFailIfRejectedPolicyAndExecutorServiceRef() {
         Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -141,8 +139,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
             }
         }));
 
-        boolean b = exception.getCause() instanceof IllegalArgumentException;
-        assertTrue(b);
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
         assertTrue(exception.getCause().getMessage().startsWith("RejectedPolicy"));
     }
 

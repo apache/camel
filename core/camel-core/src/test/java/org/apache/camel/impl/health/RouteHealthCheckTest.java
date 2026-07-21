@@ -27,12 +27,12 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class RouteHealthCheckTest {
+class RouteHealthCheckTest {
 
     private static final String TEST_ROUTE_ID = "Test-Route";
 
     @Test
-    public void testDoCallDoesNotHaveNPEWhenJmxDisabled() throws Exception {
+    void testDoCallDoesNotHaveNPEWhenJmxDisabled() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -56,7 +56,7 @@ public class RouteHealthCheckTest {
     }
 
     @Test
-    public void testHealthCheckIsUpWhenRouteIsNotAutoStartup() throws Exception {
+    void testHealthCheckIsUpWhenRouteIsNotAutoStartup() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override

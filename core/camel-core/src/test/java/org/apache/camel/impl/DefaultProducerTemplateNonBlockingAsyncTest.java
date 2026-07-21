@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 @Timeout(20)
-public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducerTemplateAsyncTest {
+class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducerTemplateAsyncTest {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -45,7 +45,7 @@ public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducer
     }
 
     @Test
-    public void testRunningInSameThread() {
+    void testRunningInSameThread() {
         Thread originalThread = Thread.currentThread();
         CompletableFuture<Exchange> future = template.asyncSend("direct:echo", e -> {
             assertSame(originalThread, Thread.currentThread());

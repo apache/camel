@@ -29,12 +29,12 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-public class ClassicUuidGeneratorTest {
+class ClassicUuidGeneratorTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClassicUuidGeneratorTest.class);
 
     @Test
-    public void testGenerateUUID() {
+    void testGenerateUUID() {
         ClassicUuidGenerator uuidGenerator = new ClassicUuidGenerator();
 
         String firstUUID = uuidGenerator.generateUuid();
@@ -44,7 +44,7 @@ public class ClassicUuidGeneratorTest {
     }
 
     @Test
-    public void testPerformance() {
+    void testPerformance() {
         ClassicUuidGenerator uuidGenerator = new ClassicUuidGenerator();
         StopWatch watch = new StopWatch();
         int count = 500000;
@@ -61,7 +61,7 @@ public class ClassicUuidGeneratorTest {
     }
 
     @Test
-    public void testSanitizeHostName() {
+    void testSanitizeHostName() {
         assertEquals("somehost.lan", ClassicUuidGenerator.sanitizeHostName("somehost.lan"));
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         assertEquals("otherhost.lan", ClassicUuidGenerator.sanitizeHostName("other\u0E08host.lan"));

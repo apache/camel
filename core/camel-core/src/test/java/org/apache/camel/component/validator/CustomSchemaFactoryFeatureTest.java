@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
+class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     // Need to bind the CustomerSchemaFactory
     @Override
     protected Registry createCamelRegistry() throws Exception {
@@ -42,7 +42,7 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
 
     // just inject the SchemaFactory as we want
     @Test
-    public void testCustomSchemaFactory() throws Exception {
+    void testCustomSchemaFactory() throws Exception {
         SchemaFactory registeredFactory = (SchemaFactory) context.getRegistry().lookupByName("MySchemaFactory");
 
         ValidatorComponent v = new ValidatorComponent();

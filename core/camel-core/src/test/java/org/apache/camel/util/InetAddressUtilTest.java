@@ -22,10 +22,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class InetAddressUtilTest {
+class InetAddressUtilTest {
 
     @Test
-    public void testGetLocalHostName() {
+    void testGetLocalHostName() {
         try {
             String name = InetAddressUtil.getLocalHostName();
             assertNotNull(name);
@@ -35,7 +35,7 @@ public class InetAddressUtilTest {
     }
 
     @Test
-    public void testGetLocalHostNameSafe() {
+    void testGetLocalHostNameSafe() {
         assertNotNull(InetAddressUtil.getLocalHostNameSafe());
     }
 }

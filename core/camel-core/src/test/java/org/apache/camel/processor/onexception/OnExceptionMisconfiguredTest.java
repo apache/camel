@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  *
  */
-public class OnExceptionMisconfiguredTest extends ContextTestSupport {
+class OnExceptionMisconfiguredTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -37,7 +37,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    public void testOnExceptionMisconfigured() throws Exception {
+    void testOnExceptionMisconfigured() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -56,7 +56,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    public void testOnExceptionMisconfigured2() throws Exception {
+    void testOnExceptionMisconfigured2() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -75,7 +75,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    public void testOnExceptionMisconfigured3() throws Exception {
+    void testOnExceptionMisconfigured3() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -94,7 +94,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    public void testOnExceptionMisconfigured4() throws Exception {
+    void testOnExceptionMisconfigured4() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -113,7 +113,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    public void testOnExceptionMisconfigured5() throws Exception {
+    void testOnExceptionMisconfigured5() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -131,78 +131,73 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    public void testOnExceptionNotMisconfigured() {
-        assertDoesNotThrow(() -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    onException().handled(true);
+    void testOnExceptionNotMisconfigured() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                onException().handled(true);
 
-                    from("direct:start").to("mock:result");
-                }
-            });
-            context.start();
+                from("direct:start").to("mock:result");
+            }
         });
+        context.start();
+        assertEquals(1, context.getRoutes().size());
     }
 
     @Test
-    public void testOnExceptionNotMisconfigured2() {
-        assertDoesNotThrow(() -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    onException().continued(true);
+    void testOnExceptionNotMisconfigured2() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                onException().continued(true);
 
-                    from("direct:start").to("mock:result");
-                }
-            });
-            context.start();
+                from("direct:start").to("mock:result");
+            }
         });
+        context.start();
+        assertEquals(1, context.getRoutes().size());
     }
 
     @Test
-    public void testOnExceptionNotMisconfigured3() {
-        assertDoesNotThrow(() -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    onException(Exception.class).handled(true);
+    void testOnExceptionNotMisconfigured3() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                onException(Exception.class).handled(true);
 
-                    from("direct:start").to("mock:result");
-                }
-            });
-            context.start();
+                from("direct:start").to("mock:result");
+            }
         });
+        context.start();
+        assertEquals(1, context.getRoutes().size());
     }
 
     @Test
-    public void testOnExceptionNotMisconfigured4() {
-        assertDoesNotThrow(() -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    onException(Exception.class).continued(true);
+    void testOnExceptionNotMisconfigured4() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                onException(Exception.class).continued(true);
 
-                    from("direct:start").to("mock:result");
-                }
-            });
-            context.start();
+                from("direct:start").to("mock:result");
+            }
         });
+        context.start();
+        assertEquals(1, context.getRoutes().size());
     }
 
     @Test
-    public void testOnExceptionNotMisconfigured5() {
-        assertDoesNotThrow(() -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start").onException(SOAPException.class).onException(IOException.class).to("mock:error")
-                            .end()
-                            .to("mock:result");
-                }
-            });
-            context.start();
+    void testOnExceptionNotMisconfigured5() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").onException(SOAPException.class).onException(IOException.class).to("mock:error")
+                        .end()
+                        .to("mock:result");
+            }
         });
+        context.start();
+        assertEquals(1, context.getRoutes().size());
     }
 
 }

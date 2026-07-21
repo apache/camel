@@ -51,10 +51,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XmlConverterTest extends ContextTestSupport {
+class XmlConverterTest extends ContextTestSupport {
 
     @Test
-    public void testToResultNoSource() throws Exception {
+    void testToResultNoSource() throws Exception {
         XmlConverter conv = new XmlConverter();
         // Should handle null source gracefully (returns immediately without transforming)
         conv.toResult(null, null);
@@ -63,7 +63,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToBytesSource() {
+    void testToBytesSource() {
         XmlConverter conv = new XmlConverter();
         BytesSource bs = conv.toBytesSource("<foo>bar</foo>".getBytes());
         assertNotNull(bs);
@@ -71,7 +71,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStringFromSourceNoSource() throws Exception {
+    void testToStringFromSourceNoSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         Source source = null;
@@ -80,7 +80,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStringWithBytesSource() throws Exception {
+    void testToStringWithBytesSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         Source source = conv.toBytesSource("<foo>bar</foo>".getBytes());
@@ -89,7 +89,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStringWithDocument() throws Exception {
+    void testToStringWithDocument() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         Document document = conv.createDocument();
@@ -102,7 +102,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStringWithDocumentSourceOutputProperties() throws Exception {
+    void testToStringWithDocumentSourceOutputProperties() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         Document document = conv.createDocument();
@@ -118,7 +118,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToSource() throws Exception {
+    void testToSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         Source source = conv.toSource("<foo>bar</foo>");
@@ -127,7 +127,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToSourceUsingTypeConverter() {
+    void testToSourceUsingTypeConverter() {
         Source source = context.getTypeConverter().convertTo(Source.class, "<foo>bar</foo>");
         String out = context.getTypeConverter().convertTo(String.class, source);
         assertEquals("<foo>bar</foo>", out);
@@ -139,7 +139,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToByteArrayWithExchange() throws Exception {
+    void testToByteArrayWithExchange() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         XmlConverter conv = new XmlConverter();
 
@@ -149,7 +149,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToByteArrayWithNoExchange() throws Exception {
+    void testToByteArrayWithNoExchange() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         Source source = conv.toBytesSource("<foo>bar</foo>".getBytes());
@@ -158,7 +158,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDomSourceByDomSource() throws Exception {
+    void testToDomSourceByDomSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         DOMSource source = conv.toDOMSource("<foo>bar</foo>");
@@ -167,7 +167,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDomSourceByByteArray() throws Exception {
+    void testToDomSourceByByteArray() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         byte[] bytes = "<foo>bar</foo>".getBytes();
@@ -179,7 +179,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDomSourceBySaxSource() throws Exception {
+    void testToDomSourceBySaxSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
@@ -190,7 +190,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDomSourceByStAXSource() throws Exception {
+    void testToDomSourceByStAXSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         // because of https://bugs.openjdk.java.net/show_bug.cgi?id=100228, we
@@ -203,7 +203,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDomSourceByCustomSource() throws Exception {
+    void testToDomSourceByCustomSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         Source dummy = new Source() {
@@ -220,7 +220,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToSaxSourceByInputStream() throws Exception {
+    void testToSaxSourceByInputStream() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<foo>bar</foo>");
@@ -231,7 +231,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStAXSourceByInputStream() throws Exception {
+    void testToStAXSourceByInputStream() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<foo>bar</foo>");
@@ -242,7 +242,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToSaxSourceFromFile() throws Exception {
+    void testToSaxSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         template.sendBodyAndHeader(fileUri(), "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
@@ -254,7 +254,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStAXSourceFromFile() throws Exception {
+    void testToStAXSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         template.sendBodyAndHeader(fileUri(), "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
@@ -266,7 +266,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToSaxSourceByDomSource() throws Exception {
+    void testToSaxSourceByDomSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         DOMSource source = conv.toDOMSource("<foo>bar</foo>");
@@ -277,7 +277,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToSaxSourceBySaxSource() throws Exception {
+    void testToSaxSourceBySaxSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
@@ -286,7 +286,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToSaxSourceByCustomSource() throws Exception {
+    void testToSaxSourceByCustomSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         Source dummy = new Source() {
@@ -303,7 +303,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStreamSourceByFile() throws Exception {
+    void testToStreamSourceByFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         File file = new File("org/apache/camel/converter/stream/test.xml");
@@ -313,7 +313,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStreamSourceByStreamSource() throws Exception {
+    void testToStreamSourceByStreamSource() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         XmlConverter conv = new XmlConverter();
 
@@ -323,7 +323,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStreamSourceByDomSource() throws Exception {
+    void testToStreamSourceByDomSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         DOMSource source = conv.toDOMSource("<foo>bar</foo>");
@@ -334,7 +334,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStreamSourceBySaxSource() throws Exception {
+    void testToStreamSourceBySaxSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
@@ -345,7 +345,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStreamSourceByStAXSource() throws Exception {
+    void testToStreamSourceByStAXSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         StAXSource source = conv.toStAXSource("<foo>bar</foo>", null);
@@ -356,7 +356,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStreamSourceByCustomSource() throws Exception {
+    void testToStreamSourceByCustomSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         Source dummy = new Source() {
@@ -373,7 +373,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStreamSourceByInputStream() throws Exception {
+    void testToStreamSourceByInputStream() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<foo>bar</foo>");
@@ -383,7 +383,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStreamSourceByReader() throws Exception {
+    void testToStreamSourceByReader() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         Reader reader = context.getTypeConverter().convertTo(Reader.class, "<foo>bar</foo>");
@@ -393,7 +393,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStreamSourceByByteArray() throws Exception {
+    void testToStreamSourceByByteArray() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         XmlConverter conv = new XmlConverter();
 
@@ -404,7 +404,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToStreamSourceByByteBuffer() throws Exception {
+    void testToStreamSourceByByteBuffer() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         XmlConverter conv = new XmlConverter();
 
@@ -415,7 +415,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToReaderFromSource() throws Exception {
+    void testToReaderFromSource() throws Exception {
         XmlConverter conv = new XmlConverter();
         SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
 
@@ -425,7 +425,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDomSourceFromInputStream() throws Exception {
+    void testToDomSourceFromInputStream() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<foo>bar</foo>");
@@ -435,7 +435,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDomSourceFromFile() throws Exception {
+    void testToDomSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         template.sendBodyAndHeader(fileUri(), "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
@@ -447,7 +447,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDomElement() throws Exception {
+    void testToDomElement() throws Exception {
         XmlConverter conv = new XmlConverter();
         SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
 
@@ -457,7 +457,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDomElementFromDocumentNode() throws Exception {
+    void testToDomElementFromDocumentNode() throws Exception {
         XmlConverter conv = new XmlConverter();
         Document doc = context.getTypeConverter().convertTo(Document.class,
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
@@ -468,7 +468,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDomElementFromElementNode() throws Exception {
+    void testToDomElementFromElementNode() throws Exception {
         XmlConverter conv = new XmlConverter();
         Document doc = context.getTypeConverter().convertTo(Document.class,
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
@@ -479,7 +479,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDocumentFromBytes() throws Exception {
+    void testToDocumentFromBytes() throws Exception {
         XmlConverter conv = new XmlConverter();
         byte[] bytes = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>".getBytes();
 
@@ -489,7 +489,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDocumentFromInputStream() throws Exception {
+    void testToDocumentFromInputStream() throws Exception {
         XmlConverter conv = new XmlConverter();
         InputStream is = context.getTypeConverter().convertTo(InputStream.class,
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
@@ -500,7 +500,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToInputStreamFromDocument() throws Exception {
+    void testToInputStreamFromDocument() throws Exception {
         XmlConverter conv = new XmlConverter();
         Document doc = context.getTypeConverter().convertTo(Document.class,
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
@@ -511,7 +511,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToInputStreamNonAsciiFromDocument() throws Exception {
+    void testToInputStreamNonAsciiFromDocument() throws Exception {
         XmlConverter conv = new XmlConverter();
         Document doc = context.getTypeConverter().convertTo(Document.class,
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>\u99f1\u99ddb\u00e4r</foo>");
@@ -522,7 +522,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDocumentFromFile() throws Exception {
+    void testToDocumentFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
         File file = new File("src/test/resources/org/apache/camel/converter/stream/test.xml");
 
@@ -533,7 +533,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToInputStreamByDomSource() throws Exception {
+    void testToInputStreamByDomSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         DOMSource source = conv.toDOMSource("<foo>bar</foo>");
@@ -545,7 +545,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToInputStreamNonAsciiByDomSource() throws Exception {
+    void testToInputStreamNonAsciiByDomSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         DOMSource source = conv.toDOMSource("<foo>\u99f1\u99ddb\u00e4r</foo>");
@@ -557,7 +557,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToInputSource() {
+    void testToInputSource() {
         XmlConverter conv = new XmlConverter();
 
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<foo>bar</foo>");
@@ -567,7 +567,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToInputSourceFromFile() throws Exception {
+    void testToInputSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
         File file = new File("src/test/resources/org/apache/camel/converter/stream/test.xml");
 
@@ -577,7 +577,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testOutOptionsFromCamelContext() throws Exception {
+    void testOutOptionsFromCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context);
         // shows how to set the OutputOptions from camelContext
@@ -594,7 +594,7 @@ public class XmlConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNodeListToNode() {
+    void testNodeListToNode() {
         Document document = context.getTypeConverter().convertTo(Document.class,
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<foo><hello>Hello World</hello></foo>");
 

@@ -34,14 +34,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Unit test for file producer option tempPrefix
  */
-public class FileProduceTempPrefixTest extends ContextTestSupport {
+class FileProduceTempPrefixTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME_1 = "hello" + UUID.randomUUID() + ".txt";
     private static final String TEST_FILE_NAME_2 = "claus" + UUID.randomUUID() + ".txt";
 
     public static final String FILE_QUERY = "?tempPrefix=inprogress.";
 
     @Test
-    public void testCreateTempFileName() throws Exception {
+    void testCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUri(FILE_QUERY));
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
@@ -52,7 +52,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCreateTempFileNameUsingComplexName() throws Exception {
+    void testCreateTempFileNameUsingComplexName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUri(FILE_QUERY));
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
@@ -63,7 +63,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNoPathCreateTempFileName() throws Exception {
+    void testNoPathCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUri(FILE_QUERY));
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
@@ -74,14 +74,14 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     }
 
     @Test
-    public void testTempPrefix() {
+    void testTempPrefix() {
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME_1);
 
         assertFileExists(testFile(TEST_FILE_NAME_1));
     }
 
     @Test
-    public void testTempPrefixUUIDFilename() throws Exception {
+    void testTempPrefixUUIDFilename() throws Exception {
         template.sendBody("direct:a", "Bye World");
 
         // When no FILE_NAME header is set, the producer creates a file with an auto-generated UUID name

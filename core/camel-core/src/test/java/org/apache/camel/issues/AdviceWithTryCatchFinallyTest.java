@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.AdviceWith.adviceWith;
 
-public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
+class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -31,7 +31,7 @@ public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAdviceTryCatchFinally() throws Exception {
+    void testAdviceTryCatchFinally() throws Exception {
         context.addRoutes(createRouteBuilder());
 
         adviceWith(context, "my-route", a -> a.weaveById("replace-me")

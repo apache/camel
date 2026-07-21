@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
 @Deprecated(since = "4.19.0")
-public class MDCErrorHandlerTest extends ContextTestSupport {
+class MDCErrorHandlerTest extends ContextTestSupport {
 
     @Test
-    public void testMDC() throws Exception {
+    void testMDC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:dead");
         mock.expectedMessageCount(1);
 

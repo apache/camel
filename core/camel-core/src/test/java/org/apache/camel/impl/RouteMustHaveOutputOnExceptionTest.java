@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
+class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -31,7 +31,7 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
     }
 
     @Test
-    public void testValid() throws Exception {
+    void testValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -51,7 +51,7 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
     }
 
     @Test
-    public void testInValid() throws Exception {
+    void testInValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {

@@ -23,11 +23,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class TraceInterceptorTest extends ContextTestSupport {
+class TraceInterceptorTest extends ContextTestSupport {
 
     // START SNIPPET: e1
     @Test
-    public void testSendingSomeMessages() throws Exception {
+    void testSendingSomeMessages() throws Exception {
         MockEndpoint mockFoo = getMockEndpoint("mock:foo");
         mockFoo.expectedMessageCount(2);
 

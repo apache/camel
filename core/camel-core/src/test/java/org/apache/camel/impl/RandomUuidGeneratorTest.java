@@ -30,11 +30,11 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-public class RandomUuidGeneratorTest {
+class RandomUuidGeneratorTest {
     private static final Logger LOG = LoggerFactory.getLogger(RandomUuidGeneratorTest.class);
 
     @Test
-    public void testGenerateUUID() {
+    void testGenerateUUID() {
         UuidGenerator uuidGenerator = new RandomUuidGenerator();
 
         String firstUUID = uuidGenerator.generateUuid();
@@ -44,7 +44,7 @@ public class RandomUuidGeneratorTest {
     }
 
     @Test
-    public void testPerformance() {
+    void testPerformance() {
         UuidGenerator uuidGenerator = new RandomUuidGenerator();
         StopWatch watch = new StopWatch();
         int count = 500000;

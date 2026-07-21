@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FileInvalidStartingPathTest extends ContextTestSupport {
+class FileInvalidStartingPathTest extends ContextTestSupport {
 
     @Test
-    public void testInvalidStartingPath() {
+    void testInvalidStartingPath() {
         ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
                 () -> context.getEndpoint(fileUri("${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt")),
                 "Should have thrown an exception");
@@ -39,7 +39,7 @@ public class FileInvalidStartingPathTest extends ContextTestSupport {
     }
 
     @Test
-    public void testValidStartingPath() {
+    void testValidStartingPath() {
         Endpoint endpoint = context.getEndpoint(
                 fileUri("?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt"));
         assertNotNull(endpoint, "Endpoint should be resolved for a valid starting path");

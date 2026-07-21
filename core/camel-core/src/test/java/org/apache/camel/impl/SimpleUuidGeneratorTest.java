@@ -25,12 +25,12 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SimpleUuidGeneratorTest {
+class SimpleUuidGeneratorTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleUuidGeneratorTest.class);
 
     @Test
-    public void testGenerateUUID() {
+    void testGenerateUUID() {
         SimpleUuidGenerator uuidGenerator = new SimpleUuidGenerator();
 
         assertEquals("1", uuidGenerator.generateUuid());
@@ -38,7 +38,7 @@ public class SimpleUuidGeneratorTest {
     }
 
     @Test
-    public void testPerformance() {
+    void testPerformance() {
         SimpleUuidGenerator uuidGenerator = new SimpleUuidGenerator();
         StopWatch watch = new StopWatch();
         int count = 500000;

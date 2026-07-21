@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * </pre>
  */
 @Disabled("Manual load test - run explicitly for benchmarking")
-public class VirtualThreadsLoadTest extends ContextTestSupport {
+class VirtualThreadsLoadTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(VirtualThreadsLoadTest.class);
 
@@ -86,7 +86,7 @@ public class VirtualThreadsLoadTest extends ContextTestSupport {
     }
 
     @Test
-    public void testHighConcurrencyWithSimulatedIO() throws Exception {
+    void testHighConcurrencyWithSimulatedIO() throws Exception {
         completionLatch = new CountDownLatch(TOTAL_MESSAGES);
         processedCount.reset();
 

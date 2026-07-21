@@ -28,11 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class Issue3Test extends ContextTestSupport {
+class Issue3Test extends ContextTestSupport {
     protected final String fromQueue = "direct:A";
 
     @Test
-    public void testIssue() throws Exception {
+    void testIssue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("cluster!");
 
