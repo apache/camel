@@ -188,6 +188,13 @@ They were not wired into the component; the `chatModel` is autowired instead.
 
 If you used these helpers directly, configure your `ChatModel` with LangChain4j's own builders or Spring Boot starters
 and inject it into the component.
+
+=== camel-langchain4j-web-search
+
+The `safeSearch` endpoint option is now correctly propagated to the LangChain4j `WebSearchRequest`.
+Previously the option was accepted on the endpoint but ignored, so `safeSearch=false` still sent
+`safeSearch=true` to the search engine (the LangChain4j default).
+
 === camel-openai
 
 The `conversationMemory` feature on the `chat-completion` operation has two behavior fixes:
