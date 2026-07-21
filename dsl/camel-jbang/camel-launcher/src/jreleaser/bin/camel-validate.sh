@@ -27,7 +27,8 @@
 #            host-gated homebrew and sdkman validators.
 #   local    Validate this build's own archive directly (no package manager involved)
 #   homebrew Validate via Homebrew (audit + install + version + init + uninstall)
-#   sdkman   Validate via SDKMAN (descriptor check + offline archive + version + init)
+#   sdkman   Validate via SDKMAN (descriptor + archive checks only; version/init are not
+#            exercised offline - see validate_sdkman)
 #   help     Show usage
 #
 # Host-gating:
@@ -63,7 +64,8 @@ Commands:
              validators are host-gated; "local" always runs if the archive is present.
   local      Validate this build's own archive directly (no package manager involved)
   homebrew   Validate via Homebrew (audit + install + version + init + uninstall)
-  sdkman     Validate via SDKMAN (descriptor check + offline archive + version + init)
+  sdkman     Validate via SDKMAN (descriptor + archive checks only; version/init are not
+             exercised offline)
   help       Show this help message
 
 Options:
@@ -331,7 +333,10 @@ validate_homebrew() {
     # case and a real release (where the formula version is $RESOLVED_VERSION anyway).
     local expected_version
     expected_version=$(sed -n 's/^[[:space:]]*version "\(.*\)"/\1/p' "$tap_dir/Formula/${fmla}.rb" | head -n1)
-    [ -n "$expected_version" ] || expected_version="$RESOLVED_VERSION"
+    if [ -z "$expected_version" ]; then
+        echo "WARN: could not read 'version' from tapped formula ${fmla}.rb, falling back to \$RESOLVED_VERSION ($RESOLVED_VERSION)"
+        expected_version="$RESOLVED_VERSION"
+    fi
 
     local camv_output=""
     if ! command -v camel >/dev/null 2>&1; then
@@ -504,7 +509,10 @@ validate_sdkman() {
     if command -v jq >/dev/null 2>&1; then
         local desc_version
         desc_version=$(jq -r '.version' "$DESCRIPTOR_FILE" 2>/dev/null) || true
-        if [ -z "$desc_version" ]; then
+        # jq prints the literal string "null" (not empty) when the key is absent, so that
+        # must be checked explicitly - otherwise a descriptor missing 'version' would still
+        # print a false "PASS: ... valid version: null".
+        if [ -z "$desc_version" ] || [ "$desc_version" = "null" ]; then
             echo "FAIL: SDKMAN descriptor missing 'version' field"
             return 1
         fi
@@ -546,7 +554,13 @@ validate_sdkman() {
     # access, so it is not exercised in this offline validation.
     echo "SKIP: SDKMAN vendor release API not exercised (offline validation)"
 
-    # Step 4: Verify offline camel init route content (same assertion as Homebrew)
+    # Step 4: Verify offline camel init route content (same assertion as Homebrew).
+    # Unlike the Homebrew/local validators, a failing `camel init` here stays a WARN rather
+    # than a FAIL: SDKMAN never actually installs anything in this offline validation (see
+    # Step 3 above), so any `camel` found on PATH is unrelated host state this validator did
+    # not produce - treating its failure as a defect in the SDKMAN packaging would be a false
+    # failure. A successful init IS still checked against the content fixture below, since
+    # that's a legitimate signal when it happens to be available.
     local init_dir="$TMPDIR_BASE/init-test-sdkman"
     mkdir -p "$init_dir"
     if command -v camel >/dev/null 2>&1; then
@@ -573,9 +587,9 @@ validate_sdkman() {
 main() {
     local rc=0
     case "$COMMAND" in
-        local)    validate_local_archive; rc=$? ;;
-        homebrew) validate_homebrew; rc=$? ;;
-        sdkman)   validate_sdkman; rc=$? ;;
+        local)    validate_local_archive || rc=1 ;;
+        homebrew) validate_homebrew || rc=1 ;;
+        sdkman)   validate_sdkman || rc=1 ;;
         all)
             validate_local_archive || rc=1
             validate_homebrew || rc=1

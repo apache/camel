@@ -22,7 +22,9 @@
 # Usage (caller must source this file):
 #   assert_camel_version <actual_output> <expected_version>    -- returns 1 on mismatch
 #   assert_init_content <directory> <filename>                 -- verifies content matches fixture
-#   assert_uninstalled <path_or_prefix ...>                    -- each must not exist after uninstall
+#   assert_uninstalled <path ...>                               -- each exact path must not exist after
+#                                                                   uninstall (not called by camel-validate.sh's
+#                                                                   own validators, which inline this check)
 #   assert_camel_cli <camel-cmd> <workdir> [expected-version] -- full version+init assertion wrapper
 #   assert_camel_absent <path>                                -- verify a camel symlink/entry is gone
 # ============================================================================
@@ -129,9 +131,8 @@ assert_camel_cli() {
     fi
     cd "$_orig_dir" || exit
 
-    # Step 3: assert the executable exists. A binary that isn't executable at this point is a
-    # real defect (everything above only worked because a shell can still run a non-executable
-    # script via an interpreter shebang search in some environments), not a soft skip.
+    # Step 3: final sanity check that the resolved command is executable, independent of how
+    # the version/init calls above happened to succeed.
     if [ -x "$CAMELCMD" ]; then
         assertion_pass "camel CLI executable found"
     else

@@ -141,6 +141,51 @@ class PackageNativeValidationTest {
     }
 
     @Test
+    void localArchiveValidatorAcceptsSnapshotVersionInTestMode(@TempDir Path target) throws Exception {
+        // In test mode the staged archive can be a byte-for-byte copy of a real SNAPSHOT build (see the CI
+        // workflow's "stage a synthetic release version" step, which cp's the archive rather than rebuilding
+        // it), so its embedded catalog version genuinely reports "<VERSION>-SNAPSHOT", not "<VERSION>". Pins
+        // the tolerant comparison branch that accepts this instead of failing it as a version mismatch.
+        stageLocalArchive(target, VERSION + "-SNAPSHOT");
+        Result r = sh(null, List.of(
+                "ASSERT_INIT_FIXTURE=" + FIXTURE.toAbsolutePath(),
+                "CAMEL_PACKAGE_TEST_MODE=true",
+                "CAMEL_PACKAGE_TEST_VERSION=" + VERSION,
+                "CAMEL_VALIDATE_TARGET_DIR=" + target.toAbsolutePath()),
+                "/bin/bash " + VALIDATE.toAbsolutePath() + " local");
+
+        assertThat(r.exit()).as(r.out()).isZero();
+        assertThat(r.out())
+                .contains("PASS: local archive version OK (test-mode staged archive reports its real build "
+                          + "version '" + VERSION + "-SNAPSHOT')")
+                .doesNotContain("FAIL");
+    }
+
+    @Test
+    void localArchiveValidatorSurfacesStderrOnEmptyVersionOutput(@TempDir Path target) throws Exception {
+        // The hardening pass added stderr capture to every FAIL-on-empty-version-output branch so the failure
+        // message carries a reason instead of just "returned empty output". Pin that the "(stderr: ...)"
+        // suffix actually appears for the local-archive validator's own FAIL branch.
+        stageLocalArchiveWithCamelShBody(target, "#!/bin/sh\n"
+                                                 + "case \"$1\" in\n"
+                                                 + "  --version) echo 'boom: cannot determine version' >&2; exit 1 ;;\n"
+                                                 + "  *) exit 3 ;;\n"
+                                                 + "esac\n");
+
+        Result r = sh(null, List.of(
+                "ASSERT_INIT_FIXTURE=" + FIXTURE.toAbsolutePath(),
+                "CAMEL_PACKAGE_TEST_MODE=true",
+                "CAMEL_PACKAGE_TEST_VERSION=" + VERSION,
+                "CAMEL_VALIDATE_TARGET_DIR=" + target.toAbsolutePath()),
+                "/bin/bash " + VALIDATE.toAbsolutePath() + " local");
+
+        assertThat(r.exit()).as(r.out()).isNotZero();
+        assertThat(r.out())
+                .contains("FAIL: 'camel.sh --version' returned empty output")
+                .contains("(stderr: boom: cannot determine version)");
+    }
+
+    @Test
     void versionOverrideRequiresTestMode() throws Exception {
         // CAMEL_PACKAGE_TEST_VERSION without CAMEL_PACKAGE_TEST_MODE=true must be rejected (exit 2), so
         // production can never silently run against a synthetic version.
@@ -165,6 +210,39 @@ class PackageNativeValidationTest {
 
         assertThat(r.exit()).as(r.out()).isEqualTo(2);
         assertThat(r.out()).contains("Usage:");
+    }
+
+    @Test
+    void invalidChannelIsUsageError() throws Exception {
+        Result r = sh(null, List.of("PATH=/usr/bin:/bin"),
+                "/bin/sh " + VALIDATE.toAbsolutePath() + " all --channel bogus");
+
+        assertThat(r.exit()).as(r.out()).isEqualTo(2);
+        assertThat(r.out()).contains("Error:").contains("--channel must be 'stable' or 'lts'");
+    }
+
+    @Test
+    void ltsChannelWithoutLtsLineIsUsageError() throws Exception {
+        Result r = sh(null, List.of("PATH=/usr/bin:/bin"),
+                "/bin/sh " + VALIDATE.toAbsolutePath() + " all --channel lts");
+
+        assertThat(r.exit()).as(r.out()).isEqualTo(2);
+        assertThat(r.out()).contains("Error:").contains("--channel lts requires --lts-line X.Y");
+    }
+
+    @Test
+    void ltsChannelWithLtsLineIsAccepted(@TempDir Path emptyTarget) throws Exception {
+        // With --lts-line supplied, --channel lts must pass argument validation and proceed to the
+        // validators themselves (which SKIP here since nothing is staged), rather than hitting the usage
+        // error pinned by this test's two siblings above.
+        Result r = sh(null, List.of(
+                "CAMEL_PACKAGE_TEST_MODE=true",
+                "CAMEL_PACKAGE_TEST_VERSION=" + VERSION,
+                "CAMEL_VALIDATE_TARGET_DIR=" + emptyTarget.toAbsolutePath()),
+                "/bin/bash " + VALIDATE.toAbsolutePath() + " all --channel lts --lts-line 4.21");
+
+        assertThat(r.exit()).as(r.out()).isZero();
+        assertThat(r.out()).contains("SKIP:").doesNotContain("FAIL").doesNotContain("Error:");
     }
 
     @Test
@@ -226,8 +304,8 @@ class PackageNativeValidationTest {
 
     @Test
     void homebrewValidatorFailsWhenAuditStrictReportsIssues(@TempDir Path tmp) throws Exception {
-        // The PR's own hardening goal is making `brew audit --strict` a hard gate; pin that a nonzero
-        // audit exit propagates as a FAIL and a nonzero overall exit, not a warning.
+        // Pin that a nonzero `brew audit --strict` exit always propagates as a FAIL and a nonzero
+        // overall exit, never a warning.
         Path fakeBinDir = Files.createDirectory(tmp.resolve("fake-bin"));
         writeFakeBrew(fakeBinDir.resolve("brew"));
         Path target = Files.createDirectory(tmp.resolve("target"));
@@ -306,6 +384,15 @@ class PackageNativeValidationTest {
                 .contains("FAIL: homebrew audit --strict reported issues (exit 1)")
                 .contains("SKIP: homebrew install could not resolve a Java dependency");
     }
+
+    // Note: the sibling "Failed to download resource|curl: (" SKIP branch (camel-validate.sh, same
+    // return "$rc" fix as above) is not covered by an equivalent test here. It only triggers when
+    // CAMEL_PACKAGE_TEST_MODE is NOT "true", but CAMEL_VALIDATE_TARGET_DIR (needed to point the
+    // validator at an isolated @TempDir instead of this module's real target/) requires
+    // CAMEL_PACKAGE_TEST_MODE=true - the two guards are mutually exclusive, so this branch cannot be
+    // reached hermetically the way every other test in this file is. It shares the exact same
+    // `return "$rc"` line as the covered branch above, so the risk left uncovered is narrow: whether
+    // the "Failed to download resource" text is classified correctly, not the rc-propagation logic.
 
     // ---------- helpers ----------
 
@@ -386,11 +473,16 @@ class PackageNativeValidationTest {
      * (pass a value other than VERSION to drive a version-mismatch FAIL).
      */
     private static void stageLocalArchive(Path targetDir, String reportedVersion) throws Exception {
+        stageLocalArchiveWithCamelShBody(targetDir, fakeCamelBody(reportedVersion));
+    }
+
+    /** Same staging as {@link #stageLocalArchive(Path, String)}, but with an arbitrary bin/camel.sh body. */
+    private static void stageLocalArchiveWithCamelShBody(Path targetDir, String camelShBody) throws Exception {
         Path work = Files.createTempDirectory("camel-archive");
         String root = "camel-launcher-" + PackageNativeValidationTest.VERSION;
         Path bin = work.resolve(root).resolve("bin");
         Files.createDirectories(bin);
-        writeExecutable(bin.resolve("camel.sh"), fakeCamelBody(reportedVersion));
+        writeExecutable(bin.resolve("camel.sh"), camelShBody);
 
         Files.createDirectories(targetDir);
         Path archive = targetDir.resolve(root + "-bin.tar.gz");

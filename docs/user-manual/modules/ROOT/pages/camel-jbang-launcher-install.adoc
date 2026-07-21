@@ -41,8 +41,8 @@ new terminal to pick it up.
 == Installing a specific version
 
 Request an exact version with `--version` (`install.sh`) or `-Version` (`install.ps1`). The
-requested version is validated and matched against the fetched manifest before anything is
-downloaded.
+requested version is validated and matched against the fetched manifest before the release
+archive is downloaded.
 
 On Linux and macOS, pass the argument through to the piped shell with `-s --`:
 

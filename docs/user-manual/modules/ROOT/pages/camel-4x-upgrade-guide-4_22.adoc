@@ -136,7 +136,7 @@ irm https://camel.apache.org/install.ps1 | iex
 With no arguments, both installers resolve and install the latest published release. An exact
 version can be requested instead with `--version X.Y.Z` (`install.sh`) or `-Version X.Y.Z`
 (`install.ps1`); the requested version is validated and matched against the fetched manifest
-before anything is downloaded.
+before the release archive is downloaded.
 
 Both installers download the release archive from Maven Central, verify it against a SHA-256
 recorded in a signed-path manifest before extracting it, and reject archives containing absolute
