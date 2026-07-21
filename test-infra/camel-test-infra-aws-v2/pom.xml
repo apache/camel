@@ -129,7 +129,7 @@
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
-            <artifactId>apache-client</artifactId>
+            <artifactId>apache5-client</artifactId>
             <version>${aws-java-sdk2-version}</version>
         </dependency>
 
