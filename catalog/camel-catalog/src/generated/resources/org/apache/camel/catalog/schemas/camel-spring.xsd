@@ -4576,18 +4576,6 @@ true
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="asynchronous" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to use asynchronous (non-blocking) processing with CompletionStage-based circuit breaker decorators. When
-enabled, the circuit breaker releases the caller thread immediately and completes processing asynchronously. This is
-most valuable when the downstream processor supports asynchronous processing (e.g. Netty HTTP, Kafka). When used with
-timeout, the timeoutExecutorService must be a ScheduledExecutorService. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="timeoutEnabled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
