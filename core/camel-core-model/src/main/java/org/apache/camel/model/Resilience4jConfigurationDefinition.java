@@ -408,6 +408,22 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     }
 
     /**
+     * Whether to use asynchronous (non-blocking) processing. Default is false.
+     */
+    public Resilience4jConfigurationDefinition asynchronous(boolean asynchronous) {
+        setAsynchronous(Boolean.toString(asynchronous));
+        return this;
+    }
+
+    /**
+     * Whether to use asynchronous (non-blocking) processing. Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition asynchronous(String asynchronous) {
+        setAsynchronous(asynchronous);
+        return this;
+    }
+
+    /**
      * Whether timeout is enabled or not on the circuit breaker. Default is false.
      */
     public Resilience4jConfigurationDefinition timeoutEnabled(boolean timeoutEnabled) {
