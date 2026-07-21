@@ -39,7 +39,6 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.timelimiter.TimeLimiter;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import io.github.resilience4j.timelimiter.TimeLimiterRegistry;
-import io.vavr.control.Try;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -548,10 +547,12 @@ public class ResilienceProcessor extends BaseProcessorSupport
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Processing exchange: {} using circuit breaker: {}", exchange.getExchangeId(), id);
             }
-            Try.ofCallable(callable)
-                    .andThen(this::successState)
-                    .recover(fallbackTask)
-                    .get();
+            try {
+                Exchange result = callable.call();
+                successState(result);
+            } catch (Exception e) {
+                fallbackTask.apply(e);
+            }
         } catch (Exception e) {
             exchange.setException(e);
         } finally {
@@ -788,6 +789,9 @@ public class ResilienceProcessor extends BaseProcessorSupport
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, true);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
+            if (throwable instanceof TimeoutException) {
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_TIMED_OUT, true);
+            }
 
             // store the last to endpoint as the failure endpoint
             if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
@@ -796,7 +800,11 @@ public class ResilienceProcessor extends BaseProcessorSupport
             }
             // give the rest of the pipeline another chance
             exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, true);
-            exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exchange.getException());
+            // use the guard-level throwable for EXCEPTION_CAUGHT since the exchange
+            // may not have the exception set (e.g. on timeout the exception is thrown
+            // by the TimeLimiter on the caller thread, not set on the exchange)
+            Throwable caught = exchange.getException() != null ? exchange.getException() : throwable;
+            exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, caught);
             exchange.setRouteStop(false);
             exchange.setException(null);
             // and we should not be regarded as exhausted as we are in a try ..

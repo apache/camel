@@ -45,26 +45,32 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     @Metadata(defaultValue = "100")
     private Integer minimumNumberOfCalls;
     private Boolean writableStackTraceEnabled;
-    @Metadata(defaultValue = "60")
-    private Integer waitDurationInOpenState;
+    @Metadata(defaultValue = "60s")
+    private String waitDurationInOpenState;
     private Boolean automaticTransitionFromOpenToHalfOpenEnabled;
     @Metadata(defaultValue = "100")
     private Float slowCallRateThreshold;
-    @Metadata(defaultValue = "60")
-    private Integer slowCallDurationThreshold;
+    @Metadata(defaultValue = "60s")
+    private String slowCallDurationThreshold;
     @Metadata(defaultValue = "false")
     private Boolean bulkheadEnabled;
     private Integer bulkheadMaxConcurrentCalls;
-    private Integer bulkheadMaxWaitDuration;
+    private String bulkheadMaxWaitDuration;
     @Metadata(defaultValue = "false")
     private Boolean timeoutEnabled;
     private String timeoutExecutorService;
     @Metadata(defaultValue = "1000")
-    private Integer timeoutDuration;
+    private String timeoutDuration;
     @Metadata(defaultValue = "true")
     private Boolean timeoutCancelRunningFuture;
     @Metadata(defaultValue = "false")
     private Boolean micrometerEnabled;
+    @Metadata(defaultValue = "SYNCHRONIZED", enums = "LOCK_FREE,SYNCHRONIZED")
+    private String slidingWindowSynchronizationStrategy;
+    @Metadata(defaultValue = "0")
+    private String maxWaitDurationInHalfOpenState;
+    @Metadata(defaultValue = "true")
+    private Boolean bulkheadFairCallHandlingEnabled;
 
     public Resilience4jConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -215,15 +221,15 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
         this.writableStackTraceEnabled = writableStackTraceEnabled;
     }
 
-    public Integer getWaitDurationInOpenState() {
+    public String getWaitDurationInOpenState() {
         return waitDurationInOpenState;
     }
 
     /**
-     * Configures the wait duration (in seconds) which specifies how long the CircuitBreaker should stay open, before it
-     * switches to half open. Default value is 60 seconds.
+     * Configures the wait duration which specifies how long the CircuitBreaker should stay open, before it switches to
+     * half open. Accepts Camel duration expressions (e.g. 60s, 1m) or millisecond values. Default value is 60 seconds.
      */
-    public void setWaitDurationInOpenState(Integer waitDurationInOpenState) {
+    public void setWaitDurationInOpenState(String waitDurationInOpenState) {
         this.waitDurationInOpenState = waitDurationInOpenState;
     }
 
@@ -254,15 +260,15 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
         this.slowCallRateThreshold = slowCallRateThreshold;
     }
 
-    public Integer getSlowCallDurationThreshold() {
+    public String getSlowCallDurationThreshold() {
         return slowCallDurationThreshold;
     }
 
     /**
-     * Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls
-     * percentage. Default value is 60 seconds.
+     * Configures the duration threshold above which calls are considered as slow and increase the slow calls
+     * percentage. Accepts Camel duration expressions (e.g. 60s, 1m) or millisecond values. Default value is 60 seconds.
      */
-    public void setSlowCallDurationThreshold(Integer slowCallDurationThreshold) {
+    public void setSlowCallDurationThreshold(String slowCallDurationThreshold) {
         this.slowCallDurationThreshold = slowCallDurationThreshold;
     }
 
@@ -288,20 +294,15 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
         this.bulkheadMaxConcurrentCalls = bulkheadMaxConcurrentCalls;
     }
 
-    public Integer getBulkheadMaxWaitDuration() {
+    public String getBulkheadMaxWaitDuration() {
         return bulkheadMaxWaitDuration;
     }
 
     /**
-     * Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. If bulkhead has
-     * space available, entry is guaranteed and immediate. If bulkhead is full, calling threads will contest for space,
-     * if it becomes available. maxWaitDuration can be set to 0.
-     * <p>
-     * Note: for threads running on an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration to 0
-     * is highly recommended. Blocking an event-loop thread will most likely have a negative effect on application
-     * throughput.
+     * Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. Accepts Camel
+     * duration expressions (e.g. 500ms, 1s) or millisecond values. Default is 0 (no waiting).
      */
-    public void setBulkheadMaxWaitDuration(Integer bulkheadMaxWaitDuration) {
+    public void setBulkheadMaxWaitDuration(String bulkheadMaxWaitDuration) {
         this.bulkheadMaxWaitDuration = bulkheadMaxWaitDuration;
     }
 
@@ -328,14 +329,15 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
         this.timeoutExecutorService = timeoutExecutorService;
     }
 
-    public Integer getTimeoutDuration() {
+    public String getTimeoutDuration() {
         return timeoutDuration;
     }
 
     /**
-     * Configures the thread execution timeout (millis). Default value is 1000 millis (1 second).
+     * Configures the thread execution timeout. Accepts Camel duration expressions (e.g. 1s, 500ms) or millisecond
+     * values. Default value is 1000 millis (1 second).
      */
-    public void setTimeoutDuration(Integer timeoutDuration) {
+    public void setTimeoutDuration(String timeoutDuration) {
         this.timeoutDuration = timeoutDuration;
     }
 
@@ -360,6 +362,43 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
      */
     public void setMicrometerEnabled(Boolean micrometerEnabled) {
         this.micrometerEnabled = micrometerEnabled;
+    }
+
+    public String getSlidingWindowSynchronizationStrategy() {
+        return slidingWindowSynchronizationStrategy;
+    }
+
+    /**
+     * Configures the synchronization strategy for the sliding window. LOCK_FREE uses a CAS-based lock-free algorithm
+     * for better performance under high concurrency. SYNCHRONIZED uses blocking locks with lower memory allocation.
+     */
+    public void setSlidingWindowSynchronizationStrategy(String slidingWindowSynchronizationStrategy) {
+        this.slidingWindowSynchronizationStrategy = slidingWindowSynchronizationStrategy;
+    }
+
+    public String getMaxWaitDurationInHalfOpenState() {
+        return maxWaitDurationInHalfOpenState;
+    }
+
+    /**
+     * Configures the maximum wait duration which controls how long the CircuitBreaker should stay in Half Open state,
+     * before it switches to open. Value 0 means circuit breaker will wait in half open state until all permitted calls
+     * have been completed. Accepts Camel duration expressions (e.g. 10s, 1m) or millisecond values.
+     */
+    public void setMaxWaitDurationInHalfOpenState(String maxWaitDurationInHalfOpenState) {
+        this.maxWaitDurationInHalfOpenState = maxWaitDurationInHalfOpenState;
+    }
+
+    public Boolean getBulkheadFairCallHandlingEnabled() {
+        return bulkheadFairCallHandlingEnabled;
+    }
+
+    /**
+     * Configures whether the bulkhead uses a fair calling strategy. When enabled (default), a fair strategy guarantees
+     * the order of incoming requests (FIFO). When disabled, no ordering is guaranteed and may improve throughput.
+     */
+    public void setBulkheadFairCallHandlingEnabled(Boolean bulkheadFairCallHandlingEnabled) {
+        this.bulkheadFairCallHandlingEnabled = bulkheadFairCallHandlingEnabled;
     }
 
     /**
@@ -471,10 +510,10 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Configures the wait duration (in seconds) which specifies how long the CircuitBreaker should stay open, before it
-     * switches to half open. Default value is 60 seconds.
+     * Configures the wait duration which specifies how long the CircuitBreaker should stay open, before it switches to
+     * half open. Accepts Camel duration expressions (e.g. 60s, 1m) or millisecond values. Default value is 60 seconds.
      */
-    public Resilience4jConfigurationProperties withWaitDurationInOpenState(Integer waitDurationInOpenState) {
+    public Resilience4jConfigurationProperties withWaitDurationInOpenState(String waitDurationInOpenState) {
         this.waitDurationInOpenState = waitDurationInOpenState;
         return this;
     }
@@ -499,10 +538,10 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls
-     * percentage. Default value is 60 seconds.
+     * Configures the duration threshold above which calls are considered as slow and increase the slow calls
+     * percentage. Accepts Camel duration expressions (e.g. 60s, 1m) or millisecond values. Default value is 60 seconds.
      */
-    public Resilience4jConfigurationProperties withSlowCallDurationThreshold(Integer slowCallDurationThreshold) {
+    public Resilience4jConfigurationProperties withSlowCallDurationThreshold(String slowCallDurationThreshold) {
         this.slowCallDurationThreshold = slowCallDurationThreshold;
         return this;
     }
@@ -524,15 +563,10 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. If bulkhead has
-     * space available, entry is guaranteed and immediate. If bulkhead is full, calling threads will contest for space,
-     * if it becomes available. maxWaitDuration can be set to 0.
-     * <p>
-     * Note: for threads running on an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration to 0
-     * is highly recommended. Blocking an event-loop thread will most likely have a negative effect on application
-     * throughput.
+     * Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. Accepts Camel
+     * duration expressions (e.g. 500ms, 1s) or millisecond values. Default is 0 (no waiting).
      */
-    public Resilience4jConfigurationProperties withBulkheadMaxWaitDuration(Integer bulkheadMaxWaitDuration) {
+    public Resilience4jConfigurationProperties withBulkheadMaxWaitDuration(String bulkheadMaxWaitDuration) {
         this.bulkheadMaxWaitDuration = bulkheadMaxWaitDuration;
         return this;
     }
@@ -555,9 +589,10 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Configures the thread execution timeout (millis). Default value is 1000 millis (1 second).
+     * Configures the thread execution timeout. Accepts Camel duration expressions (e.g. 1s, 500ms) or millisecond
+     * values. Default value is 1000 millis (1 second).
      */
-    public Resilience4jConfigurationProperties withTimeoutDuration(Integer timeoutDuration) {
+    public Resilience4jConfigurationProperties withTimeoutDuration(String timeoutDuration) {
         this.timeoutDuration = timeoutDuration;
         return this;
     }
@@ -576,6 +611,37 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
      */
     public Resilience4jConfigurationProperties withMicrometerEnabled(Boolean micrometerEnabled) {
         this.micrometerEnabled = micrometerEnabled;
+        return this;
+    }
+
+    /**
+     * Configures the synchronization strategy for the sliding window. LOCK_FREE uses a CAS-based lock-free algorithm
+     * for better performance under high concurrency. SYNCHRONIZED uses blocking locks with lower memory allocation.
+     */
+    public Resilience4jConfigurationProperties withSlidingWindowSynchronizationStrategy(
+            String slidingWindowSynchronizationStrategy) {
+        this.slidingWindowSynchronizationStrategy = slidingWindowSynchronizationStrategy;
+        return this;
+    }
+
+    /**
+     * Configures the maximum wait duration which controls how long the CircuitBreaker should stay in Half Open state,
+     * before it switches to open. Value 0 means circuit breaker will wait in half open state until all permitted calls
+     * have been completed. Accepts Camel duration expressions (e.g. 10s, 1m) or millisecond values.
+     */
+    public Resilience4jConfigurationProperties withMaxWaitDurationInHalfOpenState(
+            String maxWaitDurationInHalfOpenState) {
+        this.maxWaitDurationInHalfOpenState = maxWaitDurationInHalfOpenState;
+        return this;
+    }
+
+    /**
+     * Configures whether the bulkhead uses a fair calling strategy. When enabled (default), a fair strategy guarantees
+     * the order of incoming requests (FIFO). When disabled, no ordering is guaranteed and may improve throughput.
+     */
+    public Resilience4jConfigurationProperties withBulkheadFairCallHandlingEnabled(
+            Boolean bulkheadFairCallHandlingEnabled) {
+        this.bulkheadFairCallHandlingEnabled = bulkheadFairCallHandlingEnabled;
         return this;
     }
 
