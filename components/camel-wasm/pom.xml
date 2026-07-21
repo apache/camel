@@ -45,9 +45,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.dylibso.chicory</groupId>
+            <groupId>run.endive</groupId>
             <artifactId>runtime</artifactId>
-            <version>${chicory-version}</version>
+            <version>${endive-version}</version>
         </dependency>
 
         <dependency>
