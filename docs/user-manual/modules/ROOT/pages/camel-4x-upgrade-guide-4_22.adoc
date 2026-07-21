@@ -671,6 +671,20 @@ If you were relying on non-durable queues, you can restore the previous behavior
 setting `arg.queue.durable=false&arg.queue.exclusive=true` on the endpoint URI. Note that
 RabbitMQ 4.3+ requires non-durable queues to also be exclusive.
 
+=== camel-core - additional sensitive keywords redacted from sanitized URIs
+
+The URI sanitization used for logs, JMX attributes, exception messages and the developer console
+(`URISupport.sanitizeUri`) now also redacts endpoint parameters whose name contains `api-key` (hyphenated)
+or `authorization`. Previously a credential supplied through a hyphenated or `Authorization`-style
+parameter/header name — for example `additionalHeader.api-key=...` (the Azure OpenAI auth header) or
+`additionalHeader.Authorization=...` in `camel-openai` — was written in clear text in sanitized URIs, even
+though the camelCase `apiKey` option was already redacted.
+
+Because matching is a case-insensitive substring match, parameter names that merely contain `authorization`
+without being secrets — `adjustAuthorization`, `jwtAuthorizationType`, `proxyAuthorizationPolicy` — now also
+have their values shown as `xxxxxx` in sanitized URIs. This is a cosmetic change to sanitized output only and
+does not affect the actual endpoint configuration.
+
 === camel-core - Multicast UseOriginalAggregationStrategy fix
 
 The Multicast EIP now correctly honors `UseOriginalAggregationStrategy`, consistent with the Splitter
