@@ -30,6 +30,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.hc.core5.http.HttpHost;
 import org.opensearch.client.RestClient;
+import org.opensearch.client.opensearch.OpenSearchClient;
 
 /**
  * Represents the component that manages {@link OpensearchEndpoint}.
@@ -39,6 +40,8 @@ public class OpensearchComponent extends DefaultComponent implements SSLContextP
 
     @Metadata(label = "advanced", autowired = true)
     private RestClient client;
+    @Metadata(label = "advanced", autowired = true)
+    private OpenSearchClient openSearchClient;
     @Metadata
     private String hostAddresses;
     @Metadata(defaultValue = "" + OpensearchConstants.DEFAULT_SOCKET_TIMEOUT)
@@ -88,7 +91,7 @@ public class OpensearchComponent extends DefaultComponent implements SSLContextP
         config.setClusterName(remaining);
         config.setSslContextParameters(this.getSslContextParameters());
 
-        Endpoint endpoint = new OpensearchEndpoint(uri, this, config, client);
+        Endpoint endpoint = new OpensearchEndpoint(uri, this, config, client, openSearchClient);
         setProperties(endpoint, parameters);
         if (config.getSslContextParameters() == null) {
             config.setSslContextParameters(retrieveGlobalSslContextParameters());
@@ -128,6 +131,18 @@ public class OpensearchComponent extends DefaultComponent implements SSLContextP
      */
     public void setClient(RestClient client) {
         this.client = client;
+    }
+
+    public OpenSearchClient getOpenSearchClient() {
+        return openSearchClient;
+    }
+
+    /**
+     * To use a custom configured OpenSearchClient instance. When set, this takes precedence over the RestClient-based
+     * client option.
+     */
+    public void setOpenSearchClient(OpenSearchClient openSearchClient) {
+        this.openSearchClient = openSearchClient;
     }
 
     /**
