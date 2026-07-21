@@ -53,6 +53,11 @@ import software.amazon.awssdk.services.bedrockruntime.model.ToolConfiguration;
 public class BedrockProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(BedrockProducer.class);
+
+    /**
+     * Region prefixes used by Bedrock cross-region inference profile ids, e.g. {@code us.anthropic.claude-...}.
+     */
+    private static final List<String> INFERENCE_PROFILE_REGION_PREFIXES = List.of("us.", "eu.", "apac.", "us-gov.");
     private transient String bedrockProducerToString;
 
     public BedrockProducer(Endpoint endpoint) {
@@ -263,7 +268,7 @@ public class BedrockProducer extends DefaultProducer {
     }
 
     protected void setResponseText(InvokeModelResponse result, Message message) {
-        String modelId = getConfiguration().getModelId();
+        String modelId = resolveFoundationModelId(getConfiguration().getModelId());
         switch (modelId) {
             // Amazon Titan Models
             case "amazon.titan-text-express-v1":
@@ -370,7 +375,71 @@ public class BedrockProducer extends DefaultProducer {
                 break;
 
             default:
+                setResponseTextByModelFamily(modelId, result, message);
+        }
+    }
+
+    /**
+     * Resolves the underlying foundation-model id for a model reference. Bedrock also accepts cross-region inference
+     * profile ids (for example {@code us.anthropic.claude-3-5-sonnet-20241022-v2:0}) and inference-profile or
+     * provisioned-throughput ARNs in place of the plain model id. They all address the same foundation model, so they
+     * must be handled the same way.
+     */
+    protected static String resolveFoundationModelId(String modelId) {
+        if (modelId == null) {
+            return null;
+        }
+        String resolved = modelId;
+        // an ARN carries the profile or model id in its last path segment
+        if (resolved.startsWith("arn:")) {
+            int slash = resolved.lastIndexOf('/');
+            if (slash >= 0 && slash < resolved.length() - 1) {
+                resolved = resolved.substring(slash + 1);
+            }
+        }
+        for (String prefix : INFERENCE_PROFILE_REGION_PREFIXES) {
+            if (resolved.startsWith(prefix)) {
+                return resolved.substring(prefix.length());
+            }
+        }
+        return resolved;
+    }
+
+    /**
+     * Fallback for model ids that are not listed explicitly, typically a model released after this component was built.
+     * Dispatching on the vendor/family prefix lets a new model of a known family work instead of failing, since the
+     * response format is defined by the family rather than the individual model.
+     */
+    private void setResponseTextByModelFamily(String modelId, InvokeModelResponse result, Message message) {
+        if (modelId == null) {
+            throw new IllegalStateException("Model id must be specified");
+        }
+        // families that do not produce a text completion must keep failing rather than being parsed as text
+        if (modelId.startsWith("stability.") || modelId.contains("image-generator") || modelId.contains("-canvas")
+                || modelId.contains("embed") || modelId.contains("rerank") || modelId.contains("-reel")
+                || modelId.contains("-sonic")) {
+            throw new IllegalArgumentException(
+                    "Model " + modelId
+                                               + " is not a text generation model and cannot be used with the invokeTextModel operation.");
+        }
+        try {
+            if (modelId.startsWith("amazon.titan-text")) {
+                setTitanText(result, message);
+            } else if (modelId.startsWith("anthropic.claude") || modelId.startsWith("amazon.nova")) {
+                setAnthropicV3Text(result, message);
+            } else if (modelId.startsWith("meta.llama")) {
+                setLlamaText(result, message);
+            } else if (modelId.startsWith("mistral.")) {
+                setMistralText(result, message);
+            } else if (modelId.startsWith("cohere.command")) {
+                setCohereText(result, message);
+            } else if (modelId.startsWith("ai21.")) {
+                setAi21Text(result, message);
+            } else {
                 throw new IllegalStateException("Unexpected model: " + modelId);
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 
