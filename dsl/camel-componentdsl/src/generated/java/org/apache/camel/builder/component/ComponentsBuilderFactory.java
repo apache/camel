@@ -3760,7 +3760,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion, embeddings, and audio transcription.
+     * OpenAI endpoint for chat completion, embeddings, audio transcription,
+     * audio translation, and text-to-speech.
      * 
      * Category: ai
      * Since: 4.17

@@ -151,14 +151,23 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         if (config.getSlidingWindowType() != null) {
             builder.slidingWindowType(CircuitBreakerConfig.SlidingWindowType.valueOf(config.getSlidingWindowType()));
         }
+        if (config.getSlidingWindowSynchronizationStrategy() != null) {
+            builder.slidingWindowSynchronizationStrategy(
+                    CircuitBreakerConfig.SlidingWindowSynchronizationStrategy
+                            .valueOf(config.getSlidingWindowSynchronizationStrategy()));
+        }
         if (config.getSlowCallDurationThreshold() != null) {
-            builder.slowCallDurationThreshold(Duration.ofSeconds(parseLong(config.getSlowCallDurationThreshold())));
+            builder.slowCallDurationThreshold(Duration.ofMillis(parseDuration(config.getSlowCallDurationThreshold())));
         }
         if (config.getSlowCallRateThreshold() != null) {
             builder.slowCallRateThreshold(parseFloat(config.getSlowCallRateThreshold()));
         }
         if (config.getWaitDurationInOpenState() != null) {
-            builder.waitDurationInOpenState(Duration.ofSeconds(parseLong(config.getWaitDurationInOpenState())));
+            builder.waitDurationInOpenState(Duration.ofMillis(parseDuration(config.getWaitDurationInOpenState())));
+        }
+        if (config.getMaxWaitDurationInHalfOpenState() != null) {
+            builder.maxWaitDurationInHalfOpenState(
+                    Duration.ofMillis(parseDuration(config.getMaxWaitDurationInHalfOpenState())));
         }
         if (config.getWritableStackTraceEnabled() != null) {
             builder.writableStackTraceEnabled(parseBoolean(config.getWritableStackTraceEnabled()));
@@ -182,12 +191,15 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             builder.maxConcurrentCalls(parseInt(config.getBulkheadMaxConcurrentCalls()));
         }
         if (config.getBulkheadMaxWaitDuration() != null) {
-            long duration = parseLong(config.getBulkheadMaxWaitDuration());
+            long duration = parseDuration(config.getBulkheadMaxWaitDuration());
             if (duration <= 0) {
                 builder.maxWaitDuration(Duration.ZERO);
             } else {
                 builder.maxWaitDuration(Duration.ofMillis(duration));
             }
+        }
+        if (config.getBulkheadFairCallHandlingEnabled() != null) {
+            builder.fairCallHandlingStrategyEnabled(parseBoolean(config.getBulkheadFairCallHandlingEnabled()));
         }
         return builder.build();
     }
@@ -199,7 +211,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
 
         TimeLimiterConfig.Builder builder = TimeLimiterConfig.custom();
         if (config.getTimeoutDuration() != null) {
-            builder.timeoutDuration(Duration.ofMillis(parseLong(config.getTimeoutDuration())));
+            builder.timeoutDuration(Duration.ofMillis(parseDuration(config.getTimeoutDuration())));
         }
         if (config.getTimeoutCancelRunningFuture() != null) {
             builder.cancelRunningFuture(parseBoolean(config.getTimeoutCancelRunningFuture()));

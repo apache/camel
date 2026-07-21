@@ -17,13 +17,17 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FileInvalidStartingPathTest extends ContextTestSupport {
+class FileInvalidStartingPathTest extends ContextTestSupport {
 
     @Test
     public void testInvalidStartingPath() {
@@ -35,9 +39,17 @@ public class FileInvalidStartingPathTest extends ContextTestSupport {
     }
 
     @Test
-    public void testValidStartingPath() {
-        context.getEndpoint(
+    void testValidStartingPath() {
+        Endpoint endpoint = context.getEndpoint(
                 fileUri("?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt"));
+        assertNotNull(endpoint, "Endpoint should be resolved for a valid starting path");
+        FileEndpoint fileEndpoint = assertInstanceOf(FileEndpoint.class, endpoint);
+        assertNotNull(fileEndpoint.getFileName(), "FileEndpoint should have a fileName expression set");
+        assertNotNull(fileEndpoint.getConfiguration().getDirectory(),
+                "FileEndpoint should have a directory configured");
+        assertEquals("${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt",
+                fileEndpoint.getFileName().toString(),
+                "FileEndpoint fileName expression should match the configured value");
     }
 
 }

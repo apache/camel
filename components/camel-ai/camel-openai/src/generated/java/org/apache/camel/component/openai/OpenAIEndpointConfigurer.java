@@ -89,6 +89,16 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "outputClass": target.getConfiguration().setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
+        case "speechinstructions":
+        case "speechInstructions": target.getConfiguration().setSpeechInstructions(property(camelContext, java.lang.String.class, value)); return true;
+        case "speechmodel":
+        case "speechModel": target.getConfiguration().setSpeechModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "speechresponseformat":
+        case "speechResponseFormat": target.getConfiguration().setSpeechResponseFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "speechspeed":
+        case "speechSpeed": target.getConfiguration().setSpeechSpeed(property(camelContext, java.lang.Double.class, value)); return true;
+        case "speechvoice":
+        case "speechVoice": target.getConfiguration().setSpeechVoice(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "sslendpointalgorithm":
@@ -198,6 +208,16 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "outputClass": return java.lang.String.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
+        case "speechinstructions":
+        case "speechInstructions": return java.lang.String.class;
+        case "speechmodel":
+        case "speechModel": return java.lang.String.class;
+        case "speechresponseformat":
+        case "speechResponseFormat": return java.lang.String.class;
+        case "speechspeed":
+        case "speechSpeed": return java.lang.Double.class;
+        case "speechvoice":
+        case "speechVoice": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "sslendpointalgorithm":
@@ -308,6 +328,16 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "outputClass": return target.getConfiguration().getOutputClass();
         case "requesttimeout":
         case "requestTimeout": return target.getConfiguration().getRequestTimeout();
+        case "speechinstructions":
+        case "speechInstructions": return target.getConfiguration().getSpeechInstructions();
+        case "speechmodel":
+        case "speechModel": return target.getConfiguration().getSpeechModel();
+        case "speechresponseformat":
+        case "speechResponseFormat": return target.getConfiguration().getSpeechResponseFormat();
+        case "speechspeed":
+        case "speechSpeed": return target.getConfiguration().getSpeechSpeed();
+        case "speechvoice":
+        case "speechVoice": return target.getConfiguration().getSpeechVoice();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "sslendpointalgorithm":

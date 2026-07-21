@@ -665,22 +665,118 @@ public AwsSecretsManagerKeyLifecycleManager createKeyManager() {
 }
 ----
 
+=== AzureKeyVaultKeyLifecycleManager
+
+An enterprise-grade implementation that integrates with Azure Key Vault for centralized secret management. PQC keys
+are stored as Key Vault *secrets*, since Key Vault key objects do not support post-quantum key material.
+
+**Security Implementation:**
+
+This implementation uses the same industry-standard formats and separation of concerns as the AWS implementation:
+
+* **Private keys**: Stored in PKCS#8 format (RFC 5208), Base64-encoded in a JSON envelope
+* **Public keys**: Stored in X.509/SubjectPublicKeyInfo format (RFC 5280), Base64-encoded in a JSON envelope
+* **Separate storage**: Private keys, public keys, and metadata are stored as distinct Key Vault secrets
+* **Fine-grained access policies**: Enables different Key Vault access policies or Azure RBAC role assignments for
+  private keys (restricted) vs public keys (read-only)
+
+**Naming:** Azure Key Vault secret names may only contain alphanumeric characters and dashes, so secrets are named
+`\{keyPrefix}-\{keyId}-private`, `\{keyPrefix}-\{keyId}-public` and `\{keyPrefix}-\{keyId}-metadata`, with a default key
+prefix of `pqc-keys`. Key ids (and a custom key prefix) must only contain alphanumeric characters and dashes.
+
+**Deletion:** Deleting a key initiates the Key Vault delete operation for the backing secrets; on vaults with
+soft-delete enabled the secrets remain recoverable (and their names reserved) until purged according to the vault
+retention policy.
+
+**Dependencies:**
+
+To use AzureKeyVaultKeyLifecycleManager, add the following optional dependencies:
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.azure</groupId>
+    <artifactId>azure-security-keyvault-secrets</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.azure</groupId>
+    <artifactId>azure-identity</artifactId>
+</dependency>
+----
+
+**Example with SecretClient:**
+
+._Java-only: AzureKeyVaultKeyLifecycleManager with SecretClient_
+[source,java]
+----
+// Using existing SecretClient (recommended when using camel-azure-key-vault)
+@BindToRegistry("secretClient")
+public SecretClient createSecretClient() {
+    return new SecretClientBuilder()
+        .vaultUrl("https://myvault.vault.azure.net")
+        .credential(new DefaultAzureCredentialBuilder().build())
+        .buildClient();
+}
+
+@BindToRegistry("keyLifecycleManager")
+public AzureKeyVaultKeyLifecycleManager createKeyManager() {
+    return new AzureKeyVaultKeyLifecycleManager(
+        secretClient,   // Reuse existing client
+        "pqc-keys"      // Key prefix
+    );
+}
+
+// Generate an ML-DSA key stored in Azure Key Vault
+KeyPair keyPair = keyManager.generateKeyPair("MLDSA", "app-signing-key");
+
+// Keys are stored as: pqc-keys-app-signing-key-private, -public, -metadata
+----
+
+**Example with Client Secret Credential:**
+
+._Java-only: AzureKeyVaultKeyLifecycleManager with client secret credential_
+[source,java]
+----
+AzureKeyVaultKeyLifecycleManager keyManager =
+    new AzureKeyVaultKeyLifecycleManager(
+        "https://myvault.vault.azure.net", // Key Vault URL
+        "client-id",                       // Azure AD application client id
+        "client-secret",                   // Azure AD application client secret
+        "tenant-id",                       // Azure AD tenant id
+        "pqc-keys"                         // key prefix (optional, defaults to "pqc-keys")
+    );
+----
+
+**Example with Default Azure Credential (managed identity):**
+
+._Java-only: AzureKeyVaultKeyLifecycleManager with Default Azure Credential_
+[source,java]
+----
+AzureKeyVaultKeyLifecycleManager keyManager =
+    new AzureKeyVaultKeyLifecycleManager(
+        "https://myvault.vault.azure.net", // Key Vault URL
+        "pqc-keys"                         // key prefix
+    );
+----
+
 === Comparison of Implementations
 
 [options="header"]
 |===
-|Feature |FileBasedKeyLifecycleManager |InMemoryKeyLifecycleManager |HashicorpVaultKeyLifecycleManager |AwsSecretsManagerKeyLifecycleManager
+|Feature |FileBasedKeyLifecycleManager |InMemoryKeyLifecycleManager |HashicorpVaultKeyLifecycleManager |AwsSecretsManagerKeyLifecycleManager |AzureKeyVaultKeyLifecycleManager
 
 |Persistence
 |File system
 |Memory only
 |Vault backend
 |AWS Secrets Manager
+|Azure Key Vault
 
 |Distributed
 |Single node
 |Single node
 |Multi-node
+|Multi-region
 |Multi-region
 
 |Audit Logging
@@ -688,36 +784,42 @@ public AwsSecretsManagerKeyLifecycleManager createKeyManager() {
 |None
 |Automatic (Vault)
 |Automatic (CloudTrail)
+|Automatic (Azure Monitor)
 
 |Access Control
 |File permissions
 |None
 |Vault policies
 |IAM policies
+|Access policies / Azure RBAC
 
 |Encryption at Rest
 |OS-dependent
 |N/A
 |Always (Vault)
 |Always (AWS KMS)
+|Always (Key Vault)
 
 |High Availability
 |No
 |No
 |Yes (Vault HA)
 |Yes (AWS Multi-AZ)
+|Yes (Azure zone-redundant)
 
 |External Dependencies
 |None
 |None
 |Vault + spring-vault
 |AWS SDK v2
+|Azure SDK
 
 |Use Case
 |Single server
 |Testing/Dev
 |Production/Enterprise (Vault)
 |Production/Enterprise (AWS)
+|Production/Enterprise (Azure)
 |===
 
 == Key Generation

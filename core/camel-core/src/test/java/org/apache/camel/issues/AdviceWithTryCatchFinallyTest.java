@@ -18,11 +18,12 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.AdviceWith.adviceWith;
 
-public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
+class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -30,13 +31,23 @@ public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAdviceTryCatchFinally() throws Exception {
+    void testAdviceTryCatchFinally() throws Exception {
         context.addRoutes(createRouteBuilder());
 
         adviceWith(context, "my-route", a -> a.weaveById("replace-me")
                 .replace().to("mock:replaced"));
 
         context.start();
+
+        MockEndpoint mockReplaced = getMockEndpoint("mock:replaced");
+        mockReplaced.expectedMessageCount(1);
+
+        MockEndpoint mockReplaceMe = getMockEndpoint("mock:replace-me");
+        mockReplaceMe.expectedMessageCount(0);
+
+        template.sendBody("direct:start", "Hello World");
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

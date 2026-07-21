@@ -22,16 +22,22 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
 @Deprecated(since = "4.19.0")
-public class MDCErrorHandlerTest extends ContextTestSupport {
+class MDCErrorHandlerTest extends ContextTestSupport {
 
     @Test
-    public void testMDC() {
+    void testMDC() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:dead");
+        mock.expectedMessageCount(1);
+
         template.sendBody("direct:start", "Hello World");
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -68,7 +74,8 @@ public class MDCErrorHandlerTest extends ContextTestSupport {
                                 Assertions.assertEquals("dead", m.get("camel.routeId"));
                             }
                         })
-                        .to("log:dead");
+                        .to("log:dead")
+                        .to("mock:dead");
             }
         };
     }

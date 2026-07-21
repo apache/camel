@@ -135,11 +135,29 @@ public final class OpenAIConstants {
               javaType = "String")
     public static final String AUDIO_TIMESTAMP_GRANULARITIES = "CamelOpenAIAudioTimestampGranularities";
 
-    // Audio Transcription Output Headers
+    // Audio Transcription/Translation Output Headers
     @Metadata(description = "Duration of the audio in seconds (verbose_json only)", javaType = "Double")
     public static final String AUDIO_DURATION = "CamelOpenAIAudioDuration";
     @Metadata(description = "Language detected in the audio (verbose_json only)", javaType = "String")
     public static final String AUDIO_DETECTED_LANGUAGE = "CamelOpenAIAudioDetectedLanguage";
+
+    // Audio Speech (Text-to-Speech) Input Headers
+    @Metadata(description = "The model to use for text-to-speech (e.g., gpt-4o-mini-tts, tts-1, tts-1-hd)",
+              javaType = "String")
+    public static final String SPEECH_MODEL = "CamelOpenAISpeechModel";
+    @Metadata(description = "The voice to use for the generated audio (e.g., alloy, echo, fable, onyx, nova, shimmer)",
+              javaType = "String")
+    public static final String SPEECH_VOICE = "CamelOpenAISpeechVoice";
+    @Metadata(description = "The audio format for text-to-speech output (mp3, opus, aac, flac, wav, pcm)",
+              javaType = "String")
+    public static final String SPEECH_RESPONSE_FORMAT = "CamelOpenAISpeechResponseFormat";
+    @Metadata(description = "The speed of the generated audio (0.25 to 4.0, where 1.0 is normal speed)",
+              javaType = "Double")
+    public static final String SPEECH_SPEED = "CamelOpenAISpeechSpeed";
+    @Metadata(description = "Optional instructions to control the voice of the generated audio "
+                            + "(does not work with tts-1 or tts-1-hd)",
+              javaType = "String")
+    public static final String SPEECH_INSTRUCTIONS = "CamelOpenAISpeechInstructions";
 
     private OpenAIConstants() {
         // Utility class

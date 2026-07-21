@@ -80,7 +80,7 @@
         <avro-ipc-jetty-version>1.12.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.1</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.48.3</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.48.4</aws-java-sdk2-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.38</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
@@ -100,7 +100,6 @@
         <camunda-client-java-version>8.9.13</camunda-client-java-version>
         <cassandra-driver-version>4.19.3</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
-        <chicory-version>1.7.5</chicory-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <citrus-version>5.0.0-M2</citrus-version>
         <classgraph-version>4.8.184</classgraph-version>
@@ -133,8 +132,8 @@
         <cxf-xjc-plugin-version>4.2.0</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.2.0</cxf-xjc-utils-version>
         <daffodil-version>3.10.0</daffodil-version>
-        <dapr-version>1.18.0</dapr-version>
-        <dapr-workflow-version>1.18.0</dapr-workflow-version>
+        <dapr-version>1.18.1</dapr-version>
+        <dapr-workflow-version>1.18.1</dapr-workflow-version>
         <datasonnet-mapper-version>3.0.1.3</datasonnet-mapper-version>
         <debezium-version>3.6.0.Final</debezium-version>
         <debezium-mysql-connector-version>9.7.0</debezium-mysql-connector-version>
@@ -153,6 +152,7 @@
         <github-api-version>1.330</github-api-version>
         <elasticsearch-java-client-version>9.4.3</elasticsearch-java-client-version>
         <elasticsearch-java-client-sniffer-version>9.4.3</elasticsearch-java-client-sniffer-version>
+        <endive-version>1.0.1</endive-version>
         <extjwnl-version>2.0.5</extjwnl-version>
         <extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
         <exec-maven-plugin-version>3.6.3</exec-maven-plugin-version>
@@ -191,7 +191,7 @@
         <google-cloud-core-version>2.72.0</google-cloud-core-version>
         <google-cloud-firestore-version>3.44.0</google-cloud-firestore-version>
         <google-cloud-functions-version>2.82.0</google-cloud-functions-version>
-        <google-cloud-http-client-version>2.1.1</google-cloud-http-client-version>
+        <google-cloud-http-client-version>2.2.0</google-cloud-http-client-version>
         <google-cloud-pubsub-version>1.152.0</google-cloud-pubsub-version>
         <google-cloud-secretmanager-version>2.94.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.70.0</google-cloud-storage-version>
@@ -387,7 +387,7 @@
         <mockito-version>5.23.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
         <mongo-java-driver-version>5.9.0</mongo-java-driver-version>
-        <msal4j-version>1.25.0</msal4j-version>
+        <msal4j-version>1.25.1</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
         <mybatis-version>3.5.19</mybatis-version>
@@ -512,7 +512,6 @@
         <undertow-servlet-version>2.3.26.Final</undertow-servlet-version>
         <undertow-version>2.4.2.Final</undertow-version>
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
-        <vavr-version>1.0.0</vavr-version>
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.4.1</velocity-version>
         <vertx-version>4.5.28</vertx-version>

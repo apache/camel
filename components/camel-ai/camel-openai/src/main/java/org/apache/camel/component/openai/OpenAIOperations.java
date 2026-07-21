@@ -21,7 +21,9 @@ public enum OpenAIOperations {
     chatCompletion("chat-completion"),
     embeddings("embeddings"),
     toolExecution("tool-execution"),
-    audioTranscription("audio-transcription");
+    audioTranscription("audio-transcription"),
+    audioTranslation("audio-translation"),
+    audioSpeech("audio-speech");
 
     private final String value;
 
@@ -37,7 +39,8 @@ public enum OpenAIOperations {
         }
         throw new IllegalArgumentException(
                 "Unknown operation: " + value
-                                           + ". Supported: chat-completion, embeddings, tool-execution, audio-transcription");
+                                           + ". Supported: chat-completion, embeddings, tool-execution, "
+                                           + "audio-transcription, audio-translation, audio-speech");
     }
 
     public String getValue() {

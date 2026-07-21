@@ -218,10 +218,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     }
 
     /**
-     * The fallback route path to execute that does <b>not</b> go over the network.
-     * <p>
-     * This should be a static or cached result that can immediately be returned upon failure. If the fallback requires
-     * network connection then use {@link #onFallbackViaNetwork()}.
+     * The fallback route path to execute when the circuit breaker triggers.
      */
     public CircuitBreakerDefinition onFallback() {
         onFallback = new OnFallbackDefinition();
@@ -233,7 +230,10 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      * The fallback route path to execute that will go over the network.
      * <p/>
      * If the fallback will go over the network it is another possible point of failure.
+     *
+     * @deprecated Not supported by any circuit breaker implementation. Use {@link #onFallback()} instead.
      */
+    @Deprecated(since = "4.22", forRemoval = true)
     public CircuitBreakerDefinition onFallbackViaNetwork() {
         onFallback = new OnFallbackDefinition();
         onFallback.setFallbackViaNetwork(Boolean.toString(true));

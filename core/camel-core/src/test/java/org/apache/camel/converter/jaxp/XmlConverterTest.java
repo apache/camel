@@ -51,12 +51,15 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XmlConverterTest extends ContextTestSupport {
+class XmlConverterTest extends ContextTestSupport {
 
     @Test
-    public void testToResultNoSource() throws Exception {
+    void testToResultNoSource() throws Exception {
         XmlConverter conv = new XmlConverter();
+        // Should handle null source gracefully (returns immediately without transforming)
         conv.toResult(null, null);
+        // Verify the converter itself is still functional after handling null
+        assertNotNull(conv.createDocument());
     }
 
     @Test

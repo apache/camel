@@ -20,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 @Timeout(20)
-public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducerTemplateAsyncTest {
+class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducerTemplateAsyncTest {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -37,10 +38,10 @@ public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducer
         template.start();
     }
 
+    @Disabled("Not applicable for non-blocking async mode")
     @Test
     @Override
     public void testSendAsyncProcessor() {
-        // noop
     }
 
     @Test

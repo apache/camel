@@ -66,6 +66,10 @@ org.apache.camel.telemetry.decorators.ElasticsearchSpanDecorator
 org.apache.camel.telemetry.decorators.FileSpanDecorator
 org.apache.camel.telemetry.decorators.FtpSpanDecorator
 org.apache.camel.telemetry.decorators.FtpsSpanDecorator
+org.apache.camel.telemetry.decorators.GoogleBigQuerySpanDecorator
+org.apache.camel.telemetry.decorators.GoogleFirestoreSpanDecorator
+org.apache.camel.telemetry.decorators.GooglePubsubSpanDecorator
+org.apache.camel.telemetry.decorators.GoogleStorageSpanDecorator
 org.apache.camel.telemetry.decorators.HttpSpanDecorator
 org.apache.camel.telemetry.decorators.HttpsSpanDecorator
 org.apache.camel.telemetry.decorators.IronmqSpanDecorator

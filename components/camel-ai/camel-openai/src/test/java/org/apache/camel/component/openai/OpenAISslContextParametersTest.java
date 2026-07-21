@@ -39,6 +39,7 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.infra.openai.mock.MockExpectation;
+import org.apache.camel.test.infra.openai.mock.OpenAIMockExpectations;
 import org.apache.camel.test.infra.openai.mock.OpenAIMockServerHandler;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
@@ -90,7 +91,7 @@ class OpenAISslContextParametersTest extends CamelTestSupport {
         expectations.add(expectation);
 
         httpsServer.createContext("/",
-                new OpenAIMockServerHandler(expectations, List.of(), List.of(), new ObjectMapper()));
+                new OpenAIMockServerHandler(OpenAIMockExpectations.ofChat(expectations), new ObjectMapper()));
 
         executor = Executors.newSingleThreadExecutor();
         httpsServer.setExecutor(executor);
