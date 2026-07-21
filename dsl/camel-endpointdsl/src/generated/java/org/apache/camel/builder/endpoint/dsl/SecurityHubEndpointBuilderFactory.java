@@ -853,6 +853,19 @@ public interface SecurityHubEndpointBuilderFactory {
         public String awsSecurityHubProductArn() {
             return "CamelAwsSecurityHubProductArn";
         }
+        /**
+         * The ARN of the finding aggregator to retrieve.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: getFindingAggregator
+         * 
+         * @return the name of the header {@code
+         * AwsSecurityHubFindingAggregatorArn}.
+         */
+        public String awsSecurityHubFindingAggregatorArn() {
+            return "CamelAwsSecurityHubFindingAggregatorArn";
+        }
     }
     static SecurityHubEndpointBuilder endpointBuilder(String componentName, String path) {
         class SecurityHubEndpointBuilderImpl extends AbstractEndpointBuilder implements SecurityHubEndpointBuilder, AdvancedSecurityHubEndpointBuilder {
