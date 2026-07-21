@@ -21,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -33,9 +32,11 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class IOHelperTest {
+class IOHelperTest {
 
     @Test
     public void testIOException() {
@@ -52,10 +53,11 @@ public class IOHelperTest {
     }
 
     @Test
-    public void testCopyAndCloseInput() throws Exception {
+    void testCopyAndCloseInput() throws Exception {
         InputStream is = new ByteArrayInputStream("Hello".getBytes());
-        OutputStream os = new ByteArrayOutputStream();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(is, os, 256);
+        assertEquals("Hello", os.toString());
     }
 
     @Test

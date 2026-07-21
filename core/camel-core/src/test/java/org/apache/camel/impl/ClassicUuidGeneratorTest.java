@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.camel.support.ClassicUuidGenerator;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
@@ -26,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-public class ClassicUuidGeneratorTest {
+class ClassicUuidGeneratorTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClassicUuidGeneratorTest.class);
 
@@ -41,17 +44,20 @@ public class ClassicUuidGeneratorTest {
     }
 
     @Test
-    public void testPerformance() {
+    void testPerformance() {
         ClassicUuidGenerator uuidGenerator = new ClassicUuidGenerator();
         StopWatch watch = new StopWatch();
+        int count = 500000;
+        Set<String> ids = new HashSet<>(count + 2);
 
-        LOG.info("First id: {}", uuidGenerator.generateUuid());
-        for (int i = 0; i < 500000; i++) {
-            uuidGenerator.generateUuid();
+        ids.add(uuidGenerator.generateUuid());
+        for (int i = 0; i < count; i++) {
+            ids.add(uuidGenerator.generateUuid());
         }
-        LOG.info("Last id: {}", uuidGenerator.generateUuid());
+        ids.add(uuidGenerator.generateUuid());
 
         LOG.info("Took {}", TimeUtils.printDuration(watch.taken(), true));
+        assertEquals(count + 2, ids.size(), "All generated UUIDs should be unique");
     }
 
     @Test
