@@ -360,7 +360,7 @@ public class SpringAiChatConfiguration implements Cloneable {
 
     /**
      * Tags for discovering and calling Camel route tools. When provided, the chat component will automatically register
-     * tools from camel-spring-ai-tools routes matching these tags.
+     * tools from ai-tool routes matching these tags.
      */
     public void setTags(String tags) {
         this.tags = tags;

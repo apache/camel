@@ -262,6 +262,47 @@ The following 10 Oracle connector options have been removed by Debezium 3.6.0 an
 
 If you use any of these options, remove them from your configuration as they will cause errors.
 
+=== camel-spring-ai-chat
+
+==== Camel route tools now use ai-tool
+
+The `spring-ai-chat` producer now discovers Camel route tools from the `ai-tool` component
+(`AiToolRegistry`) instead of the `spring-ai-tools` component (`CamelToolExecutorCache`).
+
+Migrate your tool definition routes from `spring-ai-tools:` to `ai-tool:`:
+
+[source,java]
+----
+// Before (no longer works with spring-ai-chat)
+from("spring-ai-tools:weather?tags=weather&description=Get current weather for a city&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22°C\"}"));
+
+// After
+from("ai-tool:weather?tags=weather&description=Get current weather for a city&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22°C\"}"));
+----
+
+The `spring-ai-chat` producer endpoint is unchanged — only the tool consumer routes need
+to be migrated:
+
+[source,java]
+----
+from("direct:chat")
+    .to("spring-ai-chat:weatherChat?tags=weather&chatModel=#chatModel");
+----
+
+Add the `camel-ai-tool` dependency to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-tool</artifactId>
+</dependency>
+----
+
+The `camel-spring-ai-tools` dependency is no longer required by `camel-spring-ai-chat`.
+
 === camel-fory with JDK 25+ - Breaking change
 
 Due to new requirements from Apache Fory, when using Apache Fory Dataformat, the JVM parameter `--add-opens java.base/java.lang.invoke=ALL-UNNAMED` must be provided.
