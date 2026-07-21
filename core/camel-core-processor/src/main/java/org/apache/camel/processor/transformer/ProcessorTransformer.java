@@ -73,6 +73,9 @@ public class ProcessorTransformer extends Transformer {
         Exchange transformExchange = new DefaultExchange(exchange);
         transformExchange.setIn(message);
         transformExchange.getExchangeExtension().setProperties(exchange.getProperties());
+        if (exchange.hasVariables()) {
+            transformExchange.getVariables().putAll(exchange.getVariables());
+        }
         processor.process(transformExchange);
         Message answer = transformExchange.getMessage();
 
