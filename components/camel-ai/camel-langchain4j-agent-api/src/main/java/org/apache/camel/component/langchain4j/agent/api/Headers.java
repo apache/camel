@@ -55,4 +55,12 @@ public class Headers {
 
     @Metadata(description = "The Total Token Count.", javaType = "int")
     public static final String TOTAL_TOKEN_COUNT = "CamelLangChain4jAgentTotalTokenCount";
+
+    @Metadata(description = "RAG sources retrieved during agent invocation.",
+              javaType = "java.util.List<dev.langchain4j.rag.content.Content>")
+    public static final String SOURCES = "CamelLangChain4jAgentSources";
+
+    @Metadata(description = "Tool executions performed during agent invocation.",
+              javaType = "java.util.List<dev.langchain4j.service.tool.ToolExecution>")
+    public static final String TOOL_EXECUTIONS = "CamelLangChain4jAgentToolExecutions";
 }

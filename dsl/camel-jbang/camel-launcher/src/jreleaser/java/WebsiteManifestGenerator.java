@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
+// Intentionally in the default package so camel-package.sh can run this JDK-only source-file
+// tool directly by path without compiling or loading a package-qualified launcher class.
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;

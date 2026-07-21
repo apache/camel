@@ -53,7 +53,7 @@ jobs:
       camel-exe: ${{ steps.changes.outputs.camel-exe }}
       camel-launcher: ${{ steps.changes.outputs.camel-launcher }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -93,7 +93,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.camel-exe == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Set up JDK 25
@@ -107,7 +107,7 @@ jobs:
         # Plain mvn: this reactor is only a handful of modules, so the mvnd daemon
         # brings no parallelism benefit and adds a cold-start failure mode.
         run: |
-          mvn -pl buildingtools,tooling/camel-exe -am verify -Dcamel.exe.build=true -DskipTests
+          mvn -B -pl buildingtools,tooling/camel-exe -am verify -Dcamel.exe.build=true -DskipTests
       - name: Upload Windows x64 camel.exe
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -122,7 +122,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.camel-exe == 'true'
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Set up JDK 25
@@ -139,14 +139,15 @@ jobs:
       - name: Smoke test Windows x64 camel.exe
         shell: bash
         run: |
-          mvn -B -ntp -pl buildingtools,tooling/camel-exe -am test -Dtest=CamelExeBootstrapTest -Dsurefire.failIfNoSpecifiedTests=false
+          mvn -B -ntp -pl buildingtools,tooling/camel-exe -am test \
+            -Dtest=CamelExeBootstrapTest -Dsurefire.failIfNoSpecifiedTests=false
 
   camel-launcher-native:
     needs: detect-changes
     if: github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.camel-launcher == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Set up JDK 25
@@ -174,6 +175,14 @@ jobs:
           fi
           echo "Launcher upstream snapshots for ${VERSION} are available."
       - uses: ./.github/actions/setup-llvm-mingw
+      - name: Install the launcher's in-repo build plugins
+        # camel-repackager-maven-plugin builds the launcher's self-executing JAR. It is not in the
+        # -pl list below, so without this step Maven resolves it from the Apache snapshot repository
+        # and any change made to it in this PR is silently not exercised. Maven cannot consume a
+        # plugin produced by the same reactor invocation, hence the separate installation.
+        run: |
+          mvn -B -P apache-snapshots -ntp \
+            -pl tooling/maven/camel-repackager-maven-plugin install -DskipTests
       - name: Build launcher with native camel.exe (x64 + arm64)
         # No -am: build only the listed modules. The launcher's other in-repo
         # dependencies (camel-jbang-core, its jbang plugins, camel-core, ...) resolve
@@ -186,12 +195,12 @@ jobs:
         # daemon brings no parallelism benefit and adds a cold-start failure mode.
         # -P apache-snapshots is required here so the upstream modules resolve.
         run: |
-          mvn -P apache-snapshots \
+          mvn -B -P apache-snapshots \
             -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher verify \
             -Dcamel.exe.build=true -DskipTests
       - name: Assert archive carries both exe files
         run: |
-          ZIP=$(find dsl/camel-jbang/camel-launcher/target -maxdepth 1 -name 'camel-launcher-*-bin.zip' -print -quit)
+          ZIP=$(find dsl/camel-jbang/camel-launcher/target -maxdepth 1 -name 'camel-launcher-*-winget-bin.zip' -print -quit)
           echo "Checking archive: $ZIP"
           ENTRIES=$(unzip -l "$ZIP" | grep -Ec '/bin/camel-(x64|arm64)\.exe$')
           if [ "$ENTRIES" -ne 2 ]; then
@@ -200,3 +209,62 @@ jobs:
             exit 1
           fi
           echo "Both bin/camel-x64.exe and bin/camel-arm64.exe found in archive"
+      - name: Verify reproducible native executables and WinGet archive
+        run: |
+          HASH_FILE="$RUNNER_TEMP/winget-first-build.sha256"
+          sha256sum \
+            tooling/camel-exe/target/camel-x64.exe \
+            tooling/camel-exe/target/camel-arm64.exe \
+            dsl/camel-jbang/camel-launcher/target/camel-launcher-*-winget-bin.zip \
+            > "$HASH_FILE"
+
+          # 'clean verify' wipes target, so keep the first-build outputs around; on a mismatch the
+          # differing byte offsets and zip entry listing say far more than a bare FAILED.
+          FIRST_BUILD="$RUNNER_TEMP/winget-first-build"
+          mkdir -p "$FIRST_BUILD"
+          cp tooling/camel-exe/target/camel-x64.exe \
+             tooling/camel-exe/target/camel-arm64.exe \
+             dsl/camel-jbang/camel-launcher/target/camel-launcher-*-winget-bin.zip "$FIRST_BUILD"
+
+          mvn -B -P apache-snapshots \
+            -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher clean verify \
+            -Dcamel.exe.build=true -DskipTests
+
+          if ! sha256sum --check "$HASH_FILE"; then
+            for ARCH in x64 arm64; do
+              echo "=== differing bytes in camel-${ARCH}.exe (first 40) ==="
+              cmp -l "$FIRST_BUILD/camel-${ARCH}.exe" \
+                     "tooling/camel-exe/target/camel-${ARCH}.exe" | head -40 || true
+            done
+            # 'unzip -v' lists each entry's CRC and timestamp, so the diff distinguishes an entry
+            # whose contents changed from one that merely got a new modification time.
+            echo "=== differing WinGet archive entries ==="
+            ZIP=$(find dsl/camel-jbang/camel-launcher/target -maxdepth 1 -name '*-winget-bin.zip' -print -quit)
+            diff <(unzip -v "$FIRST_BUILD"/*-winget-bin.zip) <(unzip -v "$ZIP") || true
+
+            # The launcher JAR is itself an archive, so a CRC change above says nothing about which of
+            # its thousands of entries moved. Unpack both and diff one level down.
+            echo "=== differing entries inside the launcher JAR ==="
+            unzip -qo "$FIRST_BUILD"/*-winget-bin.zip '*/bin/camel-launcher-*.jar' -d "$RUNNER_TEMP/jar-first"
+            unzip -qo "$ZIP" '*/bin/camel-launcher-*.jar' -d "$RUNNER_TEMP/jar-second"
+            diff <(unzip -v "$(find "$RUNNER_TEMP/jar-first" -name '*.jar' -print -quit)") \
+                 <(unzip -v "$(find "$RUNNER_TEMP/jar-second" -name '*.jar' -print -quit)") \
+              | head -60 || true
+            exit 1
+          fi
+      - name: Verify WinGet archive is not deployed by Maven
+        run: |
+          MAVEN_REPO="$RUNNER_TEMP/winget-maven-repo"
+          mvn -B -P apache-snapshots \
+            -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher deploy \
+            -Dcamel.exe.build=true -DskipTests \
+            -DaltSnapshotDeploymentRepository="winget-check::file://$MAVEN_REPO"
+
+          # Matches the ZIP and every sidecar Maven may generate alongside it
+          # (.sha1, .md5, .sha256, .sha512, .asc), not just the two seen locally.
+          DEPLOYED_WINGET_FILES=$(find "$MAVEN_REPO" -type f -name '*-winget-bin.zip*' -print)
+          if [ -n "$DEPLOYED_WINGET_FILES" ]; then
+            echo "ERROR: Maven deployed the local-only WinGet payload:"
+            echo "$DEPLOYED_WINGET_FILES"
+            exit 1
+          fi

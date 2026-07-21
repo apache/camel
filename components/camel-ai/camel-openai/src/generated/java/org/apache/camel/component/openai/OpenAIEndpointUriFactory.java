@@ -24,7 +24,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(52);
+        Set<String> props = new HashSet<>(54);
         props.add("additionalBodyProperty");
         props.add("additionalHeader");
         props.add("additionalResponseHeader");
@@ -46,6 +46,8 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("jsonSchema");
         props.add("lazyStartProducer");
         props.add("maxAgenticTokens");
+        props.add("maxHistoryMessages");
+        props.add("maxHistoryTokens");
         props.add("maxRetries");
         props.add("maxTokens");
         props.add("maxToolIterations");

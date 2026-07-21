@@ -501,9 +501,9 @@ NOTE: The component automatically configures conversation isolation using metada
 
 === Function Calling / Tool Integration
 
-The component integrates with the xref:spring-ai-tools-component.adoc[Spring AI Tools Component] to enable LLMs to call Camel routes as functions/tools. This extends the LLM's capabilities with custom logic, external APIs, database queries, and more.
+The component integrates with the xref:ai-tool-component.adoc[AI Tool Component] to enable LLMs to call Camel routes as functions/tools. This extends the LLM's capabilities with custom logic, external APIs, database queries, and more.
 
-When you configure the `tags` parameter, the chat component discovers all matching tools from `spring-ai-tools` routes, registers them with Spring AI's ChatClient, and allows the LLM to call them during conversation.
+When you configure the `tags` parameter, the chat component discovers all matching tools from `ai-tool` routes, registers them with Spring AI's ChatClient, and allows the LLM to call them during conversation.
 
 [tabs]
 ====
@@ -512,13 +512,13 @@ Java::
 [source,java]
 ----
 // Define tools
-from("spring-ai-tools:weather?tags=weather&description=Get current weather for a location")
+from("ai-tool:weather?tags=weather&description=Get current weather for a location")
     .setBody(constant("Sunny"));
 
-from("spring-ai-tools:calculator?tags=math&description=Evaluate mathematical expressions")
+from("ai-tool:calculator?tags=math&description=Evaluate mathematical expressions")
     .setBody(constant("42"));
 
-from("spring-ai-tools:stock?tags=finance&description=Get current stock price")
+from("ai-tool:stock?tags=finance&description=Get current stock price")
     .setBody(constant("42"));
 
 // Chat endpoints with different tool combinations
@@ -538,17 +538,17 @@ XML::
 ----
 <!-- Define tools -->
 <route>
-  <from uri="spring-ai-tools:weather?tags=weather&amp;description=Get current weather for a location"/>
+  <from uri="ai-tool:weather?tags=weather&amp;description=Get current weather for a location"/>
   <setBody><constant>Sunny</constant></setBody>
 </route>
 
 <route>
-  <from uri="spring-ai-tools:calculator?tags=math&amp;description=Evaluate mathematical expressions"/>
+  <from uri="ai-tool:calculator?tags=math&amp;description=Evaluate mathematical expressions"/>
   <setBody><constant>42</constant></setBody>
 </route>
 
 <route>
-  <from uri="spring-ai-tools:stock?tags=finance&amp;description=Get current stock price"/>
+  <from uri="ai-tool:stock?tags=finance&amp;description=Get current stock price"/>
   <setBody><constant>42</constant></setBody>
 </route>
 
@@ -576,7 +576,7 @@ YAML::
 # Define tools
 - route:
     from:
-      uri: spring-ai-tools:weather
+      uri: ai-tool:weather
       parameters:
         tags: weather
         description: Get current weather for a location
@@ -586,7 +586,7 @@ YAML::
 
 - route:
     from:
-      uri: spring-ai-tools:calculator
+      uri: ai-tool:calculator
       parameters:
         tags: math
         description: Evaluate mathematical expressions
@@ -596,7 +596,7 @@ YAML::
 
 - route:
     from:
-      uri: spring-ai-tools:stock
+      uri: ai-tool:stock
       parameters:
         tags: finance
         description: Get current stock price
@@ -1028,7 +1028,7 @@ template.request("direct:chat", e -> {
 ----
 
 NOTE: Tool context works with Spring AI `@Tool` methods and MCP tools.
-Camel route tools (defined via `spring-ai-tools` consumer) do not receive the `ToolContext`.
+Camel route tools (defined via `ai-tool` consumer) do not receive the `ToolContext`.
 
 === Structured Output Validation
 
@@ -1384,7 +1384,7 @@ logging.level.org.springframework.ai.chat.client.advisor=DEBUG
 
 * https://docs.spring.io/spring-ai/reference/[Spring AI Documentation]
 * https://docs.spring.io/spring-ai/reference/api/tools.html[Spring AI Function Calling]
-* xref:spring-ai-tools-component.adoc[Spring AI Tools Component]
+* xref:ai-tool-component.adoc[AI Tool Component]
 * xref:spring-ai-embeddings-component.adoc[Spring AI Embeddings Component]
 * xref:spring-ai-vector-store-component.adoc[Spring AI VectorStore Component]
 * xref:spring-ai-image-component.adoc[Spring AI Image Component]

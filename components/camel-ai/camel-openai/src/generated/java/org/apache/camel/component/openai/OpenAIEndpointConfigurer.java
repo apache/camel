@@ -64,6 +64,10 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxagentictokens":
         case "maxAgenticTokens": target.getConfiguration().setMaxAgenticTokens(property(camelContext, long.class, value)); return true;
+        case "maxhistorymessages":
+        case "maxHistoryMessages": target.getConfiguration().setMaxHistoryMessages(property(camelContext, int.class, value)); return true;
+        case "maxhistorytokens":
+        case "maxHistoryTokens": target.getConfiguration().setMaxHistoryTokens(property(camelContext, int.class, value)); return true;
         case "maxretries":
         case "maxRetries": target.getConfiguration().setMaxRetries(property(camelContext, int.class, value)); return true;
         case "maxtokens":
@@ -169,6 +173,10 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": return boolean.class;
         case "maxagentictokens":
         case "maxAgenticTokens": return long.class;
+        case "maxhistorymessages":
+        case "maxHistoryMessages": return int.class;
+        case "maxhistorytokens":
+        case "maxHistoryTokens": return int.class;
         case "maxretries":
         case "maxRetries": return int.class;
         case "maxtokens":
@@ -275,6 +283,10 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxagentictokens":
         case "maxAgenticTokens": return target.getConfiguration().getMaxAgenticTokens();
+        case "maxhistorymessages":
+        case "maxHistoryMessages": return target.getConfiguration().getMaxHistoryMessages();
+        case "maxhistorytokens":
+        case "maxHistoryTokens": return target.getConfiguration().getMaxHistoryTokens();
         case "maxretries":
         case "maxRetries": return target.getConfiguration().getMaxRetries();
         case "maxtokens":

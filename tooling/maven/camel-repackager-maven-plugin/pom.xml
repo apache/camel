@@ -68,6 +68,16 @@
             <version>${spring-boot-version}</version>
         </dependency>
 
+        <!--
+            For MavenArchiver.parseBuildOutputTimestamp, the canonical reading of
+            project.build.outputTimestamp: it accepts both the ISO-8601 and epoch-second forms,
+            honours the single-character "disabled" convention, and falls back to SOURCE_DATE_EPOCH.
+        -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-archiver</artifactId>
+        </dependency>
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

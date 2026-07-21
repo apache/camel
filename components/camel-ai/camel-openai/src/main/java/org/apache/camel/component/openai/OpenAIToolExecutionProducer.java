@@ -173,7 +173,7 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
         }
 
         // Update conversation history and clear body for the next chat-completion call
-        exchange.setProperty(historyProperty, history);
+        exchange.setProperty(historyProperty, OpenAIConversationHistoryTrimmer.trim(history, config));
         exchange.getMessage().setBody(null);
         exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, executedCount);
     }

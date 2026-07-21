@@ -40,10 +40,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Isolated
 public class CxfTimeoutTest extends CamelSpringTestSupport {
@@ -78,8 +75,8 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
     public void testInvokingJaxWsServerWithCxfEndpointWithConfigurer() throws Exception {
         Exchange reply = sendJaxWsMessage("cxf://bean:springEndpoint?cxfConfigurer=#myConfigurer");
         // we don't expect the exception here
-        assertFalse(reply.isFailed(), "We don't expect the exception here");
-        assertEquals("Greet Hello World!", reply.getMessage().getBody(String.class), "Get a wrong response");
+        assertThat(reply.isFailed()).as("We don't expect the exception here").isFalse();
+        assertThat(reply.getMessage().getBody(String.class)).as("response body").isEqualTo("Greet Hello World!");
     }
 
     @Test
@@ -95,8 +92,14 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
     protected void sendTimeOutMessage(String endpointUri) throws Exception {
         Exchange reply = sendJaxWsMessage(endpointUri);
         Exception e = reply.getException();
-        assertNotNull(e, "We should get the exception cause here");
-        assertTrue(e instanceof HttpTimeoutException, "We should get a http time out exception here");
+        assertThat(e).as("exchange exception").isNotNull();
+        // CXF may either propagate HttpTimeoutException directly or wrap it in a
+        // Fault ("Could not send Message.") depending on where in the interceptor
+        // chain the timeout is caught. Both cases indicate the timeout was applied
+        // correctly, so check the entire cause chain.
+        assertThat(e).satisfiesAnyOf(
+                ex -> assertThat(ex).isInstanceOf(HttpTimeoutException.class),
+                ex -> assertThat(ex).hasRootCauseInstanceOf(HttpTimeoutException.class));
     }
 
     protected Exchange sendJaxWsMessage(String endpointUri) throws InterruptedException {

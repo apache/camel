@@ -55,6 +55,7 @@ public class LangChain4jWebSearchProducer extends DefaultProducer {
                     .geoLocation(getEndpoint().getConfiguration().getGeoLocation())
                     .startPage(getEndpoint().getConfiguration().getStartPage())
                     .startIndex(getEndpoint().getConfiguration().getStartIndex())
+                    .safeSearch(getEndpoint().getConfiguration().getSafeSearch())
                     .additionalParams(getEndpoint().getConfiguration().getAdditionalParams())
                     .build();
         }
