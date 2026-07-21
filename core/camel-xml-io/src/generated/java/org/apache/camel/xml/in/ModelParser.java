@@ -794,6 +794,7 @@ public class ModelParser extends BaseParser {
     }
     protected <T extends Resilience4jConfigurationCommon> AttributeHandler<T> resilience4jConfigurationCommonAttributeHandler() {
         return (def, key, val) -> switch (key) {
+            case "asynchronous": def.setAsynchronous(val); yield true;
             case "automaticTransitionFromOpenToHalfOpenEnabled": def.setAutomaticTransitionFromOpenToHalfOpenEnabled(val); yield true;
             case "bulkheadEnabled": def.setBulkheadEnabled(val); yield true;
             case "bulkheadFairCallHandlingEnabled": def.setBulkheadFairCallHandlingEnabled(val); yield true;

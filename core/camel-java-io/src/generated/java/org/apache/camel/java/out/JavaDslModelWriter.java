@@ -2330,6 +2330,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
         doWriteAttribute(sb, "bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
         doWriteAttribute(sb, "bulkheadFairCallHandlingEnabled", def.getBulkheadFairCallHandlingEnabled(), "true");
+        doWriteAttribute(sb, "asynchronous", def.getAsynchronous(), "false");
         doWriteAttribute(sb, "timeoutEnabled", def.getTimeoutEnabled(), "false");
         doWriteAttribute(sb, "timeoutExecutorService", def.getTimeoutExecutorService(), null);
         doWriteAttribute(sb, "timeoutDuration", def.getTimeoutDuration(), "1000");
