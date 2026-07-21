@@ -94,6 +94,14 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
               defaultValue = "true")
     private boolean exposed = true;
 
+    @Metadata(label = "producer")
+    @UriParam(description = "Maximum number of tool-calling round trips (iterations) allowed before stopping."
+                            + " This prevents infinite loops when the LLM keeps requesting tool calls indefinitely."
+                            + " Each round trip consists of one LLM call and the execution of all tools requested in that call."
+                            + " Set to 0 for unlimited (not recommended).",
+              defaultValue = "10")
+    private int maxToolCallingRoundTrips = 10;
+
     // Track the tool specification created by this endpoint for proper cleanup
     private CamelToolSpecification camelToolSpecification;
 
@@ -276,6 +284,19 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
 
     public void setExposed(boolean exposed) {
         this.exposed = exposed;
+    }
+
+    /**
+     * Maximum number of tool-calling round trips allowed
+     *
+     * @return the maximum number of round trips
+     */
+    public int getMaxToolCallingRoundTrips() {
+        return maxToolCallingRoundTrips;
+    }
+
+    public void setMaxToolCallingRoundTrips(int maxToolCallingRoundTrips) {
+        this.maxToolCallingRoundTrips = maxToolCallingRoundTrips;
     }
 
     @Override
