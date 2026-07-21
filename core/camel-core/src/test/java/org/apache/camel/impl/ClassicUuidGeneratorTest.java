@@ -34,7 +34,7 @@ class ClassicUuidGeneratorTest {
     private static final Logger LOG = LoggerFactory.getLogger(ClassicUuidGeneratorTest.class);
 
     @Test
-    void testGenerateUUID() {
+    public void testGenerateUUID() {
         ClassicUuidGenerator uuidGenerator = new ClassicUuidGenerator();
 
         String firstUUID = uuidGenerator.generateUuid();
@@ -61,7 +61,7 @@ class ClassicUuidGeneratorTest {
     }
 
     @Test
-    void testSanitizeHostName() {
+    public void testSanitizeHostName() {
         assertEquals("somehost.lan", ClassicUuidGenerator.sanitizeHostName("somehost.lan"));
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         assertEquals("otherhost.lan", ClassicUuidGenerator.sanitizeHostName("other\u0E08host.lan"));

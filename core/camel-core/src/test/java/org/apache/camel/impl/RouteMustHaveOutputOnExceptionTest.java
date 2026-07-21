@@ -51,7 +51,7 @@ class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
     }
 
     @Test
-    void testInValid() throws Exception {
+    public void testInValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FileInvalidStartingPathTest extends ContextTestSupport {
 
     @Test
-    void testInvalidStartingPath() {
+    public void testInvalidStartingPath() {
         ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
                 () -> context.getEndpoint(fileUri("${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt")),
                 "Should have thrown an exception");

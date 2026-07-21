@@ -30,7 +30,7 @@ class SimpleUuidGeneratorTest {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleUuidGeneratorTest.class);
 
     @Test
-    void testGenerateUUID() {
+    public void testGenerateUUID() {
         SimpleUuidGenerator uuidGenerator = new SimpleUuidGenerator();
 
         assertEquals("1", uuidGenerator.generateUuid());

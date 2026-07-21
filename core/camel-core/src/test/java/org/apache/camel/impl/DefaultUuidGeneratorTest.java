@@ -34,7 +34,7 @@ class DefaultUuidGeneratorTest {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUuidGeneratorTest.class);
 
     @Test
-    void testGenerateUUID() {
+    public void testGenerateUUID() {
         UuidGenerator uuidGenerator = new DefaultUuidGenerator();
 
         String firstUUID = uuidGenerator.generateUuid();

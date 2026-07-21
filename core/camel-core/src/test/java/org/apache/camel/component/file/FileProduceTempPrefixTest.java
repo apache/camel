@@ -41,7 +41,7 @@ class FileProduceTempPrefixTest extends ContextTestSupport {
     public static final String FILE_QUERY = "?tempPrefix=inprogress.";
 
     @Test
-    void testCreateTempFileName() throws Exception {
+    public void testCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUri(FILE_QUERY));
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
@@ -52,7 +52,7 @@ class FileProduceTempPrefixTest extends ContextTestSupport {
     }
 
     @Test
-    void testCreateTempFileNameUsingComplexName() throws Exception {
+    public void testCreateTempFileNameUsingComplexName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUri(FILE_QUERY));
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
@@ -63,7 +63,7 @@ class FileProduceTempPrefixTest extends ContextTestSupport {
     }
 
     @Test
-    void testNoPathCreateTempFileName() throws Exception {
+    public void testNoPathCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUri(FILE_QUERY));
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
@@ -74,7 +74,7 @@ class FileProduceTempPrefixTest extends ContextTestSupport {
     }
 
     @Test
-    void testTempPrefix() {
+    public void testTempPrefix() {
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME_1);
 
         assertFileExists(testFile(TEST_FILE_NAME_1));

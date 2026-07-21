@@ -37,7 +37,7 @@ class OnExceptionMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    void testOnExceptionMisconfigured() throws Exception {
+    public void testOnExceptionMisconfigured() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -56,7 +56,7 @@ class OnExceptionMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    void testOnExceptionMisconfigured2() throws Exception {
+    public void testOnExceptionMisconfigured2() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -75,7 +75,7 @@ class OnExceptionMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    void testOnExceptionMisconfigured3() throws Exception {
+    public void testOnExceptionMisconfigured3() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -94,7 +94,7 @@ class OnExceptionMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    void testOnExceptionMisconfigured4() throws Exception {
+    public void testOnExceptionMisconfigured4() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -113,7 +113,7 @@ class OnExceptionMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    void testOnExceptionMisconfigured5() throws Exception {
+    public void testOnExceptionMisconfigured5() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {

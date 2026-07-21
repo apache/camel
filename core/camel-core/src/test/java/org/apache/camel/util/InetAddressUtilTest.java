@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class InetAddressUtilTest {
 
     @Test
-    void testGetLocalHostName() {
+    public void testGetLocalHostName() {
         try {
             String name = InetAddressUtil.getLocalHostName();
             assertNotNull(name);

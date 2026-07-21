@@ -45,7 +45,7 @@ class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducerTemplat
     }
 
     @Test
-    void testRunningInSameThread() {
+    public void testRunningInSameThread() {
         Thread originalThread = Thread.currentThread();
         CompletableFuture<Exchange> future = template.asyncSend("direct:echo", e -> {
             assertSame(originalThread, Thread.currentThread());
