@@ -71,14 +71,14 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     private final Lock lock = new ReentrantLock();
     @Metadata(description = "Sets which scope the throttling should be based upon, either route or total scoped.",
               enums = "Context,Route", defaultValue = "Route")
-    private ThrottlingScope scope = ThrottlingScope.Route;
+    private volatile ThrottlingScope scope = ThrottlingScope.Route;
     @Metadata(description = "Sets the upper limit of number of concurrent inflight exchanges at which point reached the throttler should suspend the route.",
               defaultValue = "1000")
-    private int maxInflightExchanges = 1000;
+    private volatile int maxInflightExchanges = 1000;
     @Metadata(description = "Sets at which percentage of the max the throttler should start resuming the route.",
               defaultValue = "70")
-    private int resumePercentOfMax = 70;
-    private int resumeInflightExchanges = 700;
+    private volatile int resumePercentOfMax = 70;
+    private volatile int resumeInflightExchanges = 700;
     @Metadata(description = "Sets the logging level to report the throttling activity.",
               javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private LoggingLevel loggingLevel = LoggingLevel.INFO;

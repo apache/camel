@@ -64,15 +64,15 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     private boolean spoolEnabled;
     private File spoolDirectory;
     private transient String spoolDirectoryName = "${java.io.tmpdir}/camel/camel-tmp-#uuid#";
-    private long spoolThreshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
-    private int spoolUsedHeapMemoryThreshold;
+    private volatile long spoolThreshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
+    private volatile int spoolUsedHeapMemoryThreshold;
     private SpoolUsedHeapMemoryLimit spoolUsedHeapMemoryLimit;
     private String spoolCipher;
-    private int bufferSize = IOHelper.DEFAULT_BUFFER_SIZE;
+    private volatile int bufferSize = IOHelper.DEFAULT_BUFFER_SIZE;
     private boolean removeSpoolDirectoryWhenStopping = true;
     private final UtilizationStatistics statistics = new UtilizationStatistics();
     private final Set<SpoolRule> spoolRules = new LinkedHashSet<>();
-    private boolean anySpoolRules;
+    private volatile boolean anySpoolRules;
 
     @Override
     public CamelContext getCamelContext() {

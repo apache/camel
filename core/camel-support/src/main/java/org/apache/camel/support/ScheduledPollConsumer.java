@@ -57,13 +57,13 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
     private boolean startScheduler = true;
     private long initialDelay = 1000;
-    private long delay = 500;
+    private volatile long delay = 500;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private boolean useFixedDelay = true;
     private PollingConsumerPollStrategy pollStrategy;
-    private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
-    private boolean sendEmptyMessageWhenIdle;
-    private boolean greedy;
+    private volatile LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
+    private volatile boolean sendEmptyMessageWhenIdle;
+    private volatile boolean greedy;
     private int backoffMultiplier;
     private int backoffIdleThreshold;
     private int backoffErrorThreshold;

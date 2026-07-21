@@ -49,7 +49,7 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
     protected boolean rejectExecution;
     protected boolean asyncDelayed;
     protected boolean callerRunsWhenRejected = true;
-    protected Expression maxRequestsExpression;
+    protected volatile Expression maxRequestsExpression;
 
     AbstractThrottler(final ScheduledExecutorService asyncExecutor, final boolean shutdownAsyncExecutor,
                       final CamelContext camelContext, final boolean rejectExecution, Expression correlation,

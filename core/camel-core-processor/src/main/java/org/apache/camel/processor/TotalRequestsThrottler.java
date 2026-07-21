@@ -58,7 +58,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
 
     private static final Logger LOG = LoggerFactory.getLogger(TotalRequestsThrottler.class);
 
-    private long timePeriodMillis;
+    private volatile long timePeriodMillis;
     private final long cleanPeriodMillis;
     private final Expression correlationExpression;
     private final Map<String, ThrottlingState> states = new ConcurrentHashMap<>();
