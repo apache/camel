@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
+class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
 
     @Override
     @BeforeEach
@@ -41,7 +41,7 @@ public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
     }
 
     @Test
-    public void testErrorHandlerRouteContextRefNotFound() throws Exception {
+    void testErrorHandlerRouteContextRefNotFound() throws Exception {
         Exception e = assertThrows(Exception.class, () -> {
             super.setUp();
         });

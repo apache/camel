@@ -26,7 +26,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
+class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
 
     @Override
     @BeforeEach
@@ -35,7 +35,7 @@ public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSup
     }
 
     @Test
-    public void testDummy() throws Exception {
+    void testDummy() throws Exception {
         Exception e = assertThrows(Exception.class, () -> {
             super.setUp();
         });

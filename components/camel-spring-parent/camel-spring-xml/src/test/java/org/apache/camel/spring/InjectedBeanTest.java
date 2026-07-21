@@ -24,11 +24,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class InjectedBeanTest extends SpringTestSupport {
+class InjectedBeanTest extends SpringTestSupport {
     protected InjectedBean bean;
 
     @Test
-    public void testInjectionPoints() throws Exception {
+    void testInjectionPoints() throws Exception {
         log.info("getFieldInjectedEndpoint()         = {}", bean.getFieldInjectedEndpoint());
         log.info("getPropertyInjectedEndpoint()      = {}", bean.getPropertyInjectedEndpoint());
 
@@ -59,7 +59,7 @@ public class InjectedBeanTest extends SpringTestSupport {
 
     @Disabled("Empty test stub — no send/receive logic implemented")
     @Test
-    public void testSendAndReceive() {
+    void testSendAndReceive() {
     }
 
     @Override

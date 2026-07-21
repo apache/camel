@@ -17,6 +17,7 @@
 package org.apache.camel.spring.produce;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +26,20 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ContextConfiguration
 @ExtendWith(SpringExtension.class)
-public class MyCoolBeanTest {
+class MyCoolBeanTest {
 
     @Autowired
     ApplicationContext applicationContext;
 
     @Test
-    public void testProducerTemplate() {
+    void testProducerTemplate() {
         MyCoolBean cool = applicationContext.getBean("cool", MyCoolBean.class);
         assertNotNull(cool, "MyCoolBean should be resolved from application context");
         assertNotNull(cool.producer, "ProducerTemplate should be injected via @Produce annotation");
@@ -50,7 +53,10 @@ public class MyCoolBeanTest {
         CamelContext camelContext = applicationContext.getBean(CamelContext.class);
         assertTrue(camelContext.getStatus().isStarted(), "CamelContext should be started");
 
-        // Send message — verifies the @Produce-injected template can deliver to log:foo
-        cool.sendMsg();
+        // Verify message delivery through the @Produce-injected template
+        Exchange result = cool.producer.send(cool.producer.getDefaultEndpoint(),
+                e -> e.getMessage().setBody("Hello World"));
+        assertFalse(result.isFailed(), "Message delivery to log:foo should succeed");
+        assertNull(result.getException(), "No exception should occur during message delivery");
     }
 }

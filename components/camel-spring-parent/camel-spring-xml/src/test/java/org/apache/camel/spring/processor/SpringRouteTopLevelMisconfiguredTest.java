@@ -25,7 +25,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SpringRouteTopLevelMisconfiguredTest extends ContextTestSupport {
+class SpringRouteTopLevelMisconfiguredTest extends ContextTestSupport {
 
     @Override
     @BeforeEach
@@ -34,7 +34,7 @@ public class SpringRouteTopLevelMisconfiguredTest extends ContextTestSupport {
     }
 
     @Test
-    public void testMisconfigured() throws Exception {
+    void testMisconfigured() throws Exception {
         RuntimeCamelException e1 = assertThrows(RuntimeCamelException.class, () -> {
             createSpringCamelContext(this,
                     "org/apache/camel/spring/processor/SpringRouteTopLevelOnExceptionMisconfiguredTest.xml");

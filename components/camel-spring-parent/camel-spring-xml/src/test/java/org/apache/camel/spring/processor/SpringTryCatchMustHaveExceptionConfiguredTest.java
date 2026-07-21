@@ -25,7 +25,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SpringTryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport {
+class SpringTryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport {
 
     @Override
     @BeforeEach
@@ -34,7 +34,7 @@ public class SpringTryCatchMustHaveExceptionConfiguredTest extends ContextTestSu
     }
 
     @Test
-    public void testTryCatchMustHaveExceptionConfigured() throws Exception {
+    void testTryCatchMustHaveExceptionConfigured() throws Exception {
         Exception e = assertThrows(Exception.class, () -> {
             createSpringCamelContext(this,
                     "org/apache/camel/spring/processor/SpringTryCatchMustHaveExceptionConfiguredTest.xml");

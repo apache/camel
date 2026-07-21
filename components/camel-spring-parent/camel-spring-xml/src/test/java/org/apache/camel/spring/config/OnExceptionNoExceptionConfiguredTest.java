@@ -24,7 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class OnExceptionNoExceptionConfiguredTest extends SpringTestSupport {
+class OnExceptionNoExceptionConfiguredTest extends SpringTestSupport {
 
     @Override
     @BeforeEach
@@ -38,7 +38,7 @@ public class OnExceptionNoExceptionConfiguredTest extends SpringTestSupport {
     }
 
     @Test
-    public void testOnExceptionNoExceptionConfigured() throws Exception {
+    void testOnExceptionNoExceptionConfigured() throws Exception {
         assertThrows(Exception.class, () -> {
             super.setUp();
         });

@@ -25,7 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SpringRouteNoOutputTest extends SpringTestSupport {
+class SpringRouteNoOutputTest extends SpringTestSupport {
 
     @Override
     @BeforeEach
@@ -34,7 +34,7 @@ public class SpringRouteNoOutputTest extends SpringTestSupport {
     }
 
     @Test
-    public void testRouteNoOutput() {
+    void testRouteNoOutput() {
         assertThrows(RuntimeCamelException.class, () -> {
             new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringRouteNoOutputTest.xml");
         });

@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ErrorHandlerCamelContextRefNotFoundTest extends SpringTestSupport {
+class ErrorHandlerCamelContextRefNotFoundTest extends SpringTestSupport {
 
     @Override
     @BeforeEach
@@ -41,7 +41,7 @@ public class ErrorHandlerCamelContextRefNotFoundTest extends SpringTestSupport {
     }
 
     @Test
-    public void testErrorHandlerCamelContextRefNotFound() throws Exception {
+    void testErrorHandlerCamelContextRefNotFound() throws Exception {
         Exception e = assertThrows(Exception.class, () -> {
             super.setUp();
         });

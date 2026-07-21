@@ -49,7 +49,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class SpringLdapProducerTest extends CamelTestSupport {
+class SpringLdapProducerTest extends CamelTestSupport {
 
     @Mock
     private SpringLdapEndpoint ldapEndpoint;
@@ -60,20 +60,20 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     private SpringLdapProducer ldapProducer;
 
     @Override
-    public void doPostSetup() {
+    protected void doPostSetup() {
         when(ldapEndpoint.getLdapTemplate()).thenReturn(ldapTemplate);
         ldapProducer = new SpringLdapProducer(ldapEndpoint);
     }
 
     @Test
-    public void testEmptyExchange() throws Exception {
+    void testEmptyExchange() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         assertThrows(UnsupportedOperationException.class,
                 () -> ldapProducer.process(exchange));
     }
 
     @Test
-    public void testWrongBodyType() throws Exception {
+    void testWrongBodyType() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
         in.setBody("");
@@ -84,7 +84,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoDN() throws Exception {
+    void testNoDN() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
@@ -95,7 +95,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoDNForFunctionDrivenOperation() throws Exception {
+    void testNoDNForFunctionDrivenOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
@@ -118,7 +118,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testEmptyDN() throws Exception {
+    void testEmptyDN() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
@@ -130,7 +130,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNullDN() throws Exception {
+    void testNullDN() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
@@ -142,7 +142,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNullOperation() throws Exception {
+    void testNullOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
@@ -154,7 +154,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSearch() throws Exception {
+    void testSearch() throws Exception {
         String dn = "some dn";
         String filter = "filter";
         Integer scope = SearchControls.SUBTREE_SCOPE;
@@ -174,7 +174,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBind() throws Exception {
+    void testBind() throws Exception {
         String dn = "some dn";
         BasicAttributes attributes = new BasicAttributes();
 
@@ -192,7 +192,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnbind() throws Exception {
+    void testUnbind() throws Exception {
         String dn = "some dn";
 
         Exchange exchange = new DefaultExchange(context);
@@ -208,7 +208,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testAuthenticate() throws Exception {
+    void testAuthenticate() throws Exception {
         String dn = "cn=dn";
         String filter = "filter";
         String password = "password";
@@ -228,7 +228,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testModifyAttributes() throws Exception {
+    void testModifyAttributes() throws Exception {
         String dn = "cn=dn";
         ModificationItem[] modificationItems
                 = new ModificationItem[] { new ModificationItem(DirContext.ADD_ATTRIBUTE, new BasicAttribute("key", "value")) };
@@ -247,7 +247,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFunctionDriven() throws Exception {
+    void testFunctionDriven() throws Exception {
         String dn = "cn=dn";
 
         Exchange exchange = new DefaultExchange(context);

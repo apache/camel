@@ -32,15 +32,13 @@ import org.springframework.ws.pox.dom.DomPoxMessageFactory;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
-public class BasicMessageFilterTest extends ExchangeTestSupport {
+class BasicMessageFilterTest extends ExchangeTestSupport {
 
     private BasicMessageFilter filter;
     private SoapMessage message;
 
     @BeforeEach
-    public void before() {
+    void before() {
         filter = new BasicMessageFilter();
         SaajSoapMessageFactory saajSoapMessageFactory = new SaajSoapMessageFactory();
         saajSoapMessageFactory.afterPropertiesSet();
@@ -48,15 +46,14 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testNulls() {
-        assertDoesNotThrow(() -> {
-            filter.filterConsumer(null, null);
-            filter.filterProducer(null, null);
-        });
+    void testNulls() {
+        // Verify null-safety: each method should handle null arguments gracefully
+        Assertions.assertThatCode(() -> filter.filterConsumer(null, null)).doesNotThrowAnyException();
+        Assertions.assertThatCode(() -> filter.filterProducer(null, null)).doesNotThrowAnyException();
     }
 
     @Test
-    public void testNullsWithExchange() {
+    void testNullsWithExchange() {
         // capture exchange state before filtering with null message
         int headerCountBefore = exchange.getIn().getHeaders().size();
         Object bodyBefore = exchange.getIn().getBody();
@@ -70,7 +67,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void nonSoapMessageShouldBeSkipped() {
+    void nonSoapMessageShouldBeSkipped() {
         DomPoxMessage domPoxMessage = new DomPoxMessageFactory().createWebServiceMessage();
 
         filter.filterConsumer(exchange, domPoxMessage);
@@ -82,7 +79,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void withoutHeader() throws Exception {
+    void withoutHeader() throws Exception {
         exchange.getIn().getHeaders().clear();
         exchange.getOut().getHeaders().clear();
 
@@ -103,7 +100,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void removeCamelInternalHeaderAttributes() throws Exception {
+    void removeCamelInternalHeaderAttributes() throws Exception {
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO, "mustBeRemoved");
@@ -125,7 +122,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void consumerWithHeader() throws Exception {
+    void consumerWithHeader() throws Exception {
         exchange.getOut().getHeaders().put("headerAttributeKey", "testAttributeValue");
         exchange.getOut().getHeaders().put("headerAttributeElement", new QName("http://shouldBeInHeader", "myElement"));
         filter.filterConsumer(exchange, message);
@@ -140,7 +137,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void producerWithHeader() throws Exception {
+    void producerWithHeader() throws Exception {
         // foo is already in the header.in from the parent ExchangeTestSupport
         exchange.getIn().getHeaders().put("headerAttributeKey", "testAttributeValue");
         exchange.getIn().getHeaders().put("headerAttributeElement", new QName("http://shouldBeInHeader", "myElement"));
@@ -157,7 +154,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void withoutAttachment() throws Exception {
+    void withoutAttachment() throws Exception {
         filter.filterConsumer(exchange, message);
         filter.filterProducer(exchange, message);
 
@@ -165,7 +162,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void producerWithAttachment() throws Exception {
+    void producerWithAttachment() throws Exception {
         exchange.getIn(AttachmentMessage.class).addAttachment("testAttachment",
                 new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 
@@ -176,7 +173,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void consumerWithAttachment() throws Exception {
+    void consumerWithAttachment() throws Exception {
         exchange.getMessage(AttachmentMessage.class).addAttachment("testAttachment",
                 new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 

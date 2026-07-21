@@ -31,13 +31,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ContextConfiguration
-public class SpringTraceTest extends SpringRunWithTestSupport {
+class SpringTraceTest extends SpringRunWithTestSupport {
 
     @Autowired
     protected ProducerTemplate camelTemplate;
 
     @Test
-    public void testTracing() throws Exception {
+    void testTracing() throws Exception {
         CamelContext camelContext = camelTemplate.getCamelContext();
 
         // Verify that tracing is enabled by the Spring XML configuration (trace="true")

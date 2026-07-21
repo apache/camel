@@ -24,10 +24,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class RabbitMQProducerSimpleIT extends RabbitMQITSupport {
+class RabbitMQProducerSimpleIT extends RabbitMQITSupport {
 
     @Test
-    public void testProducer() {
+    void testProducer() {
         Exchange result = template.send("direct:start", e -> e.getMessage().setBody("Hello World"));
         assertFalse(result.isFailed(), "Exchange should complete without error");
         assertNull(result.getException(), "Exchange should have no exception");

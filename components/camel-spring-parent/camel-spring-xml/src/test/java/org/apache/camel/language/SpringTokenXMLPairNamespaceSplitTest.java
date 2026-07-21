@@ -25,7 +25,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 /**
  *
  */
-public class SpringTokenXMLPairNamespaceSplitTest extends TokenXMLPairNamespaceSplitTest {
+class SpringTokenXMLPairNamespaceSplitTest extends TokenXMLPairNamespaceSplitTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

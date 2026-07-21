@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends SpringTestSupport {
+class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
@@ -42,7 +42,7 @@ public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends Sprin
     }
 
     @Test
-    public void testInvalidOptionUri() throws Exception {
+    void testInvalidOptionUri() throws Exception {
         Exception e = assertThrows(Exception.class, () -> {
             super.setUp();
         });
