@@ -39,6 +39,7 @@ import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
 import org.apache.hc.core5.http.protocol.RequestValidateHost;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -85,6 +86,12 @@ class HttpProducerGzipAutoDecompressionTest extends HttpServerTestSupport {
         List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
         responseInterceptors.add(new ResponseCompressingInterceptor());
         return new DefaultHttpProcessor(requestInterceptors, responseInterceptors);
+    }
+
+    @BeforeEach
+    void resetContentCompressionDisabled() {
+        HttpComponent http = context.getComponent("http", HttpComponent.class);
+        http.setContentCompressionDisabled(false);
     }
 
     @Test
