@@ -1004,18 +1004,18 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteFaultToleranceConfigurationCommonAttributes(FaultToleranceConfigurationCommon def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("delay", def.getDelay(), "5000");
-        doWriteAttribute("bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
         doWriteAttribute("typedGuard", def.getTypedGuard(), null);
-        doWriteAttribute("failureRatio", def.getFailureRatio(), "50");
-        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
-        doWriteAttribute("timeoutPoolSize", def.getTimeoutPoolSize(), "10");
+        doWriteAttribute("delay", def.getDelay(), "5000");
         doWriteAttribute("successThreshold", def.getSuccessThreshold(), "1");
         doWriteAttribute("requestVolumeThreshold", def.getRequestVolumeThreshold(), "20");
-        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
-        doWriteAttribute("threadOffloadExecutorService", def.getThreadOffloadExecutorService(), null);
+        doWriteAttribute("failureRatio", def.getFailureRatio(), "50");
+        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
+        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
+        doWriteAttribute("timeoutPoolSize", def.getTimeoutPoolSize(), "10");
         doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "false");
+        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
+        doWriteAttribute("bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
+        doWriteAttribute("threadOffloadExecutorService", def.getThreadOffloadExecutorService(), null);
     }
     protected void doWriteFaultToleranceConfigurationCommon(String name, FaultToleranceConfigurationCommon def) throws IOException {
         startElement(name);
@@ -1505,30 +1505,30 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteResilience4jConfigurationCommonAttributes(Resilience4jConfigurationCommon def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
-        doWriteAttribute("timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "true");
-        doWriteAttribute("minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "100");
-        doWriteAttribute("slidingWindowSynchronizationStrategy", def.getSlidingWindowSynchronizationStrategy(), "SYNCHRONIZED");
-        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute("permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), "10");
-        doWriteAttribute("slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
-        doWriteAttribute("bulkheadFairCallHandlingEnabled", def.getBulkheadFairCallHandlingEnabled(), "true");
         doWriteAttribute("circuitBreaker", def.getCircuitBreaker(), null);
-        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
-        doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "false");
-        doWriteAttribute("maxWaitDurationInHalfOpenState", def.getMaxWaitDurationInHalfOpenState(), "0");
+        doWriteAttribute("config", def.getConfig(), null);
         doWriteAttribute("failureRateThreshold", def.getFailureRateThreshold(), "50");
+        doWriteAttribute("permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), "10");
+        doWriteAttribute("throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), "false");
+        doWriteAttribute("slidingWindowSize", def.getSlidingWindowSize(), "100");
+        doWriteAttribute("slidingWindowType", def.getSlidingWindowType(), "COUNT_BASED");
+        doWriteAttribute("slidingWindowSynchronizationStrategy", def.getSlidingWindowSynchronizationStrategy(), "SYNCHRONIZED");
+        doWriteAttribute("minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "100");
+        doWriteAttribute("writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
+        doWriteAttribute("waitDurationInOpenState", def.getWaitDurationInOpenState(), "60000");
+        doWriteAttribute("automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
+        doWriteAttribute("maxWaitDurationInHalfOpenState", def.getMaxWaitDurationInHalfOpenState(), "0");
+        doWriteAttribute("slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
         doWriteAttribute("slowCallDurationThreshold", def.getSlowCallDurationThreshold(), "60000");
+        doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "false");
+        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
+        doWriteAttribute("bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
+        doWriteAttribute("bulkheadFairCallHandlingEnabled", def.getBulkheadFairCallHandlingEnabled(), "true");
         doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
         doWriteAttribute("timeoutExecutorService", def.getTimeoutExecutorService(), null);
-        doWriteAttribute("throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), "false");
+        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
+        doWriteAttribute("timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "true");
         doWriteAttribute("micrometerEnabled", def.getMicrometerEnabled(), "false");
-        doWriteAttribute("writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
-        doWriteAttribute("automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
-        doWriteAttribute("slidingWindowSize", def.getSlidingWindowSize(), "100");
-        doWriteAttribute("config", def.getConfig(), null);
-        doWriteAttribute("slidingWindowType", def.getSlidingWindowType(), "COUNT_BASED");
-        doWriteAttribute("waitDurationInOpenState", def.getWaitDurationInOpenState(), "60000");
     }
     protected void doWriteResilience4jConfigurationCommonElements(Resilience4jConfigurationCommon def) throws IOException {
         doWriteList(null, "ignoreException", def.getIgnoreExceptions(), this::doWriteString);
