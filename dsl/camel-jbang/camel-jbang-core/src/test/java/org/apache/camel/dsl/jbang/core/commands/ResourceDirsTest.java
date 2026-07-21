@@ -128,6 +128,13 @@ class ResourceDirsTest {
     }
 
     @Test
+    void validateShouldRejectBareDotDot(@TempDir Path tempDir) {
+        assertThatThrownBy(() -> Run.validateResourceDir(".."))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("must end with a named directory");
+    }
+
+    @Test
     void nestedParentPathShouldMapToLastComponent() {
         // ../../mydata/foo -> last component is "foo"
         Path path = Path.of("../../mydata/foo").normalize();

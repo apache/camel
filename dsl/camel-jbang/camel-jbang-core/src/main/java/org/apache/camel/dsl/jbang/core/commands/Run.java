@@ -2698,6 +2698,10 @@ public class Run extends CamelCommand {
         if (path.isAbsolute()) {
             throw new IllegalArgumentException("--resource-dirs only accepts relative paths: " + dir);
         }
+        if (path.getFileName() != null && path.getFileName().toString().equals("..")) {
+            throw new IllegalArgumentException(
+                    "--resource-dirs path must end with a named directory, not '..': " + dir);
+        }
         if (!Files.isDirectory(path)) {
             throw new IllegalArgumentException("--resource-dirs path is not a directory: " + dir);
         }
