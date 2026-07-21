@@ -681,7 +681,7 @@ This implementation uses the same industry-standard formats and separation of co
   private keys (restricted) vs public keys (read-only)
 
 **Naming:** Azure Key Vault secret names may only contain alphanumeric characters and dashes, so secrets are named
-`{keyPrefix}-{keyId}-private`, `{keyPrefix}-{keyId}-public` and `{keyPrefix}-{keyId}-metadata`, with a default key
+`\{keyPrefix}-\{keyId}-private`, `\{keyPrefix}-\{keyId}-public` and `\{keyPrefix}-\{keyId}-metadata`, with a default key
 prefix of `pqc-keys`. Key ids (and a custom key prefix) must only contain alphanumeric characters and dashes.
 
 **Deletion:** Deleting a key initiates the Key Vault delete operation for the backing secrets; on vaults with
