@@ -51,4 +51,31 @@ public interface Transcribe2Constants {
     String TAGS = "CamelAwsTranscribeTags";
     @Metadata(label = "producer", description = "A list of tag keys to remove from the resource", javaType = "List<String>")
     String TAG_KEYS = "CamelAwsTranscribeTagKeys";
+    @Metadata(label = "producer", description = "The maximum number of results to return in a list operation",
+              javaType = "Integer")
+    String MAX_RESULTS = "CamelAwsTranscribeMaxResults";
+    @Metadata(label = "producer", description = "The token to retrieve the next page of a list operation",
+              javaType = "String")
+    String NEXT_TOKEN = "CamelAwsTranscribeNextToken";
+    @Metadata(label = "producer", description = "The S3 location of the vocabulary or vocabulary filter file",
+              javaType = "String")
+    String VOCABULARY_FILE_URI = "CamelAwsTranscribeVocabularyFileUri";
+    @Metadata(label = "producer", description = "The base model used when creating a custom language model",
+              javaType = "String")
+    String BASE_MODEL_NAME = "CamelAwsTranscribeBaseModelName";
+    @Metadata(label = "producer",
+              description = "The S3 location of the training data for a custom language model", javaType = "String")
+    String INPUT_DATA_S3_URI = "CamelAwsTranscribeInputDataS3Uri";
+    @Metadata(label = "producer",
+              description = "The ARN of the IAM role granting access to the training data or vocabulary file",
+              javaType = "String")
+    String DATA_ACCESS_ROLE_ARN = "CamelAwsTranscribeDataAccessRoleArn";
+    @Metadata(label = "producer", description = "The S3 bucket where the transcription output is stored",
+              javaType = "String")
+    String OUTPUT_BUCKET_NAME = "CamelAwsTranscribeOutputBucketName";
+    @Metadata(label = "producer", description = "The medical specialty of a medical transcription job",
+              javaType = "String")
+    String SPECIALTY = "CamelAwsTranscribeSpecialty";
+    @Metadata(label = "producer", description = "The audio type of a medical transcription job", javaType = "String")
+    String TYPE = "CamelAwsTranscribeType";
 }
