@@ -27,10 +27,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
+class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
 
     @BeforeAll
-    public static void startService() {
+    static void startService() {
         Object implementor = new PersonImpl();
         String address = "http://localhost:" + getPort1()
                          + "/CxfWsdlFirstPayloadModeTest/PersonService/";

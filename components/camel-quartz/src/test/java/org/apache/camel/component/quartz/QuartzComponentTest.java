@@ -24,10 +24,10 @@ import org.quartz.impl.StdSchedulerFactory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class QuartzComponentTest extends BaseQuartzTest {
+class QuartzComponentTest extends BaseQuartzTest {
 
     @Test
-    public void testQuartzComponentCustomScheduler() throws Exception {
+    void testQuartzComponentCustomScheduler() throws Exception {
         QuartzComponent comp = new QuartzComponent();
         comp.setCamelContext(context);
 
@@ -44,7 +44,7 @@ public class QuartzComponentTest extends BaseQuartzTest {
     }
 
     @Test
-    public void testQuartzComponent() throws Exception {
+    void testQuartzComponent() throws Exception {
         QuartzComponent comp = new QuartzComponent(context);
         comp.start();
 

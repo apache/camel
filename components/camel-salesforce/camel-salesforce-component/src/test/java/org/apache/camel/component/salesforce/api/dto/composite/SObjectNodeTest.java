@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class SObjectNodeTest extends CompositeTestBase {
+class SObjectNodeTest extends CompositeTestBase {
 
     static SObjectNode[] toArray(final Stream<SObjectNode> children) {
         return children.toArray(l -> new SObjectNode[l]);
     }
 
     @Test
-    public void shouldBeAbleToAddChildNode() {
+    void shouldBeAbleToAddChildNode() {
         final SObjectTree tree = new SObjectTree();
 
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
@@ -51,7 +51,7 @@ public class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    public void shouldBeAbleToAddChildObject() {
+    void shouldBeAbleToAddChildObject() {
         final SObjectTree tree = new SObjectTree();
 
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
@@ -68,7 +68,7 @@ public class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    public void shouldBeAbleToFetchChildNodes() {
+    void shouldBeAbleToFetchChildNodes() {
         final SObjectTree tree = new SObjectTree();
 
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
@@ -87,7 +87,7 @@ public class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    public void shouldBeAbleToFetchChildren() {
+    void shouldBeAbleToFetchChildren() {
         final SObjectTree tree = new SObjectTree();
 
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
@@ -106,7 +106,7 @@ public class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    public void shouldCreateNode() {
+    void shouldCreateNode() {
         final SObjectTree tree = new SObjectTree();
 
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
@@ -131,7 +131,7 @@ public class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    public void shouldCreateNodeWithoutChildRecords() {
+    void shouldCreateNodeWithoutChildRecords() {
         SObjectNode node = new SObjectNode(new SObjectTree(), simpleAccount);
         assertNotNull(node);
         assertSame(simpleAccount, node.getObject());
@@ -139,7 +139,7 @@ public class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    public void shouldFetchChildrenNodesOfType() {
+    void shouldFetchChildrenNodesOfType() {
         final SObjectTree tree = new SObjectTree();
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
         node.addChild("Contacts", new SObjectNode(tree, smith));
@@ -157,7 +157,7 @@ public class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    public void shouldFetchChildrenOfType() {
+    void shouldFetchChildrenOfType() {
         final SObjectTree tree = new SObjectTree();
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
         node.addChild("Contacts", smith);
@@ -175,7 +175,7 @@ public class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    public void shouldSupportAddingDescribedSObjects() {
+    void shouldSupportAddingDescribedSObjects() {
         final SObjectTree tree = new SObjectTree();
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
         node.addChild(smith);
@@ -196,7 +196,7 @@ public class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    public void typeOfShouldBeBasedOnSimpleClassName() {
+    void typeOfShouldBeBasedOnSimpleClassName() {
         assertEquals("Account", SObjectNode.typeOf(new Account()), "Type of Account should be 'Account'");
         assertEquals("Contact", SObjectNode.typeOf(new Contact()), "Type of Contact should be 'Contact'");
     }

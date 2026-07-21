@@ -30,9 +30,10 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
+class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -54,7 +55,7 @@ public class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSimpleEmbedding() throws Exception {
+    void testSimpleEmbedding() throws Exception {
         EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
 
         TextSegment segment1 = TextSegment.from("I like football.");
@@ -67,5 +68,10 @@ public class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
                 .request(Message.class);
         assertNotNull(first, "response message should not be null");
         assertNotNull(first.getBody(), "response body should not be null");
+        // The embedding store add operation returns an ID (String) for the stored embedding
+        assertInstanceOf(String.class, first.getBody(), "response body should be a String (embedding ID)");
+        String embeddingId = (String) first.getBody();
+        assertFalse(embeddingId.isEmpty(),
+                "response body should contain a non-empty embedding ID");
     }
 }

@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Run manually to check how the MX parser works")
-public class ParserTest {
+class ParserTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ParserTest.class);
 
     @Test
-    public void justParse() throws XmlPullParserException, IOException {
+    void justParse() throws XmlPullParserException, IOException {
         final MXParser xpp = getMxParser();
         int eventType = xpp.getEventType();
         while (eventType != MXParser.END_DOCUMENT) {
@@ -137,7 +137,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parseTheEdge() throws XmlPullParserException, IOException {
+    void parseTheEdge() throws XmlPullParserException, IOException {
         StringBuilder sb = new StringBuilder(256);
         sb.append("<?xml version='1.0'?>\n");
         sb.append("<!--\n");

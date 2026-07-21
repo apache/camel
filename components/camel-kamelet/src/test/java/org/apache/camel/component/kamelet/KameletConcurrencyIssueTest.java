@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Manual test")
-public class KameletConcurrencyIssueTest extends CamelTestSupport {
+class KameletConcurrencyIssueTest extends CamelTestSupport {
 
     @Test
-    public void testConcurrency() throws Exception {
+    void testConcurrency() throws Exception {
         assertFalse(context.getRoutes().isEmpty(), "Routes should be started for concurrency test");
         // check there are no exceptions thrown during creating kamelets
         Thread.sleep(120000);

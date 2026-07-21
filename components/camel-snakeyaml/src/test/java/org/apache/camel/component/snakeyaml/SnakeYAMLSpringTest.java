@@ -23,9 +23,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext
-public class SnakeYAMLSpringTest extends CamelSpringTestSupport {
+class SnakeYAMLSpringTest extends CamelSpringTestSupport {
     @Test
-    public void testMarshalAndUnmarshalMap() throws Exception {
+    void testMarshalAndUnmarshalMap() throws Exception {
         SnakeYAMLTestHelper.marshalAndUnmarshal(
                 context(),
                 SnakeYAMLTestHelper.createTestMap(),
@@ -36,7 +36,7 @@ public class SnakeYAMLSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testMarshalAndUnmarshalPojo() throws Exception {
+    void testMarshalAndUnmarshalPojo() throws Exception {
         SnakeYAMLTestHelper.marshalAndUnmarshal(
                 context(),
                 SnakeYAMLTestHelper.createTestPojo(),
@@ -47,7 +47,7 @@ public class SnakeYAMLSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testMarshalAndUnmarshalPojoWithPrettyFlow() throws Exception {
+    void testMarshalAndUnmarshalPojoWithPrettyFlow() throws Exception {
         SnakeYAMLTestHelper.marshalAndUnmarshal(
                 context(),
                 SnakeYAMLTestHelper.createTestPojo(),

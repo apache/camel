@@ -62,7 +62,7 @@ class MavenDownloaderImplTest {
     File tempDir;
 
     @BeforeAll
-    public static void startMavenMirror() throws Exception {
+    static void startMavenMirror() throws Exception {
         localServer = ServerBootstrap.bootstrap()
                 .setListenerPort(AvailablePortFinder.getNextAvailable(9234, 10000))
                 .registerHandler("/maven/*", (req, res, context) -> {
@@ -106,7 +106,7 @@ class MavenDownloaderImplTest {
     }
 
     @AfterAll
-    public static void stopMavenMirror() {
+    static void stopMavenMirror() {
         if (localServer != null) {
             localServer.shutdown(2, TimeUnit.SECONDS);
         }

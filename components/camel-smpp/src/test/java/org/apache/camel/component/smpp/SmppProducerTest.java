@@ -51,7 +51,7 @@ import static org.mockito.Mockito.when;
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppProducer</code>
  */
-public class SmppProducerTest {
+class SmppProducerTest {
 
     private SmppProducer producer;
     private SmppConfiguration configuration;
@@ -59,7 +59,7 @@ public class SmppProducerTest {
     private SMPPSession session;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         configuration = new SmppConfiguration();
         configuration.setServiceType("CMT");
         configuration.setSystemType("cp");
@@ -76,7 +76,7 @@ public class SmppProducerTest {
     }
 
     @Test
-    public void doStartShouldStartANewSmppSession() throws Exception {
+    void doStartShouldStartANewSmppSession() throws Exception {
         when(endpoint.getConnectionString())
                 .thenReturn("smpp://smppclient@localhost:2775");
         BindParameter expectedBindParameters = new BindParameter(
@@ -101,7 +101,7 @@ public class SmppProducerTest {
     }
 
     @Test
-    public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
+    void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
         when(endpoint.getConnectionString())
                 .thenReturn("smpp://smppclient@localhost:2775");
         when(endpoint.isSingleton()).thenReturn(true);
@@ -112,7 +112,7 @@ public class SmppProducerTest {
     }
 
     @Test
-    public void doStopShouldCloseTheSMPPSession() throws Exception {
+    void doStopShouldCloseTheSMPPSession() throws Exception {
         when(endpoint.getConnectionString())
                 .thenReturn("smpp://smppclient@localhost:2775");
         when(endpoint.isSingleton()).thenReturn(true);
@@ -125,7 +125,7 @@ public class SmppProducerTest {
     }
 
     @Test
-    public void processInOnlyShouldExecuteTheCommand() throws Exception {
+    void processInOnlyShouldExecuteTheCommand() throws Exception {
         SmppBinding binding = mock(SmppBinding.class);
         Exchange exchange = mock(Exchange.class);
         SmppCommand command = mock(SmppCommand.class);
@@ -139,14 +139,14 @@ public class SmppProducerTest {
     }
 
     @Test
-    public void getterShouldReturnTheSetValues() {
+    void getterShouldReturnTheSetValues() {
         assertSame(endpoint, producer.getEndpoint());
         assertSame(configuration, producer.getConfiguration());
     }
 
     @ParameterizedTest
     @EnumSource(value = SessionState.class, names = { "UNBOUND", "CLOSED" })
-    public void internalSessionStateListenerShouldCloseSessionAndReconnect(SessionState sessionState) throws Exception {
+    void internalSessionStateListenerShouldCloseSessionAndReconnect(SessionState sessionState) throws Exception {
         try (MockedStatic<SmppUtils> smppUtilsMock = mockStatic(SmppUtils.class)) {
             ScheduledExecutorService reconnectService = (ScheduledExecutorService) ReflectionHelper
                     .getField(SmppProducer.class.getDeclaredField("reconnectService"), producer);

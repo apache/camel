@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class NettyEnricherLeakTest extends BaseNettyTestSupport {
+class NettyEnricherLeakTest extends BaseNettyTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,7 +32,7 @@ public class NettyEnricherLeakTest extends BaseNettyTestSupport {
     }
 
     @Test
-    public void leakNoTest() throws Exception {
+    void leakNoTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -56,7 +56,7 @@ public class NettyEnricherLeakTest extends BaseNettyTestSupport {
     }
 
     @Test
-    public void leakTest() throws Exception {
+    void leakTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {

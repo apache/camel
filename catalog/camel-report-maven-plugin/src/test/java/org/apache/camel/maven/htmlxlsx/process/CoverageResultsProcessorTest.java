@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
-public class CoverageResultsProcessorTest {
+class CoverageResultsProcessorTest {
 
     private static final String TARGET = "_target";
 
@@ -76,14 +76,14 @@ public class CoverageResultsProcessorTest {
     private File temporaryDirectory;
 
     @Test
-    public void testCoverageResultsProcessor() {
+    void testCoverageResultsProcessor() {
 
         // keep jacoco happy
         assertNotNull(processor);
     }
 
     @Test
-    public void testGenerateReport() throws IOException {
+    void testGenerateReport() throws IOException {
 
         File htmlPath = htmlPath();
         Path htmlPathAsPath = Paths.get(htmlPath.getPath());
@@ -100,7 +100,7 @@ public class CoverageResultsProcessorTest {
     }
 
     @Test
-    public void testParseAllTestResults() throws IOException, IllegalAccessException {
+    void testParseAllTestResults() throws IOException, IllegalAccessException {
 
         Mockito
                 .doReturn(TestUtil.testResult())
@@ -123,7 +123,7 @@ public class CoverageResultsProcessorTest {
     }
 
     @Test
-    public void testParseTestResult() throws IOException {
+    void testParseTestResult() throws IOException {
 
         TestResult result = processor.parseTestResult(inputFile());
 
@@ -138,7 +138,7 @@ public class CoverageResultsProcessorTest {
     }
 
     @Test
-    public void testParseTestResultNull() throws IllegalAccessException {
+    void testParseTestResultNull() throws IllegalAccessException {
 
         FieldUtils.writeDeclaredField(processor, "xmlToCamelRouteCoverageConverter", converter, true);
 
@@ -150,7 +150,7 @@ public class CoverageResultsProcessorTest {
     }
 
     @Test
-    public void testGenerateEipStatistics() throws IllegalAccessException, IOException {
+    void testGenerateEipStatistics() throws IllegalAccessException, IOException {
 
         Mockito
                 .doReturn(outputPath().getPath())
@@ -183,24 +183,24 @@ public class CoverageResultsProcessorTest {
 
     @Disabled("TODO: implement test")
     @Test
-    public void testGenerateChildEipStatistics() {
+    void testGenerateChildEipStatistics() {
 
     }
 
     @Disabled("TODO: implement test")
     @Test
-    public void testGenerateExcel() {
+    void testGenerateExcel() {
 
     }
 
     @Disabled("TODO: implement test")
     @Test
-    public void testGenerateHtml() {
+    void testGenerateHtml() {
 
     }
 
     @Test
-    public void testGatherBestRouteCoverages() throws IllegalAccessException, IOException {
+    void testGatherBestRouteCoverages() throws IllegalAccessException, IOException {
 
         @SuppressWarnings("unchecked")
         List<TestResult> testResults = (List<TestResult>) FieldUtils.readDeclaredField(processor, "testResults", true);
@@ -221,7 +221,7 @@ public class CoverageResultsProcessorTest {
     }
 
     @Test
-    public void testSquashDuplicateRoutes() throws IllegalAccessException {
+    void testSquashDuplicateRoutes() throws IllegalAccessException {
 
         @SuppressWarnings("unchecked")
         Map<String, Route> result = (Map<String, Route>) FieldUtils.readDeclaredField(processor, "routeMap", true);
@@ -242,7 +242,7 @@ public class CoverageResultsProcessorTest {
     }
 
     @Test
-    public void testGenerateRouteStatistics() throws IllegalAccessException, IOException {
+    void testGenerateRouteStatistics() throws IllegalAccessException, IOException {
 
         Mockito
                 .doReturn(indexPath().getPath())
@@ -267,12 +267,12 @@ public class CoverageResultsProcessorTest {
 
     @Disabled("TODO: implement test")
     @Test
-    public void testAddToRouteTotals() {
+    void testAddToRouteTotals() {
 
     }
 
     @Test
-    public void testGetRouteStatistic() throws IllegalAccessException {
+    void testGetRouteStatistic() throws IllegalAccessException {
 
         @SuppressWarnings("unchecked")
         Map<String, RouteStatistic> routeStatisticMap
@@ -303,12 +303,12 @@ public class CoverageResultsProcessorTest {
 
     @Disabled("TODO: implement test")
     @Test
-    public void testRecalculate() {
+    void testRecalculate() {
 
     }
 
     @Test
-    public void testWriteDetailsAsHtml() throws IllegalAccessException, IOException {
+    void testWriteDetailsAsHtml() throws IllegalAccessException, IOException {
 
         @SuppressWarnings("unchecked")
         Map<String, RouteStatistic> routeStatisticMap
@@ -336,7 +336,7 @@ public class CoverageResultsProcessorTest {
     }
 
     @Test
-    public void testWriteReportIndex() throws IOException {
+    void testWriteReportIndex() throws IOException {
 
         File outputPath = htmlPath();
         Path outputPathAsPath = Paths.get(outputPath.getPath());

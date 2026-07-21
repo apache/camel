@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * for testing without manual setup.
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class KeycloakTestInfraIT extends CamelTestSupport {
+class KeycloakTestInfraIT extends CamelTestSupport {
 
     private static final Logger log = LoggerFactory.getLogger(KeycloakTestInfraIT.class);
 

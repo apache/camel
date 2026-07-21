@@ -21,26 +21,28 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test for System.err
  */
-public class StreamSystemErrTest extends CamelTestSupport {
+class StreamSystemErrTest extends CamelTestSupport {
 
     @Test
-    public void testStringContent() {
+    void testStringContent() {
         Exchange result = template.send("direct:in", exchange -> exchange.getIn().setBody("Hello Text World\n"));
         assertNotNull(result);
-        assertNull(result.getException(), "Sending string content to stream:err should not cause an exception");
+        assertFalse(result.isFailed(), "Sending string content to stream:err should not cause an exchange failure");
+        assertNotNull(result.getIn().getBody(), "Exchange body should be preserved after sending");
     }
 
     @Test
-    public void testBinaryContent() {
+    void testBinaryContent() {
         Exchange result = template.send("direct:in", exchange -> exchange.getIn().setBody("Hello Bytes World\n".getBytes()));
         assertNotNull(result);
-        assertNull(result.getException(), "Sending binary content to stream:err should not cause an exception");
+        assertFalse(result.isFailed(), "Sending binary content to stream:err should not cause an exchange failure");
+        assertNotNull(result.getIn().getBody(), "Exchange body should be preserved after sending");
     }
 
     @Override

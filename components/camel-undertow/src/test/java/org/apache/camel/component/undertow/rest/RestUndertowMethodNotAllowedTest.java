@@ -26,10 +26,10 @@ import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RestUndertowMethodNotAllowedTest extends BaseUndertowTest {
+class RestUndertowMethodNotAllowedTest extends BaseUndertowTest {
 
     @Test
-    public void testPostMethodNotAllowed() {
+    void testPostMethodNotAllowed() {
         Exception e = assertThrows(Exception.class,
                 () -> template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body",
                         Exchange.HTTP_METHOD,
@@ -39,7 +39,7 @@ public class RestUndertowMethodNotAllowedTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testGetMethodAllowed() {
+    void testGetMethodAllowed() {
         String result = template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body",
                 Exchange.HTTP_METHOD, "GET", String.class);
         assertEquals("123;Donald Duck", result);

@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
+class WorkdayCommonAPIProducerTest extends CamelTestSupport {
 
     @Test
-    public void createProducerMinimalConfiguration() throws Exception {
+    void createProducerMinimalConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
         WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
@@ -52,7 +52,7 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerNoHostConfiguration() {
+    void createProducerNoHostConfiguration() {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -66,7 +66,7 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerInvalidAPIConfiguration() throws Exception {
+    void createProducerInvalidAPIConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
         WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
@@ -84,7 +84,7 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerWorkersValidAPIConfiguration() throws Exception {
+    void createProducerWorkersValidAPIConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
         WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
@@ -101,7 +101,7 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerPayslipByIDValidAPIConfiguration() throws Exception {
+    void createProducerPayslipByIDValidAPIConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
         WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
@@ -121,7 +121,7 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerCurrenciesValidConfiguration() throws Exception {
+    void createProducerCurrenciesValidConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
         WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
@@ -138,7 +138,7 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerCurrenciesInvalidIDConfiguration() throws Exception {
+    void createProducerCurrenciesInvalidIDConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
         WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent

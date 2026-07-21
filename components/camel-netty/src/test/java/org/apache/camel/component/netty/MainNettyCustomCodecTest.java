@@ -23,14 +23,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class MainNettyCustomCodecTest extends BaseNettyTest {
+class MainNettyCustomCodecTest extends BaseNettyTest {
 
     // use reaadble bytes
     private byte[] data_eol = new byte[] { 65, 66, 67, 68, 69, 70, 71, 72, 73, 0, 0 };
     private byte[] data = new byte[] { 65, 66, 67, 68, 69, 70, 71, 72, 73 };
 
     @Test
-    public void testMain() throws Exception {
+    void testMain() throws Exception {
         Main main = new Main();
         main.bind("myCustomDecoder", MyCustomCodec.createMyCustomDecoder());
         main.bind("myCustomDecoder2", MyCustomCodec.createMyCustomDecoder2());

@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class UndertowNoAutoStartupTest extends BaseUndertowTest {
+class UndertowNoAutoStartupTest extends BaseUndertowTest {
     @Test
-    public void testUndertow() {
+    void testUndertow() {
         // Verify the route was registered but not started due to autoStartup(false)
         assertFalse(context.getRoutes().isEmpty(), "Route should be registered");
         String routeId = context.getRoutes().get(0).getRouteId();

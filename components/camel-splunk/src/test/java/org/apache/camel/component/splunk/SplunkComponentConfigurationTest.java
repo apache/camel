@@ -28,10 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SplunkComponentConfigurationTest extends CamelTestSupport {
+class SplunkComponentConfigurationTest extends CamelTestSupport {
 
     @Test
-    public void createProducerEndpointWithMinimalConfiguration() throws Exception {
+    void createProducerEndpointWithMinimalConfiguration() throws Exception {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
 
         SplunkEndpoint endpoint = (SplunkEndpoint) component.createEndpoint("splunk://test?username=test&password=pw");
@@ -48,14 +48,14 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerWithoutUserAndPassword() {
+    void createProducerWithoutUserAndPassword() {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
         assertThrows(IllegalArgumentException.class,
                 () -> component.createEndpoint("splunk://test"));
     }
 
     @Test
-    public void createProducerWithPasswordAndToken() throws Exception {
+    void createProducerWithPasswordAndToken() throws Exception {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
         SplunkEndpoint endpoint
                 = (SplunkEndpoint) component.createEndpoint("splunk://test?username=test&password=pw&token=myToken");
@@ -64,7 +64,7 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerWithAnonymousAccess() throws Exception {
+    void createProducerWithAnonymousAccess() throws Exception {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
         component.setSplunkConfigurationFactory(parameters -> new SplunkConfiguration());
 
@@ -78,7 +78,7 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerEndpointWithMaximalConfiguration() throws Exception {
+    void createProducerEndpointWithMaximalConfiguration() throws Exception {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
 
         SplunkEndpoint endpoint = (SplunkEndpoint) component
@@ -103,7 +103,7 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createConsumerEndpointWithMinimalConfiguration() throws Exception {
+    void createConsumerEndpointWithMinimalConfiguration() throws Exception {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
 
         SplunkEndpoint endpoint = (SplunkEndpoint) component
@@ -118,7 +118,7 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createConsumerEndpointWithMaximalConfiguration() throws Exception {
+    void createConsumerEndpointWithMaximalConfiguration() throws Exception {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
 
         SplunkEndpoint endpoint = (SplunkEndpoint) component

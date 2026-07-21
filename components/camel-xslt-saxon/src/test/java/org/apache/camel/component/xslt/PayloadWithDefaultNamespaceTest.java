@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
+class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
     private static final String PAYLOAD
             = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Message xmlns=\"http://www.camel.apache.org/envelope\"><Version>2.0</Version></Message>";
 
@@ -37,7 +37,7 @@ public class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
     }
 
     @Test
-    public void testTransformWithDefaultNamespace() {
+    void testTransformWithDefaultNamespace() {
         Object result = template.requestBody("direct:start", PAYLOAD);
         assertNotNull(result, "XSLT transformation with default namespace should produce output");
     }

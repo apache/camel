@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Unit test used for FTP wiki documentation
  */
-public class FromFtpToBinarySampleTest extends CamelTestSupport {
+class FromFtpToBinarySampleTest extends CamelTestSupport {
 
     @Test
-    public void testDummy() {
+    void testDummy() {
         // this is a noop test - verify the route builder configured the route correctly
         assertNotNull(context, "CamelContext should be initialized");
         assertEquals(1, context.getRoutes().size(), "Route builder should configure exactly one route");

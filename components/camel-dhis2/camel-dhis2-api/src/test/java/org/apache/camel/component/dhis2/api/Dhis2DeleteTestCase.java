@@ -18,6 +18,7 @@ package org.apache.camel.component.dhis2.api;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -30,14 +31,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class Dhis2DeleteTestCase {
+class Dhis2DeleteTestCase {
+
+    private static final byte[] RESPONSE_BODY = "{\"status\":\"OK\"}".getBytes(StandardCharsets.UTF_8);
+
     @Mock
     private Dhis2Client dhis2Client;
 
@@ -45,7 +49,7 @@ public class Dhis2DeleteTestCase {
     private DeleteOperation deleteOperation;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         when(dhis2Client.delete(any())).thenReturn(deleteOperation);
         when(deleteOperation.withParameter(any(), any())).thenReturn(deleteOperation);
         when(deleteOperation.transfer()).thenReturn(new Dhis2Response() {
@@ -56,12 +60,11 @@ public class Dhis2DeleteTestCase {
 
             @Override
             public InputStream read() {
-                return new ByteArrayInputStream(new byte[] {});
+                return new ByteArrayInputStream(RESPONSE_BODY);
             }
 
             @Override
             public void close() {
-
             }
 
             @Override
@@ -72,20 +75,20 @@ public class Dhis2DeleteTestCase {
     }
 
     @Test
-    public void testResourceGivenMapOfListsQueryParams() throws Exception {
+    void testResourceGivenMapOfListsQueryParams() throws Exception {
         Dhis2Delete dhis2Delete = new Dhis2Delete(dhis2Client);
         InputStream result = dhis2Delete.resource(null, null, Map.of("foo", List.of("bar")));
         assertNotNull(result, "resource() should return a non-null InputStream");
-        assertEquals(0, result.readAllBytes().length, "response body should be empty");
+        assertArrayEquals(RESPONSE_BODY, result.readAllBytes(), "response content should match mock response");
         verify(dhis2Client).delete(any());
     }
 
     @Test
-    public void testResourceGivenMapOfStringsQueryParams() throws Exception {
+    void testResourceGivenMapOfStringsQueryParams() throws Exception {
         Dhis2Delete dhis2Delete = new Dhis2Delete(dhis2Client);
         InputStream result = dhis2Delete.resource(null, null, Map.of("foo", "bar"));
         assertNotNull(result, "resource() should return a non-null InputStream");
-        assertEquals(0, result.readAllBytes().length, "response body should be empty");
+        assertArrayEquals(RESPONSE_BODY, result.readAllBytes(), "response content should match mock response");
         verify(dhis2Client).delete(any());
     }
 }

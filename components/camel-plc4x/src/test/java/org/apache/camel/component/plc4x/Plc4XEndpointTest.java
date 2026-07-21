@@ -28,12 +28,12 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Mockito.*;
 
-public class Plc4XEndpointTest {
+class Plc4XEndpointTest {
 
     Plc4XEndpoint sut;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Component mockComponent = mock(Component.class, RETURNS_DEEP_STUBS);
         when(mockComponent.getCamelContext()).thenReturn(new DefaultCamelContext());
         sut = new Plc4XEndpoint("plc4x:mock:10.10.10.1/1/1", mockComponent);
@@ -41,22 +41,22 @@ public class Plc4XEndpointTest {
 
     // TODO: figure out what this is
     @Test
-    public void createProducer() {
+    void createProducer() {
         assertThat(sut.createProducer(), notNullValue());
     }
 
     @Test
-    public void createConsumer() throws Exception {
+    void createConsumer() throws Exception {
         assertThat(sut.createConsumer(mock(Processor.class)), notNullValue());
     }
 
     @Test
-    public void isSingleton() {
+    void isSingleton() {
         assertThat(sut.isSingleton(), is(true));
     }
 
     @Test
-    public void doStopBadConnection() throws Exception {
+    void doStopBadConnection() throws Exception {
         PlcConnection plcConnectionMock = mock(PlcConnection.class);
         sut.connection = plcConnectionMock;
         doThrow(new RuntimeException("oh noes")).when(plcConnectionMock).close();

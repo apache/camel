@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test setting the certificate manager
  */
-public class ServerSetCertificateManagerTest extends AbstractMiloServerTest {
+class ServerSetCertificateManagerTest extends AbstractMiloServerTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServerSetCertificateManagerTest.class);
 
     @BeforeEach
-    public void setup(TestInfo testInfo) {
+    void setup(TestInfo testInfo) {
         final var displayName = testInfo.getDisplayName();
         LOG.info("********************************************************************************");
         LOG.info(displayName);
@@ -61,7 +61,7 @@ public class ServerSetCertificateManagerTest extends AbstractMiloServerTest {
     }
 
     @Test
-    public void shouldStart() {
+    void shouldStart() {
         // Verifies that the server starts successfully during setup
         assertNotNull(context, "CamelContext should have been created");
         assertTrue(context.getStatus().isStarted(), "CamelContext should be started");

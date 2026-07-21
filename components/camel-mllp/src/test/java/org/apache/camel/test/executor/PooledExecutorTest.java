@@ -27,18 +27,18 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PooledExecutorTest {
+class PooledExecutorTest {
     static final int THREAD_COUNT = 2;
     Logger log = LoggerFactory.getLogger(this.getClass());
     TestExecutor instance;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         instance = new TestExecutor(THREAD_COUNT);
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         instance.stop();
     }
 
@@ -48,7 +48,7 @@ public class PooledExecutorTest {
      * @throws Exception in the event of a test error.
      */
     @Test
-    public void testAddRunnable() {
+    void testAddRunnable() {
         int runnableCount = 3;
         int runCount = 5;
 

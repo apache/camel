@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DataStreamProducerTest extends CamelTestSupport {
+class DataStreamProducerTest extends CamelTestSupport {
 
     static StreamExecutionEnvironment streamExecutionEnvironment = Flinks.createStreamExecutionEnvironment();
 
@@ -45,7 +45,7 @@ public class DataStreamProducerTest extends CamelTestSupport {
     private DataStreamSource<String> dss = streamExecutionEnvironment.readTextFile("src/test/resources/testds.txt");
 
     @Test
-    public void shouldExecuteDataStreamCallback() {
+    void shouldExecuteDataStreamCallback() {
         AtomicBoolean callbackExecuted = new AtomicBoolean(false);
         Exchange result = template.send(flinkDataStreamUri, exchange -> {
             exchange.getIn().setHeader(FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
@@ -62,7 +62,8 @@ public class DataStreamProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldExecuteDataStreamCallbackWithPayload() {
+    void shouldExecuteDataStreamCallbackWithPayload() {
+        AtomicBoolean callbackExecuted = new AtomicBoolean(false);
         template.sendBodyAndHeader(flinkDataStreamUri, "test-payload",
                 FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
                 new VoidDataStreamCallback() {
@@ -70,12 +71,15 @@ public class DataStreamProducerTest extends CamelTestSupport {
                     public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
                         Assertions.assertThat(payloads).hasSize(1);
                         Assertions.assertThat(payloads[0]).isEqualTo("test-payload");
+                        callbackExecuted.set(true);
                     }
                 });
+        assertTrue(callbackExecuted.get(), "DataStream callback should have been executed");
     }
 
     @Test
-    public void shouldExecuteDataStreamCallbackWithMultiplePayloads() {
+    void shouldExecuteDataStreamCallbackWithMultiplePayloads() {
+        AtomicBoolean callbackExecuted = new AtomicBoolean(false);
         List<String> payloads = Arrays.asList("payload1", "payload2", "payload3");
         template.sendBodyAndHeader(flinkDataStreamUri, payloads, FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
                 new VoidDataStreamCallback() {
@@ -85,12 +89,14 @@ public class DataStreamProducerTest extends CamelTestSupport {
                         Assertions.assertThat(payloads[0]).isEqualTo("payload1");
                         Assertions.assertThat(payloads[1]).isEqualTo("payload2");
                         Assertions.assertThat(payloads[2]).isEqualTo("payload3");
+                        callbackExecuted.set(true);
                     }
                 });
+        assertTrue(callbackExecuted.get(), "DataStream callback should have been executed");
     }
 
     @Test
-    public void shouldConfigureExecutionMode() {
+    void shouldConfigureExecutionMode() {
         StreamExecutionEnvironment env = streamExecutionEnvironment;
         env.setRuntimeMode(RuntimeExecutionMode.BATCH);
 
@@ -100,7 +106,7 @@ public class DataStreamProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldConfigureCheckpointing() {
+    void shouldConfigureCheckpointing() {
         StreamExecutionEnvironment env = Flinks.createStreamExecutionEnvironment();
         env.enableCheckpointing(5000);
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
@@ -111,7 +117,7 @@ public class DataStreamProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldConfigureParallelism() {
+    void shouldConfigureParallelism() {
         StreamExecutionEnvironment env = Flinks.createStreamExecutionEnvironment();
         env.setParallelism(4);
 
@@ -119,7 +125,7 @@ public class DataStreamProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldConfigureMaxParallelism() {
+    void shouldConfigureMaxParallelism() {
         StreamExecutionEnvironment env = Flinks.createStreamExecutionEnvironment();
         env.setMaxParallelism(128);
 

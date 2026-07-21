@@ -29,14 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
-public class Plc4XProducerTest {
+class Plc4XProducerTest {
 
     private Plc4XProducer sut;
 
     private Exchange testExchange;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Plc4XEndpoint endpointMock = mock(Plc4XEndpoint.class, RETURNS_DEEP_STUBS);
         when(endpointMock.getEndpointUri()).thenReturn("plc4x:mock:10.10.10.1/1/1");
         when(endpointMock.canWrite()).thenReturn(true);
@@ -52,7 +52,7 @@ public class Plc4XProducerTest {
     }
 
     @Test
-    public void process() throws Exception {
+    void process() throws Exception {
         when(testExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
         sut.process(testExchange);
         when(testExchange.getPattern()).thenReturn(ExchangePattern.InOut);
@@ -62,7 +62,7 @@ public class Plc4XProducerTest {
     }
 
     @Test
-    public void processAsync() throws Exception {
+    void processAsync() throws Exception {
         sut.process(testExchange, doneSync -> {
         });
         when(testExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
@@ -76,13 +76,13 @@ public class Plc4XProducerTest {
     }
 
     @Test
-    public void doStop() throws Exception {
+    void doStop() throws Exception {
         sut.doStop();
         assertEquals(0, sut.openRequests.get(), "Open requests should be zero after stop");
     }
 
     @Test
-    public void doStopOpenRequest() throws Exception {
+    void doStopOpenRequest() throws Exception {
         sut.openRequests.incrementAndGet();
         assertEquals(1, sut.openRequests.get(), "Open requests should be one before stop");
         sut.doStop();

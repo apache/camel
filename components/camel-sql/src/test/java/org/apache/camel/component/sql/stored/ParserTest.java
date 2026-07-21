@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ParserTest extends CamelTestSupport {
+class ParserTest extends CamelTestSupport {
 
     TemplateParser parser;
 
@@ -50,7 +50,7 @@ public class ParserTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldParseOk() {
+    void shouldParseOk() {
         Template template = parser.parseTemplate("addnumbers(INTEGER ${header.header1},VARCHAR ${exchangeProperty.property1},"
                                                  + "BIGINT ${header.header2},INOUT INTEGER ${header.header3} inout1,OUT INTEGER out1)");
 
@@ -89,21 +89,21 @@ public class ParserTest extends CamelTestSupport {
     }
 
     @Test
-    public void noOutputParameterShouldFail() {
+    void noOutputParameterShouldFail() {
         assertThrows(ParseRuntimeException.class,
                 () -> parser.parseTemplate("ADDNUMBERS2"
                                            + "(INTEGER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})"));
     }
 
     @Test
-    public void unexistingTypeShouldFail() {
+    void unexistingTypeShouldFail() {
         assertThrows(ParseRuntimeException.class,
                 () -> parser.parseTemplate("ADDNUMBERS2"
                                            + "(XML VALUE1 ${header.v1},OUT INTEGER VALUE2 ${header.v2})"));
     }
 
     @Test
-    public void nestedSimpleExpression() {
+    void nestedSimpleExpression() {
         Exchange exchange = createExchangeWithBody(1);
         exchange.getIn().setHeader("foo", 1);
         exchange.getIn().setHeader("bar", 3);
@@ -113,19 +113,19 @@ public class ParserTest extends CamelTestSupport {
     }
 
     @Test
-    public void vendorSpecificPositiveSqlType() {
+    void vendorSpecificPositiveSqlType() {
         Template template = parser.parseTemplate("ADDNUMBERS2(1342 ${header.foo})");
         assertEquals(1342, ((InParameter) template.getParameterList().get(0)).getSqlType());
     }
 
     @Test
-    public void vendorSpecificNegativeSqlType() {
+    void vendorSpecificNegativeSqlType() {
         Template template = parser.parseTemplate("ADDNUMBERS2(-1342 ${header.foo})");
         assertEquals(-1342, ((InParameter) template.getParameterList().get(0)).getSqlType());
     }
 
     @Test
-    public void colonInSimple() {
+    void colonInSimple() {
         PropertiesComponent pc = context.getPropertiesComponent();
         pc.setLocation("classpath:jndi.properties");
         Exchange exchange = createExchangeWithBody(1);
@@ -135,7 +135,7 @@ public class ParserTest extends CamelTestSupport {
     }
 
     @Test
-    public void colonInLocation() {
+    void colonInLocation() {
         Template template = parser.parseTemplate("ADDNUMBERS2(-1342 :#a:)");
         Exchange exchange = createExchangeWithBody(1);
 
@@ -145,19 +145,19 @@ public class ParserTest extends CamelTestSupport {
     }
 
     @Test
-    public void vendorSpecificPositiveSqlTypeOut() {
+    void vendorSpecificPositiveSqlTypeOut() {
         Template template = parser.parseTemplate("ADDNUMBERS2(OUT 1342 h1)");
         assertEquals(1342, ((OutParameter) template.getParameterList().get(0)).getSqlType());
     }
 
     @Test
-    public void vendorSpecificNegativeSqlTypeOut() {
+    void vendorSpecificNegativeSqlTypeOut() {
         Template template = parser.parseTemplate("ADDNUMBERS2(OUT -1342 h1)");
         assertEquals(-1342, ((OutParameter) template.getParameterList().get(0)).getSqlType());
     }
 
     @Test
-    public void nableIssueSyntax() throws Exception {
+    void nableIssueSyntax() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             Exchange dummy = new DefaultExchange(context);
 
@@ -171,33 +171,33 @@ public class ParserTest extends CamelTestSupport {
     }
 
     @Test
-    public void unmappedTypeShouldFaild() {
+    void unmappedTypeShouldFaild() {
         assertThrows(ParseRuntimeException.class,
                 () -> parser.parseTemplate("ADDNUMBERS2"
                                            + "(OTHER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})"));
     }
 
     @Test
-    public void testParameterNameGiven() {
+    void testParameterNameGiven() {
         Template template = parser.parseTemplate("FOO('p_instance_id' INTEGER ${header.foo})");
         assertEquals("p_instance_id", ((InParameter) template.getParameterList().get(0)).getName());
     }
 
     @Test
-    public void testParameterVendor() {
+    void testParameterVendor() {
         Template template = parser
                 .parseTemplate("FOO('p_instance_id' org.apache.camel.component.sql.stored.CustomType.INTEGER ${header.foo})");
         assertEquals(1, ((InParameter) template.getParameterList().get(0)).getSqlType());
     }
 
     @Test
-    public void testParameterVendorType() {
+    void testParameterVendorType() {
         Template template = parser.parseTemplate("FOO('p_instance_id' 2 ${header.foo})");
         assertEquals(2, ((InParameter) template.getParameterList().get(0)).getSqlType());
     }
 
     @Test
-    public void testParameterTypeName() {
+    void testParameterTypeName() {
         Template template = parser.parseTemplate("FOO('p_instance_1' 1 'p_1' ${header.foo1},"
                                                  + "INOUT 2 'p_2' ${header.foo2} p_out)");
         assertEquals("p_1", ((InParameter) template.getParameterList().get(0)).getTypeName());
@@ -205,33 +205,33 @@ public class ParserTest extends CamelTestSupport {
     }
 
     @Test
-    public void testParameterVendorTypeNegativ() {
+    void testParameterVendorTypeNegativ() {
         Template template = parser.parseTemplate("FOO('p_instance_id' -2 ${header.foo})");
         assertEquals(-2, ((InParameter) template.getParameterList().get(0)).getSqlType());
     }
 
     @Test
-    public void testOracleTypesOut() {
+    void testOracleTypesOut() {
         Template template = parser.parseTemplate("FOO(OUT 1 p_error_cd)");
         assertEquals(1, ((OutParameter) template.getParameterList().get(0)).getSqlType());
     }
 
     @Test
-    public void testOracleTypesOutParameterVendor() {
+    void testOracleTypesOutParameterVendor() {
         Template template
                 = parser.parseTemplate("FOO(OUT org.apache.camel.component.sql.stored.CustomType.INTEGER p_error_cd)");
         assertEquals(1, ((OutParameter) template.getParameterList().get(0)).getSqlType());
     }
 
     @Test
-    public void testOracleTypesOutParameterVendorWithScale() {
+    void testOracleTypesOutParameterVendorWithScale() {
         Template template
                 = parser.parseTemplate("FOO(OUT org.apache.camel.component.sql.stored.CustomType.INTEGER(11) p_error_cd)");
         assertEquals(Integer.valueOf(11), ((OutParameter) template.getParameterList().get(0)).getScale());
     }
 
     @Test
-    public void testOracleTypesOutParameterVendorWithTypeName() {
+    void testOracleTypesOutParameterVendorWithTypeName() {
         Template template
                 = parser.parseTemplate("FOO(OUT org.apache.camel.component.sql.stored.CustomType.INTEGER 'mytype' p_error_cd)");
         assertEquals("mytype", ((OutParameter) template.getParameterList().get(0)).getTypeName());
@@ -240,14 +240,14 @@ public class ParserTest extends CamelTestSupport {
     }
 
     @Test
-    public void testOracleTypesNumeric() {
+    void testOracleTypesNumeric() {
         Template template = parser
                 .parseTemplate("FOO('p_error_cd' org.apache.camel.component.sql.stored.CustomType.INTEGER(10) ${header.foo})");
         assertEquals(Integer.valueOf(10), ((InParameter) template.getParameterList().get(0)).getScale());
     }
 
     @Test
-    public void examplesSyntaxTest() {
+    void examplesSyntaxTest() {
         Template t1 = parser
                 .parseTemplate("SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers.num2},OUT INTEGER resultofsub)");
         assertNotNull(t1);

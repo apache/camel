@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XmlToYamlTest {
+class XmlToYamlTest {
 
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
 

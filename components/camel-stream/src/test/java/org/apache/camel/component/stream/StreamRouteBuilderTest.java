@@ -21,23 +21,25 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class StreamRouteBuilderTest extends CamelTestSupport {
+class StreamRouteBuilderTest extends CamelTestSupport {
 
     @Test
-    public void testStringContent() {
+    void testStringContent() {
         Exchange result = template.send("direct:start", exchange -> exchange.getIn().setBody("this is text\n"));
         assertNotNull(result);
-        assertNull(result.getException(), "Sending string content should not cause an exception");
+        assertFalse(result.isFailed(), "Sending string content should not cause an exchange failure");
+        assertNotNull(result.getIn().getBody(), "Exchange body should be preserved after sending");
     }
 
     @Test
-    public void testBinaryContent() {
+    void testBinaryContent() {
         Exchange result = template.send("direct:start", exchange -> exchange.getIn().setBody("This is bytes\n".getBytes()));
         assertNotNull(result);
-        assertNull(result.getException(), "Sending binary content should not cause an exception");
+        assertFalse(result.isFailed(), "Sending binary content should not cause an exchange failure");
+        assertNotNull(result.getIn().getBody(), "Exchange body should be preserved after sending");
     }
 
     @Override

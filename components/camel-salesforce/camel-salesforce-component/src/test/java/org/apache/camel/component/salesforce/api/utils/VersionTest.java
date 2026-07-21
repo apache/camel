@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class VersionTest {
+class VersionTest {
 
     private static final Version V34_0 = Version.create("34.0");
 
@@ -31,7 +31,7 @@ public class VersionTest {
     private static final Version V35_0 = Version.create("35.0");
 
     @Test
-    public void shouldCreate() {
+    void shouldCreate() {
         final Version version = V34_3;
 
         assertEquals(34, version.getMajor());
@@ -39,7 +39,7 @@ public class VersionTest {
     }
 
     @Test
-    public void shouldObserveApiLimits() {
+    void shouldObserveApiLimits() {
         // These calls throw UnsupportedOperationException if the version requirement is not met
         V34_0.requireAtLeast(34, 0);
         V34_0.requireAtLeast(33, 9);
@@ -53,19 +53,19 @@ public class VersionTest {
     }
 
     @Test
-    public void shouldObserveApiLimitsOnMajorVersions() {
+    void shouldObserveApiLimitsOnMajorVersions() {
         assertThrows(UnsupportedOperationException.class,
                 () -> V35_0.requireAtLeast(36, 0));
     }
 
     @Test
-    public void shouldObserveApiLimitsOnMinorVersions() {
+    void shouldObserveApiLimitsOnMinorVersions() {
         assertThrows(UnsupportedOperationException.class,
                 () -> V35_0.requireAtLeast(35, 1));
     }
 
     @Test
-    public void testComparator() {
+    void testComparator() {
         assertTrue(V34_0.compareTo(V34_3) < 0);
         assertTrue(V34_0.compareTo(V35_0) < 0);
         assertTrue(V34_3.compareTo(V35_0) < 0);

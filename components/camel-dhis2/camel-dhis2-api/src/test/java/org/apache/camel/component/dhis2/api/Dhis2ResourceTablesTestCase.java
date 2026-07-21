@@ -37,7 +37,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class Dhis2ResourceTablesTestCase {
+class Dhis2ResourceTablesTestCase {
 
     @Mock
     private Dhis2Client dhis2Client;
@@ -46,7 +46,7 @@ public class Dhis2ResourceTablesTestCase {
     private PostOperation postOperation;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         when(dhis2Client.post(any())).thenReturn(postOperation);
         when(postOperation.withParameter(any(), any())).thenReturn(postOperation);
         when(postOperation.transfer()).thenReturn(new Dhis2Response() {
@@ -62,7 +62,6 @@ public class Dhis2ResourceTablesTestCase {
 
             @Override
             public void close() {
-
             }
 
             @Override
@@ -74,7 +73,7 @@ public class Dhis2ResourceTablesTestCase {
 
     @Test
     @Timeout(5)
-    public void testAnalyticsDoesNotBlockGivenAsyncIsTrue() {
+    void testAnalyticsDoesNotBlockGivenAsyncIsTrue() {
         Dhis2ResourceTables dhis2ResourceTables = new Dhis2ResourceTables(dhis2Client);
         dhis2ResourceTables.analytics(ThreadLocalRandom.current().nextBoolean(),
                 ThreadLocalRandom.current().nextBoolean(),

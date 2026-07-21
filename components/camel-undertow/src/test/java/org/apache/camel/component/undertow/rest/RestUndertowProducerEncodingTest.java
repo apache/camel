@@ -16,30 +16,34 @@
  */
 package org.apache.camel.component.undertow.rest;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class RestUndertowProducerEncodingTest extends BaseUndertowTest {
+class RestUndertowProducerEncodingTest extends BaseUndertowTest {
 
     @Test
-    public void testSelect() {
-        Object result = template.requestBody(
+    void testSelect() {
+        Exchange result = template.request(
                 "rest:get:bw-web-api/v1/objects/timesheets?companyId=RD&select=personId,personName",
-                "Hello World");
-        assertNotNull(result, "Request with select parameter should complete successfully");
+                exchange -> exchange.getIn().setBody("Hello World"));
+        assertNotNull(result);
+        assertFalse(result.isFailed(), "Request with select parameter should complete without failure");
     }
 
     @Test
-    public void testFilter() {
-        Object result = template.requestBody(
+    void testFilter() {
+        Exchange result = template.request(
                 "rest:get:bw-web-api/v1/objects/timesheets?companyId=RD&select=personId,personName"
-                                             + "&filter=date(time/date) ge 2020-06-01 and personId eq 'R10019'",
-                "Bye World");
-        assertNotNull(result, "Request with filter parameter should complete successfully");
+                                           + "&filter=date(time/date) ge 2020-06-01 and personId eq 'R10019'",
+                exchange -> exchange.getIn().setBody("Bye World"));
+        assertNotNull(result);
+        assertFalse(result.isFailed(), "Request with filter parameter should complete without failure");
     }
 
     @Override

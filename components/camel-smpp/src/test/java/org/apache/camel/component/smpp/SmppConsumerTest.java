@@ -55,7 +55,7 @@ import static org.mockito.Mockito.when;
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConsumer</code>
  */
-public class SmppConsumerTest {
+class SmppConsumerTest {
 
     private ExchangeFactory exchangeFactory;
     private CamelContext context;
@@ -67,7 +67,7 @@ public class SmppConsumerTest {
     private SMPPSession session;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         configuration = new SmppConfiguration();
         configuration.setServiceType("CMT");
         configuration.setSystemType("cp");
@@ -97,7 +97,7 @@ public class SmppConsumerTest {
     }
 
     @Test
-    public void doStartShouldStartANewSmppSession() throws Exception {
+    void doStartShouldStartANewSmppSession() throws Exception {
         when(endpoint.getConnectionString())
                 .thenReturn("smpp://smppclient@localhost:2775");
         BindParameter expectedBindParameter = new BindParameter(
@@ -121,7 +121,7 @@ public class SmppConsumerTest {
     }
 
     @Test
-    public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
+    void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
         when(endpoint.getConnectionString())
                 .thenReturn("smpp://smppclient@localhost:2775");
 
@@ -131,7 +131,7 @@ public class SmppConsumerTest {
     }
 
     @Test
-    public void doStopShouldCloseTheSMPPSession() throws Exception {
+    void doStopShouldCloseTheSMPPSession() throws Exception {
         doStartShouldStartANewSmppSession();
         reset(endpoint, processor, session);
 
@@ -145,7 +145,7 @@ public class SmppConsumerTest {
     }
 
     @Test
-    public void addressRangeFromConfigurationIsUsed() throws Exception {
+    void addressRangeFromConfigurationIsUsed() throws Exception {
         configuration.setAddressRange("(111*|222*|333*)");
         BindParameter expectedBindParameter = new BindParameter(
                 BindType.BIND_RX,
@@ -168,14 +168,14 @@ public class SmppConsumerTest {
     }
 
     @Test
-    public void getterShouldReturnTheSetValues() {
+    void getterShouldReturnTheSetValues() {
         assertSame(endpoint, consumer.getEndpoint());
         assertSame(configuration, consumer.getConfiguration());
     }
 
     @ParameterizedTest
     @EnumSource(value = SessionState.class, names = { "UNBOUND", "CLOSED" })
-    public void internalSessionStateListenerShouldCloseSessionAndReconnect(SessionState sessionState) throws Exception {
+    void internalSessionStateListenerShouldCloseSessionAndReconnect(SessionState sessionState) throws Exception {
         try (MockedStatic<SmppUtils> smppUtilsMock = mockStatic(SmppUtils.class)) {
             SessionStateListener sessionStateListener = (SessionStateListener) ReflectionHelper
                     .getField(SmppConsumer.class.getDeclaredField("internalSessionStateListener"), consumer);

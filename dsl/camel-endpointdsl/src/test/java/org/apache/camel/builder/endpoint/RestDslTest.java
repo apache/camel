@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RestDslTest extends BaseEndpointDslTest {
+class RestDslTest extends BaseEndpointDslTest {
 
     @RegisterExtension
     AvailablePortFinder.Port port = AvailablePortFinder.find();
@@ -47,7 +47,7 @@ public class RestDslTest extends BaseEndpointDslTest {
     }
 
     @Test
-    public void testRestDsl() throws Exception {
+    void testRestDsl() throws Exception {
         context.start();
 
         context.addRoutes(new EndpointRouteBuilder() {
