@@ -41,7 +41,7 @@ public class InfrastructureITCase extends JBangTestSupport {
 
     @Test
     public void infraListTest() {
-        checkCommandOutputsPattern("infra list", "ALIAS\s+IMPLEMENTATION\s+DESCRIPTION");
+        checkCommandOutputsPattern("infra list", "ALIAS\s+IMPLEMENTATION\s+UI\s+DESCRIPTION");
     }
 
     @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
