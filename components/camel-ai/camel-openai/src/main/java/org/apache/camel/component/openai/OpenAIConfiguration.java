@@ -224,6 +224,30 @@ public class OpenAIConfiguration implements Cloneable {
                             + "Only applicable with verbose_json response format.")
     private String audioTimestampGranularities;
 
+    // ========== AUDIO SPEECH (TEXT-TO-SPEECH) CONFIGURATION ==========
+
+    @UriParam
+    @Metadata(description = "The model to use for text-to-speech (e.g., gpt-4o-mini-tts, tts-1, tts-1-hd)")
+    private String speechModel;
+
+    @UriParam(defaultValue = "alloy")
+    @Metadata(description = "The voice to use for text-to-speech (e.g., alloy, echo, fable, onyx, nova, shimmer). "
+                            + "See the OpenAI documentation for the full list of supported voices.")
+    private String speechVoice = "alloy";
+
+    @UriParam(enums = "mp3,opus,aac,flac,wav,pcm", defaultValue = "mp3")
+    @Metadata(description = "The audio format for text-to-speech output")
+    private String speechResponseFormat = "mp3";
+
+    @UriParam
+    @Metadata(description = "The speed of the generated audio, from 0.25 to 4.0 where 1.0 is normal speed")
+    private Double speechSpeed;
+
+    @UriParam
+    @Metadata(description = "Optional instructions to control the voice of the generated audio. "
+                            + "Does not work with tts-1 or tts-1-hd.")
+    private String speechInstructions;
+
     // ========== SSL CONFIGURATION ==========
 
     @UriParam(label = "security")
@@ -540,6 +564,46 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setAudioTimestampGranularities(String audioTimestampGranularities) {
         this.audioTimestampGranularities = audioTimestampGranularities;
+    }
+
+    public String getSpeechModel() {
+        return speechModel;
+    }
+
+    public void setSpeechModel(String speechModel) {
+        this.speechModel = speechModel;
+    }
+
+    public String getSpeechVoice() {
+        return speechVoice;
+    }
+
+    public void setSpeechVoice(String speechVoice) {
+        this.speechVoice = speechVoice;
+    }
+
+    public String getSpeechResponseFormat() {
+        return speechResponseFormat;
+    }
+
+    public void setSpeechResponseFormat(String speechResponseFormat) {
+        this.speechResponseFormat = speechResponseFormat;
+    }
+
+    public Double getSpeechSpeed() {
+        return speechSpeed;
+    }
+
+    public void setSpeechSpeed(Double speechSpeed) {
+        this.speechSpeed = speechSpeed;
+    }
+
+    public String getSpeechInstructions() {
+        return speechInstructions;
+    }
+
+    public void setSpeechInstructions(String speechInstructions) {
+        this.speechInstructions = speechInstructions;
     }
 
     public Map<String, Object> getMcpServer() {
