@@ -67,6 +67,7 @@
         <angus-mail-version>2.0.5</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
         <apache-drill-version>1.22.0</apache-drill-version>
+        <apicurio-registry-version>3.0.8</apicurio-registry-version>
         <arangodb-java-version>7.26.0</arangodb-java-version>
         <as2-lib-version>5.1.8</as2-lib-version>
         <ascii-table-version>1.12.1</ascii-table-version>
@@ -720,6 +721,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-amqp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-apicurio-registry</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

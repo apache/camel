@@ -1,0 +1,94 @@
+= Apicurio Registry Component
+:doctitle: Apicurio Registry
+:shortname: apicurio-registry
+:artifactid: camel-apicurio-registry
+:description: Manage schemas and API artifacts (create, read, update, delete versions) stored in an Apicurio Registry.
+:since: 4.22
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Apicurio Registry component allows you to manage schema and API artifacts
+(for example Avro, JSON Schema, Protobuf and OpenAPI) stored in an
+https://www.apicur.io/registry/[Apicurio Registry] using its
+https://www.apicur.io/registry/docs/apicurio-registry/3.0.x/getting-started/assembly-using-the-registry-client.html[Java SDK]
+(Core Registry API v3).
+
+As a producer, the component can create artifacts, add new artifact versions,
+read artifact content (latest or a specific version), list artifact versions and
+delete artifacts or versions.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-apicurio-registry</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+apicurio-registry:serverUrl[?options]
+----
+
+Where *serverUrl* is the base URL of the Core Registry API v3, for example
+`http://localhost:8080/apis/registry/v3`.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Operations
+
+The operation to perform is configured with the `operation` endpoint option or
+overridden per exchange with the `CamelApicurioRegistryOperation` header.
+
+[width="100%",cols="25%,75%",options="header"]
+|===
+| Operation | Description
+| `createArtifact` | Create a new artifact (with its first version) from the message body. Requires `artifactId` and `artifactType`.
+| `updateArtifact` | Add a new version to an existing artifact from the message body. Requires `artifactId`.
+| `getArtifact` | Read the content of the latest version of an artifact. Requires `artifactId`. Sets the content as the message body.
+| `getArtifactVersion` | Read the content of a specific version of an artifact. Requires `artifactId` and `version`. Sets the content as the message body.
+| `listArtifactVersions` | List the versions of an artifact. Requires `artifactId`.
+| `deleteArtifact` | Delete an artifact and all of its versions. Requires `artifactId`.
+| `deleteArtifactVersion` | Delete a specific version of an artifact. Requires `artifactId` and `version`.
+|===
+
+== Message Body
+
+For `createArtifact` and `updateArtifact`, the message body holds the artifact
+content and is converted to `String`. The `getArtifact` and `getArtifactVersion`
+operations set the artifact content on the message body as a `String`.
+
+== Examples
+
+Create a new Avro artifact in the `default` group:
+
+[source,java]
+----
+from("direct:create")
+    .setHeader(ApicurioRegistryConstants.ARTIFACT_ID, constant("my-schema"))
+    .setHeader(ApicurioRegistryConstants.ARTIFACT_TYPE, constant("AVRO"))
+    .to("apicurio-registry:http://localhost:8080/apis/registry/v3?operation=createArtifact");
+----
+
+Read the latest version content of an artifact:
+
+[source,java]
+----
+from("direct:get")
+    .to("apicurio-registry:http://localhost:8080/apis/registry/v3?operation=getArtifact&artifactId=my-schema");
+----

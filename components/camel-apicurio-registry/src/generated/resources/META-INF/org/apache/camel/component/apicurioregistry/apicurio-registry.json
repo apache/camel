@@ -1,0 +1,48 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "apicurio-registry",
+    "title": "Apicurio Registry",
+    "description": "Manage schemas and API artifacts (create, read, update, delete versions) stored in an Apicurio Registry.",
+    "deprecated": false,
+    "firstVersion": "4.22.0",
+    "label": "api",
+    "javaType": "org.apache.camel.component.apicurioregistry.ApicurioRegistryComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-apicurio-registry",
+    "version": "4.22.0-SNAPSHOT",
+    "scheme": "apicurio-registry",
+    "extendsScheme": "",
+    "syntax": "apicurio-registry:serverUrl",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "headers": {
+    "CamelApicurioRegistryOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "org.apache.camel.component.apicurioregistry.ApicurioRegistryOperations", "enum": [ "createArtifact", "updateArtifact", "getArtifact", "getArtifactVersion", "listArtifactVersions", "deleteArtifact", "deleteArtifactVersion" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform. Overrides the operation configured on the endpoint.", "constantName": "org.apache.camel.component.apicurioregistry.ApicurioRegistryConstants#OPERATION" },
+    "CamelApicurioRegistryGroupId": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The group id of the artifact. Overrides the groupId configured on the endpoint.", "constantName": "org.apache.camel.component.apicurioregistry.ApicurioRegistryConstants#GROUP_ID" },
+    "CamelApicurioRegistryArtifactId": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The id of the artifact. Overrides the artifactId configured on the endpoint.", "constantName": "org.apache.camel.component.apicurioregistry.ApicurioRegistryConstants#ARTIFACT_ID" },
+    "CamelApicurioRegistryArtifactType": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The type of the artifact (for example AVRO, JSON, PROTOBUF). Overrides the artifactType configured on the endpoint.", "constantName": "org.apache.camel.component.apicurioregistry.ApicurioRegistryConstants#ARTIFACT_TYPE" },
+    "CamelApicurioRegistryVersion": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The version of the artifact. Overrides the version configured on the endpoint.", "constantName": "org.apache.camel.component.apicurioregistry.ApicurioRegistryConstants#VERSION" },
+    "CamelApicurioRegistryContentType": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The content type of the artifact content being sent (for example application\/json).", "constantName": "org.apache.camel.component.apicurioregistry.ApicurioRegistryConstants#CONTENT_TYPE" }
+  },
+  "properties": {
+    "serverUrl": { "index": 0, "kind": "path", "displayName": "Server Url", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The base URL of the Apicurio Registry Core Registry v3 API, for example http:\/\/localhost:8080\/apis\/registry\/v3" },
+    "artifactId": { "index": 1, "kind": "parameter", "displayName": "Artifact Id", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of the artifact to operate on. Can be overridden per exchange with the CamelApicurioRegistryArtifactId header." },
+    "artifactType": { "index": 2, "kind": "parameter", "displayName": "Artifact Type", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The type of the artifact (for example AVRO, JSON, PROTOBUF, OPENAPI) used when creating an artifact. Can be overridden per exchange with the CamelApicurioRegistryArtifactType header." },
+    "contentType": { "index": 3, "kind": "parameter", "displayName": "Content Type", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "application\/json", "description": "The content type of the artifact content sent to the registry when creating or updating an artifact. Defaults to application\/json. Can be overridden per exchange with the CamelApicurioRegistryContentType header." },
+    "groupId": { "index": 4, "kind": "parameter", "displayName": "Group Id", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "default", "description": "The artifact group id to operate on. Defaults to default." },
+    "operation": { "index": 5, "kind": "parameter", "displayName": "Operation", "group": "producer", "label": "", "required": false, "type": "enum", "javaType": "org.apache.camel.component.apicurioregistry.ApicurioRegistryOperations", "enum": [ "createArtifact", "updateArtifact", "getArtifact", "getArtifactVersion", "listArtifactVersions", "deleteArtifact", "deleteArtifactVersion" ], "deprecated": false, "autowired": false, "secret": false, "description": "The producer operation to perform against the registry. Can be overridden per exchange with the CamelApicurioRegistryOperation header." },
+    "version": { "index": 6, "kind": "parameter", "displayName": "Version", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The version expression of the artifact to operate on (for example a version number or branch=latest). Can be overridden per exchange with the CamelApicurioRegistryVersion header." },
+    "lazyStartProducer": { "index": 7, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  }
+}
