@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -121,7 +120,7 @@ class OpenAIAgenticTokenBudgetTest extends CamelTestSupport {
         Exchange result = template.request("direct:agentic-token-budget", e -> e.getIn().setBody("expensive tool call"));
 
         assertThat(result.getException()).isNotNull();
-        assertInstanceOf(IllegalStateException.class, result.getException());
+        assertThat(result.getException()).isInstanceOf(IllegalStateException.class);
         assertThat(result.getException().getMessage())
                 .contains("Max agentic tokens (100) exceeded at iteration 0")
                 .contains("prompt=70")
@@ -173,7 +172,7 @@ class OpenAIAgenticTokenBudgetTest extends CamelTestSupport {
                 e -> e.getIn().setBody("accumulate over budget"));
 
         assertThat(result.getException()).isNotNull();
-        assertInstanceOf(IllegalStateException.class, result.getException());
+        assertThat(result.getException()).isInstanceOf(IllegalStateException.class);
         assertThat(result.getException().getMessage())
                 .contains("Max agentic tokens (80) exceeded at iteration 1")
                 .contains("total=100");
