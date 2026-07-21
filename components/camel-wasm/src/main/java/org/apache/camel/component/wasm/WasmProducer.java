@@ -18,8 +18,6 @@ package org.apache.camel.component.wasm;
 
 import java.io.InputStream;
 
-import com.dylibso.chicory.wasm.Parser;
-import com.dylibso.chicory.wasm.WasmModule;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Resource;
@@ -28,6 +26,8 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.wasm.WasmFunction;
 import org.apache.camel.wasm.WasmSupport;
+import run.endive.wasm.Parser;
+import run.endive.wasm.WasmModule;
 
 public class WasmProducer extends DefaultProducer {
 

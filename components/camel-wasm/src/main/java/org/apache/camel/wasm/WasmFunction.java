@@ -20,9 +20,9 @@ import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.dylibso.chicory.runtime.ExportFunction;
-import com.dylibso.chicory.runtime.Instance;
-import com.dylibso.chicory.wasm.WasmModule;
+import run.endive.runtime.ExportFunction;
+import run.endive.runtime.Instance;
+import run.endive.wasm.WasmModule;
 
 public class WasmFunction implements AutoCloseable {
     private final Lock lock;
