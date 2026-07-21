@@ -21,17 +21,25 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.camel.maven.htmlxlsx.TestUtil;
+import org.apache.camel.maven.htmlxlsx.model.ChildEip;
+import org.apache.camel.maven.htmlxlsx.model.ChildEipStatistic;
+import org.apache.camel.maven.htmlxlsx.model.Components;
+import org.apache.camel.maven.htmlxlsx.model.EipAttribute;
+import org.apache.camel.maven.htmlxlsx.model.EipStatistic;
 import org.apache.camel.maven.htmlxlsx.model.Route;
 import org.apache.camel.maven.htmlxlsx.model.RouteStatistic;
+import org.apache.camel.maven.htmlxlsx.model.RouteTotalsStatistic;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -181,22 +189,66 @@ class CoverageResultsProcessorTest {
                 () -> assertEquals(3, result.getEipStatisticMap().size()));
     }
 
-    @Disabled("TODO: implement test")
     @Test
     void testGenerateChildEipStatistics() {
 
+        ChildEip childEip = new ChildEip();
+
+        // Add an EipAttribute entry (simulates a child EIP node with coverage data)
+        EipAttribute eipAttribute = new EipAttribute();
+        eipAttribute.setId("setBody");
+        eipAttribute.setIndex(5);
+        eipAttribute.setExchangesTotal(3);
+        eipAttribute.setTotalProcessingTime(42);
+        Properties props = new Properties();
+        props.put("uri", "direct:test");
+        eipAttribute.setProperties(props);
+        childEip.getEipAttributeMap().put("setBody", eipAttribute);
+
+        // Add a String entry (simulates a simple property like a constant expression)
+        childEip.getEipAttributeMap().put("constant", "Hello World");
+
+        ChildEipStatistic childEipStatistic = new ChildEipStatistic();
+
+        processor.generateChildEipStatistics(childEip, childEipStatistic);
+
+        Map<Integer, EipStatistic> resultMap = childEipStatistic.getEipStatisticMap();
+
+        assertAll(
+                () -> assertNotNull(resultMap),
+                () -> assertEquals(2, resultMap.size()),
+                // EipAttribute entry: keyed by index=5, tested because exchangesTotal > 0
+                () -> assertNotNull(resultMap.get(5)),
+                () -> assertEquals("setBody", resultMap.get(5).getId()),
+                () -> assertTrue(resultMap.get(5).isTested()),
+                () -> assertEquals(42, resultMap.get(5).getTotalProcessingTime()),
+                // String entry: keyed by 0, wraps value in Properties
+                () -> assertNotNull(resultMap.get(0)),
+                () -> assertEquals("constant", resultMap.get(0).getId()),
+                () -> assertEquals("Hello World", resultMap.get(0).getProperties().get("value")));
     }
 
-    @Disabled("TODO: implement test")
     @Test
-    void testGenerateExcel() {
+    void testGenerateHtml() throws IllegalAccessException, IOException {
 
-    }
+        Mockito
+                .doNothing()
+                .when(processor).writeDetailsAsHtml(any(RouteStatistic.class), any(File.class));
 
-    @Disabled("TODO: implement test")
-    @Test
-    void testGenerateHtml() {
+        @SuppressWarnings("unchecked")
+        Map<String, RouteStatistic> routeStatisticMap
+                = (Map<String, RouteStatistic>) FieldUtils.readDeclaredField(processor, "routeStatisticMap", true);
 
+        RouteStatistic stat1 = new RouteStatistic();
+        stat1.setId("route1");
+        RouteStatistic stat2 = new RouteStatistic();
+        stat2.setId("route2");
+        routeStatisticMap.put("route1", stat1);
+        routeStatisticMap.put("route2", stat2);
+
+        processor.generateHtml(htmlPath());
+
+        Mockito.verify(processor, Mockito.times(2)).writeDetailsAsHtml(any(RouteStatistic.class), any(File.class));
     }
 
     @Test
@@ -265,10 +317,38 @@ class CoverageResultsProcessorTest {
                 () -> assertEquals(indexPath().getPath(), result));
     }
 
-    @Disabled("TODO: implement test")
     @Test
-    void testAddToRouteTotals() {
+    void testAddToRouteTotals() throws IllegalAccessException {
 
+        RouteTotalsStatistic totals
+                = (RouteTotalsStatistic) FieldUtils.readDeclaredField(processor, "routeTotalsStatistic", true);
+
+        RouteStatistic routeStatistic = new RouteStatistic();
+        routeStatistic.setTotalEips(10);
+        routeStatistic.setTotalEipsTested(5);
+        routeStatistic.setTotalProcessingTime(100);
+
+        processor.addToRouteTotals(routeStatistic);
+
+        assertAll(
+                () -> assertEquals(10, totals.getTotalEips()),
+                () -> assertEquals(5, totals.getTotalEipsTested()),
+                () -> assertEquals(100, totals.getTotalProcessingTime()),
+                () -> assertEquals(50, totals.getCoverage()));
+
+        // Call again to verify accumulation
+        RouteStatistic routeStatistic2 = new RouteStatistic();
+        routeStatistic2.setTotalEips(10);
+        routeStatistic2.setTotalEipsTested(5);
+        routeStatistic2.setTotalProcessingTime(50);
+
+        processor.addToRouteTotals(routeStatistic2);
+
+        assertAll(
+                () -> assertEquals(20, totals.getTotalEips()),
+                () -> assertEquals(10, totals.getTotalEipsTested()),
+                () -> assertEquals(150, totals.getTotalProcessingTime()),
+                () -> assertEquals(50, totals.getCoverage()));
     }
 
     @Test
@@ -301,10 +381,44 @@ class CoverageResultsProcessorTest {
                 () -> assertEquals(1, routeStatisticMap.size()));
     }
 
-    @Disabled("TODO: implement test")
     @Test
     void testRecalculate() {
 
+        Route route = new Route();
+        route.setId("test-route");
+
+        // Build Components with two EIP attributes: one tested, one untested
+        Components components = new Components();
+        EipAttribute fromAttr = new EipAttribute();
+        fromAttr.setIndex(0);
+        fromAttr.setExchangesTotal(1);
+        fromAttr.setTotalProcessingTime(10);
+
+        EipAttribute toAttr = new EipAttribute();
+        toAttr.setIndex(1);
+        toAttr.setExchangesTotal(0);
+        toAttr.setTotalProcessingTime(5);
+
+        Map<String, List<EipAttribute>> attributeMap = new HashMap<>();
+        attributeMap.put("from", Collections.singletonList(fromAttr));
+        attributeMap.put("to", Collections.singletonList(toAttr));
+        components.setAttributeMap(attributeMap);
+        route.setComponents(components);
+
+        // Fresh RouteStatistic (not yet initialized)
+        RouteStatistic input = new RouteStatistic();
+        input.setId("test-route");
+
+        RouteStatistic result = processor.recalculate(route, input);
+
+        assertAll(
+                () -> assertNotNull(result),
+                () -> assertEquals("test-route", result.getId()),
+                () -> assertEquals(2, result.getTotalEips()),
+                () -> assertEquals(1, result.getTotalEipsTested()),
+                () -> assertEquals(15, result.getTotalProcessingTime()),
+                () -> assertEquals(50, result.getCoverage()),
+                () -> assertTrue(result.isTotalEipsInitialized()));
     }
 
     @Test
