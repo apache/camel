@@ -138,15 +138,21 @@ class LangChain4jAgentToolExecutorErrorHandlingTest extends CamelTestSupport {
      *
      * <p>
      * Before the fix, the ToolExecutor caught the exception and returned an error string, making LangChain4j believe
-     * the tool succeeded.
+     * the tool succeeded. The sendBody call is wrapped in try-catch because the producer exchange may or may not
+     * propagate the exception (depending on exchange isolation); we only care about whether the ToolExecutor itself
+     * threw inside the capturing agent.
      */
     @Test
     void toolExecutorShouldThrowWhenCamelRouteToolFails() {
         errorObserved.set(false);
 
-        template.sendBody("direct:agent-with-failing-tool", "test input");
+        try {
+            template.sendBody("direct:agent-with-failing-tool", "test input");
+        } catch (Exception e) {
+            // Ignored — we are testing the ToolExecutor behavior, not the exchange propagation
+        }
 
-        // The capturing agent should have observed the error
+        // The capturing agent should have observed the error thrown by the ToolExecutor
         assertThat(errorObserved.get())
                 .as("ToolExecutor should throw when Camel route tool fails, "
                     + "so LangChain4j error handlers can fire (CAMEL-23944)")
@@ -183,7 +189,11 @@ class LangChain4jAgentToolExecutorErrorHandlingTest extends CamelTestSupport {
     void toolExecutorShouldPropagateExceptionMessageFromFailingRoute() {
         capturedErrorMessage.set(null);
 
-        template.sendBody("direct:agent-with-failing-tool", "test input");
+        try {
+            template.sendBody("direct:agent-with-failing-tool", "test input");
+        } catch (Exception e) {
+            // Ignored — we are testing the ToolExecutor error message, not the exchange propagation
+        }
 
         // The exception message should contain the original failure cause
         assertThat(capturedErrorMessage.get())
