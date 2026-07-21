@@ -20,6 +20,7 @@ import javax.xml.transform.TransformerConfigurationException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
@@ -32,6 +33,12 @@ public class ZXsltTotalOpsTest extends ContextTestSupport {
     @Override
     public boolean isUseRouteBuilder() {
         return false;
+    }
+
+    @AfterEach
+    void clearXpathLimit() {
+        // Workaround to https://issues.apache.org/jira/browse/CAMEL-24216
+        System.clearProperty("jdk.xml.xpathTotalOpLimit");
     }
 
     @Test
