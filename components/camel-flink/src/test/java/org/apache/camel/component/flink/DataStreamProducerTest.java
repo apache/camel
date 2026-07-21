@@ -96,7 +96,7 @@ class DataStreamProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void shouldConfigureExecutionMode() {
+    public void shouldConfigureExecutionMode() {
         StreamExecutionEnvironment env = streamExecutionEnvironment;
         env.setRuntimeMode(RuntimeExecutionMode.BATCH);
 
@@ -106,7 +106,7 @@ class DataStreamProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void shouldConfigureCheckpointing() {
+    public void shouldConfigureCheckpointing() {
         StreamExecutionEnvironment env = Flinks.createStreamExecutionEnvironment();
         env.enableCheckpointing(5000);
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
@@ -117,7 +117,7 @@ class DataStreamProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void shouldConfigureParallelism() {
+    public void shouldConfigureParallelism() {
         StreamExecutionEnvironment env = Flinks.createStreamExecutionEnvironment();
         env.setParallelism(4);
 
@@ -125,7 +125,7 @@ class DataStreamProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void shouldConfigureMaxParallelism() {
+    public void shouldConfigureMaxParallelism() {
         StreamExecutionEnvironment env = Flinks.createStreamExecutionEnvironment();
         env.setMaxParallelism(128);
 

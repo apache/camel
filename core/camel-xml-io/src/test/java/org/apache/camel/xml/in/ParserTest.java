@@ -35,7 +35,7 @@ class ParserTest {
     private static final Logger LOG = LoggerFactory.getLogger(ParserTest.class);
 
     @Test
-    void justParse() throws XmlPullParserException, IOException {
+    public void justParse() throws XmlPullParserException, IOException {
         final MXParser xpp = getMxParser();
         int eventType = xpp.getEventType();
         while (eventType != MXParser.END_DOCUMENT) {

@@ -59,7 +59,7 @@ class SmppProducerTest {
     private SMPPSession session;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         configuration = new SmppConfiguration();
         configuration.setServiceType("CMT");
         configuration.setSystemType("cp");
@@ -76,7 +76,7 @@ class SmppProducerTest {
     }
 
     @Test
-    void doStartShouldStartANewSmppSession() throws Exception {
+    public void doStartShouldStartANewSmppSession() throws Exception {
         when(endpoint.getConnectionString())
                 .thenReturn("smpp://smppclient@localhost:2775");
         BindParameter expectedBindParameters = new BindParameter(
@@ -112,7 +112,7 @@ class SmppProducerTest {
     }
 
     @Test
-    void doStopShouldCloseTheSMPPSession() throws Exception {
+    public void doStopShouldCloseTheSMPPSession() throws Exception {
         when(endpoint.getConnectionString())
                 .thenReturn("smpp://smppclient@localhost:2775");
         when(endpoint.isSingleton()).thenReturn(true);
@@ -125,7 +125,7 @@ class SmppProducerTest {
     }
 
     @Test
-    void processInOnlyShouldExecuteTheCommand() throws Exception {
+    public void processInOnlyShouldExecuteTheCommand() throws Exception {
         SmppBinding binding = mock(SmppBinding.class);
         Exchange exchange = mock(Exchange.class);
         SmppCommand command = mock(SmppCommand.class);
@@ -139,14 +139,14 @@ class SmppProducerTest {
     }
 
     @Test
-    void getterShouldReturnTheSetValues() {
+    public void getterShouldReturnTheSetValues() {
         assertSame(endpoint, producer.getEndpoint());
         assertSame(configuration, producer.getConfiguration());
     }
 
     @ParameterizedTest
     @EnumSource(value = SessionState.class, names = { "UNBOUND", "CLOSED" })
-    void internalSessionStateListenerShouldCloseSessionAndReconnect(SessionState sessionState) throws Exception {
+    public void internalSessionStateListenerShouldCloseSessionAndReconnect(SessionState sessionState) throws Exception {
         try (MockedStatic<SmppUtils> smppUtilsMock = mockStatic(SmppUtils.class)) {
             ScheduledExecutorService reconnectService = (ScheduledExecutorService) ReflectionHelper
                     .getField(SmppProducer.class.getDeclaredField("reconnectService"), producer);

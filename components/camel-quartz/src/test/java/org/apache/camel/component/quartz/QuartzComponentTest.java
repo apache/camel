@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 class QuartzComponentTest extends BaseQuartzTest {
 
     @Test
-    void testQuartzComponentCustomScheduler() throws Exception {
+    public void testQuartzComponentCustomScheduler() throws Exception {
         QuartzComponent comp = new QuartzComponent();
         comp.setCamelContext(context);
 

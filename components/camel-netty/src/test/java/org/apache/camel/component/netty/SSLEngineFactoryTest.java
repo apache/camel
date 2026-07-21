@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SSLEngineFactoryTest {
 
     @Test
-    void testApplyPqcNamedGroupsOnSupportedJdk() throws Exception {
+    public void testApplyPqcNamedGroupsOnSupportedJdk() throws Exception {
         SSLContext context = SSLContext.getInstance("TLSv1.3");
         context.init(null, null, null);
         SSLEngine engine = context.createSSLEngine();
@@ -80,7 +80,7 @@ class SSLEngineFactoryTest {
     }
 
     @Test
-    void testApplyPqcNamedGroupsPreservesExistingParameters() throws Exception {
+    public void testApplyPqcNamedGroupsPreservesExistingParameters() throws Exception {
         SSLContext context = SSLContext.getInstance("TLSv1.3");
         context.init(null, null, null);
         SSLEngine engine = context.createSSLEngine();
@@ -98,7 +98,7 @@ class SSLEngineFactoryTest {
     }
 
     @Test
-    void testSslProtocolIsTls13() throws Exception {
+    public void testSslProtocolIsTls13() throws Exception {
         SSLContext context = SSLContext.getInstance("TLSv1.3");
         assertNotNull(context);
         assertEquals("TLSv1.3", context.getProtocol());

@@ -34,7 +34,7 @@ class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    void shouldBeAbleToAddChildNode() {
+    public void shouldBeAbleToAddChildNode() {
         final SObjectTree tree = new SObjectTree();
 
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
@@ -51,7 +51,7 @@ class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    void shouldBeAbleToAddChildObject() {
+    public void shouldBeAbleToAddChildObject() {
         final SObjectTree tree = new SObjectTree();
 
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
@@ -68,7 +68,7 @@ class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    void shouldBeAbleToFetchChildNodes() {
+    public void shouldBeAbleToFetchChildNodes() {
         final SObjectTree tree = new SObjectTree();
 
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
@@ -87,7 +87,7 @@ class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    void shouldBeAbleToFetchChildren() {
+    public void shouldBeAbleToFetchChildren() {
         final SObjectTree tree = new SObjectTree();
 
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
@@ -106,7 +106,7 @@ class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    void shouldCreateNode() {
+    public void shouldCreateNode() {
         final SObjectTree tree = new SObjectTree();
 
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
@@ -139,7 +139,7 @@ class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    void shouldFetchChildrenNodesOfType() {
+    public void shouldFetchChildrenNodesOfType() {
         final SObjectTree tree = new SObjectTree();
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
         node.addChild("Contacts", new SObjectNode(tree, smith));
@@ -157,7 +157,7 @@ class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    void shouldFetchChildrenOfType() {
+    public void shouldFetchChildrenOfType() {
         final SObjectTree tree = new SObjectTree();
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
         node.addChild("Contacts", smith);
@@ -175,7 +175,7 @@ class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    void shouldSupportAddingDescribedSObjects() {
+    public void shouldSupportAddingDescribedSObjects() {
         final SObjectTree tree = new SObjectTree();
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
         node.addChild(smith);
@@ -196,7 +196,7 @@ class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    void typeOfShouldBeBasedOnSimpleClassName() {
+    public void typeOfShouldBeBasedOnSimpleClassName() {
         assertEquals("Account", SObjectNode.typeOf(new Account()), "Type of Account should be 'Account'");
         assertEquals("Contact", SObjectNode.typeOf(new Contact()), "Type of Contact should be 'Contact'");
     }

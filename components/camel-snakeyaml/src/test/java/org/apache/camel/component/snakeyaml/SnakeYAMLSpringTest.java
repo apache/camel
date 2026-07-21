@@ -36,7 +36,7 @@ class SnakeYAMLSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    void testMarshalAndUnmarshalPojo() throws Exception {
+    public void testMarshalAndUnmarshalPojo() throws Exception {
         SnakeYAMLTestHelper.marshalAndUnmarshal(
                 context(),
                 SnakeYAMLTestHelper.createTestPojo(),
@@ -47,7 +47,7 @@ class SnakeYAMLSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    void testMarshalAndUnmarshalPojoWithPrettyFlow() throws Exception {
+    public void testMarshalAndUnmarshalPojoWithPrettyFlow() throws Exception {
         SnakeYAMLTestHelper.marshalAndUnmarshal(
                 context(),
                 SnakeYAMLTestHelper.createTestPojo(),

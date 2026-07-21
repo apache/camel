@@ -44,7 +44,7 @@ class GroovyLogEipTest extends CamelTestSupport {
     }
 
     @Test
-    void testLogFail() {
+    public void testLogFail() {
         Exception e = assertThrows(Exception.class, () -> {
             template.sendBody("direct:fail", 4);
         });

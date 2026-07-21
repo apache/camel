@@ -148,7 +148,7 @@ class CxfSchemaValidationTest extends CamelTestSupport {
     }
 
     @Test
-    void schemaValidationEnabledClientTest() {
+    public void schemaValidationEnabledClientTest() {
         Exchange ex = template.send(clientUriValidationEnabled, exchange -> {
             exchange.getMessage().setBody(notValidRequest);
         });
@@ -158,7 +158,7 @@ class CxfSchemaValidationTest extends CamelTestSupport {
     }
 
     @Test
-    void schemaValidationDisabledClientTest() {
+    public void schemaValidationDisabledClientTest() {
         Exchange ex = template.send(clientUriValidationDisabled, exchange -> {
             exchange.getMessage().setBody(notValidRequest);
         });

@@ -67,7 +67,7 @@ class SmppConsumerTest {
     private SMPPSession session;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         configuration = new SmppConfiguration();
         configuration.setServiceType("CMT");
         configuration.setSystemType("cp");
@@ -97,7 +97,7 @@ class SmppConsumerTest {
     }
 
     @Test
-    void doStartShouldStartANewSmppSession() throws Exception {
+    public void doStartShouldStartANewSmppSession() throws Exception {
         when(endpoint.getConnectionString())
                 .thenReturn("smpp://smppclient@localhost:2775");
         BindParameter expectedBindParameter = new BindParameter(
@@ -131,7 +131,7 @@ class SmppConsumerTest {
     }
 
     @Test
-    void doStopShouldCloseTheSMPPSession() throws Exception {
+    public void doStopShouldCloseTheSMPPSession() throws Exception {
         doStartShouldStartANewSmppSession();
         reset(endpoint, processor, session);
 
@@ -145,7 +145,7 @@ class SmppConsumerTest {
     }
 
     @Test
-    void addressRangeFromConfigurationIsUsed() throws Exception {
+    public void addressRangeFromConfigurationIsUsed() throws Exception {
         configuration.setAddressRange("(111*|222*|333*)");
         BindParameter expectedBindParameter = new BindParameter(
                 BindType.BIND_RX,
@@ -168,14 +168,14 @@ class SmppConsumerTest {
     }
 
     @Test
-    void getterShouldReturnTheSetValues() {
+    public void getterShouldReturnTheSetValues() {
         assertSame(endpoint, consumer.getEndpoint());
         assertSame(configuration, consumer.getConfiguration());
     }
 
     @ParameterizedTest
     @EnumSource(value = SessionState.class, names = { "UNBOUND", "CLOSED" })
-    void internalSessionStateListenerShouldCloseSessionAndReconnect(SessionState sessionState) throws Exception {
+    public void internalSessionStateListenerShouldCloseSessionAndReconnect(SessionState sessionState) throws Exception {
         try (MockedStatic<SmppUtils> smppUtilsMock = mockStatic(SmppUtils.class)) {
             SessionStateListener sessionStateListener = (SessionStateListener) ReflectionHelper
                     .getField(SmppConsumer.class.getDeclaredField("internalSessionStateListener"), consumer);

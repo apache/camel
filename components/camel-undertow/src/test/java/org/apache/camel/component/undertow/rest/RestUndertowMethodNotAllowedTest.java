@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class RestUndertowMethodNotAllowedTest extends BaseUndertowTest {
 
     @Test
-    void testPostMethodNotAllowed() {
+    public void testPostMethodNotAllowed() {
         Exception e = assertThrows(Exception.class,
                 () -> template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body",
                         Exchange.HTTP_METHOD,

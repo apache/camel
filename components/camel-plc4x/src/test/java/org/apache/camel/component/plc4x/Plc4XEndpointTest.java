@@ -33,7 +33,7 @@ class Plc4XEndpointTest {
     Plc4XEndpoint sut;
 
     @BeforeEach
-    void setUp() throws Exception {
+    public void setUp() throws Exception {
         Component mockComponent = mock(Component.class, RETURNS_DEEP_STUBS);
         when(mockComponent.getCamelContext()).thenReturn(new DefaultCamelContext());
         sut = new Plc4XEndpoint("plc4x:mock:10.10.10.1/1/1", mockComponent);
@@ -41,17 +41,17 @@ class Plc4XEndpointTest {
 
     // TODO: figure out what this is
     @Test
-    void createProducer() {
+    public void createProducer() {
         assertThat(sut.createProducer(), notNullValue());
     }
 
     @Test
-    void createConsumer() throws Exception {
+    public void createConsumer() throws Exception {
         assertThat(sut.createConsumer(mock(Processor.class)), notNullValue());
     }
 
     @Test
-    void isSingleton() {
+    public void isSingleton() {
         assertThat(sut.isSingleton(), is(true));
     }
 

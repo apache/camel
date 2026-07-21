@@ -39,7 +39,7 @@ class ServerSetCertificateManagerTest extends AbstractMiloServerTest {
     private static final Logger LOG = LoggerFactory.getLogger(ServerSetCertificateManagerTest.class);
 
     @BeforeEach
-    void setup(TestInfo testInfo) {
+    public void setup(TestInfo testInfo) {
         final var displayName = testInfo.getDisplayName();
         LOG.info("********************************************************************************");
         LOG.info(displayName);

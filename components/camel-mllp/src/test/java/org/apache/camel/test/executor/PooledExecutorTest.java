@@ -33,12 +33,12 @@ class PooledExecutorTest {
     TestExecutor instance;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         instance = new TestExecutor(THREAD_COUNT);
     }
 
     @AfterEach
-    void tearDown() {
+    public void tearDown() {
         instance.stop();
     }
 

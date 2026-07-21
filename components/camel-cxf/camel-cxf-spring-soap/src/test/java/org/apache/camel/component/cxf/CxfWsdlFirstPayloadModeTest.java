@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
 
     @BeforeAll
-    static void startService() {
+    public static void startService() {
         Object implementor = new PersonImpl();
         String address = "http://localhost:" + getPort1()
                          + "/CxfWsdlFirstPayloadModeTest/PersonService/";

@@ -31,7 +31,7 @@ class VersionTest {
     private static final Version V35_0 = Version.create("35.0");
 
     @Test
-    void shouldCreate() {
+    public void shouldCreate() {
         final Version version = V34_3;
 
         assertEquals(34, version.getMajor());
@@ -53,19 +53,19 @@ class VersionTest {
     }
 
     @Test
-    void shouldObserveApiLimitsOnMajorVersions() {
+    public void shouldObserveApiLimitsOnMajorVersions() {
         assertThrows(UnsupportedOperationException.class,
                 () -> V35_0.requireAtLeast(36, 0));
     }
 
     @Test
-    void shouldObserveApiLimitsOnMinorVersions() {
+    public void shouldObserveApiLimitsOnMinorVersions() {
         assertThrows(UnsupportedOperationException.class,
                 () -> V35_0.requireAtLeast(35, 1));
     }
 
     @Test
-    void testComparator() {
+    public void testComparator() {
         assertTrue(V34_0.compareTo(V34_3) < 0);
         assertTrue(V34_0.compareTo(V35_0) < 0);
         assertTrue(V34_3.compareTo(V35_0) < 0);

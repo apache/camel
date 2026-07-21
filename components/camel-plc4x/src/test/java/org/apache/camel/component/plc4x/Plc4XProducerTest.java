@@ -36,7 +36,7 @@ class Plc4XProducerTest {
     private Exchange testExchange;
 
     @BeforeEach
-    void setUp() throws Exception {
+    public void setUp() throws Exception {
         Plc4XEndpoint endpointMock = mock(Plc4XEndpoint.class, RETURNS_DEEP_STUBS);
         when(endpointMock.getEndpointUri()).thenReturn("plc4x:mock:10.10.10.1/1/1");
         when(endpointMock.canWrite()).thenReturn(true);
