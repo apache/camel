@@ -365,6 +365,9 @@ class ExportCamelMain extends Export {
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-main"));
         answer.removeIf(s -> s.contains("camel-health"));
+        answer.removeIf(s -> s.contains("camel-micrometer-prometheus"));
+        // spring-boot-starter JARs are not usable in camel-main runtime
+        answer.removeIf(s -> s.contains("spring-boot-starter"));
 
         if (profile != null && Files.exists(profile)) {
             Properties prop = new CamelCaseOrderedProperties();
