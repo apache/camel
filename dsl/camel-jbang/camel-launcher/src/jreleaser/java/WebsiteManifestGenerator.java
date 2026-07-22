@@ -54,6 +54,7 @@ public class WebsiteManifestGenerator {
     private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)$");
     private static final Set<String> REQUIRED_OPTIONS
             = new LinkedHashSet<>(List.of("--version", "--tar", "--zip", "--output", "--latest"));
+    private static final Set<String> OPTIONAL_OPTIONS = Set.of("--install-sh", "--install-ps1");
     private static final String MANIFEST_FORMAT = "1";
 
     public static void main(String[] args) {
@@ -88,6 +89,23 @@ public class WebsiteManifestGenerator {
             throw new UsageException("ZIP artifact not found: " + zip);
         }
 
+        Path installSh = null;
+        Path installPs1 = null;
+        String installShValue = options.get("--install-sh");
+        if (installShValue != null) {
+            installSh = Paths.get(installShValue);
+            if (!Files.isRegularFile(installSh)) {
+                throw new UsageException("install.sh not found: " + installSh);
+            }
+        }
+        String installPs1Value = options.get("--install-ps1");
+        if (installPs1Value != null) {
+            installPs1 = Paths.get(installPs1Value);
+            if (!Files.isRegularFile(installPs1)) {
+                throw new UsageException("install.ps1 not found: " + installPs1);
+            }
+        }
+
         String latestValue = options.get("--latest");
         boolean latest;
         if ("true".equals(latestValue)) {
@@ -111,6 +129,10 @@ public class WebsiteManifestGenerator {
         if (latest) {
             writeLatestManifest(releasesDir.resolve("latest.properties"), manifest, version);
         }
+
+        if (installSh != null && installPs1 != null) {
+            writeInstallChecksums(output.getParent(), installSh, installPs1);
+        }
     }
 
     private static Map<String, String> parseArgs(String[] args) {
@@ -118,7 +140,7 @@ public class WebsiteManifestGenerator {
         int i = 0;
         while (i < args.length) {
             String key = args[i];
-            if (!REQUIRED_OPTIONS.contains(key)) {
+            if (!REQUIRED_OPTIONS.contains(key) && !OPTIONAL_OPTIONS.contains(key)) {
                 throw new UsageException("unknown option '" + key + "'.");
             }
             if (i + 1 >= args.length) {
@@ -181,6 +203,16 @@ public class WebsiteManifestGenerator {
                                          + " - refusing to overwrite.");
         }
         atomicWrite(latestFile, manifest);
+    }
+
+    // install.sh/install.ps1 aren't versioned the way the release archive is - they always describe
+    // "how to install whatever is currently latest," so unlike writeVersionManifest/writeLatestManifest
+    // there's no immutability or monotonic-version invariant to enforce here: this file is simply
+    // overwritten every release with the checksums of whatever install.sh/install.ps1 currently are.
+    private static void writeInstallChecksums(Path websiteRoot, Path installSh, Path installPs1) throws IOException {
+        String content = "install_sh_sha256=" + sha256Hex(installSh) + "\n"
+                           + "install_ps1_sha256=" + sha256Hex(installPs1) + "\n";
+        atomicWrite(websiteRoot.resolve("install.sha256"), content.getBytes(StandardCharsets.UTF_8));
     }
 
     private static Map<String, String> parseStrictManifest(byte[] bytes, Path source) {

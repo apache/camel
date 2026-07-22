@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -318,5 +319,44 @@ class WebsiteManifestGeneratorTest {
                 Files.readString(output.resolve("releases").resolve("4.22.0.properties"), StandardCharsets.UTF_8));
         assertEquals(expected,
                 Files.readString(output.resolve("releases").resolve("latest.properties"), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void writesInstallChecksums(@TempDir Path temp) throws Exception {
+        Path tar = writeFixture(temp, "camel-launcher-4.22.0-bin.tar.gz", "tar-content");
+        Path zip = writeFixture(temp, "camel-launcher-4.22.0-bin.zip", "zip-content");
+        Path installSh = writeFixture(temp, "install.sh", "#!/bin/sh\necho hi\n");
+        Path installPs1 = writeFixture(temp, "install.ps1", "Write-Host 'hi'\n");
+        Path websiteRoot = temp.resolve("website");
+        Path output = websiteRoot.resolve("camel-cli");
+        Files.createDirectories(output);
+
+        Result r = run("--version", "4.22.0", "--tar", tar.toString(), "--zip", zip.toString(),
+                "--install-sh", installSh.toString(), "--install-ps1", installPs1.toString(),
+                "--output", output.toString(), "--latest", "true");
+
+        assertThat(r.exit).isZero();
+        Path checksumFile = websiteRoot.resolve("install.sha256");
+        assertThat(checksumFile).exists();
+        List<String> lines = Files.readAllLines(checksumFile);
+        assertThat(lines).containsExactly(
+                "install_sh_sha256=" + sha256Hex(installSh),
+                "install_ps1_sha256=" + sha256Hex(installPs1));
+    }
+
+    @Test
+    void failsWhenInstallShMissing(@TempDir Path temp) throws Exception {
+        Path tar = writeFixture(temp, "camel-launcher-4.22.0-bin.tar.gz", "tar-content");
+        Path zip = writeFixture(temp, "camel-launcher-4.22.0-bin.zip", "zip-content");
+        Path output = temp.resolve("website/camel-cli");
+        Files.createDirectories(output);
+
+        Result r = run("--version", "4.22.0", "--tar", tar.toString(), "--zip", zip.toString(),
+                "--install-sh", temp.resolve("missing-install.sh").toString(),
+                "--install-ps1", temp.resolve("missing-install.ps1").toString(),
+                "--output", output.toString(), "--latest", "true");
+
+        assertThat(r.exit).isEqualTo(2);
+        assertThat(r.stderr).contains("install.sh not found");
     }
 }

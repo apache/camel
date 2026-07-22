@@ -250,6 +250,7 @@ fi
 
 if ! java "$MODULE_DIR/src/jreleaser/java/WebsiteManifestGenerator.java" \
     --version "$PROJECT_VERSION" --tar "$TAR" --zip "$ZIP" \
+    --install-sh "$WEBSITE_DIR/install.sh" --install-ps1 "$WEBSITE_DIR/install.ps1" \
     --output "$WEBSITE_DIR/camel-cli" \
     --latest "$WEBSITE_LATEST"; then
   echo "Error: website manifest generation failed." 1>&2
