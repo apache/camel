@@ -44,7 +44,7 @@ Tests for complex scenarios with multiple secrets:
 The tests require the following system properties:
 
 - `camel.cyberark.url` - CyberArk Conjur URL (e.g., `http://localhost:8080`)
-- `camel.cyberark.account` - Conjur account name (e.g., `myAccount`)
+- `camel.cyberark.account` - Conjur account name (e.g., `myConjurAccount`)
 - `camel.cyberark.username` - Admin username (e.g., `admin`)
 - `camel.cyberark.apiKey` - Admin API key
 
@@ -54,7 +54,7 @@ The tests require the following system properties:
 cd components/camel-cyberark-vault
 mvn clean verify \
   -Dcamel.cyberark.url=http://localhost:8080 \
-  -Dcamel.cyberark.account=myAccount \
+  -Dcamel.cyberark.account=myConjurAccount \
   -Dcamel.cyberark.username=admin \
   -Dcamel.cyberark.apiKey=your-api-key
 ```
@@ -64,7 +64,7 @@ mvn clean verify \
 ```bash
 mvn clean verify -Dit.test=CyberArkVaultPropertiesSourceIT \
   -Dcamel.cyberark.url=http://localhost:8080 \
-  -Dcamel.cyberark.account=myAccount \
+  -Dcamel.cyberark.account=myConjurAccount \
   -Dcamel.cyberark.username=admin \
   -Dcamel.cyberark.apiKey=your-api-key
 ```
@@ -74,7 +74,7 @@ mvn clean verify -Dit.test=CyberArkVaultPropertiesSourceIT \
 ```bash
 mvn clean verify -Dit.test=CyberArkVaultPropertiesSourceIT#testSimpleSecretRetrieval \
   -Dcamel.cyberark.url=http://localhost:8080 \
-  -Dcamel.cyberark.account=myAccount \
+  -Dcamel.cyberark.account=myConjurAccount \
   -Dcamel.cyberark.username=admin \
   -Dcamel.cyberark.apiKey=your-api-key
 ```
@@ -98,21 +98,27 @@ Use the official CyberArk Conjur quickstart setup:
 git clone https://github.com/cyberark/conjur-quickstart.git
 cd conjur-quickstart
 
+# Generate the master key 
+docker compose run --no-deps --rm conjur data-key generate > data_key
+
+# Load master key as an environment variable
+export CONJUR_DATA_KEY="$(< data_key)"
+
 # Start Conjur and database
-docker-compose up -d
+docker compose up -d
 
-# Wait for services to be ready
-sleep 10
+# Create an admin account (in another terminal)
+docker compose exec conjur conjurctl account create myConjurAccount > admin_data
 
-# The admin API key will be displayed in the logs
-docker-compose logs conjur | grep "admin API key"
+# The admin API key will be in the admin_data file
+cat admin_data | grep "API key"
 ```
 
 Default connection details:
 - **URL**: `http://localhost:8080`
 - **Account**: `myConjurAccount`
 - **Username**: `admin`
-- **API Key**: Check container logs
+- **API Key**: See admin_data
 
 ### Option 2: Using Existing Conjur Instance
 
@@ -219,7 +225,7 @@ If you see messages like `CyberArk Conjur URL not provided`, ensure you're passi
 ```bash
 mvn verify \
   -Dcamel.cyberark.url=http://localhost:8080 \
-  -Dcamel.cyberark.account=myAccount \
+  -Dcamel.cyberark.account=myConjurAccount \
   -Dcamel.cyberark.username=admin \
   -Dcamel.cyberark.apiKey=your-api-key
 ```
@@ -287,14 +293,14 @@ jobs:
           # Wait for Conjur to start
           sleep 10
           # Create account and extract API key
-          API_KEY=$(docker exec conjur conjurctl account create myAccount | grep "API key" | awk '{print $NF}')
+          API_KEY=$(docker exec conjur conjurctl account create myConjurAccount | grep "API key" | awk '{print $NF}')
           echo "CONJUR_API_KEY=$API_KEY" >> $GITHUB_ENV
 
       - name: Run Integration Tests
         run: |
           mvn clean verify \
             -Dcamel.cyberark.url=http://localhost:8080 \
-            -Dcamel.cyberark.account=myAccount \
+            -Dcamel.cyberark.account=myConjurAccount \
             -Dcamel.cyberark.username=admin \
             -Dcamel.cyberark.apiKey=${{ env.CONJUR_API_KEY }}
 ```
@@ -318,10 +324,10 @@ pipeline {
         stage('Run Integration Tests') {
             steps {
                 sh '''
-                    API_KEY=$(docker exec conjur conjurctl account create myAccount | grep "API key" | awk '{print $NF}')
+                    API_KEY=$(docker exec conjur conjurctl account create myConjurAccount | grep "API key" | awk '{print $NF}')
                     mvn clean verify \
                         -Dcamel.cyberark.url=http://localhost:8080 \
-                        -Dcamel.cyberark.account=myAccount \
+                        -Dcamel.cyberark.account=myConjurAccount \
                         -Dcamel.cyberark.username=admin \
                         -Dcamel.cyberark.apiKey=$API_KEY
                 '''

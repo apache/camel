@@ -65,4 +65,20 @@
 	    <version>${mockito-version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <camel.cyberark.url>http://localhost:8080</camel.cyberark.url>
+                        <camel.cyberark.account>myConjurAccount</camel.cyberark.account>
+                        <camel.cyberark.username>admin</camel.cyberark.username>
+                        <!--camel.cyberark.apiKey>your-api-key</camel.cyberark.apiKey-->
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
