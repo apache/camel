@@ -1,9 +1,9 @@
-= Tokenizer EIP
-:doctitle: Tokenizer
+= Specialized tokenizer for AI applications EIP
+:doctitle: Specialized tokenizer for AI applications
 :shortname: tokenizer
 :description: Tokenizes the message body for AI processing, splitting text into chunks suitable for embedding or LLM input
 :since: 4.8
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 
 The Tokenizer EIP provides support to tokenize (chunk) larger blocks of text into text segments

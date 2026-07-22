@@ -2,8 +2,8 @@
 :doctitle: Pausable
 :shortname: pausable
 :description: Pauses a consumer based on a condition, allowing it to be resumed later from the last known offset. Useful for controlling ingestion rate on polling consumers.
-:since: 3.16
-:supportlevel: Experimental
+:since:
+:supportlevel: Stable
 :tabs-sync-option:
 
 The Pausable EIP provides pause and resume features for supported consumers.
