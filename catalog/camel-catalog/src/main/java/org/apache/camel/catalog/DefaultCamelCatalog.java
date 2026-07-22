@@ -59,6 +59,8 @@ import org.apache.camel.util.json.Jsoner;
 public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements CamelCatalog {
 
     private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
+    private static final String DOCS_CATALOG = "org/apache/camel/catalog/docs.properties";
+    private static final String DOCS_DIR = "org/apache/camel/catalog/docs";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
     private static final String MAIN_DIR = "org/apache/camel/catalog/main";
     private static final String JBANG_DIR = "org/apache/camel/catalog/jbang";
@@ -92,6 +94,8 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
 
     public static final String FIND_BEAN_NAMES = "findBeanNames";
     public static final String LIST_BEANS_AS_JSON = "listBeansAsJson";
+
+    public static final String FIND_DOC_NAMES = "findDocNames";
 
     public static final String SUMMARY_AS_JSON = "summaryAsJson";
 
@@ -664,6 +668,47 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     @Override
     public InputStream loadResource(String kind, String name) {
         return versionManager.getResourceAsStream(BASE_RESOURCE_DIR + "/" + kind + "/" + name);
+    }
+
+    @Override
+    public List<String> findDocNames() {
+        return cache(FIND_DOC_NAMES, () -> {
+            try (InputStream is = versionManager.getResourceAsStream(DOCS_CATALOG)) {
+                return CatalogHelper.loadLines(is);
+            } catch (IOException e) {
+                return Collections.emptyList();
+            }
+        });
+    }
+
+    @Override
+    public String asciiDoc(String name) {
+        return cache("doc-" + name, name, n -> loadResource(DOCS_DIR + "/" + n + ".adoc"));
+    }
+
+    @Override
+    public String componentAsciiDoc(String name) {
+        return asciiDoc(name + "-component");
+    }
+
+    @Override
+    public String dataFormatAsciiDoc(String name) {
+        return asciiDoc(name + "-dataformat");
+    }
+
+    @Override
+    public String languageAsciiDoc(String name) {
+        return asciiDoc(name + "-language");
+    }
+
+    @Override
+    public String modelAsciiDoc(String name) {
+        return asciiDoc(name);
+    }
+
+    @Override
+    public String otherAsciiDoc(String name) {
+        return asciiDoc(name);
     }
 
     @Override

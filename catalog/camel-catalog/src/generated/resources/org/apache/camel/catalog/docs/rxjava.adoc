@@ -1,0 +1,27 @@
+= RxJava Component
+:doctitle: RxJava
+:shortname: rxjava
+:artifactid: camel-rxjava
+:description: RxJava based back-end for Camel's reactive streams component
+:since: 2.22
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+RxJava based back-end for Camel's reactive streams component.
+
+See more details in the camel-streams-component documentation.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-rxjava</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------

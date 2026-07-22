@@ -1,0 +1,143 @@
+= ArangoDb Component
+:doctitle: ArangoDb
+:shortname: arangodb
+:artifactid: camel-arangodb
+:description: Perform operations on ArangoDb when used as a Document Database, or as a Graph Database
+:since: 3.5
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The ArangoDb component is client for ArangoDb that uses the https://github.com/arangodb/arangodb-java-driver[arango java driver] to perform queries on collections and graphs in the ArangoDb database.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-arangodb</artifactId>
+    <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+== URI format
+
+----
+arangodb:database[?options]
+----
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Examples
+
+=== Producer Examples
+
+==== Save document on a collection
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:insert")
+    .to("arangodb:testDb?documentCollection=collection&operation=SAVE_DOCUMENT");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:insert"/>
+  <to uri="arangodb:testDb?documentCollection=collection&amp;operation=SAVE_DOCUMENT"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:insert
+      steps:
+        - to:
+            uri: arangodb:testDb
+            parameters:
+              documentCollection: collection
+              operation: SAVE_DOCUMENT
+----
+====
+
+And you can set as body a BaseDocument class 
+
+----
+BaseDocument myObject = new BaseDocument();
+myObject.addAttribute("a", "Foo");
+myObject.addAttribute("b", 42);
+----
+
+==== Query a collection
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:query")
+    .to("arangodb:testDb?operation=AQL_QUERY");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:query"/>
+  <to uri="arangodb:testDb?operation=AQL_QUERY"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:query
+      steps:
+        - to:
+            uri: arangodb:testDb
+            parameters:
+              operation: AQL_QUERY
+----
+====
+
+And you can invoke an AQL Query in this way
+
+._Java-only: ProducerTemplate with AQL query parameters and string concatenation_
+[source,java]
+----
+String query = "FOR t IN " + COLLECTION_NAME + " FILTER t.value == @value";
+Map<String, Object> bindVars = new MapBuilder().put("value", "hello")
+        .get();
+
+Exchange result = template.request("direct:query", exchange -> {
+    exchange.getMessage().setHeader(AQL_QUERY, query);
+    exchange.getMessage().setHeader(AQL_QUERY_BIND_PARAMETERS, bindVars);
+});
+----

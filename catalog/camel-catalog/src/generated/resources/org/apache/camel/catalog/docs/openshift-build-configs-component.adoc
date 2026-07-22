@@ -1,0 +1,100 @@
+= OpenShift Build Config Component
+:doctitle: OpenShift Build Config
+:shortname: openshift-build-configs
+:artifactid: camel-kubernetes
+:description: Perform operations on OpenShift Build Configs.
+:since: 2.17
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Kubernetes
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The OpenShift Build Config component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
+provides a producer to execute Openshift Build Configs operations.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Supported producer operation
+
+- `listBuildConfigs`
+- `listBuildConfigsByLabels`
+- `getBuildConfig`
+
+== Examples
+
+=== Openshift Build Configs Producer Examples
+
+- `listBuilds`: this operation lists the build configs on an Openshift cluster
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:list")
+    .to("openshift-build-configs:///?kubernetesClient=#kubernetesClient&operation=listBuildConfigs")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="openshift-build-configs:///?kubernetesClient=#kubernetesClient&amp;operation=listBuildConfigs"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+      steps:
+        - to:
+            uri: openshift-build-configs:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listBuildConfigs
+        - to:
+            uri: mock:result
+----
+====
+
+This operation returns a list of builds from your Openshift cluster
+
+- `listBuildsByLabels`: this operation lists the build configs by labels on an Openshift cluster
+
+._Java-only: sets a Map header for label selection_
+[source,java]
+----
+from("direct:listByLabels")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesBuildConfigsLabels",
+            Map.of("key1", "value1", "key2", "value2"));
+    })
+    .to("openshift-build-configs:///?kubernetesClient=#kubernetesClient&operation=listBuildConfigsByLabels")
+    .to("mock:result");
+----
+
+This operation returns a list of build configs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
+
+

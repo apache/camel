@@ -1,0 +1,860 @@
+= AWS Lambda Component
+:doctitle: AWS Lambda
+:shortname: aws2-lambda
+:artifactid: camel-aws2-lambda
+:description: Manage and invoke AWS Lambda functions.
+:since: 3.2
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS2 Lambda component supports create, get, list, delete, and invoke
+https://aws.amazon.com/lambda/[AWS Lambda] functions.
+
+*Prerequisites*
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Lambda. More information is available at
+https://aws.amazon.com/lambda/[AWS Lambda].
+
+When creating a Lambda function, you need to specify an IAM role which has at least the AWSLambdaBasicExecuteRole policy attached.
+
+== URI Format
+
+----
+aws2-lambda://functionName[?options]
+----
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+Required Lambda component options
+
+You have to provide the awsLambdaClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/lambda/[Amazon Lambda] service.
+
+== Usage
+
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
+
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
+
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
+ - Amazon EC2 Instance profile credentials. 
+
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+== List of Available Operations
+
+- listFunctions
+- getFunction
+- createFunction
+- deleteFunction
+- invokeFunction
+- updateFunction
+- createEventSourceMapping
+- deleteEventSourceMapping
+- listEventSourceMapping
+- listTags
+- tagResource
+- untagResource
+- publishVersion
+- listVersions
+- createAlias
+- deleteAlias
+- getAlias
+- listAliases
+- createFunctionUrlConfig
+- getFunctionUrlConfig
+- updateFunctionUrlConfig
+- deleteFunctionUrlConfig
+- listFunctionUrlConfigs
+- getFunctionConfiguration
+- updateFunctionConfiguration
+- putFunctionConcurrency
+- deleteFunctionConcurrency
+- getFunctionConcurrency
+- addPermission
+- removePermission
+- getPolicy
+
+== Examples
+
+=== Producer Example
+
+To have a full understanding of how the component works, you may have a look at these https://github.com/apache/camel/tree/main/components/camel-aws/camel-aws2-lambda/src/test/java/org/apache/camel/component/aws2/lambda/integration[integration tests]
+
+=== Producer Examples
+
+- CreateFunction: this operation will create a function for you in AWS Lambda
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:createFunction")
+    .to("aws2-lambda://GetHelloWithName?operation=createFunction")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:createFunction"/>
+  <to uri="aws2-lambda://GetHelloWithName?operation=createFunction"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createFunction
+      steps:
+        - to:
+            uri: aws2-lambda://GetHelloWithName
+            parameters:
+              operation: createFunction
+        - to:
+            uri: mock:result
+----
+====
+
+and by sending
+
+._Java-only: Java test API (ProducerTemplate with file upload)_
+
+[source,java]
+----
+template.send("direct:createFunction", ExchangePattern.InOut, exchange -> {
+    exchange.getIn().setHeader("CamelAwsLambdaRuntime", "nodejs6.10");
+    exchange.getIn().setHeader("CamelAwsLambdaHandler", "GetHelloWithName.handler");
+    exchange.getIn().setHeader("CamelAwsLambdaDescription", "Hello with node.js on Lambda");
+    exchange.getIn().setHeader("CamelAwsLambdaRole",
+            "arn:aws:iam::643534317684:role/lambda-execution-role");
+
+    ClassLoader classLoader = getClass().getClassLoader();
+    File file = new File(
+            classLoader
+                    .getResource("org/apache/camel/component/aws2/lambda/function/node/GetHelloWithName.zip")
+                    .getFile());
+    exchange.getIn().setBody(new FileInputStream(file));
+});
+----
+
+=== Function URL Operations
+
+Function URLs provide a dedicated HTTP(S) endpoint for your Lambda function, enabling direct invocation via HTTP without needing API Gateway.
+
+- createFunctionUrlConfig: this operation will create a function URL for your Lambda function
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:createFunctionUrl")
+    .setHeader("CamelAwsLambdaFunctionUrlAuthType", constant("NONE"))
+    .to("aws2-lambda://myFunction?operation=createFunctionUrlConfig")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:createFunctionUrl"/>
+    <setHeader name="CamelAwsLambdaFunctionUrlAuthType">
+        <constant>NONE</constant>
+    </setHeader>
+    <to uri="aws2-lambda://myFunction?operation=createFunctionUrlConfig"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createFunctionUrl
+    steps:
+      - setHeader:
+          name: CamelAwsLambdaFunctionUrlAuthType
+          constant: NONE
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: createFunctionUrlConfig
+      - to:
+          uri: mock:result
+----
+====
+
+The `FUNCTION_URL_AUTH_TYPE` can be either `NONE` (public access) or `AWS_IAM` (authenticated access).
+
+- getFunctionUrlConfig: this operation will retrieve the function URL configuration
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:getFunctionUrl")
+    .to("aws2-lambda://myFunction?operation=getFunctionUrlConfig")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:getFunctionUrl"/>
+    <to uri="aws2-lambda://myFunction?operation=getFunctionUrlConfig"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getFunctionUrl
+    steps:
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: getFunctionUrlConfig
+      - to:
+          uri: mock:result
+----
+====
+
+- updateFunctionUrlConfig: this operation will update the function URL configuration
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:updateFunctionUrl")
+    .setHeader("CamelAwsLambdaFunctionUrlAuthType", constant("AWS_IAM"))
+    .to("aws2-lambda://myFunction?operation=updateFunctionUrlConfig")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:updateFunctionUrl"/>
+    <setHeader name="CamelAwsLambdaFunctionUrlAuthType">
+        <constant>AWS_IAM</constant>
+    </setHeader>
+    <to uri="aws2-lambda://myFunction?operation=updateFunctionUrlConfig"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:updateFunctionUrl
+    steps:
+      - setHeader:
+          name: CamelAwsLambdaFunctionUrlAuthType
+          constant: AWS_IAM
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: updateFunctionUrlConfig
+      - to:
+          uri: mock:result
+----
+====
+
+- deleteFunctionUrlConfig: this operation will delete the function URL
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:deleteFunctionUrl")
+    .to("aws2-lambda://myFunction?operation=deleteFunctionUrlConfig")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:deleteFunctionUrl"/>
+    <to uri="aws2-lambda://myFunction?operation=deleteFunctionUrlConfig"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:deleteFunctionUrl
+    steps:
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: deleteFunctionUrlConfig
+      - to:
+          uri: mock:result
+----
+====
+
+- listFunctionUrlConfigs: this operation will list all function URLs for a function
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:listFunctionUrls")
+    .to("aws2-lambda://myFunction?operation=listFunctionUrlConfigs")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:listFunctionUrls"/>
+    <to uri="aws2-lambda://myFunction?operation=listFunctionUrlConfigs"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:listFunctionUrls
+    steps:
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: listFunctionUrlConfigs
+      - to:
+          uri: mock:result
+----
+====
+
+=== Function Configuration Operations
+
+Function Configuration operations allow you to view and modify your Lambda function's runtime settings.
+
+- getFunctionConfiguration: this operation will retrieve the configuration details of a function
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:getFunctionConfiguration")
+    .to("aws2-lambda://myFunction?operation=getFunctionConfiguration")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:getFunctionConfiguration"/>
+    <to uri="aws2-lambda://myFunction?operation=getFunctionConfiguration"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getFunctionConfiguration
+    steps:
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: getFunctionConfiguration
+      - to:
+          uri: mock:result
+----
+====
+
+- updateFunctionConfiguration: this operation will update the configuration of a function
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:updateFunctionConfiguration")
+    .setHeader("CamelAwsLambdaFunctionMemorySize", constant(512))
+    .setHeader("CamelAwsLambdaFunctionTimeout", constant(60))
+    .setHeader("CamelAwsLambdaDescription", constant("Updated function description"))
+    .to("aws2-lambda://myFunction?operation=updateFunctionConfiguration")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:updateFunctionConfiguration"/>
+    <setHeader name="CamelAwsLambdaFunctionMemorySize">
+        <constant resultType="java.lang.Integer">512</constant>
+    </setHeader>
+    <setHeader name="CamelAwsLambdaFunctionTimeout">
+        <constant resultType="java.lang.Integer">60</constant>
+    </setHeader>
+    <setHeader name="CamelAwsLambdaDescription">
+        <constant>Updated function description</constant>
+    </setHeader>
+    <to uri="aws2-lambda://myFunction?operation=updateFunctionConfiguration"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:updateFunctionConfiguration
+    steps:
+      - setHeader:
+          name: CamelAwsLambdaFunctionMemorySize
+          constant: 512
+      - setHeader:
+          name: CamelAwsLambdaFunctionTimeout
+          constant: 60
+      - setHeader:
+          name: CamelAwsLambdaDescription
+          constant: Updated function description
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: updateFunctionConfiguration
+      - to:
+          uri: mock:result
+----
+====
+
+=== Concurrency Operations
+
+Concurrency operations allow you to manage reserved concurrency for your Lambda functions.
+
+- putFunctionConcurrency: this operation will set the reserved concurrency for a function
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:putFunctionConcurrency")
+    .setHeader("CamelAwsLambdaReservedConcurrentExecutions", constant(100))
+    .to("aws2-lambda://myFunction?operation=putFunctionConcurrency")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:putFunctionConcurrency"/>
+    <setHeader name="CamelAwsLambdaReservedConcurrentExecutions">
+        <constant>100</constant>
+    </setHeader>
+    <to uri="aws2-lambda://myFunction?operation=putFunctionConcurrency"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:putFunctionConcurrency
+    steps:
+      - setHeader:
+          name: CamelAwsLambdaReservedConcurrentExecutions
+          constant: "100"
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: putFunctionConcurrency
+      - to:
+          uri: mock:result
+----
+====
+
+- deleteFunctionConcurrency: this operation will remove reserved concurrency from a function
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:deleteFunctionConcurrency")
+    .to("aws2-lambda://myFunction?operation=deleteFunctionConcurrency")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:deleteFunctionConcurrency"/>
+    <to uri="aws2-lambda://myFunction?operation=deleteFunctionConcurrency"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:deleteFunctionConcurrency
+    steps:
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: deleteFunctionConcurrency
+      - to:
+          uri: mock:result
+----
+====
+
+- getFunctionConcurrency: this operation will retrieve the reserved concurrency for a function
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:getFunctionConcurrency")
+    .to("aws2-lambda://myFunction?operation=getFunctionConcurrency")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:getFunctionConcurrency"/>
+    <to uri="aws2-lambda://myFunction?operation=getFunctionConcurrency"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getFunctionConcurrency
+    steps:
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: getFunctionConcurrency
+      - to:
+          uri: mock:result
+----
+====
+
+=== Permission Operations
+
+Permission operations allow you to manage the resource-based policy for your Lambda functions.
+
+- addPermission: this operation will add a permission to the function's resource-based policy
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:addPermission")
+    .setHeader("CamelAwsLambdaStatementId", constant("s3-invoke"))
+    .setHeader("CamelAwsLambdaAction", constant("lambda:InvokeFunction"))
+    .setHeader("CamelAwsLambdaPrincipal", constant("s3.amazonaws.com"))
+    .setHeader("CamelAwsLambdaSourceArn", constant("arn:aws:s3:::my-bucket"))
+    .to("aws2-lambda://myFunction?operation=addPermission")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:addPermission"/>
+    <setHeader name="CamelAwsLambdaStatementId">
+        <constant>s3-invoke</constant>
+    </setHeader>
+    <setHeader name="CamelAwsLambdaAction">
+        <constant>lambda:InvokeFunction</constant>
+    </setHeader>
+    <setHeader name="CamelAwsLambdaPrincipal">
+        <constant>s3.amazonaws.com</constant>
+    </setHeader>
+    <setHeader name="CamelAwsLambdaSourceArn">
+        <constant>arn:aws:s3:::my-bucket</constant>
+    </setHeader>
+    <to uri="aws2-lambda://myFunction?operation=addPermission"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:addPermission
+    steps:
+      - setHeader:
+          name: CamelAwsLambdaStatementId
+          constant: s3-invoke
+      - setHeader:
+          name: CamelAwsLambdaAction
+          constant: "lambda:InvokeFunction"
+      - setHeader:
+          name: CamelAwsLambdaPrincipal
+          constant: s3.amazonaws.com
+      - setHeader:
+          name: CamelAwsLambdaSourceArn
+          constant: "arn:aws:s3:::my-bucket"
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: addPermission
+      - to:
+          uri: mock:result
+----
+====
+
+- removePermission: this operation will remove a permission from the function's resource-based policy
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:removePermission")
+    .setHeader("CamelAwsLambdaStatementId", constant("s3-invoke"))
+    .to("aws2-lambda://myFunction?operation=removePermission")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:removePermission"/>
+    <setHeader name="CamelAwsLambdaStatementId">
+        <constant>s3-invoke</constant>
+    </setHeader>
+    <to uri="aws2-lambda://myFunction?operation=removePermission"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:removePermission
+    steps:
+      - setHeader:
+          name: CamelAwsLambdaStatementId
+          constant: s3-invoke
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: removePermission
+      - to:
+          uri: mock:result
+----
+====
+
+- getPolicy: this operation will retrieve the resource-based policy for a function
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:getPolicy")
+    .to("aws2-lambda://myFunction?operation=getPolicy")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:getPolicy"/>
+    <to uri="aws2-lambda://myFunction?operation=getPolicy"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getPolicy
+    steps:
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: getPolicy
+      - to:
+          uri: mock:result
+----
+====
+
+You can also configure CORS settings for function URLs:
+
+._Java-only: requires List values for CORS headers_
+
+[source,java]
+----
+from("direct:createFunctionUrlWithCors")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelAwsLambdaFunctionUrlAuthType", "NONE");
+        exchange.getIn().setHeader("CamelAwsLambdaFunctionUrlCorsAllowOrigins",
+            List.of("https://example.com"));
+        exchange.getIn().setHeader("CamelAwsLambdaFunctionUrlCorsAllowMethods",
+            List.of("GET", "POST"));
+        exchange.getIn().setHeader("CamelAwsLambdaFunctionUrlCorsAllowHeaders",
+            List.of("Content-Type", "Authorization"));
+        exchange.getIn().setHeader("CamelAwsLambdaFunctionUrlCorsMaxAge", 3600);
+    })
+    .to("aws2-lambda://myFunction?operation=createFunctionUrlConfig")
+    .to("mock:result");
+----
+
+== Using a POJO as body
+
+Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.
+In AWS Lambda there are multiple operations you can submit, as an example for Get Function request, you can do something like:
+
+._Java-only: requires AWS SDK builder_
+
+[source,java]
+----
+from("direct:getFunction")
+     .setBody(GetFunctionRequest.builder().functionName("test").build())
+     .to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getFunction&pojoRequest=true")
+----
+
+In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-lambda</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+----
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+

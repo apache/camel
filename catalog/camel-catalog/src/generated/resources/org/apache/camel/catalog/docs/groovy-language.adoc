@@ -1,0 +1,198 @@
+= Groovy Language
+:doctitle: Groovy
+:shortname: groovy
+:artifactid: camel-groovy
+:description: Evaluates a Groovy script
+:since: 1.3
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+Camel has support for using http://www.groovy-lang.org/[Groovy].
+
+For example, you can use Groovy in a xref:manual::predicate.adoc[Predicate]
+with the xref:eips:filter-eip.adoc[Message
+Filter] EIP.
+
+._Java-only: creating a Groovy expression_
+[source,java]
+----
+groovy("someGroovyExpression")
+----
+
+== Groovy Options
+
+// language options: START
+include::partial$language-options.adoc[]
+// language options: END
+
+== Usage
+
+=== Groovy Context
+
+Camel will provide exchange information in the Groovy context (just
+a `Map`). The `Exchange` is transferred as:
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|key |value
+
+|`body` |The message body.
+
+|`header` |The headers of the message.
+|`headers` |The headers of the message.
+
+|`variable` |The exchange variables
+|`variables` |The exchange variables
+
+|`exchangeProperty` |The exchange properties.
+|`exchangeProperties` |The exchange properties.
+
+|`exchange` |The `Exchange` itself.
+|`camelContext` |The Camel Context.
+|`exception` | If the exchange failed then this is the caused exception.
+
+|`request` |The message.
+|`response` | *Deprecated* The Out message (only for InOut message exchange pattern).
+
+|`attachments` | A `Map<String,jakarta.activation.DataHandler>` containing file attachments such as from HTTP file uploads, or emails containing files.
+
+|`log` | Can be used for logging purposes such as `log.info('Using body: {}', body)`.
+|=======================================================================
+
+
+=== How to get the result from multiple statements script
+
+As the Groovy script engine evaluate method just return a `Null` if it runs a
+multiple statements script. Camel now looks up the value of script result
+by using the key of `result` from the value set. If you have multiple
+statements scripts, you need to make sure you set the value of result
+variable as the script return value.
+
+[source,groovy]
+----
+bar = "baz"
+// some other statements ...
+// camel take the result value as the script evaluation result
+result = body * 2 + 1
+----
+
+=== Customizing Groovy Shell
+
+For very special use-cases you may need to use a custom `GroovyShell` instance in your
+Groovy expressions. To provide the custom `GroovyShell`, add an implementation
+of the `org.apache.camel.language.groovy.GroovyShellFactory` SPI
+interface to the Camel registry.
+
+._Java-only: implementing a custom GroovyShellFactory_
+[source,java]
+----
+public class CustomGroovyShellFactory implements GroovyShellFactory {
+
+  public GroovyShell createGroovyShell(Exchange exchange) {
+    ImportCustomizer importCustomizer = new ImportCustomizer();
+    importCustomizer.addStaticStars("com.example.Utils");
+    CompilerConfiguration configuration = new CompilerConfiguration();
+    configuration.addCompilationCustomizers(importCustomizer);
+    return new GroovyShell(configuration);
+  }
+
+}
+----
+
+Camel will then use your custom GroovyShell instance (containing your
+custom static imports), instead of the default one.
+
+=== Loading script from external resource
+
+You can externalize the script and have Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`.
+This is done using the following syntax: `"resource:scheme:location"`,
+e.g., to refer to a file on the classpath you can do:
+
+._Java-only: loading a Groovy script from an external resource_
+[source,java]
+----
+.setHeader("myHeader").groovy("resource:classpath:mygroovy.groovy")
+----
+
+=== Dependencies
+
+To use scripting languages in your camel routes, you need to add a
+dependency on *camel-groovy*.
+
+If you use Maven you could just add the following to your `pom.xml`,
+substituting the version number for the latest and greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-groovy</artifactId>
+  <version>x.x.x</version>
+</dependency>
+----
+
+== Examples
+
+In the example below, we use a groovy script as predicate in the message filter,
+to determine if any line items are over $100:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("queue:foo")
+    .filter(groovy("body.lineItems.any { i -> i.value > 100 }"))
+        .to("queue:bar")
+----
+
+XML DSL::
++
+[source,xml]
+----
+<route>
+    <from uri="queue:foo"/>
+    <filter>
+        <groovy>body.lineItems.any { i -> i.value > 100 }</groovy>
+        <to uri="queue:bar"/>
+    </filter>
+</route>
+----
+====
+
+== Pre compiling shared groovy scripts
+
+*Preview* support level.
+
+In *Camel 4.14* we have added support for loading groovy source files and pre-compile
+on startup. This allows to have a common set of groovy classes and functions which can be
+used by Camel and Java.
+
+By default, scripts can be placed in `src/main/resources/camel-groovy` folder, but
+can be fully configured via ANT path style such as:
+
+[source,properties]
+----
+camel.main.groovyScriptPattern = myscript/*.groovy
+----
+
+Then in the `src/main/resources/camel-groovy` folder you can have groovy source files that Camel
+will pre-compile on startup, and make global available via a special `GroovyScriptClassLoader`.
+
+Because this class-loader is required to be in use for being able to load the groovy pre-compiled
+classes, then this feature will only work via Camel which has control of classloading when used
+with Camel features that would support this such as in the route DSL and elsewhere.
+
+However, there may be some features in Camel where this may not work (yet).
+
+IMPORTANT: This feature is only intended to include smaller groovy sources as small functions, DTOs
+that makes it easier to use together with Camel for low-code integrations. It is not
+intended to support Groovy as a general purpose programming language for Camel. For this kind
+then you can use groovy and Java together and follow best practices for this, such as
+using the joint-compilation via Maven / Gradle plugins during build.

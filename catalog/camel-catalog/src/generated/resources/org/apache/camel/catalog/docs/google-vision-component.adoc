@@ -1,0 +1,540 @@
+= Google Cloud Vision Component
+:doctitle: Google Cloud Vision
+:shortname: google-vision
+:artifactid: camel-google-vision
+:description: Detect labels, text, faces, logos and more on images through Google Cloud Vision API
+:since: 4.19
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Google
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Google Cloud Vision component provides access to https://cloud.google.com/vision[Google Cloud Vision API] via
+the https://github.com/googleapis/java-cloud-vision[Google Cloud Vision Client for Java].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-vision</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.x.x</version>
+</dependency>
+----
+
+[[GoogleVision-AuthenticationConfiguration]]
+
+== Authentication Configuration
+
+Google Cloud Vision component authentication is targeted for use with the GCP Service Accounts.
+For more information, please refer to https://github.com/googleapis/google-cloud-java#authentication[Google Cloud Authentication].
+
+When you have the **service account key**, you can provide authentication credentials to your application code.
+Google security credentials can be set through the component endpoint:
+
+._Java-only: constructing the endpoint URI programmatically_
+
+[source,java]
+----
+String endpoint = "google-vision://labelDetection?serviceAccountKey=/home/user/Downloads/my-key.json";
+----
+
+Or by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
+
+----
+export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
+----
+
+
+== URI Format
+
+----
+google-vision://operation[?options]
+----
+
+You can append query options to the URI in the following format,
+`?options=value&option2=value&...`
+
+For example, in order to perform label detection on an image, use the following snippet:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("google-vision://labelDetection?serviceAccountKey=/home/user/Downloads/my-key.json");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-vision://labelDetection?serviceAccountKey=/home/user/Downloads/my-key.json"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-vision://labelDetection
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+----
+====
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Message body
+
+The message body should contain the image data as a `byte[]`.
+
+When `pojoRequest=true`, the body should be a `com.google.cloud.vision.v1.AnnotateImageRequest` instance instead.
+
+=== Google Cloud Vision Producer operations
+
+Google Cloud Vision component provides the following operation on the producer side:
+
+- labelDetection
+- textDetection
+- documentTextDetection
+- faceDetection
+- landmarkDetection
+- logoDetection
+- safeSearchDetection
+- imagePropertiesDetection
+- webDetection
+- objectLocalization
+- cropHintsDetection
+
+The operation is specified as part of the endpoint URI (e.g., `google-vision://labelDetection`).
+You can override the operation at runtime by setting the `GoogleCloudVisionOperation` message header.
+
+=== Advanced component configuration
+
+If you need to have more control over the `ImageAnnotatorClient` instance configuration, you can create your own instance and refer to it in your Camel google-vision component configuration:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("google-vision://labelDetection?client=#myVisionClient");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-vision://labelDetection?client=#myVisionClient"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-vision://labelDetection
+            parameters:
+              client: "#myVisionClient"
+----
+====
+
+=== Google Cloud Vision Producer Operation examples
+
+- `labelDetection`: this operation detects labels in an image. The message body should contain the image data as a `byte[]`.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("google-vision://labelDetection?serviceAccountKey=/home/user/Downloads/my-key.json&maxResults=10")
+    .log("body:${body}")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-vision://labelDetection?serviceAccountKey=/home/user/Downloads/my-key.json&amp;maxResults=10"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-vision://labelDetection
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              maxResults: 10
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will return a `List<EntityAnnotation>` with the detected labels.
+
+- `textDetection`: this operation extracts text from an image (OCR)
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("google-vision://textDetection?serviceAccountKey=/home/user/Downloads/my-key.json")
+    .log("body:${body}")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-vision://textDetection?serviceAccountKey=/home/user/Downloads/my-key.json"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-vision://textDetection
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will return a `List<EntityAnnotation>` with the detected text.
+
+- `faceDetection`: this operation detects faces in an image
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("google-vision://faceDetection?serviceAccountKey=/home/user/Downloads/my-key.json")
+    .log("body:${body}")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-vision://faceDetection?serviceAccountKey=/home/user/Downloads/my-key.json"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-vision://faceDetection
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will return a `List<FaceAnnotation>` with the detected faces.
+
+- `safeSearchDetection`: this operation detects explicit content
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("google-vision://safeSearchDetection?serviceAccountKey=/home/user/Downloads/my-key.json")
+    .log("body:${body}")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-vision://safeSearchDetection?serviceAccountKey=/home/user/Downloads/my-key.json"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-vision://safeSearchDetection
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will return a `SafeSearchAnnotation` with likelihood ratings for adult, spoof, medical, violence and racy content.
+
+- `objectLocalization`: this operation detects and localizes objects
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("google-vision://objectLocalization?serviceAccountKey=/home/user/Downloads/my-key.json")
+    .log("body:${body}")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-vision://objectLocalization?serviceAccountKey=/home/user/Downloads/my-key.json"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-vision://objectLocalization
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will return a `List<LocalizedObjectAnnotation>` with detected objects and their bounding polygons.
+
+- `webDetection`: this operation finds web references and visually similar images
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("google-vision://webDetection?serviceAccountKey=/home/user/Downloads/my-key.json")
+    .log("body:${body}")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-vision://webDetection?serviceAccountKey=/home/user/Downloads/my-key.json"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-vision://webDetection
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will return a `WebDetection` with matching pages, images and best guess labels.
+
+- Using POJO request for full control:
+
+._Java-only: Google Cloud Vision SDK AnnotateImageRequest builder_
+
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        Image image = Image.newBuilder()
+            .setContent(ByteString.copyFrom(imageData))
+            .build();
+        Feature feature = Feature.newBuilder()
+            .setType(Feature.Type.LABEL_DETECTION)
+            .setMaxResults(5)
+            .build();
+        AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
+            .addFeatures(feature)
+            .setImage(image)
+            .build();
+        exchange.getIn().setBody(request);
+    })
+    .to("google-vision://labelDetection?serviceAccountKey=/home/user/Downloads/my-key.json&pojoRequest=true")
+    .log("body:${body}")
+    .to("mock:result");
+----
+
+When using `pojoRequest=true`, the body should be an `AnnotateImageRequest` and the full `AnnotateImageResponse` is returned.
+
+- Overriding the operation at runtime via header:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader(GoogleCloudVisionConstants.OPERATION, constant(GoogleCloudVisionOperations.logoDetection))
+    .to("google-vision://labelDetection?serviceAccountKey=/home/user/Downloads/my-key.json")
+    .log("body:${body}")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelGoogleCloudVisionOperation">
+    <constant>logoDetection</constant>
+  </setHeader>
+  <to uri="google-vision://labelDetection?serviceAccountKey=/home/user/Downloads/my-key.json"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelGoogleCloudVisionOperation
+            constant: logoDetection
+        - to:
+            uri: google-vision://labelDetection
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====

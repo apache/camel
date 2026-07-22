@@ -1,0 +1,221 @@
+= Message Translator
+:tabs-sync-option:
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
+Translator] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns].
+
+image::eip/MessageTranslator.gif[image]
+
+The Message Translator can be done in different ways in Camel:
+
+* Using xref:transform-eip.adoc[Transform] or xref:setBody-eip.adoc[Set Body] in the DSL
+* Calling a xref:manual::processor.adoc[Processor] or xref:manual::bean-integration.adoc[bean]
+  to perform the transformation
+* Using template-based xref:ROOT:index.adoc[Components], with the template being the source for how the message is translated
+* Messages can also be transformed using xref:manual::data-format.adoc[Data Format]
+  to marshal and unmarshal messages in different encodings.
+
+== Example
+
+Each of the approaches above is documented in the following examples:
+
+=== Message Translator with Transform EIP
+
+You can use a xref:transform-eip.adoc[Transform] which uses an
+xref:manual::expression.adoc[Expression] to do the transformation:
+
+In the example below, we prepend Hello to the message body using the
+xref:components:languages:simple-language.adoc[Simple] language:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:cheese")
+    .setBody(simple("Hello ${body}"))
+    .to("log:hello");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:cheese"/>
+    <transform>
+        <simple>Hello ${body}</simple>
+    </transform>
+    <to uri="activemq:wine"/>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: cheese
+      steps:
+        - transform:
+            simple:
+              expression: Hello ${body}
+        - to:
+            uri: activemq
+            parameters:
+              destinationName: wine
+----
+====
+
+=== Message Translator with Bean
+
+You can transform a message using Camel's
+xref:manual::bean-integration.adoc[Bean Integration] to call any method on a bean
+that performs the message translation:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:cheese")
+  .bean("myTransformerBean", "doTransform")
+  .to("activemq:wine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:cheese"/>
+    <bean ref="myTransformerBean" method="doTransform"/>
+    <to uri="activemq:wine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: cheese
+      steps:
+        - bean:
+            ref: myTransformerBean
+            method: doTransform
+        - to:
+            uri: activemq
+            parameters:
+              destinationName: wine
+----
+
+====
+
+=== Message Translator with Processor
+
+You can also use a xref:manual::processor.adoc[Processor] to do
+the transformation:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:cheese")
+  .process(new MyTransformerProcessor())
+  .to("activemq:wine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:cheese"/>
+    <process ref="myTransformerProcessor"/>
+    <to uri="activemq:wine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: cheese
+      steps:
+        - process:
+            ref: myTransformerProcessor
+        - to:
+            uri: activemq
+            parameters:
+              destinationName: wine
+----
+====
+
+=== Message Translator using Templating Components
+
+You can also consume a message from one destination, transform it with something like
+xref:ROOT:velocity-component.adoc[Velocity] or xref:ROOT:xquery-component.adoc[XQuery], and then send
+it on to another destination.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:cheese")
+    .to("velocity:com/acme/MyResponse.vm")
+    .to("activemq:wine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:cheese"/>
+    <to uri="velocity:com/acme/MyResponse.vm"/>
+    <to uri="activemq:wine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: cheese
+      steps:
+        - to:
+            uri: velocity
+            parameters:
+              resourceUri: com/acme/MyResponse.vm
+        - to:
+            uri: activemq
+            parameters:
+              destinationName: wine
+----
+====
+
+=== Message Translator using Data Format
+
+See xref:marshal-eip.adoc[Marshal] EIP for more details and examples.

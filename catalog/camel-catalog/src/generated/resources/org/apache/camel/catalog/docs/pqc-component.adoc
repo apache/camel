@@ -1,0 +1,603 @@
+= PQC Algorithms Component
+:doctitle: PQC Algorithms
+:shortname: pqc
+:artifactid: camel-pqc
+:description: Post Quantum Cryptography Signature and Verification component.
+:since: 4.12
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The PQC component supports signing and verifying payload using Post Quantum Cryptography algorithms, as well as key lifecycle management for Post-Quantum cryptographic keys.
+
+== Features
+
+* **Digital Signatures** - Sign and verify data using NIST-standardized and experimental PQC signature algorithms
+* **Key Encapsulation** - Generate and extract shared secrets using Key Encapsulation Mechanisms (KEM)
+* **Key Lifecycle Management** - Generate, rotate, expire, revoke, and manage PQC keys
+* **Multiple Implementations** - File-based and in-memory key storage options
+* **Key Export/Import** - Convert keys between PEM, DER, PKCS8, and X.509 formats
+
+Prerequisites
+
+== URI Format
+
+-------------------------
+pqc://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Supported Algorithms
+
+The component supports the following algorithms for signature and verification.
+
+Standardized and implemented
+
+- ML-DSA
+- SLH-DSA
+- LMS
+- HSS (Hierarchical Signature System)
+- XMSS
+- XMSSMT (XMSS Multi-Tree)
+
+Experimental and non-standardized
+
+- Dilithium
+- Falcon
+- Picnic
+- SNOVA
+- MAYO
+- SPHINCS+
+
+== Parameter Sets (NIST Security Levels)
+
+By default each algorithm uses a fixed parameter set - for example ML-DSA-65 for `MLDSA` and ML-KEM-512 for `MLKEM`.
+Use the `parameterSpec` option to select a different NIST parameter set (security level); the key material is then
+generated with that parameter set instead of the algorithm default.
+
+._Java DSL: selecting ML-DSA-87 (NIST level 5)_
+[source,java]
+----
+from("direct:sign")
+    .to("pqc:sign?operation=sign&signatureAlgorithm=MLDSA&parameterSpec=ML-DSA-87")
+    .to("pqc:verify?operation=verify&signatureAlgorithm=MLDSA&parameterSpec=ML-DSA-87");
+----
+
+Endpoints configured with the same algorithm and `parameterSpec` share the same generated key, so a sign/verify endpoint
+pair works out of the box - exactly as with the default key material.
+
+Values are the BouncyCastle parameter-set names, resolved case-insensitively. The underscore form used by the
+BouncyCastle constants (`ml_dsa_87`) is accepted as an alias of the canonical name (`ML-DSA-87`).
+
+[cols="1,3",options="header"]
+|===
+| Algorithm | Parameter sets
+
+| `MLDSA` | `ML-DSA-44`, `ML-DSA-65` (default), `ML-DSA-87`
+| `MLKEM` | `ML-KEM-512` (default), `ML-KEM-768`, `ML-KEM-1024`
+| `SLHDSA` | `SLH-DSA-SHA2-128S`, `SLH-DSA-SHAKE-256F`, ... (see `SLHDSAParameterSpec`)
+| `FALCON` | `FALCON-512`, `FALCON-1024`
+| `DILITHIUM` | `DILITHIUM2`, `DILITHIUM3`, `DILITHIUM5`
+| `SPHINCSPLUS` | `sha2-128s`, ... (see `SPHINCSPlusParameterSpec`)
+| `PICNIC` | `picnicl1fs`, ... (see `PicnicParameterSpec`)
+| `KYBER` | `kyber512`, `kyber768`, `kyber1024`
+| `NTRU` | `ntruhps2048509`, ... (see `NTRUParameterSpec`)
+| `NTRULPRime` | `ntrulpr653`, ... (see `NTRULPRimeParameterSpec`)
+| `SNTRUPrime` | `sntrup761`, ... (see `SNTRUPrimeParameterSpec`)
+| `BIKE` | `bike128`, `bike192`, `bike256`
+| `HQC` | `hqc128`, `hqc192`, `hqc256`
+| `CMCE` | `mceliece348864`, ... (see `CMCEParameterSpec`)
+| `FRODO` | `frodokem640aes`, ... (see `FrodoParameterSpec`)
+| `SABER` | `lightsaberkem128r3`, ... (see `SABERParameterSpec`)
+|===
+
+The `parameterSpec` option is also honoured by the `generateKeyPair` lifecycle operation, which then generates the key
+at the configured security level.
+
+NOTE: `parameterSpec` is not supported for the stateful hash-based signature algorithms (XMSS, XMSSMT, LMS, HSS), for
+MAYO and SNOVA, nor for the hybrid operations: those either have no name-addressable BouncyCastle parameter set, or pair
+a fixed classical key set with a matching PQC key set. For those, register a `KeyPair` bean in the registry instead.
+
+== Supported Operations
+
+The component supports the following operations:
+
+**Signature Operations:**
+
+- sign - Sign data using a PQC signature algorithm
+- verify - Verify a signature
+
+**Key Encapsulation Operations:**
+
+- generateSecretKeyEncapsulation - Generate a secret key and encapsulate it
+- extractSecretKeyEncapsulation - Extract the encapsulation
+- extractSecretKeyFromEncapsulation - Extract the secret key from encapsulation
+
+**Hybrid Operations (classical + post-quantum):**
+
+- hybridSign - Create a hybrid signature combining a classical and a PQC signature
+- hybridVerify - Verify a hybrid signature (both components must be valid)
+- hybridGenerateSecretKeyEncapsulation - Generate a hybrid encapsulation and shared secret
+- hybridExtractSecretKeyEncapsulation - Extract the shared secret from a hybrid encapsulation
+- hybridExtractSecretKeyFromEncapsulation - Extract the secret key from a hybrid encapsulation
+
+See xref:others:pqc-hybrid.adoc[PQC Hybrid Cryptography] for configuration details and examples.
+
+**Key Lifecycle Operations:**
+
+- generateKeyPair - Generate a new PQC key pair
+- exportKey - Export a key to PEM, DER, PKCS8, or X.509 format
+- importKey - Import a key from bytes
+- rotateKey - Rotate a key and deprecate the old one
+- getKeyMetadata - Get metadata for a key
+- listKeys - List all keys with metadata
+- expireKey - Mark a key as expired
+- revokeKey - Revoke a compromised key
+
+See xref:others:pqc-key-lifecycle.adoc[PQC Key Lifecycle Management] for full details.
+
+== Metrics
+
+When https://micrometer.io[Micrometer] is on the classpath and a `MeterRegistry` bean is available in the Camel
+registry, the PQC producer records metrics automatically. Micrometer is an *optional* dependency: without it (or without
+a `MeterRegistry`) no metrics are emitted and there is no runtime overhead.
+
+[cols="2,1,4",options="header"]
+|===
+| Meter | Type | Description
+
+| `camel.pqc.operations`
+| Counter
+| Number of PQC operations performed, tagged by `operation` (sign, verify, generateSecretKeyEncapsulation,
+  extractSecretKeyFromEncapsulation, ...), `algorithm`, and `outcome` (`success` / `failure`).
+
+| `camel.pqc.stateful.key.remaining`
+| Gauge
+| Remaining signatures for a stateful signature key (XMSS, XMSSMT, LMS, HSS), tagged by `algorithm`. Registered only for
+  producers configured with a stateful signature algorithm.
+|===
+
+To enable the metrics, add `camel-micrometer` (or Micrometer directly) to your application and bind a `MeterRegistry` in
+the registry - for example a `SimpleMeterRegistry`, or the registry provided by Spring Boot or Quarkus.
+
+== Sub-Pages
+
+The PQC component documentation is split into focused sub-pages:
+
+* xref:others:pqc-key-lifecycle.adoc[Key Lifecycle Management] - Key generation, storage, rotation, expiration, revocation, and format conversion with FileBasedKeyLifecycleManager, InMemoryKeyLifecycleManager, HashiCorp Vault, AWS Secrets Manager, and Azure Key Vault implementations
+* xref:others:pqc-hybrid.adoc[Hybrid Cryptography] - Combining classical and post-quantum algorithms for defense-in-depth, including wire format v2
+* xref:dataformats:pqc-dataformat.adoc[PQC DataFormat] - DataFormat for quantum-resistant encryption/decryption using KEM
+
+== Signature and Verification
+
+The component expects to find a KeyPair and a Signature Objects in to the Camel Registry.
+
+In case the KeyPair and the Signature Objects are not in the registry, it will provide two instances of the Objects with default implementation.
+
+This will be true for standardized algorithms and for experimental ones.
+
+TIP: To combine a classical signature (ECDSA, Ed25519, RSA) with a PQC signature for defense-in-depth during the post-quantum transition, use the hybrid signature operations described in xref:others:pqc-hybrid.adoc[Hybrid Cryptography].
+
+NOTE: The sign and verify operations stream the message body. A `byte[]` or `InputStream` body is fed to the signature in chunks without being materialised as a String, so large payloads (files, large messages) can be signed and verified without loading them fully into memory. When the body is a re-readable `StreamCache` (for example with stream caching enabled) it is reset after reading so downstream processors still see the payload. Any other body type falls back to its String representation, which is always encoded as **UTF-8** so that signing and verifying agree regardless of the JVM default charset.
+
+== Examples
+
+All signature algorithms follow the same route pattern. Below is a complete example using ML-DSA, followed by a reference table for the other algorithms.
+
+=== ML-DSA (complete example)
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+    .to("mock:verify");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:sign"/>
+  <to uri="pqc:sign?operation=sign"/>
+  <to uri="mock:sign"/>
+  <to uri="pqc:verify?operation=verify"/>
+  <to uri="mock:verify"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sign
+    steps:
+      - to:
+          uri: pqc:sign
+          parameters:
+            operation: sign
+      - to:
+          uri: mock:sign
+      - to:
+          uri: pqc:verify
+          parameters:
+            operation: verify
+      - to:
+          uri: mock:verify
+----
+====
+
+With the following beans registered in the Registry
+
+._Java-only: registering ML-DSA KeyPair and Signature beans_
+[source,java]
+----
+    @BindToRegistry("Keypair")
+    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("ML-DSA", "BC");
+        kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
+        KeyPair kp = kpGen.generateKeyPair();
+        return kp;
+    }
+
+    @BindToRegistry("Signer")
+    public Signature getSigner() throws NoSuchAlgorithmException {
+        Signature mlDsa = Signature.getInstance("ML-DSA");
+        return mlDsa;
+    }
+----
+
+This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=MLDSA").to("mock:sign")
+    .to("pqc:verify?operation=verify&signatureAlgorithm=MLDSA")
+    .to("mock:verify");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:sign"/>
+  <to uri="pqc:sign?operation=sign&amp;signatureAlgorithm=MLDSA"/>
+  <to uri="mock:sign"/>
+  <to uri="pqc:verify?operation=verify&amp;signatureAlgorithm=MLDSA"/>
+  <to uri="mock:verify"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sign
+    steps:
+      - to:
+          uri: pqc:sign
+          parameters:
+            operation: sign
+            signatureAlgorithm: MLDSA
+      - to:
+          uri: mock:sign
+      - to:
+          uri: pqc:verify
+          parameters:
+            operation: verify
+            signatureAlgorithm: MLDSA
+      - to:
+          uri: mock:verify
+----
+====
+
+With this approach the component will use the class `org.apache.camel.component.pqc.crypto.PQCDefaultMLDSAMaterial`, which will create the Signature and KeyPair objects to be used.
+
+The Spec used for the KeyPair will be, in this case, `ML-DSA-65`.
+
+=== Other Signature Algorithms
+
+All other signature algorithms follow the exact same route pattern shown above for ML-DSA. The only differences are the algorithm name, the bean registration parameters, and the default material class. Use the following reference table:
+
+[options="header"]
+|===
+|Algorithm |signatureAlgorithm param |JCA Algorithm Name |Provider |Default Parameter Spec |Material Class
+
+|SLH-DSA
+|`SLHDSA`
+|SLH-DSA
+|BC
+|SLH-DSA-SHA2-128s
+|`PQCDefaultSLHDSAMaterial`
+
+|LMS
+|`LMS`
+|LMS
+|BC
+|LMS-SHA256-N32-H5 / SHA256-N32-W1 (OTS)
+|`PQCDefaultLMSMaterial`
+
+|XMSS
+|`XMSS`
+|XMSS
+|BCPQC
+|Tree height 10, SHA-256
+|`PQCDefaultXMSSMaterial`
+
+|XMSSMT
+|`XMSSMT`
+|XMSSMT
+|BCPQC
+|XMSSMT-SHA2-20d2-256
+|`PQCDefaultXMSSMTMaterial`
+
+|HSS
+|`HSS`
+|HSS
+|BC
+|LMS-SHA256-N32-H5
+|`PQCDefaultHSSMaterial`
+
+|Dilithium
+|`DILITHIUM`
+|Dilithium
+|BCPQC
+|dilithium2
+|`PQCDefaultDilithiumMaterial`
+
+|Falcon
+|`FALCON`
+|Falcon
+|BCPQC
+|falcon_512
+|`PQCDefaultFalconMaterial`
+
+|SPHINCS+
+|`SPHINCSPLUS`
+|SPHINCS+
+|BCPQC
+|sha2_128s
+|`PQCDefaultSPHINCSPlusMaterial`
+
+|Picnic
+|`PICNIC`
+|Picnic
+|BCPQC
+|picnicl1fs
+|`PQCDefaultPicknicMaterial`
+|===
+
+To use any algorithm, set `signatureAlgorithm` in the URI (e.g., `signatureAlgorithm=SLHDSA`). Alternatively, register a KeyPair and Signature in the registry using the JCA Algorithm Name and Provider from the table above.
+
+== Key Encapsulation and Extraction
+
+In Post Quantum Cryptography it has been introduced the concept of Key Encapsulation Algorithm.
+
+In this context there are three entities to consider:
+
+- A key generation algorithm which generates a public key and a private key (a keypair).
+
+- An encapsulation algorithm which takes as input a public key, and outputs a shared secret value and an "encapsulation" (a ciphertext) of this secret value.
+
+- A decapsulation algorithm which takes as input the encapsulation and the private key, and outputs the shared secret value.
+
+In the component we are supporting the three phases in generateSecretKeyEncapsulation, extractSecretKeyEncapsulation and extractSecretKeyFromEncapsulation
+
+The KEM Algorithm supported are the following:
+
+Standardized and implemented
+
+- ML-KEM
+
+Experimental and non-standardized
+
+- BIKE
+- CMCE
+- HQC
+- FRODO
+- SABER
+- NTRU
+- NTRULPRime
+- SNTRUPrime
+- Kyber
+
+The component expects to find a KeyGenerator and a KeyPair in to the Camel Registry.
+
+In case the KeyPair and the KeyGenerator Objects are not in the registry, it will provide two instances of the Objects with default implementation.
+
+This will be true for standardized algorithms and for experimental ones.
+
+TIP: To combine a classical key agreement (X25519, ECDH) with a PQC KEM (ML-KEM) for defense-in-depth, use the hybrid KEM operations described in xref:others:pqc-hybrid.adoc[Hybrid Cryptography].
+
+A possible flow of the operation could be the following:
+
+=== ML-KEM Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:encapsulate").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+    .to("mock:encapsulate")
+    .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES").to("mock:extract");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:encapsulate"/>
+  <to uri="pqc:keyenc?operation=generateSecretKeyEncapsulation&amp;symmetricKeyAlgorithm=AES"/>
+  <to uri="mock:encapsulate"/>
+  <to uri="pqc:keyenc?operation=extractSecretKeyEncapsulation&amp;symmetricKeyAlgorithm=AES"/>
+  <to uri="mock:extract"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:encapsulate
+    steps:
+      - to:
+          uri: pqc:keyenc
+          parameters:
+            operation: generateSecretKeyEncapsulation
+            symmetricKeyAlgorithm: AES
+      - to:
+          uri: mock:encapsulate
+      - to:
+          uri: pqc:keyenc
+          parameters:
+            operation: extractSecretKeyEncapsulation
+            symmetricKeyAlgorithm: AES
+      - to:
+          uri: mock:extract
+----
+====
+
+With the following beans registered in the Registry
+
+._Java-only: registering ML-KEM KeyPair and KeyGenerator beans_
+[source,java]
+----
+    @BindToRegistry("Keypair")
+    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+        kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
+        KeyPair kp = kpg.generateKeyPair();
+        return kp;
+    }
+
+    @BindToRegistry("KeyGenerator")
+    public KeyGenerator setKeyGenerator()
+            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+        return kg;
+    }
+----
+
+This could be done even without the Registry beans, by specifying the `symmetricKeyAlgorithm` and `keyEncapsulationAlgorithm` parameters in the following way
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:encapsulate").to(
+    "pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES&keyEncapsulationAlgorithm=MLKEM")
+    .to("mock:encapsulate")
+    .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES&keyEncapsulationAlgorithm=MLKEM")
+    .to("mock:extract");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:encapsulate"/>
+  <to uri="pqc:keyenc?operation=generateSecretKeyEncapsulation&amp;symmetricKeyAlgorithm=AES&amp;keyEncapsulationAlgorithm=MLKEM"/>
+  <to uri="mock:encapsulate"/>
+  <to uri="pqc:keyenc?operation=extractSecretKeyEncapsulation&amp;symmetricKeyAlgorithm=AES&amp;keyEncapsulationAlgorithm=MLKEM"/>
+  <to uri="mock:extract"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:encapsulate
+    steps:
+      - to:
+          uri: pqc:keyenc
+          parameters:
+            operation: generateSecretKeyEncapsulation
+            symmetricKeyAlgorithm: AES
+            keyEncapsulationAlgorithm: MLKEM
+      - to:
+          uri: mock:encapsulate
+      - to:
+          uri: pqc:keyenc
+          parameters:
+            operation: extractSecretKeyEncapsulation
+            symmetricKeyAlgorithm: AES
+            keyEncapsulationAlgorithm: MLKEM
+      - to:
+          uri: mock:extract
+----
+====
+
+With this approach the component will use the class `org.apache.camel.component.pqc.crypto.kem.PQCDefaultMLKEMMaterial`, which will create the KeyGenerator and KeyPair objects to be used.
+
+The Spec used for the KeyPair will be, in this case, `ML-KEM-512`.
+
+=== Extract Secret Key from Encapsulation for downstream usage
+
+Once you have the encapsulation you're able to decapsulate the secret key by using private key.
+
+All of this could be done to use the secret key coming from the encapsulation in the downstream route.
+
+As example you could use the secret key to dynamically instruct the CryptoDataFormat to use it, like in the following route.
+
+._Java-only: extracting secret key from encapsulation for downstream CryptoDataFormat usage_
+[source,java]
+----
+CryptoDataFormat cryptoFormat = new CryptoDataFormat("AES", null);
+
+from("direct:encapsulate")
+    .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+    .to("mock:encapsulate")
+    .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+    .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=AES")
+    .setHeader(CryptoDataFormat.KEY, body())
+    .setBody(constant("Hello"))
+    .marshal(cryptoFormat)
+    .log("Encrypted ${body}")
+    .to("mock:encrypted")
+    .unmarshal(cryptoFormat)
+    .log("Unencrypted ${body}")
+    .to("mock:unencrypted");
+----
+
+This could be used to generate a secret key, protect it through Encapsulation and KEM approach and re-use it once extracted.
+
+TIP: For a simplified approach to KEM-based encryption, consider using the xref:dataformats:pqc-dataformat.adoc[PQC DataFormat] which handles all KEM operations internally with a single marshal/unmarshal call.

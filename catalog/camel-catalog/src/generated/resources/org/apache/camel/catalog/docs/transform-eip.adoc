@@ -1,0 +1,98 @@
+= Transform EIP
+:doctitle: Transform
+:shortname: transform
+:description: Sets the message body using an expression. Unlike setBody, transform also sets the OUT message body in InOut exchanges
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
+Translator] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns].
+
+How can systems using different data formats communicate with each other using messaging?
+
+image::eip/MessageTranslator.gif[image]
+
+Use a special filter, a Message Translator, between other filters or applications to translate one data format into another.
+
+The xref:message-translator.adoc[Message Translator] can be done in different ways in Camel:
+
+* Using xref:transform-eip.adoc[Transform] or xref:setBody-eip.adoc[Set Body] in the DSL
+* Calling a xref:manual::processor.adoc[Processor] or xref:manual::bean-integration.adoc[bean]
+to perform the transformation
+* Using template-based xref:ROOT:index.adoc[Components], with the template being the source for how the message is translated
+* Messages can also be transformed using xref:manual::data-format.adoc[Data Format]
+to marshal and unmarshal messages in different encodings.
+* Using data type based transformation using xref:transformDataType-eip.adoc[Transform DataType]
+
+This page is documenting the first approach by using Transform EIP.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Using Transform EIP
+
+You can use a xref:transform-eip.adoc[Transform] which uses an
+xref:manual::expression.adoc[Expression] to do the transformation:
+
+In the example below, we prepend Hello to the message body using the
+xref:components:languages:simple-language.adoc[Simple] language:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:cheese")
+    .transform(simple("Hello ${body}"))
+    .to("log:hello");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:cheese"/>
+    <transform>
+        <simple>Hello ${body}</simple>
+    </transform>
+    <to uri="log:hello"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:cheese
+      steps:
+        - transform:
+            expression:
+              simple:
+                expression: "Hello ${body}"
+        - to:
+            uri: log:hello
+----
+====
+
+== What is the difference between Transform and Set Body?
+
+The Transform EIP always sets the result on the OUT message body.
+
+Set Body sets the result accordingly to the xref:manual::exchange-pattern.adoc[Exchange Pattern]
+on the `Exchange`.

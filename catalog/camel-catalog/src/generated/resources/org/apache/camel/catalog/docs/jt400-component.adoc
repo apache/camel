@@ -1,0 +1,380 @@
+= JT400 Component
+:doctitle: JT400
+:shortname: jt400
+:artifactid: camel-jt400
+:description: Exchanges messages with an IBM i system using data queues, message queues, or program call. IBM i is the replacement for AS/400 and iSeries servers.
+:since: 1.5
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The JT400 component allows you to exchange messages with an IBM i system
+using data queues, message queues, or program call. IBM i is the
+replacement for AS/400 and iSeries servers.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jt400</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+To send or receive data from a data queue
+
+----
+jt400://user:password/system/QSYS.LIB/library.LIB/queue.DTAQ[?options]
+----
+
+To send or receive messages from a message queue
+
+----
+jt400://user:password/system/QSYS.LIB/library.LIB/queue.MSGQ[?options]
+----
+
+To call program
+
+----
+jt400://user:password/system/QSYS.LIB/library.LIB/program.PGM[?options]
+----
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+When configured as a data queue consumer endpoint, the endpoint will poll a data
+queue on an IBM i system. For every entry on the data queue, a new
+`Exchange` is sent with the entry's data in the _In_ message's body,
+formatted either as a `String` or a `byte[]`, depending on the format.
+
+For a data queue provider endpoint, the _In_ message body contents will be put on
+the data queue as either raw bytes or text.
+
+When configured as a message queue consumer endpoint, the endpoint will poll
+a message queue on an IBM i system. For every entry on the queue, a new
+`Exchange` is sent with the entry's data in the _In_ message's body. The
+data is always formatted as a `String`. Note that only new messages will
+be processed. That is, this endpoint will not process any existing messages
+on the queue that have already been handled by another program.
+
+For a message queue provider endpoint, the _In_ message body contents are
+presumed to be text and sent to the queue as an informational message.
+Inquiry messages or messages requiring a message ID are not supported.
+
+=== Connection pool
+
+You can explicitly configure a connection pool on the Jt400Component, or as an uri option
+on the endpoint.
+
+=== Program call
+
+This endpoint expects the input to be an `Object[]`, whose object types are
+`int`, `long`, `CharSequence` (such as `String`), or `byte[]`. All other
+data types in the input array will be converted to `String`. For character
+inputs, CCSID handling is performed through the native jt400 library
+mechanisms. A parameter can be _omitted_ by passing null as the value in
+its position (the program has to support it). After the program execution,
+the endpoint returns an `Object[]` in the message body. Depending on
+_format_, the returned array will be populated with `byte[]` or `String`
+objects representing the values as they were returned by the program.
+Input-only parameters will contain the same data as the beginning of the invocation.
+This endpoint does not implement a provider endpoint!
+
+== Example
+
+In the snippet below, the data for an exchange sent to the
+`direct:george` endpoint will be put in the data queue `PENNYLANE` in
+library `BEATLES` on a system named `LIVERPOOL`.  +
+ Another user connects to the same data queue to receive the information
+from the data queue and forward it to the `mock:ringo` endpoint.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from(“direct:george”).to(“jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”);
+from(“jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”).to(“mock:ringo”);
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri=”direct:george”/>
+  <to uri=”jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”/>
+</route>
+
+<route>
+  <from uri=”jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”/>
+  <to uri=”mock:ringo”/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:george
+    steps:
+      - to:
+          uri: jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ
+
+- route:
+    from:
+      uri: jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ
+    steps:
+      - to:
+          uri: mock:ringo
+----
+====
+
+=== Program call examples
+
+In the snippet below, the data Exchange sent to the direct:work endpoint
+will contain three strings that will be used as the arguments for the
+program “compute” in the library “assets”. This program will write the
+output values in the second and third parameters. All the parameters will be
+sent to the direct:play endpoint.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from(“direct:work”).to(“jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&ouputFieldsIdx=2,3”).to(“direct:play”);
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri=”direct:work”/>
+  <to uri=”jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&amp;ouputFieldsIdx=2,3”/>
+  <to uri=”direct:play”/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:work
+    steps:
+      - to:
+          uri: jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM
+          parameters:
+            fieldsLength: “10,10,512”
+            ouputFieldsIdx: “2,3”
+      - to:
+          uri: direct:play
+----
+====
+
+In this example, the camel route will call the QUSRTVUS API to retrieve
+16 bytes from data area “MYUSRSPACE” in the “MYLIB” library.
+
+._Java-only: uses lambda Processor to set program call parameters_
+[source,java]
+----
+from(“timer://foo?period=60000”)
+    .process( exchange -> {
+        String usrSpc = “MYUSRSPACEMYLIB     “;
+        Object[] parms = new Object[] {
+            usrSpc, // Qualified user space name
+            1,      // starting position
+            16,     // length of data
+            “” // output
+        };
+        exchange.getIn().setBody(parms);
+    })
+    .to(“jt400://*CURRENT:*CURRENt@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3”)
+    .setBody(simple(“${body[3]}”))
+    .to(“direct:foo”);
+----
+
+=== Writing to keyed data queues
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jms:queue:input")
+    .to("jt400://username:password@system/lib.lib/MSGINDQ.DTAQ?keyed=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jms:queue:input"/>
+    <to uri="jt400://username:password@system/lib.lib/MSGINDQ.DTAQ?keyed=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:input
+    steps:
+      - to:
+          uri: jt400://username:password@system/lib.lib/MSGINDQ.DTAQ
+          parameters:
+            keyed: true
+----
+====
+
+=== Reading from keyed data queues
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jt400://username:password@system/lib.lib/MSGOUTDQ.DTAQ?keyed=true&searchKey=MYKEY&searchType=GE")
+    .to("jms:queue:output");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jt400://username:password@system/lib.lib/MSGOUTDQ.DTAQ?keyed=true&amp;searchKey=MYKEY&amp;searchType=GE"/>
+    <to uri="jms:queue:output"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jt400://username:password@system/lib.lib/MSGOUTDQ.DTAQ
+      parameters:
+        keyed: true
+        searchKey: MYKEY
+        searchType: GE
+    steps:
+      - to:
+          uri: jms:queue:output
+----
+====
+
+=== Writing to message queues
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jms:queue:input")
+    .to("jt400://username:password@system/lib.lib/MSGINQ.MSGQ");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jms:queue:input"/>
+    <to uri="jt400://username:password@system/lib.lib/MSGINQ.MSGQ"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:input
+    steps:
+      - to:
+          uri: jt400://username:password@system/lib.lib/MSGINQ.MSGQ
+----
+====
+
+=== Reading from a message queue
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jt400://username:password@system/lib.lib/MSGOUTQ.MSGQ")
+    .to("jms:queue:output");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jt400://username:password@system/lib.lib/MSGOUTQ.MSGQ"/>
+    <to uri="jms:queue:output"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jt400://username:password@system/lib.lib/MSGOUTQ.MSGQ
+    steps:
+      - to:
+          uri: jms:queue:output
+----
+====
+
+=== Replying to an inquiry message on a message queue
+
+._Java-only: uses Java constants, lambda expression, and choice with header() predicate_
+[source,java]
+----
+from("jt400://username:password@localhost/qsys.lib/qusrsys.lib/myq.msgq?sendingReply=true")
+.choice()
+    .when(header("CamelJt400MessageType").isEqualTo(AS400Message.INQUIRY))
+        .process((exchange) -> {
+            String reply = // insert reply logic here
+            exchange.getIn().setBody(reply);
+        })
+        .to("jt400://username:password@localhost/qsys.lib/qusrsys.lib/myq.msgq");
+----

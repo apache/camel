@@ -1,0 +1,291 @@
+= Mina Component
+:doctitle: Mina
+:shortname: mina
+:artifactid: camel-mina
+:description: Socket level networking using TCP or UDP with Apache Mina 2.x.
+:since: 2.10
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Mina component is a transport mechanism for working with
+http://mina.apache.org/[Apache MINA 2.x]
+
+[TIP]
+====
+Favor using xref:netty-component.adoc[Netty] as Netty is a much more active
+maintained and popular project than Apache Mina currently is.
+====
+
+WARNING: Be careful with `sync=false` on consumer endpoints. In camel-mina, all
+consumer exchanges are `InOut`. This is different to camel-mina.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-mina</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+mina:tcp://hostname[:port][?options]
+mina:udp://hostname[:port][?options]
+mina:vm://hostname[:port][?options]
+----
+
+You can specify a codec in the Registry using the
+*codec* option. If you are using TCP and no codec is specified then the
+`textline` flag is used to determine if text-line-based codec or object
+serialization should be used instead. By default, the object
+serialization is used.
+
+For UDP if no codec is specified the default uses a basic `ByteBuffer`
+based codec.
+
+The VM protocol is used as a direct forwarding mechanism in the same
+JVM.
+
+A Mina producer has a default timeout value of 30 seconds, while it
+waits for a response from the remote server.
+
+In normal use, `camel-mina` only supports marshalling the body
+content—message headers and exchange properties are not sent. +
+ However, the option, *transferExchange*, does allow you to transfer the
+exchange itself over the wire. See options below.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Using a custom codec
+
+See the Mina how to write your own codec. To use your custom codec with
+`camel-mina`, you should register your codec in the
+Registry; for example, by creating a bean in the
+Spring XML file. Then use the `codec` option to specify the bean ID of
+your codec. See xref:dataformats:hl7-dataformat.adoc[HL7] that has a custom codec.
+
+=== Get the IoSession for message
+
+You can get the IoSession from the message header with this key
+`CamelMinaIoSession`, and also get the local host address
+with the key `CamelMinaLocalAddress` and remote host address
+with the key `CamelMinaRemoteAddress`.
+
+=== Configuring Mina filters
+
+Filters permit you to use some Mina Filters, such as `SslFilter`. You
+can also implement some customized filters. Please note that `codec` and
+`logger` are also implemented as Mina filters of the type, `IoFilter`. Any
+filters you may define are appended to the end of the filter chain; that
+is, after `codec` and `logger`.
+
+== Examples
+
+=== Example with sync=false
+
+In this sample, Camel exposes a service that listens for TCP connections
+on port 6200. We use the *textline* codec. In our route, we create a
+Mina consumer endpoint that listens to on port 6200:
+._Java-only: Java string concatenation with port variable_
+[source,java]
+----
+from("mina:tcp://localhost:" + port1 + "?textline=true&sync=false").to("mock:result");
+----
+
+As the sample is part of a unit test, we test it by sending some data to
+it on port 6200.
+
+._Java-only: Java test API (MockEndpoint and ProducerTemplate)_
+[source,java]
+----
+MockEndpoint mock = getMockEndpoint("mock:result");
+mock.expectedBodiesReceived("Hello World");
+
+template.sendBody("mina:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
+
+MockEndpoint.assertIsSatisfied(context);
+----
+
+=== Example with sync=true
+
+In the next sample, we have a more common use case where we expose a TCP
+service on port 6201 also use the `textline` codec. However, this time we
+want to return a response, so we set the `sync` option to `true` on the
+consumer.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mina:tcp://localhost:{{port}}?textline=true&sync=true")
+    .setBody(simple("Bye ${body}"));
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina:tcp://localhost:{{port}}?textline=true&amp;sync=true"/>
+  <setBody>
+    <simple>Bye ${body}</simple>
+  </setBody>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina:tcp://localhost:{{port}}
+      parameters:
+        textline: true
+        sync: true
+      steps:
+        - setBody:
+            simple: "Bye ${body}"
+----
+====
+
+Then we test the sample by sending some data and retrieving the response
+using the `template.requestBody()` method. As we know the response is a
+`String`, we cast it to `String` and can assert that the response is, in
+fact, something we have dynamically set in our processor code logic.
+
+._Java-only: Java test API (ProducerTemplate)_
+[source,java]
+----
+String response = (String)template.requestBody("mina:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
+assertEquals("Bye World", response);
+----
+
+=== Example with Spring DSL
+
+Spring DSL can also be used for xref:mina-component.adoc[MINA].
+In the sample below, we expose a TCP server on port 5555:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mina:tcp://localhost:5555?textline=true")
+    .to("bean:myTCPOrderHandler");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina:tcp://localhost:5555?textline=true"/>
+  <to uri="bean:myTCPOrderHandler"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina:tcp://localhost:5555
+      parameters:
+        textline: true
+      steps:
+        - to:
+            uri: bean:myTCPOrderHandler
+----
+====
+
+In the route above, we expose a TCP server on port 5555 using the
+textline codec. We let the Spring bean with ID, `myTCPOrderHandler`,
+handle the request and return a reply. For instance, the handler bean
+could be implemented as follows:
+
+._Java-only: Java handler class_
+[source,java]
+----
+    public String handleOrder(String payload) {
+        ...
+        return "Order: OK"
+   }
+----
+
+== Closing Session When Complete
+
+When acting as a server, you sometimes want to close the session when,
+for example, a client conversion is finished. To instruct Camel to close
+the session, you should add a header with the key
+`CamelMinaCloseSessionWhenComplete` set to a boolean `true` value.
+
+For instance, the example below will close the session after it has
+written the `bye` message back to the client:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mina:tcp://localhost:8080?sync=true&textline=true")
+    .setBody(simple("Bye ${body}"))
+    .setHeader("CamelMinaCloseSessionWhenComplete", constant(true));
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina:tcp://localhost:8080?sync=true&amp;textline=true"/>
+  <setBody>
+    <simple>Bye ${body}</simple>
+  </setBody>
+  <setHeader name="CamelMinaCloseSessionWhenComplete">
+    <constant>true</constant>
+  </setHeader>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina:tcp://localhost:8080
+      parameters:
+        sync: true
+        textline: true
+      steps:
+        - setBody:
+            simple: "Bye ${body}"
+        - setHeader:
+            name: CamelMinaCloseSessionWhenComplete
+            constant: true
+----
+====

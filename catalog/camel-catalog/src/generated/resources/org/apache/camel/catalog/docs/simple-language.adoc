@@ -1,0 +1,131 @@
+= Simple Language
+:doctitle: Simple
+:shortname: simple
+:artifactid: camel-core-languages
+:description: Evaluates a Camel simple expression
+:since: 1.1
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Simple Expression Language was a really simple language when it was
+created, but has since grown more powerful. It is primarily intended for
+being a very small and Camel specific scripting language used anywhere in Camel
+such as with xref:components:eips:enterprise-integration-patterns.adoc[EIPs] and
+xref:manual::routes.adoc[Route].
+
+The simple language is designed with intent to cover almost all the common use cases
+when little need for scripting in your Camel routes.
+
+However, for much more complex use cases, then a more powerful language is recommended such as: xref:groovy-language.adoc[Groovy].
+
+The simple language uses `$\{body}` placeholders for dynamic expressions and functions.
+
+[TIP]
+====
+*Alternative syntax*
+
+You can also use the alternative syntax which
+uses `$simple{ }` as placeholders. This can be used in situations to avoid clashes when using, for example,
+Spring property placeholder together with Camel.
+====
+
+[NOTE]
+====
+See also the xref:csimple-language.adoc[CSimple] language which is *pre compiled*.
+====
+
+== A quick Simple Language example
+
+You often use Simple together with xref:components:eips:enterprise-integration-patterns.adoc[EIPs] such as xref:eips:choice-eip.adoc[Content-Based Router] EIP.
+
+In the example below we want to route the message depending on whether a message header with key `foo` is equal to different values:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:a")
+    .choice()
+        .when(simple("${header.foo} == 'bar'"))
+            .to("direct:b")
+        .when(simple("${header.foo} == 'cheese'"))
+            .to("direct:c")
+        .otherwise()
+            .to("direct:d");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <choice>
+        <when>
+            <simple>${header.foo} == 'bar'</simple>
+            <to uri="direct:b"/>
+        </when>
+        <when>
+            <simple>${header.foo} == 'cheese'</simple>
+            <to uri="direct:c"/>
+        </when>
+        <otherwise>
+            <to uri="direct:d"/>
+        </otherwise>
+    </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:a
+    steps:
+      - choice:
+          when:
+            - expression:
+                simple:
+                  expression: "${header.foo} == 'bar'"
+              steps:
+                - to:
+                    uri: direct:b
+            - expression:
+                simple:
+                  expression: "${header.foo} == 'cheese'"
+              steps:
+                - to:
+                    uri: direct:c
+          otherwise:
+            steps:
+              - to:
+                  uri: direct:d
+----
+====
+
+
+== Simple Language options
+
+The Simple Language can be configured globally. However, its seldom needed.
+
+// language options: START
+include::partial$language-options.adoc[]
+// language options: END
+
+== Detailed Reference
+
+For detailed documentation on each topic, see the following sub-pages:
+
+* xref:simple-functions.adoc[Built-in Functions] — All function categories (Core, Array/List, Boolean, Date/Time, Math, String, XML/JSON, and more)
+* xref:simple-operators.adoc[Built-in Operators] — Comparison, numeric, ternary, elvis, chain, and boolean operators
+* xref:simple-ognl.adoc[OGNL Expressions] — OGNL dot-notation for invoking methods on POJOs
+* xref:simple-advanced.adoc[Advanced Features] — Init blocks, EIP examples, custom functions, and JavaScript validator
+
+== Dependencies
+
+The Simple language is part of *camel-core*.

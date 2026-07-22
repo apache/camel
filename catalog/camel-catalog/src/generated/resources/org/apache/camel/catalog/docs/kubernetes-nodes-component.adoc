@@ -1,0 +1,147 @@
+= Kubernetes Nodes Component
+:doctitle: Kubernetes Nodes
+:shortname: kubernetes-nodes
+:artifactid: camel-kubernetes
+:description: Perform operations on Kubernetes Nodes and get notified on Node changes.
+:since: 2.17
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Kubernetes
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Kubernetes Nodes component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
+provides a producer to execute Kubernetes Node operations and a consumer to consume events related to Node objects.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Supported producer operation
+
+- `listNodes`
+- `listNodesByLabels`
+- `getNode`
+- `createNode`
+- `updateNode`
+- `deleteNode`
+
+== Examples
+
+=== Kubernetes Nodes Producer Examples
+
+- `listNodes`: this operation lists the nodes on a kubernetes cluster
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:list")
+    .to("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodes")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-nodes:///?kubernetesClient=#kubernetesClient&amp;operation=listNodes"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+    steps:
+      - to:
+          uri: kubernetes-nodes:///
+          parameters:
+            kubernetesClient: "#kubernetesClient"
+            operation: listNodes
+      - to:
+          uri: mock:result
+----
+====
+
+This operation returns a List of Nodes from your cluster
+
+- `listNodesByLabels`: this operation lists the nodes by labels on a kubernetes cluster
+
+._Java-only: sets a Map header for label selection_
+[source,java]
+----
+from("direct:listByLabels")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesNodeLabels",
+            Map.of("key1", "value1", "key2", "value2"));
+    })
+    .to("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels")
+    .to("mock:result");
+----
+
+This operation returns a list of nodes from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+
+=== Kubernetes Nodes Consumer Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("kubernetes-nodes://{{kubernetes-host}}?oauthToken={{kubernetes-token}}")
+    .to("log:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kubernetes-nodes://{{kubernetes-host}}?oauthToken={{kubernetes-token}}"/>
+  <to uri="log:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kubernetes-nodes://{{kubernetes-host}}
+      parameters:
+        oauthToken: "{{kubernetes-token}}"
+    steps:
+      - to:
+          uri: log:result
+----
+====
+
+This consumer returns a message per event received for all Nodes in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch Nodes with the specified label.
+- `resourceName` - Watch the Nodes with the specified name.
+
+

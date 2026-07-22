@@ -315,6 +315,64 @@ public interface CamelCatalog {
     String modelJSonSchema(String name);
 
     /**
+     * Find all the available documentation page names.
+     *
+     * @return a list of documentation names (without the .adoc extension)
+     */
+    List<String> findDocNames();
+
+    /**
+     * Returns the AsciiDoc documentation for the given name.
+     * <p>
+     * The name corresponds to the documentation filename without the .adoc extension, such as {@code kafka-component},
+     * {@code split-eip}, {@code simple-language}, or {@code jackson2-dataformat}.
+     *
+     * @param  name the documentation name (without .adoc extension)
+     * @return      the documentation in AsciiDoc format, or {@code null} if not found
+     */
+    String asciiDoc(String name);
+
+    /**
+     * Returns the AsciiDoc documentation for the given component.
+     *
+     * @param  name the component name
+     * @return      the documentation in AsciiDoc format, or {@code null} if not found
+     */
+    String componentAsciiDoc(String name);
+
+    /**
+     * Returns the AsciiDoc documentation for the given data format.
+     *
+     * @param  name the data format name
+     * @return      the documentation in AsciiDoc format, or {@code null} if not found
+     */
+    String dataFormatAsciiDoc(String name);
+
+    /**
+     * Returns the AsciiDoc documentation for the given language.
+     *
+     * @param  name the language name
+     * @return      the documentation in AsciiDoc format, or {@code null} if not found
+     */
+    String languageAsciiDoc(String name);
+
+    /**
+     * Returns the AsciiDoc documentation for the given EIP model.
+     *
+     * @param  name the model name
+     * @return      the documentation in AsciiDoc format, or {@code null} if not found
+     */
+    String modelAsciiDoc(String name);
+
+    /**
+     * Returns the AsciiDoc documentation for the given other (miscellaneous) component.
+     *
+     * @param  name the other component name
+     * @return      the documentation in AsciiDoc format, or {@code null} if not found
+     */
+    String otherAsciiDoc(String name);
+
+    /**
      * Find all the unique label names all the components are using.
      *
      * @return a set of all the labels.

@@ -1,0 +1,204 @@
+= Timer Component
+:doctitle: Timer
+:shortname: timer
+:artifactid: camel-timer
+:description: Generate messages in specified intervals using java.util.Timer.
+:since: 1.0
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only consumer is supported
+:core:
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Timer component is used to generate message exchanges when a
+timer fires. You can only consume events from this endpoint.
+
+== URI format
+
+----
+timer:name[?options]
+----
+
+Where `name` is the name of the `Timer` object, which is created and
+shared across endpoints. So if you use the same name for all your timer
+endpoints, only one `Timer` object and thread will be used.
+
+NOTE: The _IN_ body of the generated exchange is `null`.
+Therefore, calling `exchange.getIn().getBody()` returns `null`.
+
+[TIP]
+====
+*Advanced Scheduler*
+
+See also the xref:quartz-component.adoc[Quartz] component that supports much more
+advanced scheduling.
+====
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Exchange Properties
+
+When the timer is fired, it adds the following information as properties
+to the `Exchange`:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+|Name |Type |Description
+
+|`Exchange.TIMER_NAME` |`String` |The value of the `name` option.
+
+|`Exchange.TIMER_TIME` |`Date` |The value of the `time` option.
+
+|`Exchange.TIMER_PERIOD` |`long` |The value of the `period` option.
+
+|`Exchange.TIMER_FIRED_TIME` |`Date` |The time when the consumer fired.
+
+|`Exchange.TIMER_COUNTER` |`Long` |The current fire counter. Starts from 1.
+|===
+
+== Example
+
+To set up a route that generates an event every 60 seconds:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer://foo?fixedRate=true&period=60000").to("bean:myBean?method=someMethodName");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="timer://foo?fixedRate=true&amp;period=60000"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:foo
+      parameters:
+        fixedRate: true
+        period: 60000
+      steps:
+        - to:
+            uri: bean:myBean
+            parameters:
+              method: someMethodName
+----
+====
+
+The above route will generate an event and then invoke the
+`someMethodName` method on the bean called `myBean` in the
+Registry.
+
+=== Firing as soon as possible
+
+You may want to fire messages in a Camel route as soon as possible, you
+can use a negative delay:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer://foo?delay=-1").to("bean:myBean?method=someMethodName");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="timer://foo?delay=-1"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:foo
+      parameters:
+        delay: -1
+      steps:
+        - to:
+            uri: bean:myBean
+            parameters:
+              method: someMethodName
+----
+====
+
+In this way, the timer will fire messages immediately.
+
+You can also specify a `repeatCount` parameter in conjunction with a
+negative delay to stop firing messages after a fixed number has been
+reached.
+
+If you don't specify a `repeatCount` then the timer will continue firing
+messages until the route will be stopped. 
+
+=== Firing only once
+
+You may want to fire a message in a Camel route only once, such as when
+starting the route.
+To do that, you use the `repeatCount` option as shown:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer://foo?repeatCount=1").to("bean:myBean?method=someMethodName");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="timer://foo?repeatCount=1"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:foo
+      parameters:
+        repeatCount: 1
+      steps:
+        - to:
+            uri: bean:myBean
+            parameters:
+              method: someMethodName
+----
+====

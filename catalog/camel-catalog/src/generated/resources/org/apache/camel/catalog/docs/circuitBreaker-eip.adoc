@@ -1,0 +1,111 @@
+= Circuit Breaker EIP
+:doctitle: Circuit Breaker
+:shortname: circuitBreaker
+:description: Wraps message processing with a circuit breaker for fault tolerance. Prevents cascading failures by short-circuiting calls to an unhealthy service and routing to a fallback
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+The Circuit Breaker pattern is inspired by the real-world electrical circuit breaker,
+which is used to detect excessive current draw and fail fast to protect electrical equipment.
+The software-based circuit breaker works on the same notion, by encapsulating
+the operation and monitoring it for failures. The Circuit Breaker pattern operates in
+three states, as illustrated in the following figure:
+
+image::eip/CircuitBreaker.png[image]
+
+The states are as follows:
+
+* *Closed*: When operating successfully.
+* *Open*: When failure is detected, and the breaker opens to short-circuit and fails
+  fast. In this state, the circuit breaker avoids invoking the protected operation and
+  avoids putting the additional load on the struggling service.
+* *Half-Open*: After a short period in the open state, an operation is attempted to
+  see whether it can complete successfully, and depending on the outcome, it will
+  transfer to either open or closed state.
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
+
+Below is an example route showing a circuit breaker endpoint that protects against
+slow operation by falling back to the in-lined fallback route.
+
+In this example, the circuit breaker protects against slow operation by falling back to the in-lined fallback route.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .circuitBreaker()
+        .to("http://fooservice.com/slow")
+    .onFallback()
+        .transform().constant("Fallback message")
+    .end()
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <circuitBreaker>
+    <to uri="http://fooservice.com/slow"/>
+    <onFallback>
+      <transform>
+        <constant>Fallback message</constant>
+      </transform>
+    </onFallback>
+  </circuitBreaker>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - circuitBreaker:
+            steps:
+              - to:
+                  uri: http://fooservice.com/slow
+              - onFallback:
+                  steps:
+                    - transform:
+                        expression:
+                          constant:
+                            expression: Fallback message
+        - to:
+            uri: mock:result
+----
+====
+
+== Route lifecycle and breaker state
+
+When a route is stopped and started, the circuit breaker state is reset (an OPEN breaker returns to CLOSED)
+and any collected metrics are cleared. This is by design — a route stop/start is a full lifecycle reset,
+equivalent to a fresh boot.
+
+== Circuit Breaker components
+
+Camel provides two implementations of this pattern:
+
+* xref:resilience4j-eip.adoc[Resilience4j]: Using the Resilience4j implementation
+* xref:fault-tolerance-eip.adoc[Fault Tolerance]: Using the MicroProfile Fault Tolerance implementation

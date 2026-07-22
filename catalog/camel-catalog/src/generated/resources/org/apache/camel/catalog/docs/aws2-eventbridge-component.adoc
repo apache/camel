@@ -1,0 +1,841 @@
+= AWS Eventbridge Component
+:doctitle: AWS Eventbridge
+:shortname: aws2-eventbridge
+:artifactid: camel-aws2-eventbridge
+:description: Manage AWS EventBridge cluster instances and consume events via SQS-backed polling.
+:since: 3.6
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: AWS
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS2 Eventbridge component supports assumeRole operation.
+https://aws.amazon.com/eventbridge/[AWS Eventbridge].
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Eventbridge. More information is available at
+https://aws.amazon.com/eventbridge/[Amazon Eventbridge].
+
+[NOTE]
+====
+To create a rule that triggers on an action by an AWS service that does not emit events, you can base the rule on API calls made by that service. The API calls are recorded by AWS CloudTrail, so you'll need to have CloudTrail enabled. For more information, check https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events.html[Services Supported by CloudTrail Event History].
+====
+
+== URI Format
+
+----
+aws2-eventbridge://label[?options]
+----
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
+
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
+
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
+ - Amazon EC2 Instance profile credentials. 
+
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+=== AWS2-Eventbridge Producer operations
+
+Camel-AWS2-Eventbridge component provides the following operation on the producer side:
+
+- putRule
+- putTargets
+- removeTargets
+- deleteRule
+- enableRule
+- disableRule
+- listRules
+- describeRule
+- listTargetsByRule
+- listRuleNamesByTarget
+- putEvent
+
+- PutRule: this operation creates a rule related to an eventbus
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:putRule")
+    .setHeader("CamelAwsEventbridgeRuleName", constant("firstrule"))
+    .to("aws2-eventbridge://test?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:putRule"/>
+  <setHeader name="CamelAwsEventbridgeRuleName">
+    <constant>firstrule</constant>
+  </setHeader>
+  <to uri="aws2-eventbridge://test?operation=putRule&amp;eventPatternFile=file:src/test/resources/eventpattern.json"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:putRule
+      steps:
+        - setHeader:
+            name: CamelAwsEventbridgeRuleName
+            constant: firstrule
+        - to:
+            uri: aws2-eventbridge://test
+            parameters:
+              operation: putRule
+              eventPatternFile: "file:src/test/resources/eventpattern.json"
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will create a rule named _firstrule_, and it will use a json file for defining the EventPattern.
+
+- PutTargets: this operation will add a target to the rule
+
+._Java-only: uses AWS SDK `Target.builder()` to construct target objects_
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelAwsEventbridgeRuleName", "firstrule");
+        Target target = Target.builder().id("sqs-queue")
+                .arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
+                .build();
+        List<Target> targets = new ArrayList<>();
+        targets.add(target);
+        exchange.getIn().setHeader("CamelAwsEventbridgeTargets", targets);
+    })
+    .to("aws2-eventbridge://test?operation=putTargets")
+    .to("mock:result");
+----
+
+This operation will add the target sqs-queue with the arn reported to the targets of the _firstrule_ rule.
+
+- RemoveTargets: this operation will remove a collection of targets from the rule
+
+._Java-only: uses `List<String>` to specify target IDs for removal_
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelAwsEventbridgeRuleName", "firstrule");
+        List<String> ids = new ArrayList<>();
+        ids.add("sqs-queue");
+        exchange.getIn().setHeader("CamelAwsEventbridgeTargetsIds", ids);
+    })
+    .to("aws2-eventbridge://test?operation=removeTargets")
+    .to("mock:result");
+----
+
+This operation will remove the target sqs-queue from the _firstrule_ rule.
+
+- DeleteRule: this operation will delete a rule related to an eventbus
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelAwsEventbridgeRuleName", constant("firstrule"))
+    .to("aws2-eventbridge://test?operation=deleteRule")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAwsEventbridgeRuleName">
+    <constant>firstrule</constant>
+  </setHeader>
+  <to uri="aws2-eventbridge://test?operation=deleteRule"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAwsEventbridgeRuleName
+            constant: firstrule
+        - to:
+            uri: aws2-eventbridge://test
+            parameters:
+              operation: deleteRule
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will remove the _firstrule_ rule from the test eventbus.
+
+- EnableRule: this operation will enable a rule related to an eventbus
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelAwsEventbridgeRuleName", constant("firstrule"))
+    .to("aws2-eventbridge://test?operation=enableRule")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAwsEventbridgeRuleName">
+    <constant>firstrule</constant>
+  </setHeader>
+  <to uri="aws2-eventbridge://test?operation=enableRule"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAwsEventbridgeRuleName
+            constant: firstrule
+        - to:
+            uri: aws2-eventbridge://test
+            parameters:
+              operation: enableRule
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will enable the _firstrule_ rule from the test eventbus.
+
+- DisableRule: this operation will disable a rule related to an eventbus
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelAwsEventbridgeRuleName", constant("firstrule"))
+    .to("aws2-eventbridge://test?operation=disableRule")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAwsEventbridgeRuleName">
+    <constant>firstrule</constant>
+  </setHeader>
+  <to uri="aws2-eventbridge://test?operation=disableRule"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAwsEventbridgeRuleName
+            constant: firstrule
+        - to:
+            uri: aws2-eventbridge://test
+            parameters:
+              operation: disableRule
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will disable the _firstrule_ rule from the test eventbus.
+
+- ListRules: this operation will list all the rules related to an eventbus with prefix first
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelAwsEventbridgeRuleNamePrefix", constant("first"))
+    .to("aws2-eventbridge://test?operation=listRules")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAwsEventbridgeRuleNamePrefix">
+    <constant>first</constant>
+  </setHeader>
+  <to uri="aws2-eventbridge://test?operation=listRules"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAwsEventbridgeRuleNamePrefix
+            constant: first
+        - to:
+            uri: aws2-eventbridge://test
+            parameters:
+              operation: listRules
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will list all the rules with prefix first from the test eventbus.
+
+- DescribeRule: this operation will describe a specified rule related to an eventbus
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelAwsEventbridgeRuleName", constant("firstrule"))
+    .to("aws2-eventbridge://test?operation=describeRule")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAwsEventbridgeRuleName">
+    <constant>firstrule</constant>
+  </setHeader>
+  <to uri="aws2-eventbridge://test?operation=describeRule"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAwsEventbridgeRuleName
+            constant: firstrule
+        - to:
+            uri: aws2-eventbridge://test
+            parameters:
+              operation: describeRule
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will describe the _firstrule_ rule from the test eventbus.
+
+- ListTargetsByRule: this operation will return a list of targets associated with a rule
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelAwsEventbridgeRuleName", constant("firstrule"))
+    .to("aws2-eventbridge://test?operation=listTargetsByRule")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAwsEventbridgeRuleName">
+    <constant>firstrule</constant>
+  </setHeader>
+  <to uri="aws2-eventbridge://test?operation=listTargetsByRule"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAwsEventbridgeRuleName
+            constant: firstrule
+        - to:
+            uri: aws2-eventbridge://test
+            parameters:
+              operation: listTargetsByRule
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will return a list of targets associated with the _firstrule_ rule.
+
+- ListRuleNamesByTarget: this operation will return a list of rules associated with a target
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelAwsEventbridgeTargetArn", constant("arn:aws:sqs:eu-west-1:123456789012:my-queue"))
+    .to("aws2-eventbridge://test?operation=listRuleNamesByTarget")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAwsEventbridgeTargetArn">
+    <constant>arn:aws:sqs:eu-west-1:123456789012:my-queue</constant>
+  </setHeader>
+  <to uri="aws2-eventbridge://test?operation=listRuleNamesByTarget"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAwsEventbridgeTargetArn
+            constant: "arn:aws:sqs:eu-west-1:123456789012:my-queue"
+        - to:
+            uri: aws2-eventbridge://test
+            parameters:
+              operation: listRuleNamesByTarget
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will return a list of rules associated with a target.
+
+- PutEvent: this operation will send an event to the Servicebus
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelAwsEventbridgeResourcesArn", constant("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test"))
+    .setHeader("CamelAwsEventbridgeSource", constant("com.pippo"))
+    .setHeader("CamelAwsEventbridgeDetailType", constant("peppe"))
+    .setBody(constant("Test Event"))
+    .to("aws2-eventbridge://test?operation=putEvent")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAwsEventbridgeResourcesArn">
+    <constant>arn:aws:sqs:eu-west-1:780410022472:camel-connector-test</constant>
+  </setHeader>
+  <setHeader name="CamelAwsEventbridgeSource">
+    <constant>com.pippo</constant>
+  </setHeader>
+  <setHeader name="CamelAwsEventbridgeDetailType">
+    <constant>peppe</constant>
+  </setHeader>
+  <setBody>
+    <constant>Test Event</constant>
+  </setBody>
+  <to uri="aws2-eventbridge://test?operation=putEvent"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAwsEventbridgeResourcesArn
+            constant: "arn:aws:sqs:eu-west-1:780410022472:camel-connector-test"
+        - setHeader:
+            name: CamelAwsEventbridgeSource
+            constant: com.pippo
+        - setHeader:
+            name: CamelAwsEventbridgeDetailType
+            constant: peppe
+        - setBody:
+            constant: Test Event
+        - to:
+            uri: aws2-eventbridge://test
+            parameters:
+              operation: putEvent
+        - to:
+            uri: mock:result
+----
+====
+
+This operation will return a list of entries with related ID sent to servicebus.
+
+=== Updating the rule
+
+To update a rule, you'll need to perform the putRule operation again.
+There is no explicit update rule operation in the Java SDK.
+
+== Consuming Events from EventBridge
+
+Since Camel 4.19, the component supports consuming events from EventBridge rules using an SQS-backed polling pattern.
+
+AWS EventBridge is an event router, not a message queue — it does not provide a pull-based API.
+The consumer works by wiring an SQS queue as a target of the specified EventBridge rule and then polling that queue for events.
+This is the standard AWS pattern for programmatically consuming EventBridge events.
+
+=== How It Works
+
+1. On startup the consumer creates an SQS queue (unless you provide one via `queueUrl`).
+2. It sets an SQS queue policy that allows EventBridge to send messages.
+3. It adds the queue as a target of the EventBridge rule specified by `ruleName`.
+4. It polls the SQS queue on schedule, delivering each event into the Camel route.
+5. Successfully processed messages are deleted from the queue; failed messages remain for retry.
+6. On shutdown the target is removed and the auto-created queue is deleted (configurable).
+
+=== Consumer Configuration Options
+
+[width="100%",cols="2,1,1,4",options="header"]
+|===
+|Option |Default |Type |Description
+
+|`ruleName`
+|
+|String
+|**Required.** The EventBridge rule name to consume events from.
+
+|`queueUrl`
+|
+|String
+|URL of an existing SQS queue to use. If omitted, a queue is auto-created.
+
+|`autoCreateQueue`
+|`true`
+|boolean
+|Whether to auto-create an SQS queue and wire it as the rule target.
+
+|`deleteQueueOnShutdown`
+|`true`
+|boolean
+|Whether to delete the auto-created queue and remove the EventBridge target on shutdown.
+
+|`maxMessagesPerPoll`
+|`10`
+|int
+|Maximum number of SQS messages to receive per poll cycle.
+
+|`waitTimeSeconds`
+|`20`
+|int
+|SQS long-polling wait time in seconds.
+
+|`visibilityTimeout`
+|`30`
+|int
+|Seconds that received messages are hidden from subsequent polls.
+|===
+
+Standard `ScheduledPollConsumer` options (`delay`, `initialDelay`, `greedy`, etc.) are also available.
+
+=== Consumer Example — Auto-Created Queue
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("aws2-eventbridge://default?ruleName=my-rule&delay=5000")
+    .log("Received EventBridge event: ${body}")
+    .to("direct:process");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="aws2-eventbridge://default?ruleName=my-rule&amp;delay=5000"/>
+    <log message="Received EventBridge event: ${body}"/>
+    <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws2-eventbridge://default
+      parameters:
+        ruleName: my-rule
+        delay: 5000
+    steps:
+      - log:
+          message: "Received EventBridge event: ${body}"
+      - to:
+          uri: direct:process
+----
+====
+
+The consumer auto-creates an SQS queue, wires it to the `my-rule` EventBridge rule, and polls every 5 seconds.
+
+=== Consumer Example — User-Provided Queue
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("aws2-eventbridge://default?ruleName=my-rule&autoCreateQueue=false&queueUrl=https://sqs.us-east-1.amazonaws.com/123456789012/my-queue")
+    .log("Received: ${body}")
+    .to("direct:process");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="aws2-eventbridge://default?ruleName=my-rule&amp;autoCreateQueue=false&amp;queueUrl=https://sqs.us-east-1.amazonaws.com/123456789012/my-queue"/>
+  <log message="Received: ${body}"/>
+  <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws2-eventbridge://default
+      parameters:
+        ruleName: my-rule
+        autoCreateQueue: false
+        queueUrl: "https://sqs.us-east-1.amazonaws.com/123456789012/my-queue"
+      steps:
+        - log:
+            message: "Received: ${body}"
+        - to:
+            uri: direct:process
+----
+====
+
+Use this when you manage the SQS queue and its policy yourself.
+
+=== Consumer Example — Combined Producer and Consumer
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// First create the rule
+from("direct:setup")
+    .to("aws2-eventbridge://default?operation=putRule&eventPatternFile=file:eventpattern.json");
+
+// Consume events matching the rule
+from("aws2-eventbridge://default?ruleName=my-rule&delay=2000")
+    .log("Event: ${body}")
+    .to("mock:events");
+----
+
+XML::
++
+[source,xml]
+----
+<!-- First create the rule -->
+<route>
+  <from uri="direct:setup"/>
+  <to uri="aws2-eventbridge://default?operation=putRule&amp;eventPatternFile=file:eventpattern.json"/>
+</route>
+
+<!-- Consume events matching the rule -->
+<route>
+  <from uri="aws2-eventbridge://default?ruleName=my-rule&amp;delay=2000"/>
+  <log message="Event: ${body}"/>
+  <to uri="mock:events"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+# First create the rule
+- route:
+    from:
+      uri: direct:setup
+      steps:
+        - to:
+            uri: aws2-eventbridge://default
+            parameters:
+              operation: putRule
+              eventPatternFile: "file:eventpattern.json"
+
+# Consume events matching the rule
+- route:
+    from:
+      uri: aws2-eventbridge://default
+      parameters:
+        ruleName: my-rule
+        delay: 2000
+      steps:
+        - log:
+            message: "Event: ${body}"
+        - to:
+            uri: mock:events
+----
+====
+
+=== IAM Permissions
+
+The consumer's IAM principal needs the following permissions:
+
+- `events:PutTargets` and `events:RemoveTargets` on the EventBridge rule
+- `sqs:CreateQueue`, `sqs:DeleteQueue`, `sqs:SetQueueAttributes`, `sqs:GetQueueAttributes` (if auto-creating)
+- `sqs:ReceiveMessage`, `sqs:DeleteMessage` on the SQS queue
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-eventbridge</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+----
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+

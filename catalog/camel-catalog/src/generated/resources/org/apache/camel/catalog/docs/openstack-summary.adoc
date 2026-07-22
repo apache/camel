@@ -1,0 +1,34 @@
+= OpenStack Component
+//attributes written by hand, not generated
+:doctitle: OpenStack
+:since: 2.19
+:shortname: openstack
+:artifactid: camel-openstack
+
+*Since Camel {since}*
+
+The OpenStack component is a component for managing your
+https://www.openstack.org//[OpenStack] applications.
+
+== {doctitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={doctitle}',descriptionformat=description]
+
+== Installation
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-openstack</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+

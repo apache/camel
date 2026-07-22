@@ -1,0 +1,264 @@
+= Azure Storage Blob Service Component
+:doctitle: Azure Storage Blob Service
+:shortname: azure-storage-blob
+:artifactid: camel-azure-storage-blob
+:description: Store and retrieve blobs from Azure Storage Blob Service.
+:since: 3.3
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Azure
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Azure Storage Blob component is used for storing and retrieving blobs from https://azure.microsoft.com/services/storage/blobs/[Azure Storage Blob] Service using *Azure APIs v12*.
+However, in the case of versions above v12, we will see if this component can adopt these changes depending on how much breaking changes can result.
+
+Prerequisites
+
+You must have a valid Windows Azure Storage account. More information is available at
+https://docs.microsoft.com/azure/[Azure Documentation Portal].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-azure-storage-blob</artifactId>
+    <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+== URI Format
+
+[source,text]
+----
+azure-storage-blob://accountName[/containerName][?options]
+----
+
+In the case of a consumer, `accountName`, `containerName` are required.
+
+In the case of a producer, it depends on the operation that is being requested, for example, if operation is on a container level, e.b: createContainer, accountName and containerName are only required, but in case of operation being requested in blob level, e.g: getBlob, accountName, containerName and blobName are required.
+
+The blob will be created if it does not already exist.
+You can append query options to the URI in the following format, `?options=value&option2=value&...`
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+*Required information options:*
+
+To use this component, you have multiple options to provide the required Azure authentication information:
+
+- By providing your own https://azuresdkdocs.blob.core.windows.net/$web/java/azure-storage-blob/12.0.0/com/azure/storage/blob/BlobServiceClient.html[BlobServiceClient] instance which can be injected into `blobServiceClient`. Note: You don't need to create a specific client, e.g.: BlockBlobClient, the BlobServiceClient represents the upper level which
+can be used to retrieve lower level clients.
+- Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password. Note that this is the default authentication strategy.
+- Via shared storage account key, when specifying `credentialType=SHARED_ACCOUNT_KEY` and providing `accountName` and `accessKey` for your Azure account, this is the simplest way to get started. The accessKey can be generated through your Azure portal.
+- Via shared storage account key, when specifying `credentialType=SHARED_KEY_CREDENTIAL` and providing a https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-java/staging/apidocs/com/azure/storage/common/StorageSharedKeyCredential.html[StorageSharedKeyCredential] instance which can be injected into `credentials` option.
+- Via Azure SAS, when specifying `credentialType=AZURE_SAS` and providing a SAS Token parameter through the `sasToken` parameter.
+
+== Usage
+
+For example, to download a blob content from the block blob `hello.txt`
+located on the `container1` in the `camelazure` storage account, use the following snippet:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&credentialType=SHARED_ACCOUNT_KEY&accessKey=RAW(yourAccessKey)")
+    .to("file://blobdirectory");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="azure-storage-blob://camelazure/container1?blobName=hello.txt&amp;credentialType=SHARED_ACCOUNT_KEY&amp;accessKey=RAW(yourAccessKey)"/>
+    <to uri="file://blobdirectory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-storage-blob://camelazure/container1
+      parameters:
+        blobName: hello.txt
+        credentialType: SHARED_ACCOUNT_KEY
+        accessKey: RAW(yourAccessKey)
+    steps:
+      - to:
+          uri: file://blobdirectory
+----
+====
+
+=== Advanced Azure Storage Blob configuration
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the `BlobServiceClient` instance configuration, you can
+create your own instance:
+
+._Java-only: programmatic BlobServiceClient setup_
+
+[source,java]
+----
+StorageSharedKeyCredential credential = new StorageSharedKeyCredential("yourAccountName", "yourAccessKey");
+String uri = String.format("https://%s.blob.core.windows.net", "yourAccountName");
+
+BlobServiceClient client = new BlobServiceClientBuilder()
+                          .endpoint(uri)
+                          .credential(credential)
+                          .buildClient();
+// This is camel context
+context.getRegistry().bind("client", client);
+----
+
+Then refer to this instance in your Camel `azure-storage-blob` component configuration:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("azure-storage-blob://cameldev/container1?blobName=myblob&serviceClient=#client")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="azure-storage-blob://cameldev/container1?blobName=myblob&amp;serviceClient=#client"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-storage-blob://cameldev/container1
+      parameters:
+        blobName: myblob
+        serviceClient: "#client"
+    steps:
+      - to:
+          uri: mock:result
+----
+====
+
+=== Automatic detection of BlobServiceClient client in registry
+
+The component is capable of detecting the presence of an BlobServiceClient bean into the registry.
+If it's the only instance of that type, it will be used as the client, and you won't have to define it as uri parameter, like the example above.
+This may be really useful for smarter configuration of the endpoint.
+
+=== Azure Storage Blob Producer operations
+
+Camel Azure Storage Blob component provides a wide range of operations on the producer side:
+
+*Operations on the service level*
+
+For these operations, `accountName` is *required*.
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`listBlobContainers`  |Get the content of the blob. You can restrict the output of this operation to a blob range.
+|`getChangeFeed` | Returns transaction logs of all the changes that occur to the blobs and the blob metadata in your storage account. The change feed provides ordered, guaranteed, durable, immutable, read-only log of these changes.
+|`findBlobsByTags` | Returns a list of blobs across the storage account whose index tags match the SQL-like filter expression provided via the `CamelAzureStorageBlobTagFilter` header or the message body. Optionally honours `CamelAzureStorageBlobMaxResultsPerPage` and `CamelAzureStorageBlobTimeout`. The result body is a `List<TaggedBlobItem>`.
+|===
+
+*Operations on the container level*
+
+For these operations, `accountName` and `containerName` are *required*.
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`createBlobContainer` | Create a new container within a storage account. If a container with the same name already exists, the producer will ignore it.
+|`deleteBlobContainer` | Delete the specified container in the storage account. If the container doesn't exist, the operation fails.
+|`listBlobs`| Returns a list of blobs in this container, with folder structures flattened.
+|`listBlobVersions`| Returns a list of blobs and their versions in this container. Each `BlobItem` in the result carries its own `versionId` and `isCurrentVersion` flag, allowing the full version history of every blob to be inspected. Requires versioning to be enabled on the storage account. Honours the same `prefix`, `regex` and `maxResultsPerPage` filters as `listBlobs`.
+|===
+
+*Operations on the blob level*
+
+For these operations, `accountName`, `containerName` and `blobName` are *required*.
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+|Operation |Blob Type|Description
+|`getBlob`  |Common|Get the content of the blob. You can restrict the output of this operation to a blob range.
+|`deleteBlob`  |Common|Delete a blob.
+|`downloadBlobToFile` |Common|Download the entire blob into a file specified by the path. The file will be created and must not exist, if the file already exists a `FileAlreadyExistsException` will be thrown.
+|`downloadLink`  |Common| Generate the download link for the specified blob using shared access signatures (SAS). This by default only limits to 1hour of allowed access. However, you can override the default expiration duration through the headers.
+|`uploadBlockBlob` |BlockBlob|Creates a new block blob, or updates the content of an existing block blob. Updating an existing block blob overwrites any existing metadata on the blob. Partial updates are not supported with PutBlob; the content of the existing blob is overwritten with the new content. Note: For larger files, use `uploadBlockBlobChunked`.
+|`uploadBlockBlobChunked` |BlockBlob|Creates or updates a block blob with support for large files (up to several GB). Uses chunked parallel uploads for memory efficiency. Accepts File, Path, WrappedFile, or InputStream as body. Configure `blockSize` (default: 4MB) and `maxConcurrency` (default: auto) for performance tuning. Recommended for files larger than 256MB.
+|`stageBlockBlobList`|`BlockBlob`|Uploads the specified block to the block blob's "staging area" to be later committed by a call to commitBlobBlockList. However, in case header `CamelAzureStorageBlobCommitBlobBlockListLater` or config `commitBlockListLater` is set to false, this will commit the blocks immediately after staging the blocks.
+|`commitBlobBlockList`|`BlockBlob`|Write a blob by specifying the list of block IDs that are to make up the blob. To be written as part
+of a blob, a block must have been successfully written to the server in a prior `stageBlockBlobList` operation. You can
+call `commitBlobBlockList` to update a blob by uploading only those blocks that have changed, then committing the new
+and existing blocks together. Any blocks not specified in the block list and permanently deleted.
+|`getBlobBlockList`  |`BlockBlob`|Returns the list of blocks that have been uploaded as part of a block blob using the specified blocklist filter.
+|`createAppendBlob` |`AppendBlob`|Creates a 0-length append blob. Call commitAppendBlo`b operation to append data to an append blob.
+|`commitAppendBlob` |`AppendBlob`|Commits a new block of data to the end of the existing append blob. In case of header `CamelAzureStorageBlobCreateAppendBlob` or config `createAppendBlob` is set to true, it will attempt to create the appendBlob through internal call to `createAppendBlob` operation first before committing.
+|`createPageBlob`|`PageBlob`|Creates a page blob of the specified length. Call `uploadPageBlob` operation to upload data to a page blob.
+|`uploadPageBlob`|`PageBlob`|Write one or more pages to the page blob. The size must be a multiple of 512. In case of header `CamelAzureStorageBlobCreatePageBlob` or config `createPageBlob` is set to true, it will attempt to create the appendBlob through internal call to `createPageBlob` operation first before uploading.
+|`resizePageBlob`|`PageBlob`| Resizes the page blob to the specified size, which must be a multiple of 512.
+|`clearPageBlob`|`PageBlob`| Free the specified pages from the page blob. The size of the range must be a multiple of 512.
+|`getPageBlobRanges`|`PageBlob`|Returns the list of valid page ranges for a page blob or snapshot of a page blob.
+|`copyBlob`|`Common`|Copy a blob from one container to another one, even from different accounts.
+|`createBlobSnapshot`|`Common`|Creates a read-only snapshot of a blob. The snapshot ID is returned in the `CamelAzureStorageBlobSnapshotId` header.
+|`setBlobTags`|`Common`|Sets user-defined index tags on a blob. Tags are key-value pairs that can be used to filter and query blobs across containers. Tags can be provided via the `CamelAzureStorageBlobTags` header or as the message body (`Map<String, String>`).
+|`getBlobTags`|`Common`|Retrieves user-defined index tags from a blob. The tags are returned as the message body (`Map<String, String>`) and also set in the `CamelAzureStorageBlobTags` header.
+|`setBlobLegalHold`|`Common`|Sets a legal hold on a blob. The legal hold flag (`Boolean`) is provided via the `CamelAzureStorageBlobLegalHold` header or the message body. While a legal hold is set, the blob cannot be modified or deleted until the hold is explicitly cleared by calling the operation again with `false`.
+|`setBlobImmutabilityPolicy`|`Common`|Sets a time-based immutability policy on a blob. The policy expiry time (`OffsetDateTime`) is read from the `CamelAzureStorageBlobImmutabilityPolicyExpiryTime` header and the policy mode (`BlobImmutabilityPolicyMode`, defaults to `UNLOCKED`) from `CamelAzureStorageBlobImmutabilityPolicyMode`. A pre-built `BlobImmutabilityPolicy` may also be supplied via the message body or `CamelAzureStorageBlobImmutabilityPolicy` header.
+|`undeleteBlob`|`Common`|Restores the contents and metadata of a soft-deleted blob and any associated soft-deleted snapshots. Soft delete must be enabled on the storage account for this operation to succeed.
+|`setBlobTier`|`Common`|Sets the access tier of an existing blob. The target tier (`AccessTier` such as `HOT`, `COOL`, `COLD`, or `ARCHIVE`) is read from the `CamelAzureStorageBlobAccessTier` header or the message body. When rehydrating a blob from `ARCHIVE`, the optional `CamelAzureStorageBlobRehydratePriority` header (`RehydratePriority`, `STANDARD` or `HIGH`) controls the rehydration priority.
+|===
+
+Refer to the example section in this page to learn how to use these operations into your camel application.
+
+== Sub-Pages
+
+For more details on specific features, see:
+
+* xref:others:azure-storage-blob-operations.adoc[Producer Operations] - All producer operation examples, blob snapshots/versions, and SAS token generation
+* xref:others:azure-storage-blob-consumer.adoc[Consumer Examples] - Consumer patterns including delete after read and move after read
+
+== Important Development Notes
+
+All integration tests use https://www.testcontainers.org/[Testcontainers] and run by default.
+Obtaining of Azure accessKey and accountName is needed to be able to run all integration tests using Azure services.
+In addition to the mocked unit tests, you *will need to run the integration tests
+with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
+To run the integration tests, on this component directory, run the following maven command:
+
+[source,bash]
+----
+mvn verify -DaccountName=myacc -DaccessKey=mykey -DcredentialType=SHARED_ACCOUNT_KEY
+----
+
+Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
+
+

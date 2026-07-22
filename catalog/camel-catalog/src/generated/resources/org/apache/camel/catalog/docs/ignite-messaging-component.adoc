@@ -1,0 +1,24 @@
+= Ignite Messaging Component
+:doctitle: Ignite Messaging
+:shortname: ignite-messaging
+:artifactid: camel-ignite
+:description: Send and receive messages from an Ignite topic.
+:since: 2.17
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Ignite
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Ignite Messaging endpoint is one of camel-ignite endpoints that allow you to send and consume messages from an https://apacheignite.readme.io/docs/messaging[Ignite topic].
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
