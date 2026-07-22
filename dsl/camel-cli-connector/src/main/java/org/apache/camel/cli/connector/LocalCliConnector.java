@@ -752,9 +752,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-structure");
         if (dc != null) {
-            String filter = root.getString("filter");
-            String brief = root.getString("brief");
-            String metric = root.getString("metric");
+            String filter = root.getStringOrDefault("filter", "*");
+            String brief = root.getStringOrDefault("brief", "false");
+            String metric = root.getStringOrDefault("metric", "false");
             JsonObject json
                     = (JsonObject) dc.call(DevConsole.MediaType.JSON,
                             Map.of("filter", filter, "brief", brief, "metric", metric));

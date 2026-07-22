@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,7 +44,9 @@ import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.tooling.model.ArtifactModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -55,7 +58,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
  */
 class CatalogTab extends AbstractTableTab {
 
-    private static final String[] SCOPES = { "all", "component", "dataformat", "language", "other" };
+    private static final String[] SCOPES = { "all", "component", "dataformat", "language", "other", "eip" };
 
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
@@ -303,11 +306,13 @@ class CatalogTab extends AbstractTableTab {
         addDetailField(lines, "Title", entry.title, area.width());
         addDetailField(lines, "Description", entry.description, area.width());
         addDetailField(lines, "Kind", entry.kind, area.width());
-        String maven = entry.groupId + ":" + entry.artifactId;
-        if (entry.version != null) {
-            maven += ":" + entry.version;
+        if (entry.groupId != null) {
+            String maven = entry.groupId + ":" + entry.artifactId;
+            if (entry.version != null) {
+                maven += ":" + entry.version;
+            }
+            addDetailField(lines, "Maven", maven, area.width());
         }
-        addDetailField(lines, "Maven", maven, area.width());
         if (entry.firstVersion != null) {
             addDetailField(lines, "Since", entry.firstVersion, area.width());
         }
@@ -355,6 +360,7 @@ class CatalogTab extends AbstractTableTab {
             case "component" -> entry.name + "-component";
             case "dataformat" -> entry.name + "-dataformat";
             case "language" -> entry.name + "-language";
+            case "eip" -> entry.name + "-eip";
             default -> entry.name;
         };
         String adoc = catalog.asciiDoc(docName);
@@ -431,6 +437,7 @@ class CatalogTab extends AbstractTableTab {
             case "component" -> Style.EMPTY.fg(Theme.accent());
             case "dataformat" -> Theme.success();
             case "language" -> Theme.warning();
+            case "eip" -> Theme.info();
             default -> Style.EMPTY.dim();
         };
     }
@@ -475,6 +482,7 @@ class CatalogTab extends AbstractTableTab {
                 collectArtifacts(cat, "dataformat", cat.findDataFormatNames(), appArtifacts, entries);
                 collectArtifacts(cat, "language", cat.findLanguageNames(), appArtifacts, entries);
                 collectArtifacts(cat, "other", cat.findOtherNames(), appArtifacts, entries);
+                collectEips(cat, info.pid, full, entries);
 
                 entries.sort((a, b) -> a.name.compareToIgnoreCase(b.name));
                 applyResult(entries, cat, null);
@@ -530,6 +538,71 @@ class CatalogTab extends AbstractTableTab {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private void collectEips(CamelCatalog catalog, String pid, boolean full, List<CatalogEntry> entries) {
+        try {
+            Set<String> eipNames;
+            if (full) {
+                eipNames = new HashSet<>(catalog.findModelNames());
+            } else {
+                eipNames = new HashSet<>();
+                Path outputFile = ctx.getOutputFile(pid);
+                PathUtils.deleteFile(outputFile);
+
+                JsonObject root = new JsonObject();
+                root.put("action", "route-structure");
+                root.put("filter", "*");
+                root.put("brief", true);
+                root.put("metric", false);
+                PathUtils.writeTextSafely(root.toJson(), ctx.getActionFile(pid));
+
+                JsonObject jo = TuiHelper.pollJsonResponse(outputFile, 5000);
+                PathUtils.deleteFile(outputFile);
+                if (jo == null) {
+                    return;
+                }
+
+                List<JsonObject> routes = (List<JsonObject>) jo.getCollection("routes");
+                if (routes != null) {
+                    for (JsonObject route : routes) {
+                        List<JsonObject> code = (List<JsonObject>) route.getCollection("code");
+                        if (code != null) {
+                            for (JsonObject node : code) {
+                                String type = node.getString("type");
+                                if (type != null) {
+                                    eipNames.add(type);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (String name : eipNames) {
+                EipModel model = catalog.eipModel(name);
+                if (model == null) {
+                    continue;
+                }
+                if (full && (model.getLabel() == null || !model.getLabel().contains("eip"))) {
+                    continue;
+                }
+                CatalogEntry entry = new CatalogEntry();
+                entry.name = model.getName();
+                entry.kind = "eip";
+                entry.title = model.getTitle() != null ? model.getTitle() : name;
+                entry.description = model.getDescription() != null ? model.getDescription() : "";
+                entry.label = model.getLabel();
+                entry.firstVersion = model.getFirstVersion();
+                entry.deprecated = model.isDeprecated();
+                entry.deprecatedSince = model.getDeprecatedSince();
+                entry.deprecationNote = model.getDeprecationNote();
+                entries.add(entry);
+            }
+        } catch (Exception e) {
+            // ignore - EIP detection is best-effort
+        }
+    }
+
     private void applyResult(List<CatalogEntry> entries, CamelCatalog cat, String error) {
         if (ctx.runner == null) {
             return;
@@ -548,6 +621,9 @@ class CatalogTab extends AbstractTableTab {
         String ft = filterTerm != null ? filterTerm.toLowerCase() : null;
         String scope = SCOPES[scopeIndex];
         for (CatalogEntry entry : allEntries) {
+            if ("all".equals(scope) && "eip".equals(entry.kind)) {
+                continue;
+            }
             if (!"all".equals(scope) && !scope.equals(entry.kind)) {
                 continue;
             }
@@ -639,6 +715,7 @@ class CatalogTab extends AbstractTableTab {
                 - **dataformat** — show only data formats
                 - **language** — show only expression languages
                 - **other** — show only miscellaneous artifacts
+                - **eip** — show EIPs detected from the running app's routes
 
                 ## Filter
 
