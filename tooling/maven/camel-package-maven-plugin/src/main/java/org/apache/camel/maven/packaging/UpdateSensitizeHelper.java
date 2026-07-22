@@ -76,10 +76,15 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
     private static final Map<String, String> VALUE_CONSTANTS = Map.of(
             "false", "VALUE_FALSE");
 
-    // extra keys that are regarded as secret which may not yet been in any component
-    // they MUST be in lowercase and without a dash
+    // extra keys that are regarded as secret which may not yet been in any component.
+    // they MUST be in lowercase; keep them without a dash unless a dashed variant is required to cover a
+    // hyphenated parameter/header name in the URISupport.sanitizeUri regex path (which, unlike
+    // SensitiveUtils.containsSensitive, does not strip dashes before matching): "api-key" covers the Azure
+    // OpenAI api-key header, and "authorization" covers the standard Authorization header.
     private static final String[] EXTRA_KEYS
-            = new String[] { "apipassword", "apiuser", "apiusername", "api_key", "api_secret", SECRET, "keystorePassword" };
+            = new String[] {
+                    "apipassword", "apiuser", "apiusername", "api_key", "api-key", "api_secret", "authorization",
+                    SECRET, "keystorePassword" };
 
     // extra security options from camel-main properties that are not in component JSON files
     // each entry: option name (lowercase, no dashes), security category, insecure value
