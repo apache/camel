@@ -1,0 +1,56 @@
+= Resumable EIP
+:doctitle: Resumable
+:shortname: resumable
+:description: Enables resuming processing from the last known offset after a restart, using a resume strategy to track and restore position
+:since: 3.16
+:supportlevel: Experimental
+:tabs-sync-option:
+
+The Resumable EIP allows consuming data from the last known offset after a restart,
+using a resume strategy to track and restore the position.
+
+This is useful when consuming large data sources where you want to avoid reprocessing
+data that has already been consumed. The resume strategy points the consumer to the exact
+offset to resume operations.
+
+== EIP options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+KafkaResumeStrategyConfigurationBuilder kafkaConfigurationBuilder =
+    KafkaResumeStrategyConfigurationBuilder.newBuilder()
+        .withBootstrapServers("kafka-address:9092")
+        .withTopic("offset")
+        .withResumeCache(new MyChoiceOfResumeCache<>(100));
+
+from("some:component")
+    .resumable().configuration(kafkaConfigurationBuilder)
+    .process(this::process);
+----
+====
+
+=== Intermittent Mode
+
+Enable intermittent mode to avoid updating the offset for every exchange:
+
+[source,java]
+----
+from("some:component")
+    .resumable(new MyTestResumeStrategy()).intermittent(true)
+    .process(this::process);
+----
+
+== See Also
+
+* xref:resume-strategies.adoc[Resume Strategies]
+* xref:pausable-eip.adoc[Pausable EIP]
