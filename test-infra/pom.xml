@@ -45,6 +45,7 @@
         <module>camel-test-infra-aws-common</module>
         <module>camel-test-infra-aws-v2</module>
         <module>camel-test-infra-cassandra</module>
+        <module>camel-test-infra-clickhouse</module>
         <module>camel-test-infra-elasticsearch</module>
         <module>camel-test-infra-couchbase</module>
         <module>camel-test-infra-mongodb</module>

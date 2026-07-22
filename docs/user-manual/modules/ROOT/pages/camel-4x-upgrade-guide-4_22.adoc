@@ -217,23 +217,27 @@ to the true average throughput rather than oscillating between zero and spike va
 If you have tooling that consumes the JMX throughput value and expects the old instantaneous
 behavior, be aware that the reported value will now ramp up and decay gradually.
 
-=== camel-azure-servicebus - Camel-managed message lock renewal
+=== camel-azure-servicebus - Camel-managed message and session lock renewal
 
 When consuming from Azure Service Bus in `PEEK_LOCK` mode with `maxAutoLockRenewDuration > 0`, Camel now
-actively renews message locks using a dedicated `ServiceBusReceiverAsyncClient` and Camel's internal
+actively renews message and session locks using dedicated Azure Service Bus receiver clients and Camel's internal
 `PeriodTaskScheduler`. This addresses a limitation where the Azure SDK's built-in lock renewal is tied
 to the `processMessage` callback duration, which returns immediately for asynchronous Camel routes —
-causing long-running exchanges to silently lose their message locks.
+causing long-running exchanges to silently lose their message or session locks.
 
 The new behavior activates automatically when all of the following are true:
 
 * No custom `processorClient` is provided
 * Receive mode is `PEEK_LOCK`
 * `maxAutoLockRenewDuration > 0`
-* Session mode is disabled
+
+For non-session consumers, Camel uses `ServiceBusReceiverAsyncClient.renewMessageLock()`. For session-enabled
+consumers, Camel creates session-bound receivers on demand via `ServiceBusSessionReceiverAsyncClient.acceptSession()`
+and renews locks with `renewSessionLock()`, cleaning up session receivers when no exchanges for that session
+are in flight.
 
 No configuration changes are required. The existing `maxAutoLockRenewDuration` option controls how long
-Camel will continue renewing a message's lock.
+Camel will continue renewing a message's or session's lock.
 
 === camel-azure - component-specific CredentialType enums removed
 
@@ -884,3 +888,22 @@ camel.resilience4j.waitDurationInOpenState = 60000
 The `io.vavr:vavr` and `io.vavr:vavr-match` runtime dependencies have been removed from
 `camel-resilience4j`. The single internal usage of Vavr's `Try` monad has been replaced with a
 plain try-catch. This eliminates two transitive runtime JARs. No user-facing behavior change.
+
+=== camel-clickhouse (new component)
+
+A new `camel-clickhouse` producer component has been added. It integrates with
+https://clickhouse.com/[ClickHouse], the high-performance columnar OLAP database, using the official
+ClickHouse Java client (client-v2). It exposes ClickHouse's native capabilities as first-class endpoint
+options: native format streaming inserts (`RowBinary`, `JSONEachRow`, `CSV`, `TSV`, `Parquet`),
+server-side asynchronous inserts, OLAP queries and health checks.
+
+[source,java]
+----
+from("direct:events")
+    .to("clickhouse://analytics.events?operation=insert&format=JSONEachRow");
+----
+
+The component supports the `insert` (default), `query` and `ping` operations, and can either use a shared
+autowired `com.clickhouse.client.api.Client` bean or build its own client from the `serverUrl`, `username`,
+`password` and `ssl` endpoint options. See the xref:components::clickhouse-component.adoc[ClickHouse component]
+documentation for details.
