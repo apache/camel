@@ -66,6 +66,8 @@ class DocViewerPopup {
     private String catalogEntryKind;
     private org.apache.camel.catalog.CamelCatalog catalogEntryRef;
     private boolean wantsOptions;
+    private final TocPopup tocPopup = new TocPopup();
+    private int lastContentWidth;
 
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final ListState pickerState = new ListState();
@@ -175,12 +177,25 @@ class DocViewerPopup {
 
     boolean handleKeyEvent(KeyEvent ke) {
         if (showViewer) {
+            if (tocPopup.isVisible()) {
+                tocPopup.handleKeyEvent(ke);
+                TocPopup.TocEntry entry = tocPopup.consumePendingEntry();
+                if (entry != null) {
+                    jumpToHeading(entry);
+                }
+                return true;
+            }
             if (ke.isCancel()) {
                 showViewer = false;
                 Runnable cb = onCloseCallback;
                 onCloseCallback = null;
                 if (cb != null) {
                     cb.run();
+                }
+            } else if (ke.isCharIgnoreCase('t') && docContent != null) {
+                List<TocPopup.TocEntry> headings = TocPopup.extractHeadings(docContent);
+                if (!headings.isEmpty()) {
+                    tocPopup.open(headings);
                 }
             } else if (ke.isCharIgnoreCase('o') && catalogEntryName != null) {
                 wantsOptions = true;
@@ -219,6 +234,14 @@ class DocViewerPopup {
 
     boolean handleMouseEvent(MouseEvent me) {
         if (showViewer) {
+            if (tocPopup.isVisible()) {
+                tocPopup.handleMouseEvent(me);
+                TocPopup.TocEntry entry = tocPopup.consumePendingEntry();
+                if (entry != null) {
+                    jumpToHeading(entry);
+                }
+                return true;
+            }
             if (me.kind() == MouseEventKind.SCROLL_UP) {
                 docScroll = Math.max(0, docScroll - 3);
                 return true;
@@ -230,6 +253,19 @@ class DocViewerPopup {
             return true;
         }
         return false;
+    }
+
+    private void jumpToHeading(TocPopup.TocEntry entry) {
+        if (docContent == null || lastContentWidth <= 0) {
+            return;
+        }
+        String prefix = docContent.substring(0, Math.min(entry.charOffset(), docContent.length()));
+        int offset = MarkdownView.builder()
+                .source(prefix)
+                .styles(Theme.markdownStyles())
+                .build()
+                .computeHeight(lastContentWidth);
+        docScroll = offset;
     }
 
     void render(Frame frame, Rect area) {
@@ -244,11 +280,12 @@ class DocViewerPopup {
     void renderFooter(List<Span> spans) {
         if (showViewer) {
             hint(spans, "Esc", "back");
+            hint(spans, "↑↓", "scroll");
+            if (docContent != null) {
+                hint(spans, "t", "toc");
+            }
             if (catalogEntryName != null) {
-                hint(spans, "↑↓", "scroll");
                 hintLast(spans, "o", "options");
-            } else {
-                hintLast(spans, "↑↓", "scroll");
             }
         } else if (showPicker) {
             hint(spans, "↑↓", "navigate");
@@ -459,12 +496,14 @@ class DocViewerPopup {
         footerSpans.add(Span.styled(" Esc ", Theme.hintKey()));
         footerSpans.add(Span.raw(" back  "));
         footerSpans.add(Span.styled(" ↑↓ ", Theme.hintKey()));
+        footerSpans.add(Span.raw(" scroll  "));
+        if (docContent != null) {
+            footerSpans.add(Span.styled(" t ", Theme.hintKey()));
+            footerSpans.add(Span.raw(" toc  "));
+        }
         if (catalogEntryName != null) {
-            footerSpans.add(Span.raw(" scroll  "));
             footerSpans.add(Span.styled(" o ", Theme.hintKey()));
             footerSpans.add(Span.raw(" options "));
-        } else {
-            footerSpans.add(Span.raw(" scroll "));
         }
         Title footer = Title.from(Line.from(footerSpans));
         Block block = Block.builder()
@@ -503,13 +542,14 @@ class DocViewerPopup {
             List<Rect> hChunks = Layout.horizontal()
                     .constraints(Constraint.fill(), Constraint.length(1))
                     .split(inner);
+            lastContentWidth = hChunks.get(0).width();
             MarkdownView view = MarkdownView.builder()
                     .source(docContent)
                     .scroll(docScroll)
                     .styles(Theme.markdownStyles())
                     .build();
             frame.renderWidget(view, hChunks.get(0));
-            int totalHeight = view.computeHeight(hChunks.get(0).width());
+            int totalHeight = view.computeHeight(lastContentWidth);
             int viewportHeight = hChunks.get(0).height();
             if (totalHeight > viewportHeight) {
                 scrollbarState
@@ -518,6 +558,9 @@ class DocViewerPopup {
                         .position(docScroll);
                 frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), scrollbarState);
             }
+        }
+        if (tocPopup.isVisible()) {
+            tocPopup.render(frame, area);
         }
     }
 
