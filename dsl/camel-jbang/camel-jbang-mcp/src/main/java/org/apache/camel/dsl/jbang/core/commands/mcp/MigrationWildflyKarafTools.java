@@ -33,6 +33,7 @@ import io.quarkiverse.mcp.server.ToolCallException;
  * Handles the special case where projects running on legacy runtimes need to be replatformed to Spring Boot or Quarkus.
  * Uses Maven archetypes for new project creation and migration guides for component mapping details.
  */
+@McpSecured
 @ApplicationScoped
 public class MigrationWildflyKarafTools {
 

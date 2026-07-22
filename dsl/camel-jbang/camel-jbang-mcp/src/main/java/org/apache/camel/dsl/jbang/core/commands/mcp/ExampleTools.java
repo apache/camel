@@ -33,6 +33,7 @@ import org.apache.camel.util.json.JsonObject;
 /**
  * MCP Tools for browsing Camel CLI examples.
  */
+@McpSecured
 @ApplicationScoped
 public class ExampleTools {
 

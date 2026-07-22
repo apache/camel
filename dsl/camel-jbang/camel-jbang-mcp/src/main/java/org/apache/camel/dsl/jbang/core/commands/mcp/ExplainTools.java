@@ -35,6 +35,7 @@ import org.apache.camel.tooling.model.EipModel;
  * This tool extracts components and EIPs used in a route and returns their documentation from the Camel Catalog. The
  * calling LLM can use this context to formulate its own explanation of the route.
  */
+@McpSecured
 @ApplicationScoped
 public class ExplainTools {
 

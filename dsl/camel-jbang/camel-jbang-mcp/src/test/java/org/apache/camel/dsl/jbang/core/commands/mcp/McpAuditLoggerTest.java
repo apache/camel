@@ -29,6 +29,8 @@ class McpAuditLoggerTest {
         assertThat(McpAuditLogger.escape("quote\"here")).isEqualTo("quote\\\"here");
         assertThat(McpAuditLogger.escape("back\\slash")).isEqualTo("back\\\\slash");
         assertThat(McpAuditLogger.escape("return\rhere")).isEqualTo("return\\rhere");
+        assertThat(McpAuditLogger.escape("back\bspace")).isEqualTo("back\\bspace");
+        assertThat(McpAuditLogger.escape("form\ffeed")).isEqualTo("form\\ffeed");
     }
 
     @Test
