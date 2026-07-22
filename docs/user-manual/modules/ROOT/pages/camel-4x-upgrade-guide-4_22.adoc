@@ -197,6 +197,11 @@ Previously the option was accepted on the endpoint but ignored, so `safeSearch=f
 
 === camel-openai
 
+The per-call token usage headers `CamelOpenAIPromptTokens`, `CamelOpenAICompletionTokens`, and
+`CamelOpenAITotalTokens` now declare `javaType = Long` in component metadata (previously `Integer`).
+The OpenAI SDK returns `long` values, so routes that read these headers with `Integer.class` should
+switch to `Long.class`.
+
 The `conversationMemory` feature on the `chat-completion` operation has two behavior fixes:
 
 * User messages are now stored in the `CamelOpenAIConversationHistory` exchange property (configurable via
