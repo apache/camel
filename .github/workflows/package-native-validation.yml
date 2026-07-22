@@ -96,13 +96,16 @@ jobs:
           echo "TEST_VERSION=$TEST_VERSION" >> "$GITHUB_ENV"
           cp -p "target/camel-launcher-$REAL_VERSION-bin.tar.gz" "target/camel-launcher-$TEST_VERSION-bin.tar.gz"
           cp -p "target/camel-launcher-$REAL_VERSION-bin.zip" "target/camel-launcher-$TEST_VERSION-bin.zip"
-          # camel-package.sh prepare requires a WinGet release ZIP (camel-launcher-<v>-winget-bin.zip) to
-          # exist and to match CAMEL_PACKAGE_TEST_WINGET_REMOTE byte-for-byte. That artifact is only built
-          # by the -Dcamel.exe.build=true profile (native camel-exe), which this validation build does not
-          # run. The POSIX validators never consume the WinGet payload, so stage the already-built bin.zip
-          # under the WinGet name as an offline stand-in; the remote override below points at the same
-          # bytes so prepare's cmp passes without a network fetch to archive.apache.org.
+          # camel-package.sh prepare requires a WinGet release ZIP (camel-launcher-<v>-winget-bin.zip), but
+          # that artifact is only built by the -Dcamel.exe.build=true profile (native camel-exe), which this
+          # validation build does not run. The POSIX validators never consume the WinGet payload, so stage
+          # the already-built bin.zip under the WinGet name as an offline stand-in. Two names are needed:
+          # camel-package.sh's own existence check and cmp look for the stripped TEST_VERSION name (and
+          # CAMEL_PACKAGE_TEST_WINGET_REMOTE below points at the same bytes so the cmp passes without a
+          # network fetch to archive.apache.org), while JReleaser resolves the artifact from the real
+          # -SNAPSHOT POM version, so it needs the REAL_VERSION name too.
           cp -p "target/camel-launcher-$REAL_VERSION-bin.zip" "target/camel-launcher-$TEST_VERSION-winget-bin.zip"
+          cp -p "target/camel-launcher-$REAL_VERSION-bin.zip" "target/camel-launcher-$REAL_VERSION-winget-bin.zip"
 
       - name: Prepare packages (stable, offline, synthetic release version)
         shell: bash
