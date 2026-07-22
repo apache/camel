@@ -1,0 +1,479 @@
+= Hazelcast Map Component
+:doctitle: Hazelcast Map
+:shortname: hazelcast-map
+:artifactid: camel-hazelcast
+:description: Perform operations on Hazelcast distributed map.
+:since: 2.7
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Hazelcast
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The http://www.hazelcast.com/[Hazelcast] Map component is one of Camel Hazelcast Components which allows you to access a Hazelcast distributed map.
+
+
+== Options
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Map cache producer - to("hazelcast-map:foo")
+
+If you want to store a value in a map, you can use the map cache
+producer. 
+
+The map cache producer provides follow operations specified by *CamelHazelcastOperationType* header:
+
+* put
+* putIfAbsent
+* get
+* getAll
+* keySet
+* containsKey
+* containsValue
+* delete
+* update
+* query
+* clear
+* evict
+* evictAll
+
+You can call the samples with:
+
+._Java-only: calling producer operations using ProducerTemplate_
+[source,java]
+----
+template.sendBodyAndHeader("direct:[put|get|update|delete|query|evict]", "my-foo", "CamelHazelcastObjectId", "4711");
+----
+
+=== Example for *put*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:put")
+.setHeader("CamelHazelcastOperationType", constant("put"))
+.to("hazelcast-map:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:put"/>
+    <setHeader name="CamelHazelcastOperationType">
+        <constant>put</constant>
+    </setHeader>
+    <to uri="hazelcast-map:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:put
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: put
+        - to:
+            uri: hazelcast-map:foo
+----
+====
+
+Sample for *put* with eviction:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:put")
+.setHeader("CamelHazelcastOperationType", constant("put"))
+.setHeader("CamelHazelcastObjectTtlValue", constant(Long.valueOf(1)))
+.setHeader("CamelHazelcastObjectTtlUnit", constant(TimeUnit.MINUTES))
+.to("hazelcast-map:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:put"/>
+    <setHeader name="CamelHazelcastOperationType">
+        <constant>put</constant>
+    </setHeader>
+    <setHeader name="CamelHazelcastObjectTtlValue">
+        <constant>1</constant>
+    </setHeader>
+    <setHeader name="CamelHazelcastObjectTtlUnit">
+        <constant>MINUTES</constant>
+    </setHeader>
+    <to uri="hazelcast-map:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:put
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: put
+        - setHeader:
+            name: CamelHazelcastObjectTtlValue
+            constant: 1
+        - setHeader:
+            name: CamelHazelcastObjectTtlUnit
+            constant: MINUTES
+        - to:
+            uri: hazelcast-map:foo
+----
+====
+
+=== Example for *get*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:get")
+.setHeader("CamelHazelcastOperationType", constant("get"))
+.to("hazelcast-map:foo")
+.to("seda:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:get"/>
+    <setHeader name="CamelHazelcastOperationType">
+        <constant>get</constant>
+    </setHeader>
+    <to uri="hazelcast-map:foo"/>
+    <to uri="seda:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:get
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: get
+        - to:
+            uri: hazelcast-map:foo
+        - to:
+            uri: seda:out
+----
+====
+
+=== Example for *update*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:update")
+.setHeader("CamelHazelcastOperationType", constant("update"))
+.to("hazelcast-map:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:update"/>
+    <setHeader name="CamelHazelcastOperationType">
+        <constant>update</constant>
+    </setHeader>
+    <to uri="hazelcast-map:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:update
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: update
+        - to:
+            uri: hazelcast-map:foo
+----
+====
+
+=== Example for *delete*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:delete")
+.setHeader("CamelHazelcastOperationType", constant("delete"))
+.to("hazelcast-map:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:delete"/>
+    <setHeader name="CamelHazelcastOperationType">
+        <constant>delete</constant>
+    </setHeader>
+    <to uri="hazelcast-map:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:delete
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: delete
+        - to:
+            uri: hazelcast-map:foo
+----
+====
+
+=== Example for *query*
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:query")
+.setHeader("CamelHazelcastOperationType", constant("query"))
+.to("hazelcast-map:foo")
+.to("seda:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:query"/>
+    <setHeader name="CamelHazelcastOperationType">
+        <constant>query</constant>
+    </setHeader>
+    <to uri="hazelcast-map:foo"/>
+    <to uri="seda:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:query
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: query
+        - to:
+            uri: hazelcast-map:foo
+        - to:
+            uri: seda:out
+----
+====
+
+For the query operation Hazelcast offers an SQL like syntax to query your
+distributed map.
+
+._Java-only: sending a query predicate using ProducerTemplate_
+[source,java]
+----
+String q1 = "bar > 1000";
+template.sendBodyAndHeader("direct:query", null, "CamelHazelcastQuery", q1);
+----
+
+
+== Map cache consumer - from("hazelcast-map:foo")
+
+Hazelcast provides event listeners on their data grid. If you want to be
+notified if a cache is manipulated, you can use the map consumer.
+There are four events: *put*, *update*, *delete* and *envict*. The event
+type will be stored in the "*hazelcast.listener.action*" header
+variable. The map consumer provides some additional information inside
+these variables:
+
+Header Variables inside the response message:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+
+|`CamelHazelcastListenerTime` |`Long` |time of the event in millis
+
+|`CamelHazelcastListenerType` |`String` |the map consumer sets here "cachelistener"
+
+|`CamelHazelcastListenerAction` |`String` |type of event (*added*, *updated*, *envicted* and *removed*).
+
+|`CamelHazelcastObjectId` |`String` |the oid of the object
+
+|`CamelHazelcastCacheName` |`String` |the name of the cache (e.g., "foo")
+
+|`CamelHazelcastCacheType` |`String` |the type of the cache (e.g., map)
+|=======================================================================
+
+The object value will be stored within *put* and *update* actions inside
+the message body.
+
+Here's a sample:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("hazelcast-map:foo")
+    .log("object...")
+    .choice()
+        .when(header("CamelHazelcastListenerAction").isEqualTo("added"))
+            .log("...added")
+            .to("mock:added")
+        .when(header("CamelHazelcastListenerAction").isEqualTo("envicted"))
+            .log("...envicted")
+            .to("mock:envicted")
+        .when(header("CamelHazelcastListenerAction").isEqualTo("updated"))
+            .log("...updated")
+            .to("mock:updated")
+        .when(header("CamelHazelcastListenerAction").isEqualTo("removed"))
+            .log("...removed")
+            .to("mock:removed")
+        .otherwise()
+            .log("fail!");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="hazelcast-map:foo"/>
+  <log message="object..."/>
+  <choice>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'added'</simple>
+      <log message="...added"/>
+      <to uri="mock:added"/>
+    </when>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'envicted'</simple>
+      <log message="...envicted"/>
+      <to uri="mock:envicted"/>
+    </when>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'updated'</simple>
+      <log message="...updated"/>
+      <to uri="mock:updated"/>
+    </when>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'removed'</simple>
+      <log message="...removed"/>
+      <to uri="mock:removed"/>
+    </when>
+    <otherwise>
+      <log message="fail!"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: hazelcast-map:foo
+      steps:
+        - log:
+            message: "object..."
+        - choice:
+            when:
+              - simple: "${header.CamelHazelcastListenerAction} == 'added'"
+                steps:
+                  - log:
+                      message: "...added"
+                  - to:
+                      uri: mock:added
+              - simple: "${header.CamelHazelcastListenerAction} == 'envicted'"
+                steps:
+                  - log:
+                      message: "...envicted"
+                  - to:
+                      uri: mock:envicted
+              - simple: "${header.CamelHazelcastListenerAction} == 'updated'"
+                steps:
+                  - log:
+                      message: "...updated"
+                  - to:
+                      uri: mock:updated
+              - simple: "${header.CamelHazelcastListenerAction} == 'removed'"
+                steps:
+                  - log:
+                      message: "...removed"
+                  - to:
+                      uri: mock:removed
+            otherwise:
+              steps:
+                - log:
+                    message: "fail!"
+----
+====
+
+

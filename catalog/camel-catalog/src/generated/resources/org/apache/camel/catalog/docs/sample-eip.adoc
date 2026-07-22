@@ -1,0 +1,214 @@
+= Sample EIP
+:doctitle: Sample
+:shortname: sample
+:description: Samples a subset of messages passing through the route, either by frequency count or time interval, and discards the rest
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+A sampling throttler allows you to extract a sample of the exchanges from the traffic through a route.
+
+image::eip/Sample.png[image]
+
+The Sample EIP selects a single message in a given time period or every nth message.
+This selected message is allowed to pass through, and all other messages are stopped.
+
+== Options
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+
+== Using Sample EIP
+
+In the example below, we sample one message per second (default time period):
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:sample")
+    .sample()
+    .to("direct:sampled");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:sample"/>
+    <sample/>
+    <to uri="direct:sampled"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sample
+      steps:
+        - sample: {}
+        - to:
+            uri: direct:sampled
+----
+====
+
+=== Sampling using time period
+
+The default time period is 1 second, but this can easily be configured.
+For example, to sample one message per 5 seconds, you can do:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:sample")
+    .sample(Duration.ofSeconds(5))
+    .to("direct:sampled");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:sample"/>
+    <sample samplePeriod="5s"/>
+    <to uri="direct:sampled"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sample
+      steps:
+        - sample:
+            samplePeriod: 5s
+        - to:
+            uri: direct:sampled
+----
+====
+
+=== Sampling using message frequency
+
+The Sample EIP can also be configured to sample based on frequency instead of a time period.
+
+For example, to sample every 10th message you can do:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:sample")
+    .sample(10)
+    .to("direct:sampled");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:sample"/>
+    <sample messageFrequency="10"/>
+    <to uri="direct:sampled"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sample
+      steps:
+        - sample:
+            messageFrequency: 10
+        - to:
+            uri: direct:sampled
+----
+====
+
+=== Sampling with wiretap
+
+The sampling throttler will stop all exchanges not included in the sample. This may be undesirable if you want to
+perform custom processing on the sample while still allowing all 10 messages to flow to an endpoint after the sample EIP.
+
+For this use case, you can combine the sample EIP with wiretap EIP. In the example below, we sample every 10th message
+and send it to direct:sampleProcessing, while all 10 messages are still sent to direct:regularProcessing.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .wireTap("direct:sample")
+  .to("direct:regularProcessing");
+
+from("direct:sample")
+  .sample(10)
+  .to("direct:sampleProcessing");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <wireTap uri="direct:sample"/>
+    <to uri="direct:regularProcessing"/>
+</route>
+
+<route>
+    <from uri="direct:sample"/>
+    <sample messageFrequency="10"/>
+    <to uri="direct:sampleProcessing"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - wireTap:
+            uri: direct:sample
+        - to:
+            uri: direct:regularProcessing
+- route:
+    from:
+      uri: direct:sample
+      steps:
+        - sample:
+            messageFrequency: 10
+        - to:
+            uri: direct:sampleProcessing
+----
+====

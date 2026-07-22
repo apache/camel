@@ -1,0 +1,106 @@
+= XChange Component
+:doctitle: XChange
+:shortname: xchange
+:artifactid: camel-xchange
+:description: Access market data and trade on Bitcoin and Altcoin exchanges.
+:since: 2.21
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The XChange component uses the https://knowm.org/open-source/xchange/[XChange] Java library to provide access to 60+ Bitcoin and Altcoin exchanges.
+It comes with a consistent interface for trading and accessing market data. 
+
+Camel can get crypto currency market data, query historical data, place market orders and much more.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-xchange</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+---------------------------------
+xchange://exchange?options
+---------------------------------
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Authentication
+
+This component communicates with supported cryptocurrency exchanges via REST API. Some API requests use simple unauthenticated GET request.
+For most of the interesting stuff, however, you'd need an account with the exchange and have API access keys enabled.
+
+These API access keys need to be guarded tightly, especially so when they also allow for the withdraw functionality. 
+In which case, anyone who can get hold of your API keys can easily transfer funds from your account to some other address i.e. steal your money.   
+
+Your API access keys can be stored in an exchange specific properties file in your SSH directory.
+For Binance, for example, this would be: `~/.ssh/binance-secret.keys`
+
+----
+##
+# This file MUST NEVER be commited to source control. 
+# It is therefore added to .gitignore. 
+#
+apiKey = GuRW0*********
+secretKey = nKLki************
+----
+
+== Examples
+
+In this sample we find the current Bitcoin market price in USDT:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:ticker").to("xchange:binance?service=marketdata&method=ticker&currencyPair=BTC/USDT");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:ticker"/>
+  <to uri="xchange:binance?service=marketdata&amp;method=ticker&amp;currencyPair=BTC/USDT"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:ticker
+      steps:
+        - to:
+            uri: xchange:binance
+            parameters:
+              service: marketdata
+              method: ticker
+              currencyPair: BTC/USDT
+----
+====

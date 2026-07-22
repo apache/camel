@@ -1,0 +1,142 @@
+= MVEL Language
+:doctitle: MVEL
+:shortname: mvel
+:artifactid: camel-mvel
+:description: Evaluates a MVEL template
+:since: 2.0
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+Camel supports http://mvel.documentnode.com/[MVEL] to do message transformations
+using MVEL templates.
+
+MVEL is powerful for templates, but can also be used for
+xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate]
+
+For example, you can use MVEL in a xref:manual::predicate.adoc[Predicate]
+with the xref:eips:choice-eip.adoc[Content-Based Router] EIP.
+
+You can use MVEL dot notation to invoke operations. If you for instance
+have a body that contains a POJO that has a `getFamilyName` method then
+you can construct the syntax as follows:
+
+[source,text]
+----
+request.body.familyName
+----
+
+Or use similar syntax as in Java:
+
+._Java-only: MVEL expression using Java method call syntax_
+[source,java]
+----
+getRequest().getBody().getFamilyName()
+----
+
+== MVEL Options
+
+// language options: START
+include::partial$language-options.adoc[]
+// language options: END
+
+
+== Variables
+
+The following Camel related variables are made available:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Variable |Type |Description
+|*this* |Exchange |the Exchange is the root object
+|context |CamelContext |the CamelContext
+|exchange |Exchange |the Exchange
+|exchangeId |String |the exchange id
+|exception |Throwable |the Exchange exception (if any)
+|request |Message |the message
+|message |Message |the message
+|headers |Map |the message headers
+|header(name) |Object |the message header by the given name
+|header(name, type) |Type |the message header by the given name as the given type
+|properties |Map |the exchange properties
+|property(name) |Object |the exchange property by the given name
+|property(name, type) |Type |the exchange property by the given name as the given type
+|=======================================================================
+
+== Example
+
+For example, you could use MVEL inside a xref:eips:filter-eip.adoc[Message
+Filter]
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:foo")
+  .filter().mvel("headers.foo == 'bar'")
+    .to("seda:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:foo"/>
+  <filter>
+    <mvel>headers.foo == 'bar'</mvel>
+    <to uri="seda:bar"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:foo
+      steps:
+        - filter:
+            expression:
+              mvel:
+                expression: headers.foo == 'bar'
+            steps:
+              - to:
+                  uri: seda:bar
+----
+====
+
+== Loading script from external resource
+
+You can externalize the script and have Apache Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`.
+This is done using the following syntax: `"resource:scheme:location"`,
+e.g., to refer to a file on the classpath you can do:
+
+._Java-only: loading a MVEL script from the classpath_
+[source,java]
+----
+.setHeader("myHeader").mvel("resource:classpath:script.mvel")
+----
+
+== Dependencies
+
+To use MVEL in your Camel routes, you need to add the dependency on
+*camel-mvel* which implements the MVEL language.
+
+If you use Maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release.
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-mvel</artifactId>
+  <version>x.x.x</version>
+</dependency>
+----

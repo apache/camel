@@ -1,0 +1,514 @@
+= XSLT Saxon Component
+:doctitle: XSLT Saxon
+:shortname: xslt-saxon
+:artifactid: camel-xslt-saxon
+:description: Transform XML payloads using an XSLT template using Saxon.
+:since: 3.0
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+:core:
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The XSLT Saxon component allows you to process a message using an
+http://www.w3.org/TR/xslt[XSLT] template using Saxon. This can be ideal when using
+Templating to generate responses for requests.
+
+== URI format
+
+----
+xslt-saxon:templateName[?options]
+----
+
+The URI format contains *templateName*, which can be one of the following:
+
+* the classpath-local URI of the template to invoke
+* the complete URL of the remote template.
+
+You can append query options to the URI in the following format:
+
+*?option=value&option=value&...*
+
+.Example URIs
+[options="header"]
+|=================================================================
+|URI                              |Description     
+|`xslt-saxon:com/acme/mytransform.xsl`|Refers to the file `com/acme/mytransform.xsl` on the classpath
+|`xslt-saxon:file:///foo/bar.xsl` |Refers to the file `/foo/bar.xsl`
+|`xslt-saxon:http://acme.com/cheese/foo.xsl`|Refers to the remote http resource
+|=================================================================
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Using XSLT endpoints
+
+The following format is an example of using an XSLT template to formulate a response for a message for InOut
+message exchanges (where there is a `JMSReplyTo` header) 
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:My.Queue")
+    .to("xslt-saxon:com/acme/mytransform.xsl");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="xslt-saxon:com/acme/mytransform.xsl"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: xslt-saxon:com/acme/mytransform.xsl
+----
+====
+
+
+If you want to use InOnly and consume the message and send it to another
+destination, you could use the following route:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:My.Queue")
+    .to("xslt-saxon:com/acme/mytransform.xsl")
+    .to("activemq:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="xslt-saxon:com/acme/mytransform.xsl"/>
+  <to uri="activemq:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: xslt-saxon:com/acme/mytransform.xsl
+        - to:
+            uri: activemq:Another.Queue
+----
+====
+
+=== Getting Usable Parameters into the XSLT
+
+By default, all headers and variables are added as parameters which are then available in
+the XSLT. +
+To make the parameters usable, you will need to declare them.
+
+- Header
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("myParam", constant("42"))
+    .to("xslt-saxon:MyTransform.xsl");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="myParam"><constant>42</constant></setHeader>
+  <to uri="xslt-saxon:MyTransform.xsl"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: myParam
+            constant: "42"
+        - to:
+            uri: xslt-saxon:MyTransform.xsl
+----
+====
+
+- Variable
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setVariable("myParam", constant("42"))
+    .to("xslt-saxon:MyTransform.xsl");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setVariable name="myParam"><constant>42</constant></setVariable>
+  <to uri="xslt-saxon:MyTransform.xsl"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setVariable:
+            name: myParam
+            constant: "42"
+        - to:
+            uri: xslt-saxon:MyTransform.xsl
+----
+====
+
+The parameter also needs to be declared in the top level of the XSLT for it to be
+available:
+
+[source,xml]
+----
+<xsl: ...... >
+
+   <xsl:param name="myParam"/>
+  
+    <xsl:template ...>
+----
+
+=== Spring XML versions
+
+To use the above examples in Spring XML, you would use something like the following code:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:My.Queue")
+    .to("xslt-saxon:org/apache/camel/spring/processor/example.xsl")
+    .to("activemq:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+  <route>
+    <from uri="activemq:My.Queue"/>
+    <to uri="xslt-saxon:org/apache/camel/spring/processor/example.xsl"/>
+    <to uri="activemq:Another.Queue"/>
+  </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: xslt-saxon:org/apache/camel/spring/processor/example.xsl
+        - to:
+            uri: activemq:Another.Queue
+----
+====
+
+=== Using `xsl:include`
+
+Camel provides its own implementation of `URIResolver`. This allows
+Camel to load included files from the classpath.
+
+For example, the included file in the following code will be located relative to the starting endpoint.
+
+[source,xml]
+----
+<xsl:include href="staff_template.xsl"/>
+----
+
+This means that Camel will locate the file in the *classpath* as
+*org/apache/camel/component/xslt/staff_template.xsl* +
+ 
+You can use `classpath:` or `file:` to instruct Camel to look either in the classpath or file system. If you omit
+the prefix, then Camel uses the prefix from the endpoint configuration.
+If no prefix is specified in the endpoint configuration, the default is `classpath:`.
+
+You can also refer backwards in the included paths.
+In the following example, the XSL file will be resolved under `org/apache/camel/component`.
+
+[source,xml]
+----
+    <xsl:include href="../staff_other_template.xsl"/>
+----
+
+
+=== Using `xsl:include` and default prefix
+
+Camel will use the prefix from the endpoint configuration as the default prefix.
+
+You can explicitly specify `file:` or `classpath:` loading. The two loading types can be mixed in an XSLT script, if necessary.
+
+=== Using Saxon extension functions
+
+Since Saxon 9.2, writing extension functions has been supplemented by a
+new mechanism, referred to
+as https://www.saxonica.com/html/documentation12/extensibility/extension-functions.html[extension functions] you can now easily use camel as shown in the below example:
+
+._Java-only: registering Saxon extension functions and using them in a route_
+[source,java]
+----
+SimpleRegistry registry = new SimpleRegistry();
+registry.put("function1", new MyExtensionFunction1());
+registry.put("function2", new MyExtensionFunction2());
+
+from("direct:start")
+    .to("xslt-saxon:org/apache/camel/component/xslt/extensions/extensions.xslt?saxonExtensionFunctions=#function1,#function2");
+----
+
+
+With Spring XML:
+
+._XML-only: registering Saxon extension functions as Spring beans_
+[source,xml]
+----
+<bean id="function1" class="org.apache.camel.component.xslt.extensions.MyExtensionFunction1"/>
+<bean id="function2" class="org.apache.camel.component.xslt.extensions.MyExtensionFunction2"/>
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:extensions"/>
+    <to uri="xslt-saxon:org/apache/camel/component/xslt/extensions/extensions.xslt?saxonExtensionFunctions=#function1,#function2"/>
+  </route>
+</camelContext>
+----
+
+
+=== Dynamic stylesheets
+
+To provide a dynamic stylesheet at runtime, you can either:
+
+- Define a dynamic URI. See xref:eips:toD-eip.adoc[toD] EIP.
+- Use header with the stylesheet.
+
+When using a header for dynamic stylesheet, then you can either refer to the stylesheet as a `file` or `classpath`
+with the header `CamelXsltResourceUri`, such as:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:transform")
+    .setHeader("CamelXsltResourceUri", simple("file:styles/${header.region}.xsl"))
+    .to("xslt-saxon:template.xsl?allowTemplateFromHeader=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:transform"/>
+  <setHeader name="CamelXsltResourceUri">
+    <simple>file:styles/${header.region}.xsl</simple>
+  </setHeader>
+  <to uri="xslt-saxon:template.xsl?allowTemplateFromHeader=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:transform
+      steps:
+        - setHeader:
+            name: CamelXsltResourceUri
+            simple: "file:styles/${header.region}.xsl"
+        - to:
+            uri: xslt-saxon:template.xsl
+            parameters:
+              allowTemplateFromHeader: true
+----
+====
+
+Here we set the `CamelXsltResourceUri` header to refer to a stylesheet to be loaded from the file system,
+with a dynamic name that is computed from another header (`region`).
+
+Notice how the `allowTemplateFromHeader` must be set to `true` on the XSLT endpoint to support dynamic templates.
+
+You can also use the header `CamelXsltStylesheet` which instead should contain the content of the stylesheet
+to use, instead of referring to a file as the example from above.
+
+TIP: You can set `contentCache=false` and refer to a non-existing template, such as `"xslt-saxon:dummy.xsl?contentCache=false&allowTemplateFromHeader=true"`
+as this will tell Camel to not load `dummy.xsl` on startup but to load the stylesheet on demand. And because you
+provide the stylesheet via headers, then it is fully dynamic.
+
+=== Accessing warnings, errors and fatalErrors from XSLT ErrorListener
+
+Any warning/error or fatalError is stored on
+the current Exchange as a property with the
+keys `Exchange.XSLT_ERROR`, `Exchange.XSLT_FATAL_ERROR`,
+or `Exchange.XSLT_WARNING` which allows end users to get hold of any
+errors happening during transformation.
+
+For example, in the stylesheet below, we want to determinate whether a staff has
+an empty dob field. And to include a custom error message using
+`xsl:message`.
+
+[source,xml]
+----
+<xsl:template match="/">
+  <html>
+    <body>
+      <xsl:for-each select="staff/programmer">
+        <p>Name: <xsl:value-of select="name"/><br />
+          <xsl:if test="dob=''">
+            <xsl:message terminate="yes">Error: DOB is an empty string!</xsl:message>
+          </xsl:if>
+        </p>
+      </xsl:for-each>
+    </body>
+  </html>
+</xsl:template>
+----
+
+The exception is stored on the Exchange as a warning with the
+key `Exchange.XSLT_WARNING.`
+
+=== Consume JSON body
+
+By default, the input body is assumed as XML. You can set `useJsonBody=true` to consume JSON data from Camel Message body.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:transform")
+    .to("xslt-saxon:template.xsl?useJsonBody=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:transform"/>
+  <to uri="xslt-saxon:template.xsl?useJsonBody=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:transform
+      steps:
+        - to:
+            uri: xslt-saxon:template.xsl
+            parameters:
+              useJsonBody: true
+----
+====
+
+If `useJsonBody=true` is set, the JSON body is transformed into XML representation of JSON https://www.w3.org/TR/xslt-30/#json-to-xml-mapping[defined in XSLT 3.0 specification].
+
+For example, when we have following JSON data
+[source,json]
+----
+{
+    "name": "John Doe",
+    "age": 30,
+    "email": "john.doe@example.com",
+    "address": {
+        "street": "123 Main St",
+        "city": "New York",
+        "zipcode": "10001"
+    },
+    "hobbies": ["reading", "cycling", "swimming"]
+}
+----
+
+XSLT 3.0 XML representation of JSON is
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns="http://www.w3.org/2005/xpath-functions">
+   <string key="name">John Doe</string>
+   <number key="age">30</number>
+   <string key="email">john.doe@example.com</string>
+   <map key="address">
+      <string key="street">123 Main St</string>
+      <string key="city">New York</string>
+      <string key="zipcode">10001</string>
+   </map>
+   <array key="hobbies">
+      <string>reading</string>
+      <string>cycling</string>
+      <string>swimming</string>
+   </array>
+</map>
+----

@@ -1,0 +1,94 @@
+= Lumberjack Component
+:doctitle: Lumberjack
+:shortname: lumberjack
+:artifactid: camel-lumberjack
+:description: Receive logs messages using the Lumberjack protocol.
+:since: 2.18
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only consumer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Lumberjack component retrieves logs sent over the network using the Lumberjack protocol,
+from https://www.elastic.co/beats/filebeat/[Filebeat], for instance.
+The network communication can be secured with SSL.
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-lumberjack</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+------------------------------------
+lumberjack:host
+lumberjack:host:port
+------------------------------------
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+The result body is a `Map<String, Object>` object.
+
+== Examples
+
+Lumberjack usage samples.
+
+=== Example 1: Streaming the log messages
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("lumberjack:0.0.0.0")
+    .setBody(simple("${body[message]}"))
+    .to("stream:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="lumberjack:0.0.0.0"/>
+  <setBody>
+    <simple>${body[message]}</simple>
+  </setBody>
+  <to uri="stream:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: lumberjack:0.0.0.0
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "${body[message]}"
+        - to:
+            uri: stream:out
+----
+====

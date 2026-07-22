@@ -1,0 +1,44 @@
+= Caffeine LoadCache Component
+:doctitle: Caffeine LoadCache
+:shortname: caffeine-loadcache
+:artifactid: camel-caffeine
+:description: Perform caching operations using Caffeine Cache with an attached CacheLoader.
+:since: 2.20
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Caffeine LoadCache component enables you to perform caching operations using
+the LoadingCache from Caffeine.
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-caffeine</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+-----------------------------
+caffeine-loadcache://cacheName[?options]
+-----------------------------
+
+You can append query options to the URI in the following format: `?option=value&option=#beanRef&...`
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END

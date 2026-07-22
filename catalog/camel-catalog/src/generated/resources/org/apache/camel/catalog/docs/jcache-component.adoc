@@ -1,0 +1,346 @@
+= JCache Component
+:doctitle: JCache
+:shortname: jcache
+:artifactid: camel-jcache
+:description: Perform caching operations against JSR107/JCache.
+:since: 2.17
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The JCache component enables you to perform caching operations using JSR107/JCache as cache implementation.
+
+== URI Format
+
+----
+jcache:cacheName[?options]
+----
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== JCache Policy
+
+The JCachePolicy is an interceptor around a route that caches the "result of the route" (the message body) after the route is completed.
+If the next time the route is called with a "similar" Exchange, the cached value is used on the Exchange instead of executing the route.
+The policy uses the JSR107/JCache API of a cache implementation, so it's required to add one (e.g., Hazelcast, Ehcache) to the classpath.
+
+The policy takes a _key_ value from the received Exchange to get or store values in the cache.
+By default, the _key_ is the message body.
+For example, if the route - having a JCachePolicy - receives an Exchange with a String body _"fruit"_ and the body at the
+end of the route is "apple", it stores a _key/value_ pair _"fruit=apple"_ in the cache. If next time another Exchange arrives
+with a body _"fruit"_, the value _"apple"_ is taken from the cache instead of letting the route process the Exchange.
+
+So by default, the message body at the beginning of the route is the cache _key_ and the body at the end is the stored _value_.
+It's possible to use something else as a _key_ by setting a Camel Expression via `.setKeyExpression()`
+that will be used to determine the key.
+
+The policy needs a JCache Cache. It can be set directly by `.setCache()` or the policy will try to get or create the Cache
+based on the other parameters set.
+
+Similar caching solution is available, for example, in Spring using the @Cacheable annotation.
+
+
+=== JCachePolicy Fields
+
+[width="100%",cols="2,5,3,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cache* | The Cache to use to store the cached values. If this value is set, `cacheManager`, `cacheName` and `cacheConfiguration` is ignored. |  | Cache
+| *cacheManager* | The CacheManager to use to look up or create the Cache. Used only if `cache` is not set. | Try to find a `CacheManager` in the `CamelContext` registry or calls the standard JCache `Caching.getCachingProvider().getCacheManager()`. | CacheManager
+| *cacheName* | Name of the cache. Get the Cache from `cacheManager` or create a new one if it doesn't exist. | RouteId of the route. | String
+| *cacheConfiguration* | JCache cache configuration to use if a new Cache is created | Default new `MutableConfiguration` object. | CacheConfiguration
+| *keyExpression* | An Expression to evaluate to determine the cache key. | Exchange body | Expression
+| *enabled* | If the policy is not enabled, no wrapper processor is added to the route. It has impact only during startup, not during runtime. For example, it can be used to disable caching from properties. | true | boolean
+|===
+
+=== How to determine cache to use?
+
+=== Set cache
+
+The cache used by the policy can be set directly. This means you have to configure the cache yourself and get a JCache Cache object,
+but this gives the most flexibility. For example, it can be setup in the config xml of the cache provider (Hazelcast, EhCache, ...)
+and used here. Or it's possible to use the standard Caching API as below:
+
+._Java-only: Java programmatic cache configuration with JCachePolicy_
+[source,java]
+----
+MutableConfiguration configuration = new MutableConfiguration<>();
+configuration.setTypes(String.class, Object.class);
+configuration.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 60)));
+CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
+Cache cache = cacheManager.createCache("orders",configuration);
+
+JCachePolicy jcachePolicy = new JCachePolicy();
+jcachePolicy.setCache(cache);
+
+from("direct:get-orders")
+    .policy(jcachePolicy)
+    .log("Getting order with id: ${body}")
+    .bean(OrderService.class,"findOrderById(${body})");
+----
+
+=== Set cacheManager
+
+If the `cache` is not set, the policy will try to look up or create the cache automatically.
+If the `cacheManager` is set on the policy, it will try to get cache with the set `cacheName` (routeId by default) from the CacheManager.
+If the cache does not exist, it will create a new one using the `cacheConfiguration` (new MutableConfiguration by default).
+
+._Java-only: Java programmatic CacheManager configuration_
+[source,java]
+----
+//In a Spring environment, for example, the CacheManager may already exist as a bean
+@Autowire
+CacheManager cacheManager;
+...
+
+//Cache "items" is used or created if not exists
+JCachePolicy jcachePolicy = new JCachePolicy();
+jcachePolicy.setCacheManager(cacheManager);
+jcachePolicy.setCacheName("items")
+----
+
+=== Find cacheManager
+
+If `cacheManager` (and the `cache`) is not set, the policy will try to find a JCache CacheManager object:
+
+* Lookup a CacheManager in Camel registry. That falls back on JNDI or Spring context based on the environment
+* Use the standard api `Caching.getCachingProvider().getCacheManager()`
+
+._Java-only: Java DSL with JCachePolicy_
+[source,java]
+----
+//A Cache "getorders" will be used (or created) from the found CacheManager
+from("direct:get-orders").routeId("getorders")
+    .policy(new JCachePolicy())
+    .log("Getting order with id: ${body}")
+    .bean(OrderService.class,"findOrderById(${body})");
+----
+
+=== Partially wrapped route
+
+In the examples above, the whole route was executed or skipped.
+A policy can be used to wrap only a segment of the route instead of all processors.
+
+._Java-only: Java DSL with partial JCachePolicy wrapping_
+[source,java]
+----
+from("direct:get-orders")
+    .log("Order requested: ${body}")
+    .policy(new JCachePolicy())
+        .log("Getting order with id: ${body}")
+        .bean(OrderService.class,"findOrderById(${body})")
+    .end()
+    .log("Order found: ${body}");
+----
+
+The `.log()` at the beginning and at the end of the route is always called, but the section inside `.policy()` and `.end()` is executed based on the cache.
+
+=== KeyExpression
+
+By default, the policy uses the received Exchange body as the _key_, so the default expression is like `simple("$\{body\}")`.
+We can set a different Camel Expression as `keyExpression` which will be evaluated to determine the key.
+For example, if we try to find an `order` by an `orderId` which is in the message headers,
+set `header("orderId")` (or `simple("$\{header.orderId\}")` as `keyExpression`.
+
+The expression is evaluated only once at the beginning of the route to determine the _key_. If nothing was found in cache,
+this _key_ is used to store the _value_ in cache at the end of the route.
+
+._Java-only: Java programmatic JCachePolicy with keyExpression_
+[source,java]
+----
+MutableConfiguration configuration = new MutableConfiguration<>();
+configuration.setTypes(String.class, Order.class);
+configuration.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 10)));
+
+JCachePolicy jcachePolicy = new JCachePolicy();
+jcachePolicy.setCacheConfiguration(configuration);
+jcachePolicy.setCacheName("orders")
+jcachePolicy.setKeyExpression(simple("${header.orderId}))
+
+//The cache key is taken from "orderId" header.
+from("direct:get-orders")
+    .policy(jcachePolicy)
+    .log("Getting order with id: ${header.orderId}")
+    .bean(OrderService.class,"findOrderById(${header.orderId})");
+----
+
+=== BypassExpression
+
+The `JCachePolicy` can be configured with an `Expression` that can per `Exchange` determine whether
+to look up the value from the cache or bypass. If the expression is evaluated to `false` then the route
+is executed as normal, and the returned value is inserted into the cache for future lookup.
+
+=== Camel XML DSL examples
+
+=== Use JCachePolicy in an XML route
+
+In Camel XML DSL, we need a named reference to the JCachePolicy instance (registered in CamelContext or simply in Spring).
+We have to wrap the route between `<policy>...</policy>` tags after `<from>`.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:get-order")
+    .policy("jCachePolicy")
+        .setBody().method("orderService", "findOrderById(${body})")
+    .end();
+----
+
+XML::
++
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:get-order"/>
+        <policy ref="jCachePolicy" >
+            <setBody>
+                <method ref="orderService" method="findOrderById(${body})"/>
+            </setBody>
+        </policy>
+    </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:get-order
+      steps:
+        - policy:
+            ref: jCachePolicy
+            steps:
+              - setBody:
+                  method:
+                    ref: orderService
+                    method: "findOrderById(${body})"
+----
+====
+
+See this example when only a part of the route is wrapped:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:get-order")
+    .log("Start - This is always called. body:${body}")
+    .policy("jCachePolicy")
+        .log("Executing route, not found in cache. body:${body}")
+        .setBody().method("orderService", "findOrderById(${body})")
+    .end()
+    .log("End - This is always called. body:${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:get-order"/>
+        <log message="Start - This is always called. body:${body}"/>
+        <policy ref="jCachePolicy" >
+            <log message="Executing route, not found in cache. body:${body}"/>
+            <setBody>
+                <method ref="orderService" method="findOrderById(${body})"/>
+            </setBody>
+        </policy>
+        <log message="End - This is always called. body:${body}"/>
+    </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:get-order
+      steps:
+        - log:
+            message: "Start - This is always called. body:${body}"
+        - policy:
+            ref: jCachePolicy
+            steps:
+              - log:
+                  message: "Executing route, not found in cache. body:${body}"
+              - setBody:
+                  method:
+                    ref: orderService
+                    method: "findOrderById(${body})"
+        - log:
+            message: "End - This is always called. body:${body}"
+----
+====
+
+
+=== Define CachePolicy in Spring
+
+It's more convenient to create a JCachePolicy in Java, especially within a RouteBuilder using the Camel DSL expressions,
+but see this example to define it in a Spring XML:
+
+[source,xml]
+----
+<bean id="jCachePolicy" class="org.apache.camel.component.jcache.policy.JCachePolicy">
+    <property name="cacheName" value="spring"/>
+    <property name="keyExpression">
+        <bean class="org.apache.camel.model.language.SimpleExpression">
+            <property name="expression" value="${header.mykey}"/>
+        </bean>
+    </property>
+</bean>
+----
+
+=== Create Cache from XML
+
+It's not strictly speaking related to Camel XML DSL, but JCache providers usually have a way to configure the cache in an XML file.
+For example with Hazelcast, you can add a `hazelcast.xml` to classpath to configure the cache "spring" used in the example above.
+
+[source,xml]
+----
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.hazelcast.com/schema/config http://www.hazelcast.com/schema/config/hazelcast-config-4.0.xsd">
+
+    <cache name="spring">
+        <key-type class-name="java.lang.String"/>
+        <value-type class-name="java.lang.String"/>
+        <expiry-policy-factory>
+            <timed-expiry-policy-factory expiry-policy-type="CREATED" duration-amount="60" time-unit="MINUTES"/>
+        </expiry-policy-factory>
+    </cache>
+
+</hazelcast>
+----
+
+=== Special scenarios and error handling
+
+If the Cache used by the policy is closed (can be done dynamically), the whole caching functionality is skipped,
+the route will be executed every time.
+
+If the determined _key_ is _null_, nothing is looked up or stored in cache.
+
+In case of an exception during the route, the error handled is called as always. If the exception gets `handled()`,
+the policy stores the Exchange body. Otherwise, nothing is added to the cache.
+If an exception happens during evaluating the keyExpression, the routing fails, the error handler is called as normally.

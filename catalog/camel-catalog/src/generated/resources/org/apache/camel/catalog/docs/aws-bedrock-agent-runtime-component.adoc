@@ -1,0 +1,157 @@
+= AWS Bedrock Agent Runtime Component
+:doctitle: AWS Bedrock Agent Runtime
+:shortname: aws-bedrock-agent-runtime
+:artifactid: camel-aws-bedrock
+:description: Invoke Model of AWS Bedrock Agent Runtime service.
+:since: 4.5
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS2 Bedrock component supports invoking a supported LLM model from
+https://aws.amazon.com/bedrock/[AWS Bedrock] service.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Bedrock. More information is available at
+https://aws.amazon.com/bedrock/[Amazon Bedrock].
+
+
+== URI Format
+
+-------------------------
+aws-bedrock-agent-runtime://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+Required Bedrock component options
+
+You have to provide the bedrockRuntimeClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/bedrock/[Amazon Bedrock] service.
+
+== Usage
+
+=== Supported operations
+
+The component supports the following operations on the `operation` URI option:
+
+* `retrieveAndGenerate` — Query a Bedrock Knowledge Base and generate a grounded response from the selected model.
+* `retrieve` — Run a semantic search against a Bedrock Knowledge Base and return the matched chunks without LLM generation.
+* `invokeFlow` — Invoke a Bedrock Flow by id/alias and stream the resulting events back as Camel message headers.
+
+=== Retrieving from a Bedrock Knowledge Base
+
+The `retrieve` operation performs a semantic search against a Bedrock Knowledge Base and returns the matching chunks
+without invoking an LLM. Use this when you want to plug retrieval into your own generation step, inspect retrieval
+quality, or build pagination on top of the knowledge base.
+
+Mandatory options:
+
+* `knowledgeBaseId` — the id of the Bedrock Knowledge Base to query.
+
+The body of the in-message must be a `String` containing the search query. When `pojoRequest=true`, the body must be a
+`RetrieveRequest` (any retrieval-config knobs in that POJO are honored verbatim).
+
+The retrieval configuration can be tuned per exchange via the following headers:
+
+* `CamelAwsBedrockAgentRuntimeNumberOfResults` (Integer) — maximum number of chunks to return.
+* `CamelAwsBedrockAgentRuntimeSearchType` (String) — overrides the search type (`HYBRID` or `SEMANTIC`).
+* `CamelAwsBedrockAgentRuntimeNextToken` (String) — pagination token returned by a previous call.
+
+The producer surfaces the matched chunks as the out-message body (a `List<KnowledgeBaseRetrievalResult>`) and on the
+following headers:
+
+* `CamelAwsBedrockAgentRuntimeRetrievedResults` — the same `List<KnowledgeBaseRetrievalResult>` available on the body.
+* `CamelAwsBedrockAgentRuntimeNextToken` — present when the response carries a pagination token.
+* `CamelAwsBedrockAgentRuntimeRetrieveGuardrailAction` — present when the knowledge base applies a guardrail action.
+
+=== Invoking a Bedrock Flow
+
+The `invokeFlow` operation streams flow events using the AWS SDK async client; the producer transparently allocates a
+`BedrockAgentRuntimeAsyncClient` when the endpoint is configured with `operation=invokeFlow`.
+
+Mandatory options:
+
+* `flowIdentifier` — the unique id of the flow to invoke (overridable via the
+  `CamelAwsBedrockAgentRuntimeFlowIdentifier` header).
+* `flowAliasIdentifier` — the unique id of the flow alias to invoke (overridable via the
+  `CamelAwsBedrockAgentRuntimeFlowAliasIdentifier` header).
+
+Optional options:
+
+* `enableTrace` — when `true`, the producer collects the emitted `FlowTraceEvent`s into the
+  `CamelAwsBedrockAgentRuntimeFlowTraces` header (overridable via `CamelAwsBedrockAgentRuntimeFlowEnableTrace`).
+
+The body of the in-message can be:
+
+* a `String` — wrapped in a single `FlowInput` targeting node `FlowInputNode`, output `document`;
+* a `FlowInput` instance — used as the sole input to the flow;
+* a `List<FlowInput>` — passed verbatim to the request (use this form to chain multiple flow inputs).
+
+When `pojoRequest=true`, the body must be an `InvokeFlowRequest` and is sent unchanged.
+
+The producer collects emitted events into headers:
+
+* `CamelAwsBedrockAgentRuntimeFlowOutputs` — the list of `FlowOutputEvent`s emitted by the flow.
+* `CamelAwsBedrockAgentRuntimeFlowTraces` — the list of `FlowTraceEvent`s (only when tracing is enabled).
+* `CamelAwsBedrockAgentRuntimeFlowCompletionReason` — the completion reason reported by the flow (when present).
+
+The out-message body is the document of the last `FlowOutputEvent` (decoded as `String` when the document is a string,
+otherwise the raw `Document`). When the flow emits no outputs, the body is left untouched.
+
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
+
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
+
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
+ - Amazon EC2 Instance profile credentials. 
+
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws-bedrock</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+

@@ -1,0 +1,678 @@
+= Hazelcast Queue Component
+:doctitle: Hazelcast Queue
+:shortname: hazelcast-queue
+:artifactid: camel-hazelcast
+:description: Perform operations on Hazelcast distributed queue.
+:since: 2.7
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Hazelcast
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The http://www.hazelcast.com/[Hazelcast] Queue component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed queue.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Queue producer – to(“hazelcast-queue:foo”)
+
+The queue producer provides 12 operations:
+
+* add
+* put
+* poll
+* peek
+* offer
+* removevalue
+* remainingCapacity
+* removeAll
+* removeIf
+* drainTo
+* take
+* retainAll
+
+=== Example for *add*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:add")
+    .setHeader("CamelHazelcastOperationType", constant("add"))
+    .to("hazelcast-queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:add"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>add</constant>
+  </setHeader>
+  <to uri="hazelcast-queue:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:add
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: add
+        - to:
+            uri: hazelcast-queue:bar
+----
+====
+
+=== Example for *put*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:put")
+    .setHeader("CamelHazelcastOperationType", constant("put"))
+    .to("hazelcast-queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:put"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>put</constant>
+  </setHeader>
+  <to uri="hazelcast-queue:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:put
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: put
+        - to:
+            uri: hazelcast-queue:bar
+----
+====
+
+=== Example for *poll*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:poll")
+    .setHeader("CamelHazelcastOperationType", constant("poll"))
+    .to("hazelcast-queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:poll"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>poll</constant>
+  </setHeader>
+  <to uri="hazelcast-queue:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:poll
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: poll
+        - to:
+            uri: hazelcast-queue:bar
+----
+====
+
+=== Example for *peek*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:peek")
+    .setHeader("CamelHazelcastOperationType", constant("peek"))
+    .to("hazelcast-queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:peek"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>peek</constant>
+  </setHeader>
+  <to uri="hazelcast-queue:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:peek
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: peek
+        - to:
+            uri: hazelcast-queue:bar
+----
+====
+
+=== Example for *offer*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:offer")
+    .setHeader("CamelHazelcastOperationType", constant("offer"))
+    .to("hazelcast-queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:offer"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>offer</constant>
+  </setHeader>
+  <to uri="hazelcast-queue:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:offer
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: offer
+        - to:
+            uri: hazelcast-queue:bar
+----
+====
+
+=== Example for *removevalue*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:removevalue")
+    .setHeader("CamelHazelcastOperationType", constant("removeValue"))
+    .to("hazelcast-queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:removevalue"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>removeValue</constant>
+  </setHeader>
+  <to uri="hazelcast-queue:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:removevalue
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: removeValue
+        - to:
+            uri: hazelcast-queue:bar
+----
+====
+
+=== Example for *remaining capacity*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:remaining-capacity")
+    .setHeader("CamelHazelcastOperationType", constant("remainingCapacity"))
+    .to("hazelcast-queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:remaining-capacity"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>remainingCapacity</constant>
+  </setHeader>
+  <to uri="hazelcast-queue:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:remaining-capacity
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: remainingCapacity
+        - to:
+            uri: hazelcast-queue:bar
+----
+====
+
+=== Example for *remove all*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:removeAll")
+    .setHeader("CamelHazelcastOperationType", constant("removeAll"))
+    .to("hazelcast-queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:removeAll"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>removeAll</constant>
+  </setHeader>
+  <to uri="hazelcast-queue:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:removeAll
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: removeAll
+        - to:
+            uri: hazelcast-queue:bar
+----
+====
+
+=== Example for *remove if*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:removeIf")
+    .setHeader("CamelHazelcastOperationType", constant("removeIf"))
+    .to("hazelcast-queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:removeIf"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>removeIf</constant>
+  </setHeader>
+  <to uri="hazelcast-queue:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:removeIf
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: removeIf
+        - to:
+            uri: hazelcast-queue:bar
+----
+====
+
+=== Example for *drain to*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:drainTo")
+    .setHeader("CamelHazelcastOperationType", constant("drainTo"))
+    .to("hazelcast-queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:drainTo"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>drainTo</constant>
+  </setHeader>
+  <to uri="hazelcast-queue:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:drainTo
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: drainTo
+        - to:
+            uri: hazelcast-queue:bar
+----
+====
+
+=== Example for *take*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:take")
+    .setHeader("CamelHazelcastOperationType", constant("take"))
+    .to("hazelcast-queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:take"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>take</constant>
+  </setHeader>
+  <to uri="hazelcast-queue:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:take
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: take
+        - to:
+            uri: hazelcast-queue:bar
+----
+====
+
+=== Example for *retain all*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:retainAll")
+    .setHeader("CamelHazelcastOperationType", constant("retainAll"))
+    .to("hazelcast-queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:retainAll"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>retainAll</constant>
+  </setHeader>
+  <to uri="hazelcast-queue:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:retainAll
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: retainAll
+        - to:
+            uri: hazelcast-queue:bar
+----
+====
+
+== Queue consumer – from(“hazelcast-queue:foo”)
+
+The queue consumer provides two different modes:
+
+* Poll
+* Listen
+
+Sample for *Poll* mode
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("hazelcast-queue:foo?queueConsumerMode=Poll")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="hazelcast-queue:foo?queueConsumerMode=Poll"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: hazelcast-queue:foo
+      parameters:
+        queueConsumerMode: Poll
+      steps:
+        - to:
+            uri: mock:result
+----
+====
+
+In this way, the consumer will poll the queue and return the head of the queue or null after a timeout.
+
+
+In Listen mode instead, the consumer will listen for events on queue.
+
+The queue consumer in Listen mode provides 2 operations:
+* add
+* remove
+
+Sample for *Listen* mode
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("hazelcast-queue:mm")
+    .log("object...")
+    .choice()
+        .when(header("CamelHazelcastListenerAction").isEqualTo("added"))
+            .log("...added")
+            .to("mock:added")
+        .when(header("CamelHazelcastListenerAction").isEqualTo("removed"))
+            .log("...removed")
+            .to("mock:removed")
+        .otherwise()
+            .log("fail!");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="hazelcast-queue:mm"/>
+  <log message="object..."/>
+  <choice>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'added'</simple>
+      <log message="...added"/>
+      <to uri="mock:added"/>
+    </when>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'removed'</simple>
+      <log message="...removed"/>
+      <to uri="mock:removed"/>
+    </when>
+    <otherwise>
+      <log message="fail!"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: hazelcast-queue:mm
+      steps:
+        - log:
+            message: "object..."
+        - choice:
+            when:
+              - simple: "${header.CamelHazelcastListenerAction} == 'added'"
+                steps:
+                  - log:
+                      message: "...added"
+                  - to:
+                      uri: mock:added
+              - simple: "${header.CamelHazelcastListenerAction} == 'removed'"
+                steps:
+                  - log:
+                      message: "...removed"
+                  - to:
+                      uri: mock:removed
+            otherwise:
+              steps:
+                - log:
+                    message: "fail!"
+----
+====
+
+

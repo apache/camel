@@ -1,0 +1,187 @@
+= JGroups raft Component
+:doctitle: JGroups raft
+:shortname: jgroups-raft
+:artifactid: camel-jgroups-raft
+:description: Exchange messages with JGroups-raft clusters.
+:since: 2.24
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+http://belaban.github.io/jgroups-raft/[JGroups-raft] is a https://raftconsensus.github.io/[Raft] implementation in http://www.jgroups.org/[JGroups].
+The *jgroups-raft:* component provides interoperability between camel and a JGroups-raft clusters.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jgroups-raft</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+----
+
+== URI format
+
+----
+jgroups-raft:clusterName[?options]
+----
+
+Where *clusterName* represents the name of the JGroups-raft cluster, the
+component should connect to.
+
+== Options
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+Using `jgroups-raft` component with `enableRoleChangeEvents=true` on the consumer side of the route will capture
+change in JGroups-raft role and forward them to the Camel route.
+JGroups-raft consumer processes incoming messages
+http://camel.apache.org/asynchronous-routing-engine.html[asynchronously].
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jgroups-raft:clusterName?enableRoleChangeEvents=true").to("seda:queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jgroups-raft:clusterName?enableRoleChangeEvents=true"/>
+  <to uri="seda:queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jgroups-raft:clusterName
+      parameters:
+        enableRoleChangeEvents: true
+      steps:
+        - to:
+            uri: seda:queue
+----
+====
+
+Using `jgroups-raft` component on the producer side of the route will use the body of the camel exchange (which must be a `byte[]`)
+to perform a setX() operation on the raftHandle associated with the endpoint.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start").to("jgroups-raft:clusterName");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="jgroups-raft:clusterName"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: jgroups-raft:clusterName
+----
+====
+
+== Examples
+
+=== Receive cluster view change notifications
+
+The snippet below demonstrates how to create the consumer endpoint
+listening to the change role events.
+By default, this option is off.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jgroups-raft:clusterName?enableRoleChangeEvents=true")
+    .to("mock:mockEndpoint");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jgroups-raft:clusterName?enableRoleChangeEvents=true"/>
+  <to uri="mock:mockEndpoint"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jgroups-raft:clusterName
+      parameters:
+        enableRoleChangeEvents: true
+      steps:
+        - to:
+            uri: mock:mockEndpoint
+----
+====
+
+=== Keeping singleton route within the cluster
+
+The snippet below demonstrates how to keep the singleton consumer route
+in the cluster of Camel Contexts. As soon as the master node dies, one
+of the slaves will be elected as a new master and started. In this
+particular example, we want to keep singleton xref:jetty-component.adoc[jetty]
+instance listening for the requests on
+address` http://localhost:8080/orders`.
+
+._Java-only: programmatic JGroupsRaftClusterService configuration_
+[source,java]
+----
+JGroupsRaftClusterService service = new JGroupsRaftClusterService();
+service.setId("raftId");
+service.setRaftId("raftId");
+service.setJgroupsClusterName("clusterName");
+...
+context.addService(service);
+
+from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders");
+----

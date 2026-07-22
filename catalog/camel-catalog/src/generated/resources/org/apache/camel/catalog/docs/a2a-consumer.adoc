@@ -1,0 +1,743 @@
+= A2A - Consumer Guide
+:tabs-sync-option:
+
+xref:ROOT:a2a-component.adoc[Back to A2A Component]
+
+== Consumer — Exposing an A2A Agent
+
+The consumer turns a Camel route into an A2A agent. It automatically:
+
+- Serves the agent card at `GET /.well-known/agent-card.json`
+- Registers HTTP endpoints for A2A operations (REST routes, or a JSON-RPC dispatcher for supported methods)
+- Validates authentication on incoming requests (when configured)
+- Manages task state via an internal `A2ATaskStore`
+- Dispatches push notification webhooks when task state changes
+- Filters inbound `Camel*` and `org.apache.camel.*` headers (case-insensitive) from untrusted requests
+- Enforces `maxPayloadSize` on incoming request bodies (returns 413 when exceeded)
+
+The route's `setBody` output becomes the agent's response — the consumer handles all A2A protocol wrapping. The `dataFormat` parameter controls what the route receives as body: extracted text (`PAYLOAD`, default), the full `Message` object (`POJO`), or raw JSON (`RAW`).
+
+=== Basic Agent (Local Only)
+
+The simplest possible local A2A agent. Define your agent's capabilities in `agent-card.json`, disable operation auth for local-only use, and let the route handle business logic:
+
+[tabs]
+====
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:agent-card.json
+      parameters:
+        validateAuth: false
+      steps:
+        - log:
+            message: "Received: ${body}"
+        - setBody:
+            constant: "Hello from my agent!"
+----
+
+Java::
++
+[source,java]
+----
+from("a2a:classpath:agent-card.json?validateAuth=false")
+    .log("Received: ${body}")
+    .setBody(constant("Hello from my agent!"));
+----
+====
+
+Do not use `validateAuth=false` for agents exposed to an untrusted network. See <<Authentication>> for authenticated operation serving.
+
+The agent card (`agent-card.json`) declares your agent's identity and capabilities:
+
+[source,json]
+----
+{
+  "protocolVersion": "1.0",
+  "name": "my-agent",
+  "description": "A simple Camel A2A agent",
+  "url": "http://localhost:8080",
+  "version": "1.0.0",
+  "provider": {
+    "name": "Example",
+    "url": "https://example.com"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "extendedAgentCard": false
+  },
+  "supportedInterfaces": [
+    {
+      "url": "http://localhost:8080",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/plain"],
+  "skills": [
+    {
+      "id": "greet",
+      "name": "Greeting",
+      "description": "Returns a greeting message",
+      "tags": ["greeting"],
+      "examples": ["Say hello to Ada"],
+      "inputModes": ["text/plain"],
+      "outputModes": ["text/plain"]
+    }
+  ]
+}
+----
+
+The component supports the `HTTP+JSON` and `JSONRPC` protocol bindings. The legacy aliases `rest` and `jsonrpc` are also accepted and normalized to the v1.0 binding names. The `protocolVersion`, `defaultInputModes`, and `defaultOutputModes` fields are part of the A2A v1.0 card shape.
+
+NOTE: The `AgentCard` Java model can deserialize A2A v1.0 fields such as `defaultInputModes` and `defaultOutputModes`, and it also stores unknown JSON properties. URI parameter overrides are limited to `name`, `description`, and `version`; the endpoint resolver preserves card metadata and unknown extension properties from file and bean cards, supplies preview defaults for plain-name routes, and rejects unsupported protocol bindings.
+
+=== Card from Parameters (Local Only)
+
+For simple or test agents, the card identity fields can be built from URI parameters - no JSON file needed. Because parameter-built cards do not include security schemes, these local-only examples set `validateAuth=false`:
+
+[tabs]
+====
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: >-
+        a2a:weather-agent
+        ?name=Weather Agent
+        &description=Provides weather forecasts
+        &version=1.0.0
+        &validateAuth=false
+      steps:
+        - bean:
+            ref: weatherService
+----
+
+Java::
++
+[source,java]
+----
+from("a2a:my-agent?name=My Agent&description=A simple agent&version=1.0.0&validateAuth=false")
+    .setBody(constant("Response from parameter-configured agent"));
+----
+====
+
+The component generates the `/.well-known/agent-card.json` response dynamically from the parameters. URI parameters only cover the agent identity fields above; use an agent card file or an `agentCard` bean for capabilities, skills, security schemes, supported interfaces, and other card metadata.
+
+=== JSON-RPC Protocol Binding
+
+By default, the consumer uses the REST binding (HTTP+JSON with colon-notation paths like `/message:send`). To use JSON-RPC 2.0 (single `POST /` endpoint), set `protocolBinding` to `JSONRPC`. The legacy aliases `rest` and `jsonrpc` are also accepted.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:agent-card.json
+      parameters:
+        protocolBinding: JSONRPC
+        validateAuth: false
+      steps:
+        - setBody:
+            constant: "JSON-RPC response"
+----
+
+This example is local-only because it disables operation auth. Keep `validateAuth=true` and configure a card security scheme for network-exposed agents.
+
+The REST binding exposes separate HTTP routes for the operation-serving methods listed in <<Consumer REST API Paths>>. The JSON-RPC binding exposes a single dispatcher and handles `SendMessage`, `SendStreamingMessage`, `GetTask`, `ListTasks`, `CancelTask`, `SubscribeToTask`, and the push notification config operations. Extended agent cards are outside the Preview scope for this first release.
+
+REST requests and responses use `application/a2a+json`. JSON-RPC requests and responses use `application/json`. Streaming operations produce `text/event-stream`.
+
+==== Vert.x Colon-in-Path Issue
+
+The A2A REST protocol uses Google's Custom Method convention with colons in paths (e.g., `/message:send`, `/message:stream`, `/tasks/\{id}:cancel`). Vert.x's router interprets the colon (`:`) as a path parameter delimiter, causing route collisions:
+
+* `/message:send` and `/message:stream` both match the pattern `/message\{param}` — whichever is registered first captures ALL requests
+* `/tasks/\{taskId}:cancel` and `/tasks/\{taskId}:subscribe` can collide with `/tasks/\{taskId}`
+
+This means operation serving is not reliable with REST binding on Vert.x/platform-http. For example, `POST /message:stream` can be handled by the `SendMessage` route instead of the streaming route.
+
+*Workaround:* Use `protocolBinding=JSONRPC` for agents running on Vert.x (the default `platform-http`). Alternatively, use `httpServerComponent=jetty` or `httpServerComponent=undertow`; their routers treat colons as literal characters.
+
+=== Authentication
+
+The component supports OAuth 2.0, OpenID Connect, API key, and HTTP bearer security schemes.
+OAuth 2.0 and OpenID Connect use the `oauthProfile` option and the `camel-oauth` SPI; HTTP bearer can use either an OAuth profile or the static `bearerToken` option.
+
+[IMPORTANT]
+====
+When `validateAuth=true`, the resolved agent card must declare at least one security scheme. If the card declares no schemes, the consumer rejects every request with HTTP 401 (fail closed). Cards built purely from URI parameters contain no security schemes, so combine `validateAuth=true` with a card file or `agentCard` bean that declares the scheme, as shown in the examples below.
+====
+
+[WARNING]
+====
+`validateAuth` defaults to `true`. The well-known agent card remains public, but all A2A operation endpoints require authentication by default. Set `validateAuth=false` only for deployments that intentionally expose unauthenticated A2A operation serving; in that mode the in-memory task store is open/single-tenant and does not provide per-user isolation.
+====
+
+NOTE: The component scopes built-in task and push-notification operations to the authenticated user that created the task. Tenant routing and tenant-aware authorization policy are outside the component scope; implement those rules in the Camel route or in deployment-specific infrastructure.
+
+`securityRequirements` follows A2A v1.0 semantics: multiple requirement objects are alternatives (OR), while multiple schemes inside one requirement must all be satisfied together (AND). The `list` array contains required scopes. The legacy A2A draft field `security` is accepted on input and converted to `securityRequirements`; new cards should use `securityRequirements`.
+
+==== OAuth / OIDC Authentication
+
+Validate incoming bearer tokens via the `camel-oauth` SPI. When an `oauthProfile` is configured, the consumer validates JWT signatures (via JWKS), expiry, issuer, and audience — or uses RFC 7662 token introspection for opaque tokens. Requires `camel-oauth` on the classpath.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:agent-card.json
+      parameters:
+        oauthProfile: my-agent
+        validateAuth: true
+      steps:
+        - setBody:
+            constant: "Authenticated response"
+----
+
+Configure the OIDC provider in application properties (these properties are owned by the `camel-oauth` component — see its documentation for the canonical format):
+
+[source,properties]
+----
+camel.oauth.my-agent.client-id=my-agent-client
+camel.oauth.my-agent.client-secret=my-secret
+camel.oauth.my-agent.token-endpoint=http://keycloak:8180/realms/my-realm/protocol/openid-connect/token
+----
+
+The agent card must declare the security scheme:
+
+[source,json]
+----
+{
+  "securitySchemes": {
+    "oidc": {
+      "openIdConnectSecurityScheme": {
+        "openIdConnectUrl": "http://keycloak:8180/realms/my-realm/.well-known/openid-configuration"
+      }
+    }
+  },
+  "securityRequirements": [
+    {
+      "schemes": {
+        "oidc": {
+          "list": []
+        }
+      }
+    }
+  ]
+}
+----
+
+When authentication succeeds, the `CamelA2AUserProfile` exchange property is populated with a `Map<String, Object>` containing the authenticated user's profile (subject, issuer, scopes, claims). When using OAuth/OIDC, the full `OAuthTokenValidationResult` is also available as the `CamelOAuthTokenValidationResult` exchange property.
+
+==== API Key Authentication
+
+The `apiKeyHeader` parameter controls which HTTP header carries the API key. It defaults to `Authorization`. A common override is `X-API-Key`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:agent-card.json
+      parameters:
+        validateAuth: true
+        apiKey: "{{my.api.key}}"
+        apiKeyHeader: X-API-Key      # default is Authorization
+      steps:
+        - setBody:
+            constant: "API key protected response"
+----
+
+The agent card must declare an `apiKey` security scheme:
+
+[source,json]
+----
+{
+  "securitySchemes": {
+    "apikey": {
+      "apiKeySecurityScheme": {
+        "location": "header",
+        "name": "X-API-Key"
+      }
+    }
+  },
+  "securityRequirements": [
+    {
+      "schemes": {
+        "apikey": {
+          "list": []
+        }
+      }
+    }
+  ]
+}
+----
+
+When the scheme declares `location=header` and `name`, that header name takes precedence over `apiKeyHeader`. The component also supports `location=query` and `location=cookie` for API key schemes.
+
+==== Bearer Token
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:agent-card.json
+      parameters:
+        bearerToken: "{{my.token}}"
+        validateAuth: true
+      steps:
+        - setBody:
+            constant: "Bearer token protected response"
+----
+
+The agent card must declare an `http` bearer security scheme:
+
+[source,json]
+----
+{
+  "securitySchemes": {
+    "bearer": {
+      "httpAuthSecurityScheme": {
+        "scheme": "bearer"
+      }
+    }
+  },
+  "securityRequirements": [
+    {
+      "schemes": {
+        "bearer": {
+          "list": []
+        }
+      }
+    }
+  ]
+}
+----
+
+NOTE: The agent card endpoint (`GET /.well-known/agent-card.json`) is always public — clients need it for discovery before they can authenticate.
+
+=== SSE Streaming with `${a2a:emit()}`
+
+Agents can emit progressive status updates during processing using the `${a2a:emit()}` Simple language function. Clients receive these as Server-Sent Events (SSE).
+
+For `SendStreamingMessage` and `SubscribeToTask`, the agent card must explicitly set `capabilities.streaming=true`. If the `capabilities` object is missing, or `streaming` is omitted or `false`, the consumer returns `UnsupportedOperationError` (HTTP 405 for REST, JSON-RPC `-32004` for JSON-RPC).
+
+[tabs]
+====
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:agent-card.json
+      parameters:
+        protocolBinding: JSONRPC
+        httpServerComponent: undertow
+      steps:
+        - script:
+            simple: "${a2a:emit('Connecting to database...')}"
+        - delay:
+            constant: 2000
+        - script:
+            simple: "${a2a:emit('Processing 1000 records...')}"
+        - delay:
+            constant: 3000
+        - script:
+            simple: "${a2a:emit('Analysis complete!')}"
+        - setBody:
+            constant: "Final analysis results: ..."
+----
+
+Java::
++
+[source,java]
+----
+import org.apache.camel.component.a2a.A2AProgress;
+
+from("a2a:classpath:agent-card.json?httpServerComponent=undertow")
+    .process(exchange -> {
+        A2AProgress.emit(exchange, "Connecting...");
+        //connect to the external service
+        A2AProgress.emit(exchange, "Processing...");
+        //process data
+        exchange.getMessage().setBody("Here is the final answer.");
+    });
+----
+====
+
+Each `${a2a:emit('message')}` emits an SSE status event with `TASK_STATE_WORKING` state. The final `setBody` is automatically delivered as the completed response.
+
+You can also emit with an explicit state:
+
+[source,yaml]
+----
+- script:
+    simple: "${a2a:emit(INPUT_REQUIRED, 'Please provide your address')}"
+----
+
+NOTE: Use `script` EIP (not `setBody`) for `${a2a:emit()}` calls — `script` evaluates the expression for its side effect without changing the message body. Use `setBody` only for the final response.
+
+=== Scoped progress updates with `a2aSubTask`
+
+Camel routes can group related work with the `a2aSubTask` EIP and emit progress updates before, after, or when the grouped steps fail.
+This is a regular Camel route step, not a YAML-only extension, and it can be used from Camel's model-based DSLs when `camel-a2a` is on the classpath.
+The `emitBefore`, `emitAfter`, and `emitOnError` fields are optional and are evaluated as Simple expressions against the current Exchange.
+The nested `steps` behave like normal Camel route steps: in YAML they are configured under `steps`, and in Java DSL they are added after `.a2aSubTask()` until `.end()`.
+If the nested steps fail, `emitOnError` can access the original exception, for example with `$\{exception.message}`, and the original exception continues to propagate through the route.
+Failures while evaluating the `emitBefore`, `emitAfter`, or `emitOnError` Simple expressions are route failures.
+Failures while storing or notifying the resulting A2A progress event are best-effort: they are logged at debug level and do not stop nested work, fail an otherwise successful exchange, or replace the original nested-step exception.
+By default, emitting progress outside an active A2A task context is a no-op.
+Set `failIfNoTaskContext=true` when a route should fail instead if the current Exchange does not carry an active A2A task.
+An active task context is normally created by an A2A consumer while it is processing a task.
+Use stable `id` values on long-lived sub-tasks so route tracing and route-structure views keep stable node names.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:agent-card.json
+      parameters:
+        protocolBinding: JSONRPC
+        httpServerComponent: undertow
+        validateAuth: false
+      steps:
+        - a2aSubTask:
+            id: search-docs-progress
+            emitBefore: "Searching docs..."
+            emitAfter: "Docs found: ${body.size()}"
+            emitOnError: "Error searching docs: ${exception.message}"
+            failIfNoTaskContext: true
+            steps:
+              - to:
+                  uri: "elasticsearch:docs?operation=Search"
+        - a2aSubTask:
+            id: draft-answer-progress
+            emitBefore: "Drafting answer..."
+            emitAfter: "Answer drafted: ${body}"
+            emitOnError: "Error drafting answer: ${exception.message}"
+            steps:
+              - bean:
+                  ref: answerDraftingService
+                  method: draft
+        - setBody:
+            simple: "Final answer: ${body}"
+----
+
+The route examples in this section are local-only because they disable operation auth. Keep `validateAuth=true` and configure a card security scheme for network-exposed agents.
+
+The same route step is also available from Java DSL:
+
+[source,java]
+----
+from("a2a:classpath:agent-card.json?protocolBinding=JSONRPC&httpServerComponent=undertow&validateAuth=false")
+    .a2aSubTask()
+        .id("search-docs-progress")
+        .emitBefore("Searching docs...")
+        .emitAfter("Docs found: ${body.size()}")
+        .emitOnError("Error searching docs: ${exception.message}")
+        .failIfNoTaskContext(true)
+        .to("elasticsearch:docs?operation=Search")
+    .end();
+----
+
+For advanced use cases, `A2AProgress` also supports emitting structured artifacts and intermediate messages:
+
+._Java-only: emitting structured artifacts and intermediate messages with A2AProgress_
+[source,java]
+----
+// Emit a structured artifact (e.g., a generated file)
+Artifact artifact = Artifact.builder()
+    .artifactId("report-1")
+    .name("Analysis Report")
+    .parts(List.of(new TextPart("Report content...")))
+    .build();
+A2AProgress.emitArtifact(exchange, artifact, false, true);  // append=false, lastChunk=true
+
+// Emit an intermediate agent message (not a status update)
+Message msg = Message.builder()
+    .role(Message.Role.ROLE_AGENT)
+    .parts(List.of(new TextPart("Intermediate finding...")))
+    .build();
+A2AProgress.emitMessage(exchange, msg);
+----
+
+The consumer supports two SSE streaming patterns:
+
+* *`SendStreamingMessage`* — The stream starts with the submitted `Task`, followed by progress events from `A2AProgress` or `${a2a:emit()}`. When the route completes, the body is emitted as the final message.
+* *`SubscribeToTask`* — Clients subscribe via `POST /tasks/\{id}:subscribe` to receive real-time SSE updates for an existing non-terminal task. The component uses an Event-to-Stream Bridge (`QueueStreamEmitter` + `SseQueueInputStream`) with heartbeat comments to keep the connection alive. The stream sends the current `Task` first and ends when the task later reaches a terminal state. Subscribing to an already-terminal task returns `UnsupportedOperationError`.
+
+[NOTE]
+====
+*HTTP Server Component for Streaming*
+
+Real-time SSE streaming works with all tested HTTP server components: Vert.x/platform-http, Undertow, and Jetty.
+====
+
+SSE streaming parameters:
+
+* `sseHeartbeatInterval` (default 15,000 ms / 15 seconds) — interval for SSE keep-alive heartbeat comments (`:` lines) sent to prevent proxies from closing idle connections. Independent from `asyncTimeout`.
+* `sseQueueCapacity` (default 1,000) — maximum SSE events buffered per streaming connection. When the queue is full, new events are dropped with a warning log. Prevents unbounded memory growth from slow clients.
+
+=== Async Tasks with `returnImmediately`
+
+For long-running operations, enable `returnImmediately` to return a `SUBMITTED` task immediately. The route processes in the background, and clients poll with `GetTask`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:agent-card.json
+      parameters:
+        returnImmediately: true
+        asyncTimeout: 30000          # default is 300000 (5 minutes)
+      steps:
+        - delay:
+            constant: 10000
+        - setBody:
+            constant: "Long computation result"
+----
+
+The `asyncTimeout` parameter (default: 300,000 ms / 5 minutes) controls how long the background processing can run before the task is marked `FAILED`.
+
+The consumer manages the task lifecycle automatically: `SUBMITTED` -> `WORKING` -> `COMPLETED` (or `FAILED` on error / timeout).
+
+`returnImmediately` resolution priority (highest wins):
+
+1. Per-request: `configuration.returnImmediately` in the `SendMessageRequest` body
+2. Per-request: `configuration.blocking=false` in the `SendMessageRequest` body (typed inverse of immediate return)
+3. Per-exchange: `CamelA2AReturnImmediately` header
+4. Endpoint config: `returnImmediately` URI parameter
+
+`SendMessageRequest.configuration` is modeled as `SendMessageConfiguration`. The consumer interprets `returnImmediately`, `blocking`, and `historyLength`; unknown fields are retained for protocol extensions and future A2A options. `configuration.historyLength` limits the task history returned by synchronous `SendMessage` task responses.
+
+NOTE: The REST consumer rejects `returnImmediately` for streaming operations (`SendStreamingMessage`) with 400 Bad Request.
+
+=== Push Notifications
+
+Agents that use `returnImmediately` can deliver updates via webhooks. Clients register a webhook URL via `CreateTaskPushNotificationConfig`, and the component's built-in `PushNotificationDispatcher` sends status updates to registered URLs.
+
+The agent card should declare push notification support so clients can discover the feature:
+
+[source,json]
+----
+{
+  "capabilities": {
+    "pushNotifications": true
+  }
+}
+----
+
+Progress updates emitted via `${a2a:emit()}` or `A2AProgress.emit()` are automatically dispatched to all registered webhooks.
+
+Push notification dispatch features:
+
+* *Parallel dispatch* — multiple webhooks per task are notified concurrently via `CompletableFuture`
+* *Auth headers* — `AuthenticationInfo` from the push config is sent as `Authorization: <scheme> <credentials>`
+* *Retry with exponential backoff* — configurable via `pushRetryAttempts` (default 3) and `pushRetryBackoffMs` (default 1s). Backoff formula: `delay x 2^attempt`. Only retries on 5xx/IOException — client errors (4xx) are not retried
+* *410 Gone auto-cleanup* — webhooks returning HTTP 410 are automatically deregistered
+* *SSRF protection* — webhook URLs are validated at registration time (blocks private IPs, loopback, link-local, wildcard, and cloud metadata addresses). Non-loopback webhook URLs must use HTTPS. Set `allowLocalWebhookUrls=true` to permit loopback URLs (plain HTTP allowed) for local development only
+
+=== Capacity Limiting
+
+Control concurrent task processing and queue overflow:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:agent-card.json
+      parameters:
+        maxConcurrentTasks: 10
+        taskQueueSize: 50
+      steps:
+        - setBody:
+            constant: "Processing..."
+----
+
+[cols="1,1,3"]
+|===
+| Parameter | Default | Description
+
+| `maxConcurrentTasks`
+| `0` (unlimited)
+| Maximum concurrent tasks. A shared semaphore governs all processing paths (sync, async, streaming).
+
+| `taskQueueSize`
+| `0` (no queue)
+| Pending queue capacity for async requests when all slots are occupied. Synchronous and streaming requests cannot be queued — they are rejected immediately.
+|===
+
+Behavior by processing path:
+
+* *Synchronous* (`returnImmediately=false`): if no permit, returns `ServerBusyError` (HTTP 429)
+* *Asynchronous* (`returnImmediately=true`): if no permit and queue has space, task queues as `SUBMITTED`; otherwise HTTP 429
+* *Streaming* (`SendStreamingMessage`): same as synchronous — rejects immediately
+
+The error response follows the A2A error model: REST returns HTTP 429 with `ServerBusyError`; JSON-RPC returns code `-32000` in the JSON-RPC error envelope.
+
+On shutdown, queued tasks are marked `FAILED` and subscribers are notified.
+
+=== Payload Size Limits
+
+The consumer enforces `maxPayloadSize` (default 6,291,456 bytes / 6 MiB) on incoming request bodies. Requests exceeding this limit receive HTTP 413 (REST) or a JSON-RPC error.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:agent-card.json
+      parameters:
+        maxPayloadSize: 10485760
+----
+
+=== CORS Support
+
+To enable CORS (required when browsers call your agent directly), set the REST configuration:
+
+[source,properties]
+----
+camel.rest.enableCors=true
+----
+
+The consumer automatically adds `Access-Control-*` headers (including A2A-specific headers like `A2A-Version` and `A2A-Extensions`) and registers OPTIONS preflight handlers for all A2A paths.
+
+=== A2A Extensions
+
+The agent card can advertise protocol extensions in `capabilities.extensions`. For protected operation routes, clients can request extensions with the `A2A-Extensions` HTTP header as a comma-separated list of extension URIs.
+
+The consumer validates requested extensions against the resolved agent card. If any requested URI is not advertised, or if a card extension marked `required=true` is not requested, the request fails before route processing with `UnsupportedExtensionError`. Accepted extension URIs are exposed to the route as the `CamelA2AExtensions` header and exchange property, and are echoed in the `A2A-Extensions` response header.
+
+Routes can branch directly on `CamelA2AExtensions`. For reusable behavior, register one or more `org.apache.camel.component.a2a.extension.A2AExtensionHandler` beans in the Camel registry. A handler is matched by extension URI and is invoked before and after route processing when that extension is negotiated. The handler receives the full `AgentExtension` declaration from the agent card, including `params`.
+
+=== Consumer REST API Paths
+
+When using the default REST protocol binding, the consumer registers these HTTP endpoints:
+
+[cols="1,2,2"]
+|===
+| Method | Path | Operation
+
+| `GET`
+| `/.well-known/agent-card.json`
+| Agent card discovery (always public)
+
+| `POST`
+| `/message:send`
+| SendMessage
+
+| `POST`
+| `/message:stream`
+| SendStreamingMessage (SSE response)
+
+| `GET`
+| `/tasks`
+| ListTasks
+
+| `GET`
+| `/tasks/\{taskId}`
+| GetTask
+
+| `POST`
+| `/tasks/\{taskId}:cancel`
+| CancelTask
+
+| `POST`
+| `/tasks/\{taskId}:subscribe`
+| SubscribeToTask (SSE response)
+
+| `POST`
+| `/tasks/\{taskId}/pushNotificationConfigs`
+| CreateTaskPushNotificationConfig
+
+| `GET`
+| `/tasks/\{taskId}/pushNotificationConfigs`
+| ListTaskPushNotificationConfigs
+
+| `GET`
+| `/tasks/\{taskId}/pushNotificationConfigs/\{configId}`
+| GetTaskPushNotificationConfig
+
+| `DELETE`
+| `/tasks/\{taskId}/pushNotificationConfigs/\{configId}`
+| DeleteTaskPushNotificationConfig
+|===
+
+All paths are prefixed with `basePath` if configured. When using JSON-RPC binding, a single `POST /` endpoint dispatches based on the JSON-RPC `method` field.
+
+The built-in `ListTasks` consumer applies `contextId`, `status`, `statusTimestampAfter`, `pageSize`, `pageToken`, `includeArtifacts`, and `historyLength`. `pageSize` defaults to `50` and is capped at `100`. `pageToken` values returned by the consumer are opaque cursor tokens containing a snapshot of the filtered task IDs for that listing. Clients must send the token back unchanged with the same filters; numeric offsets are rejected.
+
+=== Consumer Error Responses
+
+REST binding responses use the A2A v1.0 error wrapper with an `error` object. The `ErrorInfo.reason` detail maps back to these component error names:
+
+[cols="2,1,2"]
+|===
+| Condition | HTTP status | Error code
+
+| Unsupported `A2A-Version` request header
+| `400`
+| `VersionNotSupportedError`
+
+| Authentication validation failure
+| `401`
+| `AuthenticationError`
+
+| Authenticated caller is not authorized for the task
+| `403`
+| `AuthorizationError`
+
+| Unsupported requested extension, or required extension not requested
+| `400`
+| `ExtensionSupportRequiredError`
+
+| Empty `SendMessage` or `SendStreamingMessage` body
+| `400`
+| `ContentTypeNotSupportedError`
+
+| Request body larger than `maxPayloadSize`
+| `413`
+| `ContentTypeNotSupportedError`
+
+| Streaming or task subscription requested but `capabilities.streaming` is omitted or `false`
+| `405`
+| `UnsupportedOperationError`
+
+| Push notification config requested but `capabilities.pushNotifications` is omitted or `false`
+| `405`
+| `UnsupportedOperationError`
+
+| `returnImmediately=true` on REST `SendStreamingMessage`
+| `400`
+| `UnsupportedOperationError`
+
+| Invalid parameters (for example negative `historyLength`, invalid `pageSize`, invalid `pageToken`, or rejected webhook URL)
+| `400`
+| `InvalidParamsError`
+
+| Agent capacity reached
+| `429`
+| `ServerBusyError`
+
+| Task or push notification config not found
+| `404`
+| `TaskNotFoundError`
+
+| Cancel requested for a terminal task
+| `409`
+| `TaskNotCancelableError`
+
+| Unhandled consumer exception
+| `500`
+| `InternalError`
+|===
+
+REST binding returns these error responses as `application/a2a+json` with an `error` object containing the HTTP status, status name, message, and a `google.rpc.ErrorInfo` detail reason such as `TASK_NOT_FOUND` or `VERSION_NOT_SUPPORTED`.
+
+JSON-RPC binding returns JSON-RPC error envelopes as `application/json`. Parse errors use `-32700`, invalid requests use `-32600`, unknown methods use `-32601`, invalid parameters use `-32602`, internal errors use `-32603`, capacity and authorization errors use `-32000`, missing tasks use `-32001`, non-cancelable terminal tasks use `-32002`, push notification support errors use `-32003`, unsupported operations use `-32004`, unsupported content types use `-32005`, invalid agent responses use `-32006`, extension negotiation failures use `-32008`, and unsupported A2A versions use `-32009`.

@@ -1,0 +1,776 @@
+= Dropbox Component
+:doctitle: Dropbox
+:shortname: dropbox
+:artifactid: camel-dropbox
+:description: Upload, download and manage files, folders, groups, collaborations, etc on Dropbox.
+:since: 2.14
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Dropbox component allows you to treat
+https://www.dropbox.com[Dropbox] remote folders as a producer or
+consumer of messages. Using the
+https://github.com/dropbox/dropbox-sdk-java[Dropbox Java
+Core API], this camel
+component has the following features:
+
+* As a consumer, download files and search files by queries
+* As a producer, download files, move files between remote directories,
+delete files/dir, upload files and search files by queries
+
+To work with Dropbox API, you need to obtain an *accessToken*,
+ *expireIn*, *refreshToken*, *apiKey*, *apiSecret* and a *clientIdentifier.* +
+You can refer to the
+https://dropbox.tech/developers/migrating-app-permissions-and-access-tokens[Dropbox
+documentation] that explains how to get them.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-dropbox</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+dropbox://[operation]?[options]
+----
+
+Where *operation* is the specific action (typically is a CRUD action) to
+perform on Dropbox remote folder.
+
+== Operations
+
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Operation |Description
+
+|`del` |deletes files or directories on Dropbox
+
+|`get` |download files from Dropbox
+
+|`move` |move files from folders on Dropbox
+
+|`put` |upload files on Dropbox
+
+|`search` |search files on Dropbox based on string queries
+|===
+
+*Operations* require additional options to work. Some are mandatory for
+the specific operation.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Del operation
+
+Delete files on Dropbox.
+
+Works only as a Camel producer.
+
+Below are listed the options for this operation:
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|===
+|Property |Mandatory |Description
+
+|`remotePath` |`true` |Folder or file to delete on Dropbox
+|===
+
+.Deleting a folder
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("dropbox://del?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/root/folder1")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="dropbox://del?accessToken=XXX&amp;clientIdentifier=XXX&amp;expireIn=1000&amp;refreshToken=XXXX&amp;apiKey=XXXXX&amp;apiSecret=XXXXXX&amp;remotePath=/root/folder1"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dropbox://del
+            parameters:
+              accessToken: XXX
+              clientIdentifier: XXX
+              expireIn: 1000
+              refreshToken: XXXX
+              apiKey: XXXXX
+              apiSecret: XXXXXX
+              remotePath: /root/folder1
+        - to:
+            uri: mock:result
+----
+====
+
+.Deleting a file
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("dropbox://del?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/root/folder1/file1.tar.gz")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="dropbox://del?accessToken=XXX&amp;clientIdentifier=XXX&amp;expireIn=1000&amp;refreshToken=XXXX&amp;apiKey=XXXXX&amp;apiSecret=XXXXXX&amp;remotePath=/root/folder1/file1.tar.gz"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dropbox://del
+            parameters:
+              accessToken: XXX
+              clientIdentifier: XXX
+              expireIn: 1000
+              refreshToken: XXXX
+              apiKey: XXXXX
+              apiSecret: XXXXXX
+              remotePath: /root/folder1/file1.tar.gz
+        - to:
+            uri: mock:result
+----
+====
+
+==== Result Message Body
+
+The following objects are set on message body result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Object type |Description
+
+|`String` |name of the path deleted on dropbox
+|===
+
+=== Get (download) operation
+
+Download files from Dropbox.
+
+Works as a Camel producer or Camel consumer.
+
+Below are listed the options for this operation:
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|===
+|Property |Mandatory |Description
+
+|`remotePath` |`true` |Folder or file to download from Dropbox
+|===
+
+.Downloading a single file
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("dropbox://get?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/root/folder1/file1.tar.gz")
+    .to("file:///home/kermit/?fileName=file1.tar.gz");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="dropbox://get?accessToken=XXX&amp;clientIdentifier=XXX&amp;expireIn=1000&amp;refreshToken=XXXX&amp;apiKey=XXXXX&amp;apiSecret=XXXXXX&amp;remotePath=/root/folder1/file1.tar.gz"/>
+  <to uri="file:///home/kermit/?fileName=file1.tar.gz"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dropbox://get
+            parameters:
+              accessToken: XXX
+              clientIdentifier: XXX
+              expireIn: 1000
+              refreshToken: XXXX
+              apiKey: XXXXX
+              apiSecret: XXXXXX
+              remotePath: /root/folder1/file1.tar.gz
+        - to:
+            uri: "file:///home/kermit/?fileName=file1.tar.gz"
+----
+====
+
+.Downloading a folder
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("dropbox://get?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/root/folder1")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="dropbox://get?accessToken=XXX&amp;clientIdentifier=XXX&amp;expireIn=1000&amp;refreshToken=XXXX&amp;apiKey=XXXXX&amp;apiSecret=XXXXXX&amp;remotePath=/root/folder1"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dropbox://get
+            parameters:
+              accessToken: XXX
+              clientIdentifier: XXX
+              expireIn: 1000
+              refreshToken: XXXX
+              apiKey: XXXXX
+              apiSecret: XXXXXX
+              remotePath: /root/folder1
+        - to:
+            uri: mock:result
+----
+====
+
+.Using as a consumer to download files
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("dropbox://get?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/root/folder1")
+    .to("file:///home/kermit/");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="dropbox://get?accessToken=XXX&amp;clientIdentifier=XXX&amp;expireIn=1000&amp;refreshToken=XXXX&amp;apiKey=XXXXX&amp;apiSecret=XXXXXX&amp;remotePath=/root/folder1"/>
+  <to uri="file:///home/kermit/"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: dropbox://get
+      parameters:
+        accessToken: XXX
+        clientIdentifier: XXX
+        expireIn: 1000
+        refreshToken: XXXX
+        apiKey: XXXXX
+        apiSecret: XXXXXX
+        remotePath: /root/folder1
+      steps:
+        - to:
+            uri: "file:///home/kermit/"
+----
+====
+
+==== Result Message Body
+
+The following objects are set on message body result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Object type |Description
+
+|`byte[]` or `CachedOutputStream`  if stream caching is enabled |in case of single file download, stream represents the file downloaded
+
+|`Map<String, byte[]>` or `Map<String, CachedOutputStream>` if stream caching is enabled |in the case of multiple files downloaded, a map with as a key the path of the
+remote file downloaded and as value the stream representing the file
+downloaded
+|===
+
+=== Move operation
+
+Move files on Dropbox between one folder to another.
+
+Works only as a Camel producer.
+
+Below are listed the options for this operation:
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|===
+|Property |Mandatory |Description
+
+|`remotePath` |`true` |Original file or folder to move
+
+|`newRemotePath` |`true` |Destination file or folder
+|===
+
+.Examples
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("dropbox://move?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/root/folder1&newRemotePath=/root/folder2")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="dropbox://move?accessToken=XXX&amp;clientIdentifier=XXX&amp;expireIn=1000&amp;refreshToken=XXXX&amp;apiKey=XXXXX&amp;apiSecret=XXXXXX&amp;remotePath=/root/folder1&amp;newRemotePath=/root/folder2"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dropbox://move
+            parameters:
+              accessToken: XXX
+              clientIdentifier: XXX
+              expireIn: 1000
+              refreshToken: XXXX
+              apiKey: XXXXX
+              apiSecret: XXXXXX
+              remotePath: /root/folder1
+              newRemotePath: /root/folder2
+        - to:
+            uri: mock:result
+----
+====
+
+==== Result Message Body
+
+The following objects are set on message body result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Object type |Description
+
+|`String` |name of the path moved on dropbox
+|===
+
+=== Put (upload) operation
+
+Upload files on Dropbox.
+
+Works as a Camel producer.
+
+Below are listed the options for this operation:
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|===
+|Property |Mandatory |Description
+
+|`uploadMode` |`true` |add or force this option specifies how a file should be saved on
+dropbox: in the case of `add`, the new file will be renamed if a file with the same
+name already exists on dropbox. In the case of `force`, if a file with the same name already exists on
+dropbox, this will be overwritten.
+
+|`localPath` |`false` |Folder or file to upload on Dropbox from the local filesystem.
+If this option has been configured, then it takes precedence over uploading as a single
+file with content from the Camel message body (the message body is converted into a byte array).
+
+|`remotePath` |`false` |Folder destination on Dropbox. If the property is not set, the component
+will upload the file on a remote path equal to the local path. With Windows or without an absolute 
+localPath you may run into an exception like the following:
+
+Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with "/": "C:/My/File" +
+OR +
+Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with "/": "MyFile" +
+	
+|===
+
+.Uploading from local path
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX&apiKey=XXXXX&apiSecret=XXXXXX&uploadMode=add&localPath=/root/folder1")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="dropbox://put?accessToken=XXX&amp;clientIdentifier=XXX&amp;expireIn=1000&amp;refreshToken=XXXX&amp;apiKey=XXXXX&amp;apiSecret=XXXXXX&amp;uploadMode=add&amp;localPath=/root/folder1"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dropbox://put
+            parameters:
+              accessToken: XXX
+              clientIdentifier: XXX
+              expireIn: 1000
+              refreshToken: XXXX
+              apiKey: XXXXX
+              apiSecret: XXXXXX
+              uploadMode: add
+              localPath: /root/folder1
+        - to:
+            uri: mock:result
+----
+====
+
+.Uploading to a specific remote path
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX&apiKey=XXXXX&apiSecret=XXXXXX&uploadMode=add&localPath=/root/folder1&remotePath=/root/folder2")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="dropbox://put?accessToken=XXX&amp;clientIdentifier=XXX&amp;expireIn=1000&amp;refreshToken=XXXX&amp;apiKey=XXXXX&amp;apiSecret=XXXXXX&amp;uploadMode=add&amp;localPath=/root/folder1&amp;remotePath=/root/folder2"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dropbox://put
+            parameters:
+              accessToken: XXX
+              clientIdentifier: XXX
+              expireIn: 1000
+              refreshToken: XXXX
+              apiKey: XXXXX
+              apiSecret: XXXXXX
+              uploadMode: add
+              localPath: /root/folder1
+              remotePath: /root/folder2
+        - to:
+            uri: mock:result
+----
+====
+
+And to upload a single file with content from the message body
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDropboxPutFileName", constant("myfile.txt"))
+    .to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX&apiKey=XXXXX&apiSecret=XXXXXX&uploadMode=add&remotePath=/root/folder2")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDropboxPutFileName">
+    <constant>myfile.txt</constant>
+  </setHeader>
+  <to uri="dropbox://put?accessToken=XXX&amp;clientIdentifier=XXX&amp;expireIn=1000&amp;refreshToken=XXXX&amp;apiKey=XXXXX&amp;apiSecret=XXXXXX&amp;uploadMode=add&amp;remotePath=/root/folder2"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDropboxPutFileName
+            constant: myfile.txt
+        - to:
+            uri: dropbox://put
+            parameters:
+              accessToken: XXX
+              clientIdentifier: XXX
+              expireIn: 1000
+              refreshToken: XXXX
+              apiKey: XXXXX
+              apiSecret: XXXXXX
+              uploadMode: add
+              remotePath: /root/folder2
+        - to:
+            uri: mock:result
+----
+====
+
+The name of the file can be provided in the header `CamelDropboxPutFileName`
+or `CamelFileName` in that order of precedence. If no header has been provided then the message id (uuid) is
+used as the file name.
+
+==== Result Message Body
+
+The following objects are set on message body result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Object type |Description
+
+|`String` |in case of single file upload, result of the upload operation, OK or KO
+
+|`Map<String, DropboxResultCode>` |in the case of multiple files upload, a map with as a key the path of the
+remote file uploaded and as value the result of the upload operation, OK
+or KO
+|===
+
+=== Search operation
+
+Search inside a remote Dropbox folder including its subdirectories.
+
+Works as Camel producer and as Camel consumer.
+
+Below are listed the options for this operation:
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|===
+|Property |Mandatory |Description
+
+|`remotePath` |`true` |Folder on Dropbox where to search in.
+
+|`query` |`true` |A space-separated list of sub-strings to search for. A file matches only
+if it contains all the sub-strings. If this option is not set, all files
+will be matched. The query is required to be provided in either the endpoint configuration
+or as a header `CamelDropboxQuery` on the Camel message.
+|===
+
+.Searching with a query in the URI
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("dropbox://search?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/XXX&query=XXX")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="dropbox://search?accessToken=XXX&amp;clientIdentifier=XXX&amp;expireIn=1000&amp;refreshToken=XXXX&amp;apiKey=XXXXX&amp;apiSecret=XXXXXX&amp;remotePath=/XXX&amp;query=XXX"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: dropbox://search
+      parameters:
+        accessToken: XXX
+        clientIdentifier: XXX
+        expireIn: 1000
+        refreshToken: XXXX
+        apiKey: XXXXX
+        apiSecret: XXXXXX
+        remotePath: /XXX
+        query: XXX
+      steps:
+        - to:
+            uri: mock:result
+----
+====
+
+.Searching with a query set via header
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDropboxQuery", constant("XXX"))
+    .to("dropbox://search?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/XXX")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDropboxQuery">
+    <constant>XXX</constant>
+  </setHeader>
+  <to uri="dropbox://search?accessToken=XXX&amp;clientIdentifier=XXX&amp;expireIn=1000&amp;refreshToken=XXXX&amp;apiKey=XXXXX&amp;apiSecret=XXXXXX&amp;remotePath=/XXX"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDropboxQuery
+            constant: XXX
+        - to:
+            uri: dropbox://search
+            parameters:
+              accessToken: XXX
+              clientIdentifier: XXX
+              expireIn: 1000
+              refreshToken: XXXX
+              apiKey: XXXXX
+              apiSecret: XXXXXX
+              remotePath: /XXX
+        - to:
+            uri: mock:result
+----
+====
+
+==== Result Message Body
+
+The following objects are set on message body result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Object type |Description
+
+|`List<com.dropbox.core.v2.files.SearchMatchV2>` |list of the file path found. For more information on this object, refer to
+https://javadoc.io/doc/com.dropbox.core/dropbox-core-sdk/latest/com/dropbox/core/v2/files/SearchMatchV2.html[Dropbox documentation].
+|===

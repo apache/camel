@@ -1,0 +1,325 @@
+= Splunk Component (deprecated)
+:doctitle: Splunk
+:shortname: splunk
+:artifactid: camel-splunk
+:description: Publish or search for events in Splunk.
+:since: 2.13
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+[NOTE]
+====
+This component is deprecated since Camel 4.19 and will be removed in a future release.
+For event ingestion (producer) use cases, consider migrating to xref:splunk-hec-component.adoc[Splunk HEC],
+which uses the standard HTTP Event Collector and has no dependency on the unmaintained Splunk Java SDK.
+Note that Splunk HEC is producer-only and does not support consumer (search) operations.
+====
+
+The Splunk component provides access to
+http://docs.splunk.com/Documentation/Splunk/latest[Splunk] using the
+Splunk provided https://github.com/splunk/splunk-sdk-java[client] api,
+and it enables you to publish and search for events in Splunk.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-splunk</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+----
+
+== URI format
+
+----
+splunk://[endpoint]?[options]
+----
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Producer Endpoints
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Endpoint |Description
+
+|`stream` |Streams data to a named index or the default if not specified.
+When using stream mode, be aware of that Splunk has some internal buffer
+(about 1MB or so) before events get to the index.
+If you need realtime, better use submit or tcp mode.
+
+|`submit` |submit mode. Uses Splunk rest api to publish events to a named index or
+the default if not specified.
+
+|`tcp` |tcp mode. Streams data to a tcp port, and requires an open receiver port
+in Splunk.
+|=======================================================================
+
+When publishing events, the message body should contain a
+SplunkEvent.  See comment under message body.
+
+*Example*
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start").convertBodyTo(SplunkEvent.class)
+    .to("splunk://submit?username=user&password=123&index=myindex&sourceType=someSourceType&source=mySource");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <convertBodyTo type="SplunkEvent"/>
+  <to uri="splunk://submit?username=user&amp;password=123&amp;index=myindex&amp;sourceType=someSourceType&amp;source=mySource"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - convertBodyTo:
+            type: SplunkEvent
+        - to:
+            uri: splunk://submit
+            parameters:
+              username: user
+              password: "123"
+              index: myindex
+              sourceType: someSourceType
+              source: mySource
+----
+====
+
+In this example, a converter is required to convert to a SplunkEvent
+class.
+
+=== Consumer Endpoints
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Endpoint |Description
+
+|`normal` |Performs normal search and requires a search query in the search option.
+
+|`realtime` |Performs realtime search on live data and requires a search query in the search option.
+
+|`savedsearch` |Performs search based on a search query saved in splunk and requires the
+name of the query in the savedSearch option.
+|=======================================================================
+
+*Example*
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("splunk://normal?delay=5000&username=user&password=123&initEarliestTime=-10s&search=search index=myindex sourcetype=someSourcetype")
+    .to("direct:search-result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="splunk://normal?delay=5000&amp;username=user&amp;password=123&amp;initEarliestTime=-10s&amp;search=search index=myindex sourcetype=someSourcetype"/>
+  <to uri="direct:search-result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: splunk://normal
+      parameters:
+        delay: 5000
+        username: user
+        password: "123"
+        initEarliestTime: "-10s"
+        search: "search index=myindex sourcetype=someSourcetype"
+      steps:
+        - to:
+            uri: direct:search-result
+----
+====
+
+Camel Splunk component creates a route exchange per search result with a
+SplunkEvent in the body.
+
+
+=== Message body
+
+Splunk operates on data in key/value pairs. The `SplunkEvent` class is a
+placeholder for such data, and should be in the message body for the producer. 
+Likewise, it will be returned in the body per search
+result for the consumer.
+
+You can send raw data to Splunk by setting the raw
+option on the producer endpoint. This is useful for e.g., json/xml and
+other payloads where Splunk has built in support.
+
+=== Use Cases
+
+Search Twitter for tweets with music and publish events to Splunk
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("twitter://search?type=polling&keywords=music&delay=10&consumerKey=abc&consumerSecret=def&accessToken=hij&accessTokenSecret=xxx")
+    .convertBodyTo(SplunkEvent.class)
+    .to("splunk://submit?username=foo&password=bar&index=camel-tweets&sourceType=twitter&source=music-tweets");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="twitter://search?type=polling&amp;keywords=music&amp;delay=10&amp;consumerKey=abc&amp;consumerSecret=def&amp;accessToken=hij&amp;accessTokenSecret=xxx"/>
+  <convertBodyTo type="SplunkEvent"/>
+  <to uri="splunk://submit?username=foo&amp;password=bar&amp;index=camel-tweets&amp;sourceType=twitter&amp;source=music-tweets"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: twitter://search
+      parameters:
+        type: polling
+        keywords: music
+        delay: 10
+        consumerKey: abc
+        consumerSecret: def
+        accessToken: hij
+        accessTokenSecret: xxx
+      steps:
+        - convertBodyTo:
+            type: SplunkEvent
+        - to:
+            uri: splunk://submit
+            parameters:
+              username: foo
+              password: bar
+              index: camel-tweets
+              sourceType: twitter
+              source: music-tweets
+----
+====
+
+To convert a Tweet to a `SplunkEvent`, you could use a converter like:
+
+._Java-only: custom type converter from Tweet to SplunkEvent_
+[source,java]
+----
+@Converter
+public class Tweet2SplunkEvent {
+    @Converter
+    public static SplunkEvent convertTweet(Status status) {
+        SplunkEvent data = new SplunkEvent("twitter-message", null);
+        //data.addPair("source", status.getSource());
+        data.addPair("from_user", status.getUser().getScreenName());
+        data.addPair("in_reply_to", status.getInReplyToScreenName());
+        data.addPair(SplunkEvent.COMMON_START_TIME, status.getCreatedAt());
+        data.addPair(SplunkEvent.COMMON_EVENT_ID, status.getId());
+        data.addPair("text", status.getText());
+        data.addPair("retweet_count", status.getRetweetCount());
+        if (status.getPlace() != null) {
+            data.addPair("place_country", status.getPlace().getCountry());
+            data.addPair("place_name", status.getPlace().getName());
+            data.addPair("place_street", status.getPlace().getStreetAddress());
+        }
+        if (status.getGeoLocation() != null) {
+            data.addPair("geo_latitude", status.getGeoLocation().getLatitude());
+            data.addPair("geo_longitude", status.getGeoLocation().getLongitude());
+        }
+        return data;
+    }
+}
+----
+
+Search Splunk for tweets:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("splunk://normal?username=foo&password=bar&initEarliestTime=-2m&search=search index=camel-tweets sourcetype=twitter")
+    .log("${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="splunk://normal?username=foo&amp;password=bar&amp;initEarliestTime=-2m&amp;search=search index=camel-tweets sourcetype=twitter"/>
+  <log message="${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: splunk://normal
+      parameters:
+        username: foo
+        password: bar
+        initEarliestTime: "-2m"
+        search: "search index=camel-tweets sourcetype=twitter"
+      steps:
+        - log:
+            message: "${body}"
+----
+====
+
+=== Other comments
+
+Splunk comes with a variety of options for leveraging machine generated
+data with prebuilt apps for analyzing and displaying this.
+For example, the jmx app could be used to publish jmx attributes, e.g.,
+route and jvm metrics to Splunk, and display this on a dashboard.

@@ -1,0 +1,150 @@
+= Control Bus Component
+:doctitle: Control Bus
+:shortname: controlbus
+:artifactid: camel-controlbus
+:description: Manage and monitor Camel routes.
+:since: 2.11
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+:core:
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The http://www.eaipatterns.com/ControlBus.html[Control Bus] from the
+EIP patterns allows for the
+integration system to be monitored and managed from within the
+framework.
+
+image::control_bus.png[image]
+
+Use a Control Bus to manage an enterprise integration system. The
+Control Bus uses the same messaging mechanism used by the application
+data, but uses separate channels to transmit data that is relevant to
+the management of components involved in the message flow.
+
+In Camel, you can manage and monitor the application:
+
+* using JMX.
+* by using a Java API from the `CamelContext`.
+* from the `org.apache.camel.api.management` package.
+* using the event notifier.
+* using the ControlBus component.
+
+The ControlBus component provides easy management of Camel applications based on the xref:controlbus-component.adoc[Control Bus] EIP pattern.
+For example, by sending a message to an endpoint, you can control the lifecycle of routes, or gather performance statistics.
+
+----
+controlbus:command[?options]
+----
+
+Where `command` can be any string to identify which type of command to use.
+
+== Commands
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Command |Description
+
+|`route` |To control routes using the `routeId` and `action` parameter.
+
+|`language` |Allows you to specify a xref:language-component.adoc[Language] to use for
+evaluating the message body. If there is any result from the evaluation,
+then the result is put in the message body.
+|===
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Examples
+
+=== Using route command
+
+The route command allows you to do common tasks on a given route very easily.
+For example, to start a route, you can send an empty message to this endpoint:
+
+._Java-only: Java test API (ProducerTemplate)_
+[source,java]
+----
+template.sendBody("controlbus:route?routeId=foo&action=start", null);
+----
+
+To get the status of the route, you can do:
+
+._Java-only: Java test API (ProducerTemplate)_
+[source,java]
+----
+String status = template.requestBody("controlbus:route?routeId=foo&action=status", null, String.class);
+----
+
+[[ControlBus-Gettingperformancestatistics]]
+=== Getting performance statistics
+
+This requires JMX to be enabled (it is enabled by default) then you can get the
+performance statics per route, or for the CamelContext.
+For example, to get the statics for a route named foo, we can use:
+
+._Java-only: Java test API (ProducerTemplate)_
+[source,java]
+----
+String xml = template.requestBody("controlbus:route?routeId=foo&action=stats", null, String.class);
+----
+
+The returned statics is in XML format.
+It is the same data you can get from JMX with the `dumpRouteStatsAsXml` operation on the `ManagedRouteMBean`.
+
+To get statics for the entire `CamelContext` you just omit the routeId parameter as shown below:
+
+._Java-only: Java test API (ProducerTemplate)_
+[source,java]
+----
+String xml = template.requestBody("controlbus:route?action=stats", null, String.class);
+----
+
+=== Using Simple language
+
+You can use the xref:languages:simple-language.adoc[Simple] language with the control bus.
+For example, to stop a specific route, you can send a message to the `"controlbus:language:simple"` endpoint containing the following message:
+
+._Java-only: Java test API (ProducerTemplate)_
+[source,java]
+----
+template.sendBody("controlbus:language:simple", "${camelContext.getRouteController().stopRoute('myRoute')}");
+----
+
+As this is a void operation, no result is returned.
+However, if you want the route status, you can use:
+
+._Java-only: Java test API (ProducerTemplate)_
+[source,java]
+----
+String status = template.requestBody("controlbus:language:simple", "${camelContext.getRouteController().getRouteStatus('myRoute')}", String.class);
+----
+
+It's easier to use the `route` command to control lifecycle of
+routes. The `language` command allows you to execute a language script
+that has stronger powers such as xref:languages:groovy-language.adoc[Groovy] or to some
+extend the xref:languages:simple-language.adoc[Simple] language.
+
+For example, to shut down Apache Camel itself, you can do:
+
+._Java-only: Java test API (ProducerTemplate)_
+[source,java]
+----
+template.sendBody("controlbus:language:simple?async=true", "${camelContext.stop()}");
+----
+
+We use `async=true` to stop Camel asynchronously as otherwise we
+would be trying to stop Camel while it was in-flight processing the
+message we sent to the control bus component.
+
+[TIP]
+====
+You can also use other languages such as xref:languages:groovy-language.adoc[Groovy], etc.
+====

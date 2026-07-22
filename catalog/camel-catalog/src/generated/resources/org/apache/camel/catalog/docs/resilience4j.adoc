@@ -1,0 +1,27 @@
+= Resilience4j Component
+:doctitle: Resilience4j
+:shortname: resilience4j
+:artifactid: camel-resilience4j
+:description: Circuit Breaker EIP using Resilience4j
+:since: 3.0
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+This component supports the Circuit Breaker EIP with the https://resilience4j.readme.io/[Resilience4j] library.
+
+For more details, see the xref:eips:circuitBreaker-eip.adoc[Circuit Breaker EIP] documentation.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-resilience4j</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----

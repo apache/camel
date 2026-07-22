@@ -1,0 +1,300 @@
+= IEC 60870 Client Component (deprecated)
+:doctitle: IEC 60870 Client
+:shortname: iec60870-client
+:artifactid: camel-iec60870
+:description: IEC 60870 supervisory control and data acquisition (SCADA) client using NeoSCADA implementation.
+:since: 2.20
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The IEC 60870-5-104 Client component provides access to IEC 60870 servers using the
+http://eclipse.org/eclipsescada[Eclipse NeoSCADA] implementation.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-iec60870</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+The URI syntax of the endpoint is:
+
+----
+iec60870-client:host:port/00-01-02-03-04
+----
+
+The information object address is encoded in the path in the syntax above.
+Please note that always the full, 5-octet address format is being used.
+Unused octets have to be filled with zero.
+
+A connection instance if identified by the host and port part of the URI, plus all parameters in the _"id"_ group.
+If a new connection id is encountered, the connection options will be evaluated and the connection instance
+is created with those options.
+
+[NOTE]
+If two URIs specify the same connection (host, port, ...) but different connection options, then it is
+undefined which of those connection options will be used. 
+
+The final connection options will be evaluated in the following order:
+
+* If present, the `connectionOptions` parameter will be used
+* Otherwise, the `defaultConnectionOptions` instance is copied and customized in the following steps
+* Apply `protocolOptions` if present
+* Apply `dataModuleOptions` if present
+* Apply all explicit connection parameters (e.g. `timeZone`)
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Producer Command Types
+
+The producer supports different command types via the `CamelIec60870CommandType` header:
+
+[cols="1,3"]
+|===
+|Command Type |Description
+
+|`value`
+|Send value command (default). Body type determines command: Boolean→Single, Integer→Scaled, Float→Float setpoint.
+
+|`interrogation`
+|Trigger interrogation (C_IC_NA_1). Use `CamelIec60870Qoi` header for group interrogation (21-36).
+
+|`read`
+|Read single data point (C_RD_NA_1).
+
+|`status`
+|Get connection state only. No protocol command sent.
+|===
+
+=== Getting Connection Status (Producer)
+
+._Java-only: using ProducerTemplate to send and inspect connection state headers_
+[source,java]
+----
+from("direct:status")
+    .setHeader("CamelIec60870CommandType", constant("status"))
+    .to("iec60870-client:localhost:2404/00-01-00-00-01");
+
+// Usage
+Exchange result = producerTemplate.send("direct:status", e -> {});
+State state = result.getMessage().getHeader("CamelIec60870ConnectionState", State.class);
+Long uptime = result.getMessage().getHeader("CamelIec60870ConnectionUptime", Long.class);
+----
+
+=== Triggering Interrogation
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:interrogate")
+    .setHeader("CamelIec60870CommandType", constant("interrogation"))
+    .to("iec60870-client:localhost:2404/00-01-00-00-01");
+
+from("direct:interrogateGroup")
+    .setHeader("CamelIec60870CommandType", constant("interrogation"))
+    .setHeader("CamelIec60870Qoi", constant((short) 21))
+    .to("iec60870-client:localhost:2404/00-01-00-00-01");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:interrogate"/>
+  <setHeader name="CamelIec60870CommandType">
+    <constant>interrogation</constant>
+  </setHeader>
+  <to uri="iec60870-client:localhost:2404/00-01-00-00-01"/>
+</route>
+
+<route>
+  <from uri="direct:interrogateGroup"/>
+  <setHeader name="CamelIec60870CommandType">
+    <constant>interrogation</constant>
+  </setHeader>
+  <setHeader name="CamelIec60870Qoi">
+    <constant>21</constant>
+  </setHeader>
+  <to uri="iec60870-client:localhost:2404/00-01-00-00-01"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:interrogate
+      steps:
+        - setHeader:
+            name: CamelIec60870CommandType
+            constant: interrogation
+        - to:
+            uri: iec60870-client:localhost:2404/00-01-00-00-01
+
+- route:
+    from:
+      uri: direct:interrogateGroup
+      steps:
+        - setHeader:
+            name: CamelIec60870CommandType
+            constant: interrogation
+        - setHeader:
+            name: CamelIec60870Qoi
+            constant: 21
+        - to:
+            uri: iec60870-client:localhost:2404/00-01-00-00-01
+----
+====
+
+=== Sending Value Commands
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:bool").setBody(constant(true))
+    .to("iec60870-client:localhost:2404/00-01-00-00-01");
+
+from("direct:float").setBody(constant(42.5f))
+    .to("iec60870-client:localhost:2404/00-01-00-00-01");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:bool"/>
+  <setBody>
+    <constant>true</constant>
+  </setBody>
+  <to uri="iec60870-client:localhost:2404/00-01-00-00-01"/>
+</route>
+
+<route>
+  <from uri="direct:float"/>
+  <setBody>
+    <constant>42.5</constant>
+  </setBody>
+  <to uri="iec60870-client:localhost:2404/00-01-00-00-01"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:bool
+      steps:
+        - setBody:
+            constant: true
+        - to:
+            uri: iec60870-client:localhost:2404/00-01-00-00-01
+
+- route:
+    from:
+      uri: direct:float
+      steps:
+        - setBody:
+            constant: 42.5
+        - to:
+            uri: iec60870-client:localhost:2404/00-01-00-00-01
+----
+====
+
+== Consumer Examples
+
+Each message received by the consumer includes connection state and quality headers.
+
+=== Getting Connection Status (Consumer)
+
+._Java-only: using a Processor lambda to access typed connection state and quality headers_
+[source,java]
+----
+from("iec60870-client:localhost:2404/00-01-00-00-01")
+    .process(exchange -> {
+        // Connection state is included in every message
+        State state = exchange.getIn().getHeader("CamelIec60870ConnectionState", State.class);
+        Long uptime = exchange.getIn().getHeader("CamelIec60870ConnectionUptime", Long.class);
+
+        // Get the value and quality
+        Object value = exchange.getIn().getHeader("CamelIec60870Value");
+        Boolean valid = exchange.getIn().getHeader("CamelIec60870QualityValid", Boolean.class);
+
+        log.info("State: {}, Uptime: {} ms, Value: {}, Valid: {}", state, uptime, value, valid);
+    })
+    .to("log:values");
+----
+
+=== Filtering by Quality
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("iec60870-client:localhost:2404/00-01-00-00-01")
+    .filter(header("CamelIec60870QualityValid").isEqualTo(true))
+    .log("Good value: ${header.CamelIec60870Value}")
+    .to("seda:process");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="iec60870-client:localhost:2404/00-01-00-00-01"/>
+  <filter>
+    <simple>${header.CamelIec60870QualityValid} == true</simple>
+    <log message="Good value: ${header.CamelIec60870Value}"/>
+    <to uri="seda:process"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: iec60870-client:localhost:2404/00-01-00-00-01
+      steps:
+        - filter:
+            simple: "${header.CamelIec60870QualityValid} == true"
+            steps:
+              - log: "Good value: ${header.CamelIec60870Value}"
+              - to:
+                  uri: seda:process
+----
+====

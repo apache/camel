@@ -1,0 +1,274 @@
+= Kubernetes ConfigMap Component
+:doctitle: Kubernetes ConfigMap
+:shortname: kubernetes-config-maps
+:artifactid: camel-kubernetes
+:description: Perform operations on Kubernetes ConfigMaps and get notified on ConfigMaps changes.
+:since: 2.17
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Kubernetes
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Kubernetes ConfigMap component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
+provides a producer to execute Kubernetes ConfigMap operations and a consumer to consume events related to ConfigMap objects.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Supported producer operation
+
+- `listConfigMaps`
+- `listConfigMapsByLabels`
+- `getConfigMap`
+- `createConfigMap`
+- `updateConfigMap`
+- `deleteConfigMap`
+
+== Examples
+
+=== Kubernetes ConfigMaps Producer Examples
+
+- `listConfigMaps`: this operation lists the configmaps
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:list")
+    .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMaps")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&amp;operation=listConfigMaps"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+      steps:
+        - to:
+            uri: kubernetes-config-maps:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listConfigMaps
+        - to:
+            uri: mock:result
+----
+====
+
+This operation returns a List of ConfigMaps from your cluster
+
+- `listConfigMapsByLabels`: this operation lists the configmaps selected by label
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:listByLabels")
+    .setHeader("CamelKubernetesConfigMapsLabels", constant("key1=value1,key2=value2"))
+    .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMapsByLabels")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:listByLabels"/>
+  <setHeader name="CamelKubernetesConfigMapsLabels">
+    <constant>key1=value1,key2=value2</constant>
+  </setHeader>
+  <to uri="kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&amp;operation=listConfigMapsByLabels"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:listByLabels
+      steps:
+        - setHeader:
+            name: CamelKubernetesConfigMapsLabels
+            expression:
+              constant:
+                expression: key1=value1,key2=value2
+        - to:
+            uri: kubernetes-config-maps:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listConfigMapsByLabels
+        - to:
+            uri: mock:result
+----
+====
+
+This operation returns a List of ConfigMaps from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+
+=== Kubernetes ConfigMaps Consumer Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("kubernetes-config-maps://{{kubernetes-host}}?oauthToken={{kubernetes-token}}")
+    .to("log:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kubernetes-config-maps://{{kubernetes-host}}?oauthToken={{kubernetes-token}}"/>
+  <to uri="log:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kubernetes-config-maps://{{kubernetes-host}}
+      parameters:
+        oauthToken: "{{kubernetes-token}}"
+      steps:
+        - to:
+            uri: log:result
+----
+====
+
+This consumer returns a message per event received for all ConfigMaps from all namespaces in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch ConfigMaps with the specified label in any namespace.
+- `namespace` - Watch all ConfigMaps in the specified namespace.
+- `namespace` + `resourceName` - Watch the ConfigMap with the specified name in the given namespace.
+- `namespace` + `labelKey` + `labelValue` - Watch ConfigMaps with the specified label in the given namespace.
+
+== Using configmap properties function with Kubernetes
+
+The `camel-kubernetes` component include the following configmap related functions:
+
+* `configmap` - A function to lookup the string property from Kubernetes ConfigMaps.
+* `configmap-binary` - A function to lookup the binary property from Kubernetes ConfigMaps.
+
+Camel reads Configmaps from the Kubernetes API Server. And when RBAC is enabled on the cluster,
+the ServiceAccount that is used to run the application needs to have the proper permissions for such access.
+
+Before the Kubernetes property placeholder functions can be used they need to be configured with either (or both)
+
+- path - A _mount path_ that must be mounted to the running pod, to load the configmaps or secrets from local disk.
+- kubernetes client - *Autowired* An `io.fabric8.kubernetes.client.KubernetesClient` instance to use for connecting to the Kubernetes API server.
+
+Camel will first use _mount paths_ (if configured) to lookup, and then fallback to use the `KubernetesClient`.
+
+=== Using configmap with Kubernetes
+
+Given a configmap named `myconfig` in Kubernetes that has two entries:
+
+[source,properties]
+----
+drink = beer
+first = Carlsberg
+----
+
+Then these values can be used in your Camel routes such as:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("What {{configmap:myconfig/drink}} do you want?")
+    .log("I want {{configmap:myconfig/first}}");
+----
+
+XML::
++
+[source,xml]
+----
+<camelContext>
+  <route>
+    <from uri="direct:start"/>
+    <log message="What {{configmap:myconfig/drink}} do you want?"/>
+    <log message="I want {{configmap:myconfig/first}}"/>
+  </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "What {{configmap:myconfig/drink}} do you want?"
+        - log:
+            message: "I want {{configmap:myconfig/first}}"
+----
+====
+
+You can also provide a default value in case a key does not exist:
+
+[source,xml]
+----
+    <log message="I want {{configmap:myconfig/second:Heineken}}"/>
+----
+
+== Automatic Camel context reloading on Configmaps Refresh
+
+Being able to reload Camel context on a Configmap Refresh could be done by specifying the following properties: 
+
+[source,properties]
+----
+camel.vault.kubernetescm.refreshEnabled=true
+camel.vault.kubernetescm.configmaps=Configmap
+camel.main.context-reload-enabled = true
+----
+
+where `camel.vault.kubernetescm.refreshEnabled` will enable the automatic context reload and `camel.vault.kubernetescm.configmaps` is a regex representing or a comma separated lists of the configmaps we want to track for updates.
+
+Whenever a configmap listed in the property, will be updated in the same namespace of the running application, the Camel context will be reloaded, refreshing the configmap value.
+

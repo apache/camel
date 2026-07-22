@@ -1,0 +1,316 @@
+= SFTP Component
+:doctitle: SFTP
+:shortname: sftp
+:artifactid: camel-ftp
+:description: Upload and download files to/from SFTP servers.
+:since: 1.1
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+This component provides access to remote file systems over the SFTP protocol.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ftp</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Security Best Practices: Host Key Verification
+
+WARNING: By default, the SFTP component has `strictHostKeyChecking=no`, which disables host key verification and makes connections vulnerable to man-in-the-middle (MITM) attacks. For production environments, you should enable strict host key checking to ensure you are connecting to the expected server.
+
+==== Global Configuration (Component Level)
+
+You can configure host key verification settings globally on the SFTP component, which will apply to all SFTP endpoints unless overridden at the endpoint level:
+
+._Java-only: programmatic `SftpComponent` configuration via `CamelContext`_
+[source,java]
+----
+// Configure component for all SFTP endpoints
+SftpComponent sftp = context.getComponent("sftp", SftpComponent.class);
+sftp.setStrictHostKeyChecking("yes");
+sftp.setKnownHostsFile("/path/to/known_hosts");
+
+// All endpoints will inherit these settings
+from("sftp://host1/path1?username=user1&password=secret1")
+    .to("direct:result");
+
+from("sftp://host2/path2?username=user2&password=secret2")
+    .to("direct:result");
+----
+
+Or with application.properties configuration:
+
+[source,properties]
+----
+camel.component.sftp.strict-host-key-checking=yes
+camel.component.sftp.known-hosts-file=/path/to/known_hosts
+----
+
+==== Per-Endpoint Configuration
+
+Host key verification prevents MITM attacks by verifying the server's host key against a known list of trusted keys. When `strictHostKeyChecking=yes` is enabled, the SFTP client will reject connections to servers whose host key is not in the known hosts file.
+
+Endpoint-level configurations will override component-level settings. This allows you to set secure defaults globally while making exceptions for specific endpoints if needed.
+
+To enable strict host key checking at the endpoint level, set `strictHostKeyChecking=yes` and provide a known hosts file:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("sftp://host:22/path?username=myuser&password=secret&knownHostsFile=/path/to/known_hosts&strictHostKeyChecking=yes")
+    .to("direct:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="sftp://host:22/path?username=myuser&amp;password=secret&amp;knownHostsFile=/path/to/known_hosts&amp;strictHostKeyChecking=yes"/>
+  <to uri="direct:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: sftp://host:22/path
+      parameters:
+        username: myuser
+        password: secret
+        knownHostsFile: /path/to/known_hosts
+        strictHostKeyChecking: "yes"
+      steps:
+        - to:
+            uri: direct:result
+----
+====
+
+Alternatively, load the known hosts from the classpath:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("sftp://host:22/path?username=myuser&privateKeyFile=/path/to/id_rsa&knownHostsUri=classpath:known_hosts&strictHostKeyChecking=yes")
+    .to("direct:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="sftp://host:22/path?username=myuser&amp;privateKeyFile=/path/to/id_rsa&amp;knownHostsUri=classpath:known_hosts&amp;strictHostKeyChecking=yes"/>
+  <to uri="direct:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: sftp://host:22/path
+      parameters:
+        username: myuser
+        privateKeyFile: /path/to/id_rsa
+        knownHostsUri: "classpath:known_hosts"
+        strictHostKeyChecking: "yes"
+      steps:
+        - to:
+            uri: direct:result
+----
+====
+
+If you do not have a known hosts file, you can create one by connecting to the server using the `ssh` command, which will add the host key to `~/.ssh/known_hosts`. By default, the SFTP component will use this file if `useUserKnownHostsFile=true` (which is the default).
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("sftp://host:22/path?username=myuser&privateKeyFile=/path/to/id_rsa&strictHostKeyChecking=yes")
+    .to("direct:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="sftp://host:22/path?username=myuser&amp;privateKeyFile=/path/to/id_rsa&amp;strictHostKeyChecking=yes"/>
+  <to uri="direct:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: sftp://host:22/path
+      parameters:
+        username: myuser
+        privateKeyFile: /path/to/id_rsa
+        strictHostKeyChecking: "yes"
+      steps:
+        - to:
+            uri: direct:result
+----
+====
+
+NOTE: When `strictHostKeyChecking=yes` is enabled, Camel's security policy enforcement framework will not flag this as a security violation. The default `strictHostKeyChecking=no` may trigger warnings or failures depending on your configured security policy.
+
+=== OpenSSH Certificate Authentication
+
+Camel supports OpenSSH certificate-based authentication for SFTP connections, where a user's public key is signed by a Certificate Authority (CA) rather than being individually authorized on the server. This is common in enterprise environments using tools like HashiCorp Vault or custom CA infrastructure.
+
+To use certificate authentication, provide the certificate file alongside the private key:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("sftp://host:22/path?username=myuser&privateKeyFile=/path/to/user_key&certFile=/path/to/user_key-cert.pub")
+    .to("direct:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="sftp://host:22/path?username=myuser&amp;privateKeyFile=/path/to/user_key&amp;certFile=/path/to/user_key-cert.pub"/>
+  <to uri="direct:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: sftp://host:22/path
+      parameters:
+        username: myuser
+        privateKeyFile: /path/to/user_key
+        certFile: /path/to/user_key-cert.pub
+      steps:
+        - to:
+            uri: direct:result
+----
+====
+
+The certificate can also be loaded from a classpath resource using `certUri`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("sftp://host:22/path?username=myuser&privateKeyFile=/path/to/user_key&certUri=classpath:user_key-cert.pub")
+    .to("direct:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="sftp://host:22/path?username=myuser&amp;privateKeyFile=/path/to/user_key&amp;certUri=classpath:user_key-cert.pub"/>
+  <to uri="direct:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: sftp://host:22/path
+      parameters:
+        username: myuser
+        privateKeyFile: /path/to/user_key
+        certUri: "classpath:user_key-cert.pub"
+      steps:
+        - to:
+            uri: direct:result
+----
+====
+
+Or provided as raw bytes using `certBytes` (useful when the certificate is loaded programmatically, e.g., from a vault).
+
+NOTE: When a certificate is loaded, Camel automatically adds the certificate's key type to
+JSch's `PubkeyAcceptedAlgorithms` if it is not already present. This ensures certificate
+authentication works even when the key type has been removed from JSch's defaults due to
+SHA-1 deprecation (e.g., `ssh-rsa-cert-v01@openssh.com`). Both the legacy vendor-prefixed
+key type names (`<algorithm>-cert-v01@openssh.com`, used through
+https://datatracker.ietf.org/doc/html/draft-miller-ssh-cert-03[draft-03]) and the
+standardized short names (`<algorithm>-cert`, introduced in
+https://datatracker.ietf.org/doc/html/draft-miller-ssh-cert-04[draft-04]) are recognized.
+If you need to control the CA signature algorithms that JSch will accept, use the
+`caSignatureAlgorithms` parameter.
+
+=== Restoring Deprecated Key Types and Algorithms
+
+As of Camel 3.17.0, key types and algorithms that use SHA1 have been deprecated. These can be restored, if necessary, by setting JSch configuration directly. E.g.:
+
+._Java-only: restoring deprecated JSch key types and algorithms_
+[source,java]
+----
+JSch.setConfig("server_host_key",  JSch.getConfig("server_host_key") + ",ssh-rsa");
+JSch.setConfig("PubkeyAcceptedAlgorithms", JSch.getConfig("PubkeyAcceptedAlgorithms") + ",ssh-rsa");
+JSch.setConfig("kex", JSch.getConfig("kex") + ",diffie-hellman-group1-sha1,diffie-hellman-group14-sha1");
+----
+
+Note that the key types and algorithms your server supports may differ than the above example. You can use the following
+command to inspect your server's configuration:
+
+----
+ssh -vvv <server_address>
+----
+
+As of Camel 3.18.1, these values can also be set on SFTP endpoints by setting the corresponding URI parameters.
+
+== More Information
+
+For more information, you can look at the xref:ftp-component.adoc[FTP component].

@@ -1,0 +1,745 @@
+= MyBatis Component
+:doctitle: MyBatis
+:shortname: mybatis
+:artifactid: camel-mybatis
+:description: Performs a query, poll, insert, update or delete in a relational database using MyBatis.
+:since: 2.7
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The MyBatis component allows you to query, poll, insert, update and
+delete data in a relational database using http://mybatis.org/[MyBatis].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-mybatis</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+mybatis:statementName[?options]
+----
+
+Where *statementName* is the statement name in the MyBatis XML mapping
+file which maps to the query, insert, update or delete operation you
+wish to evaluate.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+This component will by default load the MyBatis SqlMapConfig file from
+the root of the classpath with the expected name of
+`SqlMapConfig.xml`. +
+ If the file is located in another location, you will need to configure
+the `configurationUri` option on the `MyBatisComponent` component.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Message Body
+
+The response from MyBatis will only be set as the body if it's a
+`SELECT` statement. That means, for example, for `INSERT` statements
+Camel will not replace the body. This allows you to continue routing and
+keep the original body. The response from MyBatis is always stored in
+the header with the key `CamelMyBatisResult`.
+
+== Examples
+
+For example, if you wish to consume beans from a JMS queue and insert
+them into a database, you could do the following:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:queue:newAccount")
+    .to("mybatis:insertAccount?statementType=Insert");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:queue:newAccount"/>
+  <to uri="mybatis:insertAccount?statementType=Insert"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:queue:newAccount
+      steps:
+        - to:
+            uri: mybatis:insertAccount
+            parameters:
+              statementType: Insert
+----
+====
+
+Notice we have to specify the `statementType`, as we need to instruct
+Camel which kind of operation to invoke.
+
+Where *insertAccount* is the MyBatis ID in the SQL mapping file:
+
+[source,xml]
+----
+  <!-- Insert example, using the Account parameter class -->
+  <insert id="insertAccount" parameterType="Account">
+    insert into ACCOUNT (
+      ACC_ID,
+      ACC_FIRST_NAME,
+      ACC_LAST_NAME,
+      ACC_EMAIL
+    )
+    values (
+      #{id}, #{firstName}, #{lastName}, #{emailAddress}
+    )
+  </insert>
+----
+
+== Using StatementType for better control of MyBatis
+
+When routing to an MyBatis endpoint, you will want more fine-grained
+control so you can control whether the SQL statement to be executed is a
+`SELECT`, `UPDATE`, `DELETE` or `INSERT` etc. So for instance if we want
+to route to an MyBatis endpoint in which the IN body contains parameters
+to a `SELECT` statement we can do:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("mybatis:selectAccountById?statementType=SelectOne")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="mybatis:selectAccountById?statementType=SelectOne"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mybatis:selectAccountById
+            parameters:
+              statementType: SelectOne
+        - to:
+            uri: mock:result
+----
+====
+
+In the code above we can invoke the MyBatis statement
+`selectAccountById` and the IN body should contain the account id we
+want to retrieve, such as an `Integer` type.
+
+We can do the same for some of the other operations, such as
+`SelectList`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("mybatis:selectAllAccounts?statementType=SelectList")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="mybatis:selectAllAccounts?statementType=SelectList"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mybatis:selectAllAccounts
+            parameters:
+              statementType: SelectList
+        - to:
+            uri: mock:result
+----
+====
+
+And the same for `UPDATE`, where we can send an `Account` object as the
+IN body to MyBatis:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("mybatis:updateAccount?statementType=Update")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="mybatis:updateAccount?statementType=Update"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mybatis:updateAccount
+            parameters:
+              statementType: Update
+        - to:
+            uri: mock:result
+----
+====
+
+=== Using InsertList StatementType
+
+MyBatis allows you to insert multiple rows using its for-each batch
+driver. To use this, you need to use the <foreach> in the mapper XML
+file. For example, as shown below:
+
+[source,xml]
+----
+<!-- Batch Insert example, using the Account parameter class -->
+<insert id="batchInsertAccount" parameterType="java.util.List">
+    insert into ACCOUNT (
+    ACC_ID,
+    ACC_FIRST_NAME,
+    ACC_LAST_NAME,
+    ACC_EMAIL
+    )
+    values (
+    <foreach item="Account" collection="list" open="" close="" separator="),(">
+        #{Account.id}, #{Account.firstName}, #{Account.lastName}, #{Account.emailAddress}
+    </foreach>
+    )
+</insert>
+----
+
+Then you can insert multiple rows, by sending a Camel message to the
+`mybatis` endpoint which uses the `InsertList` statement type, as shown
+below:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("mybatis:batchInsertAccount?statementType=InsertList")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="mybatis:batchInsertAccount?statementType=InsertList"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mybatis:batchInsertAccount
+            parameters:
+              statementType: InsertList
+        - to:
+            uri: mock:result
+----
+====
+
+=== Using UpdateList StatementType
+
+MyBatis allows you to update multiple rows using its for-each batch
+driver. To use this, you need to use the <foreach> in the mapper XML
+file. For example, as shown below:
+
+[source,xml]
+----
+<update id="batchUpdateAccount" parameterType="java.util.Map">
+    update ACCOUNT set
+    ACC_EMAIL = #{emailAddress}
+    where
+    ACC_ID in
+    <foreach item="Account" collection="list" open="(" close=")" separator=",">
+        #{Account.id}
+    </foreach>
+</update>
+----
+
+Then you can update multiple rows, by sending a Camel message to the
+mybatis endpoint which uses the UpdateList statement type, as shown
+below:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("mybatis:batchUpdateAccount?statementType=UpdateList")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="mybatis:batchUpdateAccount?statementType=UpdateList"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mybatis:batchUpdateAccount
+            parameters:
+              statementType: UpdateList
+        - to:
+            uri: mock:result
+----
+====
+
+=== Using DeleteList StatementType
+
+MyBatis allows you to delete multiple rows using its for-each batch
+driver. To use this, you need to use the <foreach> in the mapper XML
+file. For example, as shown below:
+
+[source,xml]
+----
+<delete id="batchDeleteAccountById" parameterType="java.util.List">
+    delete from ACCOUNT
+    where
+    ACC_ID in
+    <foreach item="AccountID" collection="list" open="(" close=")" separator=",">
+        #{AccountID}
+    </foreach>
+</delete>
+----
+
+Then you can delete multiple rows, by sending a Camel message to the
+mybatis endpoint which uses the DeleteList statement type, as shown
+below:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("mybatis:batchDeleteAccount?statementType=DeleteList")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="mybatis:batchDeleteAccount?statementType=DeleteList"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mybatis:batchDeleteAccount
+            parameters:
+              statementType: DeleteList
+        - to:
+            uri: mock:result
+----
+====
+
+=== Notice on InsertList, UpdateList and DeleteList StatementTypes
+
+Parameter of any type (List, Map, etc.) can be passed to mybatis, and an
+end user is responsible for handling it as required with the help of
+http://www.mybatis.org/mybatis-3/dynamic-sql.html[mybatis dynamic queries] capabilities.
+
+=== Scheduled polling example
+
+This component supports scheduled polling and can therefore be used as
+a Polling Consumer. For example, to poll the
+database every minute:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mybatis:selectAllAccounts?delay=60000")
+    .to("activemq:queue:allAccounts");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mybatis:selectAllAccounts?delay=60000"/>
+  <to uri="activemq:queue:allAccounts"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mybatis:selectAllAccounts
+      parameters:
+        delay: 60000
+      steps:
+        - to:
+            uri: activemq:queue:allAccounts
+----
+====
+
+Alternatively you can use another mechanism for triggering the scheduled
+polls, such as the xref:timer-component.adoc[Timer] or xref:timer-component.adoc[Quartz]
+components. In the sample below we poll the database, every 30 seconds
+using the xref:timer-component.adoc[Timer] component and send the data to the JMS
+queue:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer://pollTheDatabase?delay=30000")
+    .to("mybatis:selectAllAccounts")
+    .to("activemq:queue:allAccounts");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="timer://pollTheDatabase?delay=30000"/>
+  <to uri="mybatis:selectAllAccounts"/>
+  <to uri="activemq:queue:allAccounts"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:pollTheDatabase
+      parameters:
+        delay: 30000
+      steps:
+        - to:
+            uri: mybatis:selectAllAccounts
+        - to:
+            uri: activemq:queue:allAccounts
+----
+====
+
+And the MyBatis SQL mapping file used:
+
+[source,xml]
+----
+  <!-- Select with no parameters using the result map for Account class. -->
+  <select id="selectAllAccounts" resultMap="AccountResult">
+    select * from ACCOUNT
+  </select>
+----
+
+=== Using onConsume
+
+This component supports executing statements *after* data have been
+consumed and processed by Camel. This allows you to do post updates in
+the database. Notice all statements must be `UPDATE` statements. Camel
+supports executing multiple statements whose names should be separated
+by commas.
+
+The route below illustrates we execute the *consumeAccount* statement
+data is processed. This allows us to change the status of the row in the
+database to process, so we avoid consuming it twice or more.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mybatis:selectUnprocessedAccounts?onConsume=consumeAccount")
+    .to("mock:results");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mybatis:selectUnprocessedAccounts?onConsume=consumeAccount"/>
+  <to uri="mock:results"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mybatis:selectUnprocessedAccounts
+      parameters:
+        onConsume: consumeAccount
+      steps:
+        - to:
+            uri: mock:results
+----
+====
+
+And the statements in the sqlmap file:
+
+[source,xml]
+----
+<update id="consumeAccount" parameterType="Account">
+    update ACCOUNT set PROCESSED = true where ACC_ID = #{id}
+</update>
+----
+
+=== Participating in transactions
+
+Setting up a transaction manager under camel-mybatis can be a little bit
+fiddly, as it involves externalising the database configuration outside
+the standard MyBatis `SqlMapConfig.xml` file.
+
+The first part requires the setup of a `DataSource`. This is typically a
+pool (either DBCP, or c3p0), which needs to be wrapped in a Spring
+proxy. This proxy enables non-Spring use of the `DataSource` to
+participate in Spring transactions (the MyBatis `SqlSessionFactory` does
+just this).
+
+._XML-only: Spring bean declaration for transaction-aware `DataSource` proxy_
+[source,xml]
+----
+<bean id="dataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+    <constructor-arg>
+        <bean class="com.mchange.v2.c3p0.ComboPooledDataSource">
+            <property name="driverClass" value="org.postgresql.Driver"/>
+            <property name="jdbcUrl" value="jdbc:postgresql://localhost:5432/myDatabase"/>
+            <property name="user" value="myUser"/>
+            <property name="password" value="myPassword"/>
+        </bean>
+    </constructor-arg>
+</bean>
+----
+
+This has the additional benefit of enabling the database configuration
+to be externalised using property placeholders.
+
+A transaction manager is then configured to manage the outermost
+`DataSource`:
+
+._XML-only: Spring bean declaration for `DataSourceTransactionManager`_
+[source,xml]
+----
+<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSource"/>
+</bean>
+----
+
+A http://www.mybatis.org/spring/index.html[mybatis-spring]
+http://www.mybatis.org/spring/factorybean.html[`SqlSessionFactoryBean`]
+then wraps that same `DataSource`:
+
+._XML-only: Spring bean declaration for MyBatis `SqlSessionFactoryBean`_
+[source,xml]
+----
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="dataSource"/>
+    <!-- standard mybatis config file -->
+    <property name="configLocation" value="/META-INF/SqlMapConfig.xml"/>
+    <!-- externalised mappers -->
+    <property name="mapperLocations" value="classpath*:META-INF/mappers/**/*.xml"/>
+</bean>
+----
+
+The camel-mybatis component is then configured with that factory:
+
+._XML-only: Spring bean declaration for `MyBatisComponent` with `SqlSessionFactory`_
+[source,xml]
+----
+<bean id="mybatis" class="org.apache.camel.component.mybatis.MyBatisComponent">
+    <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+</bean>
+----
+
+Finally, a transaction policy is defined over the top of the transaction manager, which can then be used as usual:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:insert")
+    .policy("PROPAGATION_REQUIRED")
+    .to("mybatis:myModel.insert?statementType=Insert");
+----
+
+XML::
++
+[source,xml]
+----
+<bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+    <property name="transactionManager" ref="txManager"/>
+    <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"/>
+</bean>
+
+<camelContext id="my-model-context" xmlns="http://camel.apache.org/schema/spring">
+    <route id="insertModel">
+        <from uri="direct:insert"/>
+        <transacted ref="PROPAGATION_REQUIRED"/>
+        <to uri="mybatis:myModel.insert?statementType=Insert"/>
+    </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:insert
+      steps:
+        - policy:
+            ref: PROPAGATION_REQUIRED
+            steps:
+              - to:
+                  uri: mybatis:myModel.insert
+                  parameters:
+                    statementType: Insert
+----
+====
+
+== MyBatis Spring Boot Starter integration
+
+Spring Boot users can use https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/[mybatis-spring-boot-starter] artifact provided by the mybatis team
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.mybatis.spring.boot</groupId>
+  <artifactId>mybatis-spring-boot-starter</artifactId>
+  <version>3.0.3</version>
+</dependency>
+----
+
+in particular, autoconfigured beans from mybatis-spring-boot-starter can be used as follows:
+
+[source,properties]
+----
+#application.properties
+camel.component.mybatis.sql-session-factory = #sqlSessionFactory
+----

@@ -1,0 +1,119 @@
+= Normalizer
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/Normalizer.html[Normalizer]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
+
+The normalizer pattern is used to process messages that are semantically equivalent,
+but arrive in different formats. The normalizer transforms the incoming messages into a common format.
+
+image::eip/NormalizerDetail.gif[image]
+
+In Apache Camel, you can implement the normalizer pattern by combining a xref:choice-eip.adoc[Content-Based Router],
+which detects the incoming message's format, with a collection of different xref:message-translator.adoc[Message Translators],
+which transform the different incoming formats into a common format.
+
+== Example
+
+This example shows a Message Normalizer that converts two types of XML messages into a common format.
+Messages in this common format are then routed.
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+// we need to normalize two types of incoming messages
+from("direct:start")
+    .choice()
+        .when().xpath("/employee").to("bean:normalizer?method=employeeToPerson")
+        .when().xpath("/customer").to("bean:normalizer?method=customerToPerson")
+    .end()
+    .to("mock:result");
+----
+
+
+XML::
++
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <choice>
+      <when>
+        <xpath>/employee</xpath>
+        <to uri="bean:normalizer?method=employeeToPerson"/>
+      </when>
+      <when>
+        <xpath>/customer</xpath>
+        <to uri="bean:normalizer?method=customerToPerson"/>
+      </when>
+    </choice>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+
+<bean id="normalizer" class="org.apache.camel.processor.MyNormalizer"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - choice:
+            when:
+              - expression:
+                  xpath:
+                    expression: /employee
+                steps:
+                  - to:
+                      uri: bean:normalizer
+                      parameters:
+                        method: employeeToPerson
+              - expression:
+                  xpath:
+                    expression: /customer
+                steps:
+                  - to:
+                      uri: bean:normalizer
+                      parameters:
+                        method: customerToPerson
+        - to:
+            uri: mock:result
+----
+====
+
+In this case, we're using a Java xref:ROOT:bean-component.adoc[Bean] as the normalizer.
+
+The class looks like this:
+
+[source,java]
+----
+// Java
+public class MyNormalizer {
+
+    public void employeeToPerson(Exchange exchange, @XPath("/employee/name/text()") String name) {
+        exchange.getMessage().setBody(createPerson(name));
+    }
+
+    public void customerToPerson(Exchange exchange, @XPath("/customer/@name") String name) {
+        exchange.getMessage().setBody(createPerson(name));
+    }
+
+    private String createPerson(String name) {
+        return "<person name=\" + name + \"/>";
+    }
+}
+----
+
+In case there are many incoming formats, then the xref:choice-eip.adoc[Content Based Router]
+may end up with too many choices. In this situation, then an alternative is to use xref:toD-eip.adoc[Dynamic to]
+that computes a xref:ROOT:bean-component.adoc[Bean] endpoint, to be called that acts as
+xref:message-translator.adoc[Message Translator].

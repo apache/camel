@@ -1,0 +1,298 @@
+= AWS Bedrock Component
+:doctitle: AWS Bedrock
+:shortname: aws-bedrock
+:artifactid: camel-aws-bedrock
+:description: Invoke Model of AWS Bedrock service.
+:since: 4.5
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS2 Bedrock component supports invoking a supported LLM model from
+https://aws.amazon.com/bedrock/[AWS Bedrock] service.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Bedrock. More information is available at
+https://aws.amazon.com/bedrock/[Amazon Bedrock].
+
+
+== URI Format
+
+----
+aws-bedrock://label[?options]
+----
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+Required Bedrock component options
+
+You have to provide the bedrockRuntimeClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/bedrock/[Amazon Bedrock] service.
+
+== Usage
+
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
+
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
+
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
+ - Amazon EC2 Instance profile credentials. 
+
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+=== Bedrock Producer operations
+
+Camel-AWS Bedrock component provides the following operation on the producer side:
+
+- invokeTextModel
+- invokeImageModel
+- invokeEmbeddingsModel
+- invokeTextModelStreaming
+- invokeImageModelStreaming
+- invokeEmbeddingsModelStreaming
+- converse
+- converseStream
+- applyGuardrail
+
+The operation must match the model type. Text-generation models are used with `invokeTextModel`, image-generation
+models (for example `amazon.titan-image-generator-v1`, `amazon.nova-canvas-v1:0`, the `stability.*` models) with
+`invokeImageModel`, and embedding models (for example `amazon.titan-embed-text-v1`, `cohere.embed-english-v3`) with
+`invokeEmbeddingsModel`. Invoking `invokeTextModel` with an image, embedding, rerank or video/speech model fails fast
+with an `IllegalArgumentException` that names the model and points to the operation to use instead.
+
+=== Streaming Support
+
+The streaming operations (`invokeTextModelStreaming`, `invokeImageModelStreaming`, `invokeEmbeddingsModelStreaming`) enable real-time streaming of model responses, providing lower latency and better user experience for interactive applications.
+
+==== Streaming Output Modes
+
+Two streaming modes are supported:
+
+*Complete Mode (default)*: Accumulates all chunks and returns the complete response as a single message. This is the simplest mode and behaves similarly to non-streaming operations, but with lower time-to-first-token.
+
+*Chunks Mode*: Emits each chunk as it arrives in a List. Useful for reactive streaming pipelines or when you need to process chunks individually.
+
+==== Streaming Configuration Options
+
+- `streamOutputMode`: Set to "complete" (default) or "chunks"
+- `includeStreamingMetadata`: Whether to include metadata headers (default: true)
+
+==== Streaming Metadata Headers
+
+When `includeStreamingMetadata` is true, the following headers are set:
+
+- `CamelAwsBedrockCompletionReason`: The reason the model stopped generating (e.g., "FINISH", "end_turn", "stop")
+- `CamelAwsBedrockTokenCount`: The number of tokens generated (if provided by the model)
+- `CamelAwsBedrockChunkCount`: The number of chunks received
+
+==== Supported Models for Streaming
+
+All text generation models support streaming:
+- Amazon Titan (all text models)
+- Anthropic Claude (all versions)
+- Meta Llama (all versions)
+- Mistral AI (all models)
+- Cohere Command models
+- Amazon Nova models
+
+=== Converse API Support
+
+The Converse API provides a unified, model-agnostic interface for conversational AI interactions with AWS Bedrock models. It offers several advantages over the legacy InvokeModel API:
+
+- *Unified Interface*: Single API across all supported models (Claude, Llama, Mistral, etc.)
+- *Multi-turn Conversations*: Native support for conversation history with user/assistant roles
+- *Tool Use & Function Calling*: Built-in support for tools and function calling
+- *System Prompts*: First-class support for system-level instructions
+- *Structured Responses*: Consistent response format across all models
+- *Streaming Support*: Real-time streaming with the `converseStream` operation
+
+==== Converse Operations
+
+Two operations are provided:
+
+*converse*: Standard request-response conversation
+[source]
+----
+aws-bedrock://label?operation=converse&modelId=anthropic.claude-3-sonnet-20240229-v1:0
+----
+
+*converseStream*: Streaming conversation with real-time chunk delivery
+[source]
+----
+aws-bedrock://label?operation=converseStream&modelId=anthropic.claude-3-sonnet-20240229-v1:0
+----
+
+==== Converse Configuration Options
+
+Converse API uses message headers for configuration:
+
+- `CamelAwsBedrockConverseMessages` (required): List of Message objects representing the conversation
+- `CamelAwsBedrockConverseSystem`: List of SystemContentBlock for system-level instructions
+- `CamelAwsBedrockConverseInferenceConfig`: InferenceConfiguration for temperature, maxTokens, etc.
+- `CamelAwsBedrockConverseToolConfig`: ToolConfiguration for function calling support
+- `CamelAwsBedrockConverseAdditionalFields`: Document for model-specific additional fields
+
+For streaming operations, you can also use:
+- `CamelAwsBedrockStreamOutputMode`: Set to "complete" (default) or "chunks"
+
+==== Converse Response Headers
+
+When a conversation completes, the following headers are set:
+
+- `CamelAwsBedrockConverseStopReason`: Why the model stopped (e.g., "end_turn", "max_tokens")
+- `CamelAwsBedrockConverseUsage`: TokenUsage object with input/output token counts
+- `CamelAwsBedrockConverseOutputMessage`: The complete Message object from the model
+- `CamelAwsBedrockChunkCount`: (streaming only) Number of chunks received
+
+==== Supported Models for Converse API
+
+The Converse API supports all modern foundation models on Bedrock:
+
+- Anthropic Claude 3 family (Haiku, Sonnet, Opus)
+- Anthropic Claude 3.5 family (Sonnet v2, Haiku)
+- Amazon Nova family (Micro, Lite, Pro)
+- Meta Llama 3.x models
+- Mistral AI models
+- Cohere Command R models
+
+NOTE: Legacy models (Claude 2.x, Claude Instant) are not supported by the Converse API. Use the `invokeTextModel` operation for those models.
+
+=== Guardrails Support
+
+AWS Bedrock Guardrails enable you to implement safeguards for your generative AI applications based on your use cases and responsible AI policies. Guardrails can filter harmful content, block sensitive topics, remove personally identifiable information (PII), and enhance content safety and privacy in generative AI applications.
+
+The Camel AWS Bedrock component provides comprehensive support for guardrails through:
+
+- *Converse API Integration*: Apply guardrails to conversational interactions
+- *Streaming Support*: Use guardrails with real-time streaming responses
+- *Standalone Validation*: Check content against guardrails without invoking a model
+- *Flexible Configuration*: Configure guardrails at endpoint level or per-message
+
+==== Guardrails Configuration Options
+
+*Endpoint-level Configuration* (applies to all requests):
+
+- `guardrailIdentifier`: The ID or ARN of the guardrail to apply
+- `guardrailVersion`: The version of the guardrail (default: "DRAFT")
+- `guardrailTrace`: Whether to return trace information (default: false)
+
+*Message-level Configuration* (per-message override via headers):
+
+- `CamelAwsBedrockGuardrailConfig`: GuardrailConfiguration object for converse operations
+- `CamelAwsBedrockGuardrailIdentifier`: Guardrail identifier String for the applyGuardrail operation (overrides the endpoint `guardrailIdentifier`)
+- `CamelAwsBedrockGuardrailContent`: Content blocks for applyGuardrail operation
+- `CamelAwsBedrockGuardrailSource`: Source type - "INPUT" or "OUTPUT" for applyGuardrail
+
+==== Guardrails Operations
+
+*converse with Guardrails*: Apply guardrails to conversational model invocations
+
+[source]
+----
+aws-bedrock://label?operation=converse&modelId=anthropic.claude-3-sonnet-20240229-v1:0
+    &guardrailIdentifier=abc123xyz&guardrailVersion=DRAFT&guardrailTrace=true
+----
+
+*converseStream with Guardrails*: Apply guardrails to streaming conversations
+
+[source]
+----
+aws-bedrock://label?operation=converseStream&modelId=anthropic.claude-3-sonnet-20240229-v1:0
+    &guardrailIdentifier=abc123xyz&guardrailVersion=DRAFT
+----
+
+*applyGuardrail*: Standalone operation to validate content against a guardrail without invoking a model
+
+[source]
+----
+aws-bedrock://label?operation=applyGuardrail&guardrailIdentifier=abc123xyz
+    &guardrailVersion=DRAFT
+----
+
+==== Guardrails Response Headers
+
+When using guardrails, the following headers may be set in the response:
+
+- `CamelAwsBedrockGuardrailTrace`: Trace information from guardrail evaluation (when trace is enabled)
+- `CamelAwsBedrockGuardrailOutput`: Output content blocks from applyGuardrail
+- `CamelAwsBedrockGuardrailAssessments`: Detailed assessments from applyGuardrail
+- `CamelAwsBedrockGuardrailUsage`: Token usage for guardrail evaluation
+
+==== Creating a Guardrail in AWS
+
+Before using guardrails, you need to create and configure one in the AWS Bedrock console:
+
+1. Navigate to AWS Bedrock Console → Guardrails
+2. Click "Create guardrail"
+3. Configure filters:
+   - *Content filters*: Block harmful content (hate, violence, sexual, etc.)
+   - *Denied topics*: Block specific topics you define
+   - *Word filters*: Block or mask custom words/phrases
+   - *PII filters*: Detect and redact personally identifiable information
+4. Save and note your Guardrail ID (e.g., `abc123xyz`)
+
+==== Supported Models for Guardrails
+
+Guardrails work with all models that support the Converse API:
+
+- Anthropic Claude 3 family (Haiku, Sonnet, Opus)
+- Anthropic Claude 3.5 family (Sonnet v2, Haiku)
+- Amazon Nova family (Micro, Lite, Pro)
+- Meta Llama 3.x models
+- Mistral AI models
+- Cohere Command R models
+
+== Sub-Pages
+
+For more details on specific features, see:
+
+* xref:others:aws-bedrock-models.adoc[Supported Models] - Complete list of supported AWS Bedrock models with JSON request schemas
+* xref:others:aws-bedrock-examples.adoc[Examples] - Producer examples for text, image, embeddings, streaming, conversation, and guardrails
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws-bedrock</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+----
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+

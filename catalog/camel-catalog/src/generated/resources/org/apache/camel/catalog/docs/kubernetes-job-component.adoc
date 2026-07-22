@@ -1,0 +1,141 @@
+= Kubernetes Job Component
+:doctitle: Kubernetes Job
+:shortname: kubernetes-job
+:artifactid: camel-kubernetes
+:description: Perform operations on Kubernetes Jobs.
+:since: 2.23
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Kubernetes
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Kubernetes Job component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
+provides a producer to execute kubernetes Job operations.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Supported producer operation
+
+- `listJob`
+- `listJobByLabels`
+- `getJob`
+- `createJob`
+- `updateJob`
+- `deleteJob`
+
+== Examples
+
+=== Kubernetes Job Producer Examples
+
+- `listJob`: this operation lists the jobs on a kubernetes cluster
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:list")
+    .to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=listJob")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-job:///?kubernetesClient=#kubernetesClient&amp;operation=listJob"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+    steps:
+      - to:
+          uri: kubernetes-job:///
+          parameters:
+            kubernetesClient: "#kubernetesClient"
+            operation: listJob
+      - to:
+          uri: mock:result
+----
+====
+
+This operation returns a list of jobs from your cluster
+
+- `listJobByLabels`: this operation lists the jobs by labels on a kubernetes cluster
+
+._Java-only: sets a Map header for label selection_
+[source,java]
+----
+from("direct:listByLabels")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesJobLabels",
+            Map.of("key1", "value1", "key2", "value2"));
+    })
+    .to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=listJobByLabels")
+    .to("mock:result");
+----
+
+This operation returns a list of jobs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+
+- `createJob`: This operation creates a job on a Kubernetes Cluster
+
+._Java-only: programmatic JobSpec construction with Fabric8 Kubernetes client_
+[source,java]
+----
+from("timer:foo?delay=1000&repeatCount=1")
+    .routeId("kubernetes-jobcreate-client")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesJobName", "camel-job");
+        exchange.getIn().setHeader("CamelKubernetesNamespaceName", "default");
+        exchange.getIn().setHeader("CamelKubernetesJobLabels",
+            Map.of("jobLabelKey1", "value1", "jobLabelKey2", "value2", "app", "jobFromCamelApp"));
+
+        Container container = new Container();
+        container.setName("pi");
+        container.setImage("perl");
+        container.setCommand(List.of("echo", "Job created from Apache Camel"));
+
+        PodSpec ps = new PodSpec();
+        ps.setRestartPolicy("Never");
+        ps.setContainers(List.of(container));
+
+        ObjectMeta metadata = new ObjectMeta();
+        metadata.setAnnotations(Map.of("jobMetadataAnnotation1", "random value"));
+        metadata.setLabels(Map.of("podLabelKey1", "value1", "podLabelKey2", "value2", "app", "podFromCamelApp"));
+
+        PodTemplateSpec pts = new PodTemplateSpec();
+        pts.setSpec(ps);
+        pts.setMetadata(metadata);
+
+        JobSpec js = new JobSpec();
+        js.setTemplate(pts);
+        exchange.getIn().setHeader("CamelKubernetesJobSpec", js);
+    })
+    .to("kubernetes-job:///{{kubernetes-master-url}}?oauthToken={{kubernetes-oauth-token:}}&operation=createJob")
+    .log("Job created:")
+    .to("log:output");
+----
+
+

@@ -1,0 +1,192 @@
+= Event Message
+:tabs-sync-option:
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/EventMessage.html[Event Message]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns].
+
+How can messaging be used to transmit events from one application to another?
+
+image::eip/EventMessageSolution.gif[image]
+
+Use an Event Message for reliable, asynchronous event notification between applications.
+
+Camel supports Event Message by the xref:manual::exchange-pattern.adoc[Exchange Pattern]
+on a xref:message.adoc[Message] which can be set to `InOnly` to indicate
+a oneway event message. Camel xref:ROOT:index.adoc[Components] then
+implement this pattern using the underlying transport or protocols.
+
+The default behaviour of many xref:ROOT:index.adoc[Components] is `InOnly`
+such as for xref:ROOT:jms-component.adoc[JMS], xref:ROOT:jms-component.adoc[File] or
+xref:ROOT:seda-component.adoc[SEDA].
+
+Some components support both `InOnly` and `InOut` and act accordingly.
+For example, the xref:ROOT:jms-component.adoc[JMS]
+can send messages as one-way (`InOnly`) or use request/reply messaging (`InOut`).
+
+TIP: See the related xref:requestReply-eip.adoc[Request Reply] message.
+
+== Using endpoint URI
+
+If you are using a component which defaults to `InOut` you can override
+the xref:manual::exchange-pattern.adoc[Exchange Pattern] for a *consumer* endpoint using
+the pattern property.
+
+[source,text]
+----
+foo:bar?exchangePattern=InOnly
+----
+
+IMPORTANT: This is only possible on endpoints used by consumers (i.e., in `<from>`).
+
+In the example below the message will be forced as an event message as the consumer
+is in `InOnly` mode.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mq:someQueue?exchangePattern=InOnly")
+  .to("activemq:queue:one-way");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="mq:someQueue?exchangePattern=InOnly"/>
+    <to uri="activemq:queue:one-way"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mq:someQueue
+      parameters:
+        exchangePattern: InOnly
+      steps:
+        - to:
+            uri: activemq:queue:one-way
+----
+====
+
+== Using `setExchangePattern` EIP
+
+You can specify the
+xref:manual::exchange-pattern.adoc[Exchange Pattern] using `setExchangePattern` in the DSL.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mq:someQueue")
+  .setExchangePattern(ExchangePattern.InOnly)
+  .to("activemq:queue:one-way");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="mq:someQueue"/>
+    <setExchangePattern pattern="InOnly"/>
+    <to uri="activemq:queue:one-way"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mq:someQueue
+      steps:
+        - setExchangePattern:
+            pattern: InOnly
+        - to:
+            uri: activemq:queue:one-way
+----
+====
+
+When using `setExchangePattern` then the xref:manual::exchange-pattern.adoc[Exchange Pattern]
+on the xref:manual::exchange.adoc[Exchange] is changed from this point onwards in the route.
+
+This means you can change the pattern back again at a later point:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mq:someQueue")
+  .setExchangePattern(ExchangePattern.InOnly)
+  .to("activemq:queue:one-way")
+  .setExchangePattern(ExchangePattern.InOut)
+  .to("activemq:queue:in-and-out")
+  .log("InOut MEP received ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="mq:someQueue"/>
+    <setExchangePattern pattern="InOnly"/>
+    <to uri="activemq:queue:one-way"/>
+    <setExchangePattern pattern="InOut"/>
+    <to uri="activemq:queue:in-and-out"/>
+    <log message="InOut MEP received ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mq:someQueue
+      steps:
+        - setExchangePattern:
+            pattern: InOnly
+        - to:
+            uri: activemq:queue:one-way
+        - setExchangePattern:
+            pattern: InOut
+        - to:
+            uri: activemq:queue:in-and-out
+        - log:
+            message: "InOut MEP received ${body}"
+----
+====
+
+NOTE: Using `setExchangePattern` to change the xref:manual::exchange-pattern.adoc[Exchange Pattern]
+is often only used in special use-cases where you must
+force to be using either `InOnly` or `InOut` mode when using components that support both modes (such as messaging components like ActiveMQ, JMS, RabbitMQ etc.)
+
+== JMS component and InOnly vs. InOut
+
+When consuming messages from xref:ROOT:jms-component.adoc[JMS] a Request Reply is
+indicated by the presence of the `JMSReplyTo` header. This means the JMS component automatic
+detects whether to use `InOnly` or `InOut` in the consumer.
+
+Likewise, the JMS producer will check the current xref:manual::exchange-pattern.adoc[Exchange Pattern]
+on the xref:manual::exchange.adoc[Exchange] to know whether to use `InOnly` or `InOut` mode (i.e., one-way vs. request/reply messaging)
+
+
+== Other Implementation Details
+
+There are concrete classes that implement the `Message` interface for each Camel-supported communications technology. For example, the `JmsMessage` class provides a JMS-specific implementation of the `Message` interface. The public API of the `Message` interface provides getters and setters methods to access the _message id_, _body_ and individual _header_ fields of a message.
