@@ -767,7 +767,9 @@ class CatalogTab extends AbstractTableTab {
             if (e.label != null) {
                 row.put("label", e.label);
             }
-            row.put("artifactId", e.artifactId);
+            if (e.artifactId != null) {
+                row.put("artifactId", e.artifactId);
+            }
             if (e.firstVersion != null) {
                 row.put("since", e.firstVersion);
             }
