@@ -55,8 +55,6 @@ import static org.apache.hc.core5.http.ContentType.TEXT_PLAIN;
 import static org.apache.hc.core5.http.HttpHeaders.CONTENT_ENCODING;
 import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpCompressionTest extends BaseHttpTest {
 
@@ -145,13 +143,13 @@ public class HttpCompressionTest extends BaseHttpTest {
                         exchange1.getIn().setBody(getBody());
                     });
 
-            assertNotNull(exchange);
+            assertThat(exchange).isNotNull();
 
             Message out = exchange.getMessage();
-            assertNotNull(out);
+            assertThat(out).isNotNull();
 
             Map<String, Object> headers = out.getHeaders();
-            assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
+            assertThat(headers.get(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(HttpStatus.SC_OK);
 
             assertBody(out.getBody(String.class));
         } finally {
