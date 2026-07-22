@@ -630,6 +630,31 @@ public class ServiceBusConsumerTest {
     }
 
     @Test
+    void sessionLockRenewerReleasesSessionReceiverOnRenewalFailure() throws Exception {
+        when(configuration.isSessionEnabled()).thenReturn(true);
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        when(messageContext.getMessage()).thenReturn(message);
+        configureMockMessage();
+        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusSeconds(5));
+        // renewal fails -> the renewer must still release/close the session receiver (no leak)
+        when(sessionBoundReceiver.renewSessionLock())
+                .thenReturn(Mono.error(new RuntimeException("renew failed")));
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
+            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), anyLong());
+
+            processMessageCaptor.getValue().accept(messageContext);
+            taskCaptor.getValue().run();
+
+            verify(sessionBoundReceiver).renewSessionLock();
+            verify(sessionBoundReceiver).close();
+        }
+    }
+
+    @Test
     void sessionLockRenewerReusesSessionReceiverForSameSession() throws Exception {
         when(configuration.isSessionEnabled()).thenReturn(true);
         when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);

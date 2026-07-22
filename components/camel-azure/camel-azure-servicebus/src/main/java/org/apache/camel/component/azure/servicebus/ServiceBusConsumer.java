@@ -452,7 +452,9 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
                 if (elapsed.compareTo(maxRenewDuration) >= 0) {
                     LOG.debug("Max session lock renewal duration exceeded for exchangeId {}, stopping renewal",
                             exchangeId);
-                    entries.remove(exchangeId);
+                    if (entries.remove(exchangeId) != null) {
+                        releaseSessionReceiver(entry.sessionId);
+                    }
                     continue;
                 }
 
@@ -476,21 +478,21 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
                                     error -> {
                                         LOG.warn("Failed to renew session lock for sessionId {}, exchangeId {}: {}",
                                                 entry.sessionId, exchangeId, error.getMessage());
-                                        entries.remove(exchangeId);
+                                        if (entries.remove(exchangeId) != null) {
+                                            releaseSessionReceiver(entry.sessionId);
+                                        }
                                     });
                 }
             }
         }
 
+        // Acquire and release are both guarded by sessionReceiverCreationLock so the
+        // increment/create and decrement/close operations on a SessionReceiverHolder are
+        // atomic relative to each other. This prevents a race where a newly arriving message
+        // increments a holder that a concurrently completing exchange is about to close.
         private ServiceBusReceiverAsyncClient acquireSessionReceiver(String sessionId) {
-            SessionReceiverHolder existing = sessionReceivers.get(sessionId);
-            if (existing != null) {
-                existing.inFlightCount.incrementAndGet();
-                return existing.client;
-            }
-
             synchronized (sessionReceiverCreationLock) {
-                existing = sessionReceivers.get(sessionId);
+                SessionReceiverHolder existing = sessionReceivers.get(sessionId);
                 if (existing != null) {
                     existing.inFlightCount.incrementAndGet();
                     return existing.client;
@@ -510,14 +512,16 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
         }
 
         private void releaseSessionReceiver(String sessionId) {
-            SessionReceiverHolder holder = sessionReceivers.get(sessionId);
-            if (holder == null) {
-                return;
-            }
+            synchronized (sessionReceiverCreationLock) {
+                SessionReceiverHolder holder = sessionReceivers.get(sessionId);
+                if (holder == null) {
+                    return;
+                }
 
-            if (holder.inFlightCount.decrementAndGet() <= 0) {
-                sessionReceivers.remove(sessionId, holder);
-                holder.client.close();
+                if (holder.inFlightCount.decrementAndGet() <= 0) {
+                    sessionReceivers.remove(sessionId);
+                    holder.client.close();
+                }
             }
         }
 
