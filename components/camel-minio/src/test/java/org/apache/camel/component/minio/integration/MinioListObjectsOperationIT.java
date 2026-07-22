@@ -26,7 +26,7 @@ import io.minio.MinioClient;
 import io.minio.RemoveBucketArgs;
 import io.minio.RemoveObjectsArgs;
 import io.minio.Result;
-import io.minio.messages.DeleteObject;
+import io.minio.messages.DeleteRequest;
 import io.minio.messages.Item;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -115,12 +115,12 @@ class MinioListObjectsOperationIT extends MinioIntegrationTestSupport {
 
         client.makeBucket(MakeBucketArgs.builder().bucket(BUCKET_NAME).build());
 
-        final List<DeleteObject> objects = new ArrayList<>(20);
+        final List<DeleteRequest.Object> objects = new ArrayList<>(20);
 
         // set up the environment
         for (int i = 0; i < 20; i++) {
             String currentDeleteObjectName = "CamelUnitTest-" + randomAlphanumeric(5);
-            objects.add(new DeleteObject(currentDeleteObjectName));
+            objects.add(new DeleteRequest.Object(currentDeleteObjectName));
             template.send("direct:addObject", ExchangePattern.InOnly, new Processor() {
                 @Override
                 public void process(Exchange exchange) throws Exception {

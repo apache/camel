@@ -887,7 +887,7 @@ public interface MinioComponentBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option is a:
-         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
+         * &lt;code&gt;io.minio.ServerSideEncryption.CustomerKey&lt;/code&gt;
          * type.
          * 
          * Group: security
@@ -895,7 +895,7 @@ public interface MinioComponentBuilderFactory {
          * @param serverSideEncryptionCustomerKey the value to set
          * @return the dsl builder
          */
-        default MinioComponentBuilder serverSideEncryptionCustomerKey(io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
+        default MinioComponentBuilder serverSideEncryptionCustomerKey(io.minio.ServerSideEncryption.CustomerKey serverSideEncryptionCustomerKey) {
             doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
             return this;
         }
@@ -968,7 +968,7 @@ public interface MinioComponentBuilderFactory {
             case "accessKey": getOrCreateConfiguration((MinioComponent) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((MinioComponent) component).setSecretKey((java.lang.String) value); return true;
             case "serverSideEncryption": getOrCreateConfiguration((MinioComponent) component).setServerSideEncryption((io.minio.ServerSideEncryption) value); return true;
-            case "serverSideEncryptionCustomerKey": getOrCreateConfiguration((MinioComponent) component).setServerSideEncryptionCustomerKey((io.minio.ServerSideEncryptionCustomerKey) value); return true;
+            case "serverSideEncryptionCustomerKey": getOrCreateConfiguration((MinioComponent) component).setServerSideEncryptionCustomerKey((io.minio.ServerSideEncryption.CustomerKey) value); return true;
             default: return false;
             }
         }
