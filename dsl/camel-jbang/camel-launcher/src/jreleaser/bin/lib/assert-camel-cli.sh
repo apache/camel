@@ -26,7 +26,6 @@
 #                                                                   uninstall (not called by camel-validate.sh's
 #                                                                   own validators, which inline this check)
 #   assert_camel_cli <camel-cmd> <workdir> [expected-version] -- full version+init assertion wrapper
-#   assert_camel_absent <path>                                -- verify a camel symlink/entry is gone
 # ============================================================================
 
 if [ -n "${BASH_SOURCE+set}" ]; then
@@ -141,15 +140,4 @@ assert_camel_cli() {
     fi
 
     return 0
-}
-
-assert_camel_absent() {
-    local path="$1"
-    if [ -e "$path" ] || [ -L "$path" ]; then
-        assertion_fail "uninstall left behind: $path"
-        return 1
-    else
-        assertion_pass "'$path' does not exist (removed by uninstall)"
-        return 0
-    fi
 }

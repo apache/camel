@@ -52,7 +52,7 @@ class PackageNativeValidationTest {
         Path fake = writeFakeCamel(tmp.resolve("camel"), VERSION);
         String script = ". " + LIB.toAbsolutePath()
                         + "; assert_camel_cli '" + fake + "' '" + tmp + "' '" + VERSION + "'"
-                        + " && assert_camel_absent '" + tmp.resolve("does-not-exist-camel").toAbsolutePath() + "'";
+                        + " && assert_uninstalled '" + tmp.resolve("does-not-exist-camel").toAbsolutePath() + "'";
         Result r = sh(null, List.of("ASSERT_INIT_FIXTURE=" + FIXTURE.toAbsolutePath()), script);
 
         assertThat(r.exit()).as(r.out()).isZero();
