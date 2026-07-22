@@ -26,15 +26,29 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.ses.model.MessageTag;
+import software.amazon.awssdk.services.ses.model.RawMessage;
 import software.amazon.awssdk.services.ses.model.SendEmailRequest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SesComponentTest extends CamelTestSupport {
 
     @BindToRegistry("amazonSESClient")
     private AmazonSESClientMock sesClient = new AmazonSESClientMock();
+
+    @Test
+    void rawMessageBodyIsSentAsItsContentNotTheSdkBytesDescriptor() {
+        String mime = "From: from@example.com\r\nSubject: Subject\r\n\r\nThis is my message text.";
+        template.send("direct:start", exchange -> exchange.getIn().setBody(
+                RawMessage.builder().data(SdkBytes.fromUtf8String(mime)).build()));
+
+        // SdkBytes.toString() would yield "SdkBytes(bytes=0x...)" rather than the message content
+        String sent = sesClient.getSendEmailRequest().message().body().text().data();
+        assertThat(sent).isEqualTo(mime);
+    }
 
     @Test
     public void sendInOnlyMessageUsingUrlOptions() {
