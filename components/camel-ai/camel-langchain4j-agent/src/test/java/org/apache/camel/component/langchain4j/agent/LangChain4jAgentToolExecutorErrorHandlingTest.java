@@ -28,6 +28,7 @@ import dev.langchain4j.service.tool.AiServiceTool;
 import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.service.tool.ToolProviderRequest;
 import dev.langchain4j.service.tool.ToolProviderResult;
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
@@ -38,20 +39,23 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests that the ToolExecutor created by LangChain4jAgentProducer for Camel route tools correctly propagates
- * exceptions. This is the reproducer for CAMEL-23944: when a Camel route tool throws, the exception must be rethrown by
- * the ToolExecutor so that LangChain4j's ToolExecutionErrorHandler / compensateOnToolErrors can fire.
+ * Tests that the ToolExecutor created by LangChain4jAgentProducer for Camel route tools correctly propagates exceptions
+ * and isolates tool execution state. This is the reproducer for CAMEL-23944: when a Camel route tool throws, the
+ * exception must be rethrown by the ToolExecutor so that LangChain4j's ToolExecutionErrorHandler /
+ * compensateOnToolErrors can fire.
  *
  * <p>
- * Before the fix, the ToolExecutor swallowed exceptions from the route (stored on the exchange via
- * {@code setException()}) and returned an error string instead, preventing LangChain4j from seeing the failure.
+ * Before the fix, the ToolExecutor had two bugs:
+ * <ol>
+ * <li>Exceptions from tool routes were swallowed and returned as a plain string ("Tool execution failed"), making
+ * LangChain4j believe the tool succeeded.</li>
+ * <li>The live producer exchange was shared with tool execution, causing tool side-effects (headers, body, exceptions)
+ * to leak into the calling exchange.</li>
+ * </ol>
  */
 class LangChain4jAgentToolExecutorErrorHandlingTest extends CamelTestSupport {
 
     private static final String TOOL_SUCCESS_RESULT = "{\"status\": \"ok\"}";
-
-    /** Captures the ToolProvider passed by the producer so we can test the ToolExecutor directly. */
-    private final AtomicReference<ToolProvider> capturedToolProvider = new AtomicReference<>();
 
     /** Tracks whether a tool execution error was observed by the agent. */
     private final AtomicBoolean errorObserved = new AtomicBoolean(false);
@@ -74,7 +78,6 @@ class LangChain4jAgentToolExecutorErrorHandlingTest extends CamelTestSupport {
         // A custom Agent that captures the ToolProvider and exercises the ToolExecutor directly.
         // This avoids needing a real LLM while still testing the producer's tool execution path.
         Agent capturingAgent = (body, toolProvider) -> {
-            capturedToolProvider.set(toolProvider);
 
             if (toolProvider != null) {
                 ToolProviderResult providerResult = toolProvider.provideTools(createToolProviderRequest());
@@ -83,7 +86,7 @@ class LangChain4jAgentToolExecutorErrorHandlingTest extends CamelTestSupport {
                 for (AiServiceTool aiTool : aiTools) {
                     ToolExecutionRequest request = ToolExecutionRequest.builder()
                             .name(aiTool.toolSpecification().name())
-                            .arguments("{}")
+                            .arguments("{\"input\": \"test value\"}")
                             .build();
 
                     try {
@@ -118,15 +121,16 @@ class LangChain4jAgentToolExecutorErrorHandlingTest extends CamelTestSupport {
                         .to("langchain4j-agent:test?agent=#capturingAgent&tags=success");
 
                 // Camel route tool that throws an exception
-                from("langchain4j-tools:failingTool?tags=failing"
+                from("ai-tool:failingTool?tags=failing"
                      + "&description=A tool that always fails"
                      + "&parameter.input=string")
                         .throwException(new RuntimeException("Simulated tool failure"));
 
-                // Camel route tool that succeeds
-                from("langchain4j-tools:successTool?tags=success"
+                // Camel route tool that succeeds and sets a side-effect header
+                from("ai-tool:successTool?tags=success"
                      + "&description=A tool that always succeeds"
                      + "&parameter.input=string")
+                        .setHeader("toolSideEffect", constant("leaked"))
                         .setBody(constant(TOOL_SUCCESS_RESULT));
             }
         };
@@ -205,19 +209,70 @@ class LangChain4jAgentToolExecutorErrorHandlingTest extends CamelTestSupport {
     /**
      * Verifies that tool execution does not leak state (headers, body) into the calling exchange. Each tool invocation
      * should use an isolated exchange copy.
+     *
+     * <p>
+     * Without exchange isolation, AiToolExecutor sets tool argument headers (like "input") and the tool route may set
+     * additional side-effect headers (like "toolSideEffect") directly on the live producer exchange. This test verifies
+     * that the calling exchange's original headers survive and that no tool-related headers leak through.
      */
     @Test
     void toolExecutionShouldNotLeakStateIntoCallingExchange() {
-        // Send a message with a known body and header
-        String originalBody = "original body";
+        Exchange result = template.request("direct:agent-with-success-tool", exchange -> {
+            exchange.getMessage().setBody("original body");
+            exchange.getMessage().setHeader("originalHeader", "originalValue");
+        });
 
-        String response = template.requestBodyAndHeader(
-                "direct:agent-with-success-tool",
-                originalBody,
-                "originalHeader", "originalValue",
-                String.class);
+        // The response body comes from the agent (via result.content()),
+        // not from the tool route
+        assertThat(result.getMessage().getBody(String.class))
+                .as("Response should come from the agent, not the tool route")
+                .isEqualTo("agent response");
 
-        // The response should come from the agent, not be polluted by tool execution
-        assertThat(response).isEqualTo("agent response");
+        // The caller's original header must survive tool execution
+        assertThat(result.getMessage().getHeader("originalHeader"))
+                .as("Original header should survive tool execution")
+                .isEqualTo("originalValue");
+
+        // Tool argument headers must NOT leak into the calling exchange.
+        // AiToolExecutor sets each tool argument as an exchange header (e.g. "input");
+        // with exchange isolation, these stay on the copy.
+        assertThat(result.getMessage().getHeader("input"))
+                .as("Tool argument header 'input' should not leak into calling exchange")
+                .isNull();
+
+        // Side-effect headers set by the tool route must NOT leak.
+        // The success tool route sets "toolSideEffect" = "leaked"; with exchange
+        // isolation, this stays on the copy.
+        assertThat(result.getMessage().getHeader("toolSideEffect"))
+                .as("Tool route side-effect header should not leak into calling exchange")
+                .isNull();
+    }
+
+    /**
+     * Verifies that a failing tool also does not leak state into the calling exchange. The exchange isolation must be
+     * unconditional — it must happen for both success and failure paths.
+     */
+    @Test
+    void failingToolExecutionShouldNotLeakStateIntoCallingExchange() {
+        Exchange result = template.request("direct:agent-with-failing-tool", exchange -> {
+            exchange.getMessage().setBody("original body");
+            exchange.getMessage().setHeader("originalHeader", "originalValue");
+        });
+
+        // The response body comes from the agent (the capturing agent always
+        // returns "agent response" regardless of tool success/failure)
+        assertThat(result.getMessage().getBody(String.class))
+                .as("Response should come from the agent even after tool failure")
+                .isEqualTo("agent response");
+
+        // The caller's original header must survive even when the tool fails
+        assertThat(result.getMessage().getHeader("originalHeader"))
+                .as("Original header should survive failing tool execution")
+                .isEqualTo("originalValue");
+
+        // Tool argument headers must NOT leak even on the failure path
+        assertThat(result.getMessage().getHeader("input"))
+                .as("Tool argument header 'input' should not leak on failure path")
+                .isNull();
     }
 }
