@@ -16,33 +16,20 @@
  */
 package org.apache.camel.component.cyberark.vault.integration;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.Base64;
-
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cyberark.vault.CyberArkVaultConstants;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 // Must be manually tested. Provide CyberArk Conjur connection details using system properties:
 // -Dcamel.cyberark.url=http://localhost:8080
-// -Dcamel.cyberark.account=myAccount
+// -Dcamel.cyberark.account=myConjurAccount
 // -Dcamel.cyberark.username=admin
 // -Dcamel.cyberark.apiKey=your-api-key
 @EnabledIfSystemProperties({
@@ -55,62 +42,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         @EnabledIfSystemProperty(named = "camel.cyberark.apiKey", matches = ".*",
                                  disabledReason = "CyberArk Conjur API key not provided")
 })
-public class CyberArkVaultProducerIT extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CyberArkVaultProducerIT.class);
-
-    @EndpointInject("mock:result")
-    private MockEndpoint mockResult;
-
-    private static HttpClient httpClient;
-    private static String authToken;
+public class CyberArkVaultProducerIT extends CyberArkTestSupport {
 
     @BeforeAll
     public static void setupSecrets() throws Exception {
-        httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
 
-        // Authenticate
-        String url = String.format("%s/authn/%s/%s/authenticate",
-                System.getProperty("camel.cyberark.url"),
-                System.getProperty("camel.cyberark.account"),
-                System.getProperty("camel.cyberark.username"));
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "text/plain")
-                .POST(HttpRequest.BodyPublishers.ofString(System.getProperty("camel.cyberark.apiKey")))
-                .build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        authToken = response.body();
+        // Declare variables
+        loadPolicy("""
+                - !variable test/secret
+                - !variable production/database
+                """);
 
         // Create test secrets
         createSecret("test/secret", "mySecretValue");
         createSecret("production/database", "{\"username\":\"prod-user\",\"password\":\"prod-pass\"}");
-    }
-
-    private static void createSecret(String secretId, String secretValue) {
-        try {
-            String url = String.format("%s/secrets/%s/variable/%s",
-                    System.getProperty("camel.cyberark.url"),
-                    System.getProperty("camel.cyberark.account"),
-                    secretId);
-
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .header("Authorization", "Token token=\"" + Base64.getEncoder()
-                            .encodeToString(authToken.getBytes(StandardCharsets.UTF_8)) + "\"")
-                    .header("Content-Type", "application/octet-stream")
-                    .POST(HttpRequest.BodyPublishers.ofString(secretValue))
-                    .build();
-
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            LOG.info("Created secret '{}': HTTP {}", secretId, response.statusCode());
-        } catch (Exception e) {
-            LOG.warn("Could not create secret '{}': {}", secretId, e.getMessage());
-        }
     }
 
     @Test
