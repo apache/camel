@@ -578,7 +578,10 @@ class CatalogTab extends AbstractTableTab {
                 }
             }
 
-            Set<String> skipEips = Set.of("when", "otherwise");
+            Set<String> skipEips = Set.of("when", "otherwise",
+                    "langChain4jCharacterTokenizer", "langChain4jLineTokenizer",
+                    "langChain4jParagraphTokenizer", "langChain4jSentenceTokenizer",
+                    "langChain4jWordTokenizer");
             for (String name : eipNames) {
                 if (skipEips.contains(name)) {
                     continue;
