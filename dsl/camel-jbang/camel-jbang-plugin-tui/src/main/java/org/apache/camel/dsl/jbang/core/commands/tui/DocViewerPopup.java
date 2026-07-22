@@ -68,6 +68,7 @@ class DocViewerPopup {
     private boolean wantsOptions;
     private final TocPopup tocPopup = new TocPopup();
     private int lastContentWidth;
+    private int lastTotalHeight;
 
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final ListState pickerState = new ListState();
@@ -148,6 +149,7 @@ class DocViewerPopup {
         docContent = markdown;
         docTitle = title;
         docScroll = 0;
+        lastTotalHeight = 0;
         showViewer = true;
         onCloseCallback = null;
     }
@@ -520,6 +522,7 @@ class DocViewerPopup {
             int visibleLines = hChunks.get(0).height();
             int totalLines = docLines.size();
             int clampedScroll = Math.min(docScroll, Math.max(0, totalLines - visibleLines));
+            docScroll = clampedScroll;
             int end = Math.min(clampedScroll + visibleLines, totalLines);
             List<Line> visible = new ArrayList<>(docLines.subList(clampedScroll, end));
             while (visible.size() < visibleLines) {
@@ -543,6 +546,13 @@ class DocViewerPopup {
                     .constraints(Constraint.fill(), Constraint.length(1))
                     .split(inner);
             lastContentWidth = hChunks.get(0).width();
+            int viewportHeight = hChunks.get(0).height();
+            if (lastTotalHeight > 0) {
+                int maxScroll = Math.max(0, lastTotalHeight - viewportHeight);
+                if (docScroll > maxScroll) {
+                    docScroll = maxScroll;
+                }
+            }
             MarkdownView view = MarkdownView.builder()
                     .source(docContent)
                     .scroll(docScroll)
@@ -550,7 +560,7 @@ class DocViewerPopup {
                     .build();
             frame.renderWidget(view, hChunks.get(0));
             int totalHeight = view.computeHeight(lastContentWidth);
-            int viewportHeight = hChunks.get(0).height();
+            lastTotalHeight = totalHeight;
             if (totalHeight > viewportHeight) {
                 scrollbarState
                         .contentLength(totalHeight)
