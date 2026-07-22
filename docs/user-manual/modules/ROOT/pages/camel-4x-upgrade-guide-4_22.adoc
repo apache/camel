@@ -217,23 +217,27 @@ to the true average throughput rather than oscillating between zero and spike va
 If you have tooling that consumes the JMX throughput value and expects the old instantaneous
 behavior, be aware that the reported value will now ramp up and decay gradually.
 
-=== camel-azure-servicebus - Camel-managed message lock renewal
+=== camel-azure-servicebus - Camel-managed message and session lock renewal
 
 When consuming from Azure Service Bus in `PEEK_LOCK` mode with `maxAutoLockRenewDuration > 0`, Camel now
-actively renews message locks using a dedicated `ServiceBusReceiverAsyncClient` and Camel's internal
+actively renews message and session locks using dedicated Azure Service Bus receiver clients and Camel's internal
 `PeriodTaskScheduler`. This addresses a limitation where the Azure SDK's built-in lock renewal is tied
 to the `processMessage` callback duration, which returns immediately for asynchronous Camel routes —
-causing long-running exchanges to silently lose their message locks.
+causing long-running exchanges to silently lose their message or session locks.
 
 The new behavior activates automatically when all of the following are true:
 
 * No custom `processorClient` is provided
 * Receive mode is `PEEK_LOCK`
 * `maxAutoLockRenewDuration > 0`
-* Session mode is disabled
+
+For non-session consumers, Camel uses `ServiceBusReceiverAsyncClient.renewMessageLock()`. For session-enabled
+consumers, Camel creates session-bound receivers on demand via `ServiceBusSessionReceiverAsyncClient.acceptSession()`
+and renews locks with `renewSessionLock()`, cleaning up session receivers when no exchanges for that session
+are in flight.
 
 No configuration changes are required. The existing `maxAutoLockRenewDuration` option controls how long
-Camel will continue renewing a message's lock.
+Camel will continue renewing a message's or session's lock.
 
 === camel-azure - component-specific CredentialType enums removed
 

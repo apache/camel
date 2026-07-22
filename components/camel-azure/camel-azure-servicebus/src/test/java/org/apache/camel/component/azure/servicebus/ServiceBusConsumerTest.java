@@ -43,6 +43,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
+import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -93,6 +94,8 @@ public class ServiceBusConsumerTest {
     private final PeriodTaskScheduler periodTaskScheduler = mock();
     private final UuidGenerator uuidGenerator = mock();
     private final ServiceBusReceiverAsyncClient renewalClient = mock();
+    private final ServiceBusSessionReceiverAsyncClient sessionRenewalClient = mock();
+    private final ServiceBusReceiverAsyncClient sessionBoundReceiver = mock();
     private final ArgumentCaptor<Consumer<ServiceBusReceivedMessageContext>> processMessageCaptor = ArgumentCaptor.captor();
     private final ArgumentCaptor<Consumer<ServiceBusErrorContext>> processErrorCaptor = ArgumentCaptor.captor();
     private final ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.captor();
@@ -120,6 +123,9 @@ public class ServiceBusConsumerTest {
         when(context.getUuidGenerator()).thenReturn(uuidGenerator);
         when(uuidGenerator.generateExchangeUuid()).thenReturn("test-exchange-id");
         when(clientFactory.createServiceBusReceiverAsyncClient(any())).thenReturn(renewalClient);
+        when(clientFactory.createServiceBusSessionReceiverAsyncClient(any())).thenReturn(sessionRenewalClient);
+        when(sessionRenewalClient.acceptSession(any())).thenReturn(Mono.just(sessionBoundReceiver));
+        when(sessionBoundReceiver.renewSessionLock()).thenReturn(Mono.just(MESSAGE_LOCKED_UNTIL.plusMinutes(1)));
     }
 
     @Test
@@ -549,14 +555,166 @@ public class ServiceBusConsumerTest {
     }
 
     @Test
-    void lockRenewerNotCreatedForSessionEnabledConsumer() throws Exception {
+    void lockRenewerCreatedForSessionEnabledPeekLockMode() throws Exception {
         when(configuration.isSessionEnabled()).thenReturn(true);
         when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
         when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
             consumer.doStart();
+            verify(clientFactory).createServiceBusSessionReceiverAsyncClient(any());
             verify(clientFactory, never()).createServiceBusReceiverAsyncClient(any());
+            verify(periodTaskScheduler).schedulePeriodTask(any(), anyLong());
         }
+    }
+
+    @Test
+    void lockRenewerNotCreatedForSessionEnabledReceiveAndDeleteMode() throws Exception {
+        when(configuration.isSessionEnabled()).thenReturn(true);
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.RECEIVE_AND_DELETE);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+            verify(clientFactory, never()).createServiceBusSessionReceiverAsyncClient(any());
+        }
+    }
+
+    @Test
+    void sessionLockRenewerTracksAndRemovesExchanges() throws Exception {
+        when(configuration.isSessionEnabled()).thenReturn(true);
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        when(messageContext.getMessage()).thenReturn(message);
+        configureMockMessage();
+        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusSeconds(5));
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
+            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), anyLong());
+            Runnable sessionLockRenewerTask = taskCaptor.getValue();
+
+            processMessageCaptor.getValue().accept(messageContext);
+
+            verify(sessionRenewalClient).acceptSession(MESSAGE_SESSION_ID);
+
+            Exchange exchange = exchangeCaptor.getValue();
+            for (Synchronization sync : exchange.getExchangeExtension().handoverCompletions()) {
+                sync.onComplete(exchange);
+            }
+
+            sessionLockRenewerTask.run();
+            verify(sessionBoundReceiver, never()).renewSessionLock();
+            verify(sessionBoundReceiver).close();
+        }
+    }
+
+    @Test
+    void sessionLockRenewerRenewsSessionLockWhenExpiring() throws Exception {
+        when(configuration.isSessionEnabled()).thenReturn(true);
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        when(messageContext.getMessage()).thenReturn(message);
+        configureMockMessage();
+        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusSeconds(5));
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
+            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), anyLong());
+
+            processMessageCaptor.getValue().accept(messageContext);
+            taskCaptor.getValue().run();
+
+            verify(sessionBoundReceiver).renewSessionLock();
+        }
+    }
+
+    @Test
+    void sessionLockRenewerReusesSessionReceiverForSameSession() throws Exception {
+        when(configuration.isSessionEnabled()).thenReturn(true);
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        when(messageContext.getMessage()).thenReturn(message);
+        configureMockMessage();
+        when(uuidGenerator.generateExchangeUuid()).thenReturn("exchange-1", "exchange-2");
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            processMessageCaptor.getValue().accept(messageContext);
+            processMessageCaptor.getValue().accept(messageContext);
+
+            verify(sessionRenewalClient, times(1)).acceptSession(MESSAGE_SESSION_ID);
+        }
+    }
+
+    @Test
+    void sessionLockRenewerKeepsSessionReceiverOpenUntilLastExchangeCompletes() throws Exception {
+        when(configuration.isSessionEnabled()).thenReturn(true);
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        when(messageContext.getMessage()).thenReturn(message);
+        configureMockMessage();
+        when(uuidGenerator.generateExchangeUuid()).thenReturn("exchange-1", "exchange-2");
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            processMessageCaptor.getValue().accept(messageContext);
+            processMessageCaptor.getValue().accept(messageContext);
+
+            Exchange firstExchange = exchangeCaptor.getAllValues().get(0);
+            for (Synchronization sync : firstExchange.getExchangeExtension().handoverCompletions()) {
+                sync.onComplete(firstExchange);
+            }
+
+            verify(sessionBoundReceiver, never()).close();
+
+            Exchange secondExchange = exchangeCaptor.getAllValues().get(1);
+            for (Synchronization sync : secondExchange.getExchangeExtension().handoverCompletions()) {
+                sync.onComplete(secondExchange);
+            }
+
+            verify(sessionBoundReceiver).close();
+        }
+    }
+
+    @Test
+    void doStopCleansUpSessionLockRenewer() throws Exception {
+        when(configuration.isSessionEnabled()).thenReturn(true);
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
+        consumer.doStart();
+
+        verify(clientFactory).createServiceBusSessionReceiverAsyncClient(any());
+
+        consumer.doStop();
+
+        verify(sessionRenewalClient).close();
+        verify(client).close();
+    }
+
+    @Test
+    void stopStartCycleRecreatesSessionLockRenewer() throws Exception {
+        when(configuration.isSessionEnabled()).thenReturn(true);
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
+        consumer.doStart();
+
+        verify(clientFactory, times(1)).createServiceBusSessionReceiverAsyncClient(any());
+
+        consumer.doStop();
+        verify(sessionRenewalClient).close();
+
+        ServiceBusSessionReceiverAsyncClient sessionRenewalClient2 = mock();
+        when(clientFactory.createServiceBusSessionReceiverAsyncClient(any())).thenReturn(sessionRenewalClient2);
+        consumer.doStart();
+
+        verify(clientFactory, times(2)).createServiceBusSessionReceiverAsyncClient(any());
+        verify(periodTaskScheduler, times(2)).schedulePeriodTask(any(), anyLong());
+
+        consumer.doShutdown();
+        verify(sessionRenewalClient2).close();
     }
 
     @Test

@@ -130,6 +130,29 @@ public final class ServiceBusClientFactory {
         return clientBuilder.buildAsyncClient();
     }
 
+    public ServiceBusSessionReceiverAsyncClient createServiceBusSessionReceiverAsyncClient(
+            final ServiceBusConfiguration configuration) {
+        final ServiceBusClientBuilder busClientBuilder = createBaseServiceBusClient(configuration);
+        final ServiceBusClientBuilder.ServiceBusSessionReceiverClientBuilder clientBuilder
+                = busClientBuilder.sessionReceiver();
+
+        clientBuilder.disableAutoComplete();
+
+        switch (configuration.getServiceBusType()) {
+            case queue -> clientBuilder.queueName(configuration.getTopicOrQueueName());
+            case topic -> clientBuilder.topicName(configuration.getTopicOrQueueName());
+        }
+
+        clientBuilder
+                .subscriptionName(configuration.getSubscriptionName())
+                .receiveMode(configuration.getServiceBusReceiveMode())
+                .maxAutoLockRenewDuration(Duration.ZERO)
+                .prefetchCount(configuration.getPrefetchCount())
+                .subQueue(configuration.getSubQueue());
+
+        return clientBuilder.buildAsyncClient();
+    }
+
     public ServiceBusProcessorClient createServiceBusProcessorClient(
             ServiceBusConfiguration configuration, Consumer<ServiceBusReceivedMessageContext> processMessage,
             Consumer<ServiceBusErrorContext> processError) {

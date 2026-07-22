@@ -31,6 +31,7 @@ import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessageContext;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
+import com.azure.messaging.servicebus.ServiceBusSessionReceiverAsyncClient;
 import com.azure.messaging.servicebus.models.DeadLetterOptions;
 import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import com.azure.messaging.servicebus.models.SubQueue;
@@ -57,7 +58,9 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
     private ServiceBusProcessorClient client;
     private boolean clientCloseable;
     private ServiceBusReceiverAsyncClient renewalClient;
+    private ServiceBusSessionReceiverAsyncClient sessionRenewalClient;
     private LockRenewer lockRenewer;
+    private SessionLockRenewer sessionLockRenewer;
     private final AtomicInteger pendingExchanges = new AtomicInteger();
 
     public ServiceBusConsumer(final ServiceBusEndpoint endpoint, final Processor processor) {
@@ -104,16 +107,21 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
         // which returns immediately for async routes, making maxAutoLockRenewDuration ineffective
         if (getConfiguration().getProcessorClient() == null
                 && getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK
-                && getConfiguration().getMaxAutoLockRenewDuration() > 0
-                && !getConfiguration().isSessionEnabled()) {
-            renewalClient = getEndpoint().getServiceBusClientFactory()
-                    .createServiceBusReceiverAsyncClient(getConfiguration());
-
+                && getConfiguration().getMaxAutoLockRenewDuration() > 0) {
             long maxRenewMs = getConfiguration().getMaxAutoLockRenewDuration();
-            lockRenewer = new LockRenewer(renewalClient, Duration.ofMillis(maxRenewMs));
-
             PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getEndpoint().getCamelContext());
-            scheduler.schedulePeriodTask(lockRenewer, LOCK_RENEW_INTERVAL_SECONDS * 1000L);
+
+            if (Boolean.TRUE.equals(getConfiguration().isSessionEnabled())) {
+                sessionRenewalClient = getEndpoint().getServiceBusClientFactory()
+                        .createServiceBusSessionReceiverAsyncClient(getConfiguration());
+                sessionLockRenewer = new SessionLockRenewer(sessionRenewalClient, Duration.ofMillis(maxRenewMs));
+                scheduler.schedulePeriodTask(sessionLockRenewer, LOCK_RENEW_INTERVAL_SECONDS * 1000L);
+            } else {
+                renewalClient = getEndpoint().getServiceBusClientFactory()
+                        .createServiceBusReceiverAsyncClient(getConfiguration());
+                lockRenewer = new LockRenewer(renewalClient, Duration.ofMillis(maxRenewMs));
+                scheduler.schedulePeriodTask(lockRenewer, LOCK_RENEW_INTERVAL_SECONDS * 1000L);
+            }
         }
     }
 
@@ -128,6 +136,8 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             // track for Camel-managed lock renewal
             if (lockRenewer != null) {
                 lockRenewer.add(exchange, message);
+            } else if (sessionLockRenewer != null) {
+                sessionLockRenewer.add(exchange, message);
             }
             // use default consumer callback
             AsyncCallback cb = defaultConsumerCallback(exchange, true);
@@ -161,9 +171,17 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             lockRenewer.cancel();
             lockRenewer = null;
         }
+        if (sessionLockRenewer != null) {
+            sessionLockRenewer.cancel();
+            sessionLockRenewer = null;
+        }
         if (renewalClient != null) {
             renewalClient.close();
             renewalClient = null;
+        }
+        if (sessionRenewalClient != null) {
+            sessionRenewalClient.close();
+            sessionRenewalClient = null;
         }
         if (client != null) {
             if (clientCloseable) {
@@ -186,9 +204,17 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             lockRenewer.cancel();
             lockRenewer = null;
         }
+        if (sessionLockRenewer != null) {
+            sessionLockRenewer.cancel();
+            sessionLockRenewer = null;
+        }
         if (renewalClient != null) {
             renewalClient.close();
             renewalClient = null;
+        }
+        if (sessionRenewalClient != null) {
+            sessionRenewalClient.close();
+            sessionRenewalClient = null;
         }
         if (clientCloseable && client != null) {
             client.close();
@@ -352,6 +378,153 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
         }
 
         private record LockRenewerEntry(ServiceBusReceivedMessage message, OffsetDateTime lockedUntil, Instant startTime) {
+        }
+    }
+
+    private class SessionLockRenewer implements Runnable {
+
+        private final ServiceBusSessionReceiverAsyncClient sessionReceiverClient;
+        private final Duration maxRenewDuration;
+        private final AtomicBoolean run = new AtomicBoolean(true);
+        private final Object sessionReceiverCreationLock = new Object();
+        private final Map<String, SessionLockRenewerEntry> entries = new ConcurrentHashMap<>();
+        private final Map<String, SessionReceiverHolder> sessionReceivers = new ConcurrentHashMap<>();
+
+        SessionLockRenewer(ServiceBusSessionReceiverAsyncClient sessionReceiverClient, Duration maxRenewDuration) {
+            this.sessionReceiverClient = sessionReceiverClient;
+            this.maxRenewDuration = maxRenewDuration;
+        }
+
+        public void add(Exchange exchange, ServiceBusReceivedMessage message) {
+            String sessionId = message.getSessionId();
+            if (ObjectHelper.isEmpty(sessionId)) {
+                LOG.warn("Cannot renew session lock for message without sessionId");
+                return;
+            }
+
+            if (acquireSessionReceiver(sessionId) == null) {
+                return;
+            }
+
+            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onComplete(Exchange exchange) {
+                    remove(exchange);
+                }
+
+                @Override
+                public void onFailure(Exchange exchange) {
+                    remove(exchange);
+                }
+
+                private void remove(Exchange exchange) {
+                    LOG.trace("Removing exchangeId {} from the SessionLockRenewer, processing done",
+                            exchange.getExchangeId());
+                    SessionLockRenewerEntry entry = entries.remove(exchange.getExchangeId());
+                    if (entry != null) {
+                        releaseSessionReceiver(entry.sessionId);
+                    }
+                }
+            });
+
+            entries.put(exchange.getExchangeId(),
+                    new SessionLockRenewerEntry(sessionId, message.getLockedUntil(), Instant.now()));
+        }
+
+        public void cancel() {
+            run.set(false);
+            sessionReceivers.values().forEach(holder -> holder.client.close());
+            sessionReceivers.clear();
+        }
+
+        @Override
+        public void run() {
+            if (!run.get()) {
+                return;
+            }
+
+            Instant now = Instant.now();
+            for (Map.Entry<String, SessionLockRenewerEntry> mapEntry : entries.entrySet()) {
+                String exchangeId = mapEntry.getKey();
+                SessionLockRenewerEntry entry = mapEntry.getValue();
+
+                Duration elapsed = Duration.between(entry.startTime, now);
+                if (elapsed.compareTo(maxRenewDuration) >= 0) {
+                    LOG.debug("Max session lock renewal duration exceeded for exchangeId {}, stopping renewal",
+                            exchangeId);
+                    entries.remove(exchangeId);
+                    continue;
+                }
+
+                Instant lockExpiry = entry.lockedUntil.toInstant();
+                if (now.plusSeconds(LOCK_RENEW_INTERVAL_SECONDS).isAfter(lockExpiry)) {
+                    SessionReceiverHolder holder = sessionReceivers.get(entry.sessionId);
+                    if (holder == null) {
+                        continue;
+                    }
+
+                    holder.client.renewSessionLock()
+                            .subscribe(
+                                    newLockedUntil -> {
+                                        LOG.trace("Renewed session lock for sessionId {}, exchangeId {}, new expiry: {}",
+                                                entry.sessionId, exchangeId, newLockedUntil);
+                                        entries.replace(exchangeId,
+                                                new SessionLockRenewerEntry(
+                                                        entry.sessionId, newLockedUntil,
+                                                        entry.startTime));
+                                    },
+                                    error -> {
+                                        LOG.warn("Failed to renew session lock for sessionId {}, exchangeId {}: {}",
+                                                entry.sessionId, exchangeId, error.getMessage());
+                                        entries.remove(exchangeId);
+                                    });
+                }
+            }
+        }
+
+        private ServiceBusReceiverAsyncClient acquireSessionReceiver(String sessionId) {
+            SessionReceiverHolder existing = sessionReceivers.get(sessionId);
+            if (existing != null) {
+                existing.inFlightCount.incrementAndGet();
+                return existing.client;
+            }
+
+            synchronized (sessionReceiverCreationLock) {
+                existing = sessionReceivers.get(sessionId);
+                if (existing != null) {
+                    existing.inFlightCount.incrementAndGet();
+                    return existing.client;
+                }
+
+                try {
+                    ServiceBusReceiverAsyncClient sessionReceiver
+                            = sessionReceiverClient.acceptSession(sessionId).block();
+                    SessionReceiverHolder holder = new SessionReceiverHolder(sessionReceiver, new AtomicInteger(1));
+                    sessionReceivers.put(sessionId, holder);
+                    return sessionReceiver;
+                } catch (Exception e) {
+                    LOG.warn("Failed to acquire session receiver for sessionId {}: {}", sessionId, e.getMessage());
+                    return null;
+                }
+            }
+        }
+
+        private void releaseSessionReceiver(String sessionId) {
+            SessionReceiverHolder holder = sessionReceivers.get(sessionId);
+            if (holder == null) {
+                return;
+            }
+
+            if (holder.inFlightCount.decrementAndGet() <= 0) {
+                sessionReceivers.remove(sessionId, holder);
+                holder.client.close();
+            }
+        }
+
+        private record SessionLockRenewerEntry(String sessionId, OffsetDateTime lockedUntil, Instant startTime) {
+        }
+
+        private record SessionReceiverHolder(ServiceBusReceiverAsyncClient client, AtomicInteger inFlightCount) {
         }
     }
 
