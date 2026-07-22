@@ -358,6 +358,8 @@ public interface CamelCatalog {
 
     /**
      * Returns the AsciiDoc documentation for the given EIP model.
+     * <p>
+     * Delegates directly to {@link #asciiDoc(String)} since model doc names are not consistently suffixed.
      *
      * @param  name the model name
      * @return      the documentation in AsciiDoc format, or {@code null} if not found
@@ -366,6 +368,8 @@ public interface CamelCatalog {
 
     /**
      * Returns the AsciiDoc documentation for the given other (miscellaneous) component.
+     * <p>
+     * Delegates directly to {@link #asciiDoc(String)} since other doc names are not consistently suffixed.
      *
      * @param  name the other component name
      * @return      the documentation in AsciiDoc format, or {@code null} if not found
