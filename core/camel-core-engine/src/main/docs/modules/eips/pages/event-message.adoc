@@ -77,6 +77,24 @@ YAML::
 ----
 ====
 
+== How It Works
+
+The `InOnly` exchange pattern is a contract between the route and the component endpoint.
+It tells the producer component that the caller does *not* expect a reply (fire-and-forget).
+
+The exchange pattern does *not* affect how EIPs and processors work within the route.
+Processors such as `setBody`, `transform`, `process`, and `bean` always operate on the
+current message regardless of the exchange pattern. The pattern only matters when the exchange
+reaches a producer endpoint that acts on it.
+
+Whether a component acts on the pattern depends on the component.
+Components that support both modes, such as xref:ROOT:jms-component.adoc[JMS],
+xref:ROOT:seda-component.adoc[SEDA], and xref:ROOT:amqp-component.adoc[AMQP],
+use `InOnly` to dispatch the message without waiting for a reply (fire-and-forget).
+Synchronous components such as xref:ROOT:direct-component.adoc[Direct] always process
+in the same thread and call stack, so the pattern has no practical effect on the dispatch
+behavior — the caller still waits for the called route to complete.
+
 == Using `setExchangePattern` EIP
 
 You can specify the
