@@ -23,11 +23,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class ZXsltTotalOpsTest extends ContextTestSupport {
 
     @Override
