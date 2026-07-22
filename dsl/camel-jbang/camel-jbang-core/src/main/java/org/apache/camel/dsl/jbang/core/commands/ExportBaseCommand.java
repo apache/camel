@@ -1280,7 +1280,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 // ignore
             }
         }
-        return answer != null ? answer : "3.5.1";
+        return answer != null ? answer : "3.5.2";
     }
 
     protected static String jkubeMavenPluginVersion(Path settings, Properties props) {
@@ -1298,7 +1298,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 // ignore
             }
         }
-        return answer != null ? answer : "1.19.0";
+        return answer != null ? answer : "1.20.0";
     }
 
     // This method is kept for backward compatibility with derived classes
