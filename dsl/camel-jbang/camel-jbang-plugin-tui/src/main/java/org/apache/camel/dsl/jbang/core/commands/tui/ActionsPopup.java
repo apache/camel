@@ -1090,6 +1090,11 @@ class ActionsPopup {
         }
     }
 
+    void openMarkdown(String title, String markdown) {
+        showActionsMenu = false;
+        docViewerPopup.openMarkdown(title, markdown);
+    }
+
     private void setNotification(String msg, boolean error) {
         if (notificationCallback != null) {
             notificationCallback.accept(msg, error);

@@ -41,6 +41,7 @@ class MonitorContext {
     boolean logPinVisible;
     boolean ratePerMinute;
     BiConsumer<String, Boolean> notificationCallback;
+    BiConsumer<String, String> openMarkdownCallback;
 
     MonitorContext(
                    AtomicReference<List<IntegrationInfo>> data,

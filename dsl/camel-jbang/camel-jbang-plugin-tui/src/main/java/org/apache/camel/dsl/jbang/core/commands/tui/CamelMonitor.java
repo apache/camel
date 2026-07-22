@@ -268,6 +268,7 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.setMonitorContext(ctx);
         actionsPopup.setNotificationCallback((msg, error) -> setNotification(msg, error));
         ctx.notificationCallback = (msg, error) -> setNotification(msg, error);
+        ctx.openMarkdownCallback = actionsPopup::openMarkdown;
         actionsPopup.setResetStatsAction(this::resetStats);
         shellPanel.setContext(ctx);
         aiPanel.setContext(ctx);

@@ -64,6 +64,7 @@ class CatalogTab extends AbstractTableTab {
     private String filterTerm;
     private int scopeIndex;
     private boolean fullCatalog;
+    private CamelCatalog catalog;
     private List<CatalogEntry> allEntries = Collections.emptyList();
     private List<CatalogEntry> filteredEntries = Collections.emptyList();
     private String lastPid;
@@ -94,6 +95,7 @@ class CatalogTab extends AbstractTableTab {
         filterTerm = null;
         filterInputActive = false;
         scopeIndex = 0;
+        catalog = null;
         lastPid = null;
         errorMessage = null;
         dataLoaded = false;
@@ -132,6 +134,10 @@ class CatalogTab extends AbstractTableTab {
             fullCatalog = !fullCatalog;
             dataLoaded = false;
             loadCatalogData();
+            return true;
+        }
+        if (ke.isCharIgnoreCase('d')) {
+            openDocViewer();
             return true;
         }
         return false;
@@ -334,6 +340,30 @@ class CatalogTab extends AbstractTableTab {
                 area);
     }
 
+    private void openDocViewer() {
+        if (ctx.openMarkdownCallback == null || catalog == null) {
+            return;
+        }
+        List<CatalogEntry> sorted = new ArrayList<>(filteredEntries);
+        sorted.sort(this::sortEntry);
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= sorted.size()) {
+            return;
+        }
+        CatalogEntry entry = sorted.get(sel);
+        String docName = switch (entry.kind) {
+            case "component" -> entry.name + "-component";
+            case "dataformat" -> entry.name + "-dataformat";
+            case "language" -> entry.name + "-language";
+            default -> entry.name;
+        };
+        String adoc = catalog.asciiDoc(docName);
+        if (adoc != null) {
+            String md = DocHelper.asciidocToMarkdown(adoc);
+            ctx.openMarkdownCallback.accept(entry.name, md);
+        }
+    }
+
     private void addDetailField(List<Line> lines, String label, String value, int width) {
         if (value == null || value.isEmpty()) {
             return;
@@ -377,6 +407,7 @@ class CatalogTab extends AbstractTableTab {
         hint(spans, "s", "sort");
         hint(spans, "a", fullCatalog ? "app only" : "all");
         hint(spans, "f", "scope [" + SCOPES[scopeIndex] + "]");
+        hint(spans, "d", "doc");
         if (filterTerm != null) {
             spans.add(Span.styled("  /", Theme.label().bold()));
             spans.add(Span.raw("\"" + filterTerm + "\"  "));
@@ -422,7 +453,7 @@ class CatalogTab extends AbstractTableTab {
                 if (!full) {
                     DependencyLoader.LoadResult result = DependencyLoader.loadDependencies(info);
                     if (result.error() != null && result.entries().isEmpty()) {
-                        applyResult(Collections.emptyList(), result.error());
+                        applyResult(Collections.emptyList(), null, result.error());
                         return;
                     }
                     appArtifacts = new HashSet<>();
@@ -433,22 +464,22 @@ class CatalogTab extends AbstractTableTab {
                     }
                 }
 
-                CamelCatalog catalog = CatalogLoader.loadCatalog(null, info.camelVersion, true);
-                if (catalog == null) {
-                    applyResult(Collections.emptyList(), "Could not load catalog for version " + info.camelVersion);
+                CamelCatalog cat = CatalogLoader.loadCatalog(null, info.camelVersion, true);
+                if (cat == null) {
+                    applyResult(Collections.emptyList(), null, "Could not load catalog for version " + info.camelVersion);
                     return;
                 }
 
                 List<CatalogEntry> entries = new ArrayList<>();
-                collectArtifacts(catalog, "component", catalog.findComponentNames(), appArtifacts, entries);
-                collectArtifacts(catalog, "dataformat", catalog.findDataFormatNames(), appArtifacts, entries);
-                collectArtifacts(catalog, "language", catalog.findLanguageNames(), appArtifacts, entries);
-                collectArtifacts(catalog, "other", catalog.findOtherNames(), appArtifacts, entries);
+                collectArtifacts(cat, "component", cat.findComponentNames(), appArtifacts, entries);
+                collectArtifacts(cat, "dataformat", cat.findDataFormatNames(), appArtifacts, entries);
+                collectArtifacts(cat, "language", cat.findLanguageNames(), appArtifacts, entries);
+                collectArtifacts(cat, "other", cat.findOtherNames(), appArtifacts, entries);
 
                 entries.sort((a, b) -> a.name.compareToIgnoreCase(b.name));
-                applyResult(entries, null);
+                applyResult(entries, cat, null);
             } catch (Exception e) {
-                applyResult(Collections.emptyList(), "Error: " + e.getMessage());
+                applyResult(Collections.emptyList(), null, "Error: " + e.getMessage());
             } finally {
                 loading.set(false);
             }
@@ -499,12 +530,13 @@ class CatalogTab extends AbstractTableTab {
         }
     }
 
-    private void applyResult(List<CatalogEntry> entries, String error) {
+    private void applyResult(List<CatalogEntry> entries, CamelCatalog cat, String error) {
         if (ctx.runner == null) {
             return;
         }
         ctx.runner.runOnRenderThread(() -> {
             allEntries = entries;
+            catalog = cat;
             errorMessage = error;
             dataLoaded = true;
             refilter();
@@ -613,12 +645,20 @@ class CatalogTab extends AbstractTableTab {
                 Press `/` to open the filter input. Type a search term and press
                 `Enter` to filter by substring match on name, title, or label.
 
+                ## Documentation
+
+                Press `d` to open the full documentation for the selected artifact in
+                a scrollable viewer. The documentation is loaded from the Camel catalog
+                and converted from AsciiDoc to Markdown. Use `↑`/`↓`/`PgUp`/`PgDn` or
+                mouse scroll to navigate, and `Esc` to close.
+
                 ## Keys
 
                 - `s` — cycle sort column (name, kind, description)
                 - `S` — reverse sort order
                 - `a` — toggle app only / full catalog
                 - `f` — cycle scope
+                - `d` — open documentation viewer
                 - `/` — open filter
                 - `Esc` — clear filter or back
                 """;
