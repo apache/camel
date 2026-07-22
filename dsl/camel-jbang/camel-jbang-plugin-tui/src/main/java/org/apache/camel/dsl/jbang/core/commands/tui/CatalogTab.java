@@ -578,7 +578,11 @@ class CatalogTab extends AbstractTableTab {
                 }
             }
 
+            Set<String> skipEips = Set.of("when", "otherwise");
             for (String name : eipNames) {
+                if (skipEips.contains(name)) {
+                    continue;
+                }
                 EipModel model = catalog.eipModel(name);
                 if (model == null) {
                     continue;
