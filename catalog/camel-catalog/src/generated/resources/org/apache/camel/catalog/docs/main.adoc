@@ -678,11 +678,12 @@ The camel.faulttolerance supports 12 options, which are listed below.
 
 
 === Resilience4j EIP Circuit Breaker configurations
-The camel.resilience4j supports 24 options, which are listed below.
+The camel.resilience4j supports 25 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.resilience4j.asynchronous* | Whether to use asynchronous (non-blocking) processing using Resilience4j's CompletionStage-based decorators. When enabled, the caller thread is released immediately and processing completes asynchronously. | false | Boolean
 | *camel.resilience4j.automaticTransitionFromOpenToHalfOpenEnabled* | Enables automatic transition from OPEN to HALF_OPEN state once the waitDurationInOpenState has passed. | false | Boolean
 | *camel.resilience4j.bulkheadEnabled* | Whether bulkhead is enabled or not on the circuit breaker. | false | Boolean
 | *camel.resilience4j.bulkheadFairCallHandlingEnabled* | Configures whether the bulkhead uses a fair calling strategy. When enabled (default), a fair strategy guarantees the order of incoming requests (FIFO). When disabled, no ordering is guaranteed and may improve throughput. | true | Boolean
