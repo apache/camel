@@ -263,8 +263,7 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                             // httpclient 5.6+ auto-decompresses but no longer removes the stale
                             // Content-Encoding, Content-Length, and Content-MD5 headers.
                             // Strip them here to restore the 5.5.2 invariant for all downstream code.
-                            removeStaleCompressionHeaders(httpResponse,
-                                    !getEndpoint().getComponent().isContentCompressionDisabled());
+                            removeStaleCompressionHeaders(httpResponse);
                             if (!throwException) {
                                 // if we do not use failed exception then populate response for all response codes
                                 HttpProducer.this.populateResponse(exchange, httpRequest, httpResponse, strategy, responseCode);
@@ -523,14 +522,10 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
      * (compressed byte count), and Content-MD5 headers. Remove them here so every downstream reader sees the same
      * invariant as 5.5.2.
      */
-    private static void removeStaleCompressionHeaders(ClassicHttpResponse httpResponse, boolean httpClientDecompresses) {
+    private static void removeStaleCompressionHeaders(ClassicHttpResponse httpResponse) {
         HttpEntity entity = httpResponse.getEntity();
-        if (entity == null || !httpResponse.containsHeader(Exchange.CONTENT_ENCODING)) {
-            return;
-        }
-        // When HttpClient auto-decompression is enabled the stream is already plain even though the response
-        // (and sometimes the entity wrapper) still advertises gzip encoding.
-        if (httpClientDecompresses || entity.getContentEncoding() == null) {
+        if (entity != null && entity.getContentEncoding() == null
+                && httpResponse.containsHeader(Exchange.CONTENT_ENCODING)) {
             httpResponse.removeHeaders(Exchange.CONTENT_ENCODING);
             httpResponse.removeHeaders(Exchange.CONTENT_LENGTH);
             httpResponse.removeHeaders(HttpHeaders.CONTENT_MD5);
@@ -553,16 +548,10 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
             return null;
         }
 
-        final boolean skipGzip = exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class);
-        final boolean httpClientDecompresses = !getEndpoint().getComponent().isContentCompressionDisabled();
-        if (!skipGzip && !httpClientDecompresses) {
-            String contentEncoding = entity.getContentEncoding();
-            if (contentEncoding == null) {
-                Header encodingHeader = httpResponse.getFirstHeader(Exchange.CONTENT_ENCODING);
-                if (encodingHeader != null) {
-                    contentEncoding = encodingHeader.getValue();
-                }
-            }
+        String contentEncoding = entity.getContentEncoding();
+
+        final boolean gzipEncoding = exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class);
+        if (!gzipEncoding) {
             is = GZIPHelper.uncompressGzip(contentEncoding, is);
         }
         // Honor the character encoding
