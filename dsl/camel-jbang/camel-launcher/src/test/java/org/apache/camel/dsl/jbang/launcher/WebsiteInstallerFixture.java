@@ -151,16 +151,26 @@ final class WebsiteInstallerFixture implements AutoCloseable {
     }
 
     private static void runTool(ProcessBuilder pb) throws Exception {
+        long start = System.nanoTime();
         pb.redirectErrorStream(true);
         Process process = pb.start();
         String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-        if (!process.waitFor(30, TimeUnit.SECONDS)) {
+        boolean exited = process.waitFor(30, TimeUnit.SECONDS);
+        logElapsed("keytool " + pb.command().get(1), start);
+        if (!exited) {
             process.destroyForcibly();
             throw new IllegalStateException("keytool did not finish in time");
         }
         if (process.exitValue() != 0) {
             throw new IllegalStateException("keytool failed: " + output);
         }
+    }
+
+    // Temporary diagnostics for CAMEL-23703's windows-validator fork timeout investigation: prints
+    // real subprocess durations so a re-run pinpoints whether a single call hangs or overall
+    // PowerShell/keytool startup latency just adds up across the test class. Remove once diagnosed.
+    static void logElapsed(String label, long startNanos) {
+        System.err.printf("[diag] %s took %dms%n", label, (System.nanoTime() - startNanos) / 1_000_000);
     }
 
     String baseUrl() {
@@ -395,6 +405,7 @@ final class WebsiteInstallerFixture implements AutoCloseable {
     }
 
     Result run(List<String> command, Map<String, String> env) throws Exception {
+        long start = System.nanoTime();
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.environment().clear();
         pb.environment().put("PATH", System.getenv("PATH"));
@@ -423,7 +434,9 @@ final class WebsiteInstallerFixture implements AutoCloseable {
             Future<byte[]> stdout = collectors.submit(() -> process.getInputStream().readAllBytes());
             Future<byte[]> stderr = collectors.submit(() -> process.getErrorStream().readAllBytes());
             process.getOutputStream().close();
-            if (!process.waitFor(PROCESS_TIMEOUT.toSeconds(), TimeUnit.SECONDS)) {
+            boolean exited = process.waitFor(PROCESS_TIMEOUT.toSeconds(), TimeUnit.SECONDS);
+            logElapsed("run " + command.get(0), start);
+            if (!exited) {
                 process.destroyForcibly();
                 throw new IllegalStateException("installer did not exit in time");
             }

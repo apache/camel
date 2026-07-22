@@ -38,8 +38,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -566,6 +568,22 @@ class WebsiteInstallTest {
 
         private final List<String> binDirsForCleanup = new ArrayList<>();
 
+        // Temporary diagnostics for CAMEL-23703's windows-validator fork timeout investigation: prints
+        // per-test start/elapsed so a re-run pinpoints which test (or that they're all just slow) blew
+        // the module's 600s surefire fork budget. Remove once diagnosed.
+        private long testStartNanos;
+
+        @BeforeEach
+        void logTestStart(TestInfo info) {
+            testStartNanos = System.nanoTime();
+            System.err.println("[diag] >>> start " + info.getDisplayName());
+        }
+
+        @AfterEach
+        void logTestElapsed(TestInfo info) {
+            WebsiteInstallerFixture.logElapsed("<<< " + info.getDisplayName(), testStartNanos);
+        }
+
         @AfterEach
         void restoreUserPath() throws Exception {
             if (binDirsForCleanup.isEmpty()) {
@@ -586,9 +604,11 @@ class WebsiteInstallTest {
                           + "if ($path) { $kind = $k.GetValueKind('Path'); "
                           + "$kept = ($path -split ';') | Where-Object { $_ -and (-not ($dirs -icontains $_)) }; "
                           + "$k.SetValue('Path', ($kept -join ';'), $kind) } $k.Close() }");
+            long start = System.nanoTime();
             Process cleanup = new ProcessBuilder("powershell", "-NoProfile", "-Command", script.toString())
                     .redirectErrorStream(true).start();
             cleanup.waitFor(30, TimeUnit.SECONDS);
+            WebsiteInstallerFixture.logElapsed("restoreUserPath", start);
         }
 
         private WebsiteInstallerFixture.Result install(
@@ -619,11 +639,13 @@ class WebsiteInstallTest {
             assertTrue(Files.isDirectory(versionDir(home, version)),
                     "expected version directory " + versionDir(home, version));
 
+            long start = System.nanoTime();
             Process check = new ProcessBuilder("cmd.exe", "/c", shim.toString(), "version")
                     .redirectErrorStream(true)
                     .start();
             String output = new String(check.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
             check.waitFor(30, TimeUnit.SECONDS);
+            WebsiteInstallerFixture.logElapsed("assertVersionInstalled", start);
             assertTrue(output.contains("Camel " + version), output);
         }
 
@@ -643,12 +665,14 @@ class WebsiteInstallTest {
         }
 
         private static String queryEnvironmentPath(String scope) throws Exception {
+            long start = System.nanoTime();
             Process p = new ProcessBuilder(
                     "powershell", "-NoProfile", "-Command",
                     "[Environment]::GetEnvironmentVariable('Path','" + scope + "')")
                     .redirectErrorStream(true).start();
             String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
             p.waitFor(30, TimeUnit.SECONDS);
+            WebsiteInstallerFixture.logElapsed("queryEnvironmentPath", start);
             return out;
         }
 
@@ -663,6 +687,7 @@ class WebsiteInstallTest {
 
         // Reads HKCU\Environment\Path without expanding %VAR% references, returning "" when unset.
         private static String readUserPathRaw() throws Exception {
+            long start = System.nanoTime();
             Process p = new ProcessBuilder(
                     "powershell", "-NoProfile", "-Command",
                     "$k = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment'); "
@@ -671,6 +696,7 @@ class WebsiteInstallTest {
                     .start();
             String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
             p.waitFor(30, TimeUnit.SECONDS);
+            WebsiteInstallerFixture.logElapsed("readUserPathRaw", start);
             return out;
         }
 
@@ -684,14 +710,18 @@ class WebsiteInstallTest {
                                                             + "[Microsoft.Win32.RegistryValueKind]::ExpandString); $k.Close()")
                     .redirectErrorStream(true);
             pb.environment().put("CAMEL_TEST_USERPATH", value);
+            long start = System.nanoTime();
             Process p = pb.start();
             String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            if (!p.waitFor(30, TimeUnit.SECONDS) || p.exitValue() != 0) {
+            boolean exited = p.waitFor(30, TimeUnit.SECONDS);
+            WebsiteInstallerFixture.logElapsed("writeUserPathExpandable", start);
+            if (!exited || p.exitValue() != 0) {
                 throw new IllegalStateException("failed to seed user PATH: " + out);
             }
         }
 
         private static void deleteUserPath() throws Exception {
+            long start = System.nanoTime();
             Process p = new ProcessBuilder(
                     "powershell", "-NoProfile", "-Command",
                     "$k = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true); "
@@ -699,6 +729,7 @@ class WebsiteInstallTest {
                     .redirectErrorStream(true).start();
             p.getInputStream().readAllBytes();
             p.waitFor(30, TimeUnit.SECONDS);
+            WebsiteInstallerFixture.logElapsed("deleteUserPath", start);
         }
 
         @Test
