@@ -93,13 +93,15 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
         Exchange reply = sendJaxWsMessage(endpointUri);
         Exception e = reply.getException();
         assertThat(e).as("exchange exception").isNotNull();
-        // CXF may either propagate HttpTimeoutException directly or wrap it in a
+        // CXF may either propagate HttpTimeoutException directly or wrap an HttpConnectTimeoutException in a
         // Fault ("Could not send Message.") depending on where in the interceptor
         // chain the timeout is caught. Both cases indicate the timeout was applied
         // correctly, so check the entire cause chain.
         assertThat(e).satisfiesAnyOf(
                 ex -> assertThat(ex).isInstanceOf(HttpTimeoutException.class),
-                ex -> assertThat(ex).hasRootCauseInstanceOf(HttpTimeoutException.class));
+                //TODO: when AssertJ 4 is released, to replace with throwableChains() for more precise and robust check
+                ex -> assertThat(ex).hasStackTraceContaining(
+                        "Caused by: java.net.http.HttpConnectTimeoutException: HTTP connect timed out"));
     }
 
     protected Exchange sendJaxWsMessage(String endpointUri) throws InterruptedException {
