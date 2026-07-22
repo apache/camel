@@ -62,6 +62,10 @@ class DocViewerPopup {
     private String docTitle;
     private int docScroll;
     private Runnable onCloseCallback;
+    private String catalogEntryName;
+    private String catalogEntryKind;
+    private org.apache.camel.catalog.CamelCatalog catalogEntryRef;
+    private boolean wantsOptions;
 
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final ListState pickerState = new ListState();
@@ -110,10 +114,31 @@ class DocViewerPopup {
         return pickerIntegrations;
     }
 
+    boolean consumeWantsOptions() {
+        boolean v = wantsOptions;
+        wantsOptions = false;
+        return v;
+    }
+
+    String getCatalogEntryName() {
+        return catalogEntryName;
+    }
+
+    String getCatalogEntryKind() {
+        return catalogEntryKind;
+    }
+
+    org.apache.camel.catalog.CamelCatalog getCatalogEntryRef() {
+        return catalogEntryRef;
+    }
+
     void close() {
         showViewer = false;
         showPicker = false;
         onCloseCallback = null;
+        catalogEntryName = null;
+        catalogEntryKind = null;
+        catalogEntryRef = null;
     }
 
     void openMarkdown(String title, String markdown) {
@@ -128,6 +153,15 @@ class DocViewerPopup {
     void openMarkdown(String title, String markdown, Runnable onClose) {
         openMarkdown(title, markdown);
         this.onCloseCallback = onClose;
+    }
+
+    void openCatalogDoc(
+            String title, String markdown, String entryName, String entryKind,
+            org.apache.camel.catalog.CamelCatalog catalog) {
+        openMarkdown(title, markdown);
+        this.catalogEntryName = entryName;
+        this.catalogEntryKind = entryKind;
+        this.catalogEntryRef = catalog;
     }
 
     void openLines(String title, List<Line> lines) {
@@ -148,6 +182,9 @@ class DocViewerPopup {
                 if (cb != null) {
                     cb.run();
                 }
+            } else if (ke.isCharIgnoreCase('o') && catalogEntryName != null) {
+                wantsOptions = true;
+                showViewer = false;
             } else if (ke.isUp() || ke.isChar('k')) {
                 docScroll = Math.max(0, docScroll - 1);
             } else if (ke.isDown() || ke.isChar('j')) {
@@ -206,8 +243,13 @@ class DocViewerPopup {
 
     void renderFooter(List<Span> spans) {
         if (showViewer) {
-            hint(spans, "↑↓", "scroll");
-            hintLast(spans, "Esc", "back");
+            hint(spans, "Esc", "back");
+            if (catalogEntryName != null) {
+                hint(spans, "↑↓", "scroll");
+                hintLast(spans, "o", "options");
+            } else {
+                hintLast(spans, "↑↓", "scroll");
+            }
         } else if (showPicker) {
             hint(spans, "↑↓", "navigate");
             hint(spans, "Enter", "view");
@@ -404,7 +446,6 @@ class DocViewerPopup {
 
     private void renderViewer(Frame frame, Rect area) {
         frame.renderWidget(Clear.INSTANCE, area);
-        Rect popup = new Rect(area.left() + 2, area.top() + 1, area.width() - 4, area.height() - 2);
         Title title;
         if (docTitle != null && docTitle.startsWith("Failed:")) {
             String rest = docTitle.substring("Failed:".length());
@@ -414,13 +455,26 @@ class DocViewerPopup {
         } else {
             title = Title.from(" " + docTitle + " ");
         }
+        List<Span> footerSpans = new ArrayList<>();
+        footerSpans.add(Span.styled(" Esc ", Theme.hintKey()));
+        footerSpans.add(Span.raw(" back  "));
+        footerSpans.add(Span.styled(" ↑↓ ", Theme.hintKey()));
+        if (catalogEntryName != null) {
+            footerSpans.add(Span.raw(" scroll  "));
+            footerSpans.add(Span.styled(" o ", Theme.hintKey()));
+            footerSpans.add(Span.raw(" options "));
+        } else {
+            footerSpans.add(Span.raw(" scroll "));
+        }
+        Title footer = Title.from(Line.from(footerSpans));
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
+                .titleBottom(footer)
                 .build();
         if (docLines != null) {
-            frame.renderWidget(block, popup);
-            Rect inner = block.inner(popup);
+            frame.renderWidget(block, area);
+            Rect inner = block.inner(area);
             List<Rect> hChunks = Layout.horizontal()
                     .constraints(Constraint.fill(), Constraint.length(1))
                     .split(inner);
@@ -444,8 +498,8 @@ class DocViewerPopup {
                 frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), scrollbarState);
             }
         } else {
-            frame.renderWidget(block, popup);
-            Rect inner = block.inner(popup);
+            frame.renderWidget(block, area);
+            Rect inner = block.inner(area);
             List<Rect> hChunks = Layout.horizontal()
                     .constraints(Constraint.fill(), Constraint.length(1))
                     .split(inner);

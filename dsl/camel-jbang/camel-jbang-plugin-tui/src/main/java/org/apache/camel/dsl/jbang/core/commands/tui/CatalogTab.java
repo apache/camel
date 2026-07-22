@@ -143,6 +143,10 @@ class CatalogTab extends AbstractTableTab {
             openDocViewer();
             return true;
         }
+        if (ke.isCharIgnoreCase('o')) {
+            openOptionsViewer();
+            return true;
+        }
         return false;
     }
 
@@ -346,7 +350,7 @@ class CatalogTab extends AbstractTableTab {
     }
 
     private void openDocViewer() {
-        if (ctx.openMarkdownCallback == null || catalog == null) {
+        if (ctx.openCatalogDocCallback == null || catalog == null) {
             return;
         }
         List<CatalogEntry> sorted = new ArrayList<>(filteredEntries);
@@ -356,18 +360,21 @@ class CatalogTab extends AbstractTableTab {
             return;
         }
         CatalogEntry entry = sorted.get(sel);
-        String docName = switch (entry.kind) {
-            case "component" -> entry.name + "-component";
-            case "dataformat" -> entry.name + "-dataformat";
-            case "language" -> entry.name + "-language";
-            case "eip" -> entry.name + "-eip";
-            default -> entry.name;
-        };
-        String adoc = catalog.asciiDoc(docName);
-        if (adoc != null) {
-            String md = DocHelper.asciidocToMarkdown(adoc);
-            ctx.openMarkdownCallback.accept(entry.name, md);
+        ctx.openCatalogDocCallback.accept(entry.name, entry.kind, catalog);
+    }
+
+    private void openOptionsViewer() {
+        if (ctx.openOptionsCallback == null || catalog == null) {
+            return;
         }
+        List<CatalogEntry> sorted = new ArrayList<>(filteredEntries);
+        sorted.sort(this::sortEntry);
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= sorted.size()) {
+            return;
+        }
+        CatalogEntry entry = sorted.get(sel);
+        ctx.openOptionsCallback.accept(entry.name, entry.kind, catalog);
     }
 
     private void addDetailField(List<Line> lines, String label, String value, int width) {
@@ -414,6 +421,7 @@ class CatalogTab extends AbstractTableTab {
         hint(spans, "a", fullCatalog ? "app only" : "all");
         hint(spans, "f", "scope [" + SCOPES[scopeIndex] + "]");
         hint(spans, "d", "doc");
+        hint(spans, "o", "options");
         if (filterTerm != null) {
             spans.add(Span.styled("  /", Theme.label().bold()));
             spans.add(Span.raw("\"" + filterTerm + "\"  "));
@@ -736,6 +744,23 @@ class CatalogTab extends AbstractTableTab {
                 and converted from AsciiDoc to Markdown. Use `↑`/`↓`/`PgUp`/`PgDn` or
                 mouse scroll to navigate, and `Esc` to close.
 
+                ## Options
+
+                Press `o` to open the options viewer for the selected artifact. This
+                shows all configuration options in a structured format with types,
+                defaults, enum values, groups, and descriptions.
+
+                For **components**, the viewer has three tabs:
+                - **Component** — component-level options
+                - **Endpoint** — endpoint-level options
+                - **Headers** — message headers with constant names
+
+                For **data formats**, **languages**, and **others**, a single Options tab
+                is shown. For **EIPs**, Options and exchange Properties tabs are shown.
+
+                Press `←`/`→` or `Tab` to switch tabs. Use `↑`/`↓`/`PgUp`/`PgDn` or
+                mouse scroll to navigate, and `Esc` to close.
+
                 ## Keys
 
                 - `s` — cycle sort column (name, kind, description)
@@ -743,6 +768,7 @@ class CatalogTab extends AbstractTableTab {
                 - `a` — toggle app only / full catalog
                 - `f` — cycle scope
                 - `d` — open documentation viewer
+                - `o` — open options viewer
                 - `/` — open filter
                 - `Esc` — clear filter or back
                 """;

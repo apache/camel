@@ -115,6 +115,7 @@ class ActionsPopup {
     private final ThemePopup themePopup = new ThemePopup();
     private final SettingsPopup settingsPopup = new SettingsPopup();
     private final DocViewerPopup docViewerPopup = new DocViewerPopup();
+    private final OptionsViewerPopup optionsViewerPopup = new OptionsViewerPopup();
 
     private final ExampleBrowserPopup exampleBrowserPopup;
     private final RunOptionsForm runOptionsForm = new RunOptionsForm();
@@ -353,6 +354,7 @@ class ActionsPopup {
                 || folderInputPopup.isVisible()
                 || runOptionsForm.isVisible()
                 || docViewerPopup.isVisible()
+                || optionsViewerPopup.isVisible()
                 || infraBrowserPopup.isVisible()
                 || mcpLogPopup.isVisible() || aiLogPopup.isVisible() || doctorPopup.isVisible()
                 || sendMessagePopup.isVisible() || stopAllPopup.isVisible() || captionOverlay.isInlineMode();
@@ -500,8 +502,19 @@ class ActionsPopup {
         if (docViewerPopup.isVisible()) {
             boolean wasPicker = docViewerPopup.isPickerVisible();
             docViewerPopup.handleKeyEvent(ke);
-            if (wasPicker && !docViewerPopup.isVisible() && ke.isCancel()) {
+            if (!docViewerPopup.isVisible() && docViewerPopup.consumeWantsOptions()) {
+                openOptions(docViewerPopup.getCatalogEntryName(), docViewerPopup.getCatalogEntryKind(),
+                        docViewerPopup.getCatalogEntryRef());
+            } else if (wasPicker && !docViewerPopup.isVisible() && ke.isCancel()) {
                 showActionsMenu = true;
+            }
+            return true;
+        }
+        if (optionsViewerPopup.isVisible()) {
+            optionsViewerPopup.handleKeyEvent(ke);
+            if (!optionsViewerPopup.isVisible() && optionsViewerPopup.consumeWantsDoc()) {
+                openDocForEntry(optionsViewerPopup.getCurrentName(), optionsViewerPopup.getCurrentKind(),
+                        optionsViewerPopup.getCurrentCatalog());
             }
             return true;
         }
@@ -763,6 +776,9 @@ class ActionsPopup {
         if (docViewerPopup.isVisible()) {
             return docViewerPopup.handleMouseEvent(me);
         }
+        if (optionsViewerPopup.isVisible()) {
+            return optionsViewerPopup.handleMouseEvent(me);
+        }
         if (folderInputPopup.isVisible()) {
             return folderInputPopup.handleMouseEvent(me);
         }
@@ -834,6 +850,9 @@ class ActionsPopup {
         if (docViewerPopup.isVisible()) {
             docViewerPopup.render(frame, area);
         }
+        if (optionsViewerPopup.isVisible()) {
+            optionsViewerPopup.render(frame, area);
+        }
         if (mcpLogPopup.isVisible()) {
             mcpLogPopup.render(frame, area);
         }
@@ -881,6 +900,10 @@ class ActionsPopup {
         }
         if (docViewerPopup.isVisible()) {
             docViewerPopup.renderFooter(spans);
+            return;
+        }
+        if (optionsViewerPopup.isVisible()) {
+            optionsViewerPopup.renderFooter(spans);
             return;
         }
         if (runOptionsForm.isVisible()) {
@@ -1093,6 +1116,34 @@ class ActionsPopup {
     void openMarkdown(String title, String markdown) {
         showActionsMenu = false;
         docViewerPopup.openMarkdown(title, markdown);
+    }
+
+    void openOptions(String name, String kind, org.apache.camel.catalog.CamelCatalog catalog) {
+        showActionsMenu = false;
+        optionsViewerPopup.open(name, kind, catalog);
+    }
+
+    void openCatalogDoc(String name, String kind, org.apache.camel.catalog.CamelCatalog catalog) {
+        showActionsMenu = false;
+        openDocForEntry(name, kind, catalog);
+    }
+
+    private void openDocForEntry(String name, String kind, org.apache.camel.catalog.CamelCatalog catalog) {
+        if (catalog == null) {
+            return;
+        }
+        String docName = switch (kind) {
+            case "component" -> name + "-component";
+            case "dataformat" -> name + "-dataformat";
+            case "language" -> name + "-language";
+            case "eip" -> name + "-eip";
+            default -> name;
+        };
+        String adoc = catalog.asciiDoc(docName);
+        if (adoc != null) {
+            String md = DocHelper.asciidocToMarkdown(adoc);
+            docViewerPopup.openCatalogDoc(name, md, name, kind, catalog);
+        }
     }
 
     private void setNotification(String msg, boolean error) {
