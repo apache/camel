@@ -13884,6 +13884,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Configures Resilience4j settings for the Circuit Breaker EIP, such as failure rate threshold, wait duration, and sliding window parameters",
             deprecated = false,
             properties = {
+                    @YamlProperty(name = "asynchronous", type = "boolean", defaultValue = "false", description = "Whether to use asynchronous (non-blocking) processing with CompletionStage-based circuit breaker decorators. When enabled, the circuit breaker releases the caller thread immediately and completes processing asynchronously. This is most valuable when the downstream processor supports asynchronous processing (e.g. Netty HTTP, Kafka). When used with timeout, the timeoutExecutorService must be a ScheduledExecutorService.", displayName = "Asynchronous"),
                     @YamlProperty(name = "automaticTransitionFromOpenToHalfOpenEnabled", type = "boolean", defaultValue = "false", description = "Enables automatic transition from OPEN to HALF_OPEN state once the waitDurationInOpenState has passed.", displayName = "Automatic Transition From Open To Half Open Enabled"),
                     @YamlProperty(name = "bulkheadEnabled", type = "boolean", defaultValue = "false", description = "Whether bulkhead is enabled or not on the circuit breaker.", displayName = "Bulkhead Enabled"),
                     @YamlProperty(name = "bulkheadFairCallHandlingEnabled", type = "boolean", defaultValue = "true", description = "Configures whether the bulkhead uses a fair calling strategy. When enabled (default), a fair strategy guarantees the order of incoming requests (FIFO). When disabled, no ordering is guaranteed and may improve throughput.", displayName = "Bulkhead Fair Call Handling Enabled"),
@@ -13928,6 +13929,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyKey, String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
+                case "asynchronous": {
+                    String val = asText(node);
+                    target.setAsynchronous(val);
+                    break;
+                }
                 case "automaticTransitionFromOpenToHalfOpenEnabled": {
                     String val = asText(node);
                     target.setAutomaticTransitionFromOpenToHalfOpenEnabled(val);
