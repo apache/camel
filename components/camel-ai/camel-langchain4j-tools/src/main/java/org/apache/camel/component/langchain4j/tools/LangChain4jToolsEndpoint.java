@@ -296,6 +296,11 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
     }
 
     public void setMaxToolCallingRoundTrips(int maxToolCallingRoundTrips) {
+        if (maxToolCallingRoundTrips < 0) {
+            throw new IllegalArgumentException(
+                    "maxToolCallingRoundTrips must be >= 0 (0 means unlimited, default is 10), got: "
+                                               + maxToolCallingRoundTrips);
+        }
         this.maxToolCallingRoundTrips = maxToolCallingRoundTrips;
     }
 

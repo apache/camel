@@ -189,6 +189,41 @@ They were not wired into the component; the `chatModel` is autowired instead.
 If you used these helpers directly, configure your `ChatModel` with LangChain4j's own builders or Spring Boot starters
 and inject it into the component.
 
+=== camel-langchain4j-tools
+
+==== Tool-calling round trips now bounded by default
+
+The `langchain4j-tools` producer now limits the number of tool-calling round trips to 10 by default
+(previously the loop was unbounded and could run indefinitely if the LLM kept requesting tools).
+Each round trip consists of one LLM call and the execution of all tools requested in that call.
+
+If your LLM interaction legitimately requires more than 10 iterations, increase the
+`maxToolCallingRoundTrips` endpoint option. Set to `0` for unlimited (not recommended).
+Negative values are rejected with `IllegalArgumentException`.
+
+When the limit is reached, the producer throws a `RuntimeCamelException` with a message indicating
+the maximum was exceeded.
+
+==== Hallucinated tool names no longer crash the producer
+
+When the LLM requests a tool name that does not exist among the registered tools, the producer
+now sends an error message back to the LLM listing the available tools, giving it a chance to
+self-correct. Previously this caused a `NoSuchElementException` crash.
+
+==== Tool execution errors sent to LLM instead of propagating to the route
+
+When a tool route throws an exception, the error is now sent back to the LLM as a
+`ToolExecutionResultMessage`, allowing the LLM to handle it gracefully (e.g., retry with different
+parameters or answer directly). Previously the exception was set on the tool exchange and
+`ExchangeHelper.copyResults` propagated it onto the main exchange, but the loop continued anyway,
+leaving the exchange in an inconsistent state.
+
+This is a behavior change: routes that used `onException(...)` to catch tool execution failures
+will no longer see those exceptions, since the error is now handled within the producer and sent
+back to the LLM. The previous behavior was unreliable — a later successful tool call would
+overwrite the exception via `copyResults` — but if you relied on it, be aware that tool errors
+are now consumed by the producer.
+
 === camel-langchain4j-web-search
 
 The `safeSearch` endpoint option is now correctly propagated to the LangChain4j `WebSearchRequest`.

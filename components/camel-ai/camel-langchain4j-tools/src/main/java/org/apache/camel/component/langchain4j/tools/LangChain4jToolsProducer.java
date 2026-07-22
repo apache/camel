@@ -299,7 +299,8 @@ public class LangChain4jToolsProducer extends DefaultProducer {
                 toolResult = toolExchange.getIn().getBody(String.class);
             } catch (Exception e) {
                 LOG.warn("Error executing tool '{}': {}", toolName, e.getMessage(), e);
-                toolResult = "Error executing tool '" + toolName + "': " + e.getMessage();
+                String errorDetail = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
+                toolResult = "Error executing tool '" + toolName + "': " + errorDetail;
             }
 
             chatMessages.add(new ToolExecutionResultMessage(
