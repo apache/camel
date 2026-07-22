@@ -94,9 +94,12 @@ public final class GenericFileHelper {
             // enrich with data from dynamic source
             if (dynamic.getMessage().hasHeaders()) {
                 MessageHelper.copyHeaders(dynamic.getMessage(), dummy.getMessage(), true);
-                if (dynamic.hasVariables()) {
-                    dummy.getVariables().putAll(dynamic.getVariables());
-                }
+            }
+            if (dynamic.hasVariables()) {
+                dummy.getVariables().putAll(dynamic.getVariables());
+            }
+            if (dynamic.hasProperties()) {
+                dummy.getProperties().putAll(dynamic.getProperties());
             }
         }
         return dummy;
