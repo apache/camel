@@ -25,7 +25,6 @@ import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.invocation.InvocationContext;
 import dev.langchain4j.service.Result;
 import dev.langchain4j.service.tool.AiServiceTool;
-import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.service.tool.ToolProviderRequest;
 import dev.langchain4j.service.tool.ToolProviderResult;
 import org.apache.camel.Exchange;
