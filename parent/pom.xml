@@ -151,7 +151,7 @@
         <!-- github-api (kohsuke) for camel-github2 -->
         <github-api-version>1.330</github-api-version>
         <elasticsearch-java-client-version>9.4.4</elasticsearch-java-client-version>
-        <elasticsearch-java-client-sniffer-version>9.4.3</elasticsearch-java-client-sniffer-version>
+        <elasticsearch-java-client-sniffer-version>9.4.4</elasticsearch-java-client-sniffer-version>
         <endive-version>1.0.1</endive-version>
         <extjwnl-version>2.0.5</extjwnl-version>
         <extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
