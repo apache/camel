@@ -113,7 +113,7 @@ jobs:
           cd dsl/camel-jbang/camel-launcher
           CAMEL_PACKAGE_TEST_MODE=true CAMEL_PACKAGE_TEST_VERSION="$TEST_VERSION" \
             CAMEL_PACKAGE_TEST_WINGET_REMOTE="target/camel-launcher-$TEST_VERSION-winget-bin.zip" \
-            sh src/jreleaser/bin/camel-package.sh prepare --channel stable
+            bash src/jreleaser/bin/camel-package.sh prepare --channel stable
 
       - name: Validate local archive + Homebrew + SDKMAN (host-gated)
         shell: bash
