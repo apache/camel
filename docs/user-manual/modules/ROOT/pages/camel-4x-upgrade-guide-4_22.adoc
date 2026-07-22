@@ -722,6 +722,15 @@ The `TemplateParser` now catches `TokenMgrError` (a JavaCC lexer error) and wrap
 `ParseRuntimeException`. Previously a malformed stored-procedure template with characters
 outside the token alphabet would propagate as a raw `java.lang.Error`.
 
+=== camel-aws - Migrated from apache-client to apache5-client
+
+All camel-aws modules now use `software.amazon.awssdk:apache5-client` (Apache HttpClient 5) instead of
+`software.amazon.awssdk:apache-client` (Apache HttpClient 4), aligning with the
+https://github.com/aws/aws-sdk-java-v2/issues/7007[new default] in AWS SDK for Java v2.46.0.
+
+If your project has `<dependencyManagement>` entries, exclusions, or explicit dependencies referencing
+`software.amazon.awssdk:apache-client`, update them to `software.amazon.awssdk:apache5-client`.
+
 === camel-aws-cloudtrail - consumer event delivery fixed
 
 The CloudTrail consumer previously kept its lookup cursor in a `static` field (shared across all
