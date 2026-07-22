@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import dev.tamboui.layout.Constraint;
+import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.markdown.MarkdownView;
 import dev.tamboui.style.Overflow;
@@ -44,6 +46,8 @@ import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
@@ -59,6 +63,7 @@ class DocViewerPopup {
     private int docScroll;
     private Runnable onCloseCallback;
 
+    private final ScrollbarState scrollbarState = new ScrollbarState();
     private final ListState pickerState = new ListState();
     private List<IntegrationInfo> pickerIntegrations;
     private Rect pickerRect;
@@ -416,7 +421,10 @@ class DocViewerPopup {
         if (docLines != null) {
             frame.renderWidget(block, popup);
             Rect inner = block.inner(popup);
-            int visibleLines = inner.height();
+            List<Rect> hChunks = Layout.horizontal()
+                    .constraints(Constraint.fill(), Constraint.length(1))
+                    .split(inner);
+            int visibleLines = hChunks.get(0).height();
             int totalLines = docLines.size();
             int clampedScroll = Math.min(docScroll, Math.max(0, totalLines - visibleLines));
             int end = Math.min(clampedScroll + visibleLines, totalLines);
@@ -427,15 +435,35 @@ class DocViewerPopup {
             frame.renderWidget(
                     Paragraph.builder().text(Text.from(visible.toArray(Line[]::new)))
                             .overflow(Overflow.CLIP).build(),
-                    inner);
+                    hChunks.get(0));
+            if (totalLines > visibleLines) {
+                scrollbarState
+                        .contentLength(totalLines)
+                        .viewportContentLength(visibleLines)
+                        .position(clampedScroll);
+                frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), scrollbarState);
+            }
         } else {
+            frame.renderWidget(block, popup);
+            Rect inner = block.inner(popup);
+            List<Rect> hChunks = Layout.horizontal()
+                    .constraints(Constraint.fill(), Constraint.length(1))
+                    .split(inner);
             MarkdownView view = MarkdownView.builder()
                     .source(docContent)
                     .scroll(docScroll)
-                    .block(block)
                     .styles(Theme.markdownStyles())
                     .build();
-            frame.renderWidget(view, popup);
+            frame.renderWidget(view, hChunks.get(0));
+            int totalHeight = view.computeHeight(hChunks.get(0).width());
+            int viewportHeight = hChunks.get(0).height();
+            if (totalHeight > viewportHeight) {
+                scrollbarState
+                        .contentLength(totalHeight)
+                        .viewportContentLength(viewportHeight)
+                        .position(docScroll);
+                frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), scrollbarState);
+            }
         }
     }
 
