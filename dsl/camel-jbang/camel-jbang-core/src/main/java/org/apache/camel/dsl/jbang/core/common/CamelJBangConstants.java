@@ -60,6 +60,10 @@ public final class CamelJBangConstants {
               javaType = "String", label = "kubernetes")
     public static final String JKUBE_FILES = "camel.jbang.jkubeFiles";
 
+    @Metadata(description = "Additional resource directories to include recursively, preserving directory structure (Use commas to separate multiple directories)",
+              javaType = "String")
+    public static final String RESOURCE_DIRS = "camel.jbang.resourceDirs";
+
     @Metadata(description = "Which runtime to use (camel-main, spring-boot, quarkus)",
               javaType = "String", enums = "camel-main,spring-boot,quarkus")
     public static final String RUNTIME = "camel.jbang.runtime";

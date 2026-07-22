@@ -4,7 +4,7 @@ This page covers configuring the Camel CLI — available options, configuration 
 
 // jbang options: START
 == Camel CLI configurations
-The camel.jbang supports 49 options, which are listed below.
+The camel.jbang supports 50 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -51,6 +51,7 @@ The camel.jbang supports 49 options, which are listed below.
 | *camel.jbang.quarkusVersion* | version of Quarkus Platform BOM |  | String
 | *camel.jbang.readmeFiles* | README files included with the integration (Use commas to separate multiple files) |  | String
 | *camel.jbang.repos* | Additional Maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
+| *camel.jbang.resourceDirs* | Additional resource directories to include recursively, preserving directory structure (Use commas to separate multiple directories) |  | String
 | *camel.jbang.runtime* | Which runtime to use (camel-main, spring-boot, quarkus) |  | String
 | *camel.jbang.scriptFiles* | Additional shell script files to export to src/main/scripts directory |  | String
 | *camel.jbang.sourceDir* | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String

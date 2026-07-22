@@ -180,6 +180,11 @@ public class Run extends CamelCommand {
             description = "Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time.")
     String sourceDir;
 
+    @Option(names = { "--resource-dir", "--resource-dirs" },
+            description = "Additional resource directories to include on the classpath (recursive, preserving structure)",
+            split = ",")
+    List<String> resourceDirs = new ArrayList<>();
+
     @Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
     public boolean background;
 
@@ -971,6 +976,16 @@ public class Run extends CamelCommand {
             }
         }
 
+        // walk resource directories and add files to classpath preserving directory structure
+        if (resourceDirs != null) {
+            for (String dir : resourceDirs) {
+                Path dirPath = validateResourceDir(dir);
+                for (Path f : walkResourceDir(dirPath)) {
+                    sjClasspathFiles.add(f.toString());
+                }
+            }
+        }
+
         for (String file : files) {
             if (file.startsWith("clipboard") && !(Files.exists(Paths.get(file)))) {
                 file = loadFromClipboard(file);
@@ -1129,6 +1144,13 @@ public class Run extends CamelCommand {
             writeSettings(JKUBE_FILES, sjJKubeFiles.toString());
         } else {
             writeSetting(main, profileProperties, JKUBE_FILES, () -> null);
+        }
+        if (resourceDirs != null && !resourceDirs.isEmpty()) {
+            String dirs = String.join(",", resourceDirs);
+            main.addInitialProperty(RESOURCE_DIRS, dirs);
+            writeSettings(RESOURCE_DIRS, dirs);
+        } else {
+            writeSetting(main, profileProperties, RESOURCE_DIRS, () -> null);
         }
 
         if (sjKamelets.length() > 0) {
@@ -2667,6 +2689,36 @@ public class Run extends CamelCommand {
     private static boolean isReadmeFile(String name) {
         String on = FileUtil.onlyName(FileUtil.stripPath(name), true);
         return on.toLowerCase(Locale.ROOT).startsWith("readme");
+    }
+
+    static final int MAX_RESOURCE_DIR_FILES = 1000;
+
+    static Path validateResourceDir(String dir) {
+        Path path = Paths.get(dir).normalize();
+        if (path.isAbsolute()) {
+            throw new IllegalArgumentException("--resource-dirs only accepts relative paths: " + dir);
+        }
+        if (path.getFileName() != null && path.getFileName().toString().equals("..")) {
+            throw new IllegalArgumentException(
+                    "--resource-dirs path must end with a named directory, not '..': " + dir);
+        }
+        if (!Files.isDirectory(path)) {
+            throw new IllegalArgumentException("--resource-dirs path is not a directory: " + dir);
+        }
+        return path;
+    }
+
+    static List<Path> walkResourceDir(Path dirPath) throws IOException {
+        try (Stream<Path> walk = Files.walk(dirPath)) {
+            List<Path> files = walk.filter(Files::isRegularFile).toList();
+            if (files.size() > MAX_RESOURCE_DIR_FILES) {
+                throw new IllegalArgumentException(
+                        "--resource-dirs directory contains " + files.size()
+                                                   + " files which exceeds the limit of " + MAX_RESOURCE_DIR_FILES + ": "
+                                                   + dirPath);
+            }
+            return files;
+        }
     }
 
     private void writeSettings(String key, String value) {
