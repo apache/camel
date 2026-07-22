@@ -31,6 +31,12 @@
     <name>Camel :: ClickHouse</name>
     <description>Camel ClickHouse component</description>
 
+    <properties>
+        <!-- ClickHouse server container image is not available on these platforms -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
+    </properties>
+
     <dependencies>
 
         <dependency>

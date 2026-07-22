@@ -42,6 +42,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -87,6 +88,9 @@ class ClickHouseProducerTest extends CamelTestSupport {
                         .to("mock:result");
                 from("direct:insertRowBinary")
                         .to("clickhouse://analytics.events?operation=insert&format=RowBinary")
+                        .to("mock:result");
+                from("direct:insertBatched")
+                        .to("clickhouse://analytics.events?operation=insert&format=JSONEachRow&batchSize=2")
                         .to("mock:result");
                 from("direct:query")
                         .to("clickhouse://analytics?operation=query&format=CSV")
@@ -137,6 +141,24 @@ class ClickHouseProducerTest extends CamelTestSupport {
         template.sendBody("direct:insert", rows);
 
         verify(client).insert(anyString(), anyList(), any(InsertSettings.class));
+    }
+
+    @Test
+    void insertSplitsListIntoBatchesWhenBatchSizeSet() throws Exception {
+        // batchSize=2 with 5 rows -> 3 insert calls (2 + 2 + 1)
+        List<Map<String, Object>> rows = List.of(
+                Map.of("id", 1), Map.of("id", 2), Map.of("id", 3), Map.of("id", 4), Map.of("id", 5));
+
+        template.sendBody("direct:insertBatched", rows);
+
+        ArgumentCaptor<List> batchCaptor = ArgumentCaptor.forClass(List.class);
+        verify(client, times(3)).insert(anyString(), batchCaptor.capture(), any(InsertSettings.class));
+
+        List<List> batches = batchCaptor.getAllValues();
+        assertThat(batches).hasSize(3);
+        assertThat(batches.get(0)).hasSize(2);
+        assertThat(batches.get(1)).hasSize(2);
+        assertThat(batches.get(2)).hasSize(1);
     }
 
     @Test

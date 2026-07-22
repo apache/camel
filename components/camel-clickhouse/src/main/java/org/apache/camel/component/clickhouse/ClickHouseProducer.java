@@ -82,9 +82,7 @@ public class ClickHouseProducer extends DefaultProducer {
         long writtenRows;
         if (body instanceof List) {
             List<?> data = exchange.getIn().getBody(List.class);
-            try (InsertResponse response = client.insert(target, data, settings).get()) {
-                writtenRows = response.getWrittenRows();
-            }
+            writtenRows = insertList(client, target, data, settings);
         } else {
             InputStream stream = null;
             boolean createdStream = false;
@@ -117,6 +115,25 @@ public class ClickHouseProducer extends DefaultProducer {
 
         LOG.debug("Inserted {} rows into {}", writtenRows, target);
         exchange.getMessage().setHeader(ClickHouseConstants.WRITTEN_ROWS, writtenRows);
+    }
+
+    private long insertList(Client client, String target, List<?> data, InsertSettings settings) throws Exception {
+        int batchSize = endpoint.getBatchSize();
+        if (batchSize <= 0 || data.size() <= batchSize) {
+            try (InsertResponse response = client.insert(target, data, settings).get()) {
+                return response.getWrittenRows();
+            }
+        }
+
+        // split the list into batches of batchSize, inserting each batch separately
+        long writtenRows = 0;
+        for (int start = 0; start < data.size(); start += batchSize) {
+            List<?> batch = data.subList(start, Math.min(start + batchSize, data.size()));
+            try (InsertResponse response = client.insert(target, batch, settings).get()) {
+                writtenRows += response.getWrittenRows();
+            }
+        }
+        return writtenRows;
     }
 
     private void doQuery(Exchange exchange) throws Exception {

@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
              producerOnly = true, headersClass = ClickHouseConstants.class)
 public class ClickHouseEndpoint extends DefaultEndpoint {
 
-    private Client client;
+    private volatile Client client;
     private boolean clientCreated;
 
     @UriPath
@@ -64,8 +64,9 @@ public class ClickHouseEndpoint extends DefaultEndpoint {
                             + " RowBinary, CSV, TSV or Parquet.")
     private String format = "JSONEachRow";
     @UriParam(defaultValue = "0",
-              description = "The client-side batch size hint for insert operations. A value of 0 disables client-side"
-                            + " batching (data is streamed as-is).")
+              description = "The client-side batch size for insert operations when the message body is a List. When"
+                            + " greater than 0, the list is split into batches of this size and each batch is sent as a"
+                            + " separate insert. A value of 0 (default) inserts the whole list in a single call.")
     private int batchSize;
     @UriParam(defaultValue = "false",
               description = "Whether to use ClickHouse server-side asynchronous inserts (async_insert=1).")
@@ -123,8 +124,8 @@ public class ClickHouseEndpoint extends DefaultEndpoint {
             synchronized (this) {
                 if (client == null) {
                     Client.Builder builder = new Client.Builder()
-                            .addEndpoint(serverUrl)
-                            .setUsername(username != null ? username : "default")
+                            .addEndpoint(resolveEndpointUrl())
+                            .setUsername(username)
                             .setPassword(password != null ? password : "");
                     if (ObjectHelper.isNotEmpty(database)) {
                         builder.setDefaultDatabase(database);
@@ -138,6 +139,22 @@ public class ClickHouseEndpoint extends DefaultEndpoint {
             }
         }
         return client;
+    }
+
+    /**
+     * Resolves the endpoint URL, upgrading the scheme to HTTPS when the {@code ssl} option is enabled. The ClickHouse
+     * client-v2 derives the transport security from the endpoint URL scheme.
+     */
+    private String resolveEndpointUrl() {
+        if (ssl) {
+            if (serverUrl.startsWith("http://")) {
+                return "https://" + serverUrl.substring("http://".length());
+            }
+            if (!serverUrl.startsWith("https://")) {
+                return "https://" + serverUrl;
+            }
+        }
+        return serverUrl;
     }
 
     public void setClient(Client client) {
