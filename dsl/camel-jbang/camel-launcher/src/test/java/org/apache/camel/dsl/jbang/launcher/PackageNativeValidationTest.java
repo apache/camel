@@ -280,7 +280,14 @@ class PackageNativeValidationTest {
         assertThat(r.out())
                 .contains("camel version mismatch")
                 .contains("FAIL")
-                .contains("SKIP: homebrew formula not found")
+                // Which SKIP reason fires depends on whether `brew` is on PATH for the host running this
+                // test: package-native-validation.yml's ubuntu-latest/macos-latest legs put Linuxbrew/
+                // Homebrew on PATH first, so validate_homebrew() gets past the host-gate and SKIPs on the
+                // formula file (never staged here). The generic "Build and test" workflow runs this same
+                // test via a plain reactor `mvn test` with no such PATH setup, so it SKIPs at the host-gate
+                // instead. Either way the local FAIL didn't short-circuit the homebrew leg, which is what
+                // this test is actually proving.
+                .containsPattern("SKIP: homebrew (not available|formula not found)")
                 // `sdk` is a shell function sourced from sdkman-init.sh, not a PATH binary, so a bare
                 // subprocess (this test's `sh`, and CI's separate "Run POSIX validator unit tests" step)
                 // always hits the host-gate SKIP rather than the descriptor-not-found one.
