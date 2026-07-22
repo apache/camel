@@ -25,12 +25,19 @@ import org.apache.camel.dsl.jbang.core.commands.test.TestPlugin;
 import org.apache.camel.dsl.jbang.core.commands.tui.TuiPlugin;
 import org.apache.camel.dsl.jbang.core.commands.validate.ValidatePlugin;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
+import org.apache.camel.dsl.jbang.launcher.selfupdate.SelfUpdatePlugin;
+import org.apache.camel.dsl.jbang.launcher.selfupdate.UpdateChecker;
 import picocli.CommandLine;
 
 /**
  * Main for Camel Launcher
  */
 public class CamelLauncherMain extends CamelJBangMain {
+
+    @Override
+    public void preExecute(CommandLine commandLine, String[] args) {
+        UpdateChecker.maybeNotify(args);
+    }
 
     @Override
     public void postAddCommands(CommandLine commandLine, String[] args) {
@@ -44,6 +51,7 @@ public class CamelLauncherMain extends CamelJBangMain {
         List<Plugin> plugins = List.of(
                 new GeneratePlugin(),
                 new KubernetesPlugin(),
+                new SelfUpdatePlugin(),
                 new TuiPlugin(),
                 new ValidatePlugin(),
                 new TestPlugin());
