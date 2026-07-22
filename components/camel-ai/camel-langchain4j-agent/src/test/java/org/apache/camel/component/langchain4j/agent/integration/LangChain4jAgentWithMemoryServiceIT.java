@@ -87,7 +87,7 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
         mockEndpoint.expectedMessageCount(2);
 
         AiAgentBody<?> firstRequest = new AiAgentBody<>(
-                "Hi! Can you look up user 123 and tell me about our rental policies?",
+                "You MUST use the userDb tool to look up user 123. Tell me their name, membership level, and rental policies.",
                 null,
                 MEMORY_ID_SESSION);
 
@@ -237,10 +237,10 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
                         .to("mock:agent-response");
 
                 // Tool routes for function calling
-                from("langchain4j-tools:userDb?tags=users&description=Query user database by user ID&parameter.userId=string")
+                from("ai-tool:userDb?tags=users&description=Query user database by user ID&parameter.userId=string")
                         .setBody(constant(USER_DATABASE));
 
-                from("langchain4j-tools:weatherService?tags=weather&description=Get current weather information&parameter.location=string")
+                from("ai-tool:weatherService?tags=weather&description=Get current weather information&parameter.location=string")
                         .setBody(constant("{\"weather\": \"" + WEATHER_INFO + "\", \"location\": \"Current Location\"}"));
             }
         };

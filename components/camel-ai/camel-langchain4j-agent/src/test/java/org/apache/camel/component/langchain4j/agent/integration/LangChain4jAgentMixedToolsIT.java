@@ -151,10 +151,10 @@ public class LangChain4jAgentMixedToolsIT extends CamelTestSupport {
                         .to("mock:agent-response");
 
                 // Tool routes for function calling
-                from("langchain4j-tools:userDb?tags=users&description=Query user database by user ID&parameter.userId=string")
+                from("ai-tool:userDb?tags=users&description=Query user database by user ID&parameter.userId=string")
                         .setBody(constant(USER_DATABASE));
 
-                from("langchain4j-tools:weatherService?tags=weather&description=Get current weather information&parameter.location=string")
+                from("ai-tool:weatherService?tags=weather&description=Get current weather information&parameter.location=string")
                         .setBody(constant("{\"weather\": \"" + WEATHER_INFO + "\", \"location\": \"Current Location\"}"));
             }
         };
