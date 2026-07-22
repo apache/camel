@@ -292,6 +292,7 @@ class ExportCamelMain extends Export {
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-main"));
         answer.removeIf(s -> s.contains("camel-health"));
+        answer.removeIf(s -> s.contains("camel-micrometer-prometheus"));
         // spring-boot-starter JARs are not usable in camel-main runtime
         answer.removeIf(s -> s.contains("spring-boot-starter"));
 
