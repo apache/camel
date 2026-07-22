@@ -977,3 +977,106 @@ camel.resilience4j.waitDurationInOpenState = 60000
 The `io.vavr:vavr` and `io.vavr:vavr-match` runtime dependencies have been removed from
 `camel-resilience4j`. The single internal usage of Vavr's `Try` monad has been replaced with a
 plain try-catch. This eliminates two transitive runtime JARs. No user-facing behavior change.
+
+=== camel-minio - Upgraded to minio 9.0.3 - Breaking Changes
+
+The underlying `io.minio:minio` library has been upgraded from 8.x to 9.0.3.
+This release contains several breaking API changes that affect users who pass `io.minio` objects
+directly through the Camel Minio component (e.g. via `pojoRequest=true` or custom `MinioClient`
+configuration).
+
+==== ServerSideEncryptionCustomerKey renamed
+
+`io.minio.ServerSideEncryptionCustomerKey` has been removed as a top-level class.
+Use the inner class `io.minio.ServerSideEncryption.CustomerKey` instead.
+
+[source,java]
+----
+// Before:
+import io.minio.ServerSideEncryptionCustomerKey;
+ServerSideEncryptionCustomerKey ssec = ...;
+
+// After:
+import io.minio.ServerSideEncryption;
+ServerSideEncryption.CustomerKey ssec = ...;
+----
+
+The `serverSideEncryptionCustomerKey` endpoint/component option type has changed accordingly.
+
+==== CopySource renamed to SourceObject
+
+`io.minio.CopySource` has been removed. Use `io.minio.SourceObject` instead.
+`CopyObjectArgs.Builder.source()` now accepts a `SourceObject`.
+
+[source,java]
+----
+// Before:
+import io.minio.CopySource;
+CopySource src = CopySource.builder().bucket("b").object("o").build();
+
+// After:
+import io.minio.SourceObject;
+SourceObject src = SourceObject.builder().bucket("b").object("o").build();
+----
+
+==== Method enum moved inside Http class
+
+`io.minio.http.Method` (package `io.minio.http`) has been removed.
+Use the nested enum `io.minio.Http.Method` instead.
+
+[source,java]
+----
+// Before:
+import io.minio.http.Method;
+
+// After:
+import io.minio.Http;
+// reference as Http.Method.GET, Http.Method.PUT, etc.
+----
+
+==== Bucket type changed for listBuckets
+
+`io.minio.messages.Bucket` has been removed. The `MinioClient.listBuckets()` method now returns
+`List<io.minio.messages.ListAllMyBucketsResult.Bucket>`.
+
+[source,java]
+----
+// Before:
+import io.minio.messages.Bucket;
+List<Bucket> buckets = minioClient.listBuckets();
+
+// After:
+import io.minio.messages.ListAllMyBucketsResult;
+List<ListAllMyBucketsResult.Bucket> buckets = minioClient.listBuckets();
+----
+
+==== DeleteObject renamed to DeleteRequest.Object
+
+`io.minio.messages.DeleteObject` has been removed. Use `io.minio.messages.DeleteRequest.Object` instead.
+
+[source,java]
+----
+// Before:
+import io.minio.messages.DeleteObject;
+new DeleteObject("my-object-name");
+
+// After:
+import io.minio.messages.DeleteRequest;
+new DeleteRequest.Object("my-object-name");
+----
+
+==== MinioClient methods now throw MinioException only
+
+All `MinioClient` methods previously declared multiple checked exceptions
+(`InvalidKeyException`, `NoSuchAlgorithmException`, `IOException`, etc.).
+In 9.x they now uniformly declare `throws io.minio.errors.MinioException`.
+Update any catch blocks or method `throws` declarations accordingly.
+
+[source,java]
+----
+// Before:
+} catch (MinioException | InvalidKeyException | NoSuchAlgorithmException | IOException e) { ... }
+
+// After:
+} catch (MinioException e) { ... }
+----
