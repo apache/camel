@@ -2,7 +2,7 @@
 :doctitle: Pausable
 :shortname: pausable
 :description: Pauses a consumer based on a condition, allowing it to be resumed later from the last known offset. Useful for controlling ingestion rate on polling consumers.
-:since:
+:since: 
 :supportlevel: Stable
 :tabs-sync-option:
 

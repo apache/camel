@@ -2,7 +2,7 @@
 :doctitle: Resumable
 :shortname: resumable
 :description: Enables resuming processing from the last known offset after a restart, using a resume strategy to track and restore position
-:since:
+:since: 
 :supportlevel: Stable
 :tabs-sync-option:
 
