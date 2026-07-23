@@ -39,7 +39,7 @@ import org.jboss.logging.Logger;
  * <p>
  * Combines data from the message history, top processor statistics, and route structure to surface AI-specific metrics:
  * token usage, model IDs, guardrail outcomes, completion reasons, and per-component latency for AI components (Bedrock,
- * LangChain4j, Docling, Textract, OpenAI).
+ * LangChain4j, Docling, Textract, OpenAI, KServe, DJL, TensorFlow Serving, HuggingFace).
  */
 @ApplicationScoped
 public class AiTraceTools {
@@ -254,7 +254,7 @@ public class AiTraceTools {
     }
 
     private String categorizeHeader(String header) {
-        if (header.contains("TokenCount") || header.contains("Usage")) {
+        if (header.contains("TokenCount") || header.contains("Usage") || header.contains("TokenUsage")) {
             return "token_usage";
         }
         if (header.contains("Model")) {
@@ -263,7 +263,8 @@ public class AiTraceTools {
         if (header.contains("Guardrail")) {
             return "guardrail";
         }
-        if (header.contains("CompletionReason") || header.contains("StopReason")) {
+        if (header.contains("CompletionReason") || header.contains("StopReason")
+                || header.contains("FinishReason")) {
             return "completion";
         }
         if (header.contains("ChunkCount") || header.contains("Stream")) {
