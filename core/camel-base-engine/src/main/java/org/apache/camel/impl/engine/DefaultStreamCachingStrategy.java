@@ -583,7 +583,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
             try {
                 spoolAverageSize.set(spoolSize.addAndGet(size) / spoolCounter.incrementAndGet());
             } finally {
-                lock.lock();
+                lock.unlock();
             }
         }
 
