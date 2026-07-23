@@ -310,10 +310,12 @@ if [ "${CAMEL_PACKAGE_TEST_MODE:-}" = "true" ] && [ -n "${CAMEL_PACKAGE_TEST_VER
   SNAPSHOT_PATTERN_ARGS=(-Djreleaser.project.snapshot.pattern=CAMEL_LAUNCHER_NEVER_MATCH_SNAPSHOT_PATTERN)
 fi
 echo "Preparing packages for channel '$CHANNEL' (packagers: $PACKAGERS)..."
+# The "${arr[@]+"${arr[@]}"}" form expands to nothing for an empty array; a bare "${arr[@]}"
+# trips `set -u` as an unbound variable on bash < 4.4 (e.g. the bash 3.2 shipped by macOS).
 mvn -B -ntp -f "$MODULE_DIR/pom.xml" \
   -Djreleaser.distributions=camel-cli,camel-cli-winget \
   -Djreleaser.packagers="$PACKAGERS" \
-  "${SNAPSHOT_PATTERN_ARGS[@]}" \
+  "${SNAPSHOT_PATTERN_ARGS[@]+"${SNAPSHOT_PATTERN_ARGS[@]}"}" \
   jreleaser:config jreleaser:prepare jreleaser:package \
   -Djreleaser.dry.run=true
 
