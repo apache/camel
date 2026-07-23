@@ -145,6 +145,20 @@ class RouteCostEstimateToolsTest {
     }
 
     @Test
+    void shouldExtractSchemesFromXmlRoutes() {
+        String xmlRoute = """
+                <route>
+                  <from uri="aws2-s3:bucket"/>
+                  <to uri="aws-bedrock:label"/>
+                </route>
+                """;
+
+        List<String> schemes = tools.extractSchemes(xmlRoute);
+
+        assertThat(schemes).contains("aws2-s3", "aws-bedrock");
+    }
+
+    @Test
     void shouldHandleTextractAndDoclingCombined() {
         String combinedRoute = """
                 - route:

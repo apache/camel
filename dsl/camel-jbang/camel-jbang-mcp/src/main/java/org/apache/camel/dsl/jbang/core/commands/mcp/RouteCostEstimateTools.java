@@ -42,9 +42,13 @@ import io.quarkiverse.mcp.server.ToolCallException;
 @ApplicationScoped
 public class RouteCostEstimateTools {
 
-    private static final Pattern SCHEME_PATTERN = Pattern.compile(
+    private static final Pattern YAML_SCHEME_PATTERN = Pattern.compile(
             "(?:uri:\\s*[\"']?|from:\\s+[\"']?|to:\\s+[\"']?|toD:\\s+[\"']?)([a-zA-Z][a-zA-Z0-9+.-]*):(?://)?",
             Pattern.MULTILINE);
+
+    private static final Pattern XML_SCHEME_PATTERN = Pattern.compile(
+            "(?:<from|<to|<toD)\\s+uri=[\"']([a-zA-Z][a-zA-Z0-9+.-]*):",
+            Pattern.CASE_INSENSITIVE);
 
     private static final Map<String, ComponentCostProfile> COST_PROFILES = buildCostProfiles();
 
@@ -64,6 +68,20 @@ public class RouteCostEstimateTools {
         if (route == null || route.isBlank()) {
             throw new ToolCallException("Route content is required", null);
         }
+
+        try {
+            return doEstimate(route, messagesPerHour, avgPages, avgInputTokens, avgOutputTokens);
+        } catch (ToolCallException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Failed to estimate route cost (" + e.getClass().getName() + "): " + e.getMessage(), null);
+        }
+    }
+
+    private CostEstimateResult doEstimate(
+            String route, Integer messagesPerHour, Integer avgPages,
+            Integer avgInputTokens, Integer avgOutputTokens) {
 
         int throughput = messagesPerHour != null && messagesPerHour > 0 ? messagesPerHour : 100;
         int pages = avgPages != null && avgPages > 0 ? avgPages : 5;
@@ -119,14 +137,19 @@ public class RouteCostEstimateTools {
 
     List<String> extractSchemes(String route) {
         List<String> schemes = new ArrayList<>();
-        Matcher m = SCHEME_PATTERN.matcher(route);
+        addSchemeMatches(schemes, YAML_SCHEME_PATTERN, route);
+        addSchemeMatches(schemes, XML_SCHEME_PATTERN, route);
+        return schemes;
+    }
+
+    private void addSchemeMatches(List<String> schemes, Pattern pattern, String route) {
+        Matcher m = pattern.matcher(route);
         while (m.find()) {
             String scheme = m.group(1);
             if (!schemes.contains(scheme)) {
                 schemes.add(scheme);
             }
         }
-        return schemes;
     }
 
     private List<String> buildOptimizationTips(List<String> schemes, List<ComponentCostBreakdown> breakdown) {
@@ -162,8 +185,9 @@ public class RouteCostEstimateTools {
         Map<String, ComponentCostProfile> profiles = new LinkedHashMap<>();
 
         profiles.put("aws-bedrock", new ComponentCostProfile(
-                "AWS Bedrock (Claude Sonnet 4)", "per-token",
-                "Input: ~$3/MTok, Output: ~$15/MTok (Claude Sonnet 4 pricing)") {
+                "AWS Bedrock (model-dependent, estimated as Claude Sonnet 4)", "per-token",
+                "Estimate uses Claude Sonnet 4 pricing ($3/$15 per MTok). Actual cost depends on model: "
+                                                                                            + "Nova Lite ~$0.06/$0.24, Haiku ~$0.25/$1.25, Opus ~$15/$75") {
             @Override
             double estimateCostPerExecution(int pages, int inputTokens, int outputTokens) {
                 return (inputTokens * 3.0 / 1_000_000) + (outputTokens * 15.0 / 1_000_000);
@@ -226,7 +250,8 @@ public class RouteCostEstimateTools {
 
         profiles.put("langchain4j-chat", new ComponentCostProfile(
                 "LangChain4j Chat (model-dependent)", "per-token",
-                "Cost depends on the underlying model provider") {
+                "Cost depends on the underlying model provider. Estimated as Claude Sonnet 4; "
+                                                                   + "free with Ollama/local models") {
             @Override
             double estimateCostPerExecution(int pages, int inputTokens, int outputTokens) {
                 return (inputTokens * 3.0 / 1_000_000) + (outputTokens * 15.0 / 1_000_000);
@@ -284,7 +309,7 @@ public class RouteCostEstimateTools {
 
     // ---- Result records ----
 
-    record CostEstimateResult(
+    public record CostEstimateResult(
             List<ComponentCostBreakdown> costBreakdown,
             CostProjection projection,
             CostSummary summary,
@@ -292,7 +317,7 @@ public class RouteCostEstimateTools {
             String disclaimer) {
     }
 
-    record ComponentCostBreakdown(
+    public record ComponentCostBreakdown(
             String scheme,
             String displayName,
             String pricingModel,
@@ -300,14 +325,14 @@ public class RouteCostEstimateTools {
             String pricingNote) {
     }
 
-    record CostProjection(
+    public record CostProjection(
             int messagesPerHour,
             String hourly,
             String daily,
             String monthly) {
     }
 
-    record CostSummary(
+    public record CostSummary(
             String estimatedCostPerExecution,
             int pricedComponentCount,
             int totalComponentCount,
