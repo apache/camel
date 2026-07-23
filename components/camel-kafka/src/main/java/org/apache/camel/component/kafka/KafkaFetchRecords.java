@@ -320,7 +320,7 @@ public class KafkaFetchRecords implements Runnable {
         subscribe();
 
         // set reconnect to false as the connection and resume is done at this point
-        setConnected(false);
+        setReconnect(false);
 
         pollExceptionStrategy.reset();
     }

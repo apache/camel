@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a Python expression.
  */
-@Metadata(firstVersion = "3.19.0", label = "language,python", title = "Python")
+@Metadata(firstVersion = "3.19.0", label = "language,python", title = "Python", description = "Evaluates a Python expression")
 @XmlRootElement(name = "python")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PythonExpression extends TypedExpressionDefinition {

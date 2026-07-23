@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-braintree</artifactId>
@@ -253,6 +253,13 @@
                                             <argName>^.+$</argName>
                                             <argType>com.braintreegateway.TransactionCloneRequest</argType>
                                             <replacement>cloneRequest</replacement>
+                                            <replaceWithType>false</replaceWithType>
+                                        </substitution>
+                                        <substitution>
+                                            <method>^.+$</method>
+                                            <argName>^.+$</argName>
+                                            <argType>com.braintreegateway.TransactionVoidRequest</argType>
+                                            <replacement>voidRequest</replacement>
                                             <replaceWithType>false</replaceWithType>
                                         </substitution>
                                     </substitutions>

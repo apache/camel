@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.models.chat.completions.ChatCompletion;
 import com.openai.models.chat.completions.ChatCompletionAssistantMessageParam;
@@ -124,8 +125,7 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
                         .build()));
 
         // Execute each tool call via MCP and add tool result messages
-        Map<String, McpSyncClient> toolClientMap = getEndpoint().getToolClientMap();
-        if (toolClientMap == null || toolClientMap.isEmpty()) {
+        if (getEndpoint().getMcpToolState().toolClientMap().isEmpty()) {
             throw new IllegalStateException(
                     "No MCP tool clients configured on the endpoint. Configure mcpServer.* parameters.");
         }
@@ -136,16 +136,17 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
             String argsJson = toolCall.asFunction().function().arguments();
             String toolCallId = toolCall.asFunction().id();
 
-            McpSyncClient mcpClient = toolClientMap.get(toolName);
+            McpToolState mcpToolState = getEndpoint().getMcpToolState();
+            McpSyncClient mcpClient = mcpToolState.toolClientMap().get(toolName);
             if (mcpClient == null) {
                 throw new IllegalStateException(
                         "Tool '" + toolName + "' not found in any configured MCP server");
             }
 
-            Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
             String resultContent;
 
             try {
+                Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
                 McpSchema.CallToolResult toolResult
                         = getEndpoint().callTool(mcpClient, toolName, argsMap);
 
@@ -155,6 +156,9 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
                 } else {
                     resultContent = extractTextContent(toolResult.content());
                 }
+            } catch (JsonProcessingException e) {
+                LOG.warn("Invalid tool arguments for '{}': {}", toolName, argsJson, e);
+                resultContent = "Error: invalid tool arguments: " + e.getMessage();
             } catch (Exception e) {
                 LOG.warn("MCP tool '{}' execution failed: {}", toolName, e.getMessage(), e);
                 resultContent = "Error: Tool execution failed: " + e.getMessage();
@@ -169,7 +173,7 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
         }
 
         // Update conversation history and clear body for the next chat-completion call
-        exchange.setProperty(historyProperty, history);
+        exchange.setProperty(historyProperty, OpenAIConversationHistoryTrimmer.trim(history, config));
         exchange.getMessage().setBody(null);
         exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, executedCount);
     }

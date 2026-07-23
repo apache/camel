@@ -18,6 +18,7 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -50,6 +51,8 @@ import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.LanguageModel.LanguageFunctionModel;
+import org.apache.camel.tooling.model.LanguageModel.LanguageOperatorModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.TransformerModel;
@@ -149,6 +152,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/models-app")
     protected File modelsAppOutDir;
+
+    /**
+     * The output directory for generated documentation catalog
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/docs")
+    protected File docsOutDir;
 
     /**
      * The output directory for generated XML schemas catalog
@@ -407,6 +416,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             Set<String> consoles = executeDevConsoles();
             Set<String> others = executeOthers();
             executeDocuments(components, dataformats, languages, others);
+            executeDocs();
             executeXmlSchemas();
             executeMain();
             executeJBang();
@@ -753,6 +763,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         printLanguagesReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
+        // Generate Simple language JavaScript validator with embedded catalog data
+        generateSimpleValidatorJs(languagesOutDir);
+
         return languagesNames;
     }
 
@@ -1080,6 +1093,58 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // find out if we have documents for each component / dataformat /
         // languages / others
         printMissingDocumentsReport(docNames, components, dataformats, languages, others);
+    }
+
+    protected void executeDocs() throws Exception {
+        Path docsOutDir = this.docsOutDir.toPath();
+        Files.createDirectories(docsOutDir);
+
+        Set<Path> adocFiles = new TreeSet<>();
+
+        // find all adoc files from component, core, and dsl modules
+        try (Stream<Path> stream = Stream.of(componentsDir.toPath(), coreDir.toPath(), dslDir.toPath())
+                .flatMap(base -> {
+                    try {
+                        return list(base)
+                                .filter(dir -> !dir.getFileName().startsWith(".")
+                                        && !"target".equals(dir.getFileName().toString()))
+                                .flatMap(p -> getComponentPath(p).stream());
+                    } catch (Exception e) {
+                        return Stream.empty();
+                    }
+                })) {
+            stream.forEach(dir -> {
+                try (Stream<Path> pathStream = PackageHelper.walk(dir.resolve("src/main/docs"))
+                        .filter(f -> {
+                            String name = f.getFileName().toString();
+                            return name.endsWith(ADOC)
+                                    && !name.equals("nav.adoc")
+                                    && !name.endsWith(".template");
+                        })) {
+                    adocFiles.addAll(pathStream.toList());
+                }
+            });
+        }
+
+        getLog().info("Copying " + adocFiles.size() + " ascii document files to catalog");
+
+        // build source -> destination map (flatten to filename only)
+        Map<Path, Path> newDocs = map(adocFiles, p -> p, p -> docsOutDir.resolve(p.getFileName()));
+
+        // delete stale files
+        try (Stream<Path> stream = list(docsOutDir).filter(p -> !newDocs.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
+
+        // copy all docs
+        newDocs.forEach(this::copy);
+
+        // write docs.properties index
+        Path all = docsOutDir.resolve("../docs.properties");
+        Set<String> docNames = adocFiles.stream()
+                .map(PrepareCatalogMojo::asComponentName)
+                .collect(Collectors.toCollection(TreeSet::new));
+        FileUtil.updateFile(all, String.join("\n", docNames) + "\n");
     }
 
     private void printMissingDocumentsReport(
@@ -1531,6 +1596,97 @@ public class PrepareCatalogMojo extends AbstractMojo {
         return jsonFiles.stream()
                 .filter(p -> !p.toString().contains("/components/camel-jackson3"))
                 .collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    private void generateSimpleValidatorJs(Path languagesOutDir) throws Exception {
+        Path simpleJson = languagesOutDir.resolve("simple.json");
+        if (!Files.exists(simpleJson)) {
+            return;
+        }
+
+        String json = loadText(simpleJson);
+        LanguageModel model = JsonMapper.generateLanguageModel(json);
+
+        // Build JS object for functions keyed by base name (what extractBaseName returns).
+        // The validator looks up baseName in FUNCTIONS, so we strip (params), .suffix, :suffix.
+        StringBuilder sb = new StringBuilder();
+        sb.append("const FUNCTIONS = {\n");
+        Set<String> seenBases = new TreeSet<>();
+        List<LanguageFunctionModel> functions = model.getFunctions();
+        for (LanguageFunctionModel fn : functions) {
+            String baseName = extractFunctionBaseName(fn.getName());
+            if (seenBases.add(baseName)) {
+                if (seenBases.size() > 1) {
+                    sb.append(",\n");
+                }
+                sb.append("  '").append(escapeJs(baseName)).append("': true");
+            }
+        }
+        sb.append("\n};\n\n");
+
+        // Build JS object for operators keyed by symbol
+        sb.append("const OPERATORS = {\n");
+        List<LanguageOperatorModel> operators = model.getOperators();
+        for (int i = 0; i < operators.size(); i++) {
+            LanguageOperatorModel op = operators.get(i);
+            sb.append("  '").append(escapeJs(op.getName()));
+            sb.append("': { kind: '").append(escapeJs(op.getOperatorKind()));
+            sb.append("', description: '").append(escapeJs(op.getDescription()));
+            sb.append("' }");
+            if (i < operators.size() - 1) {
+                sb.append(",");
+            }
+            sb.append("\n");
+        }
+        sb.append("};\n");
+
+        // Read the template from classpath
+        String template;
+        try (InputStream is = getClass().getResourceAsStream("/camel-simple-validator-template.js")) {
+            if (is == null) {
+                getLog().warn("camel-simple-validator-template.js not found on classpath, skipping JS validator generation");
+                return;
+            }
+            template = loadText(is);
+        }
+
+        // Replace the placeholder with generated catalog data
+        String output = template.replace("// @CATALOG_DATA@", sb.toString());
+
+        // Write output to the simple/ directory alongside the catalog
+        Path simpleDir = languagesOutDir.resolve("../simple");
+        Files.createDirectories(simpleDir);
+        Path jsFile = simpleDir.resolve("camel-simple-validator.js");
+        FileUtil.updateFile(jsFile, output);
+        getLog().info("Generated " + jsFile);
+
+        // Copy the HTML demo file
+        try (InputStream is = getClass().getResourceAsStream("/camel-simple-validator.html")) {
+            if (is != null) {
+                String html = loadText(is);
+                Path htmlFile = simpleDir.resolve("camel-simple-validator.html");
+                FileUtil.updateFile(htmlFile, html);
+                getLog().info("Copied " + htmlFile);
+            }
+        }
+    }
+
+    private static String extractFunctionBaseName(String name) {
+        String base = name;
+        for (char ch : new char[] { '(', '.', ':' }) {
+            int pos = base.indexOf(ch);
+            if (pos != -1) {
+                base = base.substring(0, pos);
+            }
+        }
+        return base;
+    }
+
+    private static String escapeJs(String s) {
+        if (s == null) {
+            return "";
+        }
+        return s.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n").replace("\r", "");
     }
 
 }

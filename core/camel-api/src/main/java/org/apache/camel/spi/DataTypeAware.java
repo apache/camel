@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Allows {@link org.apache.camel.Message} to store a {@link DataType} which represents the data type of the Message.
  * Sometimes message content is marshaled into {@code String}, {@code InputStream} or etc, and the data type structure
@@ -44,6 +46,7 @@ public interface DataTypeAware {
      *
      * @return data type
      */
+    @Nullable
     DataType getDataType();
 
     /**

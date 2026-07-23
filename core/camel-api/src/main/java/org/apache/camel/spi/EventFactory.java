@@ -21,11 +21,28 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Factory to create {@link CamelEvent events} that are emitted when such an event occur.
+ * Factory that mints concrete {@link CamelEvent} instances for every significant lifecycle and messaging event in the
+ * Camel runtime.
  * <p/>
- * For example when an {@link Exchange} is being created and then later when its done.
+ * Camel defines a rich event taxonomy covering: {@link org.apache.camel.CamelContext} lifecycle (initializing, started,
+ * stopped, suspended, resumed, reloaded), route lifecycle (starting, started, stopping, stopped, added, removed,
+ * reloaded, restarting), service failures, and {@link Exchange} milestones (created, completed, failed, redelivery,
+ * sending, sent, step start/complete/fail). Each method corresponds to one event type and returns an instance populated
+ * with the relevant context information.
+ * <p/>
+ * The factory is set on {@link ManagementStrategy#setEventFactory(EventFactory)} and called whenever
+ * {@link ManagementStrategy#notify(CamelEvent)} needs to fire a new event. Timestamps can be included in events by
+ * setting {@link #setTimestampEnabled(boolean)} to {@code true}; they are disabled by default to avoid overhead when
+ * not needed. A custom factory can extend the event set or change how event objects are constructed.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/event-notifier.html">Event Notifier</a> in the Camel user manual.
+ *
+ * @see CamelEvent
+ * @see EventNotifier
+ * @see ManagementStrategy
  */
 public interface EventFactory {
 
@@ -303,7 +320,7 @@ public interface EventFactory {
      */
     CamelEvent createExchangeFailureHandlingEvent(
             Exchange exchange, Processor failureHandler,
-            boolean deadLetterChannel, String deadLetterUri);
+            boolean deadLetterChannel, @Nullable String deadLetterUri);
 
     /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} has failed but was handled by the Camel
@@ -320,7 +337,7 @@ public interface EventFactory {
      */
     CamelEvent createExchangeFailureHandledEvent(
             Exchange exchange, Processor failureHandler,
-            boolean deadLetterChannel, String deadLetterUri);
+            boolean deadLetterChannel, @Nullable String deadLetterUri);
 
     /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} is about to be redelivered

@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Send and receive messages to/from and IRC chat.
+ * Send and receive messages to/from an IRC chat.
  */
 @UriEndpoint(firstVersion = "1.1.0",
              scheme = "irc",

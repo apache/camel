@@ -31,29 +31,36 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluates a JSONPath expression against a JSON message body.
  */
-@Metadata(firstVersion = "2.13.0", label = "language,json", title = "JSONPath")
+@Metadata(firstVersion = "2.13.0", label = "language,json", title = "JSONPath",
+          description = "Evaluates a JSONPath expression against a JSON message body")
 @XmlRootElement(name = "jsonpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to suppress exceptions such as PathNotFoundException.")
     private String suppressExceptions;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to allow in inlined Simple exceptions in the JSONPath expression.")
     private String allowSimple;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to allow using the easy predicate parser to pre-parse predicates.")
     private String allowEasyPredicate;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.")
     private String writeAsString;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to unpack a single element json-array into an object.")
     private String unpackArray;
     @XmlAttribute
     @Metadata(label = "advanced",
-              enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES")
+              enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES",
+              description = "To configure additional options on JSONPath. Multiple values can be separated by comma.")
     private String option;
 
     public JsonPathExpression() {
@@ -96,9 +103,6 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
         return allowSimple;
     }
 
-    /**
-     * Whether to allow in inlined Simple exceptions in the JSONPath expression
-     */
     public void setAllowSimple(String allowSimple) {
         this.allowSimple = allowSimple;
     }
@@ -107,16 +111,10 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
         return allowEasyPredicate;
     }
 
-    /**
-     * Whether to allow using the easy predicate parser to pre-parse predicates.
-     */
     public void setAllowEasyPredicate(String allowEasyPredicate) {
         this.allowEasyPredicate = allowEasyPredicate;
     }
 
-    /**
-     * Whether to suppress exceptions such as PathNotFoundException.
-     */
     public void setSuppressExceptions(String suppressExceptions) {
         this.suppressExceptions = suppressExceptions;
     }
@@ -125,9 +123,6 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
         return writeAsString;
     }
 
-    /**
-     * Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.
-     */
     public void setWriteAsString(String writeAsString) {
         this.writeAsString = writeAsString;
     }
@@ -136,9 +131,6 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
         return unpackArray;
     }
 
-    /**
-     * Whether to unpack a single element json-array into an object.
-     */
     public void setUnpackArray(String unpackArray) {
         this.unpackArray = unpackArray;
     }
@@ -147,9 +139,6 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
         return option;
     }
 
-    /**
-     * To configure additional options on JSONPath. Multiple values can be separated by comma.
-     */
     public void setOption(String option) {
         this.option = option;
     }

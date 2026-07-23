@@ -44,11 +44,13 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.ModelDumpLine;
+import org.apache.camel.spi.ModelToJavaDumper;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteDiagramDumper;
+import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PluginHelper;
@@ -57,6 +59,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
@@ -84,6 +87,8 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     private boolean log = true;
     private String output;
     private String outputFileName;
+    private boolean topology = true;
+    private boolean topologyExternal = true;
 
     @Override
     public CamelContext getCamelContext() {
@@ -152,12 +157,30 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         this.uriAsParameters = uriAsParameters;
     }
 
+    public boolean isTopology() {
+        return topology;
+    }
+
+    public void setTopology(boolean topology) {
+        this.topology = topology;
+    }
+
+    public boolean isTopologyExternal() {
+        return topologyExternal;
+    }
+
+    public void setTopologyExternal(boolean topologyExternal) {
+        this.topologyExternal = topologyExternal;
+    }
+
     @Override
     public void dumpRoutes(String format) {
         if ("yaml".equalsIgnoreCase(format)) {
             doDumpRoutesAsYaml(camelContext);
         } else if ("xml".equalsIgnoreCase(format)) {
             doDumpRoutesAsXml(camelContext);
+        } else if ("java".equalsIgnoreCase(format)) {
+            doDumpRoutesAsJava(camelContext);
         } else if ("json".equals(format)) {
             doDumpRoutesStructureAsJSon(camelContext);
         } else if ("png".equals(format)) {
@@ -189,6 +212,13 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     LOG.info("Dumping route diagrams as PNG files to folder: {}", folder);
                 }
                 dumper.dumpRoutesToFolder(filter, RouteDiagramDumper.Theme.LIGHT, new File(folder));
+            }
+            if (topology) {
+                if (log) {
+                    LOG.info("Dumping route topology diagram as PNG to folder: {}", folder != null ? folder : ".");
+                }
+                dumper.dumpTopologyToFolder(RouteDiagramDumper.Theme.LIGHT, topologyExternal,
+                        new File(folder != null ? folder : "."));
             }
         } catch (IOException e) {
             LOG.warn("Error dumping routes diagrams. This exception is ignored.", e);
@@ -231,7 +261,92 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 LOG.info("{}", sbLog);
             }
         }
+        if (topology) {
+            doDumpTopologyAsJSon(camelContext);
+        }
 
+    }
+
+    /**
+     * Dumps the inter-route topology (nodes, edges and optionally external endpoints) as a single
+     * {@code route-topology.json} file in the configured output directory. This mirrors the JSON shape produced by the
+     * {@code route-topology} developer console (minus live metrics, which are not available at dump time). The file is
+     * always written (with empty {@code nodes}/{@code edges} arrays if there are no routes) as long as an output
+     * directory and a dumper are available, so its presence signals that the whole route-structure dump (which always
+     * runs first) has completed.
+     */
+    protected void doDumpTopologyAsJSon(CamelContext camelContext) {
+        if (output == null) {
+            // unlike route-structure dumping, topology has no console/log-only mode: it is only ever written
+            // as a file, so without an output directory there is nowhere to put it
+            return;
+        }
+
+        RouteTopologyDumper dumper = PluginHelper.getRouteTopologyDumper(camelContext);
+        if (dumper == null) {
+            LOG.warn("Cannot dump route topology as JSon as there is no RouteTopologyDumper available");
+            return;
+        }
+
+        RouteTopologyDumper.TopologyResult result = dumper.dumpTopology(camelContext);
+        if (result.nodes().isEmpty() && log) {
+            LOG.info("Dumping route topology JSon as there are no routes to connect");
+        }
+
+        // always write the file, even with empty nodes/edges: its presence is how callers (e.g. camel-jbang)
+        // distinguish "the dump ran and there are genuinely no routes" from "the dump never completed"
+        JsonObject root = new JsonObject();
+
+        JsonArray nodesArr = new JsonArray();
+        for (RouteTopologyDumper.TopologyNode node : result.nodes()) {
+            JsonObject jo = new JsonObject();
+            jo.put("routeId", node.routeId());
+            if (node.description() != null) {
+                jo.put("description", node.description());
+            }
+            jo.put("from", node.from());
+            jo.put("fromScheme", node.fromScheme());
+            jo.put("nodeType", node.nodeType());
+            nodesArr.add(jo);
+        }
+        root.put("nodes", nodesArr);
+
+        JsonArray edgesArr = new JsonArray();
+        for (RouteTopologyDumper.TopologyEdge edge : result.edges()) {
+            JsonObject jo = new JsonObject();
+            jo.put("fromRouteId", edge.fromRouteId());
+            jo.put("toRouteId", edge.toRouteId());
+            jo.put("endpoint", edge.endpoint());
+            jo.put("connectionType", edge.connectionType());
+            edgesArr.add(jo);
+        }
+        root.put("edges", edgesArr);
+
+        if (topologyExternal && !result.externalEndpoints().isEmpty()) {
+            JsonArray extArr = new JsonArray();
+            for (RouteTopologyDumper.TopologyExternalEndpoint ep : result.externalEndpoints()) {
+                JsonObject jo = new JsonObject();
+                jo.put("id", ep.id());
+                jo.put("uri", ep.uri());
+                jo.put("scheme", ep.scheme());
+                jo.put("direction", ep.direction());
+                jo.put("routeId", ep.routeId());
+                extArr.add(jo);
+            }
+            root.put("externalEndpoints", extArr);
+        }
+
+        try {
+            File dir = new File(output);
+            dir.mkdirs();
+            File target = new File(dir, "route-topology.json");
+            IOHelper.writeText(Jsoner.prettyPrint(root.toJson(), 2), target);
+            if (log) {
+                LOG.info("Dumped route topology as JSon to file: {}", target);
+            }
+        } catch (Exception e) {
+            LOG.warn("Error dumping route topology to JSon due to {}. This exception is ignored.", e.getMessage(), e);
+        }
     }
 
     protected void doDumpRoutesAsYaml(CamelContext camelContext) {
@@ -424,6 +539,146 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
+    }
+
+    protected void doDumpRoutesAsJava(CamelContext camelContext) {
+        final ModelToJavaDumper dumper = PluginHelper.getModelToJavaDumper(camelContext);
+        final Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+        final DummyResource dummy = new DummyResource(null, null);
+        final Set<String> files = new HashSet<>();
+
+        if (include.contains("*") || include.contains("all") || include.contains("rests")) {
+            int size = model.getRestDefinitions().size();
+            if (size > 0) {
+                Map<Resource, RestsDefinition> groups = new LinkedHashMap<>();
+                for (RestDefinition rest : model.getRestDefinitions()) {
+                    Resource res = rest.getResource();
+                    if (res == null) {
+                        res = dummy;
+                    }
+                    RestsDefinition rests = groups.computeIfAbsent(res, resource -> new RestsDefinition());
+                    rests.getRests().add(rest);
+                }
+                StringBuilder sbLog = new StringBuilder();
+                for (Map.Entry<Resource, RestsDefinition> entry : groups.entrySet()) {
+                    RestsDefinition def = entry.getValue();
+                    Resource resource = entry.getKey();
+
+                    StringBuilder sbLocal = new StringBuilder();
+                    doDumpJava(camelContext, def, resource == dummy ? null : resource, dumper, "rests", sbLocal, sbLog);
+                    doDumpToDirectory(resource, sbLocal, "rests", "java", files);
+                }
+                if (!sbLog.isEmpty() && log) {
+                    LOG.info("Dumping {} rests as Java", size);
+                    LOG.info("{}", sbLog);
+                }
+            }
+        }
+
+        if (include.contains("*") || include.contains("all") || include.contains("routeConfigurations")
+                || include.contains("route-configurations")) {
+            int size = model.getRouteConfigurationDefinitions().size();
+            if (size > 0) {
+                Map<Resource, RouteConfigurationsDefinition> groups = new LinkedHashMap<>();
+                for (RouteConfigurationDefinition config : model.getRouteConfigurationDefinitions()) {
+                    Resource res = config.getResource();
+                    if (res == null) {
+                        res = dummy;
+                    }
+                    RouteConfigurationsDefinition routes
+                            = groups.computeIfAbsent(res, resource -> new RouteConfigurationsDefinition());
+                    routes.getRouteConfigurations().add(config);
+                }
+                StringBuilder sbLog = new StringBuilder();
+                for (Map.Entry<Resource, RouteConfigurationsDefinition> entry : groups.entrySet()) {
+                    RouteConfigurationsDefinition def = entry.getValue();
+                    Resource resource = entry.getKey();
+
+                    StringBuilder sbLocal = new StringBuilder();
+                    doDumpJava(camelContext, def, resource == dummy ? null : resource, dumper, "route-configurations", sbLocal,
+                            sbLog);
+                    doDumpToDirectory(resource, sbLocal, "route-configurations", "java", files);
+                }
+                if (!sbLog.isEmpty() && log) {
+                    LOG.info("Dumping {} route-configurations as Java", size);
+                    LOG.info("{}", sbLog);
+                }
+            }
+        }
+
+        if (include.contains("*") || include.contains("all") || include.contains("routeTemplates")
+                || include.contains("route-templates")) {
+            int size = model.getRouteTemplateDefinitions().size();
+            if (size > 0) {
+                Map<Resource, RouteTemplatesDefinition> groups = new LinkedHashMap<>();
+                for (RouteTemplateDefinition rt : model.getRouteTemplateDefinitions()) {
+                    Resource res = rt.getResource();
+                    if (res == null) {
+                        res = dummy;
+                    }
+                    RouteTemplatesDefinition rests = groups.computeIfAbsent(res, resource -> new RouteTemplatesDefinition());
+                    rests.getRouteTemplates().add(rt);
+                }
+                StringBuilder sbLog = new StringBuilder();
+                for (Map.Entry<Resource, RouteTemplatesDefinition> entry : groups.entrySet()) {
+                    RouteTemplatesDefinition def = entry.getValue();
+                    Resource resource = entry.getKey();
+
+                    StringBuilder sbLocal = new StringBuilder();
+                    doDumpJava(camelContext, def, resource == dummy ? null : resource, dumper, "route-templates", sbLocal,
+                            sbLog);
+                    doDumpToDirectory(resource, sbLocal, "route-templates", "java", files);
+                }
+                if (!sbLog.isEmpty() && log) {
+                    LOG.info("Dumping {} route-templates as Java", size);
+                    LOG.info("{}", sbLog);
+                }
+            }
+        }
+
+        if (include.contains("*") || include.contains("all") || include.contains("routes")) {
+            int size = model.getRouteDefinitions().size();
+            if (size > 0) {
+                Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
+                for (RouteDefinition route : model.getRouteDefinitions()) {
+                    if ((route.isRest() != null && route.isRest()) || (route.isTemplate() != null && route.isTemplate())) {
+                        continue;
+                    }
+                    Resource res = route.getResource();
+                    if (res == null) {
+                        res = dummy;
+                    }
+                    RoutesDefinition routes = groups.computeIfAbsent(res, resource -> new RoutesDefinition());
+                    routes.getRoutes().add(route);
+                }
+                StringBuilder sbLog = new StringBuilder();
+                for (Map.Entry<Resource, RoutesDefinition> entry : groups.entrySet()) {
+                    RoutesDefinition def = entry.getValue();
+                    Resource resource = entry.getKey();
+
+                    StringBuilder sbLocal = new StringBuilder();
+                    doDumpJava(camelContext, def, resource == dummy ? null : resource, dumper, "routes", sbLocal, sbLog);
+                    doDumpToDirectory(resource, sbLocal, "routes", "java", files);
+                }
+                if (!sbLog.isEmpty() && log) {
+                    LOG.info("Dumping {} routes as Java", size);
+                    LOG.info("{}", sbLog);
+                }
+            }
+        }
+
+    }
+
+    protected void doDumpJava(
+            CamelContext camelContext, NamedNode def, Resource resource,
+            ModelToJavaDumper dumper, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
+        try {
+            String dump = dumper.dumpModelAsJava(camelContext, def, resolvePlaceholders, generatedIds);
+            sbLocal.append(dump);
+            appendLogDump(resource, dump, sbLog);
+        } catch (Exception e) {
+            LOG.warn("Error dumping {}} to Java due to {}. This exception is ignored.", kind, e.getMessage(), e);
+        }
     }
 
     protected void doDumpYaml(
@@ -741,12 +996,10 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             ModelToXMLDumper dumper, String replace, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
         try {
             String xml = dumper.dumpModelAsXml(camelContext, def, resolvePlaceholders, generatedIds, false);
-            // remove spring schema xmlns that camel-jaxb dumper includes
-            xml = StringHelper.replaceFirst(xml, " xmlns=\"http://camel.apache.org/schema/spring\">", ">");
             xml = xml.replace("</" + replace + ">", "</" + replace + ">\n");
-            // remove outer tag (routes, rests, etc)
+            // remove outer tag (routes, rests, etc) including any xmlns attributes
             replace = replace + "s";
-            xml = StringHelper.replaceFirst(xml, "<" + replace + ">", "");
+            xml = xml.replaceFirst("<" + replace + "(?:\\s[^>]*)?>", "");
             xml = StringHelper.replaceFirst(xml, "</" + replace + ">", "");
 
             sbLocal.append(xml);

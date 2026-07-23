@@ -37,10 +37,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for copyTo.
  */
 public class MailCopyToTest extends CamelTestSupport {
-    private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
+    private static final MailboxUser jones = Mailbox.getOrCreateUser("MailCopyToTest-jones", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

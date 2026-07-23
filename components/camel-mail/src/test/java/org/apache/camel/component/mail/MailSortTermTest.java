@@ -52,7 +52,7 @@ public class MailSortTermTest extends CamelTestSupport {
     private SearchTerm searchTerm = new SearchTermBuilder().subject("Camel").build();
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

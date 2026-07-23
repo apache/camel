@@ -61,6 +61,11 @@ public final class CamelContextTestHelper {
      */
     public static final String ROUTE_DUMP_ENABLED = "CamelTestRouteDump";
 
+    /**
+     * JVM system property which can set the output directory
+     */
+    public static final String ROUTE_DUMP_DIR = "CamelTestRouteDumpDir";
+
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextTestHelper.class);
 
     public static CamelContext createCamelContext(Registry registry) throws Exception {
@@ -297,11 +302,16 @@ public final class CamelContextTestHelper {
             if ("true".equals(p)) {
                 p = "xml"; // xml is default
             }
-            boolean valid = "xml".equals(p) || "yaml".equals(p) || "false".equals(p);
+            boolean valid = "xml".equals(p) || "yaml".equals(p) || "false".equals(p) || "png".equals(p);
             if (!valid) {
-                throw new IllegalArgumentException("RouteDump must be: xml, yaml, true, or false");
+                throw new IllegalArgumentException("RouteDump must be: xml, yaml, png, true, or false");
             }
         }
         return p;
     }
+
+    public static String getRouteDumpDir() {
+        return System.getProperty(ROUTE_DUMP_DIR);
+    }
+
 }

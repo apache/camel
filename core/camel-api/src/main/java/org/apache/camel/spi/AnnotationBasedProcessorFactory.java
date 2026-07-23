@@ -25,6 +25,8 @@ import org.apache.camel.RoutingSlip;
 
 /**
  * Factory to create {@link Processor} for annotation based EIPs.
+ *
+ * @since 3.0
  */
 public interface AnnotationBasedProcessorFactory {
 

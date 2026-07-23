@@ -49,11 +49,19 @@ import org.kiwiproject.consul.model.session.SessionCreatedResponse;
  */
 public class ConsulRegistry implements Registry {
 
+    /**
+     * Default deserialization filter. Denies {@code java.net.**} and otherwise allows {@code java.**} and
+     * {@code org.apache.camel.**}; applies JEP-290 graph-shape limits ({@code maxdepth}, {@code maxrefs},
+     * {@code maxbytes}) as defense-in-depth against resource-exhaustion payloads.
+     */
+    static final String DEFAULT_DESERIALIZATION_FILTER
+            = "!java.net.**;java.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*";
+
     private String hostname = "localhost";
     private int port = 8500;
     private Consul consul;
     private KeyValueClient kvClient;
-    private String deserializationFilter = "!java.net.**;java.**;org.apache.camel.**;!*";
+    private String deserializationFilter = DEFAULT_DESERIALIZATION_FILTER;
 
     /* constructor with default port */
     public ConsulRegistry(String hostname) {
@@ -331,7 +339,7 @@ public class ConsulRegistry implements Registry {
          *
          * @param  bytes                 the byte array to deserialize from
          * @param  deserializationFilter the deserialization filter to apply (e.g.
-         *                               "!java.net.**;java.**;org.apache.camel.**;!*")
+         *                               "!java.net.**;java.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*")
          * @return                       an {@link Object} deserialized from the given byte array
          */
         static Object deserialize(byte[] bytes, String deserializationFilter) {

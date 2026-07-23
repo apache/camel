@@ -589,7 +589,7 @@ public interface MSK2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MSK2HeaderNameBuilder INSTANCE = new MSK2HeaderNameBuilder();
+        public static final MSK2HeaderNameBuilder INSTANCE = new MSK2HeaderNameBuilder();
 
         /**
          * The operation we want to perform.

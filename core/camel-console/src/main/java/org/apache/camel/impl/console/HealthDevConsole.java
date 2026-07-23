@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -32,6 +33,10 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole(name = "health", displayName = "Health Check", description = "Health Check Status")
 public class HealthDevConsole extends AbstractDevConsole {
 
+    @Metadata(label = "query", description = "Exposure level for health check details",
+              defaultValue = "default", javaType = "java.lang.String", enums = "default,oneline,full")
+    public static final String EXPOSURE_LEVEL = "exposureLevel";
+
     public HealthDevConsole() {
         super("camel", "health", "Health Check", "Health Check Status");
     }
@@ -40,7 +45,7 @@ public class HealthDevConsole extends AbstractDevConsole {
         // only text is supported
         StringBuilder sb = new StringBuilder();
 
-        String exposureLevel = (String) options.get("exposureLevel");
+        String exposureLevel = optionString(options, EXPOSURE_LEVEL);
         Collection<HealthCheck.Result> results = HealthCheckHelper.invoke(getCamelContext(), exposureLevel);
         boolean up = results.stream().allMatch(h -> HealthCheck.State.UP.equals(h.getState()));
         sb.append(String.format("Health Check Status: %s", up ? "UP" : "DOWN"));
@@ -77,7 +82,7 @@ public class HealthDevConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        String exposureLevel = (String) options.get("exposureLevel");
+        String exposureLevel = optionString(options, EXPOSURE_LEVEL);
         Collection<HealthCheck.Result> readies = HealthCheckHelper.invokeReadiness(getCamelContext(), exposureLevel);
         Collection<HealthCheck.Result> lives = HealthCheckHelper.invokeLiveness(getCamelContext(), exposureLevel);
         boolean ready = HealthCheckHelper.isResultsUp(readies, true);

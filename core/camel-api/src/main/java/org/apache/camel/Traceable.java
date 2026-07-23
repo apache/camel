@@ -17,8 +17,14 @@
 package org.apache.camel;
 
 /**
- * Traceable processors allowing easier tracing using constructed labels to help identify the processor and where it's
- * defined in the route model.
+ * Implemented by {@link Processor}s that want to expose a human-readable label used by the Camel tracing infrastructure
+ * to identify them in trace output and log messages.
+ * <p/>
+ * When the backlog tracer or message-history feature is active, Camel calls {@link #getTraceLabel()} on each processor
+ * to build a concise, path-style identifier such as {@code log:myLogger} or {@code to:direct:next}. The label is also
+ * shown in the startup route summary and in JMX management output.
+ *
+ * @see Processor
  */
 public interface Traceable {
 

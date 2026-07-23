@@ -141,7 +141,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         for (String s : data) {
 
             // Get KeyValuePair
-            String[] keyValuePair = s.split(getKeyValuePairSeparator());
+            String[] keyValuePair = s.split(getKeyValuePairSeparator(), 2);
 
             // Extract only if value is populated in key:value pair in incoming message.
             if (keyValuePair.length > 1) {
@@ -293,8 +293,12 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                         getLocale());
                                 Format<?> format = formatFactory.getFormat(formattingOptions);
 
+                                boolean fieldContinueParseOnFailure
+                                        = shouldContinueOnFailure(keyValuePairField.continueParseOnFailure());
+
                                 // format the value of the key received
-                                result = formatField(format, value, key, line);
+                                result = formatField(format, value, key, line, fieldContinueParseOnFailure, field.getType(),
+                                        "");
 
                                 LOG.debug("Value formated : {}", result);
 
@@ -335,8 +339,12 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                             getLocale());
                                     Format<?> format = formatFactory.getFormat(formattingOptions);
 
+                                    boolean fieldContinueParseOnFailure
+                                            = shouldContinueOnFailure(keyValuePairField.continueParseOnFailure());
+
                                     // format the value of the key received
-                                    Object result = formatField(format, value, key, line);
+                                    Object result = formatField(format, value, key, line, fieldContinueParseOnFailure,
+                                            field.getType(), "");
 
                                     LOG.debug("Value formated : {}", result);
 
@@ -573,7 +581,10 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         return builder.toString();
     }
 
-    private Object formatField(Format<?> format, String value, int tag, int line) throws Exception {
+    private Object formatField(
+            Format<?> format, String value, int tag, int line, boolean continueOnFailure, Class<?> fieldType,
+            String defaultValue)
+            throws Exception {
 
         Object obj = null;
 
@@ -581,7 +592,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
             // Format field value
             try {
-                obj = format.parse(value);
+                obj = parseField(format, value, continueOnFailure, fieldType, defaultValue);
             } catch (Exception e) {
                 throw new IllegalArgumentException(
                         "Parsing error detected for field defined at the tag: " + tag + ", line: " + line, e);
@@ -648,6 +659,9 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     // Get isOrdered parameter
                     messageOrdered = message.isOrdered();
                     LOG.debug("Is the message ordered in output: {}", messageOrdered);
+
+                    continueParseOnFailure = message.continueParseOnFailure();
+                    LOG.debug("Continue parse on failure: {}", continueParseOnFailure);
                 }
 
                 if (section != null) {

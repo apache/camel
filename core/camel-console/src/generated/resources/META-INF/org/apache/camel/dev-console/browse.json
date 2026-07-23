@@ -9,7 +9,112 @@
     "javaType": "org.apache.camel.impl.console.BrowseDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
-    "version": "4.21.0-SNAPSHOT"
+    "version": "4.22.0-SNAPSHOT"
+  },
+  "options": {
+    "bodyMaxChars": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Body Max Chars",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Integer",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": 32768,
+      "description": "Maximum size of the message body to include in the dump"
+    },
+    "dump": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Dump",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": true,
+      "description": "Whether to include message dumps"
+    },
+    "filter": {
+      "index": 2,
+      "kind": "option",
+      "displayName": "Filter",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Filters the endpoints matching by route id, endpoint url"
+    },
+    "freshSize": {
+      "index": 3,
+      "kind": "option",
+      "displayName": "Fresh Size",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": false,
+      "description": "Whether to calculate fresh queue size (can cause performance overhead)"
+    },
+    "includeBody": {
+      "index": 4,
+      "kind": "option",
+      "displayName": "Include Body",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": true,
+      "description": "Whether to include message body in dumps"
+    },
+    "limit": {
+      "index": 5,
+      "kind": "option",
+      "displayName": "Limit",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Integer",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": 100,
+      "description": "Limits the number of entries per endpoint"
+    },
+    "tail": {
+      "index": 6,
+      "kind": "option",
+      "displayName": "Tail",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "java.lang.Integer",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "To receive N last messages from the tail"
+    }
   }
 }
 

@@ -31,12 +31,14 @@ import org.apache.camel.spi.Metadata;
 /**
  * Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,loadbalancing,routing",
+          description = "Load balancer that routes messages to the same endpoint based on a correlation expression, ensuring session affinity")
 @XmlRootElement(name = "stickyLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @XmlElement(name = "correlationExpression", required = true)
+    @Metadata(description = "The correlation expression to use to calculate the correlation key.")
     private ExpressionSubElementDefinition correlationExpression;
 
     public StickyLoadBalancerDefinition() {
@@ -57,9 +59,6 @@ public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
         return correlationExpression;
     }
 
-    /**
-     * The correlation expression to use to calculate the correlation key
-     */
     public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
         this.correlationExpression = correlationExpression;
     }

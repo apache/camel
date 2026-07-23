@@ -1,0 +1,54 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Camel TUI dark theme (default). Single source of color truth for Theme tokens. */
+
+$brand: #F69123;
+$dark-bg: #1E1E1E;
+$dark-fg: #D4D4D4;
+
+#accent         { color: $brand; }
+#accent-bg      { color: white; background: $brand; text-style: bold; }
+#hint-key       { color: black; background: $brand; text-style: bold; }
+#border         { color: #505050; }
+#border-focused { color: $brand; }
+#title          { color: $brand; text-style: bold; }
+#success        { color: #4EC9B0; }
+#warning        { color: #DCDCAA; }
+#error          { color: #F48771; }
+#muted          { color: #808080; }
+#selection      { color: white; background: #264F78; text-style: bold; }
+#info           { color: #9CDCFE; }
+#notice         { color: #C586C0; }
+#row-alt        { background: #252525; }
+#base-bg        { background: $dark-bg; }
+#base-fg        { color: $dark-fg; }
+
+/* Content tokens — labels, change indicators, search highlight */
+#label          { color: #DCDCAA; }
+#change         { color: #DCDCAA; }
+#search-match   { color: black; background: #DCDCAA; }
+#mnemonic       { color: #DCDCAA; text-style: bold underline; }
+
+/* Diagram tokens */
+#diagram-border  { color: #808080; }
+#diagram-id      { color: $dark-fg; }
+#diagram-from    { color: #4EC9B0; }
+#diagram-to      { color: #56B6C2; }
+#diagram-choice  { color: #DCDCAA; }
+#diagram-action  { color: #C586C0; }
+#diagram-eip     { color: #8957E5; }
+#diagram-default { color: #808080; }

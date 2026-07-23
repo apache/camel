@@ -433,6 +433,29 @@ public interface PQCEndpointBuilderFactory {
             return this;
         }
         /**
+         * The NIST parameter set (security level) to use for the configured
+         * signature or key encapsulation algorithm, using the BouncyCastle
+         * parameter-set names: for example ML-DSA-44, ML-DSA-65 or ML-DSA-87
+         * for MLDSA, and ML-KEM-512, ML-KEM-768 or ML-KEM-1024 for MLKEM. Names
+         * are case-insensitive and the underscore form (ml_dsa_87) is accepted
+         * as an alias. When set, the key material is generated with this
+         * parameter set instead of the algorithm default. Not supported for the
+         * stateful signature algorithms (XMSS, XMSSMT, LMS, HSS), for MAYO and
+         * SNOVA, nor for the hybrid operations: for those, register a KeyPair
+         * bean in the registry instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param parameterSpec the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder parameterSpec(String parameterSpec) {
+            doSetProperty("parameterSpec", parameterSpec);
+            return this;
+        }
+        /**
          * In case there is no signer, we specify an algorithm to build the
          * KeyPair or the Signer.
          * 
@@ -699,7 +722,7 @@ public interface PQCEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final PQCHeaderNameBuilder INSTANCE = new PQCHeaderNameBuilder();
+        public static final PQCHeaderNameBuilder INSTANCE = new PQCHeaderNameBuilder();
 
         /**
          * The operation we want to perform.

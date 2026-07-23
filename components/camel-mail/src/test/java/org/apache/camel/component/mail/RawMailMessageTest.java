@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
@@ -33,7 +34,9 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,27 +45,30 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  * Unit test for Mail using camel headers to set recipient subject.
  */
+@Isolated
 public class RawMailMessageTest extends CamelTestSupport {
 
-    private static final MailboxUser jonesPop3 = Mailbox.getOrCreateUser("jonesPop3", "secret");
-    private static final MailboxUser jonesRawPop3 = Mailbox.getOrCreateUser("jonesRawPop3", "secret");
-    private static final MailboxUser jonesImap = Mailbox.getOrCreateUser("jonesImap", "secret");
-    private static final MailboxUser jonesRawImap = Mailbox.getOrCreateUser("jonesRawImap", "secret");
-    private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("davsclaus", "secret");
+    private static final MailboxUser jonesPop3 = Mailbox.getOrCreateUser("RawMailMessageTest-jonesPop3", "secret");
+    private static final MailboxUser jonesRawPop3 = Mailbox.getOrCreateUser("RawMailMessageTest-jonesRawPop3", "secret");
+    private static final MailboxUser jonesImap = Mailbox.getOrCreateUser("RawMailMessageTest-jonesImap", "secret");
+    private static final MailboxUser jonesRawImap = Mailbox.getOrCreateUser("RawMailMessageTest-jonesRawImap", "secret");
+    private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("RawMailMessageTest-davsclaus", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
-        Mailbox.clearAll();
+    protected void setupResources() throws Exception {
         prepareMailbox(jonesPop3);
         prepareMailbox(jonesRawPop3);
         prepareMailbox(jonesImap);
         prepareMailbox(jonesRawImap);
     }
 
+    @Override
+    protected void cleanupResources() throws Exception {
+        Mailbox.clearAll();
+    }
+
     @Test
     public void testGetRawJavaMailMessage() throws Exception {
-        Mailbox.clearAll();
-
         Map<String, Object> map = new HashMap<>();
         map.put("To", davsclaus.getEmail());
         map.put("From", "jstrachan@apache.org");
@@ -72,8 +78,9 @@ public class RawMailMessageTest extends CamelTestSupport {
 
         getMockEndpoint("mock:mail").expectedMessageCount(1);
         template.sendBodyAndHeaders(
-                "smtp://davsclaus@localhost:" + Mailbox.getPort(Protocol.smtp) + "?password=" + davsclaus.getPassword(), body,
-                map);
+                "smtp://" + davsclaus.getEmail() + ":" + Mailbox.getPort(Protocol.smtp) + "?password=" + davsclaus.getPassword()
+                                    + "&useHeaderRecipients=true&useHeaderFrom=true&useHeaderSubject=true",
+                body, map);
         MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = getMockEndpoint("mock:mail").getReceivedExchanges().get(0);
@@ -162,6 +169,11 @@ public class RawMailMessageTest extends CamelTestSupport {
         // insert one signed message
         folder.appendMessages(messages);
         folder.close(true);
+
+        await()
+                .atMost(500, TimeUnit.MILLISECONDS)
+                .alias("Await that the sent mail is ready in the Mailbox before starting the Camel route")
+                .untilAsserted(() -> assertEquals(1, user.getInbox().getNewMessageCount()));
     }
 
     @Override
@@ -174,7 +186,7 @@ public class RawMailMessageTest extends CamelTestSupport {
                      + "&closeFolder=false&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
                         .to("mock://rawMessagePop3");
 
-                from(jonesImap.uriPrefix(Protocol.imap)
+                from(jonesRawImap.uriPrefix(Protocol.imap)
                      + "&closeFolder=false&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
                         .to("mock://rawMessageImap");
 

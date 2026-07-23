@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AggregationStrategy;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -38,8 +37,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
-import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
-import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -192,23 +189,6 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     @Override
-    public boolean process(Exchange exchange, final AsyncCallback callback) {
-        AggregationStrategy strategy = getAggregationStrategy();
-
-        // set original exchange if not already pre-configured
-        if (strategy instanceof UseOriginalAggregationStrategy original) {
-            // need to create a new private instance, as we can also have concurrency issue so we cannot store state
-            AggregationStrategy clone = original.newInstance(exchange);
-            if (isShareUnitOfWork()) {
-                clone = new ShareUnitOfWorkAggregationStrategy(clone);
-            }
-            setAggregationStrategyOnExchange(exchange, clone);
-        }
-
-        return super.process(exchange, callback);
-    }
-
-    @Override
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange)
             throws Exception {
 
@@ -307,6 +287,10 @@ public class RecipientListProcessor extends MulticastProcessor {
         // copy exchange, and do not share the unit of work
         Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
         copy.getExchangeExtension().setTransacted(exchange.isTransacted());
+        if (isParallelProcessing()) {
+            // do not share JPA EntityManager in parallel mode as it is not thread-safe (CAMEL-22534)
+            copy.removeProperty(Exchange.JPA_ENTITY_MANAGER);
+        }
 
         // If we are in a transaction, set TRANSACTION_CONTEXT_DATA property for new exchanges to share txData
         // during the transaction.

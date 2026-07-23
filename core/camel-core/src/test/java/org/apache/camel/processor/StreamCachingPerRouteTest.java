@@ -71,9 +71,9 @@ public class StreamCachingPerRouteTest extends ContextTestSupport {
 
                 from("direct:a").to("mock:a");
 
-                from("direct:b").noStreamCaching().to("mock:b");
+                from("direct:b").streamCache(false).to("mock:b");
 
-                from("direct:c").streamCaching().to("mock:c");
+                from("direct:c").streamCache(true).to("mock:c");
             }
         };
     }

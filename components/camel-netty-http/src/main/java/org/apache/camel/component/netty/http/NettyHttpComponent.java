@@ -74,8 +74,8 @@ public class NettyHttpComponent extends NettyComponent
     private NettyHttpSecurityConfiguration securityConfiguration;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata(label = "consumer")
-    private boolean muteException;
+    @Metadata(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
@@ -346,7 +346,20 @@ public class NettyHttpComponent extends NettyComponent
         } finally {
             lock.unlock();
         }
-        return bootstrapFactories.computeIfAbsent(key, s -> newHttpServerBootstrapFactory(consumer));
+        HttpServerBootstrapFactory factory
+                = bootstrapFactories.computeIfAbsent(key, s -> newHttpServerBootstrapFactory(consumer));
+        // the first consumer on the address decides the effective pipeline configuration, so a later consumer with
+        // oauthProfile may pass its own usingExecutorService guard yet end up validating tokens on the event loop
+        NettyHttpEndpoint endpoint = (NettyHttpEndpoint) consumer.getEndpoint();
+        if (ObjectHelper.isNotEmpty(endpoint.getOauthProfile())
+                && factory.getBootstrapConfiguration() instanceof NettyConfiguration effective
+                && !effective.isUsingExecutorService()) {
+            throw new IllegalArgumentException(
+                    "The netty-http oauthProfile option on endpoint " + endpoint
+                                               + " requires usingExecutorService=true on the shared server for address " + key
+                                               + ", but the server was initialized with usingExecutorService=false by another endpoint");
+        }
+        return factory;
     }
 
     private HttpServerBootstrapFactory newHttpServerBootstrapFactory(NettyHttpConsumer consumer) {

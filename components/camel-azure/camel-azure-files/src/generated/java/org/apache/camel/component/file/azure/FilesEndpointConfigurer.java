@@ -50,7 +50,7 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "connecttimeout":
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "credentialtype":
-        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.file.azure.CredentialType.class, value)); return true;
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "delete": target.setDelete(property(camelContext, boolean.class, value)); return true;
         case "disconnect": target.setDisconnect(property(camelContext, boolean.class, value)); return true;
@@ -126,7 +126,7 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "premove":
         case "preMove": target.setPreMove(property(camelContext, java.lang.String.class, value)); return true;
         case "presort":
-        case "preSort": target.setPreSort(property(camelContext, boolean.class, value)); return true;
+        case "preSort": target.setPreSort(property(camelContext, java.lang.String.class, value)); return true;
         case "processstrategy":
         case "processStrategy": target.setProcessStrategy(property(camelContext, org.apache.camel.component.file.GenericFileProcessStrategy.class, value)); return true;
         case "readlock":
@@ -232,7 +232,7 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "connecttimeout":
         case "connectTimeout": return int.class;
         case "credentialtype":
-        case "credentialType": return org.apache.camel.component.file.azure.CredentialType.class;
+        case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "delay": return long.class;
         case "delete": return boolean.class;
         case "disconnect": return boolean.class;
@@ -308,7 +308,7 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "premove":
         case "preMove": return java.lang.String.class;
         case "presort":
-        case "preSort": return boolean.class;
+        case "preSort": return java.lang.String.class;
         case "processstrategy":
         case "processStrategy": return org.apache.camel.component.file.GenericFileProcessStrategy.class;
         case "readlock":
@@ -491,7 +491,7 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "premove":
         case "preMove": return target.getPreMove();
         case "presort":
-        case "preSort": return target.isPreSort();
+        case "preSort": return target.getPreSort();
         case "processstrategy":
         case "processStrategy": return target.getProcessStrategy();
         case "readlock":

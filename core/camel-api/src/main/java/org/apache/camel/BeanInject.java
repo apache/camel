@@ -23,9 +23,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to indicate an injection point of a bean obtained from the {@link org.apache.camel.spi.Registry}, into a POJO.
+ * Marks a field, method, constructor, or parameter as an injection point for a bean obtained from the Camel
+ * <a href="https://camel.apache.org/manual/registry.html">{@link org.apache.camel.spi.Registry}</a>.
+ * <p/>
+ * When Camel performs bean post-processing it resolves the injection by looking up the registry: by name if
+ * {@link #value()} is set, or by type if no name is provided. The resolved bean is then injected at the annotated site.
+ * If no matching bean is found an exception is thrown at startup.
  *
- * If no name is specified then the lookup is anonymous and based on lookup up by the type.
+ * @see   BeanConfigInject
+ * @see   PropertyInject
+ * @see   BindToRegistry
+ * @since 3.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

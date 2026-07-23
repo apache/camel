@@ -26,11 +26,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.KeyFactory;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.Duration;
@@ -46,11 +43,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
-import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
-import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
-import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
-import org.bouncycastle.pqc.jcajce.spec.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,33 +81,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     public KeyPair generateKeyPair(String algorithm, String keyId, Object parameterSpec) throws Exception {
         LOG.info("Generating key pair for algorithm: {}, keyId: {}", algorithm, keyId);
 
-        KeyPairGenerator generator;
-        String provider = determineProvider(algorithm);
-
-        if (provider != null) {
-            generator = KeyPairGenerator.getInstance(getAlgorithmName(algorithm), provider);
-        } else {
-            generator = KeyPairGenerator.getInstance(getAlgorithmName(algorithm));
-        }
-
-        // Initialize with parameter spec if provided
-        if (parameterSpec != null) {
-            if (parameterSpec instanceof AlgorithmParameterSpec algorithmParamSpec) {
-                generator.initialize(algorithmParamSpec, new SecureRandom());
-            } else if (parameterSpec instanceof Integer keySize) {
-                generator.initialize(keySize, new SecureRandom());
-            }
-        } else {
-            // Use default parameter spec for the algorithm
-            AlgorithmParameterSpec defaultSpec = getDefaultParameterSpec(algorithm);
-            if (defaultSpec != null) {
-                generator.initialize(defaultSpec, new SecureRandom());
-            } else {
-                generator.initialize(getDefaultKeySize(algorithm), new SecureRandom());
-            }
-        }
-
-        KeyPair keyPair = generator.generateKeyPair();
+        KeyPair keyPair = KeyAlgorithmSupport.generateKeyPair(algorithm, parameterSpec);
 
         // Create metadata
         KeyMetadata metadata = new KeyMetadata(keyId, algorithm);
@@ -142,14 +108,16 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     public KeyPair importKey(byte[] keyData, KeyFormat format, String algorithm) throws Exception {
         // Try to import as private key first (which includes public key)
         try {
-            PrivateKey privateKey = KeyFormatConverter.importPrivateKey(keyData, format, getAlgorithmName(algorithm));
+            PrivateKey privateKey = KeyFormatConverter.importPrivateKey(keyData, format,
+                    KeyAlgorithmSupport.getAlgorithmName(algorithm));
             // For PQC algorithms, we need to derive the public key
             // This is algorithm-specific and may require regeneration
             LOG.warn("Importing private key only - public key derivation may be needed");
             return new KeyPair(null, privateKey);
         } catch (Exception e) {
             // Try as public key only
-            PublicKey publicKey = KeyFormatConverter.importPublicKey(keyData, format, getAlgorithmName(algorithm));
+            PublicKey publicKey = KeyFormatConverter.importPublicKey(keyData, format,
+                    KeyAlgorithmSupport.getAlgorithmName(algorithm));
             return new KeyPair(publicKey, null);
         }
     }
@@ -248,10 +216,10 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
             return null;
         }
 
-        String content = Files.readString(metadataFile, StandardCharsets.UTF_8);
-
-        // Detect format: JSON starts with '{', legacy Java serialization starts with binary
-        if (content.trim().startsWith("{")) {
+        // Detect the format from the raw bytes: a JSON document starts with '{', whereas a legacy
+        // Java-serialized file is binary (and not valid UTF-8), so it must not be read as a String first.
+        byte[] content = Files.readAllBytes(metadataFile);
+        if (isJsonContent(content)) {
             MetadataFileData data = objectMapper.readValue(content, MetadataFileData.class);
             KeyMetadata metadata = data.toKeyMetadata();
             metadataCache.put(keyId, metadata);
@@ -344,8 +312,8 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
         X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicKeyBytes);
 
         String algorithm = privateData.algorithm();
-        String algorithmName = getAlgorithmName(algorithm);
-        String provider = determineProvider(algorithm);
+        String algorithmName = KeyAlgorithmSupport.getAlgorithmName(algorithm);
+        String provider = KeyAlgorithmSupport.determineProvider(algorithm);
 
         KeyFactory keyFactory;
         if (provider != null) {
@@ -369,6 +337,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
 
         KeyPair keyPair;
         try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(legacyKeyFile)))) {
+            ois.setObjectInputFilter(KeyMetadataCodec.KEY_PAIR_FILTER);
             keyPair = (KeyPair) ois.readObject();
         }
 
@@ -395,6 +364,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
 
         KeyMetadata metadata;
         try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(metadataFile)))) {
+            ois.setObjectInputFilter(KeyMetadataCodec.METADATA_FILTER);
             metadata = (KeyMetadata) ois.readObject();
         }
 
@@ -444,90 +414,18 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
         return keyDirectory.resolve(keyId + ".key");
     }
 
-    private String determineProvider(String algorithm) {
-        try {
-            PQCSignatureAlgorithms sigAlg = PQCSignatureAlgorithms.valueOf(algorithm);
-            return sigAlg.getBcProvider();
-        } catch (IllegalArgumentException e1) {
-            try {
-                PQCKeyEncapsulationAlgorithms kemAlg = PQCKeyEncapsulationAlgorithms.valueOf(algorithm);
-                return kemAlg.getBcProvider();
-            } catch (IllegalArgumentException e2) {
-                return null;
+    /**
+     * Detects whether the given file content is a JSON document (the current format) by inspecting the first
+     * non-whitespace byte, without decoding the bytes as text (a legacy Java-serialized file is binary).
+     */
+    private static boolean isJsonContent(byte[] content) {
+        for (byte b : content) {
+            if (b == ' ' || b == '\t' || b == '\n' || b == '\r') {
+                continue;
             }
+            return b == '{';
         }
-    }
-
-    private String getAlgorithmName(String algorithm) {
-        try {
-            return PQCSignatureAlgorithms.valueOf(algorithm).getAlgorithm();
-        } catch (IllegalArgumentException e1) {
-            try {
-                return PQCKeyEncapsulationAlgorithms.valueOf(algorithm).getAlgorithm();
-            } catch (IllegalArgumentException e2) {
-                return algorithm;
-            }
-        }
-    }
-
-    private AlgorithmParameterSpec getDefaultParameterSpec(String algorithm) {
-        // Provide default parameter specs for PQC algorithms
-        try {
-            switch (algorithm) {
-                case "DILITHIUM":
-                    return DilithiumParameterSpec.dilithium2;
-                case "MLDSA":
-                case "SLHDSA":
-                    // These use default initialization
-                    return null;
-                case "FALCON":
-                    return FalconParameterSpec.falcon_512;
-                case "SPHINCSPLUS":
-                    return SPHINCSPlusParameterSpec.sha2_128s;
-                case "XMSS":
-                    return new XMSSParameterSpec(
-                            10,
-                            XMSSParameterSpec.SHA256);
-                case "XMSSMT":
-                    return XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256;
-                case "LMS":
-                case "HSS":
-                    return new LMSKeyGenParameterSpec(
-                            LMSigParameters.lms_sha256_n32_h10,
-                            LMOtsParameters.sha256_n32_w4);
-                case "MLKEM":
-                case "KYBER":
-                    // These use default initialization
-                    return null;
-                case "NTRU":
-                    return NTRUParameterSpec.ntruhps2048509;
-                case "NTRULPRime":
-                    return NTRULPRimeParameterSpec.ntrulpr653;
-                case "SNTRUPrime":
-                    return SNTRUPrimeParameterSpec.sntrup761;
-                case "SABER":
-                    return SABERParameterSpec.lightsaberkem128r3;
-                case "FRODO":
-                    return FrodoParameterSpec.frodokem640aes;
-                case "BIKE":
-                    return BIKEParameterSpec.bike128;
-                case "HQC":
-                    return HQCParameterSpec.hqc128;
-                case "CMCE":
-                    return CMCEParameterSpec.mceliece348864;
-                default:
-                    return null;
-            }
-        } catch (Exception e) {
-            LOG.warn("Failed to create default parameter spec for algorithm: {}", algorithm, e);
-            return null;
-        }
-    }
-
-    private int getDefaultKeySize(String algorithm) {
-        // Default key sizes for different algorithms
-        // For PQC algorithms, key size is usually determined by parameter specs
-        return 256;
+        return false;
     }
 
     /**

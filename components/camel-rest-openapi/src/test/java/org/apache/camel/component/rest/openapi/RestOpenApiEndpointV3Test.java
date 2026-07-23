@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -38,8 +39,14 @@ import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 import io.swagger.v3.oas.models.servers.Server;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestOpenApiConsumerFactory;
+import org.apache.camel.support.DefaultComponent;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,6 +94,86 @@ public class RestOpenApiEndpointV3Test {
         oas30Parameter = new Parameter().name("q").required(false);
         assertThat(RestOpenApiEndpoint.queryParameterExpression(oas30Parameter))
                 .isEqualTo("q={q?}");
+    }
+
+    @Test
+    public void shouldPassDirectConsumerEndpointParametersToDelegate() throws Exception {
+        final CamelContext camelContext = new DefaultCamelContext();
+        final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
+        String specificationUri = Objects.requireNonNull(RestOpenApiEndpointV3Test.class.getResource("/openapi-v3.json"))
+                .toString();
+        final RecordingRestOpenApiConsumerFactory delegate = new RecordingRestOpenApiConsumerFactory();
+        camelContext.addComponent("rest-openapi", component);
+        camelContext.addComponent("delegate-http", delegate);
+        camelContext.start();
+
+        try {
+            RestOpenApiEndpoint endpoint = camelContext.getEndpoint(
+                    "rest-openapi:" + specificationUri + "?consumerComponentName=delegate-http&oauthProfile=myprofile",
+                    RestOpenApiEndpoint.class);
+
+            endpoint.createConsumer(exchange -> {
+            });
+
+            // oauthProfile is a first-class endpoint option bound to the endpoint and injected into
+            // the parameters passed to the delegate consumer factory
+            assertThat(endpoint.getOauthProfile()).isEqualTo("myprofile");
+            assertThat(delegate.parameters).containsEntry("oauthProfile", "myprofile");
+        } finally {
+            camelContext.stop();
+        }
+    }
+
+    @Test
+    public void oauthProfileFailsClosedWhenDelegateDoesNotSupportIt() throws Exception {
+        final CamelContext camelContext = new DefaultCamelContext();
+        final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
+        String specificationUri = Objects.requireNonNull(RestOpenApiEndpointV3Test.class.getResource("/openapi-v3.json"))
+                .toString();
+        camelContext.addComponent("rest-openapi", component);
+        camelContext.addComponent("no-oauth-http", new NoOAuthRestOpenApiConsumerFactory());
+        camelContext.start();
+
+        try {
+            RestOpenApiEndpoint endpoint = camelContext.getEndpoint(
+                    "rest-openapi:" + specificationUri + "?consumerComponentName=no-oauth-http&oauthProfile=myprofile",
+                    RestOpenApiEndpoint.class);
+
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                    () -> endpoint.createConsumer(exchange -> {
+                    }));
+
+            assertThat(exception.getMessage())
+                    .contains("The oauthProfile option is not supported by the resolved RestOpenApiConsumerFactory")
+                    .contains(NoOAuthRestOpenApiConsumerFactory.class.getName());
+        } finally {
+            camelContext.stop();
+        }
+    }
+
+    @Test
+    public void unknownEndpointPropertyIsTolerated() throws Exception {
+        final CamelContext camelContext = new DefaultCamelContext();
+        final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
+        String specificationUri = Objects.requireNonNull(RestOpenApiEndpointV3Test.class.getResource("/openapi-v3.json"))
+                .toString();
+        final RecordingRestOpenApiConsumerFactory delegate = new RecordingRestOpenApiConsumerFactory();
+        camelContext.addComponent("rest-openapi", component);
+        camelContext.addComponent("delegate-http", delegate);
+        camelContext.start();
+
+        try {
+            RestOpenApiEndpoint endpoint = camelContext.getEndpoint(
+                    "rest-openapi:" + specificationUri + "?consumerComponentName=delegate-http&unknownOption=value",
+                    RestOpenApiEndpoint.class);
+
+            endpoint.createConsumer(exchange -> {
+            });
+
+            assertThat(delegate.parameters).containsEntry("unknownOption", "value");
+        } finally {
+            camelContext.stop();
+        }
     }
 
     @Test
@@ -198,6 +285,70 @@ public class RestOpenApiEndpointV3Test {
                 entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "zyx"),
                 entry("consumes", "application/json"), entry("produces", "application/atom+xml"),
                 entry("queryParameters", "q={q}&o={o?}"));
+    }
+
+    @Test
+    public void shouldNotLeakPathParametersAsQueryParameters() {
+        final CamelContext camelContext = mock(CamelContext.class);
+
+        final RestOpenApiComponent component = new RestOpenApiComponent();
+        component.setCamelContext(camelContext);
+
+        // endpoint parameters include two path params and one extra param
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", "1");
+        params.put("orderId", "2");
+        params.put("format", "json");
+
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "uri", "remaining", component, params);
+        endpoint.setHost("http://petstore.openapi.io");
+
+        final OpenAPI openapi = new OpenAPI();
+        final Operation operation = new Operation().operationId("getOrder");
+        operation.addParametersItem(new Parameter().name("userId").in("path").required(true));
+        operation.addParametersItem(new Parameter().name("orderId").in("path").required(true));
+
+        Map<String, Object> result = endpoint.determineEndpointParameters(openapi, operation);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> nested = (Map<String, Object>) result.get("parameters");
+
+        // path params must not leak into nested parameters
+        assertThat(nested).doesNotContainKey("userId");
+        assertThat(nested).doesNotContainKey("orderId");
+        // non-path param must be preserved
+        assertThat(nested).containsEntry("format", "json");
+    }
+
+    @Test
+    public void shouldKeepEndpointParametersWhenNoPathParamClash() {
+        final CamelContext camelContext = mock(CamelContext.class);
+
+        final RestOpenApiComponent component = new RestOpenApiComponent();
+        component.setCamelContext(camelContext);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("verbose", "true");
+        params.put("timeout", "5000");
+
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "uri", "remaining", component, params);
+        endpoint.setHost("http://petstore.openapi.io");
+
+        final OpenAPI openapi = new OpenAPI();
+        final Operation operation = new Operation().operationId("listUsers");
+        operation.addParametersItem(new Parameter().name("page").in("query"));
+        operation.addParametersItem(new Parameter().name("limit").in("query"));
+
+        Map<String, Object> result = endpoint.determineEndpointParameters(openapi, operation);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> nested = (Map<String, Object>) result.get("parameters");
+
+        // no path params in the operation, so all endpoint params should be preserved
+        assertThat(nested).containsEntry("verbose", "true");
+        assertThat(nested).containsEntry("timeout", "5000");
     }
 
     @Test
@@ -418,6 +569,127 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
+    public void shouldNotCrossContaminateProducersForSameOperation() throws Exception {
+        final CamelContext camelContext = new DefaultCamelContext();
+        camelContext.start();
+
+        try {
+            final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
+            camelContext.addComponent("rest-openapi", component);
+
+            final OpenAPI openapi = new OpenAPI();
+            openapi.addServersItem(new Server().url("http://petstore.example.com"));
+            final Operation operation = new Operation().operationId("findPets");
+
+            // first endpoint: produces JSON
+            final RestOpenApiEndpoint endpoint1 = new RestOpenApiEndpoint(
+                    "rest-openapi:spec#findPets", "spec#findPets", component, Collections.emptyMap());
+            endpoint1.setCamelContext(camelContext);
+            endpoint1.setHost("http://petstore.example.com");
+            endpoint1.setProduces("application/json");
+
+            // second endpoint: produces XML
+            final RestOpenApiEndpoint endpoint2 = new RestOpenApiEndpoint(
+                    "rest-openapi:spec#findPets", "spec#findPets", component, Collections.emptyMap());
+            endpoint2.setCamelContext(camelContext);
+            endpoint2.setHost("http://petstore.example.com");
+            endpoint2.setProduces("application/xml");
+
+            endpoint1.createProducerFor(openapi, operation, "get", "/pets");
+            endpoint2.createProducerFor(openapi, operation, "get", "/pets");
+
+            // the two delegate rest: endpoints must be distinct instances
+            long restEndpointCount = camelContext.getEndpoints().stream()
+                    .filter(e -> e.getEndpointUri().startsWith("rest:"))
+                    .count();
+            assertThat(restEndpointCount)
+                    .as("Two rest-openapi endpoints with different 'produces' should create two distinct rest: delegate endpoints")
+                    .isEqualTo(2);
+
+            // verify each has the correct produces value
+            org.apache.camel.component.rest.RestEndpoint restEp1 = camelContext.getEndpoints().stream()
+                    .filter(e -> e.getEndpointUri().startsWith("rest:"))
+                    .filter(e -> e.getEndpointUri().contains("produces=application/json"))
+                    .map(org.apache.camel.component.rest.RestEndpoint.class::cast)
+                    .findFirst().orElseThrow();
+            assertThat(restEp1.getProduces()).isEqualTo("application/json");
+
+            org.apache.camel.component.rest.RestEndpoint restEp2 = camelContext.getEndpoints().stream()
+                    .filter(e -> e.getEndpointUri().startsWith("rest:"))
+                    .filter(e -> e.getEndpointUri().contains("produces=application/xml"))
+                    .map(org.apache.camel.component.rest.RestEndpoint.class::cast)
+                    .findFirst().orElseThrow();
+            assertThat(restEp2.getProduces()).isEqualTo("application/xml");
+        } finally {
+            camelContext.stop();
+        }
+    }
+
+    @Test
+    public void shouldNotCrossContaminateQueryParameters() throws Exception {
+        final CamelContext camelContext = new DefaultCamelContext();
+        camelContext.start();
+
+        try {
+            final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
+            camelContext.addComponent("rest-openapi", component);
+
+            final OpenAPI openapi = new OpenAPI();
+            openapi.addServersItem(new Server().url("http://petstore.example.com"));
+            final Operation operation = new Operation().operationId("findPetsByStatus");
+
+            // first endpoint: status=available
+            Map<String, Object> params1 = new HashMap<>();
+            params1.put("status", "available");
+            final RestOpenApiEndpoint endpoint1 = new RestOpenApiEndpoint(
+                    "rest-openapi:spec#findPetsByStatus", "spec#findPetsByStatus", component, params1);
+            endpoint1.setCamelContext(camelContext);
+            endpoint1.setHost("http://petstore.example.com");
+
+            // second endpoint: status=sold
+            Map<String, Object> params2 = new HashMap<>();
+            params2.put("status", "sold");
+            final RestOpenApiEndpoint endpoint2 = new RestOpenApiEndpoint(
+                    "rest-openapi:spec#findPetsByStatus", "spec#findPetsByStatus", component, params2);
+            endpoint2.setCamelContext(camelContext);
+            endpoint2.setHost("http://petstore.example.com");
+
+            // add a query parameter to the operation
+            operation.addParametersItem(new Parameter().name("status").in("query").required(true));
+
+            endpoint1.createProducerFor(openapi, operation, "get", "/pet/findByStatus");
+            endpoint2.createProducerFor(openapi, operation, "get", "/pet/findByStatus");
+
+            // verify two distinct delegate endpoints
+            long restEndpointCount = camelContext.getEndpoints().stream()
+                    .filter(e -> e.getEndpointUri().startsWith("rest:"))
+                    .count();
+            assertThat(restEndpointCount)
+                    .as("Two rest-openapi endpoints with different queryParameters should create two distinct rest: delegate endpoints")
+                    .isEqualTo(2);
+
+            // verify each has the correct query parameter value
+            org.apache.camel.component.rest.RestEndpoint restEp1 = camelContext.getEndpoints().stream()
+                    .filter(e -> e.getEndpointUri().startsWith("rest:"))
+                    .filter(e -> e instanceof org.apache.camel.component.rest.RestEndpoint)
+                    .map(org.apache.camel.component.rest.RestEndpoint.class::cast)
+                    .filter(e -> e.getQueryParameters() != null && e.getQueryParameters().contains("status=available"))
+                    .findFirst().orElseThrow();
+            assertThat(restEp1.getQueryParameters()).contains("status=available");
+
+            org.apache.camel.component.rest.RestEndpoint restEp2 = camelContext.getEndpoints().stream()
+                    .filter(e -> e.getEndpointUri().startsWith("rest:"))
+                    .filter(e -> e instanceof org.apache.camel.component.rest.RestEndpoint)
+                    .map(org.apache.camel.component.rest.RestEndpoint.class::cast)
+                    .filter(e -> e.getQueryParameters() != null && e.getQueryParameters().contains("status=sold"))
+                    .findFirst().orElseThrow();
+            assertThat(restEp2.getQueryParameters()).contains("status=sold");
+        } finally {
+            camelContext.stop();
+        }
+    }
+
+    @Test
     public void shouldUseDefaultSpecificationUri() {
         final RestOpenApiComponent component = new RestOpenApiComponent();
 
@@ -437,6 +709,47 @@ public class RestOpenApiEndpointV3Test {
                 component, Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri()).isEqualTo(RestOpenApiComponent.DEFAULT_SPECIFICATION_URI);
+    }
+
+    private static final class RecordingRestOpenApiConsumerFactory extends DefaultComponent
+            implements RestOpenApiConsumerFactory {
+
+        private Map<String, Object> parameters;
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Consumer createConsumer(
+                CamelContext camelContext, Processor processor, String contextPath, RestConfiguration configuration,
+                Map<String, Object> parameters) {
+            this.parameters = new HashMap<>(parameters);
+            return mock(Consumer.class);
+        }
+
+        @Override
+        public boolean supportsOAuthProfile() {
+            return true;
+        }
+    }
+
+    private static final class NoOAuthRestOpenApiConsumerFactory extends DefaultComponent
+            implements RestOpenApiConsumerFactory {
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Consumer createConsumer(
+                CamelContext camelContext, Processor processor, String contextPath, RestConfiguration configuration,
+                Map<String, Object> parameters) {
+            return mock(Consumer.class);
+        }
+        // does not override supportsOAuthProfile: the default is false
     }
 
 }

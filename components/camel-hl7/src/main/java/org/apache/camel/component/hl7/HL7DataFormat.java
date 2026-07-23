@@ -64,8 +64,15 @@ import static org.apache.camel.component.hl7.HL7Constants.HL7_VERSION_ID;
  * <p/>
  * Uses the <a href="https://hapifhir.github.io/hapi-hl7v2/index.html">HAPI (HL7 API)</a> for HL7 parsing.
  * <p/>
- * Uses the default GenericParser from the HAPI API. This DataFormat <b>only</b> supports both the EDI based HL7
- * messages and the XML based messages.
+ * Uses the default GenericParser from the HAPI API. This DataFormat supports both the ER7 (pipe-delimited) and XML
+ * based HL7 messages. The input format is auto-detected by the GenericParser.
+ * <p/>
+ * The {@code targetFormat} option controls the output format. When set to {@code XML}:
+ * <ul>
+ * <li>marshal encodes the HAPI Message to HL7 XML bytes instead of ER7. The input body can be either a HAPI Message or
+ * an XML Document (converted to Message automatically via the registered TypeConverter).</li>
+ * <li>unmarshal returns an {@link org.w3c.dom.Document} instead of a HAPI Message.</li>
+ * </ul>
  * <p/>
  * The <tt>unmarshal</tt> operation adds these MSH fields as headers on the Camel message (key, MSH-field):
  * <ul>
@@ -95,6 +102,7 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFor
     private HapiContext hapiContext;
     private Parser parser;
     private boolean validate = true;
+    private String targetFormat;
 
     static {
         HEADER_MAP.put(HL7_SENDING_APPLICATION, "MSH-3");
@@ -120,7 +128,12 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFor
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         Message message = ExchangeHelper.convertToMandatoryType(exchange, Message.class, body);
         String charsetName = HL7Charset.getCharsetName(message, exchange);
-        String encoded = parser.encode(message);
+        String encoded;
+        if ("XML".equalsIgnoreCase(targetFormat)) {
+            encoded = hapiContext.getXMLParser().encode(message);
+        } else {
+            encoded = parser.encode(message);
+        }
         outputStream.write(encoded.getBytes(charsetName));
     }
 
@@ -138,6 +151,10 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFor
         }
         exchange.getOut().setHeader(HL7_CONTEXT, hapiContext);
         exchange.getOut().setHeader(Exchange.CHARSET_NAME, charsetName);
+
+        if ("XML".equalsIgnoreCase(targetFormat)) {
+            return hapiContext.getXMLParser().encodeDocument(message);
+        }
         return message;
     }
 
@@ -163,6 +180,14 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFor
 
     public void setParser(Parser parser) {
         this.parser = parser;
+    }
+
+    public String getTargetFormat() {
+        return targetFormat;
+    }
+
+    public void setTargetFormat(String targetFormat) {
+        this.targetFormat = targetFormat;
     }
 
     @Override

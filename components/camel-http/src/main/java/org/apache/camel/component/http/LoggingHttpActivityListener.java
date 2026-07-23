@@ -180,15 +180,16 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
                         if (!accepted) {
                             lines.add("WARN: Cannot log HTTP body because the body is binary");
                         } else {
-                            Header ce = request != null
+                            Header reqCe = request != null
                                     ? request.getHeader(HttpHeaders.CONTENT_ENCODING)
-                                    : response.getHeader(HttpHeaders.CONTENT_ENCODING);
+                                    : null;
+                            String ce = reqCe != null ? reqCe.getValue() : e.getContentEncoding();
                             ByteArrayOutputStream bos = new ByteArrayOutputStream();
                             e.writeTo(bos);
                             String data;
-                            if (ce != null && GZIPHelper.isGzip(ce.getValue())) {
+                            if (ce != null && GZIPHelper.isGzip(ce)) {
                                 ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-                                InputStream is = GZIPHelper.uncompressGzip(ce.getValue(), bis);
+                                InputStream is = GZIPHelper.uncompressGzip(ce, bis);
                                 data = new String(is.readAllBytes());
                                 IOHelper.close(is);
                             } else {
@@ -204,7 +205,7 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
                                 byte[] arr = bos.toByteArray();
                                 // ByteArrayEntity close() is a NOOP. Additionally
                                 // the stream must be closed by client (request/response in our case).
-                                e = new ByteArrayEntity(arr, ct); // NOSONAR
+                                e = new ByteArrayEntity(arr, ct, ce); // NOSONAR
                                 if (request instanceof HttpEntityContainer ec) {
                                     ec.setEntity(e);
                                 } else if (response instanceof HttpEntityContainer ec) {

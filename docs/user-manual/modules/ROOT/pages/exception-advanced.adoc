@@ -1,0 +1,462 @@
+= Exception Clause - Advanced Usage
+:tabs-sync-option:
+
+xref:exception-clause.adoc[Back to Exception Clause]
+
+== Advanced Usage of Exception Clause
+
+Camel supports advanced configuration of exception clauses.
+
+=== Using Global and Per Route Exception Clauses
+
+You can define exception clauses either as:
+
+* global
+* or route specific
+
+We start off with the sample that we change over time. First off
+we use only global exception clauses:
+
+._Java-only: global exception policies_
+[source,java]
+----
+// default should errors go to mock:error
+errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0));
+
+// if a MyTechnicalException is thrown we will not try to
+// redeliver and we mark it as handled
+// so the caller does not get a failure
+// since we have no to then the exchange will continue to be
+// routed to the normal error handler
+// destination that is mock:error as defined above
+onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true);
+
+// if a MyFunctionalException is thrown we do not want Camel to
+// redelivery but handle it our self using
+// our bean myOwnHandler, then the exchange is not routed to the
+// default error (mock:error)
+onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("bean:myOwnHandler");
+
+// here we route message to our service bean
+from("direct:start").choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end().to("mock:result");
+----
+
+In the next sample we change the global exception policies to be pure route
+specific.
+
+=== Must use `.end()` for route specific exception policies
+
+[IMPORTANT] This requires to end the *`onException`* route with
+*`.end()`* to indicate where it stops and when the regular route
+continues.
+
+._Java-only: route-specific exception policies with .end()_
+[source,java]
+----
+// default should errors go to mock:error
+errorHandler(deadLetterChannel("mock:error"));
+
+// here we start the routing with the consumer
+from("direct:start")
+
+    // if a MyTechnicalException is thrown we will not try to
+    // redeliver and we mark it as handled
+    // so the caller does not get a failure
+    // since we have no to then the exchange will continue to be
+    // routed to the normal error handler
+    // destination that is mock:error as defined above
+    // we MUST use .end() to indicate that this sub block is
+    // ended
+    .onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true).end()
+
+    // if a MyFunctionalException is thrown we do not want Camel
+    // to redelivery but handle it our self using
+    // our bean myOwnHandler, then the exchange is not routed to
+    // the default error (mock:error)
+    // we MUST use .end() to indicate that this sub block is
+    // ended
+    .onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("bean:myOwnHandler").end()
+
+    // here we have the regular routing
+    .choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end().to("mock:result");
+----
+
+And now it gets complex as we combine global and route specific exception
+policies as we introduce a second route in the sample:
+
+._Java-only: combining global and route-specific exception policies_
+[source,java]
+----
+// global error handler
+// as its based on a unit test we do not have any delays between
+// and do not log the stack trace
+errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).logStackTrace(false));
+
+// shared for both routes
+onException(MyTechnicalException.class).handled(true).maximumRedeliveries(2).to("mock:tech.error");
+
+from("direct:start")
+    // route specific on exception for MyFunctionalException
+    // we MUST use .end() to indicate that this sub block is
+    // ended
+    .onException(MyFunctionalException.class).maximumRedeliveries(0).end().to("bean:myServiceBean").to("mock:result");
+
+from("direct:start2")
+    // route specific on exception for MyFunctionalException
+    // that is different than the previous route
+    // here we marked it as handled and send it to a different
+    // destination mock:handled
+    // we MUST use .end() to indicate that this sub block is
+    // ended
+    .onException(MyFunctionalException.class).handled(true).maximumRedeliveries(0).to("mock:handled").end().to("bean:myServiceBean").to("mock:result");
+----
+
+Notice that we can define the same exception *`MyFunctionalException`* in both
+routes, but they are configured differently and thus is handled
+different depending on the route. You can of course also add a
+new *`onException`* to one of the routes so it has an additional
+exception policy.
+
+And finally we top this by throwing in a nested error handler as well,
+as we add the 3rd route shown below:
+
+._Java-only: nested error handler with route-specific exceptions_
+[source,java]
+----
+from("direct:start3")
+    // route specific error handler that is different than the
+    // global error handler
+    // here we do not redeliver and send errors to mock:error3
+    // instead of the global endpoint
+    .errorHandler(deadLetterChannel("mock:error3").maximumRedeliveries(0))
+
+    // route specific on exception to mark MyFunctionalException
+    // as being handled
+    .onException(MyFunctionalException.class).handled(true).end()
+    // however we want the IO exceptions to redeliver at most 3
+    // times
+    .onException(IOException.class).maximumRedeliveries(3).end().to("bean:myServiceBean").to("mock:result");
+----
+
+=== Global exception policies and nested error handlers
+
+The sample above with both nested error handlers and both global and per
+route exception clauses is a bit advanced. It's important to get the
+fact straight that the *global* exception clauses is really global so
+they also applies for nested error handlers. So if a
+*`MyTechnicalException`* is thrown then it's the global exception policy
+that is selected.
+
+=== Using Fine Grained Selection Using `onWhen` Predicate
+
+You can attach an xref:expression.adoc[Expression] to the exception
+clause to have fine-grained control when a clause should be selected or
+not. As it's an xref:expression.adoc[Expression] you can use any kind of
+code to perform the test. Here is a sample:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
+
+// here we define our onException to catch MyUserException when
+// there is a header[user] on the exchange that is not null
+onException(MyUserException.class).onWhen(header("user").isNotNull()).maximumRedeliveries(1)
+    // setting delay to zero is just to make unit testing faster
+    .redeliveryDelay(0).to(ERROR_USER_QUEUE);
+
+// here we define onException to catch MyUserException as a kind
+// of fallback when the above did not match.
+// Notice: The order how we have defined these onException is
+// important as Camel will resolve in the same order as they
+// have been defined
+onException(MyUserException.class).maximumRedeliveries(2)
+    // setting delay to zero is just to make unit testing faster
+    .redeliveryDelay(0).to(ERROR_QUEUE);
+----
+
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>com.foo.MyUserException</exception>
+    <redeliveryPolicy maximumRedeliveries="1" redeliveryDelay="0"/>
+    <onWhen>
+        <simple>${header.user} != null</simple>
+    </onWhen>
+    <to uri="mock:error"/>
+</onException>
+
+<onException>
+    <exception>com.foo.MyUserException</exception>
+    <redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0"/>
+    <to uri="mock:error"/>
+</onException>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - com.foo.MyUserException
+    steps:
+      - redeliveryPolicy:
+          maximumRedeliveries: 1
+          redeliveryDelay: 0
+      - onWhen:
+          expression:
+            simple:
+              expression: "${header.user} != null"
+      - to:
+          uri: mock:error
+- onException:
+    exception:
+      - com.foo.MyUserException
+    redeliveryPolicy:
+      maximumRedeliveries: 2
+      redeliveryDelay: 0
+    steps:
+      - to:
+          uri: mock:error
+----
+====
+
+In the sample above we have two *`onException`*'s defined. The first has
+an *`onWhen`* expression attached to only trigger if the message has a
+header with the key user that is not null. If so this clause is selected
+and is handling the thrown exception. The second clause is a for coarse
+gained selection to select the same exception being thrown but when the
+expression is evaluated to false.
+
+[NOTE]
+====
+This is not required, if the second clause is omitted, then the
+default error handler will kick in.
+====
+
+=== Using onRedelivery Processor
+
+xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel] has support
+for *`onRedelivery`* to allow custom processing of a Message before its
+being redelivered. It can be used to add some customer header or
+whatnot. In Camel 2.0 we have added this feature to
+xref:exception-clause.adoc[Exception Clause] as well, so you can use per
+exception scoped on redelivery. Camel will fallback to use the one
+defined on xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel] if any, if
+none exists on the xref:exception-clause.adoc[Exception Clause]. See
+xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel] for more details on
+*`onRedelivery`*.
+
+In the code below we want to do some custom code before redelivering any
+*`IOException`*. So we configure an *`onException`* for
+the *`IOException`* and set the *`onRedelivery`* to use our custom
+processor:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+// when we redeliver caused by an IOException we want to do some
+// special code before the redelivery attempt
+onException(IOException.class)
+    // try to redeliver at most 3 times
+    .maximumRedeliveries(3)
+    // setting delay to zero is just to make unit testing faster
+    .redeliveryDelay(0).onRedelivery(new MyIORedeliverProcessor());
+----
+
+XML::
++
+In XML then you refer to the redelivery process using `onRedeliveryRef` which is configured on `onException`.
++
+[source,xml]
+----
+<onException onRedeliveryRef="myIORedeliverProcessor">
+    <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="0"/>
+    <exception>java.io.IOException</exception>
+</onException>
+----
+
+YAML::
++
+In YAML then you refer to the redelivery process using `onRedeliveryRef` which is configured on `onException`.
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - java.io.IOException
+    onRedeliveryRef: myIORedeliverProcessor
+    redeliveryPolicy:
+      maximumRedeliveries: 3
+      redeliveryDelay: 0
+----
+====
+
+And in our custom processor we set a special timeout header to the message.
+You can of course do anything what you like in your code.
+
+._Java-only: custom redelivery processor_
+[source,java]
+----
+// This is our processor that is executed before every redelivery attempt
+// here we can do what we want in the java code, such as altering the
+// message
+public static class MyRedeliverProcessor implements Processor {
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        // the message is being redelivered so we can alter it
+
+        // we just append the redelivery counter to the body
+        // you can of course do all kind of stuff instead
+        String body = exchange.getIn().getBody(String.class);
+        int count = exchange.getIn().getHeader("CamelRedeliveryCounter", Integer.class);
+
+        exchange.getIn().setBody(body + count);
+    }
+}
+----
+
+=== Using onExceptionOccurred Processor
+
+xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel] has support
+for *`onExceptionOccurred`* to allow custom processing of a Message just
+after the exception was thrown. It can be used to do some custom logging
+or whatnot. The difference between *`onRedelivery`* processor
+and *`onExceptionOccurred`* processor, is that the former is processed
+just before a redelivery attempt is being performed, that means it will
+not happen right after an exception was thrown. For example if the error
+handler has been configured to perform 5 seconds delay between
+redelivery attempts, then the redelivery processor is invoked 5 seconds
+after the exception was thrown. On the other hand
+the *`onExceptionOccurred`* processor is always invoked right after the
+exception was thrown, and also if redelivery has been disabled.
+
+[NOTE]
+====
+Any new exceptions thrown from the *`onExceptionOccurred`*
+processor is logged as *`WARN`* and ignored, to not override the
+existing exception. 
+====
+
+In the code below we want to do some custom logging when an exception
+happened. Therefore, we configure an *`onExceptionOccurred`* to use our
+custom processor:
+
+[tabs]
+====
+
+Java::
++
+[source.java]
+----
+errorHandler(defaultErrorHandler()
+    .maximumRedeliveries(3)
+    .redeliveryDelay(5000)
+    .onExceptionOccurred(myProcessor));
+----
+
+XML::
++
+[source,xml]
+----
+<errorHandler>
+    <defaultErrorHandler onExceptionOccurredRef="myProcessor">
+        <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="5000"/>
+    </defaultErrorHandler>
+</errorHandler>
+----
+
+YAML::
++
+[source,yaml]
+----
+- errorHandler:
+    defaultErrorHandler:
+      onExceptionOccurredRef: myProcessor
+      redeliveryPolicy:
+        maximumRedeliveries: 3
+        redeliveryDelay: 5000
+----
+====
+
+
+=== Using Fine Grained Retry Using retryWhile Predicate
+
+When you need fine-grained control for determining if an exchange should
+be retried or not you can use the *`retryWhile`* predicate. Camel will
+redeliver until the predicate returns false.
+
+Example:
+
+._Java-only: using retryWhile predicate for fine-grained retry_
+[source,java]
+----
+// we want to use a predicate for retries so we can determine in
+// our bean when retry should stop, notice it will overrule the global
+// error handler where we defined at most 1 redelivery attempt. Here we will
+// continue until the predicate returns false
+onException(MyFunctionalException.class).retryWhile(method("myRetryHandler")).handled(true).transform().constant("Sorry");
+----
+
+Where the bean *`myRetryHandler`* is computing if we should retry or not:
+
+._Java-only: retry handler bean with Bean Binding_
+[source,java]
+----
+public class MyRetryBean {
+
+    // using bean binding we can bind the information from the exchange to
+    // the types we have in our method signature
+    public boolean retry(@Header(Exchange.REDELIVERY_COUNTER) Integer counter) {
+        // NOTE: counter is the redelivery attempt, will start from 1
+        // we can of course do what ever we want to determine the result but
+        // this is a unit test so we end after 3 attempts
+        return counter < 3;
+    }
+}
+----
+
+=== Using Custom ExceptionPolicyStrategy
+
+The default `org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy` in Camel should be sufficient in nearly all use-cases.
+However, if you need to use your own (use only for rare and advanced use-cases) this can be configured as the
+sample below illustrates:
+
+._Java-only: configuring a custom ExceptionPolicyStrategy_
+[source,java]
+----
+// configure the error handler to use my policy instead of the default from Camel
+errorHandler(deadLetterChannel("mock:error").exceptionPolicyStrategy(new MyPolicy()));
+----
+
+Using our own strategy *`MyPolicy`* we can change the default behavior of
+Camel with our own code to resolve which exception type
+from above should be handling the given thrown exception.
+
+._Java-only: custom ExceptionPolicyStrategy implementation_
+[source,java]
+----
+public static class MyPolicy implements ExceptionPolicyStrategy {
+
+    @Override
+    public ExceptionPolicyKey getExceptionPolicy(Set<ExceptionPolicyKey> exceptionPolicies, Exchange exchange, Throwable exception) {
+        // This is just an example that always forces the exception type configured
+        // with MyPolicyException to win.
+        return new ExceptionPolicyKey(null, MyPolicyException.class, null);
+    }
+}
+----
+
+

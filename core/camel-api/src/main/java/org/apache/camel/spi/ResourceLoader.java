@@ -19,7 +19,16 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContextAware;
 
 /**
- * SPI for loading resources.
+ * SPI for loading a {@link Resource} from a URI.
+ * <p/>
+ * The resource loader is the entry point Camel uses to turn a location (such as {@code file:routes.yaml} or
+ * {@code classpath:rules.txt}) into a {@link Resource}. It selects the appropriate scheme-specific
+ * {@link ResourceResolver} to perform the actual resolution. A single loader is registered per
+ * {@link org.apache.camel.CamelContext} under the {@value #FACTORY} factory key.
+ *
+ * @see   Resource
+ * @see   ResourceResolver
+ * @since 3.9
  */
 public interface ResourceLoader extends CamelContextAware {
 

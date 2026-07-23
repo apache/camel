@@ -21,7 +21,9 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
+import org.junit.jupiter.api.Disabled;
 
+@Disabled("Test was flaky 4 years ago. It is now completely broken when launched with Maven. See CAMEL-23499")
 public class FileToFtpsExplicitSSLWithoutClientAuthAndGlobalSSLContextParametersIT
         extends FileToFtpsExplicitSSLWithoutClientAuthIT {
 
@@ -36,7 +38,7 @@ public class FileToFtpsExplicitSSLWithoutClientAuthAndGlobalSSLContextParameters
         tmp.setKeyStore(ksp);
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
-        sslContextParameters.setSecureSocketProtocol("SSLv3");
+        sslContextParameters.setSecureSocketProtocol("TLSv1.2");
         sslContextParameters.setTrustManagers(tmp);
         context.setSSLContextParameters(sslContextParameters);
 

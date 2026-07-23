@@ -31,8 +31,10 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("objectMapper", asRef(definition.getObjectMapper()));
+        properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
+        properties.put("prettyPrint", definition.getPrettyPrint());
         if (definition.getLibrary() == JsonLibrary.Jackson) {
+            properties.put("objectMapper", asRef(definition.getObjectMapper()));
             if (definition.getUseDefaultObjectMapper() == null) {
                 // default true
                 properties.put("useDefaultObjectMapper", "true");
@@ -41,27 +43,26 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
             }
             properties.put("autoDiscoverObjectMapper", definition.getAutoDiscoverObjectMapper());
             properties.put("jsonView", or(definition.getJsonView(), definition.getJsonViewTypeName()));
-        } else {
-            properties.put("jsonView", definition.getJsonView());
-        }
-        properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
-        properties.put("prettyPrint", definition.getPrettyPrint());
-        properties.put("include", definition.getInclude());
-        properties.put("allowJmsType", definition.getAllowJmsType());
-        properties.put("collectionType", or(definition.getCollectionType(), definition.getCollectionTypeName()));
-        properties.put("useList", definition.getUseList());
-        properties.put("combineUnicodeSurrogates", definition.getCombineUnicodeSurrogates());
-        properties.put("moduleClassNames", definition.getModuleClassNames());
-        properties.put("moduleRefs", definition.getModuleRefs());
-        properties.put("enableFeatures", definition.getEnableFeatures());
-        properties.put("disableFeatures", definition.getDisableFeatures());
-        properties.put("allowUnmarshallType", definition.getAllowUnmarshallType());
-        if (definition.getLibrary() == JsonLibrary.Jackson) {
+            properties.put("include", definition.getInclude());
+            properties.put("allowJmsType", definition.getAllowJmsType());
+            properties.put("collectionType", or(definition.getCollectionType(), definition.getCollectionTypeName()));
+            properties.put("useList", definition.getUseList());
+            properties.put("combineUnicodeSurrogates", definition.getCombineUnicodeSurrogates());
+            properties.put("moduleClassNames", definition.getModuleClassNames());
+            properties.put("moduleRefs", definition.getModuleRefs());
+            properties.put("enableFeatures", definition.getEnableFeatures());
+            properties.put("disableFeatures", definition.getDisableFeatures());
+            properties.put("allowUnmarshallType", definition.getAllowUnmarshallType());
             properties.put("schemaResolver", asRef(definition.getSchemaResolver()));
             properties.put("autoDiscoverSchemaResolver", definition.getAutoDiscoverSchemaResolver());
             properties.put("namingStrategy", definition.getNamingStrategy());
             properties.put("timezone", definition.getTimezone());
             properties.put("maxStringLength", definition.getMaxStringLength());
+        } else {
+            properties.put("jsonView", definition.getJsonView());
+        }
+        if (definition.getLibrary() == JsonLibrary.Jsonb) {
+            properties.put("objectMapper", asRef(definition.getObjectMapper()));
         }
         if (definition.getLibrary() == JsonLibrary.Fastjson || definition.getLibrary() == JsonLibrary.Gson) {
             properties.put("dateFormatPattern", definition.getDateFormatPattern());

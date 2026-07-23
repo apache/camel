@@ -348,7 +348,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final StringTemplateHeaderNameBuilder INSTANCE = new StringTemplateHeaderNameBuilder();
+        public static final StringTemplateHeaderNameBuilder INSTANCE = new StringTemplateHeaderNameBuilder();
 
         /**
          * A URI for the template resource to use instead of the endpoint

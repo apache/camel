@@ -27,9 +27,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -136,7 +136,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         // compute dir depending on stepwise is enabled or not
         final String dir = computeDir(absolutePath, dirName);
 
-        final FTPFile[] files = getFtpFiles(dir);
+        final FTPFile[] files = getFtpFiles(dynamic, dir);
 
         if (files == null || files.length == 0) {
             // no files in this directory to poll
@@ -148,7 +148,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         LOG.trace("Found {} files in directory: {}", files.length, dir);
 
         if (getEndpoint().isPreSort()) {
-            Arrays.sort(files, Comparator.comparing(FTPFile::getName));
+            Arrays.sort(files, preSortComparator(getEndpoint().getPreSort()));
         }
 
         for (FTPFile file : files) {
@@ -233,11 +233,11 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return dir;
     }
 
-    private FTPFile[] pollNamedFile() {
+    private FTPFile[] pollNamedFile(Exchange dynamic) {
         FTPFile[] files = null;
         // we cannot use the LIST command(s) so we can only poll a named
         // file so created a pseudo file with that name
-        Exchange dummy = ExchangeHelper.getDummy(getEndpoint().getCamelContext());
+        Exchange dummy = GenericFileHelper.createDummy(getEndpoint(), dynamic);
         String name = evaluateFileExpression(dummy);
         if (name != null) {
             FTPFile file = new FTPFile();
@@ -257,14 +257,14 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return operations.listFiles(dir);
     }
 
-    private FTPFile[] getFtpFiles(String dir) {
+    private FTPFile[] getFtpFiles(Exchange dynamic, String dir) {
         FTPFile[] files = null;
         try {
             LOG.trace("Polling directory: {}", dir);
             if (isUseList()) {
                 files = listFiles(dir);
             } else {
-                files = pollNamedFile();
+                files = pollNamedFile(dynamic);
             }
         } catch (GenericFileOperationFailedException e) {
             if (ignoreCannotRetrieveFile(null, null, e)) {
@@ -437,5 +437,23 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             ftpConsumerToString = "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return ftpConsumerToString;
+    }
+
+    private static Comparator<FTPFile> preSortComparator(String preSort) {
+        boolean reverse = preSort.startsWith("-");
+        String field = reverse ? preSort.substring(1) : preSort;
+        Comparator<FTPFile> cmp;
+        switch (field) {
+            case "modified":
+                cmp = Comparator.comparingLong(f -> f.getTimestamp() != null ? f.getTimestamp().getTimeInMillis() : 0);
+                break;
+            case "size":
+                cmp = Comparator.comparingLong(FTPFile::getSize);
+                break;
+            default:
+                cmp = Comparator.comparing(FTPFile::getName);
+                break;
+        }
+        return reverse ? cmp.reversed() : cmp;
     }
 }

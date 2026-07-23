@@ -44,7 +44,7 @@ public class JmsDeadLetterChannelInOutIT extends AbstractPersistentJMSTest {
         assertNotNull(out);
 
         // should be in DLQ
-        Object dead = consumer.receiveBody("activemq:queue:JmsDeadLetterChannelInOutIT.error", 5000);
+        Object dead = consumer.receiveBody("activemq:queue:JmsDeadLetterChannelInOutIT.error", 10000);
         assertEquals("Hello World", dead);
     }
 

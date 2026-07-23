@@ -69,7 +69,9 @@ import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToJavaDumper;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
@@ -552,6 +554,14 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
+    protected ModelToJavaDumper createModelToJavaDumper() {
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
+                ModelToJavaDumper.FACTORY,
+                ModelToJavaDumper.class,
+                "camel-java-io");
+    }
+
+    @Override
     protected ModelToStructureDumper createModelToStructureDumper() {
         return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 ModelToStructureDumper.FACTORY,
@@ -613,10 +623,10 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected RestRegistryFactory createRestRegistryFactory() {
-        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
+        return ResolverHelper.resolveBootstrapService(getCamelContextReference(),
                 RestRegistryFactory.FACTORY,
-                RestRegistryFactory.class,
-                "camel-rest");
+                RestRegistryFactory.class)
+                .orElse(null);
     }
 
     @Override
@@ -627,6 +637,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected StreamCachingStrategy createStreamCachingStrategy() {
         return new DefaultStreamCachingStrategy();
+    }
+
+    @Override
+    protected MessageSizeStrategy createMessageSizeStrategy() {
+        return new DefaultMessageSizeStrategy();
     }
 
     @Override

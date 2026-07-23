@@ -17,7 +17,7 @@
 @REM
 
 @REM ----------------------------------------------------------------------------
-@REM Camel JBang Launcher Start Up Batch script
+@REM Camel CLI Launcher Start Up Batch script
 @REM ----------------------------------------------------------------------------
 
 @REM Set local scope for the variables with windows NT shell
@@ -28,45 +28,106 @@ set DIRNAME=%~dp0
 if "%DIRNAME%" == "" set DIRNAME=.
 set BASEDIR=%DIRNAME%
 
-@REM Java command to use
-if "%JAVA_HOME%" == "" goto noJavaHome
-set JAVACMD=%JAVA_HOME%\bin\java.exe
-goto checkJavaCmd
+@REM --- Shared Java 17+ discovery contract ---
+@REM Candidates in order: JAVACMD, %JAVA_HOME%\bin\java.exe, java.exe on PATH, CAMEL_FALLBACK_JAVA.
+set CAMEL_MIN_JAVA=17
 
-:noJavaHome
-set JAVACMD=java.exe
+set "CAMEL_JAVACMD="
+call :tryJava "%JAVACMD%"
+if defined CAMEL_JAVACMD goto haveJava
+if defined JAVA_HOME call :tryJava "%JAVA_HOME%\bin\java.exe"
+if defined CAMEL_JAVACMD goto haveJava
+for %%p in (java.exe) do call :tryJava "%%~$PATH:p"
+if defined CAMEL_JAVACMD goto haveJava
+call :tryJava "%CAMEL_FALLBACK_JAVA%"
+if defined CAMEL_JAVACMD goto haveJava
+goto noJava
 
-:checkJavaCmd
-if exist "%JAVACMD%" goto init
+:haveJava
+set "JAVACMD=%CAMEL_JAVACMD%"
 
-echo.
-echo Error: JAVA_HOME is not defined correctly. >&2
-echo Cannot execute "%JAVACMD%" >&2
-echo.
-goto error
-
-:init
 @REM Set JVM options if specified
 if "%JAVA_OPTS%" == "" set JAVA_OPTS=-Xmx512m
 
-@REM Find the JAR file
-dir /b "%BASEDIR%\camel-launcher-*.jar" > nul 2>&1
-if not errorlevel 1 (
-  for /f "tokens=*" %%j in ('dir /b "%BASEDIR%\camel-launcher-*.jar"') do set LAUNCHER_JAR=%BASEDIR%\%%j
-) else (
-  for %%i in ("%BASEDIR%\camel-launcher-*.jar") do set LAUNCHER_JAR=%%i
-)
+@REM Find the launcher JAR
+set "LAUNCHER_JAR="
+for %%i in ("%BASEDIR%\camel-launcher-*.jar") do set "LAUNCHER_JAR=%%i"
 
-@REM Execute Camel JBang
+@REM Execute Camel CLI, preserving arguments and the child exit code
+for %%e in ("%JAVACMD%") do set "_JAVACMD_EXT=%%~xe"
+if /i "%_JAVACMD_EXT%"==".bat" goto executeJavaBatch
+if /i "%_JAVACMD_EXT%"==".cmd" goto executeJavaBatch
+goto executeJavaNative
+
+:executeJavaBatch
+call "%JAVACMD%" %JAVA_OPTS% -jar "%LAUNCHER_JAR%" %*
+set ERROR_CODE=%ERRORLEVEL%
+goto javaExecuted
+
+:executeJavaNative
 "%JAVACMD%" %JAVA_OPTS% -jar "%LAUNCHER_JAR%" %*
-if ERRORLEVEL 1 goto error
-goto end
+set ERROR_CODE=%ERRORLEVEL%
 
-:error
-set ERROR_CODE=1
-
-:end
+:javaExecuted
 @REM End local scope for the variables with windows NT shell
-if "%OS%"=="Windows_NT" endlocal
-
+if "%OS%"=="Windows_NT" endlocal & set ERROR_CODE=%ERROR_CODE%
 exit /B %ERROR_CODE%
+
+:noJava
+echo. 1>&2
+echo Error: no suitable Java runtime found. Camel CLI requires Java %CAMEL_MIN_JAVA% or newer. 1>&2
+echo Checked: JAVACMD, %%JAVA_HOME%%\bin\java.exe, java.exe on PATH, CAMEL_FALLBACK_JAVA. 1>&2
+echo Install a Java %CAMEL_MIN_JAVA%+ runtime and set JAVA_HOME or JAVACMD, or add java.exe to PATH. 1>&2
+if "%OS%"=="Windows_NT" endlocal
+exit /B 1
+
+:tryJava
+@REM %1 = candidate path (quoted). On success sets CAMEL_JAVACMD.
+set "_CAND=%~1"
+if "%_CAND%"=="" exit /b 1
+if not exist "%_CAND%" exit /b 1
+for %%e in ("%_CAND%") do set "_CAND_EXT=%%~xe"
+set "_PROBE_DIR="
+if defined TEMP set "_PROBE_DIR=%TEMP%"
+if not defined _PROBE_DIR if defined TMP set "_PROBE_DIR=%TMP%"
+if not defined _PROBE_DIR set "_PROBE_DIR=%BASEDIR%"
+
+:tryJavaProbePath
+set "_PROBE=%_PROBE_DIR%\camel-java-probe-%RANDOM%-%RANDOM%.tmp"
+if exist "%_PROBE%" goto tryJavaProbePath
+if /i "%_CAND_EXT%"==".bat" goto tryJavaProbeBatch
+if /i "%_CAND_EXT%"==".cmd" goto tryJavaProbeBatch
+goto tryJavaProbeNative
+
+:tryJavaProbeBatch
+call "%_CAND%" -version <NUL >"%_PROBE%" 2>&1
+set "_PROBE_RC=%ERRORLEVEL%"
+goto tryJavaProbeComplete
+
+:tryJavaProbeNative
+"%_CAND%" -version <NUL >"%_PROBE%" 2>&1
+set "_PROBE_RC=%ERRORLEVEL%"
+
+:tryJavaProbeComplete
+if "%_PROBE_RC%"=="0" goto tryJavaParseProbe
+del /q "%_PROBE%" >NUL 2>&1
+set "_PROBE="
+exit /b 1
+
+:tryJavaParseProbe
+set "_RAW="
+for /f "tokens=3" %%v in ('findstr /b /l /i /c:"java version " /c:"openjdk version " "%_PROBE%"') do if not defined _RAW set "_RAW=%%v"
+del /q "%_PROBE%" >NUL 2>&1
+set "_PROBE="
+if not defined _RAW exit /b 1
+set "_RAW=%_RAW:"=%"
+set "_MAJOR="
+for /f "tokens=1,2 delims=." %%a in ("%_RAW%") do (
+  if "%%a"=="1" (set "_MAJOR=%%b") else (set "_MAJOR=%%a")
+)
+if not defined _MAJOR exit /b 1
+@REM Reject non-numeric majors (e.g. early-access "17-ea") so the numeric compare below is safe.
+for /f "delims=0123456789" %%z in ("%_MAJOR%") do exit /b 1
+if %_MAJOR% LSS %CAMEL_MIN_JAVA% exit /b 1
+set "CAMEL_JAVACMD=%_CAND%"
+exit /b 0

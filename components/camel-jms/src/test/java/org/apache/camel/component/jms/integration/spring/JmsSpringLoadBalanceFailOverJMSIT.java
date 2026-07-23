@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.jms.integration.spring;
 
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Integration test for Camel load-balancer fail-over with JMS
  */
 @Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Isolated
+@Timeout(60)
 public class JmsSpringLoadBalanceFailOverJMSIT extends AbstractSpringJMSITSupport {
 
     @Override
@@ -39,6 +46,9 @@ public class JmsSpringLoadBalanceFailOverJMSIT extends AbstractSpringJMSITSuppor
 
     @Test
     public void testFailover() throws Exception {
+        // Wait for the JMS consumer routes to be fully subscribed to the broker
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "fooConsumerRoute", "barConsumerRoute");
+
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
@@ -46,7 +56,7 @@ public class JmsSpringLoadBalanceFailOverJMSIT extends AbstractSpringJMSITSuppor
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
 }

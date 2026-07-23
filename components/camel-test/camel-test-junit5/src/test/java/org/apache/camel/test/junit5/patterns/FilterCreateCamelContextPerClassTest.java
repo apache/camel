@@ -40,6 +40,7 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:start", expectedBody, "foo", "bar");
 
+        endpoint.setResultWaitTime(30_000);
         endpoint.assertIsSatisfied();
     }
 

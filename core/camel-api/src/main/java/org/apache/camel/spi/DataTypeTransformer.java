@@ -25,10 +25,19 @@ import java.lang.annotation.Target;
 import org.apache.camel.spi.annotations.ServiceFactory;
 
 /**
- * Annotation to configure a data type transformer with either specifying its name or from/to data types.
+ * Marks a {@link Transformer} implementation as a data type transformer, identified by its name and/or its from/to
+ * {@link DataType}s.
  * <p/>
- * The annotation is used by specific classpath scanning data type loaders to automatically add the data types to a
- * registry.
+ * Classpath-scanning transformer loaders discover annotated classes and register them in the
+ * {@link TransformerRegistry}, so they can be detected and applied when a route declares input/output data types via a
+ * {@link Contract}. Provide a unique {@link #name()}, or a {@link #fromType()}/{@link #toType()} pair, so the
+ * transformer can be referenced or auto-detected.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/transformer.html">Transformer</a> in the Camel user manual.
+ *
+ * @see   Transformer
+ * @see   TransformerRegistry
+ * @since 4.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

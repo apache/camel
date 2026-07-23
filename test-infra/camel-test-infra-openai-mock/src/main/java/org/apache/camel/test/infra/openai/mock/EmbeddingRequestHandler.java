@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.openai.mock;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,10 @@ public class EmbeddingRequestHandler {
 
     public String handleRequest(HttpExchange exchange) throws IOException {
         try {
-            String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+            String requestBody;
+            try (InputStream is = exchange.getRequestBody()) {
+                requestBody = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            }
             LOG.debug("Processing embedding request: {}", requestBody);
 
             JsonNode rootNode = objectMapper.readTree(requestBody);

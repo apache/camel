@@ -31,9 +31,9 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 
 /**
- * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+ * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.19.0", scheme = "aws-cloudtrail", title = "AWS Cloudtrail", syntax = "aws-cloudtrail:label",
+@UriEndpoint(firstVersion = "3.19.0", scheme = "aws-cloudtrail", title = "AWS CloudTrail", syntax = "aws-cloudtrail:label",
              consumerOnly = true,
              category = { Category.CLOUD, Category.MANAGEMENT, Category.MONITORING }, headersClass = CloudtrailConstants.class)
 public class CloudtrailEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {

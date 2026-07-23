@@ -21,7 +21,7 @@ import org.apache.camel.spi.Metadata;
 
 public class WeaviateVectorDbHeaders {
     @Metadata(description = "The action to be performed.", javaType = "String",
-              enums = "CREATE_COLLECTION,CREATE,DELETE_BY_ID,DELETE_COLLECTION,QUERY,QUERY_BY_ID,UPDATE_BY_ID")
+              enums = "AGGREGATE,BATCH_CREATE,BM25_QUERY,CREATE_COLLECTION,CREATE,DELETE_BY_ID,DELETE_COLLECTION,HYBRID_QUERY,QUERY,QUERY_BY_ID,UPDATE_BY_ID")
     public static final String ACTION = "CamelWeaviateAction";
 
     @Metadata(description = "Text Field Name for Create/Update/Query operation", javaType = "String")
@@ -53,5 +53,12 @@ public class WeaviateVectorDbHeaders {
 
     @Metadata(description = "Key Value for Create/Update/Query operation", javaType = "String")
     public static final String KEY_VALUE = "CamelWeaviateKeyValue";
+
+    @Metadata(description = "Alpha value for hybrid search (0.0 = pure BM25, 1.0 = pure vector)", javaType = "Float")
+    public static final String HYBRID_ALPHA = "CamelWeaviateHybridAlpha";
+
+    @Metadata(description = "Optional query vector for hybrid search (overrides server-side vectorizer)",
+              javaType = "List<Float>")
+    public static final String QUERY_VECTOR = "CamelWeaviateQueryVector";
 
 }

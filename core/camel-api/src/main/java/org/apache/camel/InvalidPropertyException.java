@@ -16,20 +16,34 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 /**
  * An exception caused when an invalid property name is used on an object
  */
 public class InvalidPropertyException extends RuntimeCamelException {
 
-    private final transient Object owner;
+    private final transient @Nullable Object owner;
     private final String propertyName;
 
-    public InvalidPropertyException(Object owner, String propertyName) {
+    /**
+     * @param owner        the object that does not have the property
+     * @param propertyName the name of the property that could not be found
+     */
+    public InvalidPropertyException(@Nullable Object owner, String propertyName) {
         this(owner, propertyName, owner != null ? owner.getClass() : Object.class);
     }
 
-    public InvalidPropertyException(Object owner, String propertyName, Class<?> type) {
-        super("No '" + propertyName + "' property available on type: " + type.getName() + " in: " + owner);
+    /**
+     * @param owner        the object that does not have the property
+     * @param propertyName the name of the property that could not be found
+     * @param type         the type of the object being inspected
+     */
+    public InvalidPropertyException(@Nullable Object owner, String propertyName, Class<?> type) {
+        super("No '" + Objects.requireNonNull(propertyName, "propertyName") + "' property available on type: "
+              + Objects.requireNonNull(type, "type").getName() + " in: " + owner);
         this.owner = owner;
         this.propertyName = propertyName;
     }
@@ -38,7 +52,7 @@ public class InvalidPropertyException extends RuntimeCamelException {
         return propertyName;
     }
 
-    public Object getOwner() {
+    public @Nullable Object getOwner() {
         return owner;
     }
 }

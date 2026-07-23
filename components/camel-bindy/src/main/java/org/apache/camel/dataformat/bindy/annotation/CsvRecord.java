@@ -124,4 +124,11 @@ public @interface CsvRecord {
      */
     boolean trimLine() default true;
 
+    /**
+     * If true, a parse failure on any field in this record is replaced with the field's defaultValue (or the
+     * type-appropriate default if no defaultValue is set), instead of aborting the unmarshal. Individual fields can opt
+     * out per-field via @DataField.continueParseOnFailure. Default false preserves the existing fail-fast behavior.
+     */
+    boolean continueParseOnFailure() default false;
+
 }

@@ -41,6 +41,7 @@ import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToJavaDumper;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
@@ -56,6 +57,7 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteDiagramDumper;
 import org.apache.camel.spi.RouteFactory;
+import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.SimpleFunctionRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
@@ -563,10 +565,24 @@ public final class PluginHelper {
     }
 
     /**
-     * Gets the {@link ModelToXMLDumper} to be used.
+     * Gets the {@link ModelToYAMLDumper} to be used.
      */
     public static ModelToYAMLDumper getModelToYAMLDumper(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ModelToYAMLDumper.class);
+    }
+
+    /**
+     * Gets the {@link ModelToJavaDumper} to be used.
+     */
+    public static ModelToJavaDumper getModelToJavaDumper(CamelContext camelContext) {
+        return getModelToJavaDumper(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link ModelToJavaDumper} to be used.
+     */
+    public static ModelToJavaDumper getModelToJavaDumper(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ModelToJavaDumper.class);
     }
 
     /**
@@ -581,6 +597,20 @@ public final class PluginHelper {
      */
     public static ModelToStructureDumper getModelToStructureDumper(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ModelToStructureDumper.class);
+    }
+
+    /**
+     * Gets the {@link RouteTopologyDumper} to use.
+     */
+    public static RouteTopologyDumper getRouteTopologyDumper(CamelContext camelContext) {
+        return getRouteTopologyDumper(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link RouteTopologyDumper} to use.
+     */
+    public static RouteTopologyDumper getRouteTopologyDumper(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RouteTopologyDumper.class);
     }
 
     /**

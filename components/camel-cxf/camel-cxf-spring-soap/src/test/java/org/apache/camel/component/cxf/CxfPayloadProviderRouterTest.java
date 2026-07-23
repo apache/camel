@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.concurrent.TimeUnit;
+
 import jakarta.xml.ws.Endpoint;
 import jakarta.xml.ws.Service;
 
 import javax.xml.namespace.QName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.Fault;
@@ -36,6 +39,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -70,8 +74,9 @@ public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
         return new RouteBuilder() {
             public void configure() {
                 from("cxf:bean:routerEndpoint?synchronous=true&dataFormat=PAYLOAD")
-                        .setHeader("operationNamespace", constant("http://camel.apache.org/cxf/jaxws/dispatch"))
-                        .setHeader("operationName", constant("Invoke"))
+                        .setHeader(CxfConstants.OPERATION_NAMESPACE,
+                                constant("http://camel.apache.org/cxf/jaxws/dispatch"))
+                        .setHeader(CxfConstants.OPERATION_NAME, constant("Invoke"))
                         .to("cxf:bean:serviceEndpoint?synchronous=true&dataFormat=PAYLOAD");
             }
         };
@@ -115,9 +120,11 @@ public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
         icp.setCalled(false);
         greeter.greetMeOneWay("call greetMe OneWay !");
         assertFalse(icp.isCalled(), "An unnecessary inbound message");
-        // wait a few seconds for the async oneway service to be invoked
-        Thread.sleep(3000);
-        assertEquals(++ic, implementor.getInvocationCount(), "The target service not invoked");
+        // wait for the async oneway service to be invoked
+        final int expectedCount = ++ic;
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(expectedCount, implementor.getInvocationCount(),
+                        "The target service not invoked"));
     }
 
     static class VerifyInboundInterceptor extends AbstractPhaseInterceptor<Message> {

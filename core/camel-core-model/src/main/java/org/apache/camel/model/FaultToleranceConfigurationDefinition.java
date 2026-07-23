@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * MicroProfile Fault Tolerance Circuit Breaker EIP configuration
  */
-@Metadata(label = "configuration,eip,error")
+@Metadata(label = "configuration,eip,error,resilience",
+          description = "Configures MicroProfile Fault Tolerance settings for the Circuit Breaker EIP, such as timeout, bulkhead, and retry parameters")
 @XmlRootElement(name = "faultToleranceConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
@@ -89,10 +90,27 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
+     * Controls the number of trial calls which are allowed when the circuit breaker is half-open. Supports property
+     * placeholders.
+     */
+    public FaultToleranceConfigurationDefinition successThreshold(String successThreshold) {
+        setSuccessThreshold(successThreshold);
+        return this;
+    }
+
+    /**
      * Controls the size of the rolling window used when the circuit breaker is closed
      */
     public FaultToleranceConfigurationDefinition requestVolumeThreshold(int requestVolumeThreshold) {
         setRequestVolumeThreshold(Integer.toString(requestVolumeThreshold));
+        return this;
+    }
+
+    /**
+     * Controls the size of the rolling window used when the circuit breaker is closed. Supports property placeholders.
+     */
+    public FaultToleranceConfigurationDefinition requestVolumeThreshold(String requestVolumeThreshold) {
+        setRequestVolumeThreshold(requestVolumeThreshold);
         return this;
     }
 
@@ -108,10 +126,26 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
+     * Configures the failure rate threshold in percentage. Supports property placeholders.
+     */
+    public FaultToleranceConfigurationDefinition failureRatio(String failureRatio) {
+        setFailureRatio(failureRatio);
+        return this;
+    }
+
+    /**
      * Whether timeout is enabled or not on the circuit breaker. Default is false.
      */
     public FaultToleranceConfigurationDefinition timeoutEnabled(boolean timeoutEnabled) {
         setTimeoutEnabled(Boolean.toString(timeoutEnabled));
+        return this;
+    }
+
+    /**
+     * Whether timeout is enabled or not on the circuit breaker. Supports property placeholders.
+     */
+    public FaultToleranceConfigurationDefinition timeoutEnabled(String timeoutEnabled) {
+        setTimeoutEnabled(timeoutEnabled);
         return this;
     }
 
@@ -132,10 +166,20 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
-     * Configures the pool size of the thread pool when timeout is enabled. Default value is 10.
+     * @deprecated No longer in use since the switch to TypedGuard API (CAMEL-21857).
      */
+    @Deprecated(since = "4.22.0")
     public FaultToleranceConfigurationDefinition timeoutPoolSize(int poolSize) {
         setTimeoutPoolSize(Integer.toString(poolSize));
+        return this;
+    }
+
+    /**
+     * @deprecated No longer in use since the switch to TypedGuard API (CAMEL-21857).
+     */
+    @Deprecated(since = "4.22.0")
+    public FaultToleranceConfigurationDefinition timeoutPoolSize(String poolSize) {
+        setTimeoutPoolSize(poolSize);
         return this;
     }
 
@@ -148,6 +192,14 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
+     * Whether bulkhead is enabled or not on the circuit breaker. Supports property placeholders.
+     */
+    public FaultToleranceConfigurationDefinition bulkheadEnabled(String bulkheadEnabled) {
+        setBulkheadEnabled(bulkheadEnabled);
+        return this;
+    }
+
+    /**
      * Configures the max amount of concurrent calls the bulkhead will support.
      */
     public FaultToleranceConfigurationDefinition bulkheadMaxConcurrentCalls(int bulkheadMaxConcurrentCalls) {
@@ -156,10 +208,27 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
+     * Configures the max amount of concurrent calls the bulkhead will support. Supports property placeholders.
+     */
+    public FaultToleranceConfigurationDefinition bulkheadMaxConcurrentCalls(String bulkheadMaxConcurrentCalls) {
+        setBulkheadMaxConcurrentCalls(bulkheadMaxConcurrentCalls);
+        return this;
+    }
+
+    /**
      * Configures the task queue size for holding waiting tasks to be processed by the bulkhead
      */
     public FaultToleranceConfigurationDefinition bulkheadWaitingTaskQueue(int bulkheadWaitingTaskQueue) {
         setBulkheadWaitingTaskQueue(Integer.toString(bulkheadWaitingTaskQueue));
+        return this;
+    }
+
+    /**
+     * Configures the task queue size for holding waiting tasks to be processed by the bulkhead. Supports property
+     * placeholders.
+     */
+    public FaultToleranceConfigurationDefinition bulkheadWaitingTaskQueue(String bulkheadWaitingTaskQueue) {
+        setBulkheadWaitingTaskQueue(bulkheadWaitingTaskQueue);
         return this;
     }
 

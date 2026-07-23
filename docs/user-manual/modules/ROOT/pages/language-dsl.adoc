@@ -11,6 +11,7 @@ The DSL can be accessed directly from the `RouteBuilder` with the `expression()`
 
 In the following example, a `TokenizerExpression` is created using the legacy approach where the expression is instantiated explicitly and configured using setters:
 
+._Java-only: creating a tokenizer expression using the legacy approach_
 [source,java]
 ----
 public class MyRoutes extends RouteBuilder {
@@ -30,6 +31,7 @@ public class MyRoutes extends RouteBuilder {
 
 The previous code could be simplified using the utility methods available directly from the `ExpressionClause` corresponding to the type returned by several existing methods such as `split()`, `setBody()`, `setHeader(String)`, `aggregate()`, etc.:
 
+._Java-only: simplified tokenizer using ExpressionClause utility method_
 [source,java]
 ----
 public class MyRoutes extends RouteBuilder {
@@ -46,6 +48,7 @@ public class MyRoutes extends RouteBuilder {
 
 This approach is suitable for very basic configuration, but as there are only limited utility methods for each supported language, for more complex configuration, we can quickly face situations where the utility method for our expected configuration doesn't exist. In this situation, you can either use the legacy approach or the language DSL like in the next code snippet:
 
+._Java-only: configuring a tokenizer using the Language DSL builder_
 [source,java]
 ----
 public class MyRoutes extends RouteBuilder {
@@ -70,6 +73,7 @@ public class MyRoutes extends RouteBuilder {
 Sometimes creating an expression can be a bit verbose with a number of fluent builder methods.
 What you can do is to pre create the expression before the route as shown below:
 
+._Java-only: pre-creating an expression before the route_
 [source,java]
 ----
 public class MyRoutes extends RouteBuilder {

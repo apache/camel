@@ -295,7 +295,7 @@ public interface TensorFlowServingEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final TensorFlowServingHeaderNameBuilder INSTANCE = new TensorFlowServingHeaderNameBuilder();
+        public static final TensorFlowServingHeaderNameBuilder INSTANCE = new TensorFlowServingHeaderNameBuilder();
 
         /**
          * The target of the client. See:

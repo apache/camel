@@ -22,14 +22,14 @@ package org.apache.camel.spi;
 public interface UuidGenerator {
 
     /**
-     * Generates an UUID string representation.
+     * Generates a UUID string representation.
      *
      * @return the unique id.
      */
     String generateUuid();
 
     /**
-     * Generates an UUID string representation to be used as exchange id.
+     * Generates a UUID string representation to be used as exchange id.
      *
      * @return the unique exchange id
      */

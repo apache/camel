@@ -71,7 +71,7 @@ public class Base extends CamelTestSupport {
 
     @BeforeAll
     void initProperties() {
-        fileSystemName = RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT);
+        fileSystemName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(Locale.ROOT);
 
         configuration = new DataLakeConfiguration();
         configuration.setSharedKeyCredential(new StorageSharedKeyCredential(

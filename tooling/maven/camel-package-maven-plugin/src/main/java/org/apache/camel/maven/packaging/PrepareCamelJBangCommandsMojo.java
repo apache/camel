@@ -57,9 +57,9 @@ import org.jboss.forge.roaster.model.source.JavaSource;
       requiresDependencyResolution = ResolutionScope.COMPILE)
 public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
 
-    // Pattern to match .addSubcommand("name", new CommandLine(new ClassName(this/main))
+    // Pattern to match .addSubcommand("name", new CommandLine(new ClassName(main)) or (this))
     private static final Pattern SUBCOMMAND_PATTERN = Pattern.compile(
-            "\\.addSubcommand\\(\\s*\"([^\"]+)\"\\s*,\\s*new\\s+CommandLine\\(\\s*new\\s+([A-Za-z0-9_]+)\\s*\\(\\s*(?:this|main)\\s*\\)\\s*\\)");
+            "\\.addSubcommand\\(\\s*\"([^\"]+)\"\\s*,\\s*new\\s+CommandLine\\(\\s*new\\s+([A-Za-z0-9_]+)\\s*\\(\\s*(?:main|this)\\s*\\)\\s*\\)");
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File outFolder;
@@ -165,8 +165,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         // Find the start of the commandLine builder chain
         int startLine = -1;
         for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).contains("commandLine = new CommandLine(this)")
-                    || lines.get(i).contains("commandLine = new CommandLine(main)")) {
+            if (lines.get(i).contains("commandLine = new CommandLine(")) {
                 startLine = i;
                 break;
             }
@@ -383,6 +382,22 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
                 }
             }
         }
+
+        // Also parse options from @CommandLine.Mixin fields
+        for (FieldSource<JavaClassSource> field : clazz.getFields()) {
+            if (hasMixinAnnotation(field)) {
+                String mixinTypeName = field.getType().getName();
+                File mixinFile = findClassFile(baseDir, mixinTypeName);
+                if (mixinFile != null && mixinFile.exists()) {
+                    try {
+                        JavaClassSource mixinClazz = (JavaClassSource) Roaster.parse(mixinFile);
+                        parseOptionsFromClassHierarchy(mixinClazz, options, mixinFile.getParentFile());
+                    } catch (Exception e) {
+                        getLog().debug("Could not parse mixin class: " + mixinTypeName + " - " + e.getMessage());
+                    }
+                }
+            }
+        }
     }
 
     private File findClassFile(File dir, String className) {
@@ -440,6 +455,12 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
             }
         }
         return null;
+    }
+
+    private boolean hasMixinAnnotation(FieldSource<JavaClassSource> field) {
+        return field.getAnnotation("picocli.CommandLine.Mixin") != null
+                || field.getAnnotation("CommandLine.Mixin") != null
+                || field.getAnnotation("Mixin") != null;
     }
 
     private AnnotationSource<?> findAnnotation(JavaClassSource clazz, String annotationName) {

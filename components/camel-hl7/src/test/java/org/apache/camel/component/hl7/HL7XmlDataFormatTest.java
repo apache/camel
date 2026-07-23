@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hl7;
 
+import org.w3c.dom.Document;
+
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
@@ -28,8 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HL7XmlDataFormatTest extends CamelTestSupport {
 
@@ -62,6 +63,97 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
         assertEquals("O01", new Terser(received).get("MSH-9-2"));
     }
 
+    @Test
+    public void testUnmarshalXmlFormat() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:unmarshalXml");
+        mock.expectedMessageCount(1);
+
+        String body = createHL7AsString();
+        template.sendBody("direct:unmarshalXml", body);
+
+        MockEndpoint.assertIsSatisfied(context);
+        Object rawBody = mock.getReceivedExchanges().get(0).getIn().getBody();
+        assertNotNull(rawBody);
+        assertInstanceOf(Document.class, rawBody);
+        Document doc = (Document) rawBody;
+        assertEquals("ORM_O01", doc.getDocumentElement().getLocalName());
+    }
+
+    @Test
+    public void testMarshalXmlFromDocument() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:marshalFromDoc");
+        mock.expectedMessageCount(1);
+
+        String body = createHL7AsString();
+        Message msg = hl7.getParser().parse(body);
+        String xml = hl7.getParser().encode(msg, "XML");
+        template.sendBody("direct:marshalFromDoc", xml);
+
+        MockEndpoint.assertIsSatisfied(context);
+        String edi = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertTrue(edi.contains("MSH|^~\\&|"));
+        assertTrue(edi.contains("ORM^O01"));
+    }
+
+    @Test
+    public void testMarshalXmlOutput() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:marshalXmlOutput");
+        mock.expectedMessageCount(1);
+
+        String body = createHL7AsString();
+        Message msg = hl7.getParser().parse(body);
+        template.sendBody("direct:marshalXmlOutput", msg);
+
+        MockEndpoint.assertIsSatisfied(context);
+        String xml = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertTrue(xml.contains("<ORM_O01"));
+        assertTrue(xml.contains("urn:hl7-org:v2xml"));
+    }
+
+    @Test
+    public void testUnmarshalXmlFormatViaModelDefinition() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:unmarshalXmlModel");
+        mock.expectedMessageCount(1);
+
+        String body = createHL7AsString();
+        template.sendBody("direct:unmarshalXmlModel", body);
+
+        MockEndpoint.assertIsSatisfied(context);
+        Object rawBody = mock.getReceivedExchanges().get(0).getIn().getBody();
+        assertNotNull(rawBody);
+        assertInstanceOf(Document.class, rawBody);
+        Document doc = (Document) rawBody;
+        assertEquals("ORM_O01", doc.getDocumentElement().getLocalName());
+    }
+
+    @Test
+    public void testRoundTripViaModelDefinition() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:roundtripModel");
+        mock.expectedMessageCount(1);
+
+        String body = createHL7AsString();
+        template.sendBody("direct:roundtripModel", body);
+
+        MockEndpoint.assertIsSatisfied(context);
+        String edi = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertTrue(edi.contains("MSH|^~\\&|"));
+        assertTrue(edi.contains("ORM^O01"));
+    }
+
+    @Test
+    public void testRoundTripEdiToXmlToEdi() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:roundtrip");
+        mock.expectedMessageCount(1);
+
+        String body = createHL7AsString();
+        template.sendBody("direct:roundtrip", body);
+
+        MockEndpoint.assertIsSatisfied(context);
+        String edi = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertTrue(edi.contains("MSH|^~\\&|"));
+        assertTrue(edi.contains("ORM^O01"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         HapiContext hapiContext = new DefaultHapiContext();
@@ -70,10 +162,31 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
         hl7 = new HL7DataFormat();
         hl7.setParser(p);
 
+        final HL7DataFormat hl7Xml = new HL7DataFormat();
+        hl7Xml.setTargetFormat("XML");
+        hl7Xml.setValidate(false);
+
+        final HL7DataFormat hl7Default = new HL7DataFormat();
+        hl7Default.setValidate(false);
+
+        final org.apache.camel.model.dataformat.HL7DataFormat hl7XmlDef
+                = new org.apache.camel.model.dataformat.HL7DataFormat.Builder()
+                        .targetFormat("XML").validate(false).end();
+        final org.apache.camel.model.dataformat.HL7DataFormat hl7DefaultDef
+                = new org.apache.camel.model.dataformat.HL7DataFormat.Builder()
+                        .validate(false).end();
+
         return new RouteBuilder() {
             public void configure() {
                 from("direct:unmarshalOk").unmarshal().hl7(false).to("mock:unmarshal");
                 from("direct:unmarshalOkXml").unmarshal(hl7).to("mock:unmarshal");
+                from("direct:unmarshalXml").unmarshal(hl7Xml).to("mock:unmarshalXml");
+                from("direct:marshalFromDoc").marshal(hl7Default).to("mock:marshalFromDoc");
+                from("direct:marshalXmlOutput").marshal(hl7Xml).to("mock:marshalXmlOutput");
+                from("direct:roundtrip").unmarshal(hl7Xml).marshal(hl7Default).to("mock:roundtrip");
+
+                from("direct:unmarshalXmlModel").unmarshal(hl7XmlDef).to("mock:unmarshalXmlModel");
+                from("direct:roundtripModel").unmarshal(hl7XmlDef).marshal(hl7DefaultDef).to("mock:roundtripModel");
             }
         };
     }

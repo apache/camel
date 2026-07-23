@@ -66,7 +66,6 @@ public class SyslogSpringNettyTest extends CamelSpringTestSupport {
 
                 DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort.getPort());
                 socket.send(packet);
-                Thread.sleep(100);
             }
         } finally {
             socket.close();

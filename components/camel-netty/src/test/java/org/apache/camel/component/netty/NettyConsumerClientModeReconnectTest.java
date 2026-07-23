@@ -75,8 +75,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
 
             LOG.info(">>> routing done");
 
-            Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                    .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+            MockEndpoint.assertIsSatisfied(context);
 
         } finally {
             LOG.info(">>> shutting down Netty server");
@@ -97,7 +96,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
                                 String body = exchange.getIn().getBody(String.class);
                                 exchange.getMessage().setBody("Bye " + body);
                             }
-                        }).to("log:receive").to("mock:receive").noAutoStartup();
+                        }).to("log:receive").to("mock:receive").autoStartup(false);
             }
         };
     }

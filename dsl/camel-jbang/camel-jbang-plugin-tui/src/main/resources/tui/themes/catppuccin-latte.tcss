@@ -1,0 +1,54 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Camel TUI Catppuccin Latte theme. Soothing pastel light palette. */
+
+$brand: #8839EF;
+$latte-bg: #EFF1F5;
+$latte-fg: #4C4F69;
+
+#accent         { color: $brand; }
+#accent-bg      { color: white; background: $brand; text-style: bold; }
+#hint-key       { color: white; background: #7C3AED; text-style: bold; }
+#border         { color: #BCC0CC; }
+#border-focused { color: $brand; }
+#title          { color: $brand; text-style: bold; }
+#success        { color: #40A02B; }
+#warning        { color: #DF8E1D; }
+#error          { color: #D20F39; }
+#muted          { color: #9CA0B0; }
+#selection      { color: white; background: #1E66F5; text-style: bold; }
+#info           { color: #1E66F5; }
+#notice         { color: #8839EF; }
+#row-alt        { background: #E6E9EF; }
+#base-bg        { background: $latte-bg; }
+#base-fg        { color: $latte-fg; }
+
+/* Content tokens — labels, change indicators, search highlight */
+#label          { color: #DF8E1D; }
+#change         { color: #DF8E1D; }
+#search-match   { color: #4C4F69; background: #DF8E1D; }
+#mnemonic       { color: #DF8E1D; text-style: bold underline; }
+
+/* Diagram tokens */
+#diagram-border  { color: #8C8FA1; }
+#diagram-id      { color: $latte-fg; }
+#diagram-from    { color: #40A02B; }
+#diagram-to      { color: #179299; }
+#diagram-choice  { color: #DF8E1D; }
+#diagram-action  { color: #8839EF; }
+#diagram-eip     { color: #7287FD; }
+#diagram-default { color: #9CA0B0; }

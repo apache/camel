@@ -40,7 +40,11 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractS
 
 @Command(name = "context",
          description = "Top status of Camel integrations",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel top context",
+                 "  camel top context --watch" })
 public class CamelContextTop extends ProcessWatchCommand {
 
     public static class PidNameMemAgeCompletionCandidates implements Iterable<String> {
@@ -78,7 +82,6 @@ public class CamelContextTop extends ProcessWatchCommand {
                     // there must be a status file for the running Camel integration
                     if (root != null) {
                         Row row = new Row();
-                        rows.add(row);
                         JsonObject context = (JsonObject) root.get("context");
                         if (context == null) {
                             return;
@@ -139,6 +142,7 @@ public class CamelContextTop extends ProcessWatchCommand {
                             row.gcCount = gc.getLong("collectionCount");
                             row.gcTime = gc.getLong("collectionTime");
                         }
+                        rows.add(row);
                     }
                 });
 

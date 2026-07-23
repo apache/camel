@@ -42,9 +42,9 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
             .when("Hi! Can you look up user 123 and tell me about our rental policies?")
             .assertRequest(request -> {
                 // Both tools are part of the request
-                Assertions.assertThat(request).contains("QueryUserDatabaseByUserID", "GetCurrentWeatherInformation");
+                Assertions.assertThat(request).contains("userDb", "weatherService");
             })
-            .invokeTool("QueryUserDatabaseByUserID")
+            .invokeTool("userDb")
             .withParam("userId", "123")
             .replyWithToolContent(" " + COMPANY_KNOWLEDGE_BASE)
             .end()
@@ -57,7 +57,7 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
             .replyWith("SUV")
             .end()
             .when("What's the weather in London?")
-            .invokeTool("GetCurrentWeatherInformation")
+            .invokeTool("weatherService")
             .withParam("location", "London")
             .end()
             .build();
@@ -117,7 +117,7 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
                 thirdRequest,
                 String.class);
 
-        assertNotNull(thirdRequest, "Third response should not be null");
+        assertNotNull(thirdResponse, "Third response should not be null");
         Assertions.assertThat(thirdResponse).contains(WEATHER_INFO);
 
         mockEndpoint.assertIsSatisfied();
@@ -151,10 +151,10 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
                         .to("mock:agent-response");
 
                 // Tool routes for function calling
-                from("langchain4j-tools:userDb?tags=users&description=Query user database by user ID&parameter.userId=string")
+                from("ai-tool:userDb?tags=users&description=Query user database by user ID&parameter.userId=string")
                         .setBody(constant(USER_DATABASE));
 
-                from("langchain4j-tools:weatherService?tags=weather&description=Get current weather information&parameter.location=string")
+                from("ai-tool:weatherService?tags=weather&description=Get current weather information&parameter.location=string")
                         .setBody(constant("{\"weather\": \"" + WEATHER_INFO + "\", \"location\": \"Current Location\"}"));
             }
         };

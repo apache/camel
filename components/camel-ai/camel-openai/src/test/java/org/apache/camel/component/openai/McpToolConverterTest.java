@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.openai.core.JsonValue;
+import com.openai.models.FunctionParameters;
 import com.openai.models.chat.completions.ChatCompletionFunctionTool;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,14 +35,11 @@ class McpToolConverterTest {
 
     @Test
     void convertFullSchema() {
-        McpSchema.Tool tool = McpSchema.Tool.builder()
-                .name("get_weather")
+        McpSchema.Tool tool = McpSchema.Tool.builder("get_weather",
+                Map.of("type", "object",
+                        "properties", Map.of("city", Map.of("type", "string", "description", "City name"),
+                                "required", List.of("city"))))
                 .description("Get the weather for a location")
-                .inputSchema(new McpSchema.JsonSchema(
-                        "object",
-                        Map.of("city", Map.of("type", "string", "description", "City name")),
-                        List.of("city"),
-                        null, null, null))
                 .build();
 
         List<ChatCompletionFunctionTool> result = McpToolConverter.convert(List.of(tool));
@@ -53,8 +54,7 @@ class McpToolConverterTest {
 
     @Test
     void convertWithoutInputSchema() {
-        McpSchema.Tool tool = McpSchema.Tool.builder()
-                .name("no_params_tool")
+        McpSchema.Tool tool = McpSchema.Tool.builder("no_params_tool", Collections.emptyMap())
                 .description("A tool with no parameters")
                 .build();
 
@@ -67,9 +67,8 @@ class McpToolConverterTest {
 
     @Test
     void convertWithoutDescription() {
-        McpSchema.Tool tool = McpSchema.Tool.builder()
+        McpSchema.Tool tool = McpSchema.Tool.builder("bare_tool", Map.of("type", "object"))
                 .name("bare_tool")
-                .inputSchema(new McpSchema.JsonSchema("object", null, null, null, null, null))
                 .build();
 
         List<ChatCompletionFunctionTool> result = McpToolConverter.convert(List.of(tool));
@@ -80,18 +79,13 @@ class McpToolConverterTest {
 
     @Test
     void convertMultipleTools() {
-        McpSchema.Tool tool1 = McpSchema.Tool.builder()
-                .name("tool_a")
+        McpSchema.Tool tool1 = McpSchema.Tool.builder("tool_a", Collections.emptyMap())
                 .description("First tool")
                 .build();
 
-        McpSchema.Tool tool2 = McpSchema.Tool.builder()
-                .name("tool_b")
+        McpSchema.Tool tool2 = McpSchema.Tool
+                .builder("tool_b", Map.of("type", "object", "properties", Map.of("x", Map.of("type", "number"))))
                 .description("Second tool")
-                .inputSchema(new McpSchema.JsonSchema(
-                        "object",
-                        Map.of("x", Map.of("type", "number")),
-                        null, null, null, null))
                 .build();
 
         List<ChatCompletionFunctionTool> result = McpToolConverter.convert(List.of(tool1, tool2));
@@ -106,5 +100,47 @@ class McpToolConverterTest {
         List<ChatCompletionFunctionTool> result = McpToolConverter.convert(List.of());
         assertNotNull(result);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void convertPreservesAllInputSchemaKeywords() {
+        Map<String, Object> addressDef = Map.of("type", "object", "properties", Map.of("city", Map.of("type", "string")));
+        Map<String, Object> inputSchema = Map.of(
+                "type", "object",
+                "description", "Search parameters",
+                "additionalProperties", false,
+                "$defs", Map.of("Address", addressDef),
+                "properties", Map.of("query", Map.of("type", "string"), "address", Map.of("$ref", "#/$defs/Address")),
+                "required", List.of("query"));
+
+        McpSchema.Tool tool = McpSchema.Tool.builder("search", inputSchema)
+                .description("Search tool")
+                .build();
+
+        FunctionParameters parameters = McpToolConverter.convert(List.of(tool)).get(0).function().parameters().get();
+        Map<String, JsonValue> converted = parameters._additionalProperties();
+
+        assertThat(converted).containsKeys("type", "description", "additionalProperties", "$defs", "properties", "required");
+        assertThat(converted.get("type").asString()).contains("object");
+        assertThat(converted.get("description").asString()).contains("Search parameters");
+        assertThat(converted.get("additionalProperties").asBoolean()).contains(false);
+        @SuppressWarnings("unchecked")
+        Map<String, JsonValue> defs = (Map<String, JsonValue>) converted.get("$defs").asObject().orElse(Map.of());
+        @SuppressWarnings("unchecked")
+        Map<String, JsonValue> properties = (Map<String, JsonValue>) converted.get("properties").asObject().orElse(Map.of());
+        assertThat(defs).containsKey("Address");
+        assertThat(properties).containsKey("address");
+        assertThat(converted.get("required").asArray()).isNotEmpty();
+    }
+
+    @Test
+    void convertDefaultsTypeToObjectWhenMissing() {
+        McpSchema.Tool tool = McpSchema.Tool.builder("bare_schema", Map.of("properties", Map.of("x", Map.of("type", "string"))))
+                .build();
+
+        FunctionParameters parameters = McpToolConverter.convert(List.of(tool)).get(0).function().parameters().get();
+
+        assertThat(parameters._additionalProperties().get("type").asString()).contains("object");
+        assertThat(parameters._additionalProperties()).containsKey("properties");
     }
 }

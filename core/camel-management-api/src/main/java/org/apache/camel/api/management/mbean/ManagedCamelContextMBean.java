@@ -135,9 +135,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Average load (inflight messages, not cpu) over the last fifteen minutes")
     String getLoad15();
 
-    @ManagedAttribute(description = "Throughput message/second")
-    String getThroughput();
-
     @ManagedAttribute(description = "Total number of exchanges processed from remote endpoints only")
     long getRemoteExchangesTotal();
 
@@ -256,6 +253,15 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Dumps the routes as YAML")
     String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds, boolean sourceLocation)
             throws Exception;
+
+    @ManagedOperation(description = "Dumps the routes as Java DSL")
+    String dumpRoutesAsJava() throws Exception;
+
+    @ManagedOperation(description = "Dumps the routes as Java DSL")
+    String dumpRoutesAsJava(boolean resolvePlaceholders) throws Exception;
+
+    @ManagedOperation(description = "Dumps the routes as Java DSL")
+    String dumpRoutesAsJava(boolean resolvePlaceholders, boolean generatedIds) throws Exception;
 
     /**
      * Creates the endpoint by the given uri

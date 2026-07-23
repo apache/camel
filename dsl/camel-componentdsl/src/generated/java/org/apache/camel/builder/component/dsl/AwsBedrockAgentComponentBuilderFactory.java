@@ -97,21 +97,6 @@ public interface AwsBedrockAgentComponentBuilderFactory {
         }
     
         /**
-         * Define the model Id we are going to use.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param modelId the value to set
-         * @return the dsl builder
-         */
-        default AwsBedrockAgentComponentBuilder modelId(java.lang.String modelId) {
-            doSetProperty("modelId", modelId);
-            return this;
-        }
-    
-        /**
          * The operation to perform.
          * 
          * The option is a:
@@ -550,7 +535,6 @@ public interface AwsBedrockAgentComponentBuilderFactory {
             case "configuration": ((BedrockAgentComponent) component).setConfiguration((org.apache.camel.component.aws2.bedrock.agent.BedrockAgentConfiguration) value); return true;
             case "dataSourceId": getOrCreateConfiguration((BedrockAgentComponent) component).setDataSourceId((java.lang.String) value); return true;
             case "knowledgeBaseId": getOrCreateConfiguration((BedrockAgentComponent) component).setKnowledgeBaseId((java.lang.String) value); return true;
-            case "modelId": getOrCreateConfiguration((BedrockAgentComponent) component).setModelId((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((BedrockAgentComponent) component).setOperation((org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((BedrockAgentComponent) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((BedrockAgentComponent) component).setPojoRequest((boolean) value); return true;

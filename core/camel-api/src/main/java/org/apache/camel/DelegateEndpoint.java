@@ -17,7 +17,13 @@
 package org.apache.camel;
 
 /**
- * An interface to represent an {@link org.apache.camel.Endpoint} which are delegated.
+ * An {@link Endpoint} that delegates all operations to another underlying {@link Endpoint}, following the
+ * <em>Decorator</em> pattern.
+ * <p/>
+ * Implementations use this interface to wrap an existing endpoint to modify, intercept, or enrich its behaviour without
+ * changing the endpoint URI visible to the rest of the routing engine.
+ *
+ * @see Endpoint
  */
 public interface DelegateEndpoint extends Endpoint {
 

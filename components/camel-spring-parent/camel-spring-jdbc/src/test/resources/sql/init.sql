@@ -24,4 +24,4 @@ create table tableWithAutoIncr (id int not null GENERATED ALWAYS AS IDENTITY, co
 insert into tableWithAutoIncr (content) values ('value1');
 
 create table tableWithClob (id varchar(15), picture clob(10M));
-insert into tableWithClob values ('id1', cast('\x0123456789ABCDEF' as clob));
+insert into tableWithClob values ('id1', cast(X'0123456789ABCDEF' as clob));

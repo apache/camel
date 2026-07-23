@@ -78,10 +78,12 @@ public class FaultToleranceConfiguration {
         this.timeoutDuration = timeoutDuration;
     }
 
+    @Deprecated(since = "4.22.0")
     public int getTimeoutPoolSize() {
         return timeoutPoolSize;
     }
 
+    @Deprecated(since = "4.22.0")
     public void setTimeoutPoolSize(int timeoutPoolSize) {
         this.timeoutPoolSize = timeoutPoolSize;
     }

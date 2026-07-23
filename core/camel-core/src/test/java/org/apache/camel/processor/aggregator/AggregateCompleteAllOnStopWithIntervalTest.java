@@ -24,13 +24,15 @@ import org.junit.jupiter.api.Test;
 
 /**
  * This test verifies that completeAllOnStop() properly completes aggregations on shutdown when using
- * completionInterval.
+ * completionInterval. Uses a very long interval (60s) so the interval timer will never fire during the short shutdown
+ * timeout — force completion in prepareShutdown must handle it.
  */
 public class AggregateCompleteAllOnStopWithIntervalTest extends ContextTestSupport {
 
     @Test
-    public void testCompleteAllOnStopWithCompletionIntervalOnly() throws Exception {
-        // Set shutdown timeout to 5x the completion interval (1 second)
+    public void testCompleteAllOnStopWithCompletionInterval() throws Exception {
+        // Set shutdown timeout shorter than the completion interval (60s)
+        // so the interval timer will never fire — force completion must handle it
         context.getShutdownStrategy().setTimeout(5);
 
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
@@ -49,8 +51,8 @@ public class AggregateCompleteAllOnStopWithIntervalTest extends ContextTestSuppo
 
         input.assertIsSatisfied();
 
-        // Stop the route immediately without waiting for completionInterval
-        // With completeAllOnStop(), we expect the aggregation to be completed
+        // Stop the context without waiting for completionInterval
+        // With completeAllOnStop(), the aggregation must be force-completed during shutdown
         context.stop();
 
         mock.assertIsSatisfied();
@@ -66,7 +68,7 @@ public class AggregateCompleteAllOnStopWithIntervalTest extends ContextTestSuppo
                         .aggregate(new GroupedBodyAggregationStrategy())
                         .simple("${in.header.aggregateKey}")
                         .completionSize(10)
-                        .completionInterval(1000)
+                        .completionInterval(60000)
                         .completeAllOnStop()
                         .to("mock:aggregated");
             }

@@ -17,8 +17,16 @@
 package org.apache.camel.spi;
 
 /**
- * Strategy when 3rd party dependencies are detected during loading routes. For example when loading YAML DSL routes for
- * Camel K where dependencies are listed in the YAML file.
+ * Strategy notified when a 3rd-party dependency is detected while loading routes.
+ * <p/>
+ * Some DSLs declare external dependencies inline; for example YAML DSL routes (as used by Camel K) can list Maven
+ * coordinates that the route needs. As such routes are loaded, each detected dependency is reported through
+ * {@link #onDependency(String)} so the runtime can react, for instance by downloading the artifact and adding it to the
+ * classpath. The dependency is expressed as a resolver URI such as {@code mvn:com.foo/bar/1.2.3}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/camel-jbang.html">Camel CLI</a> in the Camel user manual.
+ *
+ * @since 3.16
  */
 @FunctionalInterface
 public interface DependencyStrategy {

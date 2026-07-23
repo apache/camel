@@ -38,7 +38,6 @@ import com.azure.storage.file.datalake.options.DataLakeFileAppendOptions;
 import com.azure.storage.file.datalake.options.FileParallelUploadOptions;
 import com.azure.storage.file.datalake.options.FileQueryOptions;
 import com.azure.storage.file.datalake.sas.DataLakeServiceSasSignatureValues;
-import org.apache.camel.util.SkipLastByteInputStream;
 
 public class DataLakeFileClientWrapper {
     private final DataLakeFileClient client;
@@ -64,10 +63,7 @@ public class DataLakeFileClientWrapper {
     }
 
     public InputStream openInputStream() {
-        String query = "SELECT * from BlobStorage";
-        final InputStream sourceInputStream = client.openQueryInputStream(query);
-        /* Workaround for https://github.com/Azure/azure-sdk-for-java/issues/19612 */
-        return new SkipLastByteInputStream(sourceInputStream, (byte) '\n');
+        return client.openInputStream().getInputStream();
     }
 
     public Response<InputStream> openQueryInputStreamWithResponse(final FileQueryOptions queryOptions) {

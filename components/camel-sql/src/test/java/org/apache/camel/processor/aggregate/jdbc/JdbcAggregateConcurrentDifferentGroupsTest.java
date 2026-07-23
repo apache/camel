@@ -16,9 +16,9 @@
  */
 package org.apache.camel.processor.aggregate.jdbc;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -48,14 +48,12 @@ public class JdbcAggregateConcurrentDifferentGroupsTest extends AbstractJdbcAggr
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
             final int index = i;
-            executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
-                    String id = index % 2 == 0 ? "A" : "B";
-                    template.sendBodyAndHeader("direct:start", index, "id", id);
-                    // simulate a little delay
-                    Thread.sleep(3);
-                    return null;
-                }
+            executor.submit(() -> {
+                String id = index % 2 == 0 ? "A" : "B";
+                template.sendBodyAndHeader("direct:start", index, "id", id);
+                // simulate a little delay
+                TimeUnit.MILLISECONDS.sleep(3);
+                return null;
             });
         }
 

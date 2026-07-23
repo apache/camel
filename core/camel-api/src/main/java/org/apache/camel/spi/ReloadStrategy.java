@@ -18,9 +18,17 @@ package org.apache.camel.spi;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
- * SPI strategy for reloading.
+ * SPI strategy for reloading Camel at runtime when a change is detected.
+ * <p/>
+ * A reload is triggered via {@link #onReload(Object)}, and the strategy tracks success and failure counts
+ * ({@link #getReloadCounter()}, {@link #getFailedCounter()}) and the {@link #getLastError() last error}. Concrete
+ * strategies target different scopes: {@link ContextReloadStrategy} reloads routes and property placeholders in the
+ * running context, while {@link ResourceReloadStrategy} reloads from changed {@link Resource}s.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/context-reload.html">Context Reload</a> in the Camel user manual.
  *
  * @see ContextReloadStrategy
  * @see ResourceReloadStrategy
@@ -52,5 +60,6 @@ public interface ReloadStrategy extends StaticService, CamelContextAware {
     /**
      * Gets the last error if reloading failed
      */
+    @Nullable
     Exception getLastError();
 }

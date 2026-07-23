@@ -21,9 +21,22 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Set;
 
+import org.jspecify.annotations.Nullable;
+
 /**
- * A class resolver for loading classes in a loosly coupled manner to cater for different platforms such as standalone,
- * Spring Boot, Quarkus, JBang etc.
+ * Platform-neutral strategy for loading classes and classpath resources across the different runtimes that Camel
+ * supports (standalone JVM, Spring Boot, Quarkus, OSGi, JBang, and others).
+ * <p/>
+ * A single {@link org.apache.camel.CamelContext} maintains one {@code ClassResolver} instance. Instead of calling
+ * {@code Class.forName()} or {@code ClassLoader.getResourceAsStream()} directly, all Camel internals delegate to this
+ * interface so that custom or container-aware class loaders can participate in class resolution without changes to the
+ * framework. Additional class loaders can be plugged in at any time via {@link #addClassLoader(ClassLoader)}.
+ * <p/>
+ * The interface exposes both optional-return ({@link #resolveClass(String)}) and throwing
+ * ({@link #resolveMandatoryClass(String)}) variants so that callers can choose the appropriate error-handling strategy.
+ *
+ * @see PackageScanClassResolver
+ * @see org.apache.camel.CamelContext#getClassResolver()
  */
 public interface ClassResolver {
 
@@ -45,6 +58,7 @@ public interface ClassResolver {
      * @param  name the name of the custom classloader
      * @return      the class loader or <tt>null</tt> if not found
      */
+    @Nullable
     ClassLoader getClassLoader(String name);
 
     /**
@@ -53,6 +67,7 @@ public interface ClassResolver {
      * @param  name full qualified name of class
      * @return      the class if resolved, <tt>null</tt> if not found.
      */
+    @Nullable
     Class<?> resolveClass(String name);
 
     /**
@@ -62,7 +77,7 @@ public interface ClassResolver {
      * @param  type the expected type of the class
      * @return      the class if resolved, <tt>null</tt> if not found.
      */
-    <T> Class<T> resolveClass(String name, Class<T> type);
+    <T> @Nullable Class<T> resolveClass(String name, Class<T> type);
 
     /**
      * Resolves the given class by its name
@@ -71,6 +86,7 @@ public interface ClassResolver {
      * @param  loader use the provided class loader
      * @return        the class if resolved, <tt>null</tt> if not found.
      */
+    @Nullable
     Class<?> resolveClass(String name, ClassLoader loader);
 
     /**
@@ -81,7 +97,7 @@ public interface ClassResolver {
      * @param  loader use the provided class loader
      * @return        the class if resolved, <tt>null</tt> if not found.
      */
-    <T> Class<T> resolveClass(String name, Class<T> type, ClassLoader loader);
+    <T> @Nullable Class<T> resolveClass(String name, Class<T> type, ClassLoader loader);
 
     /**
      * Resolves the given class by its name
@@ -129,6 +145,7 @@ public interface ClassResolver {
      * @param  uri the uri of the resource
      * @return     as a stream
      */
+    @Nullable
     InputStream loadResourceAsStream(String uri);
 
     /**
@@ -137,6 +154,7 @@ public interface ClassResolver {
      * @param  uri the uri of the resource
      * @return     as a URL
      */
+    @Nullable
     URL loadResourceAsURL(String uri);
 
     /**

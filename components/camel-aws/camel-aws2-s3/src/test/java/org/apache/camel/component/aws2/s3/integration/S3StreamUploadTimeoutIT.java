@@ -52,8 +52,7 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
                 template.sendBody("direct:stream1", "Andrea\n");
             }
 
-            Awaitility.await().atMost(11, TimeUnit.SECONDS)
-                    .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+            MockEndpoint.assertIsSatisfied(context, 11, TimeUnit.SECONDS);
 
             Awaitility.await().atMost(11, TimeUnit.SECONDS)
                     .untilAsserted(() -> {

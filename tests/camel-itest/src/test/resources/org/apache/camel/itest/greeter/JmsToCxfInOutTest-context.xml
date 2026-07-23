@@ -63,6 +63,14 @@
         <route>
             <from uri="jms:queue:bridge.cxf"/>
             <to uri="log:jms"/>
+            <!-- The CXF operation header (CxfConstants.OPERATION_NAME =
+                 "CamelCxfOperationName") is filtered at the JMS boundary by
+                 JmsHeaderFilterStrategy, which strips "Camel*" headers by design.
+                 Restore it from the application-level carrier header set by the
+                 sender. See the 4.21 upgrade guide. -->
+            <setHeader name="CamelCxfOperationName">
+                <simple>${header.operationName}</simple>
+            </setHeader>
             <to uri="cxf://bean:serviceEndpoint"/>
         </route>
 

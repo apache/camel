@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +28,7 @@ import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
@@ -46,8 +48,8 @@ public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends 
 
         // should not take long to stop the route
         StopWatch watch = new StopWatch();
-        // sleep 0.5 seconds to do some redeliveries before we stop
-        Thread.sleep(500);
+        // wait for enough redeliveries before we stop
+        await().atMost(5, TimeUnit.SECONDS).until(() -> counter.get() >= 20);
         log.info("==== stopping route foo ====");
         context.getRouteController().stopRoute("foo");
         long taken = watch.taken();

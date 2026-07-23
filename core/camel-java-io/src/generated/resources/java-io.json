@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "java-io",
+    "title": "Java Io",
+    "description": "Camel Java DSL IO",
+    "deprecated": false,
+    "firstVersion": "4.21.0",
+    "label": "dsl",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-java-io",
+    "version": "4.22.0-SNAPSHOT"
+  }
+}

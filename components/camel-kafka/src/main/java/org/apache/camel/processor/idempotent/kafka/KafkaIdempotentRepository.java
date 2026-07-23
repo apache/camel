@@ -53,6 +53,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -382,11 +383,14 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     @Override
     protected void doStop() throws Exception {
+        ServiceHelper.stopService(poller);
+        if (consumer != null) {
+            consumer.wakeup();
+        }
         if (executorService != null && camelContext != null) {
-            camelContext.getExecutorServiceManager().shutdown(executorService);
+            camelContext.getExecutorServiceManager().shutdownNow(executorService);
             executorService = null;
         }
-        ServiceHelper.stopService(poller);
         IOHelper.close(consumer, "consumer", LOG);
         IOHelper.close(producer, "producer", LOG);
         LOG.debug("Stopped KafkaIdempotentRepository. Cache counter: {}", cacheCounter.get());
@@ -436,6 +440,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
                     for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
                         addToCache(consumerRecord);
                     }
+                } catch (WakeupException e) {
+                    LOG.debug("TopicPoller woken up during shutdown");
                 } catch (Exception e) {
                     LOG.warn("TopicPoller error syncing due to: " + e.getMessage() + ". This exception is ignored.", e);
                 }
@@ -471,15 +477,15 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     @Override
     public boolean add(String key) {
-        if (cache.containsKey(key)) {
+        if (cache.putIfAbsent(key, key) != null) {
             return false;
-        } else {
-            // update the local cache and broadcast the addition on the topic,
-            // which will be reflected
-            // at a later point in any peers
-            cache.put(key, key);
+        }
+        try {
             broadcastAction(key, CacheAction.add);
             return true;
+        } catch (Exception e) {
+            cache.remove(key, key);
+            throw e;
         }
     }
 
@@ -521,6 +527,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     @Override
     public void clear() {
+        cache.clear();
         broadcastAction(null, CacheAction.clear);
     }
 

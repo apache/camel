@@ -44,6 +44,42 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return (AdvancedSpringWebserviceEndpointConsumerBuilder) this;
         }
         /**
+         * To use a custom HeaderFilterStrategy to filter headers mapped to and
+         * from the Camel message. By default the internal Camel and camel
+         * header namespace (case-insensitive) is filtered out from inbound SOAP
+         * headers.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointConsumerBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter headers mapped to and
+         * from the Camel message. By default the internal Camel and camel
+         * header namespace (case-insensitive) is filtered out from inbound SOAP
+         * headers.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointConsumerBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * Option to provide a custom MessageFilter. For example when you want
          * to process your headers or attachments by your own.
          * 
@@ -370,6 +406,42 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return (AdvancedSpringWebserviceEndpointProducerBuilder) this;
         }
 
+        /**
+         * To use a custom HeaderFilterStrategy to filter headers mapped to and
+         * from the Camel message. By default the internal Camel and camel
+         * header namespace (case-insensitive) is filtered out from inbound SOAP
+         * headers.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointProducerBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter headers mapped to and
+         * from the Camel message. By default the internal Camel and camel
+         * header namespace (case-insensitive) is filtered out from inbound SOAP
+         * headers.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointProducerBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
         /**
          * Option to provide a custom MessageFilter. For example when you want
          * to process your headers or attachments by your own.
@@ -945,6 +1017,42 @@ public interface SpringWebserviceEndpointBuilderFactory {
         }
 
         /**
+         * To use a custom HeaderFilterStrategy to filter headers mapped to and
+         * from the Camel message. By default the internal Camel and camel
+         * header namespace (case-insensitive) is filtered out from inbound SOAP
+         * headers.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter headers mapped to and
+         * from the Camel message. By default the internal Camel and camel
+         * header namespace (case-insensitive) is filtered out from inbound SOAP
+         * headers.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * Option to provide a custom MessageFilter. For example when you want
          * to process your headers or attachments by your own.
          * 
@@ -1158,7 +1266,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SpringWebserviceHeaderNameBuilder INSTANCE = new SpringWebserviceHeaderNameBuilder();
+        public static final SpringWebserviceHeaderNameBuilder INSTANCE = new SpringWebserviceHeaderNameBuilder();
 
         /**
          * The endpoint URI.

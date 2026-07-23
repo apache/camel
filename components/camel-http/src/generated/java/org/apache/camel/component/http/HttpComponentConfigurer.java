@@ -55,10 +55,14 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyHeaders": target.setCopyHeaders(property(camelContext, boolean.class, value)); return true;
         case "defaultuseragentdisabled":
         case "defaultUserAgentDisabled": target.setDefaultUserAgentDisabled(property(camelContext, boolean.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "followredirects":
         case "followRedirects": target.setFollowRedirects(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "hostnameverificationpolicy":
+        case "hostnameVerificationPolicy": target.setHostnameVerificationPolicy(property(camelContext, org.apache.hc.client5.http.ssl.HostnameVerificationPolicy.class, value)); return true;
         case "httpactivitylistener":
         case "httpActivityListener": target.setHttpActivityListener(property(camelContext, org.apache.camel.component.http.HttpActivityListener.class, value)); return true;
         case "httpbinding":
@@ -165,10 +169,14 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyHeaders": return boolean.class;
         case "defaultuseragentdisabled":
         case "defaultUserAgentDisabled": return boolean.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "followredirects":
         case "followRedirects": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "hostnameverificationpolicy":
+        case "hostnameVerificationPolicy": return org.apache.hc.client5.http.ssl.HostnameVerificationPolicy.class;
         case "httpactivitylistener":
         case "httpActivityListener": return org.apache.camel.component.http.HttpActivityListener.class;
         case "httpbinding":
@@ -271,10 +279,14 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyHeaders": return target.isCopyHeaders();
         case "defaultuseragentdisabled":
         case "defaultUserAgentDisabled": return target.isDefaultUserAgentDisabled();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "followredirects":
         case "followRedirects": return target.isFollowRedirects();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
+        case "hostnameverificationpolicy":
+        case "hostnameVerificationPolicy": return target.getHostnameVerificationPolicy();
         case "httpactivitylistener":
         case "httpActivityListener": return target.getHttpActivityListener();
         case "httpbinding":

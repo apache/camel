@@ -78,6 +78,9 @@ public class ManagedProcessor extends ManagedPerformanceCounter
         super.init(strategy);
         boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel().isDefaultOrExtended();
         setStatisticsEnabled(enabled);
+        if (context.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended()) {
+            initExtendedStatistics();
+        }
     }
 
     public CamelContext getContext() {

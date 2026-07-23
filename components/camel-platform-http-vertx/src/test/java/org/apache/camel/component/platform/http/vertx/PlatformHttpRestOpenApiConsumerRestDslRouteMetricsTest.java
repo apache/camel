@@ -20,10 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -31,13 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PlatformHttpRestOpenApiConsumerRestDslRouteMetricsTest {
-
-    @RegisterExtension
-    AvailablePortFinder.Port port = AvailablePortFinder.find();
-
     @Test
     public void testRouteMetrics() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
 
         try {
             context.addRoutes(new RouteBuilder() {
@@ -59,7 +53,7 @@ public class PlatformHttpRestOpenApiConsumerRestDslRouteMetricsTest {
                 }
             });
 
-            context.start();
+            VertxPlatformHttpEngineTest.startCamelContext(context);
 
             ManagedRouteMBean mr
                     = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("myRest");

@@ -22,14 +22,16 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 
 /**
  * A processor which converts current message body to a stream cache.
  */
-public class StreamCachingProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class StreamCachingProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
 
     private String id;
     private String routeId;
+    private String stepId;
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -74,5 +76,15 @@ public class StreamCachingProcessor extends BaseProcessorSupport implements Trac
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 }

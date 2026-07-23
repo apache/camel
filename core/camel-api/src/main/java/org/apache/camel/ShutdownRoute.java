@@ -20,18 +20,20 @@ import jakarta.xml.bind.annotation.XmlEnum;
 import jakarta.xml.bind.annotation.XmlType;
 
 /**
- * Represents the options available when shutting down routes.
+ * Per-route policy controlling whether the route stops immediately or defers during
+ * <a href="https://camel.apache.org/manual/graceful-shutdown.html">graceful shutdown</a>.
  * <p/>
- * Is used for example to defer shutting down a route until all inflight exchanges have been completed, after which the
- * route can be shutdown safely.
- * <p/>
- * This allows fine grained configuration in accomplishing graceful shutdown where you have for example some internal
- * route which other routes are dependent upon.
+ * Set on a route via the DSL {@code .shutdownRoute(ShutdownRoute.Defer)} call. Deferring is useful for shared internal
+ * routes (for example a {@code direct:} or {@code seda:} route used by many other routes) that must remain active until
+ * all dependent routes have stopped processing their in-flight exchanges. The
+ * {@link org.apache.camel.spi.ShutdownStrategy} honours the deferred routes by stopping them last.
  * <ul>
- * <li>Default - The <b>default</b> behavior where a route will attempt to shutdown now</li>
- * <li>Defer - Will defer shutting down the route and let it be active during graceful shutdown. The route will be
- * shutdown at a later stage during the graceful shutdown process.</li>
+ * <li>{@link #Default} - attempt to stop the route as soon as the shutdown sequence reaches it.</li>
+ * <li>{@link #Defer} - keep the route running and stop it only after all {@code Default} routes have stopped.</li>
  * </ul>
+ *
+ * @see ShutdownRunningTask
+ * @see org.apache.camel.spi.ShutdownStrategy
  */
 @XmlType
 @XmlEnum

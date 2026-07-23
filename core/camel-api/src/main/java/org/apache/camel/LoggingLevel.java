@@ -19,16 +19,28 @@ package org.apache.camel;
 import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
- * Used to configure the logging levels
+ * Logging severity levels used throughout Camel to control the verbosity of diagnostic output.
+ * <p/>
+ * This enum is used wherever Camel accepts a configurable log level: the
+ * <a href="https://camel.apache.org/manual/log-eip.html">Log EIP</a>, the {@link org.apache.camel.spi.CamelLogger},
+ * error-handler redelivery logging, tracing, the dead-letter channel, and many component-level options. It maps
+ * directly to the SLF4J levels of the same name. {@link #OFF} disables the specific log statement without changing the
+ * logger's overall threshold.
  */
 @XmlEnum
 public enum LoggingLevel {
 
+    /** Most detailed logging level. */
     TRACE,
+    /** Detailed information useful during development. */
     DEBUG,
+    /** Informational messages. */
     INFO,
+    /** Warning messages. */
     WARN,
+    /** Error messages. */
     ERROR,
+    /** Disables logging entirely. */
     OFF;
 
     /**

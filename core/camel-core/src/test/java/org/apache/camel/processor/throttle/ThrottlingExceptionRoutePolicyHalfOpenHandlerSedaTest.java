@@ -75,7 +75,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
         final ServiceSupport consumer = (ServiceSupport) context.getRoute("foo").getConsumer();
 
         // wait long enough to have the consumer suspended
-        await().atMost(2, TimeUnit.SECONDS).until(consumer::isSuspended);
+        await().atMost(10, TimeUnit.SECONDS).until(consumer::isSuspended);
 
         // send more messages
         // but should get there (yet)
@@ -84,7 +84,9 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
         log.debug("sending message three");
         sendMessage("Message Three");
 
-        assertMockEndpointsSatisfied();
+        // use timed assertion — consumer suspend/resume and SEDA queue
+        // draining can be slow on CI
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         result.reset();
         result.expectedMessageCount(2);
@@ -92,14 +94,14 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
         result.expectedBodiesReceivedInAnyOrder(bodies);
 
         // wait long enough to have the consumer resumed
-        await().atMost(2, TimeUnit.SECONDS).until(consumer::isStarted);
+        await().atMost(10, TimeUnit.SECONDS).until(consumer::isStarted);
 
         // send message
         // should get through
         log.debug("sending message four");
         sendMessage("Message Four");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
@@ -109,7 +111,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
             public void configure() {
                 int threshold = 2;
                 long failureWindow = 30;
-                long halfOpenAfter = 250;
+                long halfOpenAfter = 1000;
                 ThrottlingExceptionRoutePolicy policy
                         = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
                 policy.setHalfOpenHandler(new AlwaysCloseHandler());

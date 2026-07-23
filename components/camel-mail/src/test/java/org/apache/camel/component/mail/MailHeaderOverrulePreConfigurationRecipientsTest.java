@@ -31,8 +31,10 @@ import org.junit.jupiter.api.Test;
  * Unit test to verify that message headers override pre configuration.
  */
 public class MailHeaderOverrulePreConfigurationRecipientsTest extends CamelTestSupport {
-    private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
-    private static final MailboxUser willem = Mailbox.getOrCreateUser("willem", "secret");
+    private static final MailboxUser claus
+            = Mailbox.getOrCreateUser("MailHeaderOverrulePreConfigurationRecipientsTest-claus", "secret");
+    private static final MailboxUser willem
+            = Mailbox.getOrCreateUser("MailHeaderOverrulePreConfigurationRecipientsTest-willem", "secret");
 
     @Test
     public void testSendWithRecipientsInHeaders() throws Exception {
@@ -48,7 +50,7 @@ public class MailHeaderOverrulePreConfigurationRecipientsTest extends CamelTestS
         headers.put("to", claus.getEmail());
         headers.put("cc", willem.getEmail());
 
-        template.sendBodyAndHeaders(claus.uriPrefix(Protocol.smtp), "Hello World", headers);
+        template.sendBodyAndHeaders(claus.uriPrefix(Protocol.smtp) + "&useHeaderRecipients=true", "Hello World", headers);
 
         mock.assertIsSatisfied();
         /* Bcc should be stripped by specs compliant SMTP servers */

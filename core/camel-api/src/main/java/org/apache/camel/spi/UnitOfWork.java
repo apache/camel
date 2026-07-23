@@ -23,10 +23,28 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.jspecify.annotations.Nullable;
 
 /**
- * An object representing the unit of work processing an {@link Exchange} which allows the use of
- * {@link Synchronization} hooks. This object might map one-to-one with a transaction in JPA or Spring; or might not.
+ * Tracks the lifecycle of a single {@link org.apache.camel.Exchange} as it flows through the routing engine, and
+ * provides hooks for {@link Synchronization} callbacks and async continuation coordination.
+ * <p/>
+ * A {@code UnitOfWork} instance is created per exchange by {@link UnitOfWorkFactory} and attached to it for the
+ * exchange's entire lifetime. It accumulates {@link Synchronization} objects (via
+ * {@link #addSynchronization(Synchronization)}); these callbacks fire {@code onComplete} or {@code onFailure} when the
+ * exchange finishes, regardless of whether it was processed synchronously or across multiple async threads. The unit
+ * also holds the current {@link org.apache.camel.Route} context, breadcrumb ID, and — in conjunction with
+ * {@link CamelMDCService} — carries MDC values across continuation threads so that log entries on async threads retain
+ * the same correlation keys. The relationship to a JPA or Spring transaction is intentionally loose: the unit of work
+ * may span multiple transactions, or a single transaction may span multiple units of work.
+ * <p/>
+ * Most production code should extend {@code DefaultUnitOfWork} from {@code camel-base-engine} rather than implement
+ * this interface directly. See {@link UnitOfWorkFactory} for details on plugging in a custom impl.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/exchange.html">Exchange</a> in the Camel user manual.
+ *
+ * @see UnitOfWorkFactory
+ * @see Synchronization
  */
 public interface UnitOfWork {
 
@@ -104,7 +122,7 @@ public interface UnitOfWork {
      * @param target the target exchange
      * @param filter optional filter to only handover if filter returns <tt>true</tt>
      */
-    void handoverSynchronization(Exchange target, Predicate<Synchronization> filter);
+    void handoverSynchronization(Exchange target, @Nullable Predicate<Synchronization> filter);
 
     /**
      * Invoked when this unit of work has been completed, whether it has failed or completed
@@ -136,8 +154,9 @@ public interface UnitOfWork {
      * {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()} is enabled. If its disabled an
      * <tt>IllegalStateException</tt> is thrown.
      *
-     * @return the original IN {@link Message}
+     * @return the original IN {@link Message}, or {@code null} if the original message is not available
      */
+    @Nullable
     Message getOriginalInMessage();
 
     /**
@@ -179,6 +198,7 @@ public interface UnitOfWork {
      *
      * @return the route, maybe be <tt>null</tt> if not routed through a route currently.
      */
+    @Nullable
     Route getRoute();
 
     /**
@@ -196,6 +216,7 @@ public interface UnitOfWork {
      *
      * @return the route or <tt>null</tt> if none existed
      */
+    @Nullable
     Route popRoute();
 
     /**

@@ -60,7 +60,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "createleasedatabaseifnotexists":
         case "createLeaseDatabaseIfNotExists": getOrCreateConfiguration(target).setCreateLeaseDatabaseIfNotExists(property(camelContext, boolean.class, value)); return true;
         case "credentialtype":
-        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.cosmosdb.CredentialType.class, value)); return true;
+        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "databaseendpoint":
         case "databaseEndpoint": getOrCreateConfiguration(target).setDatabaseEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "hostname":
@@ -131,7 +131,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "createleasedatabaseifnotexists":
         case "createLeaseDatabaseIfNotExists": return boolean.class;
         case "credentialtype":
-        case "credentialType": return org.apache.camel.component.azure.cosmosdb.CredentialType.class;
+        case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "databaseendpoint":
         case "databaseEndpoint": return java.lang.String.class;
         case "hostname":

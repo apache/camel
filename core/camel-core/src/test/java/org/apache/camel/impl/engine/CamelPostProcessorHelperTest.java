@@ -107,7 +107,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -138,10 +138,10 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // give UoW a bit of time
-        await("onDone invokation").atMost(1, TimeUnit.SECONDS).until(mySynchronization::isOnDone);
+        await("onDone invokation").atMost(5, TimeUnit.SECONDS).until(mySynchronization::isOnDone);
     }
 
     @Test
@@ -157,10 +157,10 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         my.produceSomething("Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // give UoW a bit of time
-        await("onDone invocation").atMost(1, TimeUnit.SECONDS).until(mySynchronization::isOnDone);
+        await("onDone invocation").atMost(5, TimeUnit.SECONDS).until(mySynchronization::isOnDone);
     }
 
     @Test
@@ -185,7 +185,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertNotNull(bean.getProducer());
         bean.send("Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -214,7 +214,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         bean.send(exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -243,7 +243,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Exchange exchange = bean.consume();
         template.send("mock:result", exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -269,7 +269,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         bean.send(exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -295,7 +295,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         bean.send(exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -321,7 +321,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         bean.send(exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -623,7 +623,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         myBean.sendExchange(exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
     }
 

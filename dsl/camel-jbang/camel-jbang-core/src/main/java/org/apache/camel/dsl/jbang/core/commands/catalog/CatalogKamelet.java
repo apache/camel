@@ -29,7 +29,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
@@ -60,9 +60,8 @@ public class CatalogKamelet extends CamelCommand {
     String filterName;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version",
-                        defaultValue = RuntimeType.KAMELETS_VERSION)
-    String kameletsVersion = RuntimeType.KAMELETS_VERSION;
+            "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
+    String kameletsVersion;
 
     public CatalogKamelet(CamelJBangMain main) {
         super(main);
@@ -115,18 +114,17 @@ public class CatalogKamelet extends CamelCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            int tw = terminalWidth();
-            // Fixed columns: NAME (~30), TYPE (10), LEVEL (12)
-            int fixedWidth = 30 + 10 + 12;
-            int descWidth = TerminalWidthHelper.flexWidth(
-                    tw, fixedWidth, TerminalWidthHelper.noBorderOverhead(4),
-                    20, 80);
+            // Size the DESCRIPTION column to fill the terminal from the measured width of the other columns.
+            int nameW = CamelTableColumns.measure("NAME", CamelTableColumns.NAME_MAX, rows, r -> r.name);
+            int typeW = Math.max(10, CamelTableColumns.measure("TYPE", Integer.MAX_VALUE, rows, r -> r.type));
+            int levelW = Math.max(12, CamelTableColumns.measure("LEVEL", Integer.MAX_VALUE, rows, r -> r.supportLevel));
+            int descWidth = CamelTableColumns.lastColumnWidth(
+                    terminalWidth(), TerminalWidthHelper.noBorderOverhead(4), nameW, typeW, levelW);
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
+                    CamelTableColumns.name().with(r -> r.name),
                     new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).minWidth(10).with(r -> r.type),
                     new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).minWidth(12).with(r -> r.supportLevel),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(descWidth)
-                            .with(this::getDescription))));
+                    CamelTableColumns.lastText("DESCRIPTION", descWidth).with(this::getDescription))));
         }
 
         return 0;

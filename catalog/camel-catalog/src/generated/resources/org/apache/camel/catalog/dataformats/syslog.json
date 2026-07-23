@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "syslog",
     "title": "Syslog",
-    "description": "Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.",
+    "description": "Marshall SyslogMessages to RFC3164 and RFC5424 messages and back",
     "deprecated": false,
     "firstVersion": "2.6.0",
     "label": "dataformat,transformation,monitoring",
@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-syslog",
-    "version": "4.21.0-SNAPSHOT",
+    "version": "4.22.0-SNAPSHOT",
     "modelName": "syslog",
     "modelJavaType": "org.apache.camel.model.dataformat.SyslogDataFormat"
   },

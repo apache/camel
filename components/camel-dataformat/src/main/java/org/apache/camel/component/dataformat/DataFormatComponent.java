@@ -16,15 +16,19 @@
  */
 package org.apache.camel.component.dataformat;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.PropertyConfigurerHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -47,6 +51,7 @@ public class DataFormatComponent extends DefaultComponent {
         // create new data format as it is configured from the given parameters
         String name = StringHelper.before(remaining, ":");
         DataFormat df = getCamelContext().createDataFormat(name);
+        boolean created = df != null;
         if (df == null) {
             // if not, try to lookup existing data format
             df = getCamelContext().resolveDataFormat(name);
@@ -58,7 +63,15 @@ public class DataFormatComponent extends DefaultComponent {
         // find configurer if any
         PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(getCamelContext())
                 .resolvePropertyConfigurer(name + "-dataformat", getCamelContext());
-        // bind properties to data format
+
+        // when a brand-new instance was created, first copy any global camel.dataformat.<name>.*
+        // configuration from the auto-configured data format onto it, so the dataformat: component
+        // honors global configuration the same way the marshal()/unmarshal() DSL does (CAMEL-22352)
+        if (created) {
+            copyGlobalConfiguration(name, df, configurer);
+        }
+
+        // bind the endpoint parameters; these take precedence over the global configuration
         PropertyBindingSupport.Builder builder = new PropertyBindingSupport.Builder();
         builder.withConfigurer(configurer);
         builder.bind(getCamelContext(), df, parameters);
@@ -68,5 +81,46 @@ public class DataFormatComponent extends DefaultComponent {
         endpoint.setOperation(operation);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    /**
+     * Copies the configuration of an auto-configured data format (e.g. set up via global
+     * {@code camel.dataformat.<name>.*} properties) onto the newly created data format instance, so that
+     * {@code dataformat:} endpoints honor global configuration. The endpoint URI parameters are bound afterwards and
+     * therefore take precedence over the copied values.
+     */
+    private void copyGlobalConfiguration(String name, DataFormat target, PropertyConfigurer configurer) {
+        CamelContext context = getCamelContext();
+        // only relevant when a generic data format has been auto-configured, e.g. via camel.dataformat.<name>.*
+        if (!context.getDataFormatNames().contains(name)) {
+            return;
+        }
+        DataFormat template = context.resolveDataFormat(name);
+        if (template == null || template == target) {
+            return;
+        }
+        PropertyConfigurer getter = configurer;
+        if (getter == null) {
+            getter = PropertyConfigurerHelper.resolvePropertyConfigurer(context, template);
+        }
+        if (getter instanceof ExtendedPropertyConfigurerGetter eg) {
+            Map<String, Object> properties = new LinkedHashMap<>();
+            for (String key : eg.getAllOptions(template).keySet()) {
+                Object value = eg.getOptionValue(template, key, true);
+                if (value != null) {
+                    properties.put(key, value);
+                }
+            }
+            if (!properties.isEmpty()) {
+                PropertyBindingSupport.build()
+                        .withCamelContext(context)
+                        .withTarget(target)
+                        .withReference(true)
+                        .withIgnoreCase(true)
+                        .withConfigurer(configurer)
+                        .withProperties(properties)
+                        .bind();
+            }
+        }
     }
 }

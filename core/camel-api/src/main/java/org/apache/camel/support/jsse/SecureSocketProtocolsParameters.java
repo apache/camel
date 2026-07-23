@@ -19,11 +19,13 @@ package org.apache.camel.support.jsse;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Represents a list of TLS/SSL cipher suite names.
  */
 public class SecureSocketProtocolsParameters {
-    private List<String> secureSocketProtocol;
+    private @Nullable List<String> secureSocketProtocol;
 
     /**
      * Returns a live reference to the list of secure socket protocol names.
@@ -42,7 +44,7 @@ public class SecureSocketProtocolsParameters {
      *
      * @param secureSocketProtocol list of secure socket protocol names
      */
-    public void setSecureSocketProtocol(List<String> secureSocketProtocol) {
+    public void setSecureSocketProtocol(@Nullable List<String> secureSocketProtocol) {
         this.secureSocketProtocol = secureSocketProtocol == null ? null : new ArrayList<>(secureSocketProtocol);
     }
 

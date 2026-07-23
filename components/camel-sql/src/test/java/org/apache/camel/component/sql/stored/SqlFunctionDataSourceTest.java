@@ -16,56 +16,166 @@
  */
 package org.apache.camel.component.sql.stored;
 
+import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
+import ch.vorburger.mariadb4j.DB;
+import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * This test evaluates SQL stored function call with sql-stored component against a MariaDB database because HSQLDB
+ * doesn't support SQL stored functions.
+ */
+@EnabledOnOs(value = { OS.LINUX, OS.WINDOWS, OS.MAC },
+             architectures = { "amd64", "x86_64", "aarch64", "aarch_64" })
+@DisabledOnOs(value = OS.LINUX, architectures = { "aarch64", "aarch_64" },
+              disabledReason = "MariaDB4j has no Linux ARM64 native binary (mariadb4j-db-linux64 is x86_64 only)")
 public class SqlFunctionDataSourceTest extends CamelTestSupport {
 
-    private EmbeddedDatabase db;
+    private static final String DB_NAME = "test";
+    private static final Object DB_LOCK = new Object();
+    private static DB sharedMariaDb;
+    private static DataSource sharedDataSource;
 
+    private DataSource db;
+    private static JdbcTemplate jdbcTemplate;
+    private TemplateParser templateParser;
+
+    /**
+     * MariaDB startup timeout in milliseconds. The default 30s in MariaDB4j is too short for CI environments under
+     * load, where InnoDB initialization can take longer. 120s provides a comfortable margin.
+     */
+    private static final int MARIADB_START_TIMEOUT_MS = 120_000;
+
+    /** Initialize the shared MariaDB database for the tests. */
+    private static void initSharedMariaDb() throws Exception {
+        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+        config.setPort(0);
+        DB db = DB.newEmbeddedDB(config.build());
+
+        // Increase the startup timeout from the default 30s — CI machines under load
+        // may need more time for InnoDB initialization before "ready for connections"
+        Field timeoutField = DB.class.getDeclaredField("dbStartMaxWaitInMS");
+        timeoutField.setAccessible(true);
+        timeoutField.setInt(db, MARIADB_START_TIMEOUT_MS);
+
+        db.start();
+
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
+        dataSource.setUrl(db.getConfiguration().getURL(DB_NAME));
+        dataSource.setUsername("root");
+        dataSource.setPassword("");
+
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(new ClassPathResource("sql/storedFunctionMariaDB.sql"));
+        populator.setSeparator("$$");
+        populator.execute(dataSource);
+
+        // Only assign to static fields after all initialization succeeds (start,
+        // DataSource creation, schema population), so that surefire retries will
+        // re-attempt the full initialization if any step fails
+        sharedMariaDb = db;
+        sharedDataSource = dataSource;
+        jdbcTemplate = new JdbcTemplate(sharedDataSource);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (sharedMariaDb != null) {
+                try {
+                    sharedMariaDb.stop();
+                } catch (Exception e) {
+                    // best-effort cleanup on JVM shutdown
+                }
+            }
+        }));
+    }
+
+    /** Initialize the database for the tests. */
     @Override
-
     public void doPreSetup() throws Exception {
-        db = new EmbeddedDatabaseBuilder()
-                .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
-                .addScript("sql/storedProcedureTest.sql").build();
-
+        synchronized (DB_LOCK) {
+            if (sharedMariaDb == null) {
+                initSharedMariaDb();
+            }
+        }
+        db = sharedDataSource;
     }
 
     @Override
     public void doPostTearDown() throws Exception {
-        if (db != null) {
-            db.shutdown();
-        }
+        db = null;
     }
 
+    @BeforeEach
+    void setupTest() {
+        templateParser = new TemplateParser(context().getClassResolver());
+    }
+
+    /* Testing SQL stored function call with sql-stored component against
+       MariaDB database.
+    */
     @Test
-    public void shouldExecuteStoredProcedure() throws InterruptedException {
+    public void shouldExecuteStoredFunction() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
         Map<String, Object> headers = new HashMap<>();
-        headers.put("num1", 1);
-        headers.put("num2", 2);
+        headers.put("num1", 11);
+        headers.put("num2", 3);
         template.requestBodyAndHeaders("direct:query", null, headers);
 
         MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
+        assertEquals(Integer.valueOf(8), exchange.getIn().getBody(Map.class).get("resultofsub"));
+    }
 
-        assertEquals(Integer.valueOf(-1), exchange.getIn().getBody(Map.class).get("resultofsub"));
+    /* Test moved from CallableStatementWrapperTest to here as HSQLDB doesn't
+       support SQL stored functions. This test evaluates SQL stored function
+       call using CallableStatementWrapper against a MariaDB database.
+    */
+    @Test
+    public void shouldExecuteStoredFunctionDirect() throws Exception {
+        CallableStatementWrapperFactory factory = new CallableStatementWrapperFactory(jdbcTemplate, templateParser, true);
+
+        CallableStatementWrapper wrapper = new CallableStatementWrapper(
+                "SUBNUMBERS_FUNCTION(OUT INTEGER resultofsub, INTEGER ${header.v1},INTEGER ${header.v2})",
+                factory);
+
+        final Exchange exchange = createExchangeWithBody(null);
+        exchange.getIn().setHeader("v1", 12);
+        exchange.getIn().setHeader("v2", 5);
+
+        wrapper.call(new WrapperExecuteCallback() {
+            @Override
+            public void execute(StatementWrapper statementWrapper) throws SQLException, DataAccessException {
+                statementWrapper.populateStatement(null, exchange);
+
+                Map resultOfQuery = (Map) statementWrapper.executeStatement();
+                assertEquals(7, resultOfQuery.get("resultofsub"));
+            }
+        });
     }
 
     @Override
@@ -73,7 +183,6 @@ public class SqlFunctionDataSourceTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                // required for the sql component
                 getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
                 from("direct:query")

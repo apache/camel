@@ -26,8 +26,9 @@ public final class TestStoredFunction {
     private TestStoredFunction() {
     }
 
-    public static int subnumbers(int val1, int val2) {
-        LOG.info("calling subnumbers:{} - {}", val1, val2);
-        return val1 - val2;
+    /* HSQLDB style requires Integer instead of int for any out parameters. */
+    public static void subnumbers(Integer[] result, int val1, int val2) {
+        LOG.info("calling subnumbers: {} - {}", val1, val2);
+        result[0] = val1 - val2;
     }
 }

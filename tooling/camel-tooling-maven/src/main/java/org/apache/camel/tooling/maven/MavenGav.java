@@ -42,6 +42,23 @@ public final class MavenGav {
         return parseGav(gav, null);
     }
 
+    /**
+     * Parses a strict {@code groupId:artifactId:version} GAV string. Unlike {@link #parseGav(String)}, this method
+     * requires exactly three colon-separated parts and throws if the input does not match.
+     *
+     * @param  gav                      the GAV string in {@code groupId:artifactId:version} format
+     * @return                          a new {@link MavenGav}
+     * @throws IllegalArgumentException if the input does not contain exactly three colon-separated parts
+     */
+    public static MavenGav parseStrictGav(String gav) {
+        String[] parts = gav.split(":");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException(
+                    "Expected groupId:artifactId:version, got: " + gav);
+        }
+        return fromCoordinates(parts[0], parts[1], parts[2], null, null);
+    }
+
     public static MavenGav fromCoordinates(
             String groupId, String artifactId, String version, String packaging,
             String classifier) {
@@ -154,6 +171,25 @@ public final class MavenGav {
         return answer;
     }
 
+    /**
+     * @param  gav {@code <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>}
+     * @return     a new {@link MavenGav}
+     */
+    public static MavenGav parseMavenResolverString(String gaecv) {
+        String[] parts = gaecv.split(":");
+        switch (parts.length) {
+            case 3:
+                return MavenGav.fromCoordinates(parts[0], parts[1], parts[2], null, null);
+            case 4:
+                return MavenGav.fromCoordinates(parts[0], parts[1], parts[3], parts[2], null);
+            case 5:
+                return MavenGav.fromCoordinates(parts[0], parts[1], parts[4], parts[2], parts[3]);
+            default:
+                throw new IllegalArgumentException(
+                        "Expected <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>, found :" + gaecv);
+        }
+    }
+
     public String getGroupId() {
         return groupId;
     }
@@ -225,6 +261,10 @@ public final class MavenGav {
         return result;
     }
 
+    /**
+     * @return a {@code <groupId>:<artifactId>[:<version>]} {@link String}; note that this representation is not
+     *         suitable for Maven Resolver - see {@link #toMavenResolverString()}
+     */
     @Override
     public String toString() {
         if (version != null) {
@@ -232,5 +272,24 @@ public final class MavenGav {
         } else {
             return groupId + ":" + artifactId;
         }
+    }
+
+    /**
+     * @return a {@link String} representation {@code <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>}
+     *         suitable for Maven Resolver
+     */
+    public String toMavenResolverString() {
+        StringBuilder result = new StringBuilder()
+                .append(groupId)
+                .append(':')
+                .append(artifactId);
+        if (packaging != null && !packaging.isEmpty()) {
+            result.append(':').append(packaging);
+        }
+        if (classifier != null && !classifier.isEmpty()) {
+            result.append(':').append(classifier);
+        }
+        result.append(':').append(Objects.requireNonNull(version, "version"));
+        return result.toString();
     }
 }

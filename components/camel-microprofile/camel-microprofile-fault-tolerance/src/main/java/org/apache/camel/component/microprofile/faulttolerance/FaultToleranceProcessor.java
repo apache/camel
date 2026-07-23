@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.smallrye.faulttolerance.api.CircuitBreakerMaintenance;
 import io.smallrye.faulttolerance.api.CircuitBreakerState;
@@ -34,6 +35,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.Suspendable;
 import org.apache.camel.Traceable;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -61,7 +63,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed FaultTolerance Processor")
 public class FaultToleranceProcessor extends BaseProcessorSupport
-        implements CamelContextAware, Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+        implements CamelContextAware, Navigate<Processor>, Traceable, IdAware, RouteIdAware, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(FaultToleranceProcessor.class);
 
@@ -152,7 +154,7 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
         return config.getDelay();
     }
 
-    @ManagedAttribute(description = "Returns the current failure rate in percentage.")
+    @ManagedAttribute(description = "Returns the configured failure ratio threshold (0.0-1.0).")
     public float getFailureRate() {
         return config.getFailureRatio();
     }
@@ -177,7 +179,8 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
         return config.getTimeoutDuration();
     }
 
-    @ManagedAttribute(description = "The timeout pool size for the thread pool")
+    @Deprecated(since = "4.22.0")
+    @ManagedAttribute(description = "Deprecated: no longer in use since the switch to TypedGuard API (CAMEL-21857)")
     public int getTimeoutPoolSize() {
         return config.getTimeoutPoolSize();
     }
@@ -231,6 +234,10 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
         // run this as if we run inside try / catch so there is no regular Camel error handler
         exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
         CircuitBreakerTask task = (CircuitBreakerTask) taskFactory.acquire(exchange, callback);
+        // guard to prevent the worker thread from writing results back to the original exchange
+        // after a timeout has triggered fallback processing on the caller thread
+        AtomicBoolean exchangeWriteGuard = new AtomicBoolean(false);
+        task.exchangeWriteGuard = exchangeWriteGuard;
         CircuitBreakerFallbackTask fallbackTask = null;
 
         try {
@@ -238,9 +245,13 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
             try {
                 typedGuard.call(task);
             } catch (Exception e) {
+                // prevent the worker thread from writing results back to the exchange
+                exchangeWriteGuard.set(true);
                 // Do fallback if applicable. Note that a fallback handler is not configured on the TypedGuard builder
                 // and is instead invoked manually here since we need access to the message exchange on each FaultToleranceProcessor.process call
                 if (fallbackProcessor != null) {
+                    // store guard exception so the fallback can see it via Exchange.EXCEPTION_CAUGHT
+                    exchange.setException(e);
                     fallbackTask = (CircuitBreakerFallbackTask) fallbackTaskFactory.acquire(exchange, null);
                     fallbackTask.call();
                 } else {
@@ -253,6 +264,13 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, true);
+        } catch (TimeoutException e) {
+            // the circuit breaker triggered a timeout (no fallback)
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, false);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_TIMED_OUT, true);
+            exchange.setException(e);
         } catch (Exception e) {
             // some other kind of exception
             exchange.setException(e);
@@ -365,6 +383,16 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     }
 
     @Override
+    protected void doSuspend() throws Exception {
+        // noop - preserve circuit breaker state across suspend/resume
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        // noop - circuit breaker state was preserved during suspend
+    }
+
+    @Override
     protected void doStop() throws Exception {
         if (shutdownExecutorService && executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
@@ -387,6 +415,7 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     private final class CircuitBreakerTask implements PooledExchangeTask, Callable<Exchange> {
 
         private Exchange exchange;
+        private AtomicBoolean exchangeWriteGuard;
 
         @Override
         public void prepare(Exchange exchange, AsyncCallback callback) {
@@ -397,6 +426,7 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
         @Override
         public void reset() {
             this.exchange = null;
+            this.exchangeWriteGuard = null;
         }
 
         @Override
@@ -436,21 +466,25 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
                 // process the processor until its fully done
                 processor.process(copy);
 
-                // handle the processing result
-                if (copy.getException() != null) {
-                    exchange.setException(copy.getException());
-                } else {
-                    // copy the result as it's regarded as success
-                    ExchangeHelper.copyResults(exchange, copy);
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
-                    String state = getCircuitBreakerState();
-                    if (state != null) {
-                        exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, state);
+                // handle the processing result, but only write back if the fallback has not taken over
+                if (exchangeWriteGuard == null || exchangeWriteGuard.compareAndSet(false, true)) {
+                    if (copy.getException() != null) {
+                        exchange.setException(copy.getException());
+                    } else {
+                        // copy the result as it's regarded as success
+                        ExchangeHelper.copyResults(exchange, copy);
+                        exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
+                        exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                        String state = getCircuitBreakerState();
+                        if (state != null) {
+                            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, state);
+                        }
                     }
                 }
             } catch (Exception e) {
-                exchange.setException(e);
+                if (exchangeWriteGuard == null || exchangeWriteGuard.compareAndSet(false, true)) {
+                    exchange.setException(e);
+                }
             } finally {
                 // must done uow
                 UnitOfWorkHelper.doneUow(uow, copy);
@@ -458,8 +492,10 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
                 cause = exchange.getException();
             }
 
-            // and release exchange back in pool
-            processorExchangeFactory.release(exchange);
+            // and release correlated copy back in pool
+            if (copy != null) {
+                processorExchangeFactory.release(copy);
+            }
 
             if (cause != null) {
                 // throw exception so fault tolerance knows it was a failure
@@ -496,34 +532,13 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
                 exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, state);
             }
 
-            Throwable throwable = exchange.getException();
-            if (fallbackProcessor == null) {
-                if (throwable instanceof TimeoutException) {
-                    // the circuit breaker triggered a timeout (and there is no
-                    // fallback) so lets mark the exchange as failed
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, false);
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_TIMED_OUT, true);
-                    exchange.setException(throwable);
-                    return exchange;
-                } else if (throwable instanceof CircuitBreakerOpenException) {
-                    // the circuit breaker triggered a call rejected
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
-                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, true);
-                    return exchange;
-                } else {
-                    // throw exception so fault tolerance know it was a failure
-                    throw RuntimeExchangeException.wrapRuntimeException(throwable);
-                }
-            }
-
             // fallback route is handling the exception so its short-circuited
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, true);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
+            if (exchange.getException() instanceof TimeoutException) {
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_TIMED_OUT, true);
+            }
 
             // store the last to endpoint as the failure endpoint
             if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {

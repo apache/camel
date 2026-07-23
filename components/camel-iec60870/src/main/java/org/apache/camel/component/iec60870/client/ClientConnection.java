@@ -50,6 +50,7 @@ import org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.21")
 public class ClientConnection {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClientConnection.class);

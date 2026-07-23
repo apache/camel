@@ -19,9 +19,10 @@ package org.apache.camel.component.pqc.crypto;
 import java.security.*;
 
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
+import org.apache.camel.util.SecureRandomHelper;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 
 public class PQCDefaultDILITHIUMMaterial {
     public static final KeyPair keyPair;
@@ -49,7 +50,7 @@ public class PQCDefaultDILITHIUMMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(),
                 PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
-        kpGen.initialize(DilithiumParameterSpec.dilithium5);
+        kpGen.initialize(MLDSAParameterSpec.ml_dsa_87, SecureRandomHelper.getSecureRandom());
         return kpGen;
     }
 }

@@ -26,28 +26,28 @@
            http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<!-- START SNIPPET: e1 -->
-	<jdbc:embedded-database id="dataSource" type="H2" />
+    <!-- START SNIPPET: e1 -->
+    <jdbc:embedded-database id="dataSource" type="H2" />
     <!-- END SNIPPET: e1 -->
-    
+
     <!-- START SNIPPET: e2 -->
     <bean id="messageIdRepository" class="org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository">
-    	<constructor-arg ref="dataSource" />
-    	<constructor-arg value="myProcessorName" />
+        <constructor-arg ref="dataSource" />
+        <constructor-arg value="myProcessorName" />
     </bean>
-    
+
     <camel:camelContext>
-    	<camel:errorHandler id="deadLetterChannel" type="DeadLetterChannel" deadLetterUri="mock:error">
-    		<camel:redeliveryPolicy maximumRedeliveries="0" maximumRedeliveryDelay="0" logStackTrace="false" />
-    	</camel:errorHandler>
-    	
-    	<camel:route id="JdbcMessageIdRepositoryTest" errorHandlerRef="deadLetterChannel">
-    		<camel:from uri="direct:start" />
-    		<camel:idempotentConsumer idempotentRepository="messageIdRepository">
-    			<camel:header>messageId</camel:header>
-    			<camel:to uri="mock:result" />
-    		</camel:idempotentConsumer>
-    	</camel:route>
+        <camel:errorHandler id="deadLetterChannel" type="DeadLetterChannel" deadLetterUri="mock:error">
+            <camel:redeliveryPolicy maximumRedeliveries="0" maximumRedeliveryDelay="0" logStackTrace="false" />
+        </camel:errorHandler>
+
+        <camel:route id="JdbcMessageIdRepositoryTest" errorHandlerRef="deadLetterChannel">
+            <camel:from uri="direct:start" />
+            <camel:idempotentConsumer idempotentRepository="messageIdRepository">
+                <camel:header>messageId</camel:header>
+                <camel:to uri="mock:result" />
+            </camel:idempotentConsumer>
+        </camel:route>
     </camel:camelContext>
     <!-- END SNIPPET: e2 -->
 </beans>

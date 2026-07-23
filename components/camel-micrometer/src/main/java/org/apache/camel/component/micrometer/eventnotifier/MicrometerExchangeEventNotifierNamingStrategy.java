@@ -72,23 +72,15 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
                 uri = StringHelper.before(uri, "?", uri);
             }
         }
+
         String routeId = event.getExchange().getFromRouteId();
-        if (routeId != null) {
-            return Tags.of(
-                    CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
-                    KIND, KIND_EXCHANGE,
-                    EVENT_TYPE_TAG, event.getClass().getSimpleName(),
-                    ROUTE_ID_TAG, routeId,
-                    ENDPOINT_NAME, uri,
-                    FAILED_TAG, Boolean.toString(event.getExchange().isFailed()));
-        } else {
-            return Tags.of(
-                    CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
-                    KIND, KIND_EXCHANGE,
-                    EVENT_TYPE_TAG, event.getClass().getSimpleName(),
-                    ENDPOINT_NAME, uri,
-                    FAILED_TAG, Boolean.toString(event.getExchange().isFailed()));
-        }
+        return Tags.of(
+                CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
+                KIND, KIND_EXCHANGE,
+                EVENT_TYPE_TAG, event.getClass().getSimpleName(),
+                ROUTE_ID_TAG, routeId != null ? routeId : "",
+                ENDPOINT_NAME, uri,
+                FAILED_TAG, Boolean.toString(event.getExchange().isFailed()));
     }
 
     default Tags getInflightExchangesTags(CamelContext camelContext, String routeId) {

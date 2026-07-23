@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -45,8 +46,8 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.AnsiConsole;
+import org.jline.jansi.Ansi;
+import org.jline.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "send",
@@ -131,6 +132,9 @@ public class CamelSendAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--infra" },
                         description = "Send to infrastructure service (e.g., nats, kafka)")
     String infra;
+
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
     private volatile long pid;
 
@@ -221,12 +225,10 @@ public class CamelSendAction extends ActionBaseCommand {
         this.pid = pids.get(0);
 
         Path outputFile = writeSendData();
-        showStatus(outputFile);
-
-        return 0;
+        return showStatus(outputFile);
     }
 
-    protected void showStatus(Path outputFile) throws Exception {
+    protected int showStatus(Path outputFile) throws Exception {
         try {
             // wait longer than timeout
             JsonObject jo = getJsonObject(outputFile, timeout + 10000);
@@ -274,8 +276,14 @@ public class CamelSendAction extends ActionBaseCommand {
                         printer().println(table);
                     }
                 }
+                String status = jo.getString("status");
+                if ("failed".equals(status) || "error".equals(status) || "timeout".equals(status)) {
+                    return 1;
+                }
+                return 0;
             } else {
                 printer().println("Send timeout");
+                return 1;
             }
         } finally {
             // delete output file after use
@@ -295,6 +303,7 @@ public class CamelSendAction extends ActionBaseCommand {
         run.empty = true;
         run.propertiesFiles = propertiesFiles;
         run.property = property;
+        run.mavenResolver = mavenResolver;
 
         // spawn thread that waits for response file
         final CountDownLatch latch = new CountDownLatch(1);
@@ -329,7 +338,7 @@ public class CamelSendAction extends ActionBaseCommand {
     private void printStatusLine(JsonObject jo) {
         // timestamp
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        String ts = sdf.format(new Date(jo.getLong("timestamp")));
+        String ts = sdf.format(new Date(jo.getLongOrDefault("timestamp", System.currentTimeMillis())));
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
         } else {

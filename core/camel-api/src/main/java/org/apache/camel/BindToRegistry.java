@@ -31,6 +31,8 @@ import java.lang.annotation.Target;
  *
  * If no name is specified then the bean will have its name auto computed based on the class name, field name, or method
  * name where the annotation is configured.
+ *
+ * @since 3.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

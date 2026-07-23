@@ -30,12 +30,10 @@ import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
 
-@Disabled("Doesn't work with Localstack v4")
 public class EventbridgePutEventsIT extends CamelTestSupport {
 
     @RegisterExtension

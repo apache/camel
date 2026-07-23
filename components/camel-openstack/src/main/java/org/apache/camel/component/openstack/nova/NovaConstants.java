@@ -25,34 +25,34 @@ public final class NovaConstants extends OpenstackConstants {
     public static final String NOVA_SUBSYSTEM_KEYPAIRS = "keypairs";
 
     @Metadata(label = "flavor server", description = "ID of the flavor.", javaType = "String")
-    public static final String FLAVOR_ID = "FlavorId";
+    public static final String FLAVOR_ID = "CamelOpenstackNovaFlavorId";
 
     //flavor
     @Metadata(label = "flavor", description = "Size of RAM.", javaType = "Integer")
-    public static final String RAM = "RAM";
+    public static final String RAM = "CamelOpenstackNovaRam";
     @Metadata(label = "flavor", description = "The number of flavor VCPU.", javaType = "Integer")
-    public static final String VCPU = "VCPU";
+    public static final String VCPU = "CamelOpenstackNovaVcpu";
     @Metadata(label = "flavor", description = "Size of disk.", javaType = "Integer")
-    public static final String DISK = "disk";
+    public static final String DISK = "CamelOpenstackNovaDisk";
     @Metadata(label = "flavor", description = "Size of swap.", javaType = "Integer")
-    public static final String SWAP = "swap";
+    public static final String SWAP = "CamelOpenstackNovaSwap";
     @Metadata(label = "flavor", description = "Rxtx Factor.", javaType = "Integer")
-    public static final String RXTXFACTOR = "rxtxFactor";
+    public static final String RXTXFACTOR = "CamelOpenstackNovaRxtxFactor";
 
     //server
     @Metadata(label = "server", description = "Admin password of the new server.", javaType = "String")
-    public static final String ADMIN_PASSWORD = "AdminPassword";
+    public static final String ADMIN_PASSWORD = "CamelOpenstackNovaAdminPassword";
     @Metadata(label = "server", description = "The Image ID.", javaType = "String")
-    public static final String IMAGE_ID = "ImageId";
+    public static final String IMAGE_ID = "CamelOpenstackNovaImageId";
     @Metadata(label = "server", description = "The Keypair name.", javaType = "String")
-    public static final String KEYPAIR_NAME = "KeypairName";
+    public static final String KEYPAIR_NAME = "CamelOpenstackNovaKeypairName";
     @Metadata(label = "server", description = "The list of networks (by id).", javaType = "List<String>")
-    public static final String NETWORK = "NetworkId";
+    public static final String NETWORK = "CamelOpenstackNovaNetworkId";
 
     //server
     public static final String CREATE_SNAPSHOT = "createSnapshot";
     @Metadata(label = "server", description = "An action to perform.", javaType = "org.openstack4j.model.compute.Action")
-    public static final String ACTION = "action";
+    public static final String ACTION = "CamelOpenstackNovaAction";
 
     private NovaConstants() {
     }

@@ -55,13 +55,16 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
 
     @Override
     public Exchange receive(long timeout) {
-        setReceiveTimeout(timeout);
         Message message;
-        // using the selector
-        if (ObjectHelper.isNotEmpty(jmsEndpoint.getSelector())) {
-            message = template.receiveSelected(jmsEndpoint.getSelector());
-        } else {
-            message = template.receive();
+        // synchronize to make set-timeout + receive atomic, as the polling consumer
+        // may be shared across concurrent pollEnrich / ConsumerTemplate callers
+        synchronized (template) {
+            setReceiveTimeout(timeout);
+            if (ObjectHelper.isNotEmpty(jmsEndpoint.getSelector())) {
+                message = template.receiveSelected(jmsEndpoint.getSelector());
+            } else {
+                message = template.receive();
+            }
         }
         if (message != null) {
             return getEndpoint().createExchange(message, null);

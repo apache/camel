@@ -31,20 +31,18 @@ import org.apache.camel.spi.Metadata;
  * Models a series of string key/value pairs for configuring some global options on a Camel context such as max debug
  * log length.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration", description = "Defines a collection of global configuration options for the CamelContext")
 @XmlRootElement(name = "globalOptions")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GlobalOptionsDefinition {
 
     @XmlElement(name = "globalOption")
+    @Metadata(description = "A series of global options as key value pairs.")
     private List<GlobalOptionDefinition> globalOptions;
 
     public GlobalOptionsDefinition() {
     }
 
-    /**
-     * A series of global options as key value pairs
-     */
     public void setGlobalOptions(List<GlobalOptionDefinition> globalOptions) {
         this.globalOptions = globalOptions;
     }

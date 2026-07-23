@@ -16,15 +16,18 @@
  */
 package org.apache.camel.main;
 
+import java.util.Properties;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Configure Camel Main with the chosen profile.
+ * Configure Camel with the chosen profile.
  *
- * This is for Camel JBang and Standalone Camel, not Spring Boot or Quarkus; as they have their own profile concept.
+ * The {@link #configureMain} method is for Camel Main (CLI and standalone). The {@link #configureCommon} method is for
+ * all runtimes (standalone, Spring Boot, Quarkus).
  */
 public class ProfileConfigurer {
 
@@ -33,25 +36,28 @@ public class ProfileConfigurer {
     /**
      * Configures camel-main to run in given profile
      *
-     * @param camelContext the camel context
-     * @param profile      the profile
-     * @param config       the main configuration
+     * @param camelContext   the camel context
+     * @param profile        the profile
+     * @param config         the main configuration
+     * @param autoConfigured properties that were explicitly configured by the user (may be null)
      */
-    public static void configureMain(CamelContext camelContext, String profile, MainConfigurationProperties config) {
+    public static void configureMain(
+            CamelContext camelContext, String profile, MainConfigurationProperties config, Properties autoConfigured) {
         if (profile == null || profile.isBlank()) {
             // no profile is active
             return;
         }
 
         if ("dev".equals(profile)) {
-            // make tracing at least standby so we can use it in dev-mode
+            // make tracer config at least standby so we can use it in dev-mode
             boolean enabled = config.tracerConfig().isEnabled();
             if (!enabled) {
                 config.tracerConfig().withStandby(true);
             }
-        }
-
-        if ("dev".equals(profile)) {
+            // enable activity tracking so backlog tracer captures enriched data
+            config.tracerConfig().withActivityEnabled(true);
+            // enable error registry to capture routing errors
+            config.errorRegistryConfig().withEnabled(true);
             // dev profile allows insecure:dev options by default since those features
             // (devConsole, upload, etc.) are expected in development.
             // Users can still override this explicitly via camel.security.insecureDevPolicy=warn/fail.
@@ -67,17 +73,19 @@ public class ProfileConfigurer {
             config.securityConfig().setPolicy("fail");
         }
 
-        configureCommon(camelContext, profile, config);
+        configureCommon(camelContext, profile, config, autoConfigured);
     }
 
     /**
      * Configures camel in general (standalone, quarkus, spring-boot etc) to run in given profile
      *
-     * @param camelContext the camel context
-     * @param profile      the profile
-     * @param config       the core configuration
+     * @param camelContext   the camel context
+     * @param profile        the profile
+     * @param config         the core configuration
+     * @param autoConfigured properties that were explicitly configured by the user (may be null)
      */
-    public static void configureCommon(CamelContext camelContext, String profile, DefaultConfigurationProperties<?> config) {
+    public static void configureCommon(
+            CamelContext camelContext, String profile, DefaultConfigurationProperties<?> config, Properties autoConfigured) {
         camelContext.getCamelContextExtension().setProfile(profile);
 
         if (profile == null || profile.isBlank()) {
@@ -86,22 +94,34 @@ public class ProfileConfigurer {
         }
 
         if ("dev".equals(profile)) {
-            // always enable developer console as it is needed by camel-cli-connector
-            config.setDevConsoleEnabled(true);
-            // and enable a bunch of other stuff that gives more details for developers
-            config.setCamelEventsTimestampEnabled(true);
-            config.setLoadHealthChecks(true);
-            config.setSourceLocationEnabled(true);
-            config.setModeline(true);
-            config.setLoadStatisticsEnabled(true);
-            config.setMessageHistory(true);
-            config.setInflightRepositoryBrowseEnabled(true);
-            config.setEndpointRuntimeStatisticsEnabled(true);
-            config.setJmxManagementStatisticsLevel(ManagementStatisticsLevel.Extended);
-            config.setJmxUpdateRouteEnabled(true);
-            config.setShutdownLogInflightExchangesOnTimeout(false);
-            config.setShutdownTimeout(10);
-            config.setStartupRecorder("backlog");
+            // make tracing at least standby so we can use it in dev-mode
+            if (!config.isTracing()) {
+                config.setTracingStandby(true);
+            }
+            // enable developer features as defaults — user properties can override any of these
+            setIfNotConfigured(autoConfigured, "camel.main.devConsoleEnabled", () -> config.setDevConsoleEnabled(true));
+            setIfNotConfigured(autoConfigured, "camel.main.camelEventsTimestampEnabled",
+                    () -> config.setCamelEventsTimestampEnabled(true));
+            setIfNotConfigured(autoConfigured, "camel.main.loadHealthChecks", () -> config.setLoadHealthChecks(true));
+            setIfNotConfigured(autoConfigured, "camel.main.sourceLocationEnabled",
+                    () -> config.setSourceLocationEnabled(true));
+            setIfNotConfigured(autoConfigured, "camel.main.modeline", () -> config.setModeline(true));
+            setIfNotConfigured(autoConfigured, "camel.main.loadStatisticsEnabled",
+                    () -> config.setLoadStatisticsEnabled(true));
+            setIfNotConfigured(autoConfigured, "camel.main.messageHistory", () -> config.setMessageHistory(true));
+            setIfNotConfigured(autoConfigured, "camel.main.inflightRepositoryBrowseEnabled",
+                    () -> config.setInflightRepositoryBrowseEnabled(true));
+            setIfNotConfigured(autoConfigured, "camel.main.messageSizeEnabled", () -> config.setMessageSizeEnabled(true));
+            setIfNotConfigured(autoConfigured, "camel.main.endpointRuntimeStatisticsEnabled",
+                    () -> config.setEndpointRuntimeStatisticsEnabled(true));
+            setIfNotConfigured(autoConfigured, "camel.main.jmxManagementStatisticsLevel",
+                    () -> config.setJmxManagementStatisticsLevel(ManagementStatisticsLevel.Extended));
+            setIfNotConfigured(autoConfigured, "camel.main.jmxUpdateRouteEnabled",
+                    () -> config.setJmxUpdateRouteEnabled(true));
+            setIfNotConfigured(autoConfigured, "camel.main.shutdownLogInflightExchangesOnTimeout",
+                    () -> config.setShutdownLogInflightExchangesOnTimeout(false));
+            setIfNotConfigured(autoConfigured, "camel.main.shutdownTimeout", () -> config.setShutdownTimeout(10));
+            setIfNotConfigured(autoConfigured, "camel.main.startupRecorder", () -> config.setStartupRecorder("backlog"));
         }
 
         if ("prod".equals(profile)) {
@@ -111,6 +131,12 @@ public class ProfileConfigurer {
         // no special configuration for other kind of profiles
 
         LOG.info("The application is starting with profile: {}", profile);
+    }
+
+    private static void setIfNotConfigured(Properties autoConfigured, String key, Runnable setter) {
+        if (autoConfigured == null || !autoConfigured.containsKey(key)) {
+            setter.run();
+        }
     }
 
 }

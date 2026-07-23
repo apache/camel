@@ -79,7 +79,7 @@ public class FtpConsumerResumeDownloadIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).routeId("myRoute").noAutoStartup().to("mock:result", TestSupport.fileUri(lwd, "out"));
+                from(getFtpUrl()).routeId("myRoute").autoStartup(false).to("mock:result", TestSupport.fileUri(lwd, "out"));
             }
         };
     }

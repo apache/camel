@@ -16,21 +16,31 @@
  */
 package org.apache.camel.test.infra.ibmmq.services;
 
+import java.util.concurrent.TimeUnit;
+
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
+import org.apache.camel.test.infra.ibmmq.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.ibmmq.common.IbmMQProperties;
+import org.awaitility.Awaitility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.containers.wait.strategy.WaitAllStrategy;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = IbmMQInfraService.class,
               description = "IBM MQ is enterprise messaging middleware for reliable communication",
-              serviceAlias = "ibmmq")
+              serviceAlias = "ibmmq",
+              uiSupported = true)
 public class IbmMQLocalContainerInfraService implements IbmMQInfraService, ContainerService<GenericContainer<?>> {
 
     public static final String CONTAINER_NAME = "ibmmq";
@@ -61,8 +71,13 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
                         .withEnv("MQ_QMGR_NAME", IbmMQProperties.DEFAULT_QMGR_NAME)
                         .withEnv("MQ_APP_PASSWORD", IbmMQProperties.DEFAULT_APP_PASSWORD)
                         .withLogConsumer(new Slf4jLogConsumer(LOG))
-                        .waitingFor(Wait.forLogMessage(
-                                ".*Queued Publish/Subscribe Daemon started for queue manager.*", 1));
+                        // AND the listener-port and log-message checks; a plain chained waitingFor() would replace,
+                        // not combine, the strategies. WITH_INDIVIDUAL_TIMEOUTS_ONLY keeps each strategy's own timeout
+                        // instead of the 30s outer cap the default WaitAllStrategy mode would impose.
+                        .waitingFor(new WaitAllStrategy(WaitAllStrategy.Mode.WITH_INDIVIDUAL_TIMEOUTS_ONLY)
+                                .withStrategy(Wait.forListeningPort())
+                                .withStrategy(Wait.forLogMessage(
+                                        ".*Queued Publish/Subscribe Daemon started for queue manager.*", 1)));
 
                 ContainerEnvironmentUtil.configurePorts(this,
                         ContainerEnvironmentUtil.isFixedPort(IbmMQLocalContainerInfraService.class),
@@ -88,6 +103,22 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
         // also starts admin console on https://localhost:9443/ibmmq/console, user: admin, password: passw0rd
         container.start();
         registerProperties();
+        waitForJmsConnection();
+    }
+
+    private void waitForJmsConnection() {
+        Awaitility.await("IBM MQ accepting JMS connections")
+                .atMost(30, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .ignoreExceptionsInstanceOf(JMSException.class)
+                .until(() -> {
+                    ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(
+                            queueManager(), channel(), listenerPort());
+                    try (Connection connection = connectionFactory.createConnection()) {
+                        connection.start();
+                    }
+                    return true;
+                });
     }
 
     @Override
@@ -117,5 +148,10 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
     @Override
     public int listenerPort() {
         return container.getMappedPort(MQ_LISTENER_PORT);
+    }
+
+    @Override
+    public String uiUrl() {
+        return String.format("https://%s:%d/ibmmq/console", container.getHost(), container.getMappedPort(WEB_CONSOLE_PORT));
     }
 }

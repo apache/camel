@@ -105,6 +105,19 @@ abstract class ProcessBaseCommand extends CamelCommand {
         return null;
     }
 
+    JsonObject loadErrorFile(long pid) {
+        try {
+            Path f = getErrorFile(Long.toString(pid));
+            if (f != null && Files.exists(f)) {
+                String text = Files.readString(f);
+                return (JsonObject) Jsoner.deserialize(text);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
+    }
+
     String sourceLocLine(String location) {
         while (StringHelper.countChar(location, ':') > 1) {
             location = location.substring(location.indexOf(':') + 1);

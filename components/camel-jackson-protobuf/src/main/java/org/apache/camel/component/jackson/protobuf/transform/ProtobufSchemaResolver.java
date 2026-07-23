@@ -18,6 +18,8 @@ package org.apache.camel.component.jackson.protobuf.transform;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -65,9 +67,11 @@ public class ProtobufSchemaResolver implements SchemaResolver, Processor {
     public void setSchema(String schema) {
         if (ObjectHelper.isNotEmpty(schema)) {
             try {
-                this.schema = ProtobufSchemaLoader.std.parse(schema);
+                // URL-decode the schema in case it was encoded
+                String decodedSchema = URLDecoder.decode(schema, StandardCharsets.UTF_8);
+                this.schema = ProtobufSchemaLoader.std.parse(decodedSchema);
             } catch (IOException e) {
-                throw new RuntimeCamelException("Failed tp parse Protobuf schema", e);
+                throw new RuntimeCamelException("Failed to parse Protobuf schema", e);
             }
         } else {
             this.schema = null;
@@ -157,10 +161,6 @@ public class ProtobufSchemaResolver implements SchemaResolver, Processor {
                     }
                 });
             }
-        }
-
-        if (answer != null) {
-            this.schema = answer;
         }
 
         return answer;

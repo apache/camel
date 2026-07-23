@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -98,11 +100,11 @@ public class SBOMGenerator extends Export {
         Integer answer = doExport();
         if (answer == 0) {
             Path buildDir = Paths.get(EXPORT_DIR);
-            String mvnProgramCall;
+            List<String> mvnProgramCall;
             if (FileUtil.isWindows()) {
-                mvnProgramCall = "cmd /c mvn";
+                mvnProgramCall = List.of("cmd", "/c", "mvn");
             } else {
-                mvnProgramCall = "mvn";
+                mvnProgramCall = List.of("mvn");
             }
             boolean done;
             if (sbomFormat.equalsIgnoreCase(CYCLONEDX_FORMAT)) {
@@ -112,25 +114,25 @@ public class SBOMGenerator extends Export {
                 } else {
                     outputDirectoryParameter += "../../" + outputDirectory;
                 }
-                ProcessBuilder pb = new ProcessBuilder(
-                        mvnProgramCall,
-                        "org.cyclonedx:cyclonedx-maven-plugin:" + cyclonedxPluginVersion + ":makeAggregateBom",
-                        outputDirectoryParameter,
-                        "-DoutputName=" + outputName,
-                        "-DoutputFormat=" + sbomOutputFormat);
-
+                List<String> cmd = new ArrayList<>(mvnProgramCall);
+                cmd.add("org.cyclonedx:cyclonedx-maven-plugin:" + cyclonedxPluginVersion + ":makeAggregateBom");
+                cmd.add(outputDirectoryParameter);
+                cmd.add("-DoutputName=" + outputName);
+                cmd.add("-DoutputFormat=" + sbomOutputFormat);
+                ProcessBuilder pb = new ProcessBuilder(cmd);
                 pb.directory(buildDir.toFile());
+                pb.inheritIO();
 
                 Process p = pb.start();
                 done = p.waitFor(60, TimeUnit.SECONDS);
                 if (!done) {
+                    p.destroyForcibly();
                     answer = 1;
-                }
-                if (p.exitValue() != 0) {
+                } else if (p.exitValue() != 0) {
                     answer = p.exitValue();
                 }
             } else if (sbomFormat.equalsIgnoreCase(SPDX_FORMAT)) {
-                String outputDirectoryParameter = null;
+                String outputDirectoryParameter;
                 String outputFormat = null;
                 if (Paths.get(outputDirectory).isAbsolute()) {
                     outputDirectoryParameter = outputDirectory;
@@ -142,19 +144,20 @@ public class SBOMGenerator extends Export {
                 } else if (sbomOutputFormat.equalsIgnoreCase(SBOM_XML_FORMAT)) {
                     outputFormat = "RDF/XML";
                 }
-                ProcessBuilder pb = new ProcessBuilder(
-                        mvnProgramCall,
-                        "org.spdx:spdx-maven-plugin:" + spdxPluginVersion + ":createSPDX",
-                        "-DspdxFileName=" + Paths.get(outputDirectoryParameter, outputName + "." + sbomOutputFormat),
-                        "-DoutputFormat=" + outputFormat);
+                List<String> cmd = new ArrayList<>(mvnProgramCall);
+                cmd.add("org.spdx:spdx-maven-plugin:" + spdxPluginVersion + ":createSPDX");
+                cmd.add("-DspdxFileName=" + Paths.get(outputDirectoryParameter, outputName + "." + sbomOutputFormat));
+                cmd.add("-DoutputFormat=" + outputFormat);
+                ProcessBuilder pb = new ProcessBuilder(cmd);
                 pb.directory(buildDir.toFile());
+                pb.inheritIO();
 
                 Process p = pb.start();
                 done = p.waitFor(60, TimeUnit.SECONDS);
                 if (!done) {
+                    p.destroyForcibly();
                     answer = 1;
-                }
-                if (p.exitValue() != 0) {
+                } else if (p.exitValue() != 0) {
                     answer = p.exitValue();
                 }
             }
@@ -181,9 +184,7 @@ public class SBOMGenerator extends Export {
             this.camelVersion = prop.getProperty(CAMEL_VERSION, this.camelVersion);
             this.kameletsVersion = prop.getProperty(KAMELETS_VERSION, this.kameletsVersion);
             this.localKameletDir = prop.getProperty(LOCAL_KAMELET_DIR, this.localKameletDir);
-            this.quarkusGroupId = prop.getProperty(QUARKUS_GROUP_ID, this.quarkusGroupId);
-            this.quarkusArtifactId = prop.getProperty(QUARKUS_ARTIFACT_ID, this.quarkusArtifactId);
-            this.quarkusVersion = prop.getProperty(QUARKUS_VERSION, this.quarkusVersion);
+            this.quarkusPlatform = QuarkusPlatformMixin.of(prop, quarkusPlatform);
             this.springBootVersion = prop.getProperty(SPRING_BOOT_VERSION, this.springBootVersion);
         }
 

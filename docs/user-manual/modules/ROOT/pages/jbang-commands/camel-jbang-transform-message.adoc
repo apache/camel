@@ -23,13 +23,15 @@ camel transform message [options]
 | `--camel-version` | To run using a different Camel version than the default version. |  | String
 | `--component` | The component to use for message transformation |  | String
 | `--dataformat` | The dataformat to use for message transformation |  | String
+| `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
+| `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--header` | Message header (key=value) |  | List
 | `--language` | The language to use for message transformation |  | String
 | `--logging-color` | Use colored logging | true | boolean
 | `--option` | Option for additional configuration of the used language, component or dataformat (key=value) |  | List
 | `--output` | File to store output. If none provide then output is printed to console. |  | String
 | `--pretty` | Pretty print message body when using JSon or XML format |  | boolean
-| `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
+| `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--show-body` | Show message body from the output message | true | boolean
 | `--show-exception` | Show exception and stacktrace for failed transformation | true | boolean
 | `--show-exchange-properties` | Show exchange properties from the output message | false | boolean

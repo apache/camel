@@ -28,17 +28,19 @@ import org.apache.camel.spi.Metadata;
  * Evaluate a compiled simple expression.
  */
 @Metadata(firstVersion = "3.7.0", label = "language,java", title = "CSimple",
-          deprecationNote = "Use the Simple language instead")
+          deprecationNote = "Use the Simple language instead", description = "Evaluate a compiled simple expression")
 @XmlRootElement(name = "csimple")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated(since = "4.19")
 public class CSimpleExpression extends TypedExpressionDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to trim the returned values when this language is in use.")
     private String trimResult;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "To pretty format the output (only JSon or XML supported).")
     private String pretty;
 
     public CSimpleExpression() {
@@ -74,14 +76,6 @@ public class CSimpleExpression extends TypedExpressionDefinition {
         return trimResult;
     }
 
-    /**
-     * Whether to trim the returned values when this language are in use.
-     *
-     * For example the output result may contain unwanted line breaks at the beginning and end such as when using Java
-     * DSL with multi-line blocks.
-     *
-     * Is default false to be backwards compatible with existing behavior.
-     */
     public void setTrimResult(String trimResult) {
         this.trimResult = trimResult;
     }
@@ -90,9 +84,6 @@ public class CSimpleExpression extends TypedExpressionDefinition {
         return pretty;
     }
 
-    /**
-     * To pretty format the output (only JSon or XML supported)
-     */
     public void setPretty(String pretty) {
         this.pretty = pretty;
     }

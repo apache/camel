@@ -119,7 +119,7 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "serversideencryption":
         case "serverSideEncryption": target.getConfiguration().setServerSideEncryption(property(camelContext, io.minio.ServerSideEncryption.class, value)); return true;
         case "serversideencryptioncustomerkey":
-        case "serverSideEncryptionCustomerKey": target.getConfiguration().setServerSideEncryptionCustomerKey(property(camelContext, io.minio.ServerSideEncryptionCustomerKey.class, value)); return true;
+        case "serverSideEncryptionCustomerKey": target.getConfiguration().setServerSideEncryptionCustomerKey(property(camelContext, io.minio.ServerSideEncryption.CustomerKey.class, value)); return true;
         case "startafter":
         case "startAfter": target.getConfiguration().setStartAfter(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
@@ -244,7 +244,7 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "serversideencryption":
         case "serverSideEncryption": return io.minio.ServerSideEncryption.class;
         case "serversideencryptioncustomerkey":
-        case "serverSideEncryptionCustomerKey": return io.minio.ServerSideEncryptionCustomerKey.class;
+        case "serverSideEncryptionCustomerKey": return io.minio.ServerSideEncryption.CustomerKey.class;
         case "startafter":
         case "startAfter": return java.lang.String.class;
         case "startscheduler":

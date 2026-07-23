@@ -22,6 +22,8 @@ import java.io.IOException;
 
 /**
  * To dump routes as visual diagrams as PNG images.
+ *
+ * @since 4.21
  */
 public interface RouteDiagramDumper {
 
@@ -43,30 +45,149 @@ public interface RouteDiagramDumper {
     String FACTORY = "route-diagram-dumper";
 
     /**
-     * Dumps the routes into a single combined PNG file
+     * Dumps the routes as PNG files in the given file
+     *
+     * @param filter to filter routes
+     * @param theme  the coloring theme
+     * @param file   the name of the file to store
      */
     void dumpRoutesToFile(String filter, Theme theme, File file) throws IOException;
 
     /**
      * Dumps the routes as PNG files in the given folder
+     *
+     * @param filter to filter routes
+     * @param theme  the coloring theme
+     * @param folder the folder to store the files
      */
     void dumpRoutesToFolder(String filter, Theme theme, File folder) throws IOException;
 
     /**
      * Dumps the routes as a PNG image
+     *
+     * @param filter to filter routes
+     * @param theme  the coloring theme
      */
     default BufferedImage dumpRoutesAsImage(String filter, Theme theme) {
-        return dumpRoutesAsImage(filter, theme, NodeLabelMode.CODE, 180, 12);
+        return dumpRoutesAsImage(filter, theme, false, NodeLabelMode.CODE, 180, 12);
     }
 
     /**
      * Dumps the routes as a PNG image
+     *
+     * @param filter    to filter routes
+     * @param theme     the coloring theme
+     * @param metrics   whether to include live metric counters
+     * @param nodeLabel what information to display in the nodes
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param fontSize  the font size
      */
-    BufferedImage dumpRoutesAsImage(String filter, Theme theme, NodeLabelMode nodeLabel, int nodeWidth, int fontSize);
+    BufferedImage dumpRoutesAsImage(
+            String filter, Theme theme, boolean metrics,
+            NodeLabelMode nodeLabel, int nodeWidth, int fontSize);
 
     /**
      * Converts the image to base64
      */
     String imageToBase64(BufferedImage image) throws IOException;
+
+    /**
+     * Dumps the routes as ASCII art text
+     *
+     * @param filter to filter routes
+     */
+    default String dumpRoutesAsAsciiArt(String filter) {
+        return dumpRoutesAsAsciiArt(filter, NodeLabelMode.CODE, 180, false);
+    }
+
+    /**
+     * Dumps the routes as ASCII art text
+     *
+     * @param filter    to filter routes
+     * @param nodeLabel what information to display in the nodes
+     * @param nodeWidth the width in pixels of the node boxes
+     */
+    default String dumpRoutesAsAsciiArt(String filter, NodeLabelMode nodeLabel, int nodeWidth) {
+        return dumpRoutesAsAsciiArt(filter, nodeLabel, nodeWidth, false);
+    }
+
+    /**
+     * Dumps the routes as ASCII art or Unicode box-drawing text
+     *
+     * @param filter    to filter routes
+     * @param nodeLabel what information to display in the nodes
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param unicode   whether to use Unicode box-drawing characters
+     */
+    default String dumpRoutesAsAsciiArt(String filter, NodeLabelMode nodeLabel, int nodeWidth, boolean unicode) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Dumps the route topology as a PNG file in the given folder
+     *
+     * @param theme    the coloring theme
+     * @param external whether to include external systems (kafka, http, etc.)
+     * @param folder   the folder to store the file
+     *
+     * @since          4.21
+     */
+    default void dumpTopologyToFolder(Theme theme, boolean external, File folder) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Dumps the route topology as ASCII art or Unicode box-drawing text
+     *
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param unicode   whether to use Unicode box-drawing characters
+     *
+     * @since           4.21
+     */
+    default String dumpTopologyAsAsciiArt(int nodeWidth, boolean unicode) {
+        return dumpTopologyAsAsciiArt(nodeWidth, unicode, false);
+    }
+
+    /**
+     * Dumps the route topology as ASCII art or Unicode box-drawing text
+     *
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param unicode   whether to use Unicode box-drawing characters
+     * @param external  whether to include external systems (kafka, http, etc.)
+     *
+     * @since           4.21
+     */
+    default String dumpTopologyAsAsciiArt(int nodeWidth, boolean unicode, boolean external) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Dumps the route topology as a PNG image
+     *
+     * @param theme     the coloring theme
+     * @param metrics   whether to include live metric counters
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param fontSize  the font size
+     *
+     * @since           4.21
+     */
+    default BufferedImage dumpTopologyAsImage(Theme theme, boolean metrics, int nodeWidth, int fontSize) {
+        return dumpTopologyAsImage(theme, metrics, nodeWidth, fontSize, false);
+    }
+
+    /**
+     * Dumps the route topology as a PNG image
+     *
+     * @param theme     the coloring theme
+     * @param metrics   whether to include live metric counters
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param fontSize  the font size
+     * @param external  whether to include external systems (kafka, http, etc.)
+     *
+     * @since           4.21
+     */
+    default BufferedImage dumpTopologyAsImage(Theme theme, boolean metrics, int nodeWidth, int fontSize, boolean external) {
+        throw new UnsupportedOperationException();
+    }
 
 }

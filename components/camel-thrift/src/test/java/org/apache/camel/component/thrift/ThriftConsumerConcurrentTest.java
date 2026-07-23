@@ -16,18 +16,20 @@
  */
 package org.apache.camel.component.thrift;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.googlecode.junittoolbox.MultithreadingTester;
-import com.googlecode.junittoolbox.RunnableAssert;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.thrift.TException;
 import org.apache.thrift.async.AsyncMethodCallback;
@@ -38,10 +40,8 @@ import org.apache.thrift.transport.TNonblockingSocket;
 import org.apache.thrift.transport.TNonblockingTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
-import org.apache.thrift.transport.TTransportException;
 import org.apache.thrift.transport.layered.TFramedTransport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,15 +51,15 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class ThriftConsumerConcurrentTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerConcurrentTest.class);
 
-    @RegisterExtension
-    AvailablePortFinder.Port thriftSyncPort = AvailablePortFinder.find();
-    @RegisterExtension
-    AvailablePortFinder.Port thriftAsyncPort = AvailablePortFinder.find();
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int CONCURRENT_THREAD_COUNT = 30;
     private static final int ROUNDS_PER_THREAD_COUNT = 10;
 
     private static AtomicInteger idCounter = new AtomicInteger();
+
+    private int getPortForRoute(int index) {
+        return ((ThriftConsumer) context.getRoutes().get(index).getConsumer()).getLocalPort();
+    }
 
     public static Integer createId() {
         return idCounter.getAndIncrement();
@@ -70,68 +70,76 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSyncWithConcurrentThreads() {
-        RunnableAssert ra = new RunnableAssert("testSyncWithConcurrentThreads") {
+    public void testSyncWithConcurrentThreads() throws Exception {
+        runConcurrent(() -> {
+            TTransport transport = new TSocket("localhost", getPortForRoute(0));
+            transport.open();
+            TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
+            Calculator.Client client = (new Calculator.Client.Factory()).getClient(protocol);
 
-            @Override
-            public void run() throws TTransportException {
-                TTransport transport = new TSocket("localhost", thriftSyncPort.getPort());
-                transport.open();
-                TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
-                Calculator.Client client = (new Calculator.Client.Factory()).getClient(protocol);
+            int instanceId = createId();
 
-                int instanceId = createId();
-
-                int calculateResponse = 0;
-                try {
-                    calculateResponse = client.calculate(1, new Work(instanceId, THRIFT_TEST_NUM1, Operation.MULTIPLY));
-                } catch (TException e) {
-                    LOG.info("Exception", e);
-                }
-
-                assertNotEquals(0, calculateResponse, "instanceId = " + instanceId);
-                assertEquals(instanceId * THRIFT_TEST_NUM1, calculateResponse);
-
-                transport.close();
+            int calculateResponse = 0;
+            try {
+                calculateResponse = client.calculate(1, new Work(instanceId, THRIFT_TEST_NUM1, Operation.MULTIPLY));
+            } catch (TException e) {
+                LOG.info("Exception", e);
             }
-        };
 
-        new MultithreadingTester().add(ra).numThreads(CONCURRENT_THREAD_COUNT).numRoundsPerThread(ROUNDS_PER_THREAD_COUNT)
-                .run();
+            assertNotEquals(0, calculateResponse, "instanceId = " + instanceId);
+            assertEquals(instanceId * THRIFT_TEST_NUM1, calculateResponse);
+
+            transport.close();
+            return null;
+        });
     }
 
     @Test
-    public void testAsyncWithConcurrentThreads() {
-        RunnableAssert ra = new RunnableAssert("testAsyncWithConcurrentThreads") {
+    public void testAsyncWithConcurrentThreads() throws Exception {
+        runConcurrent(() -> {
+            final CountDownLatch latch = new CountDownLatch(1);
 
-            @Override
-            public void run() throws TTransportException, IOException, InterruptedException {
-                final CountDownLatch latch = new CountDownLatch(1);
+            TNonblockingTransport transport = new TNonblockingSocket("localhost", getPortForRoute(1));
+            Calculator.AsyncClient client
+                    = (new Calculator.AsyncClient.Factory(new TAsyncClientManager(), new TBinaryProtocol.Factory()))
+                            .getAsyncClient(transport);
 
-                TNonblockingTransport transport = new TNonblockingSocket("localhost", thriftAsyncPort.getPort());
-                Calculator.AsyncClient client
-                        = (new Calculator.AsyncClient.Factory(new TAsyncClientManager(), new TBinaryProtocol.Factory()))
-                                .getAsyncClient(transport);
-
-                int instanceId = createId();
-                CalculateAsyncMethodCallback calculateCallback = new CalculateAsyncMethodCallback(latch);
-                try {
-                    client.calculate(1, new Work(instanceId, THRIFT_TEST_NUM1, Operation.MULTIPLY), calculateCallback);
-                } catch (TException e) {
-                    LOG.info("Exception", e);
-                }
-                latch.await(5, TimeUnit.SECONDS);
-
-                int calculateResponse = calculateCallback.getCalculateResponse();
-                LOG.debug("instanceId = {}", instanceId);
-                assertEquals(instanceId * THRIFT_TEST_NUM1, calculateResponse);
-
-                transport.close();
+            int instanceId = createId();
+            CalculateAsyncMethodCallback calculateCallback = new CalculateAsyncMethodCallback(latch);
+            try {
+                client.calculate(1, new Work(instanceId, THRIFT_TEST_NUM1, Operation.MULTIPLY), calculateCallback);
+            } catch (TException e) {
+                LOG.info("Exception", e);
             }
-        };
+            latch.await(5, TimeUnit.SECONDS);
 
-        new MultithreadingTester().add(ra).numThreads(CONCURRENT_THREAD_COUNT).numRoundsPerThread(ROUNDS_PER_THREAD_COUNT)
-                .run();
+            int calculateResponse = calculateCallback.getCalculateResponse();
+            LOG.debug("instanceId = {}", instanceId);
+            assertEquals(instanceId * THRIFT_TEST_NUM1, calculateResponse);
+
+            transport.close();
+            return null;
+        });
+    }
+
+    private void runConcurrent(Callable<?> task) throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_THREAD_COUNT);
+        try {
+            List<Future<?>> futures = new ArrayList<>();
+            for (int thread = 0; thread < CONCURRENT_THREAD_COUNT; thread++) {
+                futures.add(executor.submit(() -> {
+                    for (int round = 0; round < ROUNDS_PER_THREAD_COUNT; round++) {
+                        task.call();
+                    }
+                    return null;
+                }));
+            }
+            for (Future<?> future : futures) {
+                future.get(1, TimeUnit.MINUTES);
+            }
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     public class CalculateAsyncMethodCallback implements AsyncMethodCallback<Integer> {
@@ -165,12 +173,10 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("thrift://localhost:" + thriftSyncPort.getPort()
-                     + "/org.apache.camel.component.thrift.generated.Calculator?synchronous=true")
+                from("thrift://localhost:0/org.apache.camel.component.thrift.generated.Calculator?synchronous=true")
                         .setBody(simple("${body[1]}")).bean(new CalculatorMessageBuilder(), "multiply");
 
-                from("thrift://localhost:" + thriftAsyncPort.getPort()
-                     + "/org.apache.camel.component.thrift.generated.Calculator")
+                from("thrift://localhost:0/org.apache.camel.component.thrift.generated.Calculator")
                         .setBody(simple("${body[1]}")).bean(new CalculatorMessageBuilder(), "multiply");
             }
         };

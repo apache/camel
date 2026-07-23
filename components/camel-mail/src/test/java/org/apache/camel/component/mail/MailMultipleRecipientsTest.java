@@ -30,10 +30,10 @@ import org.junit.jupiter.api.Test;
  * Unit test to verify that we can have multiple recipients in To, CC and BCC
  */
 public class MailMultipleRecipientsTest extends CamelTestSupport {
-    private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
-    private static final MailboxUser willem = Mailbox.getOrCreateUser("willem", "secret");
-    private static final MailboxUser hadrian = Mailbox.getOrCreateUser("hadrian", "secret");
-    private static final MailboxUser tracy = Mailbox.getOrCreateUser("tracy", "secret");
+    private static final MailboxUser claus = Mailbox.getOrCreateUser("MailMultipleRecipientsTest-claus", "secret");
+    private static final MailboxUser willem = Mailbox.getOrCreateUser("MailMultipleRecipientsTest-willem", "secret");
+    private static final MailboxUser hadrian = Mailbox.getOrCreateUser("MailMultipleRecipientsTest-hadrian", "secret");
+    private static final MailboxUser tracy = Mailbox.getOrCreateUser("MailMultipleRecipientsTest-tracy", "secret");
 
     @Test
     public void testSendWithMultipleRecipientsInHeader() throws Exception {
@@ -42,7 +42,8 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         // START SNIPPET: e1
         Map<String, Object> headers = new HashMap<>();
         // test with both comma and semi colon as Camel supports both kind of separators
-        headers.put("to", "claus@localhost, willem@localhost ; hadrian@localhost, \"Snell, Tracy\" <tracy@localhost>");
+        headers.put("to", claus.getEmail() + ", " + willem.getEmail() + " ; " + hadrian.getEmail() + ", \"Snell, Tracy\" <"
+                          + tracy.getEmail() + ">");
         headers.put("cc", "james@localhost");
 
         assertMailbox("claus");
@@ -50,7 +51,7 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         assertMailbox("hadrian");
         assertMailbox("tracy");
 
-        template.sendBodyAndHeaders(claus.uriPrefix(Protocol.smtp), "Hello World", headers);
+        template.sendBodyAndHeaders(claus.uriPrefix(Protocol.smtp) + "&useHeaderRecipients=true", "Hello World", headers);
         // END SNIPPET: e1
 
         MockEndpoint.assertIsSatisfied(context);
@@ -66,7 +67,8 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         // START SNIPPET: e2
         // here we have pre configured the to receivers to claus and willem. Notice we use comma to separate
         // the two recipients. Camel also support using colon as separator char
-        template.sendBody(claus.uriPrefix(Protocol.smtp) + "&to=claus@localhost,willem@localhost&cc=james@localhost",
+        template.sendBody(
+                claus.uriPrefix(Protocol.smtp) + "&to=" + claus.getEmail() + "," + willem.getEmail() + "&cc=james@localhost",
                 "Hello World");
         // END SNIPPET: e2
 

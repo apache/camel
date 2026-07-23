@@ -118,8 +118,11 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
         producer.process(exchange);
         verify(containerService).list(containerListOptionsCaptor.capture());
         Map<String, String> options = containerListOptionsCaptor.getValue().getOptions();
-        assertEquals(String.valueOf(10), options.get(SwiftConstants.LIMIT));
-        assertEquals("x", options.get(SwiftConstants.DELIMITER));
+        // The openstack4j ContainerListOptions stores its options under the Swift URL
+        // parameter names ("limit", "delimiter"), independent of the Camel header
+        // constant values (which now follow the CamelOpenstack* naming convention).
+        assertEquals(String.valueOf(10), options.get("limit"));
+        assertEquals("x", options.get("delimiter"));
         assertEquals(list, msg.getBody(List.class));
     }
 

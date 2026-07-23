@@ -310,7 +310,7 @@ public interface SpringAiVectorStoreEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SpringAiVectorStoreHeaderNameBuilder INSTANCE = new SpringAiVectorStoreHeaderNameBuilder();
+        public static final SpringAiVectorStoreHeaderNameBuilder INSTANCE = new SpringAiVectorStoreHeaderNameBuilder();
 
         /**
          * The operation to perform (ADD, DELETE, SIMILARITY_SEARCH).

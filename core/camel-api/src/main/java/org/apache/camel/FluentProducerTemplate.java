@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.util.ObjectHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Template for working with Camel and sending {@link Message} instances in an {@link Exchange} to an {@link Endpoint}
@@ -75,9 +76,7 @@ import org.apache.camel.util.ObjectHelper;
  * <ul>
  * <li>throws {@link org.apache.camel.CamelExecutionException} if processing failed <i>during</i> routing with the
  * caused exception wrapped</li>
- * <li>The <tt>fault.body</tt> if there is a fault message set and its not <tt>null</tt></li>
- * <li>Either <tt>IN</tt> or <tt>OUT</tt> body according to the message exchange pattern. If the pattern is Out capable
- * then the <tt>OUT</tt> body is returned, otherwise <tt>IN</tt>.
+ * <li>The <tt>OUT</tt> body if the pattern is Out capable, otherwise <tt>IN</tt>.
  * </ul>
  * <br/>
  * <p/>
@@ -85,8 +84,8 @@ import org.apache.camel.util.ObjectHelper;
  * the template.<br/>
  * <p/>
  * <b>Important note on usage:</b> See this
- * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a> before
- * using.
+ * <a href="https://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
+ * before using.
  *
  * @see ProducerTemplate
  * @see ConsumerTemplate
@@ -129,6 +128,7 @@ public interface FluentProducerTemplate extends Service {
      *
      * @return the default endpoint instance
      */
+    @Nullable
     Endpoint getDefaultEndpoint();
 
     /**
@@ -146,8 +146,8 @@ public interface FluentProducerTemplate extends Service {
     void setDefaultEndpointUri(String endpointUri);
 
     /**
-     * Sets whether the {@link org.apache.camel.spi.EventNotifier} should be used by this {@link ProducerTemplate} to
-     * send events about the {@link Exchange} being sent.
+     * Sets whether the {@link org.apache.camel.spi.EventNotifier} should be used by this {@link FluentProducerTemplate}
+     * to send events about the {@link Exchange} being sent.
      * <p/>
      * By default this is enabled.
      *
@@ -156,8 +156,8 @@ public interface FluentProducerTemplate extends Service {
     void setEventNotifierEnabled(boolean enabled);
 
     /**
-     * Whether the {@link org.apache.camel.spi.EventNotifier} should be used by this {@link ProducerTemplate} to send
-     * events about the {@link Exchange} being sent.
+     * Whether the {@link org.apache.camel.spi.EventNotifier} should be used by this {@link FluentProducerTemplate} to
+     * send events about the {@link Exchange} being sent.
      *
      * @return <tt>true</tt> if enabled, <tt>false</tt> otherwise
      */
@@ -190,7 +190,7 @@ public interface FluentProducerTemplate extends Service {
      * @param key   the key of the header
      * @param value the value of the header
      */
-    FluentProducerTemplate withHeader(String key, Object value);
+    FluentProducerTemplate withHeader(String key, @Nullable Object value);
 
     /**
      * Set the exchange properties
@@ -211,7 +211,7 @@ public interface FluentProducerTemplate extends Service {
      * @param key   the key of the exchange property
      * @param value the value of the exchange property
      */
-    FluentProducerTemplate withExchangeProperty(String key, Object value);
+    FluentProducerTemplate withExchangeProperty(String key, @Nullable Object value);
 
     /**
      * Set the variables
@@ -224,7 +224,7 @@ public interface FluentProducerTemplate extends Service {
     FluentProducerTemplate withVariables(Map<String, Object> variables);
 
     /**
-     * Set the exchange property
+     * Set the variable with the given value.
      *
      * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
      * withBody/withHeaders to construct the message to be sent.
@@ -232,7 +232,7 @@ public interface FluentProducerTemplate extends Service {
      * @param key   the key of the variable
      * @param value the value of the variable
      */
-    FluentProducerTemplate withVariable(String key, Object value);
+    FluentProducerTemplate withVariable(String key, @Nullable Object value);
 
     /**
      * Set the message body
@@ -242,7 +242,7 @@ public interface FluentProducerTemplate extends Service {
      *
      * @param body the body
      */
-    FluentProducerTemplate withBody(Object body);
+    FluentProducerTemplate withBody(@Nullable Object body);
 
     /**
      * Set the message body after converting it to the given type
@@ -253,7 +253,7 @@ public interface FluentProducerTemplate extends Service {
      * @param body the body
      * @param type the type which the body should be converted to
      */
-    FluentProducerTemplate withBodyAs(Object body, Class<?> type);
+    FluentProducerTemplate withBodyAs(@Nullable Object body, Class<?> type);
 
     /**
      * To customize the producer template for advanced usage like to set the executor service to use.
@@ -403,6 +403,7 @@ public interface FluentProducerTemplate extends Service {
      * @return                         the result
      * @throws CamelExecutionException is thrown if error occurred
      */
+    @Nullable
     Object request() throws CamelExecutionException;
 
     /**
@@ -412,7 +413,7 @@ public interface FluentProducerTemplate extends Service {
      * @return                         the result
      * @throws CamelExecutionException is thrown if error occurred
      */
-    <T> T request(Class<T> type) throws CamelExecutionException;
+    <T> @Nullable T request(Class<T> type) throws CamelExecutionException;
 
     /**
      * Sends asynchronously to the given endpoint (InOut).

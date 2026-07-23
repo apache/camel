@@ -25,9 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.platform.http.cookie.CookieConfiguration;
+import org.apache.camel.component.platform.http.spi.OAuthPlatformHttpSecurityHandler;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
+import org.apache.camel.component.platform.http.spi.PlatformHttpSecurityHandler;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
+import org.apache.camel.http.base.OAuthHttpSecuritySupport;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -37,6 +40,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.MimeTypeHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Expose HTTP endpoints using the HTTP server available in the current platform.
@@ -136,6 +140,11 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     @UriParam(label = "advanced,consumer",
               description = "The period in milliseconds after which the request should be timed out.")
     private long requestTimeout;
+    @UriParam(label = "consumer,security", displayName = "OAuth Profile",
+              description = "OAuth profile name for validating incoming Authorization: Bearer tokens. "
+                            + "When set, the request is authenticated before the route is processed. "
+                            + "This requires an OAuthTokenValidationFactory; camel-oauth provides the default implementation.")
+    private String oauthProfile;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
@@ -169,15 +178,32 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     @Override
     public DefaultPlatformHttpConsumer createConsumer(Processor processor) throws Exception {
-        DefaultPlatformHttpConsumer consumer = new DefaultPlatformHttpConsumer(this, processor);
+        PlatformHttpSecurityHandler securityHandler = createSecurityHandler();
+        DefaultPlatformHttpConsumer consumer = new DefaultPlatformHttpConsumer(this, processor, securityHandler);
         configureConsumer(consumer);
         return consumer;
     }
 
     protected PlatformHttpConsumer createPlatformHttpConsumer(Processor processor) throws Exception {
-        PlatformHttpConsumer consumer = getOrCreateEngine().createConsumer(this, processor);
+        return createPlatformHttpConsumer(processor, null);
+    }
+
+    protected PlatformHttpConsumer createPlatformHttpConsumer(
+            Processor processor, PlatformHttpSecurityHandler securityHandler)
+            throws Exception {
+        PlatformHttpConsumer consumer = securityHandler != null
+                ? getOrCreateEngine().createConsumer(this, processor, securityHandler)
+                : getOrCreateEngine().createConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    protected PlatformHttpSecurityHandler createSecurityHandler() throws Exception {
+        if (ObjectHelper.isNotEmpty(oauthProfile)) {
+            return new OAuthPlatformHttpSecurityHandler(
+                    OAuthHttpSecuritySupport.create(getCamelContext(), oauthProfile));
+        }
+        return null;
     }
 
     @Override
@@ -343,5 +369,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
+    }
+
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
     }
 }

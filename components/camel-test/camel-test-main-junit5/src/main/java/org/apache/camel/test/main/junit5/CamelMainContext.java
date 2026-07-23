@@ -53,7 +53,7 @@ import static org.junit.platform.commons.support.AnnotationSupport.findAnnotated
  * An internal class representing the context of the test that is stored by the extension and closed automatically by
  * JUnit 5.
  */
-final class CamelMainContext implements ExtensionContext.Store.CloseableResource {
+final class CamelMainContext implements AutoCloseable {
 
     /**
      * The Camel context used for the test.

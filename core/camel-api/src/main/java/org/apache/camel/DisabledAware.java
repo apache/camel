@@ -18,6 +18,8 @@ package org.apache.camel;
 
 /**
  * State for whether a processor or service is disabled.
+ *
+ * @since 4.14
  */
 public interface DisabledAware {
 

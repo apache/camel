@@ -27,7 +27,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.kafka.producer.support.DelegatingCallback;
@@ -158,6 +160,8 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     @Override
     @SuppressWarnings("rawtypes")
     protected void doStart() throws Exception {
+        CamelContextAware.trySetCamelContext(configuration.getHeaderSerializer(), getEndpoint().getCamelContext());
+
         Properties props = getProps();
         transactionId = ObjectHelper.isNotEmpty(configuration.getTransactionalId())
                 ? configuration.getTransactionalId() : props.getProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG);
@@ -332,6 +336,10 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     }
 
     private boolean isIterable(Object body) {
+        if (body instanceof JsonNode node) {
+            return node.isContainerNode();
+        }
+
         if (body instanceof Iterable || body instanceof Iterator) {
             return true;
         }

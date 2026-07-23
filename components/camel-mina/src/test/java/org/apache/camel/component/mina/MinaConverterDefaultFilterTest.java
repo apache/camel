@@ -1,0 +1,64 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.mina;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InvalidClassException;
+import java.io.ObjectInput;
+import java.io.ObjectOutputStream;
+import java.net.URI;
+
+import org.apache.camel.support.DeserializationFilterHelper;
+import org.apache.mina.core.buffer.IoBuffer;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class MinaConverterDefaultFilterTest {
+
+    @Test
+    public void testDefaultFilterContainsGraphShapeLimits() {
+        String filter = DeserializationFilterHelper.DEFAULT_DESERIALIZATION_FILTER;
+        assertTrue(filter.contains("maxdepth="), "Expected maxdepth in filter: " + filter);
+        assertTrue(filter.contains("maxrefs="), "Expected maxrefs in filter: " + filter);
+        assertTrue(filter.contains("maxbytes="), "Expected maxbytes in filter: " + filter);
+    }
+
+    @Test
+    public void testToObjectInputAllowsStandardJavaType() throws Exception {
+        ObjectInput oi = MinaConverter.toObjectInput(toIoBuffer("hello"));
+        assertEquals("hello", oi.readObject());
+    }
+
+    @Test
+    public void testToObjectInputRejectsJavaNetClass() throws Exception {
+        ObjectInput oi = MinaConverter.toObjectInput(toIoBuffer(URI.create("http://example.com/")));
+        assertThrows(InvalidClassException.class, oi::readObject);
+    }
+
+    private static IoBuffer toIoBuffer(Object value) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(value);
+        }
+        IoBuffer buffer = MinaConverter.toIoBuffer(baos.toByteArray());
+        buffer.flip();
+        return buffer;
+    }
+}

@@ -16,19 +16,40 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
+/**
+ * Thrown when neither a mandatory header nor a mandatory exchange property is available on an {@link Exchange}, and at
+ * least one of them is required for processing to continue.
+ * <p/>
+ * Combines the roles of {@link NoSuchHeaderException} and {@link NoSuchPropertyException} for callers that accept
+ * either source but need at least one to be present.
+ *
+ * @see   NoSuchHeaderException
+ * @see   NoSuchPropertyException
+ * @since 3.18
+ */
 public class NoSuchHeaderOrPropertyException extends CamelExchangeException {
 
     private final String headerName;
     private final String propertyName;
     private final transient Class<?> type;
 
+    /**
+     * @param exchange     the exchange that caused the error
+     * @param headerName   the name of the header that could not be found
+     * @param propertyName the name of the property that could not be found
+     * @param type         the expected type of the header or property
+     */
     public NoSuchHeaderOrPropertyException(Exchange exchange, String headerName, String propertyName, Class<?> type) {
         super(String.format(
                 "No '%s' header or '%s' property available of type: %s (header: %s, property: %s)",
-                headerName,
-                propertyName,
-                type.getName(),
-                header(exchange, headerName),
+                Objects.requireNonNull(headerName, "headerName"),
+                Objects.requireNonNull(propertyName, "propertyName"),
+                Objects.requireNonNull(type, "type").getName(),
+                header(Objects.requireNonNull(exchange, "exchange"), headerName),
                 property(exchange, headerName)),
               exchange);
 
@@ -50,16 +71,20 @@ public class NoSuchHeaderOrPropertyException extends CamelExchangeException {
     }
 
     protected static String header(Exchange exchange, String headerName) {
+        Objects.requireNonNull(exchange, "exchange");
+        Objects.requireNonNull(headerName, "headerName");
         Object value = exchange.getMessage().getHeader(headerName);
         return valueDescription(value);
     }
 
     protected static String property(Exchange exchange, String propertyName) {
+        Objects.requireNonNull(exchange, "exchange");
+        Objects.requireNonNull(propertyName, "propertyName");
         Object value = exchange.getProperty(propertyName);
         return valueDescription(value);
     }
 
-    static String valueDescription(Object value) {
+    static String valueDescription(@Nullable Object value) {
         if (value == null) {
             return "null";
         }

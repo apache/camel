@@ -58,7 +58,7 @@ public class MailIdempotentRepositoryDuplicateNotRemoveTest extends MailIdempote
             public void configure() {
                 from(jones.uriPrefix(Protocol.pop3)
                      + "&idempotentRepository=#myRepo&idempotentRepositoryRemoveOnCommit=false&initialDelay=100&delay=100")
-                        .routeId("foo").noAutoStartup()
+                        .routeId("foo").autoStartup(false)
                         .to("mock:result");
             }
         };

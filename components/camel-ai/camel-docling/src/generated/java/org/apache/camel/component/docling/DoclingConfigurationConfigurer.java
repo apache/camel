@@ -29,6 +29,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "apiKeyHeader": target.setApiKeyHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "asyncpollinterval":
         case "asyncPollInterval": target.setAsyncPollInterval(property(camelContext, long.class, value)); return true;
+        case "asynctaskttl":
+        case "asyncTaskTtl": target.setAsyncTaskTtl(property(camelContext, long.class, value)); return true;
         case "asynctimeout":
         case "asyncTimeout": target.setAsyncTimeout(property(camelContext, long.class, value)); return true;
         case "authenticationscheme":
@@ -132,6 +134,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "apiKeyHeader": return java.lang.String.class;
         case "asyncpollinterval":
         case "asyncPollInterval": return long.class;
+        case "asynctaskttl":
+        case "asyncTaskTtl": return long.class;
         case "asynctimeout":
         case "asyncTimeout": return long.class;
         case "authenticationscheme":
@@ -236,6 +240,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "apiKeyHeader": return target.getApiKeyHeader();
         case "asyncpollinterval":
         case "asyncPollInterval": return target.getAsyncPollInterval();
+        case "asynctaskttl":
+        case "asyncTaskTtl": return target.getAsyncTaskTtl();
         case "asynctimeout":
         case "asyncTimeout": return target.getAsyncTimeout();
         case "authenticationscheme":

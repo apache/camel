@@ -180,7 +180,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private Integer workerPoolMaxSize = 20;
 
     // Async producer config
-    @UriParam(label = "producer", defaultValue = "10000")
+    @Deprecated
+    @UriParam(label = "producer", defaultValue = "10000", description = "Deprecated: this option has no effect."
+                                                                        + " Use bufferMemorySize or maxBlockMs instead.")
     private Integer queueBufferingMaxMessages = 10000;
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_SERIALIZER)
     private String valueSerializer = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
@@ -240,7 +242,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "producer", defaultValue = "5")
     private Integer maxInFlightRequest = 5;
     // metadata.max.age.ms
-    @UriParam(label = "producer", defaultValue = "300000")
+    @UriParam(label = "common", defaultValue = "300000")
     private Integer metadataMaxAgeMs = 300000;
     // metric.reporters
     @UriParam(label = "producer")
@@ -306,7 +308,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common,security")
     private String sslCipherSuites;
     // ssl.endpoint.identification.algorithm
-    @UriParam(label = "common,security", defaultValue = "https")
+    @UriParam(label = "common,security", defaultValue = "https", security = "insecure:ssl", insecureValue = "none")
     private String sslEndpointAlgorithm = SslConfigs.DEFAULT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM;
     // ssl.keymanager.algorithm
     @UriParam(label = "common,security", defaultValue = "SunX509")
@@ -449,15 +451,17 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
                 // The saslAuthType just helps set the mechanism and protocol
             }
 
-            // Determine if we should use SSL (check if any SSL properties are set)
-            boolean hasSslConfig = ObjectHelper.isNotEmpty(sslTruststoreLocation)
-                    || ObjectHelper.isNotEmpty(sslKeystoreLocation)
-                    || sslContextParameters != null;
-
-            // For SASL types, default to SSL unless explicitly using SASL_PLAINTEXT
+            // For SASL types, the configurer defaults to useSsl=true (SASL_SSL).
+            // Only downgrade to SASL_PLAINTEXT if the user explicitly requested it.
             if (saslAuthType.isSasl()) {
-                boolean useSsl = !securityProtocol.equals("SASL_PLAINTEXT") && !securityProtocol.equals("PLAINTEXT");
-                configurer.withSsl(useSsl || hasSslConfig || saslAuthType != KafkaAuthType.NONE);
+                if (securityProtocol.equals("SASL_PLAINTEXT")) {
+                    configurer.withSsl(false);
+                }
+            } else if (saslAuthType == KafkaAuthType.NONE) {
+                boolean hasSslConfig = ObjectHelper.isNotEmpty(sslTruststoreLocation)
+                        || ObjectHelper.isNotEmpty(sslKeystoreLocation)
+                        || sslContextParameters != null;
+                configurer.withSsl(hasSslConfig || securityProtocol.equals("SSL"));
             }
 
             // Apply the configuration
@@ -551,6 +555,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
             String algo = getSslEndpointAlgorithm();
             if (algo != null && !algo.equals("none") && !algo.equals("false")) {
                 addPropertyIfNotNull(props, SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, algo);
+            } else {
+                props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
             }
             addPropertyIfNotEmpty(props, SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, getSslKeymanagerAlgorithm());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, getSslTrustmanagerAlgorithm());
@@ -578,13 +584,14 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotEmpty(props, ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, getInterceptorClasses());
         addPropertyIfNotEmpty(props, ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, getAutoOffsetReset());
         addPropertyIfNotEmpty(props, ConsumerConfig.CONNECTIONS_MAX_IDLE_MS_CONFIG, getConnectionMaxIdleMs());
-        addPropertyIfNotEmpty(props, ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, getAutoCommitEnable());
+        addPropertyIfNotEmpty(props, ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, isAutoCommitEnable());
         if (classicProtocol) {
             addPropertyIfNotEmpty(props, ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, getPartitionAssignor());
         }
         addPropertyIfNotEmpty(props, ConsumerConfig.GROUP_PROTOCOL_CONFIG, getGroupProtocol());
         addPropertyIfNotEmpty(props, ConsumerConfig.GROUP_REMOTE_ASSIGNOR_CONFIG, getGroupRemoteAssignor());
         addPropertyIfNotEmpty(props, ConsumerConfig.RECEIVE_BUFFER_CONFIG, getReceiveBufferBytes());
+        addPropertyIfNotEmpty(props, ConsumerConfig.SEND_BUFFER_CONFIG, getSendBufferBytes());
         addPropertyIfNotEmpty(props, ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, getConsumerRequestTimeoutMs());
         addPropertyIfNotEmpty(props, ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, getAutoCommitIntervalMs());
         addPropertyIfNotEmpty(props, ConsumerConfig.CHECK_CRCS_CONFIG, getCheckCrcs());
@@ -639,6 +646,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
             String algo = getSslEndpointAlgorithm();
             if (algo != null && !algo.equals("none") && !algo.equals("false")) {
                 addPropertyIfNotNull(props, SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, algo);
+            } else {
+                props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
             }
             addPropertyIfNotEmpty(props, SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, getSslKeymanagerAlgorithm());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, getSslTrustmanagerAlgorithm());
@@ -647,7 +656,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
             addPropertyIfNotEmpty(props, SslConfigs.SSL_PROTOCOL_CONFIG, getSslProtocol());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_PROVIDER_CONFIG, getSslProvider());
             addUpperCasePropertyIfNotEmpty(props, SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, getSslTruststoreType());
-            addPropertyIfNotEmpty(props, ProducerConfig.SEND_BUFFER_CONFIG, getSendBufferBytes());
         }
     }
 
@@ -866,15 +874,15 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     public boolean isAutoCommitEnable() {
-        return offsetRepository == null && autoCommitEnable;
+        return offsetRepository == null && !batching && autoCommitEnable;
     }
 
+    /**
+     * @deprecated use {@link #isAutoCommitEnable()}
+     */
+    @Deprecated(since = "4.22.0")
     public boolean getAutoCommitEnable() {
-        if (!batching) {
-            return autoCommitEnable;
-        }
-
-        return false;
+        return isAutoCommitEnable();
     }
 
     /**
@@ -1123,14 +1131,20 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.deliveryTimeoutMs = deliveryTimeoutMs;
     }
 
+    /**
+     * @deprecated This option has no effect since the old Scala Kafka producer was removed (CAMEL-9467). Use
+     *             {@link #setBufferMemorySize(Integer)} or {@link #setMaxBlockMs(Integer)} instead.
+     */
+    @Deprecated
     public Integer getQueueBufferingMaxMessages() {
         return queueBufferingMaxMessages;
     }
 
     /**
-     * The maximum number of unsent messages that can be queued up the producer when using async mode before either the
-     * producer must be blocked or data must be dropped.
+     * @deprecated This option has no effect since the old Scala Kafka producer was removed (CAMEL-9467). Use
+     *             {@link #setBufferMemorySize(Integer)} or {@link #setMaxBlockMs(Integer)} instead.
      */
+    @Deprecated
     public void setQueueBufferingMaxMessages(Integer queueBufferingMaxMessages) {
         this.queueBufferingMaxMessages = queueBufferingMaxMessages;
     }

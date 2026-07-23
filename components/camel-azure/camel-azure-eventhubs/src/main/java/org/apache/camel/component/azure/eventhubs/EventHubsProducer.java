@@ -22,11 +22,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
 import org.apache.camel.component.azure.eventhubs.operations.EventHubsProducerOperations;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
 
 public class EventHubsProducer extends DefaultAsyncProducer {
 
     private EventHubProducerAsyncClient producerAsyncClient;
+    private boolean clientCloseable;
     private EventHubsProducerOperations producerOperations;
 
     public EventHubsProducer(final Endpoint endpoint) {
@@ -40,12 +42,16 @@ public class EventHubsProducer extends DefaultAsyncProducer {
         EventHubsConfiguration configuration = getConfiguration();
         producerAsyncClient = configuration.getProducerAsyncClient();
         if (producerAsyncClient == null) {
-            // create the client
             producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
+            clientCloseable = true;
+        } else {
+            clientCloseable = false;
         }
 
         // create our operations
-        producerOperations = new EventHubsProducerOperations(producerAsyncClient, getConfiguration());
+        HeaderFilterStrategy headerFilterStrategy
+                = ((EventHubsComponent) getEndpoint().getComponent()).getHeaderFilterStrategy();
+        producerOperations = new EventHubsProducerOperations(producerAsyncClient, getConfiguration(), headerFilterStrategy);
     }
 
     @Override
@@ -62,8 +68,7 @@ public class EventHubsProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (producerAsyncClient != null) {
-            // shutdown async client
+        if (clientCloseable && producerAsyncClient != null) {
             producerAsyncClient.close();
             producerAsyncClient = null;
         }

@@ -97,7 +97,8 @@ public final class KubernetesHelper {
         }
         setKubernetesClientProperties();
         var client = new KubernetesClientBuilder().withConfig(config).build();
-        return clients.put(config, client);
+        clients.put(config, client);
+        return client;
     }
 
     // set short timeouts to fail fast in case it's not connected to a cluster and don't waste time
@@ -125,7 +126,7 @@ public final class KubernetesHelper {
     /**
      * Creates new Yaml instance. The implementation provided by Snakeyaml is not thread-safe. It is better to create a
      * fresh instance for every YAML stream. Uses the given class loader as base constructor. This is mandatory when
-     * additional classes have been downloaded via Maven for instance when loading a Camel JBang plugin.
+     * additional classes have been downloaded via Maven for instance when loading a Camel CLI plugin.
      */
     public static Yaml yaml(ClassLoader classLoader) {
         return YamlHelper.yaml(classLoader);
@@ -198,6 +199,9 @@ public final class KubernetesHelper {
     // https://knative.dev/docs/serving/configuration/deployment/#skipping-tag-resolution
     public static void skipKnativeImageTagResolutionInMinikube() {
         ConfigMap cm = getKubernetesClient().configMaps().inNamespace("knative-serving").withName("config-deployment").get();
+        if (cm == null) {
+            return;
+        }
         Map<String, String> data = cm.getData();
         String skipTag = data.get("registries-skipping-tag-resolving");
         if (skipTag == null || !skipTag.contains("localhost:5000")) {
@@ -221,9 +225,44 @@ public final class KubernetesHelper {
             name = StringHelper.camelCaseToDash(name);
             name = name.toLowerCase(Locale.US);
             name = name.replaceAll("[^a-z0-9-]", "");
-            name = name.trim();
+            name = name.replaceAll("^-+|-+$", "");
+            if (name.length() > 63) {
+                name = name.substring(0, 63).replaceAll("-+$", "");
+            }
         }
         return name;
+    }
+
+    /**
+     * Extracts the image name without the tag from a container image reference. Handles registries with ports (e.g.
+     * localhost:5000/myapp).
+     */
+    public static String imageWithoutTag(String image) {
+        if (image == null) {
+            return null;
+        }
+        int lastSlash = image.lastIndexOf('/');
+        int tagColon = image.indexOf(':', lastSlash + 1);
+        if (tagColon >= 0) {
+            return image.substring(0, tagColon);
+        }
+        return image;
+    }
+
+    /**
+     * Extracts the tag from a container image reference. Returns null if no tag is present. Handles registries with
+     * ports (e.g. localhost:5000/myapp:1.0).
+     */
+    public static String imageTag(String image) {
+        if (image == null) {
+            return null;
+        }
+        int lastSlash = image.lastIndexOf('/');
+        int tagColon = image.indexOf(':', lastSlash + 1);
+        if (tagColon >= 0) {
+            return image.substring(tagColon + 1);
+        }
+        return null;
     }
 
     /**

@@ -24,9 +24,9 @@ import java.util.function.Supplier;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -128,7 +128,7 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
             dir = absolutePath;
         }
 
-        final SftpRemoteFile[] files = getSftpRemoteFiles(dir);
+        final SftpRemoteFile[] files = getSftpRemoteFiles(dynamic, dir);
 
         if (files == null || files.length == 0) {
             // no files in this directory to poll
@@ -140,7 +140,7 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
         }
 
         if (getEndpoint().isPreSort()) {
-            Arrays.sort(files, Comparator.comparing(SftpRemoteFile::getFilename));
+            Arrays.sort(files, preSortComparator(getEndpoint().getPreSort()));
         }
 
         for (SftpRemoteFile file : files) {
@@ -198,14 +198,14 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
         return operations.listFiles(dir);
     }
 
-    private SftpRemoteFile[] getSftpRemoteFiles(String dir) {
+    private SftpRemoteFile[] getSftpRemoteFiles(Exchange dynamic, String dir) {
         SftpRemoteFile[] files = null;
         try {
             LOG.trace("Polling directory: {}", dir);
             if (isUseList()) {
                 files = listFiles(dir);
             } else {
-                files = pollNamedFile();
+                files = pollNamedFile(dynamic);
             }
         } catch (GenericFileOperationFailedException e) {
             if (ignoreCannotRetrieveFile(null, null, e)) {
@@ -217,12 +217,12 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
         return files;
     }
 
-    private SftpRemoteFile[] pollNamedFile() {
+    private SftpRemoteFile[] pollNamedFile(Exchange dynamic) {
         SftpRemoteFile[] files = null;
 
         // we cannot use the LIST command(s) so we can only poll a named
         // file so created a pseudo file with that name
-        Exchange dummy = ExchangeHelper.getDummy(getEndpoint().getCamelContext());
+        Exchange dummy = GenericFileHelper.createDummy(getEndpoint(), dynamic);
         String name = evaluateFileExpression(dummy);
         if (name != null) {
             SftpRemoteFile file = new SftpRemoteFileSingle(name);
@@ -294,5 +294,24 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
     private boolean isUseList() {
         RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isUseList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Comparator<SftpRemoteFile> preSortComparator(String preSort) {
+        boolean reverse = preSort.startsWith("-");
+        String field = reverse ? preSort.substring(1) : preSort;
+        Comparator<SftpRemoteFile> cmp;
+        switch (field) {
+            case "modified":
+                cmp = Comparator.comparingLong(SftpRemoteFile::getLastModified);
+                break;
+            case "size":
+                cmp = Comparator.comparingLong(SftpRemoteFile::getFileLength);
+                break;
+            default:
+                cmp = Comparator.comparing(SftpRemoteFile::getFilename);
+                break;
+        }
+        return reverse ? cmp.reversed() : cmp;
     }
 }

@@ -23,9 +23,12 @@ import java.lang.annotation.Target;
 
 /**
  * An experimental user-facing API. Experimental API's might change or be removed in minor versions.
+ *
+ * @since 3.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface Experimental {
+    /** The revision number of this experimental API, incremented when the API changes incompatibly. */
     int revision() default 1;
 }

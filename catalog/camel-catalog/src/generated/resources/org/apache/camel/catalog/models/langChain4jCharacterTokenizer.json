@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "langChain4jCharacterTokenizer",
     "title": "LangChain4J Tokenizer with character splitter",
-    "description": "Camel AI: Tokenizer for splitting by character.",
+    "description": "Splits text into chunks by character count, using LangChain4j's character tokenizer for AI text processing",
     "deprecated": false,
     "firstVersion": "4.8.0",
     "label": "eip,transformation,ai",
@@ -14,9 +14,9 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "tokenizerType": { "index": 1, "kind": "attribute", "displayName": "Tokenizer Type", "group": "common", "required": true, "type": "enum", "javaType": "org.apache.camel.model.tokenizer.TokenizerType", "enum": [ "OPEN_AI", "AZURE", "QWEN" ], "deprecated": false, "autowired": false, "secret": false, "description": "Sets the tokenizer type" },
-    "maxTokens": { "index": 2, "kind": "attribute", "displayName": "Max Tokens", "group": "common", "required": true, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the maximum number of tokens on each segment" },
-    "maxOverlap": { "index": 3, "kind": "attribute", "displayName": "Max Overlap", "group": "common", "required": true, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the maximum number of tokens that can overlap in each segment" },
-    "modelName": { "index": 4, "kind": "attribute", "displayName": "Model Name", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the model name" }
+    "tokenizerType": { "index": 1, "kind": "attribute", "displayName": "Tokenizer Type", "group": "common", "required": true, "type": "enum", "javaType": "org.apache.camel.model.tokenizer.TokenizerType", "enum": [ "OPEN_AI", "AZURE", "QWEN" ], "deprecated": false, "autowired": false, "secret": false, "description": "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN." },
+    "maxTokens": { "index": 2, "kind": "attribute", "displayName": "Max Tokens", "group": "common", "required": true, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "The maximum number of tokens on each segment." },
+    "maxOverlap": { "index": 3, "kind": "attribute", "displayName": "Max Overlap", "group": "common", "required": true, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "The maximum number of tokens that can overlap in each segment." },
+    "modelName": { "index": 4, "kind": "attribute", "displayName": "Model Name", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The underlying model name used by the tokenizer. Providing this switches to computing segment sizes in terms of tokens." }
   }
 }

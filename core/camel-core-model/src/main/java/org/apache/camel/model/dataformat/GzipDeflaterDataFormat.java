@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Compress and decompress messages using <code>java.util.zip.GZIP*Stream</code>.
  */
-@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation", title = "GZip Deflater")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation", title = "GZip Deflater",
+          description = "Compress and decompress messages using java.util.zip.GZIP*Stream")
 @XmlRootElement(name = "gzipDeflater")
 public class GzipDeflaterDataFormat extends DataFormatDefinition {
 

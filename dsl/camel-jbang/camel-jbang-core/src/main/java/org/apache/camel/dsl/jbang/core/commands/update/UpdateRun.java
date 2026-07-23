@@ -38,7 +38,10 @@ import picocli.CommandLine;
  * runtimes such as Camel Main, Spring Boot, and Quarkus. It uses Maven and OpenRewrite to apply the necessary updates.
  */
 @CommandLine.Command(name = "run",
-                     description = "Update Camel project")
+                     description = "Update Camel project",
+                     footer = {
+                             "%nExamples:",
+                             "  camel update run" })
 public class UpdateRun extends CamelCommand {
 
     @CommandLine.Mixin
@@ -70,7 +73,7 @@ public class UpdateRun extends CamelCommand {
 
         List<String> command = new ArrayList<>();
         try (MavenDependencyDownloader downloader = new MavenDependencyDownloader();) {
-            downloader.setRepositories(updateMixin.repos);
+            downloader.setRepositories(updateMixin.mavenResolver.repos());
             downloader.start();
 
             Update update = null;
@@ -96,9 +99,7 @@ public class UpdateRun extends CamelCommand {
             }
         }
 
-        executeCommand(command);
-
-        return 0;
+        return executeCommand(command);
     }
 
     /**

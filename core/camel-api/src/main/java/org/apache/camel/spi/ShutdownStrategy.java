@@ -24,23 +24,25 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
 
 /**
- * Pluggable shutdown strategy executed during shutdown of Camel and the active routes.
+ * Pluggable strategy that performs the actual <a href="https://camel.apache.org/manual/graceful-shutdown.html">graceful
+ * shutdown</a> sequence when a {@link CamelContext} is stopping.
  * <p/>
- * Shutting down routes in a reliable and graceful manner is not a trivial task. Therefore, Camel provides a pluggable
- * strategy allowing 3rd party to use their own strategy if needed.
+ * Graceful shutdown is non-trivial: Camel must stop all route consumers (so no new messages enter) while keeping routes
+ * alive long enough to drain in-flight exchanges, including messages sitting in in-memory queues (SEDA, etc.). The
+ * default implementation shuts down routes in reverse startup order (see {@link RouteStartupOrder}), waits for
+ * in-flight exchanges to complete up to the configured {@link #setTimeout timeout}, then forces shutdown if the timeout
+ * expires.
  * <p/>
- * The shutdown strategy is <b>not</b> intended for Camel end users to use for stopping routes. Instead, use
- * {@link RouteController} via {@link CamelContext}.
- * <p/>
- * The key problem is to stop the input consumers for the routes such that no new messages is coming into Camel. But at
- * the same time still keep the routes running so the existing in flight exchanges can still be run to completion. On
- * top of that there are some in memory components (such as SEDA) which may have pending messages on its in memory queue
- * which we want to run to completion as well, otherwise they will get lost.
- * <p/>
- * Camel provides a default strategy which supports all that that can be used as inspiration for your own strategy.
+ * This SPI is intended for framework and container integrators. End users who need to stop individual routes should use
+ * {@link RouteController} via {@link CamelContext#getRouteController()} instead. Per-route and per-consumer shutdown
+ * behaviour can be tuned via {@link org.apache.camel.ShutdownRoute} and {@link org.apache.camel.ShutdownRunningTask}
+ * without replacing the strategy.
  *
- * @see org.apache.camel.spi.ShutdownAware
  * @see RouteController
+ * @see RouteStartupOrder
+ * @see org.apache.camel.ShutdownRoute
+ * @see org.apache.camel.ShutdownRunningTask
+ * @see org.apache.camel.spi.ShutdownAware
  */
 public interface ShutdownStrategy extends StaticService {
 
@@ -152,7 +154,7 @@ public interface ShutdownStrategy extends StaticService {
      * is happening. And during forced shutdown we want to avoid logging errors/warnings et al. in the logs as a side
      * effect of the forced timeout.
      * <p/>
-     * By default this is <tt>false</tt>
+     * By default, this is <tt>false</tt>
      * <p/>
      * Notice the suppression is a <i>best effort</i> as there may still be some logs coming from 3rd party libraries
      * and whatnot, which Camel cannot control.
@@ -166,7 +168,7 @@ public interface ShutdownStrategy extends StaticService {
      * is happening. And during forced shutdown we want to avoid logging errors/warnings et al. in the logs as a side
      * effect of the forced timeout.
      * <p/>
-     * By default this is <tt>false</tt>
+     * By default, this is <tt>false</tt>
      * <p/>
      * Notice the suppression is a <i>best effort</i> as there may still be some logs coming from 3rd party libraries
      * and whatnot, which Camel cannot control.
@@ -199,7 +201,7 @@ public interface ShutdownStrategy extends StaticService {
     void setShutdownRoutesInReverseOrder(boolean shutdownRoutesInReverseOrder);
 
     /**
-     * Whether to shutdown routes in reverse order than they were started.
+     * Whether to shut down routes in reverse order than they were started.
      * <p/>
      * This option is by default set to <tt>true</tt>.
      *
@@ -223,7 +225,7 @@ public interface ShutdownStrategy extends StaticService {
     boolean isLogInflightExchangesOnTimeout();
 
     /**
-     * Whether the shutdown strategy is forcing to shutdown
+     * Whether the shutdown strategy is forcing to shut down
      */
     boolean isForceShutdown();
 

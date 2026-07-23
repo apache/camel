@@ -28,7 +28,8 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 @InfraService(service = ConsulInfraService.class,
               description = "Consul is a service networking solution",
-              serviceAlias = { "consul" })
+              serviceAlias = { "consul" },
+              uiSupported = true)
 public class ConsulLocalContainerInfraService implements ConsulInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "consul";
 

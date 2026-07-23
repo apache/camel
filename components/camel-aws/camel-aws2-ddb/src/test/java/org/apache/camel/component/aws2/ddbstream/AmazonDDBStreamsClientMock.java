@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.aws2.ddbstream;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -37,6 +39,7 @@ import static org.apache.camel.component.aws2.ddbstream.ShardFixtures.STREAM_ARN
 class AmazonDDBStreamsClientMock implements DynamoDbStreamsClient {
 
     private final Map<Shard, String> shardsToIterators = new HashMap<>();
+    private final List<GetShardIteratorRequest> shardIteratorRequests = new ArrayList<>();
 
     @Override
     public ListStreamsResponse listStreams(ListStreamsRequest listStreamsRequest) {
@@ -56,6 +59,7 @@ class AmazonDDBStreamsClientMock implements DynamoDbStreamsClient {
 
     @Override
     public GetShardIteratorResponse getShardIterator(GetShardIteratorRequest request) {
+        shardIteratorRequests.add(request);
         String shardIterator = shardsToIterators.entrySet().stream()
                 .filter(s -> s.getKey().shardId().equals(request.shardId()))
                 .map(Entry::getValue)
@@ -74,6 +78,11 @@ class AmazonDDBStreamsClientMock implements DynamoDbStreamsClient {
     }
 
     void setMockedShardAndIteratorResponse(Shard shard, String iterator) {
+        shardsToIterators.keySet().removeIf(s -> s.shardId().equals(shard.shardId()));
         shardsToIterators.put(shard, iterator);
+    }
+
+    List<GetShardIteratorRequest> getShardIteratorRequests() {
+        return shardIteratorRequests;
     }
 }

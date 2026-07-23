@@ -115,6 +115,8 @@ public class SftpCertHostVerificationIT extends BaseServerTestSupport {
 
             sshd.start();
             port = sshd.getPort();
+
+            waitForServerReady();
         }
     };
 
@@ -188,7 +190,7 @@ public class SftpCertHostVerificationIT extends BaseServerTestSupport {
                      + "&useUserKnownHostsFile=false"
                      + "&caSignatureAlgorithms=ssh-ed25519,rsa-sha2-512,rsa-sha2-256"
                      + "&delay=10000&disconnect=true")
-                        .routeId("hostCert").noAutoStartup()
+                        .routeId("hostCert").autoStartup(false)
                         .to("mock:result");
             }
         });
@@ -222,7 +224,7 @@ public class SftpCertHostVerificationIT extends BaseServerTestSupport {
                      + "&strictHostKeyChecking=yes"
                      + "&useUserKnownHostsFile=false"
                      + "&delay=10000&disconnect=true")
-                        .routeId("wrongCA").noAutoStartup()
+                        .routeId("wrongCA").autoStartup(false)
                         .to("mock:wrongCA");
             }
         });
@@ -258,7 +260,7 @@ public class SftpCertHostVerificationIT extends BaseServerTestSupport {
                      + "&useUserKnownHostsFile=false"
                      + "&caSignatureAlgorithms=rsa-sha2-512"
                      + "&delay=10000&disconnect=true")
-                        .routeId("restrictedAlgo").noAutoStartup()
+                        .routeId("restrictedAlgo").autoStartup(false)
                         .to("mock:restrictedAlgo");
             }
         });

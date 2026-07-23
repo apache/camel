@@ -71,6 +71,7 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "overrideHost": getOrCreateConfiguration(target).setOverrideHost(property(camelContext, boolean.class, value)); return true;
         case "overrideport":
         case "overridePort": getOrCreateConfiguration(target).setOverridePort(property(camelContext, boolean.class, value)); return true;
+        case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "producturi":
         case "productUri": getOrCreateConfiguration(target).setProductUri(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
@@ -81,6 +82,7 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "sessionName": getOrCreateConfiguration(target).setSessionName(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeout":
         case "sessionTimeout": getOrCreateConfiguration(target).setSessionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -134,6 +136,7 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "overrideHost": return boolean.class;
         case "overrideport":
         case "overridePort": return boolean.class;
+        case "password": return java.lang.String.class;
         case "producturi":
         case "productUri": return java.lang.String.class;
         case "requesttimeout":
@@ -144,6 +147,7 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "sessionName": return java.lang.String.class;
         case "sessiontimeout":
         case "sessionTimeout": return java.lang.Long.class;
+        case "username": return java.lang.String.class;
         default: return null;
         }
     }
@@ -193,6 +197,7 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "overrideHost": return getOrCreateConfiguration(target).isOverrideHost();
         case "overrideport":
         case "overridePort": return getOrCreateConfiguration(target).isOverridePort();
+        case "password": return getOrCreateConfiguration(target).getPassword();
         case "producturi":
         case "productUri": return getOrCreateConfiguration(target).getProductUri();
         case "requesttimeout":
@@ -203,6 +208,7 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "sessionName": return getOrCreateConfiguration(target).getSessionName();
         case "sessiontimeout":
         case "sessionTimeout": return getOrCreateConfiguration(target).getSessionTimeout();
+        case "username": return getOrCreateConfiguration(target).getUsername();
         default: return null;
         }
     }

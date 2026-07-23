@@ -24,6 +24,7 @@ import org.eclipse.neoscada.protocol.iec60870.client.ClientModule;
 import org.eclipse.neoscada.protocol.iec60870.server.Server;
 import org.eclipse.neoscada.protocol.iec60870.server.ServerModule;
 
+@Deprecated(since = "4.21")
 public class DiscardAckModule implements ClientModule, ServerModule {
     @Override
     public void initializeChannel(final SocketChannel channel, final MessageChannel messageChannel) {

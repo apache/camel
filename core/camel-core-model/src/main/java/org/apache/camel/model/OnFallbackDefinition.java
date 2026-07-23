@@ -34,7 +34,9 @@ import org.apache.camel.spi.Resource;
 /**
  * Route to be executed when Circuit Breaker EIP executes fallback
  */
-@Metadata(label = "eip,routing,error")
+@Metadata(label = "eip,error,resilience,routing",
+          aliases = { "fallback" },
+          description = "Defines the fallback route that executes when the Circuit Breaker trips or the primary route fails")
 @XmlRootElement(name = "onFallback")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbackDefinition>
@@ -43,9 +45,13 @@ public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbac
     @XmlTransient
     private ProcessorDefinition<?> parent;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean",
+              deprecationNote = "Not supported by any circuit breaker implementation.",
+              description = "Whether the fallback goes over the network. If so, the fallback is executed on a separate thread-pool to avoid exhausting the main thread-pool.")
+    @Deprecated(since = "4.22", forRemoval = true)
     private String fallbackViaNetwork;
     @XmlElementRef
+    @Metadata(description = "The processing steps to execute as fallback.")
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public OnFallbackDefinition() {
@@ -101,17 +107,12 @@ public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbac
                 .collect(Collectors.joining(",", name + "[", "]"));
     }
 
+    @Deprecated(since = "4.22", forRemoval = true)
     public String getFallbackViaNetwork() {
         return fallbackViaNetwork;
     }
 
-    /**
-     * Whether the fallback goes over the network.
-     * <p/>
-     * If the fallback will go over the network it is another possible point of failure. It is important to execute the
-     * fallback command on a separate thread-pool, otherwise if the main command were to become latent and fill the
-     * thread-pool this would prevent the fallback from running if the two commands share the same pool.
-     */
+    @Deprecated(since = "4.22", forRemoval = true)
     public void setFallbackViaNetwork(String fallbackViaNetwork) {
         this.fallbackViaNetwork = fallbackViaNetwork;
     }

@@ -88,8 +88,13 @@ created it can be wired into the camel route as follows.
 
 == Using the SimpleScheduledRoutePolicy
 
-The `SimpleScheduledRoutePolicy` can be used in Java DSL as show:
+The `SimpleScheduledRoutePolicy` can be used as shown:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
@@ -97,15 +102,15 @@ long startTime = System.currentTimeMillis() + 3000L;
 policy.setRouteStartDate(new Date(startTime));
 policy.setRouteStartRepeatCount(1);
 policy.setRouteStartRepeatInterval(3000);
-                
+
 from("direct:start")
    .routeId("test")
    .routePolicy(policy)
    .to("mock:success");
 ----
 
-And in Spring XML:
-
+XML::
++
 [source,xml]
 ----
 <bean id="date" class="org.apache.camel.routepolicy.quartz.SimpleDate"/>
@@ -113,9 +118,9 @@ And in Spring XML:
 <bean id="startPolicy" class="org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy">
     <property name="routeStartDate" ref="date"/>
     <property name="routeStartRepeatCount" value="1"/>
-    <property name="routeStartRepeatInterval" value="3000"/>      
-</bean> 
-    
+    <property name="routeStartRepeatInterval" value="3000"/>
+</bean>
+
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route id="myroute" routePolicyRef="startPolicy">
         <from uri="direct:start"/>
@@ -123,6 +128,21 @@ And in Spring XML:
     </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: myroute
+    routePolicyRef: startPolicy
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mock:success
+----
+====
 
 == Dependency
 

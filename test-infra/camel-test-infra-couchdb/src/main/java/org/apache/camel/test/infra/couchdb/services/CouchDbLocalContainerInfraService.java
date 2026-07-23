@@ -29,7 +29,8 @@ import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = CouchDbInfraService.class,
               description = "Apache CouchDB is an open source NoSQL document database",
-              serviceAlias = { "couchdb" })
+              serviceAlias = { "couchdb" },
+              uiSupported = true)
 public class CouchDbLocalContainerInfraService implements CouchDbInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "couchdb";
 

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "transformers",
     "title": "Transformations",
-    "description": "To configure transformers.",
+    "description": "Container for defining data type transformer definitions",
     "deprecated": false,
     "label": "transformation",
     "javaType": "org.apache.camel.model.transformer.TransformersDefinition",
@@ -12,6 +12,6 @@
     "output": false
   },
   "properties": {
-    "transformers": { "index": 0, "kind": "element", "displayName": "Transformers", "group": "common", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.transformer.TransformerDefinition>", "oneOf": [ "customTransformer", "dataFormatTransformer", "endpointTransformer", "loadTransformer" ], "deprecated": false, "autowired": false, "secret": false, "description": "The configured transformers" }
+    "transformers": { "index": 0, "kind": "element", "displayName": "Transformers", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.transformer.TransformerDefinition>", "oneOf": [ "customTransformer", "dataFormatTransformer", "endpointTransformer", "loadTransformer" ], "deprecated": false, "autowired": false, "secret": false, "description": "The configured transformers." }
   }
 }

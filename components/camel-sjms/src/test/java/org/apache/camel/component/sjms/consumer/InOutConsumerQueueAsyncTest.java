@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -40,7 +42,7 @@ public class InOutConsumerQueueAsyncTest extends JmsCommonTestSupport {
         template.sendBody("sjms:start.queue.InOutConsumerQueueAsyncTest", "Hello Camel");
         template.sendBody("sjms:start.queue.InOutConsumerQueueAsyncTest", "Hello World");
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override

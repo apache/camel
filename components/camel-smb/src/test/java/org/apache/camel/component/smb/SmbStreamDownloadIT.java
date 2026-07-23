@@ -22,10 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class SmbStreamDownloadIT extends SmbServerTestSupport {
 
@@ -43,19 +43,13 @@ public class SmbStreamDownloadIT extends SmbServerTestSupport {
     @Test
     public void testStreamDownload() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:received_send");
-        mock.message(0).body().isInstanceOf(SmbFile.class);
-        mock.message(0).predicate(e -> {
-            Object b = e.getMessage().getBody(SmbFile.class).getBody();
-            return b instanceof InputStream;
-        });
         mock.expectedMessageCount(1);
 
         mock.assertIsSatisfied();
 
-        InputStream is = mock.getExchanges().get(0).getIn().getBody(InputStream.class);
-        assertNotNull(is);
-        String text = IOHelper.loadText(is);
-        Assertions.assertEquals("World\n", text);
+        Exchange exchange = mock.getExchanges().get(0);
+        String text = exchange.getIn().getHeader("StreamContent", String.class);
+        assertEquals("World\n", text);
     }
 
     private void prepareSmbServer() {
@@ -67,6 +61,14 @@ public class SmbStreamDownloadIT extends SmbServerTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(getSmbUrl()).streamCache("false")
+                        .process(e -> {
+                            Object body = e.getMessage().getBody(SmbFile.class);
+                            assertInstanceOf(SmbFile.class, body);
+                            Object inner = ((SmbFile) body).getBody();
+                            assertInstanceOf(InputStream.class, inner);
+                            String text = IOHelper.loadText((InputStream) inner);
+                            e.getMessage().setHeader("StreamContent", text);
+                        })
                         .to("mock:received_send");
             }
         };

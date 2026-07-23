@@ -175,6 +175,23 @@ public interface RestOpenApiEndpointBuilderFactory {
             doSetProperty("missingOperation", missingOperation);
             return this;
         }
+        /**
+         * OAuth profile name passed to the HTTP consumer delegate for
+         * validating incoming Authorization: Bearer tokens. The selected
+         * consumer component must support the oauthProfile option; delegates
+         * that ignore unknown options will start without endpoint protection.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointConsumerBuilder oauthProfile(String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
+            return this;
+        }
     }
 
     /**

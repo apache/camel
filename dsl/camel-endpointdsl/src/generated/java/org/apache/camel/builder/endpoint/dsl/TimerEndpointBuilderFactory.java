@@ -573,7 +573,7 @@ public interface TimerEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final TimerHeaderNameBuilder INSTANCE = new TimerHeaderNameBuilder();
+        public static final TimerHeaderNameBuilder INSTANCE = new TimerHeaderNameBuilder();
 
         /**
          * The fired time.

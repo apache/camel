@@ -19,6 +19,8 @@ package org.apache.camel.builder;
 import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class RouteTemplateOptionalValueTest extends ContextTestSupport {
 
     @Test
@@ -50,6 +52,62 @@ public class RouteTemplateOptionalValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testMultipleOptionalNoneProvided() throws Exception {
+        TemplatedRouteBuilder.builder(context, "myMultiTemplate")
+                .parameter("foo", "multi1")
+                .routeId("myRoute")
+                .add();
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+
+        template.sendBody("direct:multi1", "Hello World");
+        template.sendBody("direct:multi1", "Bye World");
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(2, getMockEndpoint("mock:result").getReceivedExchanges().size());
+    }
+
+    @Test
+    public void testMultipleOptionalSomeProvided() throws Exception {
+        TemplatedRouteBuilder.builder(context, "myMultiTemplate")
+                .parameter("foo", "multi2")
+                .parameter("myRetain", "1")
+                .routeId("myRoute")
+                .add();
+
+        getMockEndpoint("mock:result?retainFirst=1").expectedMessageCount(2);
+
+        template.sendBody("direct:multi2", "Hello World");
+        template.sendBody("direct:multi2", "Bye World");
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(1, getMockEndpoint("mock:result?retainFirst=1").getReceivedExchanges().size());
+    }
+
+    @Test
+    public void testMultipleOptionalAllProvided() throws Exception {
+        TemplatedRouteBuilder.builder(context, "myMultiTemplate")
+                .parameter("foo", "multi3")
+                .parameter("myRetain", "1")
+                .parameter("myRetainLast", "1")
+                .routeId("myRoute")
+                .add();
+
+        getMockEndpoint("mock:result?retainFirst=1&retainLast=1").expectedMessageCount(3);
+
+        template.sendBody("direct:multi3", "Hello World");
+        template.sendBody("direct:multi3", "Middle World");
+        template.sendBody("direct:multi3", "Bye World");
+
+        assertMockEndpointsSatisfied();
+
+        // retainFirst=1 keeps first, retainLast=1 keeps last = 2 retained
+        assertEquals(2, getMockEndpoint("mock:result?retainFirst=1&retainLast=1").getReceivedExchanges().size());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -58,6 +116,12 @@ public class RouteTemplateOptionalValueTest extends ContextTestSupport {
                 routeTemplate("myTemplate").templateParameter("foo").templateOptionalParameter("myRetain")
                         .from("direct:{{foo}}")
                         .to("mock:result?retainFirst={{?myRetain}}");
+
+                routeTemplate("myMultiTemplate").templateParameter("foo")
+                        .templateOptionalParameter("myRetain")
+                        .templateOptionalParameter("myRetainLast")
+                        .from("direct:{{foo}}")
+                        .to("mock:result?retainFirst={{?myRetain}}&retainLast={{?myRetainLast}}");
             }
         };
     }

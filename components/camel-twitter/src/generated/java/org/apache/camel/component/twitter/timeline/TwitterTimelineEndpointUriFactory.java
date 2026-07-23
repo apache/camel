@@ -21,6 +21,7 @@ public class TwitterTimelineEndpointUriFactory extends org.apache.camel.support.
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(45);
@@ -70,12 +71,14 @@ public class TwitterTimelineEndpointUriFactory extends org.apache.camel.support.
         props.add("user");
         props.add("userIds");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
+        Set<String> secretProps = new HashSet<>(5);
         secretProps.add("accessToken");
         secretProps.add("accessTokenSecret");
         secretProps.add("consumerKey");
         secretProps.add("consumerSecret");
+        secretProps.add("httpProxyPassword");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(1);
         prefixes.put("schedulerProperties", "scheduler.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
@@ -106,6 +109,11 @@ public class TwitterTimelineEndpointUriFactory extends org.apache.camel.support.
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> endpointIdentityPropertyNames() {
+        return ENDPOINT_IDENTITY_PROPERTY_NAMES;
     }
 
     @Override

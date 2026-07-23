@@ -76,8 +76,6 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
         boolean parallel = parseBoolean(definition.getParallelProcessing(), false);
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, parallel);
-        // ExecutorService lifecycle is managed by AggregateProcessor via shutdownThreadPool flag
-        @SuppressWarnings("java:S2095")
         ExecutorService threadPool = getConfiguredExecutorService("Aggregator", definition, parallel);
         if (threadPool == null && !parallel) {
             // executor service is mandatory for the Aggregator
@@ -136,6 +134,10 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         Boolean optimisticLocking = parseBoolean(definition.getOptimisticLocking());
         if (optimisticLocking != null) {
             answer.setOptimisticLocking(optimisticLocking);
+        }
+        Boolean optimisticLockingSyncRetry = parseBoolean(definition.getOptimisticLockingSyncRetry());
+        if (optimisticLockingSyncRetry != null) {
+            answer.setOptimisticLockingSyncRetry(optimisticLockingSyncRetry);
         }
         if (definition.getCompletionPredicate() != null) {
             Predicate predicate = createPredicate(definition.getCompletionPredicate());

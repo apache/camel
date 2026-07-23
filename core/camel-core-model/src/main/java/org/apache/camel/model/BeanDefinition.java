@@ -24,12 +24,14 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.BeanScope;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Calls a Java bean
  */
-@Metadata(label = "eip,endpoint")
+@Metadata(label = "eip,endpoint",
+          description = "Invokes a method on a Java bean, with automatic parameter binding from the message body, headers, and exchange properties")
 @XmlRootElement(name = "bean")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
@@ -40,13 +42,19 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     private Object bean;
 
     @XmlAttribute
+    @DslArg(position = 0)
+    @Metadata(description = "A reference to an existing bean to use, which is looked up from the registry.")
     private String ref;
     @XmlAttribute
+    @DslArg(position = 1)
+    @Metadata(description = "The method name on the bean to invoke.")
     private String method;
     @XmlAttribute
+    @Metadata(description = "The class name (fully qualified) of the bean to use.")
     private String beanType;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
+    @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype",
+              description = "Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint.")
     private String scope;
 
     public BeanDefinition() {
@@ -113,9 +121,6 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return ref;
     }
 
-    /**
-     * Sets a reference to an existing bean to use, which is looked up from the registry
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -124,16 +129,10 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return method;
     }
 
-    /**
-     * Sets the method name on the bean to use
-     */
     public void setMethod(String method) {
         this.method = method;
     }
 
-    /**
-     * Sets an existing instance of the bean to use
-     */
     public void setBean(Object bean) {
         this.bean = bean;
     }
@@ -146,9 +145,6 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return beanType;
     }
 
-    /**
-     * Sets the class name (fully qualified) of the bean to use
-     */
     public void setBeanType(String beanType) {
         this.beanType = beanType;
     }
@@ -157,9 +153,6 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return beanClass;
     }
 
-    /**
-     * Sets the class name (fully qualified) of the bean to use
-     */
     public void setBeanType(Class<?> beanType) {
         this.beanClass = beanType;
     }
@@ -172,19 +165,6 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         this.scope = scope;
     }
 
-    /**
-     * Scope of bean.
-     *
-     * When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of
-     * the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same time.
-     * When using request scope the bean is created or looked up once per request (exchange). This can be used if you
-     * want to store state on a bean while processing a request and you want to call the same bean instance multiple
-     * times while processing the request. The bean does not have to be thread-safe as the instance is only called from
-     * the same request. When using prototype scope, then the bean will be looked up or created per call. However in
-     * case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on
-     * their configuration can act as either singleton or prototype scope. So when using prototype scope then this
-     * depends on the bean registry implementation.
-     */
     public void setScope(BeanScope scope) {
         this.scope = scope.name();
     }

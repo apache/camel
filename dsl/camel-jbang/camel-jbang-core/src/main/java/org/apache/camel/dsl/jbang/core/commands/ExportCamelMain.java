@@ -35,6 +35,7 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.ObjectHelper;
 
@@ -51,15 +52,25 @@ class ExportCamelMain extends Export {
 
     @Override
     public Integer export() throws Exception {
-        String[] ids = gav.split(":");
-        if (ids.length != 3) {
+        try {
+            MavenGav.parseStrictGav(gav);
+        } catch (IllegalArgumentException e) {
             printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
+        if (parentPom != null) {
+            try {
+                MavenGav.parseStrictGav(parentPom);
+            } catch (IllegalArgumentException e) {
+                printer().printErr("--parent-pom must be in syntax: groupId:artifactId:version");
+                return 1;
+            }
+        }
+        String[] ids = gav.split(":");
 
         // the settings file has information what to export
         Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
-        if (fresh || !files.isEmpty() || !Files.exists(settings)) {
+        if (mavenResolver.fresh() || !files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
             printer().println("Generating fresh run data");
             int silent = runSilently(ignoreLoadingError, lazyBean, verbose);
@@ -161,7 +172,9 @@ class ExportCamelMain extends Export {
         if (mavenWrapper) {
             copyMavenWrapper();
         }
-        copyDockerFiles(BUILD_DIR);
+        if (docker) {
+            copyDockerFiles(BUILD_DIR);
+        }
         String appJar = Paths.get("target", ids[1] + "-" + ids[2] + ".jar").toString();
         copyReadme(BUILD_DIR, appJar);
         if (cleanExportDir || !exportDir.equals(".")) {
@@ -214,6 +227,8 @@ class ExportCamelMain extends Export {
         model.put("BuildProperties", formatBuildProperties());
         model.put("Repositories", buildRepositoryList(repos));
         model.put("Dependencies", buildDependencyList(deps));
+        model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
+        enrichParentPom(model);
 
         // kubernetes/docker properties
         enrichKubernetesModel(model, settings, profile);
@@ -254,7 +269,6 @@ class ExportCamelMain extends Export {
         model.put("hasJib", jib || jkube);
         model.put("hasJkube", jkube);
         if (jib || jkube) {
-            model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
             model.put("hasJibFromAuth",
                     prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.from.auth.")));
             model.put("hasJibToAuth",
@@ -278,18 +292,20 @@ class ExportCamelMain extends Export {
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-main"));
         answer.removeIf(s -> s.contains("camel-health"));
+        // spring-boot-starter JARs are not usable in camel-main runtime
+        answer.removeIf(s -> s.contains("spring-boot-starter"));
 
         if (profile != null && Files.exists(profile)) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
             // if metrics is defined then include camel-micrometer-prometheus for camel-main runtime
-            if (prop.getProperty("camel.metrics.enabled") != null
-                    || prop.getProperty("camel.management.metricsEnabled") != null
-                    || prop.getProperty("camel.server.metricsEnabled") != null) {
+            if (prop.containsKey("camel.metrics.enabled")
+                    || prop.containsKey("camel.management.metricsEnabled")
+                    || prop.containsKey("camel.server.metricsEnabled")) {
                 answer.add("mvn:org.apache.camel:camel-micrometer-prometheus");
             }
             // if health-check is defined then include camel-health for camel-main runtime
-            if (prop.getProperty("camel.management.healthCheckEnabled") != null) {
+            if (prop.containsKey("camel.management.healthCheckEnabled")) {
                 answer.add("mvn:org.apache.camel:camel-health");
             }
         }

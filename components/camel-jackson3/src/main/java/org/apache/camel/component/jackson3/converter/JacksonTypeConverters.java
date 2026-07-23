@@ -305,7 +305,7 @@ public final class JacksonTypeConverters {
             lock.lock();
             try {
                 if (defaultMapper == null) {
-                    ObjectMapper mapper = new ObjectMapper();
+                    JsonMapper.Builder builder = JsonMapper.builder();
                     if (moduleClassNames != null) {
                         for (Object o : ObjectHelper.createIterable(moduleClassNames)) {
                             Class<JacksonModule> type
@@ -313,11 +313,11 @@ public final class JacksonTypeConverters {
                             JacksonModule module = camelContext.getInjector().newInstance(type);
 
                             LOG.debug("Registering module: {} -> {}", o, module);
-                            mapper = JsonMapper.builder().addModule(module).build();
+                            builder.addModule(module);
                         }
                     }
 
-                    defaultMapper = mapper;
+                    defaultMapper = builder.build();
                 }
             } finally {
                 lock.unlock();

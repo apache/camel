@@ -53,9 +53,9 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
 
     @Metadata(label = "security")
     private String basicAuthUsername;
-    @Metadata(label = "security")
+    @Metadata(label = "security", security = "secret")
     private String basicAuthPassword;
-    @Metadata(label = "security")
+    @Metadata(label = "security", security = "secret")
     private String bearerToken;
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
@@ -67,7 +67,7 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
     private ProxyType proxyType;
     @Metadata(label = "proxy")
     private String proxyUsername;
-    @Metadata(label = "proxy")
+    @Metadata(label = "proxy", security = "secret")
     private String proxyPassword;
 
     @Metadata(label = "advanced")

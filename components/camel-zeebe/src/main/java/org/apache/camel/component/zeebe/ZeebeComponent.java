@@ -118,7 +118,7 @@ public class ZeebeComponent extends DefaultComponent {
         super.doStart();
 
         if (zeebeService == null) {
-            zeebeService = new ZeebeService(gatewayHost, gatewayPort);
+            zeebeService = new ZeebeService(gatewayHost, gatewayPort, clientId, clientSecret, oAuthAPI);
             zeebeService.doStart();
         }
     }

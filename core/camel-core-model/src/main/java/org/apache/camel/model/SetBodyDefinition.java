@@ -27,7 +27,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Sets the contents of the message body
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          aliases = { "map", "transform" },
+          description = "Sets the message body to a value computed by an expression")
 @XmlRootElement(name = "setBody")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetBodyDefinition extends ExpressionNode {
@@ -63,10 +65,8 @@ public class SetBodyDefinition extends ExpressionNode {
         return "setBody[" + getExpression() + "]";
     }
 
-    /**
-     * Expression that returns the new body to use
-     */
     @Override
+    @Metadata(description = "The expression whose result is used as the new message body.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

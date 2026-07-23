@@ -67,6 +67,25 @@ public interface Langchain4jAgentComponentBuilderFactory {
         }
     
         /**
+         * AgentConfiguration used by Camel to create the agent internally. When
+         * set, Camel creates an AgentWithMemory if a ChatMemoryProvider is
+         * configured, otherwise an AgentWithoutMemory. If an agentFactory is
+         * also configured, the factory takes precedence.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.langchain4j.agent.api.AgentConfiguration&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param agentConfiguration the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder agentConfiguration(org.apache.camel.component.langchain4j.agent.api.AgentConfiguration agentConfiguration) {
+            doSetProperty("agentConfiguration", agentConfiguration);
+            return this;
+        }
+    
+        /**
          * The agent factory to use for creating agents if no Agent is provided.
          * 
          * The option is a:
@@ -98,6 +117,27 @@ public interface Langchain4jAgentComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * JSON schema for structured output validation. Only supported in
+         * inline agent creation mode: agentConfiguration must be set and
+         * neither agent nor agentFactory may be configured. Mutually exclusive
+         * with outputClass.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param jsonSchema the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder jsonSchema(java.lang.String jsonSchema) {
+            doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+    
         
         /**
          * Whether the producer should be started lazy (on the first message).
@@ -120,6 +160,28 @@ public interface Langchain4jAgentComponentBuilderFactory {
          */
         default Langchain4jAgentComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    
+        /**
+         * Java class to use for structured output. Camel derives the JSON
+         * schema from the class and instructs the model to produce matching
+         * JSON; the response body is left as a raw JSON string. Only supported
+         * in inline agent creation mode: agentConfiguration must be set and
+         * neither agent nor agentFactory may be configured. The class must be a
+         * POJO with public fields or getters; simple types, enums, and
+         * collections are not supported. Mutually exclusive with jsonSchema.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param outputClass the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder outputClass(java.lang.Class<java.lang.Object> outputClass) {
+            doSetProperty("outputClass", outputClass);
             return this;
         }
     
@@ -221,9 +283,12 @@ public interface Langchain4jAgentComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "agent": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgent((org.apache.camel.component.langchain4j.agent.api.Agent) value); return true;
+            case "agentConfiguration": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgentConfiguration((org.apache.camel.component.langchain4j.agent.api.AgentConfiguration) value); return true;
             case "agentFactory": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgentFactory((org.apache.camel.component.langchain4j.agent.api.AgentFactory) value); return true;
             case "configuration": ((LangChain4jAgentComponent) component).setConfiguration((org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration) value); return true;
+            case "jsonSchema": getOrCreateConfiguration((LangChain4jAgentComponent) component).setJsonSchema((java.lang.String) value); return true;
             case "lazyStartProducer": ((LangChain4jAgentComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "outputClass": getOrCreateConfiguration((LangChain4jAgentComponent) component).setOutputClass((java.lang.Class) value); return true;
             case "tags": getOrCreateConfiguration((LangChain4jAgentComponent) component).setTags((java.lang.String) value); return true;
             case "autowiredEnabled": ((LangChain4jAgentComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "mcpClients": getOrCreateConfiguration((LangChain4jAgentComponent) component).setMcpClients((java.util.List) value); return true;

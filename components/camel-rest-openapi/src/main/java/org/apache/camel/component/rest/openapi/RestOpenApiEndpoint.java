@@ -75,6 +75,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.processor.RestBindingAdvice;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -176,6 +177,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     private String mockIncludePattern;
     @UriParam(label = "consumer", description = "Sets the context-path to use for servicing the OpenAPI specification")
     private String apiContextPath;
+    @UriParam(label = "consumer,security", displayName = "OAuth Profile",
+              description = "OAuth profile name passed to the HTTP consumer delegate for validating incoming"
+                            + " Authorization: Bearer tokens. The selected consumer component must support the"
+                            + " oauthProfile option; delegates that ignore unknown options will start without"
+                            + " endpoint protection.")
+    private String oauthProfile;
+
+    private volatile RestOpenApiProcessor openApiProcessor;
 
     public RestOpenApiEndpoint() {
         // help tooling instantiate endpoint
@@ -220,6 +229,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         RestOpenApiProcessor openApiProcessor
                 = new RestOpenApiProcessor(this, doc, path, apiContextPath, restOpenapiProcessorStrategy);
         CamelContextAware.trySetCamelContext(openApiProcessor, getCamelContext());
+        this.openApiProcessor = openApiProcessor;
 
         // use an advice to call the processor that is responsible for routing to the route that matches the
         // operation id, and also do validation of the incoming request
@@ -321,8 +331,20 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         if (factory != null) {
+            // fail closed: never start an unprotected consumer when oauthProfile is configured but the
+            // delegate factory does not declare that its consumers enforce it
+            if (isNotEmpty(oauthProfile) && !factory.supportsOAuthProfile()) {
+                throw new IllegalArgumentException(
+                        "The oauthProfile option is not supported by the resolved RestOpenApiConsumerFactory ("
+                                                   + factory.getClass().getName()
+                                                   + "); select a consumer component that enforces oauthProfile");
+            }
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname);
             Map<String, Object> copy = new HashMap<>(parameters); // defensive copy of the parameters
+            // pass oauthProfile to the delegate consumer, which is responsible for enforcing it
+            if (isNotEmpty(oauthProfile)) {
+                copy.put("oauthProfile", oauthProfile);
+            }
             // avoid duplicate context-path
             if (basePath.equals(config.getContextPath())) {
                 basePath = "";
@@ -376,6 +398,13 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                 "The specified operation with ID: `" + operationId
                                            + "` cannot be found in the OpenApi specification loaded from `" + specificationUri
                                            + "`. Operations defined in the specification are: " + supportedOperations);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(openApiProcessor);
+        openApiProcessor = null;
     }
 
     public String getBasePath() {
@@ -503,6 +532,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         this.apiContextPath = apiContextPath;
     }
 
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
+    }
+
     public String getBindingPackageScan() {
         return bindingPackageScan;
     }
@@ -522,8 +559,40 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         boolean hasHost = params.containsKey("host");
         String basePath = determineBasePath(openapi);
         String componentEndpointUri = "rest:" + method + ":" + basePath + ":" + uriTemplate;
+
+        // include all distinguishing options in the URI so each unique combination
+        // gets its own cached endpoint and avoids cross-contamination (CAMEL-24113)
+        StringBuilder query = new StringBuilder();
         if (hasHost) {
-            componentEndpointUri += "?host=" + params.get("host");
+            query.append("host=").append(params.get("host"));
+        }
+        if (params.containsKey("producerComponentName")) {
+            if (!query.isEmpty()) {
+                query.append('&');
+            }
+            query.append("producerComponentName=").append(params.get("producerComponentName"));
+        }
+        if (params.containsKey("consumes")) {
+            if (!query.isEmpty()) {
+                query.append('&');
+            }
+            query.append("consumes=").append(params.get("consumes"));
+        }
+        if (params.containsKey("produces")) {
+            if (!query.isEmpty()) {
+                query.append('&');
+            }
+            query.append("produces=").append(params.get("produces"));
+        }
+        if (params.containsKey("queryParameters")) {
+            if (!query.isEmpty()) {
+                query.append('&');
+            }
+            query.append("queryParameters=")
+                    .append(UnsafeUriCharactersEncoder.encode(params.get("queryParameters").toString()));
+        }
+        if (!query.isEmpty()) {
+            componentEndpointUri += "?" + query;
         }
 
         Endpoint endpoint = camelContext.getEndpoint(componentEndpointUri);
@@ -646,13 +715,12 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (this.parameters != null) {
             if (operation.getParameters() != null) {
                 for (Map.Entry<String, Object> entry : this.parameters.entrySet()) {
-                    for (Parameter param : operation.getParameters()) {
-                        // skip parameters that are part of the operation as path as otherwise
-                        // it will be duplicated as query parameter as well
-                        boolean clash = "path".equals(param.getIn()) && entry.getKey().equals(param.getName());
-                        if (!clash) {
-                            nestedParameters.put(entry.getKey(), entry.getValue());
-                        }
+                    // skip parameters that are part of the operation as path as otherwise
+                    // it will be duplicated as query parameter as well
+                    boolean clash = operation.getParameters().stream()
+                            .anyMatch(p -> "path".equals(p.getIn()) && entry.getKey().equals(p.getName()));
+                    if (!clash) {
+                        nestedParameters.put(entry.getKey(), entry.getValue());
                     }
                 }
             } else {
@@ -827,6 +895,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             OpenAPI openAPI, Operation operation, String method, String uriTemplate) {
         DefaultRequestValidator answer = new DefaultRequestValidator();
         answer.setOperation(new RestOpenApiOperation(operation, method, uriTemplate));
+        answer.setEndpointParameters(parameters);
         return answer;
     }
 

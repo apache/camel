@@ -33,7 +33,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.impl.BlockingHandlerDecorator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
@@ -228,7 +227,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     }
 
     /**
-     * Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang.
+     * Clear the captured metrics data when Camel is reloading routes such as when using Camel CLI.
      */
     public void setClearOnReload(boolean clearOnReload) {
         this.clearOnReload = clearOnReload;
@@ -515,10 +514,9 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         String[] scrapes = meterRegistry.scrape().split("\n");
         for (String s : scrapes) {
             if (matchesFilter(s, filters)) {
-                // We put on warn level to make sure it is printed even if the log is
-                // at higher levels. Important: we also include a start and end tag to make sure the
+                // we include a start and end tag to make sure the
                 // scraper can more easily identify the metric content.
-                LOG.warn("#METRIC-START#" + s + "#METRIC-END#");
+                LOG.info("#METRIC-START#" + s + "#METRIC-END#");
             }
         }
     }
@@ -576,7 +574,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         };
 
         // use blocking handler as the task can take longer time to complete
-        metrics.handler(new BlockingHandlerDecorator(handler, true));
+        metrics.blockingHandler(handler);
 
         platformHttpComponent.addHttpManagementEndpoint(path, "GET",
                 null, format, null);

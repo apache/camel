@@ -132,8 +132,12 @@ public class DevTrace implements Iterable<DevSpanAdapter> {
 class SpanComparator implements Comparator<DevSpanAdapter> {
     @Override
     public int compare(DevSpanAdapter a, DevSpanAdapter b) {
-        DevSpanAdapter msa = (DevSpanAdapter) a;
-        DevSpanAdapter msb = (DevSpanAdapter) b;
-        return (int) (Long.parseLong(msa.getTag("initTimestamp")) - Long.parseLong(msb.getTag("initTimestamp")));
+        int cmp = Long.compare(Long.parseLong(a.getTag("initTimestamp")), Long.parseLong(b.getTag("initTimestamp")));
+        if (cmp != 0) {
+            return cmp;
+        }
+        // When start times tie, sort by end time descending so that parent
+        // spans (which end after their children) come first.
+        return Long.compare(Long.parseLong(b.getTag("endTimestamp")), Long.parseLong(a.getTag("endTimestamp")));
     }
 }

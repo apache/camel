@@ -137,7 +137,9 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToJavaDumper;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
@@ -167,6 +169,7 @@ import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RouteTemplateParameterSource;
+import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -278,6 +281,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
     private Boolean streamCache = Boolean.TRUE;
+    private Boolean messageSize = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean loadTypeConverters = Boolean.FALSE;
     private Boolean loadHealthChecks = Boolean.FALSE;
@@ -402,6 +406,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(BeanProcessorFactory.class, this::createBeanProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(ModelToXMLDumper.class, this::createModelToXMLDumper);
         camelContextExtension.lazyAddContextPlugin(ModelToYAMLDumper.class, this::createModelToYAMLDumper);
+        camelContextExtension.lazyAddContextPlugin(ModelToJavaDumper.class, this::createModelToJavaDumper);
         camelContextExtension.lazyAddContextPlugin(ModelToStructureDumper.class, this::createModelToStructureDumper);
         camelContextExtension.lazyAddContextPlugin(DeferServiceFactory.class, this::createDeferServiceFactory);
         camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
@@ -412,6 +417,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(SimpleFunctionRegistry.class, this::createSimpleFunctionRegistry);
         camelContextExtension.lazyAddContextPlugin(RestRegistry.class, this::createRestRegistry);
         camelContextExtension.lazyAddContextPlugin(RouteDiagramDumper.class, this::createRouteDiagramDumper);
+        camelContextExtension.lazyAddContextPlugin(RouteTopologyDumper.class, this::createRouteTopologyDumper);
     }
 
     protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
@@ -867,8 +873,8 @@ public abstract class AbstractCamelContext extends BaseService
                 if (answer != null) {
                     if (!prototype) {
                         addService(answer);
-                        // register in registry
-                        answer = addEndpointToRegistry(uri, answer);
+                        // register in registry (uri is already normalized above, so avoid normalizing it again)
+                        answer = addEndpointToRegistry(uri, answer, true);
                     } else {
                         addPrototypeService(answer);
                         // if there is endpoint strategies, then use the endpoints they return
@@ -919,6 +925,21 @@ public abstract class AbstractCamelContext extends BaseService
      * @return          the added endpoint
      */
     protected Endpoint addEndpointToRegistry(String uri, Endpoint endpoint) {
+        return addEndpointToRegistry(uri, endpoint, false);
+    }
+
+    /**
+     * Strategy to add the given endpoint to the internal endpoint registry
+     *
+     * @param  uri        uri of the endpoint
+     * @param  endpoint   the endpoint to add
+     * @param  normalized whether the uri is already normalized (for example because it was normalized earlier to do the
+     *                    cache lookup that preceded this call). Re-normalizing an already normalized uri is not
+     *                    idempotent for uris containing a literal {@code %} character, so callers must not normalize
+     *                    twice or the stored key will never match a later lookup key (CAMEL-24171).
+     * @return            the added endpoint
+     */
+    protected Endpoint addEndpointToRegistry(String uri, Endpoint endpoint, boolean normalized) {
         StringHelper.notEmpty(uri, "uri");
         ObjectHelper.notNull(endpoint, "endpoint");
 
@@ -927,7 +948,7 @@ public abstract class AbstractCamelContext extends BaseService
         for (EndpointStrategy strategy : getEndpointStrategies()) {
             endpoint = strategy.registerEndpoint(uri, endpoint);
         }
-        endpoints.put(getEndpointKey(uri, endpoint), endpoint);
+        endpoints.put(getEndpointKey(uri, endpoint, normalized), endpoint);
         return endpoint;
     }
 
@@ -949,11 +970,24 @@ public abstract class AbstractCamelContext extends BaseService
      * @return          the key
      */
     protected NormalizedUri getEndpointKey(String uri, Endpoint endpoint) {
+        return getEndpointKey(uri, endpoint, false);
+    }
+
+    /**
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link DefaultEndpointRegistry}
+     *
+     * @param  uri        the endpoint uri
+     * @param  endpoint   the endpoint
+     * @param  normalized whether the uri is already normalized; see
+     *                    {@link #addEndpointToRegistry(String, Endpoint, boolean)}
+     * @return            the key
+     */
+    protected NormalizedUri getEndpointKey(String uri, Endpoint endpoint, boolean normalized) {
         if (endpoint != null && !endpoint.isSingleton()) {
             int counter = endpointKeyCounter.incrementAndGet();
-            return NormalizedUri.newNormalizedUri(uri + ":" + counter, false);
+            return NormalizedUri.newNormalizedUri(uri + ":" + counter, normalized);
         } else {
-            return NormalizedUri.newNormalizedUri(uri, false);
+            return NormalizedUri.newNormalizedUri(uri, normalized);
         }
     }
 
@@ -1769,7 +1803,7 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public String getDevConsoleParameterJsonSchema(String devConsoleName) throws IOException {
         String name = sanitizeFileName(devConsoleName) + ".json";
-        String path = DefaultDevConsoleResolver.DEV_CONSOLE_RESOURCE_PATH + name;
+        String path = "META-INF/org/apache/camel/dev-console/" + name;
         String inputStream = doLoadResource(devConsoleName, path, "console");
         if (inputStream != null) {
             return inputStream;
@@ -2007,6 +2041,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public Boolean isStreamCaching() {
         return streamCache;
+    }
+
+    @Override
+    public void setMessageSize(Boolean messageSize) {
+        this.messageSize = messageSize;
+    }
+
+    @Override
+    public Boolean isMessageSize() {
+        return messageSize;
     }
 
     @Override
@@ -3136,6 +3180,10 @@ public abstract class AbstractCamelContext extends BaseService
                       + " See more details at https://camel.apache.org/stream-caching.html");
         }
 
+        if (isMessageSizeInUse()) {
+            getMessageSizeStrategy().setEnabled(true);
+        }
+
         if (isAllowUseOriginalMessage()) {
             LOG.debug("AllowUseOriginalMessage enabled because UseOriginalMessage is in use");
         }
@@ -3560,6 +3608,10 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected boolean isStreamCachingInUse() throws Exception {
         return isStreamCaching();
+    }
+
+    protected boolean isMessageSizeInUse() throws Exception {
+        return isMessageSize();
     }
 
     protected void bindDataFormats() throws Exception {
@@ -4337,6 +4389,16 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public MessageSizeStrategy getMessageSizeStrategy() {
+        return camelContextExtension.getMessageSizeStrategy();
+    }
+
+    @Override
+    public void setMessageSizeStrategy(MessageSizeStrategy messageSizeStrategy) {
+        camelContextExtension.setMessageSizeStrategy(messageSizeStrategy);
+    }
+
+    @Override
     public RestRegistry getRestRegistry() {
         return PluginHelper.getRestRegistry(this);
     }
@@ -4348,6 +4410,9 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected RestRegistry createRestRegistry() {
         RestRegistryFactory factory = camelContextExtension.getRestRegistryFactory();
+        if (factory == null) {
+            return null;
+        }
         return factory.createRegistry();
     }
 
@@ -4356,6 +4421,13 @@ public abstract class AbstractCamelContext extends BaseService
                 RouteDiagramDumper.FACTORY,
                 RouteDiagramDumper.class,
                 "camel-diagram");
+    }
+
+    protected RouteTopologyDumper createRouteTopologyDumper() {
+        return ResolverHelper.resolveMandatoryService(getCamelContextReference(),
+                RouteTopologyDumper.FACTORY,
+                RouteTopologyDumper.class,
+                "camel-core-engine");
     }
 
     @Override
@@ -4452,6 +4524,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract StreamCachingStrategy createStreamCachingStrategy();
 
+    protected abstract MessageSizeStrategy createMessageSizeStrategy();
+
     protected abstract TypeConverter createTypeConverter();
 
     protected abstract TypeConverterRegistry createTypeConverterRegistry();
@@ -4547,6 +4621,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ModelToXMLDumper createModelToXMLDumper();
 
     protected abstract ModelToYAMLDumper createModelToYAMLDumper();
+
+    protected abstract ModelToJavaDumper createModelToJavaDumper();
 
     protected abstract ModelToStructureDumper createModelToStructureDumper();
 

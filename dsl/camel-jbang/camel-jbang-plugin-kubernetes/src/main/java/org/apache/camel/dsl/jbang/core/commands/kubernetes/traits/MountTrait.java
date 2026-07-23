@@ -250,7 +250,7 @@ public class MountTrait extends BaseTrait {
         Matcher resourceCoordinates = RESOURCE_VALUE_EXPRESSION.matcher(expression);
         if (resourceCoordinates.matches()) {
             name = resourceCoordinates.group(1);
-            key = resourceCoordinates.group(3);
+            key = Optional.ofNullable(resourceCoordinates.group(3)).orElse("");
             destPath = resourceCoordinates.group(4);
             if (!Strings.isNullOrEmpty(destPath)) {
                 destPath = destPath.replace("@", "");

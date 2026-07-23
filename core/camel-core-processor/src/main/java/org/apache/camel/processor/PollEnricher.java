@@ -42,12 +42,14 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.OptimisedComponentResolver;
 import org.apache.camel.spi.PollDynamicAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.cache.DefaultConsumerCache;
+import org.apache.camel.support.cache.EmptyConsumerCache;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -66,7 +68,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  * @see PollProcessor
  * @see Enricher
  */
-public class PollEnricher extends BaseProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+public class PollEnricher extends BaseProcessorSupport implements IdAware, RouteIdAware, StepIdAware, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
 
@@ -77,6 +79,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     private HeadersMapFactory headersMapFactory;
     private String id;
     private String routeId;
+    private String stepId;
     private String variableReceive;
     private AggregationStrategy aggregationStrategy;
     private final Expression expression;
@@ -141,6 +144,16 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public PollDynamicAware getDynamicAware() {
@@ -357,10 +370,10 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             }
         }
 
-        // remember current redelivery stats
-        Object redelivered = exchange.getIn().getHeader(Exchange.REDELIVERED);
-        Object redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER);
-        Object redeliveryMaxCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_MAX_COUNTER);
+        // remember current redelivery stats from internal state
+        // (headers may have been stripped by removeHeaders("*"))
+        int savedRedeliveryCounter = exchange.getExchangeExtension().getRedeliveryCounter();
+        int savedRedeliveryMaxCounter = exchange.getExchangeExtension().getRedeliveryMaxCounter();
 
         // if we are bridging error handler and failed then remember the caused exception
         Throwable cause = null;
@@ -420,15 +433,15 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                 // remove the exhausted marker as we want to be able to perform redeliveries with the error handler
                 exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
-                // preserve the redelivery stats
-                if (redelivered != null) {
-                    exchange.getMessage().setHeader(Exchange.REDELIVERED, redelivered);
+                // preserve the redelivery stats from internal state
+                if (savedRedeliveryCounter >= 0) {
+                    exchange.getMessage().setHeader(Exchange.REDELIVERY_COUNTER, savedRedeliveryCounter);
+                    exchange.getMessage().setHeader(Exchange.REDELIVERED, savedRedeliveryCounter > 0);
+                    exchange.getExchangeExtension().setRedeliveryCounter(savedRedeliveryCounter);
                 }
-                if (redeliveryCounter != null) {
-                    exchange.getMessage().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
-                }
-                if (redeliveryMaxCounter != null) {
-                    exchange.getMessage().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
+                if (savedRedeliveryMaxCounter >= 0) {
+                    exchange.getMessage().setHeader(Exchange.REDELIVERY_MAX_COUNTER, savedRedeliveryMaxCounter);
+                    exchange.getExchangeExtension().setRedeliveryMaxCounter(savedRedeliveryMaxCounter);
                 }
             }
 
@@ -532,9 +545,14 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     @Override
     protected void doBuild() throws Exception {
         if (consumerCache == null) {
-            // create consumer cache if we use dynamic expressions for computing the endpoints to poll
-            consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
-            LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
+            if (cacheSize < 0) {
+                consumerCache = new EmptyConsumerCache(this, camelContext);
+                LOG.debug("PollEnrich {} is not using ConsumerCache", this);
+            } else {
+                // create consumer cache if we use dynamic expressions for computing the endpoints to poll
+                consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
+                LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
+            }
         }
         if (aggregationStrategy == null) {
             aggregationStrategy = new CopyAggregationStrategy();

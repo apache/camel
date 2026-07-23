@@ -655,7 +655,7 @@ public interface XsltEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final XsltHeaderNameBuilder INSTANCE = new XsltHeaderNameBuilder();
+        public static final XsltHeaderNameBuilder INSTANCE = new XsltHeaderNameBuilder();
 
         /**
          * A URI for the template resource to load and use instead of the

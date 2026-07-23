@@ -109,7 +109,7 @@ public class WatsonDiscoveryEndpoint extends DefaultEndpoint implements Endpoint
     }
 
     private Discovery createDiscoveryClient() {
-        IamAuthenticator authenticator = new IamAuthenticator(configuration.getApiKey());
+        IamAuthenticator authenticator = (new IamAuthenticator.Builder()).apikey(configuration.getApiKey()).build();
         Discovery service = new Discovery(configuration.getVersion(), authenticator);
 
         if (configuration.getServiceUrl() != null) {

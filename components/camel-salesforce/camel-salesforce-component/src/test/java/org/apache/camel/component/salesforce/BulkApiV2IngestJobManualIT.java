@@ -55,39 +55,39 @@ public class BulkApiV2IngestJobManualIT extends AbstractSalesforceTestBase {
 
         Exchange exchange = new DefaultExchange(context());
         exchange.getIn().setBody("FirstName,LastName\nTestFirst,TestLast");
-        exchange.getIn().setHeader("jobId", job.getId());
+        exchange.getIn().setHeader("CamelSalesforceJobId", job.getId());
         template.send("salesforce:bulk2CreateBatch", exchange);
         assertNull(exchange.getException());
 
         job = template().requestBody("salesforce:bulk2GetJob", job, Job.class);
         assertSame(JobStateEnum.OPEN, job.getState(), "Job state");
 
-        job = template().requestBodyAndHeader("salesforce:bulk2CloseJob", "", "jobId", job.getId(),
+        job = template().requestBodyAndHeader("salesforce:bulk2CloseJob", "", "CamelSalesforceJobId", job.getId(),
                 Job.class);
         assertEquals(JobStateEnum.UPLOAD_COMPLETE, job.getState(), "Job state");
 
         // wait for job to finish
         while (job.getState() != JobStateEnum.JOB_COMPLETE) {
             Thread.sleep(2000);
-            job = template().requestBodyAndHeader("salesforce:bulk2GetJob", "", "jobId",
+            job = template().requestBodyAndHeader("salesforce:bulk2GetJob", "", "CamelSalesforceJobId",
                     job.getId(), Job.class);
         }
 
         InputStream is = template().requestBodyAndHeader("salesforce:bulk2GetSuccessfulResults",
-                "", "jobId", job.getId(), InputStream.class);
+                "", "CamelSalesforceJobId", job.getId(), InputStream.class);
         assertNotNull(is, "Successful results");
         List<String> successful = IOUtils.readLines(is, StandardCharsets.UTF_8);
         assertEquals(2, successful.size());
         assertTrue(successful.get(1).contains("TestFirst"));
 
         is = template().requestBodyAndHeader("salesforce:bulk2GetFailedResults",
-                "", "jobId", job.getId(), InputStream.class);
+                "", "CamelSalesforceJobId", job.getId(), InputStream.class);
         assertNotNull(is, "Failed results");
         List<String> failed = IOUtils.readLines(is, StandardCharsets.UTF_8);
         assertEquals(1, failed.size());
 
         is = template().requestBodyAndHeader("salesforce:bulk2GetUnprocessedRecords",
-                "", "jobId", job.getId(), InputStream.class);
+                "", "CamelSalesforceJobId", job.getId(), InputStream.class);
         assertNotNull(is, "Unprocessed records");
         List<String> unprocessed = IOUtils.readLines(is, StandardCharsets.UTF_8);
         assertEquals(1, unprocessed.size());
@@ -104,7 +104,7 @@ public class BulkApiV2IngestJobManualIT extends AbstractSalesforceTestBase {
         job = template().requestBody("salesforce:bulk2GetJob", job, Job.class);
         assertSame(JobStateEnum.OPEN, job.getState(), "Job should be OPEN");
 
-        template().sendBodyAndHeader("salesforce:bulk2AbortJob", "", "jobId", job.getId());
+        template().sendBodyAndHeader("salesforce:bulk2AbortJob", "", "CamelSalesforceJobId", job.getId());
 
         job = template().requestBody("salesforce:bulk2GetJob", job, Job.class);
         assertSame(JobStateEnum.ABORTED, job.getState(), "Job state");
@@ -120,12 +120,12 @@ public class BulkApiV2IngestJobManualIT extends AbstractSalesforceTestBase {
         job = template().requestBody("salesforce:bulk2GetJob", job, Job.class);
         assertSame(JobStateEnum.OPEN, job.getState(), "Job should be OPEN");
 
-        template().sendBodyAndHeader("salesforce:bulk2AbortJob", "", "jobId", job.getId());
+        template().sendBodyAndHeader("salesforce:bulk2AbortJob", "", "CamelSalesforceJobId", job.getId());
 
         job = template().requestBody("salesforce:bulk2GetJob", job, Job.class);
         assertSame(JobStateEnum.ABORTED, job.getState(), "Job state");
 
-        template().sendBodyAndHeader("salesforce:bulk2DeleteJob", "", "jobId", job.getId());
+        template().sendBodyAndHeader("salesforce:bulk2DeleteJob", "", "CamelSalesforceJobId", job.getId());
 
         final Job finalJob = job;
         CamelExecutionException ex = Assertions.assertThrows(CamelExecutionException.class,

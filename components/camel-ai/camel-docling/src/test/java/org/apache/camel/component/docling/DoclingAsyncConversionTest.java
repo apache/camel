@@ -53,7 +53,7 @@ class DoclingAsyncConversionTest extends CamelTestSupport {
         DoclingProducer producer = (DoclingProducer) endpoint.createProducer();
 
         // Access the pendingAsyncTasks map via reflection to verify the future is stored
-        Map<String, CompletableFuture<ConvertDocumentResponse>> pendingTasks = getPendingAsyncTasks(producer);
+        Map<String, AsyncTaskEntry> pendingTasks = getPendingAsyncTasks(producer);
         assertNotNull(pendingTasks, "pendingAsyncTasks map should exist");
         assertTrue(pendingTasks.isEmpty(), "pendingAsyncTasks should start empty");
     }
@@ -92,7 +92,7 @@ class DoclingAsyncConversionTest extends CamelTestSupport {
         DoclingProducer producer = (DoclingProducer) endpoint.createProducer();
 
         // Manually insert a completed future into the pending tasks map
-        Map<String, CompletableFuture<ConvertDocumentResponse>> pendingTasks = getPendingAsyncTasks(producer);
+        Map<String, AsyncTaskEntry> pendingTasks = getPendingAsyncTasks(producer);
 
         // Create a completed future with a mock response
         ConvertDocumentResponse mockResponse = InBodyConvertDocumentResponse.builder()
@@ -101,7 +101,7 @@ class DoclingAsyncConversionTest extends CamelTestSupport {
                         .build())
                 .build();
         CompletableFuture<ConvertDocumentResponse> completedFuture = CompletableFuture.completedFuture(mockResponse);
-        pendingTasks.put("test-task-1", completedFuture);
+        pendingTasks.put("test-task-1", new AsyncTaskEntry("test-task-1", completedFuture));
 
         // Check the status — should find it in local map and return COMPLETED with result
         Exchange exchange = new DefaultExchange(context);
@@ -126,11 +126,11 @@ class DoclingAsyncConversionTest extends CamelTestSupport {
                 "docling:convert?operation=CHECK_CONVERSION_STATUS&useDoclingServe=true", DoclingEndpoint.class);
         DoclingProducer producer = (DoclingProducer) endpoint.createProducer();
 
-        Map<String, CompletableFuture<ConvertDocumentResponse>> pendingTasks = getPendingAsyncTasks(producer);
+        Map<String, AsyncTaskEntry> pendingTasks = getPendingAsyncTasks(producer);
 
         // Insert an incomplete future
         CompletableFuture<ConvertDocumentResponse> incompleteFuture = new CompletableFuture<>();
-        pendingTasks.put("test-task-2", incompleteFuture);
+        pendingTasks.put("test-task-2", new AsyncTaskEntry("test-task-2", incompleteFuture));
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(DoclingHeaders.TASK_ID, "test-task-2");
@@ -156,12 +156,12 @@ class DoclingAsyncConversionTest extends CamelTestSupport {
                 "docling:convert?operation=CHECK_CONVERSION_STATUS&useDoclingServe=true", DoclingEndpoint.class);
         DoclingProducer producer = (DoclingProducer) endpoint.createProducer();
 
-        Map<String, CompletableFuture<ConvertDocumentResponse>> pendingTasks = getPendingAsyncTasks(producer);
+        Map<String, AsyncTaskEntry> pendingTasks = getPendingAsyncTasks(producer);
 
         // Insert a failed future
         CompletableFuture<ConvertDocumentResponse> failedFuture = new CompletableFuture<>();
         failedFuture.completeExceptionally(new RuntimeException("Server connection refused"));
-        pendingTasks.put("test-task-3", failedFuture);
+        pendingTasks.put("test-task-3", new AsyncTaskEntry("test-task-3", failedFuture));
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(DoclingHeaders.TASK_ID, "test-task-3");
@@ -181,11 +181,11 @@ class DoclingAsyncConversionTest extends CamelTestSupport {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, CompletableFuture<ConvertDocumentResponse>> getPendingAsyncTasks(DoclingProducer producer)
+    private Map<String, AsyncTaskEntry> getPendingAsyncTasks(DoclingProducer producer)
             throws Exception {
         Field field = DoclingProducer.class.getDeclaredField("pendingAsyncTasks");
         field.setAccessible(true);
-        return (Map<String, CompletableFuture<ConvertDocumentResponse>>) field.get(producer);
+        return (Map<String, AsyncTaskEntry>) field.get(producer);
     }
 
     @Override

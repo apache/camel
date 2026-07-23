@@ -16,9 +16,22 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
+/**
+ * Thrown when stream caching of a message body fails.
+ *
+ * @since 3.6
+ */
 public class StreamCacheException extends TypeConversionException {
 
-    public StreamCacheException(Object value, Throwable cause) {
-        super(value, StreamCache.class, cause);
+    /**
+     * @param value the message body value that could not be cached
+     * @param cause the cause of the failure
+     */
+    public StreamCacheException(@Nullable Object value, Throwable cause) {
+        super(value, StreamCache.class, Objects.requireNonNull(cause, "cause"));
     }
 }

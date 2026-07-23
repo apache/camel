@@ -41,6 +41,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.builder.EndpointConsumerBuilder;
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.BasicExpressionNode;
 import org.apache.camel.model.ExpressionNode;
@@ -132,28 +134,35 @@ public final class JaxbHelper {
 
     /**
      * If the route has been built with endpoint-dsl, then the model will not have uri set which then cannot be included
-     * in the JAXB model dump
+     * in the JAXB model dump. Returns a {@link Runnable} that restores the original endpoint DSL builders after
+     * serialization, so that the live {@link RouteDefinition} is not permanently mutated.
      */
-    public static void resolveEndpointDslUris(RouteDefinition route) {
+    @SuppressWarnings("rawtypes")
+    public static Runnable resolveEndpointDslUris(RouteDefinition route) {
+        List<Runnable> restorers = new ArrayList<>();
         FromDefinition from = route.getInput();
         if (from != null && from.getEndpointConsumerBuilder() != null) {
-            String uri = from.getEndpointConsumerBuilder().getRawUri();
-            from.setUri(uri);
+            EndpointConsumerBuilder builder = from.getEndpointConsumerBuilder();
+            from.setUri(builder.getRawUri());
+            restorers.add(() -> from.setEndpointConsumerBuilder(builder));
         }
         Collection<SendDefinition> col = filterTypeInOutputs(route.getOutputs(), SendDefinition.class);
         for (SendDefinition<?> to : col) {
             if (to.getEndpointProducerBuilder() != null) {
-                String uri = to.getEndpointProducerBuilder().getRawUri();
-                to.setUri(uri);
+                EndpointProducerBuilder builder = to.getEndpointProducerBuilder();
+                to.setUri(builder.getRawUri());
+                restorers.add(() -> to.setEndpointProducerBuilder(builder));
             }
         }
         Collection<ToDynamicDefinition> col2 = filterTypeInOutputs(route.getOutputs(), ToDynamicDefinition.class);
         for (ToDynamicDefinition to : col2) {
             if (to.getEndpointProducerBuilder() != null) {
-                String uri = to.getEndpointProducerBuilder().getRawUri();
-                to.setUri(uri);
+                EndpointProducerBuilder builder = to.getEndpointProducerBuilder();
+                to.setUri(builder.getRawUri());
+                restorers.add(() -> to.setUri(null));
             }
         }
+        return () -> restorers.forEach(Runnable::run);
     }
 
     private static NamespaceAware getNamespaceAwareFromExpression(ExpressionNode expressionNode) {

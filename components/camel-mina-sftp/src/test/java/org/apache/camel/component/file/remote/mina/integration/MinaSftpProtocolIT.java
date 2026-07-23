@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -296,9 +298,10 @@ public class MinaSftpProtocolIT extends MinaSftpServerTestSupport {
         context.getRouteController().startRoute("zeroDelete");
         mock.assertIsSatisfied();
 
-        // Verify the file was deleted
-        Thread.sleep(1000); // Give time for delete
-        assertTrue(!ftpFile("zero-delete.txt").toFile().exists(), "Zero-byte file should be deleted after consumption");
+        // Wait for the post-processing file delete to complete on the filesystem
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(!ftpFile("zero-delete.txt").toFile().exists(),
+                        "Zero-byte file should be deleted after consumption"));
 
         context.getRouteController().stopRoute("zeroDelete");
     }
@@ -329,10 +332,11 @@ public class MinaSftpProtocolIT extends MinaSftpServerTestSupport {
         context.getRouteController().startRoute("zeroMove");
         mock.assertIsSatisfied();
 
-        // Verify the file was moved
-        Thread.sleep(1000);
-        assertTrue(!ftpFile("zero-move.txt").toFile().exists(), "Original zero-byte file should not exist");
-        assertTrue(ftpFile("done/zero-move.txt").toFile().exists(), "Zero-byte file should be in done folder");
+        // Wait for the post-processing file move to complete on the filesystem
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertTrue(!ftpFile("zero-move.txt").toFile().exists(), "Original zero-byte file should not exist");
+            assertTrue(ftpFile("done/zero-move.txt").toFile().exists(), "Zero-byte file should be in done folder");
+        });
 
         context.getRouteController().stopRoute("zeroMove");
     }
@@ -442,14 +446,15 @@ public class MinaSftpProtocolIT extends MinaSftpServerTestSupport {
     @Test
     @Timeout(60)
     public void testPreserveTimestampOnDownload() throws Exception {
-        // Create a file
+        // Create a file and set its modification time to a known value in the past.
+        // This avoids Thread.sleep() — instead of waiting for clock drift, we explicitly
+        // set a past timestamp and verify the consumer reports it correctly.
         template.sendBodyAndHeader(baseUri(), "Timestamp test", Exchange.FILE_NAME, "timestamp-test.txt");
 
-        // Record original timestamp
-        long originalModified = ftpFile("timestamp-test.txt").toFile().lastModified();
-
-        // Wait a bit to ensure time difference would be noticeable
-        Thread.sleep(2000);
+        File timestampFile = ftpFile("timestamp-test.txt").toFile();
+        long pastTimestamp = System.currentTimeMillis() - 60_000; // 1 minute ago
+        timestampFile.setLastModified(pastTimestamp);
+        long originalModified = timestampFile.lastModified();
 
         MockEndpoint mock = getMockEndpoint("mock:timestamp");
         mock.expectedMessageCount(1);
@@ -471,8 +476,8 @@ public class MinaSftpProtocolIT extends MinaSftpServerTestSupport {
         Long headerModified = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
 
         assertNotNull(headerModified, "FILE_LAST_MODIFIED header should be present");
-        // The header should reflect the file's modification time from the server
-        // Allow for some timestamp granularity differences (within 2 seconds)
+        // The header should reflect the file's modification time from the server.
+        // Allow for some timestamp granularity differences (within 2 seconds).
         assertTrue(Math.abs(headerModified - originalModified) < 2000,
                 "Timestamp in header should be close to original file timestamp");
 

@@ -186,6 +186,14 @@ public class URISupportTest {
     }
 
     @Test
+    public void testCreateURIWithQueryEmptyQueryString() throws Exception {
+        URI uri = new URI("https://api.example.com/users/myuser/repos");
+        URI resultUri = URISupport.createURIWithQuery(uri, "");
+        assertNotNull(resultUri);
+        assertEquals("https://api.example.com/users/myuser/repos", resultUri.toString());
+    }
+
+    @Test
     public void testNormalizeEndpointWithEqualSignInParameter() throws Exception {
         String out = URISupport.normalizeUri("jms:queue:foo?selector=somekey='somevalue'&foo=bar");
         assertNotNull(out);
@@ -264,6 +272,21 @@ public class URISupportTest {
     public void testSanitizeAuthorizationToken() {
         String out1 = URISupport.sanitizeUri("telegram:bots?authorizationToken=1234567890:XXAuthTokenHereXX");
         assertEquals("telegram:bots?authorizationToken=xxxxxx", out1);
+    }
+
+    @Test
+    void testSanitizeApiKeyHeader() {
+        // a hyphenated api-key header name (e.g. the Azure OpenAI auth header supplied via additionalHeader.*)
+        // must be redacted from a sanitized URI, just like the camelCase apiKey option
+        String out = URISupport.sanitizeUri("openai:CHAT?baseUrl=https://host&additionalHeader.api-key=MY_SECRET");
+        assertThat(out).isEqualTo("openai:CHAT?baseUrl=https://host&additionalHeader.api-key=xxxxxx");
+    }
+
+    @Test
+    void testSanitizeAuthorizationHeader() {
+        // a bare Authorization header (e.g. supplied via additionalHeader.*) must be redacted
+        String out = URISupport.sanitizeUri("openai:CHAT?additionalHeader.Authorization=Bearer%20MY_SECRET");
+        assertThat(out).isEqualTo("openai:CHAT?additionalHeader.Authorization=xxxxxx");
     }
 
     @Test

@@ -18,25 +18,25 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
-		<property name="transactionManager" ref="tm"/>
-	</bean>
+    <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="tm"/>
+    </bean>
 
-	<bean class="org.springframework.orm.jpa.JpaTransactionManager" id="tm">
-		<property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean>
+    <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="tm">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
 
-	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-		<property name="persistenceUnitName" value="skipLockedEntiy"/>
-	</bean>
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="skipLockedEntiy"/>
+    </bean>
 
-	<bean class="org.apache.camel.component.jpa.JpaComponent" id="jpa">
-		<property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean>
-	<bean class="org.apache.camel.component.jpa.JpaComponent" id="jpa2">
-		<property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean>
+    <bean class="org.apache.camel.component.jpa.JpaComponent" id="jpa">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+    <bean class="org.apache.camel.component.jpa.JpaComponent" id="jpa2">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
 
 </beans>

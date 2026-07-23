@@ -243,28 +243,37 @@ analyzePomDependencies() {
 runScalpelDetection() {
   echo "  Running Scalpel change detection..."
 
-  # Ensure sufficient git history for JGit merge-base detection
-  # (CI uses shallow clones; Scalpel needs to find the merge base)
-  git fetch origin main:refs/remotes/origin/main --depth=200 2>/dev/null || true
-  git fetch --deepen=200 2>/dev/null || true
-
   # Scalpel is permanently configured in .mvn/extensions.xml.
-  # On developer machines it's a no-op (no GITHUB_BASE_REF → no base branch detected).
+  # On developer machines it's a no-op (disabled via -Dscalpel.enabled=false in .mvn/maven.config).
+  # The CI script overrides this with -Dscalpel.enabled=true.
+  # Base branch is pre-fetched by the CI workflow (fetchBaseBranch=false).
   # Run Maven validate with Scalpel in report mode:
   # - mode=report: write JSON report without trimming the reactor
   # - fullBuildTriggers="": override .mvn/** default (Scalpel lives in .mvn/extensions.xml)
-  # - alsoMake/alsoMakeDependents=false: we only want directly affected modules
-  #   (our script handles -amd expansion separately)
-  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.alsoMake=false -Dscalpel.alsoMakeDependents=false"
-  # For workflow_dispatch, GITHUB_BASE_REF may not be set
-  if [ -z "${GITHUB_BASE_REF:-}" ]; then
-    scalpel_args="$scalpel_args -Dscalpel.baseBranch=origin/main"
+  # - fetchBaseBranch=false: base branch is pre-fetched by the CI workflow
+  # - skipTestsForDownstreamModules: derived from EXCLUSION_LIST — tells Scalpel which
+  #   downstream modules should not run tests in skip-tests mode (for shadow comparison)
+  # Strip the Maven "!:" prefix from each entry to get bare artifact IDs for Scalpel.
+  local skip_downstream
+  skip_downstream=$(echo "$EXCLUSION_LIST" | sed 's/!://g')
+  # Always pass baseBranch explicitly — relying on Scalpel's env.GITHUB_BASE_REF
+  # auto-detection is fragile across Maven wrappers and CI rerun contexts.
+  local base_branch="origin/${GITHUB_BASE_REF:-main}"
+  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.baseBranch=${base_branch} -Dscalpel.excludePaths=.github/** -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
+
+  # Verify merge base is reachable (pre-fetched by the CI workflow step)
+  if ! git merge-base HEAD "${base_branch}" >/dev/null 2>&1; then
+    echo "  WARNING: merge base between HEAD and ${base_branch} is not reachable"
+    echo "  HEAD=$(git rev-parse HEAD 2>/dev/null), ${base_branch}=$(git rev-parse ${base_branch} 2>/dev/null || echo 'NOT FOUND')"
+    scalpel_failure_reason="Merge base not reachable between HEAD and ${base_branch} (shallow clone too shallow?)"
+    return
   fi
 
-  echo "  Scalpel: running mvn validate (report mode)..."
+  echo "  Scalpel: running mvn validate (report mode, base=${base_branch})..."
   ./mvnw -B -q validate $scalpel_args ${MAVEN_EXTRA_ARGS:-} -l /tmp/scalpel-validate.log 2>/dev/null || {
     echo "  WARNING: Scalpel detection failed (exit $?), skipping"
     grep -i "scalpel" /tmp/scalpel-validate.log 2>/dev/null | head -5 || true
+    scalpel_failure_reason="Scalpel detection failed (mvn validate exited with error)"
     return
   }
 
@@ -272,7 +281,11 @@ runScalpelDetection() {
   local report="target/scalpel-report.json"
   if [ ! -f "$report" ]; then
     echo "  WARNING: Scalpel report not found at $report"
-    grep -i "scalpel" /tmp/scalpel-validate.log 2>/dev/null | head -5 || true
+    echo "  Scalpel log (last 10 lines):"
+    tail -10 /tmp/scalpel-validate.log 2>/dev/null || true
+    echo "  Scalpel-specific messages:"
+    grep -i "scalpel\|merge.base\|JGit\|no changes" /tmp/scalpel-validate.log 2>/dev/null | head -10 || true
+    scalpel_failure_reason="Scalpel report not found (merge-base may be unreachable in shallow clone)"
     return
   fi
 
@@ -283,6 +296,7 @@ runScalpelDetection() {
     local trigger_file
     trigger_file=$(jq -r '.triggerFile // "unknown"' "$report")
     echo "  Scalpel: Full build triggered by change to $trigger_file"
+    scalpel_failure_reason="Scalpel triggered a full build (changed file: $trigger_file)"
     return
   fi
 
@@ -293,9 +307,24 @@ runScalpelDetection() {
   scalpel_managed_deps=$(jq -r '(.changedManagedDependencies // []) | if length > 0 then join(", ") else "" end' "$report" 2>/dev/null || true)
   scalpel_managed_plugins=$(jq -r '(.changedManagedPlugins // []) | if length > 0 then join(", ") else "" end' "$report" 2>/dev/null || true)
 
+  # Scalpel shadow comparison data:
+  # - Modules Scalpel skip-tests mode would test (testsSkipped != true)
+  # - Modules Scalpel would skip (testsSkipped == true, from skipTestsForDownstreamModules)
+  # - Breakdown by category (DIRECT, DOWNSTREAM)
+  scalpel_would_test=$(jq -r '[.affectedModules[] | select(.testsSkipped != true)] | map(.artifactId) | sort | join(",")' "$report" 2>/dev/null || true)
+  scalpel_would_skip=$(jq -r '[.affectedModules[] | select(.testsSkipped == true)] | map(.artifactId) | sort | join(",")' "$report" 2>/dev/null || true)
+  scalpel_direct_count=$(jq '[.affectedModules[] | select(.category == "DIRECT")] | length' "$report" 2>/dev/null || echo "0")
+  scalpel_downstream_tested=$(jq '[.affectedModules[] | select(.category == "DOWNSTREAM" and .testsSkipped != true)] | length' "$report" 2>/dev/null || echo "0")
+  scalpel_downstream_skipped=$(jq '[.affectedModules[] | select(.category == "DOWNSTREAM" and .testsSkipped == true)] | length' "$report" 2>/dev/null || echo "0")
+
   local mod_count
   mod_count=$(jq '.affectedModules | length' "$report" 2>/dev/null || echo "0")
-  echo "  Scalpel detected $mod_count affected modules"
+  local test_count=0
+  if [ -n "$scalpel_would_test" ]; then
+    test_count=$(echo "$scalpel_would_test" | tr ',' '\n' | grep -c . || true)
+  fi
+  echo "  Scalpel detected $mod_count affected modules ($test_count would be tested)"
+  echo "    Direct: $scalpel_direct_count, Downstream tested: $scalpel_downstream_tested, Downstream skipped: $scalpel_downstream_skipped"
   if [ -n "$scalpel_props" ]; then
     echo "    Changed properties: $scalpel_props"
   fi
@@ -382,6 +411,160 @@ checkManualItTests() {
   fi
 }
 
+# ── Scalpel shadow comparison ──────────────────────────────────────────
+
+# Write Scalpel shadow comparison section to the PR comment.
+# Shows what Scalpel would detect vs what the current approach actually tests,
+# with a one-line diff summary. Observation only — does not affect test execution.
+# Args: $1=comment_file, $2=tested_reactor_ids (newline-separated, already filtered by EXCLUSION_LIST)
+writeScalpelComparison() {
+  local comment_file="$1"
+  local current_reactor_ids="${2:-}"
+
+  # If Scalpel failed, show why in the PR comment
+  if [ -n "$scalpel_failure_reason" ]; then
+    echo "" >> "$comment_file"
+    echo "---" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "<details><summary>:microscope: Scalpel shadow comparison</summary>" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo ":warning: $scalpel_failure_reason" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "> :information_source: Shadow mode — Scalpel observes but does not affect test execution. [Learn more](https://github.com/maveniverse/scalpel)" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "</details>" >> "$comment_file"
+    return
+  fi
+
+  # Skip if no Scalpel data (Scalpel was not invoked for this PR)
+  if [ -z "$scalpel_would_test" ] && [ -z "$scalpel_would_skip" ]; then
+    return
+  fi
+
+  # Count Scalpel modules
+  local scalpel_total=0
+  local scalpel_test_count=0
+  local scalpel_skip_count=0
+  if [ -n "$scalpel_module_ids" ]; then
+    scalpel_total=$(echo "$scalpel_module_ids" | tr ',' '\n' | grep -c . || true)
+  fi
+  if [ -n "$scalpel_would_test" ]; then
+    scalpel_test_count=$(echo "$scalpel_would_test" | tr ',' '\n' | grep -c . || true)
+  fi
+  if [ -n "$scalpel_would_skip" ]; then
+    scalpel_skip_count=$(echo "$scalpel_would_skip" | tr ',' '\n' | grep -c . || true)
+  fi
+
+  # Compare Scalpel vs current reactor (file-path + grep + -amd expansion)
+  local current_total=0
+  local current_sorted=""
+  if [ -n "$current_reactor_ids" ]; then
+    current_sorted=$(echo "$current_reactor_ids" | sort)
+    current_total=$(echo "$current_sorted" | grep -c . || true)
+  fi
+  local scalpel_sorted=""
+  if [ -n "$scalpel_module_ids" ]; then
+    scalpel_sorted=$(echo "$scalpel_module_ids" | tr ',' '\n' | sed 's/^://' | sort)
+  fi
+
+  # Set differences: modules Scalpel found that current missed, and vice versa
+  local only_in_scalpel="" only_in_current=""
+  local only_scalpel_count=0 only_current_count=0
+  if [ -n "$scalpel_sorted" ] && [ -n "$current_sorted" ]; then
+    only_in_scalpel=$(comm -23 <(echo "$scalpel_sorted") <(echo "$current_sorted") || true)
+    only_in_current=$(comm -13 <(echo "$scalpel_sorted") <(echo "$current_sorted") || true)
+    only_scalpel_count=$(echo "$only_in_scalpel" | grep -c . || true)
+    only_current_count=$(echo "$only_in_current" | grep -c . || true)
+  elif [ -n "$scalpel_sorted" ]; then
+    only_in_scalpel="$scalpel_sorted"
+    only_scalpel_count=$scalpel_total
+  elif [ -n "$current_sorted" ]; then
+    only_in_current="$current_sorted"
+    only_current_count=$current_total
+  fi
+
+  # One-line summary: what Scalpel would change
+  local summary="Scalpel: ${scalpel_test_count} tested, ${scalpel_skip_count} compile-only — current: ${current_total} all tested"
+
+  echo "" >> "$comment_file"
+  echo "---" >> "$comment_file"
+  echo "" >> "$comment_file"
+  echo "<details><summary>:microscope: Scalpel shadow comparison — ${summary}</summary>" >> "$comment_file"
+  echo "" >> "$comment_file"
+
+  echo "[Maveniverse Scalpel](https://github.com/maveniverse/scalpel) detected **${scalpel_total} affected modules** (current approach: ${current_total})." >> "$comment_file"
+  echo "" >> "$comment_file"
+
+  # Show modules only Scalpel found (not in current reactor)
+  if [ "$only_scalpel_count" -gt 0 ]; then
+    echo "<details><summary>:warning: Modules only in Scalpel (${only_scalpel_count})</summary>" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "$only_in_scalpel" | while read -r m; do
+      [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
+    done
+    echo "" >> "$comment_file"
+    echo "</details>" >> "$comment_file"
+    echo "" >> "$comment_file"
+  fi
+
+  # Show modules only current approach found (not in Scalpel)
+  if [ "$only_current_count" -gt 0 ]; then
+    echo "<details><summary>Modules only in current approach (${only_current_count})</summary>" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "$only_in_current" | while read -r m; do
+      [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
+    done
+    echo "" >> "$comment_file"
+    echo "</details>" >> "$comment_file"
+    echo "" >> "$comment_file"
+  fi
+
+  # Show Scalpel-detected change details
+  if [ -n "$scalpel_props" ]; then
+    echo "Changed properties: ${scalpel_props}" >> "$comment_file"
+    echo "" >> "$comment_file"
+  fi
+  if [ -n "$scalpel_managed_deps" ]; then
+    echo "Changed managed dependencies: ${scalpel_managed_deps}" >> "$comment_file"
+    echo "" >> "$comment_file"
+  fi
+  if [ -n "$scalpel_managed_plugins" ]; then
+    echo "Changed managed plugins: ${scalpel_managed_plugins}" >> "$comment_file"
+    echo "" >> "$comment_file"
+  fi
+
+  echo "**Skip-tests mode would test ${scalpel_test_count} modules** (${scalpel_direct_count} direct + ${scalpel_downstream_tested} downstream), **skip tests for ${scalpel_skip_count}** (generated code, meta-modules)" >> "$comment_file"
+
+  # Show which modules Scalpel would test
+  if [ -n "$scalpel_would_test" ]; then
+    echo "" >> "$comment_file"
+    echo "<details><summary>Modules Scalpel would test (${scalpel_test_count})</summary>" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "$scalpel_would_test" | tr ',' '\n' | while read -r m; do
+      [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
+    done
+    echo "" >> "$comment_file"
+    echo "</details>" >> "$comment_file"
+  fi
+
+  # Show which modules would have tests skipped
+  if [ -n "$scalpel_would_skip" ]; then
+    echo "" >> "$comment_file"
+    echo "<details><summary>Modules with tests skipped (${scalpel_skip_count})</summary>" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "$scalpel_would_skip" | tr ',' '\n' | while read -r m; do
+      [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
+    done
+    echo "" >> "$comment_file"
+    echo "</details>" >> "$comment_file"
+  fi
+
+  echo "" >> "$comment_file"
+  echo "> :information_source: Shadow mode — Scalpel observes but does not affect test execution. [Learn more](https://github.com/maveniverse/scalpel)" >> "$comment_file"
+  echo "" >> "$comment_file"
+  echo "</details>" >> "$comment_file"
+}
+
 # ── Comment generation ─────────────────────────────────────────────────
 
 writeComment() {
@@ -391,8 +574,6 @@ writeComment() {
   local changed_props_summary="$4"
   local testedDependents="$5"
   local extra_modules="$6"
-  local managed_deps_summary="${7:-}"
-  local managed_plugins_summary="${8:-}"
 
   echo "<!-- ci-tested-modules -->" > "$comment_file"
 
@@ -410,21 +591,13 @@ writeComment() {
     fi
   fi
 
-  # Section 2: pom dependency-detected modules
+  # Section 2: pom dependency-detected modules (grep-based only)
   if [ -n "$dep_ids" ]; then
     echo "" >> "$comment_file"
     echo ":white_check_mark: **POM dependency changes: targeted tests included**" >> "$comment_file"
     echo "" >> "$comment_file"
     if [ -n "$changed_props_summary" ]; then
       echo "Changed properties: ${changed_props_summary}" >> "$comment_file"
-      echo "" >> "$comment_file"
-    fi
-    if [ -n "$managed_deps_summary" ]; then
-      echo "Changed managed dependencies: ${managed_deps_summary}" >> "$comment_file"
-      echo "" >> "$comment_file"
-    fi
-    if [ -n "$managed_plugins_summary" ]; then
-      echo "Changed managed plugins: ${managed_plugins_summary}" >> "$comment_file"
       echo "" >> "$comment_file"
     fi
     local dep_count
@@ -436,10 +609,6 @@ writeComment() {
     done
     echo "" >> "$comment_file"
     echo "</details>" >> "$comment_file"
-    if [ -n "$managed_deps_summary" ] || [ -n "$managed_plugins_summary" ]; then
-      echo "" >> "$comment_file"
-      echo "> :microscope: Detected via [Maveniverse Scalpel](https://github.com/maveniverse/scalpel) effective POM comparison" >> "$comment_file"
-    fi
   fi
 
   # Section 3: extra modules (from /component-test)
@@ -512,10 +681,8 @@ main() {
       local projectRoot
       projectRoot=$(findProjectRoot "${project}")
       if [[ ${projectRoot} = "." ]]; then
-        echo "The root project is affected, skipping targeted module testing"
-        echo "<!-- ci-tested-modules -->" > "incremental-test-comment.md"
-        echo ":information_source: CI did not run targeted module tests (root project files changed)." >> "incremental-test-comment.md"
-        exit 0
+        echo "  Skipping non-module file: ${project} (no parent pom.xml found)"
+        continue
       elif [[ ${projectRoot} != "${lastProjectRoot}" ]]; then
         totalAffected=$((totalAffected + 1))
         pl="$pl,${projectRoot}"
@@ -541,6 +708,13 @@ main() {
   scalpel_props=""
   scalpel_managed_deps=""
   scalpel_managed_plugins=""
+  # Scalpel shadow comparison data
+  scalpel_would_test=""
+  scalpel_would_skip=""
+  scalpel_direct_count="0"
+  scalpel_downstream_tested="0"
+  scalpel_downstream_skipped="0"
+  scalpel_failure_reason=""
 
   # Step 2a: Grep-based detection (existing approach)
   if [ -n "$pom_files" ]; then
@@ -564,16 +738,24 @@ main() {
     done <<< "$pom_files"
   fi
 
-  # Step 2b: Scalpel detection (parallel, for any pom.xml change)
-  # Scalpel uses effective POM model comparison — catches managed deps,
-  # plugin changes, and transitive impacts that grep misses.
-  if echo "$diff_body" | grep -q '^diff --git a/.*pom\.xml'; then
-    echo ""
-    echo "Running Scalpel POM analysis..."
-    runScalpelDetection
-  fi
+  # Step 2b: Scalpel detection (all PRs)
+  # Scalpel uses effective POM model comparison and source-set analysis —
+  # catches managed deps, plugin changes, transitive impacts, and
+  # distinguishes main vs test-only source changes.
+  # Runs in report (shadow) mode: observes what it would do, does not
+  # affect actual test execution. Results appear in the PR comment for
+  # comparison with the grep-based approach.
+  echo ""
+  echo "Running Scalpel change detection..."
+  runScalpelDetection
 
-  # Step 2c: Merge grep and Scalpel results (union, deduplicated)
+  # Save grep-only results for comment attribution (before merging with Scalpel).
+  # The comment's top section shows only what the current grep mechanism detected;
+  # the Scalpel comparison section (after a separator) shows the diff.
+  local grep_dep_module_ids="$dep_module_ids"
+  local grep_changed_props="$all_changed_props"
+
+  # Step 2c: Merge grep and Scalpel results (union, deduplicated) — for the build
   if [ -n "$scalpel_module_ids" ]; then
     dep_module_ids="${dep_module_ids:+${dep_module_ids},}${scalpel_module_ids}"
     dep_module_ids=$(echo "$dep_module_ids" | tr ',' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')
@@ -626,7 +808,7 @@ main() {
   if [ -z "$final_pl" ]; then
     echo ""
     echo "No modules to test"
-    writeComment "incremental-test-comment.md" "" "" "" "" "" "" ""
+    writeComment "incremental-test-comment.md" "" "" "" "" ""
     exit 0
   fi
 
@@ -779,7 +961,22 @@ main() {
 
   # ── Step 5: Write comment and summary ──
   local comment_file="incremental-test-comment.md"
-  writeComment "$comment_file" "$pl" "$dep_module_ids" "$all_changed_props" "$testedDependents" "$extraModules" "$scalpel_managed_deps" "$scalpel_managed_plugins"
+  writeComment "$comment_file" "$pl" "$grep_dep_module_ids" "$grep_changed_props" "$testedDependents" "$extraModules"
+
+  # Scalpel shadow comparison (observation only — after separator)
+  # Filter reactor_ids through EXCLUSION_LIST so the comparison is
+  # apples-to-apples: both sides exclude the same meta/generated modules.
+  local tested_reactor_ids=""
+  if [ -n "$reactor_ids" ]; then
+    local excl_set
+    excl_set=$(echo "$EXCLUSION_LIST" | sed 's/!://g' | tr ',' '\n')
+    tested_reactor_ids=$(echo "$reactor_ids" | while read -r rid; do
+      if ! echo "$excl_set" | grep -qx "$rid"; then
+        echo "$rid"
+      fi
+    done)
+  fi
+  writeScalpelComparison "$comment_file" "$tested_reactor_ids"
 
   # Check for tests disabled in CI via @DisabledIfSystemProperty(named = "ci.env.name")
   local disabled_tests
@@ -796,7 +993,7 @@ main() {
   # Append reactor module list from build log
   if [[ -f "$log" ]]; then
     local reactor_modules
-    reactor_modules=$(grep '^\[INFO\] Camel ::' "$log" | sed 's/\[INFO\] //' | sed 's/ \..*$//' | sed 's/  *\[.*\]$//' | sort -u || true)
+    reactor_modules=$(grep '^\[INFO\] Camel ::' "$log" | sed 's/\[INFO\] //' | sed 's/ \..*$//' | sed 's/  *\[.*\]$//' | sed 's/ SUCCESS$//' | sed 's/ FAILURE$//' | sed 's/ SKIPPED$//' | sed 's/  *$//' | sort -u || true)
     if [[ -n "$reactor_modules" ]]; then
       local count
       count=$(echo "$reactor_modules" | wc -l | tr -d ' ')
@@ -853,9 +1050,9 @@ main() {
     # Show end of build log
     if [[ -f "$log" ]]; then
       echo ""
-      echo "Last 50 lines of build log:"
+      echo "Last 500 lines of build log:"
       echo "------------------------------------------------------------"
-      tail -50 "$log"
+      tail -500 "$log"
       echo "------------------------------------------------------------"
       echo ""
     else

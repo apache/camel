@@ -35,7 +35,7 @@ public class MailSearchTermUriConfigTest extends CamelTestSupport {
     private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         prepareMailbox();
     }
 

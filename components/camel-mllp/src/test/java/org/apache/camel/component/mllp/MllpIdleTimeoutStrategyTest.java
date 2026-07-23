@@ -29,7 +29,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mllp.internal.MllpSocketBuffer;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
@@ -50,10 +49,7 @@ public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
     static final int IDLE_TIMEOUT = 500;
 
     @RegisterExtension
-    AvailablePortFinder.Port mllpServerPort = AvailablePortFinder.find();
-
-    @RegisterExtension
-    public MllpServerResource mllpServer = new MllpServerResource("localhost", mllpServerPort.getPort());
+    public MllpServerResource mllpServer = new MllpServerResource("localhost", 0);
 
     @EndpointInject("direct://sourcedefault")
     ProducerTemplate defaultStrategySource;

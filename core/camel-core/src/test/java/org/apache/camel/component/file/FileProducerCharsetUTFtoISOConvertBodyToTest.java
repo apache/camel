@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,16 +46,20 @@ class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSupport {
 
     @BeforeEach
     void writeTestData() {
+        // Write to a temp file and atomically rename so the file consumer never
+        // sees a 0-byte file between newOutputStream() and close().
         assertDoesNotThrow(() -> {
-            try (OutputStream fos = Files.newOutputStream(testFile(INPUT_FILE))) {
+            Path tmp = testFile(INPUT_FILE + ".tmp");
+            try (OutputStream fos = Files.newOutputStream(tmp)) {
                 fos.write(DATA.getBytes(StandardCharsets.UTF_8));
             }
+            Files.move(tmp, testFile(INPUT_FILE), StandardCopyOption.ATOMIC_MOVE);
         }, "The test cannot run due to an I/O error");
     }
 
     @AfterEach
     void cleanupFile() {
-        assertDoesNotThrow(() -> Files.delete(testFile(OUTPUT_FILE)),
+        assertDoesNotThrow(() -> Files.deleteIfExists(testFile(OUTPUT_FILE)),
                 "The test cannot run due to an error cleaning up");
     }
 

@@ -272,7 +272,7 @@ public interface WatsonDiscoveryEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final WatsonDiscoveryHeaderNameBuilder INSTANCE = new WatsonDiscoveryHeaderNameBuilder();
+        public static final WatsonDiscoveryHeaderNameBuilder INSTANCE = new WatsonDiscoveryHeaderNameBuilder();
 
         /**
          * The operation to perform.

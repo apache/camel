@@ -16,21 +16,25 @@
  */
 package org.apache.camel.main.download;
 
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
+import org.apache.camel.tooling.model.TransformerModel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DependencyDownloaderTransformerResolverTest {
 
     @Test
     void stubTransformerShouldHaveNameSet() {
         SimpleCamelContext context = new SimpleCamelContext();
+        // transformers require "transformer:" prefix to be stubbed
         DependencyDownloaderTransformerResolver resolver
-                = new DependencyDownloaderTransformerResolver(context, "*", true);
+                = new DependencyDownloaderTransformerResolver(context, "transformer:*", true);
 
         // use a name not in the catalog to avoid triggering artifact download
         String transformerName = "test-stub:application-json";
@@ -43,5 +47,34 @@ public class DependencyDownloaderTransformerResolverTest {
 
         TransformerKey resultKey = TransformerKey.createFrom(transformer);
         assertNotNull(resultKey);
+    }
+
+    @Test
+    void wildcardPatternShouldNotStubTransformers() {
+        SimpleCamelContext context = new SimpleCamelContext();
+        // stub pattern "*" should NOT stub transformers (only components)
+        DependencyDownloaderTransformerResolver resolver
+                = new DependencyDownloaderTransformerResolver(context, "*", true);
+
+        // transformer is not stubbed so resolve will throw for unknown names
+        String transformerName = "test-stub:application-json";
+        TransformerKey key = new TransformerKey(transformerName);
+        assertThrows(IllegalArgumentException.class, () -> resolver.resolve(key, context));
+    }
+
+    @Test
+    void catalogLookupShouldNormalizeColonSeparatedNames() {
+        DefaultCamelCatalog catalog = new DefaultCamelCatalog();
+        DependencyDownloaderTransformerResolver resolver
+                = new DependencyDownloaderTransformerResolver(new SimpleCamelContext(), "*", true);
+
+        // transformer names use colon format (e.g., aws2-ddb:application-json)
+        // but the catalog stores them in dash format (aws2-ddb-application-json)
+        String colonName = "aws2-ddb:application-json";
+        String normalizedName = resolver.normalize(new TransformerKey(colonName));
+
+        TransformerModel model = catalog.transformerModel(normalizedName);
+        assertNotNull(model, "Catalog should find transformer using normalized name: " + normalizedName);
+        assertNotNull(model.getArtifactId(), "Transformer model should have artifactId");
     }
 }

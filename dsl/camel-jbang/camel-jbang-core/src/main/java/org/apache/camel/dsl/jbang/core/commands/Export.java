@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -51,10 +51,7 @@ import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_S
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_SETTINGS_SECURITY;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_WRAPPER;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.OPEN_API;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_ARTIFACT_ID;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_GROUP_ID;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_VERSION;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.REPOS;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.PARENT_POM;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.SPRING_BOOT_VERSION;
 
 @Command(name = "export",
@@ -99,6 +96,21 @@ public class Export extends ExportBaseCommand {
                     baseDir = first;
                     RunHelper.dirToFiles(name, files);
                 }
+            }
+        }
+
+        // auto-detect application.properties and include it
+        {
+            String name = baseDir.resolve("application.properties").toString();
+            if (Files.exists(Paths.get(name)) && !files.contains(name)) {
+                files.add(name);
+            }
+        }
+        if (profile != null) {
+            // need to include profile application properties if exists
+            String name = baseDir.resolve("application-" + profile + ".properties").toString();
+            if (Files.exists(Paths.get(name)) && !files.contains(name)) {
+                files.add(name);
             }
         }
 
@@ -179,21 +191,20 @@ public class Export extends ExportBaseCommand {
                 this.runtime = RuntimeType.fromValue(rt);
             }
             this.gav = props.getProperty(GAV, this.gav);
+            this.parentPom = props.getProperty(PARENT_POM, this.parentPom);
             // allow configuring versions from profile
             this.javaVersion = props.getProperty(JAVA_VERSION, this.javaVersion);
             this.camelVersion = props.getProperty(CAMEL_VERSION, this.camelVersion);
             this.kameletsVersion = props.getProperty(KAMELETS_VERSION, this.kameletsVersion);
             this.localKameletDir = props.getProperty(LOCAL_KAMELET_DIR, this.localKameletDir);
-            this.quarkusGroupId = props.getProperty(QUARKUS_GROUP_ID, this.quarkusGroupId);
-            this.quarkusArtifactId = props.getProperty(QUARKUS_ARTIFACT_ID, this.quarkusArtifactId);
-            this.quarkusVersion = props.getProperty(QUARKUS_VERSION, this.quarkusVersion);
+            this.quarkusPlatform = QuarkusPlatformMixin.of(props, this.quarkusPlatform);
             this.camelSpringBootVersion = props.getProperty(CAMEL_SPRING_BOOT_VERSION, this.camelSpringBootVersion);
             this.springBootVersion = props.getProperty(SPRING_BOOT_VERSION, this.springBootVersion);
             this.mavenWrapper
                     = "true".equals(props.getProperty(MAVEN_WRAPPER, this.mavenWrapper ? "true" : "false"));
             this.exportDir = props.getProperty(EXPORT_DIR, this.exportDir);
             this.openapi = props.getProperty(OPEN_API, this.openapi);
-            this.repositories = props.getProperty(REPOS, this.repositories);
+            this.mavenResolver = MavenResolverMixin.of(props, this.mavenResolver);
             this.mavenSettings = props.getProperty(MAVEN_SETTINGS, this.mavenSettings);
             this.mavenSettingsSecurity = props.getProperty(MAVEN_SETTINGS_SECURITY, this.mavenSettingsSecurity);
             this.mavenCentralEnabled = "true"
@@ -208,9 +219,7 @@ public class Export extends ExportBaseCommand {
      * For supported fields prefer the values from system properties if they are defined.
      */
     private void overrideFromSystemProperties() {
-        this.quarkusGroupId = PropertyResolver.fromSystemProperty(QUARKUS_GROUP_ID, () -> this.quarkusGroupId);
-        this.quarkusArtifactId = PropertyResolver.fromSystemProperty(QUARKUS_ARTIFACT_ID, () -> this.quarkusArtifactId);
-        this.quarkusVersion = PropertyResolver.fromSystemProperty(QUARKUS_VERSION, () -> this.quarkusVersion);
+        this.quarkusPlatform = QuarkusPlatformMixin.of(System.getProperties(), this.quarkusPlatform);
         this.camelSpringBootVersion
                 = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION, () -> this.camelSpringBootVersion);
     }
@@ -219,7 +228,7 @@ public class Export extends ExportBaseCommand {
         // copy properties from this to cmd
         cmd.exportBaseDir = exportBaseDir;
         cmd.files = this.files;
-        cmd.repositories = this.repositories;
+        cmd.mavenResolver = this.mavenResolver;
         cmd.dependencies = this.dependencies;
         cmd.runtime = this.runtime;
         cmd.name = this.name;
@@ -227,6 +236,7 @@ public class Export extends ExportBaseCommand {
         cmd.managementPort = this.managementPort;
         cmd.observe = this.observe;
         cmd.gav = this.gav;
+        cmd.parentPom = this.parentPom;
         cmd.mavenSettings = this.mavenSettings;
         cmd.mavenSettingsSecurity = this.mavenSettingsSecurity;
         cmd.mavenCentralEnabled = this.mavenCentralEnabled;
@@ -234,8 +244,6 @@ public class Export extends ExportBaseCommand {
         cmd.exportDir = this.exportDir;
         cmd.cleanExportDir = this.cleanExportDir;
         cmd.yes = this.yes;
-        cmd.fresh = this.fresh;
-        cmd.download = this.download;
         cmd.skipPlugins = this.skipPlugins;
         cmd.packageScanJars = this.packageScanJars;
         cmd.javaVersion = this.javaVersion;
@@ -247,12 +255,11 @@ public class Export extends ExportBaseCommand {
         cmd.loggingLevel = this.loggingLevel;
         cmd.mainClassname = this.mainClassname;
         cmd.camelSpringBootVersion = this.camelSpringBootVersion;
-        cmd.quarkusGroupId = this.quarkusGroupId;
-        cmd.quarkusArtifactId = this.quarkusArtifactId;
-        cmd.quarkusVersion = this.quarkusVersion;
+        cmd.quarkusPlatform = this.quarkusPlatform;
         cmd.quarkusPackageType = this.quarkusPackageType;
         cmd.springBootVersion = this.springBootVersion;
         cmd.mavenWrapper = this.mavenWrapper;
+        cmd.docker = this.docker;
         cmd.quiet = this.quiet;
         cmd.buildProperties = this.buildProperties;
         cmd.openapi = this.openapi;
@@ -302,9 +309,7 @@ public class Export extends ExportBaseCommand {
 
     // Maven reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html
     protected String getBuildMavenProjectDate() {
-        // 2024-09-23T10:00:00Z
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        return sdf.format(new Date());
+        return Instant.now().truncatedTo(ChronoUnit.SECONDS).toString();
     }
 
     // Copy the dockerfile into the same Maven project root directory.
@@ -318,16 +323,21 @@ public class Export extends ExportBaseCommand {
         model.put("Version", ids[2]);
         model.put("AppJar", ids[1] + "-" + ids[2] + ".jar");
 
-        String ftlName = "Dockerfile" + javaVersion + ".ftl";
+        String ftlName = getDockerfileTemplateName() + javaVersion + ".ftl";
         String context;
         try {
             context = TemplateHelper.processTemplate(ftlName, model);
         } catch (IOException e) {
             // fallback to JDK 21 template
+            String fallback = getDockerfileTemplateName() + "21.ftl";
             printer().printf("No Dockerfile template for Java %s, falling back to Java 21 template%n", javaVersion);
-            context = TemplateHelper.processTemplate("Dockerfile21.ftl", model);
+            context = TemplateHelper.processTemplate(fallback, model);
         }
         Files.writeString(docker.resolve("Dockerfile"), context);
+    }
+
+    protected String getDockerfileTemplateName() {
+        return "Dockerfile";
     }
 
     // Copy the readme.md into the same Maven project root directory.
@@ -340,5 +350,17 @@ public class Export extends ExportBaseCommand {
 
         String context = TemplateHelper.processTemplate("readme.md.ftl", model);
         Files.writeString(Path.of(buildDir).resolve("readme.md"), context);
+
+        copyAgents(buildDir);
+    }
+
+    // Copy the AGENTS.md into the same Maven project root directory to assist AI coding assistants.
+    protected void copyAgents(String buildDir) throws Exception {
+        String[] ids = gav.split(":");
+        Map<String, Object> model = new HashMap<>();
+        model.put("ArtifactId", ids[1]);
+
+        String context = TemplateHelper.processTemplate("agents.md.ftl", model);
+        Files.writeString(Path.of(buildDir).resolve("AGENTS.md"), context);
     }
 }

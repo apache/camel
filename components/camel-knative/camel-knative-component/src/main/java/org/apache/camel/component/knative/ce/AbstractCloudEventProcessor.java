@@ -19,22 +19,30 @@ package org.apache.camel.component.knative.ce;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.knative.KnativeEndpoint;
 import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.knative.spi.KnativeResource;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class AbstractCloudEventProcessor implements CloudEventProcessor {
     private final CloudEvent cloudEvent;
+
+    // Filters internal Camel headers (Camel*/camel*) from structured-mode CloudEvent extensions, keeping the
+    // extension-to-header mapping consistent with the binary content-mode path (see KnativeHttpHeaderFilterStrategy).
+    private final HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
     protected AbstractCloudEventProcessor(CloudEvent cloudEvent) {
         this.cloudEvent = cloudEvent;
@@ -71,6 +79,17 @@ abstract class AbstractCloudEventProcessor implements CloudEventProcessor {
     }
 
     protected abstract void decodeStructuredContent(Exchange exchange, Map<String, Object> content);
+
+    /**
+     * Maps a structured-mode CloudEvent extension field to a message header, applying the header filter strategy so
+     * that internal Camel ({@code Camel*}) headers are filtered consistently with the binary content-mode path.
+     */
+    protected void mapExtensionAsHeader(Message message, Exchange exchange, String key, Object value) {
+        final String headerName = key.toLowerCase(Locale.US);
+        if (!headerFilterStrategy.applyFilterToExternalHeaders(headerName, value, exchange)) {
+            message.setHeader(headerName, value);
+        }
+    }
 
     @Override
     public Processor producer(KnativeEndpoint endpoint, KnativeResource service) {

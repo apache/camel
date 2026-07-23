@@ -41,7 +41,7 @@ public class SedaPurgeWhenStoppingTest extends ContextTestSupport {
         }
 
         context.getRouteController().startRoute("myRoute");
-        latch.await(2, TimeUnit.SECONDS);
+        latch.await(5, TimeUnit.SECONDS);
         context.getRouteController().stopRoute("myRoute");
         latch2.countDown();
 
@@ -58,7 +58,7 @@ public class SedaPurgeWhenStoppingTest extends ContextTestSupport {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         latch.countDown();
-                        latch2.await(2, TimeUnit.SECONDS);
+                        latch2.await(5, TimeUnit.SECONDS);
                     }
                 }).to("mock:result");
             }

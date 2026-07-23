@@ -77,6 +77,16 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     }
 
     @Override
+    public boolean isActivityEnabled() {
+        return backlogTracer.isActivityEnabled();
+    }
+
+    @Override
+    public void setActivityEnabled(boolean activityEnabled) {
+        backlogTracer.setActivityEnabled(activityEnabled);
+    }
+
+    @Override
     public int getBacklogSize() {
         return backlogTracer.getBacklogSize();
     }
@@ -84,6 +94,16 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     @Override
     public void setBacklogSize(int backlogSize) {
         backlogTracer.setBacklogSize(backlogSize);
+    }
+
+    @Override
+    public int getActivitySize() {
+        return backlogTracer.getActivitySize();
+    }
+
+    @Override
+    public void setActivitySize(int activitySize) {
+        backlogTracer.setActivitySize(activitySize);
     }
 
     @Override
@@ -234,6 +254,11 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     @Override
     public String dumpLatestMessageHistoryAsJSon() {
         return backlogTracer.dumpLatestMessageHistoryAsJSon();
+    }
+
+    @Override
+    public String dumpActivityAsJSon() {
+        return backlogTracer.dumpActivityAsJSon();
     }
 
     @Override

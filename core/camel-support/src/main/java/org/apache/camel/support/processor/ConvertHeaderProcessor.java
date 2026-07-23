@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderOrPropertyException;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -36,10 +37,12 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A processor which converts the message header to be of the given type
  */
-public class ConvertHeaderProcessor extends ServiceSupport implements AsyncProcessor, IdAware, RouteIdAware, DisabledAware {
+public class ConvertHeaderProcessor extends ServiceSupport
+        implements AsyncProcessor, IdAware, RouteIdAware, StepIdAware, DisabledAware {
 
     private String id;
     private String routeId;
+    private String stepId;
     private boolean disabled;
     private final String name;
     private final Expression headerName;
@@ -85,6 +88,16 @@ public class ConvertHeaderProcessor extends ServiceSupport implements AsyncProce
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

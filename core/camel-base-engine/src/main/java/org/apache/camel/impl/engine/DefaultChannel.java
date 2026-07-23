@@ -312,6 +312,11 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             tracer.setTraceTemplates(camelContext.isBacklogTracingTemplates());
             tracer.setTraceRests(camelContext.isBacklogTracingRests());
             camelContext.getCamelContextExtension().addContextPlugin(BacklogTracer.class, tracer);
+            try {
+                camelContext.addService(tracer);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         return tracer;
     }
@@ -347,10 +352,14 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         // setup initial breakpoints
         if (debugger.getInitialBreakpoints() != null) {
             boolean match = false;
+            boolean allRoutes = false;
             String id = definition.getId();
             for (String pattern : debugger.getInitialBreakpoints().split(",")) {
                 pattern = pattern.trim();
-                match |= BacklogDebugger.BREAKPOINT_ALL_ROUTES.equals(pattern) && first;
+                if (BacklogDebugger.BREAKPOINT_ALL_ROUTES.equals(pattern) && first) {
+                    match = true;
+                    allRoutes = true;
+                }
                 if (!match) {
                     match = PatternHelper.matchPattern(id, pattern);
                 }
@@ -387,13 +396,12 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                 }
             }
             if (match) {
-                if (first && debugger.isSingleStepIncludeStartEnd()) {
-                    // we want route to be breakpoint (use input)
+                if (allRoutes && first && debugger.isSingleStepIncludeStartEnd()) {
+                    // all routes breakpoint: we want route to be breakpoint (use input)
                     id = routeDefinition.getInput().getId();
                     debugger.addBreakpoint(id);
                     LOG.debug("BacklogDebugger added breakpoint: {}", id);
                 } else {
-                    // first output should also be breakpoint
                     id = targetOutputDef.getId();
                     debugger.addBreakpoint(id);
                     LOG.debug("BacklogDebugger added breakpoint: {}", id);

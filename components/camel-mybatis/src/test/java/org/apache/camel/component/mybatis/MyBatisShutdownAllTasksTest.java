@@ -105,7 +105,7 @@ public class MyBatisShutdownAllTasksTest extends MyBatisTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("mybatis:selectAllAccounts").noAutoStartup().routeId("route1")
+                from("mybatis:selectAllAccounts").autoStartup(false).routeId("route1")
                         // let it complete all tasks
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
                         .delay(1000).to("seda:foo");

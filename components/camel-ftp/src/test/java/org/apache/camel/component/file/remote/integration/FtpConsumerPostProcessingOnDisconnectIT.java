@@ -84,7 +84,7 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("ftp://admin@localhost:{{ftp.server.port}}?password=admin&delete=true").routeId("foo").noAutoStartup()
+                from("ftp://admin@localhost:{{ftp.server.port}}?password=admin&delete=true").routeId("foo").autoStartup(false)
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
@@ -92,7 +92,7 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
                             }
                         }).to("mock:result");
                 from("ftp://admin@localhost:{{ftp.server.port}}?password=admin&noop=false&move=.camel").routeId("bar")
-                        .noAutoStartup()
+                        .autoStartup(false)
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {

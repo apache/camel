@@ -31,6 +31,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
+import org.apache.camel.builder.EndpointConsumerBuilder;
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.model.BasicExpressionNode;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
@@ -74,12 +76,13 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         Properties properties = new Properties();
         Map<String, String> namespaces = new LinkedHashMap<>();
         Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
+        List<Runnable> restorers = new ArrayList<>();
         Consumer<RouteDefinition> extractor = route -> {
             extractNamespaces(route, namespaces);
             if (sourceLocation || context.isDebugging()) {
                 extractSourceLocations(route, locations);
             }
-            resolveEndpointDslUris(route);
+            restorers.add(resolveEndpointDslUris(route));
             if (Boolean.TRUE.equals(route.isTemplate())) {
                 Map<String, Object> parameters = route.getTemplateParameters();
                 if (parameters != null) {
@@ -178,7 +181,11 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         } else if (definition instanceof RouteDefinition route) {
             extractor.accept(route);
         }
-        writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition) definition);
+        try {
+            writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition) definition);
+        } finally {
+            restorers.forEach(Runnable::run);
+        }
 
         return buffer.toString();
     }
@@ -282,29 +289,37 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
 
     /**
      * If the route has been built with endpoint-dsl, then the model will not have uri set which then cannot be included
-     * in the JAXB model dump
+     * in the JAXB model dump. Returns a {@link Runnable} that restores the original endpoint DSL builders after the XML
+     * has been written, so that the live {@link RouteDefinition} is not permanently mutated by the dump.
      */
     @SuppressWarnings("rawtypes")
-    private static void resolveEndpointDslUris(RouteDefinition route) {
+    private static Runnable resolveEndpointDslUris(RouteDefinition route) {
+        List<Runnable> restorers = new ArrayList<>();
         FromDefinition from = route.getInput();
         if (from != null && from.getEndpointConsumerBuilder() != null) {
-            String uri = from.getEndpointConsumerBuilder().getRawUri();
-            from.setUri(uri);
+            EndpointConsumerBuilder builder = from.getEndpointConsumerBuilder();
+            from.setUri(builder.getRawUri());
+            restorers.add(() -> from.setEndpointConsumerBuilder(builder));
         }
         Collection<SendDefinition> col = filterTypeInOutputs(route.getOutputs(), SendDefinition.class);
         for (SendDefinition<?> to : col) {
             if (to.getEndpointProducerBuilder() != null) {
-                String uri = to.getEndpointProducerBuilder().getRawUri();
-                to.setUri(uri);
+                EndpointProducerBuilder builder = to.getEndpointProducerBuilder();
+                to.setUri(builder.getRawUri());
+                restorers.add(() -> to.setEndpointProducerBuilder(builder));
             }
         }
         Collection<ToDynamicDefinition> col2 = filterTypeInOutputs(route.getOutputs(), ToDynamicDefinition.class);
         for (ToDynamicDefinition to : col2) {
             if (to.getEndpointProducerBuilder() != null) {
-                String uri = to.getEndpointProducerBuilder().getRawUri();
-                to.setUri(uri);
+                EndpointProducerBuilder builder = to.getEndpointProducerBuilder();
+                to.setUri(builder.getRawUri());
+                // ToDynamicDefinition.setUri does not call clear(), so the builder is preserved;
+                // only the uri field needs to be reset.
+                restorers.add(() -> to.setUri(null));
             }
         }
+        return () -> restorers.forEach(Runnable::run);
     }
 
     private static NamespaceAware getNamespaceAwareFromExpression(ExpressionNode expressionNode) {

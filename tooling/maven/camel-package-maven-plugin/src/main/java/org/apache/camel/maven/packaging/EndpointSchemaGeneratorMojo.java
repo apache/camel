@@ -1259,6 +1259,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     String paramOptionalPrefix = param.optionalPrefix();
                     String paramPrefix = param.prefix();
                     boolean multiValue = param.multiValue();
+                    boolean endpointIdentity = param.endpointIdentity();
                     Object defaultValue = param.defaultValue();
                     if (isNullOrEmpty(defaultValue) && metadata != null) {
                         defaultValue = metadata.defaultValue();
@@ -1300,7 +1301,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
                         collectNonNestedField(componentModel, classElement, nestedTypeName, nestedFieldName, componentOption,
                                 apiName, apiOption, apiParams, metadata, fieldElement, deprecated, deprecationNote, secret,
-                                fieldName, param, apiParam, name, paramOptionalPrefix, paramPrefix, multiValue, defaultValue,
+                                fieldName, param, apiParam, name, paramOptionalPrefix, paramPrefix, multiValue,
+                                endpointIdentity, defaultValue,
                                 defaultValueNote, required, label, displayName, fieldTypeElement, fieldTypeName);
                     }
                 }
@@ -1352,7 +1354,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             boolean componentOption, String apiName, boolean apiOption, ApiParams apiParams, Metadata metadata,
             Field fieldElement, boolean deprecated, String deprecationNote, Boolean secret, String fieldName, UriParam param,
             ApiParam apiParam, String name, String paramOptionalPrefix, String paramPrefix, boolean multiValue,
-            Object defaultValue, String defaultValueNote, boolean required, String label, String displayName,
+            boolean endpointIdentity, Object defaultValue, String defaultValueNote, boolean required, String label,
+            String displayName,
             Class<?> fieldTypeElement, String fieldTypeName) {
         String docComment = param.description();
         if (Strings.isNullOrEmpty(docComment)) {
@@ -1449,6 +1452,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         option.setPrefix(paramPrefix);
         option.setOptionalPrefix(paramOptionalPrefix);
         option.setMultiValue(multiValue);
+        option.setEndpointIdentity(endpointIdentity);
         option.setSupportFileReference(supportFileReference);
         option.setImportant(important);
         if (componentOption) {

@@ -20,7 +20,6 @@ import java.time.ZonedDateTime;
 
 import io.minio.MinioClient;
 import io.minio.ServerSideEncryption;
-import io.minio.ServerSideEncryptionCustomerKey;
 import okhttp3.OkHttpClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -58,7 +57,7 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "common")
     private String policy;
     @UriParam(label = "security")
-    private ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey;
+    private ServerSideEncryption.CustomerKey serverSideEncryptionCustomerKey;
     @UriParam(label = "security")
     private ServerSideEncryption serverSideEncryption;
     @UriParam(label = "common")
@@ -250,14 +249,14 @@ public class MinioConfiguration implements Cloneable {
         this.policy = policy;
     }
 
-    public ServerSideEncryptionCustomerKey getServerSideEncryptionCustomerKey() {
+    public ServerSideEncryption.CustomerKey getServerSideEncryptionCustomerKey() {
         return serverSideEncryptionCustomerKey;
     }
 
     /**
      * Server-side encryption for source object while copy/move objects.
      */
-    public void setServerSideEncryptionCustomerKey(ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
+    public void setServerSideEncryptionCustomerKey(ServerSideEncryption.CustomerKey serverSideEncryptionCustomerKey) {
         this.serverSideEncryptionCustomerKey = serverSideEncryptionCustomerKey;
     }
 

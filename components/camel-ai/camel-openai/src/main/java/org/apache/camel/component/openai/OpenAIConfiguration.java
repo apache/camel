@@ -47,6 +47,23 @@ public class OpenAIConfiguration implements Cloneable {
               defaultValue = ClientOptions.PRODUCTION_URL)
     private String baseUrl = ClientOptions.PRODUCTION_URL;
 
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "HTTP request timeout in milliseconds for the OpenAI SDK client. "
+                            + "When 0 or negative, the SDK default (10 minutes) is used.")
+    private long requestTimeout;
+
+    @UriParam(defaultValue = "2")
+    @Metadata(description = "Maximum number of times the OpenAI SDK client retries failed requests. "
+                            + "The SDK retry is rate-limit aware (honors Retry-After on 429).")
+    private int maxRetries = 2;
+
+    @UriParam(prefix = "additionalHeader.", multiValue = true)
+    @Metadata(description = "Additional HTTP request headers to send with every API call "
+                            + "(e.g. additionalHeader.OpenAI-Organization=my-org or additionalHeader.api-key=secret). "
+                            + "Values may contain secrets.",
+              security = "secret")
+    private Map<String, Object> additionalHeader;
+
     @UriParam
     @Metadata(description = "The model to use for chat completion")
     private String model;
@@ -84,6 +101,22 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Exchange property name for storing conversation history")
     private String conversationHistoryProperty = "CamelOpenAIConversationHistory";
 
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "When conversationMemory is enabled, retain at most this many messages in the exchange "
+                            + "conversation history. System and developer messages are prepended separately and are not "
+                            + "stored in history. Assistant tool-call blocks are kept intact and may retain slightly "
+                            + "more than this limit to preserve tool result pairing. When 0, no message limit is applied.")
+    private int maxHistoryMessages;
+
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "When conversationMemory is enabled, trim conversation history using a token estimate "
+                            + "(character count / 4, including image payload size for multi-modal user messages). "
+                            + "Oldest segments are dropped first until the estimated tokens are within this limit. "
+                            + "Assistant tool-call blocks are removed as a unit with their tool results. The most recent "
+                            + "segment is always retained, even when it alone exceeds this limit. When 0, "
+                            + "no token limit is applied.")
+    private int maxHistoryTokens;
+
     @UriParam
     @Metadata(description = "Default user message text to use when no prompt is provided", largeInput = true)
     private String userMessage;
@@ -118,7 +151,7 @@ public class OpenAIConfiguration implements Cloneable {
 
     @UriParam(prefix = "mcpServer.", multiValue = true)
     @Metadata(description = "MCP (Model Context Protocol) server configurations. "
-                            + "Define servers using prefix notation: mcpServer.<name>.transportType=stdio|sse|streamableHttp, "
+                            + "Define servers using prefix notation: mcpServer.<name>.transportType=stdio|sse|streamableHttp, (Note that sse is deprecated) "
                             + "mcpServer.<name>.command=<cmd> (stdio), mcpServer.<name>.args=<comma-separated> (stdio), "
                             + "mcpServer.<name>.url=<url> (sse/streamableHttp), "
                             + "mcpServer.<name>.oauthProfile=<profile> (OAuth profile for HTTP auth, requires camel-oauth)")
@@ -127,6 +160,14 @@ public class OpenAIConfiguration implements Cloneable {
     @UriParam(defaultValue = "50")
     @Metadata(description = "Maximum number of tool call loop iterations to prevent infinite loops")
     private int maxToolIterations = 50;
+
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "Maximum cumulative prompt plus completion tokens allowed across the MCP agentic loop. "
+                            + "When 0 or negative, no token budget is enforced. Enforcement runs after each API call "
+                            + "that requests further tool execution, so actual spend may exceed the configured budget "
+                            + "by up to one call (typically the largest, as the prompt grows each iteration). "
+                            + "A final text response is returned even when cumulative usage exceeds the budget.")
+    private long maxAgenticTokens;
 
     @UriParam(defaultValue = "true")
     @Metadata(description = "When true and MCP servers are configured, automatically execute tool calls "
@@ -191,6 +232,30 @@ public class OpenAIConfiguration implements Cloneable {
                             + "Only applicable with verbose_json response format.")
     private String audioTimestampGranularities;
 
+    // ========== AUDIO SPEECH (TEXT-TO-SPEECH) CONFIGURATION ==========
+
+    @UriParam
+    @Metadata(description = "The model to use for text-to-speech (e.g., gpt-4o-mini-tts, tts-1, tts-1-hd)")
+    private String speechModel;
+
+    @UriParam(defaultValue = "alloy")
+    @Metadata(description = "The voice to use for text-to-speech (e.g., alloy, echo, fable, onyx, nova, shimmer). "
+                            + "See the OpenAI documentation for the full list of supported voices.")
+    private String speechVoice = "alloy";
+
+    @UriParam(enums = "mp3,opus,aac,flac,wav,pcm", defaultValue = "mp3")
+    @Metadata(description = "The audio format for text-to-speech output")
+    private String speechResponseFormat = "mp3";
+
+    @UriParam
+    @Metadata(description = "The speed of the generated audio, from 0.25 to 4.0 where 1.0 is normal speed")
+    private Double speechSpeed;
+
+    @UriParam
+    @Metadata(description = "Optional instructions to control the voice of the generated audio. "
+                            + "Does not work with tts-1 or tts-1-hd.")
+    private String speechInstructions;
+
     // ========== SSL CONFIGURATION ==========
 
     @UriParam(label = "security")
@@ -240,7 +305,7 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "The algorithm used by the trust manager factory for SSL connections")
     private String sslTrustmanagerAlgorithm = "PKIX";
 
-    @UriParam(label = "security", defaultValue = "https")
+    @UriParam(label = "security", defaultValue = "https", security = "insecure:ssl", insecureValue = "none")
     @Metadata(description = "The endpoint identification algorithm to validate the server hostname using the server certificate. "
                             + "Set to an empty string or 'none' to disable hostname verification")
     private String sslEndpointAlgorithm = "https";
@@ -267,6 +332,30 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    public long getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public int getMaxRetries() {
+        return maxRetries;
+    }
+
+    public void setMaxRetries(int maxRetries) {
+        this.maxRetries = maxRetries;
+    }
+
+    public Map<String, Object> getAdditionalHeader() {
+        return additionalHeader;
+    }
+
+    public void setAdditionalHeader(Map<String, Object> additionalHeader) {
+        this.additionalHeader = additionalHeader;
     }
 
     public String getModel() {
@@ -339,6 +428,22 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setConversationHistoryProperty(String conversationHistoryProperty) {
         this.conversationHistoryProperty = conversationHistoryProperty;
+    }
+
+    public int getMaxHistoryMessages() {
+        return maxHistoryMessages;
+    }
+
+    public void setMaxHistoryMessages(int maxHistoryMessages) {
+        this.maxHistoryMessages = maxHistoryMessages;
+    }
+
+    public int getMaxHistoryTokens() {
+        return maxHistoryTokens;
+    }
+
+    public void setMaxHistoryTokens(int maxHistoryTokens) {
+        this.maxHistoryTokens = maxHistoryTokens;
     }
 
     public String getUserMessage() {
@@ -469,6 +574,46 @@ public class OpenAIConfiguration implements Cloneable {
         this.audioTimestampGranularities = audioTimestampGranularities;
     }
 
+    public String getSpeechModel() {
+        return speechModel;
+    }
+
+    public void setSpeechModel(String speechModel) {
+        this.speechModel = speechModel;
+    }
+
+    public String getSpeechVoice() {
+        return speechVoice;
+    }
+
+    public void setSpeechVoice(String speechVoice) {
+        this.speechVoice = speechVoice;
+    }
+
+    public String getSpeechResponseFormat() {
+        return speechResponseFormat;
+    }
+
+    public void setSpeechResponseFormat(String speechResponseFormat) {
+        this.speechResponseFormat = speechResponseFormat;
+    }
+
+    public Double getSpeechSpeed() {
+        return speechSpeed;
+    }
+
+    public void setSpeechSpeed(Double speechSpeed) {
+        this.speechSpeed = speechSpeed;
+    }
+
+    public String getSpeechInstructions() {
+        return speechInstructions;
+    }
+
+    public void setSpeechInstructions(String speechInstructions) {
+        this.speechInstructions = speechInstructions;
+    }
+
     public Map<String, Object> getMcpServer() {
         return mcpServer;
     }
@@ -483,6 +628,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setMaxToolIterations(int maxToolIterations) {
         this.maxToolIterations = maxToolIterations;
+    }
+
+    public long getMaxAgenticTokens() {
+        return maxAgenticTokens;
+    }
+
+    public void setMaxAgenticTokens(long maxAgenticTokens) {
+        this.maxAgenticTokens = maxAgenticTokens;
     }
 
     public boolean isAutoToolExecution() {

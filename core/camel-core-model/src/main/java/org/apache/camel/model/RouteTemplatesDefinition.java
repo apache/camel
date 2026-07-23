@@ -34,7 +34,7 @@ import org.apache.camel.spi.ResourceAware;
 /**
  * A series of route templates
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration", description = "Container for a collection of route template definitions")
 @XmlRootElement(name = "routeTemplates")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<RouteTemplatesDefinition>
@@ -48,6 +48,7 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
     private Resource resource;
 
     @XmlElementRef
+    @Metadata(description = "The route templates.")
     private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
 
     public RouteTemplatesDefinition() {
@@ -76,9 +77,6 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
         return routeTemplates;
     }
 
-    /**
-     * The route templates
-     */
     public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
         this.routeTemplates = routeTemplates;
     }

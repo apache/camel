@@ -492,7 +492,7 @@ public interface Neo4jEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Neo4jHeaderNameBuilder INSTANCE = new Neo4jHeaderNameBuilder();
+        public static final Neo4jHeaderNameBuilder INSTANCE = new Neo4jHeaderNameBuilder();
 
         /**
          * The operation to be performed.

@@ -329,7 +329,7 @@ public interface SpringAiImageEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SpringAiImageHeaderNameBuilder INSTANCE = new SpringAiImageHeaderNameBuilder();
+        public static final SpringAiImageHeaderNameBuilder INSTANCE = new SpringAiImageHeaderNameBuilder();
 
         /**
          * Number of images to generate.

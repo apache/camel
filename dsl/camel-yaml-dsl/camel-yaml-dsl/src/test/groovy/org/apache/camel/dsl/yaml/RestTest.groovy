@@ -189,7 +189,7 @@ class RestTest extends YamlTestSupport {
             def rloc = 'classpath:/rest-dsl/generated-rest-dsl.yaml'
             def rdsl = PluginHelper.getResourceLoader(context).resolveResource(rloc)
         when:
-            loadRoutes rdsl
+            loadRoutes(rdsl)
         then:
             context.restDefinitions != null
             !context.restDefinitions.isEmpty()

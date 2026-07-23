@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -26,8 +27,12 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
@@ -41,12 +46,12 @@ abstract class ActionBaseCommand extends CamelCommand {
     }
 
     protected static JsonObject getJsonObject(Path outputFile) {
-        return getJsonObject(outputFile, 5000);
+        return getJsonObject(outputFile, 10000);
     }
 
     protected static JsonObject getJsonObject(Path outputFile, long timeout) {
         StopWatch watch = new StopWatch();
-        while (watch.taken() < 5000) {
+        while (watch.taken() < timeout) {
             File f = outputFile.toFile();
             try {
                 // give time for response to be ready
@@ -58,6 +63,7 @@ abstract class ActionBaseCommand extends CamelCommand {
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                return null;
             } catch (Exception e) {
                 // ignore
             }
@@ -89,22 +95,27 @@ abstract class ActionBaseCommand extends CamelCommand {
                     JsonObject root = loadStatus(ph.pid());
                     // there must be a status file for the running Camel integration
                     if (root != null) {
+                        // skip terminated processes (e.g. launcher process for spring-boot/quarkus runtimes)
+                        JsonObject context = (JsonObject) root.get("context");
+                        if (context != null) {
+                            int phase = context.getIntegerOrDefault("phase", 0);
+                            if (phase >= 9) {
+                                return;
+                            }
+                        }
                         String pName = ProcessHelper.extractName(root, ph);
                         // ignore file extension, so it is easier to match by name
                         pName = FileUtil.onlyName(pName);
                         if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
                             pids.add(ph.pid());
-                        } else {
+                        } else if (context != null) {
                             // try camel context name
-                            JsonObject context = (JsonObject) root.get("context");
-                            if (context != null) {
-                                pName = context.getString("name");
-                                if ("CamelJBang".equals(pName)) {
-                                    pName = null;
-                                }
-                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
-                                    pids.add(ph.pid());
-                                }
+                            pName = context.getString("name");
+                            if ("CamelJBang".equals(pName)) {
+                                pName = null;
+                            }
+                            if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
+                                pids.add(ph.pid());
                             }
                         }
                     }
@@ -175,5 +186,66 @@ abstract class ActionBaseCommand extends CamelCommand {
         PathUtils.writeTextSafely(root.toJson(), file);
 
         return outputFile;
+    }
+
+    /**
+     * Boots the given source files through a transient Camel run (see {@link Run#runTransform(boolean)}) that dumps the
+     * route structure as JSON into a temporary work directory, so route-diagram / route-topology can render from source
+     * files without a running integration. The caller reads the dumped JSON from {@link SourceDump#workDir()} and is
+     * responsible for deleting that directory when done.
+     *
+     * @param  sourceFiles        the source files to load
+     * @param  workDirPrefix      prefix for the (pid-suffixed) temporary work directory name
+     * @param  ignoreLoadingError whether to ignore route loading and compilation errors
+     * @return                    the dump location and the instant the boot started, or {@code null} if a file does not
+     *                            exist or the boot failed (an error is already printed to the user in that case)
+     */
+    protected SourceDump dumpRoutesFromSource(List<String> sourceFiles, String workDirPrefix, boolean ignoreLoadingError)
+            throws Exception {
+        for (String name : sourceFiles) {
+            File f = new File(name);
+            if (!f.isFile() || !f.exists()) {
+                printer().printErr("File does not exist: " + name);
+                return null;
+            }
+        }
+
+        Path workDir = Path.of(CommandLineHelper.CAMEL_JBANG_WORK_DIR, workDirPrefix + ProcessHandle.current().pid());
+        PathUtils.deleteDirectory(workDir);
+        final String target = workDir.toString();
+        // anything this boot dumps must be newer than this: guards readers against a stale dump left over from a
+        // previous --watch iteration whose cleanup above raced with (or lost against) a slow filesystem
+        Instant bootStart = Instant.now();
+
+        Run run = new Run(getMain()) {
+            @Override
+            protected void doAddInitialProperty(KameletMain main) {
+                main.addInitialProperty("camel.main.dumpRoutes", "json");
+                main.addInitialProperty("camel.main.dumpRoutesLog", "false");
+                main.addInitialProperty("camel.main.dumpRoutesOutput", target);
+                // turn debug off as this can otherwise include source location in dump
+                main.addInitialProperty("camel.debug.enabled", "false");
+                main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
+                main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
+                if (ignoreLoadingError) {
+                    // turn off bean method validator if ignore loading error
+                    main.addInitialProperty("camel.language.bean.validate", "false");
+                }
+            }
+        };
+        run.files = sourceFiles;
+        run.executionLimitOptions.maxSeconds = 1;
+        int exit = run.runTransform(ignoreLoadingError);
+        if (exit != 0) {
+            return null;
+        }
+        return new SourceDump(workDir, bootStart);
+    }
+
+    /**
+     * Result of {@link #dumpRoutesFromSource}: the temporary directory the route JSON was dumped into, and the instant
+     * the transient boot started (used to tell a fresh dump apart from a stale one left by an earlier run).
+     */
+    protected record SourceDump(Path workDir, Instant bootStart) {
     }
 }

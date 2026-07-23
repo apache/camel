@@ -24,4 +24,16 @@ public class LangChain4jChatHeaders {
 
     @Metadata(description = "Augmented Data for RAG", javaType = "String")
     public static final String AUGMENTED_DATA = "CamelLangChain4jChatAugmentedData";
+
+    @Metadata(description = "The Finish Reason.", javaType = "dev.langchain4j.model.output.FinishReason")
+    public static final String FINISH_REASON = "CamelLangChain4jChatFinishReason";
+
+    @Metadata(description = "The Input Token Count.", javaType = "int")
+    public static final String INPUT_TOKEN_COUNT = "CamelLangChain4jChatInputTokenCount";
+
+    @Metadata(description = "The Output Token Count.", javaType = "int")
+    public static final String OUTPUT_TOKEN_COUNT = "CamelLangChain4jChatOutputTokenCount";
+
+    @Metadata(description = "The Total Token Count.", javaType = "int")
+    public static final String TOTAL_TOKEN_COUNT = "CamelLangChain4jChatTotalTokenCount";
 }

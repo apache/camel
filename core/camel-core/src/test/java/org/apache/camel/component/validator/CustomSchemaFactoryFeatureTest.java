@@ -20,10 +20,16 @@ import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
-public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
+class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     // Need to bind the CustomerSchemaFactory
     @Override
     protected Registry createCamelRegistry() throws Exception {
@@ -36,11 +42,21 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
 
     // just inject the SchemaFactory as we want
     @Test
-    public void testCustomSchemaFactory() throws Exception {
+    void testCustomSchemaFactory() throws Exception {
+        SchemaFactory registeredFactory = (SchemaFactory) context.getRegistry().lookupByName("MySchemaFactory");
+
         ValidatorComponent v = new ValidatorComponent();
         v.setCamelContext(context);
         v.init();
-        v.createEndpoint("validator:org/apache/camel/component/validator/unsecuredSchema.xsd?schemaFactory=#MySchemaFactory");
+        Endpoint endpoint = v.createEndpoint(
+                "validator:org/apache/camel/component/validator/unsecuredSchema.xsd?schemaFactory=#MySchemaFactory");
+        assertNotNull(endpoint, "Endpoint should be created with a custom SchemaFactory");
+        ValidatorEndpoint ve = assertInstanceOf(ValidatorEndpoint.class, endpoint);
+        assertNotNull(ve.getSchemaFactory(), "Endpoint should have the custom SchemaFactory configured");
+        assertSame(registeredFactory, ve.getSchemaFactory(),
+                "Endpoint should use the same SchemaFactory instance that was registered");
+        assertFalse(ve.getSchemaFactory().getFeature(XMLConstants.FEATURE_SECURE_PROCESSING),
+                "Custom SchemaFactory should have FEATURE_SECURE_PROCESSING set to false");
     }
 
 }

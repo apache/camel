@@ -33,7 +33,7 @@ public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
 
     @Test
     public void testShutdownCompleteAllTasks() throws Exception {
-        String url = fileUri("?initialDelay=0&delay=10");
+        String url = fileUri("?initialDelay=0&delay=2000");
 
         // prepare 5 files to begin with
         template.sendBodyAndHeader(url, "A", Exchange.FILE_NAME, "a.txt");
@@ -52,16 +52,9 @@ public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).to("log:delay").to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("log:bar").to("mock:bar").process(new Processor() {
-                    boolean first = true;
-
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         latch.countDown();
-                        if (first) {
-                            // only sleep on first
-                            Thread.sleep(100);
-                        }
-                        first = false;
                     }
                 });
             }

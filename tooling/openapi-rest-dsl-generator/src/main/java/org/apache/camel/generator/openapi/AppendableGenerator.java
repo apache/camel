@@ -18,7 +18,7 @@ package org.apache.camel.generator.openapi;
 
 import java.io.IOException;
 
-import com.squareup.javapoet.JavaFile;
+import com.palantir.javapoet.JavaFile;
 import io.swagger.v3.oas.models.OpenAPI;
 
 final class AppendableGenerator extends RestDslSourceCodeGenerator<Appendable> {

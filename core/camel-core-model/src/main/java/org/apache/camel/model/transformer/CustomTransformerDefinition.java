@@ -22,19 +22,21 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Transformer;
 
 /**
  * To use a custom transformer on a route level.
  */
-@Metadata(label = "transformation")
+@Metadata(label = "transformation",
+          description = "References a custom data type transformer implementation from the registry for route-level transformations")
 @XmlRootElement(name = "customTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomTransformerDefinition extends TransformerDefinition {
 
     @XmlAttribute
+    @Metadata(description = "Reference to a custom Transformer bean in the registry.")
     private String ref;
     @XmlAttribute
+    @Metadata(description = "Fully qualified class name of the custom Transformer implementation.")
     private String className;
 
     public CustomTransformerDefinition() {
@@ -55,9 +57,6 @@ public class CustomTransformerDefinition extends TransformerDefinition {
         return ref;
     }
 
-    /**
-     * Set a bean reference of the {@link Transformer}
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -66,9 +65,6 @@ public class CustomTransformerDefinition extends TransformerDefinition {
         return className;
     }
 
-    /**
-     * Set a class name of the {@link Transformer}
-     */
     public void setClassName(String className) {
         this.className = className;
     }

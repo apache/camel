@@ -1,14 +1,14 @@
 :image-name: Fedora
 :config-class: src/test/java/org/apache/camel/test/infra/cli/common/CliProperties.java
 
-= Camel JBang CLI test infrastructure
+= Camel CLI CLI test infrastructure
 
 == Overview
 
-This module provides test infrastructure for Camel CLI (Camel JBang) integration tests.
+This module provides test infrastructure for Camel CLI (Camel CLI) integration tests.
 Two service implementations are available:
 
-* *Container-based* (`CliLocalContainerService`) -- builds and runs a Docker container based on {image-name} image with Camel JBang. This is the default.
+* *Container-based* (`CliLocalContainerService`) -- builds and runs a Docker container based on {image-name} image with Camel CLI. This is the default.
 * *Process-based* (`CliLocalProcessService`) -- runs JBang/Camel CLI directly on the host via `ProcessBuilder`, without Docker. Useful on environments where Docker is not available.
 
 == Service selection

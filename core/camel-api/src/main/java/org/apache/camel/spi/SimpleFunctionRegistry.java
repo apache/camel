@@ -20,9 +20,12 @@ import java.util.Set;
 
 import org.apache.camel.Expression;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Registry for custom simple functions.
+ *
+ * @since 4.18
  */
 public interface SimpleFunctionRegistry extends StaticService {
 
@@ -54,6 +57,7 @@ public interface SimpleFunctionRegistry extends StaticService {
      * @param  name name of function
      * @return      the function, or <tt>null</tt> if no function exists
      */
+    @Nullable
     Expression getFunction(String name);
 
     /**

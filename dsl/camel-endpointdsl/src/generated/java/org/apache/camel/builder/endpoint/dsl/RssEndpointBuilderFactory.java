@@ -892,7 +892,7 @@ public interface RssEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final RssHeaderNameBuilder INSTANCE = new RssHeaderNameBuilder();
+        public static final RssHeaderNameBuilder INSTANCE = new RssHeaderNameBuilder();
 
         /**
          * The entire SyncFeed object.

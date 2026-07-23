@@ -18,15 +18,19 @@ package org.apache.camel.telemetry;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.CamelTracingService;
@@ -47,6 +51,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
 
     public static final String TRACE_HEADER = "CAMEL_TRACE_ID";
     public static final String SPAN_HEADER = "CAMEL_SPAN_ID";
+    public static final String BAGGAGE_PROPERTY = "CamelBaggage_";
 
     private static final Logger LOG = LoggerFactory.getLogger(Tracer.class);
 
@@ -55,12 +60,17 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
      * Component configuration
      */
     private String excludePatterns;
+    private String includePatterns;
     private boolean traceProcessors;
+    private boolean disableCoreProcessors;
+    private boolean traceCustomIdOnly;
     private boolean traceHeadersInclusion;
 
+    private final Set<String> customIdRoutes = ConcurrentHashMap.newKeySet();
     private final TracingEventNotifier eventNotifier = new TracingEventNotifier();
     private final SpanStorageManager spanStorageManager = new SpanStorageManagerExchange();
     private final SpanDecoratorManager spanDecoratorManager = new SpanDecoratorManagerImpl();
+    private BacklogTracer backlogTracer;
 
     /*
      * It has to be provided by the specific implementation
@@ -89,6 +99,15 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     }
 
     @ManagedAttribute
+    public String getIncludePatterns() {
+        return includePatterns;
+    }
+
+    public void setIncludePatterns(String includePatterns) {
+        this.includePatterns = includePatterns;
+    }
+
+    @ManagedAttribute
     public boolean isTraceHeadersInclusion() {
         return traceHeadersInclusion;
     }
@@ -106,6 +125,24 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         this.traceProcessors = traceProcessors;
     }
 
+    @ManagedAttribute
+    public boolean isDisableCoreProcessors() {
+        return disableCoreProcessors;
+    }
+
+    public void setDisableCoreProcessors(boolean disableCoreProcessors) {
+        this.disableCoreProcessors = disableCoreProcessors;
+    }
+
+    @ManagedAttribute
+    public boolean isTraceCustomIdOnly() {
+        return traceCustomIdOnly;
+    }
+
+    public void setTraceCustomIdOnly(boolean traceCustomIdOnly) {
+        this.traceCustomIdOnly = traceCustomIdOnly;
+    }
+
     public SpanLifecycleManager getSpanLifecycleManager() {
         return this.spanLifecycleManager;
     }
@@ -117,7 +154,21 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
         init(camelContext);
+        if (traceCustomIdOnly) {
+            if (route.hasCustomIdAssigned()) {
+                customIdRoutes.add(routeId);
+            } else {
+                return null;
+            }
+        }
         return new TracingRoutePolicy();
+    }
+
+    boolean isCustomIdRoute(String routeId) {
+        if (routeId == null) {
+            return true;
+        }
+        return !traceCustomIdOnly || customIdRoutes.contains(routeId);
     }
 
     /**
@@ -161,6 +212,8 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         InterceptStrategy interceptStrategy = new TraceProcessorsInterceptStrategy(this);
         camelContext.getCamelContextExtension().addInterceptStrategy(interceptStrategy);
 
+        backlogTracer = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
+
         initTracer();
         ServiceHelper.startService(eventNotifier);
     }
@@ -175,6 +228,13 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         camelContext.getRoutePolicyFactories().remove(this);
     }
 
+    public boolean match(String endpointUri, CamelContext context) {
+        boolean included = includePatterns == null || include(endpointUri, context);
+        boolean excluded = exclude(endpointUri, context);
+
+        return included && !excluded;
+    }
+
     public boolean exclude(String endpointUri, CamelContext context) {
         if (endpointUri != null && excludePatterns != null) {
             for (String pattern : excludePatterns.split(",")) {
@@ -184,6 +244,20 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                 }
             }
         }
+        return false;
+    }
+
+    public boolean include(String endpointUri, CamelContext context) {
+        if (endpointUri != null && includePatterns != null) {
+            for (String pattern : includePatterns.split(",")) {
+                pattern = pattern.trim();
+
+                if (EndpointHelper.matchEndpoint(context, endpointUri, pattern)) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
@@ -200,16 +274,22 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         public void notify(CamelEvent event) throws Exception {
             try {
                 if (event instanceof CamelEvent.ExchangeSendingEvent ese) {
-                    if (exclude(ese.getEndpoint().getEndpointUri(), ese.getExchange().getContext())) {
-                        LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", ese.getEndpoint());
-                    } else {
+                    if (!isCustomIdRoute(ese.getExchange().getFromRouteId())) {
+                        return;
+                    }
+                    if (match(ese.getEndpoint().getEndpointUri(), ese.getExchange().getContext())) {
                         beginEventSpan(ese.getExchange(), ese.getEndpoint(), Op.EVENT_SENT);
+                    } else {
+                        LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", ese.getEndpoint());
                     }
                 } else if (event instanceof CamelEvent.ExchangeSentEvent ese) {
-                    if (exclude(ese.getEndpoint().getEndpointUri(), ese.getExchange().getContext())) {
-                        LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", ese.getEndpoint());
-                    } else {
+                    if (!isCustomIdRoute(ese.getExchange().getFromRouteId())) {
+                        return;
+                    }
+                    if (match(ese.getEndpoint().getEndpointUri(), ese.getExchange().getContext())) {
                         endEventSpan(ese.getExchange(), ese.getEndpoint());
+                    } else {
+                        LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", ese.getEndpoint());
                     }
                 }
             } catch (Exception t) {
@@ -223,10 +303,10 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         @Override
         public void onExchangeBegin(Route route, Exchange exchange) {
             try {
-                if (exclude(route.getEndpoint().getEndpointUri(), exchange.getContext())) {
-                    LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", route.getEndpoint());
-                } else {
+                if (match(route.getEndpoint().getEndpointUri(), exchange.getContext())) {
                     beginEventSpan(exchange, route.getEndpoint(), Op.EVENT_RECEIVED);
+                } else {
+                    LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", route.getEndpoint());
                 }
             } catch (Exception t) {
                 LOG.warn("Tracing: Failed to capture tracing data. This exception is ignored.", t);
@@ -236,10 +316,10 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         @Override
         public void onExchangeDone(Route route, Exchange exchange) {
             try {
-                if (exclude(route.getEndpoint().getEndpointUri(), exchange.getContext())) {
-                    LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", route.getEndpoint());
-                } else {
+                if (match(route.getEndpoint().getEndpointUri(), exchange.getContext())) {
                     endEventSpan(exchange, route.getEndpoint());
+                } else {
+                    LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", route.getEndpoint());
                 }
             } catch (Exception t) {
                 LOG.warn("Tracing: Failed to capture tracing data. This exception is ignored.", t);
@@ -274,7 +354,21 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         Span span = spanLifecycleManager.create(spanName, spanKind, parentSpan,
                 spanDecorator.getExtractor(exchange));
         span.setTag(TagConstants.OP, op.toString());
-        spanDecorator.beforeTracingEvent(span, exchange, endpoint);
+
+        if (backlogTracer != null && backlogTracer.isActivityEnabled() && op == Op.EVENT_SENT) {
+            // wrap with recording span to capture decorator attributes for activity enrichment
+            RecordingSpan recording = new RecordingSpan(span);
+            spanDecorator.beforeTracingEvent(recording, exchange, endpoint);
+            // store recorded tags on exchange for BacklogTracer activity to pick up
+            Map<String, String> tags = recording.getRecordedTags();
+            if (!tags.isEmpty()) {
+                exchange.setProperty(ExchangePropertyKey.ACTIVITY_SPAN_TAGS, tags);
+            }
+            // continue with the real span for activation/storage
+        } else {
+            spanDecorator.beforeTracingEvent(span, exchange, endpoint);
+        }
+
         spanLifecycleManager.activate(span);
         spanStorageManager.push(exchange, span);
         spanLifecycleManager.inject(span, spanDecorator.getInjector(exchange), this.traceHeadersInclusion);

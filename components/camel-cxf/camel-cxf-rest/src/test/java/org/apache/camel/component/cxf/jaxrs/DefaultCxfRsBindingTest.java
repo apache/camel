@@ -20,7 +20,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.HttpHeaders;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -29,6 +33,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.message.MessageImpl;
 import org.junit.jupiter.api.Test;
 
@@ -53,6 +58,34 @@ public class DefaultCxfRsBindingTest {
         cxfRsBinding.setCharsetWithContentType(exchange);
         charset = ExchangeHelper.getCharsetName(exchange);
         assertEquals("UTF-8", charset, "Get a worng charset name");
+    }
+
+    @Test
+    public void testContentLanguagePerRequest() throws Exception {
+        DefaultCxfRsBinding binding = new DefaultCxfRsBinding();
+        Exchange exchange = new DefaultExchange(context);
+        Message camelMessage = exchange.getIn();
+        camelMessage.setBody("test");
+
+        WebClient frClient = WebClient.create("http://localhost");
+        frClient.header(HttpHeaders.CONTENT_LANGUAGE, "fr");
+        Entity<Object> frEntity = binding.bindCamelMessageToRequestEntity("body", camelMessage, exchange, frClient);
+        assertEquals(Locale.FRENCH, frEntity.getVariant().getLanguage());
+
+        WebClient deClient = WebClient.create("http://localhost");
+        deClient.header(HttpHeaders.CONTENT_LANGUAGE, "de");
+        Entity<Object> deEntity = binding.bindCamelMessageToRequestEntity("body", camelMessage, exchange, deClient);
+        assertEquals(Locale.GERMAN, deEntity.getVariant().getLanguage());
+    }
+
+    @Test
+    public void testContentLanguageDefaultsToUS() throws Exception {
+        DefaultCxfRsBinding binding = new DefaultCxfRsBinding();
+        Exchange exchange = new DefaultExchange(context);
+        Message camelMessage = exchange.getIn();
+
+        Entity<Object> entity = binding.bindCamelMessageToRequestEntity("body", camelMessage, exchange, null);
+        assertEquals(Locale.US, entity.getVariant().getLanguage());
     }
 
     @Test

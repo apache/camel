@@ -38,7 +38,12 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "metric",
-         description = "Get metrics (micrometer) of running Camel integrations", sortOptions = false, showDefaultValues = true)
+         description = "Get metrics (micrometer) of running Camel integrations", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get metric",
+                 "  camel get metric --filter=timer*",
+                 "  camel get metric --watch" })
 public class ListMetric extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration",
@@ -114,7 +119,8 @@ public class ListMetric extends ProcessWatchCommand {
                                     if (!all && getNumber(row.count).isEmpty()) {
                                         continue;
                                     }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
+                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
+                                            || row.tags.contains(filter)) {
                                         rows.add(row);
                                     }
                                 }
@@ -167,7 +173,8 @@ public class ListMetric extends ProcessWatchCommand {
                                     if (!all && getNumber(row.count).isEmpty()) {
                                         continue;
                                     }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
+                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
+                                            || row.tags.contains(filter)) {
                                         rows.add(row);
                                     }
                                 }
@@ -193,7 +200,8 @@ public class ListMetric extends ProcessWatchCommand {
                                     if (!all && getNumber(row.count).isEmpty()) {
                                         continue;
                                     }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
+                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
+                                            || row.tags.contains(filter)) {
                                         rows.add(row);
                                     }
                                 }

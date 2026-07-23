@@ -29,13 +29,15 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshal and unmarshal iCal (*.ics) documents to/from model objects.
  */
-@Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "iCal")
+@Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "iCal",
+          description = "Marshal and unmarshal iCal (*.ics) documents to/from model objects")
 @XmlRootElement(name = "ical")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IcalDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(description = "Whether to validate the iCal document.",
+              javaType = "java.lang.Boolean")
     private String validating;
 
     public IcalDataFormat() {
@@ -61,9 +63,6 @@ public class IcalDataFormat extends DataFormatDefinition {
         return validating;
     }
 
-    /**
-     * Whether to validate.
-     */
     public void setValidating(String validating) {
         this.validating = validating;
     }

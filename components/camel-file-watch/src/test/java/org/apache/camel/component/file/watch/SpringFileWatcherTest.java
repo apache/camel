@@ -21,9 +21,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -47,29 +49,32 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
     @Test
     public void testDefaultConfig() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:springTest");
-        mock.setExpectedCount(2); // two MODIFY events
-        mock.setResultWaitTime(1000);
+        // Use minimum count to tolerate CREATE events from file creation in @BeforeEach,
+        // which may be delivered on JDK 25+ due to faster WatchService initialization
+        mock.expectedMinimumMessageCount(2);
+        mock.setResultWaitTime(2000);
 
         Files.write(springTestFile.toPath(), "modification".getBytes(), StandardOpenOption.SYNC);
-        // Adding few millis to avoid flaky tests
-        // The file hasher could sometimes evaluate these two changes as duplicate, as the second modification of file could be done before hashing is done
-        Thread.sleep(50);
+        // Wait for the watcher to process and hash the first write before the second one,
+        // so the file hasher can distinguish the two modifications as separate events
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> mock.getReceivedCounter() >= 1);
         Files.write(springTestFile.toPath(), "modification 2".getBytes(), StandardOpenOption.SYNC);
 
         mock.assertIsSatisfied();
-
     }
 
     @Test
     public void testCustomHasher() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:springTestCustomHasher");
         mock.setExpectedCount(1); // We passed dummy TestHasher which returns constant hashcode. This should cause, that second MODIFY event is discarded
-        mock.setResultWaitTime(1000);
+        mock.setResultWaitTime(2000);
 
         Files.write(springTestCustomHasherFile.toPath(), "first modification".getBytes(), StandardOpenOption.SYNC);
-        // Adding few millis to avoid flaky tests
-        // The file hasher could sometimes evaluate these two changes as duplicate, as the second modification of file could be done before hashing is done
-        Thread.sleep(50);
+        // Wait for the watcher to process and hash the first write before the second one,
+        // so the file hasher evaluates them as separate events (deduplicating via constant hash)
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> mock.getReceivedCounter() >= 1);
         Files.write(springTestCustomHasherFile.toPath(), "second modification".getBytes(), StandardOpenOption.SYNC);
 
         mock.assertIsSatisfied();

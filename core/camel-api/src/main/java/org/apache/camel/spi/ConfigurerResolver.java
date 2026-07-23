@@ -17,9 +17,21 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
+import org.jspecify.annotations.Nullable;
 
 /**
- * A pluggable strategy for resolving different configurers in a loosely coupled manner
+ * Pluggable strategy for resolving a {@link PropertyConfigurer} by the name of the target type (for example
+ * {@code timer-component} or {@code timer-endpoint}).
+ * <p/>
+ * The default implementation looks up the class name from a service resource under the path
+ * {@link #RESOURCE_PATH}{@code <name>} on the classpath and instantiates it. These resources are generated at build
+ * time by the {@code camel-package-maven-plugin} for every class annotated with {@link Configurer}. Camel consults the
+ * resolver when configuring a component or endpoint from properties, using the returned {@link PropertyConfigurer} to
+ * set options without reflection.
+ *
+ * @see   PropertyConfigurer
+ * @see   Configurer
+ * @since 3.1
  */
 public interface ConfigurerResolver {
 
@@ -32,5 +44,6 @@ public interface ConfigurerResolver {
      * @param  context the camel context
      * @return         the resolved configurer, or <tt>null</tt> if no configurer could be found
      */
+    @Nullable
     PropertyConfigurer resolvePropertyConfigurer(String name, CamelContext context);
 }

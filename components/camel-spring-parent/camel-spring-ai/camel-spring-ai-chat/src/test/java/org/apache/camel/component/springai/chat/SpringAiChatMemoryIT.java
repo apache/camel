@@ -165,7 +165,7 @@ public class SpringAiChatMemoryIT extends OllamaTestSupport {
         // First message
         var exchange1 = template().request("direct:chat-with-auto-memory", e -> {
             e.getIn().setBody("My favorite number is 42. Please remember this.");
-            e.getIn().setHeader("conversationId", conversationId);
+            e.getIn().setHeader(SpringAiChatConstants.CONVERSATION_ID, conversationId);
         });
 
         String response1 = exchange1.getMessage().getBody(String.class);
@@ -174,7 +174,7 @@ public class SpringAiChatMemoryIT extends OllamaTestSupport {
         // Second message - the advisor should remember the context
         var exchange2 = template().request("direct:chat-with-auto-memory", e -> {
             e.getIn().setBody("What is my favorite number? Answer with just the number.");
-            e.getIn().setHeader("conversationId", conversationId);
+            e.getIn().setHeader(SpringAiChatConstants.CONVERSATION_ID, conversationId);
         });
 
         String response2 = exchange2.getMessage().getBody(String.class);

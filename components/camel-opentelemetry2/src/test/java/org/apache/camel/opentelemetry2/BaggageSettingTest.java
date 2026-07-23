@@ -61,14 +61,14 @@ public class BaggageSettingTest extends OpenTelemetryTracerTestSupport {
 
     private void checkTrace(OtelTrace trace) {
         List<SpanData> spans = trace.getSpans();
-        assertEquals(7, spans.size());
+        // to("log:info") no longer produces a processor span (SendProcessor implements EndpointSending)
+        assertEquals(6, spans.size());
         SpanData testProducer = spans.get(0);
         SpanData direct = spans.get(1);
         SpanData setHeaders = spans.get(2);
         SpanData innerLog = spans.get(3);
         SpanData innerProcessor = spans.get(4);
         SpanData log = spans.get(5);
-        SpanData innerToLog = spans.get(6);
 
         // Validate span completion
         assertTrue(testProducer.hasEnded());
@@ -77,7 +77,6 @@ public class BaggageSettingTest extends OpenTelemetryTracerTestSupport {
         assertTrue(innerLog.hasEnded());
         assertTrue(innerProcessor.hasEnded());
         assertTrue(log.hasEnded());
-        assertTrue(innerToLog.hasEnded());
     }
 
     @Override
@@ -87,14 +86,12 @@ public class BaggageSettingTest extends OpenTelemetryTracerTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setHeader("OTEL_BAGGAGE_tenant.id", constant("1234"))
+                        .setProperty("CamelBaggage_tenant.id", constant("1234"))
                         .routeId("start")
                         .log("A message")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                exchange.getIn().setHeader("operation", "fake");
-
                                 assertEquals("1234", Baggage.current().getEntryValue("tenant.id"));
                             }
                         })

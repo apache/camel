@@ -16,11 +16,15 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ValueHolder;
 
 /**
  * Key used in {@link org.apache.camel.spi.ValidatorRegistry} in {@link CamelContext}, to ensure a consistent lookup.
+ *
+ * @since 4.7
  */
 public final class ValidatorKey extends ValueHolder<String> {
 
@@ -28,7 +32,7 @@ public final class ValidatorKey extends ValueHolder<String> {
 
     public ValidatorKey(DataType type) {
         super(type.toString());
-        this.type = type;
+        this.type = Objects.requireNonNull(type, "type");
     }
 
     public DataType getType() {

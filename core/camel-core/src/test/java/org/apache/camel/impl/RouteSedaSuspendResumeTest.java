@@ -53,9 +53,9 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
             assertEquals("Suspended", statefulService.getStatus().name());
         }
 
-        Thread.sleep(1000L);
-        // need to give seda consumer thread time to idle
-        await().atMost(1, TimeUnit.SECONDS)
+        // need to give seda consumer thread time to idle after suspension
+        await().pollDelay(1, TimeUnit.SECONDS)
+                .atMost(5, TimeUnit.SECONDS)
                 .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().isEmpty());
 
         template.sendBody("seda:foo", "B");

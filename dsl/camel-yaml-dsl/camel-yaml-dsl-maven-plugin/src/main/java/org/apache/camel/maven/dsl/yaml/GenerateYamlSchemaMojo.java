@@ -578,7 +578,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         }
 
         composition.forEach(compositionEntry -> {
-            if (!compositionEntry.has("$ref")) {
+            if (compositionEntry.has("$ref")) {
                 String parentName = StringHelper.after(compositionEntry.get("$ref").asText(), "/definitions/");
                 ObjectNode referredObject = definitions.withObject("/" + parentName);
                 extractRequiredFromComposition(negations, referredObject);

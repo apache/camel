@@ -26,7 +26,6 @@ public enum RuntimeType {
     quarkus,
     main;
 
-    public static final String QUARKUS_VERSION = "${quarkus-version}";
     public static final String QUARKUS_EXTENSION_REGISTRY_BASE_URL = "${quarkus-extension-registry-base-url}";
     public static final String SPRING_BOOT_VERSION = "${spring-boot-version}";
     public static final String KAMELETS_VERSION = "${camel-kamelets-catalog-version}";
@@ -52,7 +51,7 @@ public enum RuntimeType {
     public String version() {
         return switch (this) {
             case springBoot -> SPRING_BOOT_VERSION;
-            case quarkus -> QUARKUS_VERSION;
+            case quarkus -> throw new UnsupportedOperationException("There is no built in version for Quarkus Runtime. The caller should resolve it at runtime using QuarkusPlatformMixin.resolve()");
             case main -> new DefaultCamelCatalog().getCatalogVersion();
         };
     }

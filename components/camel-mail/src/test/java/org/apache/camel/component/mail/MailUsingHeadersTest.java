@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * Unit test for Mail using camel headers to set recipient subject.
  */
 public class MailUsingHeadersTest extends CamelTestSupport {
-    private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("davsclaus", "secret");
+    private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("MailUsingHeadersTest-davsclaus", "secret");
 
     @Test
     public void testMailUsingHeaders() throws Exception {
@@ -42,19 +42,21 @@ public class MailUsingHeadersTest extends CamelTestSupport {
 
         // START SNIPPET: e1
         Map<String, Object> map = new HashMap<>();
-        map.put("To", "davsclaus@localhost");
+        map.put("To", davsclaus.getEmail());
         map.put("From", "jstrachan@apache.org");
         map.put("Subject", "Camel rocks");
         map.put("CamelFileName", "fileOne");
         map.put("CamelTest", "value");
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
-        template.sendBodyAndHeaders(davsclaus.uriPrefix(Protocol.smtp), body, map);
+        template.sendBodyAndHeaders(
+                davsclaus.uriPrefix(Protocol.smtp) + "&useHeaderRecipients=true&useHeaderFrom=true&useHeaderSubject=true",
+                body, map);
         // END SNIPPET: e1
 
         Mailbox box = davsclaus.getInbox();
         Message msg = box.get(0);
-        assertEquals("davsclaus@localhost", msg.getRecipients(Message.RecipientType.TO)[0].toString());
+        assertEquals(davsclaus.getEmail(), msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("jstrachan@apache.org", msg.getFrom()[0].toString());
         assertEquals("Camel rocks", msg.getSubject());
 
@@ -71,12 +73,14 @@ public class MailUsingHeadersTest extends CamelTestSupport {
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
         template.sendBodyAndHeaders(
-                davsclaus.uriPrefix(Protocol.smtp) + "&from=James Strachan <jstrachan@apache.org>&to=davsclaus@localhost", body,
-                map);
+                davsclaus.uriPrefix(Protocol.smtp)
+                                    + "&from=James Strachan <jstrachan@apache.org>&to=" + davsclaus.getEmail()
+                                    + "&useHeaderSubject=true",
+                body, map);
 
         Mailbox box = davsclaus.getInbox();
         Message msg = box.get(0);
-        assertEquals("davsclaus@localhost", msg.getRecipients(Message.RecipientType.TO)[0].toString());
+        assertEquals(davsclaus.getEmail(), msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("James Strachan <jstrachan@apache.org>", msg.getFrom()[0].toString());
         assertEquals("Camel rocks", msg.getSubject());
 

@@ -112,6 +112,16 @@ public class MailConfiguration implements Cloneable {
     private boolean useInlineAttachments;
     @UriParam(label = "advanced")
     private boolean ignoreUnsupportedCharset;
+    @UriParam(label = "producer,advanced,security", security = "insecure:ssl")
+    private boolean useJavaMailSessionPropertiesFromHeaders;
+    @UriParam(label = "producer")
+    private boolean useHeaderRecipients;
+    @UriParam(label = "producer")
+    private boolean useHeaderFrom;
+    @UriParam(label = "producer")
+    private boolean useHeaderSubject;
+    @UriParam(label = "producer")
+    private boolean useHeaderReplyTo;
     @UriParam
     @Metadata(label = "consumer")
     private boolean disconnect;
@@ -695,6 +705,71 @@ public class MailConfiguration implements Cloneable {
      */
     public void setUseInlineAttachments(boolean useInlineAttachments) {
         this.useInlineAttachments = useInlineAttachments;
+    }
+
+    public boolean isUseJavaMailSessionPropertiesFromHeaders() {
+        return useJavaMailSessionPropertiesFromHeaders;
+    }
+
+    /**
+     * Whether to allow dynamic JavaMail session properties (message headers whose key starts with <tt>mail.smtp.</tt>
+     * or <tt>mail.smtps.</tt>) to override the endpoint configuration on a per-message basis.
+     *
+     * This is disabled by default. Only enable it when these headers originate exclusively from trusted route logic,
+     * never from data crossing a trust boundary (for example HTTP query parameters, or JMS/Kafka messages from
+     * untrusted producers). When enabled, an attacker able to set these headers could weaken transport security (such
+     * as <tt>mail.smtp.ssl.trust</tt> or <tt>mail.smtp.starttls.enable</tt>) or redirect the SMTP connection.
+     */
+    public void setUseJavaMailSessionPropertiesFromHeaders(boolean useJavaMailSessionPropertiesFromHeaders) {
+        this.useJavaMailSessionPropertiesFromHeaders = useJavaMailSessionPropertiesFromHeaders;
+    }
+
+    public boolean isUseHeaderRecipients() {
+        return useHeaderRecipients;
+    }
+
+    /**
+     * Whether message headers To, CC, and BCC override the recipients pre-configured in the endpoint URI. Defaults to
+     * true. Set to false to always use the endpoint URI recipients, ignoring any recipient headers from the message.
+     */
+    public void setUseHeaderRecipients(boolean useHeaderRecipients) {
+        this.useHeaderRecipients = useHeaderRecipients;
+    }
+
+    public boolean isUseHeaderFrom() {
+        return useHeaderFrom;
+    }
+
+    /**
+     * Whether message headers From and Sender override the sender pre-configured in the endpoint URI. Defaults to true.
+     * Set to false to always use the endpoint URI sender, ignoring any From or Sender headers from the message.
+     */
+    public void setUseHeaderFrom(boolean useHeaderFrom) {
+        this.useHeaderFrom = useHeaderFrom;
+    }
+
+    public boolean isUseHeaderSubject() {
+        return useHeaderSubject;
+    }
+
+    /**
+     * Whether message header Subject overrides the subject pre-configured in the endpoint URI. Defaults to true. Set to
+     * false to always use the endpoint URI subject, ignoring any Subject header from the message.
+     */
+    public void setUseHeaderSubject(boolean useHeaderSubject) {
+        this.useHeaderSubject = useHeaderSubject;
+    }
+
+    public boolean isUseHeaderReplyTo() {
+        return useHeaderReplyTo;
+    }
+
+    /**
+     * Whether message header Reply-To overrides the replyTo pre-configured in the endpoint URI. Defaults to true. Set
+     * to false to always use the endpoint URI replyTo, ignoring any Reply-To header from the message.
+     */
+    public void setUseHeaderReplyTo(boolean useHeaderReplyTo) {
+        this.useHeaderReplyTo = useHeaderReplyTo;
     }
 
     public boolean isIgnoreUnsupportedCharset() {

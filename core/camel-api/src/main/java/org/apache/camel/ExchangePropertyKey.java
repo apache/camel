@@ -17,9 +17,17 @@
 package org.apache.camel;
 
 import org.apache.camel.spi.CircuitBreakerConstants;
+import org.jspecify.annotations.Nullable;
 
 /**
- * An enum of common and known keys for exchange properties used by camel-core.
+ * Typed enum of the well-known {@link Exchange} property keys used by camel-core.
+ * <p/>
+ * Each constant wraps the corresponding {@link Exchange} string constant and provides a type-safe alternative for
+ * reading and writing internal exchange properties via {@link Exchange#getProperty(ExchangePropertyKey)} and
+ * {@link Exchange#setProperty(ExchangePropertyKey, Object)}.
+ *
+ * @see   Exchange
+ * @since 3.9
  */
 public enum ExchangePropertyKey {
 
@@ -64,6 +72,8 @@ public enum ExchangePropertyKey {
     INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED(Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED),
     LOOP_INDEX(Exchange.LOOP_INDEX),
     LOOP_SIZE(Exchange.LOOP_SIZE),
+    MESSAGE_BODY_SIZE(Exchange.MESSAGE_BODY_SIZE),
+    MESSAGE_HEADERS_SIZE(Exchange.MESSAGE_HEADERS_SIZE),
     MESSAGE_HISTORY(Exchange.MESSAGE_HISTORY),
     MULTICAST_COMPLETE(Exchange.MULTICAST_COMPLETE),
     MULTICAST_INDEX(Exchange.MULTICAST_INDEX),
@@ -78,7 +88,9 @@ public enum ExchangePropertyKey {
     SLIP_PRODUCER(Exchange.SLIP_PRODUCER),
     SPLIT_COMPLETE(Exchange.SPLIT_COMPLETE),
     SPLIT_INDEX(Exchange.SPLIT_INDEX),
+    SPLIT_RESULT(Exchange.SPLIT_RESULT),
     SPLIT_SIZE(Exchange.SPLIT_SIZE),
+    SPLIT_WATERMARK(Exchange.SPLIT_WATERMARK),
     STEP_ID(Exchange.STEP_ID),
     STREAM_CACHE_UNIT_OF_WORK(Exchange.STREAM_CACHE_UNIT_OF_WORK),
     TO_ENDPOINT(Exchange.TO_ENDPOINT),
@@ -88,7 +100,8 @@ public enum ExchangePropertyKey {
     @Deprecated(since = "4.19.0")
     OTEL_ACTIVE_SPAN(Exchange.OTEL_ACTIVE_SPAN),
     @Deprecated(since = "4.19.0")
-    OTEL_CLOSE_CLIENT_SCOPE(Exchange.OTEL_CLOSE_CLIENT_SCOPE);
+    OTEL_CLOSE_CLIENT_SCOPE(Exchange.OTEL_CLOSE_CLIENT_SCOPE),
+    ACTIVITY_SPAN_TAGS(Exchange.ACTIVITY_SPAN_TAGS);
 
     private final String name;
 
@@ -100,7 +113,7 @@ public enum ExchangePropertyKey {
         return name;
     }
 
-    public static ExchangePropertyKey asExchangePropertyKey(String name) {
+    public static @Nullable ExchangePropertyKey asExchangePropertyKey(String name) {
         switch (name) {
             case Exchange.AGGREGATED_COMPLETED_BY:
                 return AGGREGATED_COMPLETED_BY;
@@ -182,6 +195,10 @@ public enum ExchangePropertyKey {
                 return LOOP_INDEX;
             case Exchange.LOOP_SIZE:
                 return LOOP_SIZE;
+            case Exchange.MESSAGE_BODY_SIZE:
+                return MESSAGE_BODY_SIZE;
+            case Exchange.MESSAGE_HEADERS_SIZE:
+                return MESSAGE_HEADERS_SIZE;
             case Exchange.MESSAGE_HISTORY:
                 return MESSAGE_HISTORY;
             case Exchange.MULTICAST_COMPLETE:
@@ -208,8 +225,12 @@ public enum ExchangePropertyKey {
                 return SPLIT_COMPLETE;
             case Exchange.SPLIT_INDEX:
                 return SPLIT_INDEX;
+            case Exchange.SPLIT_RESULT:
+                return SPLIT_RESULT;
             case Exchange.SPLIT_SIZE:
                 return SPLIT_SIZE;
+            case Exchange.SPLIT_WATERMARK:
+                return SPLIT_WATERMARK;
             case Exchange.STEP_ID:
                 return STEP_ID;
             case Exchange.STREAM_CACHE_UNIT_OF_WORK:
@@ -226,6 +247,8 @@ public enum ExchangePropertyKey {
             // Deprecated since 4.19.0
             case Exchange.OTEL_CLOSE_CLIENT_SCOPE:
                 return OTEL_CLOSE_CLIENT_SCOPE;
+            case Exchange.ACTIVITY_SPAN_TAGS:
+                return ACTIVITY_SPAN_TAGS;
             default:
                 return null;
         }

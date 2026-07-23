@@ -137,7 +137,7 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
             LOG.info("Generating real speech audio using Watson Text-to-Speech...");
 
             // Create Watson TTS client
-            IamAuthenticator authenticator = new IamAuthenticator(ttsApiKey);
+            IamAuthenticator authenticator = (new IamAuthenticator.Builder()).apikey(ttsApiKey).build();
             TextToSpeech ttsService = new TextToSpeech(authenticator);
 
             if (ttsServiceUrl != null && !ttsServiceUrl.isBlank()) {

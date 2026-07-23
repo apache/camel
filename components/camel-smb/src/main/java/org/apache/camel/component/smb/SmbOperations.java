@@ -46,6 +46,7 @@ import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
+import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -200,7 +201,13 @@ public class SmbOperations implements SmbFileOperations {
 
     @Override
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
-        return share.fileExists(name);
+        connectIfNecessary();
+        try {
+            return share.fileExists(name);
+        } catch (SMBRuntimeException smbre) {
+            safeDisconnect(smbre);
+            throw smbre;
+        }
     }
 
     @Override
@@ -236,7 +243,8 @@ public class SmbOperations implements SmbFileOperations {
     public boolean atomicRenameFile(File src, String to)
             throws GenericFileOperationFailedException {
         try {
-            src.rename(to);
+            // SMB protocol requires backslashes as path separators
+            src.rename(to.replace('/', '\\'));
             LOG.debug("Renamed file: {} to: {} using atomic rename", src.getUncPath(), to);
             return true;
         } catch (SMBRuntimeException e) {
@@ -302,27 +310,40 @@ public class SmbOperations implements SmbFileOperations {
 
         connectIfNecessary();
 
-        // read the entire file into memory in the byte array
-        try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.GENERIC_READ), null,
-                SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null)) {
-
-            if (configuration.isStreamDownload()) {
-                InputStream is = shareFile.getInputStream();
-                target.setBody(is);
-                exchange.getIn().setHeader(SmbConstants.SMB_FILE_INPUT_STREAM, is);
-            } else {
+        if (configuration.isStreamDownload()) {
+            // stream download: keep the File handle open so the InputStream remains valid;
+            // wrap in a SmbFileClosingInputStream that closes the File handle when the stream is closed
+            try {
+                File shareFile = share.openFile(name, EnumSet.of(AccessMask.GENERIC_READ), null,
+                        SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null);
+                try {
+                    InputStream raw = shareFile.getInputStream();
+                    InputStream is = new SmbFileClosingInputStream(raw, shareFile);
+                    target.setBody(is);
+                    exchange.getIn().setHeader(SmbConstants.SMB_FILE_INPUT_STREAM, is);
+                    exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
+                } catch (Exception e) {
+                    IOHelper.close(shareFile);
+                    throw e;
+                }
+            } catch (SMBRuntimeException smbre) {
+                safeDisconnect(smbre);
+                throw smbre;
+            }
+        } else {
+            try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.GENERIC_READ), null,
+                    SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null)) {
                 try (InputStream is = shareFile.getInputStream()) {
                     byte[] body = is.readAllBytes();
                     target.setBody(body);
                 } catch (IOException e) {
                     throw new GenericFileOperationFailedException(e.getMessage(), e);
                 }
+                exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
+            } catch (SMBRuntimeException smbre) {
+                safeDisconnect(smbre);
+                throw smbre;
             }
-
-            exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
-        } catch (SMBRuntimeException smbre) {
-            safeDisconnect(smbre);
-            throw smbre;
         }
         return true;
     }
@@ -337,11 +358,18 @@ public class SmbOperations implements SmbFileOperations {
             // use relative filename in local work directory
             String relativeName = file.getRelativeFilePath();
 
+            java.io.File localWorkDir = local;
             temp = new java.io.File(local, relativeName + ".inprogress");
+            local = new java.io.File(local, relativeName);
+
+            // ensure the local work file stays within the local work directory (CAMEL-23765)
+            if (endpoint.isJailStartingDirectory()) {
+                GenericFileHelper.jailToLocalWorkDirectory(temp, localWorkDir);
+                GenericFileHelper.jailToLocalWorkDirectory(local, localWorkDir);
+            }
 
             // create directory to local work file
-            local.mkdirs();
-            local = new java.io.File(local, relativeName);
+            localWorkDir.mkdirs();
 
             // delete any existing files
             if (temp.exists()) {
@@ -517,6 +545,7 @@ public class SmbOperations implements SmbFileOperations {
 
     @Override
     public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+        connectIfNecessary();
         ByteArrayInputStream bis = new ByteArrayInputStream(payload.getBytes());
         try {
             try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.FILE_WRITE_DATA),
@@ -613,22 +642,25 @@ public class SmbOperations implements SmbFileOperations {
         }
     }
 
-    // The stream must be closed by the client.
     public InputStream getBodyAsInputStream(Exchange exchange, String path) {
         connectIfNecessary();
-        InputStream is;
         try {
-            // NOTE: the streams opened must be closed byt the client.
-            File shareFile = share.openFile(path, EnumSet.of(AccessMask.GENERIC_READ), null, // NOSONAR
+            File shareFile = share.openFile(path, EnumSet.of(AccessMask.GENERIC_READ), null,
                     SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null);
-            is = shareFile.getInputStream();
-            exchange.getIn().setHeader(SmbComponent.SMB_FILE_INPUT_STREAM, is);
-            exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
+            try {
+                InputStream raw = shareFile.getInputStream();
+                InputStream is = new SmbFileClosingInputStream(raw, shareFile);
+                exchange.getIn().setHeader(SmbComponent.SMB_FILE_INPUT_STREAM, is);
+                exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
+                return is;
+            } catch (Exception e) {
+                IOHelper.close(shareFile);
+                throw e;
+            }
         } catch (SMBRuntimeException smbre) {
             safeDisconnect(smbre);
             throw smbre;
         }
-        return is;
     }
 
     private void safeDisconnect(SMBRuntimeException smbre) {

@@ -16,15 +16,28 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
- * Exception when failing to start a {@link Component}.
+ * Thrown when a {@link Component} fails to start as part of the {@link CamelContext} startup sequence.
+ * <p/>
+ * Carries the component name so the error message points at the offending component (typically the URI scheme used in
+ * route DSL, e.g. {@code kafka}, {@code http}).
+ *
+ * @since 3.9
  */
 public class FailedToStartComponentException extends RuntimeCamelException {
 
     private final String componentName;
 
+    /**
+     * @param componentName the name of the component that failed to start
+     * @param message       the detail message describing the failure
+     * @param cause         the cause of the failure
+     */
     public FailedToStartComponentException(String componentName, String message, Throwable cause) {
-        super("Failed to start component " + componentName + " because of " + message, cause);
+        super("Failed to start component " + Objects.requireNonNull(componentName, "componentName") + " because of "
+              + Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
         this.componentName = componentName;
     }
 

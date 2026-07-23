@@ -21,12 +21,21 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+[#if ParentGroupId??]
+    <parent>
+        <groupId>[=ParentGroupId]</groupId>
+        <artifactId>[=ParentArtifactId]</artifactId>
+        <version>[=ParentVersion]</version>
+        <relativePath/>
+    </parent>
+[#else]
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>[=SpringBootVersion]</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+[/#if]
 
     <groupId>[=GroupId]</groupId>
     <artifactId>[=ArtifactId]</artifactId>
@@ -197,6 +206,49 @@
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <configuration>
                             <jvmArguments>-javaagent:target/dependency/jolokia-agent-jvm-javaagent.jar=port=7878,host=localhost</jvmArguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>jib</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <version>[=JibMavenPluginVersion]</version>
+                        <configuration>
+                            <allowInsecureRegistries>true</allowInsecureRegistries>
+                            <extraDirectories>
+                                <paths>
+                                    <path>
+                                        <from>${project.build.directory}</from>
+                                        <into>/deployments</into>
+                                        <includes>
+                                            <include>${project.build.finalName}.jar</include>
+                                        </includes>
+                                    </path>
+                                </paths>
+                                <permissions>
+                                    <permission>
+                                        <file>/deployments/${project.build.finalName}.jar</file>
+                                        <mode>644</mode>
+                                    </permission>
+                                </permissions>
+                            </extraDirectories>
+                            <container>
+                               <entrypoint>
+                                    <arg>java</arg>
+                                    <arg>-jar</arg>
+                                    <arg>/deployments/${project.build.finalName}.jar</arg>
+                                </entrypoint>
+                            </container>
                         </configuration>
                     </plugin>
                 </plugins>

@@ -35,25 +35,26 @@
 
 ####
 # This Dockerfile is used in order to build a container that runs the Camel application
+# using layered packaging for optimized container image caching.
 #
 # ./mvnw clean package
 # docker build -f src/main/docker/Dockerfile -t [=ArtifactId]:[=Version] .
 # docker run -it [=ArtifactId]:[=Version]
 #
+# Dependencies are copied first (changes infrequently - cached layer),
+# then the application JAR (changes frequently - small layer).
+#
 ###
-FROM eclipse-temurin:25-jre-ubi9-minimal
+FROM registry.access.redhat.com/ubi9/openjdk-25:1.24
 
-ENV LANGUAGE='en_US:en'
-
-RUN mkdir /deployments
-
-COPY --chown=185 target/[=AppJar] /deployments/
+# Copy dependencies first for better layer caching
+COPY --chown=185 target/lib/ /deployments/lib/
+# Copy application JAR (the .original is the thin JAR before repackaging)
+COPY --chown=185 target/[=AppJar].original /deployments/[=AppJar]
 
 # Uncomment to expose any given port
 # EXPOSE 8080
 USER 185
-# Uncomment to provide any Java option
-# ENV JAVA_OPTS=""
-WORKDIR /deployments
+ENV JAVA_APP_JAR="/deployments/[=AppJar]"
 
-ENTRYPOINT exec java $JAVA_OPTS -jar [=AppJar]
+ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]

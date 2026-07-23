@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.sjms.support;
 
+import jakarta.jms.Connection;
+
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.awaitility.Awaitility.await;
 
 /**
  * A support class that builds up and tears down an ActiveMQ instance to be used for unit testing. This is meant for
@@ -65,10 +70,23 @@ public abstract class JmsExclusiveTestSupport extends JmsCommonTestSupport {
         log.info("Stopping the ActiveMQ Broker");
         getService().restart();
         brokerUri = getService().serviceAddress();
-        Thread.sleep(waitingMillis);
+
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUri);
         setupFactoryExternal(connectionFactory);
 
+        // Wait for broker to accept connections if waitingMillis > 0
+        if (waitingMillis > 0) {
+            // Poll interval: 10% of timeout, min 30ms, max 100ms
+            long pollInterval = Math.max(30, Math.min(100, waitingMillis / 10));
+            await().atMost(waitingMillis, MILLISECONDS)
+                    .pollInterval(pollInterval, MILLISECONDS)
+                    .ignoreExceptions()
+                    .until(() -> {
+                        try (Connection conn = connectionFactory.createConnection()) {
+                            return true;
+                        }
+                    });
+        }
         connect();
     }
 

@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -144,7 +145,7 @@ public class KameletMain extends MainCommandLineSupport {
     private final BlueprintXmlBeansHandler blueprintXmlBeansHandler = new BlueprintXmlBeansHandler();
 
     /**
-     * Deprecated constructor - to tightly bound to Camel JBang. Do not use.
+     * Deprecated constructor - to tightly bound to Camel CLI. Do not use.
      */
     @Deprecated(since = "4.9.0")
     KameletMain() {
@@ -248,7 +249,7 @@ public class KameletMain extends MainCommandLineSupport {
     }
 
     /**
-     * Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang
+     * Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI
      */
     public void setPackageScanJars(boolean packageScanJars) {
         this.packageScanJars = packageScanJars;
@@ -453,7 +454,11 @@ public class KameletMain extends MainCommandLineSupport {
             setupExport(answer, true);
         } else {
             PropertiesComponent pc = (PropertiesComponent) answer.getPropertiesComponent();
-            pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer, false, transform));
+            // create resolver that can download dependencies for known functions
+            var resolver = new DependencyDownloaderPropertiesFunctionResolver(answer, false, transform);
+            resolver.setCamelContext(answer);
+            resolver.start();
+            pc.setPropertiesFunctionResolver(resolver);
         }
 
         // groovy scripts
@@ -488,7 +493,7 @@ public class KameletMain extends MainCommandLineSupport {
         TransactedDownloader.registerDownloadReifiers(this);
 
         // in case we use saga
-        SagaDownloader.registerDownloadReifiers(this);
+        SagaDownloader.registerDownloadReifiers();
 
         // if transforming DSL then disable processors as we just want to work on the model (not runtime processors)
         if (transform) {
@@ -519,8 +524,8 @@ public class KameletMain extends MainCommandLineSupport {
         infos.forEach(LOG::info);
 
         answer.getCamelContextExtension().setRegistry(registry);
-        if (silent || "*".equals(stubPattern)) {
-            registry.addBeanRepository(new StubBeanRepository(stubPattern));
+        if (silent || "*".equals(stubPattern) || "component:*".equals(stubPattern)) {
+            registry.addBeanRepository(new StubBeanRepository("*"));
         }
 
         // load camel component and custom health-checks
@@ -795,8 +800,11 @@ public class KameletMain extends MainCommandLineSupport {
         addInitialProperty("camel.component.properties.ignore-missing-location", "true");
         PropertiesComponent pc = (PropertiesComponent) answer.getPropertiesComponent();
         pc.setPropertiesParser(new ExportPropertiesParser(answer));
-        pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer, export, false));
-
+        // create resolver that can download dependencies for known functions
+        var resolver = new DependencyDownloaderPropertiesFunctionResolver(answer, export, false);
+        resolver.setCamelContext(answer);
+        resolver.start();
+        pc.setPropertiesFunctionResolver(resolver);
         // override default type converters with our export converter that is more flexible during exporting
         ExportTypeConverter ec = new ExportTypeConverter();
         answer.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Override);
@@ -805,7 +813,9 @@ public class KameletMain extends MainCommandLineSupport {
         answer.getTypeConverterRegistry().addTypeConverter(Double.class, String.class, ec);
         answer.getTypeConverterRegistry().addTypeConverter(Float.class, String.class, ec);
         answer.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
+        answer.getTypeConverterRegistry().addTypeConverter(Short.class, String.class, ec);
         answer.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
+        answer.getTypeConverterRegistry().addTypeConverter(Duration.class, String.class, ec);
         answer.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
 
         // turn of validator in onException during export

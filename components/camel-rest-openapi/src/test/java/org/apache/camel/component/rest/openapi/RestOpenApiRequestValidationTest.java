@@ -308,6 +308,37 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     }
 
     @ParameterizedTest
+    @MethodSource("petStoreVersions")
+    @SuppressWarnings("unchecked")
+    void requestValidationWithRequiredQueryParameterFromEndpointUri(String petStoreVersion) {
+        Map<String, Object> headers = Map.of("petStoreVersion", petStoreVersion);
+        List<Pet> pets
+                = template.requestBodyAndHeaders("direct:validateQueryParamsFromEndpoint", null, headers, List.class);
+        assertFalse(pets.isEmpty());
+    }
+
+    @ParameterizedTest
+    @MethodSource("petStoreVersions")
+    @SuppressWarnings("unchecked")
+    void requestValidationWithRequiredQueryParameterFromVariable(String petStoreVersion) {
+        Exchange exchange = template.request("direct:validateQueryParamsFromVariable", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getMessage().setHeader("petStoreVersion", petStoreVersion);
+                exchange.setVariable("status", "available");
+            }
+        });
+
+        Exception exception = exchange.getException();
+        if (exception != null) {
+            throw new AssertionError("Unexpected validation failure", exception);
+        }
+        List<Pet> pets = exchange.getMessage().getBody(List.class);
+        assertNotNull(pets);
+        assertFalse(pets.isEmpty());
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = { "petStoreV3" })
     void requestValidationWithBinaryBody(String petStoreVersion) throws IOException {
         Map<String, Object> headers = Map.of(
@@ -457,6 +488,14 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
                         .toD("${header.petStoreVersion}:#addPet?requestValidationEnabled=true");
 
                 from("direct:validateOperationForQueryParams")
+                        .toD("${header.petStoreVersion}:findPetsByStatus?requestValidationEnabled=true")
+                        .unmarshal(jacksonDataFormat);
+
+                from("direct:validateQueryParamsFromEndpoint")
+                        .toD("${header.petStoreVersion}:findPetsByStatus?requestValidationEnabled=true&status=available")
+                        .unmarshal(jacksonDataFormat);
+
+                from("direct:validateQueryParamsFromVariable")
                         .toD("${header.petStoreVersion}:findPetsByStatus?requestValidationEnabled=true")
                         .unmarshal(jacksonDataFormat);
 

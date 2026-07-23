@@ -16,12 +16,14 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Template for working with Camel and consuming {@link Message} instances in an {@link Exchange} from an
  * {@link Endpoint}. <br/>
  * <p/>
- * This template is an implementation of the <a href="http://camel.apache.org/polling-consumer.html">Polling Consumer
- * EIP</a>. This is <b>not</b> the <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer
+ * This template is an implementation of the <a href="https://camel.apache.org/polling-consumer.html">Polling Consumer
+ * EIP</a>. This is <b>not</b> the <a href="https://camel.apache.org/event-driven-consumer.html">Event Driven Consumer
  * EIP</a>. <br/>
  * <p/>
  * The {@link ConsumerTemplate} is <b>thread safe</b>. <br/>
@@ -34,8 +36,8 @@ package org.apache.camel;
  * the template.
  * <p/>
  * <b>Important note on usage:</b> See this
- * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a> before
- * using, it applies to this {@link ConsumerTemplate} as well.
+ * <a href="https://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
+ * before using, it applies to this {@link ConsumerTemplate} as well.
  *
  * @see ProducerTemplate
  * @see FluentProducerTemplate
@@ -112,6 +114,7 @@ public interface ConsumerTemplate extends Service {
      * @return             the returned exchange, or <tt>null</tt> if no response
      * @see                #doneUoW(Exchange)
      */
+    @Nullable
     Exchange receive(String endpointUri, long timeout);
 
     /**
@@ -124,42 +127,47 @@ public interface ConsumerTemplate extends Service {
      * @return          the returned exchange, or <tt>null</tt> if no response
      * @see             #doneUoW(Exchange)
      */
+    @Nullable
     Exchange receive(Endpoint endpoint, long timeout);
 
     /**
-     * Receives from the endpoint, not waiting for a response if non exists.
+     * Receives from the endpoint, not waiting for a response if none exists.
      * <p/>
      * <b>Important:</b> See {@link #doneUoW(Exchange)}
      *
      * @param  endpointUri the endpoint to receive from
      * @return             the returned exchange, or <tt>null</tt> if no response
      */
+    @Nullable
     Exchange receiveNoWait(String endpointUri);
 
     /**
-     * Receives from the endpoint, not waiting for a response if non exists.
+     * Receives from the endpoint, not waiting for a response if none exists.
      * <p/>
      * <b>Important:</b> See {@link #doneUoW(Exchange)}
      *
      * @param  endpoint the endpoint to receive from
      * @return          the returned exchange, or <tt>null</tt> if no response
      */
+    @Nullable
     Exchange receiveNoWait(Endpoint endpoint);
 
     /**
      * Receives from the endpoint, waiting until there is a response
      *
      * @param  endpointUri the endpoint to receive from
-     * @return             the returned response body
+     * @return             the returned response body, or <tt>null</tt> if no body
      */
+    @Nullable
     Object receiveBody(String endpointUri);
 
     /**
      * Receives from the endpoint, waiting until there is a response
      *
      * @param  endpoint the endpoint to receive from
-     * @return          the returned response body
+     * @return          the returned response body, or <tt>null</tt> if no body
      */
+    @Nullable
     Object receiveBody(Endpoint endpoint);
 
     /**
@@ -169,6 +177,7 @@ public interface ConsumerTemplate extends Service {
      * @param  timeout     timeout in millis to wait for a response
      * @return             the returned response body, or <tt>null</tt> if no response
      */
+    @Nullable
     Object receiveBody(String endpointUri, long timeout);
 
     /**
@@ -178,22 +187,25 @@ public interface ConsumerTemplate extends Service {
      * @param  timeout  timeout in millis to wait for a response
      * @return          the returned response body, or <tt>null</tt> if no response
      */
+    @Nullable
     Object receiveBody(Endpoint endpoint, long timeout);
 
     /**
-     * Receives from the endpoint, not waiting for a response if non exists.
+     * Receives from the endpoint, not waiting for a response if none exists.
      *
      * @param  endpointUri the endpoint to receive from
      * @return             the returned response body, or <tt>null</tt> if no response
      */
+    @Nullable
     Object receiveBodyNoWait(String endpointUri);
 
     /**
-     * Receives from the endpoint, not waiting for a response if non exists.
+     * Receives from the endpoint, not waiting for a response if none exists.
      *
      * @param  endpoint the endpoint to receive from
      * @return          the returned response body, or <tt>null</tt> if no response
      */
+    @Nullable
     Object receiveBodyNoWait(Endpoint endpoint);
 
     /**
@@ -201,18 +213,18 @@ public interface ConsumerTemplate extends Service {
      *
      * @param  endpointUri the endpoint to receive from
      * @param  type        the expected response type
-     * @return             the returned response body
+     * @return             the returned response body, or <tt>null</tt> if no body
      */
-    <T> T receiveBody(String endpointUri, Class<T> type);
+    <T> @Nullable T receiveBody(String endpointUri, Class<T> type);
 
     /**
      * Receives from the endpoint, waiting until there is a response
      *
      * @param  endpoint the endpoint to receive from
      * @param  type     the expected response type
-     * @return          the returned response body
+     * @return          the returned response body, or <tt>null</tt> if no body
      */
-    <T> T receiveBody(Endpoint endpoint, Class<T> type);
+    <T> @Nullable T receiveBody(Endpoint endpoint, Class<T> type);
 
     /**
      * Receives from the endpoint, waiting until there is a response or the timeout occurs
@@ -222,7 +234,7 @@ public interface ConsumerTemplate extends Service {
      * @param  type        the expected response type
      * @return             the returned response body, or <tt>null</tt> if no response
      */
-    <T> T receiveBody(String endpointUri, long timeout, Class<T> type);
+    <T> @Nullable T receiveBody(String endpointUri, long timeout, Class<T> type);
 
     /**
      * Receives from the endpoint, waiting until there is a response or the timeout occurs
@@ -232,25 +244,25 @@ public interface ConsumerTemplate extends Service {
      * @param  type     the expected response type
      * @return          the returned response body, or <tt>null</tt> if no response
      */
-    <T> T receiveBody(Endpoint endpoint, long timeout, Class<T> type);
+    <T> @Nullable T receiveBody(Endpoint endpoint, long timeout, Class<T> type);
 
     /**
-     * Receives from the endpoint, not waiting for a response if non exists.
+     * Receives from the endpoint, not waiting for a response if none exists.
      *
      * @param  endpointUri the endpoint to receive from
      * @param  type        the expected response type
      * @return             the returned response body, or <tt>null</tt> if no response
      */
-    <T> T receiveBodyNoWait(String endpointUri, Class<T> type);
+    <T> @Nullable T receiveBodyNoWait(String endpointUri, Class<T> type);
 
     /**
-     * Receives from the endpoint, not waiting for a response if non exists.
+     * Receives from the endpoint, not waiting for a response if none exists.
      *
      * @param  endpoint the endpoint to receive from
      * @param  type     the expected response type
      * @return          the returned response body, or <tt>null</tt> if no response
      */
-    <T> T receiveBodyNoWait(Endpoint endpoint, Class<T> type);
+    <T> @Nullable T receiveBodyNoWait(Endpoint endpoint, Class<T> type);
 
     /**
      * If you have used any of the <tt>receive</tt> methods which returns a {@link Exchange} type then you need to

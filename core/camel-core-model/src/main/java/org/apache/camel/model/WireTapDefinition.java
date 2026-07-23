@@ -32,7 +32,10 @@ import org.apache.camel.spi.Metadata;
  * Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original
  * message.
  */
-@Metadata(label = "eip,routing", excludeProperties = "pattern")
+@Metadata(label = "eip,endpoint,routing", excludeProperties = "pattern",
+          aliases = { "tap", "observe" },
+          description = "Sends a copy of the message to a secondary endpoint without affecting the original route flow."
+                        + " The tapped message is sent asynchronously in a separate thread")
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends ToDynamicDefinition
@@ -44,16 +47,20 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     private Processor onPrepareProcessor;
 
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to use a copy of the original exchange.")
     private String copy;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether the uri is dynamic or static. If dynamic then the simple language is used to evaluate a dynamic uri to use as the wire-tap destination, for each incoming message.")
     private String dynamicUri;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor",
+              description = "Uses a processor when preparing the exchange to be sent. This can be used to deep-clone messages, or any custom logic needed before the exchange is sent.")
     private String onPrepare;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "Uses a custom thread pool for sending tapped exchanges.")
     private String executorService;
 
     public WireTapDefinition() {
@@ -317,9 +324,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         return super.getUri();
     }
 
-    /**
-     * The uri of the endpoint to wiretap to. The uri can be dynamic computed using the simple language.
-     */
     @Override
     public void setUri(String uri) {
         super.setUri(uri);

@@ -137,8 +137,12 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             lock.lock();
             try {
                 if (ObjectHelper.isNotEmpty(uploadAggregate)) {
-                    uploadPart(uploadAggregate);
-                    completeUpload(uploadAggregate);
+                    try {
+                        uploadPart(uploadAggregate);
+                        completeUpload(uploadAggregate);
+                    } catch (Exception e) {
+                        LOG.warn("Error during timeout-triggered upload flush for {}", uploadAggregate.dynamicKeyName, e);
+                    }
                     uploadAggregate = null;
                 }
 
@@ -148,8 +152,12 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     for (Map.Entry<Long, UploadState> entry : timestampBasedUploads.entrySet()) {
                         UploadState state = entry.getValue();
                         if (ObjectHelper.isNotEmpty(state) && state.buffer.size() > 0) {
-                            uploadPart(state);
-                            completeUpload(state);
+                            try {
+                                uploadPart(state);
+                                completeUpload(state);
+                            } catch (Exception e) {
+                                LOG.warn("Error during timeout-triggered upload flush for {}", state.dynamicKeyName, e);
+                            }
                             keysToRemove.add(entry.getKey());
                         }
                     }
@@ -178,9 +186,15 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         byte[] b;
         int maxRead = (getConfiguration().isMultiPartUpload()
                 ? Math.toIntExact(getConfiguration().getPartSize()) : getConfiguration().getBufferSize());
-        if (uploadAggregate != null) {
-            uploadAggregate.index++;
-            maxRead -= uploadAggregate.buffer.size();
+        lock.lock();
+        try {
+            if (uploadAggregate != null) {
+                uploadAggregate.index++;
+                maxRead -= uploadAggregate.buffer.size();
+                maxRead = Math.max(1, maxRead);
+            }
+        } finally {
+            lock.unlock();
         }
 
         while ((b = AWS2S3Utils.toByteArray(is, maxRead)) != null && b.length > 0) {
@@ -206,6 +220,9 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                             uploadPart(uploadAggregate);
                         CompleteMultipartUploadResponse uploadResult = completeUpload(uploadAggregate);
                         this.uploadAggregate = null;
+                        if (getConfiguration().isMultiPartUpload()) {
+                            maxRead = Math.toIntExact(getConfiguration().getPartSize());
+                        }
                         Message message = getMessageForResponse(exchange);
                         message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
                         if (uploadResult.versionId() != null) {
@@ -228,10 +245,11 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             final String keyName = getConfiguration().getKeyName();
             final String fileName = AWS2S3Utils.determineFileName(keyName);
             final String extension = AWS2S3Utils.determineFileExtension(keyName);
-            if (state.index == 1 && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.random)) {
+            if (state.initResponse == null && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.random)) {
                 state.id = UUID.randomUUID();
             }
-            if (state.index == 1 && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.timestamp)) {
+            if (state.initResponse == null
+                    && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.timestamp)) {
                 state.timestamp = System.currentTimeMillis();
             }
             state.dynamicKeyName = fileNameToUpload(fileName, getConfiguration().getNamingStrategy(), extension,
@@ -262,7 +280,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             AWS2S3Utils.setEncryption(createMultipartUploadRequest, getConfiguration());
 
             LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", createMultipartUploadRequest, exchange);
-            if (state.index == 1) {
+            if (state.initResponse == null) {
                 state.initResponse
                         = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
             }
@@ -281,6 +299,9 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     }
                     populateHttpResponseCode(uploadResult, message);
                     state = null;
+                    if (getConfiguration().isMultiPartUpload()) {
+                        maxRead = Math.toIntExact(getConfiguration().getPartSize());
+                    }
                     continue;
                 }
                 if (getConfiguration().isMultiPartUpload() && state.buffer.size() >= getConfiguration().getPartSize()) {
@@ -335,6 +356,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         if (state != null) {
             state.index++;
             maxRead -= state.buffer.size();
+            maxRead = Math.max(1, maxRead);
         }
 
         while ((b = AWS2S3Utils.toByteArray(is, maxRead)) != null && b.length > 0) {
@@ -401,6 +423,9 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                         uploadPart(state);
                     CompleteMultipartUploadResponse uploadResult = completeUpload(state);
                     timestampBasedUploads.remove(timestampWindow);
+                    if (getConfiguration().isMultiPartUpload()) {
+                        maxRead = Math.toIntExact(getConfiguration().getPartSize());
+                    }
 
                     Message message = getMessageForResponse(exchange);
                     message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());

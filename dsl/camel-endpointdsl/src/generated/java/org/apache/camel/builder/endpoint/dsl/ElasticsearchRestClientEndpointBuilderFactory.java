@@ -195,6 +195,42 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * To configure security using SSLContextParameters. When configured,
+         * this takes precedence over the certificatePath option. This allows
+         * configuring named groups, signature schemes, cipher suites, and
+         * protocols for the TLS connection.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientEndpointBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters. When configured,
+         * this takes precedence over the certificatePath option. This allows
+         * configuring named groups, signature schemes, cipher suites, and
+         * protocols for the TLS connection.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientEndpointBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * Username.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -457,7 +493,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ElasticsearchRestClientHeaderNameBuilder INSTANCE = new ElasticsearchRestClientHeaderNameBuilder();
+        public static final ElasticsearchRestClientHeaderNameBuilder INSTANCE = new ElasticsearchRestClientHeaderNameBuilder();
 
         /**
          * ID of the object to index or retrieve or delete.
@@ -466,10 +502,10 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ID}.
+         * @return the name of the header {@code ElasticsearchId}.
          */
-        public String iD() {
-            return "ID";
+        public String elasticsearchId() {
+            return "CamelElasticsearchId";
         }
         /**
          * The JSON Query to perform for search.
@@ -478,10 +514,10 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code SEARCH_QUERY}.
+         * @return the name of the header {@code ElasticsearchSearchQuery}.
          */
-        public String searchQuery() {
-            return "SEARCH_QUERY";
+        public String elasticsearchSearchQuery() {
+            return "CamelElasticsearchSearchQuery";
         }
         /**
          * Advanced - The JSON Index Settings and/or Mappings Query to perform
@@ -491,10 +527,10 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code INDEX_SETTINGS}.
+         * @return the name of the header {@code ElasticsearchIndexSettings}.
          */
-        public String indexSettings() {
-            return "INDEX_SETTINGS";
+        public String elasticsearchIndexSettings() {
+            return "CamelElasticsearchIndexSettings";
         }
         /**
          * The Index name.
@@ -503,10 +539,10 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code INDEX_NAME}.
+         * @return the name of the header {@code ElasticsearchIndexName}.
          */
-        public String indexName() {
-            return "INDEX_NAME";
+        public String elasticsearchIndexName() {
+            return "CamelElasticsearchIndexName";
         }
         /**
          * The operation to perform.
@@ -516,10 +552,10 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code OPERATION}.
+         * @return the name of the header {@code ElasticsearchOperation}.
          */
-        public String oPERATION() {
-            return "OPERATION";
+        public String elasticsearchOperation() {
+            return "CamelElasticsearchOperation";
         }
     }
     static ElasticsearchRestClientEndpointBuilder endpointBuilder(String componentName, String path) {

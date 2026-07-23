@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("openai")
 public class OpenAIComponent extends DefaultComponent implements SSLContextParametersAware {
 
-    @Metadata(description = "Default API key for all endpoints")
+    @Metadata(description = "Default API key for all endpoints", security = "secret")
     private String apiKey;
 
     @Metadata(description = "Default base URL for all endpoints", defaultValue = ClientOptions.PRODUCTION_URL)

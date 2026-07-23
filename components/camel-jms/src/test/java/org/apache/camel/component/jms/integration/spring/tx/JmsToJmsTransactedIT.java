@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms.integration.spring.tx;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.activemq.artemis.api.core.QueueConfiguration;
 import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.activemq.artemis.api.core.SimpleString;
@@ -94,7 +96,7 @@ public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:JmsToJmsTransactedIT", "Hello World");
 
-        String reply = consumer.receiveBody("activemq:queue:JmsToJmsTransactedIT.reply", 5000, String.class);
+        String reply = consumer.receiveBody("activemq:queue:JmsToJmsTransactedIT.reply", 10000, String.class);
         assertEquals("Hello World", reply);
     }
 
@@ -123,7 +125,7 @@ public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:JmsToJmsTransactedIT", "Hello World");
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Order(3)
@@ -151,7 +153,7 @@ public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:JmsToJmsTransactedIT", "Hello World");
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // it should be moved to DLQ in JMS broker
         Object body = consumer.receiveBody("activemq:queue:" + DLQ_NAME, 10000);

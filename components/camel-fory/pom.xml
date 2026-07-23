@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-fory</artifactId>
@@ -33,6 +33,7 @@
 
     <properties>
         <skipTests.s390x>true</skipTests.s390x>
+        <camel.surefire.fork.vmargs>--add-opens java.base/java.lang.invoke=ALL-UNNAMED</camel.surefire.fork.vmargs>
     </properties>
 
     <dependencies>

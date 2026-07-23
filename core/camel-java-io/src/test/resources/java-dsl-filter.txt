@@ -1,0 +1,6 @@
+from("direct:start")
+    .routeId("myRoute")
+    .filter(simple("${header.foo} == 'bar'"))
+        .to("mock:filtered")
+    .end()
+    .to("mock:result");

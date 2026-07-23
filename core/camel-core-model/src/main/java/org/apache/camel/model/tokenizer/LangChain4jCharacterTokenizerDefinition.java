@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Camel AI: Tokenizer for splitting by character.
  */
-@Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer with character splitter")
+@Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer with character splitter",
+          description = "Splits text into chunks by character count, using LangChain4j's character tokenizer for AI text processing")
 @XmlRootElement(name = "langChain4jCharacterTokenizer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LangChain4jCharacterTokenizerDefinition extends LangChain4jTokenizerDefinition {

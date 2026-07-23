@@ -120,7 +120,7 @@ public final class CamelUpdate implements Update {
 
     @Override
     public List<String> command() throws CamelUpdateException {
-        commands.add(mvnProgramCall());
+        commands.addAll(mvnProgramCall());
         commands.add(debug());
         commands.add("org.openrewrite.maven:rewrite-maven-plugin:" + updateMixin.openRewriteVersion + ":"
                      + runMode());
@@ -158,7 +158,7 @@ public final class CamelUpdate implements Update {
          * @return an Optional containing the recipe name if it is a Camel upgrade recipe, otherwise empty
          */
         public Optional<String> recipeName() {
-            return Arrays.stream(content().split(System.lineSeparator()))
+            return Arrays.stream(content().split("\\R"))
                     .filter(l -> l.startsWith("name") && l.contains("org.apache.camel.upgrade"))
                     .map(l -> l.substring(l.indexOf("org.apache.camel.upgrade")))
                     .findFirst();

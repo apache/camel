@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.nio.file.Files;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,7 +47,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri() + "?initialDelay=0&delay=10&delete=true")
+                from(fileUri() + "?initialDelay=500&delay=10&delete=true")
                         // remove all headers
                         .removeHeaders("*").to("mock:result");
             }
@@ -65,7 +67,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         // the original file should have been deleted, as the file consumer
         // should be resilient against
         // end users deleting headers
-        assertFalse(Files.exists(testFile(TEST_FILE_NAME)), "File should been deleted");
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFalse(Files.exists(testFile(TEST_FILE_NAME)), "File should been deleted"));
     }
 
     @Test
@@ -73,7 +76,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri() + "?initialDelay=0&delay=10&delete=true")
+                from(fileUri() + "?initialDelay=500&delay=10&delete=true")
                         // change file header
                         .setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME_BYE)).to("mock:result");
             }
@@ -92,7 +95,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         // the original file should have been deleted, as the file consumer
         // should be resilient against
         // end users changing headers
-        assertFalse(Files.exists(testFile(TEST_FILE_NAME)), "File should been deleted");
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFalse(Files.exists(testFile(TEST_FILE_NAME)), "File should been deleted"));
     }
 
     @Test
@@ -100,7 +104,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri() + "?initialDelay=0&delay=10")
+                from(fileUri() + "?initialDelay=500&delay=10")
                         // remove all headers
                         .removeHeaders("*").to("mock:result");
             }
@@ -120,7 +124,9 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         // the original file should have been moved, as the file consumer should
         // be resilient against
         // end users deleting headers
-        assertTrue(Files.exists(testFile(".camel/" + TEST_FILE_NAME)), "File should been moved");
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(
+                        () -> assertTrue(Files.exists(testFile(".camel/" + TEST_FILE_NAME)), "File should been moved"));
     }
 
     @Test
@@ -128,7 +134,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri() + "?initialDelay=0&delay=10")
+                from(fileUri() + "?initialDelay=500&delay=10")
                         // change file header
                         .setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME_BYE)).to("mock:result");
             }
@@ -147,7 +153,9 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         // the original file should have been moved, as the file consumer should
         // be resilient against
         // end users changing headers
-        assertTrue(Files.exists(testFile(".camel/" + TEST_FILE_NAME)), "File should been moved");
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(
+                        () -> assertTrue(Files.exists(testFile(".camel/" + TEST_FILE_NAME)), "File should been moved"));
     }
 
 }

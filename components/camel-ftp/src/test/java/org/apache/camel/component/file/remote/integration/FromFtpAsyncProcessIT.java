@@ -74,7 +74,7 @@ public class FromFtpAsyncProcessIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).routeId("foo").noAutoStartup().process(new MyAsyncProcessor()).to("mock:result");
+                from(getFtpUrl()).routeId("foo").autoStartup(false).process(new MyAsyncProcessor()).to("mock:result");
             }
         };
     }

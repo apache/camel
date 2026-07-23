@@ -116,9 +116,8 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
             // somehow hold a lock to a file
             // such as AntiVirus or MS Office that has special locks for it's
             // supported files
-            if (handleIOException(e)) {
-                return false;
-            }
+            handleIOException(e);
+            return false;
         } finally {
             // close channels if we did not grab the lock
             if (!exclusive) {
@@ -139,19 +138,10 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
         return true;
     }
 
-    private boolean handleIOException(IOException e) {
-        if (timeout == 0) {
-            // if not using timeout, then we cant retry, so return false
-            return true;
+    private void handleIOException(IOException e) {
+        if (timeout > 0) {
+            LOG.debug("Cannot acquire read lock due to an IOException, will skip the file.", e);
         }
-        LOG.debug("Cannot acquire read lock. Will try again.", e);
-        boolean interrupted = sleep();
-        if (interrupted) {
-            // we were interrupted while sleeping, we are likely being
-            // shutdown so return false
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -162,7 +152,8 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
 
         FileLock lock = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), FileLock.class);
         RandomAccessFile rac
-                = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), RandomAccessFile.class);
+                = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_RANDOM_ACCESS_FILE),
+                        RandomAccessFile.class);
         Channel channel
                 = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
 

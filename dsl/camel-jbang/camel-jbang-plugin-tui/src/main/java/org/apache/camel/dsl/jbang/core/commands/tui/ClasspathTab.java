@@ -1,0 +1,555 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.core.commands.tui;
+
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Style;
+import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.Line;
+import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
+import dev.tamboui.widgets.block.Block;
+import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.input.TextInputState;
+import dev.tamboui.widgets.list.ListItem;
+import dev.tamboui.widgets.list.ListState;
+import dev.tamboui.widgets.list.ListWidget;
+import dev.tamboui.widgets.list.ScrollMode;
+import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
+
+class ClasspathTab extends AbstractTab {
+
+    private static final String[] SCOPES = { "all", "camel", "other" };
+
+    private final ListState listState = new ListState();
+    private final ScrollbarState listScrollState = new ScrollbarState();
+    private final AtomicBoolean loading = new AtomicBoolean(false);
+    private Rect lastArea;
+
+    private boolean filterInputActive;
+    private TextInputState filterInputState = new TextInputState("");
+    private String filterTerm;
+    private int scopeIndex;
+    private List<JarEntry> allEntries = Collections.emptyList();
+    private List<JarEntry> filteredEntries = Collections.emptyList();
+    private String lastPid;
+    private String errorMessage;
+    private boolean dataLoaded;
+
+    ClasspathTab(MonitorContext ctx) {
+        super(ctx);
+    }
+
+    @Override
+    public void onTabSelected() {
+        String pid = ctx.selectedPid;
+        if (pid != null && !pid.equals(lastPid)) {
+            lastPid = pid;
+            allEntries = Collections.emptyList();
+            dataLoaded = false;
+        }
+        if (!dataLoaded) {
+            loadClasspath();
+        }
+    }
+
+    @Override
+    public void onIntegrationChanged() {
+        allEntries = Collections.emptyList();
+        filteredEntries = Collections.emptyList();
+        filterTerm = null;
+        filterInputActive = false;
+        scopeIndex = 0;
+        lastPid = null;
+        errorMessage = null;
+        dataLoaded = false;
+        loading.set(false);
+        if (ctx.selectedPid != null) {
+            lastPid = ctx.selectedPid;
+            loadClasspath();
+        }
+    }
+
+    @Override
+    public boolean handleKeyEvent(KeyEvent ke) {
+        if (filterInputActive) {
+            return handleFilterInput(ke);
+        }
+        if (ke.isChar('/')) {
+            filterInputActive = true;
+            filterInputState = new TextInputState(filterTerm != null ? filterTerm : "");
+            return true;
+        }
+        if (ke.isCharIgnoreCase('f')) {
+            scopeIndex = (scopeIndex + 1) % SCOPES.length;
+            refilter();
+            return true;
+        }
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            for (int i = 0; i < 20 && listState.selected() != null && listState.selected() > 0; i++) {
+                listState.selectPrevious();
+            }
+            return true;
+        }
+        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            for (int i = 0; i < 20; i++) {
+                listState.selectNext(filteredEntries.size());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleFilterInput(KeyEvent ke) {
+        if (ke.isKey(KeyCode.ESCAPE)) {
+            filterInputActive = false;
+            return true;
+        }
+        if (ke.isConfirm()) {
+            String text = filterInputState.text().trim();
+            filterTerm = text.isEmpty() ? null : text;
+            filterInputActive = false;
+            refilter();
+            return true;
+        }
+        FormHelper.handleTextInput(ke, filterInputState);
+        return true;
+    }
+
+    boolean isFilterInputActive() {
+        return filterInputActive;
+    }
+
+    @Override
+    public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            listState.selectPrevious();
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            listState.selectNext(filteredEntries.size());
+            return true;
+        }
+        if (me.isClick() && contains(lastArea, me.x(), me.y())) {
+            int itemIndex = listState.offset() + (me.y() - lastArea.y() - 1);
+            if (itemIndex >= 0 && itemIndex < filteredEntries.size()) {
+                listState.select(itemIndex);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleEscape() {
+        if (filterTerm != null) {
+            filterTerm = null;
+            refilter();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void navigateUp() {
+        listState.selectPrevious();
+    }
+
+    @Override
+    public void navigateDown() {
+        listState.selectNext(filteredEntries.size());
+    }
+
+    @Override
+    public void render(Frame frame, Rect area) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            renderNoSelection(frame, area);
+            return;
+        }
+
+        if (loading.get() && allEntries.isEmpty()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(Span.styled("  Loading classpath...", Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Classpath ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        if (errorMessage != null && allEntries.isEmpty()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(
+                                    Span.styled("  " + errorMessage, Theme.error()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Classpath ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        int contentW = Math.max(10, area.width() - 4);
+        List<ListItem> items = new ArrayList<>();
+        for (JarEntry entry : filteredEntries) {
+            String displayText = formatEntry(entry, contentW);
+            Style normalStyle = entry.isCamel() ? Style.EMPTY : Style.EMPTY.dim();
+            items.add(ListItem.from(displayText).style(normalStyle));
+        }
+
+        if (items.isEmpty() && dataLoaded) {
+            items.add(ListItem.from("  No classpath entries found").style(Style.EMPTY.dim()));
+        }
+
+        String scope = SCOPES[scopeIndex];
+        StringBuilder sb = new StringBuilder(" Classpath [");
+        if (filterTerm != null || !"all".equals(scope)) {
+            sb.append(filteredEntries.size()).append('/').append(allEntries.size());
+        } else {
+            sb.append(filteredEntries.size());
+        }
+        sb.append(']');
+        if (!"all".equals(scope)) {
+            sb.append(" scope:").append(scope);
+        }
+        if (filterTerm != null) {
+            sb.append(" filter:\"").append(filterTerm).append('"');
+        }
+        sb.append(' ');
+        String title = sb.toString();
+
+        ListWidget list = ListWidget.builder()
+                .items(items.toArray(ListItem[]::new))
+                .highlightStyle(Theme.selectionBg())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.AUTO_SCROLL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .build();
+        frame.renderStatefulWidget(list, area, listState);
+        lastArea = area;
+
+        // Render vertical scrollbar on the right border when content overflows
+        int visibleRows = area.height() - 2; // top border + bottom border
+        if (visibleRows > 0 && filteredEntries.size() > visibleRows) {
+            Rect scrollRect = new Rect(area.x() + area.width() - 1, area.y() + 1, 1, visibleRows);
+            listScrollState.contentLength(filteredEntries.size());
+            listScrollState.viewportContentLength(visibleRows);
+            listScrollState.position(listState.offset());
+            frame.renderStatefulWidget(Scrollbar.builder().build(), scrollRect, listScrollState);
+        }
+    }
+
+    @Override
+    public void renderFooter(List<Span> spans) {
+        if (filterInputActive) {
+            spans.add(Span.styled(" /", Theme.label().bold()));
+            spans.add(Span.raw(filterInputState.text() + "█  "));
+            hint(spans, "Enter", "filter");
+            hintLast(spans, "Esc", "cancel");
+            return;
+        }
+        hint(spans, "Esc", filterTerm != null ? "clear" : "back");
+        hint(spans, "f", "scope [" + SCOPES[scopeIndex] + "]");
+        if (filterTerm != null) {
+            spans.add(Span.styled("  /", Theme.label().bold()));
+            spans.add(Span.raw("\"" + filterTerm + "\"  "));
+        } else {
+            hint(spans, "/", "filter");
+        }
+        hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
+    }
+
+    private void loadClasspath() {
+        if (ctx.selectedPid == null || ctx.runner == null) {
+            return;
+        }
+        if (!loading.compareAndSet(false, true)) {
+            return;
+        }
+
+        String pid = ctx.selectedPid;
+        ctx.runner.scheduler().execute(() -> {
+            try {
+                Path outputFile = ctx.getOutputFile(pid);
+                PathUtils.deleteFile(outputFile);
+
+                JsonObject action = new JsonObject();
+                action.put("action", "jvm");
+
+                Path actionFile = ctx.getActionFile(pid);
+                PathUtils.writeTextSafely(action.toJson(), actionFile);
+
+                JsonObject response = pollJsonResponse(outputFile, 5000);
+                PathUtils.deleteFile(outputFile);
+
+                if (response == null) {
+                    applyResult(Collections.emptyList(), "No response from integration");
+                    return;
+                }
+
+                Object cp = response.get("classpath");
+                List<String> paths = new ArrayList<>();
+                if (cp instanceof JsonArray arr) {
+                    for (Object item : arr) {
+                        paths.add(String.valueOf(item));
+                    }
+                } else if (cp instanceof String[] arr) {
+                    for (String s : arr) {
+                        paths.add(s);
+                    }
+                }
+
+                if (paths.isEmpty()) {
+                    applyResult(Collections.emptyList(), "No classpath information available");
+                    return;
+                }
+
+                List<JarEntry> parsed = new ArrayList<>();
+                for (String path : paths) {
+                    parsed.add(parseJarEntry(path));
+                }
+                parsed.sort((a, b) -> a.display().compareToIgnoreCase(b.display()));
+
+                applyResult(parsed, null);
+            } catch (Exception e) {
+                applyResult(Collections.emptyList(), "Error: " + e.getMessage());
+            } finally {
+                loading.set(false);
+            }
+        });
+    }
+
+    private void applyResult(List<JarEntry> parsed, String error) {
+        if (ctx.runner == null) {
+            return;
+        }
+        ctx.runner.runOnRenderThread(() -> {
+            allEntries = parsed;
+            errorMessage = error;
+            dataLoaded = true;
+            refilter();
+        });
+    }
+
+    private void refilter() {
+        List<JarEntry> result = new ArrayList<>();
+        String ft = filterTerm != null ? filterTerm.toLowerCase() : null;
+        String scope = SCOPES[scopeIndex];
+        for (JarEntry entry : allEntries) {
+            if ("camel".equals(scope) && !entry.isCamel()) {
+                continue;
+            }
+            if ("other".equals(scope) && entry.isCamel()) {
+                continue;
+            }
+            if (ft != null && !entry.display().toLowerCase().contains(ft)) {
+                continue;
+            }
+            result.add(entry);
+        }
+        filteredEntries = result;
+        listState.select(filteredEntries.isEmpty() ? null : 0);
+    }
+
+    private String formatEntry(JarEntry entry, int width) {
+        if (entry.groupId() != null) {
+            String gav = entry.groupId() + ":" + entry.artifactId();
+            String ver = entry.version() != null ? entry.version() : "";
+            int gavCol = Math.min(60, width - ver.length() - 4);
+            return String.format("  %-" + gavCol + "s  %s", TuiHelper.truncate(gav, gavCol), ver);
+        }
+        return "  " + TuiHelper.truncate(entry.display(), width - 2);
+    }
+
+    static JarEntry parseJarEntry(String path) {
+        String normalized = path.replace('\\', '/');
+        int repoIdx = normalized.indexOf("/repository/");
+        if (repoIdx >= 0) {
+            String relative = normalized.substring(repoIdx + "/repository/".length());
+            int lastSlash = relative.lastIndexOf('/');
+            if (lastSlash > 0) {
+                String parentPath = relative.substring(0, lastSlash);
+                int versionSlash = parentPath.lastIndexOf('/');
+                if (versionSlash > 0) {
+                    String version = parentPath.substring(versionSlash + 1);
+                    String remaining = parentPath.substring(0, versionSlash);
+                    int artifactSlash = remaining.lastIndexOf('/');
+                    if (artifactSlash > 0) {
+                        String artifactId = remaining.substring(artifactSlash + 1);
+                        String groupId = remaining.substring(0, artifactSlash).replace('/', '.');
+                        return new JarEntry(groupId, artifactId, version, path);
+                    }
+                }
+            }
+        }
+        int slash = normalized.lastIndexOf('/');
+        String filename = slash >= 0 ? normalized.substring(slash + 1) : normalized;
+        return new JarEntry(null, filename, null, path);
+    }
+
+    @Override
+    public boolean setFilter(String filter) {
+        filterTerm = filter != null && !filter.isEmpty() ? filter : null;
+        refilter();
+        return true;
+    }
+
+    @Override
+    public boolean setInputValue(String field, String value) {
+        if ("filter".equals(field)) {
+            return setFilter(value);
+        }
+        return false;
+    }
+
+    @Override
+    public SelectionContext getSelectionContext() {
+        return null;
+    }
+
+    record JarEntry(String groupId, String artifactId, String version, String fullPath) {
+        String display() {
+            if (groupId != null) {
+                return groupId + ":" + artifactId + ":" + version;
+            }
+            return fullPath;
+        }
+
+        boolean isCamel() {
+            return groupId != null && groupId.startsWith("org.apache.camel");
+        }
+    }
+
+    @Override
+    public String description() {
+        return "JVM classpath entries with filtering";
+    }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Classpath
+
+                The Classpath tab shows all JAR files on the integration's classpath,
+                parsed into Maven coordinates (groupId, artifactId, version). This is
+                useful for verifying which dependency versions are in use, finding
+                unexpected or duplicate JARs, and understanding the integration's
+                dependency footprint.
+
+                ## Table Columns
+
+                - **GROUP:ARTIFACT** — Maven coordinate of the JAR (e.g., `org.apache.camel:camel-core-model`)
+                - **VERSION** — The version of the dependency (e.g., `4.12.0`)
+
+                Camel JARs (those with `org.apache.camel` group) are displayed in
+                bold. Other dependencies are dimmed for visual distinction.
+
+                ## Example Screen
+
+                ```
+                 org.apache.camel:camel-api                 4.12.0
+                 org.apache.camel:camel-core-model           4.12.0
+                 org.apache.camel:camel-support              4.12.0
+                 org.apache.camel:camel-yaml-dsl             4.12.0
+                 com.fasterxml.jackson.core:jackson-core     2.18.3
+                 org.slf4j:slf4j-api                         2.0.16
+                ```
+
+                ## Scope
+
+                Press `f` to cycle the scope filter:
+
+                - **all** — show all classpath entries (default)
+                - **camel** — show only Apache Camel JARs
+                - **other** — show only non-Camel (third-party) JARs
+
+                The active scope is shown in the footer and title bar.
+
+                ## Filter
+
+                Press `/` to open the filter input. Type a search term and press
+                `Enter` to filter the classpath by substring match. For example,
+                type `kafka` to find all Kafka-related JARs, or `jackson` to find
+                Jackson dependencies. The scope and text filter work together.
+
+                ## When To Use
+
+                - **Version conflicts**: Check if the expected version of a library is present. Multiple versions of the same library can cause class loading issues
+                - **Missing dependencies**: Verify that a component's dependency JAR is on the classpath
+                - **Dependency audit**: Review all transitive dependencies pulled in by the integration
+                - **Size analysis**: Get a sense of how many JARs are loaded — large classpaths can slow startup
+
+                ## Keys
+
+                - `Up/Down` — navigate entries
+                - `PgUp/PgDn` — scroll by page
+                - `f` — cycle scope (all, camel, other)
+                - `/` — open filter
+                - `Esc` — clear filter or back
+                """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        List<JarEntry> entries = filteredEntries;
+        if (entries.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Classpath");
+        JsonArray rows = new JsonArray();
+        for (JarEntry j : entries) {
+            JsonObject row = new JsonObject();
+            if (j.groupId() != null) {
+                row.put("groupId", j.groupId());
+            }
+            if (j.artifactId() != null) {
+                row.put("artifactId", j.artifactId());
+            }
+            if (j.version() != null) {
+                row.put("version", j.version());
+            }
+            row.put("path", j.fullPath());
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", entries.size());
+        Integer sel = listState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
+    }
+}

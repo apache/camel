@@ -1,0 +1,5 @@
+# The generator emits source with LF line endings, and the tests compare that
+# output byte-for-byte against these .txt fixtures. Pin the fixtures to LF so a
+# Windows checkout (core.autocrlf=true) does not convert them to CRLF and break
+# the equality assertions.
+*.txt text eol=lf

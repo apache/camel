@@ -31,7 +31,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class MailConsumerUnsupportedCharsetTest extends CamelTestSupport {
-    private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
+    private static final MailboxUser jones = Mailbox.getOrCreateUser("MailConsumerUnsupportedCharsetTest-jones", "secret");
 
     @Test
     public void testConsumeUnsupportedCharset() throws Exception {

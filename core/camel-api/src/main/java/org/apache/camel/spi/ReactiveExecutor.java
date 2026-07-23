@@ -17,7 +17,23 @@
 package org.apache.camel.spi;
 
 /**
- * SPI to plugin different reactive engines in the Camel routing engine.
+ * SPI for plugging a custom reactive (non-blocking) dispatch engine into Camel's internal routing loop.
+ * <p/>
+ * Camel's async routing engine decomposes message processing into a series of continuation tasks rather than blocking a
+ * thread for the full duration of a route. This interface is the hook point that decides how those continuations are
+ * queued and executed: {@link #schedule(Runnable)} for fair background dispatch, {@link #scheduleMain(Runnable)} for
+ * high-priority dispatch that should run as soon as possible, {@link #scheduleSync(Runnable)} to run on the current
+ * thread immediately, and {@link #scheduleQueue(Runnable)} to defer to the current-thread queue (used for transactional
+ * routing where all steps must run on the same thread).
+ * <p/>
+ * The built-in {@code DefaultReactiveExecutor} uses a simple single-threaded loop driven by the calling thread.
+ * Alternative implementations can delegate to Vert.x, Project Reactor, or other reactive runtimes. The factory key
+ * {@link #FACTORY} is used by {@link FactoryFinder} for discovery.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/threading-model.html">Threading Model</a> in the Camel user manual.
+ *
+ * @see   ExecutorServiceManager
+ * @since 3.0
  */
 public interface ReactiveExecutor {
 

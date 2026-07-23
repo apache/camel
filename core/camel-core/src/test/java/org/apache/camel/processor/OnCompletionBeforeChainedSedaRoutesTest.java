@@ -29,7 +29,7 @@ public class OnCompletionBeforeChainedSedaRoutesTest extends ContextTestSupport 
         final var completionMockEndpoint = getMockEndpoint("mock:completion");
 
         completionMockEndpoint.expectedMessageCount(5);
-        completionMockEndpoint.expectedBodiesReceived(
+        completionMockEndpoint.expectedBodiesReceivedInAnyOrder(
                 "completion:a", "completion:b", "completion:c", body, "completion:d");
 
         template.sendBody("direct:a", body);

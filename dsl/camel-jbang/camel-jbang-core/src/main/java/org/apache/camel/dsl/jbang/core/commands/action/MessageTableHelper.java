@@ -34,7 +34,7 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import org.fusesource.jansi.Ansi;
+import org.jline.jansi.Ansi;
 
 /**
  * Helper to output message details (headers, body) in a table like structure with pretty and color supported.

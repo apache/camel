@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-allcomponents</artifactId>
@@ -54,12 +54,22 @@
         <!-- CODEGEN DEPENDENCIES START -->
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-a2a</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-activemq</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-activemq6</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ai-tool</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -785,11 +795,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-git</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-github</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1890,6 +1895,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-servlet</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-shell</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

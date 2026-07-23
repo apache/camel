@@ -17,13 +17,14 @@
 package org.apache.camel.spring;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class InjectedBeanTest extends SpringTestSupport {
+class InjectedBeanTest extends SpringTestSupport {
     protected InjectedBean bean;
 
     @Test
@@ -56,8 +57,9 @@ public class InjectedBeanTest extends SpringTestSupport {
                 "No PollingConsumer injected for getPropertyInjectedPollingConsumer()");
     }
 
+    @Disabled("Empty test stub — no send/receive logic implemented")
     @Test
-    public void testSendAndReceive() throws Exception {
+    void testSendAndReceive() {
     }
 
     @Override

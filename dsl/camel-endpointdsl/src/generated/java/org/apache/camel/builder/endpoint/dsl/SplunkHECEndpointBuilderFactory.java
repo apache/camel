@@ -447,7 +447,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SplunkHECHeaderNameBuilder INSTANCE = new SplunkHECHeaderNameBuilder();
+        public static final SplunkHECHeaderNameBuilder INSTANCE = new SplunkHECHeaderNameBuilder();
 
         /**
          * Epoch-formatted time. Specify with the time query string parameter.

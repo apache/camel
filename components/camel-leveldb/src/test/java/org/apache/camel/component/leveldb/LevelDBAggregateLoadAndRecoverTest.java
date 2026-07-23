@@ -65,8 +65,6 @@ public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
             headers.put("seq", i);
             LOG.debug("Sending {} with id {}", value, id);
             template.sendBodyAndHeaders("seda:start", value, headers);
-            // simulate a little delay
-            Thread.sleep(5);
         }
 
         LOG.info("Sending all {} message done. Now waiting for aggregation to complete.", SIZE);

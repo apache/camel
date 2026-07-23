@@ -257,6 +257,20 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 () -> template.sendBody("direct:unzipMaxDecompressedSize", getZippedText("file")));
     }
 
+    @Test
+    public void testUnzipMaxDecompressedSizeWithIterator() {
+        // maxDecompressedSize must also be enforced in iterator/splitter mode
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:unzipMaxDecompressedSizeIterator", getZippedText("file")));
+    }
+
+    @Test
+    public void testUnzipMaxDecompressedSizeWithSplitter() {
+        // maxDecompressedSize must also be enforced via ZipSplitter
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:zipSplitterMaxDecompressedSize", getZippedText("file")));
+    }
+
     @Override
     public void doPostSetup() {
         deleteDirectory(TEST_DIR);
@@ -325,12 +339,28 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 from("direct:dslZip").marshal().zipFile().to("mock:dslZip");
                 from("direct:dslUnzip").unmarshal().zipFile().to("mock:dslUnzip");
                 from("direct:corruptUnzip").unmarshal().zipFile().to("mock:corruptUnzip");
-                from("direct:zipStreamCache").streamCaching().marshal().zipFile().to("mock:zipStreamCache");
+                from("direct:zipStreamCache").streamCache(true).marshal().zipFile().to("mock:zipStreamCache");
 
                 ZipFileDataFormat maxDecompressedSizeZip = new ZipFileDataFormat();
                 // Only allow 10 bytes to be decompressed
                 maxDecompressedSizeZip.setMaxDecompressedSize(10L);
                 from("direct:unzipMaxDecompressedSize").unmarshal(maxDecompressedSizeZip).to("mock:unzip");
+
+                ZipFileDataFormat maxDecompSizeIterZip = new ZipFileDataFormat();
+                maxDecompSizeIterZip.setUsingIterator(true);
+                maxDecompSizeIterZip.setMaxDecompressedSize(10L);
+                from("direct:unzipMaxDecompressedSizeIterator")
+                        .unmarshal(maxDecompSizeIterZip)
+                        .split(bodyAs(Iterator.class)).streaming()
+                            .to("mock:unzipMaxDecompressedSizeIterator")
+                        .end();
+
+                ZipSplitter zipSplitter = new ZipSplitter();
+                zipSplitter.setMaxDecompressedSize(10L);
+                from("direct:zipSplitterMaxDecompressedSize")
+                        .split(zipSplitter).streaming()
+                            .to("mock:zipSplitterMaxDecompressedSize")
+                        .end();
             }
         };
     }

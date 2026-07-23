@@ -1,0 +1,36 @@
+{
+  "protocolVersion": "1.0",
+  "name": "Weather Agent",
+  "description": "Provides weather forecasts",
+  "url": "https://weather.example.com",
+  "version": "1.0.0",
+  "provider": {
+    "name": "ACME Corp",
+    "url": "https://acme.example.com"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "extendedAgentCard": false
+  },
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/plain"],
+  "skills": [
+    {
+      "id": "get-forecast",
+      "name": "Get Forecast",
+      "description": "Returns weather forecast for a location",
+      "tags": ["weather", "forecast"],
+      "examples": ["Weather in London"],
+      "inputModes": ["text/plain"],
+      "outputModes": ["text/plain"]
+    }
+  ],
+  "supportedInterfaces": [
+    {
+      "url": "https://weather.example.com",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ]
+}

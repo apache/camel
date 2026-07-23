@@ -836,6 +836,38 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
+         * Time-to-live for pending async conversion tasks in milliseconds.
+         * Tasks older than this will be evicted from memory to prevent leaks.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 86400000
+         * Group: advanced
+         * 
+         * @param asyncTaskTtl the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder asyncTaskTtl(long asyncTaskTtl) {
+            doSetProperty("asyncTaskTtl", asyncTaskTtl);
+            return this;
+        }
+        /**
+         * Time-to-live for pending async conversion tasks in milliseconds.
+         * Tasks older than this will be evicted from memory to prevent leaks.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 86400000
+         * Group: advanced
+         * 
+         * @param asyncTaskTtl the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder asyncTaskTtl(String asyncTaskTtl) {
+            doSetProperty("asyncTaskTtl", asyncTaskTtl);
+            return this;
+        }
+        /**
          * Maximum time to wait for async conversion completion in milliseconds.
          * 
          * The option is a: <code>long</code> type.
@@ -1442,7 +1474,7 @@ public interface DoclingEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DoclingHeaderNameBuilder INSTANCE = new DoclingHeaderNameBuilder();
+        public static final DoclingHeaderNameBuilder INSTANCE = new DoclingHeaderNameBuilder();
 
         /**
          * The operation to perform.
@@ -1708,6 +1740,18 @@ public interface DoclingEndpointBuilderFactory {
          */
         public String doclingMetadataPageCount() {
             return "CamelDoclingMetadataPageCount";
+        }
+        /**
+         * Document title.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingMetadataTitle}.
+         */
+        public String doclingMetadataTitle() {
+            return "CamelDoclingMetadataTitle";
         }
         /**
          * Document language code.

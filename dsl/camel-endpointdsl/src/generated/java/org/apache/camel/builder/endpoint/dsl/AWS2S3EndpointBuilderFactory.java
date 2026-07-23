@@ -484,7 +484,10 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the maxConnections parameter in the S3 client configuration.
+         * Set the maxConnections parameter in the S3 client configuration. This
+         * option is deprecated and has no effect. Use the httpClientBuilder
+         * option on the S3 client configuration to customize the HTTP client
+         * connection pool.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -494,12 +497,16 @@ public interface AWS2S3EndpointBuilderFactory {
          * @param maxConnections the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AWS2S3EndpointConsumerBuilder maxConnections(int maxConnections) {
             doSetProperty("maxConnections", maxConnections);
             return this;
         }
         /**
-         * Set the maxConnections parameter in the S3 client configuration.
+         * Set the maxConnections parameter in the S3 client configuration. This
+         * option is deprecated and has no effect. Use the httpClientBuilder
+         * option on the S3 client configuration to customize the HTTP client
+         * connection pool.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -509,6 +516,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * @param maxConnections the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AWS2S3EndpointConsumerBuilder maxConnections(String maxConnections) {
             doSetProperty("maxConnections", maxConnections);
             return this;
@@ -3714,7 +3722,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final AWS2S3HeaderNameBuilder INSTANCE = new AWS2S3HeaderNameBuilder();
+        public static final AWS2S3HeaderNameBuilder INSTANCE = new AWS2S3HeaderNameBuilder();
 
         /**
          * The bucket Name (can be dynamic using the simple language in the

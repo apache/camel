@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class FileConsumePollEnrichFileTest extends ContextTestSupport {
 
     @Test
-    public void testPollEnrich() {
+    public void testPollEnrich() throws Exception {
         getMockEndpoint("mock:start").expectedBodiesReceived("Start");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -39,13 +39,18 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
         template.sendBodyAndHeader(fileUri("enrich"), "Start", Exchange.FILE_NAME,
                 "AAA.fin");
 
-        log.info("Sleeping for 1/4 sec before writing enrichdata file");
-        Awaitility.await().pollDelay(250, TimeUnit.MILLISECONDS).untilAsserted(() -> {
-            template.sendBodyAndHeader(fileUri("enrichdata"), "Big file",
-                    Exchange.FILE_NAME, "AAA.dat");
-            log.info("... write done");
-            assertMockEndpointsSatisfied();
-        });
+        // Wait for the file consumer to pick up the trigger file before writing
+        // the enrichdata file — avoids a race where pollEnrich runs before the
+        // data file exists
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> getMockEndpoint("mock:start").getReceivedCounter() >= 1);
+
+        log.info("Writing enrichdata file");
+        template.sendBodyAndHeader(fileUri("enrichdata"), "Big file",
+                Exchange.FILE_NAME, "AAA.dat");
+        log.info("... write done");
+
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
@@ -57,7 +62,7 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
                         .to("mock:start")
                         .pollEnrich(
                                 fileUri("enrichdata?initialDelay=0&delay=10&move=.done"),
-                                1000)
+                                5000)
                         .to("mock:result");
             }
         };

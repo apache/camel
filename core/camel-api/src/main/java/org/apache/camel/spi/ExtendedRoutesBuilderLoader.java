@@ -23,6 +23,8 @@ import org.apache.camel.RoutesBuilder;
 /**
  * An extended {@link RoutesBuilderLoader} that is capable of loading from multiple resources in one unit (such as
  * compiling them together).
+ *
+ * @since 3.17
  */
 public interface ExtendedRoutesBuilderLoader extends RoutesBuilderLoader {
 

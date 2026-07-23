@@ -110,7 +110,7 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
                                 String body = exchange.getIn().getBody(String.class);
                                 exchange.getMessage().setBody("Bye " + body);
                             }
-                        }).to("mock:receive").noAutoStartup();
+                        }).to("mock:receive").autoStartup(false);
             }
         };
     }

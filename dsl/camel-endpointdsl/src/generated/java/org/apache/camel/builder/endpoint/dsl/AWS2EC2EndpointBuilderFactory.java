@@ -597,7 +597,7 @@ public interface AWS2EC2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final AWS2EC2HeaderNameBuilder INSTANCE = new AWS2EC2HeaderNameBuilder();
+        public static final AWS2EC2HeaderNameBuilder INSTANCE = new AWS2EC2HeaderNameBuilder();
 
         /**
          * An image ID of the AWS marketplace.

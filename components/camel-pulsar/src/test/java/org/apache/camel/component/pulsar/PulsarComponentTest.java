@@ -70,7 +70,19 @@ public class PulsarComponentTest extends CamelTestSupport {
         assertEquals(SubscriptionMode.DURABLE, endpoint.getPulsarConfiguration().getSubscriptionMode());
         assertFalse(endpoint.getPulsarConfiguration().isAllowManualAcknowledgement());
         assertFalse(endpoint.getPulsarConfiguration().isReadCompacted());
+        assertFalse(endpoint.getPulsarConfiguration().isEnableBatchIndexAcknowledgment());
         assertTrue(endpoint.getPulsarConfiguration().isMessageListener());
+    }
+
+    @Test
+    public void testPulsarEndpointEnableBatchIndexAcknowledgment() throws Exception {
+        PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
+
+        PulsarEndpoint endpoint = (PulsarEndpoint) component
+                .createEndpoint("pulsar://persistent/test/foobar/BatchCreated?enableBatchIndexAcknowledgment=true");
+
+        assertNotNull(endpoint);
+        assertTrue(endpoint.getPulsarConfiguration().isEnableBatchIndexAcknowledgment());
     }
 
     @Test

@@ -16,9 +16,12 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,7 +42,7 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -53,7 +56,7 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -68,7 +71,7 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
 
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -82,7 +85,7 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
         assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "A"),
                 "Should have thrown an exception");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
@@ -90,7 +93,7 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").resequence(header("seqno")).stream().timeout(150).deliveryAttemptInterval(10)
+                from("direct:start").resequence(header("seqno")).stream().timeout(2000).deliveryAttemptInterval(100)
                         .to("mock:result");
             }
         };

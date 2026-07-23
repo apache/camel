@@ -16,9 +16,9 @@
  */
 package org.apache.camel.processor.aggregate.jdbc;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -45,15 +45,13 @@ public class JdbcAggregateLoadConcurrentTest extends AbstractJdbcAggregationTest
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
             final int key = i % 10;
-            executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
-                    char id = KEYS[key];
-                    LOG.debug("Sending {} with id {}", value, id);
-                    template.sendBodyAndHeader("direct:start", value, "id", Character.toString(id));
-                    // simulate a little delay
-                    Thread.sleep(3);
-                    return null;
-                }
+            executor.submit(() -> {
+                char id = KEYS[key];
+                LOG.debug("Sending {} with id {}", value, id);
+                template.sendBodyAndHeader("direct:start", value, "id", Character.toString(id));
+                // simulate a little delay
+                TimeUnit.MILLISECONDS.sleep(3);
+                return null;
             });
         }
 

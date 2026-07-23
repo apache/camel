@@ -33,6 +33,7 @@ import org.apache.camel.tooling.model.ComponentModel;
  * MCP Tool that lists valid {@code application.properties} keys for a Camel component, so AI agents can build
  * configuration without having to parse the full component documentation.
  */
+@McpSecured
 @ApplicationScoped
 public class ComponentPropertiesTools {
 
@@ -52,12 +53,9 @@ public class ComponentPropertiesTools {
                         "component-level defaults via the same prefix in application.properties.")
     public ComponentPropertiesResult camel_component_properties(
             @ToolArg(description = "Component name / scheme (e.g., kafka, http, file, timer)") String component,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Version to query. For Main or Spring Boot: the Camel version (e.g., 4.17.0). "
-                                   + "For quarkus: the Quarkus Platform version. "
-                                   + "If not specified, uses the default catalog version.") String camelVersion,
-            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion.") String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.VERSION_QUERY) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
         if (component == null || component.isBlank()) {
             throw new ToolCallException("Component name is required", null);

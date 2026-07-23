@@ -885,7 +885,7 @@ public class BeanInfo {
             // let's try converting
             Object newBody = null;
             MethodInfo matched = null;
-            int matchCounter = 0;
+            List<MethodInfo> candidates = new ArrayList<>();
             for (MethodInfo methodInfo : operationList) {
                 if (methodInfo.getBodyParameterType() != null) {
                     if (methodInfo.getBodyParameterType().isInstance(body)) {
@@ -900,14 +900,14 @@ public class BeanInfo {
                             LOG.trace("Converted body from: {} to: {}",
                                     body.getClass().getCanonicalName(), methodInfo.getBodyParameterType().getCanonicalName());
                         }
-                        matchCounter++;
+                        candidates.add(methodInfo);
                         newBody = value;
                         matched = methodInfo;
                     }
                 }
             }
-            if (matchCounter > 1) {
-                throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, matched));
+            if (candidates.size() > 1) {
+                throw new AmbiguousMethodCallException(exchange, candidates);
             }
             if (matched != null) {
                 LOG.trace("Setting converted body: {}", body);

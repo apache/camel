@@ -35,6 +35,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -55,18 +56,28 @@ class ExportSpringBoot extends Export {
 
     @Override
     public Integer export() throws Exception {
-        String[] ids = gav.split(":");
-        if (ids.length != 3) {
+        try {
+            MavenGav.parseStrictGav(gav);
+        } catch (IllegalArgumentException e) {
             printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
+        if (parentPom != null) {
+            try {
+                MavenGav.parseStrictGav(parentPom);
+            } catch (IllegalArgumentException e) {
+                printer().printErr("--parent-pom must be in syntax: groupId:artifactId:version");
+                return 1;
+            }
+        }
+        String[] ids = gav.split(":");
 
         exportBaseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
         Path profile = exportBaseDir.resolve("application.properties");
 
         // the settings file has information what to export
         Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
-        if (fresh || !files.isEmpty() || !Files.exists(settings)) {
+        if (mavenResolver.fresh() || !files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
             printer().println("Generating fresh run data");
             int silent = runSilently(ignoreLoadingError, lazyBean, verbose);
@@ -155,7 +166,9 @@ class ExportSpringBoot extends Export {
         if (mavenWrapper) {
             copyMavenWrapper();
         }
-        copyDockerFiles(BUILD_DIR);
+        if (docker) {
+            copyDockerFiles(BUILD_DIR);
+        }
         String appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
         copyReadme(BUILD_DIR, appJar);
         if (cleanExportDir || !exportDir.equals(".")) {
@@ -182,10 +195,11 @@ class ExportSpringBoot extends Export {
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
-        String sbVersion = camelSpringBootVersion != null ? camelSpringBootVersion : camelVersion;
+        String sbVersion = camelSpringBootVersion != null
+                ? camelSpringBootVersion : (camelVersion == null ? RuntimeType.main.version() : camelVersion);
         String repos = getMavenRepositories(settings, prop, sbVersion);
 
-        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, sbVersion, download);
+        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, sbVersion, mavenResolver.download());
         if (ObjectHelper.isEmpty(camelVersion)) {
             camelVersion = catalog.getLoadedVersion();
         }
@@ -223,6 +237,8 @@ class ExportSpringBoot extends Export {
         model.put("BuildProperties", formatBuildProperties());
         model.put("Repositories", buildRepositoryList(repos));
         model.put("Dependencies", depList);
+        model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
+        enrichParentPom(model);
 
         String context = TemplateHelper.processTemplate(pomTemplateName, model);
         IOHelper.writeText(context, Files.newOutputStream(pom));
@@ -381,6 +397,11 @@ class ExportSpringBoot extends Export {
         }
         sb.append("    </pluginRepositories>\n");
         return sb.toString();
+    }
+
+    @Override
+    protected String getDockerfileTemplateName() {
+        return "Dockerfile-spring-boot";
     }
 
     @Override

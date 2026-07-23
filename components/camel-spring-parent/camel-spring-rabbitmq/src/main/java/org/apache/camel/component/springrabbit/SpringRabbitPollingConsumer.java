@@ -51,11 +51,12 @@ public class SpringRabbitPollingConsumer extends PollingConsumerSupport {
     @Override
     public Exchange receive(long timeout) {
         try {
+            String queue = jmsEndpoint.getQueues().trim();
             Message message;
             if (timeout == 0) {
-                message = template.receive(jmsEndpoint.getQueues());
+                message = template.receive(queue);
             } else {
-                message = template.receive(jmsEndpoint.getQueues(), timeout);
+                message = template.receive(queue, timeout);
             }
             if (message != null) {
                 return getEndpoint().createExchange(message);
@@ -70,6 +71,11 @@ public class SpringRabbitPollingConsumer extends PollingConsumerSupport {
     protected void doInit() throws Exception {
         if (getEndpoint().getQueues() == null) {
             throw new IllegalArgumentException("Queues must be configured when using PollingConsumer");
+        }
+        if (getEndpoint().getQueues().contains(",")) {
+            throw new IllegalArgumentException(
+                    "PollingConsumer does not support multiple queues. Configure a single queue name instead of: "
+                                               + getEndpoint().getQueues());
         }
     }
 

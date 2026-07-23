@@ -1,0 +1,12 @@
+= Spring Main Component
+:doctitle: Spring Main
+:shortname: spring-main
+:artifactid: camel-spring-main
+:description: Camel Spring Main support
+:since: 3.2
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+This module is used for running classic Spring XML (not Spring Boot) via a main class extended from `camel-main`.

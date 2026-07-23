@@ -119,13 +119,15 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
                             documents.add(new Document(str));
                         }
                     }
-                } else if (body instanceof String str) {
-                    // Create document from text
-                    documents.add(new Document(str));
                 } else {
-                    throw new IllegalArgumentException(
-                            "Message body must be a Document, List<Document>, String, List<String>, " +
-                                                       "float[], or List<float[]>, or embeddings must be present in headers");
+                    String str = message.getBody(String.class);
+                    if (str != null) {
+                        documents.add(new Document(str));
+                    } else {
+                        throw new IllegalArgumentException(
+                                "Message body must be a Document, List<Document>, String, List<String>, " +
+                                                           "float[], or List<float[]>, or embeddings must be present in headers");
+                    }
                 }
             }
         }
@@ -165,8 +167,11 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
             Object body = message.getBody();
             if (body instanceof List) {
                 documentIds = (List<String>) body;
-            } else if (body instanceof String str) {
-                documentIds = List.of(str);
+            } else {
+                String str = message.getBody(String.class);
+                if (str != null) {
+                    documentIds = List.of(str);
+                }
             }
         }
 

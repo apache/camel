@@ -598,7 +598,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KinesisFirehose2HeaderNameBuilder INSTANCE = new KinesisFirehose2HeaderNameBuilder();
+        public static final KinesisFirehose2HeaderNameBuilder INSTANCE = new KinesisFirehose2HeaderNameBuilder();
 
         /**
          * The record ID, as defined in

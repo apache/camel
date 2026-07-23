@@ -33,7 +33,8 @@ import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = KeycloakInfraService.class,
               description = "Keycloak is an open source identity and access management solution",
-              serviceAlias = { "keycloak" })
+              serviceAlias = { "keycloak" },
+              uiSupported = true)
 public class KeycloakLocalContainerInfraService implements KeycloakInfraService, ContainerService<GenericContainer<?>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeycloakLocalContainerInfraService.class);

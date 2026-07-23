@@ -27,7 +27,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "bean",
-          description = "Aggregates two ElasticSearch BulkOperation into a single BulkRequest",
+          description = "Aggregates two Elasticsearch BulkOperation into a single BulkRequest",
           annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
 @Configurer(metadataOnly = true)
 public class ElasticsearchBulkRequestAggregationStrategy implements AggregationStrategy {

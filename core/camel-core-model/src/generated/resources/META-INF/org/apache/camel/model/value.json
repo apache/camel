@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "value",
     "title": "Value",
-    "description": "A single value",
+    "description": "Holds a single value, typically used as a child element in collection-based configurations",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.ValueDefinition",
@@ -12,6 +12,6 @@
     "output": false
   },
   "properties": {
-    "value": { "index": 0, "kind": "value", "displayName": "Value", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Property value" }
+    "value": { "index": 0, "kind": "value", "displayName": "Value", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The value." }
   }
 }

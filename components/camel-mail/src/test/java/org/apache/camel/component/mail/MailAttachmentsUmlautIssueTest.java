@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Disabled("Fails on CI servers and some platforms - maybe due locale or something")
 public class MailAttachmentsUmlautIssueTest extends CamelTestSupport {
-    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
+    private static final MailboxUser james = Mailbox.getOrCreateUser("MailAttachmentsUmlautIssueTest-james", "secret");
 
     @Test
     public void testSendAndReceiveMailWithAttachments() throws Exception {

@@ -23,8 +23,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a parameter as being a header on an inbound {@link Message}
+ * Marks a method parameter as a named header from the inbound {@link Message} when Camel performs
+ * <a href="https://camel.apache.org/manual/bean-binding.html">bean binding</a>.
+ * <p/>
+ * The {@link #value()} attribute names the header to inject. Camel converts the header value to the declared parameter
+ * type via the {@link TypeConverter} infrastructure. If the header is absent the parameter receives {@code null} (or
+ * the primitive default).
  *
+ * @see Body
+ * @see Headers
  * @see Message#getHeader(String)
  */
 @Retention(RetentionPolicy.RUNTIME)

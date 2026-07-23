@@ -18,6 +18,8 @@ package org.apache.camel;
 
 /**
  * Global endpoint configurations which can be set as defaults when Camel creates new {@link Endpoint}s.
+ *
+ * @since 3.0
  */
 public interface GlobalEndpointConfiguration {
 

@@ -62,7 +62,7 @@ public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
 
         String response = template.requestBody(
                 "direct:agent-with-user-tools",
-                "What is the name of user ID 123?",
+                "You MUST use the userDb tool to query user ID 123. What is the name of user ID 123?",
                 String.class);
 
         mockEndpoint.assertIsSatisfied();
@@ -188,13 +188,13 @@ public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
                         .to("langchain4j-agent:test-agent?agent=#agentWithTools&tags=nonexistent")
                         .to("mock:check-no-tools");
 
-                from("langchain4j-tools:userDb?tags=users&description=Query user database by user ID&parameter.userId=integer")
+                from("ai-tool:userDb?tags=users&description=Query user database by user ID&parameter.userId=integer")
                         .setBody(constant("{\"name\": \"" + USER_DB_NAME + "\", \"id\": \"123\"}"));
 
-                from("langchain4j-tools:weatherService?tags=weather&description=Get weather information for a city&parameter.city=string")
+                from("ai-tool:weatherService?tags=weather&description=Get weather information for a city&parameter.city=string")
                         .setBody(constant("{\"weather\": \"" + WEATHER_INFO + "\", \"city\": \"New York\"}"));
 
-                from("langchain4j-tools:parisWeather?tags=weather&description=Get weather information for Paris&parameter.location=string")
+                from("ai-tool:parisWeather?tags=weather&description=Get weather information for Paris&parameter.location=string")
                         .setBody(constant("{\"weather\": \"" + WEATHER_INFO + "\", \"city\": \"Paris\"}"));
             }
         };

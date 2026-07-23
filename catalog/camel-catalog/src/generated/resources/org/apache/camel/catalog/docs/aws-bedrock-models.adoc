@@ -1,0 +1,604 @@
+= AWS Bedrock - Supported Models
+:tabs-sync-option:
+
+xref:ROOT:aws-bedrock-component.adoc[Back to AWS Bedrock Component]
+
+== Supported AWS Bedrock Models
+
+- Titan Text Express V1 with id `amazon.titan-text-express-v1`
+Express is a large language model for text generation. It is useful for a wide range of advanced, general language tasks such as open-ended text generation and conversational chat, as well as support within Retrieval Augmented Generation (RAG).
+
+Json schema for request
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "inputText": {
+      "type": "string"
+    },
+    "textGenerationConfig": {
+      "type": "object",
+      "properties": {
+        "maxTokenCount": {
+          "type": "integer"
+        },
+        "stopSequences": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "temperature": {
+          "type": "integer"
+        },
+        "topP": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "maxTokenCount",
+        "stopSequences",
+        "temperature",
+        "topP"
+      ]
+    }
+  },
+  "required": [
+    "inputText",
+    "textGenerationConfig"
+  ]
+}
+----
+
+- Titan Text Lite V1 with id `amazon.titan-text-lite-v1`
+Lite is a light weight efficient model, ideal for fine-tuning of English-language tasks.
+
+Json schema for request
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "inputText": {
+      "type": "string"
+    },
+    "textGenerationConfig": {
+      "type": "object",
+      "properties": {
+        "maxTokenCount": {
+          "type": "integer"
+        },
+        "stopSequences": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "temperature": {
+          "type": "integer"
+        },
+        "topP": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "maxTokenCount",
+        "stopSequences",
+        "temperature",
+        "topP"
+      ]
+    }
+  },
+  "required": [
+    "inputText",
+    "textGenerationConfig"
+  ]
+}
+----
+
+- Titan Image Generator G1 with id `amazon.titan-image-generator-v1`
+It generates images from text, and allows users to upload and edit an existing image. Users can edit an image with a text prompt (without a mask) or parts of an image with an image mask. You can extend the boundaries of an image with outpainting, and fill in an image with inpainting.
+
+Json schema for request
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "textToImageParams": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "negativeText": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "negativeText"
+      ]
+    },
+    "taskType": {
+      "type": "string"
+    },
+    "imageGenerationConfig": {
+      "type": "object",
+      "properties": {
+        "cfgScale": {
+          "type": "integer"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "quality": {
+          "type": "string"
+        },
+        "width": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "integer"
+        },
+        "numberOfImages": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "cfgScale",
+        "seed",
+        "quality",
+        "width",
+        "height",
+        "numberOfImages"
+      ]
+    }
+  },
+  "required": [
+    "textToImageParams",
+    "taskType",
+    "imageGenerationConfig"
+  ]
+}
+----
+
+- Titan Embeddings G1 with id `amazon.titan-embed-text-v1`
+The Amazon Titan Embeddings G1 - Text – Text v1.2 can intake up to 8k tokens and outputs a vector of 1,536 dimensions. The model also works in 25+ different language
+
+Json schema for request
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "inputText": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "inputText"
+  ]
+}
+----
+
+- Jurassic2-Ultra with id `ai21.j2-ultra-v1`
+Jurassic-2 Ultra is AI21's most powerful model for complex tasks that require advanced text generation and comprehension.
+
+Json schema for request
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    },
+    "maxTokens": {
+      "type": "integer"
+    },
+    "temperature": {
+      "type": "integer"
+    },
+    "topP": {
+      "type": "integer"
+    },
+    "stopSequences": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "presencePenalty": {
+      "type": "object",
+      "properties": {
+        "scale": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "scale"
+      ]
+    },
+    "frequencyPenalty": {
+      "type": "object",
+      "properties": {
+        "scale": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "scale"
+      ]
+    }
+  },
+  "required": [
+    "prompt",
+    "maxTokens",
+    "temperature",
+    "topP",
+    "stopSequences",
+    "presencePenalty",
+    "frequencyPenalty"
+  ]
+}
+----
+
+- Jurassic2-Mid with id `ai21.j2-mid-v1`
+Jurassic-2 Mid is less powerful than Ultra, yet carefully designed to strike the right balance between exceptional quality and affordability.
+
+Json schema for request
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    },
+    "maxTokens": {
+      "type": "integer"
+    },
+    "temperature": {
+      "type": "integer"
+    },
+    "topP": {
+      "type": "integer"
+    },
+    "stopSequences": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "presencePenalty": {
+      "type": "object",
+      "properties": {
+        "scale": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "scale"
+      ]
+    },
+    "frequencyPenalty": {
+      "type": "object",
+      "properties": {
+        "scale": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "scale"
+      ]
+    }
+  },
+  "required": [
+    "prompt",
+    "maxTokens",
+    "temperature",
+    "topP",
+    "stopSequences",
+    "presencePenalty",
+    "frequencyPenalty"
+  ]
+}
+----
+
+- Claude Instant V1.2 with id `anthropic.claude-instant-v1`
+A fast, affordable yet still very capable model, which can handle a range of tasks including casual dialogue, text analysis, summarization, and document question-answering.
+
+Json schema for request
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    },
+    "max_tokens_to_sample": {
+      "type": "integer"
+    },
+    "stop_sequences": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "temperature": {
+      "type": "number"
+    },
+    "top_p": {
+      "type": "integer"
+    },
+    "top_k": {
+      "type": "integer"
+    },
+    "anthropic_version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "prompt",
+    "max_tokens_to_sample",
+    "stop_sequences",
+    "temperature",
+    "top_p",
+    "top_k",
+    "anthropic_version"
+  ]
+}
+----
+
+- Claude 2 with id `anthropic.claude-v2`
+Anthropic's highly capable model across a wide range of tasks from sophisticated dialogue and creative content generation to detailed instruction following.
+
+Json schema for request
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    },
+    "max_tokens_to_sample": {
+      "type": "integer"
+    },
+    "stop_sequences": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "temperature": {
+      "type": "number"
+    },
+    "top_p": {
+      "type": "integer"
+    },
+    "top_k": {
+      "type": "integer"
+    },
+    "anthropic_version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "prompt",
+    "max_tokens_to_sample",
+    "stop_sequences",
+    "temperature",
+    "top_p",
+    "top_k",
+    "anthropic_version"
+  ]
+}
+----
+
+- Claude 2.1 with id `anthropic.claude-v2:1`
+An update to Claude 2 that features double the context window, plus improvements across reliability, hallucination rates, and evidence-based accuracy in long document and RAG contexts.
+
+Json schema for request
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    },
+    "max_tokens_to_sample": {
+      "type": "integer"
+    },
+    "stop_sequences": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "temperature": {
+      "type": "number"
+    },
+    "top_p": {
+      "type": "integer"
+    },
+    "top_k": {
+      "type": "integer"
+    },
+    "anthropic_version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "prompt",
+    "max_tokens_to_sample",
+    "stop_sequences",
+    "temperature",
+    "top_p",
+    "top_k",
+    "anthropic_version"
+  ]
+}
+----
+
+- Claude 3 Sonnet with id `anthropic.claude-3-sonnet-20240229-v1:0`
+Claude 3 Sonnet by Anthropic strikes the ideal balance between intelligence and speed—particularly for enterprise workloads.
+
+Json schema for request
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "messages": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": "string"
+            },
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "text"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "content"
+          ]
+        }
+      ]
+    },
+    "max_tokens": {
+      "type": "integer"
+    },
+    "anthropic_version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "messages",
+    "max_tokens",
+    "anthropic_version"
+  ]
+}
+----
+
+- Claude 3 Haiku with id `anthropic.claude-3-haiku-20240307-v1:0`
+Claude 3 Haiku is Anthropic's fastest, most compact model for near-instant responsiveness. It answers simple queries and requests with speed.
+
+Json schema for request
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "messages": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": "string"
+            },
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "text"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "role",
+            "content"
+          ]
+        }
+      ]
+    },
+    "max_tokens": {
+      "type": "integer"
+    },
+    "anthropic_version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "messages",
+    "max_tokens",
+    "anthropic_version"
+  ]
+}
+----

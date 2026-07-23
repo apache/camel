@@ -52,6 +52,12 @@ class SpanComparator implements Comparator<Span> {
         // cast to get timestamp without changing the Span interface
         MockSpanAdapter msa = (MockSpanAdapter) a;
         MockSpanAdapter msb = (MockSpanAdapter) b;
-        return (int) (Long.parseLong(msa.getTag("initTimestamp")) - Long.parseLong(msb.getTag("initTimestamp")));
+        int cmp = Long.compare(Long.parseLong(msa.getTag("initTimestamp")), Long.parseLong(msb.getTag("initTimestamp")));
+        if (cmp != 0) {
+            return cmp;
+        }
+        // When start times tie, sort by end time descending so that parent
+        // spans (which end after their children) come first.
+        return Long.compare(Long.parseLong(msb.getTag("endTimestamp")), Long.parseLong(msa.getTag("endTimestamp")));
     }
 }

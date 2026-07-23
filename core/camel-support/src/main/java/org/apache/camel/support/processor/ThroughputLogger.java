@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -36,12 +37,13 @@ import org.slf4j.LoggerFactory;
 /**
  * A logger for logging message throughput.
  */
-public class ThroughputLogger extends AsyncProcessorSupport implements IdAware, RouteIdAware {
+public class ThroughputLogger extends AsyncProcessorSupport implements IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThroughputLogger.class);
 
     private String id;
     private String routeId;
+    private String stepId;
     private final AtomicLong receivedCounter = new AtomicLong();
     private NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private long groupReceivedCount;
@@ -97,6 +99,16 @@ public class ThroughputLogger extends AsyncProcessorSupport implements IdAware, 
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

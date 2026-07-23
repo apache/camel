@@ -430,6 +430,24 @@ public interface AzureEventhubsComponentBuilderFactory {
         }
     
         /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AzureEventhubsComponentBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+    
+        /**
          * Instead of supplying namespace, sharedAccessKey, sharedAccessName,
          * etc. you can supply the connection string for your eventHub. The
          * connection string for EventHubs already includes all the necessary
@@ -454,7 +472,7 @@ public interface AzureEventhubsComponentBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.eventhubs.CredentialType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.azure.common.CredentialType&lt;/code&gt; type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -462,7 +480,7 @@ public interface AzureEventhubsComponentBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default AzureEventhubsComponentBuilder credentialType(org.apache.camel.component.azure.eventhubs.CredentialType credentialType) {
+        default AzureEventhubsComponentBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -554,8 +572,9 @@ public interface AzureEventhubsComponentBuilderFactory {
             case "partitionKey": getOrCreateConfiguration((EventHubsComponent) component).setPartitionKey((java.lang.String) value); return true;
             case "producerAsyncClient": getOrCreateConfiguration((EventHubsComponent) component).setProducerAsyncClient((com.azure.messaging.eventhubs.EventHubProducerAsyncClient) value); return true;
             case "autowiredEnabled": ((EventHubsComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "headerFilterStrategy": ((EventHubsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "connectionString": getOrCreateConfiguration((EventHubsComponent) component).setConnectionString((java.lang.String) value); return true;
-            case "credentialType": getOrCreateConfiguration((EventHubsComponent) component).setCredentialType((org.apache.camel.component.azure.eventhubs.CredentialType) value); return true;
+            case "credentialType": getOrCreateConfiguration((EventHubsComponent) component).setCredentialType((org.apache.camel.component.azure.common.CredentialType) value); return true;
             case "sharedAccessKey": getOrCreateConfiguration((EventHubsComponent) component).setSharedAccessKey((java.lang.String) value); return true;
             case "sharedAccessName": getOrCreateConfiguration((EventHubsComponent) component).setSharedAccessName((java.lang.String) value); return true;
             case "tokenCredential": getOrCreateConfiguration((EventHubsComponent) component).setTokenCredential((com.azure.core.credential.TokenCredential) value); return true;

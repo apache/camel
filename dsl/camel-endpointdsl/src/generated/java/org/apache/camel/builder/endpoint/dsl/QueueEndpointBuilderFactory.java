@@ -47,7 +47,8 @@ public interface QueueEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.queue.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: common
@@ -55,7 +56,7 @@ public interface QueueEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default QueueEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.storage.queue.CredentialType credentialType) {
+        default QueueEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -63,7 +64,8 @@ public interface QueueEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.storage.queue.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: common
@@ -1016,7 +1018,8 @@ public interface QueueEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.queue.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: common
@@ -1024,7 +1027,7 @@ public interface QueueEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default QueueEndpointProducerBuilder credentialType(org.apache.camel.component.azure.storage.queue.CredentialType credentialType) {
+        default QueueEndpointProducerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -1032,7 +1035,8 @@ public interface QueueEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.storage.queue.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: common
@@ -1451,7 +1455,8 @@ public interface QueueEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.queue.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: common
@@ -1459,7 +1464,7 @@ public interface QueueEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default QueueEndpointBuilder credentialType(org.apache.camel.component.azure.storage.queue.CredentialType credentialType) {
+        default QueueEndpointBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -1467,7 +1472,8 @@ public interface QueueEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.storage.queue.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: common
@@ -1838,7 +1844,7 @@ public interface QueueEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final QueueHeaderNameBuilder INSTANCE = new QueueHeaderNameBuilder();
+        public static final QueueHeaderNameBuilder INSTANCE = new QueueHeaderNameBuilder();
 
         /**
          * Returns non-parsed httpHeaders that can be used by the user.

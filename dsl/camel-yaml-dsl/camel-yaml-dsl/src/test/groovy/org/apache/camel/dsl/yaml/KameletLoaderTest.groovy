@@ -451,6 +451,62 @@ class KameletLoaderTest extends YamlTestSupport {
             }
     }
 
+    def "kamelet with local bean via bean ref"() {
+        setup:
+            loadKamelets '''
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: counter-action
+                  labels:
+                    camel.apache.org/kamelet.type: action
+                spec:
+                  definition:
+                    title: "Counter Action"
+                    properties:
+                      start:
+                        title: Start
+                        description: The starting value for the counter
+                        type: integer
+                        default: 0
+                  template:
+                    beans:
+                      - name: counter
+                        type: java.util.concurrent.atomic.AtomicInteger
+                        constructors:
+                          "0": "{{start}}"
+                    from:
+                      uri: kamelet:source
+                      steps:
+                        - bean:
+                            ref: "{{counter}}"
+                            method: getAndIncrement
+                        - to: "kamelet:sink"
+            '''
+
+            loadRoutes """
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - kamelet:
+                          name: "counter-action"
+                      - to: "mock:result"
+            """
+
+            withMock('mock:result') {
+                expectedBodiesReceived '0'
+            }
+
+        when:
+            context.start()
+
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
     def "kamelet with bean constructors"() {
         when:
         loadKamelets('''

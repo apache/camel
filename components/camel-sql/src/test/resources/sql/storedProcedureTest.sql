@@ -15,33 +15,29 @@
 -- limitations under the License.
 --
 
-CREATE PROCEDURE SUBNUMBERS(VALUE1 INTEGER, VALUE2 INTEGER,OUT RESULT INTEGER)
- PARAMETER STYLE JAVA
- LANGUAGE JAVA
- EXTERNAL NAME
-'org.apache.camel.component.sql.stored.TestStoredProcedure.subnumbers';
+-- HSQLDB stored procedures using PARAMETER STYLE JAVA with OUT parameters
+-- These reference Java methods from TestStoredProcedure class
+
+CREATE PROCEDURE SUBNUMBERS(IN param1 INTEGER, IN param2 INTEGER, OUT param3 INTEGER)
+LANGUAGE JAVA
+PARAMETER STYLE JAVA
+NO SQL
+EXTERNAL NAME 'CLASSPATH:org.apache.camel.component.sql.stored.TestStoredProcedure.subnumbers';
 
 CREATE PROCEDURE NILADIC()
- PARAMETER STYLE JAVA
- LANGUAGE JAVA
- EXTERNAL NAME
-'org.apache.camel.component.sql.stored.TestStoredProcedure.niladic';
+LANGUAGE JAVA
+PARAMETER STYLE JAVA
+NO SQL
+EXTERNAL NAME 'CLASSPATH:org.apache.camel.component.sql.stored.TestStoredProcedure.niladic';
 
-CREATE PROCEDURE BATCHFN(VALUE1 CHAR(10))
- PARAMETER STYLE JAVA
- LANGUAGE JAVA
- EXTERNAL NAME
-'org.apache.camel.component.sql.stored.TestStoredProcedure.batchfn';
+CREATE PROCEDURE BATCHFN(IN param1 VARCHAR(100))
+LANGUAGE JAVA
+PARAMETER STYLE JAVA
+NO SQL
+EXTERNAL NAME 'CLASSPATH:org.apache.camel.component.sql.stored.TestStoredProcedure.batchfn';
 
-CREATE PROCEDURE INOUTDEMO(IN1 INTEGER, INOUT IN2 INTEGER, OUT OUT1 INTEGER)
- PARAMETER STYLE JAVA
- LANGUAGE JAVA
- EXTERNAL NAME
-'org.apache.camel.component.sql.stored.TestStoredProcedure.inoutdemo';
-
-CREATE FUNCTION SUBNUMBERS_FUNCTION(VALUE1 INTEGER, VALUE2 INTEGER)
- RETURNS INTEGER
- PARAMETER STYLE JAVA
- LANGUAGE JAVA
- EXTERNAL NAME
-'org.apache.camel.component.sql.stored.TestStoredFunction.subnumbers';
+CREATE PROCEDURE INOUTDEMO(IN param1 INTEGER, INOUT param2 INTEGER, OUT param3 INTEGER)
+LANGUAGE JAVA
+PARAMETER STYLE JAVA
+NO SQL
+EXTERNAL NAME 'CLASSPATH:org.apache.camel.component.sql.stored.TestStoredProcedure.inoutdemo';

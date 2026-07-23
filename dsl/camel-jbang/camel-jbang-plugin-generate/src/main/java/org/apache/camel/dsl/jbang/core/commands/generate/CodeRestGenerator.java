@@ -113,6 +113,11 @@ public class CodeRestGenerator extends CamelCommand {
         OpenAPIV3Parser parser = new OpenAPIV3Parser();
         doc = parser.read(input);
 
+        if (doc == null) {
+            printer().println("Error: Failed to parse OpenAPI specification: " + input);
+            return 1;
+        }
+
         Configurator.setRootLevel(Level.OFF);
         try (CamelContext context = new DefaultCamelContext()) {
             String text = null;
@@ -124,6 +129,9 @@ public class CodeRestGenerator extends CamelCommand {
                 text = RestDslGenerator.toXml(doc)
                         .withDtoPackageName(generateDataObjects ? packageName : null)
                         .generate(context);
+            } else {
+                printer().println("Error: Unknown type: " + type + " (supported: yaml, xml)");
+                return 1;
             }
             if (text != null) {
                 if (output == null) {
@@ -163,7 +171,10 @@ public class CodeRestGenerator extends CamelCommand {
 
         final ClientOptInput clientOptInput = configurator.toClientOptInput();
         new DefaultGenerator().opts(clientOptInput).generate();
-        File generated = new File(Paths.get(output.getAbsolutePath(), code, packageName).toUri());
-        generated.renameTo(new File(packageName));
+        String packageDir = packageName.replace('.', File.separatorChar);
+        File generated = Paths.get(output.getAbsolutePath(), code, packageDir).toFile();
+        if (generated.exists() && !generated.renameTo(new File(packageDir))) {
+            printer().println("Error: Failed to move generated DTOs to " + packageDir);
+        }
     }
 }

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "param",
     "title": "Param",
-    "description": "To specify the rest operation parameters.",
+    "description": "Defines a parameter for a REST operation, specifying its type, name, data type, and whether it is required",
     "deprecated": false,
     "label": "rest",
     "javaType": "org.apache.camel.model.rest.ParamDefinition",
@@ -12,16 +12,16 @@
     "output": false
   },
   "properties": {
-    "description": { "index": 0, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter description." },
-    "name": { "index": 1, "kind": "attribute", "displayName": "Name", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter name." },
-    "type": { "index": 2, "kind": "attribute", "displayName": "Type", "group": "common", "required": false, "type": "enum", "javaType": "org.apache.camel.model.rest.RestParamType", "enum": [ "body", "formData", "header", "path", "query" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "path", "description": "Sets the parameter type." },
-    "defaultValue": { "index": 3, "kind": "attribute", "displayName": "Default Value", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter default value." },
+    "description": { "index": 0, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Description of the parameter." },
+    "name": { "index": 1, "kind": "attribute", "displayName": "Name", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The parameter name." },
+    "type": { "index": 2, "kind": "attribute", "displayName": "Type", "group": "common", "required": false, "type": "enum", "javaType": "org.apache.camel.model.rest.RestParamType", "enum": [ "body", "formData", "header", "path", "query" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "path", "description": "Sets the parameter type such as body, form, header, path, or query." },
+    "defaultValue": { "index": 3, "kind": "attribute", "displayName": "Default Value", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The default value of the parameter." },
     "required": { "index": 4, "kind": "attribute", "displayName": "Required", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Sets the parameter required flag." },
     "collectionFormat": { "index": 5, "kind": "attribute", "displayName": "Collection Format", "group": "common", "required": false, "type": "enum", "javaType": "org.apache.camel.model.rest.CollectionFormat", "enum": [ "csv", "multi", "pipes", "ssv", "tsv" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "csv", "description": "Sets the parameter collection format." },
     "arrayType": { "index": 6, "kind": "attribute", "displayName": "Array Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "string", "description": "Sets the parameter array type. Required if data type is array. Describes the type of items in the array." },
-    "dataType": { "index": 7, "kind": "attribute", "displayName": "Data Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "string", "description": "Sets the parameter data type." },
-    "dataFormat": { "index": 8, "kind": "attribute", "displayName": "Data Format", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter data format." },
-    "allowableValues": { "index": 9, "kind": "element", "displayName": "Allowable Values", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.ValueDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter list of allowable values (enum)." },
-    "examples": { "index": 10, "kind": "element", "displayName": "Examples", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestPropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter examples." }
+    "dataType": { "index": 7, "kind": "attribute", "displayName": "Data Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "string", "description": "Sets the parameter data type such as string, integer, or boolean." },
+    "dataFormat": { "index": 8, "kind": "attribute", "displayName": "Data Format", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The data format of the parameter such as binary, date, date-time, or password." },
+    "allowableValues": { "index": 9, "kind": "element", "displayName": "Allowable Values", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.ValueDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "List of allowable values for the parameter (enum)." },
+    "examples": { "index": 10, "kind": "element", "displayName": "Examples", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestPropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Examples of the parameter." }
   }
 }

@@ -18,7 +18,6 @@ package org.apache.camel.component.kafka.integration;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
@@ -33,7 +32,6 @@ import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -114,7 +112,7 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
     @DisplayName("Tests that LAST_RECORD_BEFORE_COMMIT header includes a value")
     @Order(1)
     @Test
-    void testLastRecordBeforeCommitHeader() {
+    void testLastRecordBeforeCommitHeader() throws Exception {
         MockEndpoint to = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
 
         to.expectedMessageCount(5);
@@ -128,7 +126,7 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
             producer.send(data);
         }
 
-        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> to.assertIsSatisfied()); // changed to 10 sec for CAMEL-20722
+        to.assertIsSatisfied();
 
         List<Exchange> exchangeList = to.getExchanges();
         assertEquals(5, exchangeList.size());
@@ -166,8 +164,7 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
         to.expectedMessageCount(3);
         to.expectedBodiesReceivedInAnyOrder("message-5", "message-6", "message-7");
 
-        Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> to.assertIsSatisfied());
+        to.assertIsSatisfied();
 
         assertEquals(0, failCount, "There should have been 0 commit failures");
     }

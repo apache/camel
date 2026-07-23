@@ -21,14 +21,27 @@ import java.util.Set;
 
 import org.apache.camel.Route;
 import org.apache.camel.util.backoff.BackOffTimer;
+import org.jspecify.annotations.Nullable;
 
 /**
- * A supervising capable {@link RouteController} that delays the startup of the routes after the camel context startup
- * and takes control of starting the routes in a safe manner. This controller is able to retry starting failing routes,
- * and have various options to configure settings for backoff between restarting routes.
+ * Extension of {@link RouteController} that adds resilient, backoff-based startup supervision for routes, as described
+ * in the <a href="https://camel.apache.org/manual/route-controller.html">Route Controller</a> documentation.
+ * <p/>
+ * Unlike the default controller, this variant starts routes asynchronously after the
+ * {@link org.apache.camel.CamelContext} has finished starting. Routes that fail to start are retried using an
+ * exponential backoff schedule (configurable via {@link #setBackOffDelay}, {@link #setBackOffMaxAttempts}, and related
+ * setters). Routes can be selectively supervised via include/exclude patterns matched against route id or endpoint URI.
+ * <p/>
+ * Failed routes can optionally be exposed as unhealthy via Camel's health check infrastructure: set
+ * {@link #setUnhealthyOnExhausted} or {@link #setUnhealthyOnRestarting} to control whether a route that is pending
+ * restart or has exhausted all attempts causes the application to report a DOWN health status.
+ *
+ * @see   RouteController
+ * @since 3.3
  */
 public interface SupervisingRouteController extends RouteController {
 
+    @Nullable
     String getIncludeRoutes();
 
     /**
@@ -36,12 +49,13 @@ public interface SupervisingRouteController extends RouteController {
      *
      * The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma.
      *
-     * For example to include all kafka routes, you can say <tt>kafka:*</tt>. And to include routes with specific route
+     * For example to include all Kafka routes, you can say <tt>kafka:*</tt>. And to include routes with specific route
      * ids <tt>myRoute,myOtherRoute</tt>. The pattern supports wildcards and uses the matcher from
      * org.apache.camel.support.PatternHelper#matchPattern.
      */
-    void setIncludeRoutes(String includeRoutes);
+    void setIncludeRoutes(@Nullable String includeRoutes);
 
+    @Nullable
     String getExcludeRoutes();
 
     /**
@@ -53,7 +67,7 @@ public interface SupervisingRouteController extends RouteController {
      * <tt>mySpecialRoute,myOtherSpecialRoute</tt>. The pattern supports wildcards and uses the matcher from
      * org.apache.camel.support.PatternHelper#matchPattern.
      */
-    void setExcludeRoutes(String excludeRoutes);
+    void setExcludeRoutes(@Nullable String excludeRoutes);
 
     int getThreadPoolSize();
 
@@ -67,7 +81,7 @@ public interface SupervisingRouteController extends RouteController {
     long getInitialDelay();
 
     /**
-     * Initial delay in milli seconds before the route controller starts, after CamelContext has been started.
+     * Initial delay in milliseconds before the route controller starts, after CamelContext has been started.
      */
     void setInitialDelay(long initialDelay);
 
@@ -153,7 +167,7 @@ public interface SupervisingRouteController extends RouteController {
      * @param  routeId the route id
      * @return         the state, or <tt>null</tt> if the route is not under restarting
      */
-    BackOffTimer.Task getRestartingRouteState(String routeId);
+    BackOffTimer.@Nullable Task getRestartingRouteState(String routeId);
 
     /**
      * Gets the last exception that caused the route to not startup for the given route
@@ -161,6 +175,7 @@ public interface SupervisingRouteController extends RouteController {
      * @param  routeId the route id
      * @return         the caused exception
      */
+    @Nullable
     Throwable getRestartException(String routeId);
 
     /**

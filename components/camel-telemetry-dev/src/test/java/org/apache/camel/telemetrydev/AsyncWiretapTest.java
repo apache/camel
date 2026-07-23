@@ -16,9 +16,9 @@
  */
 package org.apache.camel.telemetrydev;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -42,6 +43,7 @@ public class AsyncWiretapTest extends TelemetryDevTracerTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         TelemetryDevTracer tst = new TelemetryDevTracer();
         tst.setTraceFormat("json");
+        tst.setDisableCoreProcessors(true);
         CamelContext context = super.createCamelContext();
         CamelContextAware.trySetCamelContext(tst, context);
         tst.init(context);
@@ -49,15 +51,23 @@ public class AsyncWiretapTest extends TelemetryDevTracerTestSupport {
     }
 
     @Test
-    void testRouteMultipleRequests() throws InterruptedException, IOException {
+    void testRouteMultipleRequests() throws Exception {
         int j = 10;
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedMessageCount(j);
-        mock.setAssertPeriod(5000);
         for (int i = 0; i < j; i++) {
             context.createProducerTemplate().sendBody("direct:start", "Hello!");
         }
-        mock.assertIsSatisfied(1000);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+        // Wait for async trace writing to complete — traces are written asynchronously
+        // after exchange processing, so we poll until all traces with expected spans arrive.
+        await().atMost(30, TimeUnit.SECONDS).untilAsserted(() -> {
+            Map<String, DevTrace> traces = tracesFromLog();
+            assertEquals(j, traces.size());
+            for (DevTrace trace : traces.values()) {
+                assertEquals(7, trace.getSpans().size());
+            }
+        });
         Map<String, DevTrace> traces = tracesFromLog();
         // Each trace should have a unique trace id. It is enough to assert that
         // the number of elements in the map is the same of the requests to prove
@@ -67,7 +77,6 @@ public class AsyncWiretapTest extends TelemetryDevTracerTestSupport {
         for (DevTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(DevTrace trace, String expectedBody) {

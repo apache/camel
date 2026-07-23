@@ -29,6 +29,12 @@ import org.junit.jupiter.api.Test;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.admin.client.resource.GroupsResource;
+import org.keycloak.admin.client.resource.OrganizationIdentityProviderResource;
+import org.keycloak.admin.client.resource.OrganizationIdentityProvidersResource;
+import org.keycloak.admin.client.resource.OrganizationMemberResource;
+import org.keycloak.admin.client.resource.OrganizationMembersResource;
+import org.keycloak.admin.client.resource.OrganizationResource;
+import org.keycloak.admin.client.resource.OrganizationsResource;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RealmsResource;
 import org.keycloak.admin.client.resource.RoleMappingResource;
@@ -38,6 +44,8 @@ import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.GroupRepresentation;
+import org.keycloak.representations.idm.MemberRepresentation;
+import org.keycloak.representations.idm.OrganizationRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mockito.Mockito;
@@ -61,6 +69,14 @@ public class KeycloakProducerTest extends CamelTestSupport {
     private ClientsResource clientsResource = Mockito.mock(ClientsResource.class);
     private RoleMappingResource roleMappingResource = Mockito.mock(RoleMappingResource.class);
     private RoleScopeResource roleScopeResource = Mockito.mock(RoleScopeResource.class);
+    private OrganizationsResource organizationsResource = Mockito.mock(OrganizationsResource.class);
+    private OrganizationResource organizationResource = Mockito.mock(OrganizationResource.class);
+    private OrganizationMembersResource organizationMembersResource = Mockito.mock(OrganizationMembersResource.class);
+    private OrganizationMemberResource organizationMemberResource = Mockito.mock(OrganizationMemberResource.class);
+    private OrganizationIdentityProvidersResource organizationIdpsResource
+            = Mockito.mock(OrganizationIdentityProvidersResource.class);
+    private OrganizationIdentityProviderResource organizationIdpResource
+            = Mockito.mock(OrganizationIdentityProviderResource.class);
     private Response response = Mockito.mock(Response.class);
 
     @Override
@@ -118,6 +134,50 @@ public class KeycloakProducerTest extends CamelTestSupport {
 
                 from("direct:evaluatePermission")
                         .to("keycloak:test?keycloakClient=#keycloakClient&operation=evaluatePermission")
+                        .to("mock:result");
+
+                from("direct:createOrganization")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=createOrganization")
+                        .to("mock:result");
+
+                from("direct:listOrganizations")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=listOrganizations")
+                        .to("mock:result");
+
+                from("direct:getOrganization")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=getOrganization")
+                        .to("mock:result");
+
+                from("direct:deleteOrganization")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=deleteOrganization")
+                        .to("mock:result");
+
+                from("direct:searchOrganizations")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=searchOrganizations")
+                        .to("mock:result");
+
+                from("direct:addOrganizationMember")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=addOrganizationMember")
+                        .to("mock:result");
+
+                from("direct:removeOrganizationMember")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=removeOrganizationMember")
+                        .to("mock:result");
+
+                from("direct:listOrganizationMembers")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=listOrganizationMembers")
+                        .to("mock:result");
+
+                from("direct:linkOrganizationIdentityProvider")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=linkOrganizationIdentityProvider")
+                        .to("mock:result");
+
+                from("direct:unlinkOrganizationIdentityProvider")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=unlinkOrganizationIdentityProvider")
+                        .to("mock:result");
+
+                from("direct:listOrganizationIdentityProviders")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=listOrganizationIdentityProviders")
                         .to("mock:result");
             }
         };
@@ -345,6 +405,223 @@ public class KeycloakProducerTest extends CamelTestSupport {
                     KeycloakConstants.PERMISSION_RESOURCE_NAMES, "resource1"));
         } catch (Exception e) {
             assertTrue(e.getCause().getMessage().contains("Server URL must be specified"));
+        }
+    }
+
+    @Test
+    public void testCreateOrganization() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.organizations()).thenReturn(organizationsResource);
+        when(organizationsResource.create(any(OrganizationRepresentation.class))).thenReturn(response);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeaders("direct:createOrganization", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.ORGANIZATION_NAME, "testOrg",
+                KeycloakConstants.ORGANIZATION_ALIAS, "test-org",
+                KeycloakConstants.ORGANIZATION_DOMAIN, "test.example.com"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testListOrganizations() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.organizations()).thenReturn(organizationsResource);
+        when(organizationsResource.getAll()).thenReturn(List.of(new OrganizationRepresentation()));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:listOrganizations", null, KeycloakConstants.REALM_NAME, "testRealm");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testGetOrganization() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.organizations()).thenReturn(organizationsResource);
+        when(organizationsResource.get(anyString())).thenReturn(organizationResource);
+        when(organizationResource.toRepresentation()).thenReturn(new OrganizationRepresentation());
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeaders("direct:getOrganization", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.ORGANIZATION_ID, "orgId123"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testDeleteOrganization() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.organizations()).thenReturn(organizationsResource);
+        when(organizationsResource.get(anyString())).thenReturn(organizationResource);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeaders("direct:deleteOrganization", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.ORGANIZATION_ID, "orgId123"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testSearchOrganizations() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.organizations()).thenReturn(organizationsResource);
+        when(organizationsResource.search(anyString())).thenReturn(List.of(new OrganizationRepresentation()));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeaders("direct:searchOrganizations", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.ORGANIZATION_SEARCH, "test"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testAddOrganizationMember() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.organizations()).thenReturn(organizationsResource);
+        when(organizationsResource.get(anyString())).thenReturn(organizationResource);
+        when(organizationResource.members()).thenReturn(organizationMembersResource);
+        when(organizationMembersResource.addMember(anyString())).thenReturn(response);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeaders("direct:addOrganizationMember", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.ORGANIZATION_ID, "orgId123",
+                KeycloakConstants.USER_ID, "userId123"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testRemoveOrganizationMember() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.organizations()).thenReturn(organizationsResource);
+        when(organizationsResource.get(anyString())).thenReturn(organizationResource);
+        when(organizationResource.members()).thenReturn(organizationMembersResource);
+        when(organizationMembersResource.member(anyString())).thenReturn(organizationMemberResource);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeaders("direct:removeOrganizationMember", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.ORGANIZATION_ID, "orgId123",
+                KeycloakConstants.USER_ID, "userId123"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testListOrganizationMembers() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.organizations()).thenReturn(organizationsResource);
+        when(organizationsResource.get(anyString())).thenReturn(organizationResource);
+        when(organizationResource.members()).thenReturn(organizationMembersResource);
+        when(organizationMembersResource.getAll()).thenReturn(List.of(new MemberRepresentation()));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeaders("direct:listOrganizationMembers", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.ORGANIZATION_ID, "orgId123"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testLinkOrganizationIdentityProvider() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.organizations()).thenReturn(organizationsResource);
+        when(organizationsResource.get(anyString())).thenReturn(organizationResource);
+        when(organizationResource.identityProviders()).thenReturn(organizationIdpsResource);
+        when(organizationIdpsResource.addIdentityProvider(anyString())).thenReturn(response);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeaders("direct:linkOrganizationIdentityProvider", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.ORGANIZATION_ID, "orgId123",
+                KeycloakConstants.IDP_ALIAS, "my-idp"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testUnlinkOrganizationIdentityProvider() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.organizations()).thenReturn(organizationsResource);
+        when(organizationsResource.get(anyString())).thenReturn(organizationResource);
+        when(organizationResource.identityProviders()).thenReturn(organizationIdpsResource);
+        when(organizationIdpsResource.get(anyString())).thenReturn(organizationIdpResource);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeaders("direct:unlinkOrganizationIdentityProvider", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.ORGANIZATION_ID, "orgId123",
+                KeycloakConstants.IDP_ALIAS, "my-idp"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testListOrganizationIdentityProviders() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.organizations()).thenReturn(organizationsResource);
+        when(organizationsResource.get(anyString())).thenReturn(organizationResource);
+        when(organizationResource.identityProviders()).thenReturn(organizationIdpsResource);
+        when(organizationIdpsResource.getIdentityProviders()).thenReturn(List.of());
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeaders("direct:listOrganizationIdentityProviders", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.ORGANIZATION_ID, "orgId123"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testMissingOrganizationName() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+
+        try {
+            template.sendBodyAndHeader("direct:createOrganization", null, KeycloakConstants.REALM_NAME, "testRealm");
+        } catch (Exception e) {
+            assertTrue(e.getCause().getMessage().contains("Organization name must be specified"));
+        }
+    }
+
+    @Test
+    public void testMissingOrganizationId() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+
+        try {
+            template.sendBodyAndHeader("direct:getOrganization", null, KeycloakConstants.REALM_NAME, "testRealm");
+        } catch (Exception e) {
+            assertTrue(e.getCause().getMessage().contains("Organization ID must be specified"));
         }
     }
 }

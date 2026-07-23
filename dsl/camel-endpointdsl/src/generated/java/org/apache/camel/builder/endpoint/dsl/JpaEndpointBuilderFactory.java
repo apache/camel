@@ -2257,7 +2257,7 @@ public interface JpaEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final JpaHeaderNameBuilder INSTANCE = new JpaHeaderNameBuilder();
+        public static final JpaHeaderNameBuilder INSTANCE = new JpaHeaderNameBuilder();
 
         /**
          * The JPA EntityManager object.

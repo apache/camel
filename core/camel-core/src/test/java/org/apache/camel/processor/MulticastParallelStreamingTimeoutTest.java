@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,7 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.awaitility.Awaitility.await;
+
+@Isolated("Short timeouts cause problems with parallel test execution")
 @DisabledOnOs(architectures = { "s390x" },
               disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
@@ -31,12 +37,19 @@ public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
     @Test
     public void testMulticastParallelStreamingTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // A will timeout so we only get B and C (C is faster than B)
-        mock.expectedBodiesReceived("CB");
+        // A will timeout so we only get B and C (order may vary)
+        mock.expectedMessageCount(1);
+        mock.message(0).body().not(body().contains("A"));
+        mock.message(0).body().contains("B");
+        mock.message(0).body().contains("C");
+        // Use a short result wait time so each Awaitility attempt checks quickly
+        // without blocking (default 0 maps to 10s internally in MockEndpoint)
+        mock.setResultWaitTime(100);
 
         template.sendBody("direct:start", "Hello");
 
-        assertMockEndpointsSatisfied();
+        await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertMockEndpointsSatisfied());
     }
 
     @Override
@@ -54,11 +67,11 @@ public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
                         oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
                         return oldExchange;
                     }
-                }).parallelProcessing().streaming().timeout(5000).to("direct:a", "direct:b", "direct:c")
+                }).parallelProcessing().streaming().timeout(10000).to("direct:a", "direct:b", "direct:c")
                         // use end to indicate end of multicast route
                         .end().to("mock:result");
 
-                from("direct:a").delay(10000).setBody(constant("A"));
+                from("direct:a").delay(20000).setBody(constant("A"));
 
                 from("direct:b").delay(500).setBody(constant("B"));
 

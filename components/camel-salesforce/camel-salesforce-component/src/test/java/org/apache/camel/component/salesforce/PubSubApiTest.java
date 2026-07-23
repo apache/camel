@@ -204,17 +204,14 @@ public class PubSubApiTest {
         final String replayId = encodeReplayId("123");
         client.subscribe(consumer, ReplayPreset.CUSTOM, replayId, false);
 
-        Thread.sleep(1000);
-
-        InOrder inOrder = Mockito.inOrder(client);
-        inOrder.verify(client, timeout(5000).times(3)).subscribe(consumer, ReplayPreset.CUSTOM, replayId, false);
-        inOrder.verify(client, never()).subscribe(consumer, ReplayPreset.LATEST, null, false);
+        // with the fix, corrupted replay ID with fallback disabled stops after one attempt
+        // (no infinite retry with the same corrupt ID)
+        verify(client, timeout(5000).times(1)).subscribe(consumer, ReplayPreset.CUSTOM, replayId, false);
+        verify(client, never()).subscribe(consumer, ReplayPreset.LATEST, null, false);
 
         ArgumentCaptor<InvalidReplayIdException> captor = ArgumentCaptor.forClass(InvalidReplayIdException.class);
-        verify(exceptionHandler, timeout(5000).times(3)).handleException(captor.capture());
-        for (InvalidReplayIdException exception : captor.getAllValues()) {
-            Assertions.assertEquals(replayId, exception.getReplayId());
-        }
+        verify(exceptionHandler, timeout(5000).times(1)).handleException(captor.capture());
+        Assertions.assertEquals(replayId, captor.getValue().getReplayId());
     }
 
     private String encodeReplayId(String replayId) {

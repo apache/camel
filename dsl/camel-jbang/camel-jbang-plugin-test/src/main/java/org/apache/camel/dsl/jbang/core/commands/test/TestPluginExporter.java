@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -84,6 +85,7 @@ public class TestPluginExporter implements PluginExporter {
         deps.add(asDependency("citrus-yaml"));
         deps.add(asDependency("citrus-xml"));
         deps.add(asDependency("citrus-groovy"));
+        deps.add(asDependency("citrus-validation-text"));
         deps.add(asDependency("citrus-validation-xml"));
         deps.add(asDependency("citrus-validation-json"));
         deps.add(asDependency("citrus-validation-yaml"));
@@ -97,6 +99,9 @@ public class TestPluginExporter implements PluginExporter {
                 // read runtime dependencies from jbang-.properties
                 String[] dependencies = props.getOrDefault("run.deps", "").toString().split(",");
                 for (String dependency : dependencies) {
+                    if (dependency.isBlank()) {
+                        continue;
+                    }
                     if (dependency.startsWith("org.citrusframework:")) {
                         // construct proper Citrus Maven GAV from just the artifact id
                         deps.add(asDependency(extractArtifactId(dependency)));
@@ -218,7 +223,7 @@ public class TestPluginExporter implements PluginExporter {
         int last = 0;
         while (matcher.find()) {
             sb.append(resourceName, last, matcher.start());
-            sb.append(matcher.group(0).toUpperCase());
+            sb.append(matcher.group(1).toUpperCase(Locale.ROOT));
             last = matcher.end();
         }
         sb.append(resourceName.substring(last));
@@ -237,6 +242,6 @@ public class TestPluginExporter implements PluginExporter {
     }
 
     private String asDependency(String artifactName) {
-        return "mvn@test:org.citrusframework:%s:\\$\\{citrus.version}".formatted(artifactName);
+        return "mvn@test:org.citrusframework:%s:${citrus.version}".formatted(artifactName);
     }
 }

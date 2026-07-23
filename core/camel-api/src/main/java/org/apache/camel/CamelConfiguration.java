@@ -21,6 +21,8 @@ package org.apache.camel;
  *
  * This class allows doing custom configuration during Camel startup such as setting up custom beans using the
  * {@link BindToRegistry} annotation.
+ *
+ * @since 3.16
  */
 public interface CamelConfiguration {
 

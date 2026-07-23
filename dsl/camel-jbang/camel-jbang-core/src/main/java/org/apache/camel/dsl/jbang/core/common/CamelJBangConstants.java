@@ -36,6 +36,10 @@ public final class CamelJBangConstants {
               javaType = "String")
     public static final String CLASSPATH_FILES = "camel.jbang.classpathFiles";
 
+    @Metadata(description = "README files included with the integration (Use commas to separate multiple files)",
+              javaType = "String")
+    public static final String README_FILES = "camel.jbang.readmeFiles";
+
     @Metadata(description = "Local file directory for loading custom Kamelets",
               javaType = "String")
     public static final String LOCAL_KAMELET_DIR = "camel.jbang.localKameletDir";
@@ -56,6 +60,10 @@ public final class CamelJBangConstants {
               javaType = "String", label = "kubernetes")
     public static final String JKUBE_FILES = "camel.jbang.jkubeFiles";
 
+    @Metadata(description = "Additional resource directories to include recursively, preserving directory structure (Use commas to separate multiple directories)",
+              javaType = "String")
+    public static final String RESOURCE_DIRS = "camel.jbang.resourceDirs";
+
     @Metadata(description = "Which runtime to use (camel-main, spring-boot, quarkus)",
               javaType = "String", enums = "camel-main,spring-boot,quarkus")
     public static final String RUNTIME = "camel.jbang.runtime";
@@ -63,6 +71,10 @@ public final class CamelJBangConstants {
     @Metadata(description = "Maven coordinate (groupId:artifactId:version)",
               javaType = "String")
     public static final String GAV = "camel.jbang.gav";
+
+    @Metadata(description = "Parent POM coordinate (groupId:artifactId:version) to use in the exported project",
+              javaType = "String")
+    public static final String PARENT_POM = "camel.jbang.parentPom";
 
     @Metadata(description = "Java version",
               javaType = "String", enums = "21", defaultValue = "21")
@@ -72,17 +84,23 @@ public final class CamelJBangConstants {
               javaType = "String")
     public static final String KAMELETS_VERSION = "camel.jbang.kameletsVersion";
 
-    @Metadata(description = "Quarkus Platform Maven groupId",
+    @Metadata(description = "groupId of Quarkus Platform BOM",
               javaType = "String", label = "quarkus")
     public static final String QUARKUS_GROUP_ID = "camel.jbang.quarkusGroupId";
 
-    @Metadata(description = "Quarkus Platform Maven artifactId",
+    @Metadata(description = "artifactId of Quarkus Platform BOM",
               javaType = "String", label = "quarkus")
+    @Deprecated(forRemoval = true, since = "4.21.0")
+    /* See also org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin.quarkusArtifactId */
     public static final String QUARKUS_ARTIFACT_ID = "camel.jbang.quarkusArtifactId";
 
-    @Metadata(description = "Quarkus Platform version",
+    @Metadata(description = "version of Quarkus Platform BOM",
               javaType = "String", label = "quarkus")
     public static final String QUARKUS_VERSION = "camel.jbang.quarkusVersion";
+
+    @Metadata(description = "The base URI of Quarkus Extension Registry",
+              javaType = "String", label = "quarkus")
+    public static final String QUARKUS_EXTENSION_REGISTRY_BASE_URI = "camel.jbang.quarkusExtensionRegistryBaseUri";
 
     @Metadata(description = "Spring Boot version",
               javaType = "String", label = "spring-boot")
@@ -137,15 +155,15 @@ public final class CamelJBangConstants {
     @Metadata(description = "Additional dependencies for Quarkus runtime only", javaType = "String")
     public static final String DEPENDENCIES_QUARKUS = "camel.jbang.dependencies.quarkus";
 
-    @Metadata(description = "Version to use for jib-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options)",
-              javaType = "String", defaultValue = "3.4.5", label = "kubernetes")
+    @Metadata(description = "Version to use for jib-maven-plugin when exporting the application",
+              javaType = "String", defaultValue = "3.5.2", label = "maven")
     public static final String JIB_MAVEN_PLUGIN_VERSION = "camel.jbang.jib-maven-plugin-version";
 
     @Metadata(description = "Version to use for jkube-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options)",
-              javaType = "String", defaultValue = "1.19.0", label = "kubernetes")
+              javaType = "String", defaultValue = "1.20.0", label = "kubernetes")
     public static final String JKUBE_MAVEN_PLUGIN_VERSION = "camel.jbang.jkube-maven-plugin-version";
 
-    @Metadata(description = "Stubs all the matching endpoint with the given component name or pattern. Multiple names can be separated by comma. (all = everything).",
+    @Metadata(description = "Stubs all the matching endpoint with the given component name or pattern. Multiple names can be separated by comma. (all = stub all endpoints, remote = stub only remote components).",
               javaType = "String")
     public static final String STUB = "camel.jbang.stub";
 
@@ -203,7 +221,11 @@ public final class CamelJBangConstants {
               javaType = "boolean", defaultValue = "true")
     public static final String DOWNLOAD = "camel.jbang.download";
 
-    @Metadata(description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang",
+    @Metadata(description = "Whether to force using fresh (i.e. non-cached) resources",
+              javaType = "boolean", defaultValue = "false")
+    public static final String FRESH = "camel.jbang.fresh";
+
+    @Metadata(description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI",
               javaType = "boolean", label = "advanced")
     public static final String PACKAGE_SCAN_JARS = "camel.jbang.packageScanJars";
 

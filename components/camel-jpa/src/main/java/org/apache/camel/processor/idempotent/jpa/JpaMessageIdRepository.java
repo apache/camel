@@ -90,7 +90,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     @Override
     public boolean add(final Exchange exchange, final String messageId) {
         final EntityManager entityManager
-                = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+                = getTargetEntityManager(exchange, entityManagerFactory, false, sharedEntityManager, true);
         // Run this in single transaction.
         final Boolean[] rc = new Boolean[1];
         transactionStrategy.executeInTransaction(() -> {
@@ -107,14 +107,20 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                     processed.setCreatedAt(new Date());
                     entityManager.persist(processed);
                     entityManager.flush();
-                    entityManager.close();
                     rc[0] = Boolean.TRUE;
                 } else {
                     rc[0] = Boolean.FALSE;
                 }
             } catch (Exception ex) {
-                String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
-                throw new PersistenceException(contextInfo, ex);
+                if (isConstraintViolation(ex)) {
+                    // concurrent insert of the same messageId detected via unique constraint
+                    // treat as duplicate rather than failing the exchange
+                    LOG.debug("Duplicate message detected during concurrent insert: {}", messageId);
+                    rc[0] = Boolean.FALSE;
+                } else {
+                    String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
+                    throw new PersistenceException(contextInfo, ex);
+                }
             } finally {
                 try {
                     if (entityManager.isOpen()) {
@@ -139,7 +145,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     @Override
     public boolean contains(final Exchange exchange, final String messageId) {
         final EntityManager entityManager
-                = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+                = getTargetEntityManager(exchange, entityManagerFactory, false, sharedEntityManager, true);
 
         // Run this in single transaction.
         final Boolean[] rc = new Boolean[1];
@@ -181,7 +187,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     @Override
     public boolean remove(final Exchange exchange, final String messageId) {
         final EntityManager entityManager
-                = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+                = getTargetEntityManager(exchange, entityManagerFactory, false, sharedEntityManager, true);
 
         Boolean[] rc = new Boolean[1];
         transactionStrategy.executeInTransaction(() -> {
@@ -231,7 +237,8 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     @Override
     @ManagedOperation(description = "Clear the store")
     public void clear() {
-        final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager, true);
+        final EntityManager entityManager
+                = getTargetEntityManager(null, entityManagerFactory, false, sharedEntityManager, true);
 
         transactionStrategy.executeInTransaction(() -> {
             if (isJoinTransaction()) {
@@ -299,6 +306,20 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
 
     public void setSharedEntityManager(boolean sharedEntityManager) {
         this.sharedEntityManager = sharedEntityManager;
+    }
+
+    private static boolean isConstraintViolation(Exception ex) {
+        Throwable cause = ex;
+        while (cause != null) {
+            if (cause instanceof java.sql.SQLIntegrityConstraintViolationException) {
+                return true;
+            }
+            if (cause instanceof jakarta.persistence.EntityExistsException) {
+                return true;
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 
     @Override

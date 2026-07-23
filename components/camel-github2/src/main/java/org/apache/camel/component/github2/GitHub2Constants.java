@@ -23,13 +23,13 @@ public interface GitHub2Constants {
     String GITHUB_CLIENT = "github2Client";
 
     @Metadata(description = "The pull request", javaType = "org.kohsuke.github.GHPullRequest or Integer")
-    String GITHUB_PULLREQUEST = "GitHubPullRequest";
+    String GITHUB_PULLREQUEST = "CamelGitHubPullRequest";
     @Metadata(label = "producer", description = "The id of the comment to reply to", javaType = "Long")
-    String GITHUB_INRESPONSETO = "GitHubInResponseTo";
+    String GITHUB_INRESPONSETO = "CamelGitHubInResponseTo";
     @Metadata(description = "The sha of the head of the pull request", javaType = "String")
-    String GITHUB_PULLREQUEST_HEAD_COMMIT_SHA = "GitHubPullRequestHeadCommitSHA";
+    String GITHUB_PULLREQUEST_HEAD_COMMIT_SHA = "CamelGitHubPullRequestHeadCommitSha";
     @Metadata(label = "producer", description = "The title of the issue", javaType = "String")
-    String GITHUB_ISSUE_TITLE = "GitHubIssueTitle";
+    String GITHUB_ISSUE_TITLE = "CamelGitHubIssueTitle";
 
     @Metadata(label = "consumer", description = "The commit author", javaType = "String")
     String GITHUB_COMMIT_AUTHOR = "CamelGitHubCommitAuthor";

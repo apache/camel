@@ -49,7 +49,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class SpringLdapProducerTest extends CamelTestSupport {
+class SpringLdapProducerTest extends CamelTestSupport {
 
     @Mock
     private SpringLdapEndpoint ldapEndpoint;
@@ -60,7 +60,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     private SpringLdapProducer ldapProducer;
 
     @Override
-    public void doPostSetup() {
+    protected void doPostSetup() {
         when(ldapEndpoint.getLdapTemplate()).thenReturn(ldapTemplate);
         ldapProducer = new SpringLdapProducer(ldapEndpoint);
     }
@@ -95,16 +95,20 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoDNForFunctionDrivenOperation() throws Exception {
+    void testNoDNForFunctionDrivenOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
 
+        @SuppressWarnings("unchecked")
+        BiFunction<LdapOperations, Object, ?> function = mock(BiFunction.class);
+
         Map<String, Object> body = new HashMap<>();
-        body.put(SpringLdapProducer.FUNCTION, mock(BiFunction.class));
+        body.put(SpringLdapProducer.FUNCTION, function);
 
         when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.FUNCTION_DRIVEN);
 
         processBody(exchange, in, body);
+        verify(function).apply(eq(ldapTemplate), isNull());
     }
 
     private void processBody(Exchange exchange, Message message, Map<String, Object> body) throws Exception {

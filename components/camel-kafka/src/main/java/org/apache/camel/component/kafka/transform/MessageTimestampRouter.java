@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperty;
+import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.util.ObjectHelper;
 
 public class MessageTimestampRouter {
@@ -54,11 +55,13 @@ public class MessageTimestampRouter {
         }
 
         Object rawTimestamp = null;
-        String topicName = ex.getMessage().getHeader("kafka.TOPIC", String.class);
+        String topicName = ex.getMessage().getHeader(KafkaConstants.TOPIC, String.class);
         for (String key : splittedKeys) {
             if (ObjectHelper.isNotEmpty(key)) {
                 rawTimestamp = body.get(key);
-                break;
+                if (rawTimestamp != null) {
+                    break;
+                }
             }
         }
         Long timestamp = null;
@@ -66,7 +69,7 @@ public class MessageTimestampRouter {
                 && !timestampKeyFormat.equalsIgnoreCase("timestamp")) {
             final SimpleDateFormat timestampKeyFmt = new SimpleDateFormat(timestampKeyFormat);
             timestampKeyFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-            timestamp = timestampKeyFmt.parse((String) rawTimestamp).getTime();
+            timestamp = timestampKeyFmt.parse(rawTimestamp.toString()).getTime();
         } else if (ObjectHelper.isNotEmpty(rawTimestamp)) {
             timestamp = Long.parseLong(rawTimestamp.toString());
         }
@@ -82,7 +85,7 @@ public class MessageTimestampRouter {
                 replace1 = TOPIC.matcher(topicFormat).replaceAll(Matcher.quoteReplacement(""));
                 updatedTopic = TIMESTAMP.matcher(replace1).replaceAll(Matcher.quoteReplacement(formattedTimestamp));
             }
-            ex.getMessage().setHeader("kafka.OVERRIDE_TOPIC", updatedTopic);
+            ex.getMessage().setHeader(KafkaConstants.OVERRIDE_TOPIC, updatedTopic);
         }
     }
 

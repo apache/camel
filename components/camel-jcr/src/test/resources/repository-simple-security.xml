@@ -24,7 +24,6 @@
 <!-- Example Repository Configuration File
      Used by
      - org.apache.jackrabbit.core.config.RepositoryConfigTest.java
-     -
 -->
 <Repository>
     <!--
@@ -66,7 +65,7 @@
         </AccessManager>
 
         <LoginModule class="org.apache.jackrabbit.core.security.simple.SimpleLoginModule">
-           <!-- 
+           <!--
               anonymous user name ('anonymous' is the default value)
             -->
            <param name="anonymousId" value="anonymous"/>
@@ -97,7 +96,10 @@
             persistence manager of the workspace:
             class: FQN of class implementing the PersistenceManager interface
         -->
-        <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemBundlePersistenceManager"/>
+        <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.H2PersistenceManager">
+            <param name="url" value="jdbc:h2:./${wsp.home}/db"/>
+            <param name="schemaObjectPrefix" value="${wsp.name}_"/>
+        </PersistenceManager>
         <!--
             Search index and the file system it uses.
             class: FQN of class implementing the QueryHandler interface
@@ -126,7 +128,10 @@
             a 'normal' persistence manager, but this could change in future
             implementations.
         -->
-        <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemBundlePersistenceManager"/>
+        <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.H2PersistenceManager">
+            <param name="url" value="jdbc:h2:./${rep.home}/version/db"/>
+            <param name="schemaObjectPrefix" value="version_"/>
+        </PersistenceManager>
     </Versioning>
 
     <!--

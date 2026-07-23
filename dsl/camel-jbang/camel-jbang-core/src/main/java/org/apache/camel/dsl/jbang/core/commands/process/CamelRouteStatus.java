@@ -215,9 +215,6 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                             if (mean > 0 && (row.mean == null || Long.parseLong(row.mean) < mean)) {
                                 add = false;
                             }
-                            if (limit > 0 && rows.size() >= limit) {
-                                add = false;
-                            }
                             if (add && filter != null) {
                                 boolean match = false;
                                 for (String f : filter) {
@@ -247,6 +244,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
 
         // sort rows
         rows.sort(this::sortRow);
+
+        if (limit > 0 && rows.size() > limit) {
+            rows.subList(limit, rows.size()).clear();
+        }
 
         if (!rows.isEmpty()) {
             if (error) {
@@ -369,7 +370,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(msgW, OverflowBehaviour.NEWLINE)
                         .with(r -> r.lastErrorMessage))));
-        if (!er.stackTrace.isEmpty()) {
+        if (er.stackTrace != null && !er.stackTrace.isEmpty()) {
             printer().println();
             printer().println(StringHelper.fillChars('-', 120));
             printer().println(StringHelper.padString(1, 55) + "STACK-TRACE");

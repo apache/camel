@@ -42,7 +42,7 @@ public class FtpRawParameterTest extends BaseEndpointDslTest {
         return new EndpointRouteBuilder() {
             public void configure() throws Exception {
                 from(ftp("localhost:2121/inbox").username("scott").password("RAW(sec+%ret)").binary(true).delay(5000))
-                        .routeId("myroute").noAutoStartup()
+                        .routeId("myroute").autoStartup(false)
                         .convertBodyTo(String.class)
                         .to(mock("result"));
             }

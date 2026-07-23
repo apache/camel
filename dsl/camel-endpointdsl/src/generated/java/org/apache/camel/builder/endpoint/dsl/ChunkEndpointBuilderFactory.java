@@ -358,7 +358,7 @@ public interface ChunkEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ChunkHeaderNameBuilder INSTANCE = new ChunkHeaderNameBuilder();
+        public static final ChunkHeaderNameBuilder INSTANCE = new ChunkHeaderNameBuilder();
 
         /**
          * A URI for the template resource to use instead of the endpoint

@@ -18,19 +18,17 @@ package org.apache.camel.component.weaviate;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.Map;
+import java.util.Optional;
 
-import io.weaviate.client.WeaviateClient;
-import io.weaviate.client.base.Result;
-import io.weaviate.client.v1.data.api.ObjectUpdater;
-import io.weaviate.client.v1.data.model.WeaviateObject;
-import io.weaviate.client.v1.graphql.model.GraphQLResponse;
-import io.weaviate.client.v1.graphql.query.argument.NearVectorArgument;
-import io.weaviate.client.v1.graphql.query.builder.GetBuilder;
-import io.weaviate.client.v1.graphql.query.fields.Field;
-import io.weaviate.client.v1.graphql.query.fields.Fields;
-import io.weaviate.client.v1.schema.model.WeaviateClass;
-import org.apache.camel.CamelContext;
+import io.weaviate.client6.v1.api.WeaviateClient;
+import io.weaviate.client6.v1.api.collections.CollectionHandle;
+import io.weaviate.client6.v1.api.collections.Vectors;
+import io.weaviate.client6.v1.api.collections.WeaviateObject;
+import io.weaviate.client6.v1.api.collections.aggregate.AggregateResponse;
+import io.weaviate.client6.v1.api.collections.data.InsertManyResponse;
+import io.weaviate.client6.v1.api.collections.query.NearVector;
+import io.weaviate.client6.v1.api.collections.query.QueryResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
@@ -39,7 +37,6 @@ import org.apache.camel.support.ExchangeHelper;
 
 public class WeaviateVectorDbProducer extends DefaultProducer {
     private WeaviateClient client;
-    private ExecutorService executor;
 
     public WeaviateVectorDbProducer(WeaviateVectorDbEndpoint endpoint) {
         super(endpoint);
@@ -74,6 +71,9 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
                 case CREATE:
                     create(exchange);
                     break;
+                case BATCH_CREATE:
+                    batchCreate(exchange);
+                    break;
                 case UPDATE_BY_ID:
                     updateById(exchange);
                     break;
@@ -88,6 +88,15 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
                     break;
                 case QUERY_BY_ID:
                     queryById(exchange);
+                    break;
+                case HYBRID_QUERY:
+                    hybridQuery(exchange);
+                    break;
+                case BM25_QUERY:
+                    bm25Query(exchange);
+                    break;
+                case AGGREGATE:
+                    aggregate(exchange);
                     break;
                 default:
                     throw new UnsupportedOperationException("Unsupported action: " + action.name());
@@ -106,44 +115,31 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
     private void createCollection(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
 
-        String collectionName;
-        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
-        } else {
-            collectionName = getEndpoint().getCollection();
-        }
+        String collectionName = resolveCollectionName(in);
 
-        WeaviateClass collection = WeaviateClass.builder().className(collectionName).build();
-
-        Result<Boolean> res = client.misc().readyChecker().run();
-
-        Result<Boolean> result = client.schema().classCreator().withClass(collection).run();
-        populateResponse(result, exchange);
-
+        client.collections.create(collectionName);
+        populateResponse(true, exchange);
     }
 
     private void create(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         List elements = in.getMandatoryBody(List.class);
 
-        // Check the headers for a collection name.   Use the endpoint's
-        // collection name by default
-        String collectionName;
-        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
-        } else {
-            collectionName = getEndpoint().getCollection();
-        }
+        String collectionName = resolveCollectionName(in);
 
         HashMap<String, Object> props = in.getHeader(WeaviateVectorDbHeaders.PROPERTIES, HashMap.class);
 
         Float[] vectors = (Float[]) elements.toArray(new Float[0]);
+        float[] primitiveVectors = toPrimitiveFloatArray(vectors);
 
-        Result<WeaviateObject> result = client.data().creator()
-                .withClassName(collectionName)
-                .withVector(vectors)
-                .withProperties(props)
-                .run();
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
+
+        WeaviateObject<Map<String, Object>> result;
+        if (props != null) {
+            result = collection.data.insert(props, obj -> obj.vectors(Vectors.of(primitiveVectors)));
+        } else {
+            result = collection.data.insert(Map.of(), obj -> obj.vectors(Vectors.of(primitiveVectors)));
+        }
 
         populateResponse(result, exchange);
     }
@@ -153,118 +149,76 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
         List elements = in.getMandatoryBody(List.class);
         String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDbHeaders.INDEX_ID, String.class);
 
-        // Check the headers for a collection name.   Use the endpoint's
-        // collection name by default
-        String collectionName;
-        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
-        } else {
-            collectionName = getEndpoint().getCollection();
-        }
+        String collectionName = resolveCollectionName(in);
 
         Float[] vectors = (Float[]) elements.toArray(new Float[0]);
+        float[] primitiveVectors = toPrimitiveFloatArray(vectors);
         HashMap<String, Object> props = in.getHeader(WeaviateVectorDbHeaders.PROPERTIES, HashMap.class);
 
-        ObjectUpdater ou = client.data().updater();
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
 
         boolean updateWithMerge = in.getHeader(WeaviateVectorDbHeaders.UPDATE_WITH_MERGE, true, Boolean.class);
         if (updateWithMerge) {
-            ou.withMerge();
+            collection.data.update(indexId,
+                    u -> u.properties(props != null ? props : Map.of()).vectors(Vectors.of(primitiveVectors)));
+        } else {
+            collection.data.replace(indexId,
+                    r -> r.properties(props != null ? props : Map.of()).vectors(Vectors.of(primitiveVectors)));
         }
 
-        Result<Boolean> result = ou
-                .withID(indexId)
-                .withClassName(collectionName)
-                .withVector(vectors)
-                .withProperties(props)
-                .run();
-
-        populateResponse(result, exchange);
+        populateResponse(true, exchange);
     }
 
     private void deleteById(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDbHeaders.INDEX_ID, String.class);
 
-        // Check the headers for a collection name.   Use the endpoint's
-        // collection name by default
-        String collectionName;
-        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
-        } else {
-            collectionName = getEndpoint().getCollection();
-        }
-        Result<Boolean> result = this.client.data().deleter()
-                .withClassName(collectionName)
-                .withID(indexId)
-                .run();
-        populateResponse(result, exchange);
+        String collectionName = resolveCollectionName(in);
+
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
+        boolean deleted = collection.data.deleteById(indexId);
+        populateResponse(deleted, exchange);
     }
 
     private void deleteCollection(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
 
-        String collectionName;
-        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
-        } else {
-            collectionName = getEndpoint().getCollection();
-        }
+        String collectionName = resolveCollectionName(in);
 
-        Result<Boolean> result = this.client.schema().classDeleter()
-                .withClassName(collectionName)
-                .run();
-
-        populateResponse(result, exchange);
+        client.collections.delete(collectionName);
+        populateResponse(true, exchange);
     }
 
     private void query(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         List elements = in.getMandatoryBody(List.class);
 
-        // topK default of 10
-        int topK = 10;
-        if (in.getHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, Integer.class) != null) {
-            topK = in.getHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, Integer.class);
-        }
+        int topK = in.getHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, 10, Integer.class);
 
-        // Check the headers for a collection name.   Use the endpoint's
-        // collection name by default
-        String collectionName;
-        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
-        } else {
-            collectionName = getEndpoint().getCollection();
-        }
+        String collectionName = resolveCollectionName(in);
 
         Float[] vectors = (Float[]) elements.toArray(new Float[0]);
+        float[] primitiveVectors = toPrimitiveFloatArray(vectors);
 
-        NearVectorArgument nearVectorArg = NearVectorArgument.builder()
-                .vector(vectors)
-                .build();
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
 
-        Fields fields;
+        final int limit = topK;
+
+        QueryResponse<Map<String, Object>> result;
 
         if (in.getHeader(WeaviateVectorDbHeaders.FIELDS, HashMap.class) != null) {
             HashMap<String, Object> fieldToSearch = in.getHeader(WeaviateVectorDbHeaders.FIELDS, HashMap.class);
+            String[] returnProps = fieldToSearch.keySet().toArray(new String[0]);
 
-            Field[] fieldArray
-                    = fieldToSearch.keySet().stream().map(k -> Field.builder().name(k).build()).toArray(Field[]::new);
-            fields = Fields.builder().fields(fieldArray).build();
-
+            result = collection.query.nearVector(
+                    primitiveVectors,
+                    nv -> nv.limit(limit).returnProperties(returnProps));
         } else {
-            fields = Fields.builder().fields(new Field[0]).build();
+            result = collection.query.nearVector(
+                    primitiveVectors,
+                    nv -> nv.limit(limit));
         }
 
-        String query = GetBuilder.builder()
-                .className(collectionName)
-                .fields(fields)
-                .withNearVectorFilter(nearVectorArg)
-                .limit(topK)
-                .build()
-                .buildQuery();
-
-        Result<GraphQLResponse> result = client.graphQL().raw().withQuery(query).run();
         populateResponse(result, exchange);
     }
 
@@ -272,19 +226,97 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
         final Message in = exchange.getMessage();
         String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDbHeaders.INDEX_ID, String.class);
 
-        // Check the headers for a collection name.   Use the endpoint's
-        // collection name by default
-        String collectionName;
-        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
+        String collectionName = resolveCollectionName(in);
+
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
+
+        Optional<WeaviateObject<Map<String, Object>>> result = collection.query.fetchObjectById(indexId);
+
+        populateResponse(result, exchange);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void batchCreate(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+        List<WeaviateObject<Map<String, Object>>> objects = in.getMandatoryBody(List.class);
+
+        String collectionName = resolveCollectionName(in);
+
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
+
+        InsertManyResponse result = collection.data.insertMany(objects);
+        populateResponse(result, exchange);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void hybridQuery(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+        String queryText = in.getMandatoryBody(String.class);
+
+        int topK = in.getHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, 10, Integer.class);
+        Float alpha = in.getHeader(WeaviateVectorDbHeaders.HYBRID_ALPHA, Float.class);
+        List<Float> queryVector = in.getHeader(WeaviateVectorDbHeaders.QUERY_VECTOR, List.class);
+
+        String collectionName = resolveCollectionName(in);
+
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
+
+        HashMap<String, Object> fieldToSearch = in.getHeader(WeaviateVectorDbHeaders.FIELDS, HashMap.class);
+
+        QueryResponse<Map<String, Object>> result = (QueryResponse<Map<String, Object>>) collection.query.hybrid(
+                queryText, h -> {
+                    h.limit(topK);
+                    if (alpha != null) {
+                        h.alpha(alpha);
+                    }
+                    if (queryVector != null) {
+                        float[] primitiveVector = toPrimitiveFloatArray(queryVector.toArray(new Float[0]));
+                        h.nearVector(NearVector.of(primitiveVector));
+                    }
+                    if (fieldToSearch != null) {
+                        h.returnProperties(fieldToSearch.keySet().toArray(new String[0]));
+                    }
+                    return h;
+                });
+
+        populateResponse(result, exchange);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void bm25Query(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+        String queryText = in.getMandatoryBody(String.class);
+
+        int topK = in.getHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, 10, Integer.class);
+
+        String collectionName = resolveCollectionName(in);
+
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
+
+        HashMap<String, Object> fieldToSearch = in.getHeader(WeaviateVectorDbHeaders.FIELDS, HashMap.class);
+
+        QueryResponse<Map<String, Object>> result;
+        if (fieldToSearch != null) {
+            String[] returnProps = fieldToSearch.keySet().toArray(new String[0]);
+            result = (QueryResponse<Map<String, Object>>) collection.query.bm25(queryText,
+                    b -> b.limit(topK).returnProperties(returnProps));
         } else {
-            collectionName = getEndpoint().getCollection();
+            result = (QueryResponse<Map<String, Object>>) collection.query.bm25(queryText,
+                    b -> b.limit(topK));
         }
 
-        Result<List<WeaviateObject>> result = client.data().objectsGetter()
-                .withClassName(collectionName)
-                .withID(indexId)
-                .run();
+        populateResponse(result, exchange);
+    }
+
+    private void aggregate(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+
+        String collectionName = resolveCollectionName(in);
+
+        CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
+
+        AggregateResponse result = (AggregateResponse) collection.aggregate.overAll(
+                a -> a.includeTotalCount(true));
 
         populateResponse(result, exchange);
     }
@@ -295,12 +327,26 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
     //
     // ***************************************
 
-    private CamelContext getCamelContext() {
-        return getEndpoint().getCamelContext();
+    private String resolveCollectionName(Message in) {
+        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
+            return in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
+        }
+        return getEndpoint().getCollection();
     }
 
-    private void populateResponse(Result<?> r, Exchange exchange) {
+    private void populateResponse(Object r, Exchange exchange) {
         Message out = exchange.getMessage();
         out.setBody(r);
+    }
+
+    private static float[] toPrimitiveFloatArray(Float[] boxed) {
+        float[] result = new float[boxed.length];
+        for (int i = 0; i < boxed.length; i++) {
+            if (boxed[i] == null) {
+                throw new IllegalArgumentException("Vector element at index " + i + " is null");
+            }
+            result[i] = boxed[i];
+        }
+        return result;
     }
 }

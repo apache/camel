@@ -250,6 +250,40 @@ public interface ElasticsearchRestClientComponentBuilderFactory {
         }
     
         /**
+         * To configure security using SSLContextParameters. When configured,
+         * this takes precedence over the certificatePath option.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientComponentBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+    
+        
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientComponentBuilder useGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+            return this;
+        }
+    
+        /**
          * Username.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -289,6 +323,8 @@ public interface ElasticsearchRestClientComponentBuilderFactory {
             case "snifferInterval": ((ElasticsearchRestClientComponent) component).setSnifferInterval((int) value); return true;
             case "certificatePath": ((ElasticsearchRestClientComponent) component).setCertificatePath((java.lang.String) value); return true;
             case "password": ((ElasticsearchRestClientComponent) component).setPassword((java.lang.String) value); return true;
+            case "sslContextParameters": ((ElasticsearchRestClientComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((ElasticsearchRestClientComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "user": ((ElasticsearchRestClientComponent) component).setUser((java.lang.String) value); return true;
             default: return false;
             }

@@ -111,12 +111,22 @@ public class JdbcAggregationRepository extends ServiceSupport
     @Metadata(label = "advanced", security = "insecure:serialization",
               description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
-    @Metadata(label = "security", defaultValue = "!java.net.**;java.**;org.apache.camel.**;!*",
+    /**
+     * Default deserialization filter. Denies {@code java.net.**} and otherwise allows {@code java.**} and
+     * {@code org.apache.camel.**}; applies JEP-290 graph-shape limits ({@code maxdepth}, {@code maxrefs},
+     * {@code maxbytes}) as defense-in-depth against resource-exhaustion payloads.
+     */
+    static final String DEFAULT_DESERIALIZATION_FILTER
+            = "!java.net.**;java.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*";
+
+    @Metadata(label = "security", defaultValue = DEFAULT_DESERIALIZATION_FILTER,
               description = "Sets a deserialization filter while reading Object from Aggregation Repository. By default the filter denies"
                             + " java.net.** (to avoid classes whose hash/equals methods perform network I/O) and otherwise allows all java"
                             + " packages and subpackages and all org.apache.camel packages and subpackages, while the remaining will be"
-                            + " blacklisted and not deserialized. This parameter should be customized if you're using classes you trust to be deserialized.")
-    private String deserializationFilter = "!java.net.**;java.**;org.apache.camel.**;!*";
+                            + " blacklisted and not deserialized. It also applies JEP-290 graph-shape limits (maxdepth, maxrefs, maxbytes)"
+                            + " as defense-in-depth against resource-exhaustion payloads. This parameter should be customized if you're"
+                            + " using classes you trust to be deserialized.")
+    private String deserializationFilter = DEFAULT_DESERIALIZATION_FILTER;
     @Metadata(label = "advanced",
               description = "Mapper allowing different JDBC vendors to be mapped with vendor specific error codes to an OptimisticLockingException")
     private JdbcOptimisticLockingExceptionMapper jdbcOptimisticLockingExceptionMapper
@@ -230,8 +240,9 @@ public class JdbcAggregationRepository extends ServiceSupport
     }
 
     // Useful to verify if the table name does not contain invalid characters.
+    // Allows simple names (my_table) and schema-qualified names (myschema.my_table).
     protected static void verifyTableName(String tableName) {
-        if (!tableName.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+        if (!tableName.matches("[a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*)?")) {
             throw new IllegalArgumentException("Invalid repository name: " + tableName);
         }
     }
@@ -427,12 +438,18 @@ public class JdbcAggregationRepository extends ServiceSupport
                     LOG.debug("Removing key {}", correlationId);
                     String table = getRepositoryName();
                     verifyTableName(table);
-                    jdbcTemplate.update("DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?", // NOSONAR
+                    int deleteCount = jdbcTemplate.update(
+                            "DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?", // NOSONAR
                             correlationId, version);
+                    if (deleteCount != 1) {
+                        throw new OptimisticLockingException();
+                    }
 
                     insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version);
                     LOG.debug("Removed key {}", correlationId);
 
+                } catch (OptimisticLockingException e) {
+                    throw e;
                 } catch (Exception e) {
                     throw new RuntimeException("Error removing key " + correlationId + " from repository " + repositoryName, e);
                 }

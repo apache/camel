@@ -29,7 +29,10 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum WaitForTaskToComplete {
 
+    /** Never wait for the async task to complete. */
     Never,
+    /** Wait only if the exchange pattern expects a reply (InOut). */
     IfReplyExpected,
+    /** Always wait for the async task to complete. */
     Always
 }

@@ -42,6 +42,7 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         map.put("SecureRandomProvider", java.lang.String.class);
         map.put("SecureSocketProtocol", java.lang.String.class);
         map.put("SelfSigned", boolean.class);
+        map.put("SelfSignedKeyType", java.lang.String.class);
         map.put("SessionTimeout", int.class);
         map.put("SignatureSchemes", java.lang.String.class);
         map.put("SignatureSchemesExclude", java.lang.String.class);
@@ -94,6 +95,8 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureSocketProtocol": target.setSecureSocketProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "selfsigned":
         case "selfSigned": target.setSelfSigned(property(camelContext, boolean.class, value)); return true;
+        case "selfsignedkeytype":
+        case "selfSignedKeyType": target.setSelfSignedKeyType(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeout":
         case "sessionTimeout": target.setSessionTimeout(property(camelContext, int.class, value)); return true;
         case "signatureschemes":
@@ -158,6 +161,8 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureSocketProtocol": return java.lang.String.class;
         case "selfsigned":
         case "selfSigned": return boolean.class;
+        case "selfsignedkeytype":
+        case "selfSignedKeyType": return java.lang.String.class;
         case "sessiontimeout":
         case "sessionTimeout": return int.class;
         case "signatureschemes":
@@ -218,6 +223,8 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureSocketProtocol": return target.getSecureSocketProtocol();
         case "selfsigned":
         case "selfSigned": return target.isSelfSigned();
+        case "selfsignedkeytype":
+        case "selfSignedKeyType": return target.getSelfSignedKeyType();
         case "sessiontimeout":
         case "sessionTimeout": return target.getSessionTimeout();
         case "signatureschemes":

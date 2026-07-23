@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Route;
 import org.apache.camel.component.kafka.consumer.devconsole.DefaultMetricsCollector;
 import org.apache.camel.component.kafka.consumer.devconsole.DevConsoleMetricsCollector;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StopWatch;
@@ -41,9 +42,8 @@ public class KafkaDevConsole extends AbstractDevConsole {
 
     private static final long COMMITTED_TIMEOUT = 10000;
 
-    /**
-     * Whether to include committed offset (sync operation to Kafka broker)
-     */
+    @Metadata(label = "query", description = "Whether to include committed offset (sync operation to Kafka broker)",
+              defaultValue = "false", javaType = "java.lang.Boolean")
     public static final String COMMITTED = "committed";
 
     public KafkaDevConsole() {
@@ -52,7 +52,7 @@ public class KafkaDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        final boolean committed = "true".equals(options.getOrDefault(COMMITTED, "false"));
+        final boolean committed = optionBoolean(options, COMMITTED, false);
 
         StringBuilder sb = new StringBuilder();
         for (Route route : getCamelContext().getRoutes()) {
@@ -121,7 +121,7 @@ public class KafkaDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        final boolean committed = "true".equals(options.getOrDefault(COMMITTED, "false"));
+        final boolean committed = optionBoolean(options, COMMITTED, false);
 
         JsonObject root = new JsonObject();
 

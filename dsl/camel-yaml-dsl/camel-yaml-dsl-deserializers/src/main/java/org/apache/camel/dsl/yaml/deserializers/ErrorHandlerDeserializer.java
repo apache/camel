@@ -28,6 +28,7 @@ import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
@@ -110,8 +111,10 @@ public class ErrorHandlerDeserializer implements ConstructNode {
                     factory = asType(val, DefaultErrorHandlerDefinition.class);
                     break;
                 case "jtaTransactionErrorHandler":
-                case "springTransactionErrorHandler":
                     factory = asType(val, JtaTransactionErrorHandlerDefinition.class);
+                    break;
+                case "springTransactionErrorHandler":
+                    factory = asType(val, SpringTransactionErrorHandlerDefinition.class);
                     break;
                 case "noErrorHandler":
                     factory = asType(val, NoErrorHandlerDefinition.class);

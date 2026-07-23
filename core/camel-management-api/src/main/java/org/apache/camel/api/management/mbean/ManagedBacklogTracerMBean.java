@@ -39,11 +39,23 @@ public interface ManagedBacklogTracerMBean {
     @ManagedAttribute(description = "Is tracing enabled")
     void setEnabled(boolean enabled);
 
+    @ManagedAttribute(description = "Whether activity tracking is enabled")
+    boolean isActivityEnabled();
+
+    @ManagedAttribute(description = "Whether activity tracking is enabled")
+    void setActivityEnabled(boolean activityEnabled);
+
     @ManagedAttribute(description = "Number of maximum traced messages in total to keep in the backlog (FIFO queue)")
     int getBacklogSize();
 
     @ManagedAttribute(description = "Number of maximum traced messages in total to keep in the backlog (FIFO queue)")
     void setBacklogSize(int backlogSize);
+
+    @ManagedAttribute(description = "Number of completed exchange summaries to keep in the activity queue")
+    int getActivitySize();
+
+    @ManagedAttribute(description = "Number of completed exchange summaries to keep in the activity queue")
+    void setActivitySize(int activitySize);
 
     @ManagedAttribute(description = "Whether to remove traced message from backlog when dumping trace messages")
     boolean isRemoveOnDump();
@@ -134,6 +146,9 @@ public interface ManagedBacklogTracerMBean {
 
     @ManagedOperation(description = "Dumps latest completed exchange message history in JSon format")
     String dumpLatestMessageHistoryAsJSon();
+
+    @ManagedOperation(description = "Dumps completed exchange activity summaries in JSon format")
+    String dumpActivityAsJSon();
 
     @ManagedOperation(description = "Clears the backlog")
     void clear();

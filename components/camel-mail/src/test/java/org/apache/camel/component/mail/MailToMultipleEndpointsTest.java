@@ -27,13 +27,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MailToMultipleEndpointsTest extends CamelTestSupport {
-    private static final MailboxUser james2 = Mailbox.getOrCreateUser("james2", "secret");
-    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
-    private static final MailboxUser admin = Mailbox.getOrCreateUser("admin", "secret");
+    private static final MailboxUser james2 = Mailbox.getOrCreateUser("MailToMultipleEndpointsTest-james2", "secret");
+    private static final MailboxUser james = Mailbox.getOrCreateUser("MailToMultipleEndpointsTest-james", "secret");
+    private static final MailboxUser admin = Mailbox.getOrCreateUser("MailToMultipleEndpointsTest-admin", "secret");
 
-    private static final MailboxUser a = Mailbox.getOrCreateUser("a", "secret");
-    private static final MailboxUser b = Mailbox.getOrCreateUser("b", "secret");
-    private static final MailboxUser c = Mailbox.getOrCreateUser("c", "secret");
+    private static final MailboxUser a = Mailbox.getOrCreateUser("MailToMultipleEndpointsTest-a", "secret");
+    private static final MailboxUser b = Mailbox.getOrCreateUser("MailToMultipleEndpointsTest-b", "secret");
+    private static final MailboxUser c = Mailbox.getOrCreateUser("MailToMultipleEndpointsTest-c", "secret");
 
     @Test
     public void testMultipleEndpoints() throws Exception {
@@ -69,13 +69,15 @@ public class MailToMultipleEndpointsTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").to(james2.uriPrefix(Protocol.smtp) + "&to=" + a.getEmail() + "&from=me@me.com");
+                from("direct:a")
+                        .to(james2.uriPrefix(Protocol.smtp) + "&to=" + a.getEmail() + "&from=me@me.com&useHeaderSubject=true");
 
-                from("direct:b").to(james.uriPrefix(Protocol.smtp) + "&to=" + b.getEmail() + "&from=you@you.com");
+                from("direct:b")
+                        .to(james.uriPrefix(Protocol.smtp) + "&to=" + b.getEmail() + "&from=you@you.com&useHeaderSubject=true");
 
                 from("direct:c").to(
                         admin.uriPrefix(Protocol.smtp) + "&to=" + c.getEmail()
-                                    + "&from=me@me.com&cc=you@you.com,them@them.com");
+                                    + "&from=me@me.com&cc=you@you.com,them@them.com&useHeaderSubject=true");
             }
         };
     }

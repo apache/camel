@@ -58,34 +58,29 @@ public class SendDevConsole extends AbstractDevConsole {
               description = "Timeout when using poll mode")
     private int pollTimeout = 20000;
 
-    /**
-     * Maximum size of the message body to include in the dump
-     */
+    @Metadata(label = "query", description = "Maximum size of the message body to include in the dump",
+              javaType = "java.lang.Integer", defaultValue = "32768")
     public static final String BODY_MAX_CHARS = "bodyMaxChars";
 
-    /**
-     * The message body to send. Can refer to files using file: prefix
-     */
+    @Metadata(label = "query", description = "The message body to send. Can refer to files using file: prefix",
+              javaType = "java.lang.String")
     public static final String BODY = "body";
 
-    /**
-     * Whether to poll message from the endpoint instead of sending
-     */
+    @Metadata(label = "query", description = "Whether to poll message from the endpoint instead of sending",
+              javaType = "java.lang.Boolean")
     public static final String POLL = "poll";
 
-    /**
-     * Timeout when using poll mode
-     */
+    @Metadata(label = "query", description = "Timeout when using poll mode",
+              javaType = "java.lang.Integer", defaultValue = "20000")
     public static final String POLL_TIMEOUT = "pollTimeout";
 
-    /**
-     * Exchange pattern when sending
-     */
+    @Metadata(label = "query", description = "Exchange pattern when sending",
+              javaType = "java.lang.String", enums = "InOnly,InOut")
     public static final String EXCHANGE_PATTERN = "exchangePattern";
 
-    /**
-     * Endpoint for where to send messages (can also refer to a route id, endpoint pattern).
-     */
+    @Metadata(label = "query",
+              description = "Endpoint for where to send messages (can also refer to a route id, endpoint pattern)",
+              javaType = "java.lang.String")
     public static final String ENDPOINT = "endpoint";
 
     public SendDevConsole() {
@@ -125,11 +120,14 @@ public class SendDevConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         StopWatch watch = new StopWatch();
-        String endpoint = (String) options.get(ENDPOINT);
-        String body = (String) options.getOrDefault(BODY, "");
-        String exchangePattern = (String) options.get(EXCHANGE_PATTERN);
-        boolean poll = "true".equals(options.get(POLL));
-        int timeout = Integer.parseInt((String) options.getOrDefault(POLL_TIMEOUT, String.valueOf(pollTimeout)));
+        String endpoint = optionString(options, ENDPOINT);
+        String body = optionString(options, BODY);
+        if (body == null) {
+            body = "";
+        }
+        String exchangePattern = optionString(options, EXCHANGE_PATTERN);
+        boolean poll = optionBoolean(options, POLL, false);
+        int timeout = optionInt(options, POLL_TIMEOUT, pollTimeout);
         // give extra time as CLI needs to process reply also
         timeout += 5000;
 
@@ -172,7 +170,7 @@ public class SendDevConsole extends AbstractDevConsole {
         }
         if (out != null && (poll || "InOut".equals(exchangePattern))) {
             sb.append("\n    Response Message:\n\n");
-            int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
+            int maxChars = optionInt(options, BODY_MAX_CHARS, bodyMaxChars);
             String json
                     = MessageHelper.dumpAsJSon(out.getMessage(), true, true, true, 2, true, true, true,
                             maxChars, true);
@@ -189,11 +187,14 @@ public class SendDevConsole extends AbstractDevConsole {
 
         StopWatch watch = new StopWatch();
         long timestamp = System.currentTimeMillis();
-        String endpoint = (String) options.get(ENDPOINT);
-        String body = (String) options.getOrDefault(BODY, "");
-        String exchangePattern = (String) options.get(EXCHANGE_PATTERN);
-        boolean poll = "true".equals(options.get(POLL));
-        int timeout = Integer.parseInt((String) options.getOrDefault(POLL_TIMEOUT, String.valueOf(pollTimeout)));
+        String endpoint = optionString(options, ENDPOINT);
+        String body = optionString(options, BODY);
+        if (body == null) {
+            body = "";
+        }
+        String exchangePattern = optionString(options, EXCHANGE_PATTERN);
+        boolean poll = optionBoolean(options, POLL, false);
+        int timeout = optionInt(options, POLL_TIMEOUT, pollTimeout);
         // give extra time as CLI needs to process reply also
         timeout += 5000;
 
@@ -234,7 +235,7 @@ public class SendDevConsole extends AbstractDevConsole {
         }
         if (out != null && (poll || "InOut".equals(exchangePattern))) {
             root.put("exchangeId", out.getExchangeId());
-            int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
+            int maxChars = optionInt(options, BODY_MAX_CHARS, bodyMaxChars);
             // avoid double wrap
             root.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true, true,
                     maxChars).getMap("message"));

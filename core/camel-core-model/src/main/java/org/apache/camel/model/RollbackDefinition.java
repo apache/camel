@@ -22,22 +22,32 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Forces a rollback by stopping routing the message
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,errorhandling,routing",
+          aliases = { "rollback" },
+          description = "Forces a rollback of the current transaction and stops routing the message."
+                        + " Can set a custom message on the exception.")
 @XmlRootElement(name = "rollback")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
 
     @XmlAttribute
+    @DslArg
+    @Metadata(description = "The message to set on the exception when rolling back.")
     private String message;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If enabled then only the current transaction is marked for rollback."
+                            + " No exception is thrown and the route continues to execute.")
     private String markRollbackOnly;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then only the last sub-transaction (from the last transacted EIP) is marked for rollback."
+                            + " This allows partial rollbacks in nested transaction scenarios.")
     private String markRollbackOnlyLast;
 
     public RollbackDefinition() {
@@ -82,9 +92,6 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
         return message;
     }
 
-    /**
-     * Message to use in rollback exception
-     */
     public void setMessage(String message) {
         this.message = message;
     }
@@ -93,9 +100,6 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
         return markRollbackOnly;
     }
 
-    /**
-     * Mark the transaction for rollback only (cannot be overruled to commit)
-     */
     public void setMarkRollbackOnly(String markRollbackOnly) {
         this.markRollbackOnly = markRollbackOnly;
     }
@@ -104,11 +108,6 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
         return markRollbackOnlyLast;
     }
 
-    /**
-     * Mark only last sub transaction for rollback only.
-     * <p/>
-     * When using sub transactions (if the transaction manager support this)
-     */
     public void setMarkRollbackOnlyLast(String markRollbackOnlyLast) {
         this.markRollbackOnlyLast = markRollbackOnlyLast;
     }

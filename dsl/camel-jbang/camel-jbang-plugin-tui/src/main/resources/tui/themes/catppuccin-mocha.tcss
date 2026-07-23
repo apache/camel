@@ -1,0 +1,54 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Camel TUI Catppuccin Mocha theme. Soothing pastel dark palette. */
+
+$brand: #CBA6F7;
+$mocha-bg: #1E1E2E;
+$mocha-fg: #CDD6F4;
+
+#accent         { color: $brand; }
+#accent-bg      { color: white; background: $brand; text-style: bold; }
+#hint-key       { color: black; background: $brand; text-style: bold; }
+#border         { color: #45475A; }
+#border-focused { color: $brand; }
+#title          { color: $brand; text-style: bold; }
+#success        { color: #A6E3A1; }
+#warning        { color: #F9E2AF; }
+#error          { color: #F38BA8; }
+#muted          { color: #6C7086; }
+#selection      { color: white; background: #45475A; text-style: bold; }
+#info           { color: #89B4FA; }
+#notice         { color: #CBA6F7; }
+#row-alt        { background: #252536; }
+#base-bg        { background: $mocha-bg; }
+#base-fg        { color: $mocha-fg; }
+
+/* Content tokens — labels, change indicators, search highlight */
+#label          { color: #F9E2AF; }
+#change         { color: #F9E2AF; }
+#search-match   { color: black; background: #F9E2AF; }
+#mnemonic       { color: #F9E2AF; text-style: bold underline; }
+
+/* Diagram tokens */
+#diagram-border  { color: #6C7086; }
+#diagram-id      { color: $mocha-fg; }
+#diagram-from    { color: #A6E3A1; }
+#diagram-to      { color: #94E2D5; }
+#diagram-choice  { color: #F9E2AF; }
+#diagram-action  { color: #CBA6F7; }
+#diagram-eip     { color: #B4BEFE; }
+#diagram-default { color: #6C7086; }

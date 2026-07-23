@@ -30,6 +30,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.servlet.ServletConsumer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.atmosphere.cpr.ApplicationConfig;
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereFrameworkInitializer;
@@ -103,8 +104,12 @@ public class WebsocketConsumer extends ServletConsumer {
         exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY, connectionKey);
         exchange.getIn().setHeader(WebsocketConstants.EVENT_TYPE, eventType);
 
+        HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
         for (Map.Entry<String, String> param : queryMap.entrySet()) {
-            exchange.getIn().setHeader(param.getKey(), param.getValue());
+            if (headerFilterStrategy == null
+                    || !headerFilterStrategy.applyFilterToExternalHeaders(param.getKey(), param.getValue(), exchange)) {
+                exchange.getIn().setHeader(param.getKey(), param.getValue());
+            }
         }
 
         // use default consumer callback

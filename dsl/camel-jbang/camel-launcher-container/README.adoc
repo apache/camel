@@ -2,7 +2,7 @@
 
 == Overview
 
-This module provides the Docker container image for the Camel Launcher, a self-contained executable JAR that includes all dependencies required to run Camel JBang without needing JBang installed.
+This module provides the Docker container image for the Camel Launcher, a self-contained executable JAR that includes all dependencies required to run Camel CLI without needing JBang installed.
 
 The Maven build gathers all required resources into `target/docker/`, ready for building the container image.
 

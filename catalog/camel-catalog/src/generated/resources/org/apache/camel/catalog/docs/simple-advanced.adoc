@@ -1,0 +1,1009 @@
+= Simple - Advanced Features
+:tabs-sync-option:
+
+xref:simple-language.adoc[Back to Simple Language]
+
+== Init Blocks
+
+Starting from *Camel 4.18* you can in the top of your Simple expressions declare an _initialization_ block that are used
+to define a set of local variables that are pre-computed, and can be used in the following Simple expression. This allows
+to reuse variables, and also avoid making the simple expression complicated when having inlined functions, and in general
+make the simple expression easier to maintain and understand.
+
+IMPORTANT: Init Blocks is not supported with xref:csimple-language.adoc[CSimple] language.
+
+NOTE: The init block declaration `$init{ ... }init$` may be changed in the future.
+
+The _init block_ is declared as follows:
+
+[source,text]
+----
+$init{
+  // init block
+  // goes here
+  // ...
+}init$
+// here is the regular simple expression
+----
+
+Notice how the block uses the `$init{` ... `}init$` markers to indicate the start and end of the block.
+
+Inside the init block, then you can assign local variables in the syntax `$key := <statement>;` where you can then use simple language to compute
+the value of the variable.
+
+IMPORTANT: Each statement must end with semicolon and new-line (`;\n`). You can only have 1 statement per line.
+This makes the init block more similar to Java programming language,
+and it was also necessary to make this work for the internal simple parser used by Camel.
+
+Here are a couple of examples:
+
+[source,text]
+----
+$init{
+  $cheese := 'Hello ${body}';
+  $minAge := 18;
+  $foo := ${uppercase('Hello ${body}')};
+  $bar := ${header.code > 999 ? 'Gold' : 'Silver'};
+}init$
+----
+
+You can have Java style code comments in the init block using `// comment here` as follows:
+
+[source,text]
+----
+$init{
+  // minimum age to drive
+  $minAge := 18;
+
+  // say hello to my friend
+  $foo := ${uppercase('Hello ${body}')};
+
+  // either gold or silver
+  $bar := ${header.code > 999 ? 'Gold' : 'Silver'};
+}init$
+----
+
+The local variables can then easily be used in the Simple language either using the `${variable.foo}` syntax
+or the shorthand syntax `$foo`.
+
+For example as below where we do a basic JSON mapping:
+
+[source,text]
+----
+$init{
+  $greeting := ${uppercase('Hello ${body}')};
+  $level := ${header.code > 999 ? 'Gold' : 'Silver'};
+}init$
+{
+  "message": "$greeting",
+  "status": "$level"
+}
+----
+
+The assigned variables from the _init block_ are stored as xref:manual::variables.adoc[Variables] on the `Exchange` which
+allows to use the variables later in the Camel routes.
+
+For example:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:welcome")
+  .transform().simple(
+          """
+            $init{
+              $greeting := ${uppercase('Hello ${body}')};
+              $level := ${header.code > 999 ? 'Gold' : 'Silver'};
+            }init$
+            {
+              "message": "$greeting",
+              "status": "$level"
+            }
+          """)
+  .to("kafka:welcome")
+  .log("Sending welcome email to customer with status ${variable.level}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:welcome"/>
+    <transform>
+        <simple>
+            $init{
+              $greeting := ${uppercase('Hello ${body}')};
+              $level := ${header.code > 999 ? 'Gold' : 'Silver'};
+            }init$
+            {
+              "message": "$greeting",
+              "status": "$level"
+            }
+        </simple>
+    </transform>
+    <to uri="kafka:welcome"/>
+    <log message="Sending welcome email to customer with status ${variable.level}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:welcome
+    steps:
+      - transform:
+          simple:
+            expression: |-
+                $init{
+                  $greeting := ${uppercase('Hello ${body}')};
+                  $level := ${header.code > 999 ? 'Gold' : 'Silver'};
+                }init$
+                {
+                  "message": "$greeting",
+                  "status": "$level"
+                }
+      - to:
+          uri: kafka:welcome
+      - log:
+          message: "Sending welcome email to customer with status ${variable.level}"
+----
+====
+
+Notice how we can refer to the variable (`$level`) in the log statement using the standard `${variable.xxx}` syntax.
+
+TIP: Instead of inlining the simple script in the route, you can externalize this to a source file such as `mymapping.txt`
+and then refer to the file such as `resource:classpath:mymapping.txt` where the file is located in the root classpath (can also be located in sub packages).
+
+=== Init Blocks with custom functions
+
+You can also declare custom functions using
+
+Inside the init block, it is a lso possible to define custom functions in the syntax `$nane ~:= <statement>;` where you can then use simple language to declare
+the structure of the function. Then you can later use these custom functions in your simple language expressions.
+
+For example to create a function that can cleanup a `String` value:
+
+[source,text]
+----
+$init{
+  $cleanUp ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
+}init$
+----
+
+The function will by default use the message body as the input, such that the following:
+
+[source,java]
+----
+simple("Incoming message: $cleanUp()");
+----
+
+Would then call the _clean_ function with the message body as the input, which will then be used for trim, normalize and upper-casing.
+
+A custom function can also use a **single** parameter, however then the syntax must use `${name(...)}` style, such as:
+
+[source,java]
+----
+simple("Incoming message: ${cleanUp('  Please   clean  this   text for    me ')}");
+----
+
+Here the parameter is a fixed `String` but you can also pass in other type of value such as a number, boolean, or even a nested function.
+
+==== Calling custom functions from custom functions
+
+It is also possible to reuse custom functions from other functions using `${function(name)}`, such shown:
+
+[source,text]
+----
+$init{
+  $cleanUp ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
+  $count ~:= ${function(cleanUp)} ~> ${split(' ')} ~> ${size()};
+}init$
+----
+
+Here the `$count` is declared as a function which calls the cleanUp function and then counts the words via split and size functions.
+
+Instead of using `${function(name)}` you can also same syntax as the built-in Simple functions, as follows:
+
+[source,text]
+----
+$init{
+  $cleanUp ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
+  $count ~:= ${cleanUp()} ~> ${split(' ')} ~> ${size()};
+}init$
+----
+
+Notice how `${cleanUp()}` despite being a custom function is using the same syntax as all the built-in functions that are being used, for example:
+ `${trim()}`.
+
+
+== EIP Examples
+
+Below we filter based on a header value:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:orders")
+    .filter().simple("${header.foo}")
+        .to("seda:fooOrders");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:orders"/>
+  <filter>
+    <simple>${header.foo}</simple>
+    <to uri="seda:fooOrders"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:orders
+      steps:
+        - filter:
+            simple: "${header.foo}"
+            steps:
+              - to:
+                  uri: seda:fooOrders
+----
+====
+
+The Simple language can be used for the predicate test above in the
+Message Filter pattern, where we test if the
+in message has a `foo` header (a header with the key `foo` exists). If
+the expression evaluates to `*true*`, then the message is routed to the
+`seda:fooOrders` endpoint, otherwise the message is dropped.
+
+You can also use the simple language for simple text concatenations such as:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:hello")
+    .transform().simple("Hello ${header.user} how are you?")
+    .to("mock:reply");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:hello"/>
+  <transform>
+    <simple>Hello ${header.user} how are you?</simple>
+  </transform>
+  <to uri="mock:reply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:hello
+      steps:
+        - transform:
+            simple: "Hello ${header.user} how are you?"
+        - to:
+            uri: mock:reply
+----
+====
+
+Notice that we must use `${ }` placeholders in the expression now to
+allow Camel to parse it correctly.
+
+And this sample uses the date command to output current date.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:hello")
+    .transform().simple("The today is ${date:now:yyyyMMdd} and it is a great day.")
+    .to("mock:reply");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:hello"/>
+  <transform>
+    <simple>The today is ${date:now:yyyyMMdd} and it is a great day.</simple>
+  </transform>
+  <to uri="mock:reply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:hello
+      steps:
+        - transform:
+            simple: "The today is ${date:now:yyyyMMdd} and it is a great day."
+        - to:
+            uri: mock:reply
+----
+====
+
+And in the sample below, we invoke the bean language to invoke a method
+on a bean to be included in the returned string:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:order")
+    .transform().simple("OrderId: ${bean:orderIdGenerator}")
+    .to("mock:reply");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <transform>
+    <simple>OrderId: ${bean:orderIdGenerator}</simple>
+  </transform>
+  <to uri="mock:reply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - transform:
+            simple: "OrderId: ${bean:orderIdGenerator}"
+        - to:
+            uri: mock:reply
+----
+====
+
+Where `orderIdGenerator` is the id of the bean registered in the
+Registry. If using Spring, then it is the Spring bean
+id.
+
+If we want to declare which method to invoke on the order id generator
+bean we must prepend `.method name` such as below where we invoke the
+`generateId` method.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:order")
+    .transform().simple("OrderId: ${bean:orderIdGenerator.generateId}")
+    .to("mock:reply");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <transform>
+    <simple>OrderId: ${bean:orderIdGenerator.generateId}</simple>
+  </transform>
+  <to uri="mock:reply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - transform:
+            simple: "OrderId: ${bean:orderIdGenerator.generateId}"
+        - to:
+            uri: mock:reply
+----
+====
+
+We can use the `?method=methodname` option that we are familiar with the
+xref:components::bean-component.adoc[Bean] component itself:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:order")
+    .transform().simple("OrderId: ${bean:orderIdGenerator?method=generateId}")
+    .to("mock:reply");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <transform>
+    <simple>OrderId: ${bean:orderIdGenerator?method=generateId}</simple>
+  </transform>
+  <to uri="mock:reply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - transform:
+            simple: "OrderId: ${bean:orderIdGenerator?method=generateId}"
+        - to:
+            uri: mock:reply
+----
+====
+
+You can also convert the body to a given
+type, for example, to ensure that it is a String you can do:
+
+[source,xml]
+----
+<transform>
+  <simple>Hello ${bodyAs(String)} how are you?</simple>
+</transform>
+----
+
+There are a few types which have a shorthand notation, so we can use
+`String` instead of `java.lang.String`. These are:
+`byte[], String, Integer, Long`. All other types must use their FQN
+name, e.g. `org.w3c.dom.Document`.
+
+It is also possible to look up a value from a header `Map`:
+
+[source,xml]
+----
+<transform>
+  <simple>The gold value is ${header.type[gold]}</simple>
+</transform>
+----
+
+In the code above we look up the header with name `type` and regard it as
+a `java.util.Map` and we then look up with the key `gold` and return the
+value. If the header is not convertible to Map, an exception is thrown. If the
+header with name `type` does not exist `null` is returned.
+
+You can nest functions, such as shown below:
+
+[source,xml]
+----
+<setHeader name="myHeader">
+  <simple>${properties:${header.someKey}}</simple>
+</setHeader>
+----
+
+== Using Substring Function
+
+You can use the `substring` function to more easily clip the message body.
+For example if the message body contains the following 10 letters `ABCDEFGHIJ` then:
+
+[source,xml]
+----
+<setBody>
+  <simple>${substring(3)}</simple>
+</setBody>
+----
+
+Then the message body after the substring will be `DEFGHIJ`.
+If you want to clip from the end instead, then use negative values such as `substring(-3)`.
+
+You can also clip from both ends at the same time such as `substring(1,-1)` that will clip the first and last character in the String.
+
+If the number is higher than the length of the message body, then an empty string is returned, for example `substring(99)`.
+
+Instead of the message body then a simple expression can be nested as input, for example, using a variable, as shown below:
+
+[source,xml]
+----
+<setBody>
+  <simple>${substring(1,-1,${variable.foo})}</simple>
+</setBody>
+----
+
+[#_replacing_double_and_single_quotes]
+== Replacing double and single quotes
+
+You can use the `replace` function to more easily replace all single or double quotes in the message body,
+using the XML escape syntax. This avoids to fiddle with enclosing a double quote or single quotes with outer quotes,
+that can get confusing to be correct as you may need to escape the quotes as well. So instead you can use the XML escape
+syntax where double quote is `\&quot;` and single quote is `\&apos;` (yeah that is the name).
+
+For example, to replace all double quotes with single quotes:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:order")
+  .transform().simple("${replace(&quot; , &apos;)}")
+  .to("mock:reply");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <transform>
+    <simple>${replace(&amp;quot; , &amp;apos;)}</simple>
+  </transform>
+  <to uri="mock:reply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - transform:
+            simple: "${replace(&quot; , &apos;)}"
+        - to:
+            uri: mock:reply
+----
+====
+
+And to replace all single quotes with double quotes:
+
+[source,xml]
+----
+<setBody>
+  <simple>${replace(&apos; , &quot;)}</simple>
+</setBody>
+----
+
+Or to remove all double quotes:
+
+[source,xml]
+----
+<setBody>
+  <simple>${replace(&quot; , &empty;)}</simple>
+</setBody>
+----
+
+== Setting the result type
+
+You can now provide a result type to the xref:simple-language.adoc[Simple]
+expression, which means the result of the evaluation will be converted
+to the desired type. This is most usable to define types such as
+booleans, integers, etc.
+
+For example, to set a header as a boolean type, you can do:
+
+._Java-only: setting result type on a simple expression_
+[source,java]
+----
+.setHeader("cool", simple("true", Boolean.class))
+----
+
+And in XML DSL
+
+[source,xml]
+----
+<setHeader name="cool">
+  <!-- use resultType to indicate that the type should be a java.lang.Boolean -->
+  <simple resultType="java.lang.Boolean">true</simple>
+</setHeader>
+----
+
+== Using new lines or tabs in XML DSLs
+
+It is easier to specify new lines or tabs in
+XML DSLs as you can escape the value now
+
+[source,xml]
+----
+<transform>
+  <simple>The following text\nis on a new line</simple>
+</transform>
+----
+
+== Leading and trailing whitespace handling
+
+The trim attribute of the expression can be
+used to control whether the leading and trailing whitespace characters
+are removed or preserved. The default value is true, which removes the
+whitespace characters.
+
+[source,xml]
+----
+<setBody>
+  <simple trim="false">You get some trailing whitespace characters.     </simple>
+</setBody>
+----
+
+== Loading script from external resource
+
+You can externalize the script and have Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`.
+This is done using the following syntax: `"resource:scheme:location"`,
+e.g., to refer to a file on the classpath you can do:
+
+._Java-only: loading a simple script from an external resource_
+[source,java]
+----
+.setHeader("myHeader").simple("resource:classpath:mysimple.txt")
+----
+
+== Pretty XML or JSON
+
+From *Camel 4.18* onwards then the Simple language can _pretty format_ the output.
+
+You turn this on via the `pretty` option set to `true`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:json")
+    .setBody().simple("{ \"name\": \"Jack\", \"age\": 44 }", true)
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:json"/>
+  <setBody>
+    <simple pretty="true">{ "name": "Jack", "age": 44 }</simple>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:json
+      steps:
+        - setBody:
+            simple:
+              expression: "{ \"name\": \"Jack\", \"age\": 44 }"
+              pretty: true
+        - to:
+            uri: mock:result
+----
+====
+
+This works with XML, JSON and text content:
+
+._Java-only: pretty formatting with different content types_
+[source,java]
+----
+from("direct:xml")
+    .setBody().simple("<person><name>Jack</name></person>", true)
+    .to("mock:result");
+
+from("direct:text")
+    .setBody().simple("Hello ${body}", true)
+    .to("mock:result");
+----
+
+== Adding custom functions to Simple language
+
+You can add custom functions to the Simple language by adding to the `org.apache.camel.spi.SimpleFunctionRegistry`.
+
+A custom function should either be an `Expression` or a `org.apache.camel.spi.SimpleFunction` implementation.
+
+You may want to use `Expression` when you build custom functions from the built-in functions in Camel.
+This can be done programmatically such as:
+
+._Java-only: registering a custom function with SimpleFunctionRegistry_
+[source,java]
+----
+SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(getCamelContext());
+
+reg.addFunction("foo", new ExpressionAdapter() {
+    @Override
+    public Object evaluate(Exchange exchange) {
+        return "I was here " + exchange.getMessage().getBody();
+    }
+});
+----
+
+Here we add a custom function named `foo` which is implemented as a `org.apache.camel.Expression` which conveniently
+can be done by using the `org.apache.camel.support.ExpressionAdapter` class as above.
+
+The foo function can now be used in simple such as:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+        .setBody(simple("Hello ${foo}"))
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <simple>Hello ${foo}</simple>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            simple: "Hello ${foo}"
+        - to:
+            uri: mock:result
+----
+====
+
+Notice how the foo function is used just like it was a built-in function using `$\{foo}` syntax.
+
+Since a custom function is just an `Expression` then it's possible to build custom functions from
+all the Camel languages such as Groovy, JSonPath and even Simple as well.
+
+._Java-only: building a custom function from Simple expressions_
+[source,java]
+----
+var bar = context.resolveLanguage("simple").createExpression("${trim()} ~> ${normalizeWhitespace()} ~> ${capitalize()} ~> ${quote()}");
+reg.addFunction("bar", bar);
+----
+
+The `bar` function is build using simple functions using the `~>` chain operators to perform a sequence of functions on the payload.
+
+Custom functions will by default use the message body as the payload. But they also support a single parameter as the input,
+which allows to provide the input as fixed value such as a string literal or to refer to an existing header or variable.
+
+For example the foo function uses variable with name `msg` as the input:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+        .setVariable("msg", constant("Moon"))
+        .setBody(simple("Bye ${foo(${variable.msg})}"))
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setVariable name="msg">
+    <constant>Moon</constant>
+  </setVariable>
+  <setBody>
+    <simple>Bye ${foo(${variable.msg})}</simple>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setVariable:
+            name: msg
+            constant: "Moon"
+        - setBody:
+            simple: "Bye ${foo(${variable.msg})}"
+        - to:
+            uri: mock:result
+----
+====
+
+And instead of nesting the variable inside the foo function, we can also use the `~>` chain operator:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+        .setVariable("msg", constant("Moon"))
+        .setBody(simple("Bye ${variable.msg} ~> ${foo}"))
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setVariable name="msg">
+    <constant>Moon</constant>
+  </setVariable>
+  <setBody>
+    <simple>Bye ${variable.msg} ~> ${foo}</simple>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setVariable:
+            name: msg
+            constant: "Moon"
+        - setBody:
+            simple: "Bye ${variable.msg} ~> ${foo}"
+        - to:
+            uri: mock:result
+----
+====
+
+You can also build custom functions as a Java class as below:
+
+._Java-only: implementing SimpleFunction interface_
+[source,java]
+----
+public class FooSimpleFunction implements SimpleFunction {
+
+    @Override
+    public String getName() {
+        return "foo";
+    }
+
+    @Override
+    public Object apply(Exchange exchange, Object input) throws Exception {
+        return "I was here " + input;
+    }
+}
+----
+
+This gives you the full power to implement the function logic in standard Java.
+
+This function can be added programmatically:
+
+._Java-only: adding a SimpleFunction to the registry_
+[source,java]
+----
+SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(getCamelContext());
+
+reg.addFunction(new FooSimpleFunction());
+----
+
+TIP: The custom function can then be made discoverable by Camel by dependency injection.
+If you use standalone Camel you can add `@BindToRegistry("foo-function")` to the class.
+For Spring Boot use `@Component` or `@Service` and Quarkus you can for example use `@ApplicationScoped`.
+
+
+== JavaScript Validator
+
+The `camel-catalog` JAR includes a self-contained JavaScript validator for the Simple language.
+It can syntax-check expressions and predicates in any browser or Node.js environment — no Java backend required.
+
+The files are located in the JAR under:
+
+----
+org/apache/camel/catalog/simple/camel-simple-validator.js
+org/apache/camel/catalog/simple/camel-simple-validator.html
+----
+
+The `.js` file is auto-generated from `simple.json` during the Maven build, so its list of functions and operators
+always matches the current Camel version.
+
+=== API
+
+The validator exposes these functions:
+
+* `validate(input, mode)` — validate a Simple expression or predicate.
+  `mode` is `'expression'` (default) or `'predicate'`.
+  Returns `{ valid: boolean, diagnostics: [...] }`.
+* `complete(input, pos)` — return completion suggestions at the given cursor position.
+* `getFunctions()` — return the list of known Simple function names.
+* `getOperators()` — return the list of known Simple operators with their kind and description.
+
+=== Usage in Node.js
+
+[source,javascript]
+----
+const { validate, complete } = require('./camel-simple-validator.js');
+
+const result = validate("${body} == 'hello'", 'predicate');
+console.log(result.valid);       // true
+console.log(result.diagnostics); // []
+
+const bad = validate("${bdy}", 'expression');
+console.log(bad.valid);          // false
+console.log(bad.diagnostics[0].message); // "Unknown function 'bdy', did you mean 'body'?"
+----
+
+=== Usage in a browser
+
+Extract `camel-simple-validator.html` from the JAR and open it in a browser.
+It provides an interactive form where you can type Simple expressions and validate them with instant feedback.
+

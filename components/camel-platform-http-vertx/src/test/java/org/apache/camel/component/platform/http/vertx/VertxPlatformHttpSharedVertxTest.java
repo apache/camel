@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.awaitility.Awaitility.await;
 
 class VertxPlatformHttpSharedVertxTest {
     @RegisterExtension
@@ -61,9 +61,10 @@ class VertxPlatformHttpSharedVertxTest {
             context.start();
         }
 
-        // Verify shutdown of VertxPlatformHttpServer did not close the shared Vertx instance
-        CountDownLatch latch = new CountDownLatch(1);
-        vertx.setTimer(1, event -> latch.countDown());
-        assertTrue(latch.await(1, TimeUnit.SECONDS));
+        // Verify shutdown of VertxPlatformHttpServer did not close the shared Vertx instance.
+        // Use Awaitility instead of a tight CountDownLatch timeout to avoid flakiness on slow CI.
+        AtomicBoolean timerFired = new AtomicBoolean(false);
+        vertx.setTimer(1, event -> timerFired.set(true));
+        await().atMost(5, TimeUnit.SECONDS).untilTrue(timerFired);
     }
 }

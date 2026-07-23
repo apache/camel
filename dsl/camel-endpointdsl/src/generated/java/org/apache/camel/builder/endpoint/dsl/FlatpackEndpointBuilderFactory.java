@@ -1430,7 +1430,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final FlatpackHeaderNameBuilder INSTANCE = new FlatpackHeaderNameBuilder();
+        public static final FlatpackHeaderNameBuilder INSTANCE = new FlatpackHeaderNameBuilder();
 
         /**
          * The current row index. For splitRows=false the counter is the total

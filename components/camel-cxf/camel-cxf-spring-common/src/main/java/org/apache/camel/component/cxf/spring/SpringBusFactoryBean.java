@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.spring;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBusFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.SmartFactoryBean;
 
 /**
@@ -29,19 +30,22 @@ import org.springframework.beans.factory.SmartFactoryBean;
  * all the extension in CXF 2.4.x by default. You can still specify the spring extension file in the cfgFiles list and
  * it will override the extensions which is load by CXF bus.
  */
-public class SpringBusFactoryBean implements SmartFactoryBean<Bus> {
+public class SpringBusFactoryBean implements SmartFactoryBean<Bus>, DisposableBean {
     private String[] cfgFiles;
     private boolean includeDefaultBus;
-    private SpringBusFactory bf;
+    private Bus bus;
 
     @Override
     public Bus getObject() throws Exception {
-        bf = new SpringBusFactory();
-        if (cfgFiles != null) {
-            return bf.createBus(cfgFiles, includeDefaultBus);
-        } else {
-            return bf.createBus();
+        if (bus == null) {
+            SpringBusFactory bf = new SpringBusFactory();
+            if (cfgFiles != null) {
+                bus = bf.createBus(cfgFiles, includeDefaultBus);
+            } else {
+                bus = bf.createBus();
+            }
         }
+        return bus;
     }
 
     @Override
@@ -50,7 +54,9 @@ public class SpringBusFactoryBean implements SmartFactoryBean<Bus> {
     }
 
     public void setCfgFiles(String cfgFiles) {
-        this.cfgFiles = cfgFiles.split(";");
+        if (cfgFiles != null) {
+            this.cfgFiles = cfgFiles.split(";");
+        }
     }
 
     public void setIncludeDefaultBus(boolean includeDefaultBus) {
@@ -70,6 +76,14 @@ public class SpringBusFactoryBean implements SmartFactoryBean<Bus> {
     @Override
     public boolean isPrototype() {
         return false;
+    }
+
+    @Override
+    public void destroy() {
+        if (bus != null) {
+            bus.shutdown(true);
+            bus = null;
+        }
     }
 
 }

@@ -34,6 +34,7 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -50,6 +51,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import ai.docling.core.DoclingDocument;
+import ai.docling.core.DoclingDocument.BaseTextItem;
+import ai.docling.core.DoclingDocument.DocItemLabel;
 import ai.docling.core.DoclingDocument.DocumentOrigin;
 import ai.docling.serve.api.DoclingServeApi;
 import ai.docling.serve.api.chunk.request.ChunkDocumentRequest;
@@ -159,7 +162,7 @@ public class DoclingProducer extends DefaultProducer {
     private DoclingConfiguration configuration;
     private DoclingServeApi doclingServeApi;
     private ObjectMapper objectMapper;
-    private Map<String, CompletableFuture<ConvertDocumentResponse>> pendingAsyncTasks;
+    private Map<String, AsyncTaskEntry> pendingAsyncTasks;
     private AtomicLong taskIdCounter;
 
     public DoclingProducer(DoclingEndpoint endpoint) {
@@ -367,10 +370,11 @@ public class DoclingProducer extends DefaultProducer {
         CompletableFuture<ConvertDocumentResponse> asyncResult
                 = doclingServeApi.convertSourceAsync(request).toCompletableFuture();
 
-        // Generate a unique task ID and store the future for later status checks
+        // Generate a unique task ID and store the future with timestamp for later status checks
         String taskId = "task-" + taskIdCounter.incrementAndGet();
-        pendingAsyncTasks.put(taskId, asyncResult);
-        LOG.debug("Started async conversion with task ID: {}", taskId);
+        AsyncTaskEntry taskEntry = new AsyncTaskEntry(taskId, asyncResult);
+        pendingAsyncTasks.put(taskId, taskEntry);
+        LOG.debug("Started async conversion with task ID: {} at {}", taskId, taskEntry.getCreatedAtMs());
 
         // Set task ID in body and header
         exchange.getIn().setBody(taskId);
@@ -425,9 +429,9 @@ public class DoclingProducer extends DefaultProducer {
         LOG.debug("Checking status for task: {}", taskId);
 
         // Check the local pending tasks map first (tasks submitted via SUBMIT_ASYNC_CONVERSION)
-        CompletableFuture<ConvertDocumentResponse> future = pendingAsyncTasks.get(taskId);
-        if (future != null) {
-            return checkLocalAsyncTask(taskId, future);
+        AsyncTaskEntry taskEntry = pendingAsyncTasks.get(taskId);
+        if (taskEntry != null) {
+            return checkLocalAsyncTask(taskId, taskEntry.getFuture());
         }
 
         // Fall back to server-side task polling
@@ -680,6 +684,9 @@ public class DoclingProducer extends DefaultProducer {
                 metadata.setFormat(origin.getMimetype());
             }
 
+            metadata.setDocumentType(deriveDocumentType(origin));
+            metadata.setTitle(extractTitle(doclingDocument));
+
             // Store raw metadata if requested
             if (configuration.isIncludeRawMetadata()) {
                 @SuppressWarnings("unchecked")
@@ -728,6 +735,9 @@ public class DoclingProducer extends DefaultProducer {
                 metadata.setFormat(origin.getMimetype());
             }
 
+            metadata.setDocumentType(deriveDocumentType(origin));
+            metadata.setTitle(extractTitle(doclingDocument));
+
             // Store raw metadata if configured
             if (configuration.isIncludeRawMetadata()) {
                 JsonNode rootNode = objectMapper.readTree(jsonOutput);
@@ -744,6 +754,12 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     private void setMetadataHeaders(Exchange exchange, DocumentMetadata metadata) {
+        if (metadata.getTitle() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_TITLE, metadata.getTitle());
+        }
+        if (metadata.getDocumentType() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_DOCUMENT_TYPE, metadata.getDocumentType());
+        }
         if (metadata.getPageCount() != null) {
             exchange.getIn().setHeader(DoclingHeaders.METADATA_PAGE_COUNT, metadata.getPageCount());
         }
@@ -760,6 +776,52 @@ public class DoclingProducer extends DefaultProducer {
                 && !metadata.getRawMetadata().isEmpty()) {
             exchange.getIn().setHeader(DoclingHeaders.METADATA_RAW, metadata.getRawMetadata());
         }
+    }
+
+    /**
+     * Extracts the document title from the Docling document, defined as the first text item labelled as
+     * {@link DocItemLabel#TITLE}. Returns {@code null} when the document does not expose a title.
+     */
+    private String extractTitle(DoclingDocument doclingDocument) {
+        List<BaseTextItem> texts = doclingDocument.getTexts();
+        if (texts == null) {
+            return null;
+        }
+        for (BaseTextItem item : texts) {
+            if (item != null && item.getLabel() == DocItemLabel.TITLE) {
+                String text = item.getText();
+                if (text != null && !text.isBlank()) {
+                    return text.trim();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Derives a short, human-readable document type (e.g., {@code PDF}, {@code DOCX}) from the document origin,
+     * preferring the source file extension and falling back to the MIME subtype. Returns {@code null} when the type
+     * cannot be determined.
+     */
+    private String deriveDocumentType(DocumentOrigin origin) {
+        if (origin == null) {
+            return null;
+        }
+        String filename = origin.getFilename();
+        if (filename != null) {
+            int dot = filename.lastIndexOf('.');
+            if (dot > 0 && dot < filename.length() - 1) {
+                return filename.substring(dot + 1).toUpperCase(Locale.ROOT);
+            }
+        }
+        String mimetype = origin.getMimetype();
+        if (mimetype != null && !mimetype.isBlank()) {
+            int slash = mimetype.lastIndexOf('/');
+            String subtype = slash >= 0 && slash < mimetype.length() - 1
+                    ? mimetype.substring(slash + 1) : mimetype;
+            return subtype.toUpperCase(Locale.ROOT);
+        }
+        return null;
     }
 
     private void processBatchConversion(Exchange exchange, String outputFormat) throws Exception {

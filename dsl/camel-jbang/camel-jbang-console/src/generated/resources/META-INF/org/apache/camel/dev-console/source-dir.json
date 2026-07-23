@@ -4,12 +4,28 @@
     "group": "camel-jbang",
     "name": "source-dir",
     "title": "Source Directory",
-    "description": "Information about Camel JBang source files",
+    "description": "Information about Camel CLI source files",
     "deprecated": false,
     "javaType": "org.apache.camel.jbang.console.SourceDirDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jbang-console",
-    "version": "4.21.0-SNAPSHOT"
+    "version": "4.22.0-SNAPSHOT"
+  },
+  "options": {
+    "source": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Source",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Whether to show the source in the output"
+    }
   }
 }
 

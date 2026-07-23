@@ -18,7 +18,6 @@ package org.apache.camel.component.jpa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.persistence.EntityManager;
@@ -41,6 +40,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -55,8 +55,7 @@ public class JpaTest {
     protected EntityManager entityManager;
     protected TransactionTemplate transactionTemplate;
     protected Consumer consumer;
-    protected Exchange receivedExchange;
-    protected CountDownLatch latch = new CountDownLatch(1);
+    protected volatile Exchange receivedExchange;
     protected String entityName = SendEmail.class.getName();
     protected String queryText = "select o from " + entityName + " o";
 
@@ -80,20 +79,19 @@ public class JpaTest {
             public void process(Exchange e) {
                 LOG.info("Received exchange: {}", e.getIn());
                 receivedExchange = e;
-                // should have a EntityManager
-                EntityManager entityManager = e.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
-                assertNotNull(entityManager, "Should have a EntityManager as header");
-                latch.countDown();
             }
         });
         consumer.start();
 
-        assertTrue(latch.await(50, TimeUnit.SECONDS));
-
-        assertNotNull(receivedExchange);
-        SendEmail result = receivedExchange.getIn().getBody(SendEmail.class);
-        assertNotNull(result, "Received a POJO");
-        assertEquals("foo@bar.com", result.getAddress(), "address property");
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertNotNull(receivedExchange);
+            // should have a EntityManager
+            EntityManager em = receivedExchange.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
+            assertNotNull(em, "Should have a EntityManager as header");
+            SendEmail result = receivedExchange.getIn().getBody(SendEmail.class);
+            assertNotNull(result, "Received a POJO");
+            assertEquals("foo@bar.com", result.getAddress(), "address property");
+        });
     }
 
     @Test

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-catalog</artifactId>
@@ -219,6 +219,26 @@
                                 <goals>
                                     <!-- update camel release details from camel-website -->
                                     <goal>update-camel-releases</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>update-security-advisories</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-package-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <!-- update published CVE security advisories from camel-website -->
+                                    <goal>update-security-advisories</goal>
                                 </goals>
                                 <phase>generate-resources</phase>
                             </execution>

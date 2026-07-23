@@ -20,16 +20,19 @@ import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.test.infra.ibmmq.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.ibmmq.services.IbmMQService;
 import org.apache.camel.test.infra.ibmmq.services.IbmMQServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs(architectures = { "aarch64", "aarch_64" }, disabledReason = "IBM MQ has no Linux ARM64 native image")
 public class JmsReplyToIbmMQTest extends CamelTestSupport {
 
     @RegisterExtension
@@ -37,10 +40,12 @@ public class JmsReplyToIbmMQTest extends CamelTestSupport {
 
     @Test
     public void testCustomJMSReplyToInOut() {
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "request");
+
         template.sendBody("jms:queue:DEV.QUEUE.1", "What is your name?");
 
         String reply
-                = consumer.receiveBody("jms:queue:DEV.QUEUE.2", 5000, String.class);
+                = consumer.receiveBody("jms:queue:DEV.QUEUE.2", 20000, String.class);
         assertEquals("My name is Camel", reply);
     }
 
@@ -50,6 +55,7 @@ public class JmsReplyToIbmMQTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("jms:queue:DEV.QUEUE.1?replyTo=queue:DEV.QUEUE.2")
+                        .routeId("request")
                         .to("log:hello")
                         .transform(constant("My name is Camel"));
             }

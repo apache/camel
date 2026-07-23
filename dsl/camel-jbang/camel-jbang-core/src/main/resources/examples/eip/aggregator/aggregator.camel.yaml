@@ -1,0 +1,37 @@
+- beans:
+    - name: myAggregationStrategy
+      type: "#class:org.apache.camel.processor.aggregate.StringAggregationStrategy"
+      properties:
+        delimiter: ", "
+
+- route:
+    id: order-generator
+    from:
+      uri: timer
+      parameters:
+        timerName: orders
+        period: 1000
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Order-${exchangeProperty.CamelTimerCounter}"
+        - log:
+            message: "New: ${body}"
+        - to:
+            uri: direct:aggregate
+
+- route:
+    id: order-aggregator
+    from:
+      uri: direct:aggregate
+      steps:
+        - aggregate:
+            aggregationStrategy: "#bean:myAggregationStrategy"
+            correlationExpression:
+              constant:
+                expression: "true"
+            completionSize: 5
+            steps:
+              - log:
+                  message: "Batch of 5: ${body}"

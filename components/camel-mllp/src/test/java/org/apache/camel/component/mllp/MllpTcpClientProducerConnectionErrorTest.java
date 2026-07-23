@@ -27,7 +27,6 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
@@ -40,10 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
     @RegisterExtension
-    AvailablePortFinder.Port mllpServerPort = AvailablePortFinder.find();
-
-    @RegisterExtension
-    public MllpServerResource mllpServer = new MllpServerResource("localhost", mllpServerPort.getPort());
+    public MllpServerResource mllpServer = new MllpServerResource("localhost", 0);
 
     @EndpointInject("direct://source")
     ProducerTemplate source;
@@ -259,8 +255,6 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
         target.expectedMessageCount(1);
         complete.expectedMessageCount(2);
         connectEx.expectedMessageCount(0);
-        writeEx.expectedMessageCount(1);
-        acknowledgementEx.expectedMessageCount(0);
 
         NotifyBuilder done = new NotifyBuilder(context).whenCompleted(2).create();
 
@@ -275,6 +269,10 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
         assertTrue(done.matches(10, TimeUnit.SECONDS), "Should have completed an exchange");
 
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+
+        // Depending on the timing, either a write or a receive exception will be thrown
+        assertEquals(1, writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size(),
+                "Either a write or a receive exception should have been be thrown");
     }
 
 }

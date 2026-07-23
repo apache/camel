@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.util.FileUtil;
@@ -73,6 +74,26 @@ public final class RunHelper {
             }
         }
         return answer;
+    }
+
+    public static RuntimeType detectRuntimeFromPom(Path pomPath) {
+        try {
+            Model model = loadMavenModel(pomPath);
+            if (model != null && model.getDependencyManagement() != null) {
+                for (Dependency d : model.getDependencyManagement().getDependencies()) {
+                    String a = d.getArtifactId();
+                    if ("camel-spring-boot-bom".equals(a) || "spring-boot-dependencies".equals(a)) {
+                        return RuntimeType.springBoot;
+                    }
+                    if ("quarkus-bom".equals(a) || "quarkus-camel-bom".equals(a)) {
+                        return RuntimeType.quarkus;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
     }
 
     public static List<String> scanMavenDependenciesFromPom(Path pomPath) throws Exception {

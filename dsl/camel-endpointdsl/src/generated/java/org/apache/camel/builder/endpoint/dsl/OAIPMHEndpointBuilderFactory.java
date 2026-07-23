@@ -1466,7 +1466,7 @@ public interface OAIPMHEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final OAIPMHHeaderNameBuilder INSTANCE = new OAIPMHHeaderNameBuilder();
+        public static final OAIPMHHeaderNameBuilder INSTANCE = new OAIPMHHeaderNameBuilder();
 
         /**
          * This header is obtained when onlyFirst option is enable. Return

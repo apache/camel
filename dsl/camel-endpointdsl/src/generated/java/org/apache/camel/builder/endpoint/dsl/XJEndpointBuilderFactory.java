@@ -843,7 +843,7 @@ public interface XJEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final XJHeaderNameBuilder INSTANCE = new XJHeaderNameBuilder();
+        public static final XJHeaderNameBuilder INSTANCE = new XJHeaderNameBuilder();
 
         /**
          * The XSLT file name.

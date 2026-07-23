@@ -48,7 +48,6 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
@@ -71,7 +70,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed Route")
-public class ManagedRoute extends ManagedPerformanceCounter implements TimerListener, ManagedRouteMBean {
+public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRouteMBean {
 
     public static final String VALUE_UNKNOWN = "Unknown";
 
@@ -85,7 +84,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     protected final String sourceLocationShort;
     protected final CamelContext context;
     private final LoadTriplet load = new LoadTriplet();
-    private final LoadThroughput thp = new LoadThroughput();
     private final String jmxDomain;
 
     public ManagedRoute(CamelContext context, Route route) {
@@ -105,6 +103,9 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         boolean enabled
                 = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
+        if (context.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended()) {
+            initExtendedStatistics();
+        }
     }
 
     public Route getRoute() {
@@ -313,20 +314,9 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
-    public String getThroughput() {
-        double d = thp.getThroughput();
-        if (Double.isNaN(d)) {
-            // empty string if load statistics is disabled
-            return "";
-        } else {
-            return String.format("%.2f", d);
-        }
-    }
-
-    @Override
     public void onTimer() {
+        super.onTimer();
         load.update(getInflightExchanges());
-        thp.update(getExchangesTotal());
     }
 
     @Override
@@ -489,6 +479,28 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (def != null) {
             return PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, def, resolvePlaceholders,
                     uriAsParameters, generatedIds, sourceLocation);
+        }
+
+        return null;
+    }
+
+    @Override
+    public String dumpRouteAsJava() throws Exception {
+        return dumpRouteAsJava(false);
+    }
+
+    @Override
+    public String dumpRouteAsJava(boolean resolvePlaceholders) throws Exception {
+        return dumpRouteAsJava(resolvePlaceholders, true);
+    }
+
+    @Override
+    public String dumpRouteAsJava(boolean resolvePlaceholders, boolean generatedIds) throws Exception {
+        String id = route.getId();
+        RouteDefinition def = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
+        if (def != null) {
+            return PluginHelper.getModelToJavaDumper(context).dumpModelAsJava(context, def, resolvePlaceholders,
+                    generatedIds);
         }
 
         return null;
@@ -817,7 +829,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     public void reset(boolean includeProcessors) throws Exception {
         reset();
         load.reset();
-        thp.reset();
 
         // and now reset all processors for this route
         if (includeProcessors) {

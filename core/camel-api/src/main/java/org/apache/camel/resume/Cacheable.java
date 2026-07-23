@@ -21,6 +21,8 @@ import org.apache.camel.resume.cache.ResumeCache;
 
 /**
  * Used to identify objects that can cache their resume state or data
+ *
+ * @since 3.18
  */
 public interface Cacheable {
 

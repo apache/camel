@@ -20,9 +20,11 @@ import java.util.Map;
 
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
+import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.GetTopicAttributesRequest;
 
 public class Sns2ProducerHealthCheck extends AbstractHealthCheck {
 
@@ -37,13 +39,17 @@ public class Sns2ProducerHealthCheck extends AbstractHealthCheck {
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         Sns2Configuration configuration = sns2Endpoint.getConfiguration();
         try {
-            if (!SnsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())
+                    && !SnsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
             SnsClient client = sns2Endpoint.getSNSClient();
-            client.listSubscriptions();
+            if (ObjectHelper.isNotEmpty(configuration.getTopicArn())) {
+                client.getTopicAttributes(
+                        GetTopicAttributesRequest.builder().topicArn(configuration.getTopicArn()).build());
+            }
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);

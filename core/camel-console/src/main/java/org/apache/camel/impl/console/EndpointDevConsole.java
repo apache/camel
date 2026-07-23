@@ -19,7 +19,6 @@ package org.apache.camel.impl.console;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.EndpointRegistry;
@@ -61,11 +60,20 @@ public class EndpointDevConsole extends AbstractDevConsole {
                     // shadow-stub
                     uri = uri + " (stub)";
                 }
-                var stat = findStats(stats, e.getEndpointUri());
-                if (stat.isPresent()) {
-                    var st = stat.get();
-                    sb.append(String.format("%n    %s (remote: %s direction: %s, usage: %s)", uri, remote, st.getDirection(),
-                            st.getHits()));
+                List<RuntimeEndpointRegistry.Statistic> endpointStats = findStats(stats, e.getEndpointUri());
+                if (!endpointStats.isEmpty()) {
+                    for (RuntimeEndpointRegistry.Statistic st : endpointStats) {
+                        sb.append(String.format("%n    %s (remote: %s direction: %s, usage: %s)", uri, remote,
+                                st.getDirection(), st.getHits()));
+                        if (st.getMinBodySize() >= 0) {
+                            sb.append(String.format(" body: min/max/mean=%s/%s/%s",
+                                    st.getMinBodySize(), st.getMaxBodySize(), st.getMeanBodySize()));
+                        }
+                        if (st.getMinHeadersSize() >= 0) {
+                            sb.append(String.format(" headers: min/max/mean=%s/%s/%s",
+                                    st.getMinHeadersSize(), st.getMaxHeadersSize(), st.getMeanHeadersSize()));
+                        }
+                    }
                 } else {
                     sb.append(String.format("%n    %s (remote: %s)", uri, remote));
                 }
@@ -96,32 +104,51 @@ public class EndpointDevConsole extends AbstractDevConsole {
         root.put("endpoints", list);
         Collection<Endpoint> col = reg.getReadOnlyValues();
         for (Endpoint e : col) {
-            JsonObject jo = new JsonObject();
-            jo.put("uri", e.getEndpointUri());
-            jo.put("remote", e.isRemote());
             // NOTE: StubComponent is not available at compilation time.
             boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent"); // NOSONAR
-            jo.put("stub", stub);
-            var stat = findStats(stats, e.getEndpointUri());
-            if (stat.isPresent()) {
-                var st = stat.get();
-                jo.put("direction", st.getDirection());
-                jo.put("hits", st.getHits());
-                jo.put("routeId", st.getRouteId());
+            boolean remote = e.isRemote();
+            List<RuntimeEndpointRegistry.Statistic> endpointStats = findStats(stats, e.getEndpointUri());
+            if (!endpointStats.isEmpty()) {
+                // emit one entry per direction so both in and out hits are captured
+                for (RuntimeEndpointRegistry.Statistic st : endpointStats) {
+                    JsonObject jo = new JsonObject();
+                    jo.put("uri", e.getEndpointUri());
+                    jo.put("remote", remote);
+                    jo.put("stub", stub);
+                    jo.put("direction", st.getDirection());
+                    jo.put("hits", st.getHits());
+                    jo.put("routeId", st.getRouteId());
+                    if (st.getMinBodySize() >= 0) {
+                        jo.put("minBodySize", st.getMinBodySize());
+                        jo.put("maxBodySize", st.getMaxBodySize());
+                        jo.put("meanBodySize", st.getMeanBodySize());
+                    }
+                    if (st.getMinHeadersSize() >= 0) {
+                        jo.put("minHeadersSize", st.getMinHeadersSize());
+                        jo.put("maxHeadersSize", st.getMaxHeadersSize());
+                        jo.put("meanHeadersSize", st.getMeanHeadersSize());
+                    }
+                    list.add(jo);
+                }
+            } else {
+                JsonObject jo = new JsonObject();
+                jo.put("uri", e.getEndpointUri());
+                jo.put("remote", remote);
+                jo.put("stub", stub);
+                list.add(jo);
             }
-            list.add(jo);
         }
 
         return root;
     }
 
-    private static Optional<RuntimeEndpointRegistry.Statistic> findStats(
+    private static List<RuntimeEndpointRegistry.Statistic> findStats(
             List<RuntimeEndpointRegistry.Statistic> stats, String uri) {
         if (stats == null) {
-            return Optional.empty();
+            return List.of();
         }
         return stats.stream()
                 .filter(s -> uri.equals(s.getUri()))
-                .findFirst();
+                .toList();
     }
 }

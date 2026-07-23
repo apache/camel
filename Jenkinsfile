@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=1"
+def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=1"
 def MAVEN_TEST_PARAMS = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.org"
 def MAVEN_TEST_PARAMS_UBUNTU = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.org"
 def MAVEN_JDK_17_PARAMS = "-Denforcer.skip=true"
@@ -63,11 +63,15 @@ pipeline {
                 options {
                     throttle(['camel'])
                 }
-                when { anyOf {
-                    expression { params.PLATFORM_FILTER == 'all' }
-                    expression { params.PLATFORM_FILTER == env.PLATFORM }
-                    expression { params.JDK_FILTER == 'all' }
-                    expression { params.JDK_FILTER == env.JDK_NAME }
+                when { allOf {
+                    anyOf {
+                        expression { params.PLATFORM_FILTER == 'all' }
+                        expression { params.PLATFORM_FILTER == env.PLATFORM }
+                    }
+                    anyOf {
+                        expression { params.JDK_FILTER == 'all' }
+                        expression { params.JDK_FILTER == env.JDK_NAME }
+                    }
                 } }
                 axes {
                     axis {
@@ -128,8 +132,25 @@ pipeline {
                     stage('Clean workspace') {
                         steps {
                             cleanWs()
-                            sh 'rm -rvf /home/jenkins/.m2/repository/org/apache/camel'
-                            checkout scm
+                            sh 'if [ -d /home/jenkins/.m2/repository/org/apache/camel ]; then rm -rf /home/jenkins/.m2/repository/org/apache/camel; fi'
+                            script {
+                                // Use full clone for JDK 21 on ubuntu-avx (needed for Sonar analysis)
+                                // Use shallow clone for all other combinations
+                                if ("${PLATFORM}" == "ubuntu-avx" && "${JDK_NAME}" == "jdk_21_latest") {
+                                    echo "Using full clone for ${PLATFORM}-${JDK_NAME} (required for code coverage and Sonar)"
+                                    checkout scm
+                                } else {
+                                    echo "Using shallow clone for ${PLATFORM}-${JDK_NAME}"
+                                    checkout([
+                                        $class: 'GitSCM',
+                                        branches: scm.branches,
+                                        extensions: [
+                                            [$class: 'CloneOption', depth: 1, noTags: true, shallow: true]
+                                        ],
+                                        userRemoteConfigs: scm.userRemoteConfigs
+                                    ])
+                                }
+                            }
                         }
                     }
 
@@ -189,6 +210,15 @@ pipeline {
                             body: '${DEFAULT_CONTENT}',
                             recipientProviders: [[$class: 'DevelopersRecipientProvider']]
                         )
+                        cleanWs(
+                            cleanWhenNotBuilt: false,
+                            cleanWhenUnstable: false,
+                            cleanWhenFailure: false,
+                            cleanWhenAborted: false,
+                            cleanWhenSuccess: true,
+                            deleteDirs: true,
+                            disableDeferredWipeout: true,
+                            notFailBuild: true)
                     }
                 }
             }

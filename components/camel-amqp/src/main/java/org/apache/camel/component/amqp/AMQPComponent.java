@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.amqp;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Messaging with AMQP protocol using Apache QPid Client.
+ * Messaging with AMQP protocol using Apache Qpid Client.
  */
 @Component("amqp")
 public class AMQPComponent extends JmsComponent {
@@ -110,18 +112,31 @@ public class AMQPComponent extends JmsComponent {
                 connectionFactory.setTopicPrefix("topic://");
             }
             getConfiguration().setConnectionFactory(connectionFactory);
-        } else if (host != null || port != null || getUsername() != null || getPassword() != null || useTopicPrefix != null
-                || useSsl != null) {
+        } else if (getConfiguration().getConnectionFactory() == null
+                && (host != null || port != null || getUsername() != null || getPassword() != null || useTopicPrefix != null
+                        || useSsl != null)) {
             StringBuilder sb = new StringBuilder();
             sb.append(useSsl == Boolean.TRUE ? "amqps://" : "amqp://");
             sb.append(host == null ? AMQP_DEFAULT_HOST : host).append(":").append(port == null ? AMQP_DEFAULT_PORT : port);
             if (useSsl == Boolean.TRUE) {
-                sb.append("?transport.trustStoreLocation=").append(trustStoreLocation == null ? "" : trustStoreLocation);
-                sb.append("&transport.trustStoreType=").append(trustStoreType);
-                sb.append("&transport.trustStorePassword=").append(trustStorePassword == null ? "" : trustStorePassword);
-                sb.append("&transport.keyStoreLocation=").append(keyStoreLocation == null ? "" : keyStoreLocation);
-                sb.append("&transport.keyStoreType=").append(keyStoreType);
-                sb.append("&transport.keyStorePassword=").append(keyStorePassword == null ? "" : keyStorePassword);
+                boolean first = true;
+                if (trustStoreLocation != null) {
+                    sb.append('?');
+                    first = false;
+                    sb.append("transport.trustStoreLocation=").append(urlEncode(trustStoreLocation));
+                    sb.append("&transport.trustStoreType=").append(urlEncode(trustStoreType));
+                    if (trustStorePassword != null) {
+                        sb.append("&transport.trustStorePassword=").append(urlEncode(trustStorePassword));
+                    }
+                }
+                if (keyStoreLocation != null) {
+                    sb.append(first ? '?' : '&');
+                    sb.append("transport.keyStoreLocation=").append(urlEncode(keyStoreLocation));
+                    sb.append("&transport.keyStoreType=").append(urlEncode(keyStoreType));
+                    if (keyStorePassword != null) {
+                        sb.append("&transport.keyStorePassword=").append(urlEncode(keyStorePassword));
+                    }
+                }
             }
             JmsConnectionFactory connectionFactory
                     = new JmsConnectionFactory(getUsername(), getPassword(), sb.toString());
@@ -281,5 +296,9 @@ public class AMQPComponent extends JmsComponent {
 
     public void setTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = trustStorePassword;
+    }
+
+    private static String urlEncode(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 }

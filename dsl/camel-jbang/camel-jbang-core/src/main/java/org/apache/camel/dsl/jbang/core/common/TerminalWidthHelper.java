@@ -16,20 +16,28 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Helper for detecting the terminal width to adapt table and command output.
  *
  * <p>
- * Uses JLine to query the actual terminal size. Falls back to a default width when the terminal size cannot be
- * determined (e.g., when output is piped or redirected).
+ * Uses the {@code COLUMNS} environment variable, {@code stty size} (POSIX) or {@code mode con} (Windows) to detect the
+ * terminal width. Falls back to a default width when the terminal size cannot be determined (e.g., when output is piped
+ * or redirected).
+ *
+ * <p>
+ * Avoids using JLine's {@code TerminalBuilder} for width detection because it sends escape sequence queries (DA1, CPR)
+ * to the terminal that can leak into the shell output when the terminal is closed before responses arrive.
  */
 public final class TerminalWidthHelper {
 
     private static final int DEFAULT_WIDTH = 120;
     private static final int MIN_WIDTH = 40;
+
+    private static final Pattern INTEGER = Pattern.compile("\\d+");
 
     private TerminalWidthHelper() {
     }
@@ -38,22 +46,74 @@ public final class TerminalWidthHelper {
      * Returns the current terminal width in columns.
      *
      * <p>
-     * Attempts to detect the terminal width using JLine. Returns {@value #DEFAULT_WIDTH} if detection fails or if the
-     * output is not connected to a terminal.
+     * Tries the {@code COLUMNS} environment variable first, then {@code stty size} on POSIX or {@code mode con} on
+     * Windows. Returns {@value #DEFAULT_WIDTH} if detection fails or if the output is not connected to a terminal.
      */
     public static int getTerminalWidth() {
-        try (Terminal terminal = TerminalBuilder.builder()
-                .system(true)
-                .dumb(true)
-                .build()) {
-            int width = terminal.getWidth();
-            if (width > 0) {
-                return Math.max(width, MIN_WIDTH);
+        // Try COLUMNS env var first (set by most shells)
+        String cols = System.getenv("COLUMNS");
+        if (cols != null) {
+            try {
+                int w = Integer.parseInt(cols.trim());
+                if (w > 0) {
+                    return Math.max(w, MIN_WIDTH);
+                }
+            } catch (NumberFormatException e) {
+                // ignore
             }
-        } catch (Exception e) {
-            // ignore
+        }
+        // Fall back to an OS native command that reads the terminal size without escape sequences
+        int w = isWindows()
+                ? readWidthFromCommand("cmd", "/c", "mode", "con")
+                : readWidthFromCommand("stty", "size");
+        if (w > 0) {
+            return Math.max(w, MIN_WIDTH);
         }
         return DEFAULT_WIDTH;
+    }
+
+    private static boolean isWindows() {
+        return System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("windows");
+    }
+
+    private static int readWidthFromCommand(String... command) {
+        try {
+            Process p = new ProcessBuilder(command)
+                    .redirectInput(ProcessBuilder.Redirect.INHERIT)
+                    .start();
+            String output = new String(p.getInputStream().readAllBytes());
+            p.waitFor();
+            return parseColumns(output);
+        } catch (Exception e) {
+            // ignore — command not available (e.g. stty/mode missing)
+            return -1;
+        }
+    }
+
+    /**
+     * Parses the column count from the output of {@code stty size} ("rows cols") or Windows {@code mode con} (a
+     * multi-line "Lines: N / Columns: N" block). Both place the column count as the <b>second</b> integer in the
+     * output, so it is parsed positionally rather than by label to survive localized Windows output where the
+     * {@code Columns:} label is translated.
+     *
+     * @param  output the raw command output
+     * @return        the column count, or {@code -1} if it cannot be determined
+     */
+    static int parseColumns(String output) {
+        if (output == null) {
+            return -1;
+        }
+        Matcher m = INTEGER.matcher(output);
+        Integer first = null;
+        while (m.find()) {
+            int value = Integer.parseInt(m.group());
+            if (first == null) {
+                first = value;
+            } else {
+                return value;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -73,6 +133,23 @@ public final class TerminalWidthHelper {
             int minFlexWidth, int maxFlexWidth) {
         int available = terminalWidth - fixedColumnsWidth - borderOverhead;
         return Math.max(minFlexWidth, Math.min(maxFlexWidth, available));
+    }
+
+    /**
+     * Computes the width for the last column so the table fills the terminal width. Unlike
+     * {@link #flexWidth(int, int, int, int, int)} there is no upper cap: the column grows all the way to the terminal
+     * edge.
+     *
+     * @param  terminalWidth     total terminal width in columns
+     * @param  fixedColumnsWidth sum of the (actual) widths of all other columns
+     * @param  borderOverhead    overhead from table borders and padding (use {@link #noBorderOverhead(int)} or
+     *                           {@link #fancyBorderOverhead(int)})
+     * @param  minWidth          minimum width for the last column (used when terminal is narrow)
+     * @return                   the computed width for the last column
+     */
+    public static int fillWidth(
+            int terminalWidth, int fixedColumnsWidth, int borderOverhead, int minWidth) {
+        return Math.max(minWidth, terminalWidth - fixedColumnsWidth - borderOverhead);
     }
 
     /**
@@ -98,10 +175,11 @@ public final class TerminalWidthHelper {
     }
 
     /**
-     * Border overhead for NO_BORDERS tables: 2 spaces between each column pair.
+     * Border overhead for NO_BORDERS tables. AsciiTable pads every column with one leading and one trailing space (no
+     * separator characters), so the overhead is exactly {@code 2 * columnCount} regardless of the number of columns.
      */
     public static int noBorderOverhead(int columnCount) {
-        return (columnCount - 1) * 2;
+        return columnCount * 2;
     }
 
     /**

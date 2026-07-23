@@ -9,7 +9,7 @@ NOTE: Both unit testing and integration testing are essential in software develo
 == Citrus Test Framework
 
 As an example of writing integration tests for Camel applications you can use the
-https://citfrusframework.org[Citrus] test framework.
+https://citrusframework.org[Citrus] test framework.
 
 Citrus is an Open Source Java testing framework with focus on integration testing and messaging.
 
@@ -25,12 +25,12 @@ The following sections might be interesting to explore for Camel developers and 
 | https://citrusframework.org/citrus/reference/html/#apache-camel[Citrus & Camel routes] | Start and stop Camel routes as part of the test.
 | https://citrusframework.org/citrus/reference/html/#camel-infra[Citrus & Camel test infra] | Start and stop Camel test infrastructure services as part of the Citrus test.
 | https://citrusframework.org/citrus/reference/html/#camel-processor-support[Citrus & Camel processors] | Use Camel processor, transformer and data format EIPs in Citrus tests.
-| https://citrusframework.org/citrus/reference/html/#apache-camel[Citrus & Camel JBang] | Run Camel integrations with JBang as part of a test.
+| https://citrusframework.org/citrus/reference/html/#apache-camel[Citrus & Camel CLI] | Run Camel integrations with JBang as part of a test.
 |=======================================================================
 
-TIP: Citrus provides a good integration with https://www.jbang.dev[JBang] and Camel JBang.
-This means you can use Citrus from the very beginning for writing automated tests also in the prototyping phase with Camel JBang.
-Read about it in the chapter xref:camel-jbang-test.adoc[Camel JBang test plugin].
+TIP: Citrus provides a good integration with https://www.jbang.dev[JBang] and Camel CLI.
+This means you can use Citrus from the very beginning for writing automated tests also in the prototyping phase with Camel CLI.
+Read about it in the chapter xref:camel-jbang-test.adoc[Camel CLI test plugin].
 
 Citrus integrates with Quarkus and Spring Boot so you can write the tests on top of known concepts and libraries.
 You can choose from a set of supported test engines such as JUnit Jupiter to run the tests as part of the build lifecycle or from your favorite IDE.

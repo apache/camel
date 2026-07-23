@@ -19,7 +19,6 @@ package org.apache.camel.processor.saga;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.saga.CamelSagaCoordinator;
@@ -31,9 +30,9 @@ import org.apache.camel.saga.CamelSagaStep;
  */
 public class RequiredSagaProcessor extends SagaProcessor {
 
-    public RequiredSagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
+    public RequiredSagaProcessor(Processor childProcessor, CamelSagaService sagaService,
                                  SagaCompletionMode completionMode, CamelSagaStep step) {
-        super(camelContext, childProcessor, sagaService, completionMode, step);
+        super(childProcessor, sagaService, completionMode, step);
     }
 
     @Override

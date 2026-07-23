@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.jackson.avro.transform;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
 import org.apache.avro.NameValidator;
 import org.apache.avro.Schema;
@@ -88,5 +91,45 @@ class AvroSchemaResolverTest {
         Assertions.assertEquals(AvroSchema.class, exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
         Assertions.assertEquals(SchemaType.AVRO.type(), exchange.getProperty(SchemaHelper.CONTENT_SCHEMA_TYPE));
         Assertions.assertEquals(Person.class.getName(), exchange.getProperty(SchemaHelper.CONTENT_CLASS));
+    }
+
+    @Test
+    void shouldDecodeUrlEncodedSchemaFromSetter() throws Exception {
+        // CAMEL-23534: Schema properties are URL-encoded when passed from Pipe to Kamelet
+        String schemaString = """
+                {
+                  "type": "record",
+                  "name": "Person",
+                  "fields": [
+                    {"name": "name", "type": "string"},
+                    {"name": "age", "type": "int"}
+                  ]
+                }
+                """;
+
+        // Simulate URL encoding that happens when properties are passed from Pipe to Kamelet
+        String urlEncodedSchema = URLEncoder.encode(schemaString, StandardCharsets.UTF_8);
+
+        // The encoded schema should contain URL-encoded characters like %22 for ", %7B for {, etc.
+        Assertions.assertTrue(urlEncodedSchema.contains("%22"), "Schema should be URL-encoded");
+        Assertions.assertTrue(urlEncodedSchema.contains("%7B"), "Schema should be URL-encoded");
+
+        // Create resolver and set the URL-encoded schema via the setter method
+        AvroSchemaResolver schemaResolver = new AvroSchemaResolver();
+
+        // This should not throw an exception - the resolver should decode the schema
+        Assertions.assertDoesNotThrow(() -> schemaResolver.setSchema(urlEncodedSchema),
+                "URL-encoded schema should be decoded and parsed successfully");
+
+        // Verify the schema was parsed correctly
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
+        exchange.getMessage().setBody(person);
+
+        schemaResolver.process(exchange);
+
+        Assertions.assertNotNull(exchange.getProperty(SchemaHelper.CONTENT_SCHEMA));
+        Assertions.assertEquals(AvroSchema.class, exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
+        Assertions.assertEquals(SchemaType.AVRO.type(), exchange.getProperty(SchemaHelper.CONTENT_SCHEMA_TYPE));
     }
 }

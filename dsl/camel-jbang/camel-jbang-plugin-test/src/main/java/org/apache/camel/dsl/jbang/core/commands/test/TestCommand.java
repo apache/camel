@@ -31,6 +31,7 @@ public class TestCommand extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         // defaults to printing the help message
-        return new CommandLine(new CommandLine.HelpCommand()).execute();
+        new CommandLine(this).execute("--help");
+        return 0;
     }
 }

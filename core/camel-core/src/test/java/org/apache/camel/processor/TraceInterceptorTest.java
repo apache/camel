@@ -20,15 +20,24 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class TraceInterceptorTest extends ContextTestSupport {
+class TraceInterceptorTest extends ContextTestSupport {
 
     // START SNIPPET: e1
     @Test
-    public void testSendingSomeMessages() {
+    void testSendingSomeMessages() throws Exception {
+        MockEndpoint mockFoo = getMockEndpoint("mock:foo");
+        mockFoo.expectedMessageCount(2);
+
+        MockEndpoint mockBar = getMockEndpoint("mock:bar");
+        mockBar.expectedMessageCount(2);
+
         template.sendBodyAndHeader("direct:start", "Hello London", "to", "James");
         template.sendBodyAndHeader("direct:start", "This is Copenhagen calling", "from", "Claus");
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

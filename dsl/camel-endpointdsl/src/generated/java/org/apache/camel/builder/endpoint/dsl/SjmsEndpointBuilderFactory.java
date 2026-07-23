@@ -3286,7 +3286,7 @@ public interface SjmsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SjmsHeaderNameBuilder INSTANCE = new SjmsHeaderNameBuilder();
+        public static final SjmsHeaderNameBuilder INSTANCE = new SjmsHeaderNameBuilder();
 
         /**
          * DestinationName is a JMS queue or topic name. By default, the

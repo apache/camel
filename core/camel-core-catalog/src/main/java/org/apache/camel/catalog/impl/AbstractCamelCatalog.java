@@ -32,6 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -864,6 +865,60 @@ public abstract class AbstractCamelCatalog {
             return StringHelper.before(uri, ":");
         }
         return null;
+    }
+
+    public boolean matchEndpointIdentity(String uri1, String uri2) {
+        if (uri1 == null || uri2 == null) {
+            return false;
+        }
+        if (uri1.equals(uri2)) {
+            return true;
+        }
+
+        String scheme1 = endpointComponentName(uri1);
+        String scheme2 = endpointComponentName(uri2);
+        if (!Objects.equals(scheme1, scheme2)) {
+            return false;
+        }
+
+        String base1 = URISupport.stripQuery(uri1);
+        String base2 = URISupport.stripQuery(uri2);
+        if (!Objects.equals(base1, base2)) {
+            return false;
+        }
+
+        ComponentModel model = componentModel(scheme1);
+        if (model == null) {
+            return true;
+        }
+
+        List<String> identityNames = model.getEndpointOptions().stream()
+                .filter(BaseOptionModel::isEndpointIdentity)
+                .map(BaseOptionModel::getName)
+                .toList();
+        if (identityNames.isEmpty()) {
+            return true;
+        }
+
+        Map<String, Object> params1;
+        Map<String, Object> params2;
+        try {
+            String q1 = URISupport.extractQuery(uri1);
+            String q2 = URISupport.extractQuery(uri2);
+            params1 = q1 != null ? URISupport.parseQuery(q1) : Map.of();
+            params2 = q2 != null ? URISupport.parseQuery(q2) : Map.of();
+        } catch (URISyntaxException e) {
+            return false;
+        }
+
+        for (String name : identityNames) {
+            Object v1 = params1.get(name);
+            Object v2 = params2.get(name);
+            if (!Objects.equals(v1, v2)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) {

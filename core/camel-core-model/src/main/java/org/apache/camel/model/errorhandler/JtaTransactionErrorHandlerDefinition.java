@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * JTA based transactional error handler (requires camel-jta).
  */
-@Metadata(label = "configuration,error")
+@Metadata(label = "configuration,error,errorhandling",
+          description = "Transactional error handler using JTA (Java Transaction API) that marks the transaction for rollback on failure")
 @XmlRootElement(name = "jtaTransactionErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JtaTransactionErrorHandlerDefinition extends TransactionErrorHandlerDefinition {

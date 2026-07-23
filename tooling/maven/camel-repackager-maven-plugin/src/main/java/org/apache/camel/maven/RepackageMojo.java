@@ -18,8 +18,10 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.attribute.FileTime;
 import java.util.Set;
 
+import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -47,7 +49,7 @@ public class RepackageMojo extends AbstractMojo {
      * The Maven project.
      */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
+    protected MavenProject project;
 
     /**
      * The source JAR file to repackage. If not specified, uses the project's main artifact.
@@ -59,25 +61,31 @@ public class RepackageMojo extends AbstractMojo {
      * The main class to use for the executable JAR.
      */
     @Parameter(required = true)
-    private String mainClass;
+    protected String mainClass;
 
     /**
      * The output directory for the repackaged JAR.
      */
     @Parameter(defaultValue = "${project.build.directory}")
-    private File outputDirectory;
+    protected File outputDirectory;
 
     /**
      * The final name of the repackaged JAR (without extension).
      */
     @Parameter(defaultValue = "${project.build.finalName}")
-    private String finalName;
+    protected String finalName;
 
     /**
      * Whether to backup the source JAR.
      */
     @Parameter(defaultValue = "true")
-    private boolean backupSource;
+    protected boolean backupSource;
+
+    /**
+     * Timestamp for reproducible output, either formatted as ISO-8601 or as seconds since the epoch.
+     */
+    @Parameter(defaultValue = "${project.build.outputTimestamp}")
+    protected String outputTimestamp;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -94,13 +102,28 @@ public class RepackageMojo extends AbstractMojo {
             repackager.setMainClass(mainClass);
 
             File targetFile = getTargetFile();
-            repackager.repackage(targetFile, this::getLibraries);
+            // The last-modified time drives both halves of a reproducible JAR: it pins every entry's
+            // timestamp, and a non-null value additionally switches BOOT-INF/lib from insertion order
+            // (which follows the dependency set's iteration order) to a sorted map. Omitting it makes
+            // consecutive builds of the same source differ, which in turn breaks the SHA-256 published
+            // for the launcher distribution.
+            repackager.repackage(targetFile, this::getLibraries, parseOutputTimestamp(outputTimestamp));
 
             getLog().info("Successfully created self-executing JAR: " + targetFile);
 
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to repackage JAR", e);
         }
+    }
+
+    /**
+     * Resolves the configured {@code project.build.outputTimestamp} into the last-modified time to stamp on the
+     * repackaged JAR, or {@code null} when reproducible output is not configured.
+     */
+    static FileTime parseOutputTimestamp(String outputTimestamp) {
+        return MavenArchiver.parseBuildOutputTimestamp(outputTimestamp)
+                .map(FileTime::from)
+                .orElse(null);
     }
 
     private File getSourceJar() {
@@ -129,7 +152,14 @@ public class RepackageMojo extends AbstractMojo {
         }
     }
 
-    private boolean includeArtifact(Artifact artifact) {
+    boolean includeArtifact(Artifact artifact) {
+        // Only jar-type artifacts are valid Spring Boot loader libraries. Non-jar artifacts
+        // (e.g. the native camel-exe:exe bootstrap, which camel-launcher depends on purely to
+        // stage bin/camel-x64.exe and bin/camel-arm64.exe via the assembly descriptor) must never
+        // be embedded in BOOT-INF/lib.
+        if (!"jar".equals(artifact.getType())) {
+            return false;
+        }
         String scope = artifact.getScope();
         // Include compile and runtime dependencies
         return Artifact.SCOPE_COMPILE.equals(scope) ||

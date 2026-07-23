@@ -1,0 +1,173 @@
+= MINA SFTP Migration from JSch
+:tabs-sync-option:
+
+xref:ROOT:mina-sftp-component.adoc[Back to MINA SFTP Component]
+
+Users migrating from the JSch-based `sftp` component can switch by changing only the URI scheme from `sftp://` to `mina-sftp://`:
+
+[source,java]
+----
+// Before (JSch)
+from("sftp://user@host/path?password=secret").to("file:local");
+
+// After (MINA SSHD)
+from("mina-sftp://user@host/path?password=secret").to("file:local");
+----
+
+All standard configuration options remain the same for supported features.
+
+== Features Not Supported
+
+The following JSch features are *not* supported by mina-sftp:
+
+* **Proxy support**: HTTP proxy, SOCKS4, SOCKS5 proxy connections
+* **GSSAPI/Kerberos authentication**
+
+If you require these features, continue using the JSch-based `sftp` component. Configuring an unsupported feature throws a clear error message.
+
+== Behavioral Differences
+
+[cols="2,3,3"]
+|===
+| Feature | mina-sftp (Apache MINA SSHD) | sftp (JSch)
+
+| **License**
+| Apache License 2.0
+| BSD-style license
+
+| **Compression**
+| Built-in, no extra JARs
+| Requires jsch-zlib JAR
+
+| **Ciphers**
+| Modern (ChaCha20-Poly1305, AES-GCM); validates before connection
+| Limited; errors at connection time
+
+| **Key Exchange**
+| Modern (Curve25519, ECDH); validates before connection
+| Limited; uses JSch.setConfig()
+
+| **Server Host Keys**
+| Modern (Ed25519, RSA-SHA2, ECDSA); validates before connection
+| Limited; uses session.setConfig()
+
+| **Known Hosts Port Matching**
+| Strict OpenSSH: `hostname` = port 22 only; `[hostname]:port` for non-standard
+| Lenient: `hostname` matches any port
+
+| **serverAliveCountMax=0**
+| Fire-and-forget: heartbeats sent, never terminates
+| Keep-alive disabled
+
+| **Host Key Verification**
+| MINA SSHD ServerKeyVerifier with certificate support
+| JSch HostKeyRepository
+
+| **Proxy Support**
+| Not supported
+| HTTP, SOCKS4, SOCKS5
+
+| **GSSAPI/Kerberos**
+| Not supported
+| Supported
+
+| **Logging**
+| SLF4J natively; configure via log4j/logback
+| Requires `loggingLevel` parameter to bridge
+|===
+
+=== Known Hosts Port Matching
+
+The mina-sftp component follows **strict OpenSSH semantics**: `hostname` matches port 22 only, while `[hostname]:port` matches non-standard ports.
+
+If your known_hosts contains `myserver.example.com ssh-rsa AAAA...`:
+* **sftp**: matches on **any port**
+* **mina-sftp**: matches on **port 22 only**
+
+For non-standard ports, use: `[myserver.example.com]:2222 ssh-rsa AAAA...`
+
+== Migration Checklist
+
+. **URI Scheme**: Change `sftp://` to `mina-sftp://`
+. **Proxy Usage**: If using proxy, stay with `sftp`
+. **Kerberos/GSSAPI**: If using GSSAPI, stay with `sftp`
+. **Known Hosts on Non-Standard Ports**: Update entries to `[hostname]:port` format
+. **serverAliveCountMax**: If using `=0`, note behavioral difference
+. **Compression**: Remove manual zlib JAR additions
+. **Deprecated Parameters**: Remove `loggingLevel`, `serverMessageLoggingLevel`, `existDirCheckUsingLs` (see <<Deprecated JSch Parameters>>)
+. **Logging**: Configure via log4j/logback instead of URI parameters (see <<Logging Configuration>>)
+. **Test Authentication**: Verify public key and password work correctly
+. **Test Host Key Verification**: Verify known_hosts entries match
+
+== Deprecated JSch Parameters
+
+These JSch parameters are accepted for backward compatibility but ignored with a deprecation warning:
+
+[cols="2,3,2"]
+|===
+| Parameter | Description | Recommendation
+
+| `existDirCheckUsingLs`
+| JSch workaround for Windows. MINA SSHD uses `stat()`.
+| Remove from URI
+
+| `jschLoggingLevel`
+| Controlled JSch logging verbosity.
+| Configure via log4j/logback
+
+| `serverMessageLoggingLevel`
+| Controlled SSH server message logging.
+| Configure via log4j/logback
+|===
+
+[source,java]
+----
+// Before (sftp with JSch-specific parameters)
+from("sftp://user@host/path?existDirCheckUsingLs=false&jschLoggingLevel=WARN")
+
+// After (mina-sftp) - remove JSch-specific parameters
+from("mina-sftp://user@host/path")
+----
+
+== Logging Configuration
+
+Apache MINA SSHD uses SLF4J natively — no logging parameters needed in the URI. Configure your logging framework directly:
+
+[source,properties]
+----
+# log4j.properties - common configurations
+log4j.logger.org.apache.sshd=WARN           # production
+log4j.logger.org.apache.sshd.client=DEBUG    # debug connections
+log4j.logger.org.apache.sshd.client.auth=DEBUG  # debug authentication
+log4j.logger.org.apache.sshd.sftp=DEBUG      # debug file transfers
+----
+
+[source,xml]
+----
+<!-- logback.xml -->
+<configuration>
+    <logger name="org.apache.sshd" level="WARN"/>
+    <logger name="org.apache.sshd.client.auth" level="DEBUG"/>
+    <logger name="org.apache.sshd.sftp" level="DEBUG"/>
+</configuration>
+----
+
+[cols="2,3"]
+|===
+| Scenario | Logger
+
+| Reduce production noise
+| `org.apache.sshd=WARN`
+
+| Debug connections
+| `org.apache.sshd.client=DEBUG`
+
+| Debug authentication
+| `org.apache.sshd.client.auth=DEBUG`
+
+| Debug file transfers
+| `org.apache.sshd.sftp=DEBUG`
+
+| Debug host key verification
+| `org.apache.sshd.client.keyverifier=DEBUG`
+|===

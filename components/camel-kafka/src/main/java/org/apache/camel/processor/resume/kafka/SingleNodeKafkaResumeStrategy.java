@@ -43,6 +43,7 @@ import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.kafka.clients.consumer.CloseOptions;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -208,8 +209,6 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
             subscribe(consumer);
 
             LOG.debug("Loading records from topic {}", resumeStrategyConfiguration.getTopic());
-            consumer.subscribe(Collections.singletonList(resumeStrategyConfiguration.getTopic()));
-
             poll(consumer, latch);
         } catch (WakeupException e) {
             LOG.info("Kafka consumer was interrupted during a blocking call");
@@ -219,7 +218,7 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
             if (consumer != null) {
                 consumer.unsubscribe();
                 try {
-                    consumer.close(Duration.ofSeconds(5));
+                    consumer.close(CloseOptions.timeout(Duration.ofSeconds(5)));
                 } catch (Exception e) {
                     LOG.warn("Error closing the consumer: {} (this error will be ignored)", e.getMessage(), e);
                 }
@@ -357,7 +356,7 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
 
     @Override
     public ResumeAdapter getAdapter() {
-        if (adapter == null) {
+        if (initLatch != null) {
             waitForInitialization();
         }
 
@@ -404,7 +403,9 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
         } catch (Exception e) {
             LOG.warn("Error closing the Kafka producer: {} (this error will be ignored)", e.getMessage(), e);
         } finally {
-            writeLock.unlock();
+            if (writeLock.isHeldByCurrentThread()) {
+                writeLock.unlock();
+            }
         }
 
         try {

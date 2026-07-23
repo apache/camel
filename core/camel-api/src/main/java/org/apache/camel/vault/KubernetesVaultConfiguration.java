@@ -17,16 +17,19 @@
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to Kubernetes Secrets
+ *
+ * @since 4.8
  */
 public class KubernetesVaultConfiguration extends VaultConfiguration {
 
     @Metadata
     private boolean refreshEnabled;
     @Metadata
-    private String secrets;
+    private @Nullable String secrets;
 
     public boolean isRefreshEnabled() {
         return refreshEnabled;
@@ -39,14 +42,14 @@ public class KubernetesVaultConfiguration extends VaultConfiguration {
         this.refreshEnabled = refreshEnabled;
     }
 
-    public String getSecrets() {
+    public @Nullable String getSecrets() {
         return secrets;
     }
 
     /**
      * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
      */
-    public void setSecrets(String secrets) {
+    public void setSecrets(@Nullable String secrets) {
         this.secrets = secrets;
     }
 }

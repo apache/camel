@@ -23,6 +23,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.replicatedmap.ReplicatedMap;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -56,9 +57,18 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
     }
 
     @BeforeEach
-    public void resetState() {
+    public void resetState() throws Exception {
+        // Stop routes to deregister the Hazelcast entry listener before clearing
+        // the map. This prevents async REMOVED events from clear() from bleeding
+        // into the next test's mock expectations.
+        for (Route route : context.getRoutes()) {
+            context.getRouteController().stopRoute(route.getRouteId());
+        }
         map.clear();
         MockEndpoint.resetMocks(context);
+        for (Route route : context.getRoutes()) {
+            context.getRouteController().startRoute(route.getRouteId());
+        }
     }
 
     @Override
@@ -74,7 +84,7 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
         out.expectedMessageCount(1);
 
         map.put("4711", "my-foo");
-        MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.ADDED);
     }
@@ -83,21 +93,33 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
      * mail from talip (hazelcast) on 21.02.2011: MultiMap doesn't support eviction yet. We can and should add this feature.
      */
     @Test
-    public void testEvict() {
+    public void testEvict() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:evicted");
         out.expectedMessageCount(1);
         map.put("4711", "my-foo", 100, TimeUnit.MILLISECONDS);
-        Awaitility.await().atMost(30000, TimeUnit.MILLISECONDS).untilAsserted(
-                () -> MockEndpoint.assertIsSatisfied(context));
+        MockEndpoint.assertIsSatisfied(context, 30000, TimeUnit.MILLISECONDS);
     }
 
     @Test
     public void testRemove() throws InterruptedException {
-        MockEndpoint out = getMockEndpoint("mock:removed");
-        out.expectedMessageCount(1);
         map.put("4711", "my-foo");
+
+        // Wait for the ADDED event to be fully processed. Since events for
+        // key "4711" are dispatched in partition order within Hazelcast's
+        // event system, any stale REMOVED events from resetState()'s clear()
+        // are guaranteed to have been delivered by the time we see the ADDED.
+        MockEndpoint added = getMockEndpoint("mock:added");
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> added.getReceivedCounter() >= 1);
+
+        // Reset mock:removed to discard any stale REMOVED events that leaked
+        // from clear(), then set the expectation for the test's own remove.
+        MockEndpoint out = getMockEndpoint("mock:removed");
+        out.reset();
+        out.expectedMessageCount(1);
+
         map.remove("4711");
-        MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.REMOVED);
     }
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.bedrock.agentruntime.client;
 
 import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.bedrock.agentruntime.BedrockAgentRuntimeConfiguration;
+import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
 
 /**
@@ -38,5 +39,19 @@ public final class BedrockAgentRuntimeClientFactory {
         return AwsClientBuilderUtil.buildClient(
                 configuration,
                 BedrockAgentRuntimeClient::builder);
+    }
+
+    /**
+     * Create a BedrockAgentRuntimeAsyncClient based on configuration. The async client is required for event-stream
+     * operations such as invokeFlow.
+     *
+     * @param  configuration The Bedrock Agent Runtime configuration
+     * @return               Configured BedrockAgentRuntimeAsyncClient
+     */
+    public static BedrockAgentRuntimeAsyncClient getBedrockAgentRuntimeAsyncClient(
+            BedrockAgentRuntimeConfiguration configuration) {
+        return AwsClientBuilderUtil.buildAsyncClient(
+                configuration,
+                BedrockAgentRuntimeAsyncClient::builder);
     }
 }

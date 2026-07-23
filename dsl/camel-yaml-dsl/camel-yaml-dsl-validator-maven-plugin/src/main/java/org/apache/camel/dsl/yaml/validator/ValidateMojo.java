@@ -45,7 +45,7 @@ public class ValidateMojo extends AbstractMojo {
 
     private final YamlValidator validator = new YamlValidator();
 
-    private static final String IGNORE_FILE = "application.yml";
+    private static final String IGNORE_FILE = "application";
 
     /**
      * The maven project.
@@ -84,6 +84,12 @@ public class ValidateMojo extends AbstractMojo {
     private boolean includeTest;
 
     /**
+     * Additional directories to scan for YAML files. By default, only the project's resource directories are scanned.
+     */
+    @Parameter(property = "camel.directories")
+    private List<String> directories;
+
+    /**
      * To filter the names of YAML files to only include files matching any of the given list of patterns (wildcard and
      * regular expression). Multiple values can be separated by comma.
      */
@@ -97,10 +103,7 @@ public class ValidateMojo extends AbstractMojo {
     @Parameter(property = "camel.excludes")
     private String excludes;
 
-    /**
-     * yamlFiles in memory cache, useful for multi modules maven projects
-     */
-    private static final Set<File> yamlFiles = new LinkedHashSet<>();
+    private final Set<File> yamlFiles = new LinkedHashSet<>();
 
     private final RepositorySystem repositorySystem;
 
@@ -121,7 +124,7 @@ public class ValidateMojo extends AbstractMojo {
 
         // find all XML routes
         String ext = onlyCamelYamlExt ? ".camel.yaml" : ".yaml";
-        findYamlRouters(yamlFiles, includeTest, ext, project);
+        findYamlRouters(yamlFiles, includeTest, ext, directories, project);
         getLog().debug("Found " + yamlFiles.size() + " YAML files ...");
 
         Map<File, List<Error>> reports = new LinkedHashMap<>();
@@ -264,13 +267,24 @@ public class ValidateMojo extends AbstractMojo {
         return answer;
     }
 
-    private static void findYamlRouters(Set<File> yamlFiles, boolean includeTest, String ext, MavenProject project) {
+    static void findYamlRouters(
+            Set<File> yamlFiles, boolean includeTest, String ext,
+            List<String> directories, MavenProject project) {
         for (Resource dir : project.getResources()) {
             finYamlFiles(new File(dir.getDirectory()), ext, yamlFiles);
         }
         if (includeTest) {
             for (Resource dir : project.getTestResources()) {
                 finYamlFiles(new File(dir.getDirectory()), ext, yamlFiles);
+            }
+        }
+        if (directories != null) {
+            for (String dir : directories) {
+                File d = new File(dir);
+                if (!d.isAbsolute()) {
+                    d = new File(project.getBasedir(), dir);
+                }
+                finYamlFiles(d, ext, yamlFiles);
             }
         }
     }

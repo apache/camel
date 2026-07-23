@@ -21,9 +21,10 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(25);
+        Set<String> props = new HashSet<>(26);
         props.add("allowResponseAttachmentOverride");
         props.add("allowResponseHeaderOverride");
         props.add("bridgeErrorHandler");
@@ -34,6 +35,7 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
         props.add("expression");
         props.add("faultAction");
         props.add("faultTo");
+        props.add("headerFilterStrategy");
         props.add("lazyStartProducer");
         props.add("lookupKey");
         props.add("messageFactory");
@@ -51,6 +53,7 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
         props.add("wsAddressingAction");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 
@@ -81,6 +84,11 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> endpointIdentityPropertyNames() {
+        return ENDPOINT_IDENTITY_PROPERTY_NAMES;
     }
 
     @Override

@@ -25,24 +25,23 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SpringRouteNoOutputTest extends SpringTestSupport {
+class SpringRouteNoOutputTest extends SpringTestSupport {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        createApplicationContext();
+        // Do NOT call super.setUp() — this test validates that context creation fails
     }
 
     @Test
-    public void testRouteNoOutput() {
-        // noop
+    void testRouteNoOutput() {
+        assertThrows(RuntimeCamelException.class, () -> {
+            new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringRouteNoOutputTest.xml");
+        });
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        assertThrows(RuntimeCamelException.class, () -> {
-            new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringRouteNoOutputTest.xml");
-        });
         return null;
     }
 }

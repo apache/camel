@@ -31,7 +31,7 @@ import org.knowm.xchange.dto.account.Wallet;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-@Disabled("See CAMEL-19751 before enabling")
+@Disabled("CAMEL-19751 - tests hit live Binance API during exchange init, WireMock does not cover futures endpoint")
 public class AccountProducerTest extends XChangeTestSupport {
 
     @Override

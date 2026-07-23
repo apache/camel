@@ -60,6 +60,7 @@ public class RouteBasedDevConsoleTest extends AbstractDevConsoleTest {
                 Arguments.of("route-dump", "routes"),
                 Arguments.of("route-group", "routeGroups"),
                 Arguments.of("route-structure", "routes"),
+                Arguments.of("route-topology", "nodes"),
                 Arguments.of("source", "routes"));
     }
 

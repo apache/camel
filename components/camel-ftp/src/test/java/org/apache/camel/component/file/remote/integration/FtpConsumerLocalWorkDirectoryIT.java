@@ -91,7 +91,7 @@ public class FtpConsumerLocalWorkDirectoryIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).routeId("myRoute").noAutoStartup().process(new Processor() {
+                from(getFtpUrl()).routeId("myRoute").autoStartup(false).process(new Processor() {
                     public void process(Exchange exchange) {
                         File body = exchange.getIn().getBody(File.class);
                         assertNotNull(body);

@@ -52,24 +52,26 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long snapshotLockTimeoutMs = 10000;
-    @UriParam(label = LABEL_NAME, defaultValue = "1000000")
-    private long logMiningScnGapDetectionGapSizeMin = 1000000;
     @UriParam(label = LABEL_NAME)
     private String databaseDbname;
     @UriParam(label = LABEL_NAME, defaultValue = "disabled")
     private String snapshotTablesOrderByRowCount = "disabled";
-    @UriParam(label = LABEL_NAME, defaultValue = "1s", javaType = "java.time.Duration")
-    private long logMiningSleepTimeDefaultMs = 1000;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean logMiningBufferMemoryLegacyTransactionStart = false;
     @UriParam(label = LABEL_NAME)
     private String snapshotSelectStatementOverrides;
-    @UriParam(label = LABEL_NAME, defaultValue = "20000")
-    private long logMiningBatchSizeIncrement = 20000;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long logMiningArchiveLogOnlyScnPollIntervalMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean logMiningRestartConnection = false;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean legacyDecimalHandlingStrategy = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean logMiningBufferTrackStartTimestamp = true;
+    @UriParam(label = LABEL_NAME, defaultValue = "1528")
+    private int secondaryPort = 1528;
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean logMiningBufferTrackUsername = true;
     @UriParam(label = LABEL_NAME)
     private String tableExcludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
@@ -90,8 +92,12 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String openlineageIntegrationConfigFilePath = "./openlineage.yml";
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long retriableRestartConnectorWaitMs = 10000;
+    @UriParam(label = LABEL_NAME, defaultValue = "primary")
+    private String captureMode = "primary";
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.relational.ConcurrentMapTableMappingStorage")
+    private String memoryManagementTablesClass = "io.debezium.relational.ConcurrentMapTableMappingStorage";
     @UriParam(label = LABEL_NAME, defaultValue = "online_catalog")
     private String logMiningStrategy = "online_catalog";
     @UriParam(label = LABEL_NAME, defaultValue = "4s", javaType = "java.time.Duration")
@@ -116,10 +122,14 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private long archiveLogHours = 0;
     @UriParam(label = LABEL_NAME)
     private String logMiningBufferEhcacheRollbacksConfig;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean logMiningBufferDeferredTransactionStart = false;
     @UriParam(label = LABEL_NAME)
     private String snapshotIncludeCollectionList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedStartStream = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean statisticsMetricsEnabled = true;
     @UriParam(label = LABEL_NAME)
     private String databasePdbName;
     @UriParam(label = LABEL_NAME, defaultValue = "LogMiner")
@@ -139,15 +149,21 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "1")
     private int snapshotMaxThreads = 1;
     @UriParam(label = LABEL_NAME)
+    private String secondaryDbname;
+    @UriParam(label = LABEL_NAME)
     private String notificationSinkTopicName;
     @UriParam(label = LABEL_NAME)
     private String snapshotModeCustomName;
+    @UriParam(label = LABEL_NAME, defaultValue = "1d", javaType = "java.time.Duration")
+    private long logMiningBufferDeferredTransactionRetentionMs = 86400000;
     @UriParam(label = LABEL_NAME, defaultValue = "none")
     private String logMiningQueryFilterMode = "none";
     @UriParam(label = LABEL_NAME, defaultValue = "none")
     private String schemaNameAdjustmentMode = "none";
-    @UriParam(label = LABEL_NAME, defaultValue = "20000")
-    private long logMiningBatchSizeDefault = 20000;
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.relational.ConcurrentMapTableMappingStorage")
+    private String memoryManagementSchemasClass = "io.debezium.relational.ConcurrentMapTableMappingStorage";
+    @UriParam(label = LABEL_NAME, defaultValue = "2")
+    private int logMiningLogCountMin = 2;
     @UriParam(label = LABEL_NAME)
     private String tableIncludeList;
     @UriParam(label = LABEL_NAME)
@@ -162,8 +178,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private int queryFetchSize = 10000;
     @UriParam(label = LABEL_NAME)
     private String logMiningBufferEhcacheGlobalConfig;
-    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
-    private long logMiningSleepTimeMinMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium_unavailable_value")
     private String unavailableValuePlaceholder = "__debezium_unavailable_value";
     @UriParam(label = LABEL_NAME)
@@ -190,8 +204,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String logMiningPathDictionary;
     @UriParam(label = LABEL_NAME)
     private String logMiningBufferInfinispanCacheSchemaChanges;
-    @UriParam(label = LABEL_NAME, defaultValue = "3s", javaType = "java.time.Duration")
-    private long logMiningSleepTimeMaxMs = 3000;
     @UriParam(label = LABEL_NAME)
     private String databaseUser;
     @UriParam(label = LABEL_NAME)
@@ -200,6 +212,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String incrementalSnapshotWatermarkingStrategy = "INSERT_INSERT";
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private int heartbeatIntervalMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean logMiningReadOnly = false;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedSnapshotOnSchemaError = false;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -213,12 +227,16 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     private String logMiningBufferEhcacheTransactionsConfig;
     @UriParam(label = LABEL_NAME)
+    private String secondaryHostname;
+    @UriParam(label = LABEL_NAME)
     private String logMiningBufferInfinispanCacheProcessedTransactions;
     @UriParam(label = LABEL_NAME, defaultValue = "-1")
     private int errorsMaxRetries = -1;
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String databasePassword;
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean logMiningBufferTrackCommitTimestamp = true;
     @UriParam(label = LABEL_NAME)
     private String logMiningBufferInfinispanCacheEvents;
     @UriParam(label = LABEL_NAME, defaultValue = "t")
@@ -227,16 +245,14 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String openlineageIntegrationJobDescription = "Debezium change data capture job";
     @UriParam(label = LABEL_NAME)
     private String archiveDestinationName;
-    @UriParam(label = LABEL_NAME, defaultValue = "20s", javaType = "java.time.Duration")
-    private long logMiningScnGapDetectionTimeIntervalMaxMs = 20000;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean extendedHeadersEnabled = true;
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME, defaultValue = "warn")
     private String guardrailCollectionsLimitAction = "warn";
-    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret")
-    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret";
+    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$")
+    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$";
     @UriParam(label = LABEL_NAME)
     private String racNodes;
     @UriParam(label = LABEL_NAME)
@@ -268,8 +284,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private int openlogreplicatorPort;
     @UriParam(label = LABEL_NAME)
     private String logMiningBufferEhcacheEventsConfig;
-    @UriParam(label = LABEL_NAME, defaultValue = "100000")
-    private long logMiningBatchSizeMax = 100000;
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean logMiningBufferTrackClientId = true;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long maxQueueSizeInBytes = 0;
     @UriParam(label = LABEL_NAME)
@@ -279,11 +295,11 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "adaptive")
     private String timePrecisionMode = "adaptive";
     @UriParam(label = LABEL_NAME)
+    private String secondaryUrl;
+    @UriParam(label = LABEL_NAME)
     private String postProcessors;
     @UriParam(label = LABEL_NAME, defaultValue = "1528")
     private int databasePort = 1528;
-    @UriParam(label = LABEL_NAME, defaultValue = "200ms", javaType = "java.time.Duration")
-    private long logMiningSleepTimeIncrementMs = 200;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.storage.kafka.history.KafkaSchemaHistory")
     private String schemaHistoryInternal = "io.debezium.storage.kafka.history.KafkaSchemaHistory";
     @UriParam(label = LABEL_NAME)
@@ -292,8 +308,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private long logMiningSessionMaxMs = 0;
     @UriParam(label = LABEL_NAME)
     private String databaseHostname;
-    @UriParam(label = LABEL_NAME, defaultValue = "1000")
-    private long logMiningBatchSizeMin = 1000;
     @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
     private long connectionValidationTimeoutMs = 60000;
 
@@ -452,8 +466,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The hostname the connector will use to connect and perform read-only
-     * operations for the the replica.
+     * The secondary Oracle instance where changes will be streamed
      */
     public void setLogMiningReadonlyHostname(String logMiningReadonlyHostname) {
         this.logMiningReadonlyHostname = logMiningReadonlyHostname;
@@ -545,21 +558,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Used for SCN gap detection, if the difference between current SCN and
-     * previous end SCN is bigger than this value, and the time difference of
-     * current SCN and previous end SCN is smaller than
-     * log.mining.scn.gap.detection.time.interval.max.ms, consider it a SCN gap.
-     */
-    public void setLogMiningScnGapDetectionGapSizeMin(
-            long logMiningScnGapDetectionGapSizeMin) {
-        this.logMiningScnGapDetectionGapSizeMin = logMiningScnGapDetectionGapSizeMin;
-    }
-
-    public long getLogMiningScnGapDetectionGapSizeMin() {
-        return logMiningScnGapDetectionGapSizeMin;
-    }
-
-    /**
      * The name of the database from which the connector should capture changes
      */
     public void setDatabaseDbname(String databaseDbname) {
@@ -586,16 +584,19 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The amount of time that the connector will sleep after reading data from
-     * redo/archive logs and before starting reading data again. Value is in
-     * milliseconds.
+     * Controls whether transaction start events are deferred when using
+     * buffered LogMiner. When enabled, transaction start events are stored in a
+     * lightweight metadata map. Transactions are only promoted to the
+     * transaction cache when a DML event is observed. The mining window is not
+     * pinned by transactions, allowing a block-by-block sliding window.
      */
-    public void setLogMiningSleepTimeDefaultMs(long logMiningSleepTimeDefaultMs) {
-        this.logMiningSleepTimeDefaultMs = logMiningSleepTimeDefaultMs;
+    public void setLogMiningBufferMemoryLegacyTransactionStart(
+            boolean logMiningBufferMemoryLegacyTransactionStart) {
+        this.logMiningBufferMemoryLegacyTransactionStart = logMiningBufferMemoryLegacyTransactionStart;
     }
 
-    public long getLogMiningSleepTimeDefaultMs() {
-        return logMiningSleepTimeDefaultMs;
+    public boolean isLogMiningBufferMemoryLegacyTransactionStart() {
+        return logMiningBufferMemoryLegacyTransactionStart;
     }
 
     /**
@@ -619,18 +620,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getSnapshotSelectStatementOverrides() {
         return snapshotSelectStatementOverrides;
-    }
-
-    /**
-     * Active batch size will be also increased/decreased by this amount for
-     * tuning connector throughput when needed.
-     */
-    public void setLogMiningBatchSizeIncrement(long logMiningBatchSizeIncrement) {
-        this.logMiningBatchSizeIncrement = logMiningBatchSizeIncrement;
-    }
-
-    public long getLogMiningBatchSizeIncrement() {
-        return logMiningBatchSizeIncrement;
     }
 
     /**
@@ -672,6 +661,50 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public boolean isLegacyDecimalHandlingStrategy() {
         return legacyDecimalHandlingStrategy;
+    }
+
+    /**
+     * This controls whether the 'START_TIMESTAMP' column values are tracked.
+     * When set to true (the default), the 'START_TIMESTAMP' values are buffered
+     * and provided in events when available. When set to false, the
+     * 'START_TIMESTAMP' column is excluded from the LogMiner query and its
+     * values are not buffered, reducing both the memory footprint and query
+     * bandwidth.
+     */
+    public void setLogMiningBufferTrackStartTimestamp(
+            boolean logMiningBufferTrackStartTimestamp) {
+        this.logMiningBufferTrackStartTimestamp = logMiningBufferTrackStartTimestamp;
+    }
+
+    public boolean isLogMiningBufferTrackStartTimestamp() {
+        return logMiningBufferTrackStartTimestamp;
+    }
+
+    /**
+     * The secondary Oracle instance port where changes will be streamed
+     */
+    public void setSecondaryPort(int secondaryPort) {
+        this.secondaryPort = secondaryPort;
+    }
+
+    public int getSecondaryPort() {
+        return secondaryPort;
+    }
+
+    /**
+     * This controls whether the 'USERNAME' column values are tracked. When set
+     * to true (the default), the 'USERNAME' values are buffered and provided in
+     * events when available. When set to false, the 'USERNAME' column is
+     * excluded from the LogMiner query and its values are not buffered,
+     * reducing both the memory footprint and query bandwidth.
+     */
+    public void setLogMiningBufferTrackUsername(
+            boolean logMiningBufferTrackUsername) {
+        this.logMiningBufferTrackUsername = logMiningBufferTrackUsername;
+    }
+
+    public boolean isLogMiningBufferTrackUsername() {
+        return logMiningBufferTrackUsername;
     }
 
     /**
@@ -818,6 +851,21 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specifies the capture mode used to capture streaming changes from
+     * Oracle'primary' (the default) captures changes from the primary,
+     * specified by database.* configurations, 'physical_standby' captures
+     * changes from a read-only physical standby, specified by secondary.*
+     * configurations.
+     */
+    public void setCaptureMode(String captureMode) {
+        this.captureMode = captureMode;
+    }
+
+    public String getCaptureMode() {
+        return captureMode;
+    }
+
+    /**
      * A delay period before a snapshot will begin, given in milliseconds.
      * Defaults to 0 ms.
      */
@@ -830,8 +878,29 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * There are strategies: Online catalog with faster mining but no captured
-     * DDL. Another - with data dictionary loaded into REDO LOG files
+     * The fully-qualified class name of the storage implementation for table
+     * metadata. The class must implement
+     * io.debezium.relational.TableMappingStorage<io.debezium.relational.Table>.
+     * Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for
+     * in-memory storage.
+     */
+    public void setMemoryManagementTablesClass(
+            String memoryManagementTablesClass) {
+        this.memoryManagementTablesClass = memoryManagementTablesClass;
+    }
+
+    public String getMemoryManagementTablesClass() {
+        return memoryManagementTablesClass;
+    }
+
+    /**
+     * Defines the mining strategy and LogMiner session characteristics:
+     * 'redo_log_catalog' writes the data dictionary to the redo logs, is
+     * deprecated and will be removed in 3.7, 'online_catalog' uses the existing
+     * data dictionary and operates faster than 'redo_log_catalog' but requires
+     * schema changes in lock-step, 'hybrid' uses the existing data dictionary,
+     * operates faster than 'redo_log_catalog', and supports interleaved schema
+     * changes.
      */
     public void setLogMiningStrategy(String logMiningStrategy) {
         this.logMiningStrategy = logMiningStrategy;
@@ -987,6 +1056,22 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Controls whether transaction start events are deferred when using
+     * buffered LogMiner. When enabled, transaction start events are stored in a
+     * lightweight metadata map. Transactions are only promoted to the
+     * transaction cache when a DML event is observed. The mining window is not
+     * pinned by transactions, allowing a block-by-block sliding window.
+     */
+    public void setLogMiningBufferDeferredTransactionStart(
+            boolean logMiningBufferDeferredTransactionStart) {
+        this.logMiningBufferDeferredTransactionStart = logMiningBufferDeferredTransactionStart;
+    }
+
+    public boolean isLogMiningBufferDeferredTransactionStart() {
+        return logMiningBufferDeferredTransactionStart;
+    }
+
+    /**
      * This setting must be set to specify a list of tables/collections whose
      * snapshot must be taken on creating or restarting the connector.
      */
@@ -1010,6 +1095,19 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public boolean isSnapshotModeConfigurationBasedStartStream() {
         return snapshotModeConfigurationBasedStartStream;
+    }
+
+    /**
+     * Enable to collect various kind of statistics, like latencies in record
+     * processing, and derived data like quantiles. By default collecting
+     * statistics is enabled.
+     */
+    public void setStatisticsMetricsEnabled(boolean statisticsMetricsEnabled) {
+        this.statisticsMetricsEnabled = statisticsMetricsEnabled;
+    }
+
+    public boolean isStatisticsMetricsEnabled() {
+        return statisticsMetricsEnabled;
     }
 
     /**
@@ -1141,6 +1239,17 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The secondary Oracle instance database name, if different from primary
+     */
+    public void setSecondaryDbname(String secondaryDbname) {
+        this.secondaryDbname = secondaryDbname;
+    }
+
+    public String getSecondaryDbname() {
+        return secondaryDbname;
+    }
+
+    /**
      * The name of the topic for the notifications. This is required in case
      * 'sink' is in the list of enabled channels
      */
@@ -1164,6 +1273,22 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getSnapshotModeCustomName() {
         return snapshotModeCustomName;
+    }
+
+    /**
+     * Duration in milliseconds to retain deferred transaction metadata for
+     * transactions that never emit a DML event. By default, deferred
+     * transaction metadata is retained for 24 hours. This is independent of
+     * log.mining.transaction.retention.ms which governs cached transactions
+     * with events.
+     */
+    public void setLogMiningBufferDeferredTransactionRetentionMs(
+            long logMiningBufferDeferredTransactionRetentionMs) {
+        this.logMiningBufferDeferredTransactionRetentionMs = logMiningBufferDeferredTransactionRetentionMs;
+    }
+
+    public long getLogMiningBufferDeferredTransactionRetentionMs() {
+        return logMiningBufferDeferredTransactionRetentionMs;
     }
 
     /**
@@ -1202,15 +1327,30 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The starting SCN interval size that the connector will use for reading
-     * data from redo/archive logs.
+     * The fully-qualified class name of the storage implementation for schema
+     * metadata. The class must implement
+     * io.debezium.relational.TableMappingStorage<io.debezium.relational.TableSchema>. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
      */
-    public void setLogMiningBatchSizeDefault(long logMiningBatchSizeDefault) {
-        this.logMiningBatchSizeDefault = logMiningBatchSizeDefault;
+    public void setMemoryManagementSchemasClass(
+            String memoryManagementSchemasClass) {
+        this.memoryManagementSchemasClass = memoryManagementSchemasClass;
     }
 
-    public long getLogMiningBatchSizeDefault() {
-        return logMiningBatchSizeDefault;
+    public String getMemoryManagementSchemasClass() {
+        return memoryManagementSchemasClass;
+    }
+
+    /**
+     * Specifies the minimum number of logs to mine per redo thread. Setting
+     * this to 0 disables the cap, and all available logs are mined in a single
+     * pass.
+     */
+    public void setLogMiningLogCountMin(int logMiningLogCountMin) {
+        this.logMiningLogCountMin = logMiningLogCountMin;
+    }
+
+    public int getLogMiningLogCountMin() {
+        return logMiningLogCountMin;
     }
 
     /**
@@ -1299,19 +1439,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getLogMiningBufferEhcacheGlobalConfig() {
         return logMiningBufferEhcacheGlobalConfig;
-    }
-
-    /**
-     * The minimum amount of time that the connector will sleep after reading
-     * data from redo/archive logs and before starting reading data again. Value
-     * is in milliseconds.
-     */
-    public void setLogMiningSleepTimeMinMs(long logMiningSleepTimeMinMs) {
-        this.logMiningSleepTimeMinMs = logMiningSleepTimeMinMs;
-    }
-
-    public long getLogMiningSleepTimeMinMs() {
-        return logMiningSleepTimeMinMs;
     }
 
     /**
@@ -1480,19 +1607,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The maximum amount of time that the connector will sleep after reading
-     * data from redo/archive logs and before starting reading data again. Value
-     * is in milliseconds.
-     */
-    public void setLogMiningSleepTimeMaxMs(long logMiningSleepTimeMaxMs) {
-        this.logMiningSleepTimeMaxMs = logMiningSleepTimeMaxMs;
-    }
-
-    public long getLogMiningSleepTimeMaxMs() {
-        return logMiningSleepTimeMaxMs;
-    }
-
-    /**
      * Name of the database user to be used when connecting to the database.
      */
     public void setDatabaseUser(String databaseUser) {
@@ -1545,6 +1659,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public int getHeartbeatIntervalMs() {
         return heartbeatIntervalMs;
+    }
+
+    /**
+     * When set to 'true', the connector will not attempt to flush the LGWR
+     * buffer to disk, allowing connecting to read-only databases.
+     */
+    public void setLogMiningReadOnly(boolean logMiningReadOnly) {
+        this.logMiningReadOnly = logMiningReadOnly;
+    }
+
+    public boolean isLogMiningReadOnly() {
+        return logMiningReadOnly;
     }
 
     /**
@@ -1628,6 +1754,17 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The secondary Oracle instance where changes will be streamed
+     */
+    public void setSecondaryHostname(String secondaryHostname) {
+        this.secondaryHostname = secondaryHostname;
+    }
+
+    public String getSecondaryHostname() {
+        return secondaryHostname;
+    }
+
+    /**
      * Specifies the XML configuration for the Infinispan
      * 'processed-transactions' cache
      */
@@ -1661,6 +1798,23 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabasePassword() {
         return databasePassword;
+    }
+
+    /**
+     * This controls whether the 'COMMIT_TIMESTAMP' column values are tracked.
+     * When set to true (the default), the 'COMMIT_TIMESTAMP' values are
+     * buffered and provided in events when available. When set to false, the
+     * 'COMMIT_TIMESTAMP' column is excluded from the LogMiner query and its
+     * values are not buffered, reducing both the memory footprint and query
+     * bandwidth.
+     */
+    public void setLogMiningBufferTrackCommitTimestamp(
+            boolean logMiningBufferTrackCommitTimestamp) {
+        this.logMiningBufferTrackCommitTimestamp = logMiningBufferTrackCommitTimestamp;
+    }
+
+    public boolean isLogMiningBufferTrackCommitTimestamp() {
+        return logMiningBufferTrackCommitTimestamp;
     }
 
     /**
@@ -1712,22 +1866,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getArchiveDestinationName() {
         return archiveDestinationName;
-    }
-
-    /**
-     * Used for SCN gap detection, if the difference between current SCN and
-     * previous end SCN is bigger than
-     * log.mining.scn.gap.detection.gap.size.min, and the time difference of
-     * current SCN and previous end SCN is smaller than  this value, consider it
-     * a SCN gap.
-     */
-    public void setLogMiningScnGapDetectionTimeIntervalMaxMs(
-            long logMiningScnGapDetectionTimeIntervalMaxMs) {
-        this.logMiningScnGapDetectionTimeIntervalMaxMs = logMiningScnGapDetectionTimeIntervalMaxMs;
-    }
-
-    public long getLogMiningScnGapDetectionTimeIntervalMaxMs() {
-        return logMiningScnGapDetectionTimeIntervalMaxMs;
     }
 
     /**
@@ -1922,8 +2060,9 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     /**
      * This controls whether the 'RS_ID' column values are tracked. When set to
      * true (the default), the 'RS_ID' values are buffered and provided in
-     * events when available. When set to false, the 'RS_ID' values are not
-     * buffered and can reduce the memory footprint.
+     * events when available. When set to false, the 'RS_ID' column is excluded
+     * from the LogMiner query and its values are not buffered, reducing both
+     * the memory footprint and query bandwidth.
      */
     public void setLogMiningBufferTrackRsId(boolean logMiningBufferTrackRsId) {
         this.logMiningBufferTrackRsId = logMiningBufferTrackRsId;
@@ -1983,15 +2122,19 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The maximum SCN interval size that this connector will use when reading
-     * from redo/archive logs.
+     * This controls whether the 'CLIENT_ID' column values are tracked. When set
+     * to true (the default), the 'CLIENT_ID' values are buffered and provided
+     * in events when available. When set to false, the 'CLIENT_ID' column is
+     * excluded from the LogMiner query and its values are not buffered,
+     * reducing both the memory footprint and query bandwidth.
      */
-    public void setLogMiningBatchSizeMax(long logMiningBatchSizeMax) {
-        this.logMiningBatchSizeMax = logMiningBatchSizeMax;
+    public void setLogMiningBufferTrackClientId(
+            boolean logMiningBufferTrackClientId) {
+        this.logMiningBufferTrackClientId = logMiningBufferTrackClientId;
     }
 
-    public long getLogMiningBatchSizeMax() {
-        return logMiningBatchSizeMax;
+    public boolean isLogMiningBufferTrackClientId() {
+        return logMiningBufferTrackClientId;
     }
 
     /**
@@ -2040,7 +2183,11 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
      * use microseconds precision; 'connect' always represents time, date, and
      * timestamp values using Kafka Connect's built-in representations for Time,
      * Date, and Timestamp, which uses millisecond precision regardless of the
-     * database columns' precision.
+     * database columns' precision; 'isostring' represents time, date, and
+     * timestamp values as ISO-8601 formatted strings at the UTC time zone;
+     * 'microseconds' always represents time, date, and timestamp values using
+     * microsecond precision; 'nanoseconds' always represents time, date, and
+     * timestamp values using nanosecond precision.
      */
     public void setTimePrecisionMode(String timePrecisionMode) {
         this.timePrecisionMode = timePrecisionMode;
@@ -2048,6 +2195,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getTimePrecisionMode() {
         return timePrecisionMode;
+    }
+
+    /**
+     * The secondary Oracle instance connection string URL where changes will be
+     * streamed
+     */
+    public void setSecondaryUrl(String secondaryUrl) {
+        this.secondaryUrl = secondaryUrl;
+    }
+
+    public String getSecondaryUrl() {
+        return secondaryUrl;
     }
 
     /**
@@ -2072,20 +2231,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public int getDatabasePort() {
         return databasePort;
-    }
-
-    /**
-     * The maximum amount of time that the connector will use to tune the
-     * optimal sleep time when reading data from LogMiner. Value is in
-     * milliseconds.
-     */
-    public void setLogMiningSleepTimeIncrementMs(
-            long logMiningSleepTimeIncrementMs) {
-        this.logMiningSleepTimeIncrementMs = logMiningSleepTimeIncrementMs;
-    }
-
-    public long getLogMiningSleepTimeIncrementMs() {
-        return logMiningSleepTimeIncrementMs;
     }
 
     /**
@@ -2137,18 +2282,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The minimum SCN interval size that this connector will try to read from
-     * redo/archive logs.
-     */
-    public void setLogMiningBatchSizeMin(long logMiningBatchSizeMin) {
-        this.logMiningBatchSizeMin = logMiningBatchSizeMin;
-    }
-
-    public long getLogMiningBatchSizeMin() {
-        return logMiningBatchSizeMin;
-    }
-
-    /**
      * The maximum time in milliseconds to wait for connection validation to
      * complete. Defaults to 60 seconds.
      */
@@ -2183,15 +2316,16 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "log.mining.window.max.ms", logMiningWindowMaxMs);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
-        addPropertyIfNotNull(configBuilder, "log.mining.scn.gap.detection.gap.size.min", logMiningScnGapDetectionGapSizeMin);
         addPropertyIfNotNull(configBuilder, "database.dbname", databaseDbname);
         addPropertyIfNotNull(configBuilder, "snapshot.tables.order.by.row.count", snapshotTablesOrderByRowCount);
-        addPropertyIfNotNull(configBuilder, "log.mining.sleep.time.default.ms", logMiningSleepTimeDefaultMs);
+        addPropertyIfNotNull(configBuilder, "log.mining.buffer.memory.legacy.transaction.start", logMiningBufferMemoryLegacyTransactionStart);
         addPropertyIfNotNull(configBuilder, "snapshot.select.statement.overrides", snapshotSelectStatementOverrides);
-        addPropertyIfNotNull(configBuilder, "log.mining.batch.size.increment", logMiningBatchSizeIncrement);
         addPropertyIfNotNull(configBuilder, "log.mining.archive.log.only.scn.poll.interval.ms", logMiningArchiveLogOnlyScnPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "log.mining.restart.connection", logMiningRestartConnection);
         addPropertyIfNotNull(configBuilder, "legacy.decimal.handling.strategy", legacyDecimalHandlingStrategy);
+        addPropertyIfNotNull(configBuilder, "log.mining.buffer.track.start_timestamp", logMiningBufferTrackStartTimestamp);
+        addPropertyIfNotNull(configBuilder, "secondary.port", secondaryPort);
+        addPropertyIfNotNull(configBuilder, "log.mining.buffer.track.username", logMiningBufferTrackUsername);
         addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.transactions", logMiningBufferInfinispanCacheTransactions);
@@ -2202,7 +2336,9 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.owners", openlineageIntegrationJobOwners);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
+        addPropertyIfNotNull(configBuilder, "capture.mode", captureMode);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
+        addPropertyIfNotNull(configBuilder, "memory.management.tables.class", memoryManagementTablesClass);
         addPropertyIfNotNull(configBuilder, "log.mining.strategy", logMiningStrategy);
         addPropertyIfNotNull(configBuilder, "executor.shutdown.timeout.ms", executorShutdownTimeoutMs);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.data.error", snapshotModeConfigurationBasedSnapshotOnDataError);
@@ -2215,8 +2351,10 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "openlineage.integration.dataset.kafka.bootstrap.servers", openlineageIntegrationDatasetKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "archive.log.hours", archiveLogHours);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.rollbacks.config", logMiningBufferEhcacheRollbacksConfig);
+        addPropertyIfNotNull(configBuilder, "log.mining.buffer.deferred.transaction.start", logMiningBufferDeferredTransactionStart);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
+        addPropertyIfNotNull(configBuilder, "statistics.metrics.enabled", statisticsMetricsEnabled);
         addPropertyIfNotNull(configBuilder, "database.pdb.name", databasePdbName);
         addPropertyIfNotNull(configBuilder, "database.connection.adapter", databaseConnectionAdapter);
         addPropertyIfNotNull(configBuilder, "log.mining.flush.table.name", logMiningFlushTableName);
@@ -2226,11 +2364,14 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "notification.enabled.channels", notificationEnabledChannels);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
+        addPropertyIfNotNull(configBuilder, "secondary.dbname", secondaryDbname);
         addPropertyIfNotNull(configBuilder, "notification.sink.topic.name", notificationSinkTopicName);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.custom.name", snapshotModeCustomName);
+        addPropertyIfNotNull(configBuilder, "log.mining.buffer.deferred.transaction.retention.ms", logMiningBufferDeferredTransactionRetentionMs);
         addPropertyIfNotNull(configBuilder, "log.mining.query.filter.mode", logMiningQueryFilterMode);
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
-        addPropertyIfNotNull(configBuilder, "log.mining.batch.size.default", logMiningBatchSizeDefault);
+        addPropertyIfNotNull(configBuilder, "memory.management.schemas.class", memoryManagementSchemasClass);
+        addPropertyIfNotNull(configBuilder, "log.mining.log.count.min", logMiningLogCountMin);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.processedtransactions.config", logMiningBufferEhcacheProcessedtransactionsConfig);
         addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
@@ -2238,7 +2379,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.query.timeout.ms", databaseQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.global.config", logMiningBufferEhcacheGlobalConfig);
-        addPropertyIfNotNull(configBuilder, "log.mining.sleep.time.min.ms", logMiningSleepTimeMinMs);
         addPropertyIfNotNull(configBuilder, "unavailable.value.placeholder", unavailableValuePlaceholder);
         addPropertyIfNotNull(configBuilder, "log.mining.clientid.include.list", logMiningClientidIncludeList);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
@@ -2252,25 +2392,26 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "log.mining.archive.log.only.mode", logMiningArchiveLogOnlyMode);
         addPropertyIfNotNull(configBuilder, "log.mining.path.dictionary", logMiningPathDictionary);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.schema_changes", logMiningBufferInfinispanCacheSchemaChanges);
-        addPropertyIfNotNull(configBuilder, "log.mining.sleep.time.max.ms", logMiningSleepTimeMaxMs);
         addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
         addPropertyIfNotNull(configBuilder, "datatype.propagate.source.type", datatypePropagateSourceType);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.watermarking.strategy", incrementalSnapshotWatermarkingStrategy);
         addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
+        addPropertyIfNotNull(configBuilder, "log.mining.read.only", logMiningReadOnly);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.schema.error", snapshotModeConfigurationBasedSnapshotOnSchemaError);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.skip.unparseable.ddl", schemaHistoryInternalSkipUnparseableDdl);
         addPropertyIfNotNull(configBuilder, "column.include.list", columnIncludeList);
         addPropertyIfNotNull(configBuilder, "log.mining.username.exclude.list", logMiningUsernameExcludeList);
         addPropertyIfNotNull(configBuilder, "column.propagate.source.type", columnPropagateSourceType);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.transactions.config", logMiningBufferEhcacheTransactionsConfig);
+        addPropertyIfNotNull(configBuilder, "secondary.hostname", secondaryHostname);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.processed_transactions", logMiningBufferInfinispanCacheProcessedTransactions);
         addPropertyIfNotNull(configBuilder, "errors.max.retries", errorsMaxRetries);
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
+        addPropertyIfNotNull(configBuilder, "log.mining.buffer.track.commit_timestamp", logMiningBufferTrackCommitTimestamp);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.events", logMiningBufferInfinispanCacheEvents);
         addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.description", openlineageIntegrationJobDescription);
         addPropertyIfNotNull(configBuilder, "archive.destination.name", archiveDestinationName);
-        addPropertyIfNotNull(configBuilder, "log.mining.scn.gap.detection.time.interval.max.ms", logMiningScnGapDetectionTimeIntervalMaxMs);
         addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
@@ -2290,19 +2431,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
         addPropertyIfNotNull(configBuilder, "openlogreplicator.port", openlogreplicatorPort);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.events.config", logMiningBufferEhcacheEventsConfig);
-        addPropertyIfNotNull(configBuilder, "log.mining.batch.size.max", logMiningBatchSizeMax);
+        addPropertyIfNotNull(configBuilder, "log.mining.buffer.track.client_id", logMiningBufferTrackClientId);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
         addPropertyIfNotNull(configBuilder, "database.url", databaseUrl);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.schema", snapshotModeConfigurationBasedSnapshotSchema);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
+        addPropertyIfNotNull(configBuilder, "secondary.url", secondaryUrl);
         addPropertyIfNotNull(configBuilder, "post.processors", postProcessors);
         addPropertyIfNotNull(configBuilder, "database.port", databasePort);
-        addPropertyIfNotNull(configBuilder, "log.mining.sleep.time.increment.ms", logMiningSleepTimeIncrementMs);
         addPropertyIfNotNull(configBuilder, "schema.history.internal", schemaHistoryInternal);
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
         addPropertyIfNotNull(configBuilder, "log.mining.session.max.ms", logMiningSessionMaxMs);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
-        addPropertyIfNotNull(configBuilder, "log.mining.batch.size.min", logMiningBatchSizeMin);
         addPropertyIfNotNull(configBuilder, "connection.validation.timeout.ms", connectionValidationTimeoutMs);
         
         return configBuilder.build();

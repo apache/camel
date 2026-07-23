@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
@@ -43,6 +45,7 @@ public class RestRootHandler implements HttpHandler {
             = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
 
     private final Set<UndertowConsumer> consumers = new CopyOnWriteArraySet<>();
+    private final Map<UndertowConsumer, HttpHandler> handlers = new ConcurrentHashMap<>();
 
     //private int port; // unread field
     private String token;
@@ -58,9 +61,18 @@ public class RestRootHandler implements HttpHandler {
     }
 
     /**
-     * Adds the given consumer.
+     * Adds the given consumer, using the consumer itself as the {@link HttpHandler}.
      */
     public void addConsumer(UndertowConsumer consumer) {
+        addConsumer(consumer, consumer);
+    }
+
+    /**
+     * Adds the given consumer with the {@link HttpHandler} to dispatch its requests to, which may wrap the consumer
+     * with additional handlers such as OAuth bearer-token validation.
+     */
+    public void addConsumer(UndertowConsumer consumer, HttpHandler handler) {
+        handlers.put(consumer, handler);
         consumers.add(consumer);
         RestConsumerContextPathMatcher.register(consumer.getEndpoint().getHttpURI().getPath());
     }
@@ -70,6 +82,7 @@ public class RestRootHandler implements HttpHandler {
      */
     public void removeConsumer(UndertowConsumer consumer) {
         consumers.remove(consumer);
+        handlers.remove(consumer);
         RestConsumerContextPathMatcher.unRegister(consumer.getEndpoint().getHttpURI().getPath());
     }
 
@@ -129,7 +142,7 @@ public class RestRootHandler implements HttpHandler {
         RestConsumerContextPathMatcher.ConsumerPath<UndertowConsumer> best
                 = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
         if (best != null) {
-            answer = best.getConsumer();
+            answer = getRegisteredHandler(best.getConsumer());
         }
 
         // fallback to regular matching
@@ -150,10 +163,14 @@ public class RestRootHandler implements HttpHandler {
         candidates = candidates.stream().filter(c -> matchRestMethod(method, c.getEndpoint().getHttpMethodRestrict()))
                 .collect(Collectors.toList());
         if (candidates.size() == 1) {
-            answer = candidates.get(0);
+            answer = getRegisteredHandler(candidates.get(0));
         }
 
         return answer;
+    }
+
+    private HttpHandler getRegisteredHandler(UndertowConsumer consumer) {
+        return handlers.getOrDefault(consumer, consumer);
     }
 
     private static String pathAsKey(String path) {

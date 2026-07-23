@@ -25,7 +25,11 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "language",
                      description = "List expression languages from the Camel Catalog", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel catalog language",
+                             "  camel catalog language --filter=simple" })
 public class CatalogLanguage extends CatalogBaseCommand {
 
     public CatalogLanguage(CamelJBangMain main) {

@@ -524,7 +524,11 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets the connection string for a Service Bus namespace or a specific
-         * Service Bus resource.
+         * Service Bus resource. Connection strings commonly contain characters
+         * with a special meaning in URIs (the SharedAccessKey is a Base64 value
+         * that may contain plus, slash or equals characters): when configuring
+         * the connection string directly in an endpoint URI, wrap the value
+         * with RAW() so it is not URI-decoded.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -541,7 +545,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -549,7 +554,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.servicebus.CredentialType credentialType) {
+        default ServiceBusEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -557,7 +562,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1128,7 +1134,11 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets the connection string for a Service Bus namespace or a specific
-         * Service Bus resource.
+         * Service Bus resource. Connection strings commonly contain characters
+         * with a special meaning in URIs (the SharedAccessKey is a Base64 value
+         * that may contain plus, slash or equals characters): when configuring
+         * the connection string directly in an endpoint URI, wrap the value
+         * with RAW() so it is not URI-decoded.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1145,7 +1155,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1153,7 +1164,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointProducerBuilder credentialType(org.apache.camel.component.azure.servicebus.CredentialType credentialType) {
+        default ServiceBusEndpointProducerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -1161,7 +1172,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1488,7 +1500,11 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets the connection string for a Service Bus namespace or a specific
-         * Service Bus resource.
+         * Service Bus resource. Connection strings commonly contain characters
+         * with a special meaning in URIs (the SharedAccessKey is a Base64 value
+         * that may contain plus, slash or equals characters): when configuring
+         * the connection string directly in an endpoint URI, wrap the value
+         * with RAW() so it is not URI-decoded.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1505,7 +1521,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1513,7 +1530,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointBuilder credentialType(org.apache.camel.component.azure.servicebus.CredentialType credentialType) {
+        default ServiceBusEndpointBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -1521,7 +1538,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.servicebus.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1662,7 +1680,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ServiceBusHeaderNameBuilder INSTANCE = new ServiceBusHeaderNameBuilder();
+        public static final ServiceBusHeaderNameBuilder INSTANCE = new ServiceBusHeaderNameBuilder();
 
         /**
          * The application properties (also known as custom properties) on

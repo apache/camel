@@ -20,18 +20,22 @@ import jakarta.xml.bind.annotation.XmlEnum;
 import jakarta.xml.bind.annotation.XmlType;
 
 /**
- * Represents the kind of options for what to do with the current task when shutting down.
+ * Per-consumer policy controlling how many pending tasks are processed before the consumer stops during
+ * <a href="https://camel.apache.org/manual/graceful-shutdown.html">graceful shutdown</a>.
  * <p/>
- * By default the current task is allowed to complete. However some consumers such as {@link BatchConsumer} have pending
- * tasks which you can configure the consumer to complete as well.
+ * Set on a route via the DSL {@code .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)} call. Most consumers
+ * handle a single task at a time, so the distinction only matters for {@link BatchConsumer} implementations (such as
+ * file or JPA consumers) that can have multiple pending messages in a batch when shutdown is triggered.
  * <ul>
- * <li>CompleteCurrentTaskOnly - Is the <b>default</b> behavior where a route consumer will be shutdown as fast as
- * possible. Allowing it to complete its current task, but not to pickup pending tasks (if any).</li>
- * <li>CompleteAllTasks - Allows a route consumer to continue to complete all pending tasks (if any).</li>
- *
+ * <li>{@link #CompleteCurrentTaskOnly} - the <b>default</b>: finish the current in-flight task and then stop; any
+ * remaining pending tasks are left unprocessed.</li>
+ * <li>{@link #CompleteAllTasks} - drain the entire current batch before stopping; only applicable to
+ * {@link BatchConsumer} consumers.</li>
  * </ul>
- * <b>Notice:</b> Most consumers only have a single task, but {@link org.apache.camel.BatchConsumer} can have many tasks
- * and thus this option mostly applies to this kind of consumer.
+ *
+ * @see ShutdownRoute
+ * @see BatchConsumer
+ * @see org.apache.camel.spi.ShutdownStrategy
  */
 @XmlType
 @XmlEnum

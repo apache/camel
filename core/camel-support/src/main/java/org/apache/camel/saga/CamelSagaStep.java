@@ -35,6 +35,8 @@ public class CamelSagaStep {
 
     private final Long timeoutInMilliseconds;
 
+    private String routeId;
+
     public CamelSagaStep(Endpoint compensation, Endpoint completion,
                          Map<String, Expression> options, Long timeoutInMilliseconds) {
         this.compensation = compensation;
@@ -57,6 +59,14 @@ public class CamelSagaStep {
 
     public Optional<Long> getTimeoutInMilliseconds() {
         return Optional.ofNullable(timeoutInMilliseconds);
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public boolean isEmpty() {

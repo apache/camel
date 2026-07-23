@@ -17,10 +17,12 @@
 package org.apache.camel.management.mbean;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedPerformanceCounterMBean;
 import org.apache.camel.management.PerformanceCounter;
@@ -30,9 +32,11 @@ import org.apache.camel.util.json.JsonObject;
 
 @ManagedResource(description = "Managed PerformanceCounter")
 public abstract class ManagedPerformanceCounter extends ManagedCounter
-        implements PerformanceCounter, ManagedPerformanceCounterMBean {
+        implements TimerListener, PerformanceCounter, ManagedPerformanceCounterMBean {
 
     public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
+    private static final int PERCENTILE_WINDOW_SIZE = 1024;
 
     private Statistic exchangesCompleted;
     private Statistic exchangesFailed;
@@ -53,9 +57,16 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     private Statistic lastExchangeCreatedTimestamp;
     private Statistic lastExchangeCompletedTimestamp;
     private String lastExchangeCompletedExchangeId;
+    private Statistic lastExchangeFailureHandledTimestamp;
     private Statistic lastExchangeFailureTimestamp;
     private String lastExchangeFailureExchangeId;
+    private final LoadThroughput thp = new LoadThroughput();
     private boolean statisticsEnabled = true;
+
+    // sliding window ring buffer for percentile computation (Extended statistics only)
+    private long[] percentileWindow;
+    private int percentileIndex;
+    private int percentileCount;
 
     @Override
     public void init(ManagementStrategy strategy) {
@@ -79,7 +90,14 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         this.firstExchangeFailureTimestamp = new StatisticValue();
         this.lastExchangeCreatedTimestamp = new StatisticValue();
         this.lastExchangeCompletedTimestamp = new StatisticValue();
+        this.lastExchangeFailureHandledTimestamp = new StatisticValue();
         this.lastExchangeFailureTimestamp = new StatisticValue();
+    }
+
+    public void initExtendedStatistics() {
+        percentileWindow = new long[PERCENTILE_WINDOW_SIZE];
+        percentileIndex = 0;
+        percentileCount = 0;
     }
 
     @Override
@@ -104,8 +122,14 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         lastExchangeCreatedTimestamp.reset();
         lastExchangeCompletedTimestamp.reset();
         lastExchangeCompletedExchangeId = null;
+        lastExchangeFailureHandledTimestamp.reset();
         lastExchangeFailureTimestamp.reset();
         lastExchangeFailureExchangeId = null;
+        thp.reset();
+        if (percentileWindow != null) {
+            percentileIndex = 0;
+            percentileCount = 0;
+        }
     }
 
     @Override
@@ -169,6 +193,21 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
+    public long getProcessingTimeP50() {
+        return getPercentile(0.50);
+    }
+
+    @Override
+    public long getProcessingTimeP95() {
+        return getPercentile(0.95);
+    }
+
+    @Override
+    public long getProcessingTimeP99() {
+        return getPercentile(0.99);
+    }
+
+    @Override
     public long getIdleSince() {
         // must not have any inflight
         if (getExchangesInflight() <= 0) {
@@ -213,6 +252,12 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
+    public Date getLastExchangeFailureHandledTimestamp() {
+        long value = lastExchangeFailureHandledTimestamp.getValue();
+        return value > 0 ? new Date(value) : null;
+    }
+
+    @Override
     public Date getLastExchangeFailureTimestamp() {
         long value = lastExchangeFailureTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
@@ -245,6 +290,21 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
+    public String getThroughput() {
+        double d = thp.getThroughput();
+        if (Double.isNaN(d)) {
+            return "";
+        } else {
+            return String.format("%.2f", d);
+        }
+    }
+
+    @Override
+    public void onTimer() {
+        thp.update(getExchangesTotal());
+    }
+
+    @Override
     public void processExchange(Exchange exchange, String type) {
         exchangesInflight.increment();
         if ("route".equals(type)) {
@@ -261,6 +321,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
 
         if (ExchangeHelper.isFailureHandled(exchange)) {
             failuresHandled.increment();
+            lastExchangeFailureHandledTimestamp.updateValue(System.currentTimeMillis());
         }
         if (exchange.isExternalRedelivered()) {
             externalRedeliveries.increment();
@@ -271,6 +332,14 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         totalProcessingTime.updateValue(time);
         lastProcessingTime.updateValue(time);
         deltaProcessingTime.updateValue(time);
+
+        if (percentileWindow != null) {
+            percentileWindow[percentileIndex] = time;
+            percentileIndex = (percentileIndex + 1) % PERCENTILE_WINDOW_SIZE;
+            if (percentileCount < PERCENTILE_WINDOW_SIZE) {
+                percentileCount++;
+            }
+        }
 
         long now = System.currentTimeMillis();
         if (!firstExchangeCompletedTimestamp.isUpdated()) {
@@ -317,6 +386,17 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         lastExchangeFailureExchangeId = exchange.getExchangeId();
     }
 
+    private long getPercentile(double percentile) {
+        if (percentileWindow == null || percentileCount == 0) {
+            return -1;
+        }
+        long[] snapshot = new long[percentileCount];
+        System.arraycopy(percentileWindow, 0, snapshot, 0, percentileCount);
+        Arrays.sort(snapshot);
+        int index = (int) Math.ceil(percentile * percentileCount) - 1;
+        return snapshot[Math.max(0, index)];
+    }
+
     @Override
     public String dumpStatsAsXml(boolean fullStats) {
         StringBuilder sb = new StringBuilder();
@@ -333,6 +413,12 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         sb.append(String.format(" lastProcessingTime=\"%s\"", lastProcessingTime.getValue()));
         sb.append(String.format(" deltaProcessingTime=\"%s\"", deltaProcessingTime.getValue()));
         sb.append(String.format(" meanProcessingTime=\"%s\"", meanProcessingTime.getValue()));
+        sb.append(String.format(" exchangesThroughput=\"%s\"", getThroughput()));
+        if (percentileWindow != null) {
+            sb.append(String.format(" p50ProcessingTime=\"%s\"", getProcessingTimeP50()));
+            sb.append(String.format(" p95ProcessingTime=\"%s\"", getProcessingTimeP95()));
+            sb.append(String.format(" p99ProcessingTime=\"%s\"", getProcessingTimeP99()));
+        }
         sb.append(String.format(" idleSince=\"%s\"", getIdleSince()));
 
         if (fullStats) {
@@ -349,6 +435,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
             sb.append(String.format(" lastExchangeCompletedTimestamp=\"%s\"",
                     dateAsString(lastExchangeCompletedTimestamp.getValue())));
             sb.append(String.format(" lastExchangeCompletedExchangeId=\"%s\"", nullSafe(lastExchangeCompletedExchangeId)));
+            sb.append(String.format(" lastExchangeFailureHandledTimestamp=\"%s\"",
+                    dateAsString(lastExchangeFailureHandledTimestamp.getValue())));
             sb.append(String.format(" lastExchangeFailureTimestamp=\"%s\"",
                     dateAsString(lastExchangeFailureTimestamp.getValue())));
             sb.append(String.format(" lastExchangeFailureExchangeId=\"%s\"", nullSafe(lastExchangeFailureExchangeId)));
@@ -378,6 +466,12 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         jo.put("lastProcessingTime", lastProcessingTime.getValue());
         jo.put("deltaProcessingTime", deltaProcessingTime.getValue());
         jo.put("meanProcessingTime", meanProcessingTime.getValue());
+        jo.put("exchangesThroughput", getThroughput());
+        if (percentileWindow != null) {
+            jo.put("p50ProcessingTime", getProcessingTimeP50());
+            jo.put("p95ProcessingTime", getProcessingTimeP95());
+            jo.put("p99ProcessingTime", getProcessingTimeP99());
+        }
         jo.put("idleSince", getIdleSince());
         if (fullStats) {
             jo.put("startTimestamp", startTimestamp.getTime());
@@ -389,6 +483,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
             jo.put("lastExchangeCreatedTimestamp", lastExchangeCreatedTimestamp.getValue());
             jo.put("lastExchangeCompletedTimestamp", lastExchangeCompletedTimestamp.getValue());
             jo.put("lastExchangeCompletedExchangeId", lastExchangeCompletedExchangeId);
+            jo.put("lastExchangeFailureHandledTimestamp", lastExchangeFailureHandledTimestamp.getValue());
             jo.put("lastExchangeFailureTimestamp", lastExchangeFailureTimestamp.getValue());
             jo.put("lastExchangeFailureExchangeId", lastExchangeFailureExchangeId);
         }

@@ -40,39 +40,31 @@ public class BrowseDevConsole extends AbstractDevConsole {
         super("camel", "browse", "Browse", "Browse pending messages on Camel components");
     }
 
-    /**
-     * Filters the endpoints matching by route id, endpoint url
-     */
+    @Metadata(label = "query", description = "Filters the endpoints matching by route id, endpoint url",
+              javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Limits the number of entries per endpoint
-     */
+    @Metadata(label = "query", description = "Limits the number of entries per endpoint", javaType = "java.lang.Integer",
+              defaultValue = "100")
     public static final String LIMIT = "limit";
 
-    /**
-     * To receive N last messages from the tail
-     */
+    @Metadata(label = "query", description = "To receive N last messages from the tail", javaType = "java.lang.Integer")
     public static final String TAIL = "tail";
 
-    /**
-     * Whether to include message dumps
-     */
+    @Metadata(label = "query", description = "Whether to include message dumps", javaType = "java.lang.Boolean",
+              defaultValue = "true")
     public static final String DUMP = "dump";
 
-    /**
-     * Whether to include message body in dumps
-     */
+    @Metadata(label = "query", description = "Whether to include message body in dumps", javaType = "java.lang.Boolean",
+              defaultValue = "true")
     public static final String INCLUDE_BODY = "includeBody";
 
-    /**
-     * Whether to calculate fresh queue size (can cause performance overhead)
-     */
+    @Metadata(label = "query", description = "Whether to calculate fresh queue size (can cause performance overhead)",
+              javaType = "java.lang.Boolean", defaultValue = "false")
     public static final String FRESH_SIZE = "freshSize";
 
-    /**
-     * Maximum size of the message body to include in the dump
-     */
+    @Metadata(label = "query", description = "Maximum size of the message body to include in the dump",
+              javaType = "java.lang.Integer", defaultValue = "32768")
     public static final String BODY_MAX_CHARS = "bodyMaxChars";
 
     @Metadata(defaultValue = "32768",
@@ -103,15 +95,13 @@ public class BrowseDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        String filter = (String) options.get(FILTER);
-        String lim = (String) options.get(LIMIT);
-        String tail = (String) options.get(TAIL);
-        final int pos = tail == null ? 0 : Integer.parseInt(tail);
-        final int max = lim == null ? limit : Integer.parseInt(lim);
-        boolean freshSize = "true".equals(options.getOrDefault(FRESH_SIZE, "false"));
-        boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
-        boolean includeBody = "true".equals(options.getOrDefault(INCLUDE_BODY, "true"));
-        int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
+        String filter = optionString(options, FILTER);
+        final int pos = optionInt(options, TAIL, 0);
+        final int max = optionInt(options, LIMIT, limit);
+        boolean freshSize = optionBoolean(options, FRESH_SIZE, false);
+        boolean dump = optionBoolean(options, DUMP, true);
+        boolean includeBody = optionBoolean(options, INCLUDE_BODY, true);
+        int maxChars = optionInt(options, BODY_MAX_CHARS, bodyMaxChars);
 
         Collection<Endpoint> endpoints = new TreeSet<>(Comparator.comparing(Endpoint::getEndpointUri));
         endpoints.addAll(getCamelContext().getEndpoints());
@@ -155,15 +145,13 @@ public class BrowseDevConsole extends AbstractDevConsole {
         JsonObject root = new JsonObject();
         JsonArray arr = new JsonArray();
 
-        String filter = (String) options.get(FILTER);
-        String lim = (String) options.get(LIMIT);
-        String tail = (String) options.get(TAIL);
-        final int pos = tail == null ? 0 : Integer.parseInt(tail);
-        final int max = lim == null ? limit : Integer.parseInt(lim);
-        boolean freshSize = "true".equals(options.getOrDefault(FRESH_SIZE, "false"));
-        boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
-        boolean includeBody = "true".equals(options.getOrDefault(INCLUDE_BODY, "true"));
-        int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
+        String filter = optionString(options, FILTER);
+        final int pos = optionInt(options, TAIL, 0);
+        final int max = optionInt(options, LIMIT, limit);
+        boolean freshSize = optionBoolean(options, FRESH_SIZE, false);
+        boolean dump = optionBoolean(options, DUMP, true);
+        boolean includeBody = optionBoolean(options, INCLUDE_BODY, true);
+        int maxChars = optionInt(options, BODY_MAX_CHARS, bodyMaxChars);
 
         Collection<Endpoint> endpoints = new TreeSet<>(Comparator.comparing(Endpoint::getEndpointUri));
         endpoints.addAll(getCamelContext().getEndpoints());

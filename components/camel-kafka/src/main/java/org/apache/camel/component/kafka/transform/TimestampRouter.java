@@ -25,13 +25,15 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperty;
+import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.util.ObjectHelper;
 
 public class TimestampRouter {
 
     public void process(
             @ExchangeProperty("topicFormat") String topicFormat, @ExchangeProperty("timestampFormat") String timestampFormat,
-            @ExchangeProperty("timestampHeaderName") String timestampHeaderName, Exchange ex) {
+            @ExchangeProperty("timestampHeaderName") String timestampHeaderName,
+            @ExchangeProperty("topicHeaderName") String topicHeaderName, Exchange ex) {
         final Pattern TOPIC = Pattern.compile("$[topic]", Pattern.LITERAL);
 
         final Pattern TIMESTAMP = Pattern.compile("$[timestamp]", Pattern.LITERAL);
@@ -40,7 +42,12 @@ public class TimestampRouter {
         fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         Long timestamp = null;
-        String topicName = ex.getMessage().getHeader("kafka.TOPIC", String.class);
+        String topicName;
+        if (ObjectHelper.isNotEmpty(topicHeaderName)) {
+            topicName = ex.getMessage().getHeader(topicHeaderName, String.class);
+        } else {
+            topicName = ex.getMessage().getHeader(KafkaConstants.TOPIC, String.class);
+        }
         Object rawTimestamp = ex.getMessage().getHeader(timestampHeaderName);
         if (rawTimestamp instanceof Long longValue) {
             timestamp = longValue;
@@ -61,7 +68,7 @@ public class TimestampRouter {
                 replace1 = TOPIC.matcher(topicFormat).replaceAll(Matcher.quoteReplacement(""));
                 updatedTopic = TIMESTAMP.matcher(replace1).replaceAll(Matcher.quoteReplacement(formattedTimestamp));
             }
-            ex.getMessage().setHeader("kafka.OVERRIDE_TOPIC", updatedTopic);
+            ex.getMessage().setHeader(KafkaConstants.OVERRIDE_TOPIC, updatedTopic);
         }
     }
 

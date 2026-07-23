@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.beanclass;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -54,7 +55,9 @@ public class ClassComponent extends BeanComponent {
 
         // the bean.xxx options is for the bean
         Map<String, Object> options = PropertiesHelper.extractProperties(parameters, "bean.");
-        endpoint.setParameters(options);
+        // store a copy because setProperties below removes bound entries from the original map,
+        // but BeanEndpoint needs the options to apply them per-exchange for prototype scope
+        endpoint.setParameters(options.isEmpty() ? options : new LinkedHashMap<>(options));
 
         BeanHolder holder;
 

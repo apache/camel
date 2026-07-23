@@ -17,9 +17,13 @@
 package org.apache.camel.component.kafka.integration;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -51,6 +55,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -153,7 +158,7 @@ public class KafkaProducerSaslAuthTypeIT {
     @Timeout(30)
     @Order(1)
     @Test
-    public void kafkaProducerWithSaslAuthType() throws InterruptedException {
+    public void kafkaProducerWithSaslAuthType() {
         ProducerTemplate producerTemplate = contextExtension.getProducerTemplate();
 
         // Send messages using Camel producer with saslAuthType
@@ -161,34 +166,33 @@ public class KafkaProducerSaslAuthTypeIT {
             producerTemplate.sendBodyAndHeader("direct:start", "test-message-" + i, KafkaConstants.KEY, "key-" + i);
         }
 
-        // Allow some time for messages to be sent
-        Thread.sleep(2000);
-
         // Consume messages with native Kafka consumer to verify they were sent correctly
-        int messageCount = 0;
-        int maxAttempts = 10;
-        int attempt = 0;
+        List<ConsumerRecord<String, String>> received = new ArrayList<>();
 
-        while (messageCount < 5 && attempt < maxAttempts) {
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-            for (ConsumerRecord<String, String> record : records) {
-                LOG.info("Received message: key={}, value={}", record.key(), record.value());
-                assertNotNull(record.value());
-                assertEquals("test-message-" + messageCount, record.value());
-                assertEquals("key-" + messageCount, record.key());
-                messageCount++;
-            }
-            attempt++;
+        await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                    for (ConsumerRecord<String, String> record : records) {
+                        LOG.info("Received message: key={}, value={}", record.key(), record.value());
+                        received.add(record);
+                    }
+                    assertEquals(5, received.size(), "Should have received 5 messages");
+                });
+
+        // Sort by key to avoid relying on cross-partition delivery order
+        received.sort(Comparator.comparing(ConsumerRecord::key));
+        for (int i = 0; i < received.size(); i++) {
+            assertNotNull(received.get(i).value());
+            assertEquals("test-message-" + i, received.get(i).value());
+            assertEquals("key-" + i, received.get(i).key());
         }
-
-        assertEquals(5, messageCount, "Should have received 5 messages");
     }
 
     @DisplayName("Tests that Camel producer can send messages with headers using saslAuthType")
     @Timeout(30)
     @Order(2)
     @Test
-    public void kafkaProducerWithSaslAuthTypeAndHeaders() throws InterruptedException {
+    public void kafkaProducerWithSaslAuthTypeAndHeaders() {
         ProducerTemplate producerTemplate = contextExtension.getProducerTemplate();
 
         // Send a message with custom headers
@@ -197,16 +201,19 @@ public class KafkaProducerSaslAuthTypeIT {
                         KafkaConstants.KEY, "header-test-key",
                         "CustomHeader", "custom-value"));
 
-        // Allow some time for messages to be sent
-        Thread.sleep(2000);
+        // Consume the message, waiting until it is available
+        List<ConsumerRecord<String, String>> received = new ArrayList<>();
 
-        // Consume the message
-        ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(5000));
+        await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                    for (ConsumerRecord<String, String> record : records) {
+                        received.add(record);
+                    }
+                    assertEquals(1, received.size(), "Should have received 1 message");
+                });
 
-        assertEquals(1, records.count(), "Should have received 1 message");
-
-        ConsumerRecord<String, String> record = records.iterator().next();
-        assertEquals("message-with-headers", record.value());
-        assertEquals("header-test-key", record.key());
+        assertEquals("message-with-headers", received.get(0).value());
+        assertEquals("header-test-key", received.get(0).key());
     }
 }

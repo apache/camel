@@ -16,14 +16,17 @@
  */
 package org.apache.camel.component.zookeepermaster.integration;
 
+import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.component.zookeepermaster.CuratorFactoryBean;
+import org.apache.camel.component.zookeepermaster.MasterConsumer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
@@ -36,11 +39,15 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
+
 public class MasterEndpointFailoverIT {
     @RegisterExtension
     static ZooKeeperService service = ZooKeeperServiceFactory.createService();
 
     private static final transient Logger LOG = LoggerFactory.getLogger(MasterEndpointFailoverIT.class);
+
+    private static final Duration FAILOVER_TIMEOUT = Duration.ofSeconds(5);
 
     protected ProducerTemplate template;
     protected CamelContext producerContext;
@@ -94,7 +101,7 @@ public class MasterEndpointFailoverIT {
             }
         });
         consumerContext2.addComponent("seda", sedaComponent);
-        // Need to start at less one consumerContext to enable the seda queue for producerContext
+        // Need to start at least one consumerContext to enable the seda queue for producerContext
         producerContext.start();
         consumerContext1.start();
 
@@ -113,22 +120,67 @@ public class MasterEndpointFailoverIT {
     @Test
     public void testEndpoint() throws Exception {
         LOG.info("Starting consumerContext1");
-        consumerContext1.start();
+        consumerContext1.start(); // Idempotent re-start for test flow clarity
+        awaitMaster(consumerContext1);
         assertMessageReceived(result1Endpoint, result2Endpoint);
 
         LOG.info("Starting consumerContext2");
         consumerContext2.start();
+        awaitMaster(consumerContext1);
+        awaitStandby(consumerContext2);
         assertMessageReceivedLoop(result1Endpoint, result2Endpoint, 3);
 
         LOG.info("Stopping consumerContext1");
         consumerContext1.stop();
+        awaitMaster(consumerContext2);
         assertMessageReceivedLoop(result2Endpoint, result1Endpoint, 3);
+    }
+
+    /*
+     * Wait fixed time for the master consumer to be the master and connected.
+     * @param context the CamelContext
+     */
+    protected void awaitMaster(CamelContext context) {
+        await().atMost(FAILOVER_TIMEOUT)
+                .until(() -> {
+                    MasterConsumer masterConsumer = getMasterConsumer(context);
+                    return masterConsumer.isMaster() && masterConsumer.isConnected();
+                });
+    }
+
+    /*
+     * Wait fixed time for the master consumer to be the standby and connected.
+     * @param context the CamelContext
+     */
+    protected void awaitStandby(CamelContext context) {
+        await().atMost(FAILOVER_TIMEOUT)
+                .until(() -> {
+                    MasterConsumer masterConsumer = getMasterConsumer(context);
+                    return masterConsumer.isConnected() && !masterConsumer.isMaster();
+                });
+    }
+
+    /*
+     * Get the MasterConsumer from the first route in the context.
+     * @param context the CamelContext
+     * @return the MasterConsumer
+     * @throws IllegalStateException if no routes are registered
+     * in the context or the consumer is not a MasterConsumer
+     */
+    protected MasterConsumer getMasterConsumer(CamelContext context) {
+        if (context.getRoutes().isEmpty()) {
+            throw new IllegalStateException("No routes registered in context");
+        }
+        Consumer consumer = context.getRoutes().get(0).getConsumer();
+        if (!(consumer instanceof MasterConsumer)) {
+            throw new IllegalStateException("Expected MasterConsumer but got: " + consumer.getClass());
+        }
+        return (MasterConsumer) consumer;
     }
 
     protected void assertMessageReceivedLoop(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint, int count)
             throws Exception {
         for (int i = 0; i < count; i++) {
-            Thread.sleep(1000);
             assertMessageReceived(masterEndpoint, standbyEndpoint);
         }
     }

@@ -16,8 +16,10 @@
  */
 package org.apache.camel.opentelemetry2;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.context.Scope;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -35,6 +37,8 @@ import org.apache.camel.telemetry.SpanStorageManagerExchange;
  * custom Opentelemetry activity in the processor to be available.
  */
 public class TraceProcessorsOtelInterceptStrategy implements InterceptStrategy {
+
+    private static final String BAGGAGE_HEADER_PREFIX = "OTEL_BAGGAGE_";
 
     // NOTE: this is an implementation detail that the interceptor should not know.
     // We are temporarily using this to evaluate as a patch for a context leak problem we're suffering.
@@ -62,8 +66,9 @@ public class TraceProcessorsOtelInterceptStrategy implements InterceptStrategy {
             Span activeSpan = spanStorage.peek(exchange);
             if (activeSpan != null) {
                 OpenTelemetrySpanAdapter otelSpan = (OpenTelemetrySpanAdapter) activeSpan;
+                Baggage baggage = collectBaggage(otelSpan.getBaggage(), exchange);
                 try (Scope scope = otelSpan.getSpan().makeCurrent();
-                     Scope baggageScope = otelSpan.getBaggage().makeCurrent()) {
+                     Scope baggageScope = baggage.makeCurrent()) {
                     processor.process(exchange);
                 }
             } else {
@@ -76,8 +81,9 @@ public class TraceProcessorsOtelInterceptStrategy implements InterceptStrategy {
             Span activeSpan = spanStorage.peek(exchange);
             if (activeSpan != null) {
                 OpenTelemetrySpanAdapter otelSpan = (OpenTelemetrySpanAdapter) activeSpan;
+                Baggage baggage = collectBaggage(otelSpan.getBaggage(), exchange);
                 try (Scope scope = otelSpan.getSpan().makeCurrent();
-                     Scope baggageScope = otelSpan.getBaggage().makeCurrent()) {
+                     Scope baggageScope = baggage.makeCurrent()) {
                     return processor.process(exchange, doneSync -> {
                         callback.done(doneSync);
                     });
@@ -96,6 +102,36 @@ public class TraceProcessorsOtelInterceptStrategy implements InterceptStrategy {
             process(exchange, callback);
             return callback.getFuture();
         }
+    }
+
+    private Baggage collectBaggage(Baggage baggage, Exchange exchange) {
+        baggage = getBaggageFromProperties(baggage, exchange);
+        baggage = getBaggageFromHeaders(baggage, exchange);
+        return baggage;
+    }
+
+    private Baggage getBaggageFromProperties(Baggage baggage, Exchange exchange) {
+        for (String propertyKey : exchange.getProperties().keySet()) {
+            if (propertyKey != null && propertyKey.startsWith(org.apache.camel.telemetry.Tracer.BAGGAGE_PROPERTY)) {
+                String key = propertyKey.substring(org.apache.camel.telemetry.Tracer.BAGGAGE_PROPERTY.length());
+                String value = exchange.getProperty(propertyKey) == null
+                        ? null : exchange.getProperty(propertyKey).toString();
+                baggage = baggage.toBuilder().put(key, value).build();
+            }
+        }
+        return baggage;
+    }
+
+    private Baggage getBaggageFromHeaders(Baggage baggage, Exchange exchange) {
+        for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
+            String headerKey = entry.getKey();
+            if (headerKey != null && headerKey.startsWith(BAGGAGE_HEADER_PREFIX)) {
+                String key = headerKey.substring(BAGGAGE_HEADER_PREFIX.length());
+                String value = entry.getValue() == null ? null : entry.getValue().toString();
+                baggage = baggage.toBuilder().put(key, value).build();
+            }
+        }
+        return baggage;
     }
 
 }

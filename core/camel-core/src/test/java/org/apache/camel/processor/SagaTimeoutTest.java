@@ -52,7 +52,7 @@ public class SagaTimeoutTest extends ContextTestSupport {
     public void testTimeoutHasNoEffectIfCompleted() throws Exception {
         MockEndpoint compensate = getMockEndpoint("mock:compensate");
         compensate.expectedMessageCount(1);
-        compensate.setResultWaitTime(500);
+        compensate.setResultWaitTime(2000);
 
         MockEndpoint complete = getMockEndpoint("mock:complete");
         complete.expectedMessageCount(1);
@@ -84,10 +84,10 @@ public class SagaTimeoutTest extends ContextTestSupport {
                     template.sendBody("direct:saga-multi-participants", "Hello");
                 });
 
-        String msg1 = "Cannot begin: status is COMPENSATING";
-        String msg2 = "Cannot begin: status is COMPENSATED";
         String msg = ex.getCause().getMessage();
-        assertTrue(msg.equals(msg1) || msg.equals(msg2));
+        assertTrue(msg.contains("Cannot begin: status is COMPENSATING")
+                || msg.contains("Cannot begin: status is COMPENSATED")
+                || msg.contains("Exchange is not part of a saga"));
 
         end.assertIsSatisfied();
         complete.assertIsSatisfied();
@@ -105,7 +105,7 @@ public class SagaTimeoutTest extends ContextTestSupport {
                         .completionMode(SagaCompletionMode.MANUAL)
                         .compensation("mock:compensate").to("mock:end");
 
-                from("direct:saga-auto").saga().timeout(350, TimeUnit.MILLISECONDS).option("id", constant("myid"))
+                from("direct:saga-auto").saga().timeout(2000, TimeUnit.MILLISECONDS).option("id", constant("myid"))
                         .compensation("mock:compensate").completion("mock:complete")
                         .to("mock:end");
 

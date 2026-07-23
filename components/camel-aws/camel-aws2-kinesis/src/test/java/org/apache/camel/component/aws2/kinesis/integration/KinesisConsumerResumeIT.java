@@ -55,7 +55,6 @@ import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.createStream;
 import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.deleteStream;
 import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.putRecords;
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -78,20 +77,19 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
         }
     }
 
-    private static final class TestResumeAction extends KinesisResumeAction {
-        private List<PutRecordsResponse> previousRecords;
-        private final int expectedCount;
+    public static class TestResumeAction extends KinesisResumeAction {
+        private static volatile List<PutRecordsResponse> previousRecords;
+        private static volatile int expectedCount;
 
-        private TestResumeAction(int expectedCount) {
-            this.expectedCount = expectedCount;
+        public TestResumeAction() {
         }
 
-        public void setPreviousRecords(List<PutRecordsResponse> previousRecords) {
-            this.previousRecords = previousRecords;
+        public static void setPreviousRecords(List<PutRecordsResponse> records) {
+            previousRecords = records;
         }
 
-        public int getExpectedCount() {
-            return expectedCount;
+        public static void setExpectedCount(int count) {
+            expectedCount = count;
         }
 
         @Override
@@ -126,7 +124,7 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
     private final int expectedCount = messageCount / 2;
     private List<KinesisData> receivedMessages = new CopyOnWriteArrayList<>();
     private List<PutRecordsResponse> previousRecords;
-    private TestResumeAction action = new TestResumeAction(expectedCount);
+    private TestResumeAction action = new TestResumeAction();
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -177,7 +175,8 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
             }
         }
 
-        action.setPreviousRecords(previousRecords);
+        TestResumeAction.setExpectedCount(expectedCount);
+        TestResumeAction.setPreviousRecords(previousRecords);
     }
 
     @AfterEach
@@ -188,11 +187,11 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
     @DisplayName("Tests that the component can resume messages from AWS Kinesis")
     @Timeout(value = 3, unit = TimeUnit.MINUTES)
     @Test
-    void testProduceMessages() {
+    void testProduceMessages() throws Exception {
         result.expectedMessageCount(expectedCount);
 
-        await().atMost(2, TimeUnit.MINUTES)
-                .untilAsserted(() -> result.assertIsSatisfied());
+        result.setResultWaitTime(120000);
+        result.assertIsSatisfied();
 
         assertEquals(expectedCount, receivedMessages.size());
         for (KinesisData data : receivedMessages) {

@@ -21,7 +21,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.thrift.TConfiguration;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -33,7 +32,6 @@ import org.apache.thrift.transport.TZlibTransport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerZlibCompressionTest.class);
-    @RegisterExtension
-    AvailablePortFinder.Port thriftTestPort = AvailablePortFinder.find();
+
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
@@ -54,12 +51,17 @@ public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
     private TProtocol protocol;
     private TTransport transport;
 
+    private int getActualPort() {
+        return ((ThriftConsumer) context.getRoutes().get(0).getConsumer()).getLocalPort();
+    }
+
     @BeforeEach
     public void startThriftZlibClient() throws TTransportException {
         if (transport == null) {
-            LOG.info("Connecting to the Thrift server with zlib compression on port: {}", thriftTestPort.getPort());
+            int thriftTestPort = getActualPort();
+            LOG.info("Connecting to the Thrift server with zlib compression on port: {}", thriftTestPort);
 
-            transport = new TSocket(new TConfiguration(), "localhost", thriftTestPort.getPort(), THRIFT_CLIENT_TIMEOUT);
+            transport = new TSocket(new TConfiguration(), "localhost", thriftTestPort, THRIFT_CLIENT_TIMEOUT);
             protocol = new TBinaryProtocol(new TZlibTransport(transport));
             thriftClient = new Calculator.Client(protocol);
             transport.open();
@@ -115,8 +117,7 @@ public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("thrift://localhost:" + thriftTestPort.getPort()
-                     + "/org.apache.camel.component.thrift.generated.Calculator?compressionType=ZLIB&synchronous=true")
+                from("thrift://localhost:0/org.apache.camel.component.thrift.generated.Calculator?compressionType=ZLIB&synchronous=true")
                         .to("mock:thrift-secure-service").choice()
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))
                         .setBody(simple(Integer.valueOf(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))

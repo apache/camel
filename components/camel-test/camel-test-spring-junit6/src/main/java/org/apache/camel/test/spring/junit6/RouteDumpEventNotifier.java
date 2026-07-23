@@ -23,6 +23,7 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
 import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.test.junit6.util.CamelContextTestHelper;
 
 public class RouteDumpEventNotifier extends EventNotifierSupport {
 
@@ -49,13 +50,19 @@ public class RouteDumpEventNotifier extends EventNotifierSupport {
         CamelContext context = ((CamelContextStoppingEvent) event).getContext();
         String testName = testMethodName.apply(this);
 
-        String dir = "target/camel-route-dump";
-        String ext = format.toLowerCase();
-        String name = String.format("%s-%s.%s", testClassName, testName, ext);
+        String dir = CamelContextTestHelper.getRouteDumpDir();
+        if (dir == null) {
+            dir = "target/camel-route-dump";
+        }
 
         DumpRoutesStrategy drs = context.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
-
-        drs.setOutput(dir + "/" + name);
+        if ("png".equals(format)) {
+            drs.setOutput(dir);
+        } else {
+            String ext = format.toLowerCase();
+            String name = String.format("%s-%s.%s", testClassName, testName, ext);
+            drs.setOutput(dir + "/" + name);
+        }
         drs.setInclude("*");
         drs.setLog(false);
         drs.setUriAsParameters(true);

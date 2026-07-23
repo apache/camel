@@ -18,13 +18,18 @@ package org.apache.camel.support.jsse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a list of TLS/SSL signature schemes for use in TLS handshakes. Signature schemes control which signature
  * algorithms are available during the TLS handshake, including post-quantum signature algorithms such as ML-DSA.
+ *
+ * @since 4.19
  */
 public class SignatureSchemesParameters {
-    private List<String> signatureScheme;
+    private @Nullable List<String> signatureScheme;
 
     /**
      * Returns a live reference to the list of signature scheme names.
@@ -39,6 +44,7 @@ public class SignatureSchemesParameters {
     }
 
     public void addSignatureScheme(String scheme) {
+        Objects.requireNonNull(scheme, "scheme");
         if (this.signatureScheme == null) {
             this.signatureScheme = new ArrayList<>();
         }
@@ -51,7 +57,8 @@ public class SignatureSchemesParameters {
      * @param signatureScheme signature schemes
      */
     public void setSignatureScheme(List<String> signatureScheme) {
-        this.signatureScheme = signatureScheme == null ? null : new ArrayList<>(signatureScheme);
+        Objects.requireNonNull(signatureScheme, "signatureScheme");
+        this.signatureScheme = new ArrayList<>(signatureScheme);
     }
 
     @Override

@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Serialize and deserialize messages using Apache Fory
  */
-@Metadata(firstVersion = "4.9.0", label = "dataformat,transformation", title = "Fory")
+@Metadata(firstVersion = "4.9.0", label = "dataformat,transformation", title = "Fory",
+          description = "Serialize and deserialize messages using Apache Fory")
 @XmlRootElement(name = "fory")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ForyDataFormat extends DataFormatDefinition {

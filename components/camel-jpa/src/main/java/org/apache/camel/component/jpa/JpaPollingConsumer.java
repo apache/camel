@@ -124,6 +124,16 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
 
     @Override
     public Exchange receive() {
+        return doReceive(true);
+    }
+
+    @Override
+    public Exchange receiveNoWait() {
+        // do not use locking so the call returns immediately without blocking on row locks
+        return doReceive(false);
+    }
+
+    private Exchange doReceive(boolean useLocking) {
         // resolve the entity manager before evaluating the expression
         final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory,
                 getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
@@ -140,7 +150,9 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
                 Query innerQuery = getQueryFactory().createQuery(entityManager);
                 configureParameters(innerQuery);
 
-                if (getEndpoint().isConsumeLockEntity()) {
+                // only apply lock mode when locking is enabled and not using native queries
+                // as JPA spec does not support setLockMode on native queries
+                if (useLocking && getEndpoint().isConsumeLockEntity() && nativeQuery == null) {
                     innerQuery.setLockMode(getLockModeType());
                 }
 
@@ -183,12 +195,6 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
     }
 
     @Override
-    public Exchange receiveNoWait() {
-        // call receive as-is
-        return receive();
-    }
-
-    @Override
     public Exchange receive(long timeout) {
         // need to use a thread pool to perform the task so we can support timeout
         if (executorService == null) {
@@ -205,7 +211,8 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
         } catch (ExecutionException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } catch (TimeoutException e) {
-            // ignore as we hit timeout then return null
+            // cancel the task so it does not keep running in the background holding DB locks
+            future.cancel(true);
         }
 
         return null;

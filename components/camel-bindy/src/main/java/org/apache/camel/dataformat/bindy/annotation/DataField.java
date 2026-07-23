@@ -86,9 +86,10 @@ public @interface DataField {
     char paddingChar() default ' ';
 
     /**
-     * precision of the {@link java.math.BigDecimal} number to be created
+     * precision of the {@link java.math.BigDecimal} number to be created. Use -1 (default) to preserve the original
+     * scale from the input.
      */
-    int precision() default 0;
+    int precision() default -1;
 
     /**
      * Position of the field in the output message generated (should start from 1). Must be used when the position of
@@ -152,4 +153,14 @@ public @interface DataField {
      * org.apache.camel.dataformat.bindy.csv.BindySimpleCsvFunctionWithExternalMethodTest.replaceToBar
      */
     String method() default "";
+
+    /**
+     * Whether to keep going when parsing this field fails.
+     *
+     * TRUE forces tolerance for this field — a parse error is replaced with the field's defaultValue, or the
+     * type-appropriate default if no defaultValue is set. FALSE forces strict behavior: the exception propagates and
+     * aborts the unmarshal as it always has. INHERIT (the default) defers to the record-level setting on @CsvRecord
+     * or @FixedLengthRecord.
+     */
+    ContinueOnFailure continueParseOnFailure() default ContinueOnFailure.INHERIT;
 }

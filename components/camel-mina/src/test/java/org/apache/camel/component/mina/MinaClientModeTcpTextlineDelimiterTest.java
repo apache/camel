@@ -55,7 +55,7 @@ public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
                 fromF("mina:tcp://127.0.0.1:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true",
                         getPort())
                         .id("minaRoute")
-                        .noAutoStartup()
+                        .autoStartup(false)
                         .to("log:before?showAll=true")
                         .to("mock:result")
                         .to("log:after?showAll=true");

@@ -68,7 +68,7 @@ public class CouchDbConsumer extends ScheduledBatchPollingConsumer implements Re
         exchange.getIn().setHeader(CouchDbConstants.HEADER_SEQ, seq);
         exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, id);
         exchange.getIn().setHeader(CouchDbConstants.HEADER_METHOD, deleted ? "DELETE" : "UPDATE");
-        exchange.getIn().setBody(new JsonParser().parseString(changesResultItem.toString()));
+        exchange.getIn().setBody(JsonParser.parseString(changesResultItem.toString()));
         return exchange;
     }
 

@@ -34,6 +34,8 @@ public abstract class DefaultConfigurationProperties<T> {
 
     private String name;
     private String description;
+    @Metadata(enums = "dev,test,prod")
+    private String profile;
     @Metadata(defaultValue = "Default", enums = "Verbose,Default,Brief,Oneline,Off")
     private StartupSummaryLevel startupSummaryLevel;
     private int durationMaxSeconds;
@@ -47,14 +49,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean shutdownRoutesInReverseOrder = true;
     private boolean shutdownLogInflightExchangesOnTimeout = true;
     private boolean inflightRepositoryBrowseEnabled;
-    @Metadata(defaultValue = "false")
-    private boolean errorRegistryEnabled;
-    @Metadata(defaultValue = "100")
-    private int errorRegistryMaximumEntries = 100;
-    @Metadata(defaultValue = "3600")
-    private int errorRegistryTimeToLiveSeconds = 3600;
-    @Metadata(defaultValue = "true")
-    private boolean errorRegistryStackTraceEnabled = true;
     private String fileConfigurations;
     private boolean jmxEnabled = true;
     @Metadata(enums = "classic,default,short,simple,off", defaultValue = "default")
@@ -66,6 +60,8 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(security = "insecure:dev")
     private boolean devConsoleEnabled;
     private boolean modeline;
+    @Metadata(defaultValue = "true")
+    private boolean yamlDslCompactNotationWarn = true;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled = true;
     private String streamCachingAllowClasses;
@@ -83,6 +79,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int streamCachingBufferSize;
     private boolean streamCachingRemoveSpoolDirectoryWhenStopping = true;
     private boolean streamCachingStatisticsEnabled;
+    private boolean messageSizeEnabled;
     private boolean typeConverterStatisticsEnabled;
     private boolean tracing;
     private boolean tracingStandby;
@@ -193,6 +190,23 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    /**
+     * Camel profile to use when running.
+     *
+     * The dev profile is for development, which enables a set of additional developer focus functionality, tracing,
+     * debugging, and gathering additional runtime statistics that are useful during development. However, those
+     * additional features has a slight overhead cost, and are not enabled for production profile.
+     *
+     * The default profile is prod.
+     */
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     public StartupSummaryLevel getStartupSummaryLevel() {
@@ -332,57 +346,6 @@ public abstract class DefaultConfigurationProperties<T> {
         this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
     }
 
-    public boolean isErrorRegistryEnabled() {
-        return errorRegistryEnabled;
-    }
-
-    /**
-     * Sets whether the error registry is enabled to capture errors during message routing.
-     *
-     * This is by default disabled.
-     */
-    public void setErrorRegistryEnabled(boolean errorRegistryEnabled) {
-        this.errorRegistryEnabled = errorRegistryEnabled;
-    }
-
-    public int getErrorRegistryMaximumEntries() {
-        return errorRegistryMaximumEntries;
-    }
-
-    /**
-     * Sets the maximum number of error entries to keep in the error registry. When the limit is exceeded, the oldest
-     * entries are evicted.
-     *
-     * The default value is 100.
-     */
-    public void setErrorRegistryMaximumEntries(int errorRegistryMaximumEntries) {
-        this.errorRegistryMaximumEntries = errorRegistryMaximumEntries;
-    }
-
-    public int getErrorRegistryTimeToLiveSeconds() {
-        return errorRegistryTimeToLiveSeconds;
-    }
-
-    /**
-     * Sets the time-to-live in seconds for error entries in the error registry. Entries older than this are evicted.
-     *
-     * The default value is 3600 (1 hour).
-     */
-    public void setErrorRegistryTimeToLiveSeconds(int errorRegistryTimeToLiveSeconds) {
-        this.errorRegistryTimeToLiveSeconds = errorRegistryTimeToLiveSeconds;
-    }
-
-    public boolean isErrorRegistryStackTraceEnabled() {
-        return errorRegistryStackTraceEnabled;
-    }
-
-    /**
-     * Sets whether to capture stack traces in the error registry. This is enabled by default.
-     */
-    public void setErrorRegistryStackTraceEnabled(boolean errorRegistryStackTraceEnabled) {
-        this.errorRegistryStackTraceEnabled = errorRegistryStackTraceEnabled;
-    }
-
     public String getFileConfigurations() {
         return fileConfigurations;
     }
@@ -486,17 +449,30 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI
      */
     public boolean isModeline() {
         return modeline;
     }
 
     /**
-     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI
      */
     public void setModeline(boolean modeline) {
         this.modeline = modeline;
+    }
+
+    public boolean isYamlDslCompactNotationWarn() {
+        return yamlDslCompactNotationWarn;
+    }
+
+    /**
+     * Whether to log a WARN when YAML DSL routes use compact (shorthand) notation instead of the canonical
+     * (explicit/normalized) form. The canonical style is recommended as it is more tooling and AI friendly. Use Camel
+     * CLI to normalize existing routes: camel validate normalize &lt;file&gt;
+     */
+    public void setYamlDslCompactNotationWarn(boolean yamlDslCompactNotationWarn) {
+        this.yamlDslCompactNotationWarn = yamlDslCompactNotationWarn;
     }
 
     public int getLogDebugMaxChars() {
@@ -694,6 +670,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setStreamCachingStatisticsEnabled(boolean streamCachingStatisticsEnabled) {
         this.streamCachingStatisticsEnabled = streamCachingStatisticsEnabled;
+    }
+
+    public boolean isMessageSizeEnabled() {
+        return messageSizeEnabled;
+    }
+
+    /**
+     * Sets whether message size observation is enabled (default is false).
+     *
+     * When enabled, Camel will compute the size of message body and headers (in bytes) per endpoint (for both IN and
+     * OUT directions) and make this available via JMX MBeans (min/max/mean body size and headers size).
+     */
+    public void setMessageSizeEnabled(boolean messageSizeEnabled) {
+        this.messageSizeEnabled = messageSizeEnabled;
     }
 
     public boolean isTypeConverterStatisticsEnabled() {
@@ -1569,20 +1559,21 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
-     * represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development.
+     * represented as XML, YAML, or Java DSL into the log. This is intended for trouble shooting or to assist during
+     * development.
      *
      * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
      * output and is therefore not recommended being used for production usage.
      *
-     * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
+     * This requires to have camel-xml-io/camel-yaml-io/camel-java-io on the classpath to be able to dump the routes as
+     * XML/YAML/Java.
      *
      * You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it
      * useful for tooling to understand the structure of the routes and how EIPs are nested together.
      *
      * You can also use png to save route diagrams as PNG image files either all combined in a single file (default
      * camel-route-diagrams.png) or to a given folder, where routes are grouped by source file name(s) and saved as
-     * corresponding .png files.\ This requires to have camel-diagram on the classpath to be able to render PNG
-     * diagrams.
+     * corresponding .png files. This requires to have camel-diagram on the classpath to be able to render PNG diagrams.
      */
     public void setDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
@@ -1805,6 +1796,20 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
+     * Camel profile to use when running.
+     *
+     * The dev profile is for development, which enables a set of additional developer focus functionality, tracing,
+     * debugging, and gathering additional runtime statistics that are useful during development. However, those
+     * additional features has a slight overhead cost, and are not enabled for production profile.
+     *
+     * The default profile is prod.
+     */
+    public T withProfile(String profile) {
+        this.profile = profile;
+        return (T) this;
+    }
+
+    /**
      * To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use
      * this to run Camel for a short while.
      */
@@ -1901,44 +1906,6 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Sets whether the error registry is enabled to capture errors during message routing.
-     *
-     * This is by default disabled.
-     */
-    public T withErrorRegistryEnabled(boolean errorRegistryEnabled) {
-        this.errorRegistryEnabled = errorRegistryEnabled;
-        return (T) this;
-    }
-
-    /**
-     * Sets the maximum number of error entries to keep in the error registry.
-     *
-     * The default value is 100.
-     */
-    public T withErrorRegistryMaximumEntries(int errorRegistryMaximumEntries) {
-        this.errorRegistryMaximumEntries = errorRegistryMaximumEntries;
-        return (T) this;
-    }
-
-    /**
-     * Sets the time-to-live in seconds for error entries in the error registry.
-     *
-     * The default value is 3600 (1 hour).
-     */
-    public T withErrorRegistryTimeToLiveSeconds(int errorRegistryTimeToLiveSeconds) {
-        this.errorRegistryTimeToLiveSeconds = errorRegistryTimeToLiveSeconds;
-        return (T) this;
-    }
-
-    /**
-     * Sets whether to capture stack traces in the error registry.
-     */
-    public T withErrorRegistryStackTraceEnabled(boolean errorRegistryStackTraceEnabled) {
-        this.errorRegistryStackTraceEnabled = errorRegistryStackTraceEnabled;
-        return (T) this;
-    }
-
-    /**
      * Directory to load additional configuration files that contains configuration values that takes precedence over
      * any other configuration. This can be used to refer to files that may have secret configuration that has been
      * mounted on the file system for containers.
@@ -1994,10 +1961,19 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI
      */
     public T withModeline(boolean modeline) {
         this.modeline = modeline;
+        return (T) this;
+    }
+
+    /**
+     * Whether to log a WARN when YAML DSL routes use compact (shorthand) notation instead of the canonical
+     * (explicit/normalized) form.
+     */
+    public T withYamlDslCompactNotationWarn(boolean yamlDslCompactNotationWarn) {
+        this.yamlDslCompactNotationWarn = yamlDslCompactNotationWarn;
         return (T) this;
     }
 
@@ -2160,6 +2136,17 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withStreamCachingStatisticsEnabled(boolean streamCachingStatisticsEnabled) {
         this.streamCachingStatisticsEnabled = streamCachingStatisticsEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Sets whether message size observation is enabled (default is false).
+     *
+     * When enabled, Camel will compute the size of message body and headers (in bytes) per endpoint (for both IN and
+     * OUT directions) and make this available via JMX MBeans (min/max/mean body size and headers size).
+     */
+    public T withMessageSizeEnabled(boolean messageSizeEnabled) {
+        this.messageSizeEnabled = messageSizeEnabled;
         return (T) this;
     }
 
@@ -2802,20 +2789,21 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
-     * represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development.
+     * represented as XML, YAML, or Java DSL into the log. This is intended for trouble shooting or to assist during
+     * development.
      *
      * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
      * output and is therefore not recommended being used for production usage.
      *
-     * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
+     * This requires to have camel-xml-io/camel-yaml-io/camel-java-io on the classpath to be able to dump the routes as
+     * XML/YAML/Java.
      *
      * You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it
      * useful for tooling to understand the structure of the routes and how EIPs are nested together.
      *
      * You can also use png to save route diagrams as PNG image files either all combined in a single file (default
      * camel-route-diagrams.png) or to a given folder, where routes are grouped by source file name(s) and saved as
-     * corresponding .png files.\ This requires to have camel-diagram on the classpath to be able to render PNG
-     * diagrams.
+     * corresponding .png files. This requires to have camel-diagram on the classpath to be able to render PNG diagrams.
      */
     public T withDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;

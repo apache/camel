@@ -32,6 +32,7 @@ import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
+import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.task.BlockingTask;
@@ -441,7 +442,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         if (is != null) {
             try {
                 IOHelper.close(is);
-                client.completePendingCommand();
+                boolean ok = client.completePendingCommand();
+                if (!ok) {
+                    throw new GenericFileOperationFailedException(
+                            client.getReplyCode(), client.getReplyString());
+                }
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
@@ -481,9 +486,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             log.trace("Client retrieveFile: {}", remoteName);
             if (endpoint.getConfiguration().isStreamDownload()) {
                 InputStream is = client.retrieveFileStream(remoteName);
-                target.setBody(is);
-                exchange.getIn().setHeader(FtpConstants.REMOTE_FILE_INPUT_STREAM, is);
-                result = true;
+                if (is != null) {
+                    target.setBody(is);
+                    exchange.getIn().setHeader(FtpConstants.REMOTE_FILE_INPUT_STREAM, is);
+                }
+                result = is != null;
             } else {
                 // read the entire file into memory in the byte array
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -525,8 +532,15 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             String relativeName = target.getRelativeFilePath();
 
+            File localWorkDir = local;
             temp = new File(local, relativeName + ".inprogress");
             local = new File(local, relativeName);
+
+            // ensure the local work file stays within the local work directory (CAMEL-23765)
+            if (endpoint.isJailStartingDirectory()) {
+                GenericFileHelper.jailToLocalWorkDirectory(temp, localWorkDir);
+                GenericFileHelper.jailToLocalWorkDirectory(local, localWorkDir);
+            }
 
             // create directory to local work file
             boolean result = local.mkdirs();

@@ -17,6 +17,7 @@
 package org.apache.camel.component.azure.storage.blob;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -35,16 +36,17 @@ public final class BlobUtils {
     }
 
     public static long getInputStreamLength(InputStream is) throws IOException {
-        if (is instanceof StreamCache) {
-            long len = ((StreamCache) is).length();
+        if (is instanceof StreamCache streamCache) {
+            long len = streamCache.length();
             if (len > 0) {
                 return len;
             }
+        } else if (is instanceof FileInputStream fis) {
+            return fis.getChannel().size();
         }
 
         if (!is.markSupported()) {
-            // azure cannot use -1
-            return 0;
+            return -1;
         }
         if (is instanceof ByteArrayInputStream) {
             return is.available();

@@ -1,0 +1,46 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "heap-dump",
+    "title": "Heap Dump",
+    "description": "Write a heap dump (.hprof) file for deep memory analysis",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.HeapDumpDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.22.0-SNAPSHOT"
+  },
+  "options": {
+    "live": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Live",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": true,
+      "description": "Whether to dump only live objects (default true)"
+    },
+    "name": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Name",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "File name for the heap dump (without .hprof extension)"
+    }
+  }
+}
+

@@ -33,7 +33,6 @@ public class AtomPollingLowDelayTest extends CamelTestSupport {
     void testLowDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(7);
-        mock.setResultWaitTime(3000L);
         mock.assertIsSatisfied();
     }
 
@@ -41,7 +40,9 @@ public class AtomPollingLowDelayTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=100&initialDelay=0").to("mock:result");
+                // throttled fast polling: one entry per poll; repeatCount=7 bounds it to exactly the 7 feed entries
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=100&initialDelay=0&repeatCount=7")
+                        .to("mock:result");
             }
         };
     }

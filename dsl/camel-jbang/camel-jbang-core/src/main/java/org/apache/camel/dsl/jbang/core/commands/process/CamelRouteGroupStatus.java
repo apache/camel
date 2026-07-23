@@ -38,7 +38,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "route-group", description = "Get status of Camel route groups",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get route-group",
+                 "  camel get route-group --watch" })
 public class CamelRouteGroupStatus extends ProcessWatchCommand {
 
     public static class PidNameAgeGroupCompletionCandidates implements Iterable<String> {
@@ -95,6 +99,9 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
                             return;
                         }
                         JsonArray array = (JsonArray) root.get("routeGroups");
+                        if (array == null) {
+                            return;
+                        }
                         for (int i = 0; i < array.size(); i++) {
                             JsonObject o = (JsonObject) array.get(i);
                             Row row = new Row();
@@ -169,9 +176,6 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
                             if (mean > 0 && (row.mean == null || Long.parseLong(row.mean) < mean)) {
                                 add = false;
                             }
-                            if (limit > 0 && rows.size() >= limit) {
-                                add = false;
-                            }
                             if (add && filter != null) {
                                 boolean match = false;
                                 for (String f : filter) {
@@ -195,6 +199,10 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
 
         // sort rows
         rows.sort(this::sortRow);
+
+        if (limit > 0 && rows.size() > limit) {
+            rows.subList(limit, rows.size()).clear();
+        }
 
         if (!rows.isEmpty()) {
             printTable(rows);
@@ -266,7 +274,7 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
             case "name":
                 return o1.name.compareToIgnoreCase(o2.name) * negate;
             case "group":
-                return o1.name.compareToIgnoreCase(o2.group) * negate;
+                return o1.group.compareToIgnoreCase(o2.group) * negate;
             case "age":
                 return Long.compare(o1.uptime, o2.uptime) * negate;
             default:

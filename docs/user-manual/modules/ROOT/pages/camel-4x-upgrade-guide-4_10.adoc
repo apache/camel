@@ -47,6 +47,7 @@ we have refactored `endChoice` to work more consistent.
 
 For example the following code
 
+._Java-only: nested Choice EIP before migration_
 [source,java]
 ----
 from("direct:start")
@@ -65,6 +66,7 @@ from("direct:start")
 
 Should now be
 
+._Java-only: nested Choice EIP after migration_
 [source,java]
 ----
 from("direct:start")
@@ -124,6 +126,7 @@ other EIPs such as Multicast EIP already does this.
 The header `Exchange.BEAN_METHOD_NAME` with constant value `CamelBeanMethodName` has been deprecated, and support for using this header has been removed.
 Instead, you can specify the `method` option directly as shown, or using any other header of your choosing as follows.
 
+._Java-only: specifying bean method via header_
 [source,java]
 ----
     toD("bean:myBean?method=${header.myMethodName}");

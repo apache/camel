@@ -24,7 +24,10 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get", description = "Displays running service(s) information", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel infra get kafka" })
 public class InfraGet extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running service(s)", arity = "0..1")
@@ -41,8 +44,7 @@ public class InfraGet extends InfraBaseCommand {
         int i = 0;
         for (var e : pids.entrySet()) {
             Path pidFile = e.getValue();
-            String fn = pidFile.getFileName().toString();
-            String sn = fn.substring(fn.indexOf("-") + 1, fn.lastIndexOf('-'));
+            String sn = serviceNameFromPidFile(pidFile.getFileName().toString());
             if (i > 0) {
                 printer().println("");
             }

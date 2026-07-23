@@ -24,19 +24,19 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>camel-jbang-plugin-validate</artifactId>
 
     <name>Camel :: JBang :: Plugin :: Validate</name>
-    <description>Camel JBang Route Validator</description>
+    <description>Camel CLI Route Validator</description>
 
     <properties>
         <firstVersion>4.18.0</firstVersion>
         <label>jbang</label>
-        <supportLevel>Preview</supportLevel>
+        <supportLevel>Stable</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
     </properties>
 
@@ -48,10 +48,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-yaml-dsl-validator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-yaml-io</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -47,7 +47,6 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.build.BuildContext;
 
 import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.joinHeaderAndSource;
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
@@ -212,16 +211,33 @@ public class PrepareKameletMainMojo extends AbstractMojo {
 
     private static List<String> findFactoryFinder(File rootDir) {
         List<String> answer = new ArrayList<>();
+        String serviceDir = "src/generated/resources/META-INF/services/org/apache/camel/";
 
         for (File f : Objects.requireNonNull(rootDir.listFiles())) {
-            String artifact = f.getName();
-            if (artifact.startsWith("camel-")) {
-                artifact = artifact.substring(6);
-            }
             if (f.isDirectory()) {
-                File fd = findCamelDirectory(f, "src/generated/resources/META-INF/services/org/apache/camel/");
-                if (fd != null && fd.isDirectory()) {
+                File fd = new File(f, serviceDir);
+                if (fd.isDirectory()) {
+                    String artifact = f.getName();
+                    if (artifact.startsWith("camel-")) {
+                        artifact = artifact.substring(6);
+                    }
                     findFactoryFinder(answer, artifact, fd, null);
+                }
+                // scan nested module directories (e.g., camel-infinispan/camel-infinispan/)
+                File[] children = f.listFiles();
+                if (children != null) {
+                    for (File nested : children) {
+                        if (nested.isDirectory() && nested.getName().startsWith("camel-")) {
+                            fd = new File(nested, serviceDir);
+                            if (fd.isDirectory()) {
+                                String nestedArtifact = nested.getName();
+                                if (nestedArtifact.startsWith("camel-")) {
+                                    nestedArtifact = nestedArtifact.substring(6);
+                                }
+                                findFactoryFinder(answer, nestedArtifact, fd, null);
+                            }
+                        }
+                    }
                 }
             }
         }

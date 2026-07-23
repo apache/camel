@@ -3335,7 +3335,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Sqs2HeaderNameBuilder INSTANCE = new Sqs2HeaderNameBuilder();
+        public static final Sqs2HeaderNameBuilder INSTANCE = new Sqs2HeaderNameBuilder();
 
         /**
          * A map of the attributes requested in ReceiveMessage to their

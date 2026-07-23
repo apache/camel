@@ -200,7 +200,7 @@ public interface SpringAiEmbeddingsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SpringAiEmbeddingsHeaderNameBuilder INSTANCE = new SpringAiEmbeddingsHeaderNameBuilder();
+        public static final SpringAiEmbeddingsHeaderNameBuilder INSTANCE = new SpringAiEmbeddingsHeaderNameBuilder();
 
         /**
          * The embedding response metadata.

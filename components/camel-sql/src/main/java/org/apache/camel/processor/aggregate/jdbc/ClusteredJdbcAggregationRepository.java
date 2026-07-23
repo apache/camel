@@ -77,11 +77,17 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
                     LOG.debug("Removing key {}", correlationId);
                     String table = getRepositoryName();
                     verifyTableName(table);
-                    jdbcTemplate.update("DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?", // NOSONAR
+                    int deleteCount = jdbcTemplate.update(
+                            "DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?", // NOSONAR
                             correlationId, version);
+                    if (deleteCount != 1) {
+                        throw new OptimisticLockingException();
+                    }
 
                     insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version, true);
 
+                } catch (OptimisticLockingException e) {
+                    throw e;
                 } catch (Exception e) {
                     throw new RuntimeException(
                             "Error removing key " + correlationId + " from repository " + getRepositoryName(), e);

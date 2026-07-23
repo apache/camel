@@ -22,16 +22,20 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Removes a named header from the message
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,messaging,transformation",
+          description = "Removes a specific header from the message by name")
 @XmlRootElement(name = "removeHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefinition> {
 
     @XmlAttribute(required = true)
+    @DslArg
+    @Metadata(required = true, description = "Name of header to remove.")
     private String name;
 
     public RemoveHeaderDefinition() {
@@ -70,9 +74,6 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
         return name;
     }
 
-    /**
-     * Name of header to remove
-     */
     public void setName(String name) {
         this.name = name;
     }

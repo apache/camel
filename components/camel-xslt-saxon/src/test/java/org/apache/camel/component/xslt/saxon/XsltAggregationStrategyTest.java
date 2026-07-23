@@ -57,14 +57,14 @@ public class XsltAggregationStrategyTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&sortBy=file:name&antInclude=*.xml")
-                        .routeId("route1").noAutoStartup()
+                        .routeId("route1").autoStartup(false)
                         .aggregate(new XsltSaxonAggregationStrategy("org/apache/camel/util/toolbox/aggregate.xsl"))
                         .constant(true)
                         .completionFromBatchConsumer()
                         .to("mock:transformed");
 
                 from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&sortBy=file:name&antInclude=*.xml")
-                        .routeId("route2").noAutoStartup()
+                        .routeId("route2").autoStartup(false)
                         .aggregate(new XsltSaxonAggregationStrategy("org/apache/camel/util/toolbox/aggregate-user-property.xsl")
                                 .withPropertyName("user-property"))
                         .constant(true)

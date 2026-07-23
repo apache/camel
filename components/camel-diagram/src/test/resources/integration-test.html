@@ -1,0 +1,863 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<!--
+  Integration test page for the camel-route-diagram web component.
+
+  All tests are automated — open the page in a browser and every row should
+  be green. No running Camel instance is needed; all data is mocked inline.
+
+  Browsers block ES module imports from file:// URLs (CORS/null-origin).
+  Serve from the src/ directory:
+
+    cd components/camel-diagram/src/
+    python3 -m http.server 8080
+    open http://localhost:8080/test/resources/integration-test.html
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>camel-route-diagram · Integration Test</title>
+  <style>
+    /* ─── Camel design tokens (mirrored from smoke-test-route.html) ─── */
+    :root {
+      --camel-orange:      #e97826;
+      --camel-orange-dark: #cf7428;
+      --camel-navy:        #303284;
+      --camel-purple:      #4f51ae;
+      --camel-light:       #f5f5f5;
+      --camel-border:      #e1e1e1;
+      --camel-text:        #333;
+      --camel-muted:       #5d5d5d;
+      --camel-white:       #fff;
+      --radius:            6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, 'Open Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--camel-text);
+      background: var(--camel-light);
+      min-height: 100vh;
+    }
+
+    /* ─── Top nav bar ─── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--camel-navy);
+      color: var(--camel-white);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      gap: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,.35);
+    }
+    .site-nav .logo-mark {
+      width: 30px;
+      height: 30px;
+      background: var(--camel-orange);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      flex-shrink: 0;
+      letter-spacing: -1px;
+    }
+    .site-nav .brand-name  { font-weight: 700; font-size: .95rem; }
+    .site-nav .brand-sub   { font-size: .7rem; opacity: .65; }
+    .site-nav .nav-spacer  { flex: 1; }
+    .site-nav .nav-links   { display: flex; gap: 1.25rem; }
+    .site-nav .nav-links a {
+      color: rgba(255,255,255,.75);
+      text-decoration: none;
+      font-size: .8rem;
+      font-weight: 600;
+      transition: color .15s;
+    }
+    .site-nav .nav-links a:hover { color: var(--camel-orange); }
+    .badge-pill {
+      background: var(--camel-orange);
+      color: var(--camel-white);
+      font-size: .65rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 99px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      background: var(--camel-navy);
+      color: var(--camel-white);
+      padding: 2.5rem 1.5rem 2.75rem;
+      border-bottom: 4px solid var(--camel-orange);
+    }
+    .hero-inner { max-width: 900px; margin: 0 auto; }
+    .hero h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: .4rem;
+      letter-spacing: -.5px;
+    }
+    .hero h1 code {
+      color: var(--camel-orange);
+      font-family: 'Courier New', monospace;
+      font-size: 1.55rem;
+    }
+    .hero p {
+      opacity: .8;
+      max-width: 640px;
+      font-size: .9rem;
+      margin-bottom: .75rem;
+    }
+    .hero-hint {
+      display: inline-block;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: var(--radius);
+      padding: .5rem .9rem;
+      font-family: 'Courier New', monospace;
+      font-size: .78rem;
+      color: #9db8d2;
+      line-height: 1.7;
+    }
+
+    /* ─── Layout ─── */
+    .content {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    /* ─── Summary badge ─── */
+    #summary {
+      display: inline-block;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: .4rem 1.1rem;
+      border-radius: 99px;
+      margin-bottom: 1.75rem;
+      letter-spacing: .02em;
+    }
+    #summary.running  { background: #e8eaf6; color: var(--camel-navy); }
+    #summary.all-pass { background: #e8f5e9; color: #1b5e20; }
+    #summary.has-fail { background: #fce4ec; color: #880e4f; }
+
+    /* ─── Sections ─── */
+    .section { margin-bottom: 2.5rem; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      margin-bottom: 1rem;
+      padding-bottom: .6rem;
+      border-bottom: 2px solid var(--camel-border);
+    }
+    .section-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--camel-navy);
+    }
+    .section-tag {
+      font-size: .65rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tag-lifecycle { background: #e8eaf6; color: #303284; }
+    .tag-render    { background: #fff3e0; color: #9a4200; }
+    .tag-api       { background: #e3f2fd; color: #0d47a1; }
+    .tag-eip       { background: #fce4ec; color: #880e4f; }
+    .tag-color     { background: #f3e5f5; color: #4a148c; }
+    .tag-polling   { background: #e8f5e9; color: #1b5e20; }
+
+    /* ─── Cards ─── */
+    .card {
+      background: var(--camel-white);
+      border: 1px solid var(--camel-border);
+      border-top: 3px solid var(--camel-orange);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: .7rem 1rem .55rem;
+      border-bottom: 1px solid var(--camel-border);
+    }
+    .card-header h3 {
+      font-size: .9rem;
+      font-weight: 700;
+      color: var(--camel-navy);
+      margin-bottom: .15rem;
+    }
+    .card-header p {
+      font-size: .78rem;
+      color: var(--camel-muted);
+    }
+    .card-header p code {
+      font-size: .78rem;
+      background: #f0f0f0;
+      border-radius: 3px;
+      padding: 0 3px;
+    }
+
+    /* ─── Test rows ─── */
+    .test-list { list-style: none; }
+    .test-row {
+      display: flex;
+      align-items: baseline;
+      gap: .6rem;
+      padding: .55rem 1rem;
+      font-size: .84rem;
+      border-bottom: 1px solid var(--camel-border);
+    }
+    .test-row:last-child { border-bottom: none; }
+    .test-row.pending { color: var(--camel-muted); }
+    .test-row.pass    { background: #f0faf3; }
+    .test-row.fail    { background: #fff5f5; }
+
+    .badge {
+      font-size: .62rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .pass-badge { background: #c8e6c9; color: #1b5e20; }
+    .fail-badge { background: #ffcdd2; color: #b71c1c; }
+    .run-badge  { background: #e8eaf6; color: #303284; }
+
+    .test-label { flex: 1; }
+    .err-msg    { font-size: .78rem; color: #b71c1c; font-family: 'Courier New', monospace; }
+
+    /* ─── Footer ─── */
+    .site-footer {
+      background: var(--camel-navy);
+      color: rgba(255,255,255,.55);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: .78rem;
+    }
+    .site-footer a { color: var(--camel-orange); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<!-- ─── Navigation ─── -->
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="logo-mark" aria-hidden="true">C</div>
+  <div>
+    <div class="brand-name">Apache Camel</div>
+    <div class="brand-sub">camel-route-diagram</div>
+  </div>
+  <div class="nav-spacer"></div>
+  <nav class="nav-links" aria-label="Jump to section">
+    <a href="#lifecycle">Lifecycle</a>
+    <a href="#rendering">Rendering</a>
+    <a href="#api">Attribute API</a>
+    <a href="#eips">EIP Nodes</a>
+    <a href="#colors">Colors</a>
+    <a href="#polling">Polling</a>
+    <a href="smoke-test-route.html">Smoke · Route</a>
+    <a href="smoke-test-topology.html">Smoke · Topology</a>
+  </nav>
+  <span class="badge-pill">Integration Tests</span>
+</nav>
+
+<!-- ─── Hero ─── -->
+<header class="hero">
+  <div class="hero-inner">
+    <h1><code>&lt;camel-route-diagram&gt;</code> Integration Tests</h1>
+    <p>
+      Automated browser tests for the route-diagram web component. Every assertion drives the public
+      component API (attributes, shadow DOM) with mocked fetch responses. Open the page and all rows
+      should turn green — no running Camel instance required.
+    </p>
+    <span class="hero-hint">
+      cd components/camel-diagram/src/<br>
+      python3 -m http.server 8080 &amp;&amp; open http://localhost:8080/test/resources/integration-test.html
+    </span>
+  </div>
+</header>
+
+<!-- ─── Main content ─── -->
+<main class="content">
+  <div id="summary" class="running">Running…</div>
+  <div id="results"></div>
+</main>
+
+<!-- Hidden container for component instances created during tests -->
+<div id="mount" hidden aria-hidden="true"></div>
+
+<!-- ─── Footer ─── -->
+<footer class="site-footer">
+  <p>
+    <a href="https://camel.apache.org/" rel="noopener noreferrer">Apache Camel</a>
+    &nbsp;·&nbsp;
+    <code>camel-route-diagram</code> web component
+    &nbsp;·&nbsp;
+    Integration tests — not a production page.
+  </p>
+</footer>
+
+<script type="module">
+import '../../main/resources/META-INF/resources/camel/diagram/camel-route-diagram.js';
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Mini test runner
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+const suites = [];
+let currentSuite = null;
+
+function describe(label, fn) {
+    const suite = { label, tests: [] };
+    suites.push(suite);
+    currentSuite = suite;
+    fn();
+    currentSuite = null;
+}
+
+function it(label, fn) {
+    currentSuite.tests.push({ label, fn });
+}
+
+function expect(value) {
+    const pass = (condition, msg) => { if (!condition) throw new Error(msg); };
+    const str  = () => String(value ?? '');
+    const matchers = {
+        toBe:            (x) => pass(value === x,          `Expected ${JSON.stringify(x)}, got ${JSON.stringify(value)}`),
+        toBeTruthy:      ()  => pass(!!value,               `Expected truthy, got ${JSON.stringify(value)}`),
+        toBeFalsy:       ()  => pass(!value,                `Expected falsy, got ${JSON.stringify(value)}`),
+        toContain:       (x) => pass(str().includes(x),    `Expected to contain ${JSON.stringify(x)}`),
+        toBeGreaterThan: (n) => pass(value > n,             `Expected > ${n}, got ${value}`),
+    };
+    matchers.not = {
+        toContain: (x) => pass(!str().includes(x), `Expected NOT to contain ${JSON.stringify(x)}`),
+    };
+    return matchers;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Helpers
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+let fetchLog = [];
+const mountEl = document.getElementById('mount');
+
+function mockFetch(handler) {
+    window.fetch = (url, _opts) => {
+        fetchLog.push(String(url));
+        return handler(url);
+    };
+}
+
+function mount(attrs = {}) {
+    const el = document.createElement('camel-route-diagram');
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    mountEl.appendChild(el);
+    return el;
+}
+
+/**
+ * Polls `predicate` every 30 ms until it returns truthy or `timeout` ms elapses.
+ * Rejects with a descriptive error on timeout.
+ */
+function waitFor(predicate, timeout = 2000) {
+    return new Promise((resolve, reject) => {
+        const start = Date.now();
+        const tick = setInterval(() => {
+            try {
+                if (predicate()) { clearInterval(tick); resolve(); return; }
+            } catch (_) { /* predicate may throw transiently */ }
+            if (Date.now() - start > timeout) {
+                clearInterval(tick);
+                reject(new Error(`waitFor timed out after ${timeout} ms`));
+            }
+        }, 30);
+    });
+}
+
+function shadowText(el) { return el.shadowRoot?.textContent ?? ''; }
+function shadowHTML(el) { return el.shadowRoot?.innerHTML  ?? ''; }
+
+// Width of the first rendered route SVG. A branching EIP spreads its branches horizontally, so the SVG is much
+// wider than the ~240px of a single linear column; this is the signal the branching-layout tests assert on.
+function svgWidth(el) {
+    const svg = el.shadowRoot?.querySelector('svg');
+    return svg ? Number(svg.getAttribute('width')) : 0;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Mock route data
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+const MINIMAL = (routeId) => ({
+    routes: [{
+        routeId,
+        code: [
+            { type: 'route', id: 'r0', level: 0, code: 'route' },
+            { type: 'from',  id: 'f1', level: 1, code: 'from[timer:tick]' },
+            { type: 'to',    id: 't1', level: 1, code: 'to[log:out]' },
+        ],
+    }],
+});
+
+const STATS_DATA = {
+    routes: [{
+        routeId: 'stats-route',
+        code: [
+            { type: 'route', id: 'r0', level: 0, code: 'route' },
+            { type: 'from',  id: 'f1', level: 1, code: 'from[timer:tick]',
+              statistics: { exchangesTotal: 42, exchangesFailed: 3 } },
+            { type: 'to',    id: 't1', level: 1, code: 'to[log:out]',
+              statistics: { exchangesTotal: 42, exchangesFailed: 0 } },
+        ],
+    }],
+};
+
+// description is 66 chars, well over the 28-char truncation limit
+const LONG_DESCRIPTION = 'this-is-a-deliberately-very-long-description-to-trigger-truncation';
+const LONG_DESC_DATA = {
+    routes: [{
+        routeId: 'long-route',
+        code: [
+            { type: 'route', id: 'r0', level: 0, code: 'route' },
+            { type: 'from',  id: 'f1', level: 1, code: 'from[timer]',
+              description: LONG_DESCRIPTION },
+        ],
+    }],
+};
+
+const CHOICE_DATA = {
+    routes: [{
+        routeId: 'choice-route',
+        code: [
+            { type: 'route',     id: 'r0',  level: 0, code: 'route' },
+            { type: 'from',      id: 'f1',  level: 1, code: 'from[timer]' },
+            { type: 'choice',    id: 'ch1', level: 1, code: 'choice' },
+            { type: 'when',      id: 'wh1', level: 2, code: 'when[${body} != null]' },
+            { type: 'to',        id: 't1',  level: 3, code: 'to[direct:a]' },
+            { type: 'otherwise', id: 'ow1', level: 2, code: 'otherwise' },
+            { type: 'to',        id: 't2',  level: 3, code: 'to[direct:b]' },
+        ],
+    }],
+};
+
+const CIRCUIT_BREAKER_DATA = {
+    routes: [{
+        routeId: 'cb-route',
+        code: [
+            { type: 'route',          id: 'r0',  level: 0, code: 'route' },
+            { type: 'from',           id: 'f1',  level: 1, code: 'from[timer]' },
+            { type: 'circuitBreaker', id: 'cb1', level: 1, code: 'circuitBreaker' },
+            { type: 'to',             id: 't1',  level: 2, code: 'to[http:svc/api]' },
+            // onFallback is modeled as a `when` node: the component has no dedicated onFallback type styling
+            { type: 'when',           id: 'fb1', level: 2, code: 'onFallback' },
+            { type: 'log',            id: 'l1',  level: 3, code: 'log[fallback]' },
+        ],
+    }],
+};
+
+// Fixtures for the remaining branching EIPs (multicast, doTry, loadBalance, recipientList). Each has two or more
+// branches at the same level, which the layout engine must place side-by-side. If a type were dropped from the
+// component's BRANCHING_EIPS set, its branches would collapse into a single vertical column and the rendered SVG
+// would shrink to the linear width, which the layout tests below assert against.
+const MULTICAST_DATA = {
+    routes: [{
+        routeId: 'multicast-route',
+        code: [
+            { type: 'route',     id: 'r0',  level: 0, code: 'route' },
+            { type: 'from',      id: 'f1',  level: 1, code: 'from[timer]' },
+            { type: 'multicast', id: 'mc1', level: 1, code: 'multicast' },
+            { type: 'to',        id: 't1',  level: 2, code: 'to[direct:a]' },
+            { type: 'to',        id: 't2',  level: 2, code: 'to[direct:b]' },
+            { type: 'to',        id: 't3',  level: 2, code: 'to[direct:c]' },
+        ],
+    }],
+};
+
+const DOTRY_DATA = {
+    routes: [{
+        routeId: 'dotry-route',
+        code: [
+            { type: 'route',     id: 'r0',  level: 0, code: 'route' },
+            { type: 'from',      id: 'f1',  level: 1, code: 'from[timer]' },
+            { type: 'doTry',     id: 'dt1', level: 1, code: 'doTry' },
+            { type: 'to',        id: 't1',  level: 2, code: 'to[direct:work]' },
+            { type: 'doCatch',   id: 'dc1', level: 2, code: 'doCatch[Exception]' },
+            { type: 'log',       id: 'l1',  level: 3, code: 'log[caught]' },
+            { type: 'doFinally', id: 'df1', level: 2, code: 'doFinally' },
+            { type: 'log',       id: 'l2',  level: 3, code: 'log[cleanup]' },
+        ],
+    }],
+};
+
+const LOADBALANCE_DATA = {
+    routes: [{
+        routeId: 'loadbalance-route',
+        code: [
+            { type: 'route',       id: 'r0',  level: 0, code: 'route' },
+            { type: 'from',        id: 'f1',  level: 1, code: 'from[timer]' },
+            { type: 'loadBalance', id: 'lb1', level: 1, code: 'loadBalance' },
+            { type: 'to',          id: 't1',  level: 2, code: 'to[direct:a]' },
+            { type: 'to',          id: 't2',  level: 2, code: 'to[direct:b]' },
+        ],
+    }],
+};
+
+const RECIPIENTLIST_DATA = {
+    routes: [{
+        routeId: 'recipientlist-route',
+        code: [
+            { type: 'route',         id: 'r0',  level: 0, code: 'route' },
+            { type: 'from',          id: 'f1',  level: 1, code: 'from[timer]' },
+            { type: 'recipientList', id: 'rl1', level: 1, code: 'recipientList' },
+            { type: 'to',            id: 't1',  level: 2, code: 'to[direct:a]' },
+            { type: 'to',            id: 't2',  level: 2, code: 'to[direct:b]' },
+        ],
+    }],
+};
+
+const MULTI_ROUTE_DATA = {
+    routes: [
+        MINIMAL('route-alpha').routes[0],
+        MINIMAL('route-beta').routes[0],
+        MINIMAL('route-gamma').routes[0],
+    ],
+};
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Test suites
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+describe('Component Lifecycle', () => {
+
+    it('shows loading state while fetch is pending', () => {
+        mockFetch(() => new Promise(() => { /* never resolves */ }));
+        const el = mount({ src: '/mock/pending' });
+        // Loading state is rendered synchronously on connectedCallback
+        expect(shadowText(el)).toContain('Loading diagram');
+        el.remove();
+    });
+
+    it('shows error state on HTTP 5xx response', async () => {
+        mockFetch(() => Promise.resolve({ ok: false, status: 500, statusText: 'Internal Server Error' }));
+        const el = mount({ src: '/mock/broken' });
+        await waitFor(() => shadowHTML(el).includes('class="error"'));
+        expect(shadowText(el)).toContain('HTTP 500');
+        el.remove();
+    });
+
+    it('shows error state when JSON parsing fails', async () => {
+        mockFetch(() => Promise.resolve({
+            ok: true,
+            json: () => Promise.reject(new SyntaxError('Unexpected token')),
+        }));
+        const el = mount({ src: '/mock/bad-json' });
+        await waitFor(() => shadowHTML(el).includes('class="error"'));
+        expect(shadowText(el)).toBeTruthy();
+        el.remove();
+    });
+
+    it('shows error state when response is missing routes array', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve({ notRoutes: [] }) }));
+        const el = mount({ src: '/mock/no-routes' });
+        await waitFor(() => shadowHTML(el).includes('class="error"'));
+        expect(shadowText(el)).toContain('missing routes array');
+        el.remove();
+    });
+
+});
+
+describe('Rendering', () => {
+
+    it('renders an SVG for a simple two-node route', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(MINIMAL('simple')) }));
+        const el = mount({ src: '/mock/simple' });
+        await waitFor(() => shadowHTML(el).includes('<svg'));
+        expect(shadowHTML(el)).toContain('<svg');
+        el.remove();
+    });
+
+    it('renders aria-label for from and to nodes', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(MINIMAL('aria-test')) }));
+        const el = mount({ src: '/mock/aria' });
+        await waitFor(() => shadowHTML(el).includes('aria-label'));
+        expect(shadowHTML(el)).toContain('aria-label="from:');
+        expect(shadowHTML(el)).toContain('aria-label="to:');
+        el.remove();
+    });
+
+    it('displays the route label', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(MINIMAL('my-test-route')) }));
+        const el = mount({ src: '/mock/label' });
+        await waitFor(() => shadowText(el).includes('my-test-route'));
+        expect(shadowText(el)).toContain('my-test-route');
+        el.remove();
+    });
+
+    it('renders edge connectors between nodes', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(MINIMAL('edges')) }));
+        const el = mount({ src: '/mock/edges' });
+        await waitFor(() => shadowHTML(el).includes('<path'));
+        expect(shadowHTML(el)).toContain('<path');
+        el.remove();
+    });
+
+    it('displays exchange statistics when present', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(STATS_DATA) }));
+        const el = mount({ src: '/mock/stats' });
+        await waitFor(() => shadowText(el).includes('✓42'));
+        expect(shadowText(el)).toContain('✓42');
+        expect(shadowText(el)).toContain('✗3');
+        el.remove();
+    });
+
+    it('truncates long node descriptions with an ellipsis', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(LONG_DESC_DATA) }));
+        const el = mount({ src: '/mock/long' });
+        await waitFor(() => shadowHTML(el).includes('<svg'));
+        expect(shadowText(el)).not.toContain(LONG_DESCRIPTION);
+        expect(shadowText(el)).toContain('…');
+        el.remove();
+    });
+
+});
+
+describe('Attribute API', () => {
+
+    it('appends filter as a query parameter in the fetch URL', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(MINIMAL('filter-test')) }));
+        const el = mount({ src: '/mock/filter', filter: 'myRoute' });
+        await waitFor(() => fetchLog.length > 0);
+        expect(fetchLog[0]).toContain('filter=myRoute');
+        el.remove();
+    });
+
+    it('re-fetches and updates content when src attribute changes', async () => {
+        let serveData = MINIMAL('route-alpha');
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(serveData) }));
+        const el = mount({ src: '/mock/src-a' });
+        await waitFor(() => shadowText(el).includes('route-alpha'));
+
+        serveData = MINIMAL('route-beta');
+        el.setAttribute('src', '/mock/src-b');
+        await waitFor(() => shadowText(el).includes('route-beta'));
+        expect(shadowText(el)).not.toContain('route-alpha');
+        el.remove();
+    });
+
+    it('renders all routes when response contains multiple routes', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(MULTI_ROUTE_DATA) }));
+        const el = mount({ src: '/mock/multi' });
+        await waitFor(() => shadowText(el).includes('route-gamma'));
+        const cols = el.shadowRoot.querySelectorAll('.route-col');
+        expect(cols.length).toBe(3);
+        el.remove();
+    });
+
+});
+
+describe('EIP Node Types', () => {
+
+    it('renders choice, when, and otherwise nodes', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(CHOICE_DATA) }));
+        const el = mount({ src: '/mock/choice' });
+        await waitFor(() => shadowHTML(el).includes('aria-label="choice:'));
+        expect(shadowHTML(el)).toContain('aria-label="choice:');
+        expect(shadowHTML(el)).toContain('aria-label="when:');
+        expect(shadowHTML(el)).toContain('aria-label="otherwise:');
+        el.remove();
+    });
+
+    it('renders circuitBreaker node', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(CIRCUIT_BREAKER_DATA) }));
+        const el = mount({ src: '/mock/cb' });
+        await waitFor(() => shadowHTML(el).includes('aria-label="circuitBreaker:'));
+        expect(shadowHTML(el)).toContain('aria-label="circuitBreaker:');
+        el.remove();
+    });
+
+});
+
+describe('Branching EIP Layout', () => {
+
+    // Each branching EIP must place its branches side-by-side, producing an SVG wider than a single linear column
+    // (~240px). A regression dropping the type from BRANCHING_EIPS would stack the branches vertically and the
+    // width would collapse below this threshold.
+    const SIDE_BY_SIDE_MIN_WIDTH = 360;
+
+    it('multicast spreads its branches horizontally', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(MULTICAST_DATA) }));
+        const el = mount({ src: '/mock/multicast' });
+        await waitFor(() => shadowHTML(el).includes('aria-label="multicast:'));
+        expect(svgWidth(el)).toBeGreaterThan(SIDE_BY_SIDE_MIN_WIDTH);
+        el.remove();
+    });
+
+    it('doTry spreads its clauses horizontally', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(DOTRY_DATA) }));
+        const el = mount({ src: '/mock/dotry' });
+        await waitFor(() => shadowHTML(el).includes('aria-label="doTry:'));
+        expect(svgWidth(el)).toBeGreaterThan(SIDE_BY_SIDE_MIN_WIDTH);
+        el.remove();
+    });
+
+    it('loadBalance spreads its branches horizontally', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(LOADBALANCE_DATA) }));
+        const el = mount({ src: '/mock/loadbalance' });
+        await waitFor(() => shadowHTML(el).includes('aria-label="loadBalance:'));
+        expect(svgWidth(el)).toBeGreaterThan(SIDE_BY_SIDE_MIN_WIDTH);
+        el.remove();
+    });
+
+    it('recipientList spreads its branches horizontally', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(RECIPIENTLIST_DATA) }));
+        const el = mount({ src: '/mock/recipientlist' });
+        await waitFor(() => shadowHTML(el).includes('aria-label="recipientList:'));
+        expect(svgWidth(el)).toBeGreaterThan(SIDE_BY_SIDE_MIN_WIDTH);
+        el.remove();
+    });
+
+});
+
+describe('Node Colors', () => {
+
+    it('choice node uses amber fill (#f59e0b)', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(CHOICE_DATA) }));
+        const el = mount({ src: '/mock/choice-color' });
+        await waitFor(() => shadowHTML(el).includes('#f59e0b'));
+        expect(shadowHTML(el)).toContain('#f59e0b');
+        el.remove();
+    });
+
+    it('circuitBreaker node uses red fill (#ef4444)', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(CIRCUIT_BREAKER_DATA) }));
+        const el = mount({ src: '/mock/cb-color' });
+        await waitFor(() => shadowHTML(el).includes('#ef4444'));
+        expect(shadowHTML(el)).toContain('#ef4444');
+        el.remove();
+    });
+
+});
+
+describe('Polling', () => {
+
+    it('refresh attribute causes repeated fetch calls', async () => {
+        mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(MINIMAL('poll')) }));
+        const el = mount({ src: '/mock/poll', refresh: '50' });
+        await new Promise(r => setTimeout(r, 250));
+        el.remove();
+        expect(fetchLog.length).toBeGreaterThan(2);
+    });
+
+});
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Runner — renders results into the DOM
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+const SUITE_TAGS = {
+    'Component Lifecycle': 'tag-lifecycle',
+    'Rendering':           'tag-render',
+    'Attribute API':       'tag-api',
+    'EIP Node Types':      'tag-eip',
+    'Branching EIP Layout': 'tag-eip',
+    'Node Colors':         'tag-color',
+    'Polling':             'tag-polling',
+};
+
+async function run() {
+    const resultsEl = document.getElementById('results');
+    const summaryEl = document.getElementById('summary');
+    let passed = 0, failed = 0;
+
+    for (const suite of suites) {
+        const section = document.createElement('section');
+        section.id = suite.label.toLowerCase().replace(/\s+/g, '-');
+        section.className = 'section';
+
+        const tagClass = SUITE_TAGS[suite.label] ?? 'tag-lifecycle';
+        section.innerHTML = `
+          <div class="section-header">
+            <h2>${suite.label}</h2>
+            <span class="section-tag ${tagClass}">${suite.tests.length} test${suite.tests.length !== 1 ? 's' : ''}</span>
+          </div>
+          <div class="card"><ul class="test-list"></ul></div>`;
+        resultsEl.appendChild(section);
+        const list = section.querySelector('.test-list');
+
+        for (const test of suite.tests) {
+            const li = document.createElement('li');
+            li.className = 'test-row pending';
+            li.innerHTML = `<span class="badge run-badge">RUN</span><span class="test-label">${test.label}</span>`;
+            list.appendChild(li);
+
+            // Reset shared state between tests
+            fetchLog = [];
+            mountEl.innerHTML = '';
+
+            try {
+                await test.fn();
+                li.className = 'test-row pass';
+                li.innerHTML = `<span class="badge pass-badge">PASS</span><span class="test-label">${test.label}</span>`;
+                passed++;
+            } catch (err) {
+                li.className = 'test-row fail';
+                li.innerHTML = `<span class="badge fail-badge">FAIL</span><span class="test-label">${test.label}</span><span class="err-msg">${err.message}</span>`;
+                failed++;
+            }
+
+            // Update summary after each test
+            const total = passed + failed;
+            summaryEl.textContent = `${passed} / ${total} passed`;
+            summaryEl.className = failed > 0 ? 'has-fail' : 'running';
+        }
+    }
+
+    const total = passed + failed;
+    summaryEl.textContent = failed === 0
+        ? `All ${total} tests passed`
+        : `${passed} / ${total} passed — ${failed} failed`;
+    summaryEl.className = failed === 0 ? 'all-pass' : 'has-fail';
+}
+
+run();
+</script>
+</body>
+</html>

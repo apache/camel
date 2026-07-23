@@ -21,9 +21,10 @@ import java.security.*;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.util.SecureRandomHelper;
+import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
 
 public class PQCDefaultKYBERMaterial {
 
@@ -51,7 +52,7 @@ public class PQCDefaultKYBERMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.KYBER.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.KYBER.getBcProvider());
-        kpg.initialize(KyberParameterSpec.kyber1024, new SecureRandom());
+        kpg.initialize(MLKEMParameterSpec.ml_kem_1024, SecureRandomHelper.getSecureRandom());
         return kpg;
     }
 

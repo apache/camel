@@ -20,9 +20,12 @@ import java.util.Optional;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A pluggable strategy for resolving dev consoles in a loosely coupled manner
+ *
+ * @since 3.15
  */
 public interface DevConsoleResolver extends CamelContextAware, StaticService {
 
@@ -32,6 +35,7 @@ public interface DevConsoleResolver extends CamelContextAware, StaticService {
      * @param  id the id of the {@link DevConsole}
      * @return    the resolved {@link DevConsole}, or <tt>null</tt> if not found
      */
+    @Nullable
     DevConsole resolveDevConsole(String id);
 
     /**

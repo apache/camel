@@ -22,16 +22,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import io.minio.CopyObjectArgs;
-import io.minio.CopySource;
 import io.minio.GetObjectArgs;
 import io.minio.GetPresignedObjectUrlArgs;
+import io.minio.Http;
 import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
@@ -40,15 +38,10 @@ import io.minio.RemoveBucketArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.RemoveObjectsArgs;
 import io.minio.Result;
-import io.minio.errors.ErrorResponseException;
-import io.minio.errors.InsufficientDataException;
-import io.minio.errors.InternalException;
-import io.minio.errors.InvalidResponseException;
-import io.minio.errors.ServerException;
-import io.minio.errors.XmlParserException;
-import io.minio.http.Method;
-import io.minio.messages.Bucket;
+import io.minio.SourceObject;
+import io.minio.errors.MinioException;
 import io.minio.messages.Item;
+import io.minio.messages.ListAllMyBucketsResult;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -111,10 +104,10 @@ public class MinioProducer extends DefaultProducer {
                     getPartialObject(minioClient, exchange);
                     break;
                 case createDownloadLink:
-                    createPresignedUrl(minioClient, exchange, Method.GET);
+                    createPresignedUrl(minioClient, exchange, Http.Method.GET);
                     break;
                 case createUploadLink:
-                    createPresignedUrl(minioClient, exchange, Method.PUT);
+                    createPresignedUrl(minioClient, exchange, Http.Method.PUT);
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
@@ -195,10 +188,9 @@ public class MinioProducer extends DefaultProducer {
     private void doPutObject(
             Exchange exchange, String bucketName, String objectName, Map<String, String> objectMetadata,
             Map<String, String> extraHeaders, InputStream inputStream, long contentLength)
-            throws IOException, ErrorResponseException, InsufficientDataException, InternalException, InvalidKeyException,
-            InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException {
+            throws IOException, MinioException {
         PutObjectArgs.Builder putObjectRequest = PutObjectArgs.builder()
-                .stream(inputStream, contentLength, -1)
+                .stream(inputStream, contentLength, -1L)
                 .bucket(bucketName)
                 .object(objectName)
                 .userMetadata(objectMetadata);
@@ -259,7 +251,7 @@ public class MinioProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
             }
 
-            CopySource.Builder copySourceBuilder = CopySource.builder()
+            SourceObject.Builder copySourceBuilder = SourceObject.builder()
                     .bucket(bucketName)
                     .object(sourceKey);
 
@@ -311,7 +303,7 @@ public class MinioProducer extends DefaultProducer {
     }
 
     private void listBuckets(MinioClient minioClient, Exchange exchange) throws Exception {
-        List<Bucket> bucketsList = minioClient.listBuckets();
+        List<ListAllMyBucketsResult.Bucket> bucketsList = minioClient.listBuckets();
         Message message = getMessageForResponse(exchange);
         //returns iterator of bucketList
         message.setBody(bucketsList.iterator());
@@ -411,7 +403,7 @@ public class MinioProducer extends DefaultProducer {
         }
     }
 
-    private void createPresignedUrl(MinioClient minioClient, Exchange exchange, Method method) throws Exception {
+    private void createPresignedUrl(MinioClient minioClient, Exchange exchange, Http.Method method) throws Exception {
         int expiry = 60 * 60;
         Integer expirationInSeconds = exchange.getIn().getHeader(MinioConstants.PRESIGNED_URL_EXPIRATION_TIME, Integer.class);
         Message message = getMessageForResponse(exchange);

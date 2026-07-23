@@ -64,6 +64,12 @@ public enum KeycloakOperations {
     // User session operations
     listUserSessions,
     logoutUser,
+    logoutAllUsers,
+    // Token operations
+    revokeAccessToken,
+    revokeRefreshToken,
+    introspectToken,
+    pushNotBefore,
     // Client scope operations
     createClientScope,
     deleteClientScope,
@@ -114,5 +120,18 @@ public enum KeycloakOperations {
     bulkDeleteUsers,
     bulkAssignRolesToUser,
     bulkAssignRoleToUsers,
-    bulkUpdateUsers
+    bulkUpdateUsers,
+    // Organization operations (Keycloak 26+)
+    createOrganization,
+    updateOrganization,
+    deleteOrganization,
+    getOrganization,
+    listOrganizations,
+    searchOrganizations,
+    addOrganizationMember,
+    removeOrganizationMember,
+    listOrganizationMembers,
+    linkOrganizationIdentityProvider,
+    unlinkOrganizationIdentityProvider,
+    listOrganizationIdentityProviders
 }

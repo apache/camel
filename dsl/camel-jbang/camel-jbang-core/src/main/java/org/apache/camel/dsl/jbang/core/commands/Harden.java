@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -475,7 +476,7 @@ public class Harden extends CamelCommand {
         }
 
         prompt.append("File: ").append(fileName).append("\n");
-        prompt.append("Format: ").append(fileExtension.toUpperCase()).append("\n\n");
+        prompt.append("Format: ").append(fileExtension.toUpperCase(Locale.ROOT)).append("\n\n");
         prompt.append("Route definition:\n```").append(fileExtension).append("\n");
         prompt.append(routeContent).append("\n```\n\n");
         prompt.append("Please perform a security analysis of this Camel route and provide hardening recommendations:");

@@ -16,10 +16,11 @@
  */
 package org.apache.camel.main.download;
 
-import org.apache.camel.main.KameletMain;
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.SagaDefinition;
 import org.apache.camel.reifier.ProcessReifier;
 import org.apache.camel.reifier.ProcessorReifier;
+import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.InMemorySagaService;
 
 /**
@@ -30,7 +31,7 @@ public class SagaDownloader {
     private SagaDownloader() {
     }
 
-    public static void registerDownloadReifiers(KameletMain main) {
+    public static void registerDownloadReifiers() {
         ProcessorReifier.registerReifier(SagaDefinition.class,
                 (route, processorDefinition) -> {
                     if (processorDefinition instanceof SagaDefinition) {
@@ -42,7 +43,14 @@ public class SagaDownloader {
                                     route.getCamelContext().getVersion());
                         }
                     }
-                    main.bind("inMemorySagaService", new InMemorySagaService());
+                    CamelContext ctx = route.getCamelContext();
+                    if (ctx.hasService(CamelSagaService.class) == null) {
+                        try {
+                            ctx.addService(new InMemorySagaService());
+                        } catch (Exception e) {
+                            throw new RuntimeException("Failed to add InMemorySagaService", e);
+                        }
+                    }
                     return ProcessReifier.coreReifier(route, processorDefinition);
                 });
     }

@@ -34,16 +34,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MailProducerTest extends CamelTestSupport {
-    private static final MailboxUser camel = Mailbox.getOrCreateUser("camel", "secret");
-    private static final MailboxUser someone = Mailbox.getOrCreateUser("someone", "secret");
-    private static final MailboxUser recipient2 = Mailbox.getOrCreateUser("recipient2", "secret");
+    private static final MailboxUser camel = Mailbox.getOrCreateUser("MailProducerTest-camel", "secret");
+    private static final MailboxUser someone = Mailbox.getOrCreateUser("MailProducerTest-someone", "secret");
+    private static final MailboxUser recipient2 = Mailbox.getOrCreateUser("MailProducerTest-recipient2", "secret");
 
     @Test
     public void testProducer() throws Exception {
         Mailbox.clearAll();
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "Message ", "To", "someone@localhost");
+        template.sendBodyAndHeader("direct:start", "Message ", "To", someone.getEmail());
         MockEndpoint.assertIsSatisfied(context);
         // need to check the message header
         Exchange exchange = getMockEndpoint("mock:result").getExchanges().get(0);
@@ -67,7 +67,7 @@ public class MailProducerTest extends CamelTestSupport {
         mimeMessage.setSubject("This is the subject.");
         mimeMessage.setText("This is the message");
 
-        template.sendBodyAndHeader("direct:start", mimeMessage, "To", "someone@localhost");
+        template.sendBodyAndHeader("direct:start", mimeMessage, "To", someone.getEmail());
         MockEndpoint.assertIsSatisfied(context);
         // need to check the message header
         Exchange exchange = getMockEndpoint("mock:result").getExchanges().get(0);
@@ -86,7 +86,7 @@ public class MailProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to(camel.uriPrefix(Protocol.smtp), "mock:result");
+                from("direct:start").to(camel.uriPrefix(Protocol.smtp) + "&useHeaderRecipients=true", "mock:result");
             }
         };
     }

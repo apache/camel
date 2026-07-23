@@ -40,8 +40,11 @@ public class SpanCustomizationTest extends MicrometerObservabilityTracerPropagat
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        CamelContext ctx = super.createCamelContext();
         tst.setTraceProcessors(true);
-        return super.createCamelContext();
+        tst.setDisableCoreProcessors(false);
+
+        return ctx;
     }
 
     @Test
@@ -54,14 +57,14 @@ public class SpanCustomizationTest extends MicrometerObservabilityTracerPropagat
 
     private void checkTrace(OtelTrace trace) {
         List<SpanData> spans = trace.getSpans();
-        assertEquals(7, spans.size());
+        // to("log:info") no longer produces a processor span (SendProcessor implements EndpointSending)
+        assertEquals(6, spans.size());
         SpanData testProducer = spans.get(0);
         SpanData direct = spans.get(1);
         SpanData innerLog = spans.get(2);
         SpanData innerProcessor = spans.get(3);
         SpanData customSpan = spans.get(4);
         SpanData log = spans.get(5);
-        SpanData innerToLog = spans.get(6);
 
         // Validate span completion
         assertTrue(testProducer.hasEnded());
@@ -70,16 +73,13 @@ public class SpanCustomizationTest extends MicrometerObservabilityTracerPropagat
         assertTrue(innerProcessor.hasEnded());
         assertTrue(customSpan.hasEnded());
         assertTrue(log.hasEnded());
-        assertTrue(innerToLog.hasEnded());
 
         // Validate same trace
-        assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), innerLog.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), innerProcessor.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), customSpan.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), innerToLog.getSpanContext().getTraceId());
 
         // Validate operations
         assertEquals(Op.EVENT_RECEIVED.toString(), direct.getAttributes().get(AttributeKey.stringKey("op")));

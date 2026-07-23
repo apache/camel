@@ -22,6 +22,8 @@ import org.apache.camel.Producer;
 /**
  * Factory to create services such as {@link Producer}s and defer starting the created service, until
  * {@link org.apache.camel.CamelContext} has been started.
+ *
+ * @since 3.0
  */
 public interface DeferServiceFactory {
 

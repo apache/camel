@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.validate;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,7 +44,6 @@ public class YamlValidateCommand extends CamelCommand {
                             arity = "1..9",
                             paramLabel = "<files>",
                             parameterConsumer = FilesConsumer.class)
-    Path[] filePaths;
     List<String> files = new ArrayList<>();
 
     public YamlValidateCommand(CamelJBangMain main) {
@@ -62,6 +60,8 @@ public class YamlValidateCommand extends CamelCommand {
             if (matchFile(n)) {
                 var report = validator.validate(new File(n));
                 reports.put(n, report);
+            } else {
+                printer().println("WARN: Skipping non-YAML file: " + n);
             }
         }
 
@@ -96,7 +96,7 @@ public class YamlValidateCommand extends CamelCommand {
         if (IGNORE_FILE.equals(no)) {
             return false;
         }
-        String ext = FileUtil.onlyExt(name);
+        String ext = FileUtil.onlyExt(name, true);
         if (ext == null) {
             return false;
         }
@@ -107,9 +107,7 @@ public class YamlValidateCommand extends CamelCommand {
     private static int errorCounts(Map<String, List<Error>> reports) {
         int count = 0;
         for (List<Error> list : reports.values()) {
-            if (!list.isEmpty()) {
-                count++;
-            }
+            count += list.size();
         }
         return count;
     }

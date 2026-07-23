@@ -21,13 +21,16 @@ camel eval expression [options]
 | Option | Description | Default | Type
 | `--body` | Message body (prefix with file: to refer to loading message body from file) |  | String
 | `--camel-version` | To run using a different Camel version than the default version. |  | String
+| `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
+| `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--header` | Message header (key=value) |  | List
 | `--isolated` | Whether to run evaluation isolated in local process | false | boolean
 | `--language` | Language to use | simple | String
 | `--predicate` | Whether to force evaluating as predicate | false | boolean
-| `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
+| `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--template` | The template to use for evaluating (prefix with file: to refer to loading template from file) |  | String
 | `--timeout` | Timeout in millis waiting for evaluation to be done | 10000 | long
+| `--variable` | Exchange variable (key=value) |  | List
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===

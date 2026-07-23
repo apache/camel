@@ -1449,7 +1449,7 @@ public interface TelegramEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final TelegramHeaderNameBuilder INSTANCE = new TelegramHeaderNameBuilder();
+        public static final TelegramHeaderNameBuilder INSTANCE = new TelegramHeaderNameBuilder();
 
         /**
          * This header is used by the producer endpoint in order to resolve the

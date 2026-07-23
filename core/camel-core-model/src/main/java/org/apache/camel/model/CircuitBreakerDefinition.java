@@ -31,22 +31,32 @@ import org.apache.camel.spi.Metadata;
 /**
  * Route messages in a fault tolerance way using Circuit Breaker
  */
-@Metadata(label = "eip,routing,error")
+@Metadata(label = "eip,error,resilience,routing",
+          aliases = { "circuit-breaker" },
+          description = "Wraps message processing with a circuit breaker for fault tolerance."
+                        + " Prevents cascading failures by short-circuiting calls to an unhealthy service and routing to a fallback")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "resilience4jConfiguration", "faultToleranceConfiguration", "outputs", "onFallback" })
 public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
 
     @XmlAttribute
+    @Metadata(description = "Refers to a circuit breaker configuration to use for configuring the circuit breaker EIP.")
     private String configuration;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Whether to inherit Camel error handling during circuit breaker. By default, Camel error handler is turned off.")
     private Boolean inheritErrorHandler;
     @XmlElement
+    @Metadata(label = "advanced",
+              description = "Configures the circuit breaker to use Resilience4j with the given configuration.")
     private Resilience4jConfigurationDefinition resilience4jConfiguration;
     @XmlElement
+    @Metadata(label = "advanced",
+              description = "Configures the circuit breaker to use MicroProfile Fault Tolerance with the given configuration.")
     private FaultToleranceConfigurationDefinition faultToleranceConfiguration;
     @XmlElement
+    @Metadata(description = "The fallback route path to execute when the circuit breaker triggers.")
     private OnFallbackDefinition onFallback;
 
     public CircuitBreakerDefinition() {
@@ -123,10 +133,6 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         return configuration;
     }
 
-    /**
-     * Refers to a circuit breaker configuration (such as resillience4j, or microprofile-fault-tolerance) to use for
-     * configuring the circuit breaker EIP.
-     */
     public void setConfiguration(String configuration) {
         this.configuration = configuration;
     }
@@ -212,10 +218,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     }
 
     /**
-     * The fallback route path to execute that does <b>not</b> go over the network.
-     * <p>
-     * This should be a static or cached result that can immediately be returned upon failure. If the fallback requires
-     * network connection then use {@link #onFallbackViaNetwork()}.
+     * The fallback route path to execute when the circuit breaker triggers.
      */
     public CircuitBreakerDefinition onFallback() {
         onFallback = new OnFallbackDefinition();
@@ -227,7 +230,10 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      * The fallback route path to execute that will go over the network.
      * <p/>
      * If the fallback will go over the network it is another possible point of failure.
+     *
+     * @deprecated Not supported by any circuit breaker implementation. Use {@link #onFallback()} instead.
      */
+    @Deprecated(since = "4.22", forRemoval = true)
     public CircuitBreakerDefinition onFallbackViaNetwork() {
         onFallback = new OnFallbackDefinition();
         onFallback.setFallbackViaNetwork(Boolean.toString(true));

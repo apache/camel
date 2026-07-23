@@ -18,9 +18,12 @@ package org.apache.camel.spi;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Service;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Factory for pooled objects or tasks.
+ *
+ * @since 3.9
  */
 public interface PooledObjectFactory<T> extends Service, CamelContextAware {
 
@@ -96,6 +99,7 @@ public interface PooledObjectFactory<T> extends Service, CamelContextAware {
      *
      * @return the statistics, or null if statistics is not enabled
      */
+    @Nullable
     Statistics getStatistics();
 
     /**
@@ -108,6 +112,7 @@ public interface PooledObjectFactory<T> extends Service, CamelContextAware {
      *
      * @return the object or <tt>null</tt> if the pool is empty
      */
+    @Nullable
     T acquire();
 
     /**

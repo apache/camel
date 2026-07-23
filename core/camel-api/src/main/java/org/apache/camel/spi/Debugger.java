@@ -26,7 +26,20 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 
 /**
- * A debugger which allows tooling to attach breakpoints which is being invoked when {@link Exchange}s is being routed.
+ * Low-level debugger SPI that fires {@link Breakpoint} callbacks as {@link Exchange}s move through each route node, as
+ * described in the <a href="https://camel.apache.org/manual/debugger.html">Debugger</a> documentation.
+ * <p/>
+ * The {@code Debugger} is integrated into Camel's {@link InternalProcessor} pipeline; when enabled, the internal
+ * processor invokes the appropriate {@code before*} and {@code after*} callbacks on each registered {@link Breakpoint}
+ * as exchanges enter and leave route nodes. Breakpoints can be conditioned via {@link Condition} predicates (e.g.,
+ * match only a specific exchange ID or route ID).
+ * <p/>
+ * For a higher-level, JMX-accessible debugger with suspend/resume semantics, see {@link BacklogDebugger}, which builds
+ * on top of this SPI. For passive message capture without execution control, see {@link BacklogTracer}.
+ *
+ * @see Breakpoint
+ * @see Condition
+ * @see BacklogDebugger
  */
 public interface Debugger extends Service, CamelContextAware {
 

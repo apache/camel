@@ -75,8 +75,7 @@ public class Bind extends CamelCommand {
     String errorHandler;
 
     @CommandLine.Option(names = { "--property" },
-                        description = "Adds a pipe property in the form of [source|sink|error-handler|step-<n>].<key>=<value> where <n> is the step number starting from 1",
-                        arity = "0")
+                        description = "Adds a pipe property in the form of [source|sink|error-handler|step-<n>].<key>=<value> where <n> is the step number starting from 1")
     String[] properties;
 
     @CommandLine.Option(names = { "--output" },
@@ -175,15 +174,15 @@ public class Bind extends CamelCommand {
                         is = templateProvider.getErrorHandlerTemplate("sink");
                         errorHandlerSpec = IOHelper.loadText(is);
                         IOHelper.close(is);
-                        errorHandlerSpec = errorHandlerSpec.replaceFirst("\\{\\{ \\.Endpoint }}", endpoint);
-                        errorHandlerSpec = errorHandlerSpec.replaceFirst("\\{\\{ \\.ErrorHandlerParameter }}",
+                        errorHandlerSpec = errorHandlerSpec.replace("{{ .Endpoint }}", endpoint);
+                        errorHandlerSpec = errorHandlerSpec.replace("{{ .ErrorHandlerParameter }}",
                                 templateProvider.asErrorHandlerParameters(errorHandlerParameters));
                         break;
                     case "log":
                         is = templateProvider.getErrorHandlerTemplate("log");
                         errorHandlerSpec = IOHelper.loadText(is);
                         IOHelper.close(is);
-                        errorHandlerSpec = errorHandlerSpec.replaceFirst("\\{\\{ \\.ErrorHandlerParameter }}",
+                        errorHandlerSpec = errorHandlerSpec.replace("{{ .ErrorHandlerParameter }}",
                                 templateProvider.asErrorHandlerParameters(errorHandlerParameters));
                         break;
                     default:
@@ -194,11 +193,11 @@ public class Bind extends CamelCommand {
             }
 
             String name = FileUtil.onlyName(file, false);
-            context = context.replaceFirst("\\{\\{ \\.Name }}", name);
-            context = context.replaceFirst("\\{\\{ \\.Source }}\n", sourceEndpoint);
-            context = context.replaceFirst("\\{\\{ \\.Sink }}\n", sinkEndpoint);
-            context = context.replaceFirst("\\{\\{ \\.Steps }}", stepsContext);
-            context = context.replaceFirst("\\{\\{ \\.ErrorHandler }}", errorHandlerContext);
+            context = context.replace("{{ .Name }}", name);
+            context = context.replace("{{ .Source }}\n", sourceEndpoint);
+            context = context.replace("{{ .Sink }}\n", sinkEndpoint);
+            context = context.replace("{{ .Steps }}", stepsContext);
+            context = context.replace("{{ .ErrorHandler }}", errorHandlerContext);
             return context;
         } catch (Exception e) {
             printer().printErr(e);

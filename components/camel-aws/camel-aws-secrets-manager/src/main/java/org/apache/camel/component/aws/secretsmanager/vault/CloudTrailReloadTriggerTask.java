@@ -92,6 +92,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     private static final String CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE = "CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE";
 
     private static final Logger LOG = LoggerFactory.getLogger(CloudTrailReloadTriggerTask.class);
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final String SECRETSMANAGER_AMAZONAWS_COM = "secretsmanager.amazonaws.com";
 
     private static final String SECRETSMANAGER_UPDATE_EVENT = "PutSecretValue";
@@ -329,38 +330,34 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                     LOG.info("Queue does not exist.");
                 }
 
-                for (Message message : messageResult.messages()) {
-                    ObjectMapper mapper = new ObjectMapper();
-                    JsonNode event = null;
-                    try {
-                        event = mapper.readTree(message.body());
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                    if (ObjectHelper.isNotEmpty(event.get("detail"))) {
-                        JsonNode innerDetail = event.get("detail");
-                        if (innerDetail.get("eventSource").asText().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)) {
-                            if (innerDetail.get("eventName").asText().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)
-                                    || innerDetail.get("eventName").asText()
-                                            .equalsIgnoreCase(SECRETSMANAGER_UPDATE_SECRET_EVENT)) {
+                if (messageResult != null) {
+                    for (Message message : messageResult.messages()) {
+                        try {
+                            JsonNode event = MAPPER.readTree(message.body());
+                            JsonNode innerDetail = event.get("detail");
+                            if (ObjectHelper.isNotEmpty(innerDetail)
+                                    && innerDetail.get("eventSource").asText().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)
+                                    && (innerDetail.get("eventName").asText().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)
+                                            || innerDetail.get("eventName").asText()
+                                                    .equalsIgnoreCase(SECRETSMANAGER_UPDATE_SECRET_EVENT))) {
                                 String name = innerDetail.get("requestParameters").get("secretId").asText();
                                 if (matchSecret(name)) {
                                     updates.put(name, Instant.parse(innerDetail.get("eventTime").asText()));
                                     if (isReloadEnabled()) {
                                         LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
                                         triggerReloading = true;
-                                        DeleteMessageRequest.Builder deleteRequest
-                                                = DeleteMessageRequest.builder().queueUrl(queueUrl)
-                                                        .receiptHandle(message.receiptHandle());
-
-                                        LOG.trace("Deleting message with receipt handle {}...", message.receiptHandle());
-
-                                        sqsClient.deleteMessage(deleteRequest.build());
                                     }
-                                    break;
                                 }
                             }
+                        } catch (JsonProcessingException e) {
+                            LOG.warn("Unable to parse SQS message body, discarding message: {}", e.getMessage());
                         }
+                        // Always delete the examined message so the queue is drained rather than redelivering it
+                        // on every poll (matched -> reload recorded above; unmatched or malformed -> discarded).
+                        LOG.trace("Deleting message with receipt handle {}...", message.receiptHandle());
+                        sqsClient.deleteMessage(
+                                DeleteMessageRequest.builder().queueUrl(queueUrl)
+                                        .receiptHandle(message.receiptHandle()).build());
                     }
                 }
             } catch (Exception e) {

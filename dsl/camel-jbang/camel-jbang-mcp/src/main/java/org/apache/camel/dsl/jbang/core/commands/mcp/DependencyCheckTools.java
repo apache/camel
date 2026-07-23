@@ -34,6 +34,7 @@ import org.apache.camel.tooling.model.ComponentModel;
  * Analyzes a project's pom.xml (and optionally route definitions) to detect outdated Camel dependencies, missing
  * dependencies for components used in routes, and version conflicts between the Camel BOM and explicit overrides.
  */
+@McpSecured
 @ApplicationScoped
 public class DependencyCheckTools {
 
@@ -60,10 +61,9 @@ public class DependencyCheckTools {
                                    + "Sensitive content is automatically detected and masked.") String pomContent,
             @ToolArg(description = "Route definitions (YAML, XML, or Java DSL) to check for missing component dependencies. "
                                    + "Multiple routes can be provided concatenated.") String routes,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
-            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion.") String platformBom,
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom,
             @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials") Boolean sanitizePom) {
 
         if (pomContent == null || pomContent.isBlank()) {

@@ -20,22 +20,29 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Factory used by {@link Consumer} to create Camel {@link Exchange} holding the incoming message received by the
- * consumer.
+ * Factory used by {@link Consumer} (and {@link org.apache.camel.PollingConsumer}) to create the {@link Exchange} that
+ * carries an incoming message into Camel.
  * <p/>
- * This factory is only for {@link Consumer}'s to give control on how {@link Exchange} are created and comes into Camel.
- * Each Camel component that provides a {@link Consumer} should use this {@link ExchangeFactory}. There may be other
- * parts in Camel that creates {@link Exchange} such as sub exchanges from Splitter EIP, but they are not part of this
- * contract as we only want to control the created {@link Exchange} that comes into Camel via {@link Consumer} or
- * {@link org.apache.camel.PollingConsumer}.
+ * This factory governs only the exchanges that enter Camel from the outside world via a consumer. Sub-exchanges created
+ * internally (e.g., by the Splitter EIP) are outside this contract and use {@link ProcessorExchangeFactory} instead.
  * <p/>
- * The factory is pluggable which allows using different strategies. The default factory will create a new
- * {@link Exchange} instance, and the pooled factory will pool and reuse exchanges.
+ * The factory is pluggable to support two exchange-lifecycle strategies:
+ * <ul>
+ * <li><b>default</b> — allocates a fresh {@link Exchange} for every inbound message; simple and GC-friendly for
+ * low-volume routes.</li>
+ * <li><b>pooled</b> — reuses {@link org.apache.camel.PooledExchange} instances from an object pool; reduces
+ * garbage-collection pressure on high-throughput routes by recycling the exchange and its internal state after each
+ * routing cycle completes.</li>
+ * </ul>
+ * Camel selects the strategy at startup based on the {@code exchangeFactory} configuration option on the
+ * {@link org.apache.camel.CamelContext}.
  *
- * @see ProcessorExchangeFactory
- * @see org.apache.camel.PooledExchange
+ * @see   ProcessorExchangeFactory
+ * @see   org.apache.camel.PooledExchange
+ * @since 3.9
  */
 public interface ExchangeFactory extends PooledObjectFactory<Exchange>, NonManagedService, RouteIdAware {
 
@@ -47,6 +54,7 @@ public interface ExchangeFactory extends PooledObjectFactory<Exchange>, NonManag
     /**
      * The consumer using this factory.
      */
+    @Nullable
     Consumer getConsumer();
 
     /**

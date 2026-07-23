@@ -1231,7 +1231,7 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer (advanced)
          * 
          * @param exposeListenerSession the value to set
@@ -1247,7 +1247,7 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer (advanced)
          * 
          * @param exposeListenerSession the value to set
@@ -7357,7 +7357,7 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ActiveMQ6HeaderNameBuilder INSTANCE = new ActiveMQ6HeaderNameBuilder();
+        public static final ActiveMQ6HeaderNameBuilder INSTANCE = new ActiveMQ6HeaderNameBuilder();
 
         /**
          * The destination.

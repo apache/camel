@@ -29,6 +29,7 @@ import com.azure.messaging.servicebus.ServiceBusTransactionContext;
 import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import com.azure.messaging.servicebus.models.SubQueue;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.spi.*;
 
 @UriParams
@@ -141,7 +142,10 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     }
 
     /**
-     * Sets the connection string for a Service Bus namespace or a specific Service Bus resource.
+     * Sets the connection string for a Service Bus namespace or a specific Service Bus resource. Connection strings
+     * commonly contain characters with a special meaning in URIs (the SharedAccessKey is a Base64 value that may
+     * contain plus, slash or equals characters): when configuring the connection string directly in an endpoint URI,
+     * wrap the value with RAW() so it is not URI-decoded.
      */
     public String getConnectionString() {
         return connectionString;

@@ -70,11 +70,11 @@ public @interface KeyValuePairField {
     int position() default 0;
 
     /**
-     * precision of the BigDecimal number to be created
+     * precision of the BigDecimal number to be created. Use -1 (default) to preserve the original scale from the input.
      *
      * @return int
      */
-    int precision() default 0;
+    int precision() default -1;
 
     /**
      * Indicates if the field is mandatory
@@ -85,4 +85,14 @@ public @interface KeyValuePairField {
      * <b>Camel 2.11:</b> Indicates if there is a decimal point implied at a specified location
      */
     boolean impliedDecimalSeparator() default false;
+
+    /**
+     * Whether to keep going when parsing this field fails.
+     *
+     * TRUE forces tolerance — a parse error is replaced with the type-appropriate default (null, "", false, or
+     * MIN_VALUE for numeric primitives). KeyValuePairField doesn't currently have a defaultValue element, so there's no
+     * user-supplied substitute available here. FALSE forces strict behavior. INHERIT (the default) defers
+     * to @Message.continueParseOnFailure.
+     */
+    ContinueOnFailure continueParseOnFailure() default ContinueOnFailure.INHERIT;
 }

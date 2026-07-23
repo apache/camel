@@ -57,4 +57,11 @@ public class YamlValidatorTest {
         Assertions.assertEquals(1, report.size());
         Assertions.assertTrue(report.get(0).getMessage().contains("setCheese"));
     }
+
+    @Test
+    public void testValidateRuntimeCustomStepRejectedBySchema() throws Exception {
+        var report = validator.validate(new File("src/test/resources/custom-parser-step.yaml"));
+        Assertions.assertFalse(report.isEmpty());
+        Assertions.assertTrue(report.stream().anyMatch(error -> error.getMessage().contains("parserStep")));
+    }
 }

@@ -40,7 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSupport {
-    private static final MailboxUser ryanWithLongerFilename = Mailbox.getOrCreateUser("ryanWithLongerFilename", "secret");
+    private static final MailboxUser ryanWithLongerFilename
+            = Mailbox.getOrCreateUser("MimeMultipartAlternativeWithLongerFilenameTest-ryanWithLongerFilename", "secret");
     private Logger log = LoggerFactory.getLogger(getClass());
     private String alternativeBody = "hello world! (plain text)";
     private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:myCoolLogo.jpeg\"></body></html>";

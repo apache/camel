@@ -88,7 +88,9 @@ public class CxfClientCallback extends ClientCallback {
             ConduitSelector conduitSelector = cxfExchange.get(ConduitSelector.class);
             if (conduitSelector != null) {
                 conduitSelector.complete(cxfExchange);
-                ex = cxfExchange.getOutMessage().getContent(Exception.class);
+                if (cxfExchange.getOutMessage() != null) {
+                    ex = cxfExchange.getOutMessage().getContent(Exception.class);
+                }
                 if (ex == null && cxfExchange.getInMessage() != null) {
                     ex = cxfExchange.getInMessage().getContent(Exception.class);
                 }

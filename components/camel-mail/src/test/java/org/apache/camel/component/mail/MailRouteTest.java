@@ -41,9 +41,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailRouteTest extends CamelTestSupport {
-    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
-    private static final MailboxUser result = Mailbox.getOrCreateUser("result", "secret");
-    private static final MailboxUser copy = Mailbox.getOrCreateUser("copy", "secret");
+    private static final MailboxUser james = Mailbox.getOrCreateUser("MailRouteTest-james", "secret");
+    private static final MailboxUser result = Mailbox.getOrCreateUser("MailRouteTest-result", "secret");
+    private static final MailboxUser copy = Mailbox.getOrCreateUser("MailRouteTest-copy", "secret");
 
     @Test
     public void testSendAndReceiveMails() throws Exception {
@@ -54,7 +54,7 @@ public class MailRouteTest extends CamelTestSupport {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(MailConstants.MAIL_REPLY_TO, "route-test-reply@localhost");
-        template.sendBodyAndHeaders(james.uriPrefix(Protocol.smtp), "hello world!", headers);
+        template.sendBodyAndHeaders(james.uriPrefix(Protocol.smtp) + "&useHeaderReplyTo=true", "hello world!", headers);
 
         // lets test the first sent worked
         assertMailboxReceivedMessages(james);
@@ -130,8 +130,9 @@ public class MailRouteTest extends CamelTestSupport {
                 // plain string with semi colon
                 // to seperate the mail addresses
                 from("direct:a")
-                        .setHeader("to", constant("result@localhost; copy@localhost"))
-                        .to(result.uriPrefix(Protocol.smtp));
+                        .setHeader("to", constant(result.getEmail() + "; " + copy.getEmail()))
+                        .to(result.uriPrefix(Protocol.smtp)
+                            + "&useHeaderRecipients=true&useHeaderReplyTo=true&useHeaderSubject=true");
 
                 from(result.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100").convertBodyTo(String.class)
                         .to("mock:result");

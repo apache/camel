@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Predicate;
 
 import io.github.resilience4j.bulkhead.BulkheadConfig;
@@ -90,6 +91,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
                 cbConfig, bhConfig, tlConfig, processor, fallback, throwExceptionWhenHalfOpenOrOpenState, recordPredicate,
                 ignorePredicate);
         answer.setDisabled(isDisabled(camelContext, definition));
+        answer.setAsynchronous(parseBoolean(config.getAsynchronous(), false));
         configureTimeoutExecutorService(answer, config);
         // using any existing circuit breakers?
         if (config.getCircuitBreaker() != null) {
@@ -151,14 +153,23 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         if (config.getSlidingWindowType() != null) {
             builder.slidingWindowType(CircuitBreakerConfig.SlidingWindowType.valueOf(config.getSlidingWindowType()));
         }
+        if (config.getSlidingWindowSynchronizationStrategy() != null) {
+            builder.slidingWindowSynchronizationStrategy(
+                    CircuitBreakerConfig.SlidingWindowSynchronizationStrategy
+                            .valueOf(config.getSlidingWindowSynchronizationStrategy()));
+        }
         if (config.getSlowCallDurationThreshold() != null) {
-            builder.slowCallDurationThreshold(Duration.ofSeconds(parseLong(config.getSlowCallDurationThreshold())));
+            builder.slowCallDurationThreshold(Duration.ofMillis(parseDuration(config.getSlowCallDurationThreshold())));
         }
         if (config.getSlowCallRateThreshold() != null) {
             builder.slowCallRateThreshold(parseFloat(config.getSlowCallRateThreshold()));
         }
         if (config.getWaitDurationInOpenState() != null) {
-            builder.waitDurationInOpenState(Duration.ofSeconds(parseLong(config.getWaitDurationInOpenState())));
+            builder.waitDurationInOpenState(Duration.ofMillis(parseDuration(config.getWaitDurationInOpenState())));
+        }
+        if (config.getMaxWaitDurationInHalfOpenState() != null) {
+            builder.maxWaitDurationInHalfOpenState(
+                    Duration.ofMillis(parseDuration(config.getMaxWaitDurationInHalfOpenState())));
         }
         if (config.getWritableStackTraceEnabled() != null) {
             builder.writableStackTraceEnabled(parseBoolean(config.getWritableStackTraceEnabled()));
@@ -182,12 +193,15 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             builder.maxConcurrentCalls(parseInt(config.getBulkheadMaxConcurrentCalls()));
         }
         if (config.getBulkheadMaxWaitDuration() != null) {
-            long duration = parseLong(config.getBulkheadMaxWaitDuration());
+            long duration = parseDuration(config.getBulkheadMaxWaitDuration());
             if (duration <= 0) {
                 builder.maxWaitDuration(Duration.ZERO);
             } else {
                 builder.maxWaitDuration(Duration.ofMillis(duration));
             }
+        }
+        if (config.getBulkheadFairCallHandlingEnabled() != null) {
+            builder.fairCallHandlingStrategyEnabled(parseBoolean(config.getBulkheadFairCallHandlingEnabled()));
         }
         return builder.build();
     }
@@ -199,7 +213,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
 
         TimeLimiterConfig.Builder builder = TimeLimiterConfig.custom();
         if (config.getTimeoutDuration() != null) {
-            builder.timeoutDuration(Duration.ofMillis(parseLong(config.getTimeoutDuration())));
+            builder.timeoutDuration(Duration.ofMillis(parseDuration(config.getTimeoutDuration())));
         }
         if (config.getTimeoutCancelRunningFuture() != null) {
             builder.cancelRunningFuture(parseBoolean(config.getTimeoutCancelRunningFuture()));
@@ -212,6 +226,8 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             return;
         }
 
+        boolean isAsync = parseBoolean(config.getAsynchronous(), false);
+
         ExecutorService executorService;
         boolean shutdownThreadPool = false;
 
@@ -222,8 +238,15 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
                 executorService = lookupExecutorServiceRef("CircuitBreaker", definition, ref);
                 shutdownThreadPool = true;
             }
+            if (isAsync && !(executorService instanceof ScheduledExecutorService)) {
+                throw new IllegalArgumentException(
+                        "timeoutExecutorService must be a ScheduledExecutorService when asynchronous mode is enabled");
+            }
+        } else if (isAsync) {
+            executorService = camelContext.getExecutorServiceManager()
+                    .newDefaultScheduledThreadPool(this, "CircuitBreaker");
+            shutdownThreadPool = true;
         } else {
-            // A default thread pool if none is provided.
             executorService = camelContext.getExecutorServiceManager()
                     .newThreadPool(this, "CircuitBreaker",
                             camelContext.getExecutorServiceManager().getDefaultThreadPoolProfile());
@@ -231,6 +254,9 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         }
 
         processor.setExecutorService(executorService);
+        if (isAsync && executorService instanceof ScheduledExecutorService ses) {
+            processor.setScheduledExecutorService(ses);
+        }
         processor.setShutdownExecutorService(shutdownThreadPool);
     }
 

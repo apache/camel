@@ -27,7 +27,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * A fixed value set only once during the route startup.
  */
-@Metadata(firstVersion = "1.5.0", label = "language,core", title = "Constant")
+@Metadata(firstVersion = "1.5.0", label = "language,core", title = "Constant",
+          description = "A fixed value set only once during the route startup")
 @XmlRootElement(name = "constant")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConstantExpression extends TypedExpressionDefinition {

@@ -18,9 +18,22 @@ package org.apache.camel;
 
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 /**
- * Implementations support navigating a graph where you can traverse forward and each next returns a {@link List} of
- * outputs of type <tt>T</tt> that can contain <tt>0..n</tt> nodes.
+ * Supports forward traversal of a directed graph where each step returns a {@link List} of successor nodes of type
+ * {@code T} (0 to n nodes per step).
+ * <p/>
+ * In the Camel route model the graph is the EIP pipeline tree rooted at each {@link Route}. Every model node that can
+ * have children implements {@code Navigate} so that tools such as the backlog tracer, route visualizer, and the
+ * debugger can walk the entire processing graph without coupling to a specific model class hierarchy.
+ * <p/>
+ * Callers must invoke {@link #next()} and {@link #hasNext()} <em>at most once each</em>: the interface is stateless and
+ * not designed for repeated iteration.
+ *
+ * @param <T> the node type returned by each traversal step
+ * @see       NamedNode
+ * @see       Route
  */
 public interface Navigate<T> {
 
@@ -32,6 +45,7 @@ public interface Navigate<T> {
      *
      * @return next group or <tt>null</tt> if no more outputs
      */
+    @Nullable
     List<T> next();
 
     /**

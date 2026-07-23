@@ -41,7 +41,6 @@ import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-import io.vertx.ext.web.impl.BlockingHandlerDecorator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ConsumerTemplate;
@@ -576,7 +575,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         };
 
         // use blocking handler as the task can take longer time to complete
-        info.handler(new BlockingHandlerDecorator(handler, true));
+        info.blockingHandler(handler);
 
         platformHttpComponent.addHttpManagementEndpoint(this.infoPath, "GET", null,
                 "application/json", null);
@@ -653,9 +652,9 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
             }
         };
         // use blocking handler as the task can take longer time to complete
-        health.handler(new BlockingHandlerDecorator(handler, true));
-        live.handler(new BlockingHandlerDecorator(handler, true));
-        ready.handler(new BlockingHandlerDecorator(handler, true));
+        health.blockingHandler(handler);
+        live.blockingHandler(handler);
+        ready.blockingHandler(handler);
 
         platformHttpComponent.addHttpManagementEndpoint(this.healthPath, "GET", null,
                 "application/json", null);
@@ -674,7 +673,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 .handler(BodyHandler.create(false));
 
         Handler<RoutingContext> handler = (Handler<RoutingContext>) jolokiaPlugin.getHandler();
-        jolokia.handler(new BlockingHandlerDecorator(handler, true));
+        jolokia.blockingHandler(handler);
 
         platformHttpComponent.addHttpManagementEndpoint(jolokiaPath, "GET,POST", null,
                 "text/plain,application/json", null);
@@ -755,8 +754,8 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
             }
         };
         // use blocking handler as the task can take longer time to complete
-        upload.handler(new BlockingHandlerDecorator(handler, true));
-        uploadDelete.handler(new BlockingHandlerDecorator(handler, true));
+        upload.blockingHandler(handler);
+        uploadDelete.blockingHandler(handler);
 
         platformHttpComponent.addHttpManagementEndpoint("/q/upload", "PUT,DELETE",
                 "multipart/form-data", null, null);
@@ -867,7 +866,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
             }
         };
         // use blocking handler as the task can take longer time to complete
-        download.handler(new BlockingHandlerDecorator(handler, true));
+        download.blockingHandler(handler);
 
         platformHttpComponent.addHttpManagementEndpoint("/q/download", "GET",
                 null, "text/plain,application/octet-stream", null);
@@ -895,7 +894,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
             }
         };
         // use blocking handler as the task can take longer time to complete
-        send.handler(new BlockingHandlerDecorator(handler, true));
+        send.blockingHandler(handler);
 
         platformHttpComponent.addHttpManagementEndpoint("/q/send", "GET,POST",
                 null, "application/json", null);
@@ -996,13 +995,15 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
 
     protected void setupDevConsole() {
         Route dev = router.route("/q/dev");
-        dev.method(HttpMethod.GET);
+        dev.method(HttpMethod.GET).method(HttpMethod.POST);
         dev.produces("text/plain");
         dev.produces("application/json");
+        dev.handler(BodyHandler.create(false));
         Route devSub = router.route("/q/dev/*");
-        devSub.method(HttpMethod.GET);
+        devSub.method(HttpMethod.GET).method(HttpMethod.POST);
         devSub.produces("text/plain");
         devSub.produces("application/json");
+        devSub.handler(BodyHandler.create(false));
 
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
             @Override
@@ -1084,6 +1085,19 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 } else {
                     Map<String, Object> params = new HashMap<>();
                     ctx.queryParams().forEach(params::put);
+                    if (ctx.request().method() == HttpMethod.POST) {
+                        String jsonBody = ctx.body() != null ? ctx.body().asString() : null;
+                        if (jsonBody != null && !jsonBody.isBlank()) {
+                            try {
+                                Object parsed = Jsoner.deserialize(jsonBody);
+                                if (parsed instanceof JsonObject jo) {
+                                    params.putAll(jo);
+                                }
+                            } catch (Exception e) {
+                                // ignore invalid JSON
+                            }
+                        }
+                    }
                     params.put(Exchange.HTTP_PATH, path);
                     StringBuilder sb = new StringBuilder();
                     JsonObject root = new JsonObject();
@@ -1125,10 +1139,10 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
             }
         };
         // use blocking handler as the task can take longer time to complete
-        dev.handler(new BlockingHandlerDecorator(handler, true));
-        devSub.handler(new BlockingHandlerDecorator(handler, true));
+        dev.blockingHandler(handler);
+        devSub.blockingHandler(handler);
 
-        platformHttpComponent.addHttpManagementEndpoint("/q/dev", "GET", null,
+        platformHttpComponent.addHttpManagementEndpoint("/q/dev", "GET,POST", null,
                 "text/plain,application/json", null);
     }
 

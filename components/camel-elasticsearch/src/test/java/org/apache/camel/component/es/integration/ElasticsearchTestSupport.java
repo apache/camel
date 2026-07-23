@@ -41,6 +41,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ElasticsearchTestSupport extends CamelTestSupport {
 
@@ -76,6 +78,13 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
                 });
         restClient = builder.build();
         client = new ElasticsearchClient(new RestClientTransport(restClient, new JacksonJsonpMapper()));
+        await("Elasticsearch client is not ready").until(() -> {
+            try {
+                return client.ping().value();
+            } catch (Exception e) {
+                return false;
+            }
+        });
     }
 
     @Override

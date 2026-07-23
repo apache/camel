@@ -306,7 +306,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final IgniteSetHeaderNameBuilder INSTANCE = new IgniteSetHeaderNameBuilder();
+        public static final IgniteSetHeaderNameBuilder INSTANCE = new IgniteSetHeaderNameBuilder();
 
         /**
          * Allows you to dynamically change the set operation.

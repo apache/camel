@@ -18,6 +18,7 @@ package org.apache.camel.telemetry;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -30,6 +31,7 @@ import org.apache.camel.telemetry.mock.MockTracer;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -46,23 +48,30 @@ public class AsyncWiretapTest extends ExchangeTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         this.mockTracer = new MockTracer();
+        this.mockTracer.setDisableCoreProcessors(true);
         CamelContextAware.trySetCamelContext(mockTracer, context);
         mockTracer.init(context);
         return context;
     }
 
     @Test
-    void testRouteMultipleRequests() throws InterruptedException {
+    void testRouteMultipleRequests() throws Exception {
         int j = 10;
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedMessageCount(j);
-        mock.setAssertPeriod(5000);
         for (int i = 0; i < j; i++) {
             context.createProducerTemplate().sendBody("direct:start", "Hello!");
         }
-        mock.assertIsSatisfied(1000);
-        // We must wait a safe time to let the context completing the async writing to the log trace.
-        Thread.sleep(10000);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+        // Wait for async trace writing to complete — traces are written asynchronously
+        // after exchange processing, so we poll until all traces with expected spans arrive.
+        await().atMost(30, TimeUnit.SECONDS).untilAsserted(() -> {
+            Map<String, MockTrace> traces = mockTracer.traces();
+            assertEquals(j, traces.size());
+            for (MockTrace trace : traces.values()) {
+                assertEquals(7, trace.spans().size());
+            }
+        });
         Map<String, MockTrace> traces = mockTracer.traces();
         // Each trace should have a unique trace id. It is enough to assert that
         // the number of elements in the map is the same of the requests to prove
@@ -72,7 +81,6 @@ public class AsyncWiretapTest extends ExchangeTestSupport {
         for (MockTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(MockTrace trace, String expectedBody) {

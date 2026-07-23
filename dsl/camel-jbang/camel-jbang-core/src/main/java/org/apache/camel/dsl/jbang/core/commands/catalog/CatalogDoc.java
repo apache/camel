@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import java.awt.*;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -32,11 +33,14 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
+import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -58,7 +62,8 @@ import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseComman
                              "  camel doc kafka",
                              "  camel doc timer",
                              "  camel doc aws-s3-source",
-                             "  camel doc jsonpath" })
+                             "  camel doc jsonpath",
+                             "  camel doc kafka --example" })
 public class CatalogDoc extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, or other Camel resource",
@@ -75,21 +80,11 @@ public class CatalogDoc extends CamelCommand {
                         description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime;
 
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
-    boolean download = true;
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
-    String quarkusVersion;
-
-    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
-                        defaultValue = "io.quarkus.platform")
-    String quarkusGroupId = "io.quarkus.platform";
-
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
-    String repos;
+    @CommandLine.Mixin
+    QuarkusPlatformMixin quarkusPlatform;
 
     @CommandLine.Option(names = { "--url" },
                         description = "Prints the link to the online documentation on the Camel website",
@@ -109,10 +104,13 @@ public class CatalogDoc extends CamelCommand {
                         description = "Whether to display component message headers", defaultValue = "false")
     boolean headers;
 
+    @CommandLine.Option(names = { "--example" },
+                        description = "Prints a minimal working YAML route snippet for the component", defaultValue = "false")
+    boolean example;
+
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version",
-                        defaultValue = RuntimeType.KAMELETS_VERSION)
-    String kameletsVersion = RuntimeType.KAMELETS_VERSION;
+            "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
+    String kameletsVersion;
 
     CamelCatalog catalog;
 
@@ -122,19 +120,30 @@ public class CatalogDoc extends CamelCommand {
 
     CamelCatalog loadCatalog() throws Exception {
         if (RuntimeType.springBoot == runtime) {
-            return CatalogLoader.loadSpringBootCatalog(repos, camelVersion, download);
+            return CatalogLoader.loadSpringBootCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
         } else if (RuntimeType.quarkus == runtime) {
-            return CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId, download);
+            final MavenGav quarkusCamelBom
+                    = quarkusPlatform
+                            .resolve(
+                                    camelVersion,
+                                    mavenResolver.downloader()::resolveArtifact,
+                                    mavenResolver.download(),
+                                    mavenResolver.fresh())
+                            .quarkusCamelBom();
+            return CatalogLoader.loadQuarkusCatalog(quarkusCamelBom, mavenResolver.downloader()::resolveArtifact);
         }
         if (camelVersion == null) {
             return new DefaultCamelCatalog(true);
         } else {
-            return CatalogLoader.loadCatalog(repos, camelVersion, download);
+            return CatalogLoader.loadCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
         }
     }
 
     @Override
     public Integer doCall() throws Exception {
+        if (kameletsVersion == null) {
+            kameletsVersion = VersionHelper.extractKameletsVersion();
+        }
         this.catalog = loadCatalog();
 
         String prefix = StringHelper.before(name, ":");
@@ -152,7 +161,7 @@ public class CatalogDoc extends CamelCommand {
         }
 
         if (prefix == null || "kamelet".equals(prefix)) {
-            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, repos);
+            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
             if (km != null) {
                 docKamelet(km);
                 return 0;
@@ -161,7 +170,11 @@ public class CatalogDoc extends CamelCommand {
         if (prefix == null || "component".equals(prefix)) {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
-                docComponent(cm);
+                if (example) {
+                    printExample(cm);
+                } else {
+                    docComponent(cm);
+                }
                 return 0;
             }
         }
@@ -194,7 +207,8 @@ public class CatalogDoc extends CamelCommand {
             if (kamelet) {
                 // kamelet names
                 suggestions
-                        = SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion, repos), name);
+                        = SuggestSimilarHelper.didYouMean(
+                                KameletCatalogHelper.findKameletNames(kameletsVersion, mavenResolver.repos()), name);
             } else {
                 // assume its a component
                 suggestions = SuggestSimilarHelper.didYouMean(findComponentNames(catalog), name);
@@ -209,7 +223,8 @@ public class CatalogDoc extends CamelCommand {
         } else {
             List<String> suggestions = switch (prefix) {
                 case "kamelet" ->
-                    SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion, repos), name);
+                    SuggestSimilarHelper
+                            .didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion, mavenResolver.repos()), name);
                 case "component" -> SuggestSimilarHelper.didYouMean(findComponentNames(catalog), name);
                 case "dataformat" -> SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
                 case "language" -> SuggestSimilarHelper.didYouMean(catalog.findLanguageNames(), name);
@@ -224,6 +239,79 @@ public class CatalogDoc extends CamelCommand {
             }
         }
         return 1;
+    }
+
+    private void printExample(ComponentModel cm) {
+        String scheme = cm.getScheme();
+        String uri = buildExampleUri(cm);
+
+        printer().println("# Example: " + scheme + " component");
+
+        if (cm.isProducerOnly()) {
+            printer().println("- route:");
+            printer().println("    from:");
+            printer().println("      uri: \"timer:tick\"");
+            printer().println("      parameters:");
+            printer().println("        period: 1000");
+            printer().println("    steps:");
+            printer().println("      - to:");
+            printer().println("          uri: \"" + uri + "\"");
+        } else {
+            printer().println("- route:");
+            printer().println("    from:");
+            printer().println("      uri: \"" + uri + "\"");
+            printer().println("    steps:");
+            printer().println("      - to:");
+            printer().println("          uri: \"log:" + scheme + "\"");
+        }
+
+        printer().println();
+        printer().println("# Save to a file and run with:");
+        printer().println("#   camel run my-route.yaml");
+    }
+
+    private String buildExampleUri(ComponentModel cm) {
+        String scheme = cm.getScheme();
+        List<ComponentModel.EndpointOptionModel> pathOptions = cm.getEndpointPathOptions();
+        if (pathOptions.isEmpty()) {
+            return scheme;
+        }
+        List<String> pathValues = new ArrayList<>();
+        for (ComponentModel.EndpointOptionModel opt : pathOptions) {
+            Object dv = opt.getDefaultValue();
+            if (dv != null && !dv.toString().isEmpty()) {
+                pathValues.add(dv.toString());
+            } else if (opt.getEnums() != null && !opt.getEnums().isEmpty()) {
+                pathValues.add(opt.getEnums().get(0));
+            } else {
+                pathValues.add("my" + capitalize(opt.getName()));
+            }
+        }
+        String syntax = cm.getSyntax();
+        if (syntax != null) {
+            String result = syntax;
+            for (ComponentModel.EndpointOptionModel opt : pathOptions) {
+                Object dv = opt.getDefaultValue();
+                String value;
+                if (dv != null && !dv.toString().isEmpty()) {
+                    value = dv.toString();
+                } else if (opt.getEnums() != null && !opt.getEnums().isEmpty()) {
+                    value = opt.getEnums().get(0);
+                } else {
+                    value = "my" + capitalize(opt.getName());
+                }
+                result = result.replace(opt.getName(), value);
+            }
+            return result;
+        }
+        return scheme + ":" + String.join("/", pathValues);
+    }
+
+    private static String capitalize(String s) {
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 
     private void docKamelet(KameletModel km) throws Exception {
@@ -331,7 +419,7 @@ public class CatalogDoc extends CamelCommand {
         printer().println("");
         printer().println("    <dependency>");
         printer().println("        <groupId>" + "org.apache.camel" + "</groupId>");
-        printer().println("        <artifactId>" + "camel.main" + "</artifactId>");
+        printer().println("        <artifactId>" + "camel-main" + "</artifactId>");
         printer().println("        <version>" + catalog.getCatalogVersion() + "</version>");
         printer().println("    </dependency>");
         printer().println("");
@@ -671,7 +759,7 @@ public class CatalogDoc extends CamelCommand {
         }
         String target = name.toLowerCase(Locale.ROOT);
         return options.stream().filter(
-                r -> r.getName().contains(target) || r.getName().equalsIgnoreCase(target)
+                r -> r.getName().toLowerCase(Locale.ROOT).contains(target) || r.getName().equalsIgnoreCase(target)
                         || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
                         || r.getShortGroup() != null && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());
@@ -717,7 +805,7 @@ public class CatalogDoc extends CamelCommand {
         }
         String target = name.toLowerCase(Locale.ROOT);
         return options.stream().filter(
-                r -> r.getName().contains(target) || r.getName().equalsIgnoreCase(target)
+                r -> r.getName().toLowerCase(Locale.ROOT).contains(target) || r.getName().equalsIgnoreCase(target)
                         || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
                         || r.getShortGroup() != null && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());

@@ -360,7 +360,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final IgniteQueueHeaderNameBuilder INSTANCE = new IgniteQueueHeaderNameBuilder();
+        public static final IgniteQueueHeaderNameBuilder INSTANCE = new IgniteQueueHeaderNameBuilder();
 
         /**
          * Allows you to dynamically change the queue operation.

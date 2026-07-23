@@ -25,14 +25,16 @@ import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 
 /**
  * A processor that sorts the expression using a comparator
  */
-public class SortProcessor<T> extends BaseProcessorSupport implements IdAware, RouteIdAware, Traceable {
+public class SortProcessor<T> extends BaseProcessorSupport implements IdAware, RouteIdAware, StepIdAware, Traceable {
 
     private String id;
     private String routeId;
+    private String stepId;
     private final Expression expression;
     private final Comparator<? super T> comparator;
 
@@ -85,6 +87,16 @@ public class SortProcessor<T> extends BaseProcessorSupport implements IdAware, R
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public Expression getExpression() {

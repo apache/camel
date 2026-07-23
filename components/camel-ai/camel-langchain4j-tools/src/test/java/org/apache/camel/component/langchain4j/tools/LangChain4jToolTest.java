@@ -56,6 +56,12 @@ public class LangChain4jToolTest extends CamelTestSupport {
             .withParam("tags", "users")
             .andThenInvokeTool("queryUserBySSN")
             .withParam("ssn", "123-45-6789")
+            .end()
+            .when("Query user 5\n")
+            .invokeTool("QueryUserByNumber")
+            .withParam("number", 5)
+            .withParam("CamelFileName", "../../etc/passwd")
+            .withParam("undeclaredParam", "injected")
             .build();
 
     @Override
@@ -170,6 +176,29 @@ public class LangChain4jToolTest extends CamelTestSupport {
         Assertions.assertThat(result).isNotNull();
         String response = result.getMessage().getBody(String.class);
         Assertions.assertThat(response).isNotNull();
+    }
+
+    @Test
+    public void testUndeclaredToolArgumentsAreNotPropagatedAsHeaders() {
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new SystemMessage("You provide the requested information using the functions you have available."));
+        messages.add(new UserMessage("Query user 5\n"));
+
+        Exchange exchange = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
+
+        Assertions.assertThat(exchange).isNotNull();
+        Message message = exchange.getMessage();
+
+        // Declared parameter should be set
+        Assertions.assertThat(message.getHeader("number")).isEqualTo(5);
+
+        // Undeclared parameters should NOT be propagated as headers
+        Assertions.assertThat(message.getHeader("CamelFileName"))
+                .as("Undeclared 'CamelFileName' should not be set as header")
+                .isNull();
+        Assertions.assertThat(message.getHeader("undeclaredParam"))
+                .as("Undeclared 'undeclaredParam' should not be set as header")
+                .isNull();
     }
 
     @Test

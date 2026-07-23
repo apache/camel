@@ -511,7 +511,7 @@ public interface KubernetesCronJobEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesCronJobHeaderNameBuilder INSTANCE = new KubernetesCronJobHeaderNameBuilder();
+        public static final KubernetesCronJobHeaderNameBuilder INSTANCE = new KubernetesCronJobHeaderNameBuilder();
 
         /**
          * The Producer operation.

@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -42,7 +43,7 @@ public class FileConsumeHiddenFilesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Awaitility.await().untilAsserted(() -> {
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             // file should be deleted
             assertFalse(Files.exists(testFile("report.txt")), "File should been deleted");
             assertFalse(Files.exists(testFile(".report.hidden")), "File should been deleted");

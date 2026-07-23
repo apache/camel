@@ -22,6 +22,8 @@ import org.apache.camel.CamelContext;
  * Factory for resolving OAuth 2.0 bearer tokens using the client_credentials grant.
  * <p/>
  * This requires camel-oauth on the classpath.
+ *
+ * @since 4.19
  */
 public interface OAuthClientAuthenticationFactory {
 

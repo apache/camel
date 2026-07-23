@@ -1216,6 +1216,11 @@ public class JmsEndpoint extends DefaultEndpoint
     @ManagedAttribute
     public void setIncludeAllJMSXProperties(boolean includeAllJMSXProperties) {
         configuration.setIncludeAllJMSXProperties(includeAllJMSXProperties);
+        // Reset the default header filter strategy so it gets re-created
+        // with the updated includeAllJMSXProperties value
+        if (this.headerFilterStrategy instanceof JmsHeaderFilterStrategy) {
+            this.headerFilterStrategy = null;
+        }
     }
 
     @ManagedAttribute

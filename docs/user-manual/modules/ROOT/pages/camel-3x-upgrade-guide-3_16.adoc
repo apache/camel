@@ -30,6 +30,7 @@ and then link to this route from the REST service.
 
 For example
 
+._Java-only: Rest DSL with embedded route before migration_
 [source,java]
 ----
 rest("/users")
@@ -40,6 +41,7 @@ rest("/users")
 
 Should now be:
 
+._Java-only: Rest DSL with separate route after migration_
 [source,java]
 ----
 rest("/users")
@@ -185,6 +187,8 @@ Renamed `executorServiceRef` to `executorService`.
 Replaced by Choice EIP in precondition mode.
 
 Before it was:
+
+._Java-only: DoSwitch EIP before migration_
 [source,java]
 ----
 .doSwitch()
@@ -194,6 +198,8 @@ Before it was:
 ----
 
 Now it is:
+
+._Java-only: Choice EIP in precondition mode after migration_
 [source,java]
 ----
 .choice().precondition()

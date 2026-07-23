@@ -143,6 +143,25 @@ public interface KafkaComponentBuilderFactory {
     
         
         /**
+         * The period of time in milliseconds after which we force a refresh of
+         * metadata even if we haven't seen any partition leadership changes to
+         * proactively discover any new brokers or partitions.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 300000
+         * Group: common
+         * 
+         * @param metadataMaxAgeMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder metadataMaxAgeMs(java.lang.Integer metadataMaxAgeMs) {
+            doSetProperty("metadataMaxAgeMs", metadataMaxAgeMs);
+            return this;
+        }
+    
+        
+        /**
          * The maximum amount of time in milliseconds to wait when reconnecting
          * to a broker that has repeatedly failed to connect. If provided, the
          * backoff per host will increase exponentially for each consecutive
@@ -1427,25 +1446,6 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
     
-        
-        /**
-         * The period of time in milliseconds after which we force a refresh of
-         * metadata even if we haven't seen any partition leadership changes to
-         * proactively discover any new brokers or partitions.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 300000
-         * Group: producer
-         * 
-         * @param metadataMaxAgeMs the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder metadataMaxAgeMs(java.lang.Integer metadataMaxAgeMs) {
-            doSetProperty("metadataMaxAgeMs", metadataMaxAgeMs);
-            return this;
-        }
-    
         /**
          * A list of classes to use as metrics reporters. Implementing the
          * MetricReporter interface allows plugging in classes that will be
@@ -1578,9 +1578,8 @@ public interface KafkaComponentBuilderFactory {
     
         
         /**
-         * The maximum number of unsent messages that can be queued up the
-         * producer when using async mode before either the producer must be
-         * blocked or data must be dropped.
+         * Deprecated: this option has no effect. Use bufferMemorySize or
+         * maxBlockMs instead.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -1590,6 +1589,7 @@ public interface KafkaComponentBuilderFactory {
          * @param queueBufferingMaxMessages the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default KafkaComponentBuilder queueBufferingMaxMessages(java.lang.Integer queueBufferingMaxMessages) {
             doSetProperty("queueBufferingMaxMessages", queueBufferingMaxMessages);
             return this;
@@ -2634,6 +2634,7 @@ public interface KafkaComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((KafkaComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((KafkaComponent) component).setConfiguration((org.apache.camel.component.kafka.KafkaConfiguration) value); return true;
             case "headerFilterStrategy": getOrCreateConfiguration((KafkaComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "metadataMaxAgeMs": getOrCreateConfiguration((KafkaComponent) component).setMetadataMaxAgeMs((java.lang.Integer) value); return true;
             case "reconnectBackoffMaxMs": getOrCreateConfiguration((KafkaComponent) component).setReconnectBackoffMaxMs((java.lang.Integer) value); return true;
             case "retryBackoffMaxMs": getOrCreateConfiguration((KafkaComponent) component).setRetryBackoffMaxMs((java.lang.Integer) value); return true;
             case "retryBackoffMs": getOrCreateConfiguration((KafkaComponent) component).setRetryBackoffMs((java.lang.Integer) value); return true;
@@ -2695,7 +2696,6 @@ public interface KafkaComponentBuilderFactory {
             case "maxBlockMs": getOrCreateConfiguration((KafkaComponent) component).setMaxBlockMs((java.lang.Integer) value); return true;
             case "maxInFlightRequest": getOrCreateConfiguration((KafkaComponent) component).setMaxInFlightRequest((java.lang.Integer) value); return true;
             case "maxRequestSize": getOrCreateConfiguration((KafkaComponent) component).setMaxRequestSize((java.lang.Integer) value); return true;
-            case "metadataMaxAgeMs": getOrCreateConfiguration((KafkaComponent) component).setMetadataMaxAgeMs((java.lang.Integer) value); return true;
             case "metricReporters": getOrCreateConfiguration((KafkaComponent) component).setMetricReporters((java.lang.String) value); return true;
             case "metricsSampleWindowMs": getOrCreateConfiguration((KafkaComponent) component).setMetricsSampleWindowMs((java.lang.Integer) value); return true;
             case "noOfMetricsSample": getOrCreateConfiguration((KafkaComponent) component).setNoOfMetricsSample((java.lang.Integer) value); return true;

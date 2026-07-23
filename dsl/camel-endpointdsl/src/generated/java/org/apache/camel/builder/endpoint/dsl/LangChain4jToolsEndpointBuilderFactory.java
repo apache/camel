@@ -386,6 +386,44 @@ public interface LangChain4jToolsEndpointBuilderFactory {
             doSetProperty("tags", tags);
             return this;
         }
+        /**
+         * Maximum number of tool-calling round trips (iterations) allowed
+         * before stopping. This prevents infinite loops when the LLM keeps
+         * requesting tool calls indefinitely. Each round trip consists of one
+         * LLM call and the execution of all tools requested in that call. Set
+         * to 0 for unlimited (not recommended).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: producer
+         * 
+         * @param maxToolCallingRoundTrips the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jToolsEndpointProducerBuilder maxToolCallingRoundTrips(int maxToolCallingRoundTrips) {
+            doSetProperty("maxToolCallingRoundTrips", maxToolCallingRoundTrips);
+            return this;
+        }
+        /**
+         * Maximum number of tool-calling round trips (iterations) allowed
+         * before stopping. This prevents infinite loops when the LLM keeps
+         * requesting tool calls indefinitely. Each round trip consists of one
+         * LLM call and the execution of all tools requested in that call. Set
+         * to 0 for unlimited (not recommended).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: producer
+         * 
+         * @param maxToolCallingRoundTrips the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jToolsEndpointProducerBuilder maxToolCallingRoundTrips(String maxToolCallingRoundTrips) {
+            doSetProperty("maxToolCallingRoundTrips", maxToolCallingRoundTrips);
+            return this;
+        }
     }
 
     /**
@@ -554,6 +592,19 @@ public interface LangChain4jToolsEndpointBuilderFactory {
          * Since: 4.8
          * Maven coordinates: org.apache.camel:camel-langchain4j-tools
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default LangChain4jToolsHeaderNameBuilder langchain4jTools() {
+            return LangChain4jToolsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * LangChain4j Tools (camel-langchain4j-tools)
+         * LangChain4j Tools and Function Calling Features
+         * 
+         * Category: ai
+         * Since: 4.8
+         * Maven coordinates: org.apache.camel:camel-langchain4j-tools
+         * 
          * Syntax: <code>langchain4j-tools:toolId</code>
          * 
          * Path parameter: toolId (required)
@@ -587,6 +638,69 @@ public interface LangChain4jToolsEndpointBuilderFactory {
             return LangChain4jToolsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the LangChain4j Tools component.
+     */
+    public static class LangChain4jToolsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final LangChain4jToolsHeaderNameBuilder INSTANCE = new LangChain4jToolsHeaderNameBuilder();
+
+        /**
+         * The Finish Reason.
+         * 
+         * The option is a: {@code dev.langchain4j.model.output.FinishReason}
+         * type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code LangChain4jToolsFinishReason}.
+         */
+        public String langChain4jToolsFinishReason() {
+            return "CamelLangChain4jToolsFinishReason";
+        }
+        /**
+         * The Input Token Count.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * LangChain4jToolsInputTokenCount}.
+         */
+        public String langChain4jToolsInputTokenCount() {
+            return "CamelLangChain4jToolsInputTokenCount";
+        }
+        /**
+         * The Output Token Count.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * LangChain4jToolsOutputTokenCount}.
+         */
+        public String langChain4jToolsOutputTokenCount() {
+            return "CamelLangChain4jToolsOutputTokenCount";
+        }
+        /**
+         * The Total Token Count.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * LangChain4jToolsTotalTokenCount}.
+         */
+        public String langChain4jToolsTotalTokenCount() {
+            return "CamelLangChain4jToolsTotalTokenCount";
+        }
     }
     static LangChain4jToolsEndpointBuilder endpointBuilder(String componentName, String path) {
         class LangChain4jToolsEndpointBuilderImpl extends AbstractEndpointBuilder implements LangChain4jToolsEndpointBuilder, AdvancedLangChain4jToolsEndpointBuilder {

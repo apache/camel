@@ -22,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
@@ -36,10 +38,12 @@ public final class AvailablePortFinder {
 
     private static final AvailablePortFinder INSTANCE = new AvailablePortFinder();
 
-    public class Port implements BeforeEachCallback, AfterAllCallback, AutoCloseable {
+    public class Port
+            implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback, AfterAllCallback, AutoCloseable {
         final int port;
         String testClass;
         final Throwable creation;
+        private volatile boolean classScoped;
 
         public Port(int port) {
             this.port = port;
@@ -60,9 +64,25 @@ public final class AvailablePortFinder {
         }
 
         @Override
+        public void beforeAll(ExtensionContext context) throws Exception {
+            // beforeAll only fires when @RegisterExtension is on a static field,
+            // so use it as the signal that this Port lives for the whole test class.
+            classScoped = true;
+        }
+
+        @Override
         public void beforeEach(ExtensionContext context) throws Exception {
             testClass = context.getTestClass().map(Class::getName).orElse(null);
             LOG.info("Registering port {} for test {}", port, testClass);
+        }
+
+        @Override
+        public void afterEach(ExtensionContext context) throws Exception {
+            if (!classScoped) {
+                // Non-static @RegisterExtension: afterAll is never invoked by JUnit Jupiter,
+                // so release here to keep the port mapping bounded.
+                release();
+            }
         }
 
         @Override
@@ -118,6 +138,10 @@ public final class AvailablePortFinder {
 
     synchronized void release(Port port) {
         INSTANCE.portMapping.remove(port.getPort(), port);
+    }
+
+    static boolean isRegistered(Port port) {
+        return INSTANCE.portMapping.get(port.getPort()) == port;
     }
 
     /**

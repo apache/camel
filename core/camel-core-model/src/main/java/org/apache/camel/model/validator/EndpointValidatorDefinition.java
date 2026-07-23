@@ -26,14 +26,17 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use a Camel endpoint to perform validation on the route level.
  */
-@Metadata(label = "validation")
+@Metadata(label = "validation",
+          description = "Uses a Camel endpoint to perform data type validation by sending the message through the endpoint")
 @XmlRootElement(name = "endpointValidator")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EndpointValidatorDefinition extends ValidatorDefinition {
 
     @XmlAttribute
+    @Metadata(description = "Reference of the Endpoint used for validation.")
     private String ref;
     @XmlAttribute
+    @Metadata(description = "URI of the Endpoint used for validation.")
     private String uri;
 
     public EndpointValidatorDefinition() {
@@ -54,9 +57,6 @@ public class EndpointValidatorDefinition extends ValidatorDefinition {
         return ref;
     }
 
-    /**
-     * Set the reference of the Endpoint.
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -65,9 +65,6 @@ public class EndpointValidatorDefinition extends ValidatorDefinition {
         return uri;
     }
 
-    /**
-     * Set the URI of the Endpoint.
-     */
     public void setUri(String uri) {
         this.uri = uri;
     }

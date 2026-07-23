@@ -611,7 +611,7 @@ public interface SpringJdbcEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SpringJdbcHeaderNameBuilder INSTANCE = new SpringJdbcHeaderNameBuilder();
+        public static final SpringJdbcHeaderNameBuilder INSTANCE = new SpringJdbcHeaderNameBuilder();
 
         /**
          * If the query is an UPDATE, query the update count is returned in this

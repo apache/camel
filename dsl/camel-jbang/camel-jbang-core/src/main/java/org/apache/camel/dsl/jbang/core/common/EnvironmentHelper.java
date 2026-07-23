@@ -16,6 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.BufferedReader;
+import java.io.Console;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import org.jline.terminal.Terminal;
+
 /**
  * Helper for detecting environment characteristics such as CI environments, color support, and interactive terminals.
  *
@@ -32,7 +39,66 @@ package org.apache.camel.dsl.jbang.core.common;
  */
 public final class EnvironmentHelper {
 
+    private static volatile Terminal activeTerminal;
+    private static volatile String selectedProcess;
+
     private EnvironmentHelper() {
+    }
+
+    /**
+     * Sets the active JLine terminal. Called by the shell command to make the terminal available to subcommands.
+     */
+    public static void setActiveTerminal(Terminal terminal) {
+        activeTerminal = terminal;
+    }
+
+    /**
+     * Returns the active JLine terminal, or null if not running inside the shell.
+     */
+    public static Terminal getActiveTerminal() {
+        return activeTerminal;
+    }
+
+    /**
+     * Returns true if the current command is running inside the TUI's embedded shell panel.
+     */
+    public static boolean isEmbedded() {
+        return activeTerminal != null;
+    }
+
+    /**
+     * Sets the selected Camel process name/PID. Called by the TUI to make the selected integration available to
+     * subcommands like ask.
+     */
+    public static void setSelectedProcess(String name) {
+        selectedProcess = name;
+    }
+
+    /**
+     * Returns the selected Camel process name, or null if none is selected.
+     */
+    public static String getSelectedProcess() {
+        return selectedProcess;
+    }
+
+    /**
+     * Reads a single line from the best available input source: the active JLine terminal if inside the shell,
+     * otherwise {@link System#console()}.
+     *
+     * @return the line read, or null if no input source is available or an error occurs
+     */
+    public static String readLine() {
+        Terminal terminal = activeTerminal;
+        if (terminal != null) {
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(terminal.input()));
+                return reader.readLine();
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        Console c = System.console();
+        return c != null ? c.readLine() : null;
     }
 
     /**
@@ -59,7 +125,7 @@ public final class EnvironmentHelper {
         if (getEnv("FORCE_COLOR") != null) {
             return true;
         }
-        return System.console() != null;
+        return activeTerminal != null || System.console() != null;
     }
 
     /**
@@ -80,7 +146,7 @@ public final class EnvironmentHelper {
      * @return true if the terminal supports interactive prompts
      */
     public static boolean isInteractiveTerminal() {
-        return System.console() != null && !isCIEnvironment();
+        return (activeTerminal != null || System.console() != null) && !isCIEnvironment();
     }
 
     // Visible for testing - allows overriding in tests

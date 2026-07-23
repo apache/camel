@@ -21,9 +21,19 @@ import java.util.Map;
 import org.apache.camel.Message;
 
 /**
- * Factory to create the {@link Map} implementation to use for storing headers on {@link Message}.
+ * SPI factory that creates the {@link java.util.Map} implementation used to store headers on a {@link Message}.
+ * <p/>
+ * The factory is discovered via the service key {@link #FACTORY}. The default implementation
+ * ({@code DefaultHeadersMapFactory} in {@code camel-base-engine}) returns a case-insensitive linked hash map, which is
+ * important for HTTP-style protocols where header names such as {@code content-type} and {@code Content-Type} must be
+ * treated as equal. An alternative implementation ({@code FastHeadersMapFactory} in {@code camel-headersmap}) provides
+ * higher-throughput concurrent access. Custom implementations must correctly implement
+ * {@link #isInstanceOf(java.util.Map)} (so Camel can detect whether a given map was created by this factory) and
+ * {@link #newMap(java.util.Map)} (defensive copy semantics for {@link Message#setHeaders}).
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/exchange.html">Exchange</a> in the Camel user manual.
  *
- * @see org.apache.camel.impl.engine.DefaultHeadersMapFactory
+ * @see Message
  */
 public interface HeadersMapFactory {
 

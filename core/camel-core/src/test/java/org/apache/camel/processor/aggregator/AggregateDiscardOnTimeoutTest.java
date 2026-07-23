@@ -36,9 +36,8 @@ public class AggregateDiscardOnTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        // wait 0.25 seconds
-        Thread.sleep(250);
-
+        // verify no aggregated message arrives (discarded on timeout)
+        mock.setAssertPeriod(500);
         mock.assertIsSatisfied();
 
         // now send 3 which does not timeout
@@ -50,7 +49,7 @@ public class AggregateDiscardOnTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "E", "id", 456);
 
         // should complete before timeout
-        assertTrue(mock.await(1000, TimeUnit.MILLISECONDS));
+        assertTrue(mock.await(5000, TimeUnit.MILLISECONDS));
     }
 
     @Override

@@ -1711,7 +1711,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final InfinispanRemoteHeaderNameBuilder INSTANCE = new InfinispanRemoteHeaderNameBuilder();
+        public static final InfinispanRemoteHeaderNameBuilder INSTANCE = new InfinispanRemoteHeaderNameBuilder();
 
         /**
          * The type of the received event.

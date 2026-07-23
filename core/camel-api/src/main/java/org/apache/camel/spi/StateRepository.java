@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Service;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This {@link StateRepository} holds a set of key/value pairs for defining a particular <em>state</em> of a component.
@@ -44,5 +45,6 @@ public interface StateRepository<K, V> extends Service {
      * @param  key State key
      * @return     State value or null the key is unknown
      */
+    @Nullable
     V getState(K key);
 }

@@ -1,0 +1,41 @@
+- route:
+    from:
+      uri: timer
+      parameters:
+        timerName: start
+        period: 1000
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: Hello Camel
+        - setVariable:
+            name: myCounter
+            expression:
+              simple:
+                expression: "${random(100)}"
+        - setProperty:
+            name: myRegion
+            expression:
+              constant:
+                expression: us-east-1
+        - setHeader:
+            name: myTraceId
+            expression:
+              simple:
+                expression: "trace-${exchangeId}"
+        - circuitBreaker:
+            resilience4jConfiguration:
+              minimumNumberOfCalls: 10
+              waitDurationInOpenState: 20
+            steps:
+              - filter:
+                  expression:
+                    simple:
+                      expression: "${random(10)} > 2"
+                  steps:
+                    - throwException:
+                        message: Forced error
+                        exceptionType: java.lang.IllegalArgumentException
+        - log:
+            message: "${body} (CircuitBreaker is open: ${exchangeProperty.CamelCircuitBreakerResponseShortCircuited})"

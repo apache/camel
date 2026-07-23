@@ -24,6 +24,7 @@ import org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -49,6 +50,9 @@ public class SpringWebserviceConfiguration {
 
     @UriParam(label = "common")
     private MessageIdStrategy messageIdStrategy;
+
+    @UriParam(label = "common")
+    private HeaderFilterStrategy headerFilterStrategy = new SpringWebserviceHeaderFilterStrategy();
 
     /* Producer configuration */
     @UriParam(label = "producer")
@@ -418,6 +422,19 @@ public class SpringWebserviceConfiguration {
      */
     public void setMessageIdStrategy(MessageIdStrategy messageIdStrategy) {
         this.messageIdStrategy = messageIdStrategy;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom HeaderFilterStrategy to filter headers mapped to and from the Camel message. By default the
+     * internal {@code Camel} and {@code camel} header namespace (case-insensitive) is filtered out from inbound SOAP
+     * headers.
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     public boolean isAllowResponseHeaderOverride() {

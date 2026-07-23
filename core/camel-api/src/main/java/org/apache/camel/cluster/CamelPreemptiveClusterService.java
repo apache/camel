@@ -19,6 +19,8 @@ package org.apache.camel.cluster;
 /**
  * A {@link CamelPreemptiveClusterService} is a {@link CamelClusterService} that manages
  * {@link CamelPreemptiveClusterView}s.
+ *
+ * @since 3.7
  */
 public interface CamelPreemptiveClusterService extends CamelClusterService {
 

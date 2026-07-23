@@ -171,9 +171,6 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         } else {
             prepareAndStartListenerContainer();
         }
-
-        // mark as initialized for the first time
-        initialized = true;
     }
 
     protected void prepareAndStartListenerContainer() {
@@ -187,6 +184,9 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
             }
             startListenerContainer();
         }
+
+        // mark as initialized after the auto-startup check
+        initialized = true;
     }
 
     protected void stopAndDestroyListenerContainer() {

@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshall and unmarshall FHIR objects to/from XML.
  */
-@Metadata(firstVersion = "2.21.0", label = "dataformat,transformation,health,xml", title = "FHIR XML")
+@Metadata(firstVersion = "2.21.0", label = "dataformat,transformation,health,xml", title = "FHIR XML",
+          description = "Marshall and unmarshall FHIR objects to/from XML")
 @XmlRootElement(name = "fhirXml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FhirXmlDataFormat extends FhirDataformat {

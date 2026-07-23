@@ -18,7 +18,6 @@ package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.util.concurrent.Uninterruptibles;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -43,39 +42,54 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
+
 public class PulsarConsumerReadCompactedIT extends PulsarITSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerReadCompactedIT.class);
 
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic";
+    private static final String TOPIC_URI_PREFIX = "persistent://public/default/camel-read-compacted-topic-";
+    private static int topicId;
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-                    + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000"
-                    + "&readCompacted=true"
-                    + "&negativeAckRedeliveryDelayMicros=100000")
     private Endpoint from;
 
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
     private Producer<String> producer;
+    private String topicUri;
 
     @BeforeEach
     public void setup() throws Exception {
         context.removeRoute("myRoute");
 
+        topicUri = TOPIC_URI_PREFIX + ++topicId;
         String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
-        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(TOPIC_URI).create();
+        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(topicUri).create();
+
+        from = context.getEndpoint("pulsar:" + topicUri + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                                   + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
+                                   + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000"
+                                   + "&readCompacted=true"
+                                   + "&negativeAckRedeliveryDelayMicros=100000");
+        to = context.getEndpoint("mock:result", MockEndpoint.class);
     }
 
     @AfterEach
-    public void tearDownProducer() {
+    public void tearDown() {
         try {
+            if (from != null) {
+                from.close();
+            }
             if (producer != null) {
                 producer.close();
             }
-        } catch (PulsarClientException e) {
-            LOGGER.warn("Failed to close client: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            LOGGER.warn("Failed to close resources: {}", e.getMessage(), e);
+        }
+        try {
+            context.removeRoute("myRoute");
+        } catch (Exception e) {
+            // ignore
         }
     }
 
@@ -100,11 +114,10 @@ public class PulsarConsumerReadCompactedIT extends PulsarITSupport {
     private void triggerCompaction() throws PulsarAdminException, PulsarClientException {
         final Topics topics = givenPulsarAdmin().topics();
 
-        topics.triggerCompaction(TOPIC_URI);
-        while (topics.compactionStatus(TOPIC_URI).status.equals(LongRunningProcessStatus.Status.RUNNING)) {
-            LOGGER.info("Waiting for compaction completeness...");
-            Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
-        }
+        topics.triggerCompaction(topicUri);
+        await().atMost(30, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .until(() -> !topics.compactionStatus(topicUri).status.equals(LongRunningProcessStatus.Status.RUNNING));
     }
 
     @Test

@@ -16,9 +16,12 @@
  */
 package org.apache.camel.processor.aggregate.jdbc;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcAggregateCompletionIntervalTest extends AbstractJdbcAggregationTestSupport {
@@ -29,15 +32,15 @@ public class JdbcAggregateCompletionIntervalTest extends AbstractJdbcAggregation
         mock.setResultWaitTime(30 * 1000L);
         mock.expectedBodiesReceived("ABCD", "E");
 
-        // wait a bit so we complete on the next poll
-        Thread.sleep(2000);
-
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
         template.sendBodyAndHeader("direct:start", "C", "id", 123);
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
 
-        Thread.sleep(6000);
+        // Wait for the completion interval to fire and aggregate ABCD
+        // before sending E, so E ends up in a separate batch
+        await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, mock.getReceivedExchanges().size()));
 
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 

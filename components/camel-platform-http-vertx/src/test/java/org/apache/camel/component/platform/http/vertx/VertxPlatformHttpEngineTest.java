@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.activation.DataHandler;
@@ -1160,9 +1159,11 @@ public class VertxPlatformHttpEngineTest {
                                 assertEquals(1, message.getRequest().cookieCount());
                                 message.getRequest().response()
                                         .addCookie(Cookie.cookie("XSRF-TOKEN", "88533580000c314").setPath("/"));
-                                Map<String, Cookie> deprecatedMap = message.getRequest().cookieMap();
-                                assertFalse(((ServerCookie) deprecatedMap.get("XSRF-TOKEN")).isFromUserAgent());
-                                assertEquals("/", deprecatedMap.get("XSRF-TOKEN").getPath());
+                                Cookie xsrfCookie = message.getRequest().cookies().stream()
+                                        .filter(c -> "XSRF-TOKEN".equals(c.getName()))
+                                        .findFirst().orElseThrow();
+                                assertFalse(((ServerCookie) xsrfCookie).isFromUserAgent());
+                                assertEquals("/", xsrfCookie.getPath());
                             })
                             .setBody().constant("replace");
                 }
@@ -1352,6 +1353,10 @@ public class VertxPlatformHttpEngineTest {
         return createCamelContext(port.getPort(), customizer);
     }
 
+    static CamelContext createCamelContext() throws Exception {
+        return createCamelContext(0, null);
+    }
+
     static CamelContext createCamelContext(int port) throws Exception {
         return createCamelContext(port, null);
     }
@@ -1360,7 +1365,9 @@ public class VertxPlatformHttpEngineTest {
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
         conf.setBindPort(port);
 
-        RestAssured.port = port;
+        if (port != 0) {
+            RestAssured.port = port;
+        }
 
         if (customizer != null) {
             customizer.customize(conf);
@@ -1369,6 +1376,14 @@ public class VertxPlatformHttpEngineTest {
         CamelContext context = new DefaultCamelContext();
         context.addService(new VertxPlatformHttpServer(conf));
         return context;
+    }
+
+    static void startCamelContext(CamelContext context) throws Exception {
+        context.start();
+        VertxPlatformHttpServer server = context.hasService(VertxPlatformHttpServer.class);
+        if (server != null) {
+            RestAssured.port = server.getPort();
+        }
     }
 
     interface ServerConfigurationCustomizer {

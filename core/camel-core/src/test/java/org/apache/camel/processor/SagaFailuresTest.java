@@ -19,10 +19,13 @@ package org.apache.camel.processor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.saga.InMemorySagaService;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SagaFailuresTest extends ContextTestSupport {
 
@@ -84,6 +87,24 @@ public class SagaFailuresTest extends ContextTestSupport {
 
         complete.assertIsNotSatisfied();
         end.assertIsSatisfied();
+    }
+
+    @Test
+    public void testCompletionFailurePropagates() throws Exception {
+        maxFailures = new AtomicInteger(3);
+
+        Exchange result = template.send("direct:saga-complete", e -> e.getMessage().setBody("hello"));
+
+        assertNotNull(result.getException(), "Completion failure should propagate to exchange");
+    }
+
+    @Test
+    public void testCompensationFailurePropagates() throws Exception {
+        maxFailures = new AtomicInteger(3);
+
+        Exchange result = template.send("direct:saga-compensate", e -> e.getMessage().setBody("hello"));
+
+        assertNotNull(result.getException(), "Compensation failure should propagate to exchange");
     }
 
     @Override

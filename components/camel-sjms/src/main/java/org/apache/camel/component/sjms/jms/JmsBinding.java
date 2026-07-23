@@ -52,6 +52,7 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultExchangeHolder;
+import org.apache.camel.support.DeserializationFilterHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -64,15 +65,6 @@ import static org.apache.camel.component.sjms.jms.JmsMessageHelper.normalizeDest
  * and from a JMS {@link jakarta.jms.Message}
  */
 public class JmsBinding {
-
-    /**
-     * Default {@link ObjectInputFilter} pattern applied as a defense-in-depth check on the class returned by
-     * {@link jakarta.jms.ObjectMessage#getObject()}. Allows standard Java types and Apache Camel types and rejects
-     * everything else. Can be overridden per-endpoint via {@code SjmsEndpoint#setDeserializationFilter(String)} or
-     * globally via the JVM system property {@code jdk.serialFilter}.
-     */
-    static final String DEFAULT_DESERIALIZATION_FILTER
-            = "!java.net.**;java.**;javax.**;org.apache.camel.**;!*";
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsBinding.class);
     private final boolean mapJmsMessage;
@@ -109,7 +101,8 @@ public class JmsBinding {
         this.jmsJmsKeyFormatStrategy = jmsJmsKeyFormatStrategy;
         this.messageCreatedStrategy = messageCreatedStrategy;
         this.jmsMessageType = jmsMessageType;
-        this.deserializationFilter = resolveDeserializationFilter(deserializationFilterPattern);
+        this.deserializationFilter = DeserializationFilterHelper.resolveDeserializationFilter(
+                deserializationFilterPattern, DeserializationFilterHelper.DEFAULT_CLASS_DESERIALIZATION_FILTER);
         this.objectMessageEnabled = objectMessageEnabled;
     }
 
@@ -128,19 +121,6 @@ public class JmsBinding {
                                          + " Set objectMessageEnabled=true on the SJMS endpoint or component to enable it.");
     }
 
-    private static ObjectInputFilter resolveDeserializationFilter(String configuredPattern) {
-        if (configuredPattern != null && !configuredPattern.isBlank()) {
-            return ObjectInputFilter.Config.createFilter(configuredPattern);
-        }
-        ObjectInputFilter jvmFilter = ObjectInputFilter.Config.getSerialFilter();
-        if (jvmFilter != null) {
-            return jvmFilter;
-        }
-        LOG.debug("No JVM-wide deserialization filter set, applying default Camel filter: {}",
-                DEFAULT_DESERIALIZATION_FILTER);
-        return ObjectInputFilter.Config.createFilter(DEFAULT_DESERIALIZATION_FILTER);
-    }
-
     /**
      * Applies the configured (or default) deserialization filter to the class of an object returned by
      * {@link jakarta.jms.ObjectMessage#getObject()}. Throws {@link SecurityException} if the class is rejected.
@@ -156,44 +136,11 @@ public class JmsBinding {
             return;
         }
         Class<?> clazz = payload.getClass();
-        ObjectInputFilter.Status status = deserializationFilter.checkInput(new PostDeserializationFilterInfo(clazz));
+        ObjectInputFilter.Status status = DeserializationFilterHelper.checkClass(deserializationFilter, clazz);
         if (status == ObjectInputFilter.Status.REJECTED) {
             throw new SecurityException(
                     "JMS ObjectMessage deserialization blocked for class: " + clazz.getName()
                                         + ". Configure the 'deserializationFilter' endpoint option or -Djdk.serialFilter to allow it.");
-        }
-    }
-
-    private static final class PostDeserializationFilterInfo implements ObjectInputFilter.FilterInfo {
-        private final Class<?> clazz;
-
-        private PostDeserializationFilterInfo(Class<?> clazz) {
-            this.clazz = clazz;
-        }
-
-        @Override
-        public Class<?> serialClass() {
-            return clazz;
-        }
-
-        @Override
-        public long arrayLength() {
-            return -1;
-        }
-
-        @Override
-        public long depth() {
-            return 0;
-        }
-
-        @Override
-        public long references() {
-            return 0;
-        }
-
-        @Override
-        public long streamBytes() {
-            return 0;
         }
     }
 

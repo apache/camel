@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-xmpp</artifactId>
@@ -61,7 +61,7 @@
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
-            <artifactId>smack-java7</artifactId>
+            <artifactId>smack-java8</artifactId>
             <version>${smack-version}</version>
         </dependency>
         <dependency>

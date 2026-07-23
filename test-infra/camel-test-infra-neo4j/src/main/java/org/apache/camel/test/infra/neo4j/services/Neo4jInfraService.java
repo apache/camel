@@ -25,4 +25,8 @@ public interface Neo4jInfraService extends InfrastructureService {
     String getNeo4jDatabaseUser();
 
     String getNeo4jDatabasePassword();
+
+    default String uiUrl() {
+        return null;
+    }
 }

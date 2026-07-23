@@ -34,6 +34,8 @@ import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     private List<BsonDocument> bsonFilter;
     private BsonDocument resumeToken;
+    private CommitManager commitManager;
+    private String resumeTokenKey;
 
     MongoDbChangeStreamsThread(MongoDbEndpoint endpoint, MongoDbChangeStreamsConsumer consumer,
                                List<BsonDocument> bsonFilter) {
@@ -43,6 +45,15 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
 
     @Override
     protected void init() {
+        MongoDbChangeStreamsConsumer changeStreamsConsumer = (MongoDbChangeStreamsConsumer) consumer;
+        commitManager = CommitManagers.createCommitManager(changeStreamsConsumer, endpoint);
+        resumeTokenKey = changeStreamsConsumer.getResumeTokenKey();
+
+        // Strategy-provided resume token has precedence, then endpoint/repository fallback.
+        resumeToken = changeStreamsConsumer.getStartupResumeToken();
+        if (resumeToken == null) {
+            resumeToken = commitManager.readResumeToken();
+        }
         cursor = initializeCursor();
     }
 
@@ -77,8 +88,13 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
 
                 ObjectId documentId = dbObj.getDocumentKey().getObjectId(MONGO_ID).getValue();
                 OperationType operationType = dbObj.getOperationType();
+                BsonDocument currentResumeToken = dbObj.getResumeToken();
+
                 exchange.getIn().setHeader(MongoDbConstants.STREAM_OPERATION_TYPE, operationType.getValue());
                 exchange.getIn().setHeader(MongoDbConstants.MONGO_ID, documentId);
+                if (currentResumeToken != null) {
+                    exchange.getIn().setHeader(Exchange.OFFSET, MongoDbResumable.of(resumeTokenKey, currentResumeToken));
+                }
                 if (operationType == OperationType.DELETE) {
                     exchange.getIn().setBody(new Document(MONGO_ID, documentId));
                 }
@@ -88,10 +104,11 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                         log.trace("Sending exchange: {}, ObjectId: {}", exchange, dbObj.getFullDocument().get(MONGO_ID));
                     }
                     consumer.getProcessor().process(exchange);
+                    this.resumeToken = currentResumeToken;
+                    commitManager.recordResumeToken(currentResumeToken);
+                    commitManager.commit();
                 } catch (Exception ignored) {
                 }
-
-                this.resumeToken = dbObj.getResumeToken();
             }
         } catch (MongoException e) {
             // cursor.hasNext() opens socket and waiting for data

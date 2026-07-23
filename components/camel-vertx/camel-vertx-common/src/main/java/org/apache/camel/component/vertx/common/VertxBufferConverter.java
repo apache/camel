@@ -21,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import io.netty.buffer.ByteBuf;
 import io.vertx.core.buffer.Buffer;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -52,11 +51,6 @@ public final class VertxBufferConverter {
     @Converter
     public static Buffer toBuffer(byte[] bytes) {
         return Buffer.buffer(bytes);
-    }
-
-    @Converter
-    public static Buffer toBuffer(ByteBuf byteBuf) {
-        return Buffer.buffer(byteBuf);
     }
 
     @Converter

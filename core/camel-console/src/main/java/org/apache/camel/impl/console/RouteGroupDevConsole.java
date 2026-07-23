@@ -32,6 +32,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteGroupMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -47,19 +48,14 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteGroupDevConsole.class);
 
-    /**
-     * Filters the route groups matching by group id
-     */
+    @Metadata(label = "query", description = "Filters the route groups matching by group id", javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Limits the number of entries displayed
-     */
+    @Metadata(label = "query", description = "Limits the number of entries displayed", javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
 
-    /**
-     * Action to perform such as start, or stop
-     */
+    @Metadata(label = "query", description = "Action to perform such as start or stop", javaType = "java.lang.String",
+              enums = "start,stop")
     public static final String ACTION = "action";
 
     public RouteGroupDevConsole() {
@@ -68,8 +64,8 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        String action = (String) options.get(ACTION);
-        String filter = (String) options.get(FILTER);
+        String action = optionString(options, ACTION);
+        String filter = optionString(options, FILTER);
         if (action != null) {
             doAction(getCamelContext(), action, filter);
             return "";
@@ -124,6 +120,11 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
                 String ago = TimeUtils.printSince(last.getTime());
                 sb.append(String.format("%n    Since Last Completed: %s", ago));
             }
+            last = mrg.getLastExchangeFailureHandledTimestamp();
+            if (last != null) {
+                String ago = TimeUtils.printSince(last.getTime());
+                sb.append(String.format("%n    Since Last Failure Handled: %s", ago));
+            }
             last = mrg.getLastExchangeFailureTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
@@ -138,8 +139,8 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        String action = (String) options.get(ACTION);
-        String filter = (String) options.get(FILTER);
+        String action = optionString(options, ACTION);
+        String filter = optionString(options, FILTER);
         if (action != null) {
             doAction(getCamelContext(), action, filter);
             return new JsonObject();
@@ -179,6 +180,11 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
             stats.put("meanProcessingTime", mrg.getMeanProcessingTime());
             stats.put("maxProcessingTime", mrg.getMaxProcessingTime());
             stats.put("minProcessingTime", mrg.getMinProcessingTime());
+            if (mrg.getProcessingTimeP50() >= 0) {
+                stats.put("p50ProcessingTime", mrg.getProcessingTimeP50());
+                stats.put("p95ProcessingTime", mrg.getProcessingTimeP95());
+                stats.put("p99ProcessingTime", mrg.getProcessingTimeP99());
+            }
             if (mrg.getExchangesTotal() > 0) {
                 stats.put("lastProcessingTime", mrg.getLastProcessingTime());
                 stats.put("deltaProcessingTime", mrg.getDeltaProcessingTime());
@@ -190,6 +196,10 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
             last = mrg.getLastExchangeCompletedTimestamp();
             if (last != null) {
                 stats.put("lastCompletedExchangeTimestamp", last.getTime());
+            }
+            last = mrg.getLastExchangeFailureHandledTimestamp();
+            if (last != null) {
+                stats.put("lastFailureHandledExchangeTimestamp", last.getTime());
             }
             last = mrg.getLastExchangeFailureTimestamp();
             if (last != null) {
@@ -206,9 +216,8 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
     protected void doCall(Map<String, Object> options, Function<ManagedRouteGroupMBean, Object> task) {
         String path = (String) options.get(Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        String filter = optionString(options, FILTER);
+        final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
 
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {

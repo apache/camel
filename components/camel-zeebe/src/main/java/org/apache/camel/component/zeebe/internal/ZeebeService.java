@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.zeebe.internal;
 
+import java.io.IOException;
 import java.time.Duration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,8 +32,17 @@ import io.camunda.zeebe.client.impl.oauth.OAuthCredentialsProvider;
 import io.camunda.zeebe.client.impl.oauth.OAuthCredentialsProviderBuilder;
 import io.camunda.zeebe.gateway.protocol.GatewayGrpc;
 import io.camunda.zeebe.gateway.protocol.GatewayOuterClass;
+import io.grpc.CallOptions;
+import io.grpc.Channel;
+import io.grpc.ClientCall;
+import io.grpc.ClientInterceptor;
+import io.grpc.ClientInterceptors;
+import io.grpc.ForwardingClientCall;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Metadata;
+import io.grpc.MethodDescriptor;
+import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import org.apache.camel.component.zeebe.model.DeploymentRequest;
 import org.apache.camel.component.zeebe.model.DeploymentResponse;
@@ -52,6 +62,7 @@ public class ZeebeService {
 
     private ZeebeClient zeebeClient;
     private ManagedChannel managedChannel;
+    private Channel grpcChannel;
 
     private ObjectMapper objectMapper;
 
@@ -62,8 +73,15 @@ public class ZeebeService {
     private String oAuthAPI;
 
     public ZeebeService(String gatewayHost, int gatewayPort) {
+        this(gatewayHost, gatewayPort, null, null, null);
+    }
+
+    public ZeebeService(String gatewayHost, int gatewayPort, String clientId, String clientSecret, String oAuthAPI) {
         this.gatewayHost = gatewayHost;
         this.gatewayPort = gatewayPort;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.oAuthAPI = oAuthAPI;
 
         objectMapper = new ObjectMapper();
     }
@@ -71,15 +89,18 @@ public class ZeebeService {
     public void doStart() {
         String gatewayAddress = String.format("%s:%d", gatewayHost, gatewayPort);
 
-        if (zeebeClient == null) {
-            if (clientId != null) {
-                OAuthCredentialsProvider credentialsProvider = new OAuthCredentialsProviderBuilder()
-                        .authorizationServerUrl(oAuthAPI)
-                        .audience(gatewayAddress)
-                        .clientId(clientId)
-                        .clientSecret(clientSecret)
-                        .build();
+        OAuthCredentialsProvider credentialsProvider = null;
+        if (clientId != null) {
+            credentialsProvider = new OAuthCredentialsProviderBuilder()
+                    .authorizationServerUrl(oAuthAPI)
+                    .audience(gatewayAddress)
+                    .clientId(clientId)
+                    .clientSecret(clientSecret)
+                    .build();
+        }
 
+        if (zeebeClient == null) {
+            if (credentialsProvider != null) {
                 zeebeClient = ZeebeClient.newClientBuilder()
                         .gatewayAddress(gatewayAddress)
                         .credentialsProvider(credentialsProvider)
@@ -95,6 +116,9 @@ public class ZeebeService {
             managedChannel = ManagedChannelBuilder.forAddress(gatewayHost, gatewayPort)
                     .usePlaintext()
                     .build();
+            grpcChannel = credentialsProvider != null
+                    ? ClientInterceptors.intercept(managedChannel, new OAuthInterceptor(credentialsProvider))
+                    : managedChannel;
         }
     }
 
@@ -142,7 +166,7 @@ public class ZeebeService {
         resultMessage.setProcessInstanceKey(processMessage.getProcessInstanceKey());
 
         try {
-            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
+            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(grpcChannel);
             GatewayOuterClass.CancelProcessInstanceResponse cancelProcessInstanceResponse
                     = stub.cancelProcessInstance(GatewayOuterClass.CancelProcessInstanceRequest.newBuilder()
                             .setProcessInstanceKey(processMessage.getProcessInstanceKey())
@@ -164,7 +188,7 @@ public class ZeebeService {
         resultMessage.setCorrelationKey(message.getCorrelationKey());
 
         try {
-            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
+            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(grpcChannel);
             if (message.getCorrelationKey() == null) {
                 LOG.error("Correlation Key is missing!");
                 resultMessage.setSuccess(false);
@@ -205,7 +229,7 @@ public class ZeebeService {
         JobResponse resultMessage = new JobResponse();
 
         try {
-            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
+            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(grpcChannel);
             GatewayOuterClass.CompleteJobRequest.Builder builder = GatewayOuterClass.CompleteJobRequest.newBuilder()
                     .setJobKey(message.getJobKey());
             if (!message.getVariables().isEmpty()) {
@@ -233,7 +257,7 @@ public class ZeebeService {
         JobResponse resultMessage = new JobResponse();
 
         try {
-            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
+            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(grpcChannel);
             GatewayOuterClass.FailJobRequest.Builder builder = GatewayOuterClass.FailJobRequest.newBuilder()
                     .setJobKey(message.getJobKey());
             builder = builder.setRetries(message.getRetries());
@@ -256,7 +280,7 @@ public class ZeebeService {
         JobResponse resultMessage = new JobResponse();
 
         try {
-            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
+            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(grpcChannel);
             GatewayOuterClass.UpdateJobRetriesRequest.Builder builder = GatewayOuterClass.UpdateJobRetriesRequest.newBuilder()
                     .setJobKey(message.getJobKey());
             builder = builder.setRetries(message.getRetries());
@@ -278,7 +302,7 @@ public class ZeebeService {
         JobResponse resultMessage = new JobResponse();
 
         try {
-            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
+            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(grpcChannel);
             GatewayOuterClass.ThrowErrorRequest.Builder builder = GatewayOuterClass.ThrowErrorRequest.newBuilder()
                     .setJobKey(message.getJobKey());
             builder = builder.setErrorMessage(message.getErrorMessage());
@@ -301,7 +325,7 @@ public class ZeebeService {
         DeploymentResponse resultMessage = new DeploymentResponse();
 
         try {
-            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
+            GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(grpcChannel);
             GatewayOuterClass.Resource resource = GatewayOuterClass.Resource.newBuilder()
                     .setName(message.getName())
                     .setContent(ByteString.copyFrom(message.getContent()))
@@ -353,5 +377,34 @@ public class ZeebeService {
 
     public JobWorker registerJobHandler(JobHandler handler, String jobType, int timeout) {
         return zeebeClient.newWorker().jobType(jobType).handler(handler).timeout(Duration.ofSeconds(timeout)).open();
+    }
+
+    private static class OAuthInterceptor implements ClientInterceptor {
+
+        private final OAuthCredentialsProvider credentialsProvider;
+
+        OAuthInterceptor(OAuthCredentialsProvider credentialsProvider) {
+            this.credentialsProvider = credentialsProvider;
+        }
+
+        @Override
+        public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(
+                MethodDescriptor<ReqT, RespT> method, CallOptions callOptions, Channel next) {
+            return new ForwardingClientCall.SimpleForwardingClientCall<>(next.newCall(method, callOptions)) {
+                @Override
+                public void start(Listener<RespT> responseListener, Metadata headers) {
+                    try {
+                        credentialsProvider.applyCredentials((key, value) -> headers.put(
+                                Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER), value));
+                    } catch (IOException e) {
+                        throw Status.UNAUTHENTICATED
+                                .withDescription("Failed to apply OAuth credentials to gRPC call")
+                                .withCause(e)
+                                .asRuntimeException();
+                    }
+                    super.start(responseListener, headers);
+                }
+            };
+        }
     }
 }

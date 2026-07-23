@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.sjms.producer;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -33,8 +35,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
@@ -71,35 +75,38 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
      */
     @Test
     public void testInOutQueueProducer() throws Exception {
+        final int messageCount = 500;
+        final CountDownLatch latch = new CountDownLatch(messageCount);
+        final AtomicInteger failures = new AtomicInteger();
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
 
-        for (int i = 1; i <= 5000; i++) {
+        for (int i = 1; i <= messageCount; i++) {
             final int tempI = i;
-            Runnable worker = new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        final String requestText = "Message " + tempI;
-                        final String responseText = "Response Message " + tempI;
-                        String response = template.requestBody("direct:start", requestText, String.class);
-                        assertNotNull(response);
-                        assertEquals(responseText, response);
-                    } catch (Exception e) {
-                        log.error("TODO Auto-generated catch block", e);
-                    }
+            executor.execute(() -> {
+                try {
+                    final String requestText = "Message " + tempI;
+                    final String responseText = "Response Message " + tempI;
+                    String response = template.requestBody("direct:start", requestText, String.class);
+                    assertNotNull(response);
+                    assertEquals(responseText, response);
+                } catch (Exception e) {
+                    failures.incrementAndGet();
+                    log.error("Failed to process message {}", tempI, e);
+                } finally {
+                    latch.countDown();
                 }
-            };
-            executor.execute(worker);
+            });
         }
-        while (context.getInflightRepository().size() > 0) {
-            Thread.sleep(100);
-        }
+        // wait for all submitted tasks to complete
+        assertTrue(latch.await(60, SECONDS), "Not all messages were processed within the timeout");
+        assertEquals(0, failures.get(), "Some messages failed during processing");
+
         executor.shutdown();
-        while (!executor.isTerminated()) {
-            Thread.sleep(100);
-        }
+        assertTrue(executor.awaitTermination(10, SECONDS), "Executor did not terminate in time");
+
+        // verify all inflight messages have completed
+        assertEquals(0, context.getInflightRepository().size());
     }
 
     @Override

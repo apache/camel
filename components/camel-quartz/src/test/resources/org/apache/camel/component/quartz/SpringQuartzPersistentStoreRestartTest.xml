@@ -27,7 +27,7 @@
     ">
 
   <!-- the persistent store for quartz -->
-  <jdbc:embedded-database id="{{testClassSimpleName}}" type="DERBY">
+  <jdbc:embedded-database id="{{testClassSimpleName}}" type="H2">
     <!-- do not load script as database alreaady exists -->
   </jdbc:embedded-database>
 

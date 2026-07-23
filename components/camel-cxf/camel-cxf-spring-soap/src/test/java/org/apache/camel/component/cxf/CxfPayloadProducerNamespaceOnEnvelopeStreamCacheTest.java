@@ -26,7 +26,7 @@ public class CxfPayloadProducerNamespaceOnEnvelopeStreamCacheTest extends CxfPay
         return new RouteBuilder() {
             public void configure() {
                 from("direct:router") //
-                        .streamCaching()
+                        .streamCache(true)
                         // call an external Web service in payload mode
                         .to("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD")
                         // Check that the issue doesn't occur if stream caching is enabled

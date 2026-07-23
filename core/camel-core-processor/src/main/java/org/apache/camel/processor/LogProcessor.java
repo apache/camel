@@ -27,18 +27,20 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A processor which evaluates an {@link Expression} and logs it.
  */
-public class LogProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class LogProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogProcessor.class);
 
     private String id;
     private String routeId;
+    private String stepId;
     private final Expression expression;
     private final String message;
     private final CamelLogger logger;
@@ -157,6 +159,16 @@ public class LogProcessor extends BaseProcessorSupport implements Traceable, IdA
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public String getMessage() {

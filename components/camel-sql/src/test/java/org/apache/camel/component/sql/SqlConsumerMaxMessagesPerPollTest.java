@@ -39,7 +39,7 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.HSQL)
                 .addScript("sql/createAndPopulateDatabase4.sql")
                 .build();
 
@@ -60,19 +60,19 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
-        assertBodyMapValue(1, "ID", exchanges.get(0));
+        assertBodyMapValue(0, "ID", exchanges.get(0));
         assertBodyMapValue("Camel", "PROJECT", exchanges.get(0));
         assertProperty(0, "CamelBatchIndex", exchanges.get(0));
         assertProperty(2, "CamelBatchSize", exchanges.get(0));
         assertProperty(Boolean.FALSE, "CamelBatchComplete", exchanges.get(0));
 
-        assertBodyMapValue(2, "ID", exchanges.get(1));
+        assertBodyMapValue(1, "ID", exchanges.get(1));
         assertBodyMapValue("AMQ", "PROJECT", exchanges.get(1));
         assertProperty(1, "CamelBatchIndex", exchanges.get(1));
         assertProperty(2, "CamelBatchSize", exchanges.get(1));
         assertProperty(Boolean.TRUE, "CamelBatchComplete", exchanges.get(1)); // end of the first batch
 
-        assertBodyMapValue(3, "ID", exchanges.get(2));
+        assertBodyMapValue(2, "ID", exchanges.get(2));
         assertBodyMapValue("Linux", "PROJECT", exchanges.get(2));
         assertProperty(0, "CamelBatchIndex", exchanges.get(2)); // the second batch
         assertProperty(1, "CamelBatchSize", exchanges.get(2)); // only one entry in this batch

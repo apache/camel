@@ -17,10 +17,13 @@
 package org.apache.camel.diagram;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import org.apache.camel.console.DevConsoleRegistry;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteDiagramDumper;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
@@ -30,30 +33,46 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole(name = "route-diagram", group = "camel", displayName = "Route Diagram", description = "Visual route diagrams")
 public class DiagramDevConsole extends AbstractDevConsole {
 
-    /**
-     * Filters the routes matching by route id, route uri, and source location
-     */
+    @Metadata(label = "query", description = "Filters the routes matching by route id, route uri, and source location",
+              defaultValue = "*", javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Theme to use: dark, light, or text
-     */
+    @Metadata(label = "query", description = "Theme to use: dark, light, transparent, ascii, or unicode",
+              defaultValue = "transparent", javaType = "java.lang.String", enums = "dark,light,transparent,ascii,unicode")
     public static final String THEME = "theme";
 
-    /**
-     * The size of the font (default 12)
-     */
+    @Metadata(label = "query", description = "The size of the font", defaultValue = "12",
+              javaType = "java.lang.Integer")
     public static final String FONT_SIZE = "fontSize";
 
-    /**
-     * The node width (default 180 pixels)
-     */
+    @Metadata(label = "query", description = "The node width in pixels", defaultValue = "180",
+              javaType = "java.lang.Integer")
     public static final String NODE_WIDTH = "nodeWidth";
 
-    /**
-     * Node label mode (code, description, both). Is default code.
-     */
+    @Metadata(label = "query", description = "Node label mode", defaultValue = "code",
+              javaType = "java.lang.String", enums = "code,description,both")
     public static final String NODE_LABEL = "nodeLabel";
+
+    @Metadata(label = "query", description = "Whether to include live metric counters", defaultValue = "true",
+              javaType = "java.lang.Boolean")
+    public static final String METRIC = "metric";
+
+    @Metadata(label = "query", description = "Whether to auto-refresh page every 5 seconds", defaultValue = "true",
+              javaType = "java.lang.Boolean")
+    public static final String AUTO_REFRESH = "autoRefresh";
+
+    @Metadata(label = "query", description = "Diagram mode: route or topology", defaultValue = "route",
+              javaType = "java.lang.String", enums = "route,topology")
+    public static final String MODE = "mode";
+
+    @Metadata(label = "query",
+              description = "Output format: html (interactive web component), png (inline image), text or ascii (ASCII art), unicode (box-drawing characters)",
+              defaultValue = "html", javaType = "java.lang.String", enums = "html,png,text,ascii,unicode")
+    public static final String FORMAT = "format";
+
+    @Metadata(label = "query", description = "Whether to include external systems (kafka, http, etc.) in topology mode",
+              defaultValue = "true", javaType = "java.lang.Boolean")
+    public static final String EXTERNAL = "external";
 
     public DiagramDevConsole() {
         super("camel", "route-diagram", "Route Diagram", "Visual route diagrams");
@@ -63,31 +82,67 @@ public class DiagramDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         final StringJoiner sj = new StringJoiner("\n");
 
-        String filter = (String) options.getOrDefault(FILTER, "*");
-        String theme = (String) options.getOrDefault(THEME, RouteDiagramDumper.Theme.TRANSPARENT.name());
-        int fontSize
-                = Integer.parseInt(options.getOrDefault(FONT_SIZE, "" + RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE).toString());
-        int nodeWidth = Integer
-                .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
-        String nodeLabel = (String) options.getOrDefault(NODE_LABEL, RouteDiagramDumper.NodeLabelMode.CODE.name());
+        String mode = optionString(options, MODE);
+        if (mode == null) {
+            mode = "route";
+        }
+        String filter = optionString(options, FILTER);
+        if (filter == null) {
+            filter = "*";
+        }
+        String theme = optionString(options, THEME);
+        if (theme == null) {
+            theme = RouteDiagramDumper.Theme.TRANSPARENT.name();
+        }
+        int fontSize = optionInt(options, FONT_SIZE, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE);
+        int nodeWidth = optionInt(options, NODE_WIDTH, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH);
+        String nodeLabel = optionString(options, NODE_LABEL);
+        if (nodeLabel == null) {
+            nodeLabel = RouteDiagramDumper.NodeLabelMode.CODE.name();
+        }
+        boolean metric = optionBoolean(options, METRIC, true);
+        boolean refresh = optionBoolean(options, AUTO_REFRESH, true);
+        String format = optionString(options, FORMAT);
+        if (format == null) {
+            format = "html";
+        }
+        boolean external = optionBoolean(options, EXTERNAL, true);
 
-        // special for text
-        if ("text".equalsIgnoreCase(theme)) {
-            sj.add(renderTextTheme(filter));
-        } else {
-            try {
-                RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
-                BufferedImage image = dumper.dumpRoutesAsImage(filter, RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
-                        RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
+        try {
+            RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
+            boolean textFormat = isTextFormat(format);
+            if ("topology".equalsIgnoreCase(mode)) {
+                sj.add(doCallTopologyText(dumper, theme, nodeWidth, metric, fontSize, refresh, format, external));
+            } else if (isTextTheme(theme) || textFormat) {
+                boolean unicode = isUnicodeTheme(theme) || "unicode".equalsIgnoreCase(format);
+                String text = dumper.dumpRoutesAsAsciiArt(filter,
+                        RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()),
+                        nodeWidth, unicode);
+                sj.add(text);
+            } else if ("png".equalsIgnoreCase(format)) {
+                BufferedImage image = dumper.dumpRoutesAsImage(filter,
+                        RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
+                        metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
                 String base64 = dumper.imageToBase64(image);
-                // For HTML embedding:
                 String html = String.format(
-                        "<html>\n<body>\n<img src=\"data:image/png;base64,%s\" alt=\"Route Diagram\">\n</body>\n</html>",
+                        """
+                                  <body>
+                                    <img src="data:image/png;base64,%s" alt="Route Diagram">
+                                  </body>
+                                """,
                         base64);
+                if (refresh) {
+                    html = """
+                            <head><meta http-equiv="refresh" content="5"></head>
+                            %s""".formatted(html);
+                }
+                html = "<html>\n" + html + "</html>\n";
                 sj.add(html);
-            } catch (Exception e) {
-                // ignore
+            } else {
+                sj.add(buildRouteWebComponentHtml(filter, metric, refresh));
             }
+        } catch (Exception e) {
+            // ignore
         }
 
         return sj.toString();
@@ -95,21 +150,44 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        String filter = (String) options.getOrDefault(FILTER, "*");
-        String theme = (String) options.getOrDefault(THEME, RouteDiagramDumper.Theme.TRANSPARENT.name());
-        int fontSize
-                = Integer.parseInt(options.getOrDefault(FONT_SIZE, "" + RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE).toString());
-        int nodeWidth = Integer
-                .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
-        String nodeLabel = (String) options.getOrDefault(NODE_LABEL, RouteDiagramDumper.NodeLabelMode.CODE.name());
+        String mode = optionString(options, MODE);
+        if (mode == null) {
+            mode = "route";
+        }
+        String filter = optionString(options, FILTER);
+        if (filter == null) {
+            filter = "*";
+        }
+        String theme = optionString(options, THEME);
+        if (theme == null) {
+            theme = RouteDiagramDumper.Theme.TRANSPARENT.name();
+        }
+        int fontSize = optionInt(options, FONT_SIZE, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE);
+        int nodeWidth = optionInt(options, NODE_WIDTH, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH);
+        String nodeLabel = optionString(options, NODE_LABEL);
+        if (nodeLabel == null) {
+            nodeLabel = RouteDiagramDumper.NodeLabelMode.CODE.name();
+        }
+        boolean metric = optionBoolean(options, METRIC, true);
+        boolean external = optionBoolean(options, EXTERNAL, true);
 
         JsonObject root = new JsonObject();
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
-            BufferedImage image = dumper.dumpRoutesAsImage(filter, RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
-                    RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
-            String base64 = dumper.imageToBase64(image);
-            root.put("image", base64);
+            if ("topology".equalsIgnoreCase(mode)) {
+                return doCallTopologyJson(dumper, theme, nodeWidth, metric, fontSize, external);
+            } else if (isTextTheme(theme)) {
+                String text = dumper.dumpRoutesAsAsciiArt(filter,
+                        RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()),
+                        nodeWidth, isUnicodeTheme(theme));
+                root.put("text", text);
+            } else {
+                BufferedImage image = dumper.dumpRoutesAsImage(filter,
+                        RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
+                        metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
+                String base64 = dumper.imageToBase64(image);
+                root.put("image", base64);
+            }
         } catch (Exception e) {
             // ignore
         }
@@ -117,18 +195,128 @@ public class DiagramDevConsole extends AbstractDevConsole {
         return root;
     }
 
-    private String renderTextTheme(String filter) {
-        final StringJoiner sj = new StringJoiner("\n");
-
-        org.apache.camel.console.DevConsole dc
-                = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                        .resolveById("route-structure");
-        JsonObject root = (JsonObject) dc.call(MediaType.JSON, Map.of("filter", filter));
-        var routes = RouteDiagramHelper.parseRoutes(root);
-        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
-        var lines = renderer.printTextDiagram(routes);
-        lines.forEach(sj::add);
-        sj.add("");
-        return sj.toString();
+    private String doCallTopologyText(
+            RouteDiagramDumper dumper, String theme, int nodeWidth,
+            boolean metric, int fontSize, boolean refresh, String format, boolean external)
+            throws Exception {
+        boolean textFormat = isTextFormat(format);
+        if (isTextTheme(theme) || textFormat) {
+            boolean unicode = isUnicodeTheme(theme) || "unicode".equalsIgnoreCase(format);
+            return dumper.dumpTopologyAsAsciiArt(nodeWidth, unicode, external);
+        } else if ("png".equalsIgnoreCase(format)) {
+            BufferedImage image = dumper.dumpTopologyAsImage(
+                    RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()), metric, nodeWidth, fontSize, external);
+            if (image == null) {
+                return "";
+            }
+            String base64 = dumper.imageToBase64(image);
+            String html = String.format(
+                    """
+                              <body>
+                                <img src="data:image/png;base64,%s" alt="Route Topology">
+                              </body>
+                            """,
+                    base64);
+            if (refresh) {
+                html = "<head><meta http-equiv=\"refresh\" content=\"5\"></head>\n" + html;
+            }
+            return "<html>\n" + html + "</html>\n";
+        } else {
+            return buildTopologyWebComponentHtml(metric, refresh, external);
+        }
     }
+
+    private Map<String, Object> doCallTopologyJson(
+            RouteDiagramDumper dumper, String theme, int nodeWidth,
+            boolean metric, int fontSize, boolean external)
+            throws Exception {
+        JsonObject root = new JsonObject();
+        if (isTextTheme(theme)) {
+            String text = dumper.dumpTopologyAsAsciiArt(nodeWidth, isUnicodeTheme(theme), external);
+            root.put("text", text);
+        } else {
+            BufferedImage image = dumper.dumpTopologyAsImage(
+                    RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()), metric, nodeWidth, fontSize, external);
+            if (image != null) {
+                String base64 = dumper.imageToBase64(image);
+                root.put("image", base64);
+            }
+        }
+        return root;
+    }
+
+    private static final String WEB_COMPONENT_JS = loadWebComponentJs("camel-route-diagram.js");
+    private static final String TOPOLOGY_WEB_COMPONENT_JS = loadWebComponentJs("camel-topology-diagram.js");
+
+    private static String buildTopologyWebComponentHtml(boolean metric, boolean refresh, boolean external) {
+        String metricAttr = metric ? "" : " metric=\"false\"";
+        String refreshAttr = refresh ? " refresh=\"5000\"" : "";
+        String externalAttr = external ? "" : " external=\"false\"";
+        return """
+                <html>
+                  <head>
+                    <meta charset="utf-8">
+                    <script type="module">
+                %s
+                    </script>
+                  </head>
+                  <body>
+                %s  </body>
+                </html>
+                """.formatted(
+                TOPOLOGY_WEB_COMPONENT_JS, String.format(
+                        """
+                                    <camel-topology-diagram src="route-topology"%s%s%s></camel-topology-diagram>%n\
+                                """,
+                        metricAttr, refreshAttr, externalAttr));
+    }
+
+    private static String buildRouteWebComponentHtml(String filter, boolean metric, boolean refresh) {
+        String f = filter == null ? "*" : filter;
+        String metricAttr = metric ? "" : " metric=\"false\"";
+        String refreshAttr = refresh ? " refresh=\"5000\"" : "";
+        // inline the web component script: static resource serving is not available when only the developer
+        // console is enabled (camel run --console). route-structure is a sibling console on the same origin.
+        return """
+                <html>
+                  <head>
+                    <meta charset="utf-8">
+                    <script type="module">
+                %s
+                    </script>
+                  </head>
+                  <body>
+                %s  </body>
+                </html>
+                """.formatted(
+                WEB_COMPONENT_JS, String.format(
+                        "    <camel-route-diagram src=\"route-structure\" filter=\"%s\"%s%s></camel-route-diagram>%n",
+                        escapeAttr(f), metricAttr, refreshAttr));
+    }
+
+    private static String loadWebComponentJs(String filename) {
+        try (InputStream is = DiagramDevConsole.class.getResourceAsStream(
+                "/META-INF/resources/camel/diagram/" + filename)) {
+            return is != null ? new String(is.readAllBytes(), StandardCharsets.UTF_8) : "";
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+    private static String escapeAttr(String s) {
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
+    }
+
+    private static boolean isTextTheme(String theme) {
+        return "ascii".equalsIgnoreCase(theme) || "unicode".equalsIgnoreCase(theme);
+    }
+
+    private static boolean isUnicodeTheme(String theme) {
+        return "unicode".equalsIgnoreCase(theme);
+    }
+
+    private static boolean isTextFormat(String format) {
+        return "text".equalsIgnoreCase(format) || "ascii".equalsIgnoreCase(format) || "unicode".equalsIgnoreCase(format);
+    }
+
 }

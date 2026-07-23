@@ -18,11 +18,19 @@ package org.apache.camel.component.langchain4j.agent.api;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
+import dev.langchain4j.agent.tool.ToolExecutionRequest;
+import dev.langchain4j.data.message.ToolExecutionResultMessage;
+import dev.langchain4j.service.tool.ToolArgumentsErrorHandler;
+import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AgentConfigurationTest {
@@ -248,5 +256,98 @@ public class AgentConfigurationTest {
 
         assertNotNull(config.getOutputGuardrailClasses());
         assertTrue(config.getOutputGuardrailClasses().isEmpty());
+    }
+
+    // Tests for tool-calling options
+
+    @Test
+    public void testMaxToolCallingRoundTrips() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertEquals(0, config.getMaxToolCallingRoundTrips());
+
+        AgentConfiguration result = config.withMaxToolCallingRoundTrips(10);
+
+        assertSame(config, result);
+        assertEquals(10, config.getMaxToolCallingRoundTrips());
+    }
+
+    @Test
+    public void testHallucinatedToolNameStrategy() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertNull(config.getHallucinatedToolNameStrategy());
+
+        Function<ToolExecutionRequest, ToolExecutionResultMessage> strategy
+                = request -> ToolExecutionResultMessage.from(request, "Unknown tool: " + request.name());
+        AgentConfiguration result = config.withHallucinatedToolNameStrategy(strategy);
+
+        assertSame(config, result);
+        assertSame(strategy, config.getHallucinatedToolNameStrategy());
+    }
+
+    @Test
+    public void testToolExecutionErrorHandler() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertNull(config.getToolExecutionErrorHandler());
+
+        ToolExecutionErrorHandler handler = (error, context) -> null;
+        AgentConfiguration result = config.withToolExecutionErrorHandler(handler);
+
+        assertSame(config, result);
+        assertSame(handler, config.getToolExecutionErrorHandler());
+    }
+
+    @Test
+    public void testToolArgumentsErrorHandler() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertNull(config.getToolArgumentsErrorHandler());
+
+        ToolArgumentsErrorHandler handler = (error, context) -> null;
+        AgentConfiguration result = config.withToolArgumentsErrorHandler(handler);
+
+        assertSame(config, result);
+        assertSame(handler, config.getToolArgumentsErrorHandler());
+    }
+
+    @Test
+    public void testCompensateOnToolErrors() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertNull(config.getCompensateOnToolErrors());
+
+        AgentConfiguration result = config.withCompensateOnToolErrors(true);
+
+        assertSame(config, result);
+        assertTrue(config.getCompensateOnToolErrors());
+    }
+
+    @Test
+    public void testAiServicesCustomizer() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertNull(config.getAiServicesCustomizer());
+
+        AtomicBoolean invoked = new AtomicBoolean(false);
+        AgentConfiguration result = config.withAiServicesCustomizer(builder -> invoked.set(true));
+
+        assertSame(config, result);
+        assertNotNull(config.getAiServicesCustomizer());
+    }
+
+    @Test
+    public void testFluentChaining() {
+        ToolExecutionErrorHandler execHandler = (error, context) -> null;
+        ToolArgumentsErrorHandler argsHandler = (error, context) -> null;
+
+        AgentConfiguration config = new AgentConfiguration()
+                .withMaxToolCallingRoundTrips(5)
+                .withToolExecutionErrorHandler(execHandler)
+                .withToolArgumentsErrorHandler(argsHandler)
+                .withCompensateOnToolErrors(true)
+                .withAiServicesCustomizer(builder -> {
+                });
+
+        assertEquals(5, config.getMaxToolCallingRoundTrips());
+        assertSame(execHandler, config.getToolExecutionErrorHandler());
+        assertSame(argsHandler, config.getToolArgumentsErrorHandler());
+        assertTrue(config.getCompensateOnToolErrors());
+        assertNotNull(config.getAiServicesCustomizer());
     }
 }

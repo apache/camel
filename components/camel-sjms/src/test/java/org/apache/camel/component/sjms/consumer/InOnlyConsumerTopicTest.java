@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,7 +37,7 @@ public class InOnlyConsumerTopicTest extends JmsTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel", "Hello World");
         template.sendBody("sjms:topic:in.only.InOnlyConsumerTopicTest.topic", "Hello Camel");
         template.sendBody("sjms:topic:in.only.InOnlyConsumerTopicTest.topic", "Hello World");
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override

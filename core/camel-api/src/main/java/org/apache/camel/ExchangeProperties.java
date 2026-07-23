@@ -23,8 +23,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a parameter as being an injection point of the exchange properties of an {@link Exchange}
+ * Marks a method parameter as the entire exchange-property map of the current {@link Exchange} when Camel performs
+ * <a href="https://camel.apache.org/manual/bean-binding.html">bean binding</a>.
+ * <p/>
+ * The parameter type should be {@code Map<String, Object>} (or a compatible super-type). Unlike
+ * {@link ExchangeProperty}, which injects a single named property, {@code @ExchangeProperties} gives the method direct
+ * access to all exchange properties at once.
  *
+ * @see ExchangeProperty
  * @see Exchange#getProperties()
  */
 @Retention(RetentionPolicy.RUNTIME)

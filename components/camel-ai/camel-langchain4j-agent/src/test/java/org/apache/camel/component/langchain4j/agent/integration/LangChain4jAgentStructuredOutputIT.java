@@ -16,16 +16,17 @@
  */
 package org.apache.camel.component.langchain4j.agent.integration;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.chat.request.ResponseFormat;
-import dev.langchain4j.model.chat.request.json.JsonRawSchema;
-import dev.langchain4j.model.chat.request.json.JsonSchema;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
-import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
@@ -33,8 +34,8 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.io.TempDir;
 
-import static dev.langchain4j.model.chat.request.ResponseFormatType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -73,6 +74,9 @@ public class LangChain4jAgentStructuredOutputIT extends CamelTestSupport {
 
     protected ChatModel chatModel;
 
+    @TempDir
+    Path tempDir;
+
     @RegisterExtension
     static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
 
@@ -80,27 +84,43 @@ public class LangChain4jAgentStructuredOutputIT extends CamelTestSupport {
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        JsonRawSchema jsonRawSchema = JsonRawSchema.from(PERSON_SCHEMA);
-        ResponseFormat responseFormat = ResponseFormat.builder()
-                .type(JSON)
-                .jsonSchema(JsonSchema.builder()
-                        .name("person_schema")
-                        .rootElement(jsonRawSchema)
-                        .build())
-                .build();
-
-        chatModel = ModelHelper.loadChatModel(OLLAMA, responseFormat);
+        chatModel = ModelHelper.loadChatModel(OLLAMA);
     }
 
     @Test
-    void testStructuredOutputWithJsonSchema() throws Exception {
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+    void testStructuredOutputWithClasspathSchema() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:classpath-result");
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody("direct:structured-output", TEST_PROMPT, String.class);
+        String response = template.requestBody("direct:classpath-schema", TEST_PROMPT, String.class);
 
         mockEndpoint.assertIsSatisfied();
+        assertValidPersonResponse(response);
+    }
 
+    @Test
+    void testStructuredOutputWithInlineSchema() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:inline-result");
+        mockEndpoint.expectedMessageCount(1);
+
+        String response = template.requestBody("direct:inline-schema", TEST_PROMPT, String.class);
+
+        mockEndpoint.assertIsSatisfied();
+        assertValidPersonResponse(response);
+    }
+
+    @Test
+    void testStructuredOutputWithFileSchema() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:file-result");
+        mockEndpoint.expectedMessageCount(1);
+
+        String response = template.requestBody("direct:file-schema", TEST_PROMPT, String.class);
+
+        mockEndpoint.assertIsSatisfied();
+        assertValidPersonResponse(response);
+    }
+
+    private void assertValidPersonResponse(String response) throws Exception {
         assertNotNull(response);
         JsonNode jsonResponse = objectMapper.readTree(response);
 
@@ -113,21 +133,43 @@ public class LangChain4jAgentStructuredOutputIT extends CamelTestSupport {
         assertThat(jsonResponse.get("occupation").asText().toLowerCase()).containsAnyOf("engineer", "developer");
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        AgentConfiguration configuration = new AgentConfiguration()
-                .withChatModel(chatModel);
+    private String loadSchemaFromClasspath() throws IOException {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("person-schema.json")) {
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        }
+    }
 
-        Agent agent = new AgentWithoutMemory(configuration);
-        context.getRegistry().bind("structuredOutputAgent", agent);
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        String inlineSchema = loadSchemaFromClasspath();
+
+        Path schemaFile = tempDir.resolve("person-schema.json");
+        Files.writeString(schemaFile, inlineSchema);
+
+        AgentConfiguration agentConfiguration = new AgentConfiguration().withChatModel(chatModel);
+        context.getRegistry().bind("myAgentConfig", agentConfiguration);
 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:structured-output")
-                        .to("langchain4j-agent:structured-output?agent=#structuredOutputAgent")
+                from("direct:classpath-schema")
+                        .to("langchain4j-agent:classpath-test?agentConfiguration=#myAgentConfig"
+                            + "&jsonSchema=classpath:person-schema.json")
                         .to("json-validator:classpath:person-schema.json")
-                        .to("mock:result");
+                        .to("mock:classpath-result");
+
+                from("direct:inline-schema")
+                        .to("langchain4j-agent:inline-test?agentConfiguration=#myAgentConfig"
+                            + "&jsonSchema=RAW(" + inlineSchema + ")")
+                        .to("json-validator:classpath:person-schema.json")
+                        .to("mock:inline-result");
+
+                from("direct:file-schema")
+                        .to("langchain4j-agent:file-test?agentConfiguration=#myAgentConfig"
+                            + "&jsonSchema=file:" + schemaFile.toAbsolutePath())
+                        .to("json-validator:classpath:person-schema.json")
+                        .to("mock:file-result");
+
             }
         };
     }

@@ -445,6 +445,7 @@ Deprecated `ProblemFactChange` has been replaced by `ProblemChange`.
 
 The new URI path is:
 
+._Java-only: new OptaPlanner URI syntax_
 [source,java]
 ----
 from("optaplanner:myProblemName")
@@ -460,6 +461,7 @@ When running `camel-optaplanner` on Spring Boot or Quarkus, it is preferable to 
 
 It is possible to migrate legacy Camel OptaPlanner Routes, by putting the XML config file, as show in the code below. Camel OptaPlanner will handle creating the SolverManager for those legacy Routes:
 
+._Java-only: legacy OptaPlanner route with XML config file_
 [source,java]
 ----
 from("optaplanner:myProblemName?configFile=PATH/TO/CONFIG.FILE.xml")
@@ -512,6 +514,7 @@ Therefore, all the HTTP endpoints are no longer prefixed with the servlet contex
 
 For example:
 
+._Java-only: platform-http endpoint without servlet context-path_
 [source,java]
 ----
 from("platform-http:myservice")

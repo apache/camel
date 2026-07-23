@@ -46,20 +46,6 @@ public interface HuggingFaceEndpointBuilderFactory {
         }
 
         /**
-         * HF API token for private models.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param authToken the value to set
-         * @return the dsl builder
-         */
-        default HuggingFaceEndpointBuilder authToken(String authToken) {
-            doSetProperty("authToken", authToken);
-            return this;
-        }
-        /**
          * If true, auto-select the best label (highest score) for zero-shot
          * classification.
          * 
@@ -432,6 +418,20 @@ public interface HuggingFaceEndpointBuilderFactory {
             return this;
         }
         /**
+         * HF API token for private models.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param authToken the value to set
+         * @return the dsl builder
+         */
+        default HuggingFaceEndpointBuilder authToken(String authToken) {
+            doSetProperty("authToken", authToken);
+            return this;
+        }
+        /**
          * OAuth profile name for obtaining an access token via the OAuth 2.0
          * Client Credentials grant. When set, the token is acquired from the
          * configured identity provider and used as authToken. Requires
@@ -583,7 +583,7 @@ public interface HuggingFaceEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final HuggingFaceHeaderNameBuilder INSTANCE = new HuggingFaceHeaderNameBuilder();
+        public static final HuggingFaceHeaderNameBuilder INSTANCE = new HuggingFaceHeaderNameBuilder();
 
         /**
          * The output from the model.

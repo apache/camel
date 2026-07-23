@@ -31,7 +31,11 @@ import org.apache.camel.tooling.maven.MavenArtifact;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "hawtio", description = "Launch Hawtio web console", sortOptions = false, showDefaultValues = true)
+@Command(name = "hawtio", description = "Launch Hawtio web console", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel hawtio",
+                 "  camel hawtio --port=8090" })
 public class Hawtio extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
@@ -74,7 +78,9 @@ public class Hawtio extends CamelCommand {
                     exit = callHawtio();
                 }
             } finally {
-                disconnectJolokia();
+                if (pid != 0) {
+                    disconnectJolokia();
+                }
             }
         }
         return exit;

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "ical",
     "title": "iCal",
-    "description": "Marshal and unmarshal iCal (.ics) documents to\/from model objects.",
+    "description": "Marshal and unmarshal iCal (*.ics) documents to\/from model objects",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "dataformat,transformation",
@@ -14,6 +14,6 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "validating": { "index": 1, "kind": "attribute", "displayName": "Validating", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to validate." }
+    "validating": { "index": 1, "kind": "attribute", "displayName": "Validating", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to validate the iCal document." }
   }
 }

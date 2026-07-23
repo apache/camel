@@ -42,12 +42,17 @@ public final class OpenAIConstants {
     public static final String MAX_TOKENS = "CamelOpenAIMaxTokens";
     @Metadata(description = "Whether to stream the response back incrementally", javaType = "Boolean")
     public static final String STREAMING = "CamelOpenAIStreaming";
-    @Metadata(description = "The Java class to use for structured output parsing", javaType = "Class")
+    @Metadata(description = "The Java class name (FQCN) to use for structured output parsing", javaType = "String")
     public static final String OUTPUT_CLASS = "CamelOpenAIOutputClass";
     @Metadata(description = "The JSON schema to use for structured output validation", javaType = "String")
     public static final String JSON_SCHEMA = "CamelOpenAIJsonSchema";
     @Metadata(description = "Whether to strip <think>...</think> blocks from the response body", javaType = "Boolean")
     public static final String STRIP_THINKING = "CamelOpenAIStripThinking";
+    @Metadata(description = "The MIME type of the message body when sending a file or binary content (File, WrappedFile, "
+                            + "byte[] or InputStream) to the model. Takes precedence over component content-type headers "
+                            + "and automatic MIME type detection",
+              javaType = "String")
+    public static final String MEDIA_TYPE = "CamelOpenAIMediaType";
 
     // Output Headers
     @Metadata(description = "The thinking content extracted from <think>...</think> blocks in the model response",
@@ -63,11 +68,12 @@ public final class OpenAIConstants {
     public static final String RESPONSE_ID = "CamelOpenAIResponseId";
     @Metadata(description = "The reason the completion finished (e.g., stop, length, content_filter)", javaType = "String")
     public static final String FINISH_REASON = "CamelOpenAIFinishReason";
-    @Metadata(description = "The number of tokens used in the prompt", javaType = "Integer")
+    @Metadata(description = "The number of tokens used in the prompt for the latest API call", javaType = "Long")
     public static final String PROMPT_TOKENS = "CamelOpenAIPromptTokens";
-    @Metadata(description = "The number of tokens used in the completion", javaType = "Integer")
+    @Metadata(description = "The number of tokens used in the completion for the latest API call", javaType = "Long")
     public static final String COMPLETION_TOKENS = "CamelOpenAICompletionTokens";
-    @Metadata(description = "The total number of tokens used (prompt + completion)", javaType = "Integer")
+    @Metadata(description = "The total number of tokens used (prompt + completion) for the latest API call",
+              javaType = "Long")
     public static final String TOTAL_TOKENS = "CamelOpenAITotalTokens";
 
     // MCP Tool Call Headers
@@ -79,6 +85,12 @@ public final class OpenAIConstants {
                             + "rather than from the LLM",
               javaType = "Boolean")
     public static final String MCP_RETURN_DIRECT = "CamelOpenAIMcpReturnDirect";
+    @Metadata(description = "Cumulative prompt tokens consumed across all agentic loop iterations", javaType = "Long")
+    public static final String AGENTIC_PROMPT_TOKENS = "CamelOpenAIAgenticPromptTokens";
+    @Metadata(description = "Cumulative completion tokens consumed across all agentic loop iterations", javaType = "Long")
+    public static final String AGENTIC_COMPLETION_TOKENS = "CamelOpenAIAgenticCompletionTokens";
+    @Metadata(description = "Cumulative total tokens consumed across all agentic loop iterations", javaType = "Long")
+    public static final String AGENTIC_TOTAL_TOKENS = "CamelOpenAIAgenticTotalTokens";
 
     // Output Exchange Properties
     @Metadata(description = "The complete OpenAI response object", javaType = "com.openai.models.ChatCompletion")
@@ -123,11 +135,29 @@ public final class OpenAIConstants {
               javaType = "String")
     public static final String AUDIO_TIMESTAMP_GRANULARITIES = "CamelOpenAIAudioTimestampGranularities";
 
-    // Audio Transcription Output Headers
+    // Audio Transcription/Translation Output Headers
     @Metadata(description = "Duration of the audio in seconds (verbose_json only)", javaType = "Double")
     public static final String AUDIO_DURATION = "CamelOpenAIAudioDuration";
     @Metadata(description = "Language detected in the audio (verbose_json only)", javaType = "String")
     public static final String AUDIO_DETECTED_LANGUAGE = "CamelOpenAIAudioDetectedLanguage";
+
+    // Audio Speech (Text-to-Speech) Input Headers
+    @Metadata(description = "The model to use for text-to-speech (e.g., gpt-4o-mini-tts, tts-1, tts-1-hd)",
+              javaType = "String")
+    public static final String SPEECH_MODEL = "CamelOpenAISpeechModel";
+    @Metadata(description = "The voice to use for the generated audio (e.g., alloy, echo, fable, onyx, nova, shimmer)",
+              javaType = "String")
+    public static final String SPEECH_VOICE = "CamelOpenAISpeechVoice";
+    @Metadata(description = "The audio format for text-to-speech output (mp3, opus, aac, flac, wav, pcm)",
+              javaType = "String")
+    public static final String SPEECH_RESPONSE_FORMAT = "CamelOpenAISpeechResponseFormat";
+    @Metadata(description = "The speed of the generated audio (0.25 to 4.0, where 1.0 is normal speed)",
+              javaType = "Double")
+    public static final String SPEECH_SPEED = "CamelOpenAISpeechSpeed";
+    @Metadata(description = "Optional instructions to control the voice of the generated audio "
+                            + "(does not work with tts-1 or tts-1-hd)",
+              javaType = "String")
+    public static final String SPEECH_INSTRUCTIONS = "CamelOpenAISpeechInstructions";
 
     private OpenAIConstants() {
         // Utility class

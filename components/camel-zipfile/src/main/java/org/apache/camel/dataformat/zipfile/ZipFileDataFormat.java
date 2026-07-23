@@ -105,6 +105,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
         if (usingIterator) {
             ZipIterator zipIterator = new ZipIterator(exchange, inputStream);
             zipIterator.setAllowEmptyDirectory(allowEmptyDirectory);
+            zipIterator.setMaxDecompressedSize(maxDecompressedSize);
             return zipIterator;
         } else {
             BufferedInputStream bis = new BufferedInputStream(inputStream);

@@ -22,7 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.xml.pretty.XmlPrettyPrinter;
-import org.fusesource.jansi.Ansi;
+import org.jline.jansi.Ansi;
 
 public final class XmlHelper {
 

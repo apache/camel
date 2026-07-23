@@ -1,0 +1,423 @@
+= Camel CLI - Development Tools
+
+The Camel CLI includes a suite of development tools for sending and receiving messages, managing dependencies, scripting, and configuring beans and data sources.
+
+For debugging, see xref:camel-jbang-debugging.adoc[Debugging]. For data transformation, see xref:camel-jbang-transforming.adoc[Data Transformation].
+
+== Sending messages via Camel
+
+*Available since Camel 4*
+
+The `camel cmd send` command sends a message through a running Camel integration,
+reusing its existing endpoint configuration — a quick way to test routes without
+setting up external tooling for each protocol.
+
+For example, given a route that consumes from an MQTT broker:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: kamelet:mqtt5-source
+      parameters:
+        topic: temperature
+        brokerUrl: tcp://mybroker:1883
+      steps:
+        - transform:
+            expression:
+              jq:
+                expression: .value
+        - log:
+            message: The temperature is ${body}
+----
+
+Send a message to the running integration named `mqtt` (the payload is loaded from a file):
+
+[source,bash]
+----
+$ camel cmd send --body=file:payload.json mqtt
+----
+
+The last argument (`mqtt`) is the integration name — you can also use its PID.
+With a single route, the command automatically picks the `from` endpoint and reuses its configuration.
+For multiple routes, filter by route id or component with `--endpoint`:
+
+By route id:
+
+[source,bash]
+----
+$ camel cmd send mqtt --body=file:payload.json --endpoint=route1
+----
+
+By component:
+
+[source,bash]
+----
+$ camel cmd send mqtt --body=file:payload.json --endpoint=mqtt
+----
+
+TIP: Run `camel cmd send --help` for all options. Full example on https://github.com/apache/camel-jbang-examples/tree/main/mqtt[GitHub].
+
+=== Sending without a running integration
+
+*Available since Camel 4.12*
+
+Omit the integration name to start a temporary Camel instance and send directly.
+All configuration must be provided on the command line:
+
+[source,bash]
+----
+$ camel cmd send --body=file:payload.json --uri='paho-mqtt5:temperature?brokerUrl=tcp://mybroker:1883'
+----
+
+For complex components (Kafka, AWS, etc.), a Kamelet is often simpler:
+
+[source,bash]
+----
+$ camel cmd send --body=file:payload.json --uri='kamelet:mqtt-sink?brokerUrl=tcp://mybroker:1883&topic=temperature'
+----
+
+=== Sending to infrastructure services
+
+*Available since Camel 4.18*
+
+Use `--infra` to send to a service started with `camel infra run`.
+Connection details are read automatically from the service's JSON file in `~/.camel/`:
+
+[source,bash]
+----
+$ camel infra run nats
+$ camel cmd send --body=file:payload.json --infra=nats
+----
+
+TIP: See xref:camel-jbang-dev-services.adoc[Dev Services] for more on infrastructure services.
+
+==== Custom endpoint
+
+Without `--endpoint`, a default is created from the service type (e.g., `kafka:default`).
+Combine `--infra` with `--endpoint` to customize the destination:
+
+[source,bash]
+----
+$ camel cmd send --endpoint='kafka:myTopic' --body=file:payload.json --infra=kafka
+$ camel cmd send --endpoint='nats:mySubject' --body=file:payload.json --infra=nats
+----
+
+NOTE: Existing query parameters in the endpoint are not overridden by the service connection details.
+
+==== Automatic credential handling
+
+For services with authentication (artemis, ftp, sftp), credentials are appended automatically:
+
+[source,bash]
+----
+$ camel infra run artemis
+$ camel cmd send --endpoint='jms:myQueue' --body='Hello' --infra=artemis
+----
+
+The endpoint automatically includes `username` and `password=RAW(...)` parameters.
+
+==== Multiple service instances
+
+If multiple instances of the same service are running, the command reports an error.
+Stop the unwanted instance or specify its PID.
+
+=== Polling messages
+
+*Available since Camel 4.8*
+
+Use `--poll` to consume a message from a Kafka topic, JMS queue, FTP server, etc.
+(uses Camel consumer instead of producer — no body or headers are sent):
+
+[source,bash]
+----
+$ camel cmd send --poll --endpoint='activemq:cheese'
+----
+
+== Receiving messages via Camel
+
+*Available since Camel 4.9*
+
+The `camel cmd receive` command consumes messages from a remote endpoint and dumps them
+in the terminal — a quick way to verify what an external system has received.
+
+Receive messages from a specific endpoint:
+
+[source,bash]
+----
+$ camel cmd receive --endpoint='activemq:cheese'
+----
+
+You can also auto-discover endpoints from a running integration. Given this route:
+
+._Java-only: route with FTP consumer and JMS producer_
+[source,java]
+----
+from("ftp:myserver:1234/foo")
+  .to("log:order")
+  .to("activemq:orders");
+----
+
+Start receiving from the first remote producer endpoint automatically:
+
+[source,bash]
+----
+$ camel cmd receive --action=start
+----
+
+Camel discovers the first remote producer with consumer support — in this case `activemq:orders`.
+
+Check status:
+
+[source,bash]
+----
+$ camel cmd receive
+ PID   NAME   AGE   STATUS    TOTAL  SINCE  ENDPOINT
+  4364  foo   1m33s  Enabled     18     2s  activemq://orders
+----
+
+Dump received messages (streams continuously — press Ctrl+C to stop):
+
+[source,bash]
+----
+$ camel cmd receive --action=dump
+----
+
+Use `--follow=false` to dump once without tailing. Stop receiving with `--action=stop`.
+
+TIP: Run `camel cmd receive --help` for all options.
+
+== Scripting from terminal using pipes
+
+Camel route files can run as terminal scripts with pipes and filters.
+
+NOTE: Each execution starts a JVM, so this is best suited for tasks that benefit
+from Camel's connectors — sending or receiving data from external systems.
+
+Add the following shebang line at the top of the file:
+
+[source,text]
+----
+///usr/bin/env jbang --quiet camel@apache/camel script "$0" "$@" ; exit $?
+
+import org.apache.camel.builder.RouteBuilder;
+
+//Will upper-case the input
+public class UpperCase extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        from("stream:in")
+                .setBody()
+                .simple("${body.toUpperCase()}")
+                .to("stream:out");
+    }
+}
+----
+
+Make it executable and use it with pipes:
+
+[source,bash]
+----
+chmod +x UpperCase.java
+echo "Hello\nWorld" | ./UpperCase.java
+----
+
+Output:
+
+[source,text]
+----
+HELLO
+WORLD
+----
+
+Enable logging with `--logging=true` (writes to `~/.camel/camel-script.log`).
+
+=== Using stream:in with line vs. raw mode
+
+The xref:components::stream-component.adoc[Stream component] reads from _System in_ in two modes:
+
+- *line mode* (default): reads single lines. Body is a `String`.
+- *raw mode*: reads the entire stream until EOF. Body is a `byte[]`.
+
+Use `stream:in?readLine=false` for raw mode.
+
+== Editing code in an IDE
+
+Use `jbang edit` to set up a project with resolved dependencies for IDEA, VSCode, or Eclipse.
+Declare dependencies with https://www.jbang.dev/documentation/guide/latest/dependencies.html[JBang `//DEPS` comments] in Java source files:
+
+TIP: In YAML DSL, use `\#//DEPS` (YAML comment prefix).
+
+Example `foo.java`:
+
+[source,java]
+----
+//DEPS org.apache.camel:camel-bom:4.3.0@pom
+//DEPS org.apache.camel:camel-endpointdsl
+//DEPS org.apache.camel:camel-netty-http
+//DEPS org.apache.camel:camel-stream
+
+// add more dependencies here
+
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+import org.apache.camel.component.netty.http.NettyHttpMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class foo extends EndpointRouteBuilder {
+
+    private static final Logger LOG = LoggerFactory.getLogger(foo.class);
+
+    @Override
+    public void configure() {
+        from(timer("trigger").period(5000).repeatCount(3))
+                .to(nettyHttp("https://random-data-api.com/api/v2/banks").keepAlive(true))
+                .process(e -> {
+                    // use classes from camel-netty-http dependency in the source code
+                    // and have jbang able to generate project with the dependencies ready
+                    // to use in your IDE of choice
+                    NettyHttpMessage msg = e.getMessage(NettyHttpMessage.class);
+                    LOG.info("Netty HTTP response:\n\n\n{}\n\n\n", msg.getHttpResponse());
+                })
+                .log("Found bank:")
+          .to(stream("out"));
+    }
+}
+----
+
+The first `//DEPS` (`@pom`) sets the Camel BOM version; the rest declare individual components.
+
+Open in your IDE:
+
+[source,bash]
+----
+$ jbang edit -b foo.java
+----
+
+TIP: Use `camel dependency update foo.java` to keep `//DEPS` in sync with the components you actually use.
+
+== Updating dependencies
+
+Automatically insert or update JBang `//DEPS` lines in a Java source file:
+
+[source,bash]
+----
+$ camel dependency update foo.java
+----
+
+TIP: Use `--clean` to regenerate the dependency list from scratch.
+
+=== Maven projects
+
+The same command works on Maven projects — it scans routes for new Camel components
+and adds the corresponding dependencies to `pom.xml`:
+
+[source,bash]
+----
+$ camel dependency update pom.xml
+----
+
+NOTE: Only adding dependencies is supported (removal is manual).
+Only production code in `src/main` is scanned.
+
+== Dependency Injection
+
+The Camel CLI supports annotation-based dependency injection using Camel-native, Spring Boot,
+or Quarkus annotations — even though the runtime is standalone `camel-main` (no Spring or Quarkus container).
+
+See xref:camel-jbang-beans.adoc[Java Beans] for the full reference
+including XML DSL bean definitions and Spring Beans XML support.
+
+== Configuring JDBC DataSources
+
+Two approaches for JDBC connection pools:
+
+- *YAML/XML/Java DSL bean* — add the driver JAR and declare the data source as a bean
+- *Spring Boot style* (Camel 4.6+) — configure via `spring.datasource.*` in `application.properties` (uses Hikari)
+
+=== YAML DSL bean
+
+Declare a `DataSource` bean (e.g., for PostgreSQL):
+
+[source,yaml]
+----
+- beans:
+    - name: PostgresqlDataSource
+      properties:
+        databaseName: "postgres"
+        password: "postgres"
+        portNumber: "5432"
+        serverName: localhost
+        user: postgres
+      type: org.postgresql.ds.PGSimpleDataSource
+----
+
+Add the JDBC driver JAR: `--dep=org.postgresql:postgresql:42.7.3`
+
+=== Spring Boot style data source
+
+NOTE: The `spring.datasource.*` configuration is for prototyping and Spring Boot exports only.
+It is not supported when exporting to Camel Main or Quarkus.
+
+Configure in `application.properties`:
+
+[source,properties]
+----
+spring.datasource.url= jdbc:sqlserver://db.example.net:1433;databaseName=test_db
+spring.datasource.username=user
+spring.datasource.password=password
+spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+----
+
+The `DataSource` is registered as `springDataSource`. To use a custom name:
+
+[source,properties]
+----
+spring.datasource.name=myDataSourceNameHere
+----
+
+TIP: Some JDBC drivers are auto-detected. If not, add the JAR with `--dep`.
+
+Configure the Hikari connection pool:
+
+[source,properties]
+----
+spring.datasource.hikari.connection-timeout=30000
+spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.idle-timeout=600000
+spring.datasource.hikari.max-lifetime=1800000
+spring.datasource.hikari.pool-name=collection-pool
+----
+
+Enable Hikari debug logging to see the pool configuration:
+
+[source,properties]
+----
+logging.level.com.zaxxer.hikari = DEBUG
+----
+
+== Validate Plugin
+
+*Available since Camel 4.18*
+
+The validate plugin checks whether Camel YAML source files are valid.
+
+[source,bash]
+----
+$ camel plugin add validate
+$ camel validate yaml cheese.yaml bad.yaml
+Validation error detected (errors:1)
+
+	File: bad.yaml
+		/0/from: required property 'steps' not found
+----
+
+When all files pass:
+
+[source,bash]
+----
+$ camel validate yaml cheese.yaml bad.yaml
+Validation success (files:2)
+----

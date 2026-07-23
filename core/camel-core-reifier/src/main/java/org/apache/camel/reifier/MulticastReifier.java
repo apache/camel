@@ -31,7 +31,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
-import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
@@ -127,11 +126,6 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
             strategy = new UseLatestAggregationStrategy();
         }
         CamelContextAware.trySetCamelContext(strategy, camelContext);
-
-        if (parseBoolean(definition.getShareUnitOfWork(), false)) {
-            // wrap strategy in share unit of work
-            strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
-        }
 
         return strategy;
     }

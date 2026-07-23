@@ -22,9 +22,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.ContextEvents;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.clock.Clock;
 import org.apache.camel.spi.ReloadStrategy;
+import org.apache.camel.spi.ResourceReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExceptionHelper;
@@ -52,6 +55,10 @@ public class ContextDevConsole extends AbstractDevConsole {
                 profile, CamelContextHelper.getUptime(getCamelContext())));
         if (getCamelContext().getDescription() != null) {
             sb.append(String.format("%n    %s", getCamelContext().getDescription()));
+        }
+        Clock startClock = getCamelContext().getClock().get(ContextEvents.START);
+        if (startClock != null) {
+            sb.append(String.format("%n    Started: %s", startClock.asDate()));
         }
         sb.append("\n");
 
@@ -90,6 +97,8 @@ public class ContextDevConsole extends AbstractDevConsole {
                     sb.append(String.format("%n    Idle Since: %s", ""));
                 }
                 sb.append(String.format("%n    Reloaded: %s/%s", reloaded, reloadedFailed));
+                boolean devMode = getCamelContext().hasService(ResourceReloadStrategy.class) != null;
+                sb.append(String.format("%n    Dev Mode: %s", devMode));
                 sb.append(String.format("%n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
                 sb.append(String.format("%n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
                 sb.append(String.format("%n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
@@ -107,6 +116,11 @@ public class ContextDevConsole extends AbstractDevConsole {
                 if (last != null) {
                     String ago = TimeUtils.printSince(last.getTime());
                     sb.append(String.format("%n    Since Last Completed: %s", ago));
+                }
+                last = mb.getLastExchangeFailureHandledTimestamp();
+                if (last != null) {
+                    String ago = TimeUtils.printSince(last.getTime());
+                    sb.append(String.format("%n    Since Last Failure Handled: %s", ago));
                 }
                 last = mb.getLastExchangeFailureTimestamp();
                 if (last != null) {
@@ -132,7 +146,13 @@ public class ContextDevConsole extends AbstractDevConsole {
         root.put("version", getCamelContext().getVersion());
         root.put("state", getCamelContext().getStatus().name());
         root.put("phase", getCamelContext().getCamelContextExtension().getStatusPhase());
-        root.put("uptime", getCamelContext().getUptime().toMillis());
+        long uptimeMillis = getCamelContext().getUptime().toMillis();
+        Clock startClock = getCamelContext().getClock().get(ContextEvents.START);
+        if (startClock != null) {
+            root.put("startTimestamp", startClock.getCreated());
+        }
+        root.put("uptime", uptimeMillis);
+        root.put("devMode", getCamelContext().hasService(ResourceReloadStrategy.class) != null);
 
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
@@ -167,6 +187,11 @@ public class ContextDevConsole extends AbstractDevConsole {
                 stats.put("meanProcessingTime", mb.getMeanProcessingTime());
                 stats.put("maxProcessingTime", mb.getMaxProcessingTime());
                 stats.put("minProcessingTime", mb.getMinProcessingTime());
+                if (mb.getProcessingTimeP50() >= 0) {
+                    stats.put("p50ProcessingTime", mb.getProcessingTimeP50());
+                    stats.put("p95ProcessingTime", mb.getProcessingTimeP95());
+                    stats.put("p99ProcessingTime", mb.getProcessingTimeP99());
+                }
                 if (mb.getExchangesTotal() > 0) {
                     stats.put("lastProcessingTime", mb.getLastProcessingTime());
                     stats.put("deltaProcessingTime", mb.getDeltaProcessingTime());
@@ -178,6 +203,10 @@ public class ContextDevConsole extends AbstractDevConsole {
                 last = mb.getLastExchangeCompletedTimestamp();
                 if (last != null) {
                     stats.put("lastCompletedExchangeTimestamp", last.getTime());
+                }
+                last = mb.getLastExchangeFailureHandledTimestamp();
+                if (last != null) {
+                    stats.put("lastFailureHandledExchangeTimestamp", last.getTime());
                 }
                 last = mb.getLastExchangeFailureTimestamp();
                 if (last != null) {

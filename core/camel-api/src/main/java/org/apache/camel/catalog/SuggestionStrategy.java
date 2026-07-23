@@ -20,6 +20,8 @@ import java.util.Set;
 
 /**
  * Strategy to provide suggestions for unknown endpoint options
+ *
+ * @since 3.1
  */
 public interface SuggestionStrategy {
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka.security;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -23,6 +25,8 @@ import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.common.config.SaslConfigs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Builder for Kafka security configuration.
@@ -66,6 +70,8 @@ import org.apache.kafka.common.config.SaslConfigs;
  * </p>
  */
 public class KafkaSecurityConfigurer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaSecurityConfigurer.class);
 
     private final KafkaAuthType authType;
     private String username;
@@ -336,9 +342,8 @@ public class KafkaSecurityConfigurer {
                 validateOAuth();
                 sb.append(" clientId=\"").append(escapeJaasValue(oauthClientId)).append("\"");
                 sb.append(" clientSecret=\"").append(escapeJaasValue(oauthClientSecret)).append("\"");
-                sb.append(" oauth.token.endpoint.uri=\"").append(oauthTokenEndpointUri).append("\"");
                 if (ObjectHelper.isNotEmpty(oauthScope)) {
-                    sb.append(" oauth.scope=\"").append(oauthScope).append("\"");
+                    sb.append(" scope=\"").append(escapeJaasValue(oauthScope)).append("\"");
                 }
                 break;
 
@@ -347,6 +352,11 @@ public class KafkaSecurityConfigurer {
                 break;
 
             case KERBEROS:
+                if (ObjectHelper.isEmpty(kerberosPrincipal)) {
+                    LOG.debug(
+                            "Kerberos principal not set; assuming external JAAS configuration (e.g. java.security.auth.login.config)");
+                    return null;
+                }
                 validateKerberos();
                 sb.append(" useKeyTab=").append(kerberosUseKeyTab);
                 sb.append(" storeKey=").append(kerberosStoreKey);
@@ -405,7 +415,32 @@ public class KafkaSecurityConfigurer {
             if (jaasConfig != null) {
                 configuration.setSaslJaasConfig(jaasConfig);
             }
+            applySaslProperties(configuration.getAdditionalProperties());
         }
+    }
+
+    private void applySaslProperties(Map<String, Object> additionalProperties) {
+        getSaslCallbackProperties().forEach(additionalProperties::putIfAbsent);
+    }
+
+    private Map<String, String> getSaslCallbackProperties() {
+        Map<String, String> props = new LinkedHashMap<>();
+        switch (authType) {
+            case OAUTH:
+                props.put(SaslConfigs.SASL_LOGIN_CALLBACK_HANDLER_CLASS,
+                        "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler");
+                if (ObjectHelper.isNotEmpty(oauthTokenEndpointUri)) {
+                    props.put(SaslConfigs.SASL_OAUTHBEARER_TOKEN_ENDPOINT_URL, oauthTokenEndpointUri);
+                }
+                break;
+            case AWS_MSK_IAM:
+                props.put(SaslConfigs.SASL_CLIENT_CALLBACK_HANDLER_CLASS,
+                        "software.amazon.msk.auth.iam.IAMClientCallbackHandler");
+                break;
+            default:
+                break;
+        }
+        return props;
     }
 
     /**
@@ -426,6 +461,7 @@ public class KafkaSecurityConfigurer {
             if (jaasConfig != null) {
                 props.setProperty(SaslConfigs.SASL_JAAS_CONFIG, jaasConfig);
             }
+            getSaslCallbackProperties().forEach(props::setProperty);
         }
 
         return props;

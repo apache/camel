@@ -23,6 +23,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import software.amazon.awssdk.core.Protocol;
+import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
 
 @UriParams
@@ -34,13 +35,16 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private BedrockAgentRuntimeClient bedrockAgentRuntimeClient;
+    @UriParam
+    @Metadata(label = "advanced", autowired = true)
+    private BedrockAgentRuntimeAsyncClient bedrockAgentRuntimeAsyncClient;
     @UriParam(label = "security", security = "secret")
     private String accessKey;
     @UriParam(label = "security", security = "secret")
     private String secretKey;
     @UriParam(label = "security", security = "secret")
     private String sessionToken;
-    @UriParam(enums = "anthropic.claude-instant-v1,anthropic.claude-v2,anthropic.claude-v2:1")
+    @UriParam(enums = "amazon.titan-text-express-v1,amazon.titan-text-lite-v1,amazon.titan-image-generator-v1,amazon.titan-embed-text-v1,amazon.titan-embed-image-v1,amazon.titan-text-premier-v1:0,amazon.titan-embed-text-v2:0,amazon.titan-image-generator-v2:0,amazon.nova-canvas-v1:0,amazon.nova-lite-v1:0,amazon.nova-micro-v1:0,amazon.nova-premier-v1:0,amazon.nova-pro-v1:0,amazon.nova-reel-v1:0,amazon.nova-reel-v1:1,amazon.nova-sonic-v1:0,amazon.rerank-v1:0,ai21.jamba-1-5-large-v1:0,ai21.jamba-1-5-mini-v1:0,anthropic.claude-3-sonnet-20240229-v1:0,anthropic.claude-3-5-sonnet-20240620-v1:0,anthropic.claude-3-5-sonnet-20241022-v2:0,anthropic.claude-3-haiku-20240307-v1:0,anthropic.claude-3-5-haiku-20241022-v1:0,anthropic.claude-3-opus-20240229-v1:0,anthropic.claude-3-7-sonnet-20250219-v1:0,anthropic.claude-opus-4-20250514-v1:0,anthropic.claude-sonnet-4-20250514-v1:0,cohere.command-r-plus-v1:0,cohere.command-r-v1:0,cohere.embed-english-v3,cohere.embed-multilingual-v3,cohere.rerank-v3-5:0,meta.llama3-8b-instruct-v1:0,meta.llama3-70b-instruct-v1:0,meta.llama3-1-8b-instruct-v1:0,meta.llama3-1-70b-instruct-v1:0,meta.llama3-1-405b-instruct-v1:0,meta.llama3-2-1b-instruct-v1:0,meta.llama3-2-3b-instruct-v1:0,meta.llama3-2-11b-instruct-v1:0,meta.llama3-2-90b-instruct-v1:0,meta.llama3-3-70b-instruct-v1:0,meta.llama4-maverick-17b-instruct-v1:0,meta.llama4-scout-17b-instruct-v1:0,mistral.mistral-7b-instruct-v0:2,mistral.mixtral-8x7b-instruct-v0:1,mistral.mistral-large-2402-v1:0,mistral.mistral-large-2407-v1:0,mistral.mistral-small-2402-v1:0,mistral.pixtral-large-2502-v1:0,stability.sd3-5-large-v1:0,stability.stable-image-control-sketch-v1:0,stability.stable-image-control-structure-v1:0,stability.stable-image-core-v1:1")
     @Metadata(required = true)
     private String modelId;
     @UriParam
@@ -49,6 +53,12 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
     @UriParam
     @Metadata(required = true)
     private BedrockAgentRuntimeOperations operation;
+    @UriParam(label = "flow")
+    private String flowIdentifier;
+    @UriParam(label = "flow")
+    private String flowAliasIdentifier;
+    @UriParam(label = "flow", defaultValue = "false")
+    private boolean enableTrace;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "proxy")
@@ -83,6 +93,18 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
      */
     public void setBedrockAgentRuntimeClient(BedrockAgentRuntimeClient bedrockRuntimeClient) {
         this.bedrockAgentRuntimeClient = bedrockRuntimeClient;
+    }
+
+    public BedrockAgentRuntimeAsyncClient getBedrockAgentRuntimeAsyncClient() {
+        return bedrockAgentRuntimeAsyncClient;
+    }
+
+    /**
+     * To use an existing configured AWS Bedrock Agent Runtime async client (required for invokeFlow which streams
+     * events back).
+     */
+    public void setBedrockAgentRuntimeAsyncClient(BedrockAgentRuntimeAsyncClient bedrockAgentRuntimeAsyncClient) {
+        this.bedrockAgentRuntimeAsyncClient = bedrockAgentRuntimeAsyncClient;
     }
 
     public String getAccessKey() {
@@ -287,6 +309,42 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
      */
     public void setKnowledgeBaseId(String knowledgeBaseId) {
         this.knowledgeBaseId = knowledgeBaseId;
+    }
+
+    public String getFlowIdentifier() {
+        return flowIdentifier;
+    }
+
+    /**
+     * The unique identifier of the Bedrock flow to invoke (used by the invokeFlow operation). Can be overridden per
+     * exchange via the CamelAwsBedrockAgentRuntimeFlowIdentifier header.
+     */
+    public void setFlowIdentifier(String flowIdentifier) {
+        this.flowIdentifier = flowIdentifier;
+    }
+
+    public String getFlowAliasIdentifier() {
+        return flowAliasIdentifier;
+    }
+
+    /**
+     * The unique identifier of the Bedrock flow alias to invoke (used by the invokeFlow operation). Can be overridden
+     * per exchange via the CamelAwsBedrockAgentRuntimeFlowAliasIdentifier header.
+     */
+    public void setFlowAliasIdentifier(String flowAliasIdentifier) {
+        this.flowAliasIdentifier = flowAliasIdentifier;
+    }
+
+    public boolean isEnableTrace() {
+        return enableTrace;
+    }
+
+    /**
+     * Enables tracing for the invokeFlow operation. When enabled, the producer collects FlowTraceEvent entries and
+     * publishes them in the CamelAwsBedrockAgentRuntimeFlowTraces header.
+     */
+    public void setEnableTrace(boolean enableTrace) {
+        this.enableTrace = enableTrace;
     }
 
     // *************************************************

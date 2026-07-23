@@ -29,7 +29,10 @@ import picocli.CommandLine.Command;
 
 @Command(name = "dataweave",
          description = "Convert DataWeave scripts to DataSonnet format",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel transform dataweave --input=script.dwl --output=script.ds" })
 public class TransformDataWeave extends CamelCommand {
 
     @CommandLine.Option(names = { "--input", "-i" },
@@ -118,7 +121,10 @@ public class TransformDataWeave extends CamelCommand {
 
             if (output != null) {
                 Path outputPath = resolveOutputPath(dwlFile, Path.of(output));
-                Files.createDirectories(outputPath.getParent());
+                Path parentDir = outputPath.getParent();
+                if (parentDir != null) {
+                    Files.createDirectories(parentDir);
+                }
                 Files.writeString(outputPath, dsContent);
                 printer().println("Converted: " + dwlFile + " -> " + outputPath);
             } else {

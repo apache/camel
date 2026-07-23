@@ -18,8 +18,8 @@ package org.apache.camel.component.jms.integration.consumers;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractPersistentJMSTest;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -31,8 +31,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
 
+    // topic subscriptions take longer to register than queue consumers on slow CI;
+    // 200ms was too tight — use 2000ms to avoid flaky failures
+    private static final long TOPIC_ROUTE_UPTIME_MILLIS = 2000;
+
     @BeforeEach
-    void prepare() {
+    void waitAndPrepare() {
+        // JUnit does not honor @Order on @BeforeEach methods, so the wait and the send must live in a single
+        // @BeforeEach to guarantee the consumer routes are ready before the message is published.
+        JmsTestHelper.waitForJmsConsumerRoutes(context, TOPIC_ROUTE_UPTIME_MILLIS, "a", "b");
+
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
 
@@ -59,6 +67,7 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
 
+        JmsTestHelper.waitForJmsConsumerRoutes(context, TOPIC_ROUTE_UPTIME_MILLIS, "b");
         template.sendBody("activemq:topic:SingleMessageSameTopicIT", "Bye World");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -72,6 +81,7 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
 
+        JmsTestHelper.waitForJmsConsumerRoutes(context, TOPIC_ROUTE_UPTIME_MILLIS, "a", "b");
         template.sendBody("activemq:topic:SingleMessageSameTopicIT", "Hello World");
     }
 
@@ -90,15 +100,10 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
 
+        JmsTestHelper.waitForJmsConsumerRoutes(context, TOPIC_ROUTE_UPTIME_MILLIS, "b");
         template.sendBody("activemq:topic:SingleMessageSameTopicIT", "Bye World");
 
         MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @BeforeEach
-    void waitForConnections() {
-        Awaitility.await().until(() -> context.getRoute("a").getUptimeMillis() > 200);
-        Awaitility.await().until(() -> context.getRoute("b").getUptimeMillis() > 200);
     }
 
     @Override

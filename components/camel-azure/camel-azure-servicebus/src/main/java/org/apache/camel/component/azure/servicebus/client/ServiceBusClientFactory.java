@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 import com.azure.core.credential.TokenCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.messaging.servicebus.*;
-import org.apache.camel.component.azure.servicebus.CredentialType;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.component.azure.servicebus.ServiceBusConfiguration;
 import org.apache.camel.component.azure.servicebus.ServiceBusType;
 
@@ -97,9 +97,37 @@ public final class ServiceBusClientFactory {
         return processorClientBuilder;
     }
 
+    private static ServiceBusClientBuilder.ServiceBusReceiverClientBuilder createBaseServiceBusReceiverClient(
+            final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
+        final ServiceBusClientBuilder.ServiceBusReceiverClientBuilder receiverClientBuilder = busClientBuilder.receiver();
+
+        receiverClientBuilder.disableAutoComplete();
+
+        switch (configuration.getServiceBusType()) {
+            case queue -> receiverClientBuilder.queueName(configuration.getTopicOrQueueName());
+            case topic -> receiverClientBuilder.topicName(configuration.getTopicOrQueueName());
+        }
+
+        return receiverClientBuilder;
+    }
+
     public ServiceBusSenderClient createServiceBusSenderClient(final ServiceBusConfiguration configuration) {
         return createBaseServiceBusSenderClient(createBaseServiceBusClient(configuration), configuration)
                 .buildClient();
+    }
+
+    public ServiceBusReceiverAsyncClient createServiceBusReceiverAsyncClient(final ServiceBusConfiguration configuration) {
+        ServiceBusClientBuilder.ServiceBusReceiverClientBuilder clientBuilder
+                = createBaseServiceBusReceiverClient(createBaseServiceBusClient(configuration), configuration);
+
+        clientBuilder
+                .subscriptionName(configuration.getSubscriptionName())
+                .receiveMode(configuration.getServiceBusReceiveMode())
+                .maxAutoLockRenewDuration(Duration.ZERO)
+                .prefetchCount(configuration.getPrefetchCount())
+                .subQueue(configuration.getSubQueue());
+
+        return clientBuilder.buildAsyncClient();
     }
 
     public ServiceBusProcessorClient createServiceBusProcessorClient(

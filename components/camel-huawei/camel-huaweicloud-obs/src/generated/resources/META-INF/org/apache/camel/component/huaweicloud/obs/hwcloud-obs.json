@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-huaweicloud-obs",
-    "version": "4.21.0-SNAPSHOT",
+    "version": "4.22.0-SNAPSHOT",
     "scheme": "hwcloud-obs",
     "extendsScheme": "",
     "syntax": "hwcloud-obs:operation",
@@ -43,7 +43,7 @@
   },
   "properties": {
     "operation": { "index": 0, "kind": "path", "displayName": "Operation", "group": "producer", "label": "producer", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Operation to be performed" },
-    "bucketName": { "index": 1, "kind": "parameter", "displayName": "Bucket Name", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of bucket to perform operation on" },
+    "bucketName": { "index": 1, "kind": "parameter", "displayName": "Bucket Name", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "endpointIdentity": true, "description": "Name of bucket to perform operation on" },
     "endpoint": { "index": 2, "kind": "parameter", "displayName": "Endpoint url", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "OBS url. Carries higher precedence than region parameter based client initialization" },
     "objectName": { "index": 3, "kind": "parameter", "displayName": "Object Name", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of object to perform operation with" },
     "region": { "index": 4, "kind": "parameter", "displayName": "Service region", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "OBS service region. This is lower precedence than endpoint based configuration" },

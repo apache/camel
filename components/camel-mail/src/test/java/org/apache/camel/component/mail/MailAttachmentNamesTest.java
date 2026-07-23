@@ -48,16 +48,16 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     public static final String UUID_EXPRESSION = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
 
-    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
-    private static final MailboxUser default_ = Mailbox.getOrCreateUser("default", "secret");
-    private static final MailboxUser suffix = Mailbox.getOrCreateUser("suffix", "secret");
+    private static final MailboxUser james = Mailbox.getOrCreateUser("MailAttachmentNamesTest-james", "secret");
+    private static final MailboxUser default_ = Mailbox.getOrCreateUser("MailAttachmentNamesTest-default", "secret");
+    private static final MailboxUser suffix = Mailbox.getOrCreateUser("MailAttachmentNamesTest-suffix", "secret");
 
     MockEndpoint resultEndpoint;
     MockEndpoint resultDefaultEndpoint;
     Session session;
 
     @Override
-    public void doPreSetup() {
+    public void setupResources() {
         session = Mailbox.getSmtpSession();
     }
 

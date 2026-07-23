@@ -18,6 +18,7 @@ package org.apache.camel.component.iec60870;
 
 import org.apache.camel.spi.Metadata;
 
+@Deprecated(since = "4.21")
 public interface Constants {
 
     String SCHEME_SERVER = "iec60870-server";

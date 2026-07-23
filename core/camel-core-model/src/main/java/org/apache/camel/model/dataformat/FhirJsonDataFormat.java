@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshall and unmarshall FHIR objects to/from JSON.
  */
-@Metadata(firstVersion = "2.21.0", label = "dataformat,transformation,health,json", title = "FHIR JSon")
+@Metadata(firstVersion = "2.21.0", label = "dataformat,transformation,health,json", title = "FHIR JSon",
+          description = "Marshall and unmarshall FHIR objects to/from JSON")
 @XmlRootElement(name = "fhirJson")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FhirJsonDataFormat extends FhirDataformat {

@@ -63,6 +63,11 @@ import software.amazon.awssdk.services.bedrockruntime.model.ToolConfiguration;
 public class BedrockProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(BedrockProducer.class);
+
+    /**
+     * Region prefixes used by Bedrock cross-region inference profile ids, e.g. {@code us.anthropic.claude-...}.
+     */
+    private static final List<String> INFERENCE_PROFILE_REGION_PREFIXES = List.of("us.", "eu.", "apac.", "us-gov.");
     private transient String bedrockProducerToString;
 
     public BedrockProducer(Endpoint endpoint) {
@@ -142,6 +147,9 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 setResponseText(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "InvokeTextModel operation requires InvokeModelRequest in POJO mode");
             }
         } else {
             InvokeModelRequest.Builder builder = InvokeModelRequest.builder();
@@ -186,6 +194,9 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "InvokeImageModel operation requires InvokeModelRequest in POJO mode");
             }
         } else {
             InvokeModelRequest.Builder builder = InvokeModelRequest.builder();
@@ -235,6 +246,9 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "InvokeEmbeddingsModel operation requires InvokeModelRequest in POJO mode");
             }
         } else {
             InvokeModelRequest.Builder builder = InvokeModelRequest.builder();
@@ -273,7 +287,7 @@ public class BedrockProducer extends DefaultProducer {
     }
 
     protected void setResponseText(InvokeModelResponse result, Message message) {
-        String modelId = getConfiguration().getModelId();
+        String modelId = resolveFoundationModelId(getConfiguration().getModelId());
         switch (modelId) {
             // Amazon Titan Models
             case "amazon.titan-text-express-v1":
@@ -379,8 +393,108 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 break;
 
+            // Image generation models — use the invokeImageModel operation instead
+            case "amazon.titan-image-generator-v1":
+            case "amazon.titan-image-generator-v2:0":
+            case "amazon.nova-canvas-v1:0":
+            case "stability.sd3-5-large-v1:0":
+            case "stability.stable-image-control-sketch-v1:0":
+            case "stability.stable-image-control-structure-v1:0":
+            case "stability.stable-image-core-v1:1":
+                throw new IllegalArgumentException(
+                        "Model " + modelId
+                                                   + " is an image generation model and cannot be used with the invokeTextModel operation. Use the invokeImageModel operation instead.");
+
+            // Embedding models — use the invokeEmbeddingsModel operation instead
+            case "amazon.titan-embed-text-v1":
+            case "amazon.titan-embed-image-v1":
+            case "cohere.embed-english-v3":
+            case "cohere.embed-multilingual-v3":
+                throw new IllegalArgumentException(
+                        "Model " + modelId
+                                                   + " is an embedding model and cannot be used with the invokeTextModel operation. Use the invokeEmbeddingsModel operation instead.");
+
+            // Rerank models — not supported by the invokeTextModel operation
+            case "amazon.rerank-v1:0":
+            case "cohere.rerank-v3-5:0":
+                throw new IllegalArgumentException(
+                        "Model " + modelId
+                                                   + " is a rerank model and cannot be used with the invokeTextModel operation.");
+
+            // Video and speech models — not supported by the invokeTextModel operation
+            case "amazon.nova-reel-v1:0":
+            case "amazon.nova-reel-v1:1":
+            case "amazon.nova-sonic-v1:0":
+                throw new IllegalArgumentException(
+                        "Model " + modelId
+                                                   + " is a video/speech generation model and cannot be used with the invokeTextModel operation.");
+
             default:
+                setResponseTextByModelFamily(modelId, result, message);
+        }
+    }
+
+    /**
+     * Resolves the underlying foundation-model id for a model reference. Bedrock also accepts cross-region inference
+     * profile ids (for example {@code us.anthropic.claude-3-5-sonnet-20241022-v2:0}) and inference-profile or
+     * provisioned-throughput ARNs in place of the plain model id. They all address the same foundation model, so they
+     * must be handled the same way.
+     */
+    protected static String resolveFoundationModelId(String modelId) {
+        if (modelId == null) {
+            return null;
+        }
+        String resolved = modelId;
+        // an ARN carries the profile or model id in its last path segment
+        if (resolved.startsWith("arn:")) {
+            int slash = resolved.lastIndexOf('/');
+            if (slash >= 0 && slash < resolved.length() - 1) {
+                resolved = resolved.substring(slash + 1);
+            }
+        }
+        for (String prefix : INFERENCE_PROFILE_REGION_PREFIXES) {
+            if (resolved.startsWith(prefix)) {
+                return resolved.substring(prefix.length());
+            }
+        }
+        return resolved;
+    }
+
+    /**
+     * Fallback for model ids that are not listed explicitly, typically a model released after this component was built.
+     * Dispatching on the vendor/family prefix lets a new model of a known family work instead of failing, since the
+     * response format is defined by the family rather than the individual model.
+     */
+    private void setResponseTextByModelFamily(String modelId, InvokeModelResponse result, Message message) {
+        if (modelId == null) {
+            throw new IllegalStateException("Model id must be specified");
+        }
+        // families that do not produce a text completion must keep failing rather than being parsed as text
+        if (modelId.startsWith("stability.") || modelId.contains("image-generator") || modelId.contains("-canvas")
+                || modelId.contains("embed") || modelId.contains("rerank") || modelId.contains("-reel")
+                || modelId.contains("-sonic")) {
+            throw new IllegalArgumentException(
+                    "Model " + modelId
+                                               + " is not a text generation model and cannot be used with the invokeTextModel operation.");
+        }
+        try {
+            if (modelId.startsWith("amazon.titan-text")) {
+                setTitanText(result, message);
+            } else if (modelId.startsWith("anthropic.claude") || modelId.startsWith("amazon.nova")) {
+                setAnthropicV3Text(result, message);
+            } else if (modelId.startsWith("meta.llama")) {
+                setLlamaText(result, message);
+            } else if (modelId.startsWith("mistral.")) {
+                setMistralText(result, message);
+            } else if (modelId.startsWith("cohere.command")) {
+                setCohereText(result, message);
+            } else if (modelId.startsWith("ai21.")) {
+                setAi21Text(result, message);
+            } else {
                 throw new IllegalStateException("Unexpected model: " + modelId);
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -430,6 +544,9 @@ public class BedrockProducer extends DefaultProducer {
             Object payload = exchange.getMessage().getMandatoryBody();
             if (payload instanceof InvokeModelWithResponseStreamRequest streamRequest) {
                 processStreamingRequest(streamRequest, exchange);
+            } else {
+                throw new IllegalArgumentException(
+                        "Streaming invoke operations require InvokeModelWithResponseStreamRequest in POJO mode");
             }
         } else {
             InvokeModelWithResponseStreamRequest.Builder builder = InvokeModelWithResponseStreamRequest.builder();
@@ -816,7 +933,8 @@ public class BedrockProducer extends DefaultProducer {
                     = ApplyGuardrailRequest.builder();
 
             // Guardrail identifier from header or configuration
-            String guardrailIdentifier = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONFIG, String.class);
+            String guardrailIdentifier
+                    = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_IDENTIFIER, String.class);
             if (ObjectHelper.isEmpty(guardrailIdentifier)) {
                 guardrailIdentifier = getConfiguration().getGuardrailIdentifier();
             }

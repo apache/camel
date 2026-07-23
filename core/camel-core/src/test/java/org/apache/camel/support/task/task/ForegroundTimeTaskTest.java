@@ -34,7 +34,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
 
     @DisplayName("Test that the task does not run for more than the max iterations when using a supplier")
     @Test
-    @Timeout(10)
+    @Timeout(20)
     void testRunNoMoreSupplier() {
         // It should run 5 times in 4 seconds because there is no delay
         ForegroundTask task = Tasks.foregroundTask()
@@ -58,12 +58,12 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
 
     @DisplayName("Test that the task does not run for more than the max iterations when using a supplier and an initial delay")
     @Test
-    @Timeout(10)
+    @Timeout(20)
     void testRunNoMoreSupplierWithDelay() {
         // this should run 5 times in a total duration of 6 seconds (5s executing + 1s delay)
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofMillis(6_500)) // Add 500 ms delay to make the test more flexible
+                        .withMaxDuration(Duration.ofMillis(10_000))
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ofSeconds(1))
                         .withInterval(Duration.ofSeconds(1))
@@ -76,7 +76,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
 
     @DisplayName("Test that the task does not run for more than the max iterations when using a predicate and an initial delay")
     @Test
-    @Timeout(10)
+    @Timeout(20)
     void testRunNoMorePredicate() {
         // It should run 5 times in 4 seconds because there is no delay
         ForegroundTask task = Tasks.foregroundTask()
@@ -94,7 +94,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
 
     @DisplayName("Test that the task does not run for more than the max duration when using a predicate and an initial delay")
     @Test
-    @Timeout(10)
+    @Timeout(20)
     void testRunNoMorePredicateMaxDuration() {
         // It should run 5 times in 4 seconds because there is no delay
         ForegroundTask task = Tasks.foregroundTask()
@@ -112,7 +112,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
 
     @DisplayName("Test that the task stops running once the predicate is true")
     @Test
-    @Timeout(10)
+    @Timeout(20)
     void testRunNoMorePredicateDeterministic() {
         // It should run 5 times in 4 seconds because there is no delay
         ForegroundTask task = Tasks.foregroundTask()
@@ -130,7 +130,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
 
     @DisplayName("Test that the task stops running once the predicate is true when the test is slow")
     @Test
-    @Timeout(10)
+    @Timeout(20)
     void testRunNoMorePredicateDeterministicSlow() {
         // It should run 5 times in 4 seconds because there is no delay
         ForegroundTask task = Tasks.foregroundTask()
@@ -148,7 +148,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
 
     @DisplayName("Test that the task stops running once the predicate is true when the test is slow")
     @Test
-    @Timeout(10)
+    @Timeout(20)
     void testRunNoMorePredicateDeterministicSlowWithDelay() {
         // It should run 5 times in 4 seconds because there is no delay
         ForegroundTask task = Tasks.foregroundTask()

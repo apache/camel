@@ -16,9 +16,13 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Factory for intercepting sending to endpoint pattern and sending to mock component. This requires having camel-mock
  * on the classpath.
+ *
+ * @since 3.7
  */
 public interface MockSendToEndpointStrategyFactory {
 
@@ -31,6 +35,6 @@ public interface MockSendToEndpointStrategyFactory {
      * @param  skip    whether to skip sending to original endpoint (only to mock endpoint).
      * @return         the endpoint strategy that intercepts.
      */
-    EndpointStrategy mock(String pattern, boolean skip);
+    EndpointStrategy mock(@Nullable String pattern, boolean skip);
 
 }

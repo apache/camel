@@ -22,7 +22,6 @@ public class PQCDataFormatConfigurer extends org.apache.camel.support.component.
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("BufferSize", int.class);
         map.put("KeyEncapsulationAlgorithm", java.lang.String.class);
         map.put("KeyGenerator", javax.crypto.KeyGenerator.class);
         map.put("KeyPair", java.security.KeyPair.class);
@@ -36,8 +35,6 @@ public class PQCDataFormatConfigurer extends org.apache.camel.support.component.
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PQCDataFormat target = (PQCDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "buffersize":
-        case "bufferSize": target.setBufferSize(property(camelContext, int.class, value)); return true;
         case "keyencapsulationalgorithm":
         case "keyEncapsulationAlgorithm": target.setKeyEncapsulationAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "keygenerator":
@@ -61,8 +58,6 @@ public class PQCDataFormatConfigurer extends org.apache.camel.support.component.
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "buffersize":
-        case "bufferSize": return int.class;
         case "keyencapsulationalgorithm":
         case "keyEncapsulationAlgorithm": return java.lang.String.class;
         case "keygenerator":
@@ -82,8 +77,6 @@ public class PQCDataFormatConfigurer extends org.apache.camel.support.component.
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PQCDataFormat target = (PQCDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "buffersize":
-        case "bufferSize": return target.getBufferSize();
         case "keyencapsulationalgorithm":
         case "keyEncapsulationAlgorithm": return target.getKeyEncapsulationAlgorithm();
         case "keygenerator":

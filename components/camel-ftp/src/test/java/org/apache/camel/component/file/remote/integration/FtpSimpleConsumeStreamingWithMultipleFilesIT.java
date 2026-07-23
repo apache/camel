@@ -60,7 +60,7 @@ public class FtpSimpleConsumeStreamingWithMultipleFilesIT extends FtpServerTestS
             public void configure() {
                 from("ftp://localhost:{{ftp.server.port}}"
                      + "/tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true&stepwise=false")
-                        .routeId("foo").noAutoStartup()
+                        .routeId("foo").autoStartup(false)
                         .to("mock:result");
             }
         };

@@ -21,8 +21,6 @@ on:
   push:
     branches:
       - main
-      - camel-4.14.x
-      - camel-4.18.x
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.sha }}
@@ -37,10 +35,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: ['21']
+        java: ['25']
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - id: install-packages
@@ -53,6 +51,18 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
+      - name: Get Atlassian dependency version
+        id: atlassian-version
+        run: |
+          JIRA_VERSION=$(./mvnw help:evaluate -Dexpression=jira-rest-client-api-version -q -DforceStdout -N -f parent/pom.xml)
+          echo "version=${JIRA_VERSION}" >> $GITHUB_OUTPUT
+      - name: Restore Atlassian Maven Cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.m2/repository/com/atlassian
+            ~/.m2/repository/io/atlassian
+          key: atlassian-maven-${{ steps.atlassian-version.outputs.version }}
       - name: maven build
         run: ./etc/scripts/regen.sh
       - name: archive logs
@@ -61,6 +71,15 @@ jobs:
         with:
           name: main-build-${{ matrix.java }}.log
           path: build.log
+      - name: Save Atlassian Maven Cache
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: always()
+        with:
+          path: |
+            ~/.m2/repository/com/atlassian
+            ~/.m2/repository/io/atlassian
+          key: atlassian-maven-${{ steps.atlassian-version.outputs.version }}
+
       - name: Fail if there are uncommitted changes
         shell: bash
         run: |

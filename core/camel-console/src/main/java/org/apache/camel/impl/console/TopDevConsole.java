@@ -30,6 +30,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedPerformanceCounterMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.LoggerHelper;
@@ -46,14 +47,13 @@ import org.apache.camel.util.json.Jsoner;
 @DevConsole(name = "top", displayName = "Top Routes", description = "Display the top routes")
 public class TopDevConsole extends AbstractDevConsole {
 
-    /**
-     * Filters the routes and processors matching by route id, route uri, processor id, and source location
-     */
+    @Metadata(label = "query",
+              description = "Filters the routes and processors matching by route id, route uri, processor id, and source location",
+              javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    /**
-     * Limits the number of entries displayed
-     */
+    @Metadata(label = "query", description = "Limits the number of entries displayed",
+              javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
 
     public TopDevConsole() {
@@ -62,11 +62,10 @@ public class TopDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        String path = (String) options.get(Exchange.HTTP_PATH);
+        String path = optionString(options, Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        String filter = optionString(options, FILTER);
+        final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
 
         final StringBuilder sb = new StringBuilder();
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
@@ -93,6 +92,10 @@ public class TopDevConsole extends AbstractDevConsole {
                             String.format("%n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
                     sb.append(
                             String.format("%n    Total Time: %s", TimeUtils.printDuration(mrb.getTotalProcessingTime(), true)));
+                    String thp = mrb.getThroughput();
+                    if (thp != null && !thp.isEmpty()) {
+                        sb.append(String.format("%n    Messages/Sec: %s", thp));
+                    }
                     sb.append("\n");
                     return null;
                 };
@@ -149,6 +152,10 @@ public class TopDevConsole extends AbstractDevConsole {
                             String.format("%n    Delta Time: %s", TimeUtils.printDuration(mpb.getDeltaProcessingTime(), true)));
                     sb.append(
                             String.format("%n    Total Time: %s", TimeUtils.printDuration(mpb.getTotalProcessingTime(), true)));
+                    String thp = mpb.getThroughput();
+                    if (thp != null && !thp.isEmpty()) {
+                        sb.append(String.format("%n    Messages/Sec: %s", thp));
+                    }
                     sb.append("\n");
                     return null;
                 };
@@ -161,11 +168,10 @@ public class TopDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        String path = (String) options.get(Exchange.HTTP_PATH);
+        String path = optionString(options, Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
-        String filter = (String) options.get(FILTER);
-        String limit = (String) options.get(LIMIT);
-        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        String filter = optionString(options, FILTER);
+        final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
 
         final JsonObject root = new JsonObject();
         final JsonArray list = new JsonArray();
@@ -248,31 +254,26 @@ public class TopDevConsole extends AbstractDevConsole {
         return root;
     }
 
-    private static JsonObject getStatsObject(ManagedProcessorMBean mpb) {
+    private static JsonObject getStatsObject(ManagedPerformanceCounterMBean mbean) {
         JsonObject stats = new JsonObject();
-        stats.put("exchangesTotal", mpb.getExchangesTotal());
-        stats.put("exchangesFailed", mpb.getExchangesFailed());
-        stats.put("exchangesInflight", mpb.getExchangesInflight());
-        stats.put("meanProcessingTime", mpb.getMeanProcessingTime());
-        stats.put("maxProcessingTime", mpb.getMaxProcessingTime());
-        stats.put("minProcessingTime", mpb.getMinProcessingTime());
-        stats.put("lastProcessingTime", mpb.getLastProcessingTime());
-        stats.put("deltaProcessingTime", mpb.getDeltaProcessingTime());
-        stats.put("totalProcessingTime", mpb.getTotalProcessingTime());
-        return stats;
-    }
-
-    private static JsonObject getStatsObject(ManagedRouteMBean mrb) {
-        JsonObject stats = new JsonObject();
-        stats.put("exchangesTotal", mrb.getExchangesTotal());
-        stats.put("exchangesFailed", mrb.getExchangesFailed());
-        stats.put("exchangesInflight", mrb.getExchangesInflight());
-        stats.put("meanProcessingTime", mrb.getMeanProcessingTime());
-        stats.put("maxProcessingTime", mrb.getMaxProcessingTime());
-        stats.put("minProcessingTime", mrb.getMinProcessingTime());
-        stats.put("lastProcessingTime", mrb.getLastProcessingTime());
-        stats.put("deltaProcessingTime", mrb.getDeltaProcessingTime());
-        stats.put("totalProcessingTime", mrb.getTotalProcessingTime());
+        stats.put("exchangesTotal", mbean.getExchangesTotal());
+        stats.put("exchangesFailed", mbean.getExchangesFailed());
+        stats.put("exchangesInflight", mbean.getExchangesInflight());
+        stats.put("meanProcessingTime", mbean.getMeanProcessingTime());
+        stats.put("maxProcessingTime", mbean.getMaxProcessingTime());
+        stats.put("minProcessingTime", mbean.getMinProcessingTime());
+        stats.put("lastProcessingTime", mbean.getLastProcessingTime());
+        stats.put("deltaProcessingTime", mbean.getDeltaProcessingTime());
+        stats.put("totalProcessingTime", mbean.getTotalProcessingTime());
+        String thp = mbean.getThroughput();
+        if (thp != null && !thp.isEmpty()) {
+            stats.put("exchangesThroughput", thp);
+        }
+        if (mbean.getProcessingTimeP50() >= 0) {
+            stats.put("p50ProcessingTime", mbean.getProcessingTimeP50());
+            stats.put("p95ProcessingTime", mbean.getProcessingTimeP95());
+            stats.put("p99ProcessingTime", mbean.getProcessingTimeP99());
+        }
         return stats;
     }
 

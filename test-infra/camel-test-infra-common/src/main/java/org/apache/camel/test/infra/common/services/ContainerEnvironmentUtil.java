@@ -35,6 +35,8 @@ public final class ContainerEnvironmentUtil {
     public static final String STARTUP_ATTEMPTS_PROPERTY = ".startup.attempts";
     public static final String INFRA_PORT_PROPERTY = "camel.infra.port";
     public static final String INFRA_FIXED_PORT_PROPERTY = "camel.infra.fixedPort";
+    public static final String INFRA_UI_PROPERTY = "camel.infra.ui";
+
     private static final Logger LOG = LoggerFactory.getLogger(ContainerEnvironmentUtil.class);
     private static final AtomicInteger INSTANCE_COUNTER = new AtomicInteger(0);
 
@@ -88,11 +90,11 @@ public final class ContainerEnvironmentUtil {
     }
 
     /**
-     * Determines if a service class should use fixed ports (for Camel JBang compatibility) or random ports (for
+     * Determines if a service class should use fixed ports (for Camel CLI compatibility) or random ports (for
      * testcontainer isolation).
      *
      * Fixed ports are only used when the {@link #INFRA_FIXED_PORT_PROPERTY} system property is set to "true". This
-     * property is set by Camel JBang when running "camel infra run" commands. Tests use random ports by default for
+     * property is set by Camel CLI when running "camel infra run" commands. Tests use random ports by default for
      * isolation.
      *
      * @param  cls the service class to check (unused, kept for API compatibility)
@@ -106,6 +108,22 @@ public final class ContainerEnvironmentUtil {
             LOG.debug("Service {} will use random ports (camel.infra.fixedPort not set)", cls.getSimpleName());
         }
         return fixedPort;
+    }
+
+    /**
+     * Determines if companion UI containers should be started alongside infrastructure services. Driven by the
+     * {@link #INFRA_UI_PROPERTY} system property: {@code "true"} to start UI containers, {@code "false"} to suppress
+     * them. When the property is not set, defaults to {@code true} in fixed-port mode (Camel CLI) and {@code false}
+     * otherwise (tests).
+     *
+     * @return true if companion UI containers should be started
+     */
+    public static boolean isWithUi() {
+        String uiProp = System.getProperty(INFRA_UI_PROPERTY);
+        if (uiProp != null) {
+            return Boolean.parseBoolean(uiProp);
+        }
+        return Boolean.parseBoolean(System.getProperty(INFRA_FIXED_PORT_PROPERTY, "false"));
     }
 
     public static String containerName(Class cls) {
@@ -171,9 +189,9 @@ public final class ContainerEnvironmentUtil {
 
     /**
      * Gets the configured port from system property for embedded services. Returns the configured port if set, the
-     * default port if running in fixed port mode (Camel JBang), or 0 (random port) for test isolation.
+     * default port if running in fixed port mode (Camel CLI), or 0 (random port) for test isolation.
      *
-     * @param  defaultPort the default port to use when running in fixed port mode (Camel JBang)
+     * @param  defaultPort the default port to use when running in fixed port mode (Camel CLI)
      * @return             the configured port, the default port in fixed port mode, or 0 for random port assignment
      */
     public static int getConfiguredPortOrRandom(int defaultPort) {
@@ -185,7 +203,7 @@ public final class ContainerEnvironmentUtil {
                 LOG.warn("Invalid port value '{}', using default behavior", portStr);
             }
         }
-        // If in fixed port mode (Camel JBang), use the default port
+        // If in fixed port mode (Camel CLI), use the default port
         if (Boolean.parseBoolean(System.getProperty(INFRA_FIXED_PORT_PROPERTY, "false"))) {
             return defaultPort;
         }
@@ -229,7 +247,7 @@ public final class ContainerEnvironmentUtil {
 
     /**
      * Invokes the protected addFixedExposedPort method on a container using reflection. This method is protected in
-     * GenericContainer to discourage use, but is necessary for fixed port scenarios like Camel JBang.
+     * GenericContainer to discourage use, but is necessary for fixed port scenarios like Camel CLI.
      *
      * @param container     the container to configure
      * @param hostPort      the host port to bind

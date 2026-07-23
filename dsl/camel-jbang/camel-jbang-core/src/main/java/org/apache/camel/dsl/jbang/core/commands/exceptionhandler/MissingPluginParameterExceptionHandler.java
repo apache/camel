@@ -17,7 +17,10 @@
 package org.apache.camel.dsl.jbang.core.commands.exceptionhandler;
 
 import java.io.PrintWriter;
+import java.util.Optional;
 
+import org.apache.camel.dsl.jbang.core.common.PluginHelper;
+import org.apache.camel.dsl.jbang.core.common.PluginType;
 import picocli.CommandLine;
 import picocli.CommandLine.IParameterExceptionHandler;
 import picocli.CommandLine.Model.CommandSpec;
@@ -30,6 +33,17 @@ public class MissingPluginParameterExceptionHandler implements IParameterExcepti
     public int handleParseException(ParameterException ex, String[] args) throws Exception {
         CommandLine cmd = ex.getCommandLine();
         PrintWriter err = cmd.getErr();
+
+        if (ex.getMessage().startsWith("Unmatched argument at index 0") && args.length > 0) {
+            Optional<PluginType> pluginType = PluginType.findByName(args[0]);
+            if (pluginType.isPresent()) {
+                PluginHelper.enable(pluginType.get());
+                PrintWriter out = cmd.getOut();
+                out.printf("Installed plugin: %s%n", pluginType.get().getName());
+                out.println("Please re-run the command.");
+                return 0;
+            }
+        }
 
         if ("DEBUG".equalsIgnoreCase(System.getProperty("picocli.trace"))) {
             err.println(cmd.getColorScheme().stackTraceText(ex));
@@ -44,7 +58,7 @@ public class MissingPluginParameterExceptionHandler implements IParameterExcepti
 
         if (ex.getMessage().startsWith("Unmatched argument at index 0")) {
             err.println(cmd.getColorScheme().errorText(
-                    "Maybe a specific Camel JBang plugin must be installed? (Try camel plugin --help' for more information)"));
+                    "Maybe a specific Camel CLI plugin must be installed? (Try 'camel plugin --help' for more information)"));
         }
 
         return cmd.getExitCodeExceptionMapper() != null

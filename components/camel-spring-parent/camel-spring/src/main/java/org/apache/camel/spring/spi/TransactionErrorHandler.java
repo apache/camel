@@ -340,6 +340,9 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
     @Override
     public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        if (suspendOnly) {
+            return;
+        }
         super.prepareShutdown(suspendOnly, forced);
         if (forced) {
             // mark all in-flight transacted exchanges for rollback so the transaction

@@ -24,6 +24,7 @@ import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.input.Prompt;
 import dev.langchain4j.model.input.PromptTemplate;
 import dev.langchain4j.rag.content.Content;
@@ -31,6 +32,7 @@ import dev.langchain4j.rag.content.injector.ContentInjector;
 import dev.langchain4j.rag.content.injector.DefaultContentInjector;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -80,14 +82,17 @@ public class LangChain4jChatProducer extends DefaultProducer {
     }
 
     private void processSingleMessage(Exchange exchange) throws InvalidPayloadException {
-        // Retrieve the mandatory body from the exchange
-        final var message = exchange.getIn().getMandatoryBody();
+        final var body = exchange.getIn().getMandatoryBody();
 
-        // Use pattern matching with instanceof to streamline type checks and assignments
-        ChatMessage userMessage = (message instanceof String str) ? new UserMessage(str) : (ChatMessage) message;
+        ChatMessage userMessage;
+        if (body instanceof ChatMessage cm) {
+            userMessage = cm;
+        } else {
+            String text = exchange.getIn().getMandatoryBody(String.class);
+            userMessage = new UserMessage(text);
+        }
 
         populateResponse(sendChatMessage(userMessage, exchange), exchange);
-
     }
 
     @SuppressWarnings("unchecked")
@@ -107,6 +112,20 @@ public class LangChain4jChatProducer extends DefaultProducer {
         exchange.getMessage().setBody(response);
     }
 
+    private void populateTokenUsageHeaders(ChatResponse chatResponse, Exchange exchange) {
+        Message message = exchange.getMessage();
+
+        if (chatResponse.finishReason() != null) {
+            message.setHeader(LangChain4jChatHeaders.FINISH_REASON, chatResponse.finishReason());
+        }
+
+        if (chatResponse.tokenUsage() != null) {
+            message.setHeader(LangChain4jChatHeaders.INPUT_TOKEN_COUNT, chatResponse.tokenUsage().inputTokenCount());
+            message.setHeader(LangChain4jChatHeaders.OUTPUT_TOKEN_COUNT, chatResponse.tokenUsage().outputTokenCount());
+            message.setHeader(LangChain4jChatHeaders.TOTAL_TOKEN_COUNT, chatResponse.tokenUsage().totalTokenCount());
+        }
+    }
+
     /**
      * Send a ChatMessage
      *
@@ -116,8 +135,9 @@ public class LangChain4jChatProducer extends DefaultProducer {
     private String sendChatMessage(ChatMessage chatMessage, Exchange exchange) {
         var augmentedChatMessage = addAugmentedData(chatMessage, exchange);
 
-        AiMessage response = this.chatModel.chat(augmentedChatMessage).aiMessage();
-        return extractAiResponse(response);
+        ChatResponse chatResponse = this.chatModel.chat(augmentedChatMessage);
+        populateTokenUsageHeaders(chatResponse, exchange);
+        return extractAiResponse(chatResponse.aiMessage());
     }
 
     /**
@@ -162,7 +182,9 @@ public class LangChain4jChatProducer extends DefaultProducer {
 
         }
 
-        response = this.chatModel.chat(chatMessages).aiMessage();
+        ChatResponse chatResponse = this.chatModel.chat(chatMessages);
+        populateTokenUsageHeaders(chatResponse, exchange);
+        response = chatResponse.aiMessage();
         return extractAiResponse(response);
     }
 

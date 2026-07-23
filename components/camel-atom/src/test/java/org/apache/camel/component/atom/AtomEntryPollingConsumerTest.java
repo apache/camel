@@ -42,7 +42,8 @@ public class AtomEntryPollingConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=500")
+                // throttled: one entry per poll; repeatCount=7 bounds it to exactly the 7 feed entries
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=100&initialDelay=0&repeatCount=7")
                         .to("mock:result1");
             }
         };

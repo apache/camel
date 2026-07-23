@@ -520,6 +520,7 @@ This means that XML that were using the `http://camel.apache.org/schema/placehol
 namespace and that the java builders using the `.placeholder(key, value).` have to
 be modified.
 
+._Java-only: using property placeholders with multicast (old style)_
 [source,java]
 ----
     from("direct:start")
@@ -528,6 +529,8 @@ be modified.
         .to("mock:a")
 ----
 should be rewritten as:
+
+._Java-only: using property placeholders with multicast (new style)_
 [source,java]
 ----
     from("direct:start")

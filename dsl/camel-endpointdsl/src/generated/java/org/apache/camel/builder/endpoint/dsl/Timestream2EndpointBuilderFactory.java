@@ -631,7 +631,7 @@ public interface Timestream2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Timestream2HeaderNameBuilder INSTANCE = new Timestream2HeaderNameBuilder();
+        public static final Timestream2HeaderNameBuilder INSTANCE = new Timestream2HeaderNameBuilder();
 
         /**
          * The operation we want to perform.

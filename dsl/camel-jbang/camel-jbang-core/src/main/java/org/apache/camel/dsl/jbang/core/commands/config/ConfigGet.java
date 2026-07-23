@@ -43,15 +43,17 @@ public class ConfigGet extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        int[] exitCode = { 0 };
         CommandLineHelper.loadProperties(properties -> {
             Optional<Object> maybeProperty = Optional.ofNullable(properties.get(key));
             if (maybeProperty.isPresent()) {
                 printer().println(String.valueOf(maybeProperty.get()));
             } else {
                 printer().printErr(key + " key not found");
+                exitCode[0] = 1;
             }
         }, !global);
 
-        return 0;
+        return exitCode[0];
     }
 }

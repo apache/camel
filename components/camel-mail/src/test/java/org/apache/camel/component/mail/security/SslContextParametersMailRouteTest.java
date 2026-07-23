@@ -107,11 +107,8 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
                 .contains("unable to find valid certification path to requested target"));
     }
 
-    /**
-     * Stop Camel startup.
-     */
     @Override
-    public boolean isUseAdviceWith() {
-        return true;
+    protected void setupResources() throws Exception {
+        testConfiguration().withUseRouteBuilder(false);
     }
 }

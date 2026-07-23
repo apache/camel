@@ -25,7 +25,8 @@ import org.apache.camel.CamelContext;
  * This is used among others to detect imported classes that may need to be downloaded into classloader to allow to
  * compile the class.
  *
- * @see CompilePostProcessor
+ * @see   CompilePostProcessor
+ * @since 4.10
  */
 public interface CompilePreProcessor {
 

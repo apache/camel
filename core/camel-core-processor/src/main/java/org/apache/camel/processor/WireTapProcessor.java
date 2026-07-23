@@ -24,6 +24,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.EndpointSending;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
@@ -38,6 +39,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -48,12 +50,13 @@ import org.slf4j.LoggerFactory;
  * Processor for wire tapping exchanges to an endpoint destination.
  */
 public class WireTapProcessor extends BaseProcessorSupport
-        implements Traceable, ShutdownAware, IdAware, RouteIdAware, CamelContextAware {
+        implements Traceable, ShutdownAware, EndpointSending, IdAware, RouteIdAware, StepIdAware, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
 
     private String id;
     private String routeId;
+    private String stepId;
     private CamelContext camelContext;
     private final SendDynamicProcessor dynamicSendProcessor; // is only used for reporting statistics
     private final String uri;
@@ -143,6 +146,16 @@ public class WireTapProcessor extends BaseProcessorSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override
@@ -251,6 +264,8 @@ public class WireTapProcessor extends BaseProcessorSupport
         Exchange target = processorExchangeFactory.createCorrelatedCopy(exchange, false);
         // should not be correlated, but we needed to copy without handover
         target.removeProperty(ExchangePropertyKey.CORRELATION_ID);
+        // do not share JPA EntityManager as wire tap runs asynchronously and EM is not thread-safe (CAMEL-22534)
+        target.removeProperty(Exchange.JPA_ENTITY_MANAGER);
         // set MEP to InOnly as this wire tap is a fire and forget
         target.setPattern(ExchangePattern.InOnly);
         // move OUT to IN if needed

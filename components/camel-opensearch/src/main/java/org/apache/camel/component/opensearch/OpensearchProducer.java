@@ -46,7 +46,6 @@ import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBu
 import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
-import org.apache.hc.core5.reactor.ssl.TlsDetails;
 import org.apache.hc.core5.util.Timeout;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.RestClientBuilder;
@@ -90,6 +89,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(OpensearchProducer.class);
 
     protected final OpensearchConfiguration configuration;
+    private final OpenSearchClient openSearchClient;
     private volatile RestClient client;
     private Sniffer sniffer;
 
@@ -97,6 +97,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
         super(endpoint);
         this.configuration = configuration;
         this.client = endpoint.getClient();
+        this.openSearchClient = endpoint.getOpenSearchClient();
     }
 
     private OpensearchOperation resolveOperation(Exchange exchange) {
@@ -155,12 +156,17 @@ class OpensearchProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            if (configuration.isDisconnect() && client == null) {
-                startClient();
+            OpenSearchTransport transport;
+            if (openSearchClient != null) {
+                transport = openSearchClient._transport();
+            } else {
+                if (configuration.isDisconnect() && client == null) {
+                    startClient();
+                }
+                final ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                transport = new RestClientTransport(client, new JacksonJsonpMapper(mapper));
             }
-            final ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            OpenSearchTransport transport = new RestClientTransport(client, new JacksonJsonpMapper(mapper));
             // 2. Index and type will be set by:
             // a. If the incoming body is already an action request
             // b. If the body is not an action request we will use headers if they
@@ -435,7 +441,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
             if (ctx.configWaitForActiveShards()) {
                 message.removeHeader(OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS);
             }
-            if (configuration.isDisconnect()) {
+            if (configuration.isDisconnect() && openSearchClient == null) {
                 IOHelper.close(ctx.transport());
                 if (configuration.isEnableSniffer()) {
                     IOHelper.close(sniffer);
@@ -452,7 +458,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (!configuration.isDisconnect()) {
+        if (!configuration.isDisconnect() && openSearchClient == null) {
             startClient();
         }
     }
@@ -514,9 +520,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
 
                 // Build TLS strategy
                 ClientTlsStrategyBuilder tlsStrategyBuilder = ClientTlsStrategyBuilder.create()
-                        .setHostnameVerifier(configuration.getHostnameVerifier())
-                        .setTlsDetailsFactory(
-                                sslEngine -> new TlsDetails(sslEngine.getSession(), sslEngine.getApplicationProtocol()));
+                        .setHostnameVerifier(configuration.getHostnameVerifier());
 
                 // Set SSL context if available
                 if (sslContext != null) {
@@ -551,7 +555,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (client != null) {
+        if (client != null && openSearchClient == null) {
             LOG.info("Disconnecting from OpenSearch cluster: {}", configuration.getClusterName());
             client.close();
             if (sniffer != null) {

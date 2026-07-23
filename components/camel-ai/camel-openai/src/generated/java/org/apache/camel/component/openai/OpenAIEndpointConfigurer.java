@@ -25,6 +25,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": target.getConfiguration().setAdditionalBodyProperty(property(camelContext, java.util.Map.class, value)); return true;
+        case "additionalheader":
+        case "additionalHeader": target.getConfiguration().setAdditionalHeader(property(camelContext, java.util.Map.class, value)); return true;
         case "additionalresponseheader":
         case "additionalResponseHeader": target.getConfiguration().setAdditionalResponseHeader(property(camelContext, java.util.Map.class, value)); return true;
         case "apikey":
@@ -60,6 +62,14 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "jsonSchema": target.getConfiguration().setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxagentictokens":
+        case "maxAgenticTokens": target.getConfiguration().setMaxAgenticTokens(property(camelContext, long.class, value)); return true;
+        case "maxhistorymessages":
+        case "maxHistoryMessages": target.getConfiguration().setMaxHistoryMessages(property(camelContext, int.class, value)); return true;
+        case "maxhistorytokens":
+        case "maxHistoryTokens": target.getConfiguration().setMaxHistoryTokens(property(camelContext, int.class, value)); return true;
+        case "maxretries":
+        case "maxRetries": target.getConfiguration().setMaxRetries(property(camelContext, int.class, value)); return true;
         case "maxtokens":
         case "maxTokens": target.getConfiguration().setMaxTokens(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxtooliterations":
@@ -77,6 +87,18 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "outputclass":
         case "outputClass": target.getConfiguration().setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
+        case "speechinstructions":
+        case "speechInstructions": target.getConfiguration().setSpeechInstructions(property(camelContext, java.lang.String.class, value)); return true;
+        case "speechmodel":
+        case "speechModel": target.getConfiguration().setSpeechModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "speechresponseformat":
+        case "speechResponseFormat": target.getConfiguration().setSpeechResponseFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "speechspeed":
+        case "speechSpeed": target.getConfiguration().setSpeechSpeed(property(camelContext, java.lang.Double.class, value)); return true;
+        case "speechvoice":
+        case "speechVoice": target.getConfiguration().setSpeechVoice(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "sslendpointalgorithm":
@@ -122,6 +144,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return java.util.Map.class;
+        case "additionalheader":
+        case "additionalHeader": return java.util.Map.class;
         case "additionalresponseheader":
         case "additionalResponseHeader": return java.util.Map.class;
         case "apikey":
@@ -157,6 +181,14 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "jsonSchema": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxagentictokens":
+        case "maxAgenticTokens": return long.class;
+        case "maxhistorymessages":
+        case "maxHistoryMessages": return int.class;
+        case "maxhistorytokens":
+        case "maxHistoryTokens": return int.class;
+        case "maxretries":
+        case "maxRetries": return int.class;
         case "maxtokens":
         case "maxTokens": return java.lang.Integer.class;
         case "maxtooliterations":
@@ -174,6 +206,18 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": return java.lang.String.class;
         case "outputclass":
         case "outputClass": return java.lang.String.class;
+        case "requesttimeout":
+        case "requestTimeout": return long.class;
+        case "speechinstructions":
+        case "speechInstructions": return java.lang.String.class;
+        case "speechmodel":
+        case "speechModel": return java.lang.String.class;
+        case "speechresponseformat":
+        case "speechResponseFormat": return java.lang.String.class;
+        case "speechspeed":
+        case "speechSpeed": return java.lang.Double.class;
+        case "speechvoice":
+        case "speechVoice": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "sslendpointalgorithm":
@@ -220,6 +264,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return target.getConfiguration().getAdditionalBodyProperty();
+        case "additionalheader":
+        case "additionalHeader": return target.getConfiguration().getAdditionalHeader();
         case "additionalresponseheader":
         case "additionalResponseHeader": return target.getConfiguration().getAdditionalResponseHeader();
         case "apikey":
@@ -255,6 +301,14 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "jsonSchema": return target.getConfiguration().getJsonSchema();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxagentictokens":
+        case "maxAgenticTokens": return target.getConfiguration().getMaxAgenticTokens();
+        case "maxhistorymessages":
+        case "maxHistoryMessages": return target.getConfiguration().getMaxHistoryMessages();
+        case "maxhistorytokens":
+        case "maxHistoryTokens": return target.getConfiguration().getMaxHistoryTokens();
+        case "maxretries":
+        case "maxRetries": return target.getConfiguration().getMaxRetries();
         case "maxtokens":
         case "maxTokens": return target.getConfiguration().getMaxTokens();
         case "maxtooliterations":
@@ -272,6 +326,18 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "outputclass":
         case "outputClass": return target.getConfiguration().getOutputClass();
+        case "requesttimeout":
+        case "requestTimeout": return target.getConfiguration().getRequestTimeout();
+        case "speechinstructions":
+        case "speechInstructions": return target.getConfiguration().getSpeechInstructions();
+        case "speechmodel":
+        case "speechModel": return target.getConfiguration().getSpeechModel();
+        case "speechresponseformat":
+        case "speechResponseFormat": return target.getConfiguration().getSpeechResponseFormat();
+        case "speechspeed":
+        case "speechSpeed": return target.getConfiguration().getSpeechSpeed();
+        case "speechvoice":
+        case "speechVoice": return target.getConfiguration().getSpeechVoice();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "sslendpointalgorithm":
@@ -317,6 +383,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return java.lang.Object.class;
+        case "additionalheader":
+        case "additionalHeader": return java.lang.Object.class;
         case "additionalresponseheader":
         case "additionalResponseHeader": return java.lang.Object.class;
         case "mcpserver":

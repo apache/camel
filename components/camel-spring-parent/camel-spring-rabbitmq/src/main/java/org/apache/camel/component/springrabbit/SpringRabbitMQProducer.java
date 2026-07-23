@@ -19,6 +19,8 @@ package org.apache.camel.component.springrabbit;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
@@ -41,6 +43,7 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringRabbitMQProducer.class);
 
+    private final Lock lock = new ReentrantLock();
     private RabbitTemplate inOnlyTemplate;
     private AsyncRabbitTemplate inOutTemplate;
 
@@ -54,10 +57,15 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
     }
 
     public RabbitTemplate getInOnlyTemplate() {
-        if (inOnlyTemplate == null) {
-            inOnlyTemplate = getEndpoint().createInOnlyTemplate();
+        lock.lock();
+        try {
+            if (inOnlyTemplate == null) {
+                inOnlyTemplate = getEndpoint().createInOnlyTemplate();
+            }
+            return inOnlyTemplate;
+        } finally {
+            lock.unlock();
         }
-        return inOnlyTemplate;
     }
 
     public void setInOnlyTemplate(RabbitTemplate inOnlyTemplate) {
@@ -65,11 +73,16 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
     }
 
     public AsyncRabbitTemplate getInOutTemplate() {
-        if (inOutTemplate == null) {
-            inOutTemplate = getEndpoint().createInOutTemplate();
+        lock.lock();
+        try {
+            if (inOutTemplate == null) {
+                inOutTemplate = getEndpoint().createInOutTemplate();
+                inOutTemplate.start();
+            }
+            return inOutTemplate;
+        } finally {
+            lock.unlock();
         }
-        inOutTemplate.start();
-        return inOutTemplate;
     }
 
     public void setInOutTemplate(AsyncRabbitTemplate inOutTemplate) {
@@ -96,13 +109,18 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (inOnlyTemplate != null) {
-            inOnlyTemplate.stop();
-            inOnlyTemplate = null;
-        }
-        if (inOutTemplate != null) {
-            inOutTemplate.stop();
-            inOutTemplate = null;
+        lock.lock();
+        try {
+            if (inOnlyTemplate != null) {
+                inOnlyTemplate.stop();
+                inOnlyTemplate = null;
+            }
+            if (inOutTemplate != null) {
+                inOutTemplate.stop();
+                inOutTemplate = null;
+            }
+        } finally {
+            lock.unlock();
         }
         super.doStop();
     }
@@ -223,7 +241,7 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
                 sent = true;
             }
 
-            if (Boolean.FALSE == sent) {
+            if (!sent) {
                 exchange.setException(new TimeoutException("Message not sent within " + timeout + " millis"));
             }
         } catch (Exception e) {

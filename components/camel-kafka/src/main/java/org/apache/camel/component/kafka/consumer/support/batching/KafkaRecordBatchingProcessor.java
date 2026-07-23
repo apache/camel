@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.kafka.consumer.support.batching;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -43,6 +45,12 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaRecordBatchingProcessor.class);
 
+    /**
+     * Record metadata headers that identify where a batch came from, and are therefore worth exposing on the batch
+     * exchange itself when the whole batch agrees on them.
+     */
+    private static final List<String> COMMON_BATCH_HEADERS = List.of(KafkaConstants.TOPIC, KafkaConstants.PARTITION);
+
     private final KafkaConfiguration configuration;
     private final Processor processor;
     private final CommitManager commitManager;
@@ -53,16 +61,26 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     private final class CommitSynchronization implements Synchronization {
         private final ExceptionHandler exceptionHandler;
         private final int size;
+        private final Map<TopicPartition, Long> batchOffsets;
 
-        public CommitSynchronization(ExceptionHandler exceptionHandler, int size) {
+        public CommitSynchronization(ExceptionHandler exceptionHandler, int size,
+                                     Map<TopicPartition, Long> batchOffsets) {
             this.exceptionHandler = exceptionHandler;
             this.size = size;
+            this.batchOffsets = batchOffsets;
+        }
+
+        private void commitBatchOffsets() {
+            for (Map.Entry<TopicPartition, Long> entry : batchOffsets.entrySet()) {
+                commitManager.recordOffset(entry.getKey(), entry.getValue());
+                commitManager.commit(entry.getKey());
+            }
         }
 
         @Override
         public void onComplete(Exchange exchange) {
             LOG.debug("Calling commit on {} exchanges using {}", size, commitManager.getClass().getSimpleName());
-            commitManager.commit();
+            commitBatchOffsets();
         }
 
         @Override
@@ -80,7 +98,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
                     // This allows the consumer to move forward and potentially retry the problematic batch
                     LOG.debug("Calling commit on {} exchanges using {} due to breakOnFirstError", size,
                             commitManager.getClass().getSimpleName());
-                    commitManager.commit();
+                    commitBatchOffsets();
                 } else {
                     // Standard error handling - just log and continue (original behavior)
                     exceptionHandler.handleException(
@@ -125,6 +143,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         // Aggregate all consumer records in a single exchange
         if (exchangeList.isEmpty()) {
             timeoutWatch.takenAndRestart();
+            intervalWatch.restart();
         }
 
         // If timeout has expired, process current batch but continue to handle new records
@@ -181,6 +200,57 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         return timeout || interval;
     }
 
+    /**
+     * Copies the record metadata headers that are identical across every record in the batch onto the batch exchange,
+     * so a route can read them - for example to store the topic in a variable - before splitting the batch.
+     * <p>
+     * A header is only propagated when every record in the batch carries the same value for it. Headers that vary
+     * within the batch are left off, because no single value would be correct for the batch as a whole.
+     */
+    static void propagateCommonHeaders(List<Exchange> exchanges, Message batchMessage) {
+        for (String header : COMMON_BATCH_HEADERS) {
+            Object common = commonHeaderValue(exchanges, header);
+            if (common != null) {
+                batchMessage.setHeader(header, common);
+            }
+        }
+    }
+
+    /**
+     * Returns the value of the given header when every exchange in the batch carries the same non-null value for it,
+     * otherwise null.
+     */
+    private static Object commonHeaderValue(List<Exchange> exchanges, String header) {
+        Object common = null;
+        for (Exchange exchange : exchanges) {
+            Object value = exchange.getMessage().getHeader(header);
+            if (value == null) {
+                return null;
+            }
+            if (common == null) {
+                common = value;
+            } else if (!common.equals(value)) {
+                return null;
+            }
+        }
+        return common;
+    }
+
+    private Map<TopicPartition, Long> computeBatchOffsets(List<Exchange> exchanges) {
+        Map<TopicPartition, Long> offsets = new HashMap<>();
+        for (Exchange ex : exchanges) {
+            Message msg = ex.getMessage();
+            String topic = (String) msg.getHeader(KafkaConstants.TOPIC);
+            Integer partition = (Integer) msg.getHeader(KafkaConstants.PARTITION);
+            Long offset = (Long) msg.getHeader(KafkaConstants.OFFSET);
+            if (topic != null && partition != null && offset != null) {
+                TopicPartition tp = new TopicPartition(topic, partition);
+                offsets.merge(tp, offset, Math::max);
+            }
+        }
+        return offsets;
+    }
+
     private ProcessingResult processBatch(KafkaConsumer camelKafkaConsumer) {
         intervalWatch.restart();
 
@@ -189,6 +259,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         Message message = exchange.getMessage();
         var exchanges = exchangeList.stream().toList();
         message.setBody(exchanges);
+        propagateCommonHeaders(exchanges, message);
 
         ProcessingResult result = ProcessingResult.newUnprocessed();
 
@@ -216,7 +287,9 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     private ProcessingResult autoCommitResultProcessing(
             KafkaConsumer camelKafkaConsumer, Exchange exchange, List<Exchange> exchanges) {
         ExceptionHandler exceptionHandler = camelKafkaConsumer.getExceptionHandler();
-        CommitSynchronization commitSynchronization = new CommitSynchronization(exceptionHandler, exchanges.size());
+        Map<TopicPartition, Long> batchOffsets = computeBatchOffsets(exchanges);
+        CommitSynchronization commitSynchronization
+                = new CommitSynchronization(exceptionHandler, exchanges.size(), batchOffsets);
         exchange.getExchangeExtension().addOnCompletion(commitSynchronization);
         try {
             processor.process(exchange);

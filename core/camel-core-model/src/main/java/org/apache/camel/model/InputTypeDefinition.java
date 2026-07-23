@@ -31,16 +31,19 @@ import org.apache.camel.spi.Metadata;
  * only scheme part, so that it works like a wildcard. If only 'xml' is specified, all the XML message matches. It's
  * handy to add only one transformer/validator for all the transformation from/to XML.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Declares the expected input data type for a route. Camel will apply a data type transformer if the actual message type differs at runtime.")
 @XmlRootElement(name = "inputType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeDefinition> {
 
     @XmlAttribute
-    @Metadata(required = true)
+    @Metadata(required = true,
+              description = "The input type URN in the format 'scheme:name' (e.g. 'java:com.example.MyClass' or 'json:JsonOrder'). Declares the expected data type for messages consumed by this route.")
     private String urn;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Whether validation is required for this input type.")
     private String validate;
 
     public InputTypeDefinition() {
@@ -65,16 +68,10 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
         return urn;
     }
 
-    /**
-     * The input type URN.
-     */
     public void setUrn(String urn) {
         this.urn = urn;
     }
 
-    /**
-     * Set input type via Java Class.
-     */
     public void setJavaClass(Class<?> clazz) {
         this.urn = "java:" + clazz.getName();
     }
@@ -83,9 +80,6 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
         return this.validate;
     }
 
-    /**
-     * Whether if validation is required for this input type.
-     */
     public void setValidate(String validate) {
         this.validate = validate;
     }

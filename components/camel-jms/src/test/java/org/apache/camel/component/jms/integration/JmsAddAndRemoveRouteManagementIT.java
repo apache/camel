@@ -29,6 +29,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.core.CamelContextExtension;
@@ -75,7 +76,11 @@ public class JmsAddAndRemoveRouteManagementIT extends AbstractJMSTest {
 
         Set<ObjectName> before = mbeanServer.queryNames(query, null);
 
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        // Allow extra time for the JMS consumer to subscribe to the broker
+        // after the route is started (the default 10 s can be too short on slow CI)
+        mock.setResultWaitTime(30_000);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -85,9 +90,10 @@ public class JmsAddAndRemoveRouteManagementIT extends AbstractJMSTest {
             }
         });
 
-        // Wait for the new route's thread pool to be registered and identify it
+        // Wait for the new route's thread pool to be registered and identify it.
+        // JMX registration can be slow on CI, so use a generous timeout.
         AtomicReference<Set<ObjectName>> duringRef = new AtomicReference<>();
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+        Awaitility.await().atMost(30, TimeUnit.SECONDS).untilAsserted(() -> {
             Set<ObjectName> during = mbeanServer.queryNames(query, null);
             Set<ObjectName> added = new HashSet<>(during);
             added.removeAll(before);
@@ -95,6 +101,10 @@ public class JmsAddAndRemoveRouteManagementIT extends AbstractJMSTest {
                     "There should be at least one new thread pool in JMX");
             duringRef.set(during);
         });
+
+        // Wait for the JMS consumer to actually subscribe to the broker —
+        // thread pool registration in JMX does not guarantee the listener is ready
+        JmsTestHelper.waitForJmsConsumerRoutes(context, "myNewRoute");
 
         // Identify the thread pools added by the new route
         Set<ObjectName> addedPools = new HashSet<>(duringRef.get());
@@ -108,8 +118,9 @@ public class JmsAddAndRemoveRouteManagementIT extends AbstractJMSTest {
         context.getRouteController().stopRoute("myNewRoute");
         context.removeRoute("myNewRoute");
 
-        // Verify the thread pools from the removed route are cleaned up
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+        // Verify the thread pools from the removed route are cleaned up.
+        // Cleanup can be slow on CI, so use a generous timeout.
+        Awaitility.await().atMost(30, TimeUnit.SECONDS).untilAsserted(() -> {
             Set<ObjectName> after = mbeanServer.queryNames(query, null);
             for (ObjectName added : addedPools) {
                 Assertions.assertFalse(after.contains(added),

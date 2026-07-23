@@ -35,7 +35,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "jolokia", description = "Attach Jolokia JVM Agent to a running Camel integration", sortOptions = false,
-         showDefaultValues = true)
+         showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel jolokia myApp",
+                 "  camel jolokia myApp --stop" })
 public class Jolokia extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
@@ -59,6 +63,7 @@ public class Jolokia extends ProcessBaseCommand {
     public Integer doCall() throws Exception {
         List<Long> pids = findPids(name);
         if (pids.isEmpty()) {
+            printer().printErr("No running Camel integration matches: " + name);
             return 1;
         } else if (pids.size() > 1) {
             printer().println("Name or pid " + name + " matches " + pids.size()

@@ -101,7 +101,9 @@ public class PromptDefinitions {
                           + "get OpenRewrite recipes, search migration guides, "
                           + "and produce a migration summary.")
     public List<PromptMessage> migrateProject(
-            @PromptArg(name = "pomContent", description = "The project's pom.xml file content") String pomContent,
+            @PromptArg(name = "pomContent",
+                       description = "Optional: project's pom.xml content. If omitted, the LLM uses the pom.xml already in its conversation context.",
+                       required = false) String pomContent,
             @PromptArg(name = "targetVersion", description = "Target Camel version to migrate to (e.g., 4.18.0)",
                        required = false) String targetVersion) {
 
@@ -109,54 +111,35 @@ public class PromptDefinitions {
                 ? "Target version: " + targetVersion
                 : "Target version: latest stable (determine from camel_version_list)";
 
-        String instructions = """
-                You are migrating a Camel project to a newer version.
+        String pomNote = pomContent != null && !pomContent.isBlank()
+                ? "A pom.xml has been supplied as the `pomContent` argument to this prompt."
+                : "Use the project's pom.xml from your conversation context.";
 
-                ## %s
+        String instructions
+                = """
+                        You are migrating a Camel project to a newer version.
 
-                ## Project pom.xml
-                ```xml
-                %s
-                ```
+                        %s
+                        %s
 
-                ## Workflow
+                        ## Workflow
 
-                Follow these steps in order:
-
-                ### Step 1: Analyze the project
-                Call `camel_migration_analyze` with the pom.xml content above.
-                This detects the current runtime, Camel version, Java version, and component dependencies.
-
-                ### Step 2: Determine target version
-                If no target version was specified, call `camel_version_list` with the detected runtime \
-                to find the latest stable version. For LTS releases, filter with lts=true.
-
-                ### Step 3: Check compatibility
-                Based on the detected runtime from Step 1:
-                - For **wildfly** or **karaf** runtimes: call `camel_migration_wildfly_karaf` with the pom.xml \
-                content, target runtime, and target version.
-                - For **main**, **spring-boot**, or **quarkus** runtimes: call `camel_migration_compatibility` \
-                with the detected components, current version, target version, runtime, and Java version.
-
-                Review any blockers (e.g., Java version too old) and warnings.
-
-                ### Step 4: Get migration recipes
-                Call `camel_migration_recipes` with the runtime, current version, target version, \
-                Java version, and dryRun=true to get the OpenRewrite Maven commands.
-
-                ### Step 5: Search for breaking changes
-                For each component detected in Step 1, call `camel_migration_guide_search` \
-                with the component name to find relevant breaking changes and rename mappings.
-
-                ### Step 6: Produce migration summary
-                Present a structured summary:
-                - **Current state**: runtime, Camel version, Java version, component count
-                - **Target state**: target version, required Java version
-                - **Blockers**: issues that must be resolved before migration
-                - **Breaking changes**: component renames, API changes found in guides
-                - **Migration commands**: the OpenRewrite commands from Step 4
-                - **Manual steps**: any changes that OpenRewrite cannot automate
-                """.formatted(versionNote, pomContent);
+                        1. **Analyze**: call `camel_migration_analyze` with the pom.xml to detect runtime, \
+                        Camel version, Java version, and component dependencies.
+                        2. **Target version**: if not specified, call `camel_version_list` with the detected runtime \
+                        (use `lts=true` for LTS releases).
+                        3. **Compatibility** (based on detected runtime):
+                           - **wildfly** or **karaf**: call `camel_migration_wildfly_karaf` with the pom, target runtime, and target version.
+                           - **main**, **spring-boot**, or **quarkus**: call `camel_migration_compatibility` \
+                        with components, current/target version, runtime, and Java version.
+                        4. **Recipes**: call `camel_migration_recipes` with runtime, versions, Java version, and `dryRun=true` \
+                        to get the OpenRewrite Maven commands.
+                        5. **Breaking changes**: for each detected component, call `camel_migration_guide_search` \
+                        to find renames and API changes.
+                        6. **Summary**: report current state, target state, blockers, breaking changes, \
+                        migration commands, and manual steps that OpenRewrite cannot automate.
+                        """
+                        .formatted(versionNote, pomNote);
 
         return List.of(PromptMessage.withUserRole(instructions));
     }
@@ -218,6 +201,179 @@ public class PromptDefinitions {
                 - Note any components that handle PII or sensitive data
                 - Flag any components that communicate over the network without encryption
                 """.formatted(resolvedFormat, route, resolvedFormat, resolvedFormat);
+
+        return List.of(PromptMessage.withUserRole(instructions));
+    }
+
+    /**
+     * Guided workflow for diagnosing issues with a running Camel route.
+     */
+    @Prompt(name = "camel_diagnose_route",
+            description = "Guided workflow to diagnose issues with a running Camel route: "
+                          + "gather runtime state, errors, health, message history, "
+                          + "and produce a root cause analysis with actionable fixes.")
+    public List<PromptMessage> diagnoseRoute(
+            @PromptArg(name = "routeId",
+                       description = "Route ID to diagnose (optional — if omitted, diagnoses all routes with issues)",
+                       required = false) String routeId,
+            @PromptArg(name = "symptom",
+                       description = "Description of the observed problem (e.g., 'messages are not being processed', "
+                                     + "'high error rate', 'route is suspended')",
+                       required = false) String symptom) {
+
+        String routeFilter = routeId != null && !routeId.isBlank() ? routeId : "*";
+        String symptomNote = symptom != null && !symptom.isBlank()
+                ? "Reported symptom: " + symptom
+                : "No specific symptom reported — perform a general health diagnosis.";
+
+        String instructions = """
+                You are diagnosing a running Camel application.
+
+                %s
+                Target route(s): %s
+
+                ## Workflow
+
+                Follow these steps in order:
+
+                ### Step 1: Gather context
+                Call `get_context` to understand the application state (version, uptime, total exchanges).
+                Call `get_routes` to see all routes, their states, and error counts.
+
+                ### Step 2: Check health
+                Call `get_health` to see if any health checks are failing.
+                Note any DOWN or UNKNOWN health statuses.
+
+                ### Step 3: Collect errors
+                Call `get_errors` to get captured routing errors with stack traces.
+                Call `get_history` to see the message history trace of the last completed exchange.
+
+                ### Step 4: Inspect route details
+                Call `get_route_source` with filter="%s" to see the route definition.
+                Call `get_top_processors` to identify slow or failing processors.
+                Call `get_inflight` to check for stuck exchanges.
+                Call `get_blocked` to check for blocked exchanges.
+
+                ### Step 5: Check infrastructure
+                Call `get_memory` to check for memory pressure or excessive GC.
+                Call `get_endpoints` to verify all endpoints are reachable.
+
+                ### Step 6: Advanced diagnostics (if needed)
+                If circuit breakers are involved, call `get_circuit_breakers`.
+                If datasources are involved, call `get_datasources`.
+                If the issue involves timing, call `get_spans` for trace data.
+                If the issue involves metrics, call `get_metrics`.
+
+                ### Step 7: Root cause analysis
+                Synthesize the gathered data into a structured diagnosis:
+
+                **Summary**: One-sentence description of the root cause.
+
+                **Evidence**: List the specific data points that led to this conclusion:
+                - Which tools provided the key evidence
+                - Specific values that indicate the problem (error counts, timing, states)
+
+                **Root Cause**: Detailed explanation of what is going wrong and why.
+
+                **Immediate Actions**: Steps to take right now to mitigate:
+                - Route actions (stop, restart, suspend)
+                - Configuration changes
+                - Resource adjustments
+
+                **Permanent Fix**: What needs to change in the route definition or configuration \
+                to prevent recurrence. Include specific code examples if applicable.
+
+                **Monitoring**: What to watch going forward to detect this issue early.
+                """.formatted(symptomNote, routeFilter, routeFilter);
+
+        return List.of(PromptMessage.withUserRole(instructions));
+    }
+
+    /**
+     * Guided workflow for optimizing a running Camel application's performance.
+     */
+    @Prompt(name = "camel_optimize_route",
+            description = "Guided workflow to optimize a Camel application's performance: "
+                          + "analyze throughput, identify bottlenecks, review resource usage, "
+                          + "and produce prioritized optimization recommendations.")
+    public List<PromptMessage> optimizeRoute(
+            @PromptArg(name = "routeId",
+                       description = "Route ID to optimize (optional — if omitted, analyzes all routes)",
+                       required = false) String routeId,
+            @PromptArg(name = "goal",
+                       description = "Optimization goal: throughput, latency, memory, or general (default: general)",
+                       required = false) String goal) {
+
+        String routeFilter = routeId != null && !routeId.isBlank() ? routeId : "*";
+        String resolvedGoal = goal != null && !goal.isBlank() ? goal : "general";
+
+        String instructions = """
+                You are optimizing a running Camel application for: **%s**.
+
+                Target route(s): %s
+
+                ## Workflow
+
+                Follow these steps in order:
+
+                ### Step 1: Baseline performance
+                Call `get_context` to get overall exchange statistics (total, completed, failed, mean time).
+                Call `get_routes` to get per-route throughput and timing data.
+                Call `get_top_processors` to identify the slowest processors.
+
+                ### Step 2: Resource analysis
+                Call `get_memory` to assess JVM memory usage, GC frequency, and thread counts.
+                Call `get_consumers` to check consumer configuration and polling strategies.
+                Call `get_endpoints` to review endpoint usage patterns.
+
+                ### Step 3: Route structure analysis
+                Call `get_route_analysis` to get route structure and anti-pattern hints.
+                Call `get_eip_stats` to understand EIP usage and processor performance distribution.
+
+                ### Step 4: Infrastructure checks
+                Call `get_metrics` for detailed Micrometer metrics (if available).
+                Call `get_datasources` if database access is involved.
+                Call `get_circuit_breakers` if resilience patterns are in use.
+
+                ### Step 5: Route inspection
+                Call `get_route_source` with filter="%s" to review the route code.
+                Call `get_route_dump` with routeId="%s" and format="yaml" to see the full definition.
+
+                ### Step 6: Optimization report
+                Produce a structured optimization report:
+
+                **Current Performance Baseline**:
+                - Overall throughput (exchanges/sec)
+                - Mean and max processing time
+                - Error rate
+                - Resource utilization (memory, threads)
+
+                **Bottlenecks Identified** (ordered by impact):
+                For each bottleneck:
+                - What: the specific processor, endpoint, or pattern
+                - Impact: how much time or throughput it costs
+                - Evidence: the specific metrics that revealed it
+
+                **Optimization Recommendations** (ordered by priority):
+
+                For each recommendation:
+                1. **Change**: What to modify (with specific code examples)
+                2. **Expected Impact**: Estimated improvement
+                3. **Risk**: What could go wrong
+                4. **Effort**: Low/Medium/High
+
+                Common optimizations to evaluate:
+                - **Parallelism**: Can `split` with `parallelProcessing` or `threads` EIP help?
+                - **Batching**: Should messages be batched with `aggregate`?
+                - **Caching**: Can frequently-accessed data be cached?
+                - **Connection pooling**: Are connection pools properly sized?
+                - **Async processing**: Can synchronous calls be made asynchronous?
+                - **Backpressure**: Is `throttle` or `circuitBreaker` needed?
+                - **Serialization**: Is a more efficient data format available?
+
+                **Trade-offs**: Note any trade-offs between the optimization goal \
+                and other qualities (e.g., throughput vs. latency, performance vs. reliability).
+                """.formatted(resolvedGoal, routeFilter, routeFilter, routeFilter);
 
         return List.of(PromptMessage.withUserRole(instructions));
     }

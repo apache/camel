@@ -82,6 +82,12 @@ public class PulsarConfiguration implements Cloneable {
     private SubscriptionInitialPosition subscriptionInitialPosition = LATEST;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean readCompacted;
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "When enabled, allows each individual message in a batch to be acknowledged independently."
+                            + " By default Pulsar redelivers the entire batch when any single message in the batch is"
+                            + " not acknowledged. This option also requires the Pulsar broker to be configured with"
+                            + " acknowledgmentAtBatchIndexLevelEnabled=true.")
+    private boolean enableBatchIndexAcknowledgment;
     @UriParam(label = "consumer",
               description = "Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created")
     private Integer maxRedeliverCount;
@@ -433,6 +439,17 @@ public class PulsarConfiguration implements Cloneable {
 
     public void setReadCompacted(boolean readCompacted) {
         this.readCompacted = readCompacted;
+    }
+
+    /**
+     * Whether each message in a batch can be acknowledged independently.
+     */
+    public boolean isEnableBatchIndexAcknowledgment() {
+        return enableBatchIndexAcknowledgment;
+    }
+
+    public void setEnableBatchIndexAcknowledgment(boolean enableBatchIndexAcknowledgment) {
+        this.enableBatchIndexAcknowledgment = enableBatchIndexAcknowledgment;
     }
 
     /**

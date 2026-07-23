@@ -377,6 +377,42 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
+         * To configure security using SSLContextParameters. When configured,
+         * this takes precedence over the certificatePath option. This allows
+         * configuring named groups, signature schemes, cipher suites, and
+         * protocols for the TLS connection.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default SolrEndpointBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters. When configured,
+         * this takes precedence over the certificatePath option. This allows
+         * configuring named groups, signature schemes, cipher suites, and
+         * protocols for the TLS connection.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default SolrEndpointBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * Basic authenticate user.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -570,7 +606,7 @@ public interface SolrEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SolrHeaderNameBuilder INSTANCE = new SolrHeaderNameBuilder();
+        public static final SolrHeaderNameBuilder INSTANCE = new SolrHeaderNameBuilder();
 
         /**
          * The operation to perform.

@@ -24,7 +24,7 @@ import java.util.concurrent.TimeoutException;
 import io.dapr.workflows.Workflow;
 import io.dapr.workflows.client.DaprWorkflowClient;
 import io.dapr.workflows.client.NewWorkflowOptions;
-import io.dapr.workflows.client.WorkflowInstanceStatus;
+import io.dapr.workflows.client.WorkflowState;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
@@ -109,7 +109,7 @@ public class DaprWorkflowHandler implements DaprOperationHandler {
     private DaprOperationResponse purgeWorkflow(Exchange exchange, DaprWorkflowClient client) {
         String instanceId = configurationOptionsProxy.getWorkflowInstanceId(exchange);
 
-        client.purgeInstance(instanceId);
+        client.purgeWorkflow(instanceId);
 
         return DaprOperationResponse.create(null, Map.of(DaprConstants.WORKFLOW_INSTANCE_ID, instanceId));
     }
@@ -138,7 +138,7 @@ public class DaprWorkflowHandler implements DaprOperationHandler {
         String instanceId = configurationOptionsProxy.getWorkflowInstanceId(exchange);
         boolean getWorkflowIO = configurationOptionsProxy.getWorkflowIO(exchange);
 
-        WorkflowInstanceStatus response = client.getInstanceState(instanceId, getWorkflowIO);
+        WorkflowState response = client.getWorkflowState(instanceId, getWorkflowIO);
 
         return DaprOperationResponse.createFromWorkflowStatus(response);
     }
@@ -149,7 +149,7 @@ public class DaprWorkflowHandler implements DaprOperationHandler {
         boolean getWorkflowIO = configurationOptionsProxy.getWorkflowIO(exchange);
 
         try {
-            WorkflowInstanceStatus response = client.waitForInstanceStart(instanceId, timeout, getWorkflowIO);
+            WorkflowState response = client.waitForWorkflowStart(instanceId, timeout, getWorkflowIO);
             return DaprOperationResponse.createFromWorkflowStatus(response);
         } catch (TimeoutException exception) {
             throw new RuntimeCamelException(
@@ -163,7 +163,7 @@ public class DaprWorkflowHandler implements DaprOperationHandler {
         boolean getWorkflowIO = configurationOptionsProxy.getWorkflowIO(exchange);
 
         try {
-            WorkflowInstanceStatus response = client.waitForInstanceCompletion(instanceId, timeout, getWorkflowIO);
+            WorkflowState response = client.waitForWorkflowCompletion(instanceId, timeout, getWorkflowIO);
             return DaprOperationResponse.createFromWorkflowStatus(response);
         } catch (TimeoutException exception) {
             throw new RuntimeCamelException(

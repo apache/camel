@@ -16,21 +16,44 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
- * Exception when failing to create a {@link Route} from a RouteTemplateDefinition.
+ * Thrown when the {@link CamelContext} fails to instantiate a {@link Route} from a route template definition, for
+ * example because a required template parameter is missing or the generated route is invalid.
+ * <p/>
+ * Carries the template id and the target route id to help diagnose which template and instantiation attempt failed.
+ *
+ * @see   Route
+ * @since 3.10
  */
 public class FailedToCreateRouteFromTemplateException extends RuntimeCamelException {
     private final String templateId;
     private final String routeId;
 
+    /**
+     * @param routeId    the route id that failed to be created
+     * @param templateId the template id used to create the route
+     * @param message    the detail message
+     */
     public FailedToCreateRouteFromTemplateException(String routeId, String templateId, String message) {
-        super("Failed to create route " + routeId + " from template " + templateId + " because of " + message);
+        super("Failed to create route " + Objects.requireNonNull(routeId, "routeId") + " from template "
+              + Objects.requireNonNull(templateId, "templateId") + " because of "
+              + Objects.requireNonNull(message, "message"));
         this.routeId = routeId;
         this.templateId = templateId;
     }
 
+    /**
+     * @param routeId    the route id that failed to be created
+     * @param templateId the template id used to create the route
+     * @param message    the detail message
+     * @param cause      the cause of the failure
+     */
     public FailedToCreateRouteFromTemplateException(String routeId, String templateId, String message, Throwable cause) {
-        super("Failed to create route " + routeId + " from template " + templateId + " because of " + message, cause);
+        super("Failed to create route " + Objects.requireNonNull(routeId, "routeId") + " from template "
+              + Objects.requireNonNull(templateId, "templateId") + " because of "
+              + Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
         this.routeId = routeId;
         this.templateId = templateId;
     }

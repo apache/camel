@@ -39,7 +39,10 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "route-controller", description = "List status of route controller",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel cmd route-controller" })
 public class RouteControllerAction extends ActionWatchCommand {
 
     public static class IdStateCompletionCandidates implements Iterable<String> {
@@ -119,6 +122,10 @@ public class RouteControllerAction extends ActionWatchCommand {
             supervising = "SupervisingRouteController".equals(jo.getString("controller"));
 
             JsonArray arr = (JsonArray) jo.get("routes");
+            if (arr == null) {
+                printer().printErr("Route controller data not available from the running integration");
+                return 0;
+            }
             for (int i = 0; i < arr.size(); i++) {
                 JsonObject jt = (JsonObject) arr.get(i);
 
@@ -149,7 +156,7 @@ public class RouteControllerAction extends ActionWatchCommand {
                 rows.add(row);
             }
         } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within 5 seconds");
+            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
             return 1;
         }
 

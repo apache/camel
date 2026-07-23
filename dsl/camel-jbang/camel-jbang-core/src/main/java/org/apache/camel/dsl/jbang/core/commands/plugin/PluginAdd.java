@@ -21,12 +21,16 @@ import java.util.Optional;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "add",
-                     description = "Add new plugin", sortOptions = false, showDefaultValues = true)
+                     description = "Add new plugin", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel plugin add --command=my-cmd --gav=com.foo:bar:1.0" })
 public class PluginAdd extends PluginBaseCommand {
 
     @CommandLine.Parameters(description = "The Camel plugin to add",
@@ -89,6 +93,30 @@ public class PluginAdd extends PluginBaseCommand {
             if (firstVersion == null) {
                 firstVersion = camelPlugin.get().getFirstVersion();
             }
+        } else {
+            Optional<JsonObject> known = PluginHelper.findKnownPlugin(name);
+            if (known.isPresent()) {
+                JsonObject kp = known.get();
+                if (command == null) {
+                    command = kp.getString("command");
+                }
+                if (description == null) {
+                    description = kp.getString("description");
+                }
+                if (firstVersion == null) {
+                    firstVersion = kp.getString("firstVersion");
+                }
+                if (gav == null) {
+                    groupId = kp.getStringOrDefault("groupId", groupId);
+                    artifactId = kp.getString("artifactId");
+                }
+                if (repositories == null) {
+                    String knownRepos = kp.getString("repos");
+                    if (knownRepos != null) {
+                        repositories = knownRepos;
+                    }
+                }
+            }
         }
 
         if (command == null) {
@@ -111,8 +139,12 @@ public class PluginAdd extends PluginBaseCommand {
 
         if (gav == null && (groupId != null && artifactId != null)) {
             if (version == null) {
-                CamelCatalog catalog = new DefaultCamelCatalog();
-                version = catalog.getCatalogVersion();
+                if ("org.apache.camel".equals(groupId)) {
+                    CamelCatalog catalog = new DefaultCamelCatalog();
+                    version = catalog.getCatalogVersion();
+                } else {
+                    version = "LATEST";
+                }
             }
 
             gav = "%s:%s:%s".formatted(groupId, artifactId, version);
@@ -128,6 +160,7 @@ public class PluginAdd extends PluginBaseCommand {
         plugins.put(name, plugin);
 
         saveConfig(pluginConfig);
+        printer().printf("Plugin %s added%n", name);
         return 0;
     }
 

@@ -21,9 +21,10 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(95);
+        Set<String> props = new HashSet<>(98);
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
         props.add("cdcChangeTablesSchema");
@@ -61,6 +62,8 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("maxBatchSize");
         props.add("maxQueueSize");
         props.add("maxQueueSizeInBytes");
+        props.add("memoryManagementSchemasClass");
+        props.add("memoryManagementTablesClass");
         props.add("messageKeyColumns");
         props.add("name");
         props.add("notificationEnabledChannels");
@@ -110,6 +113,7 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("snapshotSelectStatementOverrides");
         props.add("snapshotTablesOrderByRowCount");
         props.add("sourceinfoStructMaker");
+        props.add("statisticsMetricsEnabled");
         props.add("streamingDelayMs");
         props.add("tableExcludeList");
         props.add("tableIgnoreBuiltin");
@@ -121,6 +125,7 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("transactionMetadataFactory");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(1);
         prefixes.put("additionalProperties", "additionalProperties.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
@@ -151,6 +156,11 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> endpointIdentityPropertyNames() {
+        return ENDPOINT_IDENTITY_PROPERTY_NAMES;
     }
 
     @Override

@@ -91,7 +91,7 @@ public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
         Long keyIdLong = Long.valueOf(keyId);
         PGPPrivateKey result = keyId2PrivateKey.get(keyIdLong);
         if (result == null) {
-            result = PGPDataFormatUtil.findPrivateKeyWithkeyId(keyId, password, null, provider, pgpSecretKeyring);
+            result = PGPDataFormatUtil.findPrivateKeyWithKeyId(keyId, password, null, provider, pgpSecretKeyring);
             if (result != null) {
                 keyId2PrivateKey.put(keyIdLong, result);
             }

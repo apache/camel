@@ -37,6 +37,8 @@ public class LangChain4jToolsEndpointConfigurer extends PropertyConfigurerSuppor
         case "exposed": target.setExposed(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxtoolcallingroundtrips":
+        case "maxToolCallingRoundTrips": target.setMaxToolCallingRoundTrips(property(camelContext, int.class, value)); return true;
         case "name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
@@ -66,6 +68,8 @@ public class LangChain4jToolsEndpointConfigurer extends PropertyConfigurerSuppor
         case "exposed": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxtoolcallingroundtrips":
+        case "maxToolCallingRoundTrips": return int.class;
         case "name": return java.lang.String.class;
         case "parameters": return java.util.Map.class;
         case "tags": return java.lang.String.class;
@@ -91,6 +95,8 @@ public class LangChain4jToolsEndpointConfigurer extends PropertyConfigurerSuppor
         case "exposed": return target.isExposed();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxtoolcallingroundtrips":
+        case "maxToolCallingRoundTrips": return target.getMaxToolCallingRoundTrips();
         case "name": return target.getName();
         case "parameters": return target.getParameters();
         case "tags": return target.getTags();

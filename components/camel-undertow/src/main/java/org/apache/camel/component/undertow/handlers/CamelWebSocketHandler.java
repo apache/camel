@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,11 +39,16 @@ import java.util.stream.Collectors;
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.util.AttachmentKey;
+import io.undertow.util.HeaderValues;
+import io.undertow.util.Headers;
+import io.undertow.util.MimeMappings;
 import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.WebSocketProtocolHandshakeHandler;
 import io.undertow.websockets.core.AbstractReceiveListener;
 import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
+import io.undertow.websockets.core.CloseMessage;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.core.WebSockets;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
@@ -55,6 +61,9 @@ import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.UndertowConsumer;
 import org.apache.camel.component.undertow.UndertowProducer;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.http.base.OAuthHttpSecuritySupport;
+import org.apache.camel.http.base.OAuthHttpSecuritySupport.Validation;
+import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xnio.ChannelListener;
@@ -66,6 +75,9 @@ import org.xnio.Pooled;
  */
 public class CamelWebSocketHandler implements HttpHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CamelWebSocketHandler.class);
+    // WebSocket handshakes use WebSocketHttpExchange attachments; HTTP requests use UndertowConsumer's key.
+    private static final AttachmentKey<OAuthTokenValidationResult> OAUTH_TOKEN_VALIDATION_RESULT_ATTACHMENT
+            = AttachmentKey.create(OAuthTokenValidationResult.class);
 
     private final UndertowWebSocketConnectionCallback callback;
 
@@ -130,7 +142,58 @@ public class CamelWebSocketHandler implements HttpHandler {
      */
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
+        UndertowConsumer currentConsumer = getConsumer();
+        if (currentConsumer != null && currentConsumer.getEndpoint().getOauthHttpSecurity() != null) {
+            if (exchange.isInIoThread()) {
+                exchange.dispatch(this);
+                return;
+            }
+            OAuthHttpSecuritySupport oauthHttpSecurity = currentConsumer.getEndpoint().getOauthHttpSecurity();
+            Validation validation = oauthHttpSecurity.validate(currentConsumer.getEndpoint().getCamelContext(),
+                    authorizationHeaders(exchange));
+            exchange.getRequestHeaders().remove(Headers.AUTHORIZATION);
+            if (!validation.isAuthenticated()) {
+                reject(exchange, validation);
+                return;
+            }
+            exchange.putAttachment(OAUTH_TOKEN_VALIDATION_RESULT_ATTACHMENT, validation.getValidationResult());
+        }
         this.delegate.handleRequest(exchange);
+    }
+
+    private UndertowConsumer getConsumer() {
+        consumerLock.lock();
+        try {
+            return consumer;
+        } finally {
+            consumerLock.unlock();
+        }
+    }
+
+    private boolean requiresOAuth() {
+        UndertowConsumer currentConsumer = getConsumer();
+        return currentConsumer != null && currentConsumer.getEndpoint().getOauthHttpSecurity() != null;
+    }
+
+    private static void reject(HttpServerExchange exchange, Validation validation) {
+        exchange.setStatusCode(validation.getRejectionStatusCode());
+        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
+        if (validation.getWwwAuthenticate() != null) {
+            exchange.getResponseHeaders().put(Headers.WWW_AUTHENTICATE, validation.getWwwAuthenticate());
+        }
+        exchange.getResponseSender().send(validation.getResponseBody());
+    }
+
+    private static List<String> authorizationHeaders(HttpServerExchange exchange) {
+        HeaderValues values = exchange.getRequestHeaders().get(Headers.AUTHORIZATION);
+        if (values == null) {
+            return List.of();
+        }
+        List<String> answer = new ArrayList<>(values.size());
+        for (String value : values) {
+            answer.add(value);
+        }
+        return answer;
     }
 
     /**
@@ -375,8 +438,20 @@ public class CamelWebSocketHandler implements HttpHandler {
         @Override
         public void onConnect(WebSocketHttpExchange exchange, WebSocketChannel channel) {
             LOG.trace("onConnect {}", exchange);
+            OAuthTokenValidationResult oauthTokenValidationResult
+                    = exchange.getAttachment(OAUTH_TOKEN_VALIDATION_RESULT_ATTACHMENT);
+            if (oauthTokenValidationResult == null && requiresOAuth()) {
+                // the handshake completed without token validation, for example while no consumer was set on
+                // this handler, but the current consumer requires it: fail closed
+                LOG.warn("Closing WebSocket channel whose handshake was not OAuth validated");
+                WebSockets.sendClose(CloseMessage.MSG_VIOLATES_POLICY, "Authentication required", channel, null);
+                return;
+            }
             final String connectionKey = UUID.randomUUID().toString();
             channel.setAttribute(UndertowConstants.CONNECTION_KEY, connectionKey);
+            if (oauthTokenValidationResult != null) {
+                channel.setAttribute(OAuthHttpSecuritySupport.OAUTH_TOKEN_VALIDATION_RESULT, oauthTokenValidationResult);
+            }
             channel.getReceiveSetter().set(receiveListener);
             channel.addCloseTask(closeListener);
             sendEventNotificationIfNeeded(connectionKey, exchange, channel, EventType.ONOPEN);

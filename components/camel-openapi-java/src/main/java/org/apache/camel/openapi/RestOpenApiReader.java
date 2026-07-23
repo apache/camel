@@ -78,6 +78,7 @@ import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.ResponseHeaderDefinition;
 import org.apache.camel.model.rest.ResponseMessageDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.rest.RestSecuritiesDefinition;
 import org.apache.camel.model.rest.RestSecurityDefinition;
@@ -545,8 +546,19 @@ public class RestOpenApiReader {
             op.addSecurityItem(securityRequirement);
         }
 
+        // Collect formData params to build a single requestBody with object schema
+        List<ParamDefinition> formDataParams = new ArrayList<>();
+
         for (ParamDefinition param : verb.getParams()) {
-            Parameter parameter = new Parameter().in(param.getType().name());
+            RestParamType paramType = param.getType();
+
+            // In OAS 3.x, formData is not a valid "in" value - collect for requestBody handling
+            if (RestParamType.formData == paramType) {
+                formDataParams.add(param);
+                continue;
+            }
+
+            Parameter parameter = new Parameter().in(paramType.name());
 
             if (parameter != null) {
                 parameter.setName(getValue(camelContext, param.getName()));
@@ -611,7 +623,14 @@ public class RestOpenApiReader {
                         }
                     }
                     if (param.getCollectionFormat() != null) {
-                        parameter.setStyle(convertToOpenApiStyle(getValue(camelContext, param.getCollectionFormat().name())));
+                        StyleEnum style
+                                = convertToOpenApiStyle(getValue(camelContext, param.getCollectionFormat().name()));
+                        parameter.setStyle(style);
+                        Boolean explode = convertToOpenApiExplode(
+                                getValue(camelContext, param.getCollectionFormat().name()));
+                        if (explode != null) {
+                            parameter.setExplode(explode);
+                        }
                     }
                     if (hasAllowableValues && !isArray) {
                         schema.setEnum(allowableValues);
@@ -638,7 +657,7 @@ public class RestOpenApiReader {
                     op.addParametersItem(parameter);
                 }
 
-                // In OpenAPI 3x, body or form parameters are replaced by requestBody
+                // In OpenAPI 3x, body parameters are replaced by requestBody
                 if (parameter.getIn().equals("body")) {
                     RequestBody reqBody = new RequestBody().content(new Content());
                     reqBody.setRequired(param.getRequired());
@@ -681,6 +700,51 @@ public class RestOpenApiReader {
             }
         }
 
+        // In OAS 3.x, formData params become a requestBody with object schema
+        if (!formDataParams.isEmpty()) {
+            RequestBody reqBody = op.getRequestBody();
+            if (reqBody == null) {
+                reqBody = new RequestBody().content(new Content());
+                op.setRequestBody(reqBody);
+            }
+            Schema formSchema = new Schema<>();
+            formSchema.setType("object");
+            if (openApi.getSpecVersion().equals(SpecVersion.V31)) {
+                formSchema.addType("object");
+            }
+            List<String> requiredFields = new ArrayList<>();
+            for (ParamDefinition param : formDataParams) {
+                String name = getValue(camelContext, param.getName());
+                String dataType = getValue(camelContext, param.getDataType() != null ? param.getDataType() : "string");
+                Schema<?> fieldSchema = createTypedSchema(dataType, openApi);
+                if (param.getDataFormat() != null) {
+                    fieldSchema.setFormat(getValue(camelContext, param.getDataFormat()));
+                }
+                if (org.apache.camel.util.ObjectHelper.isNotEmpty(param.getDescription())) {
+                    fieldSchema.setDescription(getValue(camelContext, param.getDescription()));
+                }
+                if (org.apache.camel.util.ObjectHelper.isNotEmpty(param.getDefaultValue())) {
+                    fieldSchema.setDefault(getValue(camelContext, param.getDefaultValue()));
+                }
+                formSchema.addProperty(name, fieldSchema);
+                if (param.getRequired()) {
+                    requiredFields.add(name);
+                }
+            }
+            if (!requiredFields.isEmpty()) {
+                formSchema.setRequired(requiredFields);
+            }
+            // Use multipart/form-data if consumes includes it, otherwise application/x-www-form-urlencoded
+            String formMediaType = "application/x-www-form-urlencoded";
+            if (consumes != null && consumes.contains("multipart/form-data")) {
+                formMediaType = "multipart/form-data";
+            }
+            if (reqBody.getContent() == null) {
+                reqBody.setContent(new Content());
+            }
+            reqBody.getContent().addMediaType(formMediaType, new MediaType().schema(formSchema));
+        }
+
         // clear parameters if its empty
         if (op.getParameters() != null && op.getParameters().isEmpty()) {
             //            op.parameters.clear();
@@ -711,17 +775,26 @@ public class RestOpenApiReader {
     }
 
     private StyleEnum convertToOpenApiStyle(String value) {
-        //Should be a Collection Format name
         switch (CollectionFormat.valueOf(value)) {
             case csv:
+            case multi:
                 return StyleEnum.FORM;
             case ssv:
             case tsv:
                 return StyleEnum.SPACEDELIMITED;
             case pipes:
                 return StyleEnum.PIPEDELIMITED;
+            default:
+                return null;
+        }
+    }
+
+    private Boolean convertToOpenApiExplode(String value) {
+        switch (CollectionFormat.valueOf(value)) {
+            case csv:
+                return Boolean.FALSE;
             case multi:
-                return StyleEnum.DEEPOBJECT;
+                return Boolean.TRUE;
             default:
                 return null;
         }
@@ -861,9 +934,9 @@ public class RestOpenApiReader {
 
                 if ("string".equals(type) || "long".equals(type) || "float".equals(type)
                         || "double".equals(type) || "boolean".equals(type)) {
-                    setResponseHeader(camelContext, response, header, name, format, type);
+                    setResponseHeader(camelContext, openApi, response, header, name, format, type);
                 } else if ("int".equals(type) || "integer".equals(type)) {
-                    setResponseHeader(camelContext, response, header, name, format, "integer");
+                    setResponseHeader(camelContext, openApi, response, header, name, format, "integer");
                 } else if ("array".equals(type)) {
                     Header ap = new Header();
                     response.addHeaderObject(name, ap);
@@ -872,17 +945,10 @@ public class RestOpenApiReader {
                     }
                     if (header.getArrayType() != null) {
                         String arrayType = getValue(camelContext, header.getArrayType());
-                        if (arrayType.equalsIgnoreCase("string")
-                                || arrayType.equalsIgnoreCase("long")
-                                || arrayType.equalsIgnoreCase("float")
-                                || arrayType.equalsIgnoreCase("double")
-                                || arrayType.equalsIgnoreCase("boolean")) {
-                            setHeaderSchemaOas30(ap, arrayType);
-                        } else if (arrayType.equalsIgnoreCase("int")
-                                || arrayType.equalsIgnoreCase("integer")) {
-                            setHeaderSchemaOas30(ap, "integer");
+                        if (arrayType.equalsIgnoreCase("int") || arrayType.equalsIgnoreCase("integer")) {
+                            arrayType = "integer";
                         }
-
+                        setHeaderSchemaOas30(ap, arrayType, openApi);
                     }
                     // add example
                     if (header.getExample() != null) {
@@ -906,17 +972,17 @@ public class RestOpenApiReader {
         }
     }
 
-    private void setHeaderSchemaOas30(Header ap, String arrayType) {
-        Schema items = new Schema().type(arrayType);
-        ap.setSchema(items);
+    private void setHeaderSchemaOas30(Header ap, String arrayType, OpenAPI openApi) {
+        Schema<?> items = createHeaderTypedSchema(arrayType, openApi);
+        ap.setSchema(new ArraySchema().items(items));
     }
 
     private void setResponseHeader(
-            CamelContext camelContext, ApiResponse response, ResponseHeaderDefinition header,
+            CamelContext camelContext, OpenAPI openApi, ApiResponse response, ResponseHeaderDefinition header,
             String name, String format, String type) {
         Header ip = new Header();
         response.addHeaderObject(name, ip);
-        Schema schema = new Schema().type(type);
+        Schema schema = createHeaderTypedSchema(type, openApi);
         ip.setSchema(schema);
         if (format != null) {
             schema.setFormat(format);
@@ -934,6 +1000,41 @@ public class RestOpenApiReader {
         // add example
         if (header.getExample() != null) {
             ip.addExample("", new Example().value(getValue(camelContext, header.getExample())));
+        }
+    }
+
+    private Schema<?> createHeaderTypedSchema(String type, OpenAPI openApi) {
+        switch (type) {
+            case "integer":
+                return new IntegerSchema();
+            case "long":
+                return new IntegerSchema().format("int64");
+            case "float":
+                return new NumberSchema().format("float");
+            case "double":
+                return new NumberSchema().format("double");
+            case "boolean":
+                return new BooleanSchema();
+            default:
+                return new StringSchema();
+        }
+    }
+
+    private Schema<?> createTypedSchema(String dataType, OpenAPI openApi) {
+        if ("int".equals(dataType) || "integer".equals(dataType)) {
+            return new IntegerSchema();
+        } else if ("long".equals(dataType)) {
+            return new IntegerSchema().format("int64");
+        } else if ("float".equals(dataType)) {
+            return new NumberSchema().format("float");
+        } else if ("double".equals(dataType)) {
+            return new NumberSchema().format("double");
+        } else if ("boolean".equals(dataType)) {
+            return new BooleanSchema();
+        } else if ("file".equals(dataType)) {
+            return new FileSchema();
+        } else {
+            return new StringSchema();
         }
     }
 
@@ -982,8 +1083,7 @@ public class RestOpenApiReader {
             // No explicit schema reference so handle primitive types
             // special for byte arrays
             if (array && ("byte".equals(typeName) || "java.lang.Byte".equals(typeName))) {
-                // Note built-in ByteArraySchema sets type="string" !
-                prop = new Schema<byte[]>().type("number").format("byte");
+                prop = new ByteArraySchema();
                 array = false;
             } else if ("string".equalsIgnoreCase(typeName) || "java.lang.String".equals(typeName)) {
                 prop = new StringSchema();
@@ -996,7 +1096,7 @@ public class RestOpenApiReader {
             } else if ("double".equals(typeName) || "java.lang.Double".equals(typeName)) {
                 prop = new NumberSchema().format("double");
             } else if ("boolean".equals(typeName) || "java.lang.Boolean".equals(typeName)) {
-                prop = new NumberSchema().format("boolean");
+                prop = new BooleanSchema();
             } else if ("file".equals(typeName) || "java.io.File".equals(typeName)) {
                 prop = new FileSchema();
             } else {
@@ -1005,11 +1105,13 @@ public class RestOpenApiReader {
         }
 
         if (array) {
-            Schema<?> items = new Schema<>();
             if (ref != null) {
+                Schema<?> items = new Schema<>();
                 items.set$ref(OAS30_SCHEMA_DEFINITION_PREFIX + ref);
+                prop = new ArraySchema().items(items);
+            } else {
+                prop = new ArraySchema().items(prop);
             }
-            prop = new ArraySchema().items(items);
         } else if (prop == null) {
             prop = new Schema<>().$ref(OAS30_SCHEMA_DEFINITION_PREFIX + ref);
         }

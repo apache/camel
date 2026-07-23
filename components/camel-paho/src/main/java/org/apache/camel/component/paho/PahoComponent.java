@@ -29,6 +29,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
  * Component to integrate with the Eclipse Paho MQTT library.
  */
 @Component("paho")
+@Deprecated(since = "4.21")
 public class PahoComponent extends DefaultComponent {
 
     @Metadata

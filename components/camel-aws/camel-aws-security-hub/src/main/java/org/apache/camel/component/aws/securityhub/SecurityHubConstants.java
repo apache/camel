@@ -97,4 +97,8 @@ public interface SecurityHubConstants {
     @Metadata(label = "getFindingHistory",
               description = "The product ARN for the finding", javaType = "String")
     String PRODUCT_ARN = "CamelAwsSecurityHubProductArn";
+
+    @Metadata(label = "getFindingAggregator",
+              description = "The ARN of the finding aggregator to retrieve", javaType = "String")
+    String FINDING_AGGREGATOR_ARN = "CamelAwsSecurityHubFindingAggregatorArn";
 }

@@ -593,7 +593,7 @@ public interface SecurityHubEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SecurityHubHeaderNameBuilder INSTANCE = new SecurityHubHeaderNameBuilder();
+        public static final SecurityHubHeaderNameBuilder INSTANCE = new SecurityHubHeaderNameBuilder();
 
         /**
          * The operation we want to perform.
@@ -852,6 +852,19 @@ public interface SecurityHubEndpointBuilderFactory {
          */
         public String awsSecurityHubProductArn() {
             return "CamelAwsSecurityHubProductArn";
+        }
+        /**
+         * The ARN of the finding aggregator to retrieve.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: getFindingAggregator
+         * 
+         * @return the name of the header {@code
+         * AwsSecurityHubFindingAggregatorArn}.
+         */
+        public String awsSecurityHubFindingAggregatorArn() {
+            return "CamelAwsSecurityHubFindingAggregatorArn";
         }
     }
     static SecurityHubEndpointBuilder endpointBuilder(String componentName, String path) {

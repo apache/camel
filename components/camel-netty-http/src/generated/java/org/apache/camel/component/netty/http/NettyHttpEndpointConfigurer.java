@@ -57,6 +57,8 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "nettyHttpBinding": target.setNettyHttpBinding(property(camelContext, org.apache.camel.component.netty.http.NettyHttpBinding.class, value)); return true;
         case "nettysharedhttpserver":
         case "nettySharedHttpServer": target.setNettySharedHttpServer(property(camelContext, org.apache.camel.component.netty.http.NettySharedHttpServer.class, value)); return true;
+        case "oauthprofile":
+        case "oauthProfile": target.setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "okstatuscoderange":
         case "okStatusCodeRange": target.getConfiguration().setOkStatusCodeRange(property(camelContext, java.lang.String.class, value)); return true;
         case "securityconfiguration":
@@ -116,6 +118,8 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "nettyHttpBinding": return org.apache.camel.component.netty.http.NettyHttpBinding.class;
         case "nettysharedhttpserver":
         case "nettySharedHttpServer": return org.apache.camel.component.netty.http.NettySharedHttpServer.class;
+        case "oauthprofile":
+        case "oauthProfile": return java.lang.String.class;
         case "okstatuscoderange":
         case "okStatusCodeRange": return java.lang.String.class;
         case "securityconfiguration":
@@ -176,6 +180,8 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "nettyHttpBinding": return target.getNettyHttpBinding();
         case "nettysharedhttpserver":
         case "nettySharedHttpServer": return target.getNettySharedHttpServer();
+        case "oauthprofile":
+        case "oauthProfile": return target.getOauthProfile();
         case "okstatuscoderange":
         case "okStatusCodeRange": return target.getConfiguration().getOkStatusCodeRange();
         case "securityconfiguration":

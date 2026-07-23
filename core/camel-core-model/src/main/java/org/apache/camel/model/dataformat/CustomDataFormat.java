@@ -29,12 +29,14 @@ import org.apache.camel.spi.Metadata;
 /**
  * Delegate to a custom {@link org.apache.camel.spi.DataFormat} implementation via Camel registry.
  */
-@Metadata(label = "dataformat,transformation", title = "Custom")
+@Metadata(label = "dataformat,transformation", title = "Custom",
+          description = "Delegates to a custom DataFormat implementation looked up from the Camel registry by name")
 @XmlRootElement(name = "custom")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomDataFormat extends DataFormatDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(required = true, description = "Reference to the custom DataFormat to lookup from the Camel registry.")
     private String ref;
 
     public CustomDataFormat() {
@@ -59,16 +61,10 @@ public class CustomDataFormat extends DataFormatDefinition {
         return new CustomDataFormat(this);
     }
 
-    /**
-     * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup from the Camel registry.
-     */
     public String getRef() {
         return ref;
     }
 
-    /**
-     * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup from the Camel registry.
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }

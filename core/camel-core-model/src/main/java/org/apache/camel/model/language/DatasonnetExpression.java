@@ -28,14 +28,17 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use DataSonnet scripts for message transformations.
  */
-@Metadata(firstVersion = "3.7.0", label = "language,transformation", title = "DataSonnet")
+@Metadata(firstVersion = "3.7.0", label = "language,transformation", title = "DataSonnet",
+          description = "To use DataSonnet scripts for message transformations")
 @XmlRootElement(name = "datasonnet")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DatasonnetExpression extends SingleInputTypedExpressionDefinition {
 
     @XmlAttribute(name = "bodyMediaType")
+    @Metadata(description = "The media type of the message body, such as application/json.")
     private String bodyMediaType;
     @XmlAttribute(name = "outputMediaType")
+    @Metadata(description = "The media type to use for the output result.")
     private String outputMediaType;
 
     public DatasonnetExpression() {
@@ -75,9 +78,6 @@ public class DatasonnetExpression extends SingleInputTypedExpressionDefinition {
         return bodyMediaType;
     }
 
-    /**
-     * The String representation of the message's body MediaType
-     */
     public void setBodyMediaType(String bodyMediaType) {
         this.bodyMediaType = bodyMediaType;
     }
@@ -86,9 +86,6 @@ public class DatasonnetExpression extends SingleInputTypedExpressionDefinition {
         return outputMediaType;
     }
 
-    /**
-     * The String representation of the MediaType to output
-     */
     public void setOutputMediaType(String outputMediaType) {
         this.outputMediaType = outputMediaType;
     }

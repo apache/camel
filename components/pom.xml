@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -148,7 +148,6 @@
         <module>camel-fory</module>
         <module>camel-geocoder</module>
         <module>camel-git</module>
-        <module>camel-github</module>
         <module>camel-github2</module>
         <module>camel-google</module>
         <module>camel-graphql</module>
@@ -292,6 +291,7 @@
         <module>camel-schematron</module>
         <module>camel-servicenow</module>
         <module>camel-servlet</module>
+        <module>camel-shell</module>
         <module>camel-shiro</module>
         <module>camel-sjms2</module>
         <module>camel-sjms</module>

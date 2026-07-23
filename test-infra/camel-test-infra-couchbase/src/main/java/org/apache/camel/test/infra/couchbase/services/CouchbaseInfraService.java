@@ -63,4 +63,8 @@ public interface CouchbaseInfraService extends InfrastructureService {
     default String connectionBase() {
         return String.format("couchbase:%s://%s:%d", protocol(), hostname(), port());
     }
+
+    default String uiUrl() {
+        return String.format("http://%s:%d", hostname(), port());
+    }
 }

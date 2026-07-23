@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLEngine;
 
@@ -94,16 +95,16 @@ final class LumberjackUtil {
             // send 5 frame windows, without pausing
             windows.stream().forEach(window -> channel.writeAndFlush(readSample(String.format("io/window%s.bin", window))));
             if (waitForResult) {
-                Awaitility.await().until(() -> windows.size() == responses.size());
+                Awaitility.await().atMost(30, TimeUnit.SECONDS).until(() -> windows.size() == responses.size());
             }
 
-            channel.close();
+            channel.close().sync();
 
             synchronized (responses) {
                 return responses;
             }
         } finally {
-            eventLoopGroup.shutdownGracefully();
+            eventLoopGroup.shutdownGracefully().syncUninterruptibly();
         }
     }
 

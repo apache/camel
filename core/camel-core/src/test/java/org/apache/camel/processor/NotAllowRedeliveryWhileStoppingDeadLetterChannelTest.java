@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class NotAllowRedeliveryWhileStoppingDeadLetterChannelTest extends ContextTestSupport {
@@ -38,9 +40,12 @@ public class NotAllowRedeliveryWhileStoppingDeadLetterChannelTest extends Contex
 
         template.sendBody("seda:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
-        Thread.sleep(500);
+        // wait for the error handler to start the redelivery cycle
+        await().pollDelay(500, TimeUnit.MILLISECONDS)
+                .atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(context.getInflightRepository().size() > 0));
 
         context.getRouteController().stopRoute("foo");
 

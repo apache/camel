@@ -22,6 +22,8 @@ import org.apache.camel.StaticService;
 
 /**
  * Manages {@link ExchangeFactory}.
+ *
+ * @since 3.9
  */
 public interface ExchangeFactoryManager extends StaticService {
 

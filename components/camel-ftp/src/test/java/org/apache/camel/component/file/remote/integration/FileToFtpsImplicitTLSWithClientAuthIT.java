@@ -35,7 +35,7 @@ public class FileToFtpsImplicitTLSWithClientAuthIT extends FtpsServerImplicitTLS
                + "&ftpClient.keyStore.algorithm=SunX509&ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password&delete=true";
     }
 
-    @Disabled("CAMEL-16784:Disable testFromFileToFtp tests")
+    @Disabled("Embedded Apache FtpServer does not support TLS 1.3")
     @Test
     public void testFromFileToFtp() throws Exception {
 

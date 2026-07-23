@@ -34,6 +34,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StartupStep;
+import org.apache.camel.model.A2ASubTaskDefinition;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.AggregationStrategyAwareDefinition;
 import org.apache.camel.model.BeanDefinition;
@@ -123,8 +124,11 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -202,7 +206,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     public static ProcessorReifier<? extends ProcessorDefinition<?>> coreReifier(
             Route route, ProcessorDefinition<?> definition) {
 
-        if (definition instanceof AggregateDefinition) {
+        if (definition instanceof A2ASubTaskDefinition) {
+            return new A2ASubTaskReifier(route, definition);
+        } else if (definition instanceof AggregateDefinition) {
             return new AggregateReifier(route, definition);
         } else if (definition instanceof BeanDefinition) {
             return new BeanReifier(route, definition);
@@ -781,6 +787,14 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             if (processor instanceof RouteIdAware routeIdAware) {
                 routeIdAware.setRouteId(route.getRouteId());
             }
+            if (processor instanceof StepIdAware stepIdAware) {
+                StepDefinition step = ProcessorDefinitionHelper.findFirstParentOfType(
+                        StepDefinition.class, output, true);
+                if (step != null) {
+                    stepIdAware.setStepId(step.idOrCreate(
+                            camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)));
+                }
+            }
 
             if (output instanceof Channel && processor == null) {
                 continue;
@@ -858,6 +872,14 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             }
             if (processor instanceof RouteIdAware routeIdAware) {
                 routeIdAware.setRouteId(route.getRouteId());
+            }
+            if (processor instanceof StepIdAware stepIdAware) {
+                StepDefinition step = ProcessorDefinitionHelper.findFirstParentOfType(
+                        StepDefinition.class, definition, true);
+                if (step != null) {
+                    stepIdAware.setStepId(step.idOrCreate(
+                            camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)));
+                }
             }
 
             if (processor == null) {
@@ -947,6 +969,20 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
         CamelContextAware.trySetCamelContext(strategy, camelContext);
         return strategy;
+    }
+
+    /**
+     * Checks if a URI is an optional property placeholder that resolved to null/empty, meaning the endpoint is not
+     * needed and the processor should be skipped.
+     */
+    protected static boolean isOptionalUriAndNotResolved(CamelContext camelContext, String rawUri) {
+        if (rawUri == null || !rawUri.contains(PropertiesComponent.PREFIX_OPTIONAL_TOKEN)) {
+            return false;
+        }
+        String resolved = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, rawUri);
+        // if resolved is null/empty, or still contains unresolved optional placeholders, then skip
+        return resolved == null || resolved.isEmpty()
+                || resolved.contains(PropertiesComponent.PREFIX_OPTIONAL_TOKEN);
     }
 
     /**

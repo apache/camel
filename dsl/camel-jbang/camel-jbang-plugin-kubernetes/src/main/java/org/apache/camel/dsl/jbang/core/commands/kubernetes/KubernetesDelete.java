@@ -43,6 +43,10 @@ public class KubernetesDelete extends KubernetesBaseCommand {
     }
 
     public Integer doCall() throws Exception {
+        if (name == null || name.isBlank()) {
+            printer().printErr("Missing required --name option or integration name");
+            return 1;
+        }
         var client = getKubernetesClient();
         namespace = Optional.ofNullable(namespace).orElse(client.getNamespace());
         namespace = Optional.ofNullable(namespace).orElse("default");

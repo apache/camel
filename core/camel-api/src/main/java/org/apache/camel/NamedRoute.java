@@ -17,9 +17,22 @@
 package org.apache.camel;
 
 import org.apache.camel.spi.Resource;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Represents a node in the {@link org.apache.camel.model routes} which is identified as a route.
+ * Represents a route-level node in the Camel route model, identified by a route id.
+ * <p/>
+ * While {@link NamedNode} identifies any model node (EIP step, route, etc.) by a generic id, {@code NamedRoute} is more
+ * specific: it marks a top-level route definition. Implementations expose the route id, an optional description, and
+ * the source {@link org.apache.camel.spi.Resource} from which the route was loaded (e.g., a YAML file or an in-memory
+ * string).
+ * <p/>
+ * This interface is used internally by the framework and by management / tooling layers to enumerate routes and map
+ * them back to their definition source.
+ *
+ * @see   NamedNode
+ * @see   Route
+ * @since 3.0
  */
 public interface NamedRoute {
 
@@ -36,6 +49,7 @@ public interface NamedRoute {
     /**
      * Gets the node prefix id.
      */
+    @Nullable
     String getNodePrefixId();
 
     /**

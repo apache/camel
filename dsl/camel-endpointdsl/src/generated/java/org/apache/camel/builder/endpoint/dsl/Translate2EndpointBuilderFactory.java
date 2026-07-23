@@ -649,7 +649,7 @@ public interface Translate2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Translate2HeaderNameBuilder INSTANCE = new Translate2HeaderNameBuilder();
+        public static final Translate2HeaderNameBuilder INSTANCE = new Translate2HeaderNameBuilder();
 
         /**
          * The text source language.

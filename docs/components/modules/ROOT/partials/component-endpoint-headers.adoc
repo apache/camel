@@ -10,7 +10,7 @@ include::jsonpathcount$example$json/{shortname}.json[queries='headercount=nodes$
 ifeval::[{headercount} != 0]
 == Message Headers
 
-The {doctitle} component supports {headercount} message header(s), which is/are listed below:
+The {doctitle} component supports the following message header(s), which is/are listed below:
 
 [{tablespec}]
 |===

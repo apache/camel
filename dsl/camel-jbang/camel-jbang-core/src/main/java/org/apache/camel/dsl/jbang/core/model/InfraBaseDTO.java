@@ -26,15 +26,18 @@ public class InfraBaseDTO {
     private String aliasImplementation;
     private String description;
     private Object serviceData;
+    private boolean uiSupported;
 
     public InfraBaseDTO() {
     }
 
-    public InfraBaseDTO(String alias, String aliasImplementation, String description, Object serviceData) {
+    public InfraBaseDTO(String alias, String aliasImplementation, String description, Object serviceData,
+                        boolean uiSupported) {
         this.alias = alias;
         this.aliasImplementation = aliasImplementation;
         this.description = description;
         this.serviceData = serviceData;
+        this.uiSupported = uiSupported;
     }
 
     public String getAlias() {
@@ -69,6 +72,14 @@ public class InfraBaseDTO {
         this.serviceData = serviceData;
     }
 
+    public boolean isUiSupported() {
+        return uiSupported;
+    }
+
+    public void setUiSupported(boolean uiSupported) {
+        this.uiSupported = uiSupported;
+    }
+
     public Map<String, Object> toMap() {
         JsonObject jo = new JsonObject();
         jo.put("alias", alias);
@@ -81,6 +92,7 @@ public class InfraBaseDTO {
         if (serviceData != null) {
             jo.put("serviceData", serviceData);
         }
+        jo.put("uiSupported", uiSupported);
         return jo;
     }
 }

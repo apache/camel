@@ -17,6 +17,7 @@
 package org.apache.camel.component.openai;
 
 import java.util.List;
+import java.util.Map;
 
 import com.openai.core.JsonValue;
 import com.openai.models.FunctionDefinition;
@@ -48,15 +49,13 @@ final class McpToolConverter {
 
         if (tool.inputSchema() != null) {
             FunctionParameters.Builder paramsBuilder = FunctionParameters.builder();
-            paramsBuilder.putAdditionalProperty("type",
-                    JsonValue.from(tool.inputSchema().type() != null ? tool.inputSchema().type() : "object"));
+            Map<String, Object> inputSchema = tool.inputSchema();
 
-            if (tool.inputSchema().properties() != null) {
-                paramsBuilder.putAdditionalProperty("properties", JsonValue.from(tool.inputSchema().properties()));
+            if (!inputSchema.containsKey("type")) {
+                paramsBuilder.putAdditionalProperty("type", JsonValue.from("object"));
             }
-
-            if (tool.inputSchema().required() != null) {
-                paramsBuilder.putAdditionalProperty("required", JsonValue.from(tool.inputSchema().required()));
+            for (Map.Entry<String, Object> entry : inputSchema.entrySet()) {
+                paramsBuilder.putAdditionalProperty(entry.getKey(), JsonValue.from(entry.getValue()));
             }
 
             funcBuilder.parameters(paramsBuilder.build());

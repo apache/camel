@@ -1,0 +1,41 @@
+= Running Camel JBang in a Container
+
+The Camel JBang container provides a convenient way to run Camel integrations without installing Java, Maven, or Camel JBang locally. The official Camel JBang container image is equipped with the `camel` CLI and it is the default entrypoint.
+
+== Verify the version
+
+The simplest command you can check is the `camel version` which can be run on the container:
+
+[source,bash]
+----
+$ docker run apache/camel-jbang:4.22.0 version
+
+Camel CLI version: 4.22.0
+----
+
+== Running a route
+
+You can mount a Camel route file from your host machine into the container and run the resulting Camel DSL directly. For example, given a route definition in `test.yaml` (ie, `camel init test.yaml`):
+
+[source,bash]
+----
+$ docker run -w /home/ubuntu -v $PWD/test.yaml:/tmp/test.yaml apache/camel-jbang:4.22.0 run /tmp/test.yaml --runtime quarkus
+
+...
+2026-06-15 12:21:13,597 INFO  [org.apache.camel.quarkus.core.CamelBootstrapRecorder] (main) Apache Camel Quarkus 3.31.0 is starting
+...
+----
+
+You can use any other parameter available for the run and customize your Camel application.
+
+== Any other `camel` command
+
+The same logic used in the previous example with the `run` command can be also used with any other available command for `camel` CLI.
+
+== Container Image Availability
+
+The Camel JBang container image is published with a number of tags that provide different Camel, Java runtime and platform architecture combinations. This allows you to select the image that best matches your requirements and deployment environment.
+
+Available image variants, supported architectures, and Java runtime versions may evolve over time. Before choosing an image, verify the available tags on https://hub.docker.com/r/apache/camel-jbang/tags[Apache Camel Jbang Docker Hub].
+
+Docker will automatically pull the appropriate image variant for your platform when a multi-architecture image is available. Refer to the Docker Hub tags page for the most up-to-date information about supported platforms and image variants.

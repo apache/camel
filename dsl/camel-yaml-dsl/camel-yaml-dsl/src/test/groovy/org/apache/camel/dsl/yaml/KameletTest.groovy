@@ -21,6 +21,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MySetBody
 import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
+import org.apache.camel.model.KameletDefinition
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy
 import org.apache.camel.spi.Resource
 
@@ -291,6 +292,40 @@ class KameletTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "kamelet (definition with local bean via bean ref)"() {
+        setup:
+            loadRoutes '''
+                - routeTemplate:
+                    id: "myTemplate"
+                    beans:
+                      - name: "myCounter"
+                        type: java.util.concurrent.atomic.AtomicInteger
+                    from:
+                      uri: "kamelet:source"
+                      steps:
+                        - bean:
+                            ref: "{{myCounter}}"
+                            method: "getAndIncrement"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "kamelet:myTemplate"
+                      - to: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived '0'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
     def "kamelet (definition with default parameters)"() {
         setup:
             loadRoutes """
@@ -355,5 +390,74 @@ class KameletTest extends YamlTestSupport {
             }
         then:
             MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "kamelet (properties not url encoded)"() {
+        setup:
+            addTemplate('setPayloadWithType') {
+                from('kamelet:source')
+                    .setBody().simple('{{contentType}}')
+                    .to("kamelet:sink")
+            }
+
+            loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - kamelet:
+                          name: "setPayloadWithType"
+                          parameters:
+                            contentType: "application/json"
+                      - to: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'application/json'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "kamelet (note property)"() {
+        setup:
+            addTemplate('setPayload') {
+                from('kamelet:source')
+                    .setBody().simple('${body}: {{payload}}')
+            }
+
+            loadRoutesNoValidate '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - kamelet:
+                          name: "setPayload"
+                          description: "calls setPayload template"
+                          note: "a developer note"
+                          parameters:
+                            payload: 1
+                      - to: "mock:kamelet"
+            '''
+
+            withMock('mock:kamelet') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'a: 1'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('a').send()
+            }
+
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+
+            with(context.routeDefinitions[0].outputs[0], KameletDefinition) {
+                description == 'calls setPayload template'
+                note == 'a developer note'
+            }
     }
 }

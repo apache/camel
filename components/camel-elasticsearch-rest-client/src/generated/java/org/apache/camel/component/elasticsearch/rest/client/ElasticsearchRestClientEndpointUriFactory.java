@@ -21,9 +21,10 @@ public class ElasticsearchRestClientEndpointUriFactory extends org.apache.camel.
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(14);
+        Set<String> props = new HashSet<>(15);
         props.add("certificatePath");
         props.add("clusterName");
         props.add("connectionTimeout");
@@ -37,12 +38,14 @@ public class ElasticsearchRestClientEndpointUriFactory extends org.apache.camel.
         props.add("sniffAfterFailureDelay");
         props.add("snifferInterval");
         props.add("socketTimeout");
+        props.add("sslContextParameters");
         props.add("user");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");
         secretProps.add("user");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 
@@ -71,6 +74,11 @@ public class ElasticsearchRestClientEndpointUriFactory extends org.apache.camel.
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> endpointIdentityPropertyNames() {
+        return ENDPOINT_IDENTITY_PROPERTY_NAMES;
     }
 
     @Override

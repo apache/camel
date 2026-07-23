@@ -51,7 +51,8 @@ import static org.apache.camel.component.langchain4j.tools.LangChain4jTools.SCHE
 @UriEndpoint(firstVersion = "4.8.0", scheme = SCHEME,
              title = "LangChain4j Tools",
              syntax = "langchain4j-tools:toolId",
-             category = { Category.AI })
+             category = { Category.AI },
+             headersClass = LangChain4jToolsHeaders.class)
 public class LangChain4jToolsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(LangChain4jToolsEndpoint.class);
@@ -92,6 +93,14 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
     @UriParam(description = "Whether the tool is automatically exposed to the LLM. When false, the tool is added to a searchable list and can be discovered via the tool-search-tool",
               defaultValue = "true")
     private boolean exposed = true;
+
+    @Metadata(label = "producer")
+    @UriParam(description = "Maximum number of tool-calling round trips (iterations) allowed before stopping."
+                            + " This prevents infinite loops when the LLM keeps requesting tool calls indefinitely."
+                            + " Each round trip consists of one LLM call and the execution of all tools requested in that call."
+                            + " Set to 0 for unlimited (not recommended).",
+              defaultValue = "10")
+    private int maxToolCallingRoundTrips = 10;
 
     // Track the tool specification created by this endpoint for proper cleanup
     private CamelToolSpecification camelToolSpecification;
@@ -275,6 +284,24 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
 
     public void setExposed(boolean exposed) {
         this.exposed = exposed;
+    }
+
+    /**
+     * Maximum number of tool-calling round trips allowed
+     *
+     * @return the maximum number of round trips
+     */
+    public int getMaxToolCallingRoundTrips() {
+        return maxToolCallingRoundTrips;
+    }
+
+    public void setMaxToolCallingRoundTrips(int maxToolCallingRoundTrips) {
+        if (maxToolCallingRoundTrips < 0) {
+            throw new IllegalArgumentException(
+                    "maxToolCallingRoundTrips must be >= 0 (0 means unlimited, default is 10), got: "
+                                               + maxToolCallingRoundTrips);
+        }
+        this.maxToolCallingRoundTrips = maxToolCallingRoundTrips;
     }
 
     @Override

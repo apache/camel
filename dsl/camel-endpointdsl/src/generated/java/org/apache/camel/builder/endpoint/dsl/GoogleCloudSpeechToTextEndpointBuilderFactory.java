@@ -306,7 +306,7 @@ public interface GoogleCloudSpeechToTextEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GoogleCloudSpeechToTextHeaderNameBuilder INSTANCE = new GoogleCloudSpeechToTextHeaderNameBuilder();
+        public static final GoogleCloudSpeechToTextHeaderNameBuilder INSTANCE = new GoogleCloudSpeechToTextHeaderNameBuilder();
 
         /**
          * The operation to perform.
@@ -320,7 +320,7 @@ public interface GoogleCloudSpeechToTextEndpointBuilderFactory {
          * GoogleCloudSpeechToTextOperation}.
          */
         public String googleCloudSpeechToTextOperation() {
-            return "GoogleCloudSpeechToTextOperation";
+            return "CamelGoogleCloudSpeechToTextOperation";
         }
         /**
          * The response object resulting from the Google Cloud Speech-to-Text
@@ -335,7 +335,7 @@ public interface GoogleCloudSpeechToTextEndpointBuilderFactory {
          * GoogleCloudSpeechToTextResponseObject}.
          */
         public String googleCloudSpeechToTextResponseObject() {
-            return "GoogleCloudSpeechToTextResponseObject";
+            return "CamelGoogleCloudSpeechToTextResponseObject";
         }
     }
     static GoogleCloudSpeechToTextEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -2813,7 +2813,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Kinesis2HeaderNameBuilder INSTANCE = new Kinesis2HeaderNameBuilder();
+        public static final Kinesis2HeaderNameBuilder INSTANCE = new Kinesis2HeaderNameBuilder();
 
         /**
          * The sequence number of the record, as defined in
@@ -2888,6 +2888,22 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         public String awsKinesisShardId() {
             return "CamelAwsKinesisShardId";
+        }
+        /**
+         * A list of partition keys for batch operations. When set, each record
+         * in the batch is assigned the partition key at the corresponding
+         * index, allowing records to be routed to different shards. If not set,
+         * the single CamelAwsKinesisPartitionKey header is used for all
+         * records.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsKinesisPartitionKeys}.
+         */
+        public String awsKinesisPartitionKeys() {
+            return "CamelAwsKinesisPartitionKeys";
         }
         /**
          * The number of records that failed in a batch put operation.

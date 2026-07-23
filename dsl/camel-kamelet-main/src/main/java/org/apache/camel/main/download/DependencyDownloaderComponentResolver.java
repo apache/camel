@@ -151,6 +151,12 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
             return true;
         }
 
+        // stub only remote components (resolved via catalog)
+        if ("component:remote".equals(stubPattern)) {
+            ComponentModel model = catalog.componentModel(name);
+            return model == null || !model.isRemote();
+        }
+
         boolean stubbed = false;
         for (String n : stubPattern.split(",")) {
             if (n.startsWith("component:")) {

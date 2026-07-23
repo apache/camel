@@ -36,7 +36,6 @@ import org.apache.camel.component.djl.model.nlp.CustomQuestionAnswerPredictor;
 import org.apache.camel.component.djl.model.nlp.CustomWordEmbeddingPredictor;
 import org.apache.camel.component.djl.model.nlp.ZooQuestionAnswerPredictor;
 import org.apache.camel.component.djl.model.nlp.ZooSentimentAnalysisPredictor;
-import org.apache.camel.component.djl.model.nlp.ZooWordEmbeddingPredictor;
 import org.apache.camel.component.djl.model.tabular.CustomTabularPredictor;
 import org.apache.camel.component.djl.model.timeseries.CustomForecastingPredictor;
 import org.apache.camel.component.djl.model.timeseries.ZooForecastingPredictor;
@@ -83,8 +82,7 @@ class ModelPredictorProducerTest {
         assertInstanceOf(ZooSentimentAnalysisPredictor.class,
                 getZooPredictor(zooEndpoint("nlp/sentiment_analysis", "ai.djl.pytorch:distilbert:0.0.1")));
         // No builtin zoo model available for "nlp/token_classification"
-        assertInstanceOf(ZooWordEmbeddingPredictor.class,
-                getZooPredictor(zooEndpoint("nlp/word_embedding", "ai.djl.mxnet:glove:0.0.2")));
+        // No builtin zoo model available for "nlp/word_embedding"
         // No builtin zoo model available for "nlp/text_generation"
         // No builtin zoo model available for "nlp/machine_translation"
         // No builtin zoo model available for "nlp/multiple_choice"

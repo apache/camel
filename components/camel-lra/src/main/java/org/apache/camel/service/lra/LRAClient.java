@@ -47,7 +47,7 @@ public class LRAClient implements Closeable {
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String TEXT_PLAIN_CONTENT = "text/plain";
     private final LRASagaService sagaService;
-    private final HttpClient client;
+    private final CloseableHttpClient client;
     private final String lraUrl;
 
     private static final Logger LOG = LoggerFactory.getLogger(LRAClient.class);
@@ -62,7 +62,7 @@ public class LRAClient implements Closeable {
         }
 
         this.sagaService = sagaService;
-        this.client = client;
+        this.client = new CloseableHttpClient(client);
 
         lraUrl = new LRAUrlBuilder()
                 .host(sagaService.getCoordinatorUrl())
@@ -125,7 +125,8 @@ public class LRAClient implements Closeable {
 
             String lraEndpoint = lra.toString();
             if (step.getTimeoutInMilliseconds().isPresent()) {
-                lraEndpoint = lraEndpoint + "?" + HEADER_TIME_LIMIT + "=" + step.getTimeoutInMilliseconds().get();
+                String separator = lraEndpoint.contains("?") ? "&" : "?";
+                lraEndpoint = lraEndpoint + separator + HEADER_TIME_LIMIT + "=" + step.getTimeoutInMilliseconds().get();
             }
             HttpRequest request = prepareRequest(URI.create(lraEndpoint), exchange)
                     .setHeader(HEADER_LINK, link.toString())
@@ -138,8 +139,10 @@ public class LRAClient implements Closeable {
         }, sagaService.getExecutorService())
                 .thenCompose(Function.identity())
                 .thenApply(response -> {
-                    if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-                        throw new RuntimeCamelException("Cannot join LRA");
+                    int status = response.statusCode();
+                    if (status >= HttpURLConnection.HTTP_BAD_REQUEST) {
+                        throw new RuntimeCamelException(
+                                "Cannot join LRA " + lra + " (HTTP " + status + "): " + response.body());
                     }
 
                     return null;
@@ -155,8 +158,10 @@ public class LRAClient implements Closeable {
         CompletableFuture<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         return future.thenApply(response -> {
-            if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-                throw new RuntimeCamelException("Cannot complete LRA");
+            int status = response.statusCode();
+            if (status >= HttpURLConnection.HTTP_BAD_REQUEST) {
+                throw new RuntimeCamelException(
+                        "Cannot complete LRA " + lra + " (HTTP " + status + "): " + response.body());
             }
 
             return null;
@@ -172,8 +177,10 @@ public class LRAClient implements Closeable {
         CompletableFuture<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         return future.thenApply(response -> {
-            if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-                throw new RuntimeCamelException("Cannot compensate LRA");
+            int status = response.statusCode();
+            if (status >= HttpURLConnection.HTTP_BAD_REQUEST) {
+                throw new RuntimeCamelException(
+                        "Cannot compensate LRA " + lra + " (HTTP " + status + "): " + response.body());
             }
 
             return null;
@@ -201,5 +208,36 @@ public class LRAClient implements Closeable {
 
     @Override
     public void close() throws IOException {
+        client.close();
+    }
+
+    /**
+     * Wrapper that makes {@link HttpClient} usable in try-with-resources. On Java 21+ HttpClient implements
+     * AutoCloseable natively; the instanceof check future-proofs us for when the minimum JDK is raised.
+     */
+    private static final class CloseableHttpClient implements Closeable {
+        private final HttpClient httpClient;
+
+        CloseableHttpClient(HttpClient httpClient) {
+            this.httpClient = httpClient;
+        }
+
+        <T> CompletableFuture<HttpResponse<T>> sendAsync(
+                HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler) {
+            return httpClient.sendAsync(request, responseBodyHandler);
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (httpClient instanceof AutoCloseable closeable) {
+                try {
+                    closeable.close();
+                } catch (IOException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new IOException(e);
+                }
+            }
+        }
     }
 }

@@ -31,7 +31,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARED_KEY_CREDENTIAL;
+import static org.apache.camel.component.azure.common.CredentialType.SHARED_KEY_CREDENTIAL;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Base extends CamelTestSupport {
@@ -74,7 +74,7 @@ public class Base extends CamelTestSupport {
 
     @BeforeAll
     public void initProperties() {
-        containerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        containerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         configuration = new BlobConfiguration();
         configuration.setCredentialType(SHARED_KEY_CREDENTIAL);

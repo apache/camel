@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
@@ -71,12 +72,14 @@ public class DataLakeComponent extends HealthCheckComponent {
                     configuration.setCredentialType(CredentialType.CLIENT_SECRET);
                 }
             } else {
-                if (configuration.getSharedKeyCredential() != null) {
-                    configuration.setCredentialType(CredentialType.SHARED_KEY_CREDENTIAL);
-                } else if (configuration.getSasCredential() != null) {
-                    configuration.setCredentialType(CredentialType.AZURE_SAS);
-                } else if (configuration.getClientSecretCredential() != null) {
-                    configuration.setCredentialType(CredentialType.CLIENT_SECRET);
+                if (configuration.getCredentialType() == null) {
+                    if (configuration.getSharedKeyCredential() != null) {
+                        configuration.setCredentialType(CredentialType.SHARED_KEY_CREDENTIAL);
+                    } else if (configuration.getSasCredential() != null) {
+                        configuration.setCredentialType(CredentialType.AZURE_SAS);
+                    } else if (configuration.getClientSecretCredential() != null) {
+                        configuration.setCredentialType(CredentialType.CLIENT_SECRET);
+                    }
                 }
             }
         }

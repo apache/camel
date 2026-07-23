@@ -1,0 +1,4 @@
+from("direct:start")
+    .routeId("myRoute")
+    .wireTap("mock:tap")
+    .to("mock:result");

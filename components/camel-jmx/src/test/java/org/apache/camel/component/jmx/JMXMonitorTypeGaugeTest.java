@@ -36,9 +36,7 @@ public class JMXMonitorTypeGaugeTest extends SimpleBeanFixture {
 
         getMockFixture().getMockEndpoint().setExpectedMessageCount(1);
         simpleBean.setMonitorNumber(90);
-        Thread.sleep(600);
         simpleBean.setMonitorNumber(60);
-        Thread.sleep(600);
         simpleBean.setMonitorNumber(40);
         getMockFixture().waitForMessages();
         getMockFixture().assertMessageReceived(new File("src/test/resources/monitor-consumer/gaugeNotification-low.xml"));

@@ -26,6 +26,7 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +37,13 @@ public class KeyStoreParameters extends JsseParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyStoreParameters.class);
 
-    protected String type;
-    protected String password;
-    protected String provider;
-    protected KeyStore keyStore;
-    protected String resource;
+    protected @Nullable String type;
+    protected @Nullable String password;
+    protected @Nullable String provider;
+    protected @Nullable KeyStore keyStore;
+    protected @Nullable String resource;
 
-    public String getType() {
+    public @Nullable String getType() {
         return type;
     }
 
@@ -51,22 +52,22 @@ public class KeyStoreParameters extends JsseParameters {
      *
      * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
      */
-    public void setType(String value) {
+    public void setType(@Nullable String value) {
         this.type = value;
     }
 
-    public String getPassword() {
+    public @Nullable String getPassword() {
         return password;
     }
 
     /**
      * The password for reading/opening/verifying the key store.
      */
-    public void setPassword(String value) {
+    public void setPassword(@Nullable String value) {
         this.password = value;
     }
 
-    public String getProvider() {
+    public @Nullable String getProvider() {
         return provider;
     }
 
@@ -75,11 +76,11 @@ public class KeyStoreParameters extends JsseParameters {
      *
      * @see Security#getProviders()
      */
-    public void setProvider(String value) {
+    public void setProvider(@Nullable String value) {
         this.provider = value;
     }
 
-    public String getResource() {
+    public @Nullable String getResource() {
         return resource;
     }
 
@@ -92,14 +93,14 @@ public class KeyStoreParameters extends JsseParameters {
      * (to load the resource using HTTP) ref:nameOfBean (to lookup an existing KeyStore instance from the registry, for
      * example for testing and development).
      */
-    public void setResource(String value) {
+    public void setResource(@Nullable String value) {
         this.resource = value;
     }
 
     /**
      * To use an existing KeyStore instead of loading. You must also set password so this keystore can be used.
      */
-    public void setKeyStore(KeyStore keyStore) {
+    public void setKeyStore(@Nullable KeyStore keyStore) {
         this.keyStore = keyStore;
     }
 
@@ -124,7 +125,9 @@ public class KeyStoreParameters extends JsseParameters {
 
         if (this.keyStore == null && this.resource != null && this.resource.startsWith("ref:")) {
             String ref = this.resource.substring(4);
-            this.keyStore = getCamelContext().getRegistry().lookupByNameAndType(ref, KeyStore.class);
+            if (getCamelContext() != null) {
+                this.keyStore = getCamelContext().getRegistry().lookupByNameAndType(ref, KeyStore.class);
+            }
         }
         if (keyStore != null) {
             if (LOG.isDebugEnabled()) {
@@ -145,7 +148,8 @@ public class KeyStoreParameters extends JsseParameters {
 
         char[] ksPassword = null;
         if (this.password != null) {
-            ksPassword = this.parsePropertyValue(this.password).toCharArray();
+            String resolvedPassword = this.parsePropertyValue(this.password);
+            ksPassword = resolvedPassword != null ? resolvedPassword.toCharArray() : this.password.toCharArray();
         }
 
         KeyStore ks;

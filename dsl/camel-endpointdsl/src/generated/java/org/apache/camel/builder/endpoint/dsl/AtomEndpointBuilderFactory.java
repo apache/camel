@@ -1016,7 +1016,7 @@ public interface AtomEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final AtomHeaderNameBuilder INSTANCE = new AtomHeaderNameBuilder();
+        public static final AtomHeaderNameBuilder INSTANCE = new AtomHeaderNameBuilder();
 
         /**
          * When consuming the List object is set to this header.

@@ -42,6 +42,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -87,9 +88,9 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     //Authentication configuration
     @UriParam(label = "security")
     private String authSource;
-    @UriParam
+    @UriParam(endpointIdentity = true)
     private String database;
-    @UriParam
+    @UriParam(endpointIdentity = true)
     private String collection;
     @UriParam
     private String collectionIndex;
@@ -195,6 +196,10 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     @UriParam(label = "advanced")
     private boolean loadBalanced;
     //additional properties
+    @UriParam(label = "consumer")
+    private StateRepository<String, String> changeStreamTokenRepository;
+    @UriParam(label = "consumer")
+    private String changeStreamToken;
     @UriParam(description = "Set the whole Connection String/Uri for mongodb endpoint.",
               label = "common")
     private String connectionUriString;
@@ -1177,6 +1182,28 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
 
     public boolean isLoadBalanced() {
         return loadBalanced;
+    }
+
+    /**
+     * The repository to store change stream tokens.
+     */
+    public void setChangeStreamTokenRepository(StateRepository<String, String> changeStreamTokenRepository) {
+        this.changeStreamTokenRepository = changeStreamTokenRepository;
+    }
+
+    public StateRepository<String, String> getChangeStreamTokenRepository() {
+        return changeStreamTokenRepository;
+    }
+
+    /**
+     * A change stream token as a serialized BSON document JSON string.
+     */
+    public void setChangeStreamToken(String changeStreamToken) {
+        this.changeStreamToken = changeStreamToken;
+    }
+
+    public String getChangeStreamToken() {
+        return changeStreamToken;
     }
 
     /**

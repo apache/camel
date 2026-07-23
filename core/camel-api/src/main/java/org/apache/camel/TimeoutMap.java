@@ -16,8 +16,19 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
- * Represents a map of values which timeout after a period of inactivity.
+ * A map whose entries expire automatically after a configurable period of inactivity.
+ * <p/>
+ * Entries are added via {@link #put(Object, Object, long)} with an individual timeout in milliseconds. A background
+ * {@link Service} thread periodically scans the map and evicts entries whose timeout has elapsed, notifying any
+ * registered {@link Listener}. This is used internally by components that need session or correlation state with
+ * automatic cleanup, such as the aggregator's in-memory repository and the idempotent consumer.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ * @see       Service
  */
 public interface TimeoutMap<K, V> extends Service {
 
@@ -27,6 +38,7 @@ public interface TimeoutMap<K, V> extends Service {
      * @param  key the key of the value to search for
      * @return     the value for the given key or <tt>null</tt> if it is not present (or has timed out)
      */
+    @Nullable
     V get(K key);
 
     /**
@@ -45,6 +57,7 @@ public interface TimeoutMap<K, V> extends Service {
      * @return               the previous value associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping
      *                       for <tt>key</tt>.
      */
+    @Nullable
     V put(K key, V value, long timeoutMillis);
 
     /**
@@ -57,6 +70,7 @@ public interface TimeoutMap<K, V> extends Service {
      * @return               the value associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping for
      *                       <tt>key</tt>.
      */
+    @Nullable
     V putIfAbsent(K key, V value, long timeoutMillis);
 
     /**
@@ -65,6 +79,7 @@ public interface TimeoutMap<K, V> extends Service {
      * @param  key key for the object to remove
      * @return     the value for the given key or <tt>null</tt> if it is not present (or has timed out)
      */
+    @Nullable
     V remove(K key);
 
     /**

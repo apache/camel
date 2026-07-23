@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.camel.Route;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -38,7 +39,11 @@ import org.apache.camel.util.json.Jsoner;
 @DevConsole(name = "route-controller", description = "Route controller information")
 public class RouteControllerConsole extends AbstractDevConsole {
 
+    @Metadata(label = "query", description = "Whether to include stack traces", javaType = "java.lang.Boolean",
+              defaultValue = "true")
     public static final String STACKTRACE = "stacktrace";
+    @Metadata(label = "query", description = "Whether to include error details", javaType = "java.lang.Boolean",
+              defaultValue = "true")
     public static final String ERROR = "error";
 
     public RouteControllerConsole() {
@@ -47,8 +52,8 @@ public class RouteControllerConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        boolean includeError = "true".equals(options.getOrDefault(ERROR, "true"));
-        boolean includeStacktrace = "true".equals(options.getOrDefault(STACKTRACE, "true"));
+        boolean includeError = optionBoolean(options, ERROR, true);
+        boolean includeStacktrace = optionBoolean(options, STACKTRACE, true);
 
         StringBuilder sb = new StringBuilder();
 
@@ -154,8 +159,8 @@ public class RouteControllerConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        boolean includeError = "true".equals(options.getOrDefault(ERROR, "true"));
-        boolean includeStacktrace = "true".equals(options.getOrDefault(STACKTRACE, "true"));
+        boolean includeError = optionBoolean(options, ERROR, true);
+        boolean includeStacktrace = optionBoolean(options, STACKTRACE, true);
 
         JsonObject root = new JsonObject();
         final JsonArray list = new JsonArray();

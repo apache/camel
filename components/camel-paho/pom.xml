@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-paho</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Paho</name>
+    <name>Camel :: Paho (deprecated)</name>
     <description>Camel Eclipse Paho support</description>
 
     <properties>
@@ -62,7 +62,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
+            <groupId>org.apache.artemis</groupId>
             <artifactId>artemis-mqtt-protocol</artifactId>
             <version>${activemq-artemis-version}</version>
             <scope>test</scope>

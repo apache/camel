@@ -22,6 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.support.service.ServiceSupport;
 
@@ -111,6 +112,69 @@ public abstract class AbstractDevConsole extends ServiceSupport implements DevCo
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * Extracts an option value as String from the options map.
+     */
+    protected String optionString(Map<String, Object> options, String key) {
+        Object val = options.get(key);
+        if (val == null) {
+            return null;
+        }
+        if (val instanceof String s) {
+            return s;
+        }
+        TypeConverter tc = getCamelContext().getTypeConverter();
+        return tc.tryConvertTo(String.class, val);
+    }
+
+    /**
+     * Extracts an option value as int from the options map.
+     */
+    protected int optionInt(Map<String, Object> options, String key, int defaultValue) {
+        Object val = options.get(key);
+        if (val == null) {
+            return defaultValue;
+        }
+        if (val instanceof Integer i) {
+            return i;
+        }
+        TypeConverter tc = getCamelContext().getTypeConverter();
+        Integer result = tc.tryConvertTo(Integer.class, val);
+        return result != null ? result : defaultValue;
+    }
+
+    /**
+     * Extracts an option value as boolean from the options map.
+     */
+    protected boolean optionBoolean(Map<String, Object> options, String key, boolean defaultValue) {
+        Object val = options.get(key);
+        if (val == null) {
+            return defaultValue;
+        }
+        if (val instanceof Boolean b) {
+            return b;
+        }
+        TypeConverter tc = getCamelContext().getTypeConverter();
+        Boolean result = tc.tryConvertTo(Boolean.class, val);
+        return result != null ? result : defaultValue;
+    }
+
+    /**
+     * Extracts an option value as long from the options map.
+     */
+    protected long optionLong(Map<String, Object> options, String key, long defaultValue) {
+        Object val = options.get(key);
+        if (val == null) {
+            return defaultValue;
+        }
+        if (val instanceof Long l) {
+            return l;
+        }
+        TypeConverter tc = getCamelContext().getTypeConverter();
+        Long result = tc.tryConvertTo(Long.class, val);
+        return result != null ? result : defaultValue;
     }
 
     /**

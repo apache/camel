@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -37,24 +37,45 @@
     <properties>
         <firstVersion>4.13.0</firstVersion>
         <label>jbang</label>
-        <supportLevel>Preview</supportLevel>
+        <supportLevel>Stable</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
 
         <!-- Dependency versions -->
         <camel-kamelets-version>4.20.0</camel-kamelets-version>
-        <maven-version>3.9.15</maven-version>
+        <maven-version>3.9.16</maven-version>
         <plexus-interpolation-version>1.29</plexus-interpolation-version>
         <plexus-utils-version>4.0.3</plexus-utils-version>
         <plexus-xml-version>3.0.1</plexus-xml-version>
         <plexus-sec-dispatcher-version>2.0</plexus-sec-dispatcher-version>
         <plexus-cipher-version>2.1.0</plexus-cipher-version>
-        <eclipse-sisu-version>1.0.0</eclipse-sisu-version>
+        <eclipse-sisu-version>1.0.1</eclipse-sisu-version>
         <javax-inject-version>1</javax-inject-version>
         <httpclient-version>4.5.14</httpclient-version>
         <httpcore-version>4.4.16</httpcore-version>
         <commons-codec-version>1.22.0</commons-codec-version>
-        <jcl-over-slf4j-version>1.7.36</jcl-over-slf4j-version>
+        <jcl-over-slf4j-version>${slf4j-version}</jcl-over-slf4j-version>
+        <commonmark-version>0.29.0</commonmark-version>
+        <jreleaser-plugin-version>1.25.0</jreleaser-plugin-version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--
+                This launcher bundles both camel-jbang-plugin-generate and camel-jbang-plugin-tui on a
+                single flat classpath. The generate plugin drags in commonmark 0.21.0 (via openapi-generator),
+                while the tui plugin (via tamboui-markdown) needs commonmark 0.28.0 and its renderer.markdown
+                classes that do not exist in 0.21.0. Without this pin Maven mediation keeps the older 0.21.0
+                core next to the 0.28.0 extensions, which makes the TUI Markdown help throw NoClassDefFoundError.
+                Pin the core to 0.28.0 so it matches the commonmark-ext-* modules; openapi-generator only uses
+                the stable Parser/HtmlRenderer APIs, which are unchanged in 0.28.0.
+            -->
+            <dependency>
+                <groupId>org.commonmark</groupId>
+                <artifactId>commonmark</artifactId>
+                <version>${commonmark-version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -66,7 +87,6 @@
         <!-- Pre-installed plugins -->
         <!-- the edit plugin is not pre-installed -->
         <!-- the route-parser plugin is not pre-installed -->
-        <!-- the citrus test plugin cannot be embedded -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-plugin-generate</artifactId>
@@ -74,7 +94,17 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-plugin-test</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-plugin-kubernetes</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-plugin-mcp</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -239,6 +269,11 @@
             <groupId>org.jolokia</groupId>
             <artifactId>jolokia-agent-jvm</artifactId>
             <version>${jolokia-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jolokia</groupId>
+            <artifactId>jolokia-agent-jvm</artifactId>
+            <version>${jolokia-version}</version>
             <classifier>javaagent</classifier>
             <scope>provided</scope>
         </dependency>
@@ -247,6 +282,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>${commons-compress-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -289,6 +330,206 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--
+                JReleaser drives package-manager distribution (Homebrew, SDKMAN, WinGet, Scoop,
+                Chocolatey). It is intentionally NOT bound to any lifecycle phase and is
+                non-inherited: ordinary Camel builds never prepare or publish packages. The
+                camel-package.sh entry point invokes its goals explicitly.
+            -->
+            <plugin>
+                <groupId>org.jreleaser</groupId>
+                <artifactId>jreleaser-maven-plugin</artifactId>
+                <version>${jreleaser-plugin-version}</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <configFile>${project.basedir}/jreleaser.yml</configFile>
+                    <gitRootSearch>true</gitRootSearch>
+                </configuration>
+            </plugin>
+            <!--
+                The distribution templates all end in ".tpl", which license-maven-plugin does
+                not map to a comment style when failIfUnknown is enabled. They are excluded here
+                instead of adding a repo-wide ".tpl" mapping that would assume a single comment
+                style for templates of different languages. The JSON template is included in the
+                same exclude set because the root "**/*.json" exclude does not reach a file whose
+                final extension is ".tpl".
+            -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <licenseSets>
+                        <licenseSet>
+                            <excludes combine.children="append">
+                                <exclude>src/jreleaser/distributions/camel-cli/brew/formula.rb.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/winget/installer.yaml.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/winget/locale.yaml.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/winget/version.yaml.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/chocolatey/tools/chocolateyinstall.ps1.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/chocolatey/tools/chocolateyuninstall.ps1.tpl</exclude>
+                                <exclude>src/jreleaser/distributions/camel-cli/scoop/manifest.json.tpl</exclude>
+                            </excludes>
+                        </licenseSet>
+                    </licenseSets>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+            When camel.exe.build=true, copy the native exe artifacts (x64 + arm64) from
+            tooling/camel-exe into target/ so the WinGet assembly descriptor can include them in
+            its dedicated distribution archive. Host-OS-independent: works on Linux, macOS, or Windows.
+        -->
+        <profile>
+            <id>include-camel-exe</id>
+            <activation>
+                <property>
+                    <name>camel.exe.build</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-exe</artifactId>
+                    <version>${project.version}</version>
+                    <type>exe</type>
+                    <classifier>x64</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-exe</artifactId>
+                    <version>${project.version}</version>
+                    <type>exe</type>
+                    <classifier>arm64</classifier>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>assemble-winget-bin</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <attach>false</attach>
+                                    <descriptors combine.self="override">
+                                        <descriptor>src/main/assembly/winget-bin.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-camel-exe-x64</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.apache.camel</groupId>
+                                            <artifactId>camel-exe</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>exe</type>
+                                            <classifier>x64</classifier>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                            <destFileName>camel-x64.exe</destFileName>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-camel-exe-arm64</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.apache.camel</groupId>
+                                            <artifactId>camel-exe</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>exe</type>
+                                            <classifier>arm64</classifier>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                            <destFileName>camel-arm64.exe</destFileName>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--
+            Release gate: fails the build before packaging if the native exe files were
+            not copied into target/. Enabled when -Dcamel.exe.build=true (CI, release builds),
+            so ordinary cross-platform dev builds are unaffected.
+        -->
+        <profile>
+            <id>require-native-exe</id>
+            <activation>
+                <property>
+                    <name>camel.exe.build</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>require-native-exe-present</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireFilesExist>
+                                            <files>
+                                                <file>${project.build.directory}/camel-x64.exe</file>
+                                                <file>${project.build.directory}/camel-arm64.exe</file>
+                                            </files>
+                                        </requireFilesExist>
+                                    </rules>
+                                    <fail>true</fail>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

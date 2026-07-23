@@ -36,6 +36,7 @@ import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.ReleaseModel;
+import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 import org.apache.camel.tooling.model.TransformerModel;
 
 /**
@@ -312,6 +313,68 @@ public interface CamelCatalog {
      * @return      model details in JSon
      */
     String modelJSonSchema(String name);
+
+    /**
+     * Find all the available documentation page names.
+     *
+     * @return a list of documentation names (without the .adoc extension)
+     */
+    List<String> findDocNames();
+
+    /**
+     * Returns the AsciiDoc documentation for the given name.
+     * <p>
+     * The name corresponds to the documentation filename without the .adoc extension, such as {@code kafka-component},
+     * {@code split-eip}, {@code simple-language}, or {@code jackson2-dataformat}.
+     *
+     * @param  name the documentation name (without .adoc extension)
+     * @return      the documentation in AsciiDoc format, or {@code null} if not found
+     */
+    String asciiDoc(String name);
+
+    /**
+     * Returns the AsciiDoc documentation for the given component.
+     *
+     * @param  name the component name
+     * @return      the documentation in AsciiDoc format, or {@code null} if not found
+     */
+    String componentAsciiDoc(String name);
+
+    /**
+     * Returns the AsciiDoc documentation for the given data format.
+     *
+     * @param  name the data format name
+     * @return      the documentation in AsciiDoc format, or {@code null} if not found
+     */
+    String dataFormatAsciiDoc(String name);
+
+    /**
+     * Returns the AsciiDoc documentation for the given language.
+     *
+     * @param  name the language name
+     * @return      the documentation in AsciiDoc format, or {@code null} if not found
+     */
+    String languageAsciiDoc(String name);
+
+    /**
+     * Returns the AsciiDoc documentation for the given EIP model.
+     * <p>
+     * Delegates directly to {@link #asciiDoc(String)} since model doc names are not consistently suffixed.
+     *
+     * @param  name the model name
+     * @return      the documentation in AsciiDoc format, or {@code null} if not found
+     */
+    String modelAsciiDoc(String name);
+
+    /**
+     * Returns the AsciiDoc documentation for the given other (miscellaneous) component.
+     * <p>
+     * Delegates directly to {@link #asciiDoc(String)} since other doc names are not consistently suffixed.
+     *
+     * @param  name the other component name
+     * @return      the documentation in AsciiDoc format, or {@code null} if not found
+     */
+    String otherAsciiDoc(String name);
 
     /**
      * Find all the unique label names all the components are using.
@@ -662,5 +725,29 @@ public interface CamelCatalog {
      * Load all Camel Quarkus releases from catalog
      */
     List<ReleaseModel> camelQuarkusReleases();
+
+    /**
+     * Load all published Camel CVE security advisories from catalog (the data behind
+     * <a href="https://camel.apache.org/security/">camel.apache.org/security</a>, synced into the catalog when it was
+     * built).
+     *
+     * @since 4.22
+     */
+    List<SecurityAdvisoryModel> camelSecurityAdvisories();
+
+    /**
+     * Checks whether two endpoint URIs refer to the same logical endpoint.
+     * <p/>
+     * Two URIs match when they share the same scheme, context-path, and &mdash; if the component declares any query
+     * parameters as {@code endpointIdentity} &mdash; the same values for those identity parameters. Non-identity query
+     * parameters (timeouts, buffer sizes, etc.) are ignored.
+     * <p/>
+     * Implemented by default via the shared base class; declared here so the full catalog interface exposes it.
+     *
+     * @param  uri1 the first endpoint uri
+     * @param  uri2 the second endpoint uri
+     * @return      {@code true} if both URIs identify the same destination
+     */
+    boolean matchEndpointIdentity(String uri1, String uri2);
 
 }

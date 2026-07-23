@@ -1,0 +1,78 @@
+= Point to Point Channel
+:tabs-sync-option:
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/PointToPointChannel.html[Point
+to Point Channel] from the xref:enterprise-integration-patterns.adoc[EIP patterns].
+
+An application is using Messaging to make remote procedure calls (RPC) or transfer documents.
+
+How can the caller be sure that exactly one receiver will receive the document or perform the call?
+
+image::eip/PointToPointSolution.gif[image]
+
+Send the message on a Point-to-Point Channel, which ensures that only one receiver will receive a particular message.
+
+The Point to Point Channel is supported in Camel by messaging based xref:ROOT:index.adoc[Components], such as:
+
+* xref:ROOT:amqp-component.adoc[AMQP] for working with AMQP Queues
+* xref:ROOT:jms-component.adoc[ActiveMQ], or xref:ROOT:jms-component.adoc[JMS] for working with JMS Queues
+* xref:ROOT:seda-component.adoc[SEDA] for internal Camel seda queue based messaging
+* xref:ROOT:spring-rabbitmq-component.adoc[Spring RabbitMQ] for working with AMQP Queues (RabbitMQ)
+
+There is also messaging based in the cloud from cloud providers such as Amazon, Google and Azure.
+
+TIP: See also the related xref:publish-subscribe-channel.adoc[Publish Scribe Channel] EIP
+
+== Example
+
+The following example demonstrates point to point messaging using
+the xref:ROOT:jms-component.adoc[JMS] component:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("jms:queue:foo");
+
+from("jms:queue:foo")
+    .to("bean:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<routes>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="jms:queue:foo"/>
+    </route>
+    <route>
+        <from uri="jms:queue:foo"/>
+        <to uri="bean:foo"/>
+    </route>
+</routes>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: jms:queue:foo
+- route:
+    from:
+      uri: jms:queue:foo
+      steps:
+        - to:
+            uri: bean:foo
+----
+====

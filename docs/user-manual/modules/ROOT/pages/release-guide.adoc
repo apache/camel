@@ -14,6 +14,14 @@ ApacheCon, for instance).
 * Make sure you have the correct maven configuration in `~/.m2/settings.xml`.
 * You may want to get familiar with the release settings in the parent Apache POM.
 * Make sure you are using the expected supported Java version.
+* The `-Prelease` Maven profile cross-compiles the native `camel-x64.exe` and `camel-arm64.exe`
+Windows bootstraps using the `x86_64-w64-mingw32-clang` and `aarch64-w64-mingw32-clang` compilers
+from https://github.com/mstorsjo/llvm-mingw/releases/tag/20260616[llvm-mingw 20260616]. For a
+local release, install that toolchain and add its `bin/` directory to `PATH`; a missing toolchain
+causes a loud build failure (never a silent skip). The CI snapshot-deploy pipeline
+(`Jenkinsfile.deploy`) reuses an agent-provided toolchain when it is already on `PATH` and
+otherwise downloads the pinned, SHA256-verified copy automatically, so no manual provisioning of
+the Jenkins agents is required.
 
 [[ReleaseGuide-GPG]]
 == GPG setup
@@ -152,6 +160,33 @@ http://maven.apache.org/guides/mini/guide-encryption.html[password encryption re
 </settings>
 ----
 
+[[ReleaseGuide-CreatingNewLTSBranch]]
+== Creating a New LTS Branch
+
+When creating a new LTS release branch (e.g., `camel-4.22.x`), the following additional steps are required beyond the normal branch creation:
+
+. Add branch protection in `.asf.yaml` (on the `main` branch):
++
+The `.asf.yaml` file in the `main` branch controls GitHub branch protection for the entire repository.
+Add the new branch to the `protected_branches` section to prevent force pushes and accidental branch deletion:
++
+[source,yaml]
+----
+github:
+  protected_branches:
+    main: {}
+    camel-4.14.x: {}
+    camel-4.18.x: {}
+    camel-4.22.x: {}   # <-- add new LTS branch here
+----
++
+NOTE: `.asf.yaml` does not support wildcard patterns — each branch must be listed explicitly.
+Only the `.asf.yaml` on the default branch (`main`) is used for repository-level settings like branch protection.
+
+. Remove branch protection for EOL branches:
++
+When an LTS branch reaches end of life, remove it from the `protected_branches` section in `.asf.yaml`.
+
 [[ReleaseGuide-CreatingTheRelease-Camel]]
 == Creating the Release
 
@@ -193,8 +228,8 @@ Complete the following steps to create a new Camel release:
 * Make sure to check the generated signature files:
 
 
-  $ gpg --verify core/target/core-4.21.0-SNAPSHOT.pom.asc
-  gpg: assuming signed data in 'core/target/core-4.21.0-SNAPSHOT.pom'
+  $ gpg --verify core/target/core-4.22.0-SNAPSHOT.pom.asc
+  gpg: assuming signed data in 'core/target/core-4.22.0-SNAPSHOT.pom'
   gpg: Signature made Thu 08 Jan 2026 10:07:47 AM CET
   gpg:                using EDDSA key D5A8412A12BFEBD9C7362CD8CED552456D5000FB
   gpg: Good signature from "Aurélien Pupier <apupier@apache.org>" [ultimate]
@@ -220,6 +255,23 @@ Complete the following steps to create a new Camel release:
 
 
   $ ./mvnw release:perform -Prelease
+
+. Stage the WinGet payload in the Apache development distribution repository:
+
+* `release:perform` builds the non-attached WinGet ZIP in its release checkout. Prepare the
+candidate with the same candidate number used in the vote:
+
+  cd ${CAMEL_ROOT_DIR}/etc/scripts
+  ./stage-winget-distro.sh <Camel version> <candidate number> \
+    ${CAMEL_ROOT_DIR}/target/checkout/dsl/camel-jbang/camel-launcher/target/camel-launcher-<Camel version>-winget-bin.zip
+
+* Review the printed `svn status`, commit the working copy only after checking the ZIP, `.asc`,
+and `.sha512`, and include the resulting `dist/dev` candidate URL together with the Nexus staging
+repository URL in the vote email. The WinGet ZIP is not present in the Nexus staging repository.
+
+* The script prints the candidate's SHA-512 digest. **Include it in the vote email**: promotion
+requires it, because the candidate number on its own cannot distinguish the approved candidate from
+a superseded one (each RC directory carries its own self-consistent `.sha512` and `.asc`).
 
 
 . Close the Apache staging repository:
@@ -350,7 +402,24 @@ This will release the artifacts.
 . Copy distribution to Apache website:
 
   cd ${CAMEL_ROOT_DIR}/etc/scripts
-  ./release-distro.sh <Camel version>
+  ./release-distro.sh <Camel version> <temp-directory> <WinGet candidate number> <WinGet SHA-512>
+
+* The script exports the voted WinGet ZIP, signature, and SHA-512 checksum from `dist/dev`, verifies
+them, and adds the exact files to the local `dist/release` working copy. It does not rebuild the ZIP.
+Review and commit the combined working copy using the commands printed by the script.
+
+* `<WinGet SHA-512>` is the digest from the vote email. Promotion aborts if the exported candidate
+does not match it, which is what stops a superseded RC from being promoted by mistake.
+
+* After the release is available from
+`https://archive.apache.org/dist/camel/apache-camel/<Camel version>/`, run the JReleaser package
+preparation. WinGet preparation fails until the archived ZIP is available and byte-identical to the
+approved local ZIP.
+
+* Remove the promoted candidate after the release copy is committed:
+
+  svn rm https://dist.apache.org/repos/dist/dev/camel/apache-camel/<Camel version>-rc<WinGet candidate number> \
+    -m "Remove promoted Apache Camel <Camel version> WinGet candidate"
 
 . Copy SBOMs to Apache website:
 

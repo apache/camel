@@ -85,6 +85,16 @@ public class ThriftConsumer extends DefaultConsumer {
         }
     }
 
+    public int getLocalPort() {
+        if (asyncServerTransport != null) {
+            return asyncServerTransport.getPort();
+        }
+        if (syncServerTransport != null) {
+            return syncServerTransport.getServerSocket().getLocalPort();
+        }
+        return -1;
+    }
+
     @Override
     protected void doStop() throws Exception {
         if (server != null) {

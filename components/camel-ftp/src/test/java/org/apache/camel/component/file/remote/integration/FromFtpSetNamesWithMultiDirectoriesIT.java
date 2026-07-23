@@ -101,7 +101,7 @@ public class FromFtpSetNamesWithMultiDirectoriesIT extends FtpServerTestSupport 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).routeId("foo").noAutoStartup().to(TestSupport.fileUri(testDirectory), "mock:result");
+                from(getFtpUrl()).routeId("foo").autoStartup(false).to(TestSupport.fileUri(testDirectory), "mock:result");
             }
         };
     }

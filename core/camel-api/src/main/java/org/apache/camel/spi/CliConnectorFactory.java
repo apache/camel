@@ -19,9 +19,19 @@ package org.apache.camel.spi;
 import org.apache.camel.Service;
 
 /**
- * Factory for creating connector to CLI tooling.
+ * SPI factory for creating a {@link CliConnector} that enables Camel CLI management of a live integration.
  * <p/>
- * Such as a local {@link CliConnector} that allows Camel CLI to manage local running Camel integrations.
+ * The factory is discovered via the service key {@link #FACTORY} using {@code FactoryFinder} when the
+ * {@code camel-cli-connector} module is on the classpath. At startup, {@link org.apache.camel.CamelContext} calls
+ * {@link #createConnector()} and registers the returned connector as a managed {@link org.apache.camel.Service}. The
+ * factory also carries runtime metadata (platform name, version, main class) that the CLI uses to identify the
+ * integration process: {@link #setRuntime(String)} / {@link #getRuntime()}, {@link #setRuntimeVersion(String)} /
+ * {@link #getRuntimeVersion()}, and {@link #setRuntimeStartClass(String)} / {@link #getRuntimeStartClass()}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/camel-jbang.html">Camel CLI (JBang)</a> in the Camel user manual.
+ *
+ * @see   CliConnector
+ * @since 3.19
  */
 public interface CliConnectorFactory {
 

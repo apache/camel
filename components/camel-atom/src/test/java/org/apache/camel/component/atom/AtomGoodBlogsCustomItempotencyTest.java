@@ -89,8 +89,8 @@ public class AtomGoodBlogsCustomItempotencyTest {
         // Get the mock endpoint
         MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
 
-        // There should be at least two good blog entries from the feed
-        mock.expectedMessageCount(2);
+        // There should be three good blog entries from the feed (containing "ActiveMQ")
+        mock.expectedMessageCount(3);
 
         // Asserts that the above expectations is true, will throw assertions exception if it failed
         // Camel will default wait max 20 seconds for the assertions to be true, if the conditions

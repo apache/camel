@@ -17,9 +17,13 @@
 package org.apache.camel.service.lra;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.*;
@@ -29,8 +33,10 @@ import org.apache.camel.saga.CamelSagaCoordinator;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
@@ -45,7 +51,10 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
     private ScheduledExecutorService executorService;
     private LRAClient client;
     private LRASagaRoutes routes;
-    private final Set<String> sagaURIs = ConcurrentHashMap.newKeySet();
+    private LifecycleStrategy lifecycleStrategy;
+    private final Set<String> compensationURIs = ConcurrentHashMap.newKeySet();
+    private final Set<String> completionURIs = ConcurrentHashMap.newKeySet();
+    private final ConcurrentHashMap<String, List<CamelSagaStep>> stepsByRouteId = new ConcurrentHashMap<>();
 
     // we want to be able to configure these following options
     @Metadata
@@ -79,13 +88,49 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
 
     @Override
     public void registerStep(CamelSagaStep step) {
-        // Register which uris should be exposed
-        step.getCompensation().map(Endpoint::getEndpointUri).map(this.sagaURIs::add);
-        step.getCompletion().map(Endpoint::getEndpointUri).map(this.sagaURIs::add);
+        step.getCompensation().map(Endpoint::getEndpointUri).ifPresent(compensationURIs::add);
+        step.getCompletion().map(Endpoint::getEndpointUri).ifPresent(completionURIs::add);
+        if (step.getRouteId() != null) {
+            stepsByRouteId.computeIfAbsent(step.getRouteId(), k -> new CopyOnWriteArrayList<>()).add(step);
+        }
+    }
+
+    void unregisterSteps(String routeId) {
+        List<CamelSagaStep> steps = stepsByRouteId.remove(routeId);
+        if (steps == null) {
+            return;
+        }
+
+        // collect URIs still referenced by other routes
+        Set<String> retainedCompensation = new HashSet<>();
+        Set<String> retainedCompletion = new HashSet<>();
+        for (List<CamelSagaStep> remaining : stepsByRouteId.values()) {
+            for (CamelSagaStep s : remaining) {
+                s.getCompensation().map(Endpoint::getEndpointUri).ifPresent(retainedCompensation::add);
+                s.getCompletion().map(Endpoint::getEndpointUri).ifPresent(retainedCompletion::add);
+            }
+        }
+
+        // remove only URIs no longer referenced
+        for (CamelSagaStep step : steps) {
+            step.getCompensation().map(Endpoint::getEndpointUri)
+                    .filter(uri -> !retainedCompensation.contains(uri))
+                    .ifPresent(compensationURIs::remove);
+            step.getCompletion().map(Endpoint::getEndpointUri)
+                    .filter(uri -> !retainedCompletion.contains(uri))
+                    .ifPresent(completionURIs::remove);
+        }
     }
 
     @Override
     protected void doStart() throws Exception {
+        if (coordinatorUrl == null) {
+            throw new IllegalStateException("coordinatorUrl must be configured on the LRA saga service");
+        }
+        if (localParticipantUrl == null) {
+            throw new IllegalStateException("localParticipantUrl must be configured on the LRA saga service");
+        }
+
         if (this.executorService == null) {
             this.executorService = camelContext.getExecutorServiceManager()
                     .newDefaultScheduledThreadPool(this, "saga-lra");
@@ -115,11 +160,20 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
             this.client.close();
             this.client = null;
         }
+        if (this.lifecycleStrategy != null) {
+            camelContext.getLifecycleStrategies().remove(this.lifecycleStrategy);
+            this.lifecycleStrategy = null;
+        }
+        compensationURIs.clear();
+        completionURIs.clear();
+        stepsByRouteId.clear();
     }
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+        // Routes must be added here (not in doStart) so they are registered before CamelContext
+        // starts its routes — otherwise the REST DSL endpoints won't bind to the HTTP server.
         if (this.routes == null) {
             this.routes = new LRASagaRoutes(this);
             try {
@@ -127,6 +181,17 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
             } catch (Exception ex) {
                 throw RuntimeCamelException.wrapRuntimeException(ex);
             }
+        }
+        if (this.lifecycleStrategy == null) {
+            this.lifecycleStrategy = new LifecycleStrategySupport() {
+                @Override
+                public void onRoutesRemove(Collection<Route> routes) {
+                    for (Route r : routes) {
+                        unregisterSteps(r.getRouteId());
+                    }
+                }
+            };
+            this.camelContext.addLifecycleStrategy(this.lifecycleStrategy);
         }
     }
 
@@ -179,8 +244,18 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
         this.localParticipantContextPath = localParticipantContextPath;
     }
 
+    public Set<String> getRegisteredCompensationURIs() {
+        return compensationURIs;
+    }
+
+    public Set<String> getRegisteredCompletionURIs() {
+        return completionURIs;
+    }
+
     public Set<String> getRegisteredURIs() {
-        return sagaURIs;
+        Set<String> all = new HashSet<>(compensationURIs);
+        all.addAll(completionURIs);
+        return all;
     }
 
     @Override

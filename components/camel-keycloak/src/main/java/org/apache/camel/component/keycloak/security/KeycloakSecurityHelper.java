@@ -21,6 +21,7 @@ import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +29,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.keycloak.TokenVerifier;
 import org.keycloak.common.VerificationException;
+import org.keycloak.jose.jws.JWSInput;
 import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,22 @@ public final class KeycloakSecurityHelper {
 
     private KeycloakSecurityHelper() {
         // Utility class
+    }
+
+    /**
+     * Extracts the key ID ({@code kid}) from the JWT header, so the matching JWKS key can be selected.
+     *
+     * @param  tokenString the serialized JWT
+     * @return             the {@code kid} from the JWS header, or {@code null} if it is absent or the token cannot be
+     *                     parsed
+     */
+    public static String extractKeyId(String tokenString) {
+        try {
+            return new JWSInput(tokenString).getHeader().getKeyId();
+        } catch (Exception e) {
+            LOG.debug("Could not extract kid from token header: {}", e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -52,6 +70,26 @@ public final class KeycloakSecurityHelper {
      */
     public static AccessToken parseAndVerifyAccessToken(String tokenString, PublicKey publicKey, String expectedIssuer)
             throws VerificationException {
+        return parseAndVerifyAccessToken(tokenString, publicKey, expectedIssuer, null);
+    }
+
+    /**
+     * Parses and fully verifies an access token including signature, issuer and, optionally, audience validation. This
+     * is the recommended method for secure token validation.
+     *
+     * @param  tokenString           the JWT token string
+     * @param  publicKey             the public key for signature verification
+     * @param  expectedIssuer        the expected issuer URL (e.g., "http://localhost:8080/realms/myrealm")
+     * @param  expectedAudiences     the expected audiences; when non-empty, the token's "aud" claim must contain every
+     *                               one of them (matching Keycloak's own {@link TokenVerifier#audience(String...)}
+     *                               check). Pass null or an empty list to skip audience validation.
+     * @return                       the verified access token
+     * @throws VerificationException if verification fails (invalid signature, wrong issuer, expired, missing/wrong
+     *                               audience, etc.)
+     */
+    public static AccessToken parseAndVerifyAccessToken(
+            String tokenString, PublicKey publicKey, String expectedIssuer, List<String> expectedAudiences)
+            throws VerificationException {
         if (publicKey == null) {
             throw new VerificationException("Public key is required for secure token verification");
         }
@@ -59,11 +97,18 @@ public final class KeycloakSecurityHelper {
             throw new VerificationException("Expected issuer is required for secure token verification");
         }
 
+        boolean checkAudience = expectedAudiences != null && !expectedAudiences.isEmpty();
+
         TokenVerifier<AccessToken> verifier = TokenVerifier.create(tokenString, AccessToken.class)
                 .publicKey(publicKey)
                 .withChecks(
                         TokenVerifier.SUBJECT_EXISTS_CHECK,
+                        TokenVerifier.IS_ACTIVE,
                         new TokenVerifier.RealmUrlCheck(expectedIssuer));
+
+        if (checkAudience) {
+            verifier.audience(expectedAudiences.toArray(new String[0]));
+        }
 
         AccessToken token = verifier.verify().getToken();
 

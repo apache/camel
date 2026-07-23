@@ -17,6 +17,7 @@
 package org.apache.camel.component.seda;
 
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -50,7 +51,7 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
         // I should happen before mock
         route = route + "send";
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         assertEquals("sendprocess", route, "Send should occur before processor");
 
@@ -74,7 +75,7 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
         // I should not happen before mock
         route = route + "send";
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         assertEquals("processsend", route, "Send should occur before processor");
 

@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FromFileSendMailTest extends CamelTestSupport {
-    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
+    private static final MailboxUser james = Mailbox.getOrCreateUser("FromFileSendMailTest-james", "secret");
 
     @Test
     public void testSendFileAsMail() throws Exception {
@@ -57,9 +57,11 @@ public class FromFileSendMailTest extends CamelTestSupport {
             public void configure() {
                 from("file://target/mailtext?initialDelay=100&delay=100")
                         .setHeader("Subject", constant("Hello World"))
-                        .setHeader("To", constant("james@localhost"))
+                        .setHeader("To", constant(james.getEmail()))
                         .setHeader("From", constant("claus@localhost"))
-                        .to(james.uriPrefix(Protocol.smtp) + "&initialDelay=100&delay=100", "mock:result");
+                        .to(james.uriPrefix(Protocol.smtp)
+                            + "&initialDelay=100&delay=100&useHeaderRecipients=true&useHeaderFrom=true&useHeaderSubject=true",
+                                "mock:result");
             }
         };
     }

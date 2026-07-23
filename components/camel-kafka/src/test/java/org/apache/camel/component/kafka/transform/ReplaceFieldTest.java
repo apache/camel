@@ -101,6 +101,20 @@ class ReplaceFieldTest {
     }
 
     @Test
+    void shouldRenameFieldsWithoutDisabledSet() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage().setBody(mapper.readTree(baseJson));
+
+        JsonNode node = processor.process("all", null, "name:firstName,age:years", exchange);
+
+        Assertions.assertEquals(node.toString(), "{" +
+                                                 "\"firstName\":\"Rajesh Koothrappali\"," +
+                                                 "\"years\":\"29\"" +
+                                                 "}");
+    }
+
+    @Test
     void shouldReplaceFieldWithDisableAllFields() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 

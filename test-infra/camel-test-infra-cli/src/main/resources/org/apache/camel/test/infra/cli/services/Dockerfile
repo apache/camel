@@ -64,6 +64,9 @@ RUN source ~/.bashrc \
     -Dcamel.jbang.version=$CAMEL_JBANG_VERSION \
     camel@$CAMEL_REPO/$CAMEL_REF ; fi
 
+# Fix JBang 0.138+ bug: wrapper scripts serialize -D with a space that breaks parsing
+RUN if [ -f ~/.jbang/bin/camel ]; then sed -i 's/ -D / -D/g' ~/.jbang/bin/camel; fi
+
 LABEL "camel.ref"=$CAMEL_REF
 LABEL "keep.container.running"=$KEEP_RUNNING
 

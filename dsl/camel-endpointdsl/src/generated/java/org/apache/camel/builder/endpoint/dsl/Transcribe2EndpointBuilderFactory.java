@@ -647,7 +647,7 @@ public interface Transcribe2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Transcribe2HeaderNameBuilder INSTANCE = new Transcribe2HeaderNameBuilder();
+        public static final Transcribe2HeaderNameBuilder INSTANCE = new Transcribe2HeaderNameBuilder();
 
         /**
          * The name of the transcription job.
@@ -821,6 +821,117 @@ public interface Transcribe2EndpointBuilderFactory {
          */
         public String awsTranscribeTagKeys() {
             return "CamelAwsTranscribeTagKeys";
+        }
+        /**
+         * The maximum number of results to return in a list operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeMaxResults}.
+         */
+        public String awsTranscribeMaxResults() {
+            return "CamelAwsTranscribeMaxResults";
+        }
+        /**
+         * The token to retrieve the next page of a list operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeNextToken}.
+         */
+        public String awsTranscribeNextToken() {
+            return "CamelAwsTranscribeNextToken";
+        }
+        /**
+         * The S3 location of the vocabulary or vocabulary filter file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsTranscribeVocabularyFileUri}.
+         */
+        public String awsTranscribeVocabularyFileUri() {
+            return "CamelAwsTranscribeVocabularyFileUri";
+        }
+        /**
+         * The base model used when creating a custom language model.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeBaseModelName}.
+         */
+        public String awsTranscribeBaseModelName() {
+            return "CamelAwsTranscribeBaseModelName";
+        }
+        /**
+         * The S3 location of the training data for a custom language model.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeInputDataS3Uri}.
+         */
+        public String awsTranscribeInputDataS3Uri() {
+            return "CamelAwsTranscribeInputDataS3Uri";
+        }
+        /**
+         * The ARN of the IAM role granting access to the training data or
+         * vocabulary file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsTranscribeDataAccessRoleArn}.
+         */
+        public String awsTranscribeDataAccessRoleArn() {
+            return "CamelAwsTranscribeDataAccessRoleArn";
+        }
+        /**
+         * The S3 bucket where the transcription output is stored.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeOutputBucketName}.
+         */
+        public String awsTranscribeOutputBucketName() {
+            return "CamelAwsTranscribeOutputBucketName";
+        }
+        /**
+         * The medical specialty of a medical transcription job.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeSpecialty}.
+         */
+        public String awsTranscribeSpecialty() {
+            return "CamelAwsTranscribeSpecialty";
+        }
+        /**
+         * The audio type of a medical transcription job.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeType}.
+         */
+        public String awsTranscribeType() {
+            return "CamelAwsTranscribeType";
         }
     }
     static Transcribe2EndpointBuilder endpointBuilder(String componentName, String path) {

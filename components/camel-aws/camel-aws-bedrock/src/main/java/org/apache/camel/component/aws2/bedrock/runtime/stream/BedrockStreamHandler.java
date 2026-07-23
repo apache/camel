@@ -37,6 +37,27 @@ public final class BedrockStreamHandler {
     }
 
     /**
+     * Records the completion reason and token count carried by a streaming chunk, if any.
+     * <p>
+     * Metadata is not always carried by the final chunk: Claude and Nova report {@code stop_reason} and {@code usage}
+     * on the {@code message_delta} chunk, which precedes the final {@code message_stop}, while Titan, Llama, Mistral
+     * and Cohere report them on their final chunk. Every chunk is therefore inspected and whatever is present is kept;
+     * the parsers return {@code null} for chunks that do not carry the values.
+     */
+    static void applyChunkMetadata(StreamResponseParser parser, String chunkJson, StreamMetadata metadata)
+            throws JsonProcessingException {
+        String completionReason = parser.extractCompletionReason(chunkJson);
+        if (ObjectHelper.isNotEmpty(completionReason)) {
+            metadata.setCompletionReason(completionReason);
+        }
+
+        Integer tokenCount = parser.extractTokenCount(chunkJson);
+        if (ObjectHelper.isNotEmpty(tokenCount)) {
+            metadata.setTokenCount(tokenCount);
+        }
+    }
+
+    /**
      * Create a response handler for complete mode (accumulates all chunks)
      *
      * @param  modelId  the model ID to determine parser
@@ -62,18 +83,7 @@ public final class BedrockStreamHandler {
                                     fullText.append(text);
                                 }
 
-                                // Extract metadata from final chunk
-                                if (parser.isFinalChunk(chunkJson)) {
-                                    String completionReason = parser.extractCompletionReason(chunkJson);
-                                    if (ObjectHelper.isNotEmpty(completionReason)) {
-                                        metadata.setCompletionReason(completionReason);
-                                    }
-
-                                    Integer tokenCount = parser.extractTokenCount(chunkJson);
-                                    if (ObjectHelper.isNotEmpty(tokenCount)) {
-                                        metadata.setTokenCount(tokenCount);
-                                    }
-                                }
+                                applyChunkMetadata(parser, chunkJson, metadata);
                                 chunkCount[0]++;
                             } catch (JsonProcessingException e) {
                                 LOG.warn("Error parsing streaming chunk: {}", e.getMessage(), e);
@@ -119,18 +129,7 @@ public final class BedrockStreamHandler {
                                     }
                                 }
 
-                                // Extract metadata from final chunk
-                                if (parser.isFinalChunk(chunkJson)) {
-                                    String completionReason = parser.extractCompletionReason(chunkJson);
-                                    if (ObjectHelper.isNotEmpty(completionReason)) {
-                                        metadata.setCompletionReason(completionReason);
-                                    }
-
-                                    Integer tokenCount = parser.extractTokenCount(chunkJson);
-                                    if (ObjectHelper.isNotEmpty(tokenCount)) {
-                                        metadata.setTokenCount(tokenCount);
-                                    }
-                                }
+                                applyChunkMetadata(parser, chunkJson, metadata);
                                 chunkCount[0]++;
                             } catch (JsonProcessingException e) {
                                 LOG.warn("Error parsing streaming chunk: {}", e.getMessage(), e);

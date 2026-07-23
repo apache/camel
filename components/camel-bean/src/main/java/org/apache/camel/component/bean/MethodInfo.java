@@ -139,12 +139,6 @@ public class MethodInfo {
         if (routingSlipAnnotation != null) {
             routingSlip = PluginHelper.getAnnotationBasedProcessorFactory(camelContext)
                     .createRoutingSlip(camelContext, routingSlipAnnotation);
-            // add created routingSlip as a service so we have its lifecycle managed
-            try {
-                camelContext.addService(routingSlip);
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
         }
 
         DynamicRouter dynamicRouterAnnotation
@@ -152,12 +146,6 @@ public class MethodInfo {
         if (dynamicRouterAnnotation != null) {
             dynamicRouter = PluginHelper.getAnnotationBasedProcessorFactory(camelContext)
                     .createDynamicRouter(camelContext, dynamicRouterAnnotation);
-            // add created dynamicRouter as a service so we have its lifecycle managed
-            try {
-                camelContext.addService(dynamicRouter);
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
         }
 
         RecipientList recipientListAnnotation
@@ -165,12 +153,6 @@ public class MethodInfo {
         if (recipientListAnnotation != null) {
             recipientList = PluginHelper.getAnnotationBasedProcessorFactory(camelContext)
                     .createRecipientList(camelContext, recipientListAnnotation);
-            // add created recipientList as a service so we have its lifecycle managed
-            try {
-                camelContext.addService(recipientList);
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
         }
     }
 
@@ -332,6 +314,11 @@ public class MethodInfo {
 
                 //If it's Java 8 async result
                 if (CompletionStage.class.isAssignableFrom(method.getReturnType())) {
+                    if (result == null) {
+                        throw new RuntimeCamelException(
+                                "Bean method " + method.getDeclaringClass().getName() + "." + method.getName()
+                                                        + " returned null CompletionStage");
+                    }
                     CompletionStage<?> completionStage = (CompletionStage<?>) result;
 
                     completionStage

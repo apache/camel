@@ -31,6 +31,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.21")
 public class PahoConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(PahoConsumer.class);

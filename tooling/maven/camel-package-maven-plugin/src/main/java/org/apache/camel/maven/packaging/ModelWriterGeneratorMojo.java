@@ -112,6 +112,10 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
 
     abstract String getWriterPackage();
 
+    protected String getTemplateName() {
+        return "velocity/model-writer.vm";
+    }
+
     protected String generateWriter() throws MojoExecutionException {
         try (DynamicClassLoader classLoader
                 = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements())) {
@@ -170,7 +174,7 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         ctx.put("package", getWriterPackage());
         ctx.put("model", model);
         ctx.put("mojo", this);
-        return velocity("velocity/model-writer.vm", ctx);
+        return velocity(getTemplateName(), ctx);
     }
 
     protected String postGenerateWriter(String writer) {
@@ -334,7 +338,11 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
             modelName = "org.apache.camel.model.ProcessDefinition";
         }
 
-        EipModel m = allModels.get(modelName);
+        EipModel em = allModels.get(modelName);
+        if (em == null && modelName.endsWith("Common")) {
+            em = allModels.get(modelName.replace("Common", "Definition"));
+        }
+        final EipModel m = em;
         if (m != null) {
             // special for DSL where XML vs YAML have different names, and we must use as-is due to JAXB @XmlType propOrder
             final Map<String, String> alias = Map.of(

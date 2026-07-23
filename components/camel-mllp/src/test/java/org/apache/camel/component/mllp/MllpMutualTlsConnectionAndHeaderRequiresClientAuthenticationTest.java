@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mllp;
 
+import java.net.SocketException;
+
 import javax.net.ssl.SSLHandshakeException;
 
 import org.apache.camel.CamelExecutionException;
@@ -34,13 +36,26 @@ class MllpMutualTlsConnectionAndHeaderRequiresClientAuthenticationTest extends M
      * This test does TLS connection without a client sending its certificate, i.e., no mTLS. As the server is
      * configured to require client authentication, this should fail.
      *
+     * The cause chain may contain either an SSLHandshakeException (clean TLS rejection) or a SocketException
+     * (connection reset before the handshake error propagates), depending on JDK-level timing.
      */
     @Test
     void testSendingTlsWithNoClientCertificateToMllpConsumerWhichRequiresClientAuthentication() {
         CamelExecutionException e = Assertions.assertThrows(CamelExecutionException.class, () -> {
             template.sendBody(assembleEndpointUri(WITH_ONLY_TRUSTSTORE), TEST_PAYLOAD);
         });
-        Assertions.assertInstanceOf(SSLHandshakeException.class, e.getCause().getCause().getCause());
+        Throwable rootCause = findRootCause(e);
+        Assertions.assertTrue(
+                rootCause instanceof SSLHandshakeException || rootCause instanceof SocketException,
+                "Expected SSLHandshakeException or SocketException but was: " + rootCause.getClass().getName());
+    }
+
+    private static Throwable findRootCause(Throwable t) {
+        Throwable cause = t;
+        while (cause.getCause() != null && cause.getCause() != cause) {
+            cause = cause.getCause();
+        }
+        return cause;
     }
 
     /**

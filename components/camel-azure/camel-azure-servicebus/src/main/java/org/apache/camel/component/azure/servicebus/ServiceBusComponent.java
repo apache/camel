@@ -21,6 +21,7 @@ import java.util.Map;
 import com.azure.identity.DefaultAzureCredential;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -62,9 +63,11 @@ public class ServiceBusComponent extends DefaultComponent {
                 endpoint.getConfiguration().setCredentialType(CredentialType.CONNECTION_STRING);
             }
         } else {
-            boolean azure = endpoint.getConfiguration().getTokenCredential() instanceof DefaultAzureCredential;
-            endpoint.getConfiguration()
-                    .setCredentialType(azure ? CredentialType.AZURE_IDENTITY : CredentialType.TOKEN_CREDENTIAL);
+            if (endpoint.getConfiguration().getCredentialType() == null) {
+                boolean azure = endpoint.getConfiguration().getTokenCredential() instanceof DefaultAzureCredential;
+                endpoint.getConfiguration()
+                        .setCredentialType(azure ? CredentialType.AZURE_IDENTITY : CredentialType.TOKEN_CREDENTIAL);
+            }
         }
 
         return endpoint;

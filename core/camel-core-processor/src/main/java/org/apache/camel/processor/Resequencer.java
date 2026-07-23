@@ -46,6 +46,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionComparator;
@@ -59,7 +60,8 @@ import org.slf4j.LoggerFactory;
  * An implementation of the <a href="http://camel.apache.org/resequencer.html">Resequencer</a> which can reorder
  * messages within a batch.
  */
-public class Resequencer extends BaseProcessorSupport implements Navigate<Processor>, IdAware, RouteIdAware, Traceable {
+public class Resequencer extends BaseProcessorSupport
+        implements Navigate<Processor>, IdAware, RouteIdAware, StepIdAware, Traceable {
 
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
@@ -68,6 +70,7 @@ public class Resequencer extends BaseProcessorSupport implements Navigate<Proces
 
     private String id;
     private String routeId;
+    private String stepId;
     private long batchTimeout = DEFAULT_BATCH_TIMEOUT;
     private int batchSize = DEFAULT_BATCH_SIZE;
     private int outBatchSize;
@@ -262,6 +265,16 @@ public class Resequencer extends BaseProcessorSupport implements Navigate<Proces
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     // Implementation methods

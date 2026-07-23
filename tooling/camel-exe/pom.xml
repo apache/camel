@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>tooling</artifactId>
+        <version>4.22.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>camel-exe</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Camel :: Exe</name>
+    <description>Native Windows camel.exe bootstrap for the Camel CLI launcher</description>
+
+    <properties>
+        <camel-prepare-component>false</camel-prepare-component>
+        <label>tooling</label>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!--
+        POM packaging is used because the main artifact is a native .exe, not a jar.
+        The test plugins below are wired manually so that CamelExeBootstrapTest (Java,
+        Windows-only) runs during the standard 'mvn verify' lifecycle.
+    -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/test/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!--
+            Cross-compiles camel.exe for Windows x64 and arm64 using clang from the
+            llvm-mingw toolchain. Host-OS-independent: runs on Linux, macOS, or Windows
+            wherever llvm-mingw is installed.
+
+            Activation:
+              - Plain 'mvn clean install' (any OS): no-op, unaffected.
+              - '-Dcamel.exe.build=true' (CI, manual): attempts the cross-compile,
+                requires llvm-mingw on PATH.
+              - Real releases: maven-release-plugin passes -Dcamel.exe.build=true in its
+                <arguments>, alongside -Prelease. '-Prelease' on its own is NOT enough:
+                the release profile sets camel.exe.build as a project property, and Maven's
+                property activator only reads user and system properties.
+        -->
+        <profile>
+            <id>build-native-exe</id>
+            <activation>
+                <property>
+                    <name>camel.exe.build</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>compile-camel-exe-x64</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>x86_64-w64-mingw32-clang</executable>
+                                    <arguments>
+                                        <argument>-Wall</argument>
+                                        <argument>-Wextra</argument>
+                                        <argument>-O1</argument>
+                                        <argument>-static</argument>
+                                        <argument>-mconsole</argument>
+                                        <argument>-municode</argument>
+                                        <!--
+                                            The PE format carries a mandatory TimeDateStamp, which lld fills
+                                            with the current wall-clock time unless told otherwise. That alone
+                                            makes two identical builds produce different bytes, and the
+                                            difference propagates into the WinGet archive and its published
+                                            SHA-256. Pin the stamp to 0 so the executables are reproducible.
+                                        -->
+                                        <argument>-Wl,--no-insert-timestamp</argument>
+                                        <argument>-o</argument>
+                                        <argument>${project.build.directory}/camel-x64.exe</argument>
+                                        <argument>${project.basedir}/src/main/native/camel.c</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>compile-camel-exe-arm64</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>aarch64-w64-mingw32-clang</executable>
+                                    <arguments>
+                                        <argument>-Wall</argument>
+                                        <argument>-Wextra</argument>
+                                        <argument>-O1</argument>
+                                        <argument>-static</argument>
+                                        <argument>-mconsole</argument>
+                                        <argument>-municode</argument>
+                                        <!-- See the x64 execution above for why the PE timestamp is pinned. -->
+                                        <argument>-Wl,--no-insert-timestamp</argument>
+                                        <argument>-o</argument>
+                                        <argument>${project.build.directory}/camel-arm64.exe</argument>
+                                        <argument>${project.basedir}/src/main/native/camel.c</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-camel-exe-x64</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>attach-artifact</goal>
+                                </goals>
+                                <configuration>
+                                    <artifacts>
+                                        <artifact>
+                                            <file>${project.build.directory}/camel-x64.exe</file>
+                                            <type>exe</type>
+                                            <classifier>x64</classifier>
+                                        </artifact>
+                                    </artifacts>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>attach-camel-exe-arm64</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>attach-artifact</goal>
+                                </goals>
+                                <configuration>
+                                    <artifacts>
+                                        <artifact>
+                                            <file>${project.build.directory}/camel-arm64.exe</file>
+                                            <type>exe</type>
+                                            <classifier>arm64</classifier>
+                                        </artifact>
+                                    </artifacts>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--
+            Release gate: fails the build before packaging if the native exe files were
+            not produced. Enabled only when -Dcamel.exe.build=true (CI, release builds),
+            so ordinary cross-platform dev builds are unaffected.
+        -->
+        <profile>
+            <id>require-native-exe</id>
+            <activation>
+                <property>
+                    <name>camel.exe.build</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>require-camel-exe</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireFilesExist>
+                                            <files>
+                                                <file>${project.build.directory}/camel-x64.exe</file>
+                                                <file>${project.build.directory}/camel-arm64.exe</file>
+                                            </files>
+                                        </requireFilesExist>
+                                    </rules>
+                                    <fail>true</fail>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

@@ -47,7 +47,7 @@ public interface FilesEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.azure.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -56,7 +56,7 @@ public interface FilesEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default FilesEndpointConsumerBuilder credentialType(org.apache.camel.component.file.azure.CredentialType credentialType) {
+        default FilesEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -64,7 +64,7 @@ public interface FilesEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.azure.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -164,6 +164,50 @@ public interface FilesEndpointBuilderFactory {
          */
         default FilesEndpointConsumerBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder jailStartingDirectory(boolean jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder jailStartingDirectory(String jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
@@ -285,31 +329,15 @@ public interface FilesEndpointBuilderFactory {
          * system. You may want to do this in case you need to operate on the
          * files in a sorted order. The pre-sort is executed before the consumer
          * starts to filter, and accept files to process by Camel. This option
-         * is default=false meaning disabled.
+         * is default=false meaning disabled. The following values are
+         * supported: name (sort by file name), modified (sort by last-modified
+         * timestamp), size (sort by file size). To sort in descending (reverse)
+         * order, prefix the value with a minus sign (e.g., -modified to sort
+         * newest first). The value true is an alias for name (backward
+         * compatible).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param preSort the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder preSort(boolean preSort) {
-            doSetProperty("preSort", preSort);
-            return this;
-        }
-        /**
-         * When pre-sort is enabled then the consumer will sort the file and
-         * directory names during polling, that was retrieved from the file
-         * system. You may want to do this in case you need to operate on the
-         * files in a sorted order. The pre-sort is executed before the consumer
-         * starts to filter, and accept files to process by Camel. This option
-         * is default=false meaning disabled.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
          * Group: consumer
          * 
          * @param preSort the value to set
@@ -2693,7 +2721,7 @@ public interface FilesEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.azure.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -2702,7 +2730,7 @@ public interface FilesEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default FilesEndpointProducerBuilder credentialType(org.apache.camel.component.file.azure.CredentialType credentialType) {
+        default FilesEndpointProducerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -2710,7 +2738,7 @@ public interface FilesEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.azure.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -2810,6 +2838,50 @@ public interface FilesEndpointBuilderFactory {
          */
         default FilesEndpointProducerBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointProducerBuilder jailStartingDirectory(boolean jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointProducerBuilder jailStartingDirectory(String jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
@@ -2976,46 +3048,6 @@ public interface FilesEndpointBuilderFactory {
          */
         default FilesEndpointProducerBuilder flatten(String flatten) {
             doSetProperty("flatten", flatten);
-            return this;
-        }
-        /**
-         * Used for jailing (restricting) writing files to the starting
-         * directory (and sub) only. This is enabled by default to not allow
-         * Camel to write files to outside directories (to be more secured out
-         * of the box). You can turn this off to allow writing files to
-         * directories outside the starting directory, such as parent or root
-         * folders.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param jailStartingDirectory the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointProducerBuilder jailStartingDirectory(boolean jailStartingDirectory) {
-            doSetProperty("jailStartingDirectory", jailStartingDirectory);
-            return this;
-        }
-        /**
-         * Used for jailing (restricting) writing files to the starting
-         * directory (and sub) only. This is enabled by default to not allow
-         * Camel to write files to outside directories (to be more secured out
-         * of the box). You can turn this off to allow writing files to
-         * directories outside the starting directory, such as parent or root
-         * folders.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param jailStartingDirectory the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointProducerBuilder jailStartingDirectory(String jailStartingDirectory) {
-            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
@@ -3695,7 +3727,7 @@ public interface FilesEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.azure.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -3704,7 +3736,7 @@ public interface FilesEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default FilesEndpointBuilder credentialType(org.apache.camel.component.file.azure.CredentialType credentialType) {
+        default FilesEndpointBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -3712,7 +3744,7 @@ public interface FilesEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.azure.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -3812,6 +3844,50 @@ public interface FilesEndpointBuilderFactory {
          */
         default FilesEndpointBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointBuilder jailStartingDirectory(boolean jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
+            return this;
+        }
+        /**
+         * Used for jailing (restricting) writing files to the starting
+         * directory (and sub) only. This is enabled by default to not allow
+         * Camel to write files to outside directories (to be more secured out
+         * of the box). You can turn this off to allow writing files to
+         * directories outside the starting directory, such as parent or root
+         * folders. For consumers that use a localWorkDirectory, this also
+         * restricts the downloaded files to stay within the configured
+         * localWorkDirectory.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointBuilder jailStartingDirectory(String jailStartingDirectory) {
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
@@ -4285,7 +4361,7 @@ public interface FilesEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final FilesHeaderNameBuilder INSTANCE = new FilesHeaderNameBuilder();
+        public static final FilesHeaderNameBuilder INSTANCE = new FilesHeaderNameBuilder();
 
         /**
          * A long value containing the file size.

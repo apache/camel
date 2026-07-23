@@ -25,7 +25,8 @@ import org.slf4j.LoggerFactory;
 
 @InfraService(service = ArtemisInfraService.class,
               description = "Apache Artemis is an open source message broker",
-              serviceAlias = "artemis")
+              serviceAlias = "artemis",
+              uiSupported = true)
 public class ArtemisAllInfraService implements ArtemisInfraService, ContainerService<ArtemisContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ArtemisAllInfraService.class);
 
@@ -101,5 +102,10 @@ public class ArtemisAllInfraService implements ArtemisInfraService, ContainerSer
     @Override
     public String remoteURI() {
         return serviceAddress();
+    }
+
+    @Override
+    public String uiUrl() {
+        return container.adminURL();
     }
 }

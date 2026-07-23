@@ -19,12 +19,18 @@ package org.apache.camel;
 import java.util.Set;
 
 /**
- * A routes builder is capable of building routes using the builder and model classes.
+ * Low-level SPI interface for objects that can contribute {@link Route}s to a {@link CamelContext}.
  * <p/>
- * Eventually the routes are added to a {@link org.apache.camel.CamelContext} where they run inside.
+ * Implementations translate a route definition (from any DSL or model) into live {@link Route} instances and register
+ * them with the context. The actual routes become active after the context starts.
+ * <p/>
+ * This interface is not intended to be used directly by Camel application developers. Application code should extend
+ * {@code org.apache.camel.builder.RouteBuilder} (Java DSL) or use the YAML / XML DSLs instead, all of which implement
+ * this interface under the hood.
  *
- * This interface is not intended to be used by Camel end users. Instead, Camel users will use
- * <tt>org.apache.camel.builder.RouteBuilder</tt> to build routes in Java DSL.
+ * @see Route
+ * @see CamelContext
+ * @see RouteConfigurationsBuilder
  */
 public interface RoutesBuilder {
 

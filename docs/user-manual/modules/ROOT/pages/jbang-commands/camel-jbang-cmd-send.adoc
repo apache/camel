@@ -20,7 +20,9 @@ camel cmd send [options]
 |===
 | Option | Description | Default | Type
 | `--body` | Message body to send (prefix with file: to refer to loading message body from file) |  | String
+| `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--endpoint,--uri` | Endpoint where to send the message (can be uri, pattern, or refer to a route id) |  | String
+| `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--header` | Message header (key=value) |  | List
 | `--infra` | Send to infrastructure service (e.g., nats, kafka) |  | String
 | `--logging-color` | Use colored logging | true | boolean
@@ -30,6 +32,7 @@ camel cmd send [options]
 | `--properties` | comma separated list of properties file (only applicable when NOT using an existing running Camel) (ex. /path/to/file.properties,/path/to/other.properties |  | String
 | `--reply` | Whether to expect a reply message (InOut vs InOut messaging style) |  | boolean
 | `--reply-file` | Saves reply message to the file with the given name (override if exists) |  | String
+| `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--show-body` | Show message body from response message (InOut) | true | boolean
 | `--show-exception` | Show exception and stacktrace for failed messages | true | boolean
 | `--show-exchange-properties` | Show exchange properties from response message (InOut) | false | boolean

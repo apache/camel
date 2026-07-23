@@ -52,47 +52,47 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String FORMAT = "format";
     public static final String RAW_PAYLOAD = "rawPayload";
 
-    public static final String SOBJECT_NAME = "sObjectName";
-    public static final String SOBJECT_ID = "sObjectId";
-    public static final String SOBJECT_IDS = "sObjectIds";
-    public static final String SOBJECT_FIELDS = "sObjectFields";
-    public static final String SOBJECT_EXT_ID_NAME = "sObjectIdName";
-    public static final String SOBJECT_EXT_ID_VALUE = "sObjectIdValue";
-    public static final String SOBJECT_BLOB_FIELD_NAME = "sObjectBlobFieldName";
-    public static final String SOBJECT_CLASS = "sObjectClass";
-    public static final String SOBJECT_QUERY = "sObjectQuery";
-    public static final String STREAM_QUERY_RESULT = "streamQueryResult";
-    public static final String SOBJECT_SEARCH = "sObjectSearch";
-    public static final String APEX_METHOD = "apexMethod";
-    public static final String APEX_URL = "apexUrl";
-    public static final String COMPOSITE_METHOD = "compositeMethod";
-    public static final String LIMIT = "limit";
-    public static final String ALL_OR_NONE = "allOrNone";
-    public static final String EVENT_NAME = "eventName";
-    public static final String EVENT_SCHEMA_ID = "eventSchemaId";
-    public static final String EVENT_SCHEMA_FORMAT = "eventSchemaFormat";
+    public static final String SOBJECT_NAME = "CamelSalesforceSObjectName";
+    public static final String SOBJECT_ID = "CamelSalesforceSObjectId";
+    public static final String SOBJECT_IDS = "CamelSalesforceSObjectIds";
+    public static final String SOBJECT_FIELDS = "CamelSalesforceSObjectFields";
+    public static final String SOBJECT_EXT_ID_NAME = "CamelSalesforceSObjectIdName";
+    public static final String SOBJECT_EXT_ID_VALUE = "CamelSalesforceSObjectIdValue";
+    public static final String SOBJECT_BLOB_FIELD_NAME = "CamelSalesforceSObjectBlobFieldName";
+    public static final String SOBJECT_CLASS = "CamelSalesforceSObjectClass";
+    public static final String SOBJECT_QUERY = "CamelSalesforceSObjectQuery";
+    public static final String STREAM_QUERY_RESULT = "CamelSalesforceStreamQueryResult";
+    public static final String SOBJECT_SEARCH = "CamelSalesforceSObjectSearch";
+    public static final String APEX_METHOD = "CamelSalesforceApexMethod";
+    public static final String APEX_URL = "CamelSalesforceApexUrl";
+    public static final String COMPOSITE_METHOD = "CamelSalesforceCompositeMethod";
+    public static final String LIMIT = "CamelSalesforceLimit";
+    public static final String ALL_OR_NONE = "CamelSalesforceAllOrNone";
+    public static final String EVENT_NAME = "CamelSalesforceEventName";
+    public static final String EVENT_SCHEMA_ID = "CamelSalesforceEventSchemaId";
+    public static final String EVENT_SCHEMA_FORMAT = "CamelSalesforceEventSchemaFormat";
 
     // prefix for parameters in headers
-    public static final String APEX_QUERY_PARAM_PREFIX = "apexQueryParam.";
+    public static final String APEX_QUERY_PARAM_PREFIX = "CamelSalesforceApexQueryParam.";
 
     // parameters for Bulk API
-    public static final String CONTENT_TYPE = "contentType";
-    public static final String JOB_ID = "jobId";
-    public static final String BATCH_ID = "batchId";
-    public static final String RESULT_ID = "resultId";
-    public static final String QUERY_LOCATOR = "queryLocator";
-    public static final String LOCATOR = "locator";
-    public static final String MAX_RECORDS = "maxRecords";
-    public static final String PK_CHUNKING = "pkChunking";
-    public static final String PK_CHUNKING_CHUNK_SIZE = "pkChunkingChunkSize";
-    public static final String PK_CHUNKING_PARENT = "pkChunkingParent";
-    public static final String PK_CHUNKING_START_ROW = "pkChunkingStartRow";
+    public static final String CONTENT_TYPE = "CamelSalesforceContentType";
+    public static final String JOB_ID = "CamelSalesforceJobId";
+    public static final String BATCH_ID = "CamelSalesforceBatchId";
+    public static final String RESULT_ID = "CamelSalesforceResultId";
+    public static final String QUERY_LOCATOR = "CamelSalesforceQueryLocator";
+    public static final String LOCATOR = "CamelSalesforceLocator";
+    public static final String MAX_RECORDS = "CamelSalesforceMaxRecords";
+    public static final String PK_CHUNKING = "CamelSalesforcePkChunking";
+    public static final String PK_CHUNKING_CHUNK_SIZE = "CamelSalesforcePkChunkingChunkSize";
+    public static final String PK_CHUNKING_PARENT = "CamelSalesforcePkChunkingParent";
+    public static final String PK_CHUNKING_START_ROW = "CamelSalesforcePkChunkingStartRow";
 
     // parameters for Analytics API
-    public static final String REPORT_ID = "reportId";
-    public static final String INCLUDE_DETAILS = "includeDetails";
-    public static final String REPORT_METADATA = "reportMetadata";
-    public static final String INSTANCE_ID = "instanceId";
+    public static final String REPORT_ID = "CamelSalesforceReportId";
+    public static final String INCLUDE_DETAILS = "CamelSalesforceIncludeDetails";
+    public static final String REPORT_METADATA = "CamelSalesforceReportMetadata";
+    public static final String INSTANCE_ID = "CamelSalesforceInstanceId";
 
     // parameters for Streaming API
     public static final String DEFAULT_REPLAY_ID = "defaultReplayId";
@@ -109,10 +109,10 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String APPROVAL = "approval";
 
     // parameters for the RAW operation
-    public static final String RAW_PATH = "rawPath";
-    public static final String RAW_METHOD = "rawMethod";
-    public static final String RAW_QUERY_PARAMETERS = "rawQueryParameters";
-    public static final String RAW_HTTP_HEADERS = "rawHttpHeaders";
+    public static final String RAW_PATH = "CamelSalesforceRawPath";
+    public static final String RAW_METHOD = "CamelSalesforceRawMethod";
+    public static final String RAW_QUERY_PARAMETERS = "CamelSalesforceRawQueryParameters";
+    public static final String RAW_HTTP_HEADERS = "CamelSalesforceRawHttpHeaders";
 
     // default maximum authentication retries on failed authentication or
     // expired session
@@ -834,6 +834,7 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(APEX_URL, apexUrl);
         // apexQueryParams are handled explicitly in AbstractRestProcessor
         valueMap.put(COMPOSITE_METHOD, compositeMethod);
+        valueMap.put(ALL_OR_NONE, allOrNone);
         valueMap.put(LIMIT, limit);
         valueMap.put(APPROVAL, approval);
         valueMap.put(EVENT_NAME, eventName);
@@ -869,7 +870,7 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(INITIAL_REPLAY_ID_MAP, initialReplayIdMap);
 
         // add Pub/Sub API properties
-        valueMap.put(REPLAY_PRESET, initialReplayIdMap);
+        valueMap.put(REPLAY_PRESET, replayPreset);
         valueMap.put(PUB_SUB_DESERIALIZE_TYPE, pubSubDeserializeType);
         valueMap.put(PUB_SUB_POJO_CLASS, pubSubPojoClass);
 

@@ -22,9 +22,19 @@ import java.util.Set;
 import org.apache.camel.StaticService;
 
 /**
- * A resolver that can find classes based on package scanning.
+ * Classpath scanning strategy for discovering classes by annotation, supertype, or custom predicate across one or more
+ * packages, used by Camel at startup to auto-detect components, type converters, and other pluggable types.
+ * <p/>
+ * The resolver scans all registered {@link ClassLoader} instances for {@code .class} files under the specified package
+ * names (including sub-packages). Results are internally cached; call {@link #clearCache()} to invalidate the cache
+ * when the classpath changes at runtime (for example, in OSGi or hot-deployment environments).
+ * <p/>
+ * Global filters added via {@link #addFilter(PackageScanFilter)} are applied to every subsequent scan operation, which
+ * is useful for excluding test or internal classes from production discovery.
  *
+ * @see PackageScanFilter
  * @see PackageScanResourceResolver
+ * @see ClassResolver
  */
 public interface PackageScanClassResolver extends StaticService {
 

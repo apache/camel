@@ -22,12 +22,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.watch.constants.FileEventEnum;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -100,7 +98,7 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         As such, we have to be lenient checking for the expected number of exchanges received.
          */
         all.expectedMinimumMessageCount(8); // 2 directories, 6 files
-        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> all.assertIsSatisfied());
+        all.assertIsSatisfied();
 
         onlyTxtAnywhere.expectedMessageCount(3); // 3 txt files
         onlyTxtAnywhere.assertIsSatisfied();

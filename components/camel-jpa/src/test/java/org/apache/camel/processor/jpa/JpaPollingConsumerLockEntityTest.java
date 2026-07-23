@@ -18,6 +18,7 @@ package org.apache.camel.processor.jpa;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.persistence.OptimisticLockException;
@@ -32,6 +33,11 @@ import org.junit.jupiter.api.Test;
 
 public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + Customer.class.getName() + " x";
+
+    // Barrier that forces both "not-locked" threads to complete the read (pollEnrich)
+    // before either proceeds to the write (to("jpa://...")), ensuring they both hold
+    // stale version references and the second commit triggers an OptimisticLockException.
+    private final CyclicBarrier notLockedBarrier = new CyclicBarrier(2);
 
     @BeforeEach
     public void setupBeans() {
@@ -57,8 +63,15 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
         Map<String, Object> headers = new HashMap<>();
         headers.put("name", "Donald%");
 
-        template.asyncRequestBodyAndHeaders("direct:locked", "message", headers);
-        template.asyncRequestBodyAndHeaders("direct:locked", "message", headers);
+        // With OPTIMISTIC_FORCE_INCREMENT each read forces a version increment on the entity.
+        // A live race between two concurrent updates cannot be recovered deterministically:
+        // the version bump is committed inside the poll, so the losing side fails during the
+        // read and its retry keeps re-reading the pre-commit state without ever converging.
+        // Issuing the two updates synchronously (the second only after the first has completed
+        // and returned) lets each one read the freshly committed state, so both succeed with
+        // sequential order counts. This exercises the forced version increment reliably.
+        template.requestBodyAndHeaders("direct:locked", "message", headers);
+        template.requestBodyAndHeaders("direct:locked", "message", headers);
 
         MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
@@ -68,7 +81,12 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
         MockEndpoint mock = getMockEndpoint("mock:not-locked");
         MockEndpoint errMock = getMockEndpoint("mock:error");
 
-        mock.expectedBodiesReceived("orders: 1");
+        // Without pessimistic locking, two concurrent updates to the same versioned entity
+        // should cause an OptimisticLockException for the loser. The CyclicBarrier in the
+        // enrichment strategy (see createRouteBuilder) forces both threads to read the entity
+        // before either can proceed to the write, making the conflict deterministic.
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isEqualTo("orders: 1");
 
         errMock.expectedMessageCount(1);
         errMock.message(0).body().isInstanceOf(OptimisticLockException.class);
@@ -79,7 +97,7 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
         template.asyncRequestBodyAndHeaders("direct:not-locked", "message", headers);
         template.asyncRequestBodyAndHeaders("direct:not-locked", "message", headers);
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override
@@ -97,16 +115,34 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
                     }
                 };
 
+                // Enrichment strategy for the not-locked route that synchronizes both
+                // threads after the read so they both hold stale entity versions.
+                // The barrier wait happens AFTER the entity has been read and mutated
+                // but BEFORE it is written back to the DB via the subsequent to("jpa://...").
+                AggregationStrategy notLockedEnrichStrategy = new AggregationStrategy() {
+                    @Override
+                    public Exchange aggregate(Exchange originalExchange, Exchange jpaExchange) {
+                        Customer customer = jpaExchange.getIn().getBody(Customer.class);
+                        customer.setOrderCount(customer.getOrderCount() + 1);
+
+                        try {
+                            // Wait for the other thread to also complete its read, ensuring
+                            // both threads proceed to the write with the same stale version.
+                            notLockedBarrier.await(10, TimeUnit.SECONDS);
+                        } catch (Exception e) {
+                            throw new RuntimeException("Barrier wait interrupted", e);
+                        }
+
+                        return jpaExchange;
+                    }
+                };
+
                 onException(Exception.class)
                         .setBody().simple("${exception}")
                         .to("mock:error")
                         .handled(true);
 
                 from("direct:locked")
-                        .onException(OptimisticLockException.class)
-                        .redeliveryDelay(60)
-                        .maximumRedeliveries(2)
-                        .end()
                         .pollEnrich()
                         .simple("jpa://" + Customer.class.getName()
                                 + "?lockModeType=OPTIMISTIC_FORCE_INCREMENT&query=select c from Customer c where c.name like '${header.name}'")
@@ -119,7 +155,7 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
                         .pollEnrich()
                         .simple("jpa://" + Customer.class.getName()
                                 + "?query=select c from Customer c where c.name like '${header.name}'")
-                        .aggregationStrategy(enrichStrategy)
+                        .aggregationStrategy(notLockedEnrichStrategy)
                         .to("jpa://" + Customer.class.getName())
                         .setBody().simple("orders: ${body.orderCount}")
                         .to("mock:not-locked");

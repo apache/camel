@@ -19,9 +19,20 @@ package org.apache.camel.spi;
 import org.apache.camel.Endpoint;
 
 /**
- * A factory for creating a {@link java.lang.reflect.Proxy} for a bean.
+ * Factory for creating a {@link java.lang.reflect.Proxy} facade that routes method invocations to a Camel
+ * {@link org.apache.camel.Endpoint} as messages.
  * <p/>
- * This requires to have camel-bean on the classpath.
+ * The generated proxy implements one or more caller-supplied interfaces. Each method call on the proxy is translated
+ * into a Camel {@link org.apache.camel.Exchange} and sent to the configured endpoint, making it straightforward to
+ * invoke Camel routes from plain Java code without depending on Camel APIs at the call site. This capability is part of
+ * the <a href="https://camel.apache.org/manual/bean-integration.html">bean integration</a> feature and requires
+ * {@code camel-bean} on the classpath; the implementation is loaded via the META-INF service key {@link #FACTORY}.
+ * <p/>
+ * When {@code binding} is {@code true}, multi-parameter methods are mapped using the standard Camel bean-parameter
+ * binding algorithm (matching by type, annotation, or position).
+ *
+ * @see   BeanProcessorFactory
+ * @since 3.0
  */
 public interface BeanProxyFactory {
 

@@ -21,6 +21,8 @@ package org.apache.camel.spi;
  * <p/>
  * This is intended for internal optimizations or third party EIP or component implementations that can be optimized to
  * pre normalize endpoints under certain use-cases.
+ *
+ * @since 3.2
  */
 public interface NormalizedEndpointUri {
 

@@ -23,7 +23,7 @@ public class ManagePluginsITCase extends JBangTestSupport {
 
     @Test
     public void testPluginInstallation() throws InterruptedException {
-        checkCommandOutputs("plugin get --all", "Supported plugins:");
+        checkCommandOutputs("plugin get --all", "Bundled plugins:");
         execute("plugin add generate");
         checkCommandOutputs("plugin get", "generate");
         checkCommandOutputs("generate -h", "Generate REST DSL source code from OpenApi specification");

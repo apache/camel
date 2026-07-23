@@ -43,12 +43,15 @@ import io.vertx.core.file.FileSystemOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
+import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
 import org.apache.camel.dsl.jbang.core.commands.RunHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.MountTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -184,10 +187,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String registryMirror;
 
     // Export base options
-
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
-    String repositories;
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
     @CommandLine.Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
                         split = ",")
@@ -206,12 +207,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
-    boolean download = true;
+    @CommandLine.Option(names = { "--resource-dir", "--resource-dirs" },
+                        description = "Additional resource directories to include in src/main/resources (recursive, preserving structure)",
+                        split = ",")
+    List<String> resourceDirs = new ArrayList<>();
 
     @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
-                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI")
     boolean packageScanJars;
 
     @CommandLine.Option(names = { "--maven-settings" },
@@ -257,17 +259,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
     String camelSpringBootVersion;
 
-    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
-                        defaultValue = "io.quarkus.platform")
-    String quarkusGroupId = "io.quarkus.platform";
-
-    @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
-                        defaultValue = "quarkus-bom")
-    String quarkusArtifactId = "quarkus-bom";
-
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
-    String quarkusVersion = RuntimeType.QUARKUS_VERSION;
+    @CommandLine.Mixin
+    protected QuarkusPlatformMixin quarkusPlatform;
 
     @CommandLine.Option(names = { "--package-name" },
                         description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
@@ -354,7 +347,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         String workingDir = getIndexedWorkingDir(projectName);
         KubernetesExport export = configureExport(workingDir, baseDir);
-        boolean cronEnabled = computedTraits.getCronjob() != null && computedTraits.getCronjob().getEnabled();
+        boolean cronEnabled = computedTraits.getCronjob() != null
+                && Boolean.TRUE.equals(computedTraits.getCronjob().getEnabled());
         if (cronEnabled) {
             // disable observability-services as CronJob doesn't use the container probes
             export.setObserve(false);
@@ -366,7 +360,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         if (output != null) {
-            boolean ksvcEnabled = computedTraits.getKnativeService() != null && computedTraits.getKnativeService().getEnabled();
+            boolean ksvcEnabled = computedTraits.getKnativeService() != null
+                    && Boolean.TRUE.equals(computedTraits.getKnativeService().getEnabled());
 
             exit = buildProjectOutput(workingDir);
             if (exit != 0) {
@@ -438,14 +433,28 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     private KubernetesExport configureExport(String workingDir, Path baseDir) {
         detectCluster();
+
+        final QuarkusPlatformBom quarkusPlatformBoms;
+        if (runtime == RuntimeType.quarkus) {
+            quarkusPlatformBoms
+                    = quarkusPlatform.resolve(
+                            camelVersion,
+                            mavenResolver.downloader()::resolveArtifact,
+                            mavenResolver.download(),
+                            mavenResolver.fresh());
+        } else {
+            quarkusPlatformBoms
+                    = new QuarkusPlatformBom(null, null, camelVersion, quarkusPlatform.quarkusExtensionRegistryBaseUri());
+        }
+
         KubernetesExport.ExportConfigurer configurer = new KubernetesExport.ExportConfigurer(
                 runtime,
                 baseDir,
-                quarkusVersion,
+                quarkusPlatformBoms.quarkusBom().getVersion(),
                 files,
                 name,
                 gav,
-                repositories,
+                mavenResolver.repos(),
                 dependencies,
                 excludes,
                 mavenSettings,
@@ -459,8 +468,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 localKameletDir,
                 springBootVersion,
                 camelSpringBootVersion,
-                quarkusGroupId,
-                quarkusArtifactId,
+                quarkusPlatformBoms.quarkusBom().getGroupId(),
+                quarkusPlatformBoms.quarkusBom().getArtifactId(),
+                quarkusPlatformBoms.quarkusExtensionRegistryBaseUri(),
                 openApi,
                 workingDir,
                 packageName,
@@ -470,13 +480,17 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 true,
                 true,
                 false,
-                download,
+                mavenResolver.download(),
                 packageScanJars,
                 (quiet || output != null),
                 true,
                 "info",
                 verbose,
-                skipPlugins);
+                skipPlugins,
+                resourceDirs,
+                quarkusPlatformBoms.quarkusCamelBom().getGroupId(),
+                quarkusPlatformBoms.quarkusCamelBom().getArtifactId(),
+                quarkusPlatformBoms.quarkusCamelBom().getVersion());
         KubernetesExport export = new KubernetesExport(getMain(), configurer);
 
         export.image = image;
@@ -545,6 +559,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                     //
                     KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
                     deleteCommand.name = projectName;
+                    deleteCommand.namespace = namespace;
                     deleteCommand.doCall();
 
                     // Re-deploy updated project
@@ -614,6 +629,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         devModeShutdownTask = new Thread(() -> {
             KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
             deleteCommand.name = projectName;
+            deleteCommand.namespace = namespace;
             try (var client = createKubernetesClientForShutdownHook()) {
                 KubernetesHelper.setKubernetesClient(client);
                 deleteCommand.doCall();
@@ -670,7 +686,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         // suppress maven transfer progress
         args.add("-ntp");
 
-        if (computedTraits.getKnativeService() != null && computedTraits.getKnativeService().getEnabled()) {
+        if (computedTraits.getKnativeService() != null
+                && Boolean.TRUE.equals(computedTraits.getKnativeService().getEnabled())) {
             // by default jkube creates a Deployment manifest and it doesn't support knative controller yet.
             // however when knative-service is enabled the knative-service trait generates a src/main/jkube/service.yml
             // and there is no need for the regular Deployment as the knative Service manifest, once deployed
@@ -720,6 +737,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
         // suppress maven transfer progress
         args.add("-ntp");
+        args.add("-DskipTests");
         args.add("--file");
         args.add(new File(workingDir, "pom.xml").getAbsolutePath());
 
@@ -738,14 +756,16 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         boolean isOpenshift = ClusterType.OPENSHIFT.isEqualTo(clusterType);
         var prefix = isOpenshift ? "oc" : "k8s";
-        if (computedTraits.getKnativeService() != null && computedTraits.getKnativeService().getEnabled()) {
+        if (computedTraits.getKnativeService() != null
+                && Boolean.TRUE.equals(computedTraits.getKnativeService().getEnabled())) {
             // by default jkube creates a Deployment manifest and it doesn't support knative controller yet.
             // however when knative-service is enabled the knative-service trait generates a src/main/jkube/service.yml
             // and there is no need for the regular Deployment as the knative Service manifest, once deployed
             // will generate the regular Deployment, so we have to disable the jkube resources task to not run and not generate the deployment.yml
             // apply the knative service manifest and specify the knative service.yml
             args.add("-Djkube.skip.resource=true");
-            args.add(prefix + ":build");
+            // run the "package" task instead of k8s:deploy
+            args.add("package");
             args.add(prefix + ":apply");
             if (isOpenshift) {
                 args.add("-Djkube.openshiftManifest=src/main/jkube/service.yml");
@@ -795,6 +815,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
             if (ClusterType.MINIKUBE == cluster) {
                 this.imageBuilder = "docker";
                 this.imagePush = false;
+            } else if (ClusterType.OPENSHIFT == cluster) {
+                if (ObjectHelper.isEmpty(imageGroup)) {
+                    this.imageGroup = client().getNamespace();
+                }
             }
             if (verbose) {
                 printer().println(this.clusterType);
@@ -856,7 +880,15 @@ public class KubernetesRun extends KubernetesBaseCommand {
         if (namespace != null || client.getNamespace() != null) {
             ns = namespace != null ? namespace : client.getNamespace();
         }
-        Map<String, String> data = client.configMaps().inNamespace(ns).withName(name).get().getData();
+        var cm = client.configMaps().inNamespace(ns).withName(name).get();
+        if (cm == null) {
+            printer().printf("ConfigMap '%s' not found in namespace '%s'%n", name, ns);
+            return Set.of();
+        }
+        Map<String, String> data = cm.getData();
+        if (data == null) {
+            return Set.of();
+        }
         return data.keySet();
     }
 
@@ -866,7 +898,15 @@ public class KubernetesRun extends KubernetesBaseCommand {
         if (namespace != null || client.getNamespace() != null) {
             ns = namespace != null ? namespace : client.getNamespace();
         }
-        Map<String, String> data = client.secrets().inNamespace(ns).withName(name).get().getData();
+        var secret = client.secrets().inNamespace(ns).withName(name).get();
+        if (secret == null) {
+            printer().printf("Secret '%s' not found in namespace '%s'%n", name, ns);
+            return Set.of();
+        }
+        Map<String, String> data = secret.getData();
+        if (data == null) {
+            return Set.of();
+        }
         return data.keySet();
     }
 

@@ -17,15 +17,12 @@
 package org.apache.camel.component.pqc.lifecycle;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -34,9 +31,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
+import org.apache.camel.util.SecureRandomHelper;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
+import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
 import org.bouncycastle.pqc.jcajce.spec.*;
@@ -185,17 +187,17 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         // Initialize with parameter spec if provided
         if (parameterSpec != null) {
             if (parameterSpec instanceof AlgorithmParameterSpec algorithmParamSpec) {
-                generator.initialize(algorithmParamSpec, new SecureRandom());
+                generator.initialize(algorithmParamSpec, SecureRandomHelper.getSecureRandom());
             } else if (parameterSpec instanceof Integer keySize) {
-                generator.initialize(keySize, new SecureRandom());
+                generator.initialize(keySize, SecureRandomHelper.getSecureRandom());
             }
         } else {
             // Use default parameter spec for the algorithm
             AlgorithmParameterSpec defaultSpec = getDefaultParameterSpec(algorithm);
             if (defaultSpec != null) {
-                generator.initialize(defaultSpec, new SecureRandom());
+                generator.initialize(defaultSpec, SecureRandomHelper.getSecureRandom());
             } else {
-                generator.initialize(getDefaultKeySize(algorithm), new SecureRandom());
+                generator.initialize(getDefaultKeySize(algorithm), SecureRandomHelper.getSecureRandom());
             }
         }
 
@@ -264,7 +266,6 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         byte[] publicKeyBytes = keyPair.getPublic().getEncoded(); // X.509/SubjectPublicKeyInfo format
         String privateKeyBase64 = Base64.getEncoder().encodeToString(privateKeyBytes);
         String publicKeyBase64 = Base64.getEncoder().encodeToString(publicKeyBytes);
-        String metadataBase64 = serializeMetadata(metadata);
 
         // Store private key separately (strict IAM policy recommended in production)
         String privateSecretName = getSecretName(keyId, "private");
@@ -284,12 +285,9 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
 
         createOrUpdateSecret(publicSecretName, publicSecretValue, "PQC Public Key: " + keyId);
 
-        // Store metadata separately
+        // Store metadata separately as JSON (see KeyMetadataCodec)
         String metadataSecretName = getSecretName(keyId, "metadata");
-        String metadataSecretValue = objectMapper.writeValueAsString(new MetadataData(
-                metadataBase64,
-                keyId,
-                metadata.getAlgorithm()));
+        String metadataSecretValue = KeyMetadataCodec.toJson(metadata);
 
         createOrUpdateSecret(metadataSecretName, metadataSecretValue, "PQC Key Metadata: " + keyId);
 
@@ -347,8 +345,16 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
 
         try {
             GetSecretValueResponse response = getSecret(metadataSecretName);
-            MetadataData metadataData = objectMapper.readValue(response.secretString(), MetadataData.class);
-            KeyMetadata metadata = deserializeMetadata(metadataData.getMetadata());
+            String secret = response.secretString();
+
+            KeyMetadata metadata;
+            JsonNode node = objectMapper.readTree(secret);
+            if (node.has("metadata")) {
+                // Legacy format: a Base64-encoded, Java-serialized KeyMetadata wrapped in an envelope
+                metadata = deserializeMetadata(node.get("metadata").asText());
+            } else {
+                metadata = KeyMetadataCodec.fromJson(secret);
+            }
 
             // Cache it
             metadataCache.put(keyId, metadata);
@@ -525,18 +531,16 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         }
     }
 
-    private String serializeMetadata(KeyMetadata metadata) throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-            oos.writeObject(metadata);
-        }
-        return Base64.getEncoder().encodeToString(baos.toByteArray());
-    }
-
+    /**
+     * Reads a legacy (pre-JSON) Base64-encoded, Java-serialized {@link KeyMetadata}. The deserialization is constrained
+     * to the expected types via {@link KeyMetadataCodec#METADATA_FILTER}. Retained for backward compatibility with
+     * metadata written by older versions; new metadata is stored as JSON.
+     */
     private KeyMetadata deserializeMetadata(String base64) throws Exception {
         byte[] data = Base64.getDecoder().decode(base64);
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         try (ObjectInputStream ois = new ObjectInputStream(bais)) {
+            ois.setObjectInputFilter(KeyMetadataCodec.METADATA_FILTER);
             return (KeyMetadata) ois.readObject();
         }
     }
@@ -572,15 +576,13 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         try {
             switch (algorithm) {
                 case "DILITHIUM":
-                    return DilithiumParameterSpec.dilithium2;
                 case "MLDSA":
+                    return MLDSAParameterSpec.ml_dsa_44;
                 case "SLHDSA":
-                    // These use default initialization
-                    return null;
+                case "SPHINCSPLUS":
+                    return SLHDSAParameterSpec.slh_dsa_sha2_128s;
                 case "FALCON":
                     return FalconParameterSpec.falcon_512;
-                case "SPHINCSPLUS":
-                    return SPHINCSPlusParameterSpec.sha2_128s;
                 case "XMSS":
                     return new XMSSParameterSpec(
                             10,
@@ -594,8 +596,7 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
                             LMOtsParameters.sha256_n32_w4);
                 case "MLKEM":
                 case "KYBER":
-                    // These use default initialization
-                    return null;
+                    return MLKEMParameterSpec.ml_kem_768;
                 case "NTRU":
                     return NTRUParameterSpec.ntruhps2048509;
                 case "NTRULPRime":
@@ -665,48 +666,6 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
 
         public void setFormat(String format) {
             this.format = format;
-        }
-
-        public String getAlgorithm() {
-            return algorithm;
-        }
-
-        public void setAlgorithm(String algorithm) {
-            this.algorithm = algorithm;
-        }
-    }
-
-    /**
-     * Helper class for storing metadata in JSON format
-     */
-    private static class MetadataData {
-        private String metadata;
-        private String keyId;
-        private String algorithm;
-
-        public MetadataData() {
-        }
-
-        public MetadataData(String metadata, String keyId, String algorithm) {
-            this.metadata = metadata;
-            this.keyId = keyId;
-            this.algorithm = algorithm;
-        }
-
-        public String getMetadata() {
-            return metadata;
-        }
-
-        public void setMetadata(String metadata) {
-            this.metadata = metadata;
-        }
-
-        public String getKeyId() {
-            return keyId;
-        }
-
-        public void setKeyId(String keyId) {
-            this.keyId = keyId;
         }
 
         public String getAlgorithm() {

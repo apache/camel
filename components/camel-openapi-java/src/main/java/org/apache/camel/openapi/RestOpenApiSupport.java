@@ -376,14 +376,12 @@ public class RestOpenApiSupport {
     }
 
     private static String getFromOpenAPI3(OpenAPI openAPI3, ObjectMapper mapper) {
-        DateFormat origin = mapper.getDateFormat();
         try {
-            mapper.setDateFormat(DEFAULT_DATE_FORMAT);
-            return mapper.writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI3);
+            return mapper.writer(new DefaultPrettyPrinter())
+                    .with(DEFAULT_DATE_FORMAT)
+                    .writeValueAsString(openAPI3);
         } catch (Exception e) {
             return null;
-        } finally {
-            mapper.setDateFormat(origin);
         }
     }
 }

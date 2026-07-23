@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class StopTimeoutRouteTest extends ContextTestSupport {
 
     private final CountDownLatch processingStarted = new CountDownLatch(1);
-    private final CountDownLatch processingDone = new CountDownLatch(1);
 
     @Test
     public void testStopTimeout() throws Exception {
@@ -44,9 +44,7 @@ public class StopTimeoutRouteTest extends ContextTestSupport {
 
         template.sendBody("direct:foo", "Hello Foo");
 
-        assertMockEndpointsSatisfied();
-
-        processingDone.countDown();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("start"));
         assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
@@ -65,7 +63,6 @@ public class StopTimeoutRouteTest extends ContextTestSupport {
                             } catch (Exception ex) {
                                 // ignore
                             }
-                            processingDone.countDown();
                         })
                         .to("mock:foo");
 

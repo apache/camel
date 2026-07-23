@@ -225,7 +225,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: security
          * 
          * @param tls the value to set
@@ -241,7 +241,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: security
          * 
          * @param tls the value to set
@@ -389,7 +389,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final PineconeVectorDbHeaderNameBuilder INSTANCE = new PineconeVectorDbHeaderNameBuilder();
+        public static final PineconeVectorDbHeaderNameBuilder INSTANCE = new PineconeVectorDbHeaderNameBuilder();
 
         /**
          * The action to be performed.

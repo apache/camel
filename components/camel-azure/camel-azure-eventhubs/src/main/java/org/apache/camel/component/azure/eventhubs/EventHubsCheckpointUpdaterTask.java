@@ -29,7 +29,7 @@ public class EventHubsCheckpointUpdaterTask implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventHubsCheckpointUpdaterTask.class);
 
-    private EventContext eventContext;
+    private volatile EventContext eventContext;
     private final AtomicInteger processedEvents;
     private volatile long scheduledTime;
 
@@ -44,7 +44,7 @@ public class EventHubsCheckpointUpdaterTask implements Runnable {
             LOG.debug("checkpointing offset after reaching timeout, with a batch of {}", processedEvents.get());
             eventContext.updateCheckpointAsync()
                     .subscribe(unused -> LOG.debug("Processed one event..."),
-                            error -> LOG.debug("Error when updating Checkpoint: {}", error.getMessage()),
+                            error -> LOG.warn("Error when updating Checkpoint: {}", error.getMessage(), error),
                             () -> {
                                 LOG.debug("Checkpoint updated.");
                                 processedEvents.set(0);

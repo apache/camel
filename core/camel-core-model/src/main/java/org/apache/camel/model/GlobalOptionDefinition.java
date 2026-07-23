@@ -26,22 +26,22 @@ import org.apache.camel.spi.Metadata;
 /**
  * Models a string key/value pair for configuring some global options on a Camel context such as max debug log length.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Defines a single global configuration option as a key/value pair for the CamelContext")
 @XmlRootElement(name = "globalOption")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GlobalOptionDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Global option key")
     private String key;
     @XmlAttribute(required = true)
+    @Metadata(description = "Global option value")
     private String value;
 
     public GlobalOptionDefinition() {
     }
 
-    /**
-     * Global option key
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -50,9 +50,6 @@ public class GlobalOptionDefinition {
         return key;
     }
 
-    /**
-     * Global option value
-     */
     public void setValue(String value) {
         this.value = value;
     }

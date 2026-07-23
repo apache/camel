@@ -28,12 +28,9 @@ import org.apache.camel.component.salesforce.api.dto.pubsub.PublishResult;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.client.PubSubApiClient;
 import org.apache.camel.support.service.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PubSubApiProcessor extends AbstractSalesforceProcessor {
 
-    private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final String topic;
     private PubSubApiClient pubSubClient;
 
@@ -67,7 +64,7 @@ public class PubSubApiProcessor extends AbstractSalesforceProcessor {
 
     private void processPublish(Exchange exchange, AsyncCallback callback) throws SalesforceException {
         try {
-            LOG.debug("Publishing on topic: {}", topic);
+            log.debug("Publishing on topic: {}", topic);
             final List<?> body = exchange.getIn().getMandatoryBody(List.class);
             final List<PublishResult> results = pubSubClient.publishMessage(topic, body);
             exchange.getIn().setBody(results);

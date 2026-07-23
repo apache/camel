@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -42,6 +42,7 @@
 
     <modules>
         <module>parent</module>
+        <module>camel-exe</module>
         <module>spi-annotations</module>
         <module>camel-tooling-model</module>
         <module>camel-util-json</module>

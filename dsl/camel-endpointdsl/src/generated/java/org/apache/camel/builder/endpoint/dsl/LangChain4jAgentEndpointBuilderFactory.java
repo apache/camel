@@ -77,6 +77,42 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return this;
         }
         /**
+         * AgentConfiguration used by Camel to create the agent internally. When
+         * set, Camel creates an AgentWithMemory if a ChatMemoryProvider is
+         * configured, otherwise an AgentWithoutMemory. If an agentFactory is
+         * also configured, the factory takes precedence.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.langchain4j.agent.api.AgentConfiguration</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param agentConfiguration the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder agentConfiguration(org.apache.camel.component.langchain4j.agent.api.AgentConfiguration agentConfiguration) {
+            doSetProperty("agentConfiguration", agentConfiguration);
+            return this;
+        }
+        /**
+         * AgentConfiguration used by Camel to create the agent internally. When
+         * set, Camel creates an AgentWithMemory if a ChatMemoryProvider is
+         * configured, otherwise an AgentWithoutMemory. If an agentFactory is
+         * also configured, the factory takes precedence.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.langchain4j.agent.api.AgentConfiguration</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param agentConfiguration the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder agentConfiguration(String agentConfiguration) {
+            doSetProperty("agentConfiguration", agentConfiguration);
+            return this;
+        }
+        /**
          * The agent factory to use for creating agents if no Agent is provided.
          * 
          * The option is a:
@@ -104,6 +140,68 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          */
         default LangChain4jAgentEndpointBuilder agentFactory(String agentFactory) {
             doSetProperty("agentFactory", agentFactory);
+            return this;
+        }
+        /**
+         * JSON schema for structured output validation. Only supported in
+         * inline agent creation mode: agentConfiguration must be set and
+         * neither agent nor agentFactory may be configured. Mutually exclusive
+         * with outputClass.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param jsonSchema the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder jsonSchema(String jsonSchema) {
+            doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+        /**
+         * Java class to use for structured output. Camel derives the JSON
+         * schema from the class and instructs the model to produce matching
+         * JSON; the response body is left as a raw JSON string. Only supported
+         * in inline agent creation mode: agentConfiguration must be set and
+         * neither agent nor agentFactory may be configured. The class must be a
+         * POJO with public fields or getters; simple types, enums, and
+         * collections are not supported. Mutually exclusive with jsonSchema.
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param outputClass the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder outputClass(Class<java.lang.Object> outputClass) {
+            doSetProperty("outputClass", outputClass);
+            return this;
+        }
+        /**
+         * Java class to use for structured output. Camel derives the JSON
+         * schema from the class and instructs the model to produce matching
+         * JSON; the response body is left as a raw JSON string. Only supported
+         * in inline agent creation mode: agentConfiguration must be set and
+         * neither agent nor agentFactory may be configured. The class must be a
+         * POJO with public fields or getters; simple types, enums, and
+         * collections are not supported. Mutually exclusive with jsonSchema.
+         * 
+         * The option will be converted to a
+         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param outputClass the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder outputClass(String outputClass) {
+            doSetProperty("outputClass", outputClass);
             return this;
         }
         /**
@@ -327,7 +425,7 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final LangChain4jAgentHeaderNameBuilder INSTANCE = new LangChain4jAgentHeaderNameBuilder();
+        public static final LangChain4jAgentHeaderNameBuilder INSTANCE = new LangChain4jAgentHeaderNameBuilder();
 
         /**
          * The system prompt.
@@ -405,6 +503,85 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          */
         public String langChain4jAgentExcludeMcpServers() {
             return "CamelLangChain4jAgentExcludeMcpServers";
+        }
+        /**
+         * The Finish Reason.
+         * 
+         * The option is a: {@code dev.langchain4j.model.output.FinishReason}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jAgentFinishReason}.
+         */
+        public String langChain4jAgentFinishReason() {
+            return "CamelLangChain4jAgentFinishReason";
+        }
+        /**
+         * The Input Token Count.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jAgentInputTokenCount}.
+         */
+        public String langChain4jAgentInputTokenCount() {
+            return "CamelLangChain4jAgentInputTokenCount";
+        }
+        /**
+         * The Output Token Count.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jAgentOutputTokenCount}.
+         */
+        public String langChain4jAgentOutputTokenCount() {
+            return "CamelLangChain4jAgentOutputTokenCount";
+        }
+        /**
+         * The Total Token Count.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jAgentTotalTokenCount}.
+         */
+        public String langChain4jAgentTotalTokenCount() {
+            return "CamelLangChain4jAgentTotalTokenCount";
+        }
+        /**
+         * RAG sources retrieved during agent invocation.
+         * 
+         * The option is a: {@code
+         * java.util.List<dev.langchain4j.rag.content.Content>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jAgentSources}.
+         */
+        public String langChain4jAgentSources() {
+            return "CamelLangChain4jAgentSources";
+        }
+        /**
+         * Tool executions performed during agent invocation.
+         * 
+         * The option is a: {@code
+         * java.util.List<dev.langchain4j.service.tool.ToolExecution>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jAgentToolExecutions}.
+         */
+        public String langChain4jAgentToolExecutions() {
+            return "CamelLangChain4jAgentToolExecutions";
         }
     }
     static LangChain4jAgentEndpointBuilder endpointBuilder(String componentName, String path) {

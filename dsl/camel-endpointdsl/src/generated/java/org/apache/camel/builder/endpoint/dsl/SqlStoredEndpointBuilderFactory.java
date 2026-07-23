@@ -391,7 +391,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SqlStoredHeaderNameBuilder INSTANCE = new SqlStoredHeaderNameBuilder();
+        public static final SqlStoredHeaderNameBuilder INSTANCE = new SqlStoredHeaderNameBuilder();
 
         /**
          * The template.

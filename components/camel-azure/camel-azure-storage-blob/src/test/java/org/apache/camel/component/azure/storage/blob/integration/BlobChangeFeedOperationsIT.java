@@ -64,7 +64,7 @@ class BlobChangeFeedOperationsIT extends Base {
     @Disabled("It is disabled due to changefeed support in the default test account")
     void testGetChangeFeed() throws IOException, InterruptedException {
         // create test blobs
-        final String blobName = RandomStringUtils.randomAlphabetic(10);
+        final String blobName = RandomStringUtils.secure().nextAlphabetic(10);
         final String data = "Hello world from my awesome tests!";
         final InputStream dataStream = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
 

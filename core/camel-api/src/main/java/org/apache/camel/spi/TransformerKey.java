@@ -16,31 +16,44 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.ValueHolder;
 import org.apache.camel.util.StringHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Key used in {@link org.apache.camel.spi.TransformerRegistry} in
- * {@link org.apache.camel.impl.engine.AbstractCamelContext}, to ensure a consistent lookup.
+ * Composite lookup key for the {@link TransformerRegistry}, encoding a from-{@link DataType} / to-{@link DataType} pair
+ * as a single string value for efficient map-based lookup.
+ * <p/>
+ * The string form is {@code "fromType/toType"} when both ends are specified, or just {@code "toType"} when the from
+ * side is {@link DataType#ANY} (scheme-only transformer that applies to any input type). This normalization ensures
+ * that scheme-based transformers (e.g. all {@code json:*} conversions) can be resolved with a single registry lookup
+ * without iterating all registered transformers.
+ *
+ * @see   TransformerRegistry
+ * @see   Transformer
+ * @see   DataType
+ * @since 4.7
  */
 public final class TransformerKey extends ValueHolder<String> {
 
     private final DataType from;
     private final DataType to;
 
-    public TransformerKey(String toType) {
-        this(DataType.ANY, new DataType(toType));
+    public TransformerKey(@Nullable String toType) {
+        this(DataType.ANY, new DataType(Objects.requireNonNull(toType, "toType")));
         StringHelper.notEmpty(toType, "toType");
     }
 
     public TransformerKey(DataType to) {
-        this(DataType.ANY, to);
+        this(DataType.ANY, Objects.requireNonNull(to, "to"));
     }
 
     public TransformerKey(DataType from, DataType to) {
         super(createKeyString(from, to));
-        this.from = from;
-        this.to = to;
+        this.from = Objects.requireNonNull(from, "from");
+        this.to = Objects.requireNonNull(to, "to");
     }
 
     /**
@@ -60,8 +73,11 @@ public final class TransformerKey extends ValueHolder<String> {
      * data type name.
      */
     public static TransformerKey createFrom(Transformer answer) {
-        if (!DataType.isAnyType(answer.getFrom()) && !DataType.isAnyType(answer.getTo())) {
-            return new TransformerKey(answer.getFrom(), answer.getTo());
+        Objects.requireNonNull(answer, "answer");
+        DataType from = answer.getFrom();
+        DataType to = answer.getTo();
+        if (from != null && to != null && !DataType.isAnyType(from) && !DataType.isAnyType(to)) {
+            return new TransformerKey(from, to);
         }
 
         return new TransformerKey(answer.getName());

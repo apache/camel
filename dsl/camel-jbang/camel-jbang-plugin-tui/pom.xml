@@ -24,19 +24,19 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>camel-jbang-plugin-tui</artifactId>
 
     <name>Camel :: JBang :: Plugin :: TUI</name>
-    <description>Camel JBang TUI Plugin - Terminal UI dashboards for monitoring Camel integrations</description>
+    <description>Camel CLI TUI Plugin - Terminal UI dashboards for monitoring Camel integrations</description>
 
     <properties>
         <firstVersion>4.20.0</firstVersion>
         <label>jbang</label>
-        <supportLevel>Experimental</supportLevel>
+        <supportLevel>Stable</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
     </properties>
 
@@ -50,8 +50,17 @@
             <artifactId>camel-catalog</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-diagram</artifactId>
+        </dependency>
+        <dependency>
             <groupId>dev.tamboui</groupId>
             <artifactId>tamboui-tui</artifactId>
+            <version>${tamboui-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.tamboui</groupId>
+            <artifactId>tamboui-css</artifactId>
             <version>${tamboui-version}</version>
         </dependency>
         <dependency>
@@ -63,6 +72,27 @@
             <groupId>dev.tamboui</groupId>
             <artifactId>tamboui-jline3-backend</artifactId>
             <version>${tamboui-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.tamboui</groupId>
+            <artifactId>tamboui-image</artifactId>
+            <version>${tamboui-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.tamboui</groupId>
+            <artifactId>tamboui-markdown</artifactId>
+            <version>${tamboui-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-junit6</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

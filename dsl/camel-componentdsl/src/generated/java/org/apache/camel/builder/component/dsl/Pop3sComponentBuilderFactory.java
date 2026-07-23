@@ -533,6 +533,84 @@ public interface Pop3sComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether message headers From and Sender override the sender
+         * pre-configured in the endpoint URI. Defaults to true. Set to false to
+         * always use the endpoint URI sender, ignoring any From or Sender
+         * headers from the message.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useHeaderFrom the value to set
+         * @return the dsl builder
+         */
+        default Pop3sComponentBuilder useHeaderFrom(boolean useHeaderFrom) {
+            doSetProperty("useHeaderFrom", useHeaderFrom);
+            return this;
+        }
+    
+        
+        /**
+         * Whether message headers To, CC, and BCC override the recipients
+         * pre-configured in the endpoint URI. Defaults to true. Set to false to
+         * always use the endpoint URI recipients, ignoring any recipient
+         * headers from the message.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useHeaderRecipients the value to set
+         * @return the dsl builder
+         */
+        default Pop3sComponentBuilder useHeaderRecipients(boolean useHeaderRecipients) {
+            doSetProperty("useHeaderRecipients", useHeaderRecipients);
+            return this;
+        }
+    
+        
+        /**
+         * Whether message header Reply-To overrides the replyTo pre-configured
+         * in the endpoint URI. Defaults to true. Set to false to always use the
+         * endpoint URI replyTo, ignoring any Reply-To header from the message.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useHeaderReplyTo the value to set
+         * @return the dsl builder
+         */
+        default Pop3sComponentBuilder useHeaderReplyTo(boolean useHeaderReplyTo) {
+            doSetProperty("useHeaderReplyTo", useHeaderReplyTo);
+            return this;
+        }
+    
+        
+        /**
+         * Whether message header Subject overrides the subject pre-configured
+         * in the endpoint URI. Defaults to true. Set to false to always use the
+         * endpoint URI subject, ignoring any Subject header from the message.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useHeaderSubject the value to set
+         * @return the dsl builder
+         */
+        default Pop3sComponentBuilder useHeaderSubject(boolean useHeaderSubject) {
+            doSetProperty("useHeaderSubject", useHeaderSubject);
+            return this;
+        }
+    
         /**
          * To use a custom org.apache.camel.component.mail.JavaMailSender for
          * sending emails.
@@ -926,6 +1004,31 @@ public interface Pop3sComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether to allow dynamic JavaMail session properties (message headers
+         * whose key starts with mail.smtp. or mail.smtps.) to override the
+         * endpoint configuration on a per-message basis. This is disabled by
+         * default. Only enable it when these headers originate exclusively from
+         * trusted route logic, never from data crossing a trust boundary (for
+         * example HTTP query parameters, or JMS/Kafka messages from untrusted
+         * producers). When enabled, an attacker able to set these headers could
+         * weaken transport security (such as mail.smtp.ssl.trust or
+         * mail.smtp.starttls.enable) or redirect the SMTP connection.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useJavaMailSessionPropertiesFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default Pop3sComponentBuilder useJavaMailSessionPropertiesFromHeaders(boolean useJavaMailSessionPropertiesFromHeaders) {
+            doSetProperty("useJavaMailSessionPropertiesFromHeaders", useJavaMailSessionPropertiesFromHeaders);
+            return this;
+        }
+    
         /**
          * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
@@ -986,6 +1089,10 @@ public interface Pop3sComponentBuilderFactory {
             case "replyTo": getOrCreateConfiguration((MailComponent) component).setReplyTo((java.lang.String) value); return true;
             case "subject": getOrCreateConfiguration((MailComponent) component).setSubject((java.lang.String) value); return true;
             case "to": getOrCreateConfiguration((MailComponent) component).setTo((java.lang.String) value); return true;
+            case "useHeaderFrom": getOrCreateConfiguration((MailComponent) component).setUseHeaderFrom((boolean) value); return true;
+            case "useHeaderRecipients": getOrCreateConfiguration((MailComponent) component).setUseHeaderRecipients((boolean) value); return true;
+            case "useHeaderReplyTo": getOrCreateConfiguration((MailComponent) component).setUseHeaderReplyTo((boolean) value); return true;
+            case "useHeaderSubject": getOrCreateConfiguration((MailComponent) component).setUseHeaderSubject((boolean) value); return true;
             case "javaMailSender": getOrCreateConfiguration((MailComponent) component).setJavaMailSender((org.apache.camel.component.mail.JavaMailSender) value); return true;
             case "additionalJavaMailProperties": getOrCreateConfiguration((MailComponent) component).setAdditionalJavaMailProperties((java.util.Properties) value); return true;
             case "alternativeBodyHeader": getOrCreateConfiguration((MailComponent) component).setAlternativeBodyHeader((java.lang.String) value); return true;
@@ -1008,6 +1115,7 @@ public interface Pop3sComponentBuilderFactory {
             case "password": getOrCreateConfiguration((MailComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((MailComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((MailComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "useJavaMailSessionPropertiesFromHeaders": getOrCreateConfiguration((MailComponent) component).setUseJavaMailSessionPropertiesFromHeaders((boolean) value); return true;
             case "username": getOrCreateConfiguration((MailComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }

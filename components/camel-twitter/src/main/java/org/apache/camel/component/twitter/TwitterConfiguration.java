@@ -53,7 +53,7 @@ public class TwitterConfiguration {
     private String httpProxyHost;
     @UriParam(label = "proxy")
     private String httpProxyUser;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", security = "secret")
     private String httpProxyPassword;
     @UriParam(label = "proxy")
     private Integer httpProxyPort;

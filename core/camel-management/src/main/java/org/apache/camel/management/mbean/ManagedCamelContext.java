@@ -37,7 +37,6 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
-import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
@@ -58,11 +57,10 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @ManagedResource(description = "Managed CamelContext")
-public class ManagedCamelContext extends ManagedPerformanceCounter implements TimerListener, ManagedCamelContextMBean {
+public class ManagedCamelContext extends ManagedPerformanceCounter implements ManagedCamelContextMBean {
 
     private final CamelContext context;
     private final LoadTriplet load = new LoadTriplet();
-    private final LoadThroughput thp = new LoadThroughput();
     private final String jmxDomain;
     private final boolean includeRouteTemplates;
     private final boolean includeKamelets;
@@ -88,6 +86,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         boolean enabled = context.getManagementStrategy().getManagementAgent() != null
                 && context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
+        if (context.getManagementStrategy().getManagementAgent() != null
+                && context.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended()) {
+            initExtendedStatistics();
+        }
     }
 
     @Override
@@ -380,17 +382,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
-    public String getThroughput() {
-        double d = thp.getThroughput();
-        if (Double.isNaN(d)) {
-            // empty string if load statistics is disabled
-            return "";
-        } else {
-            return String.format("%.2f", d);
-        }
-    }
-
-    @Override
     public long getRemoteExchangesTotal() {
         return remoteExchangesTotal.getValue();
     }
@@ -443,8 +434,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public void onTimer() {
+        super.onTimer();
         load.update(getInflightExchanges());
-        thp.update(getExchangesTotal());
     }
 
     @Override
@@ -633,6 +624,29 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
         return PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, def, resolvePlaceholders, uriAsParameters,
                 generatedIds, sourceLocation);
+    }
+
+    @Override
+    public String dumpRoutesAsJava() throws Exception {
+        return dumpRoutesAsJava(false);
+    }
+
+    @Override
+    public String dumpRoutesAsJava(boolean resolvePlaceholders) throws Exception {
+        return dumpRoutesAsJava(resolvePlaceholders, true);
+    }
+
+    @Override
+    public String dumpRoutesAsJava(boolean resolvePlaceholders, boolean generatedIds) throws Exception {
+        List<RouteDefinition> routes = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinitions();
+        if (routes.isEmpty()) {
+            return null;
+        }
+
+        RoutesDefinition def = new RoutesDefinition();
+        def.setRoutes(routes);
+
+        return PluginHelper.getModelToJavaDumper(context).dumpModelAsJava(context, def, resolvePlaceholders, generatedIds);
     }
 
     @Override
@@ -949,7 +963,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     public void reset(boolean includeRoutes) throws Exception {
         reset();
         load.reset();
-        thp.reset();
 
         // and now reset all routes for this route
         if (includeRoutes) {

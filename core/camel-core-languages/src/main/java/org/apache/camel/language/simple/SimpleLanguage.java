@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Camel simple language.
  */
-@Language(value = "simple", functionsClass = SimpleConstants.class)
+@Language(value = "simple", functionsClass = SimpleConstants.class, operatorsClass = SimpleOperatorConstants.class)
 public class SimpleLanguage extends LanguageSupport implements StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleLanguage.class);

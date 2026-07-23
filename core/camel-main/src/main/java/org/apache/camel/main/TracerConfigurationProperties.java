@@ -32,8 +32,12 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
     private boolean enabled;
     @Metadata
     private boolean standby;
+    @Metadata
+    private boolean activityEnabled;
     @Metadata(label = "advanced", defaultValue = "100")
     private int backlogSize = 100;
+    @Metadata(label = "advanced", defaultValue = "100")
+    private int activitySize = 100;
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean removeOnDump = true;
     @Metadata(label = "advanced", defaultValue = "32768")
@@ -93,6 +97,18 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
         this.standby = standby;
     }
 
+    public boolean isActivityEnabled() {
+        return activityEnabled;
+    }
+
+    /**
+     * Whether activity tracking is enabled. When enabled, the backlog tracer will capture activity data that can be
+     * enriched with additional details from tracing (such as span decorator attributes).
+     */
+    public void setActivityEnabled(boolean activityEnabled) {
+        this.activityEnabled = activityEnabled;
+    }
+
     public int getBacklogSize() {
         return backlogSize;
     }
@@ -102,6 +118,19 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
      */
     public void setBacklogSize(int backlogSize) {
         this.backlogSize = backlogSize;
+    }
+
+    public int getActivitySize() {
+        return activitySize;
+    }
+
+    /**
+     * Defines how many completed exchange summaries to keep in the activity queue (should be between 1 - 1000). The
+     * activity queue captures lightweight metadata (no body or headers) each time an exchange completes a route,
+     * providing a rolling window of recent exchange activity.
+     */
+    public void setActivitySize(int activitySize) {
+        this.activitySize = activitySize;
     }
 
     public boolean isRemoveOnDump() {
@@ -246,10 +275,26 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
+     * Whether activity tracking is enabled.
+     */
+    public TracerConfigurationProperties withActivityEnabled(boolean activityEnabled) {
+        this.activityEnabled = activityEnabled;
+        return this;
+    }
+
+    /**
      * Defines how many of the last messages to keep in the tracer (should be between 1 - 1000).
      */
     public TracerConfigurationProperties withBacklogSize(int backlogSize) {
         this.backlogSize = backlogSize;
+        return this;
+    }
+
+    /**
+     * Defines how many completed exchange summaries to keep in the activity queue (should be between 1 - 1000).
+     */
+    public TracerConfigurationProperties withActivitySize(int activitySize) {
+        this.activitySize = activitySize;
         return this;
     }
 

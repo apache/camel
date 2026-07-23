@@ -126,7 +126,7 @@ public class CouchbaseProducerTest {
         // Mock out some headers so we can set an expiry
         int expiry = 5000;
         Map<String, Object> testHeaders = new HashMap<>();
-        testHeaders.put("CCB_TTL", Integer.toString(expiry));
+        testHeaders.put(HEADER_TTL, Integer.toString(expiry));
         when(msg.getHeaders()).thenReturn(testHeaders);
         when(collection.upsert(anyString(), any(), any())).thenReturn(response);
         when(msg.getHeader(HEADER_TTL, String.class)).thenReturn(Integer.toString(expiry));

@@ -26,15 +26,18 @@ import org.apache.camel.spi.Metadata;
 /**
  * To load custom transformers from classpath scanning to be used for route level transformations.
  */
-@Metadata(label = "transformation")
+@Metadata(label = "transformation",
+          description = "Auto-discovers and loads data type transformers from the classpath via scanning")
 @XmlRootElement(name = "loadTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadTransformerDefinition extends TransformerDefinition {
 
     @XmlAttribute
+    @Metadata(description = "The classpath location to scan for annotated transformers.")
     private String packageScan;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Whether to enable loading of default transformers.")
     private String defaults;
 
     public LoadTransformerDefinition() {
@@ -55,9 +58,6 @@ public class LoadTransformerDefinition extends TransformerDefinition {
         return defaults;
     }
 
-    /**
-     * Enable loading of default transformers.
-     */
     public void setDefaults(String defaults) {
         this.defaults = defaults;
     }
@@ -66,9 +66,6 @@ public class LoadTransformerDefinition extends TransformerDefinition {
         return packageScan;
     }
 
-    /**
-     * Set the classpath location to scan for annotated transformers.
-     */
     public void setPackageScan(String packageScan) {
         this.packageScan = packageScan;
     }

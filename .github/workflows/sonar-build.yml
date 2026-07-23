@@ -41,18 +41,36 @@ jobs:
     name: Build for Sonar Analysis
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-
+      - name: Fetch base branch for Scalpel change detection
+        run: |
+          # Scalpel is observational — fetch failures must not break the build.
+          BASE_REF="${GITHUB_BASE_REF:-main}"
+          for depth in 200 1000; do
+            git fetch --deepen=$depth 2>/dev/null || true
+            git fetch --no-tags --depth=$depth origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" || true
+            if git merge-base HEAD "origin/${BASE_REF}" >/dev/null 2>&1; then
+              echo "Merge base reachable at depth $depth"
+              break
+            fi
+            echo "Merge base not reachable at depth $depth, deepening..."
+          done
+          # If still not reachable, fetch full history as last resort
+          if ! git merge-base HEAD "origin/${BASE_REF}" >/dev/null 2>&1; then
+            echo "Merge base still not reachable, fetching full history"
+            git fetch --unshallow 2>/dev/null || true
+            git fetch --no-tags origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" || true
+          fi
       - id: install-packages
         uses: ./.github/actions/install-packages
 
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '25'
           cache: 'maven'
 
       - name: Build with Maven

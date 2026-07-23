@@ -20,8 +20,10 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -33,40 +35,89 @@ import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 import software.amazon.awssdk.services.cloudtrail.model.*;
 
 public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
-    private static Instant lastTime;
+
+    // Cursor for the next lookup window. Kept per-consumer (not static) so multiple cloudtrail
+    // routes in the same JVM do not clobber each other's position.
+    private Instant lastTime;
+    // Event ids already delivered at exactly lastTime. startTime is inclusive, so these events are
+    // returned again on the next poll and must be filtered to avoid duplicate delivery.
+    private final Set<String> lastProcessedEventIds = new HashSet<>();
 
     public CloudtrailConsumer(CloudtrailEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
     @Override
-    protected int poll() throws Exception {
-        LookupEventsRequest.Builder eventsRequestBuilder
-                = LookupEventsRequest.builder().maxResults(getEndpoint().getConfiguration().getMaxResults());
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (lastTime == null) {
+            // Start tailing from the consumer start time rather than replaying CloudTrail history.
+            lastTime = Instant.now();
+        }
+    }
 
+    @Override
+    protected int poll() throws Exception {
         List<LookupAttribute> attributes = new ArrayList<>();
         if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getEventSource())) {
             LookupAttribute eventSource = LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_SOURCE)
                     .attributeValue(getEndpoint().getConfiguration().getEventSource()).build();
             attributes.add(eventSource);
         }
-        if (!attributes.isEmpty()) {
-            eventsRequestBuilder.lookupAttributes(attributes);
-        }
-        if (ObjectHelper.isNotEmpty(lastTime)) {
-            eventsRequestBuilder.startTime(lastTime.plusMillis(1000));
-        }
 
-        LookupEventsResponse response = getClient().lookupEvents(eventsRequestBuilder.build());
+        // Drain every page of the current window so no event is silently left behind.
+        List<Event> events = new ArrayList<>();
+        String nextToken = null;
+        do {
+            LookupEventsRequest.Builder eventsRequestBuilder
+                    = LookupEventsRequest.builder().maxResults(getEndpoint().getConfiguration().getMaxResults());
+            if (!attributes.isEmpty()) {
+                eventsRequestBuilder.lookupAttributes(attributes);
+            }
+            if (ObjectHelper.isNotEmpty(lastTime)) {
+                eventsRequestBuilder.startTime(lastTime);
+            }
+            if (nextToken != null) {
+                eventsRequestBuilder.nextToken(nextToken);
+            }
+
+            LookupEventsResponse response = getClient().lookupEvents(eventsRequestBuilder.build());
+            events.addAll(response.events());
+            nextToken = response.nextToken();
+        } while (ObjectHelper.isNotEmpty(nextToken));
 
         // okay we have some response from aws so lets mark the consumer as ready
         forceConsumerAsReady();
 
-        if (!response.events().isEmpty()) {
-            lastTime = response.events().get(0).eventTime();
+        // CloudTrail returns events newest-first. Advance the cursor to the newest event time and
+        // track the ids seen at that instant, skipping any event already delivered on a prior poll.
+        Instant newest = lastTime;
+        Set<String> newestEventIds = new HashSet<>();
+        Queue<Exchange> exchanges = new ArrayDeque<>();
+        for (Event event : events) {
+            if (lastProcessedEventIds.contains(event.eventId())) {
+                continue;
+            }
+            exchanges.add(createExchange(event));
+
+            Instant eventTime = event.eventTime();
+            if (newest == null || eventTime.isAfter(newest)) {
+                newest = eventTime;
+                newestEventIds.clear();
+                newestEventIds.add(event.eventId());
+            } else if (eventTime.equals(newest)) {
+                newestEventIds.add(event.eventId());
+            }
         }
 
-        Queue<Exchange> exchanges = createExchanges(response.events());
+        if (newest != null && newest.equals(lastTime)) {
+            // No event newer than the previous boundary; keep accumulating ids at that instant.
+            newestEventIds.addAll(lastProcessedEventIds);
+        }
+        lastTime = newest;
+        lastProcessedEventIds.clear();
+        lastProcessedEventIds.addAll(newestEventIds);
+
         return processBatch(CastUtils.cast(exchanges));
     }
 
@@ -91,14 +142,6 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
     @Override
     public CloudtrailEndpoint getEndpoint() {
         return (CloudtrailEndpoint) super.getEndpoint();
-    }
-
-    private Queue<Exchange> createExchanges(List<Event> events) {
-        Queue<Exchange> exchanges = new ArrayDeque<>();
-        for (Event event : events) {
-            exchanges.add(createExchange(event));
-        }
-        return exchanges;
     }
 
     protected Exchange createExchange(Event event) {

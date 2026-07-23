@@ -24,19 +24,19 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>camel-jbang-plugin-kubernetes</artifactId>
 
     <name>Camel :: JBang :: Plugin :: Kubernetes</name>
-    <description>Camel JBang Kubernetes Plugin</description>
+    <description>Camel CLI Kubernetes Plugin</description>
 
     <properties>
         <firstVersion>4.8.0</firstVersion>
         <label>jbang</label>
-        <supportLevel>Preview</supportLevel>
+        <supportLevel>Stable</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
         <camel.surefire.parallel>false</camel.surefire.parallel>
     </properties>

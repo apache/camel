@@ -74,6 +74,7 @@ public class MicrometerObservabilityTracerPropagationTestSupport extends Exchang
 
         CamelContextAware.trySetCamelContext(tst, context);
         tst.init(context);
+        tst.setDisableCoreProcessors(true);
         return context;
     }
 

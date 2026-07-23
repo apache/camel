@@ -18,11 +18,12 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
+class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -30,7 +31,7 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
     }
 
     @Test
-    public void testValid() throws Exception {
+    void testValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -40,6 +41,13 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
             }
         });
         context.start();
+
+        MockEndpoint mockResult = getMockEndpoint("mock:result");
+        mockResult.expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        mockResult.assertIsSatisfied();
     }
 
     @Test

@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,10 +32,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.ai.tool.AiToolParameterHelper;
+import org.apache.camel.component.ai.tool.AiToolRegistry;
+import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.component.springai.chat.mcp.SpringAiChatMcpManager;
-import org.apache.camel.component.springai.tools.TagsHelper;
-import org.apache.camel.component.springai.tools.spec.CamelToolExecutorCache;
-import org.apache.camel.component.springai.tools.spec.CamelToolSpecification;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +77,7 @@ public class SpringAiChatProducer extends DefaultProducer {
 
     private ChatClient chatClient;
     private SpringAiChatMcpManager mcpManager;
+    private Advisor chatMemoryAdvisor;
 
     public SpringAiChatProducer(SpringAiChatEndpoint endpoint) {
         super(endpoint);
@@ -118,6 +120,23 @@ public class SpringAiChatProducer extends DefaultProducer {
             }
 
             this.chatClient = builder.build();
+        }
+
+        // Build chat memory advisor (added per-request only when conversationId is set)
+        ChatMemory chatMemory = getEndpoint().getConfiguration().getChatMemory();
+        VectorStore chatMemoryVectorStore = getEndpoint().getConfiguration().getChatMemoryVectorStore();
+        if (chatMemory != null && chatMemoryVectorStore != null) {
+            LOG.warn("Both chatMemory and chatMemoryVectorStore are configured. Using MessageChatMemoryAdvisor (chatMemory). "
+                     + "Configure only one memory type.");
+        }
+        if (chatMemory != null) {
+            this.chatMemoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
+            LOG.debug("MessageChatMemoryAdvisor available (activated per-request via conversationId header)");
+        } else if (chatMemoryVectorStore != null) {
+            this.chatMemoryAdvisor = VectorStoreChatMemoryAdvisor.builder(chatMemoryVectorStore)
+                    .defaultTopK(getEndpoint().getConfiguration().getTopK())
+                    .build();
+            LOG.debug("VectorStoreChatMemoryAdvisor available with topK={}", getEndpoint().getConfiguration().getTopK());
         }
 
         // Initialize MCP clients if configured
@@ -214,9 +233,14 @@ public class SpringAiChatProducer extends DefaultProducer {
             UserMessage multimodalMessage = createMultimodalMessage(exchange, bytes);
             applyUserMessageWithMedia(request, exchange, multimodalMessage.getText(), multimodalMessage.getMedia());
         } else {
-            throw new IllegalArgumentException(
-                    "Unsupported message type: " + messageBody.getClass().getName()
-                                               + ". Expected String, byte[], WrappedFile, List<WrappedFile>, or org.springframework.ai.chat.messages.Message");
+            String text = exchange.getIn().getBody(String.class);
+            if (text != null) {
+                userMessageText = text;
+            } else {
+                throw new IllegalArgumentException(
+                        "Unsupported message type: " + messageBody.getClass().getName()
+                                                   + ". Expected String, byte[], WrappedFile, List<WrappedFile>, or org.springframework.ai.chat.messages.Message");
+            }
         }
 
         // Apply augmented data to user message if provided
@@ -608,10 +632,12 @@ public class SpringAiChatProducer extends DefaultProducer {
             LOG.debug("Added tool context with {} entries", toolContext.size());
         }
 
-        // Apply conversation ID for chat memory if provided
+        // Add chat memory advisor per-request only when conversationId header is set
         String conversationId = exchange.getIn().getHeader(SpringAiChatConstants.CONVERSATION_ID, String.class);
-        if (conversationId != null) {
-            request.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
+        if (conversationId != null && chatMemoryAdvisor != null) {
+            final String convId = conversationId;
+            request.advisors(chatMemoryAdvisor);
+            request.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, convId));
         }
 
         // Apply SafeGuard advisor overrides if provided via headers
@@ -933,7 +959,7 @@ public class SpringAiChatProducer extends DefaultProducer {
     }
 
     /**
-     * Register tools from camel-spring-ai-tools routes based on configured tags
+     * Register tools from ai-tool routes based on configured tags
      *
      * Tools are registered via ChatOptions.toolCallbacks() which is the correct way to pass ToolCallback instances in
      * Spring AI. The tools() method expects objects with @Tool annotated methods, not ToolCallback instances.
@@ -944,8 +970,8 @@ public class SpringAiChatProducer extends DefaultProducer {
             return List.of();
         }
 
-        // Discover tools from Camel Spring AI Tools routes
-        List<ToolCallback> toolCallbacks = discoverTools(tags);
+        // Discover tools from the unified AiToolRegistry
+        List<ToolCallback> toolCallbacks = discoverAiRegistryTools(tags);
 
         if (!toolCallbacks.isEmpty()) {
             // Collect tool names for enhanced logging
@@ -969,21 +995,22 @@ public class SpringAiChatProducer extends DefaultProducer {
     }
 
     /**
-     * Discover tools by tags and return a list of ToolCallback instances
+     * Discover tools registered via {@code ai-tool:} consumer endpoints in the shared {@link AiToolRegistry}. Converts
+     * each {@link AiToolSpec} to a Spring AI {@link ToolCallback} via {@link AiToolSpecToSpringAi}.
      */
-    private List<ToolCallback> discoverTools(String tags) {
-        final CamelToolExecutorCache toolCache = CamelToolExecutorCache.getInstance();
-        final Map<String, Set<CamelToolSpecification>> tools = toolCache.getTools();
-        final String[] tagArray = TagsHelper.splitTags(tags);
+    private List<ToolCallback> discoverAiRegistryTools(String tags) {
+        final AiToolRegistry registry = AiToolRegistry.getOrCreate(getEndpoint().getCamelContext());
+        final String[] tagArray = AiToolParameterHelper.splitTags(tags);
 
-        final List<ToolCallback> toolCallbacks = Arrays.stream(tagArray)
-                .flatMap(tag -> tools.entrySet().stream()
-                        .filter(entry -> entry.getKey().equals(tag))
-                        .flatMap(entry -> entry.getValue().stream()))
-                .map(CamelToolSpecification::getToolCallback)
+        final Set<AiToolSpec> uniqueSpecs = new LinkedHashSet<>();
+        for (String tag : tagArray) {
+            uniqueSpecs.addAll(registry.getToolsByTag(tag));
+        }
+        final List<ToolCallback> toolCallbacks = uniqueSpecs.stream()
+                .map(AiToolSpecToSpringAi::toToolCallback)
                 .collect(Collectors.toList());
 
-        LOG.debug("Discovered {} unique tools for tags: {}", toolCallbacks.size(), tags);
+        LOG.debug("Discovered {} tools from AiToolRegistry for tags: {}", toolCallbacks.size(), tags);
         return toolCallbacks;
     }
 
@@ -1174,28 +1201,8 @@ public class SpringAiChatProducer extends DefaultProducer {
             advisors.add(safeguardAdvisor);
         }
 
-        // Add ChatMemory advisor if configured
-        ChatMemory chatMemory = getEndpoint().getConfiguration().getChatMemory();
-        VectorStore chatMemoryVectorStore = getEndpoint().getConfiguration().getChatMemoryVectorStore();
-
-        if (chatMemory != null && chatMemoryVectorStore != null) {
-            LOG.warn("Both chatMemory and chatMemoryVectorStore are configured. Using MessageChatMemoryAdvisor (chatMemory). " +
-                     "Configure only one memory type.");
-        }
-
-        if (chatMemory != null) {
-            advisors.add(MessageChatMemoryAdvisor.builder(chatMemory).build());
-            LOG.debug("MessageChatMemoryAdvisor enabled");
-        } else if (chatMemoryVectorStore != null) {
-            // Configure VectorStoreChatMemoryAdvisor with conversation isolation
-            // The conversationId parameter enables automatic filtering by conversation ID
-            advisors.add(VectorStoreChatMemoryAdvisor.builder(chatMemoryVectorStore)
-                    .conversationId(ChatMemory.CONVERSATION_ID)
-                    .defaultTopK(getEndpoint().getConfiguration().getTopK())
-                    .build());
-            LOG.debug("VectorStoreChatMemoryAdvisor enabled with conversation isolation and topK={}",
-                    getEndpoint().getConfiguration().getTopK());
-        }
+        // Chat memory advisors are NOT added to defaults — they are added per-request
+        // only when a conversationId header is present (see applyRequestOptions)
 
         // Add QuestionAnswerAdvisor if VectorStore is configured
         VectorStore vectorStore = getEndpoint().getConfiguration().getVectorStore();

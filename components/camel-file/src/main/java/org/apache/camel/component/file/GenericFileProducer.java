@@ -254,6 +254,9 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
             return doIgnore(target);
         } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
             throwFileAlreadyExistException(target);
+        } else if (endpoint.getFileExist() == GenericFileExist.Move) {
+            // move any existing file first
+            this.endpoint.getMoveExistingFileStrategy().moveExistingFile(endpoint, operations, target);
         } else if (endpoint.getFileExist() == GenericFileExist.Override) {
             // we override the target so we do this by deleting
             // it so the temp file can be renamed later
@@ -432,7 +435,7 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         // first as the name can be using relative paths via ../ etc)
         String compatchAnswer = FileUtil.compactPath(answer);
         String compatchBaseDir = FileUtil.compactPath(baseDir);
-        if (!compatchAnswer.startsWith(compatchBaseDir)) {
+        if (!GenericFileHelper.isWithinDirectory(compatchAnswer, compatchBaseDir)) {
             throw new IllegalArgumentException(
                     "Cannot write file with name: " + compatchAnswer
                                                + " as the filename is jailed to the starting directory: "

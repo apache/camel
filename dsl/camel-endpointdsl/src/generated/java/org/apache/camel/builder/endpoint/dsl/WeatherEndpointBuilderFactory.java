@@ -44,21 +44,6 @@ public interface WeatherEndpointBuilderFactory {
             return (AdvancedWeatherEndpointConsumerBuilder) this;
         }
         /**
-         * APPID ID used to authenticate the user connected to the API Server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param appid the value to set
-         * @return the dsl builder
-         */
-        default WeatherEndpointConsumerBuilder appid(String appid) {
-            doSetProperty("appid", appid);
-            return this;
-        }
-        /**
          * To store the weather result in this header instead of the message
          * body. This is useable if you want to keep current message body as-is.
          * 
@@ -874,6 +859,21 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
+         * APPID ID used to authenticate the user connected to the API Server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param appid the value to set
+         * @return the dsl builder
+         */
+        default WeatherEndpointConsumerBuilder appid(String appid) {
+            doSetProperty("appid", appid);
+            return this;
+        }
+        /**
          * The geolocation service now needs an accessKey to be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1148,21 +1148,6 @@ public interface WeatherEndpointBuilderFactory {
             return (AdvancedWeatherEndpointProducerBuilder) this;
         }
 
-        /**
-         * APPID ID used to authenticate the user connected to the API Server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param appid the value to set
-         * @return the dsl builder
-         */
-        default WeatherEndpointProducerBuilder appid(String appid) {
-            doSetProperty("appid", appid);
-            return this;
-        }
         /**
          * To store the weather result in this header instead of the message
          * body. This is useable if you want to keep current message body as-is.
@@ -1490,6 +1475,21 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
+         * APPID ID used to authenticate the user connected to the API Server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param appid the value to set
+         * @return the dsl builder
+         */
+        default WeatherEndpointProducerBuilder appid(String appid) {
+            doSetProperty("appid", appid);
+            return this;
+        }
+        /**
          * The geolocation service now needs an accessKey to be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1657,21 +1657,6 @@ public interface WeatherEndpointBuilderFactory {
             return (AdvancedWeatherEndpointBuilder) this;
         }
 
-        /**
-         * APPID ID used to authenticate the user connected to the API Server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param appid the value to set
-         * @return the dsl builder
-         */
-        default WeatherEndpointBuilder appid(String appid) {
-            doSetProperty("appid", appid);
-            return this;
-        }
         /**
          * To store the weather result in this header instead of the message
          * body. This is useable if you want to keep current message body as-is.
@@ -1999,6 +1984,21 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
+         * APPID ID used to authenticate the user connected to the API Server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param appid the value to set
+         * @return the dsl builder
+         */
+        default WeatherEndpointBuilder appid(String appid) {
+            doSetProperty("appid", appid);
+            return this;
+        }
+        /**
          * The geolocation service now needs an accessKey to be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2176,7 +2176,7 @@ public interface WeatherEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final WeatherHeaderNameBuilder INSTANCE = new WeatherHeaderNameBuilder();
+        public static final WeatherHeaderNameBuilder INSTANCE = new WeatherHeaderNameBuilder();
 
         /**
          * Used by the producer to override the endpoint location and use the

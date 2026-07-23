@@ -20,10 +20,23 @@ import java.util.List;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
- * A registry of all REST services running within the {@link org.apache.camel.CamelContext} which have been defined and
- * created using the <a href="http://camel.apache.org/rest-dsl">Rest DSL</a>.
+ * A live registry of all REST services running within the {@link org.apache.camel.CamelContext} that were defined using
+ * the Camel REST DSL.
+ * <p/>
+ * Each REST-DSL route registers its verb-plus-path pair at startup via {@link #addRestService addRestService()}; the
+ * registry keeps a {@link RestService} record per operation that carries the URL, HTTP method, media types, binding
+ * types, and hit counter. The developer console, JMX management layer, and the {@code camel-openapi-java} module all
+ * query this registry to render live service listings and to generate the OpenAPI specification
+ * ({@link #apiDocAsJson()}). Separately, OpenAPI contract entries are tracked as "specifications" via
+ * {@link #addRestSpecification addRestSpecification()}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/rest-dsl.html">Rest DSL</a> in the Camel user manual.
+ *
+ * @see RestConsumerFactory
+ * @see RestConfiguration
  */
 public interface RestRegistry extends StaticService {
 
@@ -53,6 +66,22 @@ public interface RestRegistry extends StaticService {
         String getState();
 
         /**
+         * Gets the route id that this REST service is using
+         *
+         * @since 4.21
+         */
+        @Nullable
+        String getRouteId();
+
+        /**
+         * Gets the operationId from the OpenAPI contract (contract-first routes only)
+         *
+         * @since 4.21
+         */
+        @Nullable
+        String getOperationId();
+
+        /**
          * Gets the absolute url to the REST service (baseUrl + uriTemplate)
          */
         String getUrl();
@@ -70,6 +99,7 @@ public interface RestRegistry extends StaticService {
         /**
          * Gets the uri template
          */
+        @Nullable
         String getUriTemplate();
 
         /**
@@ -80,11 +110,13 @@ public interface RestRegistry extends StaticService {
         /**
          * Optional details about what media-types the REST service accepts
          */
+        @Nullable
         String getConsumes();
 
         /**
          * Optional details about what media-types the REST service returns
          */
+        @Nullable
         String getProduces();
 
         /**
@@ -92,6 +124,7 @@ public interface RestRegistry extends StaticService {
          * <p/>
          * If the input accepts a list, then <tt>List&lt;class name&gt;</tt> is enclosed the name.
          */
+        @Nullable
         String getInType();
 
         /**
@@ -99,36 +132,68 @@ public interface RestRegistry extends StaticService {
          * <p/>
          * If the output accepts a list, then <tt>List&lt;class name&gt;</tt> is enclosed the name.
          */
+        @Nullable
         String getOutType();
 
         /**
          * Optional description about this rest service.
          */
+        @Nullable
         String getDescription();
+
+        /**
+         * Gets the specification URI of the OpenAPI contract (contract-first routes only), e.g. {@code petstore.yaml}
+         * or {@code classpath:openapi.json}.
+         *
+         * @since 4.21
+         */
+        @Nullable
+        String getSpecificationUri();
+
+        /**
+         * Number of requests processed by this REST service.
+         *
+         * @since 4.21
+         */
+        long getHits();
 
     }
 
     /**
      * Adds a new REST service to the registry.
      *
-     * @param consumer      the consumer
-     * @param contractFirst is the rest service based on code-first or contract-first
-     * @param url           the absolute url of the REST service
-     * @param baseUrl       the base url of the REST service
-     * @param basePath      the base path
-     * @param uriTemplate   the uri template
-     * @param method        the HTTP method
-     * @param consumes      optional details about what media-types the REST service accepts
-     * @param produces      optional details about what media-types the REST service returns
-     * @param inType        optional detail input binding to a FQN class name
-     * @param outType       optional detail output binding to a FQN class name
-     * @param routeId       the id of the route this rest service will be using
-     * @param description   optional description about the service
+     * @param consumer         the consumer
+     * @param contractFirst    is the rest service based on code-first or contract-first
+     * @param url              the absolute url of the REST service
+     * @param baseUrl          the base url of the REST service
+     * @param basePath         the base path
+     * @param uriTemplate      the uri template
+     * @param method           the HTTP method
+     * @param consumes         optional details about what media-types the REST service accepts
+     * @param produces         optional details about what media-types the REST service returns
+     * @param inType           optional detail input binding to a FQN class name
+     * @param outType          optional detail output binding to a FQN class name
+     * @param routeId          the id of the route this rest service will be using
+     * @param operationId      optional operationId from the OpenAPI contract
+     * @param specificationUri optional URI of the OpenAPI spec file (contract-first only)
+     * @param description      optional description about the service
      */
     void addRestService(
-            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String uriTemplate,
-            String method,
-            String consumes, String produces, String inType, String outType, String routeId, String description);
+            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath,
+            @Nullable String uriTemplate, String method,
+            @Nullable String consumes, @Nullable String produces, @Nullable String inType, @Nullable String outType,
+            String routeId, @Nullable String operationId, @Nullable String specificationUri,
+            @Nullable String description);
+
+    /**
+     * Records a hit on the REST service matching the given HTTP method and path.
+     *
+     * @param method   the HTTP method (GET, POST, etc.)
+     * @param basePath the base path
+     * @param path     the URI path or template (e.g. /users/{id})
+     * @since          4.21
+     */
+    void hit(String method, String basePath, String path);
 
     /**
      * Removes the REST service from the registry
@@ -158,7 +223,7 @@ public interface RestRegistry extends StaticService {
      */
     void addRestSpecification(
             Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String method,
-            String produces, String description);
+            @Nullable String produces, @Nullable String description);
 
     /**
      * List all REST API specification (ie api-doc)
@@ -179,6 +244,7 @@ public interface RestRegistry extends StaticService {
      *
      * @return the API docs in JSon, or <tt>null</tt> if camel-openapi-java is not on classpath
      */
+    @Nullable
     String apiDocAsJson();
 
 }

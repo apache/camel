@@ -24,19 +24,19 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>camel-jbang-plugin-route-parser</artifactId>
 
     <name>Camel :: JBang :: Plugin :: Route Parser</name>
-    <description>Camel JBang Route Parser</description>
+    <description>Camel CLI Route Parser</description>
 
     <properties>
         <firstVersion>4.17.0</firstVersion>
         <label>jbang</label>
-        <supportLevel>Preview</supportLevel>
+        <supportLevel>Stable</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
     </properties>
 

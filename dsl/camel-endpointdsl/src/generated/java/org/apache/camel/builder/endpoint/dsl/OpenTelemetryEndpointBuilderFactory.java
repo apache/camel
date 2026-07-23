@@ -318,7 +318,7 @@ public interface OpenTelemetryEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final OpenTelemetryHeaderNameBuilder INSTANCE = new OpenTelemetryHeaderNameBuilder();
+        public static final OpenTelemetryHeaderNameBuilder INSTANCE = new OpenTelemetryHeaderNameBuilder();
 
         /**
          * Override timer action in URI.

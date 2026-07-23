@@ -24,20 +24,20 @@ public final class PdfHeaderConstants {
             https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/ProtectionPolicy.html[ProtectionPolicy].
             If specified then PDF document will be encrypted with it.""",
               javaType = "org.apache.pdfbox.pdmodel.encryption.ProtectionPolicy")
-    public static final String PROTECTION_POLICY_HEADER_NAME = "protection-policy";
+    public static final String PROTECTION_POLICY_HEADER_NAME = "CamelPdfProtectionPolicy";
     @Metadata(description = """
             *Mandatory* header for `append` operation and ignored in all other
             operations. Expected type is
             https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/PDDocument.html[PDDocument].
             Stores PDF document which will be used for append operation.""",
               javaType = "org.apache.pdfbox.pdmodel.PDDocument")
-    public static final String PDF_DOCUMENT_HEADER_NAME = "pdf-document";
+    public static final String PDF_DOCUMENT_HEADER_NAME = "CamelPdfDocument";
     @Metadata(description = """
             Expected type is
             https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial].
             *Mandatory* header if PDF document is encrypted.""",
               javaType = "org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial")
-    public static final String DECRYPTION_MATERIAL_HEADER_NAME = "decryption-material";
+    public static final String DECRYPTION_MATERIAL_HEADER_NAME = "CamelPdfDecryptionMaterial";
 
     @Metadata(description = """
             *Mandatory* header for `merge` operation and ignored in all other
@@ -45,7 +45,7 @@ public final class PdfHeaderConstants {
             The array of pdf files that will be merged.
             """,
               javaType = "java.util.List<java.io.File>")
-    public static final String FILES_TO_MERGE_HEADER_NAME = "files-to-merge";
+    public static final String FILES_TO_MERGE_HEADER_NAME = "CamelPdfFilesToMerge";
 
     private PdfHeaderConstants() {
     }

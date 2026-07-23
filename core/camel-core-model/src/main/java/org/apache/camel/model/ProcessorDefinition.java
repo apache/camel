@@ -82,7 +82,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.")
     protected String disabled;
     @XmlTransient
     private final Deque<Block> blocks = new LinkedList<>();
@@ -118,13 +119,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return clause;
     }
 
-    /**
-     * Gets the unique index number for when this {@link ProcessorDefinition} was created by its constructor.
-     * <p/>
-     * This can be used to know the order in which the definition was created when assembled as a route.
-     *
-     * @return the index number
-     */
     public int getIndex() {
         return index;
     }
@@ -137,46 +131,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return new ArrayList<>(getOutputs());
     }
 
-    /**
-     * Whether this definition can only be added as top-level directly on the route itself (such as
-     * onException,onCompletion,intercept, etc.)
-     * <p/>
-     * If trying to add a top-level only definition to a nested output would fail in the
-     * {@link #addOutput(ProcessorDefinition)} method.
-     */
     public boolean isTopLevelOnly() {
         return false;
     }
 
-    /**
-     * Whether this model is abstract or not.
-     * <p/>
-     * An abstract model is something that is used for configuring cross cutting concerns such as error handling,
-     * transaction policies, interceptors etc.
-     * <p/>
-     * Regular definitions is what is part of the route, such as ToDefinition, WireTapDefinition and the likes.
-     * <p/>
-     * Will by default return <tt>false</tt> to indicate regular definition, so all the abstract definitions must
-     * override this method and return <tt>true</tt> instead.
-     * <p/>
-     * This information is used in camel-spring to let Camel work a bit on the model provided by JAXB from the Spring
-     * XML file. This is needed to handle those cross cutting concerns properly. The Java DSL does not have this issue
-     * as it can work this out directly using the fluent builder methods.
-     *
-     * @return <tt>true</tt> for abstract, otherwise <tt>false</tt> for regular.
-     */
     public boolean isAbstract() {
         return false;
     }
 
-    /**
-     * Whether this definition is wrapping the entire output.
-     * <p/>
-     * When a definition is wrapping the entire output, the check to ensure that a route definition is empty should be
-     * done on the wrapped output.
-     *
-     * @return <tt>true</tt> when wrapping the entire output.
-     */
     public boolean isWrappingEntireOutput() {
         return false;
     }
@@ -1452,6 +1414,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public CircuitBreakerDefinition circuitBreaker() {
         CircuitBreakerDefinition answer = new CircuitBreakerDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Creates an A2A Sub Task EIP.
+     * <p/>
+     * This requires having camel-a2a on the classpath.
+     *
+     * @return the builder
+     */
+    public A2ASubTaskDefinition a2aSubTask() {
+        A2ASubTaskDefinition answer = new A2ASubTaskDefinition();
         addOutput(answer);
         return answer;
     }
@@ -4509,9 +4484,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         this.inheritErrorHandler = inheritErrorHandler;
     }
 
-    /**
-     * Returns a label to describe this node such as the expression if some kind of expression node
-     */
     @Override
     public String getLabel() {
         return "";

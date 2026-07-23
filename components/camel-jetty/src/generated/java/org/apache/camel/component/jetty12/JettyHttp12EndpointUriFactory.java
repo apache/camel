@@ -21,9 +21,10 @@ public class JettyHttp12EndpointUriFactory extends org.apache.camel.support.comp
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(39);
+        Set<String> props = new HashSet<>(40);
         props.add("async");
         props.add("bridgeErrorHandler");
         props.add("chunked");
@@ -54,6 +55,7 @@ public class JettyHttp12EndpointUriFactory extends org.apache.camel.support.comp
         props.add("maxRequestSize");
         props.add("multipartFilter");
         props.add("muteException");
+        props.add("oauthProfile");
         props.add("optionsEnabled");
         props.add("responseBufferSize");
         props.add("sendDateHeader");
@@ -65,6 +67,7 @@ public class JettyHttp12EndpointUriFactory extends org.apache.camel.support.comp
         props.add("useContinuation");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(1);
         prefixes.put("filterInitParameters", "filter.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
@@ -95,6 +98,11 @@ public class JettyHttp12EndpointUriFactory extends org.apache.camel.support.comp
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> endpointIdentityPropertyNames() {
+        return ENDPOINT_IDENTITY_PROPERTY_NAMES;
     }
 
     @Override

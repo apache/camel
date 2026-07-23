@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends SpringTestSupport {
+class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
@@ -38,17 +38,17 @@ public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends Sprin
     @Override
     @BeforeEach
     public void setUp() throws Exception {
+        // Do NOT call super.setUp() — this test validates that context creation fails
+    }
+
+    @Test
+    void testInvalidOptionUri() throws Exception {
         Exception e = assertThrows(Exception.class, () -> {
             super.setUp();
         });
         FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
         ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, ftcre.getCause());
         assertTrue(cause.getMessage().endsWith("Unknown parameters=[{foo=bar}]"));
-    }
-
-    @Test
-    public void testInvalidOptionUri() throws Exception {
-        // noop
     }
 
 }

@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -85,20 +86,25 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         assertEquals(QUEUE_SIZE, seda.getQueue().remainingCapacity());
 
         sendTwoOverCapacity(BLOCK_WHEN_FULL_URI, QUEUE_SIZE);
-        assertMockEndpointsSatisfied();
+        // use timed assertion — the SEDA consumer with 130ms delay needs
+        // time to drain the queue on slow CI
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
     public void testAsyncSedaBlockingWhenFull() throws Exception {
-        getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 1);
-        getMockEndpoint(MOCK_URI).setResultWaitTime(DELAY_LONG * 3);
+        // Use expectedMinimumMessageCount instead of setExpectedMessageCount:
+        // with blockWhenFull=true and async sends, all messages eventually
+        // arrive at the mock (they block and wait for queue space rather
+        // than failing). An exact-count assertion races against the
+        // remaining messages still flowing through the 130ms delay pipeline.
+        getMockEndpoint(MOCK_URI).expectedMinimumMessageCount(QUEUE_SIZE + 1);
 
         SedaEndpoint seda = context.getEndpoint(BLOCK_WHEN_FULL_URI, SedaEndpoint.class);
         assertEquals(QUEUE_SIZE, seda.getQueue().remainingCapacity());
 
         asyncSendTwoOverCapacity(BLOCK_WHEN_FULL_URI, QUEUE_SIZE + 4);
-        // wait a bit to allow the async processing to complete
-        assertMockEndpointsSatisfied(2, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     /**

@@ -247,7 +247,9 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
             return mapper.readTree(eventContext.getEventData().getBodyAsString());
         } catch (JsonProcessingException e) {
             LOG.warn("Unable to process event data body: {}", e.getMessage(), e);
-            throw new RuntimeCamelException(e);
+            // Return empty array instead of throwing exception - the calling code handles empty arrays
+            // gracefully by not executing the loop when size() is 0
+            return mapper.createArrayNode();
         }
     }
 

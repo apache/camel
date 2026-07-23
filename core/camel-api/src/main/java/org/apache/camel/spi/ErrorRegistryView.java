@@ -20,6 +20,8 @@ import java.util.Collection;
 
 /**
  * A scoped view over error entries in an {@link ErrorRegistry}, supporting browsing and clearing.
+ *
+ * @since 4.19
  */
 public interface ErrorRegistryView {
 
@@ -31,14 +33,14 @@ public interface ErrorRegistryView {
     /**
      * Browse all error entries, sorted by most recent first
      */
-    Collection<ErrorRegistryEntry> browse();
+    Collection<BacklogErrorEventMessage> browse();
 
     /**
      * Browse error entries with a limit, sorted by most recent first
      *
      * @param limit maximum number of entries to return
      */
-    Collection<ErrorRegistryEntry> browse(int limit);
+    Collection<BacklogErrorEventMessage> browse(int limit);
 
     /**
      * Clear all error entries in this view

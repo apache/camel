@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "api",
+    "title": "API",
+    "description": "OpenAPI specification for the dev console API",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.ApiDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.22.0-SNAPSHOT"
+  }
+}
+

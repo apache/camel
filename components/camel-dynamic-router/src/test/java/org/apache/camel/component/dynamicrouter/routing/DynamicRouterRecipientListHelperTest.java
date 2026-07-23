@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Assertions;
@@ -225,11 +226,11 @@ class DynamicRouterRecipientListHelperTest {
     }
 
     @Test
-    void testCreateAggregationStrategyNoOp() {
+    void testCreateAggregationStrategyDefaultsToUseLatest() {
         when(mockConfig.getAggregationStrategyBean()).thenReturn(null);
         when(mockConfig.getAggregationStrategy()).thenReturn(null);
         AggregationStrategy strategy = DynamicRouterRecipientListHelper.createAggregationStrategy(camelContext, mockConfig);
-        Assertions.assertInstanceOf(DynamicRouterRecipientListHelper.NoopAggregationStrategy.class, strategy);
+        Assertions.assertInstanceOf(UseLatestAggregationStrategy.class, strategy);
     }
 
     @Test

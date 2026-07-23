@@ -16,20 +16,19 @@
  */
 package org.apache.camel.itest.sql;
 
-import java.sql.DriverManager;
+import java.sql.Connection;
 import java.sql.SQLException;
+
+import javax.sql.DataSource;
 
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * JMS with JDBC idempotent consumer test using XA.
@@ -40,21 +39,23 @@ public class FromJmsToJdbcIdempotentConsumerToJmsXaTest extends FromJmsToJdbcIde
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
-    @BeforeEach
-    public void cleanupDirectories() {
-        deleteDirectory("target/testdb");
-    }
-
     @AfterEach
-    public void shutdownDatabase() {
-        // shutdown the embedded Derby database so that the next test becomes a clean initial state
+    public void shutdownDatabaseAndCleanup() {
+        // Drop all objects first to clear all data, then shutdown and delete files
         try {
-            DriverManager.getConnection("jdbc:derby:target/testdb;shutdown=true");
-            fail("Should have thrown exception");
+            DataSource dataSource = context.getRegistry().lookupByNameAndType(getDatasourceName(), DataSource.class);
+            try (Connection conn = dataSource.getConnection()) {
+                // Drop all tables and data
+                conn.createStatement().execute("DROP ALL OBJECTS");
+                // Then shutdown database to release file locks
+                conn.createStatement().execute("SHUTDOWN");
+            }
         } catch (SQLException e) {
-            // a successful shutdown always results in an SQLException to indicate that Derby has shut down and that there is no other exception.
-            assertEquals("Database 'target/testdb' shutdown.", e.getMessage());
+            // Ignore - database might already be closed or not exist yet
         }
+
+        // Delete the database files after shutdown
+        deleteDirectory("target/testdb");
     }
 
     @Override

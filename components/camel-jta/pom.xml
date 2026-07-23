@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jta</artifactId>
@@ -80,7 +80,7 @@
         <!-- Narayana JTA transaction manager -->
         <dependency>
             <groupId>org.jboss.narayana.jta</groupId>
-            <artifactId>narayana-jta-jakarta</artifactId>
+            <artifactId>narayana-jta</artifactId>
             <version>${narayana-version}</version>
             <scope>test</scope>
         </dependency>

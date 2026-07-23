@@ -21,6 +21,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.support.jsse.SSLContextClientParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -34,7 +35,7 @@ public abstract class AbstractSSLContextClientParametersFactoryBean
     @Override
     protected SSLContextClientParameters createInstance() {
         SSLContextClientParameters newInstance = new SSLContextClientParameters();
-        newInstance.setCamelContext(getCamelContext());
+        CamelContextAware.trySetCamelContext(newInstance, getCamelContext());
         if (sniHostNamesDefinition != null) {
             newInstance.addAllSniHostNames(sniHostNamesDefinition.getSniHostName());
         }

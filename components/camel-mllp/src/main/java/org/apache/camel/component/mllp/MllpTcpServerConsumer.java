@@ -236,6 +236,14 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         acceptThread.start();
     }
 
+    /**
+     * Returns the local port the server socket is bound to, or -1 if not yet bound. Useful when the consumer is
+     * configured with port 0 to let the OS assign a port atomically.
+     */
+    public int getLocalPort() {
+        return acceptThread != null ? acceptThread.getLocalPort() : -1;
+    }
+
     public void startConsumer(Socket clientSocket, MllpSocketBuffer mllpBuffer) {
         TcpSocketConsumerRunnable client = new TcpSocketConsumerRunnable(
                 this, clientSocket, mllpBuffer, hl7Util, logPhi);

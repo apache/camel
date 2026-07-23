@@ -23,9 +23,28 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StaticService;
 import org.apache.camel.StreamCache;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Strategy for using <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
+ * Strategy that controls when and how stream-based message bodies (such as {@link java.io.InputStream}) are buffered so
+ * they can be re-read, as described in the <a href="https://camel.apache.org/manual/stream-caching.html">Stream
+ * Caching</a> documentation.
+ * <p/>
+ * Without stream caching, a stream body can only be consumed once; any EIP or log statement that reads the body a
+ * second time will see an empty stream. When stream caching is enabled, Camel wraps the body in a {@link StreamCache}
+ * that buffers data either in memory or in a temporary spool file on disk, depending on thresholds configured on this
+ * strategy.
+ * <p/>
+ * The key thresholds are:
+ * <ul>
+ * <li>{@link #setSpoolThreshold(long)} — streams larger than this value are spooled to disk rather than held in memory,
+ * preventing out-of-memory errors for large payloads.</li>
+ * <li>{@link #setBufferSize(int)} — the internal read-buffer size when copying bytes to the spool file.</li>
+ * <li>{@link #setSpoolDirectory(java.io.File)} — the directory where spool files are written.</li>
+ * </ul>
+ * Statistics about in-memory vs. on-disk cache usage are available via {@link #getStatistics()}.
+ *
+ * @see StreamCache
  */
 public interface StreamCachingStrategy extends StaticService {
 
@@ -174,6 +193,7 @@ public interface StreamCachingStrategy extends StaticService {
      */
     void setSpoolDirectory(File path);
 
+    @Nullable
     File getSpoolDirectory();
 
     void setSpoolDirectory(String path);
@@ -204,6 +224,7 @@ public interface StreamCachingStrategy extends StaticService {
      */
     void setSpoolUsedHeapMemoryLimit(SpoolUsedHeapMemoryLimit bounds);
 
+    @Nullable
     SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit();
 
     /**
@@ -222,6 +243,7 @@ public interface StreamCachingStrategy extends StaticService {
      */
     void setSpoolCipher(String cipher);
 
+    @Nullable
     String getSpoolCipher();
 
     /**
@@ -265,29 +287,32 @@ public interface StreamCachingStrategy extends StaticService {
     boolean shouldSpoolCache(long length);
 
     /**
-     * Caches the body aas a {@link StreamCache}.
+     * Caches the body as a {@link StreamCache}.
      *
      * @param  exchange the exchange
      * @return          the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
      *                  the body
      */
+    @Nullable
     StreamCache cache(Exchange exchange);
 
     /**
-     * Caches the body aas a {@link StreamCache}.
+     * Caches the body as a {@link StreamCache}.
      *
      * @param  message the message
      * @return         the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
      *                 the body
      */
+    @Nullable
     StreamCache cache(Message message);
 
     /**
-     * Caches the value aas a {@link StreamCache}.
+     * Caches the value as a {@link StreamCache}.
      *
      * @param  value the value
      * @return       the value cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
      */
+    @Nullable
     StreamCache cache(Object value);
 
 }

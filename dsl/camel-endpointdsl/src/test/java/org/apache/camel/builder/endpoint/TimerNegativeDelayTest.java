@@ -38,7 +38,7 @@ public class TimerNegativeDelayTest extends BaseEndpointDslTest {
             @Override
             public void configure() throws Exception {
                 from(timer("foo").delay(-1).period(0).repeatCount(10))
-                        .noAutoStartup()
+                        .autoStartup(false)
                         .to(mock("result"));
             }
         };

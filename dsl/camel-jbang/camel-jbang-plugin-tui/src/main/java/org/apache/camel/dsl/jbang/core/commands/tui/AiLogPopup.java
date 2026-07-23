@@ -1,0 +1,223 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.core.commands.tui;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
+import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Style;
+import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.Line;
+import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.Clear;
+import dev.tamboui.widgets.block.Block;
+import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.list.ListItem;
+import dev.tamboui.widgets.list.ListState;
+import dev.tamboui.widgets.list.ListWidget;
+import dev.tamboui.widgets.list.ScrollMode;
+import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.util.json.Jsoner;
+
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
+
+class AiLogPopup {
+
+    private boolean visible;
+    private Supplier<List<AiPanel.LogEntry>> activityLog;
+    private List<AiPanel.LogEntry> entries;
+    private int selected;
+    private int detailScroll;
+
+    void setActivityLog(Supplier<List<AiPanel.LogEntry>> activityLog) {
+        this.activityLog = activityLog;
+    }
+
+    boolean isVisible() {
+        return visible;
+    }
+
+    void open() {
+        entries = activityLog != null ? activityLog.get() : List.of();
+        selected = entries.isEmpty() ? 0 : entries.size() - 1;
+        detailScroll = 0;
+        visible = true;
+    }
+
+    void close() {
+        visible = false;
+    }
+
+    boolean handleKeyEvent(KeyEvent ke) {
+        if (!visible) {
+            return false;
+        }
+        if (ke.isCancel()) {
+            visible = false;
+        } else if (ke.isUp() || ke.isChar('k')) {
+            if (entries != null && !entries.isEmpty()) {
+                selected = Math.max(0, selected - 1);
+                detailScroll = 0;
+            }
+        } else if (ke.isDown() || ke.isChar('j')) {
+            if (entries != null && !entries.isEmpty()) {
+                selected = Math.min(entries.size() - 1, selected + 1);
+                detailScroll = 0;
+            }
+        } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            detailScroll = Math.max(0, detailScroll - 5);
+        } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            detailScroll += 5;
+        }
+        return true;
+    }
+
+    void render(Frame frame, Rect area) {
+        Rect popup = new Rect(area.left() + 2, area.top() + 1, area.width() - 4, area.height() - 2);
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        if (entries == null || entries.isEmpty()) {
+            Block block = Block.builder()
+                    .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                    .title(" AI Log ")
+                    .titleBottom(Title.from(Line.from(
+                            Span.styled(" Esc", Theme.hintKey()), Span.raw(" back "))))
+                    .build();
+            frame.renderWidget(block, popup);
+            Rect inner = block.inner(popup);
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled("No AI activity yet. Open the AI panel (F8) and ask a question.", Style.EMPTY.dim()))),
+                    inner);
+            return;
+        }
+
+        int splitY = popup.top() + Math.max(3, (popup.height() * 2) / 5);
+        Rect masterArea = new Rect(popup.left(), popup.top(), popup.width(), splitY - popup.top());
+        Rect detailArea = new Rect(popup.left(), splitY, popup.width(), popup.bottom() - splitY);
+
+        renderMaster(frame, masterArea);
+        renderDetail(frame, detailArea);
+    }
+
+    void renderFooter(List<Span> spans) {
+        hint(spans, TuiIcons.HINT_SCROLL, "select");
+        hint(spans, "PgUp/Dn", "detail");
+        hintLast(spans, "Esc", "back");
+    }
+
+    private void renderMaster(Frame frame, Rect area) {
+        List<ListItem> items = new ArrayList<>();
+        for (AiPanel.LogEntry entry : entries) {
+            Style levelStyle = switch (entry.level()) {
+                case QUESTION -> Style.EMPTY.fg(Theme.accent());
+                case TOOL -> Theme.warning();
+                case RESULT -> Theme.success();
+                case RESPONSE -> Theme.notice();
+                case ERROR -> Theme.error();
+            };
+            String levelTag = switch (entry.level()) {
+                case QUESTION -> " ASK      ";
+                case TOOL -> " TOOL     ";
+                case RESULT -> " RESULT   ";
+                case RESPONSE -> " RESPONSE ";
+                case ERROR -> " ERROR    ";
+            };
+            items.add(ListItem.from(Line.from(
+                    Span.styled(entry.timestamp(), Style.EMPTY.dim()),
+                    Span.styled(levelTag, levelStyle),
+                    Span.raw(entry.message()))));
+        }
+
+        ListState masterState = new ListState();
+        masterState.select(selected);
+        ListWidget list = ListWidget.builder()
+                .items(items.toArray(ListItem[]::new))
+                .highlightStyle(Theme.selectionBg())
+                .highlightSymbol("▸ ")
+                .scrollMode(ScrollMode.AUTO_SCROLL)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .title(" AI Log ")
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, area, masterState);
+    }
+
+    private void renderDetail(Frame frame, Rect area) {
+        AiPanel.LogEntry entry = entries.get(selected);
+        List<Line> lines = new ArrayList<>();
+
+        String detail = entry.detail();
+        if (detail != null && !detail.isBlank()) {
+            if (entry.level() == AiPanel.LogLevel.TOOL || entry.level() == AiPanel.LogLevel.RESULT) {
+                lines.add(Line.from(Span.styled(
+                        entry.level() == AiPanel.LogLevel.TOOL
+                                ? TuiIcons.ARROW_RIGHT + " Arguments"
+                                : TuiIcons.ARROW_LEFT + " Result",
+                        (entry.level() == AiPanel.LogLevel.TOOL ? Theme.warning() : Theme.success()).bold())));
+                addJsonLines(lines, detail);
+            } else {
+                lines.add(Line.from(Span.styled(TuiIcons.ARROW_RIGHT + " Content",
+                        Style.EMPTY.fg(Theme.accent()).bold())));
+                for (String line : detail.split("\n", -1)) {
+                    lines.add(Line.from(Span.styled("  " + line, Style.EMPTY.dim())));
+                }
+            }
+        } else {
+            lines.add(Line.from(Span.styled("(no detail data)", Style.EMPTY.dim())));
+        }
+
+        Block detailBlock = Block.builder()
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .title(" Detail ")
+                .build();
+        frame.renderWidget(detailBlock, area);
+        Rect inner = detailBlock.inner(area);
+
+        int visibleLines = inner.height();
+        int totalLines = lines.size();
+        int clampedScroll = Math.min(detailScroll, Math.max(0, totalLines - visibleLines));
+        int end = Math.min(clampedScroll + visibleLines, totalLines);
+        if (clampedScroll < end) {
+            List<Line> visible = lines.subList(clampedScroll, end);
+            frame.renderWidget(
+                    Paragraph.builder().text(Text.from(visible.toArray(Line[]::new))).build(),
+                    inner);
+        }
+    }
+
+    private static void addJsonLines(List<Line> lines, String json) {
+        try {
+            String pretty = Jsoner.prettyPrint(json, 2);
+            for (String line : pretty.split("\n", -1)) {
+                lines.add(Line.from(Span.styled("  " + line, Style.EMPTY.dim())));
+            }
+        } catch (Exception e) {
+            for (String line : json.split("\n", -1)) {
+                lines.add(Line.from(Span.styled("  " + line, Style.EMPTY.dim())));
+            }
+        }
+    }
+}

@@ -16,12 +16,18 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
- * An exception to veto starting {@link CamelContext}.
+ * Thrown by a {@link org.apache.camel.spi.LifecycleStrategy} to abort the startup of a {@link CamelContext}.
  * <p/>
- * The option rethrowException can be used to control whether to rethrow this exception when starting CamelContext or
- * not.
+ * Any {@link org.apache.camel.spi.LifecycleStrategy} registered with the context can veto startup by throwing this
+ * exception from its {@code onContextStarting} callback. Whether the exception propagates out of
+ * {@link CamelContext#start()} is controlled by {@link #isRethrowException()}: when {@code true} (the default) the
+ * exception is re-thrown and the application sees a startup failure; when {@code false} the veto is silent and the
+ * context is simply not started.
  *
+ * @see CamelContext
  * @see org.apache.camel.spi.LifecycleStrategy
  */
 public class VetoCamelContextStartException extends Exception {
@@ -29,23 +35,43 @@ public class VetoCamelContextStartException extends Exception {
     private final CamelContext context;
     private final boolean rethrowException;
 
+    /**
+     * @param message the detail message
+     * @param context the CamelContext whose start is being vetoed
+     */
     public VetoCamelContextStartException(String message, CamelContext context) {
         this(message, context, true);
     }
 
+    /**
+     * @param message          the detail message
+     * @param context          the CamelContext whose start is being vetoed
+     * @param rethrowException whether to rethrow this exception when starting CamelContext
+     */
     public VetoCamelContextStartException(String message, CamelContext context, boolean rethrowException) {
-        super(message);
-        this.context = context;
+        super(Objects.requireNonNull(message, "message"));
+        this.context = Objects.requireNonNull(context, "context");
         this.rethrowException = rethrowException;
     }
 
+    /**
+     * @param message the detail message
+     * @param cause   the cause of the veto
+     * @param context the CamelContext whose start is being vetoed
+     */
     public VetoCamelContextStartException(String message, Throwable cause, CamelContext context) {
         this(message, cause, context, true);
     }
 
+    /**
+     * @param message          the detail message
+     * @param cause            the cause of the veto
+     * @param context          the CamelContext whose start is being vetoed
+     * @param rethrowException whether to rethrow this exception when starting CamelContext
+     */
     public VetoCamelContextStartException(String message, Throwable cause, CamelContext context, boolean rethrowException) {
-        super(message, cause);
-        this.context = context;
+        super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
+        this.context = Objects.requireNonNull(context, "context");
         this.rethrowException = rethrowException;
     }
 

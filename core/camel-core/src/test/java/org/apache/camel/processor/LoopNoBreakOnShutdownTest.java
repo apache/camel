@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.CompletableFuture;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,11 +34,18 @@ class LoopNoBreakOnShutdownTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(LOOP_COUNT);
 
-        CompletableFuture<Object> future = template.asyncSendBody("seda:foo", "foo");
-        await().atMost(1, SECONDS).until(future::isDone);
+        template.asyncSendBody("seda:foo", "foo");
+
+        // Wait until at least 1 loop iteration has completed and reached mock:result.
+        // This guarantees the exchange is registered in the inflight repository and
+        // the LoopProcessor's taskCount > 0, so the shutdown strategy will properly
+        // wait for all 100 iterations to complete instead of seeing 0 inflight
+        // exchanges and proceeding with immediate shutdown.
+        await().atMost(10, SECONDS).until(() -> mock.getReceivedCounter() >= 1);
 
         context.stop();
 
+        // after context.stop(), all shutdown-deferred processing has completed
         mock.assertIsSatisfied();
     }
 

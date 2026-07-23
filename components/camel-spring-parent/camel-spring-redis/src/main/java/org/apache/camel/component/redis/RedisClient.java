@@ -158,14 +158,14 @@ public class RedisClient {
 
     public void setbit(final String key, final Long offset, final Boolean value) {
         redisTemplate.execute((RedisCallback<Object>) connection -> {
-            connection.setBit(key.getBytes(), offset, value);
+            connection.stringCommands().setBit(key.getBytes(), offset, value);
             return null;
         });
     }
 
     public Boolean getbit(final String key, final Long offset) {
         return redisTemplate.execute((RedisCallback<Boolean>) connection -> {
-            return connection.getBit(key.getBytes(), offset);
+            return connection.stringCommands().getBit(key.getBytes(), offset);
         });
     }
 

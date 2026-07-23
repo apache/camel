@@ -22,8 +22,10 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("Asynchronous", java.lang.String.class);
         map.put("AutomaticTransitionFromOpenToHalfOpenEnabled", java.lang.String.class);
         map.put("BulkheadEnabled", java.lang.String.class);
+        map.put("BulkheadFairCallHandlingEnabled", java.lang.String.class);
         map.put("BulkheadMaxConcurrentCalls", java.lang.String.class);
         map.put("BulkheadMaxWaitDuration", java.lang.String.class);
         map.put("CircuitBreaker", java.lang.String.class);
@@ -31,11 +33,13 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         map.put("FailureRateThreshold", java.lang.String.class);
         map.put("Id", java.lang.String.class);
         map.put("IgnoreExceptions", java.util.List.class);
+        map.put("MaxWaitDurationInHalfOpenState", java.lang.String.class);
         map.put("MicrometerEnabled", java.lang.String.class);
         map.put("MinimumNumberOfCalls", java.lang.String.class);
         map.put("PermittedNumberOfCallsInHalfOpenState", java.lang.String.class);
         map.put("RecordExceptions", java.util.List.class);
         map.put("SlidingWindowSize", java.lang.String.class);
+        map.put("SlidingWindowSynchronizationStrategy", java.lang.String.class);
         map.put("SlidingWindowType", java.lang.String.class);
         map.put("SlowCallDurationThreshold", java.lang.String.class);
         map.put("SlowCallRateThreshold", java.lang.String.class);
@@ -53,10 +57,13 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.model.Resilience4jConfigurationDefinition target = (org.apache.camel.model.Resilience4jConfigurationDefinition) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "asynchronous": target.setAsynchronous(property(camelContext, java.lang.String.class, value)); return true;
         case "automatictransitionfromopentohalfopenenabled":
         case "automaticTransitionFromOpenToHalfOpenEnabled": target.setAutomaticTransitionFromOpenToHalfOpenEnabled(property(camelContext, java.lang.String.class, value)); return true;
         case "bulkheadenabled":
         case "bulkheadEnabled": target.setBulkheadEnabled(property(camelContext, java.lang.String.class, value)); return true;
+        case "bulkheadfaircallhandlingenabled":
+        case "bulkheadFairCallHandlingEnabled": target.setBulkheadFairCallHandlingEnabled(property(camelContext, java.lang.String.class, value)); return true;
         case "bulkheadmaxconcurrentcalls":
         case "bulkheadMaxConcurrentCalls": target.setBulkheadMaxConcurrentCalls(property(camelContext, java.lang.String.class, value)); return true;
         case "bulkheadmaxwaitduration":
@@ -69,6 +76,8 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
         case "ignoreexceptions":
         case "ignoreExceptions": target.setIgnoreExceptions(property(camelContext, java.util.List.class, value)); return true;
+        case "maxwaitdurationinhalfopenstate":
+        case "maxWaitDurationInHalfOpenState": target.setMaxWaitDurationInHalfOpenState(property(camelContext, java.lang.String.class, value)); return true;
         case "micrometerenabled":
         case "micrometerEnabled": target.setMicrometerEnabled(property(camelContext, java.lang.String.class, value)); return true;
         case "minimumnumberofcalls":
@@ -79,6 +88,8 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "recordExceptions": target.setRecordExceptions(property(camelContext, java.util.List.class, value)); return true;
         case "slidingwindowsize":
         case "slidingWindowSize": target.setSlidingWindowSize(property(camelContext, java.lang.String.class, value)); return true;
+        case "slidingwindowsynchronizationstrategy":
+        case "slidingWindowSynchronizationStrategy": target.setSlidingWindowSynchronizationStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "slidingwindowtype":
         case "slidingWindowType": target.setSlidingWindowType(property(camelContext, java.lang.String.class, value)); return true;
         case "slowcalldurationthreshold":
@@ -111,10 +122,13 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "asynchronous": return java.lang.String.class;
         case "automatictransitionfromopentohalfopenenabled":
         case "automaticTransitionFromOpenToHalfOpenEnabled": return java.lang.String.class;
         case "bulkheadenabled":
         case "bulkheadEnabled": return java.lang.String.class;
+        case "bulkheadfaircallhandlingenabled":
+        case "bulkheadFairCallHandlingEnabled": return java.lang.String.class;
         case "bulkheadmaxconcurrentcalls":
         case "bulkheadMaxConcurrentCalls": return java.lang.String.class;
         case "bulkheadmaxwaitduration":
@@ -127,6 +141,8 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "id": return java.lang.String.class;
         case "ignoreexceptions":
         case "ignoreExceptions": return java.util.List.class;
+        case "maxwaitdurationinhalfopenstate":
+        case "maxWaitDurationInHalfOpenState": return java.lang.String.class;
         case "micrometerenabled":
         case "micrometerEnabled": return java.lang.String.class;
         case "minimumnumberofcalls":
@@ -137,6 +153,8 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "recordExceptions": return java.util.List.class;
         case "slidingwindowsize":
         case "slidingWindowSize": return java.lang.String.class;
+        case "slidingwindowsynchronizationstrategy":
+        case "slidingWindowSynchronizationStrategy": return java.lang.String.class;
         case "slidingwindowtype":
         case "slidingWindowType": return java.lang.String.class;
         case "slowcalldurationthreshold":
@@ -165,10 +183,13 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.model.Resilience4jConfigurationDefinition target = (org.apache.camel.model.Resilience4jConfigurationDefinition) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "asynchronous": return target.getAsynchronous();
         case "automatictransitionfromopentohalfopenenabled":
         case "automaticTransitionFromOpenToHalfOpenEnabled": return target.getAutomaticTransitionFromOpenToHalfOpenEnabled();
         case "bulkheadenabled":
         case "bulkheadEnabled": return target.getBulkheadEnabled();
+        case "bulkheadfaircallhandlingenabled":
+        case "bulkheadFairCallHandlingEnabled": return target.getBulkheadFairCallHandlingEnabled();
         case "bulkheadmaxconcurrentcalls":
         case "bulkheadMaxConcurrentCalls": return target.getBulkheadMaxConcurrentCalls();
         case "bulkheadmaxwaitduration":
@@ -181,6 +202,8 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "id": return target.getId();
         case "ignoreexceptions":
         case "ignoreExceptions": return target.getIgnoreExceptions();
+        case "maxwaitdurationinhalfopenstate":
+        case "maxWaitDurationInHalfOpenState": return target.getMaxWaitDurationInHalfOpenState();
         case "micrometerenabled":
         case "micrometerEnabled": return target.getMicrometerEnabled();
         case "minimumnumberofcalls":
@@ -191,6 +214,8 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "recordExceptions": return target.getRecordExceptions();
         case "slidingwindowsize":
         case "slidingWindowSize": return target.getSlidingWindowSize();
+        case "slidingwindowsynchronizationstrategy":
+        case "slidingWindowSynchronizationStrategy": return target.getSlidingWindowSynchronizationStrategy();
         case "slidingwindowtype":
         case "slidingWindowType": return target.getSlidingWindowType();
         case "slowcalldurationthreshold":

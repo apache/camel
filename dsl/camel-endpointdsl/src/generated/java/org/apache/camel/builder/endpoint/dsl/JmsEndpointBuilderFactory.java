@@ -1183,7 +1183,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer (advanced)
          * 
          * @param exposeListenerSession the value to set
@@ -1199,7 +1199,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer (advanced)
          * 
          * @param exposeListenerSession the value to set
@@ -7306,7 +7306,7 @@ public interface JmsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final JmsHeaderNameBuilder INSTANCE = new JmsHeaderNameBuilder();
+        public static final JmsHeaderNameBuilder INSTANCE = new JmsHeaderNameBuilder();
 
         /**
          * The destination.

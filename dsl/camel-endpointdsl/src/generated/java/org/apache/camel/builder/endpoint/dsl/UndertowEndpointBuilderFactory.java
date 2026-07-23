@@ -172,7 +172,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param muteException the value to set
@@ -189,7 +189,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param muteException the value to set
@@ -289,6 +289,24 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder allowedRoles(String allowedRoles) {
             doSetProperty("allowedRoles", allowedRoles);
+            return this;
+        }
+        /**
+         * OAuth profile name for validating incoming Authorization: Bearer
+         * tokens. When set, the HTTP request or WebSocket upgrade request is
+         * authenticated before the route is processed. This requires an
+         * OAuthTokenValidationFactory; camel-oauth provides the default
+         * implementation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default UndertowEndpointConsumerBuilder oauthProfile(String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
             return this;
         }
         /**
@@ -1655,7 +1673,7 @@ public interface UndertowEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final UndertowHeaderNameBuilder INSTANCE = new UndertowHeaderNameBuilder();
+        public static final UndertowHeaderNameBuilder INSTANCE = new UndertowHeaderNameBuilder();
 
         /**
          * An identifier of WebSocketChannel through which the message was

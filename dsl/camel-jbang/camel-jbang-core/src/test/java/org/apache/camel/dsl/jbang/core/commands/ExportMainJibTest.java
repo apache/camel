@@ -68,7 +68,9 @@ class ExportMainJibTest {
 
         Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "--java-version=21", "target/test-classes/route.yaml");
+                "--runtime=%s".formatted(rt.runtime()), "--java-version=21",
+                CamelCommandBaseTestSupport.quarkusExtRegistry(),
+                "target/test-classes/route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -82,8 +84,8 @@ class ExportMainJibTest {
                 model.getProperties().getProperty("jib.from.image"));
 
         // should contain jib plugin
-        Assertions.assertEquals(4, model.getBuild().getPlugins().size());
-        Plugin p = model.getBuild().getPlugins().get(3);
+        Assertions.assertEquals(6, model.getBuild().getPlugins().size());
+        Plugin p = model.getBuild().getPlugins().get(5);
         Assertions.assertEquals("com.google.cloud.tools", p.getGroupId());
         Assertions.assertEquals("jib-maven-plugin", p.getArtifactId());
 
@@ -99,7 +101,9 @@ class ExportMainJibTest {
 
         Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "target/test-classes/route.yaml");
+                "--runtime=%s".formatted(rt.runtime()),
+                CamelCommandBaseTestSupport.quarkusExtRegistry(),
+                "target/test-classes/route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -113,8 +117,8 @@ class ExportMainJibTest {
                 model.getProperties().getProperty("jib.from.image"));
 
         // should contain jib plugin
-        Assertions.assertEquals(4, model.getBuild().getPlugins().size());
-        Plugin p = model.getBuild().getPlugins().get(3);
+        Assertions.assertEquals(6, model.getBuild().getPlugins().size());
+        Plugin p = model.getBuild().getPlugins().get(5);
         Assertions.assertEquals("com.google.cloud.tools", p.getGroupId());
         Assertions.assertEquals("jib-maven-plugin", p.getArtifactId());
 

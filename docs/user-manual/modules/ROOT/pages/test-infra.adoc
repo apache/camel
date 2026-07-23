@@ -114,6 +114,7 @@ This registration is done in the `registerProperties` methods during the service
 
 Registering the properties in the concrete service implementation:
 
+._Java-only: registering service properties for test infrastructure_
 [source,java]
 ----
     public void registerProperties() {
@@ -171,6 +172,7 @@ Camel version when used outside the Camel Core project.
 
 On the test class, add a member variable for the service and annotate it with the `@RegisterExtension` to let JUnit manage its lifecycle.
 
+._Java-only: registering a test infrastructure service as a JUnit extension_
 [source,java]
 ----
 @RegisterExtension
@@ -179,6 +181,7 @@ static MyService service = MyServiceServiceFactory.createService();
 
 More complex test services can be created using something similar to:
 
+._Java-only: creating a complex test service with builder pattern_
 [source,java]
 ----
 @RegisterExtension
@@ -201,6 +204,7 @@ When using these properties in Spring XML files, you may use those properties.
 It's also possible to use these properties in the test code itself. For example, when setting up the test url for the
 Camel component:
 
+._Java-only: using test infrastructure properties in a Camel route_
 [source,java]
 ----
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -219,6 +223,7 @@ When combining the different modules of the test infra, you may need to ensure t
 
 For instance:
 
+._Java-only: controlling execution order of test extensions_
 [source,java]
 ----
     @Order(1)

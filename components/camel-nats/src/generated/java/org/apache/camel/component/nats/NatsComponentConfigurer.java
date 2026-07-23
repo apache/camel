@@ -62,6 +62,8 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "jetstreamName": getOrCreateConfiguration(target).setJetstreamName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "manualack":
+        case "manualAck": getOrCreateConfiguration(target).setManualAck(property(camelContext, boolean.class, value)); return true;
         case "maxdeliver":
         case "maxDeliver": getOrCreateConfiguration(target).setMaxDeliver(property(camelContext, long.class, value)); return true;
         case "maxmessages":
@@ -81,6 +83,10 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "pingInterval": getOrCreateConfiguration(target).setPingInterval(property(camelContext, int.class, value)); return true;
         case "poolsize":
         case "poolSize": getOrCreateConfiguration(target).setPoolSize(property(camelContext, int.class, value)); return true;
+        case "pullbatchsize":
+        case "pullBatchSize": getOrCreateConfiguration(target).setPullBatchSize(property(camelContext, int.class, value)); return true;
+        case "pullfetchtimeout":
+        case "pullFetchTimeout": getOrCreateConfiguration(target).setPullFetchTimeout(property(camelContext, long.class, value)); return true;
         case "pullsubscription":
         case "pullSubscription": getOrCreateConfiguration(target).setPullSubscription(property(camelContext, boolean.class, value)); return true;
         case "queuename":
@@ -144,6 +150,8 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "jetstreamName": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "manualack":
+        case "manualAck": return boolean.class;
         case "maxdeliver":
         case "maxDeliver": return long.class;
         case "maxmessages":
@@ -163,6 +171,10 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "pingInterval": return int.class;
         case "poolsize":
         case "poolSize": return int.class;
+        case "pullbatchsize":
+        case "pullBatchSize": return int.class;
+        case "pullfetchtimeout":
+        case "pullFetchTimeout": return long.class;
         case "pullsubscription":
         case "pullSubscription": return boolean.class;
         case "queuename":
@@ -227,6 +239,8 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "jetstreamName": return getOrCreateConfiguration(target).getJetstreamName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "manualack":
+        case "manualAck": return getOrCreateConfiguration(target).isManualAck();
         case "maxdeliver":
         case "maxDeliver": return getOrCreateConfiguration(target).getMaxDeliver();
         case "maxmessages":
@@ -246,6 +260,10 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "pingInterval": return getOrCreateConfiguration(target).getPingInterval();
         case "poolsize":
         case "poolSize": return getOrCreateConfiguration(target).getPoolSize();
+        case "pullbatchsize":
+        case "pullBatchSize": return getOrCreateConfiguration(target).getPullBatchSize();
+        case "pullfetchtimeout":
+        case "pullFetchTimeout": return getOrCreateConfiguration(target).getPullFetchTimeout();
         case "pullsubscription":
         case "pullSubscription": return getOrCreateConfiguration(target).isPullSubscription();
         case "queuename":

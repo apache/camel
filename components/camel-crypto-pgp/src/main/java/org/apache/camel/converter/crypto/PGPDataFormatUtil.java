@@ -99,10 +99,10 @@ public final class PGPDataFormatUtil {
         PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(
                 PGPUtil.getDecoderStream(keyringInput),
                 new BcKeyFingerprintCalculator());
-        return findPrivateKeyWithkeyId(keyid, passphrase, passphraseAccessor, provider, pgpSec);
+        return findPrivateKeyWithKeyId(keyid, passphrase, passphraseAccessor, provider, pgpSec);
     }
 
-    public static PGPPrivateKey findPrivateKeyWithkeyId(
+    public static PGPPrivateKey findPrivateKeyWithKeyId(
             long keyid, String passphrase, PGPPassphraseAccessor passphraseAccessor,
             String provider, PGPSecretKeyRingCollection pgpSec)
             throws PGPException {

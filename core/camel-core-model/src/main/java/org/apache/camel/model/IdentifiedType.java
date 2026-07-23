@@ -36,16 +36,10 @@ public abstract class IdentifiedType {
     @Metadata(description = "The id of this node")
     private String id;
 
-    /**
-     * Gets the value of the id property.
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     */
     public void setId(String value) {
         this.id = value;
     }

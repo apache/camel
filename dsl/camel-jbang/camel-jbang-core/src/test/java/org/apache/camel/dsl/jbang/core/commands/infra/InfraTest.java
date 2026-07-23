@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.model.InfraBaseDTO;
+import org.apache.camel.util.json.Jsoner;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
@@ -68,5 +70,33 @@ public class InfraTest extends CamelCommandBaseTestSupport {
         Assertions.assertThat(output).contains("artemis");
         Assertions.assertThat(output).contains("amqp");
         Assertions.assertThat(output).contains("minio");
+    }
+
+    @Test
+    public void serviceDataInJsonIsNestedNotEscaped() {
+        String rawServiceData = "{\"host\":\"localhost\",\"port\":61616}";
+        Object serviceData = InfraBaseCommand.parseServiceData(rawServiceData);
+
+        InfraBaseDTO dto = new InfraBaseDTO("artemis", "amqp", "AMQP broker", serviceData, true);
+        String json = Jsoner.serialize(List.of(dto.toMap()));
+
+        // serviceData is embedded as a nested JSON object (so --json is machine-parseable), not a string-escaped blob
+        Assertions.assertThat(json).contains("\"serviceData\":{");
+        Assertions.assertThat(json).contains("\"host\":\"localhost\"");
+        Assertions.assertThat(json).doesNotContain("\\\"host\\\"");
+    }
+
+    @Test
+    public void malformedServiceDataIsOmittedFromJson() {
+        Object serviceData = InfraBaseCommand.parseServiceData("{not valid json");
+
+        // unparseable content is dropped rather than emitted as an escaped string
+        Assertions.assertThat(serviceData).isNull();
+
+        InfraBaseDTO dto = new InfraBaseDTO("artemis", "amqp", "AMQP broker", serviceData, true);
+        String json = Jsoner.serialize(List.of(dto.toMap()));
+
+        Assertions.assertThat(json).contains("\"alias\":\"artemis\"");
+        Assertions.assertThat(json).doesNotContain("serviceData");
     }
 }

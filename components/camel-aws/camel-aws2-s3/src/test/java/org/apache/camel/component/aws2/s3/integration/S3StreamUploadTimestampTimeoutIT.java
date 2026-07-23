@@ -57,8 +57,7 @@ public class S3StreamUploadTimestampTimeoutIT extends Aws2S3Base {
 
             long afterUpload = System.currentTimeMillis();
 
-            Awaitility.await().atMost(11, TimeUnit.SECONDS)
-                    .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+            MockEndpoint.assertIsSatisfied(context, 11, TimeUnit.SECONDS);
 
             Awaitility.await().atMost(11, TimeUnit.SECONDS)
                     .untilAsserted(() -> {

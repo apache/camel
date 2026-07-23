@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.minio;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,13 +24,13 @@ import java.util.Queue;
 
 import io.minio.BucketExistsArgs;
 import io.minio.CopyObjectArgs;
-import io.minio.CopySource;
 import io.minio.GetObjectArgs;
 import io.minio.ListObjectsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
 import io.minio.Result;
+import io.minio.SourceObject;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
 import org.apache.camel.Exchange;
@@ -329,14 +326,13 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 removeObject(srcBucketName, srcObjectName);
                 LOG.trace("Deleted object from bucket {} with objectName {}...", srcBucketName, srcObjectName);
             }
-        } catch (MinioException | NoSuchAlgorithmException | InvalidKeyException | IOException e) {
+        } catch (MinioException e) {
             getExceptionHandler().handleException("Error occurred during moving or deleting object. This exception is ignored.",
                     exchange, e);
         }
     }
 
-    private void removeObject(String srcBucketName, String srcObjectName)
-            throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
+    private void removeObject(String srcBucketName, String srcObjectName) throws MinioException {
         RemoveObjectArgs.Builder removeObjectRequest = RemoveObjectArgs.builder()
                 .bucket(srcBucketName)
                 .object(srcObjectName)
@@ -349,8 +345,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         getMinioClient().removeObject(removeObjectRequest.build());
     }
 
-    private void copyObject(String srcBucketName, String srcObjectName)
-            throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
+    private void copyObject(String srcBucketName, String srcObjectName) throws MinioException {
         String destinationBucketName = getConfiguration().getDestinationBucketName();
         if (isEmpty(destinationBucketName)) {
             throw new IllegalArgumentException("Destination Bucket name must be specified to copy operation");
@@ -364,7 +359,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         LOG.trace("Copying object from bucket {} with objectName {} to bucket {}...",
                 srcBucketName, srcObjectName, destinationBucketName);
 
-        CopySource.Builder copySourceBuilder = CopySource.builder().bucket(srcBucketName).object(srcObjectName);
+        SourceObject.Builder copySourceBuilder = SourceObject.builder().bucket(srcBucketName).object(srcObjectName);
 
         MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getServerSideEncryptionCustomerKey,
                 copySourceBuilder::ssec);

@@ -20,6 +20,8 @@ import org.apache.camel.Component;
 
 /**
  * A {@link Component} resolver that are used in EIPs with dynamic behavior such as toD, enrich and others.
+ *
+ * @since 4.16
  */
 public interface OptimisedComponentResolver {
 

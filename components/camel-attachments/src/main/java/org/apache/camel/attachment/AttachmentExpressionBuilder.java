@@ -29,7 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.OgnlExpressionBuilder;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ResourceHelper;
@@ -219,7 +219,7 @@ public class AttachmentExpressionBuilder {
      * @param ognl methods to invoke on the attachment in a simple OGNL syntax
      */
     public static Expression attachmentOgnlExpression(final String ognl) {
-        return new SimpleExpressionBuilder.KeyedOgnlExpressionAdapter(
+        return new OgnlExpressionBuilder.KeyedOgnlExpressionAdapter(
                 ognl, "attachmentOgnl(" + ognl + ")",
                 (exchange, exp) -> {
                     String key = exp.evaluate(exchange, String.class);

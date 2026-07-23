@@ -23,11 +23,11 @@ public final class LuceneConstants {
     @Metadata(description = "The Lucene Query to performed on the index. The query may include\n" +
                             "wildcards and phrases.",
               javaType = "String")
-    public static final String HEADER_QUERY = "QUERY";
+    public static final String HEADER_QUERY = "CamelLuceneQuery";
     @Metadata(description = "Set this header to true to include the actual Lucene\n" +
                             "documentation when returning hit information.",
               javaType = "String")
-    public static final String HEADER_RETURN_LUCENE_DOCS = "RETURN_LUCENE_DOCS";
+    public static final String HEADER_RETURN_LUCENE_DOCS = "CamelLuceneReturnLuceneDocs";
 
     private LuceneConstants() {
     }

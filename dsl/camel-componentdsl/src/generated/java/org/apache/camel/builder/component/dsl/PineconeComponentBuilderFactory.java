@@ -259,7 +259,7 @@ public interface PineconeComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: security
          * 
          * @param tls the value to set

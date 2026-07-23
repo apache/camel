@@ -26,7 +26,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Camel AI: Tokenizer for splitting by word.
  */
-@Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer with word splitter")
+@Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer with word splitter",
+          description = "Splits text into chunks by word boundaries, using LangChain4j's word tokenizer for AI text processing")
 @XmlRootElement(name = "langChain4jWordTokenizer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LangChain4jWordTokenizerDefinition extends LangChain4jTokenizerDefinition {

@@ -431,4 +431,59 @@ class RouteTemplateTest extends YamlTestSupport {
         Assertions.assertEquals(3, context.getRoute("second").filter("bbb*").size())
     }
 
+    def "create template with optional endpoint uri not provided"() {
+        when:
+        loadRoutes """
+                - routeTemplate:
+                    id: "myTemplate"
+                    parameters:
+                      - name: "foo"
+                      - name: "optionalUri"
+                        required: false
+                    from:
+                      uri: "direct:{{foo}}"
+                      steps:
+                        - to: "{{?optionalUri}}"
+                        - to: "mock:result"
+            """
+
+        context.addRouteFromTemplate("myRoute1", "myTemplate", [foo: "start"])
+        context.start()
+
+        then:
+        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint)
+        mock.expectedBodiesReceived("Hello World")
+        context.createProducerTemplate().sendBody("direct:start", "Hello World")
+        mock.assertIsSatisfied()
+    }
+
+    def "create template with optional endpoint uri provided"() {
+        when:
+        loadRoutes """
+                - routeTemplate:
+                    id: "myTemplate"
+                    parameters:
+                      - name: "foo"
+                      - name: "optionalUri"
+                        required: false
+                    from:
+                      uri: "direct:{{foo}}"
+                      steps:
+                        - to: "{{?optionalUri}}"
+                        - to: "mock:result"
+            """
+
+        context.addRouteFromTemplate("myRoute1", "myTemplate", [foo: "start", optionalUri: "mock:middle"])
+        context.start()
+
+        then:
+        MockEndpoint middle = context.getEndpoint("mock:middle", MockEndpoint)
+        middle.expectedBodiesReceived("Hello World")
+        MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint)
+        result.expectedBodiesReceived("Hello World")
+        context.createProducerTemplate().sendBody("direct:start", "Hello World")
+        middle.assertIsSatisfied()
+        result.assertIsSatisfied()
+    }
+
 }

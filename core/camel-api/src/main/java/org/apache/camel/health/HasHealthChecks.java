@@ -20,6 +20,8 @@ import java.util.stream.Stream;
 
 /**
  * An interface to represent an object which provides {@link HealthCheck}
+ *
+ * @since 3.20
  */
 public interface HasHealthChecks {
     /**

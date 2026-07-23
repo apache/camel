@@ -17,6 +17,7 @@
 package org.apache.camel.component.azure.storage.blob;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -283,8 +284,13 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
                 = getEndpoint().getBlobServiceClient().getBlobContainerClient(destinationContainer);
         BlobClient destBlobClient = destContainerClient.getBlobClient(destinationBlobName);
 
-        // Copy from source URL (works within same storage account)
-        destBlobClient.copyFromUrl(sourceBlobClient.getBlobUrl());
+        // Use beginCopy which supports same-account authorization via shared key/Azure AD
+        Duration timeout = getEndpoint().getConfiguration().getTimeout();
+        if (timeout == null) {
+            timeout = Duration.ofMinutes(5);
+        }
+        destBlobClient.beginCopy(sourceBlobClient.getBlobUrl(), Duration.ofSeconds(2))
+                .waitForCompletion(timeout);
     }
 
     /**

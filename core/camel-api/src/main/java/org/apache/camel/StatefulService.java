@@ -17,7 +17,13 @@
 package org.apache.camel;
 
 /**
- * A {@link Service} which has all the lifecycle events and offers details about its current state.
+ * A {@link Service} that exposes its current {@link ServiceStatus} together with the full lifecycle, including
+ * suspend/resume from {@link SuspendableService} and shutdown from {@link ShutdownableService}.
+ * <p/>
+ * Most Camel built-in services extend this contract via {@code ServiceSupport} in {@code camel-support}, so route code
+ * can ask any service whether it is started, suspended, stopping, etc.
+ *
+ * @see ServiceStatus
  */
 public interface StatefulService extends SuspendableService, ShutdownableService {
 

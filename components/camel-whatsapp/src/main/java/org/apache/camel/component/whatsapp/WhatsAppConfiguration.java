@@ -40,11 +40,18 @@ public class WhatsAppConfiguration {
     @UriParam(description = "Facebook graph api version.", label = "advanced")
     private String apiVersion;
 
-    @UriParam(description = "Webhook verify token", label = "advanced")
+    @UriParam(description = "Webhook verify token", label = "security", security = "secret")
     private String webhookVerifyToken;
 
     @UriParam(description = "Webhook path", label = "advanced", defaultValue = "webhook")
     private String webhookPath = "camel-whatsapp/webhook";
+
+    @UriParam(description = "The app secret used to verify the X-Hub-Signature-256 signature of inbound webhook event"
+                            + " payloads (from the Meta/WhatsApp app dashboard). When set, event callbacks with a missing"
+                            + " or invalid signature are rejected with HTTP 403; when not set, no signature verification"
+                            + " is performed.",
+              label = "security", security = "secret")
+    private String webhookSecret;
 
     public WhatsAppConfiguration() {
     }
@@ -95,6 +102,14 @@ public class WhatsAppConfiguration {
 
     public void setWebhookPath(String webhookPath) {
         this.webhookPath = webhookPath;
+    }
+
+    public String getWebhookSecret() {
+        return webhookSecret;
+    }
+
+    public void setWebhookSecret(String webhookSecret) {
+        this.webhookSecret = webhookSecret;
     }
 
     @Override

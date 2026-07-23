@@ -24,18 +24,18 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
+        <version>4.22.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-elasticsearch</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: ElasticSearch Java API Client</name>
-    <description>Camel ElasticSearch Java API Client support</description>
+    <name>Camel :: Elasticsearch Java API Client</name>
+    <description>Camel Elasticsearch Java API Client support</description>
 
     <properties>
         <!-- Elasticsearch container is not available on these platforms -->
         <skipITs.s390x>true</skipITs.s390x>
-        <!-- The image for ElasticSearch 9.x for ppc64le architecture is not yet available -->
+        <!-- The image for Elasticsearch 9.x for ppc64le architecture is not yet available -->
         <skipITs.ppc64le>true</skipITs.ppc64le>
 
         <camel.surefire.reuseForks>false</camel.surefire.reuseForks>

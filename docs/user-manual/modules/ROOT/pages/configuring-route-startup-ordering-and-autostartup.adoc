@@ -151,6 +151,7 @@ camel.main.auto-startup = false
 To startup based on a boolean, String or
 xref:components::properties-component.adoc[Property], do one of the following:
 
+._Java-only: autoStartup with boolean, string, and property placeholder variants_
 [source,java]
 ----
 // using a boolean

@@ -36,7 +36,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "circuit-breaker",
-         description = "Get status of Circuit Breaker EIPs", sortOptions = false, showDefaultValues = true)
+         description = "Get status of Circuit Breaker EIPs", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get circuit-breaker",
+                 "  camel get circuit-breaker --watch" })
 public class ListCircuitBreaker extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

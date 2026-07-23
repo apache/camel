@@ -19,8 +19,8 @@ package org.apache.camel.component.jms.integration.consumers;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractPersistentJMSTest;
+import org.apache.camel.component.jms.JmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +28,9 @@ import org.junit.jupiter.api.Test;
  * Tests the behavior of 2 consumers consuming multiple messages from the topic
  */
 public class MultipleMessagesSameTopicIT extends AbstractPersistentJMSTest {
+
+    // topic subscriptions take a little longer to register than queue consumers, so keep the longer 200ms threshold
+    private static final long TOPIC_ROUTE_UPTIME_MILLIS = 200;
 
     @Test
     public void testMultipleMessagesOnSameTopic() throws Exception {
@@ -46,8 +49,7 @@ public class MultipleMessagesSameTopicIT extends AbstractPersistentJMSTest {
 
     @BeforeEach
     void waitForConnections() {
-        Awaitility.await().until(() -> context.getRoute("a").getUptimeMillis() > 200);
-        Awaitility.await().until(() -> context.getRoute("b").getUptimeMillis() > 200);
+        JmsTestHelper.waitForJmsConsumerRoutes(context, TOPIC_ROUTE_UPTIME_MILLIS, "a", "b");
     }
 
     @Override

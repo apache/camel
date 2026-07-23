@@ -24,6 +24,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.util.StringHelper;
@@ -32,10 +33,11 @@ import org.apache.camel.util.StringHelper;
  * A processor which removes the variable
  */
 public class RemoveVariableProcessor extends BaseProcessorSupport
-        implements Traceable, IdAware, RouteIdAware, CamelContextAware {
+        implements Traceable, IdAware, RouteIdAware, StepIdAware, CamelContextAware {
     private CamelContext camelContext;
     private String id;
     private String routeId;
+    private String stepId;
     private final Expression variableName;
     private VariableRepositoryFactory factory;
 
@@ -112,6 +114,16 @@ public class RemoveVariableProcessor extends BaseProcessorSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public String getVariableName() {

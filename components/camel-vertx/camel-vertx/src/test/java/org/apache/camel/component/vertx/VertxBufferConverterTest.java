@@ -18,7 +18,6 @@ package org.apache.camel.component.vertx;
 
 import java.io.InputStream;
 
-import io.netty.buffer.Unpooled;
 import io.vertx.core.buffer.Buffer;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.ExchangeBuilder;
@@ -48,12 +47,6 @@ public class VertxBufferConverterTest extends CamelTestSupport {
     @Test
     public void testByteArrayToBuffer() {
         Buffer buffer = context.getTypeConverter().convertTo(Buffer.class, BODY.getBytes());
-        Assertions.assertEquals(BODY, buffer.toString());
-    }
-
-    @Test
-    public void testByteBufToBuffer() {
-        Buffer buffer = context.getTypeConverter().convertTo(Buffer.class, Unpooled.wrappedBuffer(BODY.getBytes()));
         Assertions.assertEquals(BODY, buffer.toString());
     }
 

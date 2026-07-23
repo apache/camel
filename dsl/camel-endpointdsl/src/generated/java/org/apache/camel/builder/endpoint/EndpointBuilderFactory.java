@@ -28,6 +28,7 @@ import javax.annotation.processing.Generated;
 @Generated("org.apache.camel.maven.packaging.EndpointDslMojo")
 public interface EndpointBuilderFactory
         extends
+            org.apache.camel.builder.endpoint.dsl.A2AEndpointBuilderFactory.A2ABuilders,
             org.apache.camel.builder.endpoint.dsl.AMQPEndpointBuilderFactory.AMQPBuilders,
             org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory.AS2Builders,
             org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2Builders,
@@ -36,6 +37,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.AWSConfigEndpointBuilderFactory.AWSConfigBuilders,
             org.apache.camel.builder.endpoint.dsl.ActiveMQ6EndpointBuilderFactory.ActiveMQ6Builders,
             org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQBuilders,
+            org.apache.camel.builder.endpoint.dsl.AiToolEndpointBuilderFactory.AiToolBuilders,
             org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbBuilders,
             org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory.AsteriskBuilders,
             org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.Athena2Builders,
@@ -133,7 +135,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.GeoCoderEndpointBuilderFactory.GeoCoderBuilders,
             org.apache.camel.builder.endpoint.dsl.GitEndpointBuilderFactory.GitBuilders,
             org.apache.camel.builder.endpoint.dsl.GitHub2EndpointBuilderFactory.GitHub2Builders,
-            org.apache.camel.builder.endpoint.dsl.GitHubEndpointBuilderFactory.GitHubBuilders,
             org.apache.camel.builder.endpoint.dsl.GlanceEndpointBuilderFactory.GlanceBuilders,
             org.apache.camel.builder.endpoint.dsl.GoogleBigQueryEndpointBuilderFactory.GoogleBigQueryBuilders,
             org.apache.camel.builder.endpoint.dsl.GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLBuilders,
@@ -333,6 +334,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory.ServletBuilders,
             org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory.Ses2Builders,
             org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory.SftpBuilders,
+            org.apache.camel.builder.endpoint.dsl.ShellEndpointBuilderFactory.ShellBuilders,
             org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory.SimpleNotificationBuilders,
             org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.Sjms2Builders,
             org.apache.camel.builder.endpoint.dsl.SjmsEndpointBuilderFactory.SjmsBuilders,

@@ -671,6 +671,37 @@ public interface WatsonxAiEndpointBuilderFactory {
             doSetProperty("oauthProfile", oauthProfile);
             return this;
         }
+        /**
+         * Whether to verify SSL certificates.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param verifySsl the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder verifySsl(Boolean verifySsl) {
+            doSetProperty("verifySsl", verifySsl);
+            return this;
+        }
+        /**
+         * Whether to verify SSL certificates.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param verifySsl the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder verifySsl(String verifySsl) {
+            doSetProperty("verifySsl", verifySsl);
+            return this;
+        }
     }
 
     /**
@@ -819,37 +850,6 @@ public interface WatsonxAiEndpointBuilderFactory {
             doSetProperty("timeout", timeout);
             return this;
         }
-        /**
-         * Whether to verify SSL certificates.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param verifySsl the value to set
-         * @return the dsl builder
-         */
-        default AdvancedWatsonxAiEndpointBuilder verifySsl(Boolean verifySsl) {
-            doSetProperty("verifySsl", verifySsl);
-            return this;
-        }
-        /**
-         * Whether to verify SSL certificates.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param verifySsl the value to set
-         * @return the dsl builder
-         */
-        default AdvancedWatsonxAiEndpointBuilder verifySsl(String verifySsl) {
-            doSetProperty("verifySsl", verifySsl);
-            return this;
-        }
     }
 
     public interface WatsonxAiBuilders {
@@ -919,7 +919,7 @@ public interface WatsonxAiEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final WatsonxAiHeaderNameBuilder INSTANCE = new WatsonxAiHeaderNameBuilder();
+        public static final WatsonxAiHeaderNameBuilder INSTANCE = new WatsonxAiHeaderNameBuilder();
 
         /**
          * The operation to perform.

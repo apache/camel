@@ -79,6 +79,36 @@ public class LRASagaRoutesTest {
                 "query parameter value for name 'key2' has unexpected content");
     }
 
+    @DisplayName("Tests parseQuery() preserves values containing '=' characters")
+    @Test
+    void testParseQueryWithEqualsInValue() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+
+        Map<String, String> testResult = (Map<String, String>) getParseQueryMethod()
+                .invoke(new LRASagaRoutes(null),
+                        "key1=value%3Dwith%3Dequals&key2=normal");
+
+        Assertions.assertEquals(2, testResult.size(), "query parameter count must be two");
+        Assertions.assertEquals("value=with=equals", testResult.get("key1"),
+                "value containing '=' characters must be preserved");
+        Assertions.assertEquals("normal", testResult.get("key2"));
+    }
+
+    @DisplayName("Tests parseQuery() decodes URL-encoded special characters correctly")
+    @Test
+    void testParseQueryWithEncodedSpecialChars()
+            throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+
+        Map<String, String> testResult = (Map<String, String>) getParseQueryMethod()
+                .invoke(new LRASagaRoutes(null),
+                        "key1=value+with%26ampersand&key2=a%2Bb");
+
+        Assertions.assertEquals(2, testResult.size(), "query parameter count must be two");
+        Assertions.assertEquals("value with&ampersand", testResult.get("key1"),
+                "encoded '&' and '+' must be decoded correctly");
+        Assertions.assertEquals("a+b", testResult.get("key2"),
+                "encoded '+' must be decoded correctly");
+    }
+
     @DisplayName("Tests parseQuery() to handle incorrect query string (no value is given)")
     @Test
     void testParseQuerySuccessEncoded() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {

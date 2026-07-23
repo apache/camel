@@ -44,6 +44,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           properties = {
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "description", type = "string"),
+                  @YamlProperty(name = "note", type = "string"),
                   @YamlProperty(name = "precondition", type = "string"),
                   @YamlProperty(name = "errorHandler", type = "object:org.apache.camel.model.ErrorHandlerDefinition"),
                   @YamlProperty(name = "intercept", wrapItem = true,
@@ -76,6 +77,12 @@ public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBa
         final MappingNode bn = asMappingNode(node);
         setDeserializationContext(node, dc);
 
+        int line = -1;
+        if (node.getStartMark().isPresent()) {
+            line = node.getStartMark().get().getLine();
+        }
+        onNewTarget(node, target, line);
+
         for (NodeTuple tuple : bn.getValue()) {
             String key = asText(tuple.getKeyNode());
             Node val = tuple.getValueNode();
@@ -87,6 +94,9 @@ public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBa
                     break;
                 case "description":
                     target.setDescription(asText(val));
+                    break;
+                case "note":
+                    target.setNote(asText(val));
                     break;
                 case "precondition":
                     target.setPrecondition(asText(val));

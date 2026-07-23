@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -31,12 +32,15 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import org.fusesource.jansi.Ansi;
+import org.jline.jansi.Ansi;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "expression",
                      description = "Evaluates Camel expression", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel cmd expression --language=simple --exp='${body}'" })
 public class EvalExpressionCommand extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
@@ -72,13 +76,16 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                         description = "Message header (key=value)")
     List<String> headers;
 
+    @CommandLine.Option(names = { "--variable" },
+                        description = "Exchange variable (key=value)")
+    List<String> variables;
+
     @CommandLine.Option(names = { "--timeout" }, defaultValue = "10000",
                         description = "Timeout in millis waiting for evaluation to be done")
     long timeout = 10000;
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
-    String repositories;
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
     long pid;
 
@@ -115,7 +122,7 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                     printer().printErr("This requires Camel version 4.3 or newer");
                     return -1;
                 }
-                exit = run.runTransformMessage(camelVersion, repositories);
+                exit = run.runTransformMessage(camelVersion, mavenResolver);
                 this.pid = run.spawnPid;
                 if (exit == 0) {
                     exit = super.doCall();
@@ -161,6 +168,20 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                 arr.add(jo);
             }
             root.put("headers", arr);
+        }
+        if (variables != null) {
+            JsonArray arr = new JsonArray();
+            for (String v : variables) {
+                JsonObject jo = new JsonObject();
+                if (!v.contains("=")) {
+                    printer().printErr("Variable must be in key=value format, was: " + v);
+                    return 1;
+                }
+                jo.put("key", StringHelper.before(v, "="));
+                jo.put("value", StringHelper.after(v, "="));
+                arr.add(jo);
+            }
+            root.put("variables", arr);
         }
 
         Path outputFile = getOutputFile(Long.toString(pid));

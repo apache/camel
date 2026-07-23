@@ -47,7 +47,7 @@ public class LangChain4jToolMultipleCallsTest extends CamelTestSupport {
             .build();
 
     private volatile boolean intermediateCalled = false;
-    private volatile boolean intermediateHasValidBody = false;
+    private volatile boolean intermediateIsolated = false;
 
     @Override
     protected void setupResources() throws Exception {
@@ -82,10 +82,15 @@ public class LangChain4jToolMultipleCallsTest extends CamelTestSupport {
                         .process(exchange -> {
                             String body = exchange.getIn().getBody(String.class);
                             intermediateCalled = true;
-                            if (exchange.getIn().getHeader("longitude", String.class).contains("0") &&
-                                    exchange.getIn().getHeader("latitude", String.class).contains("51") &&
-                                    body.contains("51.50758961965397") && body.contains("-0.13388057363742217")) {
-                                intermediateHasValidBody = true;
+                            // CAMEL-23704: the forecast tool must see its own argument headers but not
+                            // inherit the previous tool's 'name' header or output body (it receives the
+                            // original incoming chat messages)
+                            boolean ownHeaders = exchange.getIn().getHeader("longitude", String.class).contains("0")
+                                    && exchange.getIn().getHeader("latitude", String.class).contains("51");
+                            boolean noHeaderLeak = exchange.getIn().getHeader("name") == null;
+                            boolean originalBody = body != null && body.contains("meteorologist");
+                            if (ownHeaders && noHeaderLeak && originalBody) {
+                                intermediateIsolated = true;
                             }
                         })
                         .setBody(simple("""
@@ -135,6 +140,6 @@ public class LangChain4jToolMultipleCallsTest extends CamelTestSupport {
         // depending on the reasoning model used to test, the result is different, but we asked for Celcius degree and 3 should be part of it
         Assertions.assertThat(responseContent).containsIgnoringCase("3");
         Assertions.assertThat(intermediateCalled).isTrue();
-        Assertions.assertThat(intermediateHasValidBody).isTrue();
+        Assertions.assertThat(intermediateIsolated).isTrue();
     }
 }

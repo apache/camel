@@ -159,20 +159,6 @@ public interface WordpressEndpointBuilderFactory {
             return this;
         }
         /**
-         * Password from authorized user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default WordpressEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Search criteria.
          * 
          * The option is a:
@@ -230,6 +216,20 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointConsumerBuilder user(String user) {
             doSetProperty("user", user);
+            return this;
+        }
+        /**
+         * Password from authorized user.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default WordpressEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
     }
@@ -488,20 +488,6 @@ public interface WordpressEndpointBuilderFactory {
             return this;
         }
         /**
-         * Password from authorized user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default WordpressEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Search criteria.
          * 
          * The option is a:
@@ -559,6 +545,20 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointProducerBuilder user(String user) {
             doSetProperty("user", user);
+            return this;
+        }
+        /**
+         * Password from authorized user.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default WordpressEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
     }
@@ -746,20 +746,6 @@ public interface WordpressEndpointBuilderFactory {
             return this;
         }
         /**
-         * Password from authorized user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default WordpressEndpointBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Search criteria.
          * 
          * The option is a:
@@ -817,6 +803,20 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointBuilder user(String user) {
             doSetProperty("user", user);
+            return this;
+        }
+        /**
+         * Password from authorized user.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default WordpressEndpointBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
     }

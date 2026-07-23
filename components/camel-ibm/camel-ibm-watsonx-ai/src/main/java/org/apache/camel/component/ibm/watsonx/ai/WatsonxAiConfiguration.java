@@ -133,7 +133,8 @@ public class WatsonxAiConfiguration implements Cloneable {
     @UriParam(label = "advanced", description = "Request timeout in milliseconds")
     private Long timeout;
 
-    @UriParam(label = "advanced", defaultValue = "true", description = "Whether to verify SSL certificates")
+    @UriParam(label = "security", defaultValue = "true", description = "Whether to verify SSL certificates",
+              security = "insecure:ssl", insecureValue = "false")
     private Boolean verifySsl = true;
 
     @UriParam(label = "advanced", defaultValue = "false", description = "Whether to log HTTP requests to the watsonx.ai API")

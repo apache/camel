@@ -19,10 +19,46 @@ package org.apache.camel.spi;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
+import org.jspecify.annotations.Nullable;
+
 /**
- * Backlog tracer that captures the last N messages during routing in a backlog.
+ * Passive message capture mechanism that records a rolling window of the last N exchange snapshots as they pass through
+ * route nodes, as described in the <a href="https://camel.apache.org/manual/backlog-tracer.html">Backlog Tracer</a>
+ * documentation.
+ * <p/>
+ * Unlike the {@link Debugger}/{@link BacklogDebugger} which can suspend and step through exchanges, the
+ * {@code BacklogTracer} is non-blocking: it takes a snapshot of each exchange at each route node and adds it to a
+ * bounded circular queue (the "backlog"). Snapshots are available via {@link #dumpTracedMessagesAsXml(String, boolean)}
+ * or {@link #dumpTracedMessagesAsJSon(String, boolean)} for inspection or test assertions. The maximum number of
+ * messages held in the backlog is configured by {@link #setBacklogSize(int)}.
+ * <p/>
+ * The tracer can be filtered to a subset of routes and nodes via {@link #setTraceFilter(String)}, and can be put in
+ * standby mode (activated but not collecting) so it can be toggled at runtime via JMX without restarting Camel.
+ *
+ * @see   BacklogTracerEventMessage
+ * @see   BacklogDebugger
+ * @since 4.0
  */
 public interface BacklogTracer {
+
+    /**
+     * Whether the activity tracking feature is enabled.
+     *
+     * @since 4.22
+     */
+    default boolean isActivityEnabled() {
+        return false;
+    }
+
+    /**
+     * To turn on or off the activity tracking feature.
+     *
+     * @since 4.22
+     */
+    default void setActivityEnabled(boolean activityEnabled) {
+    }
 
     /**
      * Is the tracer enabled.
@@ -59,6 +95,24 @@ public interface BacklogTracer {
      * Number of messages to keep in the backlog (should be between 1 - 1000). Default is 100.
      */
     void setBacklogSize(int backlogSize);
+
+    /**
+     * Number of completed exchange summaries to keep in the activity queue. Default is 100.
+     * <p>
+     * The activity queue captures a lightweight summary (metadata only, no body or headers) each time an exchange
+     * completes a route. This provides a rolling window of recent exchange activity suitable for live monitoring.
+     *
+     * @since 4.22
+     */
+    int getActivitySize();
+
+    /**
+     * Number of completed exchange summaries to keep in the activity queue (should be between 1 - 1000). Default is
+     * 100.
+     *
+     * @since 4.22
+     */
+    void setActivitySize(int activitySize);
 
     /**
      * Remove the currently traced messages when dump methods are invoked
@@ -153,27 +207,36 @@ public interface BacklogTracer {
     /**
      * Filter for tracing by route or node id
      */
+    @Nullable
     String getTracePattern();
 
     /**
      * Filter for tracing by route or node id
      */
-    void setTracePattern(String tracePattern);
+    void setTracePattern(@Nullable String tracePattern);
 
     /**
      * Filter for tracing messages
      */
+    @Nullable
     String getTraceFilter();
 
     /**
      * Filter for tracing messages
      */
-    void setTraceFilter(String filter);
+    void setTraceFilter(@Nullable String filter);
 
     /**
      * Gets the trace counter (total number of traced messages)
      */
     long getTraceCounter();
+
+    /**
+     * Increments and returns the trace counter.
+     *
+     * @since 4.21
+     */
+    long incrementTraceCounter();
 
     /**
      * Number of traced messages in the backlog
@@ -186,6 +249,20 @@ public interface BacklogTracer {
     void resetTraceCounter();
 
     /**
+     * Whether the tracer should trace the given node and exchange (taking into account patterns and filters).
+     *
+     * @since 4.21
+     */
+    boolean shouldTrace(NamedNode node, Exchange exchange);
+
+    /**
+     * Records a trace event. Used internally by the route pipeline advices to submit pre-built trace events.
+     *
+     * @since 4.21
+     */
+    void traceEvent(BacklogTracerEventMessage event);
+
+    /**
      * Get all tracing data (without removing)
      */
     Collection<BacklogTracerEventMessage> getAllTracedMessages();
@@ -194,6 +271,31 @@ public interface BacklogTracer {
      * Get latest completed exchange message history (without removing)
      */
     Collection<BacklogTracerEventMessage> getLatestMessageHistory();
+
+    /**
+     * Get all activity summaries (without removing).
+     * <p>
+     * Activity summaries are lightweight snapshots captured when an exchange completes. They contain exchange-level
+     * metadata (exchange ID, route, elapsed time, status) and a list of remote endpoints that were called — no message
+     * body or headers.
+     *
+     * @since 4.22
+     */
+    Collection<BacklogTracerActivityMessage> getActivity();
+
+    /**
+     * Dumps all activity summaries.
+     *
+     * @since 4.22
+     */
+    List<BacklogTracerActivityMessage> dumpActivity();
+
+    /**
+     * Dumps all activity summaries as JSon.
+     *
+     * @since 4.22
+     */
+    String dumpActivityAsJSon();
 
     /**
      * Dumps all tracing data

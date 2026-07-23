@@ -908,7 +908,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final VertxHttpHeaderNameBuilder INSTANCE = new VertxHttpHeaderNameBuilder();
+        public static final VertxHttpHeaderNameBuilder INSTANCE = new VertxHttpHeaderNameBuilder();
 
         /**
          * The http method.

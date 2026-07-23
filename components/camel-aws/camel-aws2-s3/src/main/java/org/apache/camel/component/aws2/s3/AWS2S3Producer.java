@@ -42,7 +42,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.AwsResponse;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -212,7 +214,11 @@ public class AWS2S3Producer extends DefaultProducer {
         if (contentLength == 0 || contentLength < partSize) {
             // optimize to do a single op if content length is known and < part size
             LOG.debug("Payload size < partSize ({} > {}). Uploading payload in single operation", contentLength, partSize);
-            doPutObject(exchange, objectMetadata, filePayload, inputStream, contentLength);
+            try {
+                doPutObject(exchange, objectMetadata, filePayload, inputStream, contentLength);
+            } finally {
+                IOHelper.close(inputStream);
+            }
             return;
         }
 
@@ -222,7 +228,7 @@ public class AWS2S3Producer extends DefaultProducer {
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         CreateMultipartUploadRequest.Builder createMultipartUploadRequest
-                = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName);
+                = CreateMultipartUploadRequest.builder().bucket(bucketName).key(keyName);
 
         String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
         if (ObjectHelper.isNotEmpty(storageClass)) {
@@ -277,7 +283,7 @@ public class AWS2S3Producer extends DefaultProducer {
             for (int part = 1; position < contentLength; part++) {
                 partSize = Math.min(partSize, contentLength - position);
 
-                UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName())
+                UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(bucketName)
                         .key(keyName).uploadId(initResponse.uploadId())
                         .partNumber(part).build();
 
@@ -293,7 +299,7 @@ public class AWS2S3Producer extends DefaultProducer {
             LOG.debug("Completing multi-part upload for {}", keyName);
             CompletedMultipartUpload completeMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
             CompleteMultipartUploadRequest.Builder compRequestBuilder = CompleteMultipartUploadRequest.builder()
-                    .multipartUpload(completeMultipartUpload).bucket(getConfiguration().getBucketName()).key(keyName)
+                    .multipartUpload(completeMultipartUpload).bucket(bucketName).key(keyName)
                     .uploadId(initResponse.uploadId());
             if (getConfiguration().isConditionalWritesEnabled()) {
                 compRequestBuilder.ifNoneMatch("*");
@@ -302,7 +308,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
         } catch (Exception e) {
             getEndpoint().getS3Client()
-                    .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
+                    .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(bucketName)
                             .key(keyName).uploadId(initResponse.uploadId()).build());
             throw e;
         } finally {
@@ -512,13 +518,18 @@ public class AWS2S3Producer extends DefaultProducer {
             }
 
             if (getConfiguration().isUseCustomerKey()) {
+                // the source object was stored with SSE-C, so the same customer key must also be supplied as the
+                // copy-source key, otherwise S3 cannot decrypt the source and rejects the copy
                 if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
+                    copyObjectRequest.copySourceSSECustomerKey(getConfiguration().getCustomerKeyId());
                     copyObjectRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
                 }
                 if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
+                    copyObjectRequest.copySourceSSECustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
                     copyObjectRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
                 }
                 if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
+                    copyObjectRequest.copySourceSSECustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
                     copyObjectRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
                 }
             }
@@ -614,7 +625,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 ResponseInputStream<GetObjectResponse> res
                         = s3Client.getObject(req, ResponseTransformer.toInputStream());
                 Message message = getMessageForResponse(exchange);
-                if (!getConfiguration().isIgnoreBody()) {
+                if (getConfiguration().isIgnoreBody()) {
+                    IOHelper.close(res);
+                } else {
                     message.setBody(res);
                 }
                 populateMetadata(res, message);
@@ -642,10 +655,23 @@ public class AWS2S3Producer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(ifUnmodifiedSince)) {
                 req.ifUnmodifiedSince(ifUnmodifiedSince);
             }
+            if (getConfiguration().isUseCustomerKey()) {
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
+                    req.sseCustomerKey(getConfiguration().getCustomerKeyId());
+                }
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
+                    req.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
+                }
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
+                    req.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
+                }
+            }
             ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
             Message message = getMessageForResponse(exchange);
-            if (!getConfiguration().isIgnoreBody()) {
+            if (getConfiguration().isIgnoreBody()) {
+                IOHelper.close(res);
+            } else {
                 message.setBody(res);
             }
             populateMetadata(res, message);
@@ -677,6 +703,17 @@ public class AWS2S3Producer extends DefaultProducer {
 
             GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(keyName)
                     .range("bytes=" + Long.parseLong(rangeStart) + "-" + Long.parseLong(rangeEnd));
+            if (getConfiguration().isUseCustomerKey()) {
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
+                    req.sseCustomerKey(getConfiguration().getCustomerKeyId());
+                }
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
+                    req.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
+                }
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
+                    req.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
+                }
+            }
             ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
             Message message = getMessageForResponse(exchange);
@@ -692,8 +729,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListObjectsRequest req) {
-                ListObjectsResponse objectList = s3Client.listObjects(req);
+            if (payload instanceof ListObjectsV2Request req) {
+                ListObjectsV2Response objectList = s3Client.listObjectsV2(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(objectList.contents());
                 populateHttpResponseCode(objectList, message);
@@ -704,13 +741,13 @@ public class AWS2S3Producer extends DefaultProducer {
             final String prefix
                     = exchange.getIn().getHeader(AWS2S3Constants.PREFIX, getConfiguration().getPrefix(), String.class);
 
-            final ListObjectsRequest listObjectsRequest = ListObjectsRequest
+            final ListObjectsV2Request listObjectsRequest = ListObjectsV2Request
                     .builder()
                     .bucket(bucketName)
                     .delimiter(delimiter)
                     .prefix(prefix)
                     .build();
-            ListObjectsResponse objectList = s3Client.listObjects(listObjectsRequest);
+            ListObjectsV2Response objectList = s3Client.listObjectsV2(listObjectsRequest);
 
             Message message = getMessageForResponse(exchange);
             message.setBody(objectList.contents());
@@ -1089,12 +1126,23 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         S3Presigner.Builder builder = S3Presigner.builder();
-        builder.credentialsProvider(
-                getConfiguration().isUseDefaultCredentialsProvider()
-                        ? DefaultCredentialsProvider.create() : StaticCredentialsProvider.create(
-                                AwsBasicCredentials.create(getConfiguration().getAccessKey(),
-                                        getConfiguration().getSecretKey())))
-                .region(Region.of(getConfiguration().getRegion()));
+        if (getConfiguration().isUseDefaultCredentialsProvider()) {
+            builder.credentialsProvider(DefaultCredentialsProvider.create());
+        } else if (getConfiguration().isUseProfileCredentialsProvider()) {
+            builder.credentialsProvider(
+                    ProfileCredentialsProvider.create(getConfiguration().getProfileCredentialsName()));
+        } else if (getConfiguration().isUseSessionCredentials()) {
+            builder.credentialsProvider(StaticCredentialsProvider.create(
+                    AwsSessionCredentials.create(getConfiguration().getAccessKey(),
+                            getConfiguration().getSecretKey(), getConfiguration().getSessionToken())));
+        } else {
+            builder.credentialsProvider(StaticCredentialsProvider.create(
+                    AwsBasicCredentials.create(getConfiguration().getAccessKey(),
+                            getConfiguration().getSecretKey())));
+        }
+        if (ObjectHelper.isNotEmpty(getConfiguration().getRegion())) {
+            builder.region(Region.of(getConfiguration().getRegion()));
+        }
 
         if (getConfiguration().isForcePathStyle()) {
             builder.serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build());

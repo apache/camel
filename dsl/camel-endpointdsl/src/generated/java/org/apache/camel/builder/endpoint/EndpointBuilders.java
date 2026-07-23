@@ -25,6 +25,7 @@ import javax.annotation.processing.Generated;
 @Generated("org.apache.camel.maven.packaging.EndpointDslMojo")
 public interface EndpointBuilders
         extends
+            org.apache.camel.builder.endpoint.dsl.A2AEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AMQPEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory,
@@ -33,6 +34,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.AWSConfigEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ActiveMQ6EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.AiToolEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory,
@@ -130,7 +132,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.GeoCoderEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GitEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GitHub2EndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.GitHubEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GlanceEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleBigQueryEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleBigQuerySQLEndpointBuilderFactory,
@@ -330,6 +331,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.ShellEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SjmsEndpointBuilderFactory,

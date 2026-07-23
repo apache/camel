@@ -28,11 +28,13 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.TransactedPolicy;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Defines a policy the route will use
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration",
+          description = "Applies a policy to the route, such as a transactional policy or a custom policy for cross-cutting concerns")
 @XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
@@ -43,6 +45,8 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
     private Policy policy;
 
     @XmlAttribute(required = true)
+    @DslArg
+    @Metadata(required = true, description = "Reference to the policy to lookup in the registry.")
     private String ref;
 
     public PolicyDefinition() {
@@ -134,17 +138,6 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
         this.ref = ref;
     }
 
-    /**
-     * Sets a policy type that this definition should scope within.
-     * <p/>
-     * Is used for convention over configuration situations where the policy should be automatic looked up in the
-     * registry and it should be based on this type. For instance a {@link org.apache.camel.spi.TransactedPolicy} can be
-     * set as type for easy transaction configuration.
-     * <p/>
-     * Will by default scope to the wide {@link Policy}
-     *
-     * @param type the policy type
-     */
     public void setType(Class<? extends Policy> type) {
         this.type = type;
     }

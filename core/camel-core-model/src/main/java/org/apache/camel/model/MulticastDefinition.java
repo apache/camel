@@ -35,7 +35,10 @@ import org.apache.camel.spi.Metadata;
 /**
  * Routes the same message to multiple paths either sequentially or in parallel.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing",
+          aliases = { "fan-out", "broadcast" },
+          description = "Sends a copy of the message to multiple fixed endpoints, processing them sequentially or in parallel,"
+                        + " and optionally aggregating their replies")
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
@@ -49,41 +52,64 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
     private Processor onPrepareProcessor;
 
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.AggregationStrategy")
+    @Metadata(javaType = "org.apache.camel.AggregationStrategy",
+              description = "Reference to the AggregationStrategy to assemble the replies from the multicasts"
+                            + " into a single outgoing message. By default Camel uses the last reply as the outgoing message.")
     private String aggregationStrategy;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The method name to use when using a POJO as the AggregationStrategy.")
     private String aggregationStrategyMethodName;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If true then null is used as the oldExchange when there is no data to aggregate,"
+                            + " when using POJOs as the AggregationStrategy.")
     private String aggregationStrategyMethodAllowNull;
     @Deprecated(since = "4.7.0")
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String parallelAggregate;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If enabled then sending messages to the multicasts occurs concurrently."
+                            + " The caller thread still waits until all messages are fully processed before it continues.")
     private String parallelProcessing;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "When enabled then the same thread is used to continue routing after the multicast is complete,"
+                            + " even if parallel processing is enabled.")
     private String synchronous;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If enabled then Camel will process replies out-of-order, in the order they come back."
+                            + " If disabled, Camel will process replies in the same order as defined by the multicast.")
     private String streaming;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then stops further multicast processing if an exception or failure occurred"
+                            + " during processing of an exchange, and the caused exception will be thrown."
+                            + " The default behavior is to not stop but continue processing till the end.")
     private String stopOnException;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "0")
+    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "0",
+              description = "Total timeout in millis when using parallel processing."
+                            + " If the multicast has not been able to process all replies within the given timeframe,"
+                            + " then the timeout triggers and the multicast breaks out and continues.")
     private String timeout;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "Reference to a custom thread pool to use for parallel processing."
+                            + " Setting this option implies parallel processing.")
     private String executorService;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor",
+              description = "Reference to a processor for preparing the exchange to be sent."
+                            + " Can be used to deep-clone messages that should be sent.")
     private String onPrepare;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Shares the unit of work with the parent and each of the multicast exchanges."
+                            + " By default each multicast exchange has its own individual unit of work.")
     private String shareUnitOfWork;
 
     public MulticastDefinition() {
@@ -528,20 +554,10 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         return aggregationStrategy;
     }
 
-    /**
-     * Refers to an AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing
-     * message from the Multicast. By default Camel will use the last reply as the outgoing message. You can also use a
-     * POJO as the AggregationStrategy
-     */
     public void setAggregationStrategy(String aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    /**
-     * Refers to an AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing
-     * message from the Multicast. By default Camel will use the last reply as the outgoing message. You can also use a
-     * POJO as the AggregationStrategy
-     */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategyBean = aggregationStrategy;
     }
@@ -550,9 +566,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         return aggregationStrategyMethodName;
     }
 
-    /**
-     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
-     */
     public void setAggregationStrategyMethodName(String aggregationStrategyMethodName) {
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
@@ -561,11 +574,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         return aggregationStrategyMethodAllowNull;
     }
 
-    /**
-     * If this option is false then the aggregate method is not used if there was no data to enrich. If this option is
-     * true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the
-     * AggregationStrategy
-     */
     public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
@@ -574,10 +582,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         return executorService;
     }
 
-    /**
-     * Refers to a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel
-     * processing is automatic implied, and you do not have to enable that option as well.
-     */
     public void setExecutorService(String executorService) {
         this.executorService = executorService;
     }

@@ -30,14 +30,17 @@ public class RecipientListParallelStreamingTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c");
 
-        assertMockEndpointsSatisfied();
+        mock.assertIsSatisfied();
+    }
 
-        mock.reset();
+    @Test
+    public void testRecipientListParallelStreaming() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("b");
 
         template.sendBodyAndHeader("direct:streaming", "Hello World", "foo", "direct:a,direct:b,direct:c");
 
-        assertMockEndpointsSatisfied();
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -49,8 +52,8 @@ public class RecipientListParallelStreamingTest extends ContextTestSupport {
 
                 from("direct:streaming").recipientList(header("foo")).parallelProcessing().streaming().to("mock:result");
 
-                from("direct:a").delay(100).transform(constant("a"));
-                from("direct:b").delay(500).transform(constant("b"));
+                from("direct:a").delay(500).syncDelayed().transform(constant("a"));
+                from("direct:b").delay(2000).syncDelayed().transform(constant("b"));
                 from("direct:c").transform(constant("c"));
             }
         };

@@ -37,4 +37,8 @@ public interface InfinispanInfraService extends InfrastructureService {
     default String hosts() {
         return String.format("%s:%d", host(), port());
     }
+
+    default String uiUrl() {
+        return String.format("http://%s:%d/console", host(), port());
+    }
 }

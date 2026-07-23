@@ -40,6 +40,7 @@ public class MDCHeadersTraceTest extends OpenTelemetryTracerTestSupport {
         tst.setTraceHeadersInclusion(true);
         tst.setTracer(otelExtension.getOpenTelemetry().getTracer("traceTest"));
         tst.setContextPropagators(otelExtension.getOpenTelemetry().getPropagators());
+        tst.setDisableCoreProcessors(true);
         CamelContextAware.trySetCamelContext(tst, context);
         tst.init(context);
         return context;

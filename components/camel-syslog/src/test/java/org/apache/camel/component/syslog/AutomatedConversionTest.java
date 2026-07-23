@@ -60,13 +60,11 @@ public class AutomatedConversionTest extends CamelTestSupport {
                 byte[] data = rfc3164Message.getBytes();
                 DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort.getPort());
                 socket.send(packet);
-                Thread.sleep(100);
             }
             for (int i = 0; i < messageCount; i++) {
                 byte[] data = rfc5424Message.getBytes();
                 DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort.getPort());
                 socket.send(packet);
-                Thread.sleep(100);
             }
         } finally {
             socket.close();

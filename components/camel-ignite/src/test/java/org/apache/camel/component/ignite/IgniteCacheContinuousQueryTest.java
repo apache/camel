@@ -170,17 +170,18 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("ignite-cache:testcontinuous1?query=#query1").routeId("continuousQuery").noAutoStartup().to("mock:test1");
+                from("ignite-cache:testcontinuous1?query=#query1").routeId("continuousQuery").autoStartup(false)
+                        .to("mock:test1");
 
                 from("ignite-cache:testcontinuous1?query=#query1&fireExistingQueryResults=true")
-                        .routeId("continuousQuery.fireExistingEntries").noAutoStartup().to("mock:test2");
+                        .routeId("continuousQuery.fireExistingEntries").autoStartup(false).to("mock:test2");
 
                 from("ignite-cache:testcontinuous1?query=#query1&remoteFilter=#remoteFilter1&fireExistingQueryResults=true")
-                        .routeId("remoteFilter").noAutoStartup()
+                        .routeId("remoteFilter").autoStartup(false)
                         .to("mock:test3");
 
                 from("ignite-cache:testcontinuous1?pageSize=10&oneExchangePerUpdate=false").routeId("groupedUpdate")
-                        .noAutoStartup().to("mock:test4");
+                        .autoStartup(false).to("mock:test4");
 
             }
         };

@@ -1163,7 +1163,7 @@ public interface GoogleFirestoreEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GoogleFirestoreHeaderNameBuilder INSTANCE = new GoogleFirestoreHeaderNameBuilder();
+        public static final GoogleFirestoreHeaderNameBuilder INSTANCE = new GoogleFirestoreHeaderNameBuilder();
 
         /**
          * The operation to perform.

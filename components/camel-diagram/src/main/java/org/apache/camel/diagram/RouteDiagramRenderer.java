@@ -16,17 +16,13 @@
  */
 package org.apache.camel.diagram;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.Bounds;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
@@ -35,6 +31,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 import org.jline.utils.Colors;
 
+import static org.apache.camel.diagram.RouteDiagramLayoutEngine.BRANCH_CHILD_TYPES;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.PADDING;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCALE;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
@@ -52,10 +49,25 @@ public class RouteDiagramRenderer {
     private static final int LABEL_TEXT_BASELINE = 14 * SCALE;
     public static final int MAX_IMAGE_DIMENSION = 16384;
 
+    private static final float HIGHLIGHT_STROKE_WIDTH = 3.0f * SCALE;
+    private static final Color HIGHLIGHT_SUCCESS_COLOR = new Color(0x43a047);
+    private static final Color HIGHLIGHT_FAIL_COLOR = new Color(0xe53935);
+
+    private static final float[] DASH_PATTERN = { 10f, 5f }; // 10 pixels on, 5 pixels off
+    private static final Stroke DASHED_STROKE = new BasicStroke(
+            STROKE_WIDTH,            // line width
+            BasicStroke.CAP_BUTT,    // end cap style
+            BasicStroke.JOIN_BEVEL,  // join style
+            0f,                      // miter limit (not used for bevel)
+            DASH_PATTERN,            // dash pattern array
+            0f                       // dash phase (offset)
+    );
+
     private final int nodeWidth;
     private final int fontSizeNode;
     private final int fontSizeLabel;
     private final int nodeTextPadding;
+    private final boolean metrics;
 
     private static final String DARK_COLORS
             = "bg=#0d1117:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
@@ -75,25 +87,30 @@ public class RouteDiagramRenderer {
     public RouteDiagramRenderer() {
         this(RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * SCALE,
              RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * SCALE,
-             new RouteDiagramLayoutEngine().getNodeTextPadding());
+             new RouteDiagramLayoutEngine().getNodeTextPadding(),
+             false);
     }
 
-    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled) {
+    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, boolean metrics) {
         this(nodeWidth, fontSizeScaled, new RouteDiagramLayoutEngine(
-                nodeWidth / SCALE, fontSizeScaled / SCALE).getNodeTextPadding());
+                nodeWidth / SCALE, fontSizeScaled / SCALE).getNodeTextPadding(),
+             metrics);
     }
 
-    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding) {
+    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding, boolean metrics) {
         this.nodeWidth = nodeWidth;
         this.fontSizeNode = fontSizeScaled;
-        this.fontSizeLabel = fontSizeScaled + 1 * SCALE;
+        this.fontSizeLabel = fontSizeScaled + SCALE;
         this.nodeTextPadding = nodeTextPadding;
+        this.metrics = metrics;
     }
 
     public static class DiagramColors {
         private Color bg;
         private Color text;
         private Color arrow;
+        private Color counter;
+        private Color counterFail;
         private Color routeLabel;
         private Color nodeFrom;
         private Color nodeTo;
@@ -102,6 +119,7 @@ public class RouteDiagramRenderer {
         private Color nodeDefault;
         private Color nodeTransform;
         private Color nodeProcessor;
+        private Color nodeExternal;
 
         public static DiagramColors parse(String spec) {
             String resolved = COLOR_PRESETS.getOrDefault(spec, spec);
@@ -122,6 +140,8 @@ public class RouteDiagramRenderer {
             c.bg = parseColor(map.get("bg"));
             c.text = parseColor(map.getOrDefault("text", "#ffffff"));
             c.arrow = parseColor(map.getOrDefault("arrow", "#b4b4b4"));
+            c.counter = parseColor(map.getOrDefault("counter", "#2e7d32"));
+            c.counterFail = parseColor(map.getOrDefault("counterFail", "#ff0000"));
             c.routeLabel = parseColor(map.getOrDefault("label", "#c8c8c8"));
             c.nodeFrom = parseColor(map.getOrDefault("from", "#2e7d32"));
             c.nodeTo = parseColor(map.getOrDefault("to", "#1565c0"));
@@ -130,6 +150,7 @@ public class RouteDiagramRenderer {
             c.nodeDefault = parseColor(map.getOrDefault("default", "#455a64"));
             c.nodeTransform = parseColor(map.getOrDefault("transform", "#00838f"));
             c.nodeProcessor = parseColor(map.getOrDefault("processor", "#d84315"));
+            c.nodeExternal = parseColor(map.getOrDefault("external", "#0277bd"));
             return c;
         }
 
@@ -146,7 +167,7 @@ public class RouteDiagramRenderer {
             }
             Integer idx = Colors.rgbColor(value);
             if (idx != null) {
-                return new Color(Colors.rgbColor(idx.intValue()));
+                return new Color(Colors.rgbColor(idx));
             }
             return null;
         }
@@ -157,6 +178,14 @@ public class RouteDiagramRenderer {
 
         public Color getText() {
             return text;
+        }
+
+        public Color getCounter() {
+            return counter;
+        }
+
+        public Color getCounterFail() {
+            return counterFail;
         }
 
         public Color getArrow() {
@@ -194,6 +223,45 @@ public class RouteDiagramRenderer {
         public Color getNodeProcessor() {
             return nodeProcessor;
         }
+
+        public Color getNodeExternal() {
+            return nodeExternal;
+        }
+    }
+
+    public BufferedImage renderDiagram(
+            List<LayoutRoute> layoutRoutes, int totalHeight, DiagramColors colors,
+            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
+        int imgWidth = layoutRoutes.stream().mapToInt(lr -> lr.maxX).max().orElse(400) + PADDING;
+        int imgHeight = totalHeight + PADDING;
+
+        if (imgWidth > MAX_IMAGE_DIMENSION || imgHeight > MAX_IMAGE_DIMENSION) {
+            throw new IllegalStateException(
+                    "Diagram too large (" + imgWidth / SCALE + "x" + imgHeight / SCALE
+                                            + " logical pixels). Use --filter to narrow the routes displayed.");
+        }
+
+        int imageType = colors.getBg() == null ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+        BufferedImage image = new BufferedImage(imgWidth, imgHeight, imageType);
+        Graphics2D g = image.createGraphics();
+        try {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
+            if (colors.getBg() != null) {
+                g.setColor(colors.getBg());
+                g.fillRect(0, 0, imgWidth, imgHeight);
+            }
+
+            for (LayoutRoute lr : layoutRoutes) {
+                drawRoute(g, lr, colors, highlightedNodeIds, highlightStyle);
+            }
+        } finally {
+            g.dispose();
+        }
+        return image;
     }
 
     public BufferedImage renderDiagram(List<LayoutRoute> layoutRoutes, int totalHeight, DiagramColors colors) {
@@ -229,7 +297,9 @@ public class RouteDiagramRenderer {
         return image;
     }
 
-    private void drawRoute(Graphics2D g, LayoutRoute lr, DiagramColors colors) {
+    private void drawRoute(
+            Graphics2D g, LayoutRoute lr, DiagramColors colors,
+            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
         g.setColor(colors.getRouteLabel());
         g.setFont(new Font("SansSerif", Font.BOLD, fontSizeLabel));
         String label = lr.routeId;
@@ -248,17 +318,44 @@ public class RouteDiagramRenderer {
 
         for (LayoutNode ln : lr.nodes) {
             if (ln.parentNode != null) {
+                boolean highlightArrow = highlightedNodeIds != null
+                        && isHighlighted(ln, highlightedNodeIds)
+                        && isHighlighted(ln.parentNode, highlightedNodeIds);
                 if (ln.connectFromMerge) {
-                    drawArrowFromMerge(g, ln, colors);
+                    drawArrowFromMerge(g, ln, colors, highlightArrow, highlightStyle);
                 } else {
-                    drawArrow(g, ln.parentNode, ln, colors);
+                    drawArrow(g, ln.parentNode, ln, colors, highlightArrow, highlightStyle);
+                }
+            }
+        }
+
+        // find the last highlighted node (for FAIL mode box highlighting)
+        LayoutNode lastHighlightedNode = null;
+        if (highlightedNodeIds != null && highlightStyle == RouteDiagramHelper.HighlightStyle.FAIL) {
+            for (LayoutNode ln : lr.nodes) {
+                if (isHighlighted(ln, highlightedNodeIds)) {
+                    lastHighlightedNode = ln;
                 }
             }
         }
 
         for (LayoutNode ln : lr.nodes) {
-            drawNode(g, ln, colors);
+            drawNode(g, ln, colors, ln == lastHighlightedNode);
         }
+    }
+
+    private void drawRoute(Graphics2D g, LayoutRoute lr, DiagramColors colors) {
+        drawRoute(g, lr, colors, null, null);
+    }
+
+    private static boolean isHighlighted(LayoutNode node, Set<String> highlightedNodeIds) {
+        return node.id != null && highlightedNodeIds.contains(node.id);
+    }
+
+    private static Color highlightColor(RouteDiagramHelper.HighlightStyle style) {
+        return style == RouteDiagramHelper.HighlightStyle.FAIL
+                ? HIGHLIGHT_FAIL_COLOR
+                : HIGHLIGHT_SUCCESS_COLOR;
     }
 
     private void drawScopeBox(Graphics2D g, LayoutNode scopeNode, DiagramColors colors) {
@@ -277,7 +374,7 @@ public class RouteDiagramRenderer {
 
         Color c = colors.getArrow();
         g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 140));
-        g.setStroke(new BasicStroke(STROKE_WIDTH));
+        g.setStroke(DASHED_STROKE);
         g.drawRoundRect(boxX, boxY, boxW, boxH, ARC, ARC);
     }
 
@@ -286,9 +383,25 @@ public class RouteDiagramRenderer {
                 ? node.y - SCOPE_BOX_PAD : node.y;
     }
 
-    private void drawArrowFromMerge(Graphics2D g, LayoutNode to, DiagramColors colors) {
-        g.setColor(colors.getArrow());
-        g.setStroke(new BasicStroke(STROKE_WIDTH));
+    private void drawArrowFromMerge(
+            Graphics2D g, LayoutNode to, DiagramColors colors,
+            boolean highlighted, RouteDiagramHelper.HighlightStyle highlightStyle) {
+        var stat = metrics ? to.treeNode.info.stat : null;
+        long total = stat != null ? stat.exchangesTotal : 0;
+        long failed = stat != null ? stat.exchangesFailed : 0;
+        long ok = total - failed;
+
+        if (highlighted) {
+            g.setColor(highlightColor(highlightStyle));
+            g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
+        } else {
+            g.setColor(colors.getArrow());
+            if (!metrics || total > 0) {
+                g.setStroke(new BasicStroke(STROKE_WIDTH));
+            } else {
+                g.setStroke(DASHED_STROKE);
+            }
+        }
 
         int toCx = to.x + nodeWidth / 2;
         int toTy = getTopY(to);
@@ -304,16 +417,35 @@ public class RouteDiagramRenderer {
             g.drawLine(toCx, midY, toCx, toTy - ARROW_SIZE / 2);
         }
         drawArrowHead(g, toCx, toTy);
+
+        if (ok > 0) {
+            g.setColor(colors.getCounter());
+            g.drawString("" + ok, toCx + 2 + fontSizeNode, toTy - 2 - fontSizeNode);
+        }
+        if (failed > 0) {
+            g.setColor(colors.getCounterFail());
+            int width = g.getFontMetrics().stringWidth("" + failed);
+            g.drawString("" + failed, toCx - 2 - fontSizeNode - width, toTy - 2 - fontSizeNode);
+        }
     }
 
-    private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors) {
+    private void drawArrowFromMerge(Graphics2D g, LayoutNode to, DiagramColors colors) {
+        drawArrowFromMerge(g, to, colors, false, null);
+    }
+
+    private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors, boolean highlightFail) {
         Color color = getNodeColor(node.type, colors);
 
         g.setColor(color);
         g.fillRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
 
-        g.setColor(color.brighter());
-        g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
+        if (highlightFail) {
+            g.setColor(HIGHLIGHT_FAIL_COLOR);
+            g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
+        } else {
+            g.setColor(color.brighter());
+            g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
+        }
         g.drawRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
 
         g.setColor(colors.getText());
@@ -339,9 +471,28 @@ public class RouteDiagramRenderer {
         }
     }
 
-    private void drawArrow(Graphics2D g, LayoutNode from, LayoutNode to, DiagramColors colors) {
-        g.setColor(colors.getArrow());
-        g.setStroke(new BasicStroke(STROKE_WIDTH));
+    private void drawArrow(
+            Graphics2D g, LayoutNode from, LayoutNode to, DiagramColors colors,
+            boolean highlighted, RouteDiagramHelper.HighlightStyle highlightStyle) {
+        var stat = metrics ? to.treeNode.info.stat : null;
+        if (metrics && BRANCH_CHILD_TYPES.contains(to.type) && !to.treeNode.children.isEmpty()) {
+            stat = to.treeNode.children.get(0).info.stat;
+        }
+        long total = stat != null ? stat.exchangesTotal : 0;
+        long failed = stat != null ? stat.exchangesFailed : 0;
+        long ok = total - failed;
+
+        if (highlighted) {
+            g.setColor(highlightColor(highlightStyle));
+            g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
+        } else {
+            g.setColor(colors.getArrow());
+            if (!metrics || total > 0) {
+                g.setStroke(new BasicStroke(STROKE_WIDTH));
+            } else {
+                g.setStroke(DASHED_STROKE);
+            }
+        }
 
         int fromCx = from.x + nodeWidth / 2;
         int fromBy = from.y + from.height;
@@ -357,6 +508,20 @@ public class RouteDiagramRenderer {
             g.drawLine(toCx, midY, toCx, toTy - ARROW_SIZE / 2);
         }
         drawArrowHead(g, toCx, toTy);
+
+        if (ok > 0) {
+            g.setColor(colors.getCounter());
+            g.drawString("" + ok, toCx + 2 + fontSizeNode, toTy - 2 - fontSizeNode);
+        }
+        if (failed > 0) {
+            g.setColor(colors.getCounterFail());
+            int width = g.getFontMetrics().stringWidth("" + failed);
+            g.drawString("" + failed, toCx - 2 - fontSizeNode - width, toTy - 2 - fontSizeNode);
+        }
+    }
+
+    private void drawArrow(Graphics2D g, LayoutNode from, LayoutNode to, DiagramColors colors) {
+        drawArrow(g, from, to, colors, false, null);
     }
 
     private void drawArrowHead(Graphics2D g, int x, int y) {
@@ -387,11 +552,17 @@ public class RouteDiagramRenderer {
         };
     }
 
-    public List<String> printTextDiagram(List<RouteInfo> routes) {
+    /**
+     * Used for testing
+     */
+    List<String> printTextDiagram(List<RouteInfo> routes) {
         return printTextDiagram(routes, RouteDiagramLayoutEngine.NodeLabelMode.CODE);
     }
 
-    public List<String> printTextDiagram(List<RouteInfo> routes, RouteDiagramLayoutEngine.NodeLabelMode mode) {
+    /**
+     * Used for testing
+     */
+    List<String> printTextDiagram(List<RouteInfo> routes, RouteDiagramLayoutEngine.NodeLabelMode mode) {
         List<String> lines = new ArrayList<>();
         for (RouteInfo route : routes) {
             lines.add("");

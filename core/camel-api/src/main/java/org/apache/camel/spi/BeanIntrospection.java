@@ -25,12 +25,25 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Used for introspecting beans properties via Java reflection; such as extracting current property values, or updating
- * one or more properties etc.
+ * Low-level SPI for reading and writing bean properties via Java reflection, used internally by Camel's property
+ * binding infrastructure.
+ * <p/>
+ * This interface operates directly on getter/setter pairs discovered at runtime and is consulted by Camel when
+ * configuring components, endpoints, and EIP options from properties files, YAML, or the
+ * <a href="https://camel.apache.org/manual/camel-jbang.html">Camel JBang</a> CLI. Introspection results are cached
+ * internally to minimise repeated reflection calls during configuration-intensive startup sequences. Call
+ * {@link #clearCache()} to invalidate the cache when class definitions change at runtime (for example in OSGi
+ * hot-deployment scenarios).
+ * <p/>
+ * End users should prefer the higher-level {@link org.apache.camel.support.PropertyBindingSupport} utility, which
+ * handles placeholder resolution, type conversion, and nested property paths on top of this interface.
  *
- * End users should favour using {@link org.apache.camel.support.PropertyBindingSupport} instead.
+ * @see   org.apache.camel.support.PropertyBindingSupport
+ * @see   PropertyConfigurer
+ * @since 3.0
  */
 public interface BeanIntrospection extends StaticService, AfterPropertiesConfigured {
 
@@ -38,19 +51,19 @@ public interface BeanIntrospection extends StaticService, AfterPropertiesConfigu
      * Structure of an introspected class.
      */
     final class ClassInfo {
-        public Class<?> clazz;
-        public MethodInfo[] methods;
+        public @Nullable Class<?> clazz;
+        public MethodInfo @Nullable [] methods;
     }
 
     /**
      * Structure of an introspected method.
      */
     final class MethodInfo {
-        public Method method;
-        public Boolean isGetter;
-        public Boolean isSetter;
-        public String getterOrSetterShorthandName;
-        public Boolean hasGetterAndSetter;
+        public @Nullable Method method;
+        public @Nullable Boolean isGetter;
+        public @Nullable Boolean isSetter;
+        public @Nullable String getterOrSetterShorthandName;
+        public @Nullable Boolean hasGetterAndSetter;
     }
 
     // Statistics
@@ -100,7 +113,7 @@ public interface BeanIntrospection extends StaticService, AfterPropertiesConfigu
      * @param  optionPrefix an optional prefix to append the property key
      * @return              <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
      */
-    boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix);
+    boolean getProperties(Object target, Map<String, Object> properties, @Nullable String optionPrefix);
 
     /**
      * Will inspect the target for properties.
@@ -113,7 +126,7 @@ public interface BeanIntrospection extends StaticService, AfterPropertiesConfigu
      * @param  includeNull  whether to include <tt>null</tt> values
      * @return              <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
      */
-    boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix, boolean includeNull);
+    boolean getProperties(Object target, Map<String, Object> properties, @Nullable String optionPrefix, boolean includeNull);
 
     /**
      * Introspects the given class.
@@ -179,7 +192,7 @@ public interface BeanIntrospection extends StaticService, AfterPropertiesConfigu
      * found matching the property name on the {@code target} bean. For this mode to be triggered the parameters
      * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
      */
-    boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception;
+    boolean setProperty(CamelContext context, Object target, String name, @Nullable Object value) throws Exception;
 
     /**
      * This method supports three modes to set a property:
@@ -195,7 +208,8 @@ public interface BeanIntrospection extends StaticService, AfterPropertiesConfigu
      * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
      */
     boolean setProperty(
-            CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
+            CamelContext context, TypeConverter typeConverter, Object target, String name, @Nullable Object value,
+            @Nullable String refName,
             boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase)
             throws Exception;
 

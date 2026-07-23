@@ -16,8 +16,19 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
- * An interface to represent an object that supports variables.
+ * Implemented by objects that carry a <a href="https://camel.apache.org/manual/variables.html">variables</a> store.
+ * <p/>
+ * Variables are a key-value namespace on the {@link Exchange} (separate from message headers and exchange properties)
+ * introduced in Camel 4.4. This interface is the read/write contract for that store and is used internally by the
+ * framework and by EIP implementations that need to get or set variables programmatically.
+ *
+ * @see   Variable
+ * @see   Variables
+ * @see   Exchange
+ * @since 4.4
  */
 public interface VariableAware {
 
@@ -31,6 +42,7 @@ public interface VariableAware {
      * @param  name the name of the variable
      * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name
      */
+    @Nullable
     Object getVariable(String name);
 
     /**

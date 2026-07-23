@@ -28,6 +28,7 @@ import software.amazon.awssdk.services.athena.model.QueryExecution;
 import software.amazon.awssdk.services.athena.model.QueryExecutionState;
 import software.amazon.awssdk.services.athena.model.QueryExecutionStatus;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -153,6 +154,36 @@ public class Athena2QueryHelperTest {
         assertFalse(helper.isInterrupted());
 
         assertFalse(helper.shouldAttempt());
+    }
+
+    @Test
+    void doWaitRecordsThreadInterruptionSoTheLoopsStop() {
+        Athena2Configuration configuration = new Athena2Configuration();
+        configuration.setMaxAttempts(3);
+        configuration.setWaitTimeout(60_000);
+        configuration.setInitialDelay(10_000);
+        configuration.setDelay(10_000);
+
+        Athena2QueryHelper helper = new Athena2QueryHelper(
+                new DefaultExchange(new DefaultCamelContext()),
+                configuration);
+
+        helper.markAttempt();
+        assertThat(helper.shouldWait()).isTrue();
+
+        Thread.currentThread().interrupt();
+        try {
+            helper.doWait();
+
+            // without this, the wait loop keeps polling Athena with no delay at all, because every
+            // subsequent sleep returns immediately while the interrupt status is still set
+            assertThat(helper.isInterrupted()).isTrue();
+            assertThat(helper.shouldWait()).isFalse();
+            assertThat(helper.shouldAttempt()).isFalse();
+        } finally {
+            // clear the interrupt status so it does not leak into the following tests
+            Thread.interrupted();
+        }
     }
 
     @Test

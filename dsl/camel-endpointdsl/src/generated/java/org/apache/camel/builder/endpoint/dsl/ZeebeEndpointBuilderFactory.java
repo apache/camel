@@ -477,7 +477,7 @@ public interface ZeebeEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ZeebeHeaderNameBuilder INSTANCE = new ZeebeHeaderNameBuilder();
+        public static final ZeebeHeaderNameBuilder INSTANCE = new ZeebeHeaderNameBuilder();
 
         /**
          * The name of the resource.

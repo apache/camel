@@ -53,6 +53,9 @@ public class ModelWriter extends BaseWriter {
         super(writer, null);
     }
 
+    public void writeA2ASubTaskDefinition(A2ASubTaskDefinition def) throws IOException {
+        doWriteA2ASubTaskDefinition("a2aSubTask", def);
+    }
     public void writeAggregateDefinition(AggregateDefinition def) throws IOException {
         doWriteAggregateDefinition("aggregate", def);
     }
@@ -769,11 +772,22 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionRef(null, def);
     }
 
+    protected void doWriteA2ASubTaskDefinition(String name, A2ASubTaskDefinition def) throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("emitBefore", def.getEmitBefore(), null);
+        doWriteAttribute("emitAfter", def.getEmitAfter(), null);
+        doWriteAttribute("emitOnError", def.getEmitOnError(), null);
+        doWriteAttribute("failIfNoTaskContext", def.getFailIfNoTaskContext(), "false");
+        doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+        endElement(name);
+    }
     protected void doWriteAggregateDefinition(String name, AggregateDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("parallelProcessing", def.getParallelProcessing(), null);
         doWriteAttribute("optimisticLocking", def.getOptimisticLocking(), null);
+        doWriteAttribute("optimisticLockingSyncRetry", def.getOptimisticLockingSyncRetry(), "false");
         doWriteAttribute("executorService", def.getExecutorService(), null);
         doWriteAttribute("timeoutCheckerExecutorService", def.getTimeoutCheckerExecutorService(), null);
         doWriteAttribute("aggregateController", def.getAggregateController(), null);
@@ -990,18 +1004,18 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteFaultToleranceConfigurationCommonAttributes(FaultToleranceConfigurationCommon def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("delay", def.getDelay(), "5000");
-        doWriteAttribute("bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
         doWriteAttribute("typedGuard", def.getTypedGuard(), null);
-        doWriteAttribute("failureRatio", def.getFailureRatio(), "50");
-        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
-        doWriteAttribute("timeoutPoolSize", def.getTimeoutPoolSize(), "10");
+        doWriteAttribute("delay", def.getDelay(), "5000");
         doWriteAttribute("successThreshold", def.getSuccessThreshold(), "1");
         doWriteAttribute("requestVolumeThreshold", def.getRequestVolumeThreshold(), "20");
-        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
-        doWriteAttribute("threadOffloadExecutorService", def.getThreadOffloadExecutorService(), null);
+        doWriteAttribute("failureRatio", def.getFailureRatio(), "50");
+        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
+        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
+        doWriteAttribute("timeoutPoolSize", def.getTimeoutPoolSize(), "10");
         doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "false");
+        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
+        doWriteAttribute("bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
+        doWriteAttribute("threadOffloadExecutorService", def.getThreadOffloadExecutorService(), null);
     }
     protected void doWriteFaultToleranceConfigurationCommon(String name, FaultToleranceConfigurationCommon def) throws IOException {
         startElement(name);
@@ -1491,27 +1505,31 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteResilience4jConfigurationCommonAttributes(Resilience4jConfigurationCommon def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("circuitBreaker", def.getCircuitBreaker(), null);
+        doWriteAttribute("config", def.getConfig(), null);
         doWriteAttribute("failureRateThreshold", def.getFailureRateThreshold(), "50");
-        doWriteAttribute("bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
-        doWriteAttribute("slowCallDurationThreshold", def.getSlowCallDurationThreshold(), "60");
-        doWriteAttribute("timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "true");
-        doWriteAttribute("minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "100");
-        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
-        doWriteAttribute("timeoutExecutorService", def.getTimeoutExecutorService(), null);
         doWriteAttribute("permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), "10");
         doWriteAttribute("throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), "false");
-        doWriteAttribute("slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
-        doWriteAttribute("micrometerEnabled", def.getMicrometerEnabled(), "false");
-        doWriteAttribute("writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
-        doWriteAttribute("automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
-        doWriteAttribute("circuitBreaker", def.getCircuitBreaker(), null);
         doWriteAttribute("slidingWindowSize", def.getSlidingWindowSize(), "100");
-        doWriteAttribute("config", def.getConfig(), null);
-        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
         doWriteAttribute("slidingWindowType", def.getSlidingWindowType(), "COUNT_BASED");
+        doWriteAttribute("slidingWindowSynchronizationStrategy", def.getSlidingWindowSynchronizationStrategy(), "SYNCHRONIZED");
+        doWriteAttribute("minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "100");
+        doWriteAttribute("writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
+        doWriteAttribute("waitDurationInOpenState", def.getWaitDurationInOpenState(), "60000");
+        doWriteAttribute("automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
+        doWriteAttribute("maxWaitDurationInHalfOpenState", def.getMaxWaitDurationInHalfOpenState(), "0");
+        doWriteAttribute("slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
+        doWriteAttribute("slowCallDurationThreshold", def.getSlowCallDurationThreshold(), "60000");
         doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "false");
-        doWriteAttribute("waitDurationInOpenState", def.getWaitDurationInOpenState(), "60");
+        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
+        doWriteAttribute("bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
+        doWriteAttribute("bulkheadFairCallHandlingEnabled", def.getBulkheadFairCallHandlingEnabled(), "true");
+        doWriteAttribute("asynchronous", def.getAsynchronous(), "false");
+        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
+        doWriteAttribute("timeoutExecutorService", def.getTimeoutExecutorService(), null);
+        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
+        doWriteAttribute("timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "true");
+        doWriteAttribute("micrometerEnabled", def.getMicrometerEnabled(), "false");
     }
     protected void doWriteResilience4jConfigurationCommonElements(Resilience4jConfigurationCommon def) throws IOException {
         doWriteList(null, "ignoreException", def.getIgnoreExceptions(), this::doWriteString);
@@ -1587,9 +1605,6 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteRouteDefinition(String name, RouteDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("template", toString(def.isTemplate()), null);
-        doWriteAttribute("kamelet", toString(def.isKamelet()), null);
-        doWriteAttribute("rest", toString(def.isRest()), null);
         doWriteAttribute("group", def.getGroup(), null);
         doWriteAttribute("nodePrefixId", def.getNodePrefixId(), null);
         doWriteAttribute("routeConfigurationId", def.getRouteConfigurationId(), null);
@@ -1758,6 +1773,12 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("executorService", def.getExecutorService(), null);
         doWriteAttribute("onPrepare", def.getOnPrepare(), null);
         doWriteAttribute("shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute("group", def.getGroup(), null);
+        doWriteAttribute("errorThreshold", def.getErrorThreshold(), null);
+        doWriteAttribute("maxFailedRecords", def.getMaxFailedRecords(), null);
+        doWriteAttribute("resumeStrategy", def.getResumeStrategy(), null);
+        doWriteAttribute("watermarkKey", def.getWatermarkKey(), null);
+        doWriteAttribute("watermarkExpression", def.getWatermarkExpression(), null);
         doWriteOutputExpressionNodeElements(def);
         endElement(name);
     }
@@ -2398,6 +2419,7 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("parser", def.getParser(), null);
         doWriteAttribute("validate", def.getValidate(), "true");
+        doWriteAttribute("targetFormat", def.getTargetFormat(), null);
         endElement(name);
     }
     protected void doWriteIcalDataFormat(String name, IcalDataFormat def) throws IOException {
@@ -2551,7 +2573,6 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("symmetricKeyAlgorithm", def.getSymmetricKeyAlgorithm(), "AES");
         doWriteAttribute("symmetricKeyLength", def.getSymmetricKeyLength(), "128");
         doWriteAttribute("keyPair", def.getKeyPair(), null);
-        doWriteAttribute("bufferSize", def.getBufferSize(), "4096");
         doWriteAttribute("provider", def.getProvider(), null);
         doWriteAttribute("keyGenerator", def.getKeyGenerator(), null);
         endElement(name);
@@ -3574,6 +3595,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteOptionalIdentifiedDefinitionRef(String n, OptionalIdentifiedDefinition v) throws IOException {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
+                case "A2ASubTaskDefinition" -> doWriteA2ASubTaskDefinition("a2aSubTask", (A2ASubTaskDefinition) v);
                 case "AggregateDefinition" -> doWriteAggregateDefinition("aggregate", (AggregateDefinition) v);
                 case "BeanDefinition" -> doWriteBeanDefinition("bean", (BeanDefinition) v);
                 case "CatchDefinition" -> doWriteCatchDefinition("doCatch", (CatchDefinition) v);
@@ -3681,6 +3703,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteProcessorDefinitionRef(String n, ProcessorDefinition v) throws IOException {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
+                case "A2ASubTaskDefinition" -> doWriteA2ASubTaskDefinition("a2aSubTask", (A2ASubTaskDefinition) v);
                 case "AggregateDefinition" -> doWriteAggregateDefinition("aggregate", (AggregateDefinition) v);
                 case "BeanDefinition" -> doWriteBeanDefinition("bean", (BeanDefinition) v);
                 case "CatchDefinition" -> doWriteCatchDefinition("doCatch", (CatchDefinition) v);

@@ -16,16 +16,26 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
  * Exception when failing to load type converters.
  */
 public class TypeConverterLoaderException extends RuntimeCamelException {
 
+    /**
+     * @param message the detail message describing why the type converters failed to load
+     */
     public TypeConverterLoaderException(String message) {
-        super("Failed to load type converters because of: " + message);
+        super("Failed to load type converters because of: " + Objects.requireNonNull(message, "message"));
     }
 
+    /**
+     * @param message the detail message describing why the type converters failed to load
+     * @param cause   the cause of the failure
+     */
     public TypeConverterLoaderException(String message, Throwable cause) {
-        super("Failed to load type converters because of: " + message, cause);
+        super("Failed to load type converters because of: " + Objects.requireNonNull(message, "message"),
+              Objects.requireNonNull(cause, "cause"));
     }
 }

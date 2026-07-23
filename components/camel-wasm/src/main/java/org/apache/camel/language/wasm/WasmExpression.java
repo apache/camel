@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
-import com.dylibso.chicory.wasm.Parser;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -33,6 +32,7 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.wasm.WasmFunction;
 import org.apache.camel.wasm.WasmSupport;
+import run.endive.wasm.Parser;
 
 public class WasmExpression extends ExpressionAdapter implements ExpressionResultTypeAware {
     private final String expression;

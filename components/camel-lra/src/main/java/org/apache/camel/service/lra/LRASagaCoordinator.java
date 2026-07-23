@@ -41,9 +41,7 @@ public class LRASagaCoordinator implements CamelSagaCoordinator {
         try {
             sagaStep = LRASagaStep.fromCamelSagaStep(step, exchange);
         } catch (RuntimeException ex) {
-            return CompletableFuture.supplyAsync(() -> {
-                throw ex;
-            });
+            return CompletableFuture.failedFuture(ex);
         }
         return sagaService.getClient().join(this.lraURL, sagaStep, exchange);
     }

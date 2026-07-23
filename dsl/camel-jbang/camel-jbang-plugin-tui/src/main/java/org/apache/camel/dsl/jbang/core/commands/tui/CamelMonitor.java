@@ -16,34 +16,32 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.charset.StandardCharsets;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.buffer.Cell;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
-import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -51,57 +49,42 @@ import dev.tamboui.tui.TuiRunner;
 import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
+import dev.tamboui.tui.event.PasteEvent;
 import dev.tamboui.tui.event.TickEvent;
-import dev.tamboui.widgets.barchart.Bar;
-import dev.tamboui.widgets.barchart.BarChart;
-import dev.tamboui.widgets.barchart.BarGroup;
-import dev.tamboui.widgets.block.Block;
-import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.gauge.Gauge;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.table.Cell;
-import dev.tamboui.widgets.table.Row;
-import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import dev.tamboui.widgets.tabs.Tabs;
 import dev.tamboui.widgets.tabs.TabsState;
+import dev.tamboui.widgets.wavetext.WaveText;
+import dev.tamboui.widgets.wavetext.WaveTextState;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import sun.misc.Signal;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TabRegistry.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 
 @Command(name = "monitor",
          description = "Live dashboard for monitoring Camel integrations",
          sortOptions = false)
 public class CamelMonitor extends CamelCommand {
 
-    private static final long VANISH_DURATION_MS = 6000;
-    private static final long DEFAULT_REFRESH_MS = 100;
-    private static final int MAX_SPARKLINE_POINTS = 60;
-    private static final int MAX_LOG_LINES = 200;
-    private static final int MAX_TRACES = 200;
-    private static final int NUM_TABS = 6;
+    private static final Logger LOG = System.getLogger(CamelMonitor.class.getName());
+    private static final long DEFAULT_REFRESH_MS = 500;
 
-    // Tab indices
-    private static final int TAB_OVERVIEW = 0;
-    private static final int TAB_ROUTES = 1;
-    private static final int TAB_HEALTH = 2;
-    private static final int TAB_ENDPOINTS = 3;
-    private static final int TAB_LOG = 4;
-    private static final int TAB_TRACE = 5;
-
-    // Route sort columns
-    private static final String[] ROUTE_SORT_COLUMNS = { "mean", "max", "total", "failed", "name" };
+    // Compact tab bar (10 labels + 9 "|" dividers) needs 88 chars — that is the true minimum
+    private static final int MIN_WIDTH = 88;
+    private static final int MIN_HEIGHT = 24;
+    // Below this width the tab bar uses tight "|" dividers instead of spaced " | " so all 10 labels still fit
+    private static final int TABS_FULL_MIN_WIDTH = 157;
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -111,54 +94,74 @@ public class CamelMonitor extends CamelCommand {
                         defaultValue = "100")
     long refreshInterval = DEFAULT_REFRESH_MS;
 
+    @CommandLine.Option(names = { "--record" },
+                        description = "Replay a .tape file inside the TUI and record to an Asciinema .cast file",
+                        arity = "0..1")
+    String record;
+
+    @CommandLine.Option(names = { "--mcp" },
+                        description = "Enable embedded MCP server for AI agent access to the TUI")
+    boolean mcp;
+
+    @CommandLine.Option(names = { "--mcp-port" },
+                        description = "MCP server port (default: ${DEFAULT-VALUE})",
+                        defaultValue = "8123")
+    int mcpPort = 8123;
+
+    @CommandLine.Option(names = { "--theme" },
+                        description = "Color theme (overrides persisted preference for this session)",
+                        completionCandidates = ThemeModeCompletionCandidates.class)
+    String theme;
+
     // State
-    private final AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(Collections.emptyList());
-    private final Map<String, VanishingInfo> vanishing = new ConcurrentHashMap<>();
-    private final TableState overviewTableState = new TableState();
-    private final TableState routeTableState = new TableState();
-    private final TableState healthTableState = new TableState();
-    private final TableState endpointTableState = new TableState();
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
+    private TabRegistry tabRegistry;
 
-    // Sparkline: throughput history per PID (one point per second)
-    private final Map<String, LinkedList<Long>> throughputHistory = new ConcurrentHashMap<>();
-    // Sliding window of [timestamp, exchangesTotal] samples for smoothing
-    private final Map<String, LinkedList<long[]>> throughputSamples = new ConcurrentHashMap<>();
-    // Track last time a sparkline point was recorded
-    private final Map<String, Long> previousExchangesTime = new ConcurrentHashMap<>();
+    // selectedPid is stored on ctx (MonitorContext) so tabs can access it
 
-    // Route sort state
-    private String routeSort = "mean";
-    private int routeSortIndex;
+    private DataRefreshService dataService;
+    private String monitorNotification;
+    private boolean monitorNotificationError;
+    private long monitorNotificationExpiry;
+    private final WaveTextState notificationWaveState = new WaveTextState();
+    private String lastWaveNotification;
+    private boolean mcpInjectedKey;
+    private TuiMcpServer mcpServer;
+    private McpFacade mcpFacade;
+    private final Queue<McpFacade.PendingKey> pendingKeys = new ConcurrentLinkedQueue<>();
+    private final CaptionOverlay captionOverlay = new CaptionOverlay();
+    private final RecordingManager recordingManager = new RecordingManager(captionOverlay);
+    private final DrawOverlay drawOverlay = new DrawOverlay();
+    private final CanvasOverlay canvasOverlay = new CanvasOverlay();
+    private final HelpOverlay helpOverlay = new HelpOverlay();
+    private final ShellPanel shellPanel = new ShellPanel();
+    private final AiPanel aiPanel = new AiPanel();
+    private boolean logPinned;
+    private final PanelAnimation logPinAnim = new PanelAnimation();
 
-    // Health filter state
-    private boolean showOnlyDown;
+    private ActionsPopup actionsPopup;
+    private TuiRunner runner;
 
-    // Log state
-    private final List<String> logLines = new ArrayList<>();
-    private final List<LogEntry> filteredLogEntries = new ArrayList<>();
-    private final TableState logTableState = new TableState();
-    private boolean logFollowMode = true;
-    private boolean showLogTrace = true;
-    private boolean showLogDebug = true;
-    private boolean showLogInfo = true;
-    private boolean showLogWarn = true;
-    private boolean showLogError = true;
+    private MonitorContext ctx;
 
-    // Trace state
-    private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
-    private final TableState traceTableState = new TableState();
-    private final Map<String, Long> traceFilePositions = new ConcurrentHashMap<>();
-    private boolean showTraceHeaders = true;
-    private boolean showTraceBody = true;
-    private boolean traceFollowMode = true;
+    private final FilesBrowser filesBrowser = new FilesBrowser();
+    private PopupManager popupManager;
 
-    // Selected integration for detail views
-    private String selectedPid;
+    // Mouse support: last rendered areas for hit-testing
+    private Rect lastTabsArea;
+    private Rect lastContentArea;
+    private Line[] lastTabLabels;
+    private String lastTabDivider;
+    // Panel resize drag state
+    private final DragSplit panelSplit = new DragSplit();
+    // Footer key-binding hit-testing: each clickable hint records its [startX, endX) column range on
+    // the footer row and the KeyEvent to synthesize when clicked.
+    private int footerRowY = -1;
+    private int[] footerRegionStartX = new int[0];
+    private int[] footerRegionEndX = new int[0];
+    private KeyEvent[] footerRegionKey = new KeyEvent[0];
 
-    private volatile long lastRefresh;
-
-    private ClassLoader classLoader;
+    private final ClassLoader classLoader;
 
     public CamelMonitor(CamelJBangMain main, ClassLoader classLoader) {
         super(main);
@@ -167,262 +170,1061 @@ public class CamelMonitor extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        System.setProperty("java.awt.headless", "true");
+
+        if (theme != null) {
+            if (!Theme.isValidMode(theme)) {
+                String expected = String.join("' or '", ThemeMode.ids());
+                throw new CommandLine.ParameterException(
+                        new CommandLine(this),
+                        "Invalid value for option '--theme': expected '" + expected + "', was '" + theme + "'");
+            }
+            Theme.applyStartupMode(theme);
+        }
+
+        // Configure TamboUI recording if --record is specified
+        if (record != null) {
+            Path tapeFile = Path.of(record);
+            Path castFile = Path.of(record.replaceAll("\\.tape$", "") + ".cast");
+            System.setProperty("tamboui.record", castFile.toAbsolutePath().toString());
+            System.setProperty("tamboui.record.config", tapeFile.toAbsolutePath().toString());
+            System.setProperty("tamboui.record.width", "200");
+            System.setProperty("tamboui.record.height", "50");
+            System.setProperty("tamboui.record.duration", "120000");
+            System.setProperty("tamboui.record.fps", "10");
+        }
+
+        recordingManager.init(record != null);
+
         // to make ServiceLoader work with tamboui for downloaded JARs
         Thread.currentThread().setContextClassLoader(classLoader);
-        TuiHelper.preloadClasses(classLoader);
 
-        // Initial data load
-        refreshData();
+        // Create data refresh service first — tabs and popups reference its state
+        dataService = new DataRefreshService(
+                name,
+                new DataRefreshService.RefreshContext() {
+                    @Override
+                    public int selectedTab() {
+                        return tabRegistry != null ? tabRegistry.selectedTabIndex() : tabsState.selected();
+                    }
 
-        try (var tui = TuiRunner.create()) {
+                    @Override
+                    public boolean isSwitchPopupVisible() {
+                        return popupManager != null && popupManager.isSwitchPopupVisible();
+                    }
+
+                    @Override
+                    public String getPendingAutoSelect() {
+                        return actionsPopup != null ? actionsPopup.getPendingAutoSelect() : null;
+                    }
+
+                    @Override
+                    public void clearPendingAutoSelect() {
+                        if (actionsPopup != null) {
+                            actionsPopup.clearPendingAutoSelect();
+                        }
+                    }
+
+                    @Override
+                    public void onInfraAutoSelected(int tableIndex, String pid) {
+                        if (tabRegistry != null) {
+                            tabRegistry.overviewTab().tableState.select(tableIndex);
+                        }
+                        ctx.selectedPid = pid;
+                    }
+
+                    @Override
+                    public boolean isInfraSelected() {
+                        return CamelMonitor.this.isInfraSelected();
+                    }
+                },
+                this::getStatusFile,
+                this::getErrorFile);
+
+        // Create shared context and tab instances
+        ctx = new MonitorContext(dataService.data(), dataService.infraData());
+        dataService.setContext(ctx);
+
+        actionsPopup = new ActionsPopup(
+                () -> dataService.data().get().stream()
+                        .filter(i -> !i.vanishing && i.name != null)
+                        .map(i -> i.name)
+                        .collect(Collectors.toSet()),
+                () -> dataService.data().get().stream()
+                        .filter(i -> !i.vanishing)
+                        .collect(Collectors.toList()),
+                () -> dataService.infraData().get().stream()
+                        .filter(i -> !i.vanishing)
+                        .collect(Collectors.toList()),
+                captionOverlay,
+                () -> recordingManager.requestScreenshot(),
+                () -> recordingManager.toggleRecording(),
+                () -> recordingManager.isRecording(),
+                () -> recordingManager.toggleTapeRecording(),
+                () -> recordingManager.isTapeRecording(),
+                dataService::enableBurstMode, dataService.stoppingPids());
+
+        actionsPopup.setContext(ctx);
+        actionsPopup.setMonitorContext(ctx);
+        actionsPopup.setNotificationCallback((msg, error) -> setNotification(msg, error));
+        ctx.notificationCallback = (msg, error) -> setNotification(msg, error);
+        ctx.openMarkdownCallback = actionsPopup::openMarkdown;
+        ctx.openOptionsCallback = actionsPopup::openOptions;
+        ctx.openCatalogDocCallback = actionsPopup::openCatalogDoc;
+        actionsPopup.setResetStatsAction(this::resetStats);
+        shellPanel.setContext(ctx);
+        aiPanel.setContext(ctx);
+        aiPanel.setLaunchManager(actionsPopup.getLaunchManager());
+        actionsPopup.setOpenShellAction(shellPanel::open);
+        actionsPopup.setOpenAiPromptAction(aiPanel::open);
+        actionsPopup.setBrowseFilesAction(this::openFilesPopup);
+        actionsPopup.setSwitchIntegrationAction(
+                () -> popupManager.openSwitchPopup(ctx.selectedPid, getNonVanishingIntegrations()));
+
+        tabRegistry = new TabRegistry(tabsState);
+        tabRegistry.initTabs(ctx, dataService, this::resetIntegrationTabState);
+        tabRegistry.setCallbacks(new TabRegistry.TabCallbacks() {
+            @Override
+            public void refreshLogData() {
+                CamelMonitor.this.refreshLogData();
+            }
+
+            @Override
+            public void refreshHistoryData(List<Long> pids) {
+                dataService.loadHistoryData(pids);
+            }
+
+            @Override
+            public void refreshTraceData(List<Long> pids) {
+                dataService.refreshTraceData(pids);
+            }
+
+            @Override
+            public void refreshErrorData(List<Long> pids) {
+                dataService.refreshErrorData(pids);
+            }
+
+            @Override
+            public void refreshActivityData(List<Long> pids) {
+                dataService.refreshActivityData(pids);
+            }
+
+            @Override
+            public void openMorePopup() {
+                popupManager.openMorePopup();
+            }
+
+            @Override
+            public void closeMorePopup() {
+                popupManager.closeMorePopup();
+            }
+
+            @Override
+            public void selectMorePopupEntry(int index) {
+                popupManager.selectMorePopupEntry(index);
+            }
+        });
+
+        List<TabRegistry.TabEntry> gotoEntries = tabRegistry.allTabEntries();
+        gotoEntries.add(
+                new TabRegistry.TabEntry(TuiIcons.SWITCH, "Switch Integration", "Switch between integrations", "F3", -10, -1));
+        gotoEntries.add(new TabRegistry.TabEntry(TuiIcons.COMPUTER, "Shell", "Open embedded terminal", "F6", -11, -1));
+        gotoEntries.add(new TabRegistry.TabEntry(TuiIcons.MCP_BRAIN, "AI Prompt", "Open AI prompt panel", "F8", -12, -1));
+        actionsPopup.setGotoTabSupport(gotoEntries, () -> {
+            TabRegistry.TabEntry entry = actionsPopup.consumePendingGotoEntry();
+            if (entry != null) {
+                if (entry.tabIndex() == -10) {
+                    popupManager.openSwitchPopup(ctx.selectedPid, getNonVanishingIntegrations());
+                } else if (entry.tabIndex() == -11) {
+                    shellPanel.open();
+                } else if (entry.tabIndex() == -12) {
+                    aiPanel.open();
+                } else if (entry.moreIndex() >= 0) {
+                    tabRegistry.selectMoreTab(entry.moreIndex());
+                } else {
+                    tabRegistry.handleTabKey(entry.tabIndex(), ctx, dataService);
+                }
+            }
+        });
+
+        popupManager = new PopupManager(
+                ctx, this::getNonVanishingIntegrations, tabRegistry::moreTabs, filesBrowser,
+                new PopupManager.PopupCallbacks() {
+                    @Override
+                    public void selectMoreTab(int index) {
+                        tabRegistry.selectMoreTab(index);
+                    }
+
+                    @Override
+                    public void resetIntegrationTabState() {
+                        CamelMonitor.this.resetIntegrationTabState();
+                    }
+
+                    @Override
+                    public void refreshLogData() {
+                        CamelMonitor.this.refreshLogData();
+                    }
+
+                    @Override
+                    public void stopSelectedProcess(boolean forceKill) {
+                        CamelMonitor.this.stopSelectedProcess(forceKill);
+                    }
+                });
+
+        tabRegistry.overviewTab().setActions(new OverviewTab.OverviewActions() {
+            @Override
+            public void sendRouteCommand(String pid, String routeId, String command) {
+                CamelMonitor.this.sendRouteCommand(pid, routeId, command);
+            }
+
+            @Override
+            public void stopSelectedProcess(boolean forceKill) {
+                CamelMonitor.this.stopSelectedProcess(forceKill);
+            }
+
+            @Override
+            public void restartSelectedProcess() {
+                CamelMonitor.this.restartSelectedProcess();
+            }
+
+            @Override
+            public void showKillConfirm() {
+                popupManager.showKillConfirm();
+            }
+
+            @Override
+            public void openDoc(IntegrationInfo info) {
+                actionsPopup.openDoc(info);
+            }
+
+            @Override
+            public void openFilesPopup() {
+                CamelMonitor.this.openFilesPopup();
+            }
+        });
+
+        // Initial data load (synchronous before TUI starts)
+        dataService.refreshSync(this::refreshLogData, this::refreshConditionalData);
+
+        // Auto-select if there's exactly one integration running
+        tabRegistry.overviewTab().selectCurrentIntegration();
+
+        canvasOverlay.setOnOpen(() -> {
+            popupManager.dismissAll();
+            actionsPopup.close();
+            helpOverlay.close();
+            captionOverlay.close();
+            shellPanel.close();
+            aiPanel.close();
+        });
+        canvasOverlay.setOnClose(drawOverlay::clear);
+        mcpFacade = new McpFacade(
+                ctx, dataService.data(), tabsState, recordingManager,
+                captionOverlay, drawOverlay, canvasOverlay, helpOverlay,
+                actionsPopup, filesBrowser,
+                tabRegistry,
+                pendingKeys,
+                new McpFacade.MonitorBridge() {
+                    @Override
+                    public MonitorTab activeTab() {
+                        return tabRegistry.activeTab();
+                    }
+
+                    @Override
+                    public void handleTabKey(int tabIndex) {
+                        tabRegistry.handleTabKey(tabIndex, ctx, dataService);
+                    }
+
+                    @Override
+                    public void selectMoreTab(int moreIndex) {
+                        tabRegistry.selectMoreTab(moreIndex);
+                    }
+
+                    @Override
+                    public boolean isSwitchPopupVisible() {
+                        return popupManager.isSwitchPopupVisible();
+                    }
+
+                    @Override
+                    public boolean isMorePopupVisible() {
+                        return popupManager.isMorePopupVisible();
+                    }
+
+                    @Override
+                    public void renderOverviewFooter(List<Span> spans) {
+                        CamelMonitor.this.renderOverviewFooter(spans);
+                    }
+
+                    @Override
+                    public void insertFKeyHints(List<Span> spans) {
+                        CamelMonitor.this.insertFKeyHints(spans);
+                    }
+
+                    @Override
+                    public void sendRouteCommand(String pid, String routeId, String command) {
+                        CamelMonitor.this.sendRouteCommand(pid, routeId, command);
+                    }
+
+                    @Override
+                    public void restartProcess() {
+                        restartSelectedProcess();
+                    }
+
+                    @Override
+                    public void stopProcess(boolean forceKill) {
+                        stopSelectedProcess(forceKill);
+                    }
+                });
+        aiPanel.setMcpFacade(mcpFacade);
+        Path mcpJsonFile = null;
+        actionsPopup.setAiActivityLog(aiPanel::getActivityLog);
+        if (mcp) {
+            mcpServer = new TuiMcpServer(mcpPort, mcpFacade);
+            try {
+                mcpServer.start();
+                actionsPopup.setMcpEnabled(true, mcpPort, mcpServer::getConnectedClient,
+                        mcpServer::getActivityLog, mcpServer::getToolCallCount);
+                mcpJsonFile = writeMcpJson(mcpPort);
+            } catch (java.net.BindException e) {
+                System.err.println("MCP server failed to start: port " + mcpPort + " is already in use.");
+                System.err.println("Use --mcp-port to specify a different port, e.g.: camel tui --mcp --mcp-port 8124");
+                mcpServer = null;
+                mcp = false;
+            }
+        }
+        aiPanel.setMcpInfo(mcp, mcpPort);
+
+        try (var tui = TuiBackendHelper.createTuiRunner()) {
+            this.runner = tui;
+            aiPanel.setExitCallbackForTestingOrRuntime(tui::quit);
+            ctx.runner = tui;
+            actionsPopup.setScheduler(tui.scheduler());
+            actionsPopup.setResetScreenAction(() -> tui.terminal().clear());
+            actionsPopup.setThemeRefreshAction(() -> tui.terminal().clear());
+            actionsPopup.setClearScreenAction(() -> tui.terminal().clear());
+            actionsPopup.setCamelAnimationAction(() -> playBuiltinAnimation("camel"));
+            // Preload diagram data if an integration was auto-selected
+            tabRegistry.routesTab().preloadDiagram();
+            tabRegistry.diagramTab().preloadDiagram();
+            // Open on the configured starting tab (if any), now that all tab wiring is in place
+            applyStartingTab();
+            applyLogPin();
+            applyRatePer();
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
             tui.run(
                     this::handleEvent,
                     this::render);
+        } finally {
+            shellPanel.destroy();
+            aiPanel.destroy();
+            if (mcpServer != null) {
+                mcpServer.stop();
+            }
+            deleteMcpJson(mcpJsonFile);
+            this.runner = null;
         }
         return 0;
+    }
+
+    /**
+     * Selects the tab configured as the starting tab in {@link TuiSettings} (if any), resolving the stored programmatic
+     * name against {@link TabRegistry#allTabEntries()}. Unset, unknown, or the default "Overview" leaves the initial
+     * {@code TAB_OVERVIEW} selection untouched. Reuses the same selection logic as the Go-to callback.
+     */
+    private void applyStartingTab() {
+        String startTab = TuiSettings.load().getStartTab();
+        if (startTab == null || startTab.isBlank() || "Overview".equals(startTab)) {
+            return;
+        }
+        for (TabRegistry.TabEntry entry : tabRegistry.allTabEntries()) {
+            if (entry.name().equals(startTab)) {
+                if (entry.moreIndex() >= 0) {
+                    tabRegistry.selectMoreTab(entry.moreIndex());
+                } else {
+                    tabRegistry.handleTabKey(entry.tabIndex(), ctx, dataService);
+                }
+                return;
+            }
+        }
+    }
+
+    private void applyLogPin() {
+        String logPin = TuiSettings.load().getLogPin();
+        if (logPin == null || logPin.isBlank()) {
+            return;
+        }
+        int cycleIndex;
+        switch (logPin) {
+            case "25":
+                cycleIndex = 0;
+                break;
+            case "50":
+                cycleIndex = 1;
+                break;
+            case "75":
+                cycleIndex = 2;
+                break;
+            default:
+                return;
+        }
+        logPinned = true;
+        logPinAnim.reset(cycleIndex);
+        ctx.logPinned = true;
+        ctx.logPinPercent = Integer.parseInt(logPin);
+    }
+
+    private void applyRatePer() {
+        String ratePer = TuiSettings.load().getRatePer();
+        ctx.ratePerMinute = "minutes".equals(ratePer);
     }
 
     // ---- Event Handling ----
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
-            // Global keys
-            if (ke.isQuit() || ke.isCharIgnoreCase('q') || ke.isKey(KeyCode.ESCAPE)) {
-                // If in a detail tab, go back to overview first
-                if (tabsState.selected() != TAB_OVERVIEW) {
-                    tabsState.select(TAB_OVERVIEW);
-                    selectedPid = null;
+            recordingManager.recordKey(ke, mcpInjectedKey);
+            if (ke.hasCtrl() && ke.isChar('r')) {
+                recordingManager.toggleTapeRecording();
+                return true;
+            }
+            if (captionOverlay.isVisible()) {
+                if (captionOverlay.handleKeyEvent(ke)) {
                     return true;
                 }
-                runner.quit();
+            }
+            if (ke.hasCtrl() && ke.isChar('k')) {
+                recordingManager.toggleRecording();
                 return true;
             }
-            if (ke.isChar('r')) {
-                refreshData();
+            if (ke.hasCtrl() && ke.isChar('t')) {
+                captionOverlay.openInline();
                 return true;
             }
+            if (helpOverlay.isVisible()) {
+                return helpOverlay.handleKeyEvent(ke);
+            }
+            if (canvasOverlay.isVisible()) {
+                return canvasOverlay.handleKeyEvent(ke);
+            }
+            if (shellPanel.isOpen()) {
+                // Shift+F6 cycles shell height — handle before delegating to shell
+                if (ke.isKey(KeyCode.F6) && ke.hasShift()) {
+                    if (lastContentArea != null) {
+                        shellPanel.cycleHeight(lastContentArea.height());
+                    }
+                    return true;
+                }
+                return shellPanel.handleKeyEvent(ke);
+            }
+            if (actionsPopup.isVisible()) {
+                return actionsPopup.handleKeyEvent(ke);
+            }
+            if (popupManager.handleKeyEvent(ke, tabRegistry.selectedTabIndex(), TAB_LOG)) {
+                return true;
+            }
+            if (aiPanel.isOpen()) {
+                if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+                    if (lastContentArea != null) {
+                        aiPanel.cycleHeight(lastContentArea.height());
+                    }
+                    return true;
+                }
+                if (aiPanel.handleKeyEvent(ke)) {
+                    return true;
+                }
+            }
+            if (handleGlobalKeys(ke, runner)) {
+                return true;
+            }
+            if (handleTabKeys(ke)) {
+                return true;
+            }
+        }
+        if (event instanceof MouseEvent me) {
+            if (shellPanel.isOpen() && shellPanel.handleMouseEvent(me)) {
+                return true;
+            }
+            if (aiPanel.isOpen() && aiPanel.handleMouseEvent(me)) {
+                return true;
+            }
+            if (handleMouseEvent(me, runner)) {
+                return true;
+            }
+        }
+        if (event instanceof PasteEvent pe) {
+            return handlePasteEvent(pe);
+        }
+        if (event instanceof TickEvent) {
+            return handleTickEvent(runner);
+        }
+        return false;
+    }
 
-            // Tab switching with number keys
+    private boolean handleGlobalKeys(KeyEvent ke, TuiRunner runner) {
+        if (ke.isCancel()) {
+            MonitorTab tab = tabRegistry.activeTab();
+            if (tab != null && tab.handleEscape()) {
+                return true;
+            }
+            if (tabRegistry.selectedTabIndex() != TAB_OVERVIEW) {
+                tabsState.select(TAB_OVERVIEW);
+                return true;
+            }
+            if (ctx.selectedPid != null) {
+                ctx.selectedPid = null;
+                ctx.lastSelectedName = null;
+                tabRegistry.overviewTab().tableState.clearSelection();
+                tabRegistry.overviewTab().infraTableState.clearSelection();
+                tabRegistry.overviewTab().infraFocused = false;
+                tabRegistry.overviewTab().infraDetailVisible = false;
+                return true;
+            }
+            return true;
+        }
+        boolean probeEditing = tabRegistry.selectedTabIndex() == TAB_HTTP
+                && tabRegistry.httpTab().isProbeMode();
+        boolean logSearchActive = tabRegistry.selectedTabIndex() == TAB_LOG
+                && tabRegistry.logTab().isSearchInputActive();
+        boolean spanFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.spansTab()
+                && tabRegistry.spansTab().isFilterInputActive();
+        boolean beanFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.beansTab()
+                && tabRegistry.beansTab().isFilterInputActive();
+        boolean classpathFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.classpathTab()
+                && tabRegistry.classpathTab().isFilterInputActive();
+        boolean mavenDepsFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.mavenDependenciesTab()
+                && tabRegistry.mavenDependenciesTab().isFilterInputActive();
+        boolean sqlInputActive = tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.sqlQueryTab()
+                && tabRegistry.sqlQueryTab().isInputActive();
+        boolean catalogFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.catalogTab()
+                && tabRegistry.catalogTab().isFilterInputActive();
+        boolean textEditing = probeEditing || logSearchActive || spanFilterActive || beanFilterActive
+                || classpathFilterActive || mavenDepsFilterActive || sqlInputActive || catalogFilterActive;
+        if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
+            runner.quit();
+            return true;
+        }
+        if (ke.isCtrlC()) {
+            runner.quit();
+            return true;
+        }
+        if (!textEditing) {
             if (ke.isChar('1')) {
-                return handleTabKey(TAB_OVERVIEW);
+                return tabRegistry.handleTabKey(TAB_OVERVIEW, ctx, dataService);
             }
             if (ke.isChar('2')) {
-                return handleTabKey(TAB_ROUTES);
+                return tabRegistry.handleTabKey(TAB_LOG, ctx, dataService);
             }
-            if (ke.isChar('3')) {
-                return handleTabKey(TAB_HEALTH);
-            }
-            if (ke.isChar('4')) {
-                return handleTabKey(TAB_ENDPOINTS);
-            }
-            if (ke.isChar('5')) {
-                return handleTabKey(TAB_LOG);
-            }
-            if (ke.isChar('6')) {
-                return handleTabKey(TAB_TRACE);
-            }
-
-            // Tab cycling
-            if (ke.isKey(KeyCode.TAB)) {
-                int next = (tabsState.selected() + 1) % NUM_TABS;
-                if (next != TAB_OVERVIEW) {
-                    selectCurrentIntegration();
+            if (!isInfraSelected()) {
+                if (ke.isChar('3')) {
+                    return tabRegistry.handleTabKey(TAB_ACTIVITY, ctx, dataService);
                 }
-                tabsState.select(next);
-                return true;
-            }
-
-            // Tab-specific keys
-            int tab = tabsState.selected();
-
-            // Navigation (all tabs)
-            if (ke.isUp()) {
-                navigateUp();
-                return true;
-            }
-            if (ke.isDown()) {
-                navigateDown();
-                return true;
-            }
-            if (ke.isKey(KeyCode.PAGE_UP)) {
-                if (tab == TAB_LOG) {
-                    logFollowMode = false;
-                    for (int i = 0; i < 20; i++) {
-                        logTableState.selectPrevious();
-                    }
+                if (ke.isChar('4')) {
+                    return tabRegistry.handleTabKey(TAB_DIAGRAM, ctx, dataService);
                 }
-                return true;
-            }
-            if (ke.isKey(KeyCode.PAGE_DOWN)) {
-                if (tab == TAB_LOG) {
-                    for (int i = 0; i < 20; i++) {
-                        logTableState.selectNext(filteredLogEntries.size());
-                    }
+                if (ke.isChar('5')) {
+                    return tabRegistry.handleTabKey(TAB_ROUTES, ctx, dataService);
                 }
-                return true;
-            }
-
-            // Enter to drill into selected integration
-            if (ke.isKey(KeyCode.ENTER) && tab == TAB_OVERVIEW) {
-                selectCurrentIntegration();
-                if (selectedPid != null) {
-                    tabsState.select(TAB_ROUTES);
+                if (ke.isChar('6')) {
+                    return tabRegistry.handleTabKey(TAB_ENDPOINTS, ctx, dataService);
                 }
-                return true;
-            }
-
-            // Routes tab: sort
-            if (tab == TAB_ROUTES && ke.isCharIgnoreCase('s')) {
-                routeSortIndex = (routeSortIndex + 1) % ROUTE_SORT_COLUMNS.length;
-                routeSort = ROUTE_SORT_COLUMNS[routeSortIndex];
-                return true;
-            }
-
-            // Health tab: DOWN filter
-            if (tab == TAB_HEALTH && ke.isCharIgnoreCase('d')) {
-                showOnlyDown = !showOnlyDown;
-                return true;
-            }
-
-            // Log tab: level filters and follow mode
-            if (tab == TAB_LOG) {
-                if (ke.isCharIgnoreCase('t')) {
-                    showLogTrace = !showLogTrace;
-                    applyLogFilters();
-                    return true;
+                if (ke.isChar('7')) {
+                    return tabRegistry.handleTabKey(TAB_HTTP, ctx, dataService);
                 }
-                if (ke.isCharIgnoreCase('d')) {
-                    showLogDebug = !showLogDebug;
-                    applyLogFilters();
-                    return true;
+                if (ke.isChar('8')) {
+                    return tabRegistry.handleTabKey(TAB_HISTORY, ctx, dataService);
                 }
-                if (ke.isCharIgnoreCase('i')) {
-                    showLogInfo = !showLogInfo;
-                    applyLogFilters();
-                    return true;
+                if (ke.isChar('9')) {
+                    return tabRegistry.handleTabKey(TAB_ERRORS, ctx, dataService);
                 }
-                if (ke.isCharIgnoreCase('w')) {
-                    showLogWarn = !showLogWarn;
-                    applyLogFilters();
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('e')) {
-                    showLogError = !showLogError;
-                    applyLogFilters();
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('f')) {
-                    logFollowMode = !logFollowMode;
-                    return true;
-                }
-                if (ke.isChar('g')) {
-                    logFollowMode = false;
-                    logTableState.select(0);
-                    return true;
-                }
-                if (ke.isChar('G')) {
-                    logFollowMode = true;
-                    return true;
-                }
-            }
-
-            // Trace tab: headers/body toggle and follow mode
-            if (tab == TAB_TRACE) {
-                if (ke.isCharIgnoreCase('h')) {
-                    showTraceHeaders = !showTraceHeaders;
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('b')) {
-                    showTraceBody = !showTraceBody;
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('f')) {
-                    traceFollowMode = !traceFollowMode;
-                    if (traceFollowMode) {
-                        List<TraceEntry> current = traces.get();
-                        if (!current.isEmpty()) {
-                            traceTableState.select(current.size() - 1);
-                        }
-                    }
-                    return true;
+                if (ke.isChar('0')) {
+                    return tabRegistry.handleTabKey(TAB_MORE, ctx, dataService);
                 }
             }
         }
-        if (event instanceof TickEvent) {
-            long now = System.currentTimeMillis();
-            if (now - lastRefresh >= refreshInterval) {
-                refreshData();
+        MonitorTab activeMonitorTab = tabRegistry.activeTab();
+        boolean overlayActive = activeMonitorTab != null && activeMonitorTab.isOverlayActive();
+        if (ke.isFocusPrevious() && !textEditing && !overlayActive) {
+            if (isInfraSelected()) {
+                int prev = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
+                tabsState.select(prev);
+            } else {
+                int prev = (tabRegistry.selectedTabIndex() - 1 + NUM_TABS) % NUM_TABS;
+                tabRegistry.handleTabKey(prev, ctx, dataService);
             }
+            return true;
+        }
+        if (ke.isFocusNext() && !textEditing && !overlayActive) {
+            if (isInfraSelected()) {
+                int next = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
+                tabsState.select(next);
+            } else {
+                int next = (tabRegistry.selectedTabIndex() + 1) % NUM_TABS;
+                tabRegistry.handleTabKey(next, ctx, dataService);
+            }
+            return true;
+        }
+        if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
+            recordingManager.takeScreenshot();
+            return true;
+        }
+        if (opensHelp(ke, textEditing)) {
+            // Only opens the overlay: while it is visible, dispatch delegates to
+            // helpOverlay.handleKeyEvent (which handles F1/?/q/Esc to close) before reaching here.
+            MonitorTab tab = tabRegistry.activeTab();
+            if (tab != null) {
+                String help = tab.getHelpText();
+                if (help != null) {
+                    helpOverlay.open(help);
+                }
+            }
+            return true;
+        }
+        if (ke.isKey(KeyCode.F6)) {
+            if (shellPanel.isOpen()) {
+                shellPanel.close();
+            } else {
+                if (aiPanel.isOpen()) {
+                    aiPanel.close();
+                }
+                shellPanel.open();
+            }
+            return true;
+        }
+        if (ke.isKey(KeyCode.F8)) {
+            if (aiPanel.isOpen()) {
+                aiPanel.close();
+            } else {
+                if (shellPanel.isOpen()) {
+                    shellPanel.close();
+                }
+                aiPanel.open();
+            }
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('l')) {
+            if (!logPinned) {
+                logPinned = true;
+                logPinAnim.reset(0);
+            } else if (lastContentArea != null) {
+                logPinAnim.cycleHeight(lastContentArea.height());
+                if (logPinAnim.cyclePercent() >= 100) {
+                    logPinned = false;
+                    logPinAnim.reset(0);
+                }
+            }
+            ctx.logPinned = logPinned;
+            ctx.logPinPercent = logPinned ? logPinAnim.cyclePercent() : 0;
+            return true;
+        }
+        if (ke.isKey(KeyCode.F2) && ke.hasShift()) {
+            actionsPopup.openGotoTab();
+            return true;
+        }
+        if (ke.isKey(KeyCode.F2)) {
+            if (tabRegistry.selectedTabIndex() == TAB_ROUTES && tabRegistry.routesTab() != null) {
+                actionsPopup.setPreSelectedRouteId(tabRegistry.routesTab().selectedRouteId());
+            }
+            actionsPopup.open();
+            return true;
+        }
+        if (ke.isKey(KeyCode.F3)) {
+            popupManager.openSwitchPopup(ctx.selectedPid, getNonVanishingIntegrations());
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isChar('f')) {
+            openFilesPopup();
             return true;
         }
         return false;
     }
 
-    private boolean handleTabKey(int tab) {
-        if (tab != TAB_OVERVIEW) {
-            selectCurrentIntegration();
-        } else {
-            selectedPid = null;
-        }
-        tabsState.select(tab);
-        return true;
+    /**
+     * Whether the key event should open the help overlay. F1 always opens it; '?' opens it too, but only when no text
+     * input is focused, so the character is not swallowed while the user is typing in a search or probe field.
+     */
+    static boolean opensHelp(KeyEvent ke, boolean textEditing) {
+        return ke.isKey(KeyCode.F1) || (!textEditing && ke.isChar('?'));
     }
 
-    private void selectCurrentIntegration() {
-        if (selectedPid != null) {
-            return;
+    private boolean handleTabKeys(KeyEvent ke) {
+        MonitorTab activeTab = tabRegistry.activeTab();
+
+        if (ke.isUp()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+            tabRegistry.navigateUp();
+            return true;
         }
-        List<IntegrationInfo> infos = data.get().stream().filter(i -> !i.vanishing).toList();
-        Integer sel = overviewTableState.selected();
-        if (sel != null && sel >= 0 && sel < infos.size()) {
-            selectedPid = infos.get(sel).pid;
-        } else if (infos.size() == 1) {
-            selectedPid = infos.get(0).pid;
+        if (ke.isDown()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+            tabRegistry.navigateDown();
+            return true;
+        }
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+            return true;
+        }
+        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+            return true;
+        }
+        if (ke.isLeft()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+        if (ke.isRight()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+        if (ke.isHome()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+        if (ke.isEnd()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+
+        int tab = tabRegistry.selectedTabIndex();
+        if (ke.isConfirm() && tab == TAB_OVERVIEW) {
+            tabRegistry.overviewTab().selectCurrentIntegration();
+            if (ctx.selectedPid != null) {
+                int selectTab = resolveSelectTab();
+                if (selectTab != TAB_OVERVIEW) {
+                    tabRegistry.handleTabKey(selectTab, ctx, dataService);
+                }
+            }
+            return true;
+        }
+        if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleMouseEvent(MouseEvent me, TuiRunner runner) {
+        // Panel border drag resize: detect press on the border row, then track drag
+        boolean hasBottomPanel = shellPanel.isOpen() || aiPanel.isOpen()
+                || (logPinned && tabRegistry.selectedTabIndex() != TAB_LOG);
+        if (lastContentArea != null && hasBottomPanel
+                && panelSplit.handleMouse(me, me.y())) {
+            if (panelSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
+                int contentHeight = lastContentArea.height();
+                if (contentHeight > 0) {
+                    int newHeight = lastContentArea.y() + contentHeight - me.y();
+                    newHeight = Math.max(3, Math.min(contentHeight - 3, newHeight));
+                    if (shellPanel.isOpen()) {
+                        shellPanel.setPanelHeight(newHeight);
+                    } else if (aiPanel.isOpen()) {
+                        aiPanel.setPanelHeight(newHeight);
+                    } else {
+                        logPinAnim.setPanelHeight(newHeight);
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Modal popups capture all mouse events (including tab bar and footer)
+        if (actionsPopup.isVisible()) {
+            return actionsPopup.handleMouseEvent(me);
+        }
+
+        // Tab bar clicks: detect which tab was clicked and switch to it
+        if (me.isClick() && lastTabsArea != null && lastTabLabels != null) {
+            int tabsY = lastTabsArea.height() >= 2 ? lastTabsArea.y() + 1 : lastTabsArea.y();
+            if (me.y() == tabsY && TuiHelper.contains(lastTabsArea, me.x(), me.y())) {
+                int clickedTab = findClickedTab(me.x() - lastTabsArea.x());
+                if (clickedTab >= 0) {
+                    if (isInfraSelected()) {
+                        // Infra mode: map 0→Overview, 1→Log
+                        int realTab = clickedTab == 1 ? TAB_LOG : TAB_OVERVIEW;
+                        tabsState.select(realTab);
+                    } else {
+                        tabRegistry.handleTabKey(clickedTab, ctx, dataService);
+                    }
+                    return true;
+                }
+            }
+        }
+
+        // Footer key-binding clicks: a click on a hint fires the matching key
+        if (me.isClick() && handleFooterClick(me, runner)) {
+            return true;
+        }
+
+        // Mouse events in the content area: delegate to the active tab
+        if (TuiHelper.contains(lastContentArea, me.x(), me.y())) {
+            if (popupManager.isMorePopupVisible() || popupManager.isSwitchPopupVisible()) {
+                return popupManager.handleMouseEvent(me, tabRegistry.selectedTabIndex(), TAB_LOG);
+            }
+            if (filesBrowser.isVisible()) {
+                return filesBrowser.handleMouseEvent(me);
+            }
+            MonitorTab activeTab = tabRegistry.activeTab();
+            if (activeTab != null && activeTab.handleMouseEvent(me, lastContentArea)) {
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                tabRegistry.navigateUp();
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                tabRegistry.navigateDown();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Given a click x-offset within the tab bar, determine which tab index was clicked. Returns -1 if the click falls
+     * on a divider or outside tab labels.
+     */
+    private int findClickedTab(int xOffset) {
+        if (lastTabLabels == null || lastTabDivider == null) {
+            return -1;
+        }
+        int dividerW = CharWidth.of(lastTabDivider);
+        int x = 0;
+        for (int i = 0; i < lastTabLabels.length; i++) {
+            if (i > 0) {
+                // Skip divider region
+                if (xOffset >= x && xOffset < x + dividerW) {
+                    return -1;
+                }
+                x += dividerW;
+            }
+            int tabW = lastTabLabels[i].width();
+            if (xOffset >= x && xOffset < x + tabW) {
+                return i;
+            }
+            x += tabW;
+        }
+        return -1;
+    }
+
+    /**
+     * Records the clickable footer key-binding regions from the final list of footer spans. A hint is drawn by
+     * {@link TuiHelper#hint} as a key span styled with {@link Theme#hintKey()} immediately followed by its label span,
+     * so each key span styled that way (whose token maps to an unambiguous single key) contributes a clickable region
+     * covering both the key and its label. {@code area} is the single footer row.
+     */
+    private void captureFooterRegions(Rect area, List<Span> spans) {
+        List<int[]> bounds = new ArrayList<>();
+        List<KeyEvent> keys = new ArrayList<>();
+        Style hintKeyStyle = Theme.hintKey();
+        int x = area.x();
+        for (int i = 0; i < spans.size(); i++) {
+            Span s = spans.get(i);
+            int w = s.width();
+            if (hintKeyStyle.equals(s.style())) {
+                KeyEvent ke = footerKeyEvent(s.content());
+                if (ke != null) {
+                    // Extend the region over the following label span so clicking the label works too.
+                    int end = x + w + (i + 1 < spans.size() ? spans.get(i + 1).width() : 0);
+                    bounds.add(new int[] { x, end });
+                    keys.add(ke);
+                }
+            }
+            x += w;
+        }
+        footerRowY = area.y();
+        footerRegionStartX = bounds.stream().mapToInt(b -> b[0]).toArray();
+        footerRegionEndX = bounds.stream().mapToInt(b -> b[1]).toArray();
+        footerRegionKey = keys.toArray(new KeyEvent[0]);
+    }
+
+    /**
+     * Hit-tests a click against the footer key-binding regions captured during the last render and, when it lands on a
+     * hint, feeds the synthesized key back through the normal key path so it acts exactly like pressing that key.
+     */
+    private boolean handleFooterClick(MouseEvent me, TuiRunner runner) {
+        if (footerRowY < 0 || me.y() != footerRowY) {
+            return false;
+        }
+        int idx = footerRegionAt(footerRegionStartX, footerRegionEndX, me.x());
+        if (idx < 0) {
+            return false;
+        }
+        return handleEvent(footerRegionKey[idx], runner);
+    }
+
+    /**
+     * Returns the index of the footer hint region whose column range contains {@code mouseX}, or {@code -1} when the
+     * click is outside every region. Each region spans the half-open range {@code [startX[i], endX[i])}.
+     */
+    static int footerRegionAt(int[] startX, int[] endX, int mouseX) {
+        if (startX == null) {
+            return -1;
+        }
+        for (int i = 0; i < startX.length; i++) {
+            if (mouseX >= startX[i] && mouseX < endX[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Maps a footer hint key token (the trimmed content of a {@link Theme#hintKey()} span) to the {@link KeyEvent} that
+     * pressing it would produce, or {@code null} when the token is not an unambiguous single key. Recognizes the
+     * function keys {@code F1}-{@code F12}, {@code Enter}, {@code Esc}, {@code Tab} and any single character; ambiguous
+     * multi-key hints such as {@code Up/Down}, {@code PgUp/PgDn} or arrow glyphs are left non-clickable.
+     */
+    static KeyEvent footerKeyEvent(String token) {
+        if (token == null) {
+            return null;
+        }
+        String t = token.trim();
+        if (t.isEmpty()) {
+            return null;
+        }
+        if (t.length() >= 2 && (t.charAt(0) == 'F' || t.charAt(0) == 'f')
+                && t.chars().skip(1).allMatch(Character::isDigit)) {
+            KeyCode fkey = functionKeyCode(Integer.parseInt(t.substring(1)));
+            return fkey != null ? KeyEvent.ofKey(fkey) : null;
+        }
+        switch (t) {
+            case "Enter":
+                return KeyEvent.ofKey(KeyCode.ENTER);
+            case "Esc":
+                return KeyEvent.ofKey(KeyCode.ESCAPE);
+            case "Tab":
+                return KeyEvent.ofKey(KeyCode.TAB);
+            default:
+                return t.length() == 1 ? KeyEvent.ofChar(t.charAt(0), KeyModifiers.NONE) : null;
         }
     }
 
-    private void navigateUp() {
-        switch (tabsState.selected()) {
-            case TAB_OVERVIEW -> overviewTableState.selectPrevious();
-            case TAB_ROUTES -> routeTableState.selectPrevious();
-            case TAB_HEALTH -> healthTableState.selectPrevious();
-            case TAB_ENDPOINTS -> endpointTableState.selectPrevious();
-            case TAB_LOG -> {
-                logFollowMode = false;
-                logTableState.selectPrevious();
-            }
-            case TAB_TRACE -> {
-                traceFollowMode = false;
-                traceTableState.selectPrevious();
-            }
-        }
+    private static KeyCode functionKeyCode(int n) {
+        return switch (n) {
+            case 1 -> KeyCode.F1;
+            case 2 -> KeyCode.F2;
+            case 3 -> KeyCode.F3;
+            case 4 -> KeyCode.F4;
+            case 5 -> KeyCode.F5;
+            case 6 -> KeyCode.F6;
+            case 7 -> KeyCode.F7;
+            case 8 -> KeyCode.F8;
+            case 9 -> KeyCode.F9;
+            case 10 -> KeyCode.F10;
+            case 11 -> KeyCode.F11;
+            case 12 -> KeyCode.F12;
+            default -> null;
+        };
     }
 
-    private void navigateDown() {
-        List<IntegrationInfo> infos = data.get().stream().filter(i -> !i.vanishing).toList();
-        switch (tabsState.selected()) {
-            case TAB_OVERVIEW -> overviewTableState.selectNext(infos.size());
-            case TAB_ROUTES -> {
-                IntegrationInfo info = findSelectedIntegration();
-                routeTableState.selectNext(info != null ? info.routes.size() : 0);
-            }
-            case TAB_HEALTH -> {
-                IntegrationInfo info = findSelectedIntegration();
-                healthTableState.selectNext(info != null ? getFilteredHealthChecks(info).size() : 0);
-            }
-            case TAB_ENDPOINTS -> {
-                IntegrationInfo info = findSelectedIntegration();
-                endpointTableState.selectNext(info != null ? info.endpoints.size() : 0);
-            }
-            case TAB_LOG -> logTableState.selectNext(filteredLogEntries.size());
-            case TAB_TRACE -> {
-                List<TraceEntry> current = traces.get();
-                traceTableState.selectNext(current.size());
-            }
+    private boolean handlePasteEvent(PasteEvent pe) {
+        if (actionsPopup.isVisible()) {
+            actionsPopup.handlePaste(pe.text());
+            return true;
         }
+        if (tabRegistry.httpTab().isProbeMode()) {
+            tabRegistry.httpTab().handlePaste(pe.text());
+            return true;
+        }
+        if (tabRegistry.logTab().isSearchInputActive()) {
+            tabRegistry.logTab().handlePaste(pe.text());
+            return true;
+        }
+        if (filesBrowser.isSourceViewerPasteActive()) {
+            filesBrowser.handlePaste(pe.text());
+            return true;
+        }
+        if (tabRegistry.getActiveMoreTab() == tabRegistry.sqlQueryTab()
+                && tabRegistry.sqlQueryTab().isInputActive()) {
+            tabRegistry.sqlQueryTab().handlePaste(pe.text());
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleTickEvent(TuiRunner runner) {
+        long now = System.currentTimeMillis();
+        boolean keyProcessed = false;
+        McpFacade.PendingKey pk;
+        while ((pk = pendingKeys.peek()) != null && now >= pk.fireAt()) {
+            pendingKeys.poll();
+            mcpInjectedKey = true;
+            handleEvent(pk.event(), runner);
+            mcpInjectedKey = false;
+            keyProcessed = true;
+        }
+        if (keyProcessed) {
+            return true;
+        }
+        actionsPopup.tick(now);
+        drawOverlay.tick(now);
+        captionOverlay.tick(now);
+        recordingManager.tickRecentKeys(now);
+        boolean anyDiagramShowing = tabRegistry.routesTab().isShowDiagram()
+                || tabRegistry.diagramTab().isShowDiagram();
+        long interval = anyDiagramShowing ? Math.max(refreshInterval, 1000) : refreshInterval;
+        boolean dataRefreshed = false;
+        if (now - dataService.lastRefresh() >= interval) {
+            dataService.refresh(runner, this::refreshLogData, this::refreshConditionalData);
+            tabRegistry.routesTab().refreshDiagramIfNeeded();
+            tabRegistry.diagramTab().refreshDiagramIfNeeded();
+            dataRefreshed = true;
+        }
+        // Redraw only when the periodic data refresh fired or an animation is in flight.
+        // Everything else (footer indicators, auto-dismiss overlays, live tab data) is
+        // refreshed by the next data-refresh redraw, which is bounded by {@code interval}.
+        // Without this gate the tick loop forced a full redraw on every tick (~25/s at the
+        // default 40ms tick rate) even while idle.
+        return dataRefreshed || needsAnimationRedraw(
+                shellPanel.isOpen(),
+                aiPanel.isOpen(),
+                logPinAnim.isAnimating(),
+                canvasOverlay.isVisible(),
+                captionOverlay.isVisible(),
+                monitorNotification != null,
+                recordingManager.isRecording() && !recordingManager.getRecentKeys().isEmpty());
+    }
+
+    /**
+     * Decides whether a tick must trigger a redraw because something is animating faster than the periodic data
+     * refresh. Kept as a pure static method so the redraw intent can be unit-tested without wiring up the whole
+     * monitor.
+     *
+     * @param  shellOpen            the shell panel is open (live terminal output)
+     * @param  aiOpen               the AI panel is open (streaming output / thinking spinner)
+     * @param  logPinAnimating      the pinned-log panel is sliding open/closed
+     * @param  canvasVisible        a full-screen canvas animation is playing
+     * @param  captionVisible       a caption is typing or fading
+     * @param  notificationActive   a header notification wave is animating
+     * @param  recordingKeysVisible recorded keystrokes are shown (1s highlight then fade-out)
+     * @return                      true if the frame must be redrawn on this tick
+     */
+    static boolean needsAnimationRedraw(
+            boolean shellOpen, boolean aiOpen, boolean logPinAnimating, boolean canvasVisible,
+            boolean captionVisible, boolean notificationActive, boolean recordingKeysVisible) {
+        return shellOpen || aiOpen || logPinAnimating || canvasVisible
+                || captionVisible || notificationActive || recordingKeysVisible;
+    }
+
+    private void resetIntegrationTabState() {
+        tabRegistry.resetIntegrationTabState(dataService, filesBrowser);
     }
 
     // ---- Rendering ----
@@ -430,1589 +1232,996 @@ public class CamelMonitor extends CamelCommand {
     private void render(Frame frame) {
         Rect area = frame.area();
 
-        // Layout: header (3 rows) + tabs (2 rows) + content (fill) + footer (1 row)
+        if (area.width() < MIN_WIDTH || area.height() < MIN_HEIGHT) {
+            renderTooSmall(frame, area);
+            return;
+        }
+
+        // Layout: header (1 row) + tabs (2 rows) + content (fill) + footer (1 row)
         List<Rect> mainChunks = Layout.vertical()
                 .constraints(
-                        Constraint.length(3),
+                        Constraint.length(1),
                         Constraint.length(2),
                         Constraint.fill(),
                         Constraint.length(1))
                 .split(area);
 
-        renderHeader(frame, mainChunks.get(0));
-        renderTabs(frame, mainChunks.get(1));
-        renderContent(frame, mainChunks.get(2));
+        String reloadMsg = dataService.consumeReloadNotification();
+        if (reloadMsg != null) {
+            setNotification(reloadMsg, false);
+        }
+
+        Rect contentArea;
+        if (canvasOverlay.isVisible()) {
+            // Canvas covers header + tabs + content
+            contentArea = new Rect(area.x(), area.y(), area.width(), area.height() - 1);
+            lastContentArea = contentArea;
+        } else {
+            renderHeader(frame, mainChunks.get(0));
+            renderTabs(frame, mainChunks.get(1));
+            lastTabsArea = mainChunks.get(1);
+            contentArea = mainChunks.get(2);
+            lastContentArea = contentArea;
+        }
+        shellPanel.tickAnimation();
+        aiPanel.tickAnimation();
+        logPinAnim.tickAnimation();
+        if (canvasOverlay.isVisible()) {
+            canvasOverlay.render(frame, contentArea);
+        } else if (shellPanel.isOpen()) {
+            shellPanel.initHeight(contentArea.height());
+            int ph = shellPanel.panelHeight();
+            ctx.shellPercent = ph * 100 / Math.max(1, contentArea.height());
+            if (ph >= contentArea.height()) {
+                shellPanel.render(frame, contentArea);
+                panelSplit.setBorderPos(contentArea.y());
+            } else {
+                List<Rect> splitChunks = Layout.vertical()
+                        .constraints(Constraint.fill(), Constraint.length(ph))
+                        .split(contentArea);
+                renderContent(frame, splitChunks.get(0));
+                shellPanel.render(frame, splitChunks.get(1));
+                panelSplit.setBorderPos(splitChunks.get(1).y());
+            }
+        } else if (aiPanel.isOpen()) {
+            aiPanel.initHeight(contentArea.height());
+            int ph = aiPanel.panelHeight();
+            ctx.shellPercent = ph * 100 / Math.max(1, contentArea.height());
+            List<Rect> splitChunks = Layout.vertical()
+                    .constraints(Constraint.fill(), Constraint.length(ph))
+                    .split(contentArea);
+            renderContent(frame, splitChunks.get(0));
+            aiPanel.render(frame, splitChunks.get(1));
+            panelSplit.setBorderPos(splitChunks.get(1).y());
+        } else if (logPinned && tabRegistry.selectedTabIndex() != TAB_LOG) {
+            logPinAnim.initHeight(contentArea.height());
+            int ph = logPinAnim.panelHeight();
+            ctx.shellPercent = ph * 100 / Math.max(1, contentArea.height());
+            ctx.logPinVisible = true;
+            List<Rect> splitChunks = Layout.vertical()
+                    .constraints(Constraint.fill(), Constraint.length(ph))
+                    .split(contentArea);
+            renderContent(frame, splitChunks.get(0));
+            tabRegistry.logTab().render(frame, splitChunks.get(1));
+            panelSplit.setBorderPos(splitChunks.get(1).y());
+        } else {
+            ctx.shellPercent = 0;
+            ctx.logPinVisible = false;
+            renderContent(frame, contentArea);
+            panelSplit.clearBorderPos();
+        }
+        if (popupManager.isMorePopupVisible()) {
+            popupManager.renderMorePopup(frame, contentArea);
+        }
+        if (popupManager.isSwitchPopupVisible()) {
+            popupManager.renderSwitchPopup(frame, contentArea);
+        }
+        if (filesBrowser.isVisible()) {
+            filesBrowser.render(frame, contentArea);
+        }
+        if (drawOverlay.isVisible()) {
+            drawOverlay.render(frame, contentArea);
+        }
+        if (popupManager.isKillConfirmVisible()) {
+            popupManager.renderKillConfirm(frame, contentArea);
+        }
+        actionsPopup.render(frame, contentArea);
+        if (captionOverlay.isCaptionVisible()) {
+            captionOverlay.render(frame, contentArea);
+        }
+        if (helpOverlay.isVisible()) {
+            helpOverlay.render(frame, contentArea);
+        }
         renderFooter(frame, mainChunks.get(3));
+        applyThemeBaseColors(frame.buffer(), area);
+
+        recordingManager.updateBuffer(frame.buffer());
+        recordingManager.processPendingScreenshot();
     }
 
     private void renderHeader(Frame frame, Rect area) {
-        List<IntegrationInfo> infos = data.get();
+        List<IntegrationInfo> infos = dataService.data().get();
         String camelVersion = VersionHelper.extractCamelVersion();
         long activeCount = infos.stream().filter(i -> !i.vanishing).count();
 
-        Line titleLine = Line.from(
-                Span.styled(" Camel Monitor", Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)).bold()),
-                Span.raw("  "),
-                Span.styled(camelVersion != null ? "v" + camelVersion : "", Style.create().fg(Color.GREEN)),
-                Span.raw("  "),
-                Span.styled(activeCount + " integration(s)", Style.create().fg(Color.CYAN)));
+        List<Span> titleSpans = new ArrayList<>();
+        titleSpans.add(Span.styled(" Camel TUI", Theme.title()));
+        titleSpans.add(Span.raw("  "));
+        titleSpans.add(Span.styled(camelVersion != null ? "v" + camelVersion : "", Theme.success()));
+        titleSpans.add(Span.raw("  "));
+        titleSpans.add(Span.styled(activeCount + " integration(s)", Theme.info()));
+        long activeInfra = dataService.infraData().get().stream().filter(i -> !i.vanishing).count();
+        if (activeInfra > 0) {
+            titleSpans.add(Span.raw("  "));
+            titleSpans.add(Span.styled(activeInfra + " infra(s)", Theme.notice()));
+        }
+        if (ctx.selectedPid != null) {
+            titleSpans.add(Span.raw("  "));
+            InfraInfo selInfra = findSelectedInfra();
+            if (selInfra != null) {
+                titleSpans.add(Span.styled("selected: " + selectedName(), Theme.notice()));
+            } else {
+                titleSpans.add(Span.styled("selected: " + selectedName(), Theme.warning()));
+            }
+        }
+        if (monitorNotification != null) {
+            if (System.currentTimeMillis() > monitorNotificationExpiry) {
+                monitorNotification = null;
+            }
+        }
+        String activeNotification = monitorNotification;
+        boolean activeNotificationError = monitorNotificationError;
+        Line titleLine = Line.from(titleSpans);
 
-        Block headerBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(" Apache Camel ")
-                .build();
+        if (activeNotification != null) {
+            if (!activeNotification.equals(lastWaveNotification)) {
+                notificationWaveState.reset();
+                lastWaveNotification = activeNotification;
+            }
+            int titleWidth = titleSpans.stream().mapToInt(s -> s.width()).sum();
+            int waveWidth = activeNotification.length() + 2;
+            int leftWidth = Math.min(titleWidth + 2, area.width() - waveWidth);
+            if (leftWidth > 0 && waveWidth > 0 && leftWidth + waveWidth <= area.width()) {
+                Rect leftArea = new Rect(area.x(), area.y(), leftWidth, 1);
+                Rect waveArea = new Rect(area.x() + leftWidth, area.y(), waveWidth, 1);
+                frame.renderWidget(
+                        Paragraph.builder().text(Text.from(titleLine)).build(),
+                        leftArea);
+                Color waveColor = activeNotificationError
+                        ? Theme.error().fg().orElseThrow()
+                        : Theme.success().fg().orElseThrow();
+                WaveText wave = WaveText.builder()
+                        .text(activeNotification)
+                        .color(waveColor)
+                        .inverted(false)
+                        .speed(1.2)
+                        .mode(WaveText.Mode.LOOP)
+                        .build();
+                notificationWaveState.advance();
+                frame.renderStatefulWidget(wave, waveArea, notificationWaveState);
+            } else {
+                frame.renderWidget(
+                        Paragraph.builder().text(Text.from(titleLine)).build(),
+                        area);
+            }
+        } else {
+            frame.renderWidget(
+                    Paragraph.builder().text(Text.from(titleLine)).build(),
+                    area);
+        }
+    }
 
-        frame.renderWidget(
-                Paragraph.builder().text(Text.from(titleLine)).block(headerBlock).build(),
-                area);
+    private void renderTooSmall(Frame frame, Rect area) {
+        Style orange = Style.EMPTY.fg(Theme.accent());
+        Style normal = Style.EMPTY;
+        Style bold = Style.EMPTY.bold();
+
+        String line1 = "Terminal size too small:";
+        String wLabel = " Width = ";
+        String wVal = String.valueOf(area.width());
+        String hLabel = "  Height = ";
+        String hVal = String.valueOf(area.height());
+        String line2 = wLabel + wVal + hLabel + hVal;
+
+        String line4 = "Needed for current config:";
+        String line5 = " Width = " + MIN_WIDTH + "  Height = " + MIN_HEIGHT;
+
+        // 5 content lines (2 + blank + 2 + blank), center vertically
+        int startY = area.y() + Math.max(0, (area.height() - 5) / 2);
+
+        int x1 = area.x() + Math.max(0, (area.width() - CharWidth.of(line1)) / 2);
+        frame.buffer().setString(x1, startY, line1, bold);
+
+        int x2 = area.x() + Math.max(0, (area.width() - CharWidth.of(line2)) / 2);
+        int wLabelW = CharWidth.of(wLabel);
+        int wValW = CharWidth.of(wVal);
+        int hLabelW = CharWidth.of(hLabel);
+        frame.buffer().setString(x2, startY + 1, wLabel, normal);
+        frame.buffer().setString(x2 + wLabelW, startY + 1, wVal,
+                area.width() < MIN_WIDTH ? orange : normal);
+        frame.buffer().setString(x2 + wLabelW + wValW, startY + 1, hLabel, normal);
+        frame.buffer().setString(x2 + wLabelW + wValW + hLabelW, startY + 1, hVal,
+                area.height() < MIN_HEIGHT ? orange : normal);
+
+        int x4 = area.x() + Math.max(0, (area.width() - CharWidth.of(line4)) / 2);
+        frame.buffer().setString(x4, startY + 3, line4, bold);
+
+        int x5 = area.x() + Math.max(0, (area.width() - CharWidth.of(line5)) / 2);
+        frame.buffer().setString(x5, startY + 4, line5, normal);
+        applyThemeBaseColors(frame.buffer(), area);
     }
 
     private void renderTabs(Frame frame, Rect area) {
-        String sel = selectedPid != null ? " [" + selectedName() + "]" : "";
+        boolean compact = area.width() < TABS_FULL_MIN_WIDTH;
+        String dividerStr = compact ? "|" : " | ";
+        Span divider = Span.styled(dividerStr, Theme.muted());
+        boolean infraSelected = isInfraSelected();
+
+        if (infraSelected) {
+            // Infra mode: only Overview and Log tabs
+            Line[] labels = {
+                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
+                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log"))
+            };
+
+            // Map real tab index to infra tab index for highlight
+            int infraTabIdx = tabsState.selected() == TAB_LOG ? 1 : 0;
+            TabsState infraTabsState = new TabsState(infraTabIdx);
+
+            Tabs tabs = Tabs.builder()
+                    .titles(labels)
+                    .highlightStyle(Theme.accentBg())
+                    .divider(divider)
+                    .build();
+
+            Rect labelsArea = area.height() >= 2
+                    ? new Rect(area.x(), area.y() + 1, area.width(), 1)
+                    : area;
+            frame.renderStatefulWidget(tabs, labelsArea, infraTabsState);
+            lastTabLabels = labels;
+            lastTabDivider = dividerStr;
+            return;
+        }
+
+        Line[] labels = {
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ACTIVITY, "3", "Activity")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "4", "Diagram")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "5", "Route")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "6", "Endpoint")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HTTP, "7", "HTTP")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_INSPECT, "8", "Inspect")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ERRORS, "9", "Errors")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_MORE, "0", TuiIcons.moreTabLabel())),
+        };
+        popupManager.setCurrentTabLabels(labels);
+        lastTabLabels = labels;
+        lastTabDivider = dividerStr;
+
         Tabs tabs = Tabs.builder()
-                .titles(
-                        " 1 Overview ",
-                        " 2 Routes" + sel + " ",
-                        " 3 Health" + sel + " ",
-                        " 4 Endpoints" + sel + " ",
-                        " 5 Log" + sel + " ",
-                        " 6 Trace" + sel + " ")
-                .highlightStyle(Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
-                .divider(Span.styled(" | ", Style.create().dim()))
+                .titles(labels)
+                .highlightStyle(Theme.accentBg())
+                .divider(divider)
                 .build();
 
-        frame.renderStatefulWidget(tabs, area, tabsState);
+        Rect labelsArea = area.height() >= 2
+                ? new Rect(area.x(), area.y() + 1, area.width(), 1)
+                : area;
+        frame.renderStatefulWidget(tabs, labelsArea, tabsState);
+
+        if (area.height() >= 2) {
+            String[] badgeTexts = new String[labels.length];
+            Style[] badgeStyles = new Style[labels.length];
+            computeTabBadges(badgeTexts, badgeStyles);
+
+            int badgeY = area.y();
+            int dividerW = CharWidth.of(dividerStr);
+            int tabX = 0;
+            for (int i = 0; i < labels.length; i++) {
+                if (i > 0) {
+                    tabX += dividerW;
+                }
+                int tabW = labels[i].width();
+                if (!badgeTexts[i].isEmpty()) {
+                    int badgeW = CharWidth.of(badgeTexts[i]);
+                    int startX = area.x() + tabX + Math.max(0, (tabW - badgeW) / 2);
+                    frame.buffer().setString(startX, badgeY, badgeTexts[i], badgeStyles[i]);
+                }
+                tabX += tabW;
+            }
+        }
     }
 
     private void renderContent(Frame frame, Rect area) {
-        switch (tabsState.selected()) {
-            case TAB_OVERVIEW -> renderOverview(frame, area);
-            case TAB_ROUTES -> renderRoutes(frame, area);
-            case TAB_HEALTH -> renderHealth(frame, area);
-            case TAB_ENDPOINTS -> renderEndpoints(frame, area);
-            case TAB_LOG -> renderLog(frame, area);
-            case TAB_TRACE -> renderTrace(frame, area);
+        // Clear the content area before rendering the active tab. Without this, styled cells
+        // from the previous tab (e.g. RED error text in the log detail) can bleed through when
+        // switching tabs if TamboUI's buffer diff does not reset every cell in the region.
+        frame.buffer().clear(area);
+        MonitorTab tab = tabRegistry.activeTab();
+        if (tab != null) {
+            tab.render(frame, area);
         }
     }
 
-    // ---- Tab 1: Overview ----
-
-    private void renderOverview(Frame frame, Rect area) {
-        List<IntegrationInfo> infos = data.get();
-
-        // Split: table (fill) + sparkline (height 8) if we have data
-        boolean hasSparkline = !throughputHistory.isEmpty();
-        List<Rect> chunks;
-        if (hasSparkline) {
-            chunks = Layout.vertical()
-                    .constraints(Constraint.fill(), Constraint.length(8))
-                    .split(area);
-        } else {
-            chunks = List.of(area);
-        }
-
-        // Integration table
-        List<Row> rows = new ArrayList<>();
-        for (IntegrationInfo info : infos) {
-            if (info.vanishing) {
-                long elapsed = System.currentTimeMillis() - info.vanishStart;
-                float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
-                int gray = (int) (100 * fade);
-                Style dimStyle = Style.create().fg(Color.indexed(232 + Math.min(gray / 4, 23)));
-
-                rows.add(Row.from(
-                        Cell.from(Span.styled(info.pid, dimStyle)),
-                        Cell.from(Span.styled(info.name != null ? info.name : "", dimStyle)),
-                        Cell.from(Span.styled(info.platform != null ? info.platform : "", dimStyle)),
-                        Cell.from(Span.styled("\u2716 Stopped", Style.create().fg(Color.RED).dim())),
-                        Cell.from(Span.styled(info.ago != null ? info.ago : "", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle))));
-            } else {
-                Style statusStyle = switch (extractState(info.state)) {
-                    case "Started" -> Style.create().fg(Color.GREEN);
-                    case "Stopped" -> Style.create().fg(Color.RED);
-                    default -> Style.create().fg(Color.YELLOW);
-                };
-
-                rows.add(Row.from(
-                        Cell.from(info.pid),
-                        Cell.from(Span.styled(info.name != null ? info.name : "", Style.create().fg(Color.CYAN))),
-                        Cell.from(info.platform != null ? info.platform : ""),
-                        Cell.from(Span.styled(extractState(info.state), statusStyle)),
-                        Cell.from(info.ago != null ? info.ago : ""),
-                        Cell.from(info.throughput != null ? info.throughput : ""),
-                        Cell.from(formatMemory(info.heapMemUsed, info.heapMemMax)),
-                        Cell.from(formatThreads(info.threadCount, info.peakThreadCount))));
-            }
-        }
-
-        Row header = Row.from(
-                Cell.from(Span.styled("PID", Style.create().bold())),
-                Cell.from(Span.styled("NAME", Style.create().bold())),
-                Cell.from(Span.styled("PLATFORM", Style.create().bold())),
-                Cell.from(Span.styled("STATUS", Style.create().bold())),
-                Cell.from(Span.styled("AGE", Style.create().bold())),
-                Cell.from(Span.styled("THRUPUT", Style.create().bold())),
-                Cell.from(Span.styled("HEAP", Style.create().bold())),
-                Cell.from(Span.styled("THREADS", Style.create().bold())));
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(header)
-                .widths(
-                        Constraint.length(8),
-                        Constraint.fill(),
-                        Constraint.length(10),
-                        Constraint.length(10),
-                        Constraint.length(8),
-                        Constraint.length(10),
-                        Constraint.length(15),
-                        Constraint.length(12))
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Integrations ").build())
-                .build();
-
-        frame.renderStatefulWidget(table, chunks.get(0), overviewTableState);
-
-        // Bar chart for throughput
-        if (hasSparkline && chunks.size() > 1) {
-            // Merge all throughput histories for overview chart
-            LinkedList<Long> merged = new LinkedList<>();
-            for (int i = 0; i < MAX_SPARKLINE_POINTS; i++) {
-                long sum = 0;
-                for (LinkedList<Long> hist : throughputHistory.values()) {
-                    if (i < hist.size()) {
-                        sum += hist.get(hist.size() - 1 - i);
+    /**
+     * Fills cells that still have no explicit fg/bg after widget rendering. TamboUI clears the buffer to
+     * {@link Cell#EMPTY} each frame; when bg is unset the terminal falls back to its own default (usually black). Only
+     * patches missing colors so selection highlights, zebra stripes, and other widget backgrounds are preserved.
+     */
+    static void applyThemeBaseColors(Buffer buffer, Rect area) {
+        Color baseBg = Theme.baseBg();
+        Color baseFg = Theme.baseFg();
+        Rect intersection = buffer.area().intersection(area);
+        for (int y = intersection.top(); y < intersection.bottom(); y++) {
+            for (int x = intersection.left(); x < intersection.right(); x++) {
+                Cell cell = buffer.get(x, y);
+                if (cell.isContinuation()) {
+                    continue;
+                }
+                Style style = cell.style();
+                Color cellBg = style.bg().orElse(null);
+                Color cellFg = style.fg().orElse(null);
+                if (cellBg == null || cellFg == null) {
+                    Style patch = Style.EMPTY;
+                    if (cellBg == null) {
+                        patch = patch.bg(baseBg);
                     }
+                    if (cellFg == null) {
+                        patch = patch.fg(baseFg);
+                    }
+                    buffer.set(x, y, cell.patchStyle(patch));
                 }
-                merged.addFirst(sum);
             }
-
-            // Compute stats for title display
-            long maxTp = merged.stream().mapToLong(Long::longValue).max().orElse(0);
-            long curTp = merged.isEmpty() ? 0 : merged.get(merged.size() - 1);
-            String chartTitle = String.format(" Throughput: %d msg/s (peak: %d) ", curTp, maxTp);
-
-            // Build bar groups — one bar per data point
-            List<BarGroup> groups = new ArrayList<>();
-            for (Long value : merged) {
-                groups.add(BarGroup.of(Bar.of(value)));
-            }
-
-            BarChart barChart = BarChart.builder()
-                    .data(groups)
-                    .barWidth(1)
-                    .barGap(0)
-                    .barStyle(Style.create().fg(Color.GREEN))
-                    .block(Block.builder().borderType(BorderType.ROUNDED).title(chartTitle).build())
-                    .build();
-
-            frame.renderWidget(barChart, chunks.get(1));
         }
     }
 
-    // ---- Tab 2: Routes ----
-
-    private void renderRoutes(Frame frame, Rect area) {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
+    private void computeTabBadges(String[] badgeTexts, Style[] badgeStyles) {
+        Style yellow = Theme.label();
+        Style cyan = Style.EMPTY.fg(Theme.accent()).bold();
+        Style red = Theme.error().bold();
+        for (int j = 0; j < badgeStyles.length; j++) {
+            badgeTexts[j] = "";
+            badgeStyles[j] = yellow;
         }
 
-        // Sort routes
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
+        List<IntegrationInfo> infos = dataService.data().get();
+        long activeCount = infos.stream().filter(i -> !i.vanishing).count();
+        IntegrationInfo sel = findSelectedIntegration();
+        boolean hasSelection = ctx.selectedPid != null && sel != null;
 
-        // Split: routes table (top half) + processors table (bottom half)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.percentage(45), Constraint.percentage(55))
-                .split(area);
-
-        // Routes table
-        List<Row> routeRows = new ArrayList<>();
-        for (RouteInfo route : sortedRoutes) {
-            Style stateStyle = "Started".equals(route.state)
-                    ? Style.create().fg(Color.GREEN)
-                    : Style.create().fg(Color.RED);
-
-            Style failStyle = route.failed > 0
-                    ? Style.create().fg(Color.RED).bold()
-                    : Style.create();
-
-            routeRows.add(Row.from(
-                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.create().fg(Color.CYAN))),
-                    Cell.from(route.from != null ? route.from : ""),
-                    Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
-                    Cell.from(route.uptime != null ? route.uptime : ""),
-                    Cell.from(route.throughput != null ? route.throughput : ""),
-                    Cell.from(String.valueOf(route.total)),
-                    Cell.from(Span.styled(String.valueOf(route.failed), failStyle)),
-                    Cell.from(route.meanTime + "/" + route.maxTime)));
+        if (activeCount > 0) {
+            badgeTexts[TAB_OVERVIEW] = "(" + activeCount + ")";
         }
-
-        Table routeTable = Table.builder()
-                .rows(routeRows)
-                .header(Row.from(
-                        Cell.from(Span.styled("ROUTE", Style.create().bold())),
-                        Cell.from(Span.styled("FROM", Style.create().bold())),
-                        Cell.from(Span.styled("STATE", Style.create().bold())),
-                        Cell.from(Span.styled("UPTIME", Style.create().bold())),
-                        Cell.from(Span.styled("THRUPUT", Style.create().bold())),
-                        Cell.from(Span.styled(routeSortLabel("TOTAL", "total"), routeSortStyle("total"))),
-                        Cell.from(Span.styled(routeSortLabel("FAILED", "failed"), routeSortStyle("failed"))),
-                        Cell.from(Span.styled(routeSortLabel("MEAN/MAX", "mean"), routeSortStyle("mean")))))
-                .widths(
-                        Constraint.length(12),
-                        Constraint.fill(),
-                        Constraint.length(10),
-                        Constraint.length(8),
-                        Constraint.length(10),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(12))
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Routes [" + info.name + "] sort:" + routeSort + " ").build())
-                .build();
-
-        frame.renderStatefulWidget(routeTable, chunks.get(0), routeTableState);
-
-        // Processors for selected route
-        Integer selectedRoute = routeTableState.selected();
-        if (selectedRoute != null && selectedRoute >= 0 && selectedRoute < sortedRoutes.size()) {
-            RouteInfo route = sortedRoutes.get(selectedRoute);
-            renderProcessors(frame, chunks.get(1), route);
-        } else if (!sortedRoutes.isEmpty()) {
-            renderProcessors(frame, chunks.get(1), sortedRoutes.get(0));
+        int routeCount = hasSelection ? sel.routes.size() : 0;
+        if (routeCount > 0) {
+            badgeTexts[TAB_DIAGRAM] = "(1)";
+            badgeTexts[TAB_ROUTES] = "(" + routeCount + ")";
+        }
+        int endpointCount = hasSelection ? sel.endpoints.size() : 0;
+        if (endpointCount > 0) {
+            badgeTexts[TAB_ENDPOINTS] = "(" + endpointCount + ")";
+        }
+        int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
+        if (httpCount > 0) {
+            badgeTexts[TAB_HTTP] = "(" + httpCount + ")";
+        }
+        boolean hasTraces = hasSelection && !dataService.traces().get().isEmpty();
+        if (hasTraces) {
+            badgeTexts[TAB_HISTORY] = "(*)";
+            badgeStyles[TAB_HISTORY] = cyan;
         } else {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(Span.styled("No routes", Style.create().dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Processors ").build())
-                            .build(),
-                    chunks.get(1));
-        }
-    }
-
-    private int sortRoute(RouteInfo a, RouteInfo b) {
-        return switch (routeSort) {
-            case "mean" -> Long.compare(b.meanTime, a.meanTime);
-            case "max" -> Long.compare(b.maxTime, a.maxTime);
-            case "total" -> Long.compare(b.total, a.total);
-            case "failed" -> Long.compare(b.failed, a.failed);
-            case "name" -> {
-                String ra = a.routeId != null ? a.routeId : "";
-                String rb = b.routeId != null ? b.routeId : "";
-                yield ra.compareToIgnoreCase(rb);
+            long historyCount = hasSelection
+                    ? tabRegistry.historyTab().historyEntries.stream()
+                            .map(e -> {
+                                if (e.headers != null) {
+                                    Object bid = e.headers.get("breadcrumbId");
+                                    if (bid != null) {
+                                        return bid.toString();
+                                    }
+                                }
+                                return e.exchangeId;
+                            })
+                            .distinct().count()
+                    : 0;
+            if (historyCount > 0) {
+                badgeTexts[TAB_HISTORY] = "(" + historyCount + ")";
             }
-            default -> 0;
-        };
-    }
-
-    private String routeSortLabel(String label, String column) {
-        return routeSort.equals(column) ? label + "\u25BC" : label;
-    }
-
-    private Style routeSortStyle(String column) {
-        return routeSort.equals(column)
-                ? Style.create().fg(Color.YELLOW).bold()
-                : Style.create().bold();
-    }
-
-    private void renderProcessors(Frame frame, Rect area, RouteInfo route) {
-        List<Row> rows = new ArrayList<>();
-        for (ProcessorInfo proc : route.processors) {
-            String indent = "  ".repeat(proc.level);
-            Style nameStyle = proc.failed > 0 ? Style.create().fg(Color.RED) : Style.create().fg(Color.CYAN);
-
-            rows.add(Row.from(
-                    Cell.from(Span.styled(indent + (proc.id != null ? proc.id : ""), nameStyle)),
-                    Cell.from(proc.processor != null ? proc.processor : ""),
-                    Cell.from(String.valueOf(proc.total)),
-                    Cell.from(proc.failed > 0
-                            ? Span.styled(String.valueOf(proc.failed), Style.create().fg(Color.RED))
-                            : Span.raw("0")),
-                    Cell.from(proc.meanTime + "ms"),
-                    Cell.from(proc.maxTime + "ms"),
-                    Cell.from(proc.lastTime + "ms")));
         }
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled("PROCESSOR", Style.create().bold())),
-                        Cell.from(Span.styled("TYPE", Style.create().bold())),
-                        Cell.from(Span.styled("TOTAL", Style.create().bold())),
-                        Cell.from(Span.styled("FAILED", Style.create().bold())),
-                        Cell.from(Span.styled("MEAN", Style.create().bold())),
-                        Cell.from(Span.styled("MAX", Style.create().bold())),
-                        Cell.from(Span.styled("LAST", Style.create().bold()))))
-                .widths(
-                        Constraint.fill(),
-                        Constraint.length(15),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(8))
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Processors [" + route.routeId + "] ").build())
-                .build();
-
-        frame.renderStatefulWidget(table, area, new TableState());
+        long cbOpenCount = hasSelection
+                ? sel.circuitBreakers.stream()
+                        .filter(cb -> cb.state != null && (cb.state.equalsIgnoreCase("open")
+                                || cb.state.equalsIgnoreCase("forced_open")))
+                        .count()
+                : 0;
+        if (cbOpenCount > 0) {
+            badgeTexts[TAB_MORE] = "(" + cbOpenCount + " OPEN)";
+            badgeStyles[TAB_MORE] = red;
+        }
+        int errorCount = hasSelection ? sel.errorCount : 0;
+        if (errorCount > 0) {
+            badgeTexts[TAB_ERRORS] = "(" + errorCount + ")";
+            badgeStyles[TAB_ERRORS] = red;
+        }
+        int activityCount = hasSelection ? sel.activity.size() : 0;
+        if (activityCount > 0) {
+            badgeTexts[TAB_ACTIVITY] = "(" + activityCount + ")";
+        }
     }
 
-    // ---- Tab 3: Health ----
-
-    private void renderHealth(Frame frame, Rect area) {
+    private void openFilesPopup() {
         IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
+        if (info != null) {
+            filesBrowser.open(info);
+        }
+    }
+
+    private List<IntegrationInfo> getNonVanishingIntegrations() {
+        return dataService.data().get().stream()
+                .filter(i -> !i.vanishing && i.name != null)
+                .sorted(Comparator.comparing(i -> i.name, String.CASE_INSENSITIVE_ORDER))
+                .collect(Collectors.toList());
+    }
+
+    private void stopSelectedProcess(boolean forceKill) {
+        dataService.enableBurstMode();
+        if (ctx.selectedPid == null) {
             return;
         }
-
-        // Split: health table (fill) + memory gauge (3 rows)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(3))
-                .split(area);
-
-        List<HealthCheckInfo> healthChecks = getFilteredHealthChecks(info);
-
-        List<Row> rows = new ArrayList<>();
-        for (HealthCheckInfo hc : healthChecks) {
-            Style stateStyle;
-            String icon;
-            if ("UP".equals(hc.state)) {
-                stateStyle = Style.create().fg(Color.GREEN);
-                icon = "\u2714 ";
-            } else if ("DOWN".equals(hc.state)) {
-                stateStyle = Style.create().fg(Color.RED);
-                icon = "\u2716 ";
-            } else {
-                stateStyle = Style.create().fg(Color.YELLOW);
-                icon = "\u26A0 ";
-            }
-
-            String kind = "";
-            if (hc.readiness) {
-                kind += "R";
-            }
-            if (hc.liveness) {
-                kind += kind.isEmpty() ? "L" : "/L";
-            }
-
-            rows.add(Row.from(
-                    Cell.from(Span.styled(hc.group != null ? hc.group : "", Style.create().dim())),
-                    Cell.from(Span.styled(hc.name != null ? hc.name : "", Style.create().fg(Color.CYAN))),
-                    Cell.from(Span.styled(icon + hc.state, stateStyle)),
-                    Cell.from(kind),
-                    Cell.from(hc.message != null ? hc.message : "")));
-        }
-
-        if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(""),
-                    Cell.from(Span.styled(showOnlyDown ? "No DOWN checks" : "No health checks registered",
-                            Style.create().dim())),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from("")));
-        }
-
-        String title = showOnlyDown
-                ? " Health [" + info.name + "] [DOWN only] "
-                : " Health [" + info.name + "] ";
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled("GROUP", Style.create().bold())),
-                        Cell.from(Span.styled("NAME", Style.create().bold())),
-                        Cell.from(Span.styled("STATUS", Style.create().bold())),
-                        Cell.from(Span.styled("KIND", Style.create().bold())),
-                        Cell.from(Span.styled("MESSAGE", Style.create().bold()))))
-                .widths(
-                        Constraint.length(12),
-                        Constraint.length(25),
-                        Constraint.length(12),
-                        Constraint.length(6),
-                        Constraint.fill())
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
-                .build();
-
-        frame.renderStatefulWidget(table, chunks.get(0), healthTableState);
-
-        // Memory gauge
-        if (info.heapMemMax > 0) {
-            int pct = (int) (100.0 * info.heapMemUsed / info.heapMemMax);
-            Style gaugeStyle = pct > 80 ? Style.create().fg(Color.RED)
-                    : pct > 60 ? Style.create().fg(Color.YELLOW) : Style.create().fg(Color.GREEN);
-            Gauge gauge = Gauge.builder()
-                    .percent(pct)
-                    .label(String.format("Heap: %s / %s (%d%%)", formatBytes(info.heapMemUsed),
-                            formatBytes(info.heapMemMax), pct))
-                    .gaugeStyle(gaugeStyle)
-                    .block(Block.builder().borderType(BorderType.ROUNDED).build())
-                    .build();
-
-            frame.renderWidget(gauge, chunks.get(1));
-        }
-    }
-
-    private List<HealthCheckInfo> getFilteredHealthChecks(IntegrationInfo info) {
-        if (showOnlyDown) {
-            return info.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).toList();
-        }
-        return info.healthChecks;
-    }
-
-    // ---- Tab 4: Endpoints ----
-
-    private void renderEndpoints(Frame frame, Rect area) {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
-        List<Row> rows = new ArrayList<>();
-        for (EndpointInfo ep : info.endpoints) {
-            String dir = ep.direction != null ? ep.direction : "";
-            Style dirStyle = switch (dir) {
-                case "in" -> Style.create().fg(Color.GREEN);
-                case "out" -> Style.create().fg(Color.BLUE);
-                default -> Style.create().fg(Color.YELLOW);
-            };
-            String arrow = switch (dir) {
-                case "in" -> "\u2192 ";
-                case "out" -> "\u2190 ";
-                default -> "\u2194 ";
-            };
-
-            rows.add(Row.from(
-                    Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.create().fg(Color.CYAN))),
-                    Cell.from(Span.styled(arrow + dir, dirStyle)),
-                    Cell.from(ep.uri != null ? ep.uri : ""),
-                    Cell.from(ep.routeId != null ? ep.routeId : "")));
-        }
-
-        if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(""),
-                    Cell.from(Span.styled("No endpoints", Style.create().dim())),
-                    Cell.from(""),
-                    Cell.from("")));
-        }
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled("COMPONENT", Style.create().bold())),
-                        Cell.from(Span.styled("DIR", Style.create().bold())),
-                        Cell.from(Span.styled("URI", Style.create().bold())),
-                        Cell.from(Span.styled("ROUTE", Style.create().bold()))))
-                .widths(
-                        Constraint.length(15),
-                        Constraint.length(8),
-                        Constraint.fill(),
-                        Constraint.length(20))
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Endpoints [" + info.name + "] ").build())
-                .build();
-
-        frame.renderStatefulWidget(table, area, endpointTableState);
-    }
-
-    // ---- Tab 5: Log ----
-
-    private void renderLog(Frame frame, Rect area) {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
-        // Log data is refreshed in refreshData() tick handler
-
-        // Auto-follow: select last entry
-        if (logFollowMode && !filteredLogEntries.isEmpty()) {
-            logTableState.select(filteredLogEntries.size() - 1);
-        }
-
-        // Split: log table (60%) + detail (40%)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.percentage(60), Constraint.fill())
-                .split(area);
-
-        // Log table
-        List<Row> rows = new ArrayList<>();
-        for (LogEntry entry : filteredLogEntries) {
-            Style levelStyle = switch (entry.level) {
-                case "ERROR", "FATAL" -> Style.create().fg(Color.RED);
-                case "WARN" -> Style.create().fg(Color.YELLOW);
-                case "DEBUG", "TRACE" -> Style.create().dim();
-                default -> Style.create();
-            };
-
-            rows.add(Row.from(
-                    Cell.from(Span.styled(entry.time, Style.create().dim())),
-                    Cell.from(Span.styled(entry.level, levelStyle)),
-                    Cell.from(Span.styled(entry.logger != null ? entry.logger : "", Style.create().fg(Color.CYAN))),
-                    Cell.from(Span.styled(entry.message, levelStyle))));
-        }
-
-        String levelTitle = buildLevelFilterTitle();
-        Table logTable = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled("TIME", Style.create().bold())),
-                        Cell.from(Span.styled("LEVEL", Style.create().bold())),
-                        Cell.from(Span.styled("LOGGER", Style.create().bold())),
-                        Cell.from(Span.styled("MESSAGE", Style.create().bold()))))
-                .widths(
-                        Constraint.length(12),
-                        Constraint.length(6),
-                        Constraint.length(20),
-                        Constraint.fill())
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Log [" + info.name + "] " + levelTitle).build())
-                .build();
-
-        frame.renderStatefulWidget(logTable, chunks.get(0), logTableState);
-
-        // Detail panel for selected log entry
-        renderLogDetail(frame, chunks.get(1));
-    }
-
-    private void renderLogDetail(Frame frame, Rect area) {
-        Integer sel = logTableState.selected();
-        if (sel == null || sel < 0 || sel >= filteredLogEntries.size()) {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(
-                                    Span.styled(" Select a log entry", Style.create().dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
-                                    .title(" Detail ").build())
-                            .build(),
-                    area);
-            return;
-        }
-
-        LogEntry entry = filteredLogEntries.get(sel);
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(Line.from(Span.styled(entry.raw, colorStyleForLevel(entry.level)))))
-                        .overflow(Overflow.WRAP_WORD)
-                        .block(Block.builder().borderType(BorderType.ROUNDED)
-                                .title(" " + entry.time + " " + entry.level + " ").build())
-                        .build(),
-                area);
-    }
-
-    private Style colorStyleForLevel(String level) {
-        return switch (level) {
-            case "ERROR", "FATAL" -> Style.create().fg(Color.RED);
-            case "WARN" -> Style.create().fg(Color.YELLOW);
-            case "DEBUG", "TRACE" -> Style.create().dim();
-            default -> Style.create();
-        };
-    }
-
-    private String buildLevelFilterTitle() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(showLogTrace ? "[T] " : "[t] ");
-        sb.append(showLogDebug ? "[D] " : "[d] ");
-        sb.append(showLogInfo ? "[I] " : "[i] ");
-        sb.append(showLogWarn ? "[W] " : "[w] ");
-        sb.append(showLogError ? "[E] " : "[e] ");
-        if (logFollowMode) {
-            sb.append("[FOLLOW]");
-        }
-        return sb.toString();
-    }
-
-    private void readLogFile(String pid) {
-        logLines.clear();
-        Path logFile = CommandLineHelper.getCamelDir().resolve(pid + ".log");
-        if (!Files.exists(logFile)) {
-            return;
-        }
-        try (RandomAccessFile raf = new RandomAccessFile(logFile.toFile(), "r")) {
-            long length = raf.length();
-            // Read last ~64KB to get recent lines
-            long startPos = Math.max(0, length - 64 * 1024);
-            raf.seek(startPos);
-            if (startPos > 0) {
-                raf.readLine(); // skip partial line
-            }
-            // Read remaining bytes and split into lines using proper encoding
-            byte[] remaining = new byte[(int) (length - raf.getFilePointer())];
-            raf.readFully(remaining);
-            String content = new String(remaining, StandardCharsets.UTF_8);
-            String[] lines = content.split("\n", -1);
-            int start = Math.max(0, lines.length - MAX_LOG_LINES);
-            for (int i = start; i < lines.length; i++) {
-                String line = lines[i].replaceAll("\u001B\\[[;\\d]*m", "");
-                if (!line.isEmpty()) {
-                    logLines.add(line);
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-    }
-
-    private void applyLogFilters() {
-        filteredLogEntries.clear();
-        for (String line : logLines) {
-            LogEntry entry = parseLogLine(line);
-            if (!matchesLogLevelFilter(entry.level)) {
-                continue;
-            }
-            filteredLogEntries.add(entry);
-        }
-    }
-
-    // Regex for Spring Boot / Camel log format:
-    // "2026-03-23T21:24:11.705+01:00  WARN 11283 --- [thread] logger : message"
-    // "2026-03-23 21:24:11.705  WARN 11283 --- [thread] logger : message"
-    private static final Pattern LOG_PATTERN = Pattern.compile(
-            "^(\\d{4}-\\d{2}-\\d{2})[T ](\\d{2}:\\d{2}:\\d{2}\\.\\d+)\\S*\\s+"
-                                                               + "(TRACE|DEBUG|INFO|WARN|ERROR|FATAL)\\s+"
-                                                               + "\\d+\\s+---\\s+"
-                                                               + "\\[([^]]*)]\\s+"
-                                                               + "(\\S+)\\s*:\\s*(.*)$");
-
-    private static LogEntry parseLogLine(String line) {
-        LogEntry entry = new LogEntry();
-        entry.raw = line;
+        long pid;
         try {
-            Matcher m = LOG_PATTERN.matcher(line);
-            if (m.matches()) {
-                entry.time = m.group(2); // HH:mm:ss.SSS...
-                // Truncate time to 12 chars (HH:mm:ss.SSS)
-                if (entry.time.length() > 12) {
-                    entry.time = entry.time.substring(0, 12);
-                }
-                entry.level = m.group(3);
-                entry.logger = m.group(5);
-                // Shorten logger to simple name
-                int lastDot = entry.logger.lastIndexOf('.');
-                if (lastDot > 0) {
-                    entry.logger = entry.logger.substring(lastDot + 1);
-                }
-                entry.message = m.group(6);
-            } else {
-                entry.time = "";
-                entry.level = "INFO";
-                entry.message = line;
-            }
-        } catch (Exception e) {
-            entry.time = "";
-            entry.level = "INFO";
-            entry.message = line;
+            pid = Long.parseLong(ctx.selectedPid);
+        } catch (NumberFormatException e) {
+            LOG.log(Level.DEBUG, "Cannot parse selected PID: {0}", ctx.selectedPid);
+            return;
         }
-        return entry;
+        if (isInfraSelected()) {
+            InfraInfo infra = findSelectedInfra();
+            if (infra != null) {
+                Path camelDir = CommandLineHelper.getCamelDir();
+                PathUtils.deleteFile(camelDir.resolve("infra-" + infra.alias + "-" + infra.pid + ".json"));
+                PathUtils.deleteFile(camelDir.resolve("infra-" + infra.alias + "-" + infra.pid + ".log"));
+            }
+            if (forceKill) {
+                ProcessHandle.of(pid).ifPresent(ProcessHandle::destroyForcibly);
+            }
+        } else {
+            String pidStr = ctx.selectedPid;
+            ProcessHandle.of(pid).ifPresent(ph -> {
+                if (forceKill) {
+                    ph.destroyForcibly();
+                    Path camelDir = CommandLineHelper.getCamelDir();
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + ".log"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-status.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-action.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-output.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-trace.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-history.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-debug.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-receive.json"));
+                } else {
+                    dataService.stoppingPids().add(pidStr);
+                    ph.destroy();
+                }
+            });
+        }
     }
 
-    private boolean matchesLogLevelFilter(String level) {
-        return switch (level) {
-            case "ERROR", "FATAL" -> showLogError;
-            case "WARN" -> showLogWarn;
-            case "DEBUG" -> showLogDebug;
-            case "TRACE" -> showLogTrace;
-            default -> showLogInfo;
-        };
-    }
-
-    // ---- Tab 6: Trace ----
-
-    private void renderTrace(Frame frame, Rect area) {
+    private void restartSelectedProcess() {
+        dataService.enableBurstMode();
+        if (ctx.selectedPid == null || isInfraSelected()) {
+            return;
+        }
+        long pid;
+        try {
+            pid = Long.parseLong(ctx.selectedPid);
+        } catch (NumberFormatException e) {
+            LOG.log(Level.DEBUG, "Cannot parse selected PID for restart: {0}", ctx.selectedPid);
+            return;
+        }
         IntegrationInfo info = findSelectedIntegration();
         if (info == null) {
-            renderNoSelection(frame, area);
+            return;
+        }
+        ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
+        if (ph == null) {
             return;
         }
 
-        List<TraceEntry> current = traces.get();
+        String platform = info.platform;
+        boolean isSpringBoot = "Spring Boot".equals(platform);
+        boolean isQuarkus = "Quarkus".equals(platform);
 
-        // Layout: trace list (50%) + detail panel (50%)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.percentage(50), Constraint.fill())
-                .split(area);
-
-        // Auto-follow: select last entry
-        if (traceFollowMode && !current.isEmpty()) {
-            traceTableState.select(current.size() - 1);
-        }
-
-        // Trace list
-        List<Row> rows = new ArrayList<>();
-        for (TraceEntry entry : current) {
-            String status = entry.status != null ? entry.status : "";
-            Style statusStyle = switch (status) {
-                case "Done" -> Style.create().fg(Color.GREEN);
-                case "Failed" -> Style.create().fg(Color.RED);
-                case "Processing" -> Style.create().fg(Color.YELLOW);
-                default -> Style.create().fg(Color.WHITE);
-            };
-
-            String bodyPreview = entry.bodyPreview != null ? truncate(entry.bodyPreview, 40) : "";
-
-            rows.add(Row.from(
-                    Cell.from(entry.timestamp != null ? truncate(entry.timestamp, 12) : ""),
-                    Cell.from(entry.pid != null ? entry.pid : ""),
-                    Cell.from(Span.styled(
-                            entry.routeId != null ? truncate(entry.routeId, 15) : "",
-                            Style.create().fg(Color.CYAN))),
-                    Cell.from(entry.nodeId != null ? truncate(entry.nodeId, 15) : ""),
-                    Cell.from(Span.styled(status, statusStyle)),
-                    Cell.from(entry.elapsed + "ms"),
-                    Cell.from(bodyPreview)));
-        }
-
-        Row header = Row.from(
-                Cell.from(Span.styled("TIME", Style.create().bold())),
-                Cell.from(Span.styled("PID", Style.create().bold())),
-                Cell.from(Span.styled("ROUTE", Style.create().bold())),
-                Cell.from(Span.styled("NODE", Style.create().bold())),
-                Cell.from(Span.styled("STATUS", Style.create().bold())),
-                Cell.from(Span.styled("ELAPSED", Style.create().bold())),
-                Cell.from(Span.styled("BODY", Style.create().bold())));
-
-        String traceTitle = String.format(" Traces [%d] %s ",
-                current.size(),
-                traceFollowMode ? "[FOLLOW]" : "[SCROLL]");
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(header)
-                .widths(
-                        Constraint.length(12),
-                        Constraint.length(8),
-                        Constraint.length(15),
-                        Constraint.length(15),
-                        Constraint.length(12),
-                        Constraint.length(10),
-                        Constraint.fill())
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(traceTitle).build())
-                .build();
-
-        frame.renderStatefulWidget(table, chunks.get(0), traceTableState);
-
-        // Detail panel
-        renderTraceDetail(frame, chunks.get(1), current);
-    }
-
-    private void renderTraceDetail(Frame frame, Rect area, List<TraceEntry> current) {
-        Integer sel = traceTableState.selected();
-
-        if (sel == null || sel < 0 || sel >= current.size()) {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(
-                                    Span.styled(" Select a trace entry to view details",
-                                            Style.create().dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
-                                    .title(" Detail ").build())
-                            .build(),
-                    area);
+        // TODO: restart for Spring Boot and Quarkus is not yet reliable
+        if (isSpringBoot || isQuarkus) {
+            setNotification("Restart not supported for " + platform, true);
             return;
         }
 
-        TraceEntry entry = current.get(sel);
-        List<Line> lines = new ArrayList<>();
-
-        // Exchange info
-        lines.add(Line.from(
-                Span.styled(" Exchange: ", Style.create().fg(Color.YELLOW).bold()),
-                Span.raw(entry.exchangeId != null ? entry.exchangeId : "")));
-        lines.add(Line.from(
-                Span.styled(" UID:      ", Style.create().fg(Color.YELLOW).bold()),
-                Span.raw(entry.uid != null ? entry.uid : "")));
-        lines.add(Line.from(
-                Span.styled(" Location: ", Style.create().fg(Color.YELLOW).bold()),
-                Span.raw(entry.location != null ? entry.location : "")));
-        lines.add(Line.from(
-                Span.styled(" Route:    ", Style.create().fg(Color.YELLOW).bold()),
-                Span.raw(entry.routeId != null ? entry.routeId : ""),
-                Span.raw("  Node: "),
-                Span.raw(entry.nodeId != null ? entry.nodeId : ""),
-                Span.raw(entry.nodeLabel != null ? " (" + entry.nodeLabel + ")" : "")));
-        lines.add(Line.from(
-                Span.styled(" Status:   ", Style.create().fg(Color.YELLOW).bold()),
-                Span.raw(entry.status != null ? entry.status : ""),
-                Span.raw("  Elapsed: "),
-                Span.raw(entry.elapsed + "ms")));
-        lines.add(Line.from(Span.raw("")));
-
-        // Headers
-        if (showTraceHeaders && entry.headers != null && !entry.headers.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Headers:", Style.create().fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> h : entry.headers.entrySet()) {
-                lines.add(Line.from(
-                        Span.styled("   " + h.getKey(), Style.create().fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(h.getValue() != null ? h.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
-        }
-
-        // Body
-        if (showTraceBody && entry.body != null) {
-            lines.add(Line.from(Span.styled(" Body:", Style.create().fg(Color.GREEN).bold())));
-            String[] bodyLines = entry.body.split("\n");
-            for (String bl : bodyLines) {
-                lines.add(Line.from(Span.raw("   " + bl)));
-            }
-            lines.add(Line.from(Span.raw("")));
-        }
-
-        // Exchange properties
-        if (entry.exchangeProperties != null && !entry.exchangeProperties.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Exchange Properties:", Style.create().fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> p : entry.exchangeProperties.entrySet()) {
-                lines.add(Line.from(
-                        Span.styled("   " + p.getKey(), Style.create().fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(p.getValue() != null ? p.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
-        }
-
-        // Exchange variables
-        if (entry.exchangeVariables != null && !entry.exchangeVariables.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Exchange Variables:", Style.create().fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> v : entry.exchangeVariables.entrySet()) {
-                lines.add(Line.from(
-                        Span.styled("   " + v.getKey(), Style.create().fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(v.getValue() != null ? v.getValue().toString() : "null")));
-            }
-        }
-
-        String title = String.format(" Detail [%s] ", entry.exchangeId != null ? truncate(entry.exchangeId, 30) : "");
-
-        Paragraph detail = Paragraph.builder()
-                .text(Text.from(lines))
-                .overflow(Overflow.CLIP)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
-                .build();
-
-        frame.renderWidget(detail, area);
+        restartCamelMainProcess(ph, info);
     }
 
-    // ---- Shared rendering ----
+    private void restartCamelMainProcess(ProcessHandle ph, IntegrationInfo info) {
+        // capture command line before stopping
+        Optional<String> cmdOpt = ph.info().command();
+        Optional<String[]> argsOpt = ph.info().arguments();
+        Optional<String> cmdLineOpt = ph.info().commandLine();
 
-    private void renderNoSelection(Frame frame, Rect area) {
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(Line.from(
-                                Span.styled(" Select an integration from the Overview tab (press 1)",
-                                        Style.create().dim()))))
-                        .block(Block.builder().borderType(BorderType.ROUNDED)
-                                .title(" No integration selected ").build())
-                        .build(),
-                area);
+        String name = info.name;
+        String directory = info.directory;
+
+        // remember name so the restarted process gets auto-selected
+        ctx.lastSelectedName = name;
+
+        // stop gracefully
+        ph.destroy();
+        setNotification("Restarting: " + name, false);
+
+        // re-launch in background after process terminates
+        if (runner != null) {
+            runner.scheduler().execute(() -> {
+                try {
+                    // wait for termination (max 10 seconds, then force kill)
+                    CompletableFuture<ProcessHandle> exitFuture = ph.onExit().toCompletableFuture();
+                    try {
+                        exitFuture.get(10, TimeUnit.SECONDS);
+                    } catch (Exception e) {
+                        ph.destroyForcibly();
+                        Thread.sleep(500);
+                    }
+
+                    // build command
+                    List<String> cmd = new ArrayList<>();
+                    if (cmdOpt.isPresent() && argsOpt.isPresent() && argsOpt.get().length > 0) {
+                        cmd.add(cmdOpt.get());
+                        Collections.addAll(cmd, argsOpt.get());
+                    } else {
+                        cmdLineOpt.ifPresent(s -> cmd.addAll(parseCommandLine(s)));
+                    }
+
+                    if (cmd.isEmpty()) {
+                        runner.runOnRenderThread(
+                                () -> setNotification("Cannot restart: command line not available", true));
+                        return;
+                    }
+
+                    ProcessBuilder pb = new ProcessBuilder(cmd);
+                    if (directory != null) {
+                        pb.directory(new File(directory));
+                    }
+                    pb.redirectErrorStream(true);
+                    Path outputFile = Files.createTempFile("camel-restart-", ".log");
+                    outputFile.toFile().deleteOnExit();
+                    pb.redirectOutput(outputFile.toFile());
+                    pb.start();
+
+                    runner.runOnRenderThread(() -> setNotification("Restarted: " + name, false));
+                } catch (Exception e) {
+                    runner.runOnRenderThread(
+                            () -> setNotification("Restart failed: " + e.getMessage(), true));
+                }
+            });
+        }
+    }
+
+    private void setNotification(String message, boolean error) {
+        monitorNotification = message;
+        monitorNotificationError = error;
+        monitorNotificationExpiry = System.currentTimeMillis() + (error ? 20000 : 10000);
+        notificationWaveState.reset();
+    }
+
+    static List<String> parseCommandLine(String commandLine) {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inQuotes = false;
+        boolean escaped = false;
+
+        for (int i = 0; i < commandLine.length(); i++) {
+            char c = commandLine.charAt(i);
+            if (escaped) {
+                current.append(c);
+                escaped = false;
+            } else if (c == '\\') {
+                escaped = true;
+            } else if (c == '"') {
+                inQuotes = !inQuotes;
+            } else if (c == ' ' && !inQuotes) {
+                if (!current.isEmpty()) {
+                    tokens.add(current.toString());
+                    current.setLength(0);
+                }
+            } else {
+                current.append(c);
+            }
+        }
+        if (!current.isEmpty()) {
+            tokens.add(current.toString());
+        }
+        return tokens;
+    }
+
+    private void resetStats() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return;
+        }
+        String pid = info.pid;
+        JsonObject root = new JsonObject();
+        root.put("action", "reset-stats");
+        Path actionFile = ctx.getActionFile(pid);
+        PathUtils.writeTextSafely(root.toJson(), actionFile);
+        dataService.metrics().resetStats(pid);
+
+        info.activity = List.of();
+        info.errors = new ArrayList<>();
+        dataService.traces().set(Collections.emptyList());
+        dataService.traceFilePositions().clear();
+        tabRegistry.historyTab().historyEntries = Collections.emptyList();
+    }
+
+    private void playBuiltinAnimation(String name) {
+        List<BuiltinAnimations.Frame> frames = BuiltinAnimations.get(name);
+        if (frames == null) {
+            return;
+        }
+        canvasOverlay.open();
+        Thread thread = new Thread(() -> {
+            try {
+                for (BuiltinAnimations.Frame f : frames) {
+                    if (!canvasOverlay.isVisible()) {
+                        return;
+                    }
+                    if (f.delayMs() > 0) {
+                        Thread.sleep(f.delayMs());
+                    }
+                    if (!canvasOverlay.isVisible()) {
+                        return;
+                    }
+                    drawOverlay.setDrawing(f.cells(), 0);
+                }
+                Thread.sleep(100);
+                canvasOverlay.close();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }, "camel-animation");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void sendRouteCommand(String pid, String routeId, String command) {
+        dataService.enableBurstMode();
+        JsonObject root = new JsonObject();
+        root.put("action", "route");
+        root.put("id", routeId);
+        root.put("command", command);
+        Path actionFile = ctx.getActionFile(pid);
+        PathUtils.writeTextSafely(root.toJson(), actionFile);
     }
 
     private void renderFooter(Frame frame, Rect area) {
-        String refreshLabel = refreshInterval >= 1000
-                ? (refreshInterval / 1000) + "s"
-                : refreshInterval + "ms";
-        Line footer;
-        int tab = tabsState.selected();
-        if (tab == TAB_OVERVIEW) {
-            footer = Line.from(
-                    Span.styled(" q", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" quit  "),
-                    Span.styled("r", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" refresh  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" navigate  "),
-                    Span.styled("Enter", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" details  "),
-                    Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" tabs  "),
-                    Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
-        } else if (tab == TAB_ROUTES) {
-            footer = Line.from(
-                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" navigate  "),
-                    Span.styled("s", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" sort  "),
-                    Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" tabs  "),
-                    Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
-        } else if (tab == TAB_HEALTH) {
-            footer = Line.from(
-                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" navigate  "),
-                    Span.styled("d", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" toggle DOWN  "),
-                    Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" tabs  "),
-                    Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
-        } else if (tab == TAB_LOG) {
-            footer = Line.from(
-                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" scroll  "),
-                    Span.styled("PgUp/PgDn", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" page  "),
-                    Span.styled("t/d/i/w/e", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" levels  "),
-                    Span.styled("f", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" follow  "),
-                    Span.styled("g/G", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" top/end"));
-        } else if (tab == TAB_TRACE) {
-            footer = Line.from(
-                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" navigate  "),
-                    Span.styled("h", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" headers" + (showTraceHeaders ? " [on]" : " [off]") + "  "),
-                    Span.styled("b", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" body" + (showTraceBody ? " [on]" : " [off]") + "  "),
-                    Span.styled("f", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" follow" + (traceFollowMode ? " [on]" : " [off]")));
-        } else {
-            footer = Line.from(
-                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" navigate  "),
-                    Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" tabs  "),
-                    Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
+        // Disable footer key-binding clicks until the normal path below re-captures the hint regions.
+        // Overlay/early-return states (screenshot flash, help, caption) leave the footer non-clickable.
+        footerRowY = -1;
+
+        // Show screenshot flash message briefly
+        String msg = recordingManager.screenshotFlashMessage();
+        if (msg != null) {
+            frame.renderWidget(
+                    Paragraph.from(Line.from(Span.styled(" " + msg, Theme.success()))),
+                    area);
+            return;
         }
 
-        frame.renderWidget(Paragraph.from(footer), area);
+        List<Span> spans = new ArrayList<>();
+        int fKeyTotal = 0;
+
+        if (helpOverlay.isVisible()) {
+            helpOverlay.renderFooter(spans);
+            frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+            return;
+        }
+
+        if (captionOverlay.isCaptionVisible()) {
+            captionOverlay.renderFooter(spans);
+            frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+            return;
+        }
+
+        if (canvasOverlay.isVisible()) {
+            canvasOverlay.renderFooter(spans);
+            frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+            return;
+        }
+
+        if (filesBrowser.isVisible()) {
+            filesBrowser.renderFooter(spans);
+        } else if (popupManager.isSwitchPopupVisible()) {
+            hint(spans, "Up/Down", "select");
+            hint(spans, "Enter", "switch");
+            hint(spans, "Esc", "close");
+        } else if (popupManager.isMorePopupVisible()) {
+            hint(spans, "Up/Down", "select");
+            hint(spans, "Enter", "open");
+            hint(spans, "Esc", "close");
+        } else if (shellPanel.isOpen()) {
+            shellPanel.renderFooter(spans);
+        } else if (aiPanel.isOpen()) {
+            aiPanel.renderFooter(spans);
+        } else {
+            MonitorTab tab = tabRegistry.activeTab();
+
+            if (tabRegistry.selectedTabIndex() == TAB_OVERVIEW) {
+                fKeyTotal = renderOverviewFooter(spans);
+            } else if (tab != null) {
+                tab.renderFooter(spans);
+                fKeyTotal = insertFKeyHints(spans);
+            }
+        }
+
+        List<Span> rightSpans = new ArrayList<>();
+
+        if (recordingManager.isRecording() && !recordingManager.getRecentKeys().isEmpty()) {
+            long now = System.currentTimeMillis();
+            List<RecordingManager.KeyRecord> recentKeys = recordingManager.getRecentKeys();
+            int maxKeys = Math.min(recentKeys.size(), 8);
+            List<RecordingManager.KeyRecord> visible = recentKeys.subList(recentKeys.size() - maxKeys, recentKeys.size());
+            for (RecordingManager.KeyRecord kr : visible) {
+                long age = now - kr.timestamp();
+                Style style = age < 1000
+                        ? Theme.selectionBg()
+                        : Theme.muted();
+                rightSpans.add(Span.styled(" " + kr.label() + " ", style));
+            }
+        }
+
+        if (mcp) {
+            if (!rightSpans.isEmpty()) {
+                rightSpans.add(Span.raw("  "));
+            }
+            String client = mcpServer != null ? mcpServer.getConnectedClient() : null;
+            boolean active = mcpServer != null && mcpServer.isRecentActivity();
+            String mcpLabel = "MCP :" + mcpPort;
+            String suffix;
+            Style labelStyle;
+            Style suffixStyle;
+            if (client != null) {
+                suffix = active ? " " + TuiIcons.SELECTED : " " + TuiIcons.IDLE;
+                mcpLabel += " (" + client + ")";
+                labelStyle = Theme.success();
+                suffixStyle = active ? Theme.success() : Theme.muted();
+            } else {
+                suffix = " " + TuiIcons.CROSS;
+                labelStyle = Theme.muted();
+                suffixStyle = Theme.error();
+            }
+            rightSpans.add(Span.styled(mcpLabel, labelStyle));
+            rightSpans.add(Span.styled(suffix, suffixStyle));
+            if (client == null) {
+                rightSpans.add(Span.styled("  F2 → Setup MCP", Theme.muted()));
+            }
+        }
+
+        int hintsWidth = spans.stream().mapToInt(Span::width).sum();
+        int rightWidth = rightSpans.stream().mapToInt(Span::width).sum();
+        int minGap = rightSpans.isEmpty() ? 0 : 1;
+
+        if (hintsWidth + rightWidth + minGap > area.width()) {
+            // Drop decorative right-side content first
+            rightSpans.clear();
+            rightWidth = 0;
+            minGap = 0;
+            // Drop secondary F-key hints (F2/F3/F6) before tab-specific action hints.
+            hintsWidth = dropFKeyHints(spans, fKeyTotal, hintsWidth, area.width());
+            // Then drop tab-specific hints from the tail, keeping at least 4 spans
+            while (spans.size() > 4 && hintsWidth > area.width()) {
+                Span labelSpan = spans.remove(spans.size() - 1);
+                Span keySpan = spans.remove(spans.size() - 1);
+                hintsWidth -= keySpan.width() + labelSpan.width();
+            }
+        }
+
+        if (!rightSpans.isEmpty()) {
+            int gap = Math.max(1, area.width() - hintsWidth - rightWidth);
+            spans.add(Span.raw(" ".repeat(gap)));
+            spans.addAll(rightSpans);
+        }
+
+        captureFooterRegions(area, spans);
+        frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+    }
+
+    private int insertFKeyHints(List<Span> spans) {
+        int insertPos = Math.min(2, spans.size());
+        List<Span> fKeySpans = new ArrayList<>();
+        MonitorTab tab = tabRegistry.activeTab();
+        boolean hasHelp = tab != null && tab.getHelpText() != null;
+        if (hasHelp) {
+            hint(fKeySpans, "F1", "help");
+        }
+        hint(fKeySpans, "F2", "actions");
+        spans.addAll(insertPos, fKeySpans);
+        // Return total F-key span count. The footer drop loop uses this to remove pairs from
+        // the tail, stopping before the first pair (F1 help when present).
+        return fKeySpans.size();
+    }
+
+    /**
+     * Drops secondary F-key hint pairs from an overflowing footer. The F-key pairs are inserted at position 2 (after
+     * the first tab hint), so the last pair's key span sits at index {@code fKeyTotal}. Pairs are removed from the
+     * tail, so F2 goes first, and the loop stops at 2 so the first pair (F1 help when present) is always preserved.
+     *
+     * @param  spans      the footer spans, mutated in place by removing dropped pairs
+     * @param  fKeyTotal  total number of F-key spans that were inserted (e.g. 4 for F1/F2)
+     * @param  hintsWidth the current rendered width of {@code spans}
+     * @param  available  the available footer width
+     * @return            the rendered width of {@code spans} after dropping
+     */
+    static int dropFKeyHints(List<Span> spans, int fKeyTotal, int hintsWidth, int available) {
+        while (fKeyTotal > 2 && hintsWidth > available) {
+            Span labelSpan = spans.remove(fKeyTotal + 1);
+            Span keySpan = spans.remove(fKeyTotal);
+            hintsWidth -= keySpan.width() + labelSpan.width();
+            fKeyTotal -= 2;
+        }
+        return hintsWidth;
+    }
+
+    private int renderOverviewFooter(List<Span> spans) {
+        if (actionsPopup.isVisible()) {
+            actionsPopup.renderFooter(spans);
+            return 0;
+        }
+        tabRegistry.overviewTab().renderFooter(spans);
+        int fKeyTotal = insertFKeyHints(spans);
+        // Process action hints
+        if (ctx.selectedPid != null && !isInfraSelected()) {
+            IntegrationInfo selInfo = findSelectedIntegration();
+            if (selInfo != null) {
+                hint(spans, "p", selInfo.routeStarted > 0 ? "stop routes" : "start routes");
+            }
+        }
+        if (ctx.selectedPid != null) {
+            if (!isInfraSelected()) {
+                hint(spans, "r", "restart");
+            }
+            hint(spans, "x", "stop");
+            hint(spans, "X", "kill");
+        }
+        return fKeyTotal;
+    }
+
+    private int resolveSelectTab() {
+        TuiSettings settings = TuiSettings.load();
+        String tabName = settings.getSelectTab();
+        if (tabName == null) {
+            return TAB_LOG;
+        }
+        for (TabRegistry.TabEntry entry : tabRegistry.allTabEntries()) {
+            if (entry.name().equals(tabName) && entry.tabIndex() != TAB_MORE) {
+                return entry.tabIndex();
+            }
+        }
+        return TAB_LOG;
     }
 
     // ---- Data Loading ----
 
-    private void refreshData() {
-        lastRefresh = System.currentTimeMillis();
-        try {
-            List<IntegrationInfo> infos = new ArrayList<>();
-            List<Long> pids = findPids(name);
-            ProcessHandle.allProcesses()
-                    .filter(ph -> pids.contains(ph.pid()))
-                    .forEach(ph -> {
-                        JsonObject root = loadStatus(ph.pid());
-                        if (root != null) {
-                            IntegrationInfo info = parseIntegration(ph, root);
-                            if (info != null) {
-                                infos.add(info);
-                                // Track throughput for sparkline
-                                updateThroughputHistory(info);
-                            }
-                        }
-                    });
-
-            // Detect disappeared integrations and start vanishing
-            Set<String> livePids = infos.stream().map(i -> i.pid).collect(Collectors.toSet());
-            List<IntegrationInfo> previous = data.get();
-            for (IntegrationInfo prev : previous) {
-                if (!prev.vanishing && !livePids.contains(prev.pid) && !vanishing.containsKey(prev.pid)) {
-                    vanishing.put(prev.pid, new VanishingInfo(prev, System.currentTimeMillis()));
-                }
-            }
-
-            // Expire old vanishing entries
-            long now = System.currentTimeMillis();
-            Iterator<Map.Entry<String, VanishingInfo>> it = vanishing.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, VanishingInfo> entry = it.next();
-                if (now - entry.getValue().startTime > VANISH_DURATION_MS) {
-                    it.remove();
-                    throughputHistory.remove(entry.getKey());
-                } else if (!livePids.contains(entry.getKey())) {
-                    IntegrationInfo ghost = entry.getValue().info;
-                    ghost.vanishing = true;
-                    ghost.vanishStart = entry.getValue().startTime;
-                    infos.add(ghost);
-                } else {
-                    it.remove();
-                }
-            }
-
-            data.set(infos);
-
-            // Refresh log data for the selected integration
-            IntegrationInfo selected = findSelectedIntegration();
-            if (selected != null) {
-                readLogFile(selected.pid);
-                applyLogFilters();
-            }
-
-            // Refresh trace data
-            refreshTraceData(pids);
-        } catch (Exception e) {
-            // ignore refresh errors
-        }
-    }
-
-    private void updateThroughputHistory(IntegrationInfo info) {
-        // Track exchangesTotal over a 1-second sliding window for stable throughput
-        long currentTotal = info.exchangesTotal;
-        long now = System.currentTimeMillis();
-
-        String pid = info.pid;
-        LinkedList<long[]> samples = throughputSamples.computeIfAbsent(pid, k -> new LinkedList<>());
-        samples.add(new long[] { now, currentTotal });
-
-        // Remove samples older than 1 second
-        while (!samples.isEmpty() && now - samples.get(0)[0] > 1000) {
-            samples.remove(0);
-        }
-
-        // Compute throughput over the window
-        if (samples.size() >= 2) {
-            long[] oldest = samples.get(0);
-            long[] newest = samples.get(samples.size() - 1);
-            long deltaExchanges = newest[1] - oldest[1];
-            long deltaTimeMs = newest[0] - oldest[0];
-            long tp = deltaTimeMs > 0 ? (deltaExchanges * 1000) / deltaTimeMs : 0;
-
-            LinkedList<Long> hist = throughputHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-            // Only add one point per second to keep the sparkline meaningful
-            Long lastTime = previousExchangesTime.get(pid);
-            if (lastTime == null || now - lastTime >= 1000) {
-                previousExchangesTime.put(pid, now);
-                hist.add(tp);
-                while (hist.size() > MAX_SPARKLINE_POINTS) {
-                    hist.remove(0);
-                }
-            }
-        }
-    }
-
-    // ---- Trace Data Loading ----
-
-    private void refreshTraceData(List<Long> pids) {
-        List<TraceEntry> allTraces = new ArrayList<>(traces.get());
-
-        for (Long pid : pids) {
-            readTraceFile(Long.toString(pid), allTraces);
-        }
-
-        // Sort by timestamp
-        allTraces.sort((a, b) -> {
-            if (a.timestamp == null && b.timestamp == null) {
-                return 0;
-            }
-            if (a.timestamp == null) {
-                return -1;
-            }
-            if (b.timestamp == null) {
-                return 1;
-            }
-            return a.timestamp.compareTo(b.timestamp);
-        });
-
-        // Keep only last MAX_TRACES
-        if (allTraces.size() > MAX_TRACES) {
-            allTraces = new ArrayList<>(allTraces.subList(allTraces.size() - MAX_TRACES, allTraces.size()));
-        }
-
-        traces.set(allTraces);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void readTraceFile(String pid, List<TraceEntry> allTraces) {
-        Path traceFile = CommandLineHelper.getCamelDir().resolve(pid + "-trace.json");
-        if (!Files.exists(traceFile)) {
+    private void refreshLogData() {
+        if (tabRegistry.selectedTabIndex() != TAB_LOG && !logPinned) {
             return;
         }
-
-        long lastPos = traceFilePositions.getOrDefault(pid, 0L);
-
-        try (RandomAccessFile raf = new RandomAccessFile(traceFile.toFile(), "r")) {
-            long length = raf.length();
-            if (length <= lastPos) {
-                return; // no new data
-            }
-
-            raf.seek(lastPos);
-            // If we're resuming mid-file, skip any partial line
-            if (lastPos > 0) {
-                raf.readLine();
-            }
-
-            // Read remaining bytes
-            long startPos = raf.getFilePointer();
-            byte[] remaining = new byte[(int) (length - startPos)];
-            raf.readFully(remaining);
-            String content = new String(remaining, StandardCharsets.UTF_8);
-
-            traceFilePositions.put(pid, length);
-
-            // Each line is a JSON object: {"enabled":true,"traces":[...]}
-            String[] lines = content.split("\n");
-            for (String line : lines) {
-                line = line.trim();
-                if (line.isEmpty()) {
-                    continue;
-                }
-                try {
-                    JsonObject json = (JsonObject) Jsoner.deserialize(line);
-                    Object tracesArray = json.get("traces");
-                    if (tracesArray instanceof List<?> traceList) {
-                        for (Object traceObj : traceList) {
-                            if (traceObj instanceof JsonObject traceJson) {
-                                TraceEntry entry = parseTraceEntry(traceJson, pid);
-                                if (entry != null) {
-                                    allTraces.add(entry);
-                                }
-                            }
-                        }
-                    } else {
-                        // Fallback: try parsing the line itself as a trace entry
-                        TraceEntry entry = parseTraceEntry(json, pid);
-                        if (entry != null) {
-                            allTraces.add(entry);
-                        }
-                    }
-                } catch (Exception e) {
-                    // skip malformed lines
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private TraceEntry parseTraceEntry(JsonObject json, String pid) {
-        TraceEntry entry = new TraceEntry();
-        entry.pid = pid;
-        entry.uid = stringValue(json.get("uid"));
-        entry.exchangeId = json.getString("exchangeId");
-        entry.routeId = json.getString("routeId");
-        entry.nodeId = json.getString("nodeId");
-        entry.location = json.getString("location");
-        entry.nodeLabel = json.getString("nodeLabel");
-
-        // timestamp is epoch millis (number)
-        Object tsObj = json.get("timestamp");
-        if (tsObj instanceof Number n) {
-            long epochMs = n.longValue();
-            entry.timestamp = Instant.ofEpochMilli(epochMs)
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalTime().toString();
-            // Truncate to HH:mm:ss.SSS
-            if (entry.timestamp.length() > 12) {
-                entry.timestamp = entry.timestamp.substring(0, 12);
-            }
-        } else if (tsObj != null) {
-            entry.timestamp = tsObj.toString();
-        }
-
-        // Derive status from done/failed booleans
-        Boolean done = (Boolean) json.get("done");
-        Boolean failed = (Boolean) json.get("failed");
-        if (Boolean.TRUE.equals(failed)) {
-            entry.status = "Failed";
-        } else if (Boolean.TRUE.equals(done)) {
-            entry.status = "Done";
+        String logPid = null;
+        String logFileName = null;
+        InfraInfo selInfra = findSelectedInfra();
+        if (selInfra != null) {
+            logPid = selInfra.pid;
+            logFileName = "infra-" + selInfra.alias + "-" + selInfra.pid + ".log";
         } else {
-            entry.status = "Processing";
-        }
-
-        Object elapsedObj = json.get("elapsed");
-        if (elapsedObj instanceof Number n) {
-            entry.elapsed = n.longValue();
-        } else if (elapsedObj != null) {
-            try {
-                entry.elapsed = Long.parseLong(elapsedObj.toString());
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-        }
-
-        // Parse message object
-        Object msgObj = json.get("message");
-        if (msgObj instanceof JsonObject message) {
-            // Headers: can be a list of {key, type, value} or a map
-            Object headersObj = message.get("headers");
-            if (headersObj instanceof List<?> headerList) {
-                entry.headers = new LinkedHashMap<>();
-                for (Object h : headerList) {
-                    if (h instanceof JsonObject hObj) {
-                        entry.headers.put(
-                                String.valueOf(hObj.get("key")),
-                                hObj.get("value"));
+            IntegrationInfo selected = findSelectedIntegration();
+            if (selected != null) {
+                logPid = selected.pid;
+                logFileName = selected.pid + ".log";
+                // fallback to name-based log file (e.g. Quarkus apps use app name)
+                if (!Files.exists(CommandLineHelper.getCamelDir().resolve(logFileName))
+                        && selected.name != null) {
+                    Path nameLog = CommandLineHelper.getCamelDir().resolve(selected.name + ".log");
+                    if (Files.exists(nameLog)) {
+                        logFileName = selected.name + ".log";
                     }
                 }
-            } else if (headersObj instanceof Map) {
-                entry.headers = new LinkedHashMap<>((Map<String, Object>) headersObj);
-            }
-
-            // Body: can be {type, value} or a plain string
-            Object bodyObj = message.get("body");
-            if (bodyObj instanceof JsonObject bodyJson) {
-                Object val = bodyJson.get("value");
-                entry.body = val != null ? val.toString() : bodyJson.toString();
-            } else if (bodyObj != null) {
-                entry.body = bodyObj.toString();
-            }
-            if (entry.body != null) {
-                entry.bodyPreview = entry.body.replace("\n", " ").replace("\r", "");
-            }
-
-            // Exchange properties: can be a list of {key, type, value} or a map
-            Object propsObj = message.get("exchangeProperties");
-            if (propsObj instanceof List<?> propList) {
-                entry.exchangeProperties = new LinkedHashMap<>();
-                for (Object p : propList) {
-                    if (p instanceof JsonObject pObj) {
-                        entry.exchangeProperties.put(
-                                String.valueOf(pObj.get("key")),
-                                pObj.get("value"));
-                    }
-                }
-            } else if (propsObj instanceof Map) {
-                entry.exchangeProperties = new LinkedHashMap<>((Map<String, Object>) propsObj);
-            }
-
-            // Exchange variables: can be a list of {key, type, value} or a map
-            Object varsObj = message.get("exchangeVariables");
-            if (varsObj instanceof List<?> varList) {
-                entry.exchangeVariables = new LinkedHashMap<>();
-                for (Object v : varList) {
-                    if (v instanceof JsonObject vObj) {
-                        entry.exchangeVariables.put(
-                                String.valueOf(vObj.get("key")),
-                                vObj.get("value"));
-                    }
-                }
-            } else if (varsObj instanceof Map) {
-                entry.exchangeVariables = new LinkedHashMap<>((Map<String, Object>) varsObj);
             }
         }
-
-        return entry;
+        if (logPid != null) {
+            tabRegistry.logTab().refreshFromFile(logPid, logFileName);
+        }
     }
 
-    private static String stringValue(Object obj) {
-        return obj != null ? obj.toString() : null;
-    }
-
-    // ---- Integration Parsing ----
-
-    @SuppressWarnings("unchecked")
-    private IntegrationInfo parseIntegration(ProcessHandle ph, JsonObject root) {
-        JsonObject context = (JsonObject) root.get("context");
-        if (context == null) {
-            return null;
+    private void refreshConditionalData() {
+        List<Long> selectedPids = dataService.selectedPidAsList();
+        if (tabRegistry.selectedTabIndex() == TAB_ERRORS && !selectedPids.isEmpty()) {
+            dataService.refreshErrorData(selectedPids);
         }
-
-        IntegrationInfo info = new IntegrationInfo();
-        info.name = context.getString("name");
-        if ("CamelJBang".equals(info.name)) {
-            info.name = ProcessHelper.extractName(root, ph);
+        if (tabRegistry.selectedTabIndex() == TAB_ACTIVITY && !selectedPids.isEmpty()) {
+            dataService.refreshActivityData(selectedPids);
         }
-        info.pid = Long.toString(ph.pid());
-        info.uptime = extractSince(ph);
-        info.ago = TimeUtils.printSince(info.uptime);
-        info.state = context.getIntegerOrDefault("phase", 0);
-
-        JsonObject runtime = (JsonObject) root.get("runtime");
-        info.platform = runtime != null ? runtime.getString("platform") : null;
-
-        Map<String, ?> stats = context.getMap("statistics");
-        if (stats != null) {
-            Object thp = stats.get("exchangesThroughput");
-            if (thp != null) {
-                info.throughput = thp.toString();
+        if (tabRegistry.selectedTabIndex() == TAB_HISTORY && !selectedPids.isEmpty()) {
+            if (tabRegistry.historyTab().historyRefreshRequested) {
+                tabRegistry.historyTab().historyRefreshRequested = false;
+                tabRegistry.historyTab().historyEntries = dataService.loadHistoryData(selectedPids);
             }
-            info.exchangesTotal = objToLong(stats.get("exchangesTotal"));
+            dataService.refreshTraceData(selectedPids);
         }
-
-        JsonObject mem = (JsonObject) root.get("memory");
-        if (mem != null) {
-            info.heapMemUsed = mem.getLongOrDefault("heapMemoryUsed", 0L);
-            info.heapMemMax = mem.getLongOrDefault("heapMemoryMax", 0L);
+        if (tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.spansTab()
+                && ctx.selectedPid != null && tabRegistry.spansTab().spanRefreshRequested) {
+            tabRegistry.spansTab().spanRefreshRequested = false;
+            dataService.refreshSpanData();
         }
-
-        JsonObject threads = (JsonObject) root.get("threads");
-        if (threads != null) {
-            info.threadCount = threads.getIntegerOrDefault("threadCount", 0);
-            info.peakThreadCount = threads.getIntegerOrDefault("peakThreadCount", 0);
-        }
-
-        // Parse routes
-        JsonArray routes = (JsonArray) root.get("routes");
-        if (routes != null) {
-            for (Object r : routes) {
-                JsonObject rj = (JsonObject) r;
-                RouteInfo ri = new RouteInfo();
-                ri.routeId = rj.getString("routeId");
-                ri.from = rj.getString("from");
-                ri.state = rj.getString("state");
-                ri.uptime = rj.getString("uptime");
-
-                Map<String, ?> rs = rj.getMap("statistics");
-                if (rs != null) {
-                    ri.throughput = objToString(rs.get("exchangesThroughput"));
-                    ri.total = objToLong(rs.get("exchangesTotal"));
-                    ri.failed = objToLong(rs.get("exchangesFailed"));
-                    ri.meanTime = objToLong(rs.get("meanProcessingTime"));
-                    ri.maxTime = objToLong(rs.get("maxProcessingTime"));
-                }
-
-                // Parse processors
-                JsonArray procs = (JsonArray) rj.get("processors");
-                if (procs != null) {
-                    for (Object p : procs) {
-                        JsonObject pj = (JsonObject) p;
-                        ProcessorInfo pi = new ProcessorInfo();
-                        pi.id = pj.getString("id");
-                        pi.processor = pj.getString("processor");
-                        pi.level = pj.getIntegerOrDefault("level", 0);
-
-                        Map<String, ?> ps = pj.getMap("statistics");
-                        if (ps != null) {
-                            pi.total = objToLong(ps.get("exchangesTotal"));
-                            pi.failed = objToLong(ps.get("exchangesFailed"));
-                            pi.meanTime = objToLong(ps.get("meanProcessingTime"));
-                            pi.maxTime = objToLong(ps.get("maxProcessingTime"));
-                            pi.lastTime = objToLong(ps.get("lastProcessingTime"));
-                        }
-
-                        ri.processors.add(pi);
-                    }
-                }
-
-                info.routes.add(ri);
-            }
-        }
-
-        // Parse health checks
-        JsonObject healthChecks = (JsonObject) root.get("healthChecks");
-        if (healthChecks != null) {
-            JsonArray checks = (JsonArray) healthChecks.get("checks");
-            if (checks != null) {
-                for (Object c : checks) {
-                    JsonObject cj = (JsonObject) c;
-                    HealthCheckInfo hc = new HealthCheckInfo();
-                    hc.group = cj.getString("group");
-                    hc.name = cj.getString("id");
-                    hc.state = cj.getString("state");
-                    hc.readiness = cj.getBooleanOrDefault("readiness", false);
-                    hc.liveness = cj.getBooleanOrDefault("liveness", false);
-                    // Extract message from details if available
-                    JsonObject details = (JsonObject) cj.get("details");
-                    if (details != null && details.containsKey("failure.error.message")) {
-                        hc.message = details.getString("failure.error.message");
-                    }
-                    info.healthChecks.add(hc);
-                }
-            }
-        }
-
-        // Parse endpoints (top-level "endpoints" is a JsonObject with nested "endpoints" array)
-        JsonObject endpointsObj = (JsonObject) root.get("endpoints");
-        if (endpointsObj != null) {
-            JsonArray endpointList = (JsonArray) endpointsObj.get("endpoints");
-            if (endpointList != null) {
-                for (Object e : endpointList) {
-                    JsonObject ej = (JsonObject) e;
-                    EndpointInfo ep = new EndpointInfo();
-                    ep.uri = ej.getString("uri");
-                    ep.direction = ej.getString("direction");
-                    ep.routeId = ej.getString("routeId");
-                    // Extract component from URI (e.g., "timer://tick" -> "timer")
-                    if (ep.uri != null) {
-                        int idx = ep.uri.indexOf(':');
-                        ep.component = idx > 0 ? ep.uri.substring(0, idx) : ep.uri;
-                    }
-                    info.endpoints.add(ep);
-                }
-            }
-        }
-
-        return info;
     }
 
     // ---- Helpers ----
 
     private IntegrationInfo findSelectedIntegration() {
-        if (selectedPid == null) {
-            return null;
-        }
-        return data.get().stream()
-                .filter(i -> selectedPid.equals(i.pid) && !i.vanishing)
-                .findFirst().orElse(null);
+        return ctx.findSelectedIntegration();
+    }
+
+    private InfraInfo findSelectedInfra() {
+        return ctx.findSelectedInfra();
+    }
+
+    private boolean isInfraSelected() {
+        return ctx.isInfraSelected();
     }
 
     private String selectedName() {
-        IntegrationInfo info = findSelectedIntegration();
-        return info != null ? truncate(info.name, 20) : "?";
+        return ctx.selectedName();
     }
 
-    private List<Long> findPids(String name) {
-        return TuiHelper.findPids(name, this::getStatusFile);
-    }
+    // ---- MCP .mcp.json lifecycle ----
 
-    private JsonObject loadStatus(long pid) {
-        return TuiHelper.loadStatus(pid, this::getStatusFile);
-    }
-
-    private static long extractSince(ProcessHandle ph) {
-        return ph.info().startInstant().map(Instant::toEpochMilli).orElse(0L);
-    }
-
-    private static String truncate(String s, int max) {
-        return TuiHelper.truncate(s, max);
-    }
-
-    private static String formatMemory(long used, long max) {
-        if (used <= 0) {
-            return "";
+    private static Path writeMcpJson(int port) {
+        Path path = Path.of(".mcp.json");
+        if (Files.exists(path)) {
+            // do not overwrite an existing .mcp.json (may belong to Claude Code, Cursor, etc.)
+            return null;
         }
-        String u = formatBytes(used);
-        if (max > 0) {
-            return u + "/" + formatBytes(max);
+        try {
+            String json = """
+                    {
+                      "mcpServers": {
+                        "camel-tui": {
+                          "type": "http",
+                          "url": "http://localhost:%d/mcp"
+                        }
+                      }
+                    }
+                    """.formatted(port);
+            Files.writeString(path, json);
+            return path;
+        } catch (IOException e) {
+            LOG.log(Level.WARNING, "Failed to write .mcp.json: {0}", e.getMessage());
+            return null;
         }
-        return u;
     }
 
-    private static String formatBytes(long bytes) {
-        if (bytes < 1024) {
-            return bytes + "B";
+    private static void deleteMcpJson(Path path) {
+        if (path != null) {
+            try {
+                Files.deleteIfExists(path);
+            } catch (IOException e) {
+                LOG.log(Level.DEBUG, "Failed to delete .mcp.json: {0}", e.getMessage());
+            }
         }
-        if (bytes < 1024 * 1024) {
-            return (bytes / 1024) + "K";
-        }
-        return (bytes / (1024 * 1024)) + "M";
     }
 
-    private static String formatThreads(int count, int peak) {
-        if (count <= 0) {
-            return "";
-        }
-        return count + "/" + peak;
+    void setRunnerForTesting(Runnable onQuit) {
+        aiPanel.setExitCallbackForTestingOrRuntime(onQuit);
     }
 
-    private static String objToString(Object o) {
-        return o != null ? o.toString() : "";
+    AiPanel aiPanelForTesting() {
+        return aiPanel;
     }
 
-    private static long objToLong(Object o) {
-        return TuiHelper.objToLong(o);
-    }
-
-    // ---- Data Classes ----
-
-    static class IntegrationInfo {
-        String pid;
-        String name;
-        String platform;
-        int state;
-        long uptime;
-        String ago;
-        String throughput;
-        long exchangesTotal;
-        long heapMemUsed;
-        long heapMemMax;
-        int threadCount;
-        int peakThreadCount;
-        boolean vanishing;
-        long vanishStart;
-        final List<RouteInfo> routes = new ArrayList<>();
-        final List<HealthCheckInfo> healthChecks = new ArrayList<>();
-        final List<EndpointInfo> endpoints = new ArrayList<>();
-    }
-
-    static class RouteInfo {
-        String routeId;
-        String from;
-        String state;
-        String uptime;
-        String throughput;
-        long total;
-        long failed;
-        long meanTime;
-        long maxTime;
-        final List<ProcessorInfo> processors = new ArrayList<>();
-    }
-
-    static class ProcessorInfo {
-        String id;
-        String processor;
-        int level;
-        long total;
-        long failed;
-        long meanTime;
-        long maxTime;
-        long lastTime;
-    }
-
-    static class HealthCheckInfo {
-        String group;
-        String name;
-        String state;
-        boolean readiness;
-        boolean liveness;
-        String message;
-    }
-
-    static class EndpointInfo {
-        String uri;
-        String component;
-        String direction;
-        String routeId;
-    }
-
-    static class TraceEntry {
-        String pid;
-        String uid;
-        String exchangeId;
-        String timestamp;
-        String routeId;
-        String nodeId;
-        String nodeLabel;
-        String location;
-        String status;
-        long elapsed;
-        String body;
-        String bodyPreview;
-        Map<String, Object> headers;
-        Map<String, Object> exchangeProperties;
-        Map<String, Object> exchangeVariables;
-    }
-
-    static class LogEntry {
-        String raw;
-        String time = "";
-        String level = "INFO";
-        String logger;
-        String message = "";
-    }
-
-    record VanishingInfo(IntegrationInfo info, long startTime) {
-    }
 }

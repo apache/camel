@@ -54,26 +54,26 @@ public class RouteDiagramLayoutEngine {
     private final FontMetrics fontMetrics;
     private final NodeLabelMode nodeLabelMode;
 
-    private static final Set<String> BRANCHING_EIPS = Set.of(
+    static final Set<String> BRANCHING_EIPS = Set.of(
             "choice", "multicast", "doTry", "loadBalance", "recipientList", "circuitBreaker");
 
-    private static final Set<String> BRANCH_CHILD_TYPES = Set.of(
+    public static final Set<String> BRANCH_CHILD_TYPES = Set.of(
             "when", "otherwise", "doCatch", "doFinally", "onFallback");
 
-    private static final Set<String> STRUCTURAL_TYPES = Set.of(
+    static final Set<String> STRUCTURAL_TYPES = Set.of(
             "route", "from");
 
-    static class Bounds {
-        int minX, minY, maxX, maxY;
+    public static class Bounds {
+        public int minX, minY, maxX, maxY;
 
-        Bounds(int minX, int minY, int maxX, int maxY) {
+        public Bounds(int minX, int minY, int maxX, int maxY) {
             this.minX = minX;
             this.minY = minY;
             this.maxX = maxX;
             this.maxY = maxY;
         }
 
-        void expand(Bounds other) {
+        public void expand(Bounds other) {
             minX = Math.min(minX, other.minX);
             minY = Math.min(minY, other.minY);
             maxX = Math.max(maxX, other.maxX);
@@ -127,23 +127,55 @@ public class RouteDiagramLayoutEngine {
         return nodeTextPadding;
     }
 
+    public static class RouteStatInfo extends StatInfo {
+        public String coverage;
+        public String load01;
+        public String load05;
+        public String load15;
+    }
+
+    public static class StatInfo {
+        public long idleSince;
+        public long exchangesTotal;
+        public String exchangesThroughput;
+        public long exchangesFailed;
+        public long exchangesInflight;
+        public long meanProcessingTime;
+        public long maxProcessingTime;
+        public long minProcessingTime;
+        public long lastProcessingTime;
+        public long deltaProcessingTime;
+        public long p50ProcessingTime = -1;
+        public long p95ProcessingTime = -1;
+        public long p99ProcessingTime = -1;
+        public long lastCreatedExchangeTimestamp;
+        public long lastCompletedExchangeTimestamp;
+        public long lastFailedExchangeTimestamp;
+    }
+
     public static class NodeInfo {
         public String type;
+        public String id;
         public String code;
+        public String uri;
         public String description;
         public int level;
+        public int line;
+        public boolean remote;
+        public StatInfo stat;
     }
 
     public static class RouteInfo {
         public String routeId;
         public String source;
-        public List<NodeInfo> nodes = new ArrayList<>();
+        public RouteStatInfo stat;
+        public final List<NodeInfo> nodes = new ArrayList<>();
     }
 
     public static class TreeNode {
         public final NodeInfo info;
         public TreeNode parent;
-        public List<TreeNode> children = new ArrayList<>();
+        public final List<TreeNode> children = new ArrayList<>();
         public int subtreeWidth;
         public LayoutNode layoutNode;
 
@@ -154,6 +186,7 @@ public class RouteDiagramLayoutEngine {
 
     public static class LayoutNode {
         public String type;
+        public String id;
         public int x;
         public int y;
         public int height;
@@ -171,7 +204,7 @@ public class RouteDiagramLayoutEngine {
         public int labelY;
         public int maxX;
         public int maxY;
-        public List<LayoutNode> nodes = new ArrayList<>();
+        public final List<LayoutNode> nodes = new ArrayList<>();
     }
 
     public static TreeNode buildTree(List<NodeInfo> nodes) {
@@ -380,6 +413,7 @@ public class RouteDiagramLayoutEngine {
 
         LayoutNode ln = new LayoutNode();
         ln.type = node.info.type;
+        ln.id = node.info.id;
         ln.x = nodeX;
         ln.y = y;
         ln.wrappedLines = resolveLabel(node.info, nodeLabelMode).stream()

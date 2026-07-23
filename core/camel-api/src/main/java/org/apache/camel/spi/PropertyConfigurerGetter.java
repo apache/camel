@@ -16,24 +16,33 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
- * A marker interface to identify the object as being a configurer which can provide details about the options the
- * configurer supports.
+ * Extension of the configurer SPI that, in addition to setting properties, can describe the options a target supports.
  * <p/>
- * This is used in Camel to have fast property configuration of Camel components & endpoints, and for EIP patterns as
- * well.
+ * Where {@link PropertyConfigurer} only writes property values, a getter can report each option's type
+ * ({@link #getOptionType}), read the current value ({@link #getOptionValue}), resolve the element type of collection
+ * options ({@link #getCollectionValueType}), and list autowired options ({@link #getAutowiredNames}). Generated
+ * configurers typically implement this so tooling and the property-binding engine can introspect components and
+ * endpoints. {@link ExtendedPropertyConfigurerGetter} adds enumeration of all options.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/property-binding.html">Property Binding</a> in the Camel user manual.
  *
- * @see PropertyConfigurer
- * @see ExtendedPropertyConfigurerGetter
+ * @see   PropertyConfigurer
+ * @see   ExtendedPropertyConfigurerGetter
+ * @since 3.2
  */
 public interface PropertyConfigurerGetter {
 
     /**
      * Gets the option class type.
      *
-     * @param  name the property name
-     * @return      the class type, or <tt>null</tt> if no option exists with the name
+     * @param  name       the property name
+     * @param  ignoreCase whether to ignore case for matching the property name
+     * @return            the class type, or <tt>null</tt> if no option exists with the name
      */
+    @Nullable
     Class<?> getOptionType(String name, boolean ignoreCase);
 
     /**
@@ -41,7 +50,7 @@ public interface PropertyConfigurerGetter {
      *
      * @return the names as an array, or null if there are no autowire options.
      */
-    default String[] getAutowiredNames() {
+    default String @Nullable [] getAutowiredNames() {
         return null;
     }
 
@@ -56,7 +65,7 @@ public interface PropertyConfigurerGetter {
      * @return            the class type, or <tt>null</tt> if the option is not a collection kind or not possible to
      *                    determine
      */
-    default Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+    default @Nullable Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         return null;
     }
 
@@ -69,6 +78,7 @@ public interface PropertyConfigurerGetter {
      * @param  ignoreCase whether to ignore case for matching the property name
      * @return            the property value
      */
+    @Nullable
     Object getOptionValue(Object target, String name, boolean ignoreCase);
 
 }

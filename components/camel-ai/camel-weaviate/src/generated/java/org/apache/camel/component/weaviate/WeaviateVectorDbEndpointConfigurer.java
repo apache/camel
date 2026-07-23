@@ -25,15 +25,13 @@ public class WeaviateVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "grpchost":
+        case "grpcHost": target.getConfiguration().setGrpcHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "grpcport":
+        case "grpcPort": target.getConfiguration().setGrpcPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "proxyhost":
-        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport":
-        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyscheme":
-        case "proxyScheme": target.getConfiguration().setProxyScheme(property(camelContext, java.lang.String.class, value)); return true;
         case "scheme": target.getConfiguration().setScheme(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -44,15 +42,13 @@ public class WeaviateVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
+        case "grpchost":
+        case "grpcHost": return java.lang.String.class;
+        case "grpcport":
+        case "grpcPort": return java.lang.Integer.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "proxyhost":
-        case "proxyHost": return java.lang.String.class;
-        case "proxyport":
-        case "proxyPort": return java.lang.Integer.class;
-        case "proxyscheme":
-        case "proxyScheme": return java.lang.String.class;
         case "scheme": return java.lang.String.class;
         default: return null;
         }
@@ -64,15 +60,13 @@ public class WeaviateVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
+        case "grpchost":
+        case "grpcHost": return target.getConfiguration().getGrpcHost();
+        case "grpcport":
+        case "grpcPort": return target.getConfiguration().getGrpcPort();
         case "host": return target.getConfiguration().getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "proxyhost":
-        case "proxyHost": return target.getConfiguration().getProxyHost();
-        case "proxyport":
-        case "proxyPort": return target.getConfiguration().getProxyPort();
-        case "proxyscheme":
-        case "proxyScheme": return target.getConfiguration().getProxyScheme();
         case "scheme": return target.getConfiguration().getScheme();
         default: return null;
         }

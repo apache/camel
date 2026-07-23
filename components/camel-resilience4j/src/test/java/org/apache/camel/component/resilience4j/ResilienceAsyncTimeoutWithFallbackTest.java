@@ -1,0 +1,68 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.resilience4j;
+
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+/**
+ * Resilience using async mode with timeout and fallback
+ */
+public class ResilienceAsyncTimeoutWithFallbackTest extends CamelTestSupport {
+
+    @Test
+    public void testFast() {
+        Object out = template.requestBody("direct:start", "fast");
+        assertEquals("LAST CHANGE", out);
+    }
+
+    @Test
+    public void testSlow() {
+        Object out = template.requestBody("direct:start", "slow");
+        assertEquals("LAST CHANGE", out);
+    }
+
+    @Override
+    protected RoutesBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").circuitBreaker()
+                        .resilience4jConfiguration().asynchronous(true).timeoutEnabled(true).timeoutDuration(2000).end()
+                        .log("Resilience processing start: ${threadName}").toD("direct:${body}")
+                        .log("Resilience processing end: ${threadName}").onFallback()
+                        .log("Resilience fallback start: ${threadName}").transform().constant("Fallback response")
+                        .log("Resilience fallback end: ${threadName}").end()
+                        .log("After Resilience ${body}").transform(simple("A CHANGE")).transform(simple("LAST CHANGE"))
+                        .log("End ${body}");
+
+                from("direct:fast")
+                        .log("Fast processing start: ${threadName}").delay(1000).transform().constant("Fast response")
+                        .log("Fast processing end: ${threadName}");
+
+                from("direct:slow")
+                        .log("Slow processing start: ${threadName}").delay(3000).transform().constant("Slow response")
+                        .log("Slow processing end: ${threadName}");
+            }
+        };
+    }
+
+}

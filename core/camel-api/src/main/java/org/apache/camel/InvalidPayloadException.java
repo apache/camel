@@ -16,34 +16,62 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 /**
- * Is thrown if the payload from the exchange could not be retrieved because of being null, wrong class type etc.
+ * Thrown when the body of a {@link Message} cannot be converted to the expected type, for example because the body is
+ * null or its runtime type is incompatible with the requested type.
+ * <p/>
+ * This is the checked variant; for the unchecked equivalent see {@link InvalidPayloadRuntimeException}.
+ *
+ * @see InvalidPayloadRuntimeException
+ * @see Message
  */
 public class InvalidPayloadException extends CamelExchangeException {
 
-    private final transient Class<?> type;
+    private final transient @Nullable Class<?> type;
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param type     the expected body type
+     */
     public InvalidPayloadException(Exchange exchange, Class<?> type) {
         this(exchange, type, exchange.getIn());
     }
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param type     the expected body type
+     * @param message  the message with the invalid or missing payload
+     */
     public InvalidPayloadException(Exchange exchange, Class<?> type, Message message) {
-        super("No body available of type: " + type.getCanonicalName()
-              + NoSuchPropertyException.valueDescription(message.getBody()) + " on: " + message, exchange);
+        super("No body available of type: " + Objects.requireNonNull(type, "type").getCanonicalName()
+              + NoSuchPropertyException.valueDescription(Objects.requireNonNull(message, "message").getBody())
+              + " on: " + message, Objects.requireNonNull(exchange, "exchange"));
         this.type = type;
     }
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param type     the expected body type
+     * @param message  the message with the invalid or missing payload
+     * @param cause    the cause of the failure
+     */
     public InvalidPayloadException(Exchange exchange, Class<?> type, Message message, Throwable cause) {
-        super("No body available of type: " + type.getCanonicalName()
-              + NoSuchPropertyException.valueDescription(message.getBody()) + " on: " + message
-              + ". Caused by: " + cause.getMessage(), exchange, cause);
+        super("No body available of type: " + Objects.requireNonNull(type, "type").getCanonicalName()
+              + NoSuchPropertyException.valueDescription(Objects.requireNonNull(message, "message").getBody())
+              + " on: " + message
+              + ". Caused by: " + Objects.requireNonNull(cause, "cause").getMessage(),
+              Objects.requireNonNull(exchange, "exchange"), cause);
         this.type = type;
     }
 
     /**
      * The expected type of the body
      */
-    public Class<?> getType() {
+    public @Nullable Class<?> getType() {
         return type;
     }
 }

@@ -29,7 +29,7 @@ public class SftpSimpleConsumeRecursiveNotStepwiseIT extends SftpSimpleConsumeRe
                      + "?username=admin&password=admin&delay=10000&disconnect=true&recursive=true&stepwise=false&knownHostsFile="
                      + service.getKnownHostsFile())
                         .routeId("foo")
-                        .noAutoStartup().to("log:result", "mock:result");
+                        .autoStartup(false).to("log:result", "mock:result");
             }
         };
     }

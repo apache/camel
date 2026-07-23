@@ -36,8 +36,12 @@ import org.apache.camel.processor.saga.SagaPropagation;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
 import org.apache.camel.support.EndpointHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SagaReifier extends ProcessorReifier<SagaDefinition> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SagaReifier.class);
 
     public SagaReifier(Route route, ProcessorDefinition<?> definition) {
         super(route, (SagaDefinition) definition);
@@ -91,6 +95,7 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
         CamelSagaStep step = new CamelSagaStep(
                 compensationEndpoint, completionEndpoint, optionsMap,
                 parseDuration(timeout));
+        step.setRouteId(route.getRouteId());
 
         SagaPropagation propagation = parse(SagaPropagation.class, definition.getPropagation());
         if (propagation == null) {
@@ -104,13 +109,19 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
             completionMode = SagaCompletionMode.defaultCompletionMode();
         }
 
+        if (completionMode == SagaCompletionMode.MANUAL && timeout == null) {
+            LOG.warn("Saga in route '{}' uses MANUAL completion without a timeout."
+                     + " The saga will remain open indefinitely if never completed or compensated manually.",
+                    route.getRouteId());
+        }
+
         Processor childProcessor = this.createChildProcessor(true);
         CamelSagaService camelSagaService = resolveSagaService();
         CamelContextAware.trySetCamelContext(camelSagaService, getCamelContext());
 
         camelSagaService.registerStep(step);
 
-        SagaProcessor answer = new SagaProcessorBuilder().camelContext(camelContext).childProcessor(childProcessor)
+        SagaProcessor answer = new SagaProcessorBuilder().childProcessor(childProcessor)
                 .sagaService(camelSagaService).step(step)
                 .propagation(propagation).completionMode(completionMode).build();
         answer.setDisabled(isDisabled(camelContext, definition));

@@ -76,7 +76,9 @@ import org.apache.camel.spi.Metadata;
 /**
  * Converts the message data received from the wire into a format that Apache Camel processors can consume
  */
-@Metadata(label = "eip,dataformat,transformation")
+@Metadata(label = "eip,dataformat,transformation",
+          aliases = { "deserialize" },
+          description = "Deserializes the message body from a specific data format such as JSON, XML, CSV, or Protobuf into a Java object")
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition> implements DataFormatDefinitionAware {
@@ -130,13 +132,18 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
             @XmlElement(name = "yaml", type = YAMLDataFormat.class),
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
+    @Metadata(required = true,
+              description = "The data format to use for unmarshalling the message body from a specific format such as JSON, XML, CSV, Avro, Protobuf, etc. back into a Java object.")
     private DataFormatDefinition dataFormatType;
     @XmlAttribute
+    @Metadata(description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableSend;
     @XmlAttribute
+    @Metadata(description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Indicates whether null is allowed as value of a body to unmarshall.")
     private String allowNullBody;
 
     public UnmarshalDefinition() {
@@ -187,9 +194,6 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         return dataFormatType;
     }
 
-    /**
-     * The data format to be used
-     */
     @Override
     public void setDataFormatType(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;
@@ -215,9 +219,6 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         return allowNullBody;
     }
 
-    /**
-     * Indicates whether {@code null} is allowed as value of a body to unmarshall.
-     */
     public void setAllowNullBody(String allowNullBody) {
         this.allowNullBody = allowNullBody;
     }

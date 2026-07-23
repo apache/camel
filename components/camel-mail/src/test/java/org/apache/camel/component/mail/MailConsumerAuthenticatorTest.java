@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
  * Test the dynamic behavior of the MailAuthenticator in the MailConsumer.
  */
 public class MailConsumerAuthenticatorTest {
-    private static final MailboxUser user1 = Mailbox.getOrCreateUser("user1", "correctPassword");
+    private static final MailboxUser user1 = Mailbox.getOrCreateUser("MailConsumerAuthenticatorTest-user1", "correctPassword");
 
     @Test
     public void dynamicPasswordPop3() throws Exception {

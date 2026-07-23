@@ -30,16 +30,21 @@ import org.apache.camel.util.TimeUtils;
 /**
  * Extract a sample of the messages passing through a route
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,flowcontrol,routing",
+          aliases = { "sample" },
+          description = "Samples a subset of messages passing through the route, either by frequency count or time interval, and discards the rest")
 @XmlRootElement(name = "sample")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
 
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration",
+              description = "The period between samples, using a time-based approach. Default is 1 second.")
     private String samplePeriod;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long")
+    @Metadata(javaType = "java.lang.Long",
+              description = "The frequency of samples as a message count, using a message-frequency approach."
+                            + " For example, a value of 5 means every 5th message is sampled.")
     private String messageFrequency;
 
     public SamplingDefinition() {
@@ -111,6 +116,18 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     }
 
     /**
+     * Sets the sample message count which only a single {@link org.apache.camel.Exchange} will pass through after this
+     * many received. Supports property placeholders.
+     *
+     * @param  messageFrequency the message frequency
+     * @return                  the builder
+     */
+    public SamplingDefinition sampleMessageFrequency(String messageFrequency) {
+        setMessageFrequency(messageFrequency);
+        return this;
+    }
+
+    /**
      * Sets the sample period during which only a single {@link org.apache.camel.Exchange} will pass through.
      *
      * @param  samplePeriod the period
@@ -150,9 +167,6 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
         return samplePeriod;
     }
 
-    /**
-     * Sets the sample period during which only a single Exchange will pass through.
-     */
     public void setSamplePeriod(String samplePeriod) {
         this.samplePeriod = samplePeriod;
     }
@@ -169,9 +183,6 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
         return messageFrequency;
     }
 
-    /**
-     * Sets the sample message count which only a single Exchange will pass through after this many received.
-     */
     public void setMessageFrequency(String messageFrequency) {
         this.messageFrequency = messageFrequency;
     }

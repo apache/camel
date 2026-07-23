@@ -102,6 +102,7 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
         if (usingIterator) {
             TarIterator tarIterator = new TarIterator(exchange, stream);
             tarIterator.setAllowEmptyDirectory(allowEmptyDirectory);
+            tarIterator.setMaxDecompressedSize(maxDecompressedSize);
             return tarIterator;
         } else {
             BufferedInputStream bis = new BufferedInputStream(stream);

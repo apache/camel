@@ -25,9 +25,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -78,7 +78,7 @@ public class PQCSignatureDILITHIUMTest extends CamelTestSupport {
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(),
                 PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
-        kpGen.initialize(DilithiumParameterSpec.dilithium5);
+        kpGen.initialize(MLDSAParameterSpec.ml_dsa_87);
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
     }

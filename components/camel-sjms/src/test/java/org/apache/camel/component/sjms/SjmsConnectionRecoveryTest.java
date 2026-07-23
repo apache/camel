@@ -1,0 +1,251 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.sjms;
+
+import java.lang.reflect.Field;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSContext;
+import jakarta.jms.JMSException;
+
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisContainer;
+import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+/**
+ * Reproduces a scenario observed with Oracle AQ where, after a brief connectivity interruption, the SJMS consumer
+ * enters an infinite recovery loop: it successfully recreates the JMS connection on each attempt, but immediately
+ * re-enters recovery ~recoveryInterval later, blocking normal message consumption indefinitely.
+ * <p>
+ * Root cause: {@code SimpleMessageListenerContainer.recoverConnection()} returns {@code false} on success, but the
+ * {@code BackgroundTask} framework interprets {@code false} as "not done, keep scheduling." This causes the task to
+ * keep running — each iteration destroys the working connection via {@code refreshConnection()} while
+ * {@code initConsumers()} skips re-creation (because {@code consumers != null}), leaving consumers attached to closed
+ * sessions.
+ * <p>
+ * Uses a real Artemis broker over TCP (via Testcontainers) so that connection close truly kills sessions and consumers,
+ * matching the behavior of Oracle AQ and other remote JMS providers.
+ */
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "The container image cannot be started for this test. Maybe because it is using the ArtemisContainer instead fo the service.")
+public class SjmsConnectionRecoveryTest extends CamelTestSupport {
+
+    private static final String SJMS_QUEUE_NAME = "sjms:queue:SjmsConnectionRecoveryTest";
+    private static final String MOCK_RESULT = "mock:result";
+    private static final int RECOVERY_INTERVAL_MS = 1000;
+
+    private static ArtemisContainer broker;
+    private CountingConnectionFactory countingFactory;
+
+    @BeforeAll
+    static void startBroker() {
+        broker = new ArtemisContainer();
+        broker.start();
+    }
+
+    @AfterAll
+    static void stopBroker() {
+        if (broker != null) {
+            broker.stop();
+        }
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
+                "tcp://" + broker.getHost() + ":" + broker.defaultAcceptorPort(),
+                broker.username(), broker.password());
+        connectionFactory.setReconnectAttempts(0);
+
+        countingFactory = new CountingConnectionFactory(connectionFactory);
+
+        SjmsComponent sjms = new SjmsComponent();
+        sjms.setConnectionFactory(countingFactory);
+        camelContext.addComponent("sjms", sjms);
+
+        return camelContext;
+    }
+
+    /**
+     * Verifies that after a transient JMS connection interruption, recovery succeeds once and the recovery loop stops —
+     * the consumer does not re-enter recovery again.
+     * <p>
+     * This directly reproduces the customer scenario where logs show:
+     *
+     * <pre>
+     * Recovering from JMS Connection exception (attempt: 125)
+     * Created JMS Connection
+     * Successfully recovered JMS Connection (attempt: 125)
+     *
+     * Recovering from JMS Connection exception (attempt: 126)
+     * Created JMS Connection
+     * Successfully recovered JMS Connection (attempt: 126)
+     * ... repeats indefinitely ...
+     * </pre>
+     *
+     * The test uses a {@link CountingConnectionFactory} to track how many JMS connections are created during recovery.
+     * After triggering the connection exception, it waits for multiple recovery intervals and asserts:
+     * <ul>
+     * <li>Exactly one new connection was created (recovery happened once and stopped)</li>
+     * <li>Messages are consumed normally after recovery</li>
+     * </ul>
+     * <p>
+     * With the bug: multiple connections are created (recovery loops indefinitely), and messages sent after the
+     * recovery window are never consumed because consumers are attached to closed sessions.
+     * <p>
+     * With the fix: exactly one connection is created, the recovery task stops, consumers remain alive, and messages
+     * are consumed normally.
+     */
+    @Test
+    public void testRecoveryStopsAfterSuccessfulReconnection() throws Exception {
+        MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
+
+        // Phase 1: verify normal consumption (also confirms consumer is fully started).
+        // With asyncStartListener=true, the consumer starts in the background and may not be
+        // subscribed yet when the first message is sent. The message would be lost (delivered
+        // to a queue with no subscriber). Use Awaitility to retry the send+assert cycle until
+        // the async consumer is ready.
+        // NOTE: This is NOT redundant Awaitility wrapping of MockEndpoint — we are retrying
+        // the send operation itself, not just the assertion wait.
+        await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    mock.reset();
+                    mock.expectedMessageCount(1);
+                    template.sendBody(SJMS_QUEUE_NAME, "before-failure");
+                    mock.assertIsSatisfied();
+                });
+        mock.reset();
+
+        // Phase 2: simulate a transient JMS connection exception.
+        // Record connection count before triggering the exception.
+        int connectionsBefore = countingFactory.createCount.get();
+        SjmsConsumer sjmsConsumer = (SjmsConsumer) context.getRoute("recovery-route").getConsumer();
+        Field containerField = SjmsConsumer.class.getDeclaredField("listenerContainer");
+        containerField.setAccessible(true);
+        ExceptionListener container = (ExceptionListener) containerField.get(sjmsConsumer);
+        container.onException(new JMSException("Simulated transient connection failure"));
+
+        // Phase 3: wait for recovery to create a new connection.
+        // This uses a condition-based wait instead of a hardcoded sleep, so it
+        // adapts to CI environments where recovery may take longer.
+        await().atMost(30, TimeUnit.SECONDS)
+                .until(() -> countingFactory.createCount.get() > connectionsBefore);
+
+        // Phase 4: verify recovery created exactly one connection and then stopped.
+        // First confirm exactly one new connection was created.
+        int connectionsAfterRecovery = countingFactory.createCount.get();
+        assertEquals(connectionsBefore + 1, connectionsAfterRecovery,
+                "Recovery should create exactly one new connection");
+
+        // Then wait several recovery intervals to confirm no additional connections
+        // are created — this catches the infinite-loop bug where recovery keeps
+        // destroying and recreating connections.
+        await().pollDelay(3L * RECOVERY_INTERVAL_MS, TimeUnit.MILLISECONDS)
+                .atMost(5L * RECOVERY_INTERVAL_MS, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(connectionsAfterRecovery,
+                        countingFactory.createCount.get(),
+                        "Recovery loop should have stopped — connection count should remain stable"));
+
+        // Phase 5: verify messages are consumed after recovery.
+        // After recovery, consumers may need a moment to be fully re-established.
+        // Use Awaitility to retry the send+assert cycle (same rationale as Phase 1).
+        await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    mock.reset();
+                    mock.expectedMessageCount(1);
+                    template.sendBody(SJMS_QUEUE_NAME, "after-failure");
+                    mock.assertIsSatisfied();
+                });
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(SJMS_QUEUE_NAME
+                     + "?acknowledgementMode=CLIENT_ACKNOWLEDGE"
+                     + "&asyncStartListener=true"
+                     + "&concurrentConsumers=5"
+                     + "&recoveryInterval=" + RECOVERY_INTERVAL_MS)
+                        .routeId("recovery-route")
+                        .to(MOCK_RESULT);
+            }
+        };
+    }
+
+    /**
+     * A ConnectionFactory wrapper that counts how many JMS connections are created. Used to verify that the recovery
+     * mechanism creates exactly one new connection and stops, rather than looping indefinitely.
+     */
+    static class CountingConnectionFactory implements ConnectionFactory {
+        private final ConnectionFactory delegate;
+        final AtomicInteger createCount = new AtomicInteger();
+
+        CountingConnectionFactory(ConnectionFactory delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public Connection createConnection() throws JMSException {
+            createCount.incrementAndGet();
+            return delegate.createConnection();
+        }
+
+        @Override
+        public Connection createConnection(String userName, String password) throws JMSException {
+            createCount.incrementAndGet();
+            return delegate.createConnection(userName, password);
+        }
+
+        @Override
+        public JMSContext createContext() {
+            return delegate.createContext();
+        }
+
+        @Override
+        public JMSContext createContext(String userName, String password) {
+            return delegate.createContext(userName, password);
+        }
+
+        @Override
+        public JMSContext createContext(String userName, String password, int sessionMode) {
+            return delegate.createContext(userName, password, sessionMode);
+        }
+
+        @Override
+        public JMSContext createContext(int sessionMode) {
+            return delegate.createContext(sessionMode);
+        }
+    }
+}

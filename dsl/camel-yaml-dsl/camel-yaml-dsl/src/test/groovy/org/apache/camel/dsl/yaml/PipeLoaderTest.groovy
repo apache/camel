@@ -20,6 +20,7 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.KameletDefinition
 import org.apache.camel.model.ToDefinition
 import org.apache.camel.model.TransformDataTypeDefinition
+import org.junit.jupiter.api.Assertions
 
 class PipeLoaderTest extends YamlTestSupport {
     @Override
@@ -53,7 +54,7 @@ class PipeLoaderTest extends YamlTestSupport {
 
             with (context.routeDefinitions[0]) {
                 routeId == 'timer-event-source'
-                input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+                input.endpointUri == 'kamelet:timer-source?message=Hello world!'
                 input.lineNumber == 7
                 outputs.size() == 1
                 with (outputs[0], ToDefinition) {
@@ -294,7 +295,7 @@ class PipeLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[0]) {
             routeId == 'timer-event-source'
-            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.endpointUri == 'kamelet:timer-source?message=Hello world!'
             outputs.size() == 1
             with (outputs[0], ToDefinition) {
                 endpointUri == 'kafka:my-topic'
@@ -352,11 +353,11 @@ class PipeLoaderTest extends YamlTestSupport {
             errorHandlerFactory != null
             errorHandlerFactory instanceof DeadLetterChannelDefinition
             var eh = errorHandlerFactory as DeadLetterChannelDefinition
-            eh.deadLetterUri == 'kamelet:error-handler?kafkaTopic=my-first-test&logMessage=ERROR%21&kafkaServiceAccountId=scott&kafkaBrokers=my-broker&kafkaServiceAccountSecret=tiger'
+            eh.deadLetterUri == 'kamelet:error-handler?kafkaTopic=my-first-test&logMessage=ERROR!&kafkaServiceAccountId=scott&kafkaBrokers=my-broker&kafkaServiceAccountSecret=tiger'
             eh.redeliveryPolicy.maximumRedeliveries == "1"
             eh.redeliveryPolicy.redeliveryDelay == "2000"
             routeId == 'timer-event-source'
-            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.endpointUri == 'kamelet:timer-source?message=Hello world!'
             outputs.size() == 1
             with (outputs[0], ToDefinition) {
                 endpointUri == 'kamelet:log-sink'
@@ -395,7 +396,7 @@ class PipeLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[0]) {
             routeId == 'timer-event-source'
-            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.endpointUri == 'kamelet:timer-source?message=Hello world!'
             outputs.size() == 1
             with (outputs[0], ToDefinition) {
                 endpointUri == 'knative:channel/my-messages'
@@ -475,7 +476,7 @@ class PipeLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[0]) {
             routeId == 'timer-event-source'
-            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.endpointUri == 'kamelet:timer-source?message=Hello world!'
             outputs.size() == 1
             with (outputs[0], ToDefinition) {
                 endpointUri == 'knative:event/org.apache.camel.event.messages?kind=Broker&name=foo-broker'
@@ -585,7 +586,7 @@ class PipeLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[0]) {
             routeId == 'timer-event-source'
-            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.endpointUri == 'kamelet:timer-source?message=Hello world!'
             input.lineNumber == 7
             outputs.size() == 1
             with (outputs[0], KameletDefinition) {
@@ -627,7 +628,7 @@ class PipeLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[0]) {
             routeId == 'timer-event-source'
-            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.endpointUri == 'kamelet:timer-source?message=Hello world!'
             input.lineNumber == 7
             inputType.urn == 'text/plain'
             outputType.urn == 'application/octet-stream'
@@ -673,7 +674,7 @@ class PipeLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[0]) {
             routeId == 'timer-event-source'
-            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.endpointUri == 'kamelet:timer-source?message=Hello world!'
             input.lineNumber == 7
             inputType.urn == 'camel:text/plain'
             outputType.urn == 'camel:application/octet-stream'
@@ -717,7 +718,7 @@ class PipeLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[0]) {
             routeId == 'timer-event-source'
-            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.endpointUri == 'kamelet:timer-source?message=Hello world!'
             input.lineNumber == 7
             outputs.size() == 3
             with (outputs[0], TransformDataTypeDefinition) {
@@ -769,7 +770,7 @@ class PipeLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[0]) {
             routeId == 'timer-event-source'
-            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.endpointUri == 'kamelet:timer-source?message=Hello world!'
             input.lineNumber == 7
             outputs.size() == 3
             with (outputs[0], TransformDataTypeDefinition) {
@@ -820,6 +821,36 @@ class PipeLoaderTest extends YamlTestSupport {
             input.endpointUri == 'kamelet:timer-source?message={{my.message}}'
             !input.endpointUri.contains('%7B')
             !input.endpointUri.contains('%7D')
+        }
+    }
+
+    def "Error: Pipe with unsupported ref kind"() {
+        when:
+        var pipe = '''
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: bad-ref-pipe
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "Hello"
+                  sink:
+                    ref:
+                      kind: UnknownKind
+                      apiVersion: unknown/v1
+                      name: bad-sink
+            '''
+        then:
+        try {
+            loadBindings(pipe)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            assert e.message.contains("Unsupported Pipe ref kind")
         }
     }
 

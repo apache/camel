@@ -34,6 +34,7 @@ import com.azure.core.http.rest.ResponseBase;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.AppendBlobItem;
+import com.azure.storage.blob.models.AppendBlobRequestConditions;
 import com.azure.storage.blob.models.BlobDownloadHeaders;
 import com.azure.storage.blob.models.BlobHttpHeaders;
 import com.azure.storage.blob.models.BlobImmutabilityPolicy;
@@ -49,6 +50,7 @@ import com.azure.storage.blob.models.BlockListType;
 import com.azure.storage.blob.models.DeleteSnapshotsOptionType;
 import com.azure.storage.blob.models.DownloadRetryOptions;
 import com.azure.storage.blob.models.PageBlobItem;
+import com.azure.storage.blob.models.PageBlobRequestConditions;
 import com.azure.storage.blob.models.PageRange;
 import com.azure.storage.blob.models.PageRangeItem;
 import com.azure.storage.blob.models.ParallelTransferOptions;
@@ -60,6 +62,7 @@ import com.azure.storage.blob.specialized.BlobLeaseClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.azure.common.AzureFileNameHelper;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobCommonRequestOptions;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
@@ -153,7 +156,12 @@ public class BlobOperations {
             throw new IllegalArgumentException("In order to download a blob, you will need to specify the fileDir in the URI");
         }
 
-        final File fileToDownload = new File(fileDir, client.getBlobName());
+        final File fileToDownload = AzureFileNameHelper.resolveWithinDirectory(fileDir, client.getBlobName());
+        File parentDir = fileToDownload.getParentFile();
+        if (parentDir != null) {
+            parentDir.mkdirs();
+        }
+        fileToDownload.delete();
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
         final BlobRange blobRange = configurationProxy.getBlobRange(exchange);
         final ParallelTransferOptions parallelTransferOptions = configurationProxy.getParallelTransferOptions(exchange);
@@ -448,7 +456,7 @@ public class BlobOperations {
             throw new IllegalArgumentException("Source Account Name must be specified for copyBlob Operation");
         }
         String sourceContainerName = exchange.getMessage().getHeader(BlobConstants.SOURCE_BLOB_CONTAINER_NAME, String.class);
-        if (ObjectHelper.isEmpty(sourceAccountName)) {
+        if (ObjectHelper.isEmpty(sourceContainerName)) {
             throw new IllegalArgumentException("Source Container Name must be specified for copyBlob Operation");
         }
         final String response
@@ -475,7 +483,8 @@ public class BlobOperations {
             leaseClient = acquireLeaseIfConfigured(commonRequestOptions.getBlobRequestConditions(), exchange);
             final Response<AppendBlobItem> response
                     = client.appendBlobBlock(streamAndLength.getInputStream(), streamAndLength.getStreamLength(),
-                            commonRequestOptions.getContentMD5(), commonRequestOptions.getBlobRequestConditions(),
+                            commonRequestOptions.getContentMD5(),
+                            toAppendBlobRequestConditions(commonRequestOptions.getBlobRequestConditions()),
                             commonRequestOptions.getTimeout());
 
             return BlobOperationResponse.createWithEmptyBody(response);
@@ -528,7 +537,8 @@ public class BlobOperations {
             leaseClient = acquireLeaseIfConfigured(requestOptions.getBlobRequestConditions(), exchange);
             final Response<PageBlobItem> response
                     = client.uploadPageBlob(pageRange, is, requestOptions.getContentMD5(),
-                            requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
+                            toPageBlobRequestConditions(requestOptions.getBlobRequestConditions()),
+                            requestOptions.getTimeout());
 
             return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
@@ -569,7 +579,9 @@ public class BlobOperations {
         try {
             leaseClient = acquireLeaseIfConfigured(requestOptions.getBlobRequestConditions(), exchange);
             final Response<PageBlobItem> response
-                    = client.clearPagesBlob(pageRange, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
+                    = client.clearPagesBlob(pageRange,
+                            toPageBlobRequestConditions(requestOptions.getBlobRequestConditions()),
+                            requestOptions.getTimeout());
 
             return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
@@ -799,7 +811,10 @@ public class BlobOperations {
         final BlobHttpHeaders blobHttpHeaders = configurationProxy.getBlobHttpHeaders(exchange);
         final Map<String, String> metadata = configurationProxy.getMetadata(exchange);
         final AccessTier accessTier = configurationProxy.getAccessTier(exchange);
-        final BlobRequestConditions blobRequestConditions = configurationProxy.getBlobRequestConditions(exchange);
+        BlobRequestConditions blobRequestConditions = configurationProxy.getBlobRequestConditions(exchange);
+        if (blobRequestConditions == null) {
+            blobRequestConditions = new BlobRequestConditions();
+        }
         final Duration timeout = configurationProxy.getTimeout(exchange);
         final byte[] contentMD5 = configurationProxy.getContentMd5(exchange);
 
@@ -827,9 +842,6 @@ public class BlobOperations {
     }
 
     private BlobLeaseClient acquireLeaseIfConfigured(BlobRequestConditions requestConditions, Exchange exchange) {
-        if (requestConditions == null) {
-            requestConditions = new BlobRequestConditions();
-        }
         if (requestConditions.getLeaseId() == null && configurationProxy.getLeaseBlob(exchange)) {
             BlobLeaseClient leaseClient = client.getLeaseClient();
             Integer leaseDurationInSeconds = configurationProxy.getLeaseDurationInSeconds(exchange);
@@ -844,5 +856,39 @@ public class BlobOperations {
         if (leaseClient != null) {
             leaseClient.releaseLease();
         }
+    }
+
+    private static AppendBlobRequestConditions toAppendBlobRequestConditions(BlobRequestConditions conditions) {
+        if (conditions == null) {
+            return null;
+        }
+        if (conditions instanceof AppendBlobRequestConditions abc) {
+            return abc;
+        }
+        AppendBlobRequestConditions result = new AppendBlobRequestConditions();
+        result.setLeaseId(conditions.getLeaseId());
+        result.setIfMatch(conditions.getIfMatch());
+        result.setIfNoneMatch(conditions.getIfNoneMatch());
+        result.setIfModifiedSince(conditions.getIfModifiedSince());
+        result.setIfUnmodifiedSince(conditions.getIfUnmodifiedSince());
+        result.setTagsConditions(conditions.getTagsConditions());
+        return result;
+    }
+
+    private static PageBlobRequestConditions toPageBlobRequestConditions(BlobRequestConditions conditions) {
+        if (conditions == null) {
+            return null;
+        }
+        if (conditions instanceof PageBlobRequestConditions pbc) {
+            return pbc;
+        }
+        PageBlobRequestConditions result = new PageBlobRequestConditions();
+        result.setLeaseId(conditions.getLeaseId());
+        result.setIfMatch(conditions.getIfMatch());
+        result.setIfNoneMatch(conditions.getIfNoneMatch());
+        result.setIfModifiedSince(conditions.getIfModifiedSince());
+        result.setIfUnmodifiedSince(conditions.getIfUnmodifiedSince());
+        result.setTagsConditions(conditions.getTagsConditions());
+        return result;
     }
 }

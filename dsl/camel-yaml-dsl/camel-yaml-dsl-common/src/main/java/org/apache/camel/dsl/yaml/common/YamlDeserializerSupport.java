@@ -418,17 +418,24 @@ public class YamlDeserializerSupport {
 
         MappingNode mn = asMappingNode(root);
         for (String path : pointer.split("/")) {
+            if (path.isEmpty()) {
+                continue;
+            }
             for (NodeTuple child : mn.getValue()) {
                 if (child.getKeyNode() instanceof ScalarNode) {
                     ScalarNode scalar = (ScalarNode) child.getKeyNode();
                     if (scalar.getValue().equals(path)) {
-                        String next = pointer.substring(path.length() + 1);
+                        String next = pointer.substring(pointer.indexOf(path) + path.length());
+                        if (next.startsWith("/")) {
+                            next = next.substring(1);
+                        }
                         return ObjectHelper.isEmpty(next)
                                 ? child.getValueNode()
                                 : nodeAt(child.getValueNode(), next);
                     }
                 }
             }
+            return null;
         }
 
         return null;

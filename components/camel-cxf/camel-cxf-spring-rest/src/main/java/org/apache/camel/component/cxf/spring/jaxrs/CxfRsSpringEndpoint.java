@@ -48,14 +48,24 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
             setBeanId(beanIdAware.getBeanId());
         }
 
-        ApplicationContext applicationContext = ((SpringCamelContext) getCamelContext()).getApplicationContext();
-        configurer = new ConfigurerImpl(applicationContext);
+        if (getCamelContext() instanceof SpringCamelContext springCamelContext) {
+            ApplicationContext applicationContext = springCamelContext.getApplicationContext();
+            configurer = new ConfigurerImpl(applicationContext);
+        }
     }
 
     @Override
     protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
         checkBeanType(bean, JAXRSServerFactoryBean.class);
         return (JAXRSServerFactoryBean) bean;
+    }
+
+    @Override
+    protected void setupJAXRSServerFactoryBean(JAXRSServerFactoryBean sfb) {
+        if (sfb instanceof SpringJAXRSServerFactoryBean springBean) {
+            springBean.setPerformInvocation(isPerformInvocation());
+        }
+        super.setupJAXRSServerFactoryBean(sfb);
     }
 
     @Override
@@ -66,11 +76,23 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
 
     @Override
     protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
-        configurer.configureBean(beanId, cfb);
-        // support to call the configurer here
-        getNullSafeCxfRsEndpointConfigurer().configure(cfb);
-        cfb.setAddress(address);
+        // apply Spring bean config first so URI options can override
+        if (configurer != null) {
+            configurer.configureBean(beanId, cfb);
+        }
+        if (getModelRef() != null) {
+            cfb.setModelRef(getModelRef());
+        }
+        if (getResourceClasses() != null && !getResourceClasses().isEmpty()) {
+            cfb.setResourceClass(getResourceClasses().get(0));
+            cfb.getServiceFactory().setResourceClasses(getResourceClasses());
+        }
+        setupCommonFactoryProperties(cfb);
         cfb.setThreadSafe(true);
+        getNullSafeCxfRsEndpointConfigurer().configure(cfb);
+        if (address != null) {
+            cfb.setAddress(address);
+        }
     }
 
     @Override

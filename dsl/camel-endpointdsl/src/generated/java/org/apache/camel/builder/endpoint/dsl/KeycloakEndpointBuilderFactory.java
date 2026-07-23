@@ -2521,7 +2521,7 @@ public interface KeycloakEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KeycloakHeaderNameBuilder INSTANCE = new KeycloakHeaderNameBuilder();
+        public static final KeycloakHeaderNameBuilder INSTANCE = new KeycloakHeaderNameBuilder();
 
         /**
          * The operation to perform.
@@ -3127,6 +3127,30 @@ public interface KeycloakEndpointBuilderFactory {
             return "CamelKeycloakAccessToken";
         }
         /**
+         * The token for revocation or introspection.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakToken}.
+         */
+        public String keycloakToken() {
+            return "CamelKeycloakToken";
+        }
+        /**
+         * The token type hint for revocation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakTokenTypeHint}.
+         */
+        public String keycloakTokenTypeHint() {
+            return "CamelKeycloakTokenTypeHint";
+        }
+        /**
          * Comma-separated list of resource names or IDs to evaluate permissions
          * for.
          * 
@@ -3188,6 +3212,92 @@ public interface KeycloakEndpointBuilderFactory {
          */
         public String keycloakPermissionsOnly() {
             return "CamelKeycloakPermissionsOnly";
+        }
+        /**
+         * The organization ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakOrganizationId}.
+         */
+        public String keycloakOrganizationId() {
+            return "CamelKeycloakOrganizationId";
+        }
+        /**
+         * The organization name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakOrganizationName}.
+         */
+        public String keycloakOrganizationName() {
+            return "CamelKeycloakOrganizationName";
+        }
+        /**
+         * The organization alias.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakOrganizationAlias}.
+         */
+        public String keycloakOrganizationAlias() {
+            return "CamelKeycloakOrganizationAlias";
+        }
+        /**
+         * The organization description.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * KeycloakOrganizationDescription}.
+         */
+        public String keycloakOrganizationDescription() {
+            return "CamelKeycloakOrganizationDescription";
+        }
+        /**
+         * The organization redirect URL.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * KeycloakOrganizationRedirectUrl}.
+         */
+        public String keycloakOrganizationRedirectUrl() {
+            return "CamelKeycloakOrganizationRedirectUrl";
+        }
+        /**
+         * The organization domain name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakOrganizationDomain}.
+         */
+        public String keycloakOrganizationDomain() {
+            return "CamelKeycloakOrganizationDomain";
+        }
+        /**
+         * Search query for organizations.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakOrganizationSearch}.
+         */
+        public String keycloakOrganizationSearch() {
+            return "CamelKeycloakOrganizationSearch";
         }
     }
     static KeycloakEndpointBuilder endpointBuilder(String componentName, String path) {

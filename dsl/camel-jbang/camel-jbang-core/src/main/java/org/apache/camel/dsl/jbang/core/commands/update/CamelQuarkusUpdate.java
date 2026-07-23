@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.main.download.MavenDependencyDownloader;
+import org.apache.camel.tooling.maven.MavenGav;
 
 public final class CamelQuarkusUpdate implements Update {
 
@@ -40,17 +41,26 @@ public final class CamelQuarkusUpdate implements Update {
      *
      * @return
      */
-    public String getQuarkusStream() {
+    public String getQuarkusStream() throws CamelUpdateException {
         // Assume that the quarkus updates are in the form 3.8, 3.15, 3.16...
         List<String[]> qVersions
                 = downloader.resolveAvailableVersions("org.apache.camel.quarkus", QUARKUS_UPDATE_ARTIFACTID,
                         updateMixin.version,
-                        updateMixin.repos);
+                        updateMixin.mavenResolver.repos());
         String streamVersion = null;
         for (String[] qVersion : qVersions) {
             if (qVersion[0].equals(updateMixin.version)) {
-                streamVersion = qVersion[1].substring(0, qVersion[1].lastIndexOf('.'));
+                int dotIdx = qVersion[1].lastIndexOf('.');
+                if (dotIdx > 0) {
+                    streamVersion = qVersion[1].substring(0, dotIdx);
+                }
             }
+        }
+
+        if (streamVersion == null) {
+            throw new CamelUpdateException(
+                    "Cannot determine Quarkus stream version for Camel version " + updateMixin.version
+                                           + ". No matching entry found in camel-quarkus-catalog.");
         }
 
         return streamVersion;
@@ -78,10 +88,14 @@ public final class CamelQuarkusUpdate implements Update {
 
     @Override
     public List<String> command() throws CamelUpdateException {
-        commands.add(mvnProgramCall());
+        commands.addAll(mvnProgramCall());
         commands.add(debug());
-        commands.add(String.format("%s:quarkus-maven-plugin:%s:update", updateMixin.quarkusMavenPluginGroupId,
-                updateMixin.quarkusMavenPluginVersion));
+        MavenGav gav = updateMixin.resolveQuarkusMavenPlugin();
+        commands.add(String.format(
+                "%s:%s:%s:update",
+                gav.getGroupId(),
+                gav.getArtifactId(),
+                gav.getVersion()));
         commands.add("-Dstream=" + getQuarkusStream());
         commands.add(runMode());
 
