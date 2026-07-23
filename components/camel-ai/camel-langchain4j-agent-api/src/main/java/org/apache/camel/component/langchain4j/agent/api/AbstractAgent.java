@@ -18,8 +18,11 @@ package org.apache.camel.component.langchain4j.agent.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
 
+import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.mcp.McpToolProvider;
+import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
@@ -59,6 +62,15 @@ public abstract class AbstractAgent<S> implements Agent {
      */
     protected AgentConfiguration getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * Returns the MCP tool provider filter from this agent's configuration, if configured.
+     *
+     * @return the filter predicate, or {@code null} when no filter is configured
+     */
+    public BiPredicate<McpClient, ToolSpecification> getMcpToolProviderFilter() {
+        return configuration.getMcpToolProviderFilter();
     }
 
     /**

@@ -262,6 +262,8 @@ YAML::
 
 Both `mcpClients` (bean references) and `mcpServer` (inline) can be used together on the same endpoint. All tool sources -- Camel route tools, endpoint-level MCP tools, and agent-level MCP tools -- are automatically composed into a single tool provider.
 
+When MCP clients are configured at the endpoint level, the same `withMcpToolProviderFilter(...)` predicate configured on the endpoint's `agentConfiguration` (or on a registry `AbstractAgent` bean) is applied to those clients as well. This keeps filtering behavior consistent regardless of whether MCP clients are declared on the agent or on the endpoint URI.
+
 === Dynamic Tool Exclusion via Headers
 
 Tools can be dynamically excluded on a per-message basis using Camel headers. This allows routes to control which tools are available based on business logic, user roles, or message content.

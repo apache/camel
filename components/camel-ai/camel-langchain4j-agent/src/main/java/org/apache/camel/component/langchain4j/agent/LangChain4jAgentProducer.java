@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -198,7 +199,12 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
         if (!allMcpClients.isEmpty()) {
             LOG.debug("Adding {} MCP clients to tool provider", allMcpClients.size());
-            providers.add(McpToolProvider.builder().mcpClients(allMcpClients).build());
+            McpToolProvider.Builder mcpBuilder = McpToolProvider.builder().mcpClients(allMcpClients);
+            BiPredicate<McpClient, ToolSpecification> mcpFilter = resolveMcpToolProviderFilter();
+            if (mcpFilter != null) {
+                mcpBuilder.filter(mcpFilter);
+            }
+            providers.add(mcpBuilder.build());
         }
 
         if (providers.isEmpty()) {
@@ -208,6 +214,26 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         } else {
             return new CompositeToolProvider(providers);
         }
+    }
+
+    /**
+     * Resolves the MCP tool filter configured on the endpoint {@link AgentConfiguration} or, when the agent is an
+     * {@link AbstractAgent}, from the agent's own configuration.
+     */
+    private BiPredicate<McpClient, ToolSpecification> resolveMcpToolProviderFilter() {
+        AgentConfiguration endpointAgentConfiguration = endpoint.getConfiguration().getAgentConfiguration();
+        if (endpointAgentConfiguration != null && endpointAgentConfiguration.getMcpToolProviderFilter() != null) {
+            return endpointAgentConfiguration.getMcpToolProviderFilter();
+        }
+
+        Agent configuredAgent = endpoint.getConfiguration().getAgent();
+        if (configuredAgent == null) {
+            configuredAgent = agent;
+        }
+        if (configuredAgent instanceof AbstractAgent<?> abstractAgent) {
+            return abstractAgent.getMcpToolProviderFilter();
+        }
+        return null;
     }
 
     /**
