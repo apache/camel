@@ -69,6 +69,11 @@ upgrade command (e.g. `brew upgrade apache-camel`), when the currently running i
 made by `install.sh`/`install.ps1` — installations managed by a package manager must be upgraded
 through that manager.
 
+`camel self-update` also refuses to run when the installation was pinned to an explicit version by
+a user running `install.sh --version 4.22.0`/`install.ps1 -Version 4.22.0` directly (running
+`camel self-update --version ...` does not create a pin). The message names the pin file to remove
+to resume tracking new releases.
+
 Every `camel` invocation (except `camel self-update` itself) checks, at most once every 24 hours,
 whether a newer release has been published, and prints a one-line notice if so:
 

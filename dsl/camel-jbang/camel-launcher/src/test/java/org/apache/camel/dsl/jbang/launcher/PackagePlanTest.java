@@ -143,7 +143,7 @@ class PackagePlanTest {
 
             assertEquals(0, r.exit,
                     "supported-lts.yml advertises LTS line " + line + " but the wrapper rejected it: " + r.stderr);
-            assertTrue(r.stdout.contains("BREW_FORMULA=camel@" + line), r.stdout);
+            assertTrue(r.stdout.contains("BREW_FORMULA=apache-camel@" + line), r.stdout);
         }
     }
 
@@ -476,9 +476,9 @@ class PackagePlanTest {
         assertEquals(0, r.exit, r.stderr);
         assertTrue(r.stdout.contains("CHANNEL=stable"), r.stdout);
         assertTrue(r.stdout.contains("PACKAGERS=brew,sdkman,winget,scoop,chocolatey"), r.stdout);
-        assertTrue(r.stdout.contains("BREW_FORMULA=camel\n") || r.stdout.contains("BREW_FORMULA=camel\r\n")
-                || r.stdout.trim().endsWith("BREW_FORMULA=camel"), r.stdout);
-        assertTrue(r.stdout.contains("BREW_CLASS=Camel"), r.stdout);
+        assertTrue(r.stdout.contains("BREW_FORMULA=apache-camel\n") || r.stdout.contains("BREW_FORMULA=apache-camel\r\n")
+                || r.stdout.trim().endsWith("BREW_FORMULA=apache-camel"), r.stdout);
+        assertTrue(r.stdout.contains("BREW_CLASS=ApacheCamel"), r.stdout);
         assertTrue(r.stdout.contains("SDKMAN_CANDIDATE=camel"), r.stdout);
         assertTrue(r.stdout.contains("SDKMAN_DEFAULT=true"), r.stdout);
         assertTrue(r.stdout.contains("WEBSITE_VERSION_MANIFEST=true"), r.stdout);
@@ -495,7 +495,7 @@ class PackagePlanTest {
         assertTrue(r.stdout.contains("CHANNEL=stable"), r.stdout);
         assertTrue(r.stdout.contains("LTS_LINE=" + LTS_LINE_FUTURE), r.stdout);
         assertTrue(r.stdout.contains("PACKAGERS=brew,sdkman,winget,scoop,chocolatey"), r.stdout);
-        assertTrue(r.stdout.contains("BREW_LTS_FORMULA=camel@" + LTS_LINE_FUTURE), r.stdout);
+        assertTrue(r.stdout.contains("BREW_LTS_FORMULA=apache-camel@" + LTS_LINE_FUTURE), r.stdout);
         assertTrue(r.stdout.contains("SDKMAN_DEFAULT=true"), r.stdout);
     }
 
@@ -509,11 +509,11 @@ class PackagePlanTest {
         assertTrue(r.stdout.contains("CHANNEL=lts"), r.stdout);
         assertTrue(r.stdout.contains("PACKAGERS=brew,sdkman,winget,chocolatey"), r.stdout);
         assertFalse(r.stdout.contains("scoop"), "LTS maintenance excludes Scoop: " + r.stdout);
-        assertTrue(r.stdout.contains("BREW_FORMULA=camel@4.22"),
+        assertTrue(r.stdout.contains("BREW_FORMULA=apache-camel@4.22"),
                 "LTS produces a versioned brew formula: " + r.stdout);
-        assertTrue(r.stdout.contains("BREW_CLASS=CamelAT422"),
+        assertTrue(r.stdout.contains("BREW_CLASS=ApacheCamelAT422"),
                 "LTS formulaName must be a valid Ruby class name, pre-converted to Homebrew's AT convention: "
-                                                               + r.stdout);
+                                                                     + r.stdout);
         assertTrue(r.stdout.contains("SDKMAN_DEFAULT=false"), r.stdout);
         assertTrue(r.stdout.contains("WEBSITE_VERSION_MANIFEST=true"), r.stdout);
         assertTrue(r.stdout.contains("WEBSITE_LATEST=false"), r.stdout);
@@ -695,7 +695,7 @@ class PackagePlanTest {
         Path recordFile = tmp.resolve("mvn-calls.txt");
         // The stub must emit a Homebrew formula the way a real JReleaser run does: the LTS path treats a missing
         // formula directory as a packaging failure.
-        Map<String, String> env = envWithMvnStubProducingFormula(tmp, recordFile, "camel-at-99.rb");
+        Map<String, String> env = envWithMvnStubProducingFormula(tmp, recordFile, "apache-camel-at-99.rb");
         env.put("CAMEL_PACKAGE_TEST_MODE", "true");
         env.put("CAMEL_PACKAGE_TEST_VERSION", TEST_VERSION);
         env.putAll(supportedLtsFixtureEnv());
@@ -714,7 +714,7 @@ class PackagePlanTest {
         writeReleaseFixture("-bin.tar.gz", "fixture-tar-lts");
         writeReleaseFixture("-bin.zip", "fixture-zip-lts");
         Path recordFile = tmp.resolve("mvn-calls.txt");
-        Map<String, String> env = envWithMvnStubProducingFormula(tmp, recordFile, "camel-at-99.rb");
+        Map<String, String> env = envWithMvnStubProducingFormula(tmp, recordFile, "apache-camel-at-99.rb");
         env.put("CAMEL_PACKAGE_TEST_MODE", "true");
         env.put("CAMEL_PACKAGE_TEST_VERSION", TEST_VERSION);
         env.putAll(supportedLtsFixtureEnv());
@@ -723,9 +723,9 @@ class PackagePlanTest {
 
         assertEquals(0, r.exit, r.stderr);
         Path formulaDir = PACKAGE_DIR.resolve("camel-cli/brew/Formula");
-        assertFalse(Files.exists(formulaDir.resolve("camel-at-99.rb")),
+        assertFalse(Files.exists(formulaDir.resolve("apache-camel-at-99.rb")),
                 "JReleaser's generated LTS filename must not be left behind");
-        assertTrue(Files.exists(formulaDir.resolve("camel@" + LTS_LINE_FUTURE + ".rb")),
+        assertTrue(Files.exists(formulaDir.resolve("apache-camel@" + LTS_LINE_FUTURE + ".rb")),
                 "LTS Homebrew formula must use Homebrew's versioned-formula filename");
     }
 
