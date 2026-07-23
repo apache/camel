@@ -184,4 +184,48 @@ class AiTraceToolsTest {
         assertThat(result).hasSize(1);
         assertThat(result.get(0).scheme()).isEqualTo("aws2-textract");
     }
+
+    @Test
+    void shouldExtractOpenAiHeadersWithCorrectCasing() {
+        JsonObject history = new JsonObject();
+        history.put("CamelOpenAIModel", "gpt-4o");
+        history.put("CamelOpenAIFinishReason", "stop");
+        history.put("breadcrumbId", "abc-123");
+
+        List<AiTraceTools.AiHeaderInfo> result = tools.extractAiHeaders(history);
+
+        assertThat(result).hasSize(2);
+        assertThat(result).extracting(AiTraceTools.AiHeaderInfo::header)
+                .containsExactlyInAnyOrder("CamelOpenAIModel", "CamelOpenAIFinishReason");
+    }
+
+    @Test
+    void shouldDetectWebSearchAndEmbeddingStoreComponents() {
+        JsonObject route = new JsonObject();
+        JsonArray steps = new JsonArray();
+        JsonObject ws = new JsonObject();
+        ws.put("uri", "langchain4j-web-search:search");
+        steps.add(ws);
+        JsonObject es = new JsonObject();
+        es.put("uri", "langchain4j-embeddingstore:store");
+        steps.add(es);
+        route.put("steps", steps);
+
+        List<AiTraceTools.AiComponentInfo> result = tools.extractAiComponents(route);
+
+        assertThat(result).hasSize(2);
+        assertThat(result).extracting(AiTraceTools.AiComponentInfo::scheme)
+                .containsExactlyInAnyOrder("langchain4j-web-search", "langchain4j-embeddingstore");
+    }
+
+    @Test
+    void shouldExtractTextractHeaders() {
+        JsonObject history = new JsonObject();
+        history.put("CamelAwsTextractJobId", "job-123");
+
+        List<AiTraceTools.AiHeaderInfo> result = tools.extractAiHeaders(history);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).header()).isEqualTo("CamelAwsTextractJobId");
+    }
 }

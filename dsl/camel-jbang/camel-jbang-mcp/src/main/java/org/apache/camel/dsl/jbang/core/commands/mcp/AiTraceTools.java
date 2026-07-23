@@ -32,6 +32,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.jboss.logging.Logger;
 
 /**
  * MCP Tool for tracing AI-specific exchange flow in running Camel applications.
@@ -43,18 +44,23 @@ import org.apache.camel.util.json.JsonObject;
 @ApplicationScoped
 public class AiTraceTools {
 
+    private static final Logger LOG = Logger.getLogger(AiTraceTools.class);
+
     private static final String NAME_OR_PID_DESC
             = "Name or PID of the Camel process. Leave empty to auto-detect (works when exactly one Camel process is running)";
 
     private static final Set<String> AI_COMPONENT_SCHEMES = Set.of(
             "aws-bedrock", "aws-bedrock-agent", "aws-bedrock-agent-runtime",
             "aws2-textract", "docling",
-            "langchain4j-chat", "langchain4j-embeddings", "langchain4j-tools", "langchain4j-agent",
-            "openai", "kserve", "torchserve", "tensorflow-serving", "djl",
-            "huggingface");
+            "langchain4j-chat", "langchain4j-embeddings", "langchain4j-embeddingstore",
+            "langchain4j-tools", "langchain4j-agent", "langchain4j-web-search",
+            "openai", "kserve", "tensorflow-serving", "djl",
+            "huggingface", "ai-tool");
 
     private static final Set<String> AI_HEADER_PREFIXES = Set.of(
-            "CamelAwsBedrock", "CamelLangChain4j", "CamelDocling", "CamelOpenAi");
+            "CamelAwsBedrock", "CamelAwsTextract",
+            "CamelLangChain4j", "CamelDocling", "CamelOpenAI",
+            "CamelKServe", "CamelDjl", "CamelTensorFlowServing", "CamelHuggingFace");
 
     @Inject
     RuntimeService runtimeService;
@@ -105,6 +111,7 @@ public class AiTraceTools {
             Object result = ToolRegistry.execute(toolName, ctx, args);
             return RuntimeTools.toJsonObject(result);
         } catch (ToolExecutionException e) {
+            LOG.debugf("AI trace: %s query failed: %s", toolName, e.getMessage());
             return new JsonObject();
         }
     }
