@@ -169,7 +169,7 @@ class Athena2QueryHelper {
     void doWait() {
         // Use Camel's task API for polling delay instead of Thread.sleep()
         // We use initialDelay for the actual delay, and maxIterations(1) to run once
-        Tasks.foregroundTask()
+        boolean completed = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(1)
                         .withInitialDelay(Duration.ofMillis(this.currentDelay))
@@ -178,6 +178,14 @@ class Athena2QueryHelper {
                 .withName("AthenaQueryPollingDelay")
                 .build()
                 .run(exchange.getContext(), () -> true);
+
+        if (!completed && Thread.currentThread().isInterrupted()) {
+            // the task API already restored the interrupt status, so only record it here to let the
+            // attempt and wait loops bail out at the earliest opportunity
+            this.interrupted = true;
+            LOG.trace(
+                    "AWS Athena start query execution wait thread was interrupted; will return at earliest opportunity");
+        }
 
         this.currentDelay = this.delay;
     }
