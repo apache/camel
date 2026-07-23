@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.msk;
 
+import java.util.Map;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -32,6 +34,7 @@ import software.amazon.awssdk.services.kafka.model.DescribeClusterResponse;
 import software.amazon.awssdk.services.kafka.model.ListClustersRequest;
 import software.amazon.awssdk.services.kafka.model.ListClustersResponse;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MSKProducerTest extends CamelTestSupport {
@@ -97,6 +100,17 @@ public class MSKProducerTest extends CamelTestSupport {
         CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterName());
         assertEquals(ClusterState.CREATING.name(), resultGet.state().toString());
+    }
+
+    @Test
+    void mskCreateClusterWithoutBrokerNodesNumberReportsThatParameter() {
+        // the Kafka version IS supplied, so the error must name the missing broker-nodes count
+        assertThatThrownBy(() -> template.requestBodyAndHeaders("direct:createCluster", "body",
+                Map.of(
+                        MSK2Constants.CLUSTER_NAME, "test-kafka",
+                        MSK2Constants.CLUSTER_KAFKA_VERSION, "2.1.1")))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("Number of Broker Nodes must be specified");
     }
 
     @Test
