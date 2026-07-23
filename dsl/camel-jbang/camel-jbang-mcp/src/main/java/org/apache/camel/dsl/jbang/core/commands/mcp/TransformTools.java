@@ -51,6 +51,7 @@ import org.apache.camel.yaml.out.YamlModelWriter;
 /**
  * MCP Tools for validating and transforming Camel routes using Quarkus MCP Server.
  */
+@McpSecured
 @ApplicationScoped
 public class TransformTools {
 

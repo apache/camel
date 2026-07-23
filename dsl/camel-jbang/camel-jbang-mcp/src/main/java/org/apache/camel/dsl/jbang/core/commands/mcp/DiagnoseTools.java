@@ -37,6 +37,7 @@ import org.apache.camel.tooling.model.EipModel;
  * Accepts a Camel stack trace or error message and returns the likely component/EIP involved, common causes, links to
  * relevant documentation, and suggested fixes.
  */
+@McpSecured
 @ApplicationScoped
 public class DiagnoseTools {
 

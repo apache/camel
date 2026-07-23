@@ -39,6 +39,7 @@ import org.apache.camel.tooling.model.SecurityAdvisoryModel;
  * This tool analyzes routes for security-sensitive components, identifies potential vulnerabilities, and provides
  * structured context that an LLM can use to formulate security hardening recommendations.
  */
+@McpSecured
 @ApplicationScoped
 public class HardenTools {
 

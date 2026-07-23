@@ -34,6 +34,7 @@ import io.quarkiverse.mcp.server.ToolCallException;
  * returns a {@code nextStep} hint that guides the LLM to the next action in the workflow. For migration summaries, use
  * {@code git diff --shortstat} directly.
  */
+@McpSecured
 @ApplicationScoped
 public class MigrationTools {
 

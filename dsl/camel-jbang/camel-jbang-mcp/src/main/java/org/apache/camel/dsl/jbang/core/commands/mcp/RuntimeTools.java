@@ -42,6 +42,7 @@ import org.apache.camel.util.json.Jsoner;
  * The {@code @Tool} and {@code @ToolArg} annotations are required by the Quarkus MCP server for protocol discovery but
  * all tool logic lives in {@link ToolRegistry}, ensuring a single source of truth shared with the Agent REPL.
  */
+@McpSecured
 @ApplicationScoped
 public class RuntimeTools {
 
