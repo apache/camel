@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,7 +44,9 @@ import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.tooling.model.ArtifactModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -55,7 +58,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
  */
 class CatalogTab extends AbstractTableTab {
 
-    private static final String[] SCOPES = { "all", "component", "dataformat", "language", "other" };
+    private static final String[] SCOPES = { "all", "component", "dataformat", "language", "other", "eip" };
 
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
@@ -64,6 +67,7 @@ class CatalogTab extends AbstractTableTab {
     private String filterTerm;
     private int scopeIndex;
     private boolean fullCatalog;
+    private CamelCatalog catalog;
     private List<CatalogEntry> allEntries = Collections.emptyList();
     private List<CatalogEntry> filteredEntries = Collections.emptyList();
     private String lastPid;
@@ -94,6 +98,7 @@ class CatalogTab extends AbstractTableTab {
         filterTerm = null;
         filterInputActive = false;
         scopeIndex = 0;
+        catalog = null;
         lastPid = null;
         errorMessage = null;
         dataLoaded = false;
@@ -132,6 +137,14 @@ class CatalogTab extends AbstractTableTab {
             fullCatalog = !fullCatalog;
             dataLoaded = false;
             loadCatalogData();
+            return true;
+        }
+        if (ke.isCharIgnoreCase('d')) {
+            openDocViewer();
+            return true;
+        }
+        if (ke.isCharIgnoreCase('o')) {
+            openOptionsViewer();
             return true;
         }
         return false;
@@ -297,11 +310,13 @@ class CatalogTab extends AbstractTableTab {
         addDetailField(lines, "Title", entry.title, area.width());
         addDetailField(lines, "Description", entry.description, area.width());
         addDetailField(lines, "Kind", entry.kind, area.width());
-        String maven = entry.groupId + ":" + entry.artifactId;
-        if (entry.version != null) {
-            maven += ":" + entry.version;
+        if (entry.groupId != null) {
+            String maven = entry.groupId + ":" + entry.artifactId;
+            if (entry.version != null) {
+                maven += ":" + entry.version;
+            }
+            addDetailField(lines, "Maven", maven, area.width());
         }
-        addDetailField(lines, "Maven", maven, area.width());
         if (entry.firstVersion != null) {
             addDetailField(lines, "Since", entry.firstVersion, area.width());
         }
@@ -332,6 +347,34 @@ class CatalogTab extends AbstractTableTab {
                                 .title(title).build())
                         .build(),
                 area);
+    }
+
+    private void openDocViewer() {
+        if (ctx.openCatalogDocCallback == null || catalog == null) {
+            return;
+        }
+        List<CatalogEntry> sorted = new ArrayList<>(filteredEntries);
+        sorted.sort(this::sortEntry);
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= sorted.size()) {
+            return;
+        }
+        CatalogEntry entry = sorted.get(sel);
+        ctx.openCatalogDocCallback.accept(entry.name, entry.kind, catalog);
+    }
+
+    private void openOptionsViewer() {
+        if (ctx.openOptionsCallback == null || catalog == null) {
+            return;
+        }
+        List<CatalogEntry> sorted = new ArrayList<>(filteredEntries);
+        sorted.sort(this::sortEntry);
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= sorted.size()) {
+            return;
+        }
+        CatalogEntry entry = sorted.get(sel);
+        ctx.openOptionsCallback.accept(entry.name, entry.kind, catalog);
     }
 
     private void addDetailField(List<Line> lines, String label, String value, int width) {
@@ -377,6 +420,8 @@ class CatalogTab extends AbstractTableTab {
         hint(spans, "s", "sort");
         hint(spans, "a", fullCatalog ? "app only" : "all");
         hint(spans, "f", "scope [" + SCOPES[scopeIndex] + "]");
+        hint(spans, "d", "doc");
+        hint(spans, "o", "options");
         if (filterTerm != null) {
             spans.add(Span.styled("  /", Theme.label().bold()));
             spans.add(Span.raw("\"" + filterTerm + "\"  "));
@@ -400,6 +445,7 @@ class CatalogTab extends AbstractTableTab {
             case "component" -> Style.EMPTY.fg(Theme.accent());
             case "dataformat" -> Theme.success();
             case "language" -> Theme.warning();
+            case "eip" -> Theme.info();
             default -> Style.EMPTY.dim();
         };
     }
@@ -422,7 +468,7 @@ class CatalogTab extends AbstractTableTab {
                 if (!full) {
                     DependencyLoader.LoadResult result = DependencyLoader.loadDependencies(info);
                     if (result.error() != null && result.entries().isEmpty()) {
-                        applyResult(Collections.emptyList(), result.error());
+                        applyResult(Collections.emptyList(), null, result.error());
                         return;
                     }
                     appArtifacts = new HashSet<>();
@@ -433,22 +479,23 @@ class CatalogTab extends AbstractTableTab {
                     }
                 }
 
-                CamelCatalog catalog = CatalogLoader.loadCatalog(null, info.camelVersion, true);
-                if (catalog == null) {
-                    applyResult(Collections.emptyList(), "Could not load catalog for version " + info.camelVersion);
+                CamelCatalog cat = CatalogLoader.loadCatalog(null, info.camelVersion, true);
+                if (cat == null) {
+                    applyResult(Collections.emptyList(), null, "Could not load catalog for version " + info.camelVersion);
                     return;
                 }
 
                 List<CatalogEntry> entries = new ArrayList<>();
-                collectArtifacts(catalog, "component", catalog.findComponentNames(), appArtifacts, entries);
-                collectArtifacts(catalog, "dataformat", catalog.findDataFormatNames(), appArtifacts, entries);
-                collectArtifacts(catalog, "language", catalog.findLanguageNames(), appArtifacts, entries);
-                collectArtifacts(catalog, "other", catalog.findOtherNames(), appArtifacts, entries);
+                collectArtifacts(cat, "component", cat.findComponentNames(), appArtifacts, entries);
+                collectArtifacts(cat, "dataformat", cat.findDataFormatNames(), appArtifacts, entries);
+                collectArtifacts(cat, "language", cat.findLanguageNames(), appArtifacts, entries);
+                collectArtifacts(cat, "other", cat.findOtherNames(), appArtifacts, entries);
+                collectEips(cat, info.pid, full, entries);
 
                 entries.sort((a, b) -> a.name.compareToIgnoreCase(b.name));
-                applyResult(entries, null);
+                applyResult(entries, cat, null);
             } catch (Exception e) {
-                applyResult(Collections.emptyList(), "Error: " + e.getMessage());
+                applyResult(Collections.emptyList(), null, "Error: " + e.getMessage());
             } finally {
                 loading.set(false);
             }
@@ -499,12 +546,85 @@ class CatalogTab extends AbstractTableTab {
         }
     }
 
-    private void applyResult(List<CatalogEntry> entries, String error) {
+    @SuppressWarnings("unchecked")
+    private void collectEips(CamelCatalog catalog, String pid, boolean full, List<CatalogEntry> entries) {
+        try {
+            Set<String> eipNames;
+            if (full) {
+                eipNames = new HashSet<>(catalog.findModelNames());
+            } else {
+                eipNames = new HashSet<>();
+                Path outputFile = ctx.getOutputFile(pid);
+                PathUtils.deleteFile(outputFile);
+
+                JsonObject root = new JsonObject();
+                root.put("action", "route-structure");
+                root.put("filter", "*");
+                root.put("brief", true);
+                root.put("metric", false);
+                PathUtils.writeTextSafely(root.toJson(), ctx.getActionFile(pid));
+
+                JsonObject jo = TuiHelper.pollJsonResponse(outputFile, 5000);
+                PathUtils.deleteFile(outputFile);
+                if (jo == null) {
+                    return;
+                }
+
+                List<JsonObject> routes = (List<JsonObject>) jo.getCollection("routes");
+                if (routes != null) {
+                    for (JsonObject route : routes) {
+                        List<JsonObject> code = (List<JsonObject>) route.getCollection("code");
+                        if (code != null) {
+                            for (JsonObject node : code) {
+                                String type = node.getString("type");
+                                if (type != null) {
+                                    eipNames.add(type);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Set<String> skipEips = Set.of("when", "otherwise",
+                    "langChain4jCharacterTokenizer", "langChain4jLineTokenizer",
+                    "langChain4jParagraphTokenizer", "langChain4jSentenceTokenizer",
+                    "langChain4jWordTokenizer");
+            for (String name : eipNames) {
+                if (skipEips.contains(name)) {
+                    continue;
+                }
+                EipModel model = catalog.eipModel(name);
+                if (model == null) {
+                    continue;
+                }
+                if (full && (model.getLabel() == null || !model.getLabel().contains("eip"))) {
+                    continue;
+                }
+                CatalogEntry entry = new CatalogEntry();
+                entry.name = model.getName();
+                entry.kind = "eip";
+                entry.title = model.getTitle() != null ? model.getTitle() : name;
+                entry.description = model.getDescription() != null ? model.getDescription() : "";
+                entry.label = model.getLabel();
+                entry.firstVersion = model.getFirstVersion();
+                entry.deprecated = model.isDeprecated();
+                entry.deprecatedSince = model.getDeprecatedSince();
+                entry.deprecationNote = model.getDeprecationNote();
+                entries.add(entry);
+            }
+        } catch (Exception e) {
+            // ignore - EIP detection is best-effort
+        }
+    }
+
+    private void applyResult(List<CatalogEntry> entries, CamelCatalog cat, String error) {
         if (ctx.runner == null) {
             return;
         }
         ctx.runner.runOnRenderThread(() -> {
             allEntries = entries;
+            catalog = cat;
             errorMessage = error;
             dataLoaded = true;
             refilter();
@@ -516,6 +636,9 @@ class CatalogTab extends AbstractTableTab {
         String ft = filterTerm != null ? filterTerm.toLowerCase() : null;
         String scope = SCOPES[scopeIndex];
         for (CatalogEntry entry : allEntries) {
+            if ("all".equals(scope) && "eip".equals(entry.kind)) {
+                continue;
+            }
             if (!"all".equals(scope) && !scope.equals(entry.kind)) {
                 continue;
             }
@@ -607,11 +730,36 @@ class CatalogTab extends AbstractTableTab {
                 - **dataformat** — show only data formats
                 - **language** — show only expression languages
                 - **other** — show only miscellaneous artifacts
+                - **eip** — show EIPs detected from the running app's routes
 
                 ## Filter
 
                 Press `/` to open the filter input. Type a search term and press
                 `Enter` to filter by substring match on name, title, or label.
+
+                ## Documentation
+
+                Press `d` to open the full documentation for the selected artifact in
+                a scrollable viewer. The documentation is loaded from the Camel catalog
+                and converted from AsciiDoc to Markdown. Use `↑`/`↓`/`PgUp`/`PgDn` or
+                mouse scroll to navigate, and `Esc` to close.
+
+                ## Options
+
+                Press `o` to open the options viewer for the selected artifact. This
+                shows all configuration options in a structured format with types,
+                defaults, enum values, groups, and descriptions.
+
+                For **components**, the viewer has three tabs:
+                - **Component** — component-level options
+                - **Endpoint** — endpoint-level options
+                - **Headers** — message headers with constant names
+
+                For **data formats**, **languages**, and **others**, a single Options tab
+                is shown. For **EIPs**, Options and exchange Properties tabs are shown.
+
+                Press `←`/`→` or `Tab` to switch tabs. Use `↑`/`↓`/`PgUp`/`PgDn` or
+                mouse scroll to navigate, and `Esc` to close.
 
                 ## Keys
 
@@ -619,6 +767,8 @@ class CatalogTab extends AbstractTableTab {
                 - `S` — reverse sort order
                 - `a` — toggle app only / full catalog
                 - `f` — cycle scope
+                - `d` — open documentation viewer
+                - `o` — open options viewer
                 - `/` — open filter
                 - `Esc` — clear filter or back
                 """;
@@ -643,7 +793,9 @@ class CatalogTab extends AbstractTableTab {
             if (e.label != null) {
                 row.put("label", e.label);
             }
-            row.put("artifactId", e.artifactId);
+            if (e.artifactId != null) {
+                row.put("artifactId", e.artifactId);
+            }
             if (e.firstVersion != null) {
                 row.put("since", e.firstVersion);
             }

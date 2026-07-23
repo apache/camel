@@ -1,0 +1,100 @@
+= A2A Sub Task EIP
+:doctitle: A2A Sub Task
+:shortname: a2aSubTask
+:description: Groups route steps and emits A2A (Agent-to-Agent) protocol progress events before, after, or when the grouped work fails
+:since: 4.21
+:supportlevel: Stable
+:tabs-sync-option:
+
+The A2A Sub Task EIP groups route steps and emits https://a2a-protocol.org/latest/specification/[A2A protocol] progress events
+before, after, or when the grouped work fails.
+
+This is useful for xref:ROOT:a2a-component.adoc[A2A] consumer routes where you want to report scoped progress updates
+to the calling agent as the route processes different stages of work.
+
+The `emitBefore`, `emitAfter`, and `emitOnError` fields are optional and are evaluated as
+xref:languages:simple-language.adoc[Simple] expressions against the current Exchange.
+
+== EIP options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Example
+
+In this example, the route groups two stages of work and emits progress events for each:
+
+[tabs]
+====
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:agent-card.json
+      steps:
+        - a2aSubTask:
+            id: search-docs-progress
+            emitBefore: "Searching docs..."
+            emitAfter: "Docs found: ${body.size()}"
+            emitOnError: "Error searching docs: ${exception.message}"
+            steps:
+              - to:
+                  uri: "elasticsearch:docs?operation=Search"
+        - a2aSubTask:
+            id: draft-answer-progress
+            emitBefore: "Drafting answer..."
+            emitAfter: "Answer drafted: ${body}"
+            emitOnError: "Error drafting answer: ${exception.message}"
+            steps:
+              - bean:
+                  ref: answerDraftingService
+                  method: draft
+        - setBody:
+            simple: "Final answer: ${body}"
+----
+
+Java::
++
+[source,java]
+----
+from("a2a:classpath:agent-card.json")
+    .a2aSubTask()
+        .id("search-docs-progress")
+        .emitBefore("Searching docs...")
+        .emitAfter("Docs found: ${body.size()}")
+        .emitOnError("Error searching docs: ${exception.message}")
+        .to("elasticsearch:docs?operation=Search")
+    .end()
+    .a2aSubTask()
+        .id("draft-answer-progress")
+        .emitBefore("Drafting answer...")
+        .emitAfter("Answer drafted: ${body}")
+        .emitOnError("Error drafting answer: ${exception.message}")
+        .bean(answerDraftingService, "draft")
+    .end()
+    .setBody(simple("Final answer: ${body}"));
+----
+====
+
+== Behavior
+
+* The nested `steps` behave like normal Camel route steps.
+* If the nested steps fail, `emitOnError` can access the original exception via `${exception.message}`,
+  and the original exception continues to propagate through the route.
+* Failures while evaluating the `emitBefore`, `emitAfter`, or `emitOnError` expressions are route failures.
+* Failures while storing or notifying the resulting A2A progress event are best-effort: they are logged
+  at debug level and do not stop nested work, fail an otherwise successful exchange, or replace
+  the original nested-step exception.
+* By default, emitting progress outside an active A2A task context is a no-op.
+  Set `failIfNoTaskContext=true` when a route should fail if the current Exchange
+  does not carry an active A2A task.
+* Use stable `id` values on long-lived sub-tasks so route tracing and route-structure views keep stable node names.
+
+== See Also
+
+* xref:ROOT:a2a-component.adoc[A2A Component]
+* xref:others:a2a-consumer.adoc[A2A Consumer Guide]

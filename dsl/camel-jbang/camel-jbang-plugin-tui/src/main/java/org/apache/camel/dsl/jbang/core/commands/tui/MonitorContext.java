@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
 import dev.tamboui.tui.TuiRunner;
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 
 /**
@@ -41,6 +42,14 @@ class MonitorContext {
     boolean logPinVisible;
     boolean ratePerMinute;
     BiConsumer<String, Boolean> notificationCallback;
+    BiConsumer<String, String> openMarkdownCallback;
+    OpenOptionsCallback openOptionsCallback;
+    OpenOptionsCallback openCatalogDocCallback;
+
+    @FunctionalInterface
+    interface OpenOptionsCallback {
+        void accept(String name, String kind, CamelCatalog catalog);
+    }
 
     MonitorContext(
                    AtomicReference<List<IntegrationInfo>> data,
