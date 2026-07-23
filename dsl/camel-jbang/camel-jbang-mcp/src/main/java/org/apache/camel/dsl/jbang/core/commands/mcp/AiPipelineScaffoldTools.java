@@ -31,7 +31,7 @@ import io.quarkiverse.mcp.server.ToolCallException;
 @ApplicationScoped
 public class AiPipelineScaffoldTools {
 
-    private static final String DEFAULT_MODEL = "us.anthropic.claude-sonnet-4-20250514-v1:0";
+    private static final String DEFAULT_MODEL = "anthropic.claude-sonnet-4-20250514-v1:0";
     private static final String DEFAULT_REGION = "us-east-1";
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -46,8 +46,8 @@ public class AiPipelineScaffoldTools {
             @ToolArg(description = "Document source: file (local path, default), s3 (AWS S3 bucket), "
                                    + "or url (HTTP/HTTPS URL)") String documentSource,
             @ToolArg(description = "Bedrock model ID (default: Claude Sonnet 4). "
-                                   + "Examples: us.anthropic.claude-sonnet-4-20250514-v1:0, "
-                                   + "us.anthropic.claude-opus-4-20250514-v1:0, "
+                                   + "Examples: anthropic.claude-sonnet-4-20250514-v1:0, "
+                                   + "anthropic.claude-opus-4-20250514-v1:0, "
                                    + "amazon.nova-pro-v1:0") String modelId,
             @ToolArg(description = "AWS region for Bedrock and Textract (default: us-east-1)") String region) {
 
@@ -116,15 +116,9 @@ public class AiPipelineScaffoldTools {
         appendSourceEndpoint(sb, source);
         sb.append("    steps:\n");
         appendDocumentProcessing(sb, processor);
-        sb.append("      - setHeader:\n");
-        sb.append("          name: CamelAwsBedrockModelId\n");
-        sb.append("          constant: \"").append(model).append("\"\n");
-        sb.append("      - setHeader:\n");
-        sb.append("          name: CamelAwsBedrockInputType\n");
-        sb.append("          constant: \"text\"\n");
         sb.append("      - process:\n");
         sb.append("          ref: \"#buildSummarizationPrompt\"\n");
-        appendBedrockConverse(sb, region);
+        appendBedrockConverse(sb, model, region);
         sb.append("      - log:\n");
         sb.append("          message: \"Summary generated: ${body}\"\n");
         return sb.toString();
@@ -140,12 +134,9 @@ public class AiPipelineScaffoldTools {
         appendSourceEndpoint(sb, source);
         sb.append("    steps:\n");
         appendDocumentProcessing(sb, processor);
-        sb.append("      - setHeader:\n");
-        sb.append("          name: CamelAwsBedrockModelId\n");
-        sb.append("          constant: \"").append(model).append("\"\n");
         sb.append("      - process:\n");
         sb.append("          ref: \"#buildExtractionPrompt\"\n");
-        appendBedrockConverse(sb, region);
+        appendBedrockConverse(sb, model, region);
         sb.append("      - unmarshal:\n");
         sb.append("          json:\n");
         sb.append("            unmarshalType: java.util.Map\n");
@@ -191,12 +182,9 @@ public class AiPipelineScaffoldTools {
         sb.append("      # TODO: Retrieve relevant chunks from vector store\n");
         sb.append("      # - to: \"langchain4j-embeddings:embed\" # embed the query\n");
         sb.append("      # - to: \"qdrant:search\"                # search vector store\n");
-        sb.append("      - setHeader:\n");
-        sb.append("          name: CamelAwsBedrockModelId\n");
-        sb.append("          constant: \"").append(model).append("\"\n");
         sb.append("      - process:\n");
         sb.append("          ref: \"#buildRagPrompt\"\n");
-        appendBedrockConverse(sb, region);
+        appendBedrockConverse(sb, model, region);
         sb.append("      - log:\n");
         sb.append("          message: \"RAG answer: ${body}\"\n");
         return sb.toString();
@@ -212,12 +200,9 @@ public class AiPipelineScaffoldTools {
         appendSourceEndpoint(sb, source);
         sb.append("    steps:\n");
         appendDocumentProcessing(sb, processor);
-        sb.append("      - setHeader:\n");
-        sb.append("          name: CamelAwsBedrockModelId\n");
-        sb.append("          constant: \"").append(model).append("\"\n");
         sb.append("      - process:\n");
         sb.append("          ref: \"#buildClassificationPrompt\"\n");
-        appendBedrockConverse(sb, region);
+        appendBedrockConverse(sb, model, region);
         sb.append("      - choice:\n");
         sb.append("          when:\n");
         sb.append("            - simple: \"${body} contains 'invoice'\"\n");
@@ -278,7 +263,8 @@ public class AiPipelineScaffoldTools {
         sb.append("          uri: \"docling:convert\"\n");
         sb.append("          parameters:\n");
         sb.append("            operation: CONVERT_TO_MARKDOWN\n");
-        sb.append("            serverUrl: \"{{docling.server.url}}\"\n");
+        sb.append("            useDoclingServe: true\n");
+        sb.append("            doclingServeUrl: \"{{docling.server.url}}\"\n");
     }
 
     private void appendTextractStep(StringBuilder sb) {
@@ -289,11 +275,12 @@ public class AiPipelineScaffoldTools {
         sb.append("            region: \"{{aws.region}}\"\n");
     }
 
-    private void appendBedrockConverse(StringBuilder sb, String region) {
+    private void appendBedrockConverse(StringBuilder sb, String model, String region) {
         sb.append("      - to:\n");
         sb.append("          uri: \"aws-bedrock:label\"\n");
         sb.append("          parameters:\n");
         sb.append("            operation: converse\n");
+        sb.append("            modelId: \"").append(model).append("\"\n");
         sb.append("            region: \"").append(region).append("\"\n");
     }
 
@@ -366,7 +353,7 @@ public class AiPipelineScaffoldTools {
 
     // ---- Result record ----
 
-    record ScaffoldResult(
+    public record ScaffoldResult(
             String yamlRoute,
             String applicationProperties,
             String description) {

@@ -85,8 +85,13 @@ class AiPipelineScaffoldToolsTest {
                 .contains("ai-summarization")
                 .contains("docling:convert")
                 .contains("CONVERT_TO_MARKDOWN")
-                .contains("converse")
-                .contains("buildSummarizationPrompt");
+                .contains("useDoclingServe: true")
+                .contains("doclingServeUrl:")
+                .contains("operation: converse")
+                .contains("modelId:")
+                .contains("buildSummarizationPrompt")
+                .doesNotContain("CamelAwsBedrockModelId")
+                .doesNotContain("CamelAwsBedrockInputType");
 
         assertThat(result.applicationProperties())
                 .contains("docling.server.url")
@@ -102,7 +107,9 @@ class AiPipelineScaffoldToolsTest {
                 .contains("ai-extraction")
                 .contains("aws2-textract:")
                 .contains("detectDocumentText")
-                .contains("buildExtractionPrompt");
+                .contains("modelId:")
+                .contains("buildExtractionPrompt")
+                .doesNotContain("CamelAwsBedrockModelId");
 
         assertThat(result.applicationProperties())
                 .contains("document.s3.bucket")
