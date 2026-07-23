@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.test.junit6.TestSupport;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.io.TempDir;
@@ -35,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.test.junit6.TestSupport.createDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Tag("isolated")
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/sftp/hostkey.pem')")
 public class SftpChangedReadLockIT extends SftpServerTestSupport {
 
