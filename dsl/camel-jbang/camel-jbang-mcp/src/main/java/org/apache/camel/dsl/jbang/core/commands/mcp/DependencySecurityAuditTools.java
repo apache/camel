@@ -129,7 +129,7 @@ public class DependencySecurityAuditTools {
             int totalCves = vulnerableArtifacts.stream().mapToInt(a -> a.findings().size()).sum();
             long criticalCount = vulnerableArtifacts.stream()
                     .flatMap(a -> a.findings().stream())
-                    .filter(f -> "critical".equals(f.severity()) || "high".equals(f.severity()))
+                    .filter(f -> "critical".equalsIgnoreCase(f.severity()) || "high".equalsIgnoreCase(f.severity()))
                     .count();
             long reachableCount = vulnerableArtifacts.stream().filter(ArtifactAudit::reachable).count();
 
@@ -191,7 +191,7 @@ public class DependencySecurityAuditTools {
 
         boolean hasCritical = vulnerableArtifacts.stream()
                 .flatMap(a -> a.findings().stream())
-                .anyMatch(f -> "critical".equals(f.severity()));
+                .anyMatch(f -> "critical".equalsIgnoreCase(f.severity()));
         if (hasCritical) {
             recs.add("URGENT: Critical vulnerabilities found. Upgrade Camel version immediately. "
                      + "Use camel_migration_compatibility to check upgrade path.");

@@ -81,6 +81,7 @@ class DependencySecurityAuditToolsTest {
         assertThat(result.summary()).isNotNull();
         assertThat(result.summary().camelVersion()).isEqualTo("4.10.0");
         assertThat(result.summary().totalDependencies()).isGreaterThan(0);
+        assertThat(result.summary().totalCves()).isGreaterThanOrEqualTo(0);
         assertThat(result.recommendations()).isNotNull();
     }
 
