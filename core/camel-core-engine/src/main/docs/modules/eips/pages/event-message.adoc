@@ -17,7 +17,7 @@ a oneway event message. Camel xref:ROOT:index.adoc[Components] then
 implement this pattern using the underlying transport or protocols.
 
 The default behaviour of many xref:ROOT:index.adoc[Components] is `InOnly`
-such as for xref:ROOT:jms-component.adoc[JMS], xref:ROOT:jms-component.adoc[File] or
+such as for xref:ROOT:jms-component.adoc[JMS], xref:ROOT:file-component.adoc[File] or
 xref:ROOT:seda-component.adoc[SEDA].
 
 Some components support both `InOnly` and `InOut` and act accordingly.
