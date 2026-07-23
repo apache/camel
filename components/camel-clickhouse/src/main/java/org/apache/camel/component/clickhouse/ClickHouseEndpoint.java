@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
              producerOnly = true, headersClass = ClickHouseConstants.class)
 public class ClickHouseEndpoint extends DefaultEndpoint {
 
-    private volatile Client client;
+    private Client client;
     private boolean clientCreated;
 
     @UriPath
@@ -99,10 +99,15 @@ public class ClickHouseEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (client == null && ObjectHelper.isEmpty(serverUrl)) {
+        if (client != null) {
+            return;
+        }
+        if (ObjectHelper.isEmpty(serverUrl)) {
             throw new IllegalArgumentException(
                     "Either a shared Client must be autowired or the serverUrl option must be configured");
         }
+        client = createClient();
+        clientCreated = true;
     }
 
     @Override
@@ -115,37 +120,29 @@ public class ClickHouseEndpoint extends DefaultEndpoint {
         super.doStop();
     }
 
-    /**
-     * Returns the ClickHouse client, lazily building one from the endpoint connection options (serverUrl, username,
-     * password, ...) when no shared client has been provided.
-     */
     public Client getClient() {
-        if (client == null && ObjectHelper.isNotEmpty(serverUrl)) {
-            synchronized (this) {
-                if (client == null) {
-                    Client.Builder builder = new Client.Builder()
-                            .addEndpoint(resolveEndpointUrl())
-                            .setUsername(username)
-                            .setPassword(password != null ? password : "");
-                    if (ObjectHelper.isNotEmpty(database)) {
-                        builder.setDefaultDatabase(database);
-                    }
-                    if (compression) {
-                        builder.compressClientRequest(true);
-                    }
-                    client = builder.build();
-                    clientCreated = true;
-                }
-            }
-        }
         return client;
+    }
+
+    private Client createClient() {
+        Client.Builder builder = new Client.Builder()
+                .addEndpoint(resolveEndpointUrl())
+                .setUsername(username)
+                .setPassword(password != null ? password : "");
+        if (ObjectHelper.isNotEmpty(database)) {
+            builder.setDefaultDatabase(database);
+        }
+        if (compression) {
+            builder.compressClientRequest(true);
+        }
+        return builder.build();
     }
 
     /**
      * Resolves the endpoint URL, upgrading the scheme to HTTPS when the {@code ssl} option is enabled. The ClickHouse
      * client-v2 derives the transport security from the endpoint URL scheme.
      */
-    private String resolveEndpointUrl() {
+    String resolveEndpointUrl() {
         if (ssl) {
             if (serverUrl.startsWith("http://")) {
                 return "https://" + serverUrl.substring("http://".length());

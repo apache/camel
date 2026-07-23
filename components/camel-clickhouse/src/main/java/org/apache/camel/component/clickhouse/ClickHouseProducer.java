@@ -31,6 +31,7 @@ import com.clickhouse.client.api.query.QuerySettings;
 import com.clickhouse.data.ClickHouseFormat;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -79,6 +80,9 @@ public class ClickHouseProducer extends DefaultProducer {
         }
 
         Object body = exchange.getIn().getBody();
+        if (body instanceof WrappedFile<?> wrappedFile) {
+            body = wrappedFile.getBody();
+        }
         long writtenRows;
         if (body instanceof List) {
             List<?> data = exchange.getIn().getBody(List.class);

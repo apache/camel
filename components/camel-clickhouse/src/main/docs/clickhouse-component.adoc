@@ -40,7 +40,9 @@ clickhouse://database[.table]?[options]
 -------------------------------
 
 The producer can either use a shared `com.clickhouse.client.api.Client` bean (autowired from the registry) or build
-its own client from the `serverUrl`, `username`, `password` and `ssl` options.
+its own client from the `serverUrl`, `username`, `password` and `ssl` options. Connection settings can also be
+configured once on the **component** (for example `camel.component.clickhouse.serverUrl`) and inherited by every
+endpoint, so they do not need to be repeated in each URI.
 
 // component options: START
 include::partial$component-configure-options.adoc[]

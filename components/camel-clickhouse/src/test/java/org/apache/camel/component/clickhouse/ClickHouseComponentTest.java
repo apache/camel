@@ -94,6 +94,37 @@ class ClickHouseComponentTest extends CamelTestSupport {
     }
 
     @Test
+    void componentLevelConnectionOptionsAreInherited() {
+        ClickHouseComponent component = context.getComponent("clickhouse", ClickHouseComponent.class);
+        component.setServerUrl("http://clickhouse:8123");
+        component.setUsername("admin");
+        component.setPassword("secret");
+        component.setSsl(true);
+        component.setCompression(true);
+
+        ClickHouseEndpoint endpoint = context.getEndpoint("clickhouse://db", ClickHouseEndpoint.class);
+
+        assertThat(endpoint.getServerUrl()).isEqualTo("http://clickhouse:8123");
+        assertThat(endpoint.getUsername()).isEqualTo("admin");
+        assertThat(endpoint.getPassword()).isEqualTo("secret");
+        assertThat(endpoint.isSsl()).isTrue();
+        assertThat(endpoint.isCompression()).isTrue();
+    }
+
+    @Test
+    void endpointOptionsOverrideComponentDefaults() {
+        ClickHouseComponent component = context.getComponent("clickhouse", ClickHouseComponent.class);
+        component.setServerUrl("http://clickhouse:8123");
+        component.setUsername("admin");
+
+        ClickHouseEndpoint endpoint = context.getEndpoint(
+                "clickhouse://db?username=override&serverUrl=http://other:8123", ClickHouseEndpoint.class);
+
+        assertThat(endpoint.getServerUrl()).isEqualTo("http://other:8123");
+        assertThat(endpoint.getUsername()).isEqualTo("override");
+    }
+
+    @Test
     void emptyPathIsRejected() {
         assertThatThrownBy(() -> context.getEndpoint("clickhouse:?" + URL, ClickHouseEndpoint.class))
                 .isInstanceOf(ResolveEndpointFailedException.class)

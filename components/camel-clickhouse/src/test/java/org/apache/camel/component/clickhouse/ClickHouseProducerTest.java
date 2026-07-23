@@ -17,6 +17,7 @@
 package org.apache.camel.component.clickhouse;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -30,6 +31,7 @@ import com.clickhouse.client.api.query.QueryResponse;
 import com.clickhouse.client.api.query.QuerySettings;
 import com.clickhouse.data.ClickHouseFormat;
 import org.apache.camel.CamelContext;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -159,6 +161,34 @@ class ClickHouseProducerTest extends CamelTestSupport {
         assertThat(batches.get(0)).hasSize(2);
         assertThat(batches.get(1)).hasSize(2);
         assertThat(batches.get(2)).hasSize(1);
+    }
+
+    @Test
+    void insertStreamsWrappedFileBody() throws Exception {
+        File file = File.createTempFile("clickhouse-", ".json");
+        file.deleteOnExit();
+        java.nio.file.Files.writeString(file.toPath(), "{\"id\":1,\"name\":\"alice\"}");
+
+        WrappedFile<File> wrappedFile = new WrappedFile<>() {
+            @Override
+            public File getFile() {
+                return file;
+            }
+
+            @Override
+            public Object getBody() {
+                return file;
+            }
+
+            @Override
+            public long getFileLength() {
+                return file.length();
+            }
+        };
+
+        template.sendBody("direct:insert", wrappedFile);
+
+        verify(client).insert(anyString(), any(InputStream.class), any(ClickHouseFormat.class), any(InsertSettings.class));
     }
 
     @Test

@@ -26,8 +26,14 @@ public class ClickHouseComponentConfigurer extends PropertyConfigurerSupport imp
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "client": target.setClient(property(camelContext, com.clickhouse.client.api.Client.class, value)); return true;
+        case "compression": target.setCompression(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "serverurl":
+        case "serverUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "ssl": target.setSsl(property(camelContext, boolean.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -43,8 +49,14 @@ public class ClickHouseComponentConfigurer extends PropertyConfigurerSupport imp
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "client": return com.clickhouse.client.api.Client.class;
+        case "compression": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "serverurl":
+        case "serverUrl": return java.lang.String.class;
+        case "ssl": return boolean.class;
+        case "username": return java.lang.String.class;
         default: return null;
         }
     }
@@ -56,8 +68,14 @@ public class ClickHouseComponentConfigurer extends PropertyConfigurerSupport imp
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "client": return target.getClient();
+        case "compression": return target.isCompression();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "password": return target.getPassword();
+        case "serverurl":
+        case "serverUrl": return target.getServerUrl();
+        case "ssl": return target.isSsl();
+        case "username": return target.getUsername();
         default: return null;
         }
     }

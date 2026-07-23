@@ -30,6 +30,19 @@ public class ClickHouseComponent extends DefaultComponent {
 
     @Metadata(autowired = true)
     private Client client;
+    @Metadata(description = "The ClickHouse HTTP endpoint URL, e.g. http://localhost:8123. Can be overridden per endpoint."
+                            + " Required unless a shared Client bean is autowired or configured on the component.")
+    private String serverUrl;
+    @Metadata(label = "security", defaultValue = "default", description = "The username used to authenticate to ClickHouse.")
+    private String username = "default";
+    @Metadata(label = "security", secret = true, description = "The password used to authenticate to ClickHouse.")
+    private String password;
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Whether to connect to ClickHouse over a secure (HTTPS) connection.")
+    private boolean ssl;
+    @Metadata(defaultValue = "false",
+              description = "Whether to compress the insert request payload sent to the server (LZ4).")
+    private boolean compression;
 
     public ClickHouseComponent() {
     }
@@ -43,8 +56,14 @@ public class ClickHouseComponent extends DefaultComponent {
 
         ClickHouseEndpoint endpoint = new ClickHouseEndpoint(uri, this);
         endpoint.setClient(client);
+        if (ObjectHelper.isNotEmpty(serverUrl)) {
+            endpoint.setServerUrl(serverUrl);
+        }
+        endpoint.setUsername(username);
+        endpoint.setPassword(password);
+        endpoint.setSsl(ssl);
+        endpoint.setCompression(compression);
 
-        // remaining is database[.table]
         String database = remaining;
         String table = null;
         int dot = remaining.indexOf('.');
@@ -71,5 +90,45 @@ public class ClickHouseComponent extends DefaultComponent {
      */
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
+    }
+
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isSsl() {
+        return ssl;
+    }
+
+    public void setSsl(boolean ssl) {
+        this.ssl = ssl;
+    }
+
+    public boolean isCompression() {
+        return compression;
+    }
+
+    public void setCompression(boolean compression) {
+        this.compression = compression;
     }
 }
