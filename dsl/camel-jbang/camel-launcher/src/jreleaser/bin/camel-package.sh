@@ -136,8 +136,19 @@ else
   # instead of this line's own latest patch.
   lts_line_escaped=$(echo "$LTS_LINE" | sed 's/\./\\./g')
   CAMEL_PKG_BREW_LIVECHECK_REGEX="<version>(${lts_line_escaped}\.[0-9]+)<\/version>"
+  # deprecate! fires 6 months before the line's own documented support end; disable! fires on the
+  # support-end date itself. supported_ends was already resolved and validated (non-empty, a real
+  # entry in supported-lts.yml) by the --lts-line validation earlier in this script - re-used here
+  # rather than re-parsed.
+  CAMEL_PKG_BREW_DEPRECATE_DATE=$(date -u -d "$supported_ends -6 months" +%F 2>/dev/null \
+    || date -u -j -v-6m -f %Y-%m-%d "$supported_ends" +%F)
+  CAMEL_PKG_BREW_DISABLE_DATE="$supported_ends"
 fi
 export CAMEL_PKG_BREW_LIVECHECK_REGEX
+if [ "$CHANNEL" = "lts" ]; then
+  export CAMEL_PKG_BREW_DEPRECATE_DATE
+  export CAMEL_PKG_BREW_DISABLE_DATE
+fi
 
 if [ "$PRINT_PLAN" -eq 1 ]; then
   echo "CHANNEL=$CHANNEL"

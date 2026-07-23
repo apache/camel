@@ -30,6 +30,9 @@ class {{brewFormulaName}} < Formula
 {{#brewVersionedFormula}}
 
   keg_only :versioned_formula
+
+  deprecate! date: "{{brewDeprecateDate}}", because: :unsupported
+  disable! date: "{{brewDisableDate}}", because: :unsupported
 {{/brewVersionedFormula}}
 {{#brewHasLivecheck}}
 

@@ -129,10 +129,12 @@ distributions:
       # and JReleaser falls back to its embedded default template.
       templateDirectory: "dsl/camel-jbang/camel-launcher/src/jreleaser/distributions/camel-cli/brew"
       extraProperties:
-        # Non-empty only for versioned formulae (e.g. "camel@4.20"); used by
+        # Non-empty only for versioned formulae (e.g. "apache-camel@4.20"); used by
         # formula.rb.tpl as a Mustache truthiness check (empty string == falsy)
         # to add `keg_only :versioned_formula` and its PATH caveat.
         versionedFormula: "{{ Env.CAMEL_PKG_BREW_VERSIONED }}"
+        deprecateDate: "{{ Env.CAMEL_PKG_BREW_DEPRECATE_DATE }}"
+        disableDate: "{{ Env.CAMEL_PKG_BREW_DISABLE_DATE }}"
       livecheck:
         - 'url "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/maven-metadata.xml"'
         - 'regex(/{{ Env.CAMEL_PKG_BREW_LIVECHECK_REGEX }}/i)'
