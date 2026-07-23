@@ -7,6 +7,10 @@
     "hash": "sha256:{{distributionChecksumSha256}}",
     "extract_dir": "{{distributionArtifactRootEntryName}}",
     "bin": "bin\\{{distributionExecutableWindows}}",
+    "post_install": [
+        "Remove-Item \"$dir\\bin\\camel-x64.exe\" -ErrorAction SilentlyContinue",
+        "Remove-Item \"$dir\\bin\\camel-arm64.exe\" -ErrorAction SilentlyContinue"
+    ],
     "suggest": {
         "JDK": [
             "java/oraclejdk",

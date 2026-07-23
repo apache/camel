@@ -28,4 +28,9 @@ Install-ChocolateyZipPackage `
     -ChecksumType 'sha256' `
     -UnzipLocation $package
 
+# Chocolatey has no per-architecture exe selection (chocolatey/choco#1803); these two WinGet-only
+# native bootstraps are never invoked by a Chocolatey install and would otherwise linger unused.
+Remove-Item (Join-Path $app_home 'bin\camel-x64.exe') -ErrorAction SilentlyContinue
+Remove-Item (Join-Path $app_home 'bin\camel-arm64.exe') -ErrorAction SilentlyContinue
+
 Install-BinFile -Name '{{distributionExecutableName}}' -Path $app_exe
