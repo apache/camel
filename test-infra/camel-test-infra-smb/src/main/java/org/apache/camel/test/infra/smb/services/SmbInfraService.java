@@ -19,6 +19,8 @@ package org.apache.camel.test.infra.smb.services;
 
 import org.apache.camel.test.infra.common.services.InfrastructureService;
 
+// Credentials are intentional test-only fixtures for testcontainer services — no security risk
+@SuppressWarnings("java:S2068")
 public interface SmbInfraService extends InfrastructureService {
     String address();
 

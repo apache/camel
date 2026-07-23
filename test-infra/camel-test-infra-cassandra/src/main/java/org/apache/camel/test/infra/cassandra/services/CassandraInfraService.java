@@ -22,6 +22,8 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
 /**
  * Represents an endpoint to a Cassandra instance
  */
+// Credentials are intentional test-only fixtures for testcontainer services — no security risk
+@SuppressWarnings("java:S2068")
 public interface CassandraInfraService extends InfrastructureService {
 
     int getCQL3Port();
