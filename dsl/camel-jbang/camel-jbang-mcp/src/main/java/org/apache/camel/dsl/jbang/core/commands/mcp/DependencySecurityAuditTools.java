@@ -92,10 +92,10 @@ public class DependencySecurityAuditTools {
                         findings.add(new VulnerabilityFinding(
                                 adv.cve(),
                                 adv.summary(),
-                                mapSeverity(adv.summary()),
+                                adv.severity(),
                                 adv.affected(),
                                 adv.fixed(),
-                                AdvisoryService.SECURITY_PAGE_URL + adv.cve().toLowerCase().replace("-", "-")));
+                                adv.url()));
                     }
                     auditByArtifact.put(dep, new ArtifactAudit(dep, reachable, findings));
                 }
@@ -113,19 +113,15 @@ public class DependencySecurityAuditTools {
 
                 List<AdvisoryService.AdvisoryView> matched
                         = AdvisoryService.query(allAdvisories, effectiveVersion, artifactId, null);
-                if (!matched.isEmpty()) {
-                    boolean reachable = usedSchemes.contains(compName);
-                    boolean declaredDep = pom.dependencies().contains(artifactId);
+                if (!matched.isEmpty() && usedSchemes.contains(compName)) {
                     List<VulnerabilityFinding> findings = new ArrayList<>();
                     for (AdvisoryService.AdvisoryView adv : matched) {
                         findings.add(new VulnerabilityFinding(
-                                adv.cve(), adv.summary(), mapSeverity(adv.summary()),
+                                adv.cve(), adv.summary(), adv.severity(),
                                 adv.affected(), adv.fixed(),
-                                AdvisoryService.SECURITY_PAGE_URL + adv.cve().toLowerCase().replace("-", "-")));
+                                adv.url()));
                     }
-                    if (declaredDep || reachable) {
-                        auditByArtifact.put(artifactId, new ArtifactAudit(artifactId, reachable, findings));
-                    }
+                    auditByArtifact.put(artifactId, new ArtifactAudit(artifactId, true, findings));
                 }
             }
 
@@ -189,24 +185,6 @@ public class DependencySecurityAuditTools {
         return usedSchemes.contains(schemeName);
     }
 
-    private String mapSeverity(String title) {
-        if (title == null) {
-            return "unknown";
-        }
-        String lower = title.toLowerCase();
-        if (lower.contains("remote code") || lower.contains("rce") || lower.contains("deserialization")) {
-            return "critical";
-        }
-        if (lower.contains("injection") || lower.contains("bypass") || lower.contains("ssrf")
-                || lower.contains("traversal")) {
-            return "high";
-        }
-        if (lower.contains("disclosure") || lower.contains("xxe") || lower.contains("header")) {
-            return "medium";
-        }
-        return "medium";
-    }
-
     private List<String> buildRecommendations(
             List<ArtifactAudit> vulnerableArtifacts, String version, CamelCatalog catalog) {
         List<String> recs = new ArrayList<>();
@@ -248,20 +226,20 @@ public class DependencySecurityAuditTools {
 
     // ---- Result records ----
 
-    record AuditResult(
+    public record AuditResult(
             List<String> sanitizationWarnings,
             List<ArtifactAudit> vulnerableArtifacts,
             List<String> recommendations,
             AuditSummary summary) {
     }
 
-    record ArtifactAudit(
+    public record ArtifactAudit(
             String artifactId,
             boolean reachable,
             List<VulnerabilityFinding> findings) {
     }
 
-    record VulnerabilityFinding(
+    public record VulnerabilityFinding(
             String cve,
             String title,
             String severity,
@@ -270,7 +248,7 @@ public class DependencySecurityAuditTools {
             String advisoryUrl) {
     }
 
-    record AuditSummary(
+    public record AuditSummary(
             String camelVersion,
             int totalDependencies,
             int vulnerableArtifacts,
