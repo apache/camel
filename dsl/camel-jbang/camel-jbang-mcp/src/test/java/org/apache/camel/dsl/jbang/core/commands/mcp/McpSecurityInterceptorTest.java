@@ -36,7 +36,7 @@ class McpSecurityInterceptorTest {
 
     @Test
     void stripControlCharsRemovesBellAndOtherControls() {
-        assertThat(McpSecurityInterceptor.stripControlChars("abc"))
+        assertThat(McpSecurityInterceptor.stripControlChars("a\u0007b\u0001c"))
                 .isEqualTo("abc");
     }
 

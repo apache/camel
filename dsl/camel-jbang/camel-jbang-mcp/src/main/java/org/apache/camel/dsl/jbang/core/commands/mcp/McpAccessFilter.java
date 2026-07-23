@@ -35,13 +35,34 @@ public class McpAccessFilter implements ToolFilter {
     @Inject
     McpSecurityConfig config;
 
+    @Inject
+    McpAuditLogger auditLogger;
+
     @Override
     public boolean test(ToolManager.ToolInfo tool, FilterContext context) {
         if (!config.isEnabled()) {
             return true;
         }
-        return config.getAccessLevel().permits(
-                tool.annotations().map(ToolManager.ToolAnnotations::readOnlyHint).orElse(true),
-                tool.annotations().map(ToolManager.ToolAnnotations::destructiveHint).orElse(false));
+
+        boolean readOnlyHint = tool.annotations().map(ToolManager.ToolAnnotations::readOnlyHint).orElse(true);
+        boolean destructiveHint = tool.annotations().map(ToolManager.ToolAnnotations::destructiveHint).orElse(false);
+        boolean permitted = config.getAccessLevel().permits(readOnlyHint, destructiveHint);
+
+        if (!permitted && config.isAuditEnabled()) {
+            String requiredLevel = destructiveHint ? "admin" : (!readOnlyHint ? "read-write" : "read-only");
+            String connectionId = "";
+            String clientName = "";
+            try {
+                connectionId = context.connection().id();
+                clientName = context.connection().initialRequest().implementation().name();
+            } catch (Exception e) {
+                // connection context may not be fully available during filtering
+            }
+            auditLogger.logAccessDenied(
+                    tool.name(), connectionId, clientName,
+                    requiredLevel, config.getAccessLevel().name().toLowerCase().replace("_", "-"));
+        }
+
+        return permitted;
     }
 }

@@ -66,6 +66,9 @@ public class McpSecurityInterceptor {
         // Input sanitization
         sanitizeParameters(ctx);
 
+        // TODO: CDI interceptors do not have access to MCP connection context (connectionId, clientName).
+        // These will be populated once global guardrail support is available in Quarkus MCP Server.
+
         // Audit: log tool call
         if (config.isAuditEnabled()) {
             String arguments = null;
@@ -77,6 +80,7 @@ public class McpSecurityInterceptor {
 
         long start = System.nanoTime();
         boolean isError = false;
+        boolean wasRedacted = false;
         try {
             Object result = ctx.proceed();
 
@@ -84,6 +88,7 @@ public class McpSecurityInterceptor {
             if (config.isRedactionEnabled() && result instanceof String s) {
                 if (redactor.containsSecret(s)) {
                     result = redactor.redact(s);
+                    wasRedacted = true;
                 }
             }
 
@@ -94,7 +99,7 @@ public class McpSecurityInterceptor {
         } finally {
             if (config.isAuditEnabled()) {
                 long durationMs = (System.nanoTime() - start) / 1_000_000;
-                auditLogger.logToolResult(toolName, "", isError, false, durationMs);
+                auditLogger.logToolResult(toolName, "", isError, wasRedacted, durationMs);
             }
         }
     }

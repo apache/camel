@@ -21,10 +21,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
 
 /**
  * Central configuration for the MCP security execution layer.
@@ -34,6 +36,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
  */
 @ApplicationScoped
 public class McpSecurityConfig {
+
+    private static final Logger LOG = Logger.getLogger(McpSecurityConfig.class);
 
     static final int DEFAULT_MAX_ARGUMENT_LENGTH = 10_000;
 
@@ -94,7 +98,11 @@ public class McpSecurityConfig {
             for (String p : redactionPatterns.get().split(",")) {
                 String trimmed = p.trim();
                 if (!trimmed.isEmpty()) {
-                    patterns.add(Pattern.compile(trimmed));
+                    try {
+                        patterns.add(Pattern.compile(trimmed));
+                    } catch (PatternSyntaxException e) {
+                        LOG.warnf("Ignoring invalid redaction pattern '%s': %s", trimmed, e.getMessage());
+                    }
                 }
             }
         }
