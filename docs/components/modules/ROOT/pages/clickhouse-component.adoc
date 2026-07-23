@@ -1,1 +1,0 @@
-../../../../../components/camel-clickhouse/src/main/docs/clickhouse-component.adoc

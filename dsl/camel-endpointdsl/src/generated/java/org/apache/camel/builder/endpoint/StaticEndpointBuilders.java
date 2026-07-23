@@ -188,7 +188,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ai-tool:toolName</code>
      * 
      * Path parameter: toolName (required)
-     * The tool name. This is the name the LLM sees and uses to invoke the tool.
+     * The tool name. This is the name the LLM sees and uses to invoke the
+     * tool.
      * 
      * @param path toolName
      * @return the dsl builder
@@ -208,7 +209,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ai-tool:toolName</code>
      * 
      * Path parameter: toolName (required)
-     * The tool name. This is the name the LLM sees and uses to invoke the tool.
+     * The tool name. This is the name the LLM sees and uses to invoke the
+     * tool.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -3029,6 +3031,50 @@ public class StaticEndpointBuilders {
         return ClassEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * ClickHouse (camel-clickhouse)
+     * Interact with ClickHouse, the high-performance columnar OLAP database,
+     * for high-throughput ingestion and OLAP queries.
+     * 
+     * Category: database,bigdata
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-clickhouse
+     * 
+     * Syntax: <code>clickhouse:database</code>
+     * 
+     * Path parameter: database (required)
+     * The ClickHouse database. A table may also be provided using the
+     * database.table syntax.
+     * 
+     * @param path database
+     * @return the dsl builder
+     */
+    public static ClickHouseEndpointBuilderFactory.ClickHouseEndpointBuilder clickhouse(String path) {
+        return clickhouse("clickhouse", path);
+    }
+    /**
+     * ClickHouse (camel-clickhouse)
+     * Interact with ClickHouse, the high-performance columnar OLAP database,
+     * for high-throughput ingestion and OLAP queries.
+     * 
+     * Category: database,bigdata
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-clickhouse
+     * 
+     * Syntax: <code>clickhouse:database</code>
+     * 
+     * Path parameter: database (required)
+     * The ClickHouse database. A table may also be provided using the
+     * database.table syntax.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path database
+     * @return the dsl builder
+     */
+    public static ClickHouseEndpointBuilderFactory.ClickHouseEndpointBuilder clickhouse(String componentName, String path) {
+        return ClickHouseEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * ClickUp (camel-clickup)
      * Receives events from ClickUp
      * 
@@ -4563,7 +4609,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: dnsType (required)
      * The type of the lookup.
-     * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
+     * There are 4 enums and the value can be one of: dig, ip, lookup,
+     * wikipedia
      * 
      * @param path dnsType
      * @return the dsl builder
@@ -4583,7 +4630,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: dnsType (required)
      * The type of the lookup.
-     * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
+     * There are 4 enums and the value can be one of: dig, ip, lookup,
+     * wikipedia
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -1,0 +1,123 @@
+= ClickHouse Component
+:doctitle: ClickHouse
+:shortname: clickhouse
+:artifactid: camel-clickhouse
+:description: Interact with ClickHouse, the high-performance columnar OLAP database, for high-throughput ingestion and OLAP queries.
+:since: 4.22
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+This component allows you to interact with https://clickhouse.com/[ClickHouse], the high-performance columnar OLAP
+database, using the official ClickHouse Java client (client-v2).
+
+While ClickHouse can be reached through the generic xref:jdbc-component.adoc[JDBC] and xref:sql-component.adoc[SQL]
+components, this dedicated component exposes ClickHouse's native capabilities as first-class endpoint options:
+native format streaming inserts (RowBinary, JSONEachRow, CSV, TSV, Parquet), server-side asynchronous inserts,
+OLAP queries and health checks.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-clickhouse</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+-------------------------------
+clickhouse://database[.table]?[options]
+-------------------------------
+
+The producer can either use a shared `com.clickhouse.client.api.Client` bean (autowired from the registry) or build
+its own client from the `serverUrl`, `username`, `password` and `ssl` options. Connection settings can also be
+configured once on the **component** (for example `camel.component.clickhouse.serverUrl`) and inherited by every
+endpoint, so they do not need to be repeated in each URI.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Operations
+
+The component is producer-only and supports the following operations, selected with the `operation` option or the
+`CamelClickHouseOperation` header:
+
+[cols="1,3", options="header"]
+|===
+| Operation | Description
+| `insert` (default) | Streams the message body into the target table using the configured `format`. Accepted body
+types are `InputStream`, `byte[]`, `String`, `java.io.File` (matched to the `format`), or a `List` of objects
+whose class has been registered on the shared `Client`. When the body is a `List` and `batchSize` is greater
+than 0, the list is split into batches of that size, each sent as a separate insert. The number of written
+rows is set on the `CamelClickHouseWrittenRows` header.
+| `query` | Runs the SQL statement contained in the message body and returns the result set (in the configured
+`format`) as a `String` body. The number of read rows is set on the `CamelClickHouseReadRows` header.
+| `ping` | Pings the ClickHouse server and sets the boolean result on both the message body and the
+`CamelClickHousePingOk` header.
+|===
+
+== Examples
+
+=== High-throughput event ingestion
+
+Batch-insert aggregated events into ClickHouse using the native `RowBinary` format:
+
+[source,java]
+----
+from("kafka:events?groupId=analytics")
+    .aggregate(constant(true), new GroupedBodyAggregationStrategy())
+        .completionSize(5000).completionTimeout(2000)
+    .to("clickhouse://analytics.events?operation=insert&format=RowBinary")
+    .log("Inserted ${header.CamelClickHouseWrittenRows} rows");
+----
+
+=== Server-side asynchronous inserts
+
+Let ClickHouse buffer and flush inserts server-side, ideal for many concurrent producers sending small payloads:
+
+[source,java]
+----
+from("platform-http:/ingest")
+    .to("clickhouse://metrics.samples?operation=insert&asyncInsert=true&waitForAsyncInsert=false");
+----
+
+=== Scheduled OLAP query
+
+Run an aggregation query on a timer and route the result set downstream:
+
+[source,java]
+----
+from("timer:rollup?period=60000")
+    .setBody(constant("SELECT count() FROM analytics.events"))
+    .to("clickhouse://analytics?operation=query&format=JSONEachRow")
+    .to("kafka:rollup-metrics");
+----
+
+=== Health check
+
+Verify connectivity to the ClickHouse server:
+
+[source,java]
+----
+from("timer:health?period=30000")
+    .to("clickhouse://default?operation=ping")
+    .choice()
+        .when(header("CamelClickHousePingOk").isEqualTo(true))
+            .to("direct:markHealthy")
+        .otherwise()
+            .to("direct:alertOps")
+    .end();
+----
