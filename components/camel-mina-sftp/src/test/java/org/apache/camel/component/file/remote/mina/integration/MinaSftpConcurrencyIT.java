@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -40,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Integration tests for MINA SFTP concurrency and thread safety.
  */
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
-@Tag("isolated")
 public class MinaSftpConcurrencyIT extends MinaSftpServerTestSupport {
 
     private static final Logger log = LoggerFactory.getLogger(MinaSftpConcurrencyIT.class);
