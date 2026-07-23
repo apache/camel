@@ -64,14 +64,12 @@ than re-implementing the download/verify/extract/activate steps a second time. T
 script itself is downloaded fresh and verified against a SHA-256 published alongside it
 (`install.sha256`) before it's run.
 
-`camel self-update` refuses to run, with a message naming the detected package manager and its own
-upgrade command (e.g. `brew upgrade apache-camel`), when the currently running installation was not
-made by `install.sh`/`install.ps1`. Installations managed by a package manager must be upgraded
-through that manager.
-
-`camel self-update` also refuses to run when the installation was pinned to an explicit version by
-a user running `install.sh --version 4.22.0`/`install.ps1 -Version 4.22.0` directly (running
-`camel self-update --version ...` does not create a pin). The message names the pin file to remove
+`camel self-update` refuses to run in two cases. If the currently running installation was not made
+by `install.sh`/`install.ps1` (it was installed through Homebrew, Chocolatey, WinGet, Scoop,
+SDKMAN, or JBang instead), the message names that manager and its own upgrade command, e.g.
+`brew upgrade apache-camel`. If the installation was pinned to an explicit version by a user running
+`install.sh --version 4.22.0`/`install.ps1 -Version 4.22.0` directly (running
+`camel self-update --version ...` does not create a pin), the message names the pin file to remove
 to resume tracking new releases.
 
 Every `camel` invocation (except `camel self-update` itself) checks, at most once every 24 hours,
