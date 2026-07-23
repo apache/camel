@@ -365,7 +365,6 @@ class ExportCamelMain extends Export {
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-main"));
         answer.removeIf(s -> s.contains("camel-health"));
-        answer.removeIf(s -> s.contains("camel-micrometer-prometheus"));
         // spring-boot-starter JARs are not usable in camel-main runtime
         answer.removeIf(s -> s.contains("spring-boot-starter"));
 
@@ -373,14 +372,14 @@ class ExportCamelMain extends Export {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
             // if metrics is defined then include camel-micrometer-prometheus for camel-main runtime
-            if (prop.getProperty("camel.metrics.enabled") != null
-                    || prop.getProperty("camel.management.metricsEnabled") != null
-                    || prop.getProperty("camel.server.metricsEnabled") != null) {
-                answer.add("mvn:org.apache.camel:camel-micrometer-prometheus");
+            if (prop.containsKey("camel.metrics.enabled")
+                    || prop.containsKey("camel.management.metricsEnabled")
+                    || prop.containsKey("camel.server.metricsEnabled")) {
+                answer.add("camel:micrometer-prometheus");
             }
             // if health-check is defined then include camel-health for camel-main runtime
-            if (prop.getProperty("camel.management.healthCheckEnabled") != null) {
-                answer.add("mvn:org.apache.camel:camel-health");
+            if (prop.containsKey("camel.management.healthCheckEnabled")) {
+                answer.add("camel:health");
             }
         }
 
