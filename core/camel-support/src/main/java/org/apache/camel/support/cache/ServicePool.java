@@ -94,12 +94,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             }
         } else {
             // service no longer in a pool (such as being released twice, or can happen during shutdown of Camel etc)
-            ServicePool.stop(s);
-            try {
-                e.getCamelContext().removeService(s);
-            } catch (Exception ex) {
-                LOG.debug("Error removing service: {}. This exception is ignored.", s, ex);
-            }
+            stopAndRemove(s);
         }
     }
 
@@ -130,6 +125,18 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         Pool<S> p = pool.get(endpoint);
         if (p != null) {
             p.release(s);
+        } else {
+            // the pool was evicted while this service was in use
+            stopAndRemove(s);
+        }
+    }
+
+    private void stopAndRemove(S s) {
+        ServicePool.stop(s);
+        try {
+            getEndpoint.apply(s).getCamelContext().removeService(s);
+        } catch (Exception e) {
+            LOG.debug("Error removing service: {}. This exception is ignored.", s, e);
         }
     }
 
