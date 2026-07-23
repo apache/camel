@@ -47,6 +47,27 @@ class WebsiteManifestGeneratorTest {
 
     private static final Path GENERATOR = Paths.get("src/jreleaser/java/WebsiteManifestGenerator.java");
 
+    // Must stay byte-identical to WebsiteManifestGenerator.LICENSE_HEADER: the generator now prepends
+    // this ASF header to every manifest, and the assertions below compare the output byte-for-byte.
+    // Package-private so PackagePlanTest (which runs the generator via camel-package.sh) can reuse it.
+    static final String LICENSE_HEADER
+            = "## ---------------------------------------------------------------------------\n"
+              + "## Licensed to the Apache Software Foundation (ASF) under one or more\n"
+              + "## contributor license agreements.  See the NOTICE file distributed with\n"
+              + "## this work for additional information regarding copyright ownership.\n"
+              + "## The ASF licenses this file to You under the Apache License, Version 2.0\n"
+              + "## (the \"License\"); you may not use this file except in compliance with\n"
+              + "## the License.  You may obtain a copy of the License at\n"
+              + "##\n"
+              + "##      http://www.apache.org/licenses/LICENSE-2.0\n"
+              + "##\n"
+              + "## Unless required by applicable law or agreed to in writing, software\n"
+              + "## distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+              + "## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+              + "## See the License for the specific language governing permissions and\n"
+              + "## limitations under the License.\n"
+              + "## ---------------------------------------------------------------------------\n";
+
     private static final class Result {
         int exit;
         String stdout;
@@ -82,8 +103,8 @@ class WebsiteManifestGeneratorTest {
     }
 
     private String expectedManifest(String version, String tarSha256, String zipSha256) {
-        return "format=1\n" + "version=" + version + "\n" + "tar_sha256=" + tarSha256 + "\n" + "zip_sha256="
-               + zipSha256 + "\n";
+        return LICENSE_HEADER + "format=1\n" + "version=" + version + "\n" + "tar_sha256=" + tarSha256 + "\n"
+               + "zip_sha256=" + zipSha256 + "\n";
     }
 
     @Test
