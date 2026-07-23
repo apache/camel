@@ -42,6 +42,10 @@ class {{brewFormulaName}} < Formula
     {{/brewLivecheck}}
   end
 {{/brewHasLivecheck}}
+{{#brewDependencies}}
+
+  depends_on {{.}}
+{{/brewDependencies}}
 
   def install
     libexec.install Dir["*"]

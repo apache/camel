@@ -137,7 +137,7 @@ distributions:
         disableDate: "{{ Env.CAMEL_PKG_BREW_DISABLE_DATE }}"
       livecheck:
         - 'url "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/maven-metadata.xml"'
-        - 'regex(/{{ Env.CAMEL_PKG_BREW_LIVECHECK_REGEX }}/i)'
+        - 'regex(/{{{ Env.CAMEL_PKG_BREW_LIVECHECK_REGEX }}}/i)'
     sdkman:
       active: RELEASE
       candidate: camel
