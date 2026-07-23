@@ -45,6 +45,12 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaRecordBatchingProcessor.class);
 
+    /**
+     * Record metadata headers that identify where a batch came from, and are therefore worth exposing on the batch
+     * exchange itself when the whole batch agrees on them.
+     */
+    private static final List<String> COMMON_BATCH_HEADERS = List.of(KafkaConstants.TOPIC, KafkaConstants.PARTITION);
+
     private final KafkaConfiguration configuration;
     private final Processor processor;
     private final CommitManager commitManager;
@@ -194,6 +200,42 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         return timeout || interval;
     }
 
+    /**
+     * Copies the record metadata headers that are identical across every record in the batch onto the batch exchange,
+     * so a route can read them - for example to store the topic in a variable - before splitting the batch.
+     * <p>
+     * A header is only propagated when every record in the batch carries the same value for it. Headers that vary
+     * within the batch are left off, because no single value would be correct for the batch as a whole.
+     */
+    static void propagateCommonHeaders(List<Exchange> exchanges, Message batchMessage) {
+        for (String header : COMMON_BATCH_HEADERS) {
+            Object common = commonHeaderValue(exchanges, header);
+            if (common != null) {
+                batchMessage.setHeader(header, common);
+            }
+        }
+    }
+
+    /**
+     * Returns the value of the given header when every exchange in the batch carries the same non-null value for it,
+     * otherwise null.
+     */
+    private static Object commonHeaderValue(List<Exchange> exchanges, String header) {
+        Object common = null;
+        for (Exchange exchange : exchanges) {
+            Object value = exchange.getMessage().getHeader(header);
+            if (value == null) {
+                return null;
+            }
+            if (common == null) {
+                common = value;
+            } else if (!common.equals(value)) {
+                return null;
+            }
+        }
+        return common;
+    }
+
     private Map<TopicPartition, Long> computeBatchOffsets(List<Exchange> exchanges) {
         Map<TopicPartition, Long> offsets = new HashMap<>();
         for (Exchange ex : exchanges) {
@@ -217,6 +259,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         Message message = exchange.getMessage();
         var exchanges = exchangeList.stream().toList();
         message.setBody(exchanges);
+        propagateCommonHeaders(exchanges, message);
 
         ProcessingResult result = ProcessingResult.newUnprocessed();
 
