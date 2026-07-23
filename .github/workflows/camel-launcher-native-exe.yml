@@ -167,7 +167,7 @@ jobs:
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -N)
           META="https://repository.apache.org/snapshots/org/apache/camel/camel-launcher/${VERSION}/maven-metadata.xml"
           echo "Checking ${META}"
-          if ! curl -fsSL -o /dev/null "${META}"; then
+          if ! curl -fsSL --proto '=https' -o /dev/null "${META}"; then
             echo "ERROR: camel-launcher ${VERSION} is not on the Apache snapshot repository."
             echo "This job resolves the launcher's upstream modules from there (no -am build)."
             echo "Wait for a main-branch snapshot deploy of ${VERSION}, or rebuild with -am."
