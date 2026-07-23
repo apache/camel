@@ -27,9 +27,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -136,7 +136,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
             dir = absolutePath;
         }
 
-        final SftpRemoteFile[] files = getSftpRemoteFiles(dir);
+        final SftpRemoteFile[] files = getSftpRemoteFiles(dynamic, dir);
 
         if (files == null || files.length == 0) {
             // no files in this directory to poll
@@ -209,14 +209,14 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         return operations.listFiles(dir);
     }
 
-    private SftpRemoteFile[] getSftpRemoteFiles(String dir) {
+    private SftpRemoteFile[] getSftpRemoteFiles(Exchange dynamic, String dir) {
         SftpRemoteFile[] files = null;
         try {
             LOG.trace("Polling directory: {}", dir);
             if (isUseList()) {
                 files = listFiles(dir);
             } else {
-                files = pollNamedFile();
+                files = pollNamedFile(dynamic);
             }
         } catch (GenericFileOperationFailedException e) {
             if (ignoreCannotRetrieveFile(null, null, e)) {
@@ -228,12 +228,12 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         return files;
     }
 
-    private SftpRemoteFile[] pollNamedFile() {
+    private SftpRemoteFile[] pollNamedFile(Exchange dynamic) {
         SftpRemoteFile[] files = null;
 
         // we cannot use the LIST command(s) so we can only poll a named
         // file so created a pseudo file with that name
-        Exchange dummy = ExchangeHelper.getDummy(getEndpoint().getCamelContext());
+        Exchange dummy = GenericFileHelper.createDummy(getEndpoint(), dynamic);
         String name = evaluateFileExpression(dummy);
         if (name != null) {
             SftpRemoteFile file = new SftpRemoteFileSingle(name);
