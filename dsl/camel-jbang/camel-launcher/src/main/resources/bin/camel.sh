@@ -100,17 +100,18 @@ then
   REPO="$BASEDIR"
 fi
 
-# Set the classpath to the JAR file
+# Find the launcher JAR
+LAUNCHER_JAR=
 for f in "$BASEDIR"/camel-launcher-*.jar; do
   if [ -f "$f" ]; then
-    CLASSPATH="$f"
+    LAUNCHER_JAR="$f"
     break
   fi
 done
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
-  [ -n "$CLASSPATH" ] && CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
+  [ -n "$LAUNCHER_JAR" ] && LAUNCHER_JAR=`cygpath --path --windows "$LAUNCHER_JAR"`
   [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
   [ -n "$HOME" ] && HOME=`cygpath --path --windows "$HOME"`
   [ -n "$BASEDIR" ] && BASEDIR=`cygpath --path --windows "$BASEDIR"`
@@ -122,4 +123,4 @@ if [ -z "$JAVA_OPTS" ]; then
   JAVA_OPTS="-Xmx512m"
 fi
 
-exec "$JAVACMD" $JAVA_OPTS -jar "$CLASSPATH" "$@"
+exec "$JAVACMD" $JAVA_OPTS -jar "$LAUNCHER_JAR" "$@"

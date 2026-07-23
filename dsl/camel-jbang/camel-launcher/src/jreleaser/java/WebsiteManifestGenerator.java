@@ -55,6 +55,8 @@ public class WebsiteManifestGenerator {
     private static final Set<String> REQUIRED_OPTIONS
             = new LinkedHashSet<>(List.of("--version", "--tar", "--zip", "--output", "--latest"));
     private static final Set<String> OPTIONAL_OPTIONS = Set.of("--install-sh", "--install-ps1");
+    private static final Set<String> MANIFEST_KEYS
+            = new LinkedHashSet<>(List.of("format", "version", "tar_sha256", "zip_sha256"));
     private static final String MANIFEST_FORMAT = "1";
 
     public static void main(String[] args) {
@@ -63,10 +65,7 @@ public class WebsiteManifestGenerator {
         } catch (UsageException e) {
             System.err.println("Error: " + e.getMessage());
             System.exit(2);
-        } catch (ConflictException e) {
-            System.err.println("Error: " + e.getMessage());
-            System.exit(1);
-        } catch (IOException e) {
+        } catch (ConflictException | IOException e) {
             System.err.println("Error: " + e.getMessage());
             System.exit(1);
         }
@@ -232,9 +231,8 @@ public class WebsiteManifestGenerator {
             }
             fields.put(key, line.substring(eq + 1));
         }
-        Set<String> expectedKeys = new LinkedHashSet<>(List.of("format", "version", "tar_sha256", "zip_sha256"));
-        if (!fields.keySet().equals(expectedKeys)) {
-            throw new ConflictException("malformed manifest in " + source + ": expected keys " + expectedKeys
+        if (!fields.keySet().equals(MANIFEST_KEYS)) {
+            throw new ConflictException("malformed manifest in " + source + ": expected keys " + MANIFEST_KEYS
                                          + " but found " + fields.keySet() + ".");
         }
         if (!MANIFEST_FORMAT.equals(fields.get("format"))) {
