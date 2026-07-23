@@ -46,6 +46,7 @@ import dev.langchain4j.service.tool.ToolProviderRequest;
 import dev.langchain4j.service.tool.ToolProviderResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ai.tool.AiToolExecutor;
 import org.apache.camel.component.ai.tool.AiToolRegistry;
 import org.apache.camel.component.ai.tool.AiToolResult;
@@ -60,6 +61,7 @@ import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.component.langchain4j.agent.api.CompositeToolProvider;
 import org.apache.camel.component.langchain4j.agent.api.Headers;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -271,6 +273,12 @@ public class LangChain4jAgentProducer extends DefaultProducer {
      * Registers a single tool with the langchain4j runtime. Creates a {@link ToolExecutor} that converts the
      * langchain4j-specific {@link ToolExecutionRequest} into a framework-agnostic {@code Map<String, Object>} and
      * delegates execution to {@link AiToolExecutor}.
+     *
+     * <p>
+     * Each tool invocation runs on an isolated exchange copy so that headers, body mutations and exceptions from the
+     * tool route do not leak into the calling producer exchange. This is required because langchain4j can execute tools
+     * concurrently, and because the agent's {@code Result<String>} carries the response — the original exchange must
+     * stay clean.
      */
     private void addToolToResult(
             ToolProviderResult.Builder resultBuilder,
@@ -283,7 +291,11 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             if (arguments == null) {
                 return "Invalid arguments: could not parse the provided JSON arguments";
             }
-            AiToolResult result = AiToolExecutor.execute(spec, arguments, exchange);
+            // Isolate each tool invocation in its own exchange copy so that
+            // headers, body mutations and exceptions do not leak into the
+            // calling producer exchange (CAMEL-23944).
+            Exchange toolExchange = ExchangeHelper.createCopy(exchange, true);
+            AiToolResult result = AiToolExecutor.execute(spec, arguments, toolExchange);
             return toToolResponse(spec.getName(), result);
         };
 
@@ -317,8 +329,11 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             LOG.warn("Tool '{}' argument error: {}", toolName, error.message(), error.cause());
             return "Invalid arguments: " + error.message();
         } else if (result instanceof AiToolResult.ExecutionError error) {
-            LOG.warn("Tool '{}' execution error: {}", toolName, error.message(), error.cause());
-            return "Tool execution failed";
+            // Rethrow so LangChain4j's error handling machinery
+            // (ToolExecutionErrorHandler, compensateOnToolErrors) can fire.
+            // Use RuntimeCamelException (the Camel idiom) so downstream error
+            // handlers can type-match the real cause without unwrapping (CAMEL-23944).
+            throw RuntimeCamelException.wrapRuntimeCamelException(error.cause());
         }
         return "Tool execution failed";
     }

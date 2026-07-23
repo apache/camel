@@ -218,6 +218,27 @@ Add the `camel-ai-tool` dependency to your project:
 </dependency>
 ----
 
+==== Exchange isolation for Camel route tools
+
+Each Camel route tool invocation now runs on an isolated exchange copy. Previously, the live
+producer exchange was shared with the tool route, which caused tool side-effects (headers, body
+mutations) to leak into the calling exchange and introduced a data race when LangChain4j executed
+tools concurrently.
+
+After this change:
+
+* Headers set by tool argument mapping (e.g. `input`) no longer appear on the calling exchange
+  after the agent returns.
+* Headers set inside the tool route (e.g. custom side-effect headers) no longer leak.
+* The `CamelToolName` header is no longer visible on the calling exchange.
+* Tool execution errors are rethrown as `RuntimeCamelException` so that LangChain4j's
+  `ToolExecutionErrorHandler` and `compensateOnToolErrors` fire correctly. Previously, errors were
+  swallowed and returned as a plain string, making LangChain4j believe the tool succeeded.
+
+If your code reads tool-related headers from the calling exchange after agent invocation,
+you will need to adjust it. The agent's `Result<String>` (and the new `CamelLangChain4jAgentToolExecutions`
+header) is the intended way to observe tool execution results.
+
 === camel-langchain4j-chat
 
 The helper classes `OpenAiChatLanguageModelBuilder` and `HugginFaceChatLanguageModelBuilder` have been removed.
