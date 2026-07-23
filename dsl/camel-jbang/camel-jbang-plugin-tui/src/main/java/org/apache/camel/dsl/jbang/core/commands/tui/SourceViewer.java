@@ -156,15 +156,9 @@ class SourceViewer {
             onLineSelected = null;
             return true;
         }
-        if (isMarkdownFile) {
-            if (ke.isChar('M') || ke.isChar('m')) {
-                markdownMode = true;
-                return true;
-            }
-            if (ke.isChar('R') || ke.isChar('r')) {
-                markdownMode = false;
-                return true;
-            }
+        if (isMarkdownFile && (ke.isKey(KeyCode.TAB) || ke.isLeft() || ke.isRight())) {
+            markdownMode = !markdownMode;
+            return true;
         }
         if (markdownMode) {
             if (ke.isUp() || ke.isChar('k')) {
@@ -182,19 +176,23 @@ class SourceViewer {
             }
             return true;
         }
-        if (currentRouteId != null) {
-            if (ke.isChar('Y') || ke.isChar('y')) {
-                switchFormat("yaml");
-                return true;
+        if (currentRouteId != null
+                && (ke.isKey(KeyCode.TAB) || ke.isRight() || ke.isLeft())) {
+            String[] formats = { "yaml", "java", "xml" };
+            int idx = 0;
+            for (int i = 0; i < formats.length; i++) {
+                if (formats[i].equals(currentFormat)) {
+                    idx = i;
+                    break;
+                }
             }
-            if (ke.isChar('J') || ke.isChar('j')) {
-                switchFormat("java");
-                return true;
+            if (ke.isLeft()) {
+                idx = (idx - 1 + formats.length) % formats.length;
+            } else {
+                idx = (idx + 1) % formats.length;
             }
-            if (ke.isChar('X') || ke.isChar('x')) {
-                switchFormat("xml");
-                return true;
-            }
+            switchFormat(formats[idx]);
+            return true;
         }
         if (search.handleKeyEvent(ke)) {
             int matchLine = search.currentMatchLine();
@@ -389,8 +387,7 @@ class SourceViewer {
         if (markdownMode) {
             TuiHelper.hint(spans, "Esc/c", "close");
             TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "scroll");
-            TuiHelper.hint(spans, "M", "markdown");
-            TuiHelper.hint(spans, "R", "raw");
+            TuiHelper.hint(spans, "←→", "tab");
             TuiHelper.hint(spans, "PgUp/PgDn", "page");
             return;
         }
@@ -405,13 +402,10 @@ class SourceViewer {
         }
         TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (isMarkdownFile) {
-            TuiHelper.hint(spans, "M", "markdown");
-            TuiHelper.hint(spans, "R", "raw");
+            TuiHelper.hint(spans, "←→", "tab");
         }
         if (currentRouteId != null) {
-            TuiHelper.hint(spans, "Y", "yaml");
-            TuiHelper.hint(spans, "J", "java");
-            TuiHelper.hint(spans, "X", "xml");
+            TuiHelper.hint(spans, "←→", "tab");
         }
         search.renderSearchHints(spans);
         TuiHelper.hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));

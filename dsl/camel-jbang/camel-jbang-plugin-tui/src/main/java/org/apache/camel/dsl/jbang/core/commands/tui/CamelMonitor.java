@@ -749,7 +749,9 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
         }
-        if (ke.isFocusPrevious() && !textEditing) {
+        MonitorTab activeMonitorTab = tabRegistry.activeTab();
+        boolean overlayActive = activeMonitorTab != null && activeMonitorTab.isOverlayActive();
+        if (ke.isFocusPrevious() && !textEditing && !overlayActive) {
             if (isInfraSelected()) {
                 int prev = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
                 tabsState.select(prev);
@@ -759,7 +761,7 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
-        if (ke.isFocusNext() && !textEditing) {
+        if (ke.isFocusNext() && !textEditing && !overlayActive) {
             if (isInfraSelected()) {
                 int next = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
                 tabsState.select(next);

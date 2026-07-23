@@ -85,4 +85,8 @@ interface MonitorTab {
     default boolean setInputValue(String field, String value) {
         return false;
     }
+
+    default boolean isOverlayActive() {
+        return false;
+    }
 }

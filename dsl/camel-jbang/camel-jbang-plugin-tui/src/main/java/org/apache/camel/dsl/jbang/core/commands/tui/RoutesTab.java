@@ -103,6 +103,11 @@ class RoutesTab extends AbstractTab {
     }
 
     @Override
+    public boolean isOverlayActive() {
+        return sourceViewer.isVisible();
+    }
+
+    @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         // Source view scrolling (takes priority when active)
         if (sourceViewer.handleKeyEvent(ke)) {
