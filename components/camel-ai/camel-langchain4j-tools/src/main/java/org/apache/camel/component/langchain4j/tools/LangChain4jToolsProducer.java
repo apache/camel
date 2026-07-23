@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,6 +45,7 @@ import dev.langchain4j.model.output.TokenUsage;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolExecutorCache;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolSpecification;
@@ -130,8 +132,16 @@ public class LangChain4jToolsProducer extends DefaultProducer {
         FinishReason lastFinishReason = null;
 
         // First talk to the model to get the tools to be called
+        final int maxRoundTrips = endpoint.getMaxToolCallingRoundTrips();
         int i = 0;
         do {
+            // Guard against unbounded tool-calling loops
+            if (maxRoundTrips > 0 && i >= maxRoundTrips) {
+                throw new RuntimeCamelException(
+                        "Tool-calling loop exceeded maximum round trips (" + maxRoundTrips + "). "
+                                                + "Increase the maxToolCallingRoundTrips option or investigate why the LLM keeps requesting tools.");
+            }
+
             LOG.debug("Starting iteration {}", i);
             final ChatResponse chatResponse = chatWithLLM(chatMessages, toolPair, exchange);
 
@@ -213,10 +223,27 @@ public class LangChain4jToolsProducer extends DefaultProducer {
                 continue;
             }
 
+            // Find the tool specification — handle hallucinated tool names gracefully
             final CamelToolSpecification camelToolSpecification = toolPair.callableTools().stream()
-                    .filter(c -> c.getToolSpecification().name().equals(toolName)).findFirst().get();
+                    .filter(c -> c.getToolSpecification().name().equals(toolName))
+                    .findFirst()
+                    .orElse(null);
+
+            if (camelToolSpecification == null) {
+                LOG.warn("Tool '{}' requested by LLM not found in registered tools", toolName);
+                String availableToolNames = toolPair.callableTools().stream()
+                        .map(c -> c.getToolSpecification().name())
+                        .collect(Collectors.joining(", "));
+                chatMessages.add(new ToolExecutionResultMessage(
+                        toolExecutionRequest.id(),
+                        toolExecutionRequest.name(),
+                        "Error: Tool '" + toolName + "' not found. Available tools: " + availableToolNames));
+                i++;
+                continue;
+            }
 
             final Exchange toolExchange = ExchangeHelper.createCopy(baseline, true);
+            String toolResult;
 
             try {
                 TypeConverter typeConverter = endpoint.getCamelContext().getTypeConverter();
@@ -261,20 +288,26 @@ public class LangChain4jToolsProducer extends DefaultProducer {
                         });
 
                 // Execute the consumer route
-
                 camelToolSpecification.getConsumer().getProcessor().process(toolExchange);
-                i++;
-            } catch (Exception e) {
-                // How to handle this exception?
-                toolExchange.setException(e);
-            }
 
-            ExchangeHelper.copyResults(exchange, toolExchange);
+                // Check for exception set by the processor (not thrown)
+                if (toolExchange.getException() != null) {
+                    throw toolExchange.getException();
+                }
+
+                ExchangeHelper.copyResults(exchange, toolExchange);
+                toolResult = toolExchange.getIn().getBody(String.class);
+            } catch (Exception e) {
+                LOG.warn("Error executing tool '{}': {}", toolName, e.getMessage(), e);
+                String errorDetail = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
+                toolResult = "Error executing tool '" + toolName + "': " + errorDetail;
+            }
 
             chatMessages.add(new ToolExecutionResultMessage(
                     toolExecutionRequest.id(),
                     toolExecutionRequest.name(),
-                    toolExchange.getIn().getBody(String.class)));
+                    toolResult));
+            i++;
         }
 
         // Clear route stop flag after all tools so it does not leak

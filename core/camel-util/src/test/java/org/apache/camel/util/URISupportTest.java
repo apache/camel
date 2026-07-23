@@ -275,6 +275,21 @@ public class URISupportTest {
     }
 
     @Test
+    void testSanitizeApiKeyHeader() {
+        // a hyphenated api-key header name (e.g. the Azure OpenAI auth header supplied via additionalHeader.*)
+        // must be redacted from a sanitized URI, just like the camelCase apiKey option
+        String out = URISupport.sanitizeUri("openai:CHAT?baseUrl=https://host&additionalHeader.api-key=MY_SECRET");
+        assertThat(out).isEqualTo("openai:CHAT?baseUrl=https://host&additionalHeader.api-key=xxxxxx");
+    }
+
+    @Test
+    void testSanitizeAuthorizationHeader() {
+        // a bare Authorization header (e.g. supplied via additionalHeader.*) must be redacted
+        String out = URISupport.sanitizeUri("openai:CHAT?additionalHeader.Authorization=Bearer%20MY_SECRET");
+        assertThat(out).isEqualTo("openai:CHAT?additionalHeader.Authorization=xxxxxx");
+    }
+
+    @Test
     public void testSanitizeUriWithUserInfo() {
         String uri = "jt400://GEORGE:HARRISON@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";
         String expected = "jt400://GEORGE:xxxxxx@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";

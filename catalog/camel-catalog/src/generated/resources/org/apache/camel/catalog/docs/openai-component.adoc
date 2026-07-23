@@ -1,0 +1,1026 @@
+= OpenAI Component
+:doctitle: OpenAI
+:shortname: openai
+:artifactid: camel-openai
+:description: OpenAI endpoint for chat completion, embeddings, audio transcription, audio translation, and text-to-speech.
+:since: 4.17
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The OpenAI component provides integration with OpenAI and OpenAI-compatible APIs for chat completion, text embeddings, audio transcription, audio translation, and text-to-speech using the official openai-java SDK.
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-openai</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI Format
+
+[source]
+----
+openai:operation[?options]
+----
+
+Supported operations:
+
+* `chat-completion` - Generate chat completions using language models
+* `embeddings` - Generate vector embeddings from text for semantic search and RAG applications
+* `tool-execution` - Execute MCP tool calls from a stored chat completion response (used in manual tool loops)
+* `audio-transcription` - Transcribe audio files to text using speech-to-text models (e.g., Whisper, GPT-4o Transcribe)
+* `audio-translation` - Transcribe and translate audio files into English text (e.g., Whisper)
+* `audio-speech` - Synthesize spoken audio from text using text-to-speech models (e.g., gpt-4o-mini-tts, tts-1)
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Authentication
+
+Set `baseUrl` to your providers endpoint (default: `https://api.openai.com/v1`).
+
+API key resolution order:
+
+- Endpoint `apiKey`
+- Component `apiKey`
+- Environment variable `OPENAI_API_KEY`
+- System property `openai.api.key`
+
+[NOTE]
+====
+The API key can be omitted if using OpenAI-compatible providers that don't require authentication (e.g., some local LLM servers).
+====
+
+==== OAuth Authentication
+
+When using an identity provider (e.g., Azure AD for Azure OpenAI), set the `oauthProfile` parameter to acquire an access token via the OAuth 2.0 Client Credentials grant. The token is used in place of the API key. This requires `camel-oauth` on the classpath.
+
+[source,properties]
+----
+camel.oauth.azure.client-id=my-client
+camel.oauth.azure.client-secret=my-secret
+camel.oauth.azure.token-endpoint=https://login.microsoftonline.com/tenant/oauth2/v2.0/token
+camel.oauth.azure.scope=https://cognitiveservices.azure.com/.default
+----
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4&oauthProfile=azure");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;oauthProfile=azure"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              oauthProfile: azure
+----
+====
+
+MCP servers can also use OAuth independently via per-server `oauthProfile`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&oauthProfile=azure"
+        + "&mcpServer.tools.transportType=streamableHttp"
+        + "&mcpServer.tools.url=https://mcp.internal/mcp"
+        + "&mcpServer.tools.oauthProfile=keycloak");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:chat"/>
+    <to uri="openai:chat-completion?model=gpt-4&amp;oauthProfile=azure&amp;mcpServer.tools.transportType=streamableHttp&amp;mcpServer.tools.url=https://mcp.internal/mcp&amp;mcpServer.tools.oauthProfile=keycloak"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              oauthProfile: azure
+              mcpServer.tools.transportType: streamableHttp
+              mcpServer.tools.url: https://mcp.internal/mcp
+              mcpServer.tools.oauthProfile: keycloak
+----
+====
+
+=== Basic Chat Completion with String Input
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .setBody(constant("What is Apache Camel?"))
+    .to("openai:chat-completion")
+    .log("Response: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <setBody>
+    <constant>What is Apache Camel?</constant>
+  </setBody>
+  <to uri="openai:chat-completion"/>
+  <log message="Response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              userMessage: What is Apache Camel?
+        - log:
+            message: "Response: ${body}"
+----
+====
+
+=== File-Backed Prompt with Text File
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:prompts?noop=true")
+    .to("openai:chat-completion")
+    .log("Response: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:prompts?noop=true"/>
+  <to uri="openai:chat-completion"/>
+  <log message="Response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:prompts?noop=true
+      steps:
+        - to:
+            uri: openai:chat-completion
+        - log:
+            message: "Response: ${body}"
+----
+====
+
+=== Image File Input with Vision Model
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:images?noop=true")
+    .to("openai:chat-completion?model=gpt-4.1-mini&userMessage=Describe what you see in this image")
+    .log("Response: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:images?noop=true"/>
+  <to uri="openai:chat-completion?model=gpt-4.1-mini&amp;userMessage=Describe what you see in this image"/>
+  <log message="Response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:images?noop=true
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4.1-mini
+              userMessage: Describe what you see in this image
+        - log:
+            message: "Response: ${body}"
+----
+====
+
+Image input also works with bodies produced by remote file and cloud storage components, such as FTP/SFTP (`WrappedFile`), AWS S3, Azure Blob Storage or MinIO (`byte[]` or `InputStream`). The MIME type is detected from the component's content-type header or the file name:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("aws2-s3:my-bucket")
+    .to("openai:chat-completion?model=gpt-4.1-mini&userMessage=Describe what you see in this image")
+    .log("Response: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="aws2-s3:my-bucket"/>
+  <to uri="openai:chat-completion?model=gpt-4.1-mini&amp;userMessage=Describe what you see in this image"/>
+  <log message="Response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws2-s3:my-bucket
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4.1-mini
+              userMessage: Describe what you see in this image
+        - log:
+            message: "Response: ${body}"
+----
+====
+
+When no content-type header is available, set the `CamelOpenAIMediaType` header explicitly:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:image")
+    .setHeader("CamelOpenAIMediaType", constant("image/png"))
+    .setHeader("CamelOpenAIUserMessage", constant("Describe what you see in this image"))
+    .to("openai:chat-completion?model=gpt-4.1-mini")
+    .log("Response: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:image"/>
+  <setHeader name="CamelOpenAIMediaType">
+    <constant>image/png</constant>
+  </setHeader>
+  <setHeader name="CamelOpenAIUserMessage">
+    <constant>Describe what you see in this image</constant>
+  </setHeader>
+  <to uri="openai:chat-completion?model=gpt-4.1-mini"/>
+  <log message="Response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:image
+      steps:
+        - setHeader:
+            name: CamelOpenAIMediaType
+            constant: "image/png"
+        - setHeader:
+            name: CamelOpenAIUserMessage
+            constant: "Describe what you see in this image"
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4.1-mini
+        - log:
+            message: "Response: ${body}"
+----
+====
+
+[NOTE]
+====
+When using image input, the userMessage is required. Supported image formats are detected by MIME type (e.g., `image/png`, `image/jpeg`, `image/gif`, `image/webp`).
+====
+
+=== Streaming Response
+
+When `streaming=true`, the component returns an `Iterator<ChatCompletionChunk>` in the message body. You can consume this iterator using Camel's streaming EIPs or process it directly:
+
+.Usage example:
+[source,yaml]
+----
+- route:
+    id: route-1145
+    from:
+      id: from-1972
+      uri: timer
+      parameters:
+        repeatCount: 1
+        timerName: timer
+      steps:
+        - to:
+            id: to-1301
+            uri: openai:chat-completion
+            parameters:
+              userMessage: In one sentence, what is Apache Camel?
+              streaming: true
+        - split:
+            id: split-3196
+            steps:
+              - marshal:
+                  id: marshal-3773
+                  json:
+                    library: Jackson
+              - log:
+                  id: log-6722
+                  message: ${body}
+            expression:
+              simple:
+                expression: ${body}
+            streaming: true
+----
+
+=== Structured Output with outputClass
+
+.When `outputClass` is set, the model is instructed to produce JSON matching the given class, but the component returns the raw String. Deserialize the body yourself (e.g., with Camel's Jackson) if you need a typed object.
+
+._Java-only: uses Java class definition for `outputClass` schema_
+[source,java]
+----
+public class Person {
+    public String name;
+    public int age;
+    public String occupation;
+}
+
+from("direct:structured")
+    .setBody(constant("Generate a person profile for a software engineer"))
+    .to("openai:chat-completion?baseUrl=https://api.openai.com/v1&outputClass=com.example.Person")
+    .log("Structured response: ${body}");
+----
+
+=== Structured Output with JSON Schema
+
+The `jsonSchema` option instructs the model to return JSON that conforms to the provided schema. The response will be valid JSON but is not automatically validated against the schema:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:json-schema")
+    .setBody(constant("Create a product description"))
+    .setHeader("CamelOpenAIJsonSchema", constant("{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"}}}"))
+    .to("openai:chat-completion")
+    .log("JSON response: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:json-schema"/>
+  <setBody>
+    <constant>Create a product description</constant>
+  </setBody>
+  <setHeader name="CamelOpenAIJsonSchema">
+    <constant>{"type":"object","properties":{"name":{"type":"string"},"price":{"type":"number"}}}</constant>
+  </setHeader>
+  <to uri="openai:chat-completion"/>
+  <log message="JSON response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:json-schema
+      steps:
+        - setBody:
+            constant: "Create a product description"
+        - setHeader:
+            name: CamelOpenAIJsonSchema
+            constant: '{"type":"object","properties":{"name":{"type":"string"},"price":{"type":"number"}}}'
+        - to:
+            uri: openai:chat-completion
+        - log:
+            message: "JSON response: ${body}"
+----
+====
+
+You can also load the schema from a resource file:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:json-schema-resource")
+    .setBody(constant("Create a product description"))
+    .to("openai:chat-completion?jsonSchema=resource:classpath:schemas/product.schema.json")
+    .log("JSON response: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:json-schema-resource"/>
+  <setBody>
+    <constant>Create a product description</constant>
+  </setBody>
+  <to uri="openai:chat-completion?jsonSchema=resource:classpath:schemas/product.schema.json"/>
+  <log message="JSON response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:json-schema-resource
+      steps:
+        - setBody:
+            constant: "Create a product description"
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              jsonSchema: "resource:classpath:schemas/product.schema.json"
+        - log:
+            message: "JSON response: ${body}"
+----
+====
+
+[NOTE]
+====
+For full schema validation, integrate with the `camel-json-validator` component after receiving the response.
+====
+
+=== Conversation Memory (Per Exchange)
+
+.Usage example:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:conversation")
+    .setBody(constant("My name is Alice"))
+    .to("openai:chat-completion?conversationMemory=true")
+    .log("First response: ${body}")
+    .setBody(constant("What is my name?"))
+    .to("openai:chat-completion?conversationMemory=true")
+    .log("Second response: ${body}"); // Will remember "Alice"
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:conversation"/>
+  <setBody>
+    <constant>My name is Alice</constant>
+  </setBody>
+  <to uri="openai:chat-completion?conversationMemory=true"/>
+  <log message="First response: ${body}"/>
+  <setBody>
+    <constant>What is my name?</constant>
+  </setBody>
+  <to uri="openai:chat-completion?conversationMemory=true"/>
+  <log message="Second response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:conversation
+      steps:
+        - setBody:
+            constant: "My name is Alice"
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              conversationMemory: true
+        - log:
+            message: "First response: ${body}"
+        - setBody:
+            constant: "What is my name?"
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              conversationMemory: true
+        - log:
+            message: "Second response: ${body}"
+----
+====
+
+== Input Handling
+
+The component accepts the following types of input in the message body:
+
+1. *String*: The prompt text is taken directly from the body
+2. *File*, *Path* or *WrappedFile* (the body type produced by the file, FTP, SFTP and SMB components): Used for file-based prompts. The component handles two types of files:
+   * *Text files* (MIME type starting with `text/`, plus `application/xml` and `application/json`): The file content is read and used as the prompt. If userMessage endpoint option or `CamelOpenAIUserMessage` is set, it overrides the file content
+   * *Image files* (MIME type starting with `image/`): The file is encoded as a base64 data URL and sent to vision-capable models. The userMessage is **required** when using image files
+3. *byte[]* or *InputStream* (the body types produced by cloud storage components such as AWS S3, Azure Blob Storage, Google Cloud Storage and MinIO): When the detected MIME type is an image, the content is encoded as a base64 data URL and sent to vision-capable models (userMessage is **required**). Otherwise, the content is converted to a String and used as the prompt
+
+=== MIME Type Detection
+
+For `File`, `Path` and locally backed `WrappedFile` bodies, the MIME type is resolved in the following order:
+
+1. The `CamelOpenAIMediaType` header
+2. The `CamelFileContentType` header
+3. The file name extension, using the Camel built-in MIME type table (e.g., `.png`, `.jpg`, `.gif`, `.webp`, `.txt`, `.csv`, `.md`, `.xml`, `.json`)
+
+For `byte[]`, `InputStream` and remote `WrappedFile` bodies, the MIME type is resolved in the following order:
+
+1. The `CamelOpenAIMediaType` header
+2. Cloud storage content-type headers: `CamelAwsS3ContentType`, `CamelAzureStorageBlobContentType`, `CamelAzureStorageDataLakeContentType`, `CamelGoogleCloudStorageContentType`, `CamelMinioContentType`, `CamelIBMCOSContentType`
+3. The `Content-Type` header
+4. The `CamelFileContentType` header
+5. The extension of the file name in the `CamelFileName` header
+
+[NOTE]
+====
+Set the `CamelOpenAIMediaType` header to override the MIME type detection, for example when the payload has no content-type metadata or the detection picks the wrong type.
+====
+
+== Output Handling
+
+=== Default Mode
+The full model response is returned as a String in the message body.
+
+=== Streaming Mode
+When `streaming=true`, the message body contains an `Iterator<ChatCompletionChunk>` suitable for Camel streaming EIPs (such as `split()` with `streaming()`).
+
+IMPORTANT:
+
+* Conversation memory is **not** automatically updated for streaming responses (only for non-streaming responses)
+
+=== Structured Outputs
+
+==== Using outputClass
+The model is instructed to return JSON matching the specified class, but the response body remains a String.
+
+==== Using jsonSchema
+The `jsonSchema` option instructs the model to return JSON conforming to the provided schema. The response will be valid JSON but is not automatically validated against the schema. For full schema validation, integrate with the `camel-json-validator` component after receiving the response.
+
+The JSON schema must be a valid JSON object. Invalid schema strings will result in an `IllegalArgumentException`.
+
+== Conversation Memory
+
+When `conversationMemory=true`, the component maintains conversation history in the `CamelOpenAIConversationHistory` exchange property (configurable via `conversationHistoryProperty` option). This history is scoped to a single Exchange and allows multi-turn conversations within a route.
+
+Use `maxHistoryMessages` and `maxHistoryTokens` to bound how much history is retained in that property. Oldest conversation segments are dropped first; assistant tool-call blocks are always removed together with their tool results. The most recent segment is always kept, even when it alone exceeds `maxHistoryMessages` or `maxHistoryTokens`. Token limits use a character-count / 4 estimate (including image payload size for multi-modal user messages).
+
+IMPORTANT:
+
+* Conversation history is automatically updated with each assistant response for **non-streaming** responses only
+* The history is stored as a `List<ChatCompletionMessageParam>` in the Exchange property
+* The history persists across multiple calls to the endpoint within the same Exchange
+* You can manually set the `CamelOpenAIConversationHistory` exchange property to provide custom conversation context
+
+Example of manual conversation history:
+
+._Java-only: uses OpenAI SDK `ChatCompletionMessageParam` types_
+[source,java]
+----
+List<ChatCompletionMessageParam> history = new ArrayList<>();
+history.add(ChatCompletionMessageParam.ofUser(/* ... */));
+history.add(ChatCompletionMessageParam.ofAssistant(/* ... */));
+
+from("direct:with-history")
+    .setBody(constant("Continue the conversation"))
+    .setProperty("CamelOpenAIConversationHistory", constant(history))
+    .to("openai:chat-completion?conversationMemory=true")
+    .log("${body}");
+----
+
+== SSL Configuration
+
+The component supports custom SSL/TLS configuration for connecting to OpenAI or OpenAI-compatible endpoints that use self-signed certificates, private CAs, or require mutual TLS (mTLS) authentication.
+
+When no SSL parameters are set, the default JVM trust store is used.
+
+=== Using SSLContextParameters
+
+The component implements `SSLContextParametersAware` and supports Camel's standard `SSLContextParameters` for SSL configuration. When set, `SSLContextParameters` takes precedence over the individual `ssl*` properties (same pattern as `camel-kafka`).
+
+._Java-only: programmatic `SSLContextParameters` configuration_
+[source,java]
+----
+KeyStoreParameters trustStoreParams = new KeyStoreParameters();
+trustStoreParams.setResource("/path/to/truststore.jks");
+trustStoreParams.setPassword("changeit");
+
+TrustManagersParameters trustManagers = new TrustManagersParameters();
+trustManagers.setKeyStore(trustStoreParams);
+
+SSLContextParameters sslContextParameters = new SSLContextParameters();
+sslContextParameters.setTrustManagers(trustManagers);
+
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&baseUrl=https://my-llm-server:8443/v1"
+        + "&sslContextParameters=#sslContextParameters");
+----
+
+To use global SSL context parameters for all OpenAI endpoints:
+
+._Java-only: programmatic component configuration_
+[source,java]
+----
+OpenAIComponent openai = context.getComponent("openai", OpenAIComponent.class);
+openai.setUseGlobalSslContextParameters(true);
+----
+
+=== Custom Trust Store
+
+To trust a server using a self-signed or private CA certificate:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&baseUrl=https://my-llm-server:8443/v1"
+        + "&sslTruststoreLocation=/path/to/truststore.jks"
+        + "&sslTruststorePassword=changeit");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              baseUrl: https://my-llm-server:8443/v1
+              sslTruststoreLocation: /path/to/truststore.jks
+              sslTruststorePassword: changeit
+----
+====
+
+=== Mutual TLS (mTLS)
+
+For two-way authentication, configure both trust store and key store:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&baseUrl=https://my-llm-server:8443/v1"
+        + "&sslTruststoreLocation=/path/to/truststore.jks"
+        + "&sslTruststorePassword=changeit"
+        + "&sslKeystoreLocation=/path/to/keystore.jks"
+        + "&sslKeystorePassword=changeit"
+        + "&sslKeyPassword=keypass");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;baseUrl=https://my-llm-server:8443/v1&amp;sslTruststoreLocation=/path/to/truststore.jks&amp;sslTruststorePassword=changeit&amp;sslKeystoreLocation=/path/to/keystore.jks&amp;sslKeystorePassword=changeit&amp;sslKeyPassword=keypass"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              baseUrl: https://my-llm-server:8443/v1
+              sslTruststoreLocation: /path/to/truststore.jks
+              sslTruststorePassword: changeit
+              sslKeystoreLocation: /path/to/keystore.jks
+              sslKeystorePassword: changeit
+              sslKeyPassword: keypass
+----
+====
+
+=== Disabling Hostname Verification
+
+In development or test environments, hostname verification can be disabled by setting `sslEndpointAlgorithm` to an empty string or `none`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&baseUrl=https://localhost:8443/v1"
+        + "&sslTruststoreLocation=/path/to/truststore.jks"
+        + "&sslTruststorePassword=changeit"
+        + "&sslEndpointAlgorithm=none");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;baseUrl=https://localhost:8443/v1&amp;sslTruststoreLocation=/path/to/truststore.jks&amp;sslTruststorePassword=changeit&amp;sslEndpointAlgorithm=none"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              baseUrl: https://localhost:8443/v1
+              sslTruststoreLocation: /path/to/truststore.jks
+              sslTruststorePassword: changeit
+              sslEndpointAlgorithm: none
+----
+====
+
+WARNING: Disabling hostname verification is insecure and should only be used in non-production environments.
+
+=== SSL Parameters
+
+[cols="1,1,1,3"]
+|===
+| Parameter | Type | Default | Description
+
+| `sslContextParameters` | SSLContextParameters | | Camel SSL context parameters. When set, takes precedence over the individual `ssl*` options below
+| `sslTruststoreLocation` | String | | Location of the trust store file
+| `sslTruststorePassword` | String | | Trust store password
+| `sslTruststoreType` | String | `JKS` | Trust store format (e.g., `JKS`, `PKCS12`)
+| `sslKeystoreLocation` | String | | Location of the key store file (for mTLS)
+| `sslKeystorePassword` | String | | Key store password
+| `sslKeystoreType` | String | `JKS` | Key store format (e.g., `JKS`, `PKCS12`)
+| `sslKeyPassword` | String | | Private key password in the key store
+| `sslProtocol` | String | `TLSv1.3` | SSL protocol for generating the SSLContext
+| `sslKeymanagerAlgorithm` | String | `SunX509` | Algorithm for the key manager factory
+| `sslTrustmanagerAlgorithm` | String | `PKIX` | Algorithm for the trust manager factory
+| `sslEndpointAlgorithm` | String | `https` | Hostname verification algorithm; set to empty or `none` to disable
+|===
+
+== Reasoning Models
+
+Some OpenAI-compatible models (e.g., Qwen3, DeepSeek-R1) return chain-of-thought reasoning in a separate `reasoning_content` field alongside the regular `content` in the API response. The component automatically extracts this field and sets it as the `CamelOpenAIReasoningContent` message header.
+
+This is independent from the inline `<think>...</think>` tag stripping controlled by `stripThinking`. A response can populate both headers simultaneously:
+
+* `CamelOpenAIReasoningContent` — from the API-level `reasoning_content` field
+* `CamelOpenAIThinkingContent` — from inline `<think>` tags in the `content` field (requires `stripThinking=true`)
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=qwen3&stripThinking=true")
+    .log("Answer: ${body}")
+    .log("Reasoning: ${header.CamelOpenAIReasoningContent}")
+    .log("Thinking: ${header.CamelOpenAIThinkingContent}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=qwen3&amp;stripThinking=true"/>
+  <log message="Answer: ${body}"/>
+  <log message="Reasoning: ${header.CamelOpenAIReasoningContent}"/>
+  <log message="Thinking: ${header.CamelOpenAIThinkingContent}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: qwen3
+              stripThinking: true
+        - log:
+            message: "Answer: ${body}"
+        - log:
+            message: "Reasoning: ${header.CamelOpenAIReasoningContent}"
+        - log:
+            message: "Thinking: ${header.CamelOpenAIThinkingContent}"
+----
+====
+
+NOTE: Reasoning content extraction is supported in non-streaming mode only (both simple and agentic/MCP tool loop paths). Streaming responses do not extract reasoning content.
+
+=== Mapping Additional Response Fields to Headers
+
+The `additionalResponseHeader` option allows mapping any extra field from the API response message into a named Camel header. This is useful for provider-specific fields that are not part of the standard OpenAI response schema.
+
+The key is the field name in the API response, and the value is the Camel header name to set:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=qwen3"
+        + "&additionalResponseHeader.reasoning_content=CamelMyReasoning"
+        + "&additionalResponseHeader.custom_field=CamelMyCustomField")
+    .log("Custom reasoning: ${header.CamelMyReasoning}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=qwen3&amp;additionalResponseHeader.reasoning_content=CamelMyReasoning&amp;additionalResponseHeader.custom_field=CamelMyCustomField"/>
+  <log message="Custom reasoning: ${header.CamelMyReasoning}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: qwen3
+              additionalResponseHeader.reasoning_content: CamelMyReasoning
+              additionalResponseHeader.custom_field: CamelMyCustomField
+        - log:
+            message: "Custom reasoning: ${header.CamelMyReasoning}"
+----
+====
+
+String-valued fields are set directly. Non-string fields (numbers, booleans, objects) are converted using `toString()`.
+
+NOTE: This maps fields from the response message's additional properties (fields not part of the standard schema). Standard response fields like `content`, `role`, and `tool_calls` are not accessible through this option.
+
+== Sub-Pages
+
+For more details on specific features, see:
+
+* xref:others:openai-mcp.adoc[MCP Tool Calling] - Model Context Protocol server configuration, agentic loop, streaming, and connection recovery
+* xref:others:openai-providers.adoc[OpenAI-Compatible Providers] - Using Ollama, LM Studio, vLLM, and OpenRouter as alternative backends
+* xref:others:openai-operations.adoc[Embeddings and Audio Operations] - Text embeddings, vector database integration, and audio transcription
+
+== Error Handling
+
+The component may throw the following exceptions:
+
+* `IllegalArgumentException`:
+  ** When an invalid operation is specified (supported: `chat-completion`, `embeddings`, `tool-execution`, `audio-transcription`, `audio-translation`, `audio-speech`)
+  ** When message body or user message is missing
+  ** When the audio model is missing (audio-transcription, audio-translation) or the speech model is missing (audio-speech)
+  ** When image file is provided without userMessage (chat-completion)
+  ** When unsupported file type is provided (only text and image files are supported)
+  ** When invalid JSON schema string is provided
+* API-specific exceptions from the OpenAI SDK for network errors, authentication failures, rate limiting, etc.

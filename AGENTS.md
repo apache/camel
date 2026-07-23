@@ -259,7 +259,14 @@ class MyComponentTest extends CamelTestSupport {
     void testSendMessage() { ... }
 
     @Override
-    void configure() throws Exception { ... }
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {   // stays public — overrides RouteBuilder.configure()
+                from("direct:start").to("mock:result");
+            }
+        };
+    }
 }
 
 // Avoid — unnecessary public:
@@ -275,8 +282,16 @@ public class MyComponentTest extends CamelTestSupport {
 - When modifying an existing test file, remove the `public` modifier from the class declaration
   and from any test methods you touch. Do NOT sweep the entire file — only change what you are
   already modifying.
-- `@BeforeAll`, `@AfterAll`, `@BeforeEach`, `@AfterEach`, and `@Override` methods follow the
-  same rule: drop `public` when adding or modifying them.
+- `@BeforeAll`, `@AfterAll`, `@BeforeEach` and `@AfterEach` methods follow the same rule: drop
+  `public` when adding or modifying them.
+- **Exception — methods that override or implement a supertype method keep the supertype's
+  visibility.** Java forbids reducing visibility on an override (JLS 8.4.8.3), so
+  `public void configure()` in a `RouteBuilder`, and any override of a public method from
+  `CamelTestSupport` or an implemented interface, MUST stay `public`.
+- **Exception — base and support classes stay `public`** when they are extended from another
+  package or module (a package-private class cannot be), and anything under
+  `components/camel-test/**` or `test-infra/**` stays `public` because those are released
+  artifacts consumed by downstream projects and by users' own tests.
 - Do NOT create a standalone PR solely to remove `public` from test files in bulk — apply the
   convention incrementally as part of other work.
 

@@ -1,0 +1,162 @@
+= Set Variable EIP
+:doctitle: Set Variable
+:shortname: setVariable
+:description: Sets a variable to a value computed by an expression
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+The SetVariable EIP is used for setting an xref:manual:ROOT:exchange.adoc[Exchange] variable.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
+
+The following example shows how to set a variable on the exchange in a Camel route:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:a")
+    .setVariable("myVar", constant("test"))
+    .to("direct:b");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <setVariable name="myVar">
+        <constant>test</constant>
+    </setVariable>
+    <to uri="direct:b"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setVariable:
+            name: myVar
+            expression:
+              constant:
+                expression: test
+        - to:
+            uri: direct:b
+----
+====
+
+=== Setting a variable from a message header
+
+You can also set a variable with the value from a message header.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:a")
+    .setVariable("foo", header("bar"))
+    .to("direct:b");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <setVariable name="foo">
+        <header>bar</header>
+    </setVariable>
+    <to uri="direct:b"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setVariable:
+            name: foo
+            expression:
+              header:
+                expression: bar
+        - to:
+            uri: direct:b
+----
+====
+
+=== Setting variable with the current message body
+
+It is of course also possible to set a variable with a value
+from anything on the `Exchange` such as the message body,
+where we use the xref:components:languages:simple-language.adoc[Simple] language
+to refer to the message body:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:a")
+    .setVariable("myBody", simple("${body}"))
+    .to("direct:b");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <setVariable name="myBody">
+        <simple>${body}</simple>
+    </setVariable>
+    <to uri="direct:b"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setVariable:
+            name: myBody
+            expression:
+              simple:
+                expression: "${body}"
+        - to:
+            uri: direct:b
+----
+====

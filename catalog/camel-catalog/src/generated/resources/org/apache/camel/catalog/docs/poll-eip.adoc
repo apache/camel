@@ -1,0 +1,211 @@
+= Poll EIP
+:doctitle: Poll
+:shortname: poll
+:description: Polls a single message from a consumer endpoint and sets it as the message body. Useful for fetching data on-demand from file, database, or messaging endpoints.
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/DataEnricher.html[Content
+Enricher] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns].
+
+image::eip/DataEnricher.gif[image]
+
+In Camel the Content Enricher can be done in several ways:
+
+* Using xref:enrich-eip.adoc[Enrich] EIP, xref:pollEnrich-eip.adoc[Poll Enrich], or xref:poll-eip.adoc[Poll] EIP
+* Using a xref:message-translator.adoc[Message Translator]
+* Using a xref:manual::processor.adoc[Processor] with the enrichment programmed in Java
+* Using a xref:bean-eip.adoc[Bean] EIP with the enrichment programmed in Java
+
+The Poll EIP is a simplified xref:pollEnrich-eip.adoc[Poll Enrich] which only supports:
+
+* Static Endpoints
+* No custom aggregation or other advanced features
+* Uses a 20 seconds timeout (default)
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Polling a message using Poll EIP
+
+`poll` uses a xref:polling-consumer.adoc[Polling Consumer] to obtain the data.
+It is usually used for xref:event-message.adoc[Event Message] messaging,
+for instance, to read a file or download a file using FTP.
+
+We have three methods when polling:
+
+* `receive`: Waits until a message is available and then returns it. *Warning* that this method could block indefinitely if no messages are available.
+* `receiveNoWait`: Attempts to receive a message exchange immediately without waiting and returning `null` if a message exchange is not available yet.
+* `receive(timeout)`: Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns the message or `null` if the timeout expired.
+
+=== Timeout
+
+By default, Camel will use the `receive(timeout)` which has a 20 seconds timeout.
+
+You can pass in a timeout value that determines which method to use:
+
+* if timeout is `-1` or other negative number then `receive` is selected (*Important:* the `receive` method may block if there is no message)
+* if timeout is `0` then `receiveNoWait` is selected
+* otherwise, `receive(timeout)` is selected
+
+The timeout values are in milliseconds.
+
+=== Using Poll
+
+For example to download an FTP file:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:payload")
+  .poll("ftp:myserver.com/myfolder?fileName=report-file.pdf");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:payload"/>
+    <poll uri="ftp:myserver.com/myfolder?fileName=report-file.pdf"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:payload
+      steps:
+        - poll:
+            uri: ftp:myserver.com/myfolder
+            parameters:
+              fileName: report-file.pdf
+----
+====
+
+NOTE: You can use dynamic values using the simple language in the uri, as shown below:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:payload")
+  .poll("ftp:myserver.com/myfolder?fileName=report-${header.id}.pdf");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:payload"/>
+    <poll uri="ftp:myserver.com/myfolder?fileName=report-${header.id}.pdf"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:payload
+      steps:
+        - poll:
+            uri: ftp:myserver.com/myfolder
+            parameters:
+              fileName: "report-${header.id}.pdf"
+----
+====
+
+=== Using Poll with Rest DSL
+
+You can also use `poll` with xref:manual::rest-dsl.adoc[Rest DSL] to,
+for example, download a file from xref:ROOT:aws2-s3-component.adoc[AWS S3] as the response of an API call.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+rest("/report")
+  .get("/{id}/payload")
+    .to*("direct:payload");
+
+from("direct:payload")
+  .poll("aws-s3:xavier-dev?amazonS3Client=#s3client&amp;deleteAfterRead=false&amp;fileName=report-file.pdf")
+----
+
+XML::
++
+[source,xml]
+----
+<rest path="/report" desription="Report REST API">
+    <get path="/{id}/payload">
+        <to uri="direct:payload"/>
+    </get>
+</rest>
+
+<route>
+    <from uri="direct:payload"/>
+    <poll uri="aws-s3:xavier-dev?amazonS3Client=#s3client&amp;deleteAfterRead=false&amp;fileName=report-file.pdf"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- rest:
+    path: /report
+    get:
+      - path: /{id}/payload
+        to:
+          uri: direct:payload
+- route:
+    from:
+      uri: direct:payload
+      steps:
+        - poll:
+            uri: aws-s3:xavier-dev
+            parameters:
+              amazonS3Client: "#s3client"
+              deleteAfterRead: false
+              fileName: report-file.pdf
+----
+====
+
+=== Using Poll with file based components
+
+When using `poll` or `pollEnrich` with the file based components, then the `eagerLimitMaxMessagesPerPoll` option
+has changed default from `false` to `true` from **Camel 4.13** onwards. Only use-cases where you need to sort the files first,
+requires to explicit set the option `eagerLimitMaxMessagesPerPoll=false` to make Camel scan for all files first before sorting,
+and then `poll` or `pollEnrich` will then pick the top file after the sorting.
+
+This improves performance for use-cases without need for sorting first.
+
+== See More
+
+- xref:poll-eip.adoc[Poll EIP]
+- xref:enrich-eip.adoc[Enrich EIP]

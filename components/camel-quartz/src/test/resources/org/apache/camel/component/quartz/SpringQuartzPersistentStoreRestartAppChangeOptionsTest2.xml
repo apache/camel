@@ -61,7 +61,7 @@
     </property>
   </bean>
 
-  <camelContext id="camelContext-{{testClassSimpleName}}" managementNamePattern="#name#" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="camelContext-{{testClassSimpleName}}" managementNamePattern="#name#-opts2" xmlns="http://camel.apache.org/schema/spring">
     <route id="quartzRoute">
       <from uri="quartzBean://app/test?trigger.repeatInterval=20&amp;trigger.repeatCount=2"/>
       <to uri="log:trigger"/>

@@ -1,0 +1,127 @@
+= Validate EIP
+:doctitle: Validate
+:shortname: validate
+:description: Validates the message against a predicate expression and throws a PredicateValidationException if the validation fails
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+The Validate EIP uses an xref:manual::expression.adoc[Expression] or a xref:manual::predicate.adoc[Predicate]
+to validate the contents of a message.
+
+image::eip/MessageSelectorIcon.gif[image]
+
+This is useful for ensuring that messages are valid before attempting to process them.
+
+When a message is *not* valid then a `PredicateValidationException` is thrown.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Using Validate EIP
+
+The route below will read the file contents and validate the message body against a regular expression.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox")
+  .validate(body(String.class).regex("^\\w{10}\\,\\d{2}\\,\\w{24}$"))
+  .to("bean:myServiceBean.processLine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <validate>
+    <simple>${body} regex '^\\w{10}\\,\\d{2}\\,\\w{24}$'</simple>
+  </validate>
+  <to uri="bean:myServiceBean?method=processLine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - validate:
+            expression:
+              simple:
+                expression: "${body} regex '^\\w{10}\\,\\d{2}\\,\\w{24}$'"
+        - to:
+            uri: bean:myServiceBean
+            parameters:
+              method: processLine
+----
+====
+
+Validate EIP is not limited to the message body. You can also validate the message header.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox")
+  .validate(header("bar").isGreaterThan(100))
+  .to("bean:myServiceBean.processLine");
+----
++
+You can also use `validate` together with the xref:components:languages:simple-language.adoc[Simple] language.
++
+[source,java]
+----
+from("file:inbox")
+  .validate(simple("${header.bar} > 100"))
+  .to("bean:myServiceBean.processLine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <validate>
+    <simple>${header.bar} &gt; 100</simple>
+  </validate>
+  <to uri="bean:myServiceBean" method="processLine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - validate:
+            expression:
+              simple:
+                expression: "${header.bar} > 100"
+        - to:
+            uri: bean:myServiceBean.processLine
+----
+====

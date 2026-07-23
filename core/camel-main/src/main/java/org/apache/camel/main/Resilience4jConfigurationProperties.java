@@ -71,6 +71,8 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     private String maxWaitDurationInHalfOpenState;
     @Metadata(defaultValue = "true")
     private Boolean bulkheadFairCallHandlingEnabled;
+    @Metadata(defaultValue = "false")
+    private Boolean asynchronous;
 
     public Resilience4jConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -401,6 +403,18 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
         this.bulkheadFairCallHandlingEnabled = bulkheadFairCallHandlingEnabled;
     }
 
+    public Boolean getAsynchronous() {
+        return asynchronous;
+    }
+
+    /**
+     * Whether to use asynchronous (non-blocking) processing using Resilience4j's CompletionStage-based decorators. When
+     * enabled, the caller thread is released immediately and processing completes asynchronously.
+     */
+    public void setAsynchronous(Boolean asynchronous) {
+        this.asynchronous = asynchronous;
+    }
+
     /**
      * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the
      * registry. When using this, then any other circuit breaker options are not in use.
@@ -642,6 +656,15 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     public Resilience4jConfigurationProperties withBulkheadFairCallHandlingEnabled(
             Boolean bulkheadFairCallHandlingEnabled) {
         this.bulkheadFairCallHandlingEnabled = bulkheadFairCallHandlingEnabled;
+        return this;
+    }
+
+    /**
+     * Whether to use asynchronous (non-blocking) processing using Resilience4j's CompletionStage-based decorators. When
+     * enabled, the caller thread is released immediately and processing completes asynchronously.
+     */
+    public Resilience4jConfigurationProperties withAsynchronous(Boolean asynchronous) {
+        this.asynchronous = asynchronous;
         return this;
     }
 

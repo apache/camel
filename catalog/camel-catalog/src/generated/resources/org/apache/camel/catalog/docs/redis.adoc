@@ -1,0 +1,12 @@
+= Redis Component
+:doctitle: Redis
+:shortname: redis
+:artifactid: camel-redis
+:description: Aggregation repository using Redis as datastore
+:since: 3.5
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Redis component provides an `AggregationStrategy` to use Redis as the backend datastore.

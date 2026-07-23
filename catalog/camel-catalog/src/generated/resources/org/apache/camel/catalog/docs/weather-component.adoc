@@ -1,0 +1,195 @@
+= Weather Component
+:doctitle: Weather
+:shortname: weather
+:artifactid: camel-weather
+:description: Poll the weather information from Open Weather Map.
+:since: 2.12
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Weather component is used for polling weather information from
+http://openweathermap.org[Open Weather Map] - a site that provides free
+global weather and forecast information. The information is returned as
+a json String object.
+
+Camel will poll for updates to the current weather and forecasts once
+per hour by default. It can also be used to query the weather api based
+on the parameters defined on the endpoint which is used as producer.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-weather</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+weather://<unused name>[?options]
+----
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Exchange data format
+
+Camel will deliver the body as a json formatted `java.lang.String` (see
+the `mode` option above).
+
+== Examples
+
+In this sample we find the 7-day weather forecast for Madrid, Spain:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("weather:foo?location=Madrid,Spain&period=7 days&appid=APIKEY&geolocationAccessKey=IPSTACK_ACCESS_KEY&geolocationRequestHostIP=LOCAL_IP")
+    .to("jms:queue:weather");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="weather:foo?location=Madrid,Spain&amp;period=7 days&amp;appid=APIKEY&amp;geolocationAccessKey=IPSTACK_ACCESS_KEY&amp;geolocationRequestHostIP=LOCAL_IP"/>
+  <to uri="jms:queue:weather"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: weather:foo
+      parameters:
+        location: "Madrid,Spain"
+        period: "7 days"
+        appid: APIKEY
+        geolocationAccessKey: IPSTACK_ACCESS_KEY
+        geolocationRequestHostIP: LOCAL_IP
+      steps:
+        - to:
+            uri: jms:queue:weather
+----
+====
+
+To just find the current weather for your current location, you can use
+this:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("weather:foo?appid=APIKEY&geolocationAccessKey=IPSTACK_ACCESS_KEY&geolocationRequestHostIP=LOCAL_IP")
+    .to("jms:queue:weather");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="weather:foo?appid=APIKEY&amp;geolocationAccessKey=IPSTACK_ACCESS_KEY&amp;geolocationRequestHostIP=LOCAL_IP"/>
+  <to uri="jms:queue:weather"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: weather:foo
+      parameters:
+        appid: APIKEY
+        geolocationAccessKey: IPSTACK_ACCESS_KEY
+        geolocationRequestHostIP: LOCAL_IP
+      steps:
+        - to:
+            uri: jms:queue:weather
+----
+====
+
+And to find the weather using the producer, we do:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("weather:foo?location=Madrid,Spain&appid=APIKEY&geolocationAccessKey=IPSTACK_ACCESS_KEY&geolocationRequestHostIP=LOCAL_IP");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="weather:foo?location=Madrid,Spain&amp;appid=APIKEY&amp;geolocationAccessKey=IPSTACK_ACCESS_KEY&amp;geolocationRequestHostIP=LOCAL_IP"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: weather:foo
+            parameters:
+              location: "Madrid,Spain"
+              appid: APIKEY
+              geolocationAccessKey: IPSTACK_ACCESS_KEY
+              geolocationRequestHostIP: LOCAL_IP
+----
+====
+
+And we can send in a message with a header to get the weather for any
+location as shown:
+
+._Java-only: ProducerTemplate API usage_
+[source,java]
+----
+String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "Paris,France&appid=APIKEY", String.class);
+----
+
+And to get the weather at the current location, then:
+
+._Java-only: ProducerTemplate API usage_
+[source,java]
+----
+String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "current&appid=APIKEY", String.class);
+----

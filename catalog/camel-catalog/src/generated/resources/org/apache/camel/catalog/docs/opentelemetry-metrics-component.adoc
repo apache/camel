@@ -1,0 +1,803 @@
+= OpenTelemetry Metrics Component
+:doctitle: OpenTelemetry Metrics
+:shortname: opentelemetry-metrics
+:artifactid: camel-opentelemetry-metrics
+:description: Camel metrics based on the Camel Telemetry spec
+:since: 4.17
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The OpenTelemetry Metrics component allows the collection of various metrics directly from Camel routes.
+Supported metric types are xref:#OpenTelemetryComponent-counter[counter], xref:#OpenTelemetryComponent-summary[summary],
+and xref:#OpenTelemetryComponent-timer[timer].
+
+To get started, Maven users need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-opentelemetry-metrics</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+opentelemetry-metrics:[ counter | summary | timer ]:metricname[?options]
+----
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+[[OpenTelemetry-meter]]
+=== Opetntelemetry Meter
+
+OpenTelemetry meter configuration involves setting up a `MeterProvider` that is responsible for creating `Meter` instances.
+These `Meters` are then used to create instruments like counters, gauges or histograms.
+
+==== How it works
+OpenTelemetry metrics are collected by instrumented applications that record measurements using instruments like counters and gauges.
+These measurements are then processed by an OpenTelemetry SDK, which aggregates and batches them before exporting them,
+either directly or through the OpenTelemetry Collector. See https://opentelemetry.io/docs/languages/java/sdk/#sdkmeterprovider[SdkMeterProvider documentation]
+for details on how to configure this.
+
+=== Usage of producers
+
+Each meter has a type and name. Supported types are xref:#OpenTelemetryComponent-counter[counter],
+xref:#OpenTelemetryComponent-summary[distribution summary], and xref:#OpenTelemetryComponent-timer[timer].
+If no type is provided, then a xref:#OpenTelemetryComponent-counter[counter], is used by default.
+
+The meter name is a string that is evaluated as a `Simple` expression
+and can also be overridden using the xref:#OpenTelemetryComponent-headers[`CamelMetricsName`] header allowing the selection of the meter that depends on the exchange data.
+
+The optional `attributes` URI parameter is a comma-separated string consisting of `key=value` expressions.
+Both `key` and `value` are strings that are evaluated as `Simple` expressions.
+
+For example, the URI parameter `attributes.X=${header.Y}` would assign the current value of header `Y` to the key `X`.
+
+[[OpenTelemetryComponent-headers]]
+==== Headers
+
+The meter name defined in the URI can be overridden by populating a header with name `CamelMetricsName`.
+The meter attributes defined as URI parameters can be augmented by populating a header with name `CamelMetricsAttributes`.
+
+For example
+
+._Java-only: requires OpenTelemetry Attributes API_
+
+[source,java]
+----
+from("direct:in")
+    .setHeader("CamelMetricsName", constant("new.name"))
+    .setHeader("CamelMetricsAttributes", constant(Attributes.of(AttributeKey.stringKey("dynamic-key"), "dynamic-value")))
+    .to("opentelemetry-metrics:counter:name.not.used?attributes.key=value")
+    .to("direct:out");
+----
+
+will update a counter with name `new.name` (instead of `name.not.used`) using the attribute `dynamic-key` with value `dynamic-value` in addition to the attribute `key` with value `value`.
+
+All Metrics specific headers are removed from the message once the OpenTelemetry endpoint finishes processing the exchange. While processing the exchange
+the OpenTelemetry endpoint will catch all exceptions and write log entry using level `warn`.
+
+[[OpenTelemetryComponent-counter]]
+=== Counter
+
+----
+opentelemetry-metrics:counter:name[?options]
+----
+
+==== Options
+
+[width="100%",options="header"]
+|=====================================================
+|Name |Default |Description
+|increment  |- |Long value to add to the counter
+|decrement |- |Long value to subtract from the counter
+|=====================================================
+
+If neither `increment` or `decrement` is defined then value of the counter will be incremented by one.
+If `increment` and `decrement` are both defined only the increment operation is called.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// update counter 'simple.counter' by 7
+from("direct:in")
+    .to("opentelemetry-metrics:counter:simple.counter?increment=7")
+    .to("direct:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="opentelemetry-metrics:counter:simple.counter?increment=7"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: opentelemetry-metrics:counter:simple.counter
+            parameters:
+              increment: 7
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// increment counter 'simple.counter' by 1
+from("direct:in")
+    .to("opentelemetry-metrics:counter:simple.counter")
+    .to("direct:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="opentelemetry-metrics:counter:simple.counter"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: opentelemetry-metrics:counter:simple.counter
+        - to:
+            uri: direct:out
+----
+====
+
+Both `increment` and `decrement` values are evaluated as `Simple` expressions with a Long result. For instance,
+if header `X` contains a value that evaluates to `3`, the counter with name `simple.counter` is decremented by 3:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// decrement counter 'simple.counter' by 3
+from("direct:in")
+    .to("opentelemetry-metrics:counter:simple.counter?decrement=${header.X}")
+    .to("direct:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="opentelemetry-metrics:counter:simple.counter?decrement=${header.X}"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: opentelemetry-metrics:counter:simple.counter
+            parameters:
+              decrement: "${header.X}"
+        - to:
+            uri: direct:out
+----
+====
+
+==== Headers
+
+Message headers can be used to override `increment` and `decrement` values specified in the OpenTelemetry endpoint URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|====================================================================
+|Name |Description |Expected type
+|CamelMetricsCounterIncrement  |Override increment value in URI |Long
+|CamelMetricsCounterDecrement  |Override decrement value in URI |Long
+|====================================================================
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// update counter 'simple.counter' by 417
+from("direct:in")
+    .setHeader("CamelMetricsCounterIncrement", constant(417L))
+    .to("opentelemetry-metrics:counter:simple.counter?increment=7")
+    .to("direct:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsCounterIncrement">
+    <constant resultType="java.lang.Long">417</constant>
+  </setHeader>
+  <to uri="opentelemetry-metrics:counter:simple.counter?increment=7"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsCounterIncrement
+            constant: 417
+        - to:
+            uri: opentelemetry-metrics:counter:simple.counter
+            parameters:
+              increment: 7
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// updates counter using simple language to evaluate 'body.length'
+from("direct:in")
+    .setHeader("CamelMetricsCounterIncrement", simple("${body.length}"))
+    .to("opentelemetry-metrics:counter:body.len")
+    .to("direct:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsCounterIncrement">
+    <simple>${body.length}</simple>
+  </setHeader>
+  <to uri="opentelemetry-metrics:counter:body.len"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsCounterIncrement
+            simple: "${body.length}"
+        - to:
+            uri: opentelemetry-metrics:counter:body.len
+        - to:
+            uri: direct:out
+----
+====
+
+[[OpenTelemetryComponent-summary]]
+=== Distribution Summary
+
+----
+opentelemetry-metrics:summary:metricname[?options]
+----
+
+==== Options
+
+[width="100%",options="header"]
+|===================================
+|Name |Default |Description
+|value |- |Value to use in histogram
+|===================================
+
+If `value` is not set then nothing is added to histogram and warning is logged.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// adds value 9923 to 'simple.histogram'
+from("direct:in")
+    .to("opentelemetry-metrics:summary:simple.histogram?value=9923")
+    .to("direct:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="opentelemetry-metrics:summary:simple.histogram?value=9923"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: opentelemetry-metrics:summary:simple.histogram
+            parameters:
+              value: 9923
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// nothing is added to 'simple.histogram', and a warning is logged
+from("direct:in")
+    .to("opentelemetry-metrics:summary:simple.histogram")
+    .to("direct:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="opentelemetry-metrics:summary:simple.histogram"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: opentelemetry-metrics:summary:simple.histogram
+        - to:
+            uri: direct:out
+----
+====
+
+The histogram `value` is evaluated as a `Simple` expressions with a Long result. For example,
+if header `X` contains a value that evaluates to `3`, and this value is registered with the `simple.histogram`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .to("opentelemetry-metrics:summary:simple.histogram?value=${header.X}")
+    .to("direct:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="opentelemetry-metrics:summary:simple.histogram?value=${header.X}"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: opentelemetry-metrics:summary:simple.histogram
+            parameters:
+              value: "${header.X}"
+        - to:
+            uri: direct:out
+----
+====
+
+==== Headers
+
+A specific Message header can be used to override the value specified in the OpenTelemetry endpoint URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|=================================================================
+|Name |Description |Expected type
+|CamelMetricsHistogramValue |Override histogram value in URI |Long
+|=================================================================
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// adds value 992 to 'simple.histogram'
+from("direct:in")
+    .setHeader("CamelMetricsHistogramValue", constant(992L))
+    .to("opentelemetry-metrics:summary:simple.histogram?value=700")
+    .to("direct:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsHistogramValue">
+    <constant resultType="java.lang.Long">992</constant>
+  </setHeader>
+  <to uri="opentelemetry-metrics:summary:simple.histogram?value=700"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsHistogramValue
+            constant: 992
+        - to:
+            uri: opentelemetry-metrics:summary:simple.histogram
+            parameters:
+              value: 700
+        - to:
+            uri: direct:out
+----
+====
+
+[[OpenTelemetryComponent-timer]]
+=== Timer
+
+----
+opentelemetry-metrics:timer:metricname[?options]
+----
+
+==== Options
+
+[width="100%",options="header"]
+|==========================
+|Name |Default |Description
+|action |- |start or stop
+|==========================
+
+If no `action` or an invalid value is provided then a warning is logged without any timer update.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// measure time spent in route "direct:calculate"
+from("direct:in")
+    .to("opentelemetry-metrics:timer:simple.timer?action=start")
+    .to("direct:calculate")
+    .to("opentelemetry-metrics:timer:simple.timer?action=stop");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="opentelemetry-metrics:timer:simple.timer?action=start"/>
+  <to uri="direct:calculate"/>
+  <to uri="opentelemetry-metrics:timer:simple.timer?action=stop"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: opentelemetry-metrics:timer:simple.timer
+            parameters:
+              action: start
+        - to:
+            uri: direct:calculate
+        - to:
+            uri: opentelemetry-metrics:timer:simple.timer
+            parameters:
+              action: stop
+----
+====
+
+The timer `action` is evaluated as a `Simple` expression returning a result of type `OpenTelemetryTimerAction`.
+`TimerTask` objects are stored as Exchange properties between different Metrics component calls.
+
+==== Headers
+
+A specific Message header can be used to override action value specified in the OpenTelemetry endpoint URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|=======================================================================
+|Name |Description |Expected type
+|CamelMetricsTimerAction |Override timer action in URI
+|`org.apache.camel.component.opentelemetry.OpenTelemetryTimerAction`
+|=======================================================================
+
+._Java-only: requires OpenTelemetryTimerAction enum_
+
+[source,java]
+----
+// sets timer action using header
+from("direct:in")
+    .setHeader("CamelMetricsTimerAction", constant("start"))
+    .to("opentelemetry-metrics:timer:simple.timer")
+    .to("direct:out");
+----
+
+=== OpenTelemetry Event Notification
+
+There are event notifiers available for OpenTelemetry to capture Camel route and exchange events.
+The xref:#OpenTelemetryComponent-route-event-notifier[Route Event Notifier] counts the number of added and running routes,
+while the xref:#OpenTelemetryComponent-exchange-event-notifier[Exchange Event Notifier] times exchanges from their creation to their completion.
+
+[[OpenTelemetryComponent-route-event-notifier]]
+==== Camel Route Event Notifier
+
+A Route event notifier can be added to the CamelContext as follows:
+
+._Java-only: programmatic CamelContext API_
+
+[source,java]
+----
+camelContext.getManagementStrategy().addEventNotifier(new OpenTelemetryRouteEventNotifier());
+----
+
+Camel specific metrics that are available:
+
+[width="100%",options="header"]
+|=====================================================
+|Default Name |Type |Description
+|camel.routes.added | LongUpDownCounter | Number of routes in total
+|camel.routes.reloaded | LongCounter | Number of routes that have been reloaded
+|camel.routes.running | LongUpDownCounter | Number of routes currently running
+|=====================================================
+
+The following options are supported:
+
+[width="100%",options="header"]
+|=======================================================================
+|Name |Default |Description
+| namingStrategy | OpenTelemetryRouteEventNotifierNamingStrategy.DEFAULT | The strategy to use for overriding default metric names.
+|=======================================================================
+
+[[OpenTelemetryComponent-exchange-event-notifier]]
+==== Camel Exchange Event Notifier
+
+An Exchange event notifier can be added to the CamelContext as follows:
+
+._Java-only: programmatic CamelContext API_
+
+[source,java]
+----
+camelContext.getManagementStrategy().addEventNotifier(new OpenTelemetryExchangeEventNotifier());
+----
+
+Camel specific metrics that are available via the `OpenTelemetryExchangeEventNotifier`:
+
+[width="100%",options="header"]
+|=====================================================
+|Default Name |Type |Description
+|camel.exchange.sent | LongHistogram | Time taken to send a message to the endpoint; Default time unit is milliseconds
+|camel.exchange.elapsed | LongHistogram | Time taken to complete exchange; Default time unit is milliseconds
+|camel.exchanges.last.time | ObservableLongGauge | Last exchange processed time since the Unix epoch; ; Default time unit is milliseconds
+|camel.exchanges.inflight | ObservableLongGauge | Number of in flight messages per route
+|=====================================================
+
+The following options are supported:
+
+[width="100%",options="header"]
+|=======================================================================
+|Name |Default |Description
+| ignoreExchanges | false | A predicate allowing certain exchanges to be ignored from metrics capture.
+| namingStrategy | OpenTelemetryExchangeEventNotifierNamingStrategy.DEFAULT | The strategy to use for overriding default metric names.
+| timeUnit | TimeUnit.MILLISECONDS | The time unit to use for exchange 'sent' and 'elapsed' metrics.
+| lastExchangeTimeUnit | TimeUnit.MILLISECONDS | The time unit to use for 'last time' metric.
+| baseEndpointURI | true | Whether to use static or dynamic values for Endpoint Name attributes in captured metrics.
+By default, static values are used. When using dynamic attributes a dynamic to (toD) can compute many different endpoint URIs
+leading to high cardinality in metrics.
+|=======================================================================
+
+=== OpenTelemetry Route Policy
+
+Route policy metrics can be enabled by adding the `OpenTelemetryRoutePolicyFactory` to the `CamelContext`:
+
+._Java-only: programmatic CamelContext API_
+
+[source,java]
+----
+context.addRoutePolicyFactory(new OpenTelemetryRoutePolicyFactory());
+----
+
+[NOTE]
+====
+You can define a dedicated `OpenTelemetryRoutePolicy` per route you want to instrument
+in case you only want to instrument a few selected routes.
+====
+
+Camel specific metrics that are available via the `OpenTelemetryRoutePolicy`:
+[width="100%",options="header"]
+|=====================================================
+|Default Name |Type |Description
+| camel.route.policy | LongHistogram | Time taken to complete processing of exchanges for a route
+| camel.exchanges.succeeded | LongCounter | Number of successfully completed exchanges
+| camel.exchanges.failed | LongCounter | Number of failed exchanges
+| camel.exchanges.total | LongCounter | Total number of exchanges processed
+| camel.exchanges.external.redeliveries | LongCounter | Number of externally initiated redeliveries
+| camel.exchanges.failures.handled | LongCounter | Number of failures handled
+| camel.route.policy.tasks.active | ObservableLongUpDownCounter | Number of tasks currently active
+| camel.route.policy.tasks.duration | ObservableLongUpDownCounter | Total duration of all active tasks
+|=====================================================
+
+The following options are supported:
+
+[width="100%",options="header"]
+|=======================================================================
+|Name |Default |Description
+| namingStrategy | OpenTelemetryRoutePolicyNamingStrategy.DEFAULT | The strategy to use for overriding default metric names.
+| policyConfiguration | - | Enables individual metrics to be enabled or disabled.
+| timeUnit | TimeUnit.MILLISECONDS | The time unit for measuring the route policy timer.
+| longTaskTimeUnit | TimeUnit.MILLISECONDS | The time unit for the 'long task' timer that measures total duration of all active tasks.
+|=======================================================================
+
+=== OpenTelemetry Message History Factory
+
+`OpenTelemetryMessageHistoryFactory` allows the capture of Message History performance statistics while routing messages.
+It works by using an OpenTelemetry Timer to record the time taken to process each node in all routes.
+
+The `OpenTelemetryMessageHistoryFactory` can be added to the `CamelContext`:
+
+._Java-only: programmatic CamelContext API_
+
+[source,java]
+----
+context.setMessageHistoryFactory(new OpenTelemetryMessageHistoryFactory());
+----
+
+`OpenTelemetryMessageHistory` provides the following Camel specific metric:
+
+[width="100%",options="header"]
+|=====================================================
+|Default Name |Type |Description
+|camel.message.history | LongHistogram | Time taken for a node to process the message
+|=====================================================
+
+The following options are supported on the `OpenTelemetryMessageHistoryFactory`:
+
+[width="100%",options="header"]
+|=======================================================================
+|Name |Default |Description
+|namingStrategy | OpenTelemetryHistoryNamingStrategy.DEFAULT | The strategy to use for overriding the default metric name.
+|nodePattern | | A pattern to filter which nodes to capture metrics for. By default, all nodes are included
+|timeUnit | TimeUnit.MILLISECONDS | The time unit for recording the processing time.
+|=======================================================================
+
+== OpenTelemetry Configuration
+
+[[OpenTelemetry-JavaAgent]]
+=== Java Agent
+
+Your application will require a Java agent in order to get the metrics generated by the Camel application.
+
+Download the https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/[latest version].
+
+This package includes the instrumentation agent as well as instrumentation for all supported libraries and all available data exporters. The package provides a completely automatic, out-of-the-box experience. Enable the instrumentation agent using the `-javaagent` flag to the JVM.
+
+[source,bash]
+----
+java -javaagent:path/to/opentelemetry-javaagent.jar \
+     -Dotel. ... \
+     -jar myapp.jar
+----
+
+By default, the OpenTelemetry Java agent uses https://github.com/open-telemetry/opentelemetry-java/tree/main/exporters/otlp[OTLP exporter]
+configured to send data to https://github.com/open-telemetry/opentelemetry-collector/blob/main/receiver/otlpreceiver/README.md[OpenTelemetry collector] at `http://localhost:4318`.
+
+Configuration parameters are passed as Java system properties (`-D` flags) or as environment variables. See https://opentelemetry.io/docs/zero-code/java/agent/configuration/[the configuration documentation] for the full list of configuration items. For example:
+
+[source,bash]
+----
+java -javaagent:path/to/opentelemetry-javaagent.jar \
+     -Dotel.service.name=your-service-name \
+     -Dotel.metrics.exporter=otlp \
+     -jar myapp.jar
+----
+
+=== Using Camel OpenTelemetry Metrics with Spring Boot
+
+When you use `camel-opentelemetry-metrics-starter` with Spring Boot, then Spring Boot autoconfiguration will automatically enable metrics capture if a `io.opentelemetry.api.metrics.Meter` is available.
+
+See the following table for options to specify what metrics to capture, or to turn it off.

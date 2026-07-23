@@ -22,6 +22,7 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("Asynchronous", java.lang.String.class);
         map.put("AutomaticTransitionFromOpenToHalfOpenEnabled", java.lang.String.class);
         map.put("BulkheadEnabled", java.lang.String.class);
         map.put("BulkheadFairCallHandlingEnabled", java.lang.String.class);
@@ -56,6 +57,7 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.model.Resilience4jConfigurationDefinition target = (org.apache.camel.model.Resilience4jConfigurationDefinition) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "asynchronous": target.setAsynchronous(property(camelContext, java.lang.String.class, value)); return true;
         case "automatictransitionfromopentohalfopenenabled":
         case "automaticTransitionFromOpenToHalfOpenEnabled": target.setAutomaticTransitionFromOpenToHalfOpenEnabled(property(camelContext, java.lang.String.class, value)); return true;
         case "bulkheadenabled":
@@ -120,6 +122,7 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "asynchronous": return java.lang.String.class;
         case "automatictransitionfromopentohalfopenenabled":
         case "automaticTransitionFromOpenToHalfOpenEnabled": return java.lang.String.class;
         case "bulkheadenabled":
@@ -180,6 +183,7 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.model.Resilience4jConfigurationDefinition target = (org.apache.camel.model.Resilience4jConfigurationDefinition) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "asynchronous": return target.getAsynchronous();
         case "automatictransitionfromopentohalfopenenabled":
         case "automaticTransitionFromOpenToHalfOpenEnabled": return target.getAutomaticTransitionFromOpenToHalfOpenEnabled();
         case "bulkheadenabled":

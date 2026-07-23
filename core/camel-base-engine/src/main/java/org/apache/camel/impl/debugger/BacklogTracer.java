@@ -62,6 +62,8 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     public static final int MAX_BACKLOG_SIZE = 1000;
     private final CamelContext camelContext;
     private final Language simple;
+    // Fields below marked volatile are writable at runtime via JMX/management APIs
+    // while routing threads read them in shouldTrace() and traceEvent().
     private volatile boolean enabled;
     private volatile boolean standby;
     private final AtomicLong traceCounter = new AtomicLong();

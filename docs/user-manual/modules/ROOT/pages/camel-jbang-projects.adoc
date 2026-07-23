@@ -103,6 +103,40 @@ camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --dep=camel:manag
 camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --dep=camel:cli-connector
 ----
 
+=== Including resource directories
+
+To include entire directories of resource files (such as XSD schemas, WSDL files, etc.)
+in the exported project while preserving their directory structure, use `--resource-dirs`:
+
+[source,bash]
+----
+camel export --resource-dirs=soap
+----
+
+This recursively copies all files from the `soap/` directory into `src/main/resources/soap/`,
+preserving the directory structure. For example, `soap/schemas/common.xsd` becomes
+`src/main/resources/soap/schemas/common.xsd`.
+
+Multiple directories can be specified with commas:
+
+[source,bash]
+----
+camel export --resource-dirs=soap,wsdl
+----
+
+You can also reference directories outside the current project using relative paths.
+When using `..` paths, only the last directory name is used as the target:
+
+[source,bash]
+----
+camel export --resource-dirs=../shared/schemas
+----
+
+This copies the contents into `src/main/resources/schemas/`.
+
+NOTE: Absolute paths (e.g., `/some/path`) are not allowed.
+The directory is limited to at most 1000 files as a safety measure.
+
 === Troubleshooting exporting
 
 Use `--verbose` and `--logging` for more detail, or `--logging-level=DEBUG` for full output.

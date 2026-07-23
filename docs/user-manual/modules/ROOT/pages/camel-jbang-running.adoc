@@ -152,6 +152,36 @@ Multiple dependencies can be separated by comma:
 camel run foo.java --dep=camel-saxon,com.foo:acme:1.0
 ----
 
+== Including resource directories
+
+To include entire directories of resource files (such as XSD schemas, WSDL files, etc.)
+on the classpath while preserving their directory structure, use `--resource-dirs`:
+
+[source,bash]
+----
+camel run route.yaml --resource-dirs=soap
+----
+
+This recursively adds all files from the `soap/` directory to the classpath,
+preserving the directory structure (e.g., `soap/schemas/common.xsd` is accessible as `classpath:soap/schemas/common.xsd`).
+
+Multiple directories can be specified with commas:
+
+[source,bash]
+----
+camel run route.yaml --resource-dirs=soap,wsdl
+----
+
+You can also reference directories outside the current project using relative paths:
+
+[source,bash]
+----
+camel run route.yaml --resource-dirs=../shared/schemas
+----
+
+NOTE: Absolute paths (e.g., `/some/path`) are not allowed.
+The directory is limited to at most 1000 files as a safety measure.
+
 == Using 3rd-party Maven repositories
 
 By default, Camel CLI downloads from the local Maven repository and Maven Central.

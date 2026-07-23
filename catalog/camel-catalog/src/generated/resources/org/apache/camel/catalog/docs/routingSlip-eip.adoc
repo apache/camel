@@ -1,0 +1,148 @@
+= Routing Slip EIP
+:doctitle: Routing Slip
+:shortname: routingSlip
+:description: Routes a message through a pre-determined sequence of endpoints defined in a header or expression (the routing slip). The list of endpoints is evaluated once upfront.
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/RoutingTable.html[Routing Slip]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns].
+
+How do we route a message consecutively through a series of processing steps when the sequence of steps is not known at design-time and may vary for each message?
+
+image::eip/RoutingTableSimple.gif[image]
+
+Attach a Routing Slip to each message, specifying the sequence of processing steps. Wrap each component with a special message router that reads the Routing Slip and routes the message to the next component in the list.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Using Routing Slip
+
+The Routing Slip EIP allows to route a message through a series of xref:manual::endpoint.adoc[endpoints] (the slip).
+
+There can be 1 or more endpoint xref:manual::uris.adoc[uris] in the slip.
+
+TIP: A slip can be empty, meaning that the message will not be routed anywhere.
+
+The following route will take any messages sent to the Apache ActiveMQ queue cheese
+and use the header with key "whereTo" that is used to compute the slip (endpoint xref:manual::uris.adoc[uris]).
+
+[tabs]
+====
+Java::
++
+[source,java]
+---------------------
+from("activemq:cheese")
+  .routingSlip(header("whereTo"));
+---------------------
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:cheese"/>
+  <routingSlip>
+    <header>whereTo</header>
+  </routingSlip>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:cheese
+      steps:
+        - routingSlip:
+            expression:
+              header:
+                expression: whereTo
+----
+====
+
+The value of the header ("whereTo") should be a comma-delimited string of endpoint URIs you wish the message to be routed to.
+The message will be routed in a xref:pipeline-eip.adoc[pipeline] fashion, i.e., one after the other.
+
+The Routing Slip sets a property, `Exchange.SLIP_ENDPOINT`, on the `Exchange` which contains the
+current endpoint as it advanced though the slip. This allows you to _know_ how far we have processed in the slip.
+
+The Routing Slip will compute the slip *beforehand*, which means the slip is only computed once.
+If you need to compute the slip _on-the-fly_, then use the xref:dynamicRouter-eip.adoc[Dynamic Router] EIP instead.
+
+=== How is the slip computed
+
+The Routing Slip uses an xref:manual::expression.adoc[Expression] to compute the value for the slip.
+The result of the expression can be one of:
+
+- `String`
+- `Collection`
+- `Iterator` or `Iterable`
+- Array
+
+If the value is a `String` then the `uriDelimiter` is used to split the string into multiple uris.
+The default delimiter is comma, but can be re-configured.
+
+=== Ignore Invalid Endpoints
+
+The Routing Slip supports `ignoreInvalidEndpoints` (like xref:recipientList-eip.adoc[Recipient List] EIP).
+You can use it to skip endpoints which are invalid.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .routingSlip(header("myHeader")).ignoreInvalidEndpoints();
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <routingSlip ignoreInvalidEndpoints="true">
+    <header>myHeader</header>
+  </routingSlip>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - routingSlip:
+            ignoreInvalidEndpoints: "true"
+            expression:
+              header:
+                expression: myHeader
+----
+====
+
+Then let us say the `myHeader` contains the following two endpoints `direct:foo,xxx:bar`.
+The first endpoint is valid and works. However, the second one is invalid and will just be ignored.
+Camel logs at DEBUG level about it, so you can see why the endpoint was invalid.

@@ -154,6 +154,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File modelsAppOutDir;
 
     /**
+     * The output directory for generated documentation catalog
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/docs")
+    protected File docsOutDir;
+
+    /**
      * The output directory for generated XML schemas catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/schemas")
@@ -410,6 +416,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             Set<String> consoles = executeDevConsoles();
             Set<String> others = executeOthers();
             executeDocuments(components, dataformats, languages, others);
+            executeDocs();
             executeXmlSchemas();
             executeMain();
             executeJBang();
@@ -1086,6 +1093,58 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // find out if we have documents for each component / dataformat /
         // languages / others
         printMissingDocumentsReport(docNames, components, dataformats, languages, others);
+    }
+
+    protected void executeDocs() throws Exception {
+        Path docsOutDir = this.docsOutDir.toPath();
+        Files.createDirectories(docsOutDir);
+
+        Set<Path> adocFiles = new TreeSet<>();
+
+        // find all adoc files from component, core, and dsl modules
+        try (Stream<Path> stream = Stream.of(componentsDir.toPath(), coreDir.toPath(), dslDir.toPath())
+                .flatMap(base -> {
+                    try {
+                        return list(base)
+                                .filter(dir -> !dir.getFileName().startsWith(".")
+                                        && !"target".equals(dir.getFileName().toString()))
+                                .flatMap(p -> getComponentPath(p).stream());
+                    } catch (Exception e) {
+                        return Stream.empty();
+                    }
+                })) {
+            stream.forEach(dir -> {
+                try (Stream<Path> pathStream = PackageHelper.walk(dir.resolve("src/main/docs"))
+                        .filter(f -> {
+                            String name = f.getFileName().toString();
+                            return name.endsWith(ADOC)
+                                    && !name.equals("nav.adoc")
+                                    && !name.endsWith(".template");
+                        })) {
+                    adocFiles.addAll(pathStream.toList());
+                }
+            });
+        }
+
+        getLog().info("Copying " + adocFiles.size() + " ascii document files to catalog");
+
+        // build source -> destination map (flatten to filename only)
+        Map<Path, Path> newDocs = map(adocFiles, p -> p, p -> docsOutDir.resolve(p.getFileName()));
+
+        // delete stale files
+        try (Stream<Path> stream = list(docsOutDir).filter(p -> !newDocs.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
+
+        // copy all docs
+        newDocs.forEach(this::copy);
+
+        // write docs.properties index
+        Path all = docsOutDir.resolve("../docs.properties");
+        Set<String> docNames = adocFiles.stream()
+                .map(PrepareCatalogMojo::asComponentName)
+                .collect(Collectors.toCollection(TreeSet::new));
+        FileUtil.updateFile(all, String.join("\n", docNames) + "\n");
     }
 
     private void printMissingDocumentsReport(

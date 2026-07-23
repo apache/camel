@@ -90,7 +90,8 @@ public class RequestHandler {
         } else {
             LOG.debug("Tool sequence completed for expectation: {}", originalInput);
             return responseBuilder.createFinalToolResponse(context.getMessagesNode(), expectation.getExpectedResponse(),
-                    expectation.getToolContentResponse(), expectation.getReasoningContent());
+                    expectation.getToolContentResponse(), expectation.getReasoningContent(),
+                    resolvePromptTokens(expectation), resolveCompletionTokens(expectation));
         }
     }
 
@@ -129,7 +130,10 @@ public class RequestHandler {
             default:
                 LOG.debug("Creating simple text response");
                 return responseBuilder.createSimpleTextResponse(
-                        expectation.getExpectedResponse(), expectation.getReasoningContent());
+                        expectation.getExpectedResponse(),
+                        expectation.getReasoningContent(),
+                        resolvePromptTokens(expectation),
+                        resolveCompletionTokens(expectation));
         }
     }
 
@@ -137,7 +141,21 @@ public class RequestHandler {
         ToolExecutionStep currentStep = expectation.getCurrentToolStep();
         return responseBuilder.createToolCallResponse(
                 expectation.getExpectedResponse(),
-                currentStep.getToolCalls());
+                currentStep.getToolCalls(),
+                resolvePromptTokens(expectation),
+                resolveCompletionTokens(expectation));
+    }
+
+    private int resolvePromptTokens(MockExpectation expectation) {
+        return expectation.getUsagePromptTokens() != null
+                ? expectation.getUsagePromptTokens()
+                : ResponseBuilder.DEFAULT_PROMPT_TOKENS;
+    }
+
+    private int resolveCompletionTokens(MockExpectation expectation) {
+        return expectation.getUsageCompletionTokens() != null
+                ? expectation.getUsageCompletionTokens()
+                : ResponseBuilder.DEFAULT_COMPLETION_TOKENS;
     }
 
     private MockExpectation findExpectationByInput(String input) {

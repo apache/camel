@@ -1,0 +1,67 @@
+= ExchangeProperty Language
+:doctitle: ExchangeProperty
+:shortname: exchangeProperty
+:artifactid: camel-core-languages
+:description: Gets a property from the Exchange
+:since: 2.0
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The ExchangeProperty Expression Language allows you to extract values of
+named exchange properties.
+
+== Exchange Property Options
+
+// language options: START
+include::partial$language-options.adoc[]
+// language options: END
+
+== Example
+
+The `recipientList` EIP can utilize a exchangeProperty like:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:a").recipientList(exchangeProperty("myProperty"));
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:a" />
+  <recipientList>
+    <exchangeProperty>myProperty</exchangeProperty>
+  </recipientList>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - recipientList:
+            expression:
+              exchangeProperty:
+                expression: myProperty
+----
+====
+
+In this case, the list of recipients are contained in the property
+'myProperty'.
+
+== Dependencies
+
+The ExchangeProperty language is part of *camel-core*.

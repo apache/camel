@@ -33,6 +33,7 @@ import org.apache.camel.tooling.model.ComponentModel;
  * MCP Tool that lists valid {@code application.properties} keys for a Camel component, so AI agents can build
  * configuration without having to parse the full component documentation.
  */
+@McpSecured
 @ApplicationScoped
 public class ComponentPropertiesTools {
 

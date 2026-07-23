@@ -152,18 +152,6 @@ public class JsonPathEngine {
                     }
                 }
                 return list;
-            } else if (answer instanceof Map) {
-                Map<Object, Object> map = (Map<Object, Object>) answer;
-                for (Map.Entry<Object, Object> entry : map.entrySet()) {
-                    Object value = entry.getValue();
-                    if (adapter != null) {
-                        String json = adapter.writeAsString(value, exchange);
-                        if (json != null) {
-                            map.put(entry.getKey(), json);
-                        }
-                    }
-                }
-                return map;
             } else {
                 String json = adapter.writeAsString(answer, exchange);
                 if (json != null) {

@@ -1,0 +1,147 @@
+= Kubernetes HPA Component
+:doctitle: Kubernetes HPA
+:shortname: kubernetes-hpa
+:artifactid: camel-kubernetes
+:description: Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.
+:since: 2.23
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Kubernetes
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Kubernetes HPA component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
+provides a producer to execute kubernetes Horizontal Pod Autoscaler operations and a consumer to consume events related to Horizontal Pod Autoscaler objects.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Supported producer operation
+
+- `listHPA`
+- `listHPAByLabels`
+- `getHPA`
+- `createHPA`
+- `updateHPA`
+- `deleteHPA`
+
+== Examples
+
+=== Kubernetes HPA Producer Examples
+
+- `listHPA`: this operation lists the HPAs on a kubernetes cluster
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:list")
+    .to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPA")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-hpa:///?kubernetesClient=#kubernetesClient&amp;operation=listHPA"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+    steps:
+      - to:
+          uri: kubernetes-hpa:///
+          parameters:
+            kubernetesClient: "#kubernetesClient"
+            operation: listHPA
+      - to:
+          uri: mock:result
+----
+====
+
+This operation returns a list of HPAs from your cluster
+
+- `listDeploymentsByLabels`: this operation lists the HPAs by labels on a kubernetes cluster
+
+._Java-only: sets a Map header for label selection_
+[source,java]
+----
+from("direct:listByLabels")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesHPALabels",
+            Map.of("key1", "value1", "key2", "value2"));
+    })
+    .to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPAByLabels")
+    .to("mock:result");
+----
+
+This operation returns a List of HPAs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
+
+=== Kubernetes HPA Consumer Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("kubernetes-hpa://{{kubernetes-host}}?oauthToken={{kubernetes-token}}")
+    .to("log:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kubernetes-hpa://{{kubernetes-host}}?oauthToken={{kubernetes-token}}"/>
+  <to uri="log:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kubernetes-hpa://{{kubernetes-host}}
+      parameters:
+        oauthToken: "{{kubernetes-token}}"
+    steps:
+      - to:
+          uri: log:result
+----
+====
+
+This consumer returns a message per event received for all HorizontalPodAutoscalers from all namespaces in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch HorizontalPodAutoscalers with the specified label in any namespace.
+- `namespace` - Watch all HorizontalPodAutoscalers in the specified namespace.
+- `namespace` + `resourceName` - Watch the HorizontalPodAutoscaler with the specified name in the given namespace.
+- `namespace` + `labelKey` + `labelValue` - Watch HorizontalPodAutoscalers with the specified label in the given namespace.
+
+

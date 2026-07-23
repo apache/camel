@@ -21,7 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -40,6 +43,7 @@ import io.github.resilience4j.timelimiter.TimeLimiter;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import io.github.resilience4j.timelimiter.TimeLimiterRegistry;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -62,6 +66,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
@@ -97,8 +102,10 @@ public class ResilienceProcessor extends BaseProcessorSupport
     private final boolean throwExceptionWhenHalfOpenOrOpenState;
     private final Predicate<Throwable> recordPredicate;
     private final Predicate<Throwable> ignorePredicate;
+    private boolean asynchronous;
     private boolean shutdownExecutorService;
     private ExecutorService executorService;
+    private ScheduledExecutorService scheduledExecutorService;
     private ProcessorExchangeFactory processorExchangeFactory;
     private PooledExchangeTaskFactory taskFactory;
     private PooledExchangeTaskFactory fallbackTaskFactory;
@@ -288,6 +295,23 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public ScheduledExecutorService getScheduledExecutorService() {
+        return scheduledExecutorService;
+    }
+
+    public void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
+        this.scheduledExecutorService = scheduledExecutorService;
+    }
+
+    @ManagedAttribute(description = "Whether asynchronous (non-blocking) processing is enabled")
+    public boolean isAsynchronous() {
+        return asynchronous;
+    }
+
+    public void setAsynchronous(boolean asynchronous) {
+        this.asynchronous = asynchronous;
     }
 
     @Override
@@ -519,6 +543,13 @@ public class ResilienceProcessor extends BaseProcessorSupport
         // Camel error handler
         exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
 
+        if (asynchronous) {
+            return processAsync(exchange, callback);
+        }
+        return processSync(exchange, callback);
+    }
+
+    private boolean processSync(Exchange exchange, AsyncCallback callback) {
         CircuitBreakerFallbackTask fallbackTask = null;
         CircuitBreakerTask task = null;
         try {
@@ -573,6 +604,80 @@ public class ResilienceProcessor extends BaseProcessorSupport
         exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
         callback.done(true);
         return true;
+    }
+
+    private boolean processAsync(Exchange exchange, AsyncCallback callback) {
+        CircuitBreakerFallbackTask fallbackTask = null;
+        try {
+            fallbackTask = (CircuitBreakerFallbackTask) fallbackTaskFactory.acquire(exchange, callback);
+            AtomicBoolean exchangeWriteGuard = new AtomicBoolean(false);
+            fallbackTask.exchangeWriteGuard = exchangeWriteGuard;
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchange: {} using circuit breaker: {} (async)", exchange.getExchangeId(), id);
+            }
+
+            // build the CompletionStage supplier for the main task
+            Supplier<CompletionStage<Exchange>> supplier;
+            if (timeLimiter != null) {
+                // with timeout: submit work to executor so the supplier returns immediately
+                // and the TimeLimiter can schedule the timeout check
+                supplier = () -> {
+                    CompletableFuture<Exchange> future = new CompletableFuture<>();
+                    executorService.submit(() -> processTaskAsync(exchange, exchangeWriteGuard, future));
+                    return future;
+                };
+            } else {
+                // without timeout: run directly on the caller thread
+                // if the downstream processor is async, it returns immediately
+                supplier = () -> processTaskAsync(exchange, exchangeWriteGuard, new CompletableFuture<>());
+            }
+
+            // decorate with resilience4j CompletionStage decorators
+            if (timeLimiter != null) {
+                supplier = TimeLimiter.decorateCompletionStage(timeLimiter, scheduledExecutorService, supplier);
+            }
+            if (bulkhead != null) {
+                supplier = Bulkhead.decorateCompletionStage(bulkhead, supplier);
+            }
+            supplier = CircuitBreaker.decorateCompletionStage(circuitBreaker, supplier);
+
+            // trigger the chain and handle completion
+            final CircuitBreakerFallbackTask fFallbackTask = fallbackTask;
+            supplier.get().whenComplete((result, throwable) -> {
+                try {
+                    if (throwable != null) {
+                        Throwable cause = throwable instanceof CompletionException ? throwable.getCause() : throwable;
+                        fFallbackTask.apply(cause);
+                    } else {
+                        successState(result);
+                    }
+                } catch (Exception e) {
+                    exchange.setException(e);
+                } finally {
+                    fallbackTaskFactory.release(fFallbackTask);
+                }
+
+                if (LOG.isTraceEnabled()) {
+                    boolean failed = exchange.isFailed();
+                    LOG.trace("Processing exchange: {} using circuit breaker: {} complete (async, failed: {})",
+                            exchange.getExchangeId(), id, failed);
+                }
+
+                exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+                callback.done(false);
+            });
+            return false;
+        } catch (Exception e) {
+            // setup failure before the CompletionStage was created
+            exchange.setException(e);
+            if (fallbackTask != null) {
+                fallbackTaskFactory.release(fallbackTask);
+            }
+            exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+            callback.done(true);
+            return true;
+        }
     }
 
     private void successState(Exchange exchange) {
@@ -643,6 +748,70 @@ public class ResilienceProcessor extends BaseProcessorSupport
             throw RuntimeExchangeException.wrapRuntimeException(cause);
         }
         return exchange;
+    }
+
+    private CompletableFuture<Exchange> processTaskAsync(
+            Exchange exchange, AtomicBoolean exchangeWriteGuard, CompletableFuture<Exchange> future) {
+        String state = circuitBreaker.getState().name();
+
+        Exchange copy = null;
+        UnitOfWork uow = null;
+        try {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchange: {} using circuit breaker ({}):{} with processor: {} (async)",
+                        exchange.getExchangeId(), state, id, processor);
+            }
+            copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
+            if (copy.getUnitOfWork() != null) {
+                uow = copy.getUnitOfWork();
+            } else {
+                uow = PluginHelper.getUnitOfWorkFactory(copy.getContext()).createUnitOfWork(copy);
+                copy.getExchangeExtension().setUnitOfWork(uow);
+                Route route = ExchangeHelper.getRoute(exchange);
+                if (route != null) {
+                    uow.pushRoute(route);
+                }
+            }
+
+            final Exchange fCopy = copy;
+            final UnitOfWork fUow = uow;
+            AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
+            asyncProcessor.process(copy, doneSync -> {
+                try {
+                    if (exchangeWriteGuard.compareAndSet(false, true)) {
+                        if (fCopy.getException() != null) {
+                            exchange.setException(fCopy.getException());
+                        } else {
+                            ExchangeHelper.copyResults(exchange, fCopy);
+                            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
+                            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                        }
+                    }
+                } catch (Exception e) {
+                    if (exchangeWriteGuard.compareAndSet(false, true)) {
+                        exchange.setException(e);
+                    }
+                } finally {
+                    UnitOfWorkHelper.doneUow(fUow, fCopy);
+                    processorExchangeFactory.release(fCopy);
+                }
+
+                Throwable cause = exchange.getException();
+                if (cause != null) {
+                    future.completeExceptionally(cause);
+                } else {
+                    future.complete(exchange);
+                }
+            });
+        } catch (Exception e) {
+            // cleanup on failure to set up async processing
+            if (copy != null) {
+                UnitOfWorkHelper.doneUow(uow, copy);
+                processorExchangeFactory.release(copy);
+            }
+            future.completeExceptionally(e);
+        }
+        return future;
     }
 
     private final class CircuitBreakerTask implements PooledExchangeTask, Callable<Exchange>, Supplier<Exchange> {

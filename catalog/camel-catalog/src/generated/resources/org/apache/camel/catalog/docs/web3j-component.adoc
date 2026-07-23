@@ -1,0 +1,173 @@
+= Web3j Ethereum Blockchain Component
+:doctitle: Web3j Ethereum Blockchain
+:shortname: web3j
+:artifactid: camel-web3j
+:description: Interact with Ethereum nodes using web3j client API.
+:since: 2.22
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Ethereum blockchain component uses the
+https://github.com/web3j/web3j[web3j] client
+API and allows you to interact with Ethereum compatible nodes such as:
+
+* https://github.com/ethereum/go-ethereum/wiki/geth[Geth]
+* https://github.com/paritytech/parity[Parity]
+* https://github.com/jpmorganchase/quorum/wiki[Quorum]
+* https://infura.io[Infura]
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-web3j</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI Format
+
+----
+web3j://<local/remote host:port or local IPC path>[?options]
+----
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+All URI options can also be set as exchange headers.
+
+== Examples
+
+Listen for new mined blocks and send the block hash to a jms queue:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("web3j://http://127.0.0.1:7545?operation=ETH_BLOCK_HASH_OBSERVABLE")
+    .to("jms:queue:blocks");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="web3j://http://127.0.0.1:7545?operation=ETH_BLOCK_HASH_OBSERVABLE"/>
+  <to uri="jms:queue:blocks"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "web3j://http://127.0.0.1:7545"
+      parameters:
+        operation: ETH_BLOCK_HASH_OBSERVABLE
+      steps:
+        - to:
+            uri: jms:queue:blocks
+----
+====
+
+Use the block hash code to retrieve the block and full transaction details:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jms:queue:blocks")
+    .setHeader(BLOCK_HASH, body())
+    .to("web3j://http://127.0.0.1:7545?operation=ETH_GET_BLOCK_BY_HASH&fullTransactionObjects=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jms:queue:blocks"/>
+  <setHeader name="BLOCK_HASH">
+    <simple>${body}</simple>
+  </setHeader>
+  <to uri="web3j://http://127.0.0.1:7545?operation=ETH_GET_BLOCK_BY_HASH&amp;fullTransactionObjects=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:blocks
+      steps:
+        - setHeader:
+            name: BLOCK_HASH
+            simple: "${body}"
+        - to:
+            uri: "web3j://http://127.0.0.1:7545"
+            parameters:
+              operation: ETH_GET_BLOCK_BY_HASH
+              fullTransactionObjects: true
+----
+====
+
+Read the balance of an address at a specific block number:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("web3j://http://127.0.0.1:7545?operation=ETH_GET_BALANCE&address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952&atBlock=10");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="web3j://http://127.0.0.1:7545?operation=ETH_GET_BALANCE&amp;address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952&amp;atBlock=10"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "web3j://http://127.0.0.1:7545"
+            parameters:
+              operation: ETH_GET_BALANCE
+              address: "0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952"
+              atBlock: 10
+----
+====

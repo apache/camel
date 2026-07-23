@@ -35,8 +35,8 @@ import software.amazon.awssdk.core.client.builder.SdkAsyncClientBuilder;
 import software.amazon.awssdk.core.client.builder.SdkSyncClientBuilder;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.http.apache.ProxyConfiguration;
+import software.amazon.awssdk.http.apache5.Apache5HttpClient;
+import software.amazon.awssdk.http.apache5.ProxyConfiguration;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
@@ -73,7 +73,7 @@ public final class AwsClientBuilderUtil {
             Consumer<B> serviceSpecificConfig) {
 
         B clientBuilder = builderSupplier.get();
-        ApacheHttpClient.Builder httpClientBuilder = null;
+        Apache5HttpClient.Builder httpClientBuilder = null;
         boolean httpClientConfigured = false;
 
         // 1. Configure proxy
@@ -85,7 +85,7 @@ public final class AwsClientBuilderUtil {
             ProxyConfiguration proxyConfig = ProxyConfiguration.builder()
                     .endpoint(proxyEndpoint)
                     .build();
-            httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig);
+            httpClientBuilder = Apache5HttpClient.builder().proxyConfiguration(proxyConfig);
             httpClientConfigured = true;
         }
 
@@ -113,7 +113,7 @@ public final class AwsClientBuilderUtil {
         // 6. Configure trust all certificates
         if (config.isTrustAllCertificates()) {
             if (httpClientBuilder == null) {
-                httpClientBuilder = ApacheHttpClient.builder();
+                httpClientBuilder = Apache5HttpClient.builder();
             }
             SdkHttpClient httpClient = httpClientBuilder.buildWithDefaults(
                     AttributeMap.builder()

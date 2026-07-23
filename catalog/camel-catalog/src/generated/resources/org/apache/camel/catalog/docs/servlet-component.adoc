@@ -1,0 +1,356 @@
+= Servlet Component
+:doctitle: Servlet
+:shortname: servlet
+:artifactid: camel-servlet
+:description: Serve HTTP requests by a Servlet.
+:since: 2.0
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only consumer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Servlet component provides HTTP-based
+endpoints for consuming HTTP requests that arrive at
+an HTTP endpoint that is bound to a published Servlet.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-servlet</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+[NOTE]
+====
+*Stream*
+
+Servlet is stream-based, which means the input it receives is submitted
+to Camel as a stream. That means you will only be able to read the
+content of the stream *once*. If you find a situation where the message
+body appears to be empty, or you need to access the data multiple times
+(eg: doing multicasting, or redelivery error handling), you should use
+Stream caching or convert the message body to
+a `String` which is safe to be read multiple times.
+====
+
+== URI format
+
+----
+servlet://relative_path[?options]
+----
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== OAuth Bearer token validation
+
+Servlet consumers can validate incoming `Authorization: Bearer` tokens by setting the
+`oauthProfile` endpoint option.
+The profile is resolved through Camel's `OAuthTokenValidationFactory` SPI. The
+xref:components:others:oauth.adoc[camel-oauth] component provides the default implementation for
+standalone Camel applications; see its documentation for validation profile options and production
+hardening (expected issuer and audience, HTTPS for JWKS, OIDC discovery, and introspection
+endpoints). Runtimes can also provide their own implementation.
+
+[NOTE]
+====
+If `oauthProfile` is set but no `OAuthTokenValidationFactory` is available, the route fails to start.
+Add `camel-oauth` for the default provider or include a runtime-specific provider from the platform integration.
+====
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("servlet:secure?oauthProfile=myprofile")
+    .to("direct:businessLogic");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="servlet:secure?oauthProfile=myprofile"/>
+  <to uri="direct:businessLogic"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: servlet:secure
+      parameters:
+        oauthProfile: myprofile
+      steps:
+        - to:
+            uri: direct:businessLogic
+----
+====
+
+When `oauthProfile` is set, static profile configuration is resolved and validated at route startup.
+Updates to OAuth profile properties require restarting the route or Camel context before they take effect.
+Requests without a Bearer token or with an invalid token are rejected with HTTP 401 before the
+route is processed; missing credentials receive a `WWW-Authenticate: Bearer` response header and
+invalid tokens receive `WWW-Authenticate: Bearer error="invalid_token"`. Malformed
+`Authorization` headers are rejected with HTTP 400 and
+`WWW-Authenticate: Bearer error="invalid_request"`.
+Token validation infrastructure failures are rejected with HTTP 503.
+For valid tokens, the token validation result is stored on the exchange as the
+`CamelOAuthTokenValidationResult` exchange property. The raw `Authorization` header is removed from
+the Camel message before the route is invoked.
+
+[NOTE]
+====
+Automatic `OPTIONS` handling runs before OAuth validation when `optionsEnabled=false`, so
+unauthenticated CORS preflight and Allow requests keep the existing servlet behavior.
+If an `OPTIONS` route is explicitly enabled, that route is protected by OAuth like other methods.
+====
+
+[NOTE]
+====
+This is Camel endpoint-level validation and does not replace servlet container security, filters, or
+runtime-specific authentication mechanisms. If route code accesses the native servlet request object
+directly, the container request still reflects the original inbound HTTP headers.
+If the servlet container or framework already authenticates requests, it may consume or transform
+the `Authorization` header before Camel sees it. In that case, prefer the container or framework
+security and do not set `oauthProfile` for the same path, to avoid double validation or
+missing-header failures; `oauthProfile` is intended for deployments where the container performs no
+authentication.
+====
+
+
+== Message Headers
+
+Camel will apply the same Message Headers as the xref:http-component.adoc[HTTP]
+component.
+
+Camel will also populate *all* `request.parameter` and
+`request.headers`. For example, if a client request has the URL,
+http://myserver/myserver?orderid=123, the exchange will contain a
+header named `orderid` with the value `123`.
+
+== Examples
+
+You can consume only `from` endpoints generated by the Servlet component.
+Therefore, it should be used only as input into your Camel routes. To
+issue HTTP requests against other HTTP endpoints, use the
+xref:http-component.adoc[HTTP Component].
+
+=== Example `CamelHttpTransportServlet` configuration
+
+==== Camel Spring Boot / Camel Quarkus
+
+When running camel-servlet on the Spring Boot or Camel Quarkus runtimes, `CamelHttpTransportServlet` is configured for
+you automatically and is driven by configuration properties. Refer to the camel-servlet configuration documentation for these runtimes.
+
+==== Servlet container / application server
+
+If you're running Camel standalone on a Servlet container or application server, you can use `web.xml` to configure `CamelHttpTransportServlet`.
+
+For example, to define a route that exposes an HTTP service under the path `/services`.
+
+._XML-only: web.xml servlet configuration_
+[source,xml]
+----
+<web-app>
+  <servlet>
+    <servlet-name>CamelServlet</servlet-name>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>CamelServlet</servlet-name>
+    <url-pattern>/services/*</url-pattern>
+  </servlet-mapping>
+</web-app>
+----
+
+=== Example route
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("servlet:hello")
+    .setBody(simple("<b>Got Content-Type: ${header.Content-Type}, URI: ${header.CamelHttpUri}</b>"));
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="servlet:hello"/>
+  <setBody>
+    <simple>&lt;b&gt;Got Content-Type: ${header.Content-Type}, URI: ${header.CamelHttpUri}&lt;/b&gt;</simple>
+  </setBody>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: servlet:hello
+      steps:
+        - setBody:
+            simple: "<b>Got Content-Type: ${header.Content-Type}, URI: ${header.CamelHttpUri}</b>"
+----
+====
+
+=== Camel Servlet HTTP endpoint path
+
+The full path where the camel-servlet HTTP endpoint is published depends on:
+
+* The Servlet application context path
+* The configured Servlet mapping URL patterns
+* The camel-servlet endpoint URI context path
+
+For example, if the application context path is `/camel` and `CamelHttpTransportServlet` is configured with a URL mapping of `/services/*`.
+Then a Camel route like `from("servlet:hello")` would be published to a path like http://localhost:8080/camel/services/hello.
+
+=== Servlet asynchronous support
+
+To enable Camel to benefit from Servlet asynchronous support, you must enable the `async` boolean init parameter by setting it to `true`.
+
+By default, the servlet thread pool is used for exchange processing. However, to use a custom thread pool, you can configure an init parameter named `executorRef` with the String value set to the name of a bean bound to the Camel registry of type `Executor`.
+If no bean was found in the Camel registry, the Servlet component will attempt to fall back on an executor policy or default executor service.
+
+If you want to force exchange processing to wait in another container background thread, you can set the `forceAwait` boolean init parameter to `true`.
+
+On the Camel Quarkus runtime, these init parameters can be set via configuration properties. Refer to the Camel Quarkus Servlet extension documentation for more information.
+
+On other runtimes you can configure these parameters in `web.xml` as follows.
+
+._XML-only: web.xml with async servlet init parameters_
+[source,xml]
+----
+<web-app>
+    <servlet>
+        <servlet-name>CamelServlet</servlet-name>
+        <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+        <init-param>
+            <param-name>async</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>executorRef</param-name>
+            <param-value>my-custom-thread-pool</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CamelServlet</servlet-name>
+        <url-pattern>/services/*</url-pattern>
+    </servlet-mapping>
+</web-app>
+----
+
+=== Camel JARs on an application server boot classpath
+
+If deploying into an application server / servlet container and you choose to have Camel JARs such as `camel-core`, `camel-servlet`, etc on the boot classpath.
+Then the servlet mapping list will be shared between multiple deployed Camel application in the app server.
+
+WARNING: Having Camel JARs on the boot classpath of the application server is not best practice.
+
+In this scenario, you *must* define a custom and unique servlet name in each of your Camel applications. For example, in `web.xml`:
+
+._XML-only: web.xml with custom servlet name_
+[source,xml]
+----
+<web-app>
+    <servlet>
+      <servlet-name>MyServlet</servlet-name>
+      <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+      <servlet-name>MyServlet</servlet-name>
+      <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+</web-app>
+----
+
+In your Camel servlet endpoints, include the servlet name:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("servlet://foo?servletName=MyServlet")
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="servlet://foo?servletName=MyServlet"/>
+  <!-- ... -->
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: servlet://foo
+      parameters:
+        servletName: MyServlet
+      steps:
+        - to:
+            uri: direct:businessLogic
+----
+====
+
+Camel detects duplicate Servlet names and will fail to
+start the application. You can control and ignore such duplicates by
+setting the servlet init parameter `ignoreDuplicateServletName` to `true` as
+follows:
+
+._XML-only: web.xml init parameter to ignore duplicate servlet names_
+[source,xml]
+----
+  <servlet>
+    <servlet-name>CamelServlet</servlet-name>
+    <display-name>Camel Http Transport Servlet</display-name>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+    <init-param>
+      <param-name>ignoreDuplicateServletName</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </servlet>
+----
+
+But it is *strongly advised* to use unique `servlet-name` for each Camel
+application to avoid this duplication clash, as well any unforeseen
+side effects.

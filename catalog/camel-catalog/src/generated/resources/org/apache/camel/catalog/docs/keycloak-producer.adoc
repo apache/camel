@@ -1,0 +1,807 @@
+= Keycloak Producer Operations
+:tabs-sync-option:
+
+The Keycloak producer supports administrative operations on Keycloak instances via the Admin API.
+
+For an overview of the Keycloak component, see xref:ROOT:keycloak-component.adoc[Keycloak Component].
+
+== Configuration
+
+The Keycloak component supports four authentication methods:
+
+1. **Access Token (Bearer Token)** - Use a pre-obtained access token
+2. **Refresh Token** - Maintain long-running sessions with automatic token refresh
+3. **Username/Password** - Resource Owner Password Credentials flow
+4. **Client Credentials** - Service-to-service authentication
+
+=== Access Token Authentication
+
+Use this when you have a pre-obtained access token from an external authentication system:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Configure Keycloak component with access token
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master");
+config.setAccessToken("eyJhbGciOiJSUzI1NiIsInR5cC...");
+keycloak.setConfiguration(config);
+----
+====
+
+=== Refresh Token Authentication
+
+Use this for long-running sessions that need to maintain authentication without storing credentials. The refresh token will be used to automatically obtain new access tokens when needed:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Configure Keycloak component with refresh token
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master");
+config.setClientId("my-client");
+config.setRefreshToken("eyJhbGciOiJIUzI1NiIsInR5cCIgOi...");
+// Optional: set client secret for confidential clients
+config.setClientSecret("my-client-secret");
+keycloak.setConfiguration(config);
+----
+====
+
+NOTE: Refresh token authentication requires a `clientId`. The `clientSecret` is optional and should be provided only if your client is configured as confidential in Keycloak.
+
+=== Username/Password Authentication
+
+Use this for admin user authentication:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Configure Keycloak component
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master");
+config.setUsername("admin");
+config.setPassword("admin");
+keycloak.setConfiguration(config);
+----
+====
+
+=== Client Credentials Authentication
+
+Use this for service-to-service authentication:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Configure Keycloak component with client credentials
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master");
+config.setClientId("my-service-client");
+config.setClientSecret("my-client-secret");
+keycloak.setConfiguration(config);
+----
+====
+
+== Supported Operations
+
+The component supports the following operations:
+
+* **Realm Management**: `createRealm`, `getRealm`, `updateRealm`, `deleteRealm`
+* **User Management**: `createUser`, `getUser`, `updateUser`, `listUsers`, `searchUsers`, `deleteUser`
+* **User Attributes**: `getUserAttributes`, `setUserAttribute`, `deleteUserAttribute`
+* **User Credentials**: `getUserCredentials`, `deleteUserCredential`
+* **User Actions**: `sendVerifyEmail`, `sendPasswordResetEmail`, `addRequiredAction`, `removeRequiredAction`, `executeActionsEmail`
+* **Role Management**: `createRole`, `getRole`, `updateRole`, `listRoles`, `deleteRole`, `assignRoleToUser`, `removeRoleFromUser`, `getUserRoles`
+* **Group Management**: `createGroup`, `getGroup`, `updateGroup`, `listGroups`, `deleteGroup`, `addUserToGroup`, `removeUserFromGroup`, `listUserGroups`
+* **Client Management**: `createClient`, `getClient`, `updateClient`, `listClients`, `deleteClient`
+* **Client Secret Management**: `getClientSecret`, `regenerateClientSecret`
+* **Client Role Management**: `createClientRole`, `getClientRole`, `updateClientRole`, `listClientRoles`, `deleteClientRole`, `assignClientRoleToUser`, `removeClientRoleFromUser`
+* **Password Management**: `resetUserPassword`
+* **Session Management**: `listUserSessions`, `logoutUser`, `logoutAllUsers`
+* **Token Management**: `revokeAccessToken`, `revokeRefreshToken`, `introspectToken`, `pushNotBefore`
+* **Client Scope Management**: `createClientScope`, `getClientScope`, `updateClientScope`, `listClientScopes`, `deleteClientScope`
+* **Identity Provider Management**: `createIdentityProvider`, `getIdentityProvider`, `updateIdentityProvider`, `listIdentityProviders`, `deleteIdentityProvider`
+* **Authorization Services**: `createResource`, `getResource`, `updateResource`, `listResources`, `deleteResource`, `createResourcePolicy`, `getResourcePolicy`, `updateResourcePolicy`, `listResourcePolicies`, `deleteResourcePolicy`, `createResourcePermission`, `getResourcePermission`, `updateResourcePermission`, `listResourcePermissions`, `deleteResourcePermission`, `evaluatePermission`
+* **Organization Management** (Keycloak 26+): `createOrganization`, `getOrganization`, `updateOrganization`, `listOrganizations`, `searchOrganizations`, `deleteOrganization`, `addOrganizationMember`, `removeOrganizationMember`, `listOrganizationMembers`, `linkOrganizationIdentityProvider`, `unlinkOrganizationIdentityProvider`, `listOrganizationIdentityProviders`
+
+== Usage Pattern
+
+All producer operations follow the same pattern: set the operation name in the URI and pass parameters via message headers.
+
+[source,java]
+----
+template.sendBodyAndHeaders("keycloak:admin?operation=<operationName>", null, headers);
+----
+
+== User Operations
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create a new user
+Map<String, Object> headers = new HashMap<>();
+headers.put("CamelKeycloakRealmName", "my-realm");
+headers.put("CamelKeycloakUsername", "john.doe");
+headers.put("CamelKeycloakUserEmail", "john.doe@example.com");
+headers.put("CamelKeycloakUserFirstName", "John");
+headers.put("CamelKeycloakUserLastName", "Doe");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createUser", null, headers);
+
+// Set user password
+Map<String, Object> passwordHeaders = new HashMap<>();
+passwordHeaders.put("CamelKeycloakRealmName", "my-realm");
+passwordHeaders.put("CamelKeycloakUsername", "john.doe");
+passwordHeaders.put("CamelKeycloakUserPassword", "secure-password");
+passwordHeaders.put("CamelKeycloakUserPasswordTemporary", false);
+
+template.sendBodyAndHeaders("keycloak:admin?operation=setUserPassword", null, passwordHeaders);
+
+// List all users in realm
+template.sendBodyAndHeader("keycloak:admin?operation=listUsers", null,
+    "CamelKeycloakRealmName", "my-realm");
+
+// Delete a user
+Map<String, Object> deleteHeaders = new HashMap<>();
+deleteHeaders.put("CamelKeycloakRealmName", "my-realm");
+deleteHeaders.put("CamelKeycloakUsername", "john.doe");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteUser", null, deleteHeaders);
+----
+====
+
+== Role Operations
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create a new role
+Map<String, Object> roleHeaders = new HashMap<>();
+roleHeaders.put("CamelKeycloakRealmName", "my-realm");
+roleHeaders.put("CamelKeycloakRoleName", "manager");
+roleHeaders.put("CamelKeycloakRoleDescription", "Manager role with elevated privileges");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createRole", null, roleHeaders);
+
+// Get role information
+Map<String, Object> getRoleHeaders = new HashMap<>();
+getRoleHeaders.put("CamelKeycloakRealmName", "my-realm");
+getRoleHeaders.put("CamelKeycloakRoleName", "manager");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=getRole", null, getRoleHeaders);
+
+// Assign role to user
+Map<String, Object> assignHeaders = new HashMap<>();
+assignHeaders.put("CamelKeycloakRealmName", "my-realm");
+assignHeaders.put("CamelKeycloakUsername", "john.doe");
+assignHeaders.put("CamelKeycloakRoleName", "manager");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=assignRoleToUser", null, assignHeaders);
+
+// Delete a role
+Map<String, Object> deleteRoleHeaders = new HashMap<>();
+deleteRoleHeaders.put("CamelKeycloakRealmName", "my-realm");
+deleteRoleHeaders.put("CamelKeycloakRoleName", "old-role");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteRole", null, deleteRoleHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Create role route
+- route:
+    from:
+      uri: direct:create-role
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakRoleName
+            expression:
+              simple:
+                expression: "${body[roleName]}"
+        - setHeader:
+            name: CamelKeycloakRoleDescription
+            expression:
+              simple:
+                expression: "${body[description]}"
+        - to:
+            uri: keycloak:admin
+            parameters:
+              operation: createRole
+        - log:
+            message: "Created role: ${header.CamelKeycloakRoleName}"
+
+# Assign role to user route
+- route:
+    from:
+      uri: direct:assign-role
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUsername
+            expression:
+              simple:
+                expression: "${body[username]}"
+        - setHeader:
+            name: CamelKeycloakRoleName
+            expression:
+              simple:
+                expression: "${body[roleName]}"
+        - to:
+            uri: keycloak:admin
+            parameters:
+              operation: assignRoleToUser
+        - log:
+            message: "Assigned role ${header.CamelKeycloakRoleName} to user ${header.CamelKeycloakUsername}"
+----
+====
+
+== Operations Reference
+
+All operations below follow the same usage pattern shown above. Set the operation name in the endpoint URI and pass the required headers.
+
+=== Realm Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `createRealm` | `CamelKeycloakRealmName` | Create a new realm
+| `getRealm` | `CamelKeycloakRealmName` | Get realm information
+| `updateRealm` | `CamelKeycloakRealmName` | Update realm settings
+| `deleteRealm` | `CamelKeycloakRealmName` | Delete a realm
+|===
+
+=== Client Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `createClient` | `CamelKeycloakRealmName`, `CamelKeycloakClientId` | Create a new client. Optional: `CamelKeycloakClientSecretRequired`, `CamelKeycloakClientDirectAccessGrantsEnabled`
+| `getClient` | `CamelKeycloakRealmName`, `CamelKeycloakClientId` | Get client information
+| `updateClient` | `CamelKeycloakRealmName`, `CamelKeycloakClientId` | Update client settings
+| `listClients` | `CamelKeycloakRealmName` | List all clients in a realm
+| `deleteClient` | `CamelKeycloakRealmName`, `CamelKeycloakClientId` | Delete a client
+|===
+
+=== Group Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `createGroup` | `CamelKeycloakRealmName`, `CamelKeycloakGroupName` | Create a new group
+| `getGroup` | `CamelKeycloakRealmName`, `CamelKeycloakGroupId` | Get group information
+| `updateGroup` | `CamelKeycloakRealmName`, `CamelKeycloakGroupId` | Update group settings
+| `listGroups` | `CamelKeycloakRealmName` | List all groups in a realm
+| `deleteGroup` | `CamelKeycloakRealmName`, `CamelKeycloakGroupId` | Delete a group
+| `addUserToGroup` | `CamelKeycloakRealmName`, `CamelKeycloakUserId`, `CamelKeycloakGroupId` | Add user to a group
+| `removeUserFromGroup` | `CamelKeycloakRealmName`, `CamelKeycloakUserId`, `CamelKeycloakGroupId` | Remove user from a group
+| `listUserGroups` | `CamelKeycloakRealmName`, `CamelKeycloakUserId` | List groups a user belongs to
+|===
+
+=== Password Management Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `resetUserPassword` | `CamelKeycloakRealmName`, `CamelKeycloakUserId`, `CamelKeycloakUserPassword` | Reset user password. Optional: `CamelKeycloakPasswordTemporary`
+|===
+
+=== User Search Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `searchUsers` | `CamelKeycloakRealmName`, `CamelKeycloakSearchQuery` | Search users by query. Optional: `CamelKeycloakFirstResult`, `CamelKeycloakMaxResults`
+| `getUserRoles` | `CamelKeycloakRealmName`, `CamelKeycloakUserId` | Get roles assigned to a user
+|===
+
+=== Client Role Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `createClientRole` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid`, `CamelKeycloakRoleName` | Create a client role. Optional: `CamelKeycloakRoleDescription`
+| `getClientRole` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid`, `CamelKeycloakRoleName` | Get client role information
+| `updateClientRole` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid`, `CamelKeycloakRoleName` | Update a client role
+| `listClientRoles` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | List all client roles
+| `deleteClientRole` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid`, `CamelKeycloakRoleName` | Delete a client role
+| `assignClientRoleToUser` | `CamelKeycloakRealmName`, `CamelKeycloakUserId`, `CamelKeycloakClientUuid`, `CamelKeycloakRoleName` | Assign client role to user
+| `removeClientRoleFromUser` | `CamelKeycloakRealmName`, `CamelKeycloakUserId`, `CamelKeycloakClientUuid`, `CamelKeycloakRoleName` | Remove client role from user
+|===
+
+=== Session Management Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `listUserSessions` | `CamelKeycloakRealmName`, `CamelKeycloakUserId` | List active sessions for a user
+| `logoutUser` | `CamelKeycloakRealmName`, `CamelKeycloakUserId` | Invalidate all sessions for a user
+| `logoutAllUsers` | `CamelKeycloakRealmName` | Invalidate all sessions in a realm
+|===
+
+=== Token Management Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `revokeAccessToken` | `CamelKeycloakRealmName`, `CamelKeycloakToken` | Revoke an access token
+| `revokeRefreshToken` | `CamelKeycloakRealmName`, `CamelKeycloakToken` | Revoke a refresh token
+| `introspectToken` | `CamelKeycloakRealmName`, `CamelKeycloakToken` | Introspect a token for real-time validation
+| `pushNotBefore` | `CamelKeycloakRealmName` | Invalidate all tokens issued before now
+|===
+
+=== Client Scope Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `createClientScope` | `CamelKeycloakRealmName`, `CamelKeycloakClientScopeName` | Create a client scope
+| `getClientScope` | `CamelKeycloakRealmName`, `CamelKeycloakClientScopeId` | Get client scope details
+| `updateClientScope` | `CamelKeycloakRealmName`, `CamelKeycloakClientScopeId` | Update a client scope
+| `listClientScopes` | `CamelKeycloakRealmName` | List all client scopes
+| `deleteClientScope` | `CamelKeycloakRealmName`, `CamelKeycloakClientScopeId` | Delete a client scope
+|===
+
+=== Identity Provider Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `createIdentityProvider` | `CamelKeycloakRealmName` + body (`IdentityProviderRepresentation`, `pojoRequest=true`) | Create an OIDC/SAML identity provider
+| `getIdentityProvider` | `CamelKeycloakRealmName`, `CamelKeycloakIdpAlias` | Get identity provider details
+| `updateIdentityProvider` | `CamelKeycloakRealmName`, `CamelKeycloakIdpAlias` | Update identity provider settings
+| `listIdentityProviders` | `CamelKeycloakRealmName` | List all identity providers
+| `deleteIdentityProvider` | `CamelKeycloakRealmName`, `CamelKeycloakIdpAlias` | Delete an identity provider
+|===
+
+=== Organization Operations (Keycloak 26+)
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `createOrganization` | `CamelKeycloakRealmName`, `CamelKeycloakOrganizationName` | Create organization. Optional: `CamelKeycloakOrganizationAlias`, `CamelKeycloakOrganizationDescription`, `CamelKeycloakOrganizationDomain`. Or pass `OrganizationRepresentation` body with `pojoRequest=true`
+| `getOrganization` | `CamelKeycloakRealmName`, `CamelKeycloakOrganizationId` | Get organization details
+| `updateOrganization` | `CamelKeycloakRealmName`, `CamelKeycloakOrganizationId` | Update organization
+| `listOrganizations` | `CamelKeycloakRealmName` | List all organizations
+| `searchOrganizations` | `CamelKeycloakRealmName`, `CamelKeycloakOrganizationSearch` | Search by name/alias/domain
+| `deleteOrganization` | `CamelKeycloakRealmName`, `CamelKeycloakOrganizationId` | Delete an organization
+| `addOrganizationMember` | `CamelKeycloakRealmName`, `CamelKeycloakOrganizationId`, `CamelKeycloakUserId` | Add user to organization
+| `removeOrganizationMember` | `CamelKeycloakRealmName`, `CamelKeycloakOrganizationId`, `CamelKeycloakUserId` | Remove member
+| `listOrganizationMembers` | `CamelKeycloakRealmName`, `CamelKeycloakOrganizationId` | List members
+| `linkOrganizationIdentityProvider` | `CamelKeycloakRealmName`, `CamelKeycloakOrganizationId`, `CamelKeycloakIdpAlias` | Link identity provider
+| `unlinkOrganizationIdentityProvider` | `CamelKeycloakRealmName`, `CamelKeycloakOrganizationId`, `CamelKeycloakIdpAlias` | Unlink identity provider
+| `listOrganizationIdentityProviders` | `CamelKeycloakRealmName`, `CamelKeycloakOrganizationId` | List linked identity providers
+|===
+
+=== User Attribute Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `setUserAttribute` | `CamelKeycloakRealmName`, `CamelKeycloakUserId`, `CamelKeycloakAttributeName`, `CamelKeycloakAttributeValue` | Set a custom attribute on a user
+| `getUserAttributes` | `CamelKeycloakRealmName`, `CamelKeycloakUserId` | Get all custom attributes for a user
+| `deleteUserAttribute` | `CamelKeycloakRealmName`, `CamelKeycloakUserId`, `CamelKeycloakAttributeName` | Delete a custom attribute
+|===
+
+=== User Credential and Action Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `getUserCredentials` | `CamelKeycloakRealmName`, `CamelKeycloakUserId` | Get user credentials list
+| `deleteUserCredential` | `CamelKeycloakRealmName`, `CamelKeycloakUserId`, `CamelKeycloakCredentialId` | Delete a specific credential
+| `sendVerifyEmail` | `CamelKeycloakRealmName`, `CamelKeycloakUserId` | Send email verification
+| `sendPasswordResetEmail` | `CamelKeycloakRealmName`, `CamelKeycloakUserId` | Send password reset email
+| `addRequiredAction` | `CamelKeycloakRealmName`, `CamelKeycloakUserId`, `CamelKeycloakRequiredAction` | Add required action (e.g., `VERIFY_EMAIL`)
+| `removeRequiredAction` | `CamelKeycloakRealmName`, `CamelKeycloakUserId`, `CamelKeycloakRequiredAction` | Remove a required action
+| `executeActionsEmail` | `CamelKeycloakRealmName`, `CamelKeycloakUserId`, `CamelKeycloakActions` | Execute multiple actions via email. Optional: `CamelKeycloakRedirectUri`, `CamelKeycloakLifespan`
+|===
+
+=== Client Secret Management
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `getClientSecret` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | Retrieve the client secret
+| `regenerateClientSecret` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | Rotate the client secret
+|===
+
+=== Authorization Services Operations
+
+NOTE: These operations require a client with authorization services enabled in Keycloak.
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `createResource` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` + body (`ResourceRepresentation`, `pojoRequest=true`) | Create an authorization resource
+| `getResource` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | Get resource details
+| `updateResource` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | Update a resource
+| `listResources` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | List all resources
+| `deleteResource` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | Delete a resource
+| `createResourcePolicy` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` + body (`PolicyRepresentation`, `pojoRequest=true`) | Create authorization policy
+| `getResourcePolicy` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | Get policy details
+| `updateResourcePolicy` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | Update a policy
+| `listResourcePolicies` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | List all policies
+| `deleteResourcePolicy` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | Delete a policy
+| `createResourcePermission` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` + body (`ResourcePermissionRepresentation`, `pojoRequest=true`) | Create resource permission
+| `getResourcePermission` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | Get permission details
+| `updateResourcePermission` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | Update a permission
+| `listResourcePermissions` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | List all permissions
+| `deleteResourcePermission` | `CamelKeycloakRealmName`, `CamelKeycloakClientUuid` | Delete a permission
+|===
+
+== Permission Evaluation
+
+The `evaluatePermission` operation allows you to evaluate authorization permissions for a user or service account using Keycloak's Authorization Services. This operation uses the Keycloak Authorization Client (AuthzClient) to request permissions and obtain a Requesting Party Token (RPT) with granted permissions.
+
+NOTE: This operation requires Authorization Services to be enabled on the client in Keycloak.
+
+=== Configuration Requirements
+
+* `serverUrl` - Keycloak server URL
+* `realm` - Keycloak realm name
+* `clientId` - Client ID with authorization services enabled
+* `clientSecret` - Client secret (required for AuthzClient)
+
+=== Modes of Operation
+
+The operation supports two modes:
+
+1. **RPT Mode** (default): Returns a Requesting Party Token (RPT) containing the granted permissions
+2. **Permissions-Only Mode**: Returns only the list of permissions without obtaining an RPT token
+
+=== Usage Examples
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Evaluate all permissions for a user
+Map<String, Object> headers = new HashMap<>();
+headers.put("CamelKeycloakAccessToken", userAccessToken);
+headers.put("CamelKeycloakPermissionsOnly", true);
+
+Map<String, Object> result = template.requestBodyAndHeaders(
+    "keycloak:authz?serverUrl=http://localhost:8080&realm=myrealm"
+        + "&clientId=myapp&clientSecret=secret&operation=evaluatePermission",
+    null, headers, Map.class);
+
+List<Permission> permissions = (List<Permission>) result.get("permissions");
+boolean hasAccess = (Boolean) result.get("granted");
+
+// Check specific resource permissions
+Map<String, Object> resourceHeaders = new HashMap<>();
+resourceHeaders.put("CamelKeycloakAccessToken", userAccessToken);
+resourceHeaders.put("CamelKeycloakPermissionResourceNames", "document1,document2");
+resourceHeaders.put("CamelKeycloakPermissionScopes", "read,write");
+resourceHeaders.put("CamelKeycloakPermissionsOnly", true);
+
+Map<String, Object> resourceResult = template.requestBodyAndHeaders(
+    "keycloak:authz?serverUrl=http://localhost:8080&realm=myrealm"
+        + "&clientId=myapp&clientSecret=secret&operation=evaluatePermission",
+    null, resourceHeaders, Map.class);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Evaluate permissions for a user
+- route:
+    id: evaluate-user-permissions
+    from:
+      uri: direct:check-permissions
+      steps:
+        - setHeader:
+            name: CamelKeycloakAccessToken
+            expression:
+              simple:
+                expression: "${header.Authorization.substring(7)}"
+        - setHeader:
+            name: CamelKeycloakPermissionsOnly
+            constant: true
+        - to:
+            uri: >
+              keycloak:authz?
+              serverUrl={{keycloak.server-url}}&
+              realm={{keycloak.realm}}&
+              clientId={{keycloak.client-id}}&
+              clientSecret={{keycloak.client-secret}}&
+              operation=evaluatePermission
+        - log:
+            message: "User has ${body[permissionCount]} permissions, access granted: ${body[granted]}"
+----
+====
+
+=== Error Handling
+
+The operation throws exceptions in the following cases:
+
+* `IllegalArgumentException` - When required configuration is missing (serverUrl, realm, clientId, clientSecret)
+* `AuthorizationDeniedException` - When the user doesn't have permission to access the requested resources
+
+=== Keycloak Setup for Authorization Services
+
+To use the `evaluatePermission` operation, you must configure Authorization Services in Keycloak:
+
+1. **Enable Authorization** on the client: Go to **Clients** -> Your client -> **Settings** -> Enable **Authorization**: `ON`
+2. **Create Resources**: Go to **Authorization** -> **Resources** -> Create resources representing protected entities
+3. **Create Scopes** (optional): Go to **Authorization** -> **Scopes** -> Create scopes like "read", "write", "delete"
+4. **Create Policies**: Go to **Authorization** -> **Policies** -> Create policies (role-based, user-based, time-based, etc.)
+5. **Create Permissions**: Go to **Authorization** -> **Permissions** -> Link resources, scopes, and policies together
+
+== Bulk Operations
+
+Bulk operations allow you to perform multiple operations in a single request, improving efficiency and reducing network overhead.
+
+=== Bulk Create Users
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create multiple users at once
+List<UserRepresentation> users = new ArrayList<>();
+
+for (int i = 1; i <= 100; i++) {
+    UserRepresentation user = new UserRepresentation();
+    user.setUsername("user" + i);
+    user.setEmail("user" + i + "@company.com");
+    user.setFirstName("User");
+    user.setLastName("" + i);
+    user.setEnabled(true);
+    users.add(user);
+}
+
+Map<String, Object> headers = new HashMap<>();
+headers.put("CamelKeycloakRealmName", "my-realm");
+headers.put("CamelKeycloakContinueOnError", true); // Continue even if some users fail
+
+Map<String, Object> result = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=bulkCreateUsers", users, headers, Map.class);
+
+// Result contains summary and details
+System.out.println("Total: " + result.get("total"));
+System.out.println("Success: " + result.get("success"));
+System.out.println("Failed: " + result.get("failed"));
+----
+
+YAML::
++
+[source,yaml]
+----
+# Bulk create users route
+- route:
+    from:
+      uri: direct:bulk-create-users
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakContinueOnError
+            constant: true
+        - to:
+            uri: keycloak:admin
+            parameters:
+              operation: bulkCreateUsers
+        - log:
+            message: "Created ${body[success]} out of ${body[total]} users"
+----
+====
+
+=== Other Bulk Operations
+
+[cols="30%,40%,30%",options="header"]
+|===
+| Operation | Required Headers | Description
+
+| `bulkCreateUsers` | `CamelKeycloakRealmName` + body (`List<UserRepresentation>`) | Create multiple users. Optional: `CamelKeycloakContinueOnError`
+| `bulkDeleteUsers` | `CamelKeycloakRealmName`, `CamelKeycloakUserIds` or `CamelKeycloakUsernames` | Delete multiple users
+| `bulkUpdateUsers` | `CamelKeycloakRealmName`, `CamelKeycloakUsers` | Update multiple users
+| `bulkAssignRolesToUser` | `CamelKeycloakRealmName`, `CamelKeycloakUserId`, `CamelKeycloakRoleNames` | Assign multiple roles to one user
+| `bulkAssignRoleToUsers` | `CamelKeycloakRealmName`, `CamelKeycloakRoleName`, `CamelKeycloakUserIds` or `CamelKeycloakUsernames` | Assign one role to multiple users
+|===
+
+=== Bulk Operations Response Format
+
+All bulk operations return a consistent response format:
+
+[source,json]
+----
+{
+  "total": 10,
+  "success": 8,
+  "failed": 2,
+  "results": [
+    {
+      "username": "user1",
+      "status": "success",
+      "statusCode": 201
+    },
+    {
+      "username": "user2",
+      "status": "failed",
+      "error": "User already exists"
+    }
+  ]
+}
+----
+
+=== Best Practices for Bulk Operations
+
+1. **Use Continue on Error**: Always set `continueOnError=true` for bulk operations to get complete feedback on all items
+2. **Monitor Results**: Check the results map to identify and handle failures appropriately
+3. **Batch Size**: For very large datasets, consider splitting into smaller batches (e.g., 100-500 users per batch)
+4. **Transactions**: Note that Keycloak operations are not transactional - some items may succeed while others fail
+
+== Complete Producer Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Configure Keycloak component
+KeycloakComponent keycloak = getContext().getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master");
+config.setUsername("admin");
+config.setPassword("admin");
+keycloak.setConfiguration(config);
+
+// Comprehensive user management route
+from("direct:setup-user-environment")
+    .routeId("setup-user-environment")
+    .log("Setting up user environment...")
+
+    // Step 1: Create realm
+    .setHeader("CamelKeycloakRealmName", constant("my-company"))
+    .to("keycloak:admin?operation=createRealm")
+
+    // Step 2: Create roles
+    .setHeader("CamelKeycloakRoleName", constant("admin"))
+    .setHeader("CamelKeycloakRoleDescription", constant("Administrator role"))
+    .to("keycloak:admin?operation=createRole")
+
+    // Step 3: Create client
+    .setHeader("CamelKeycloakClientId", constant("my-app"))
+    .setHeader("CamelKeycloakClientSecretRequired", constant(true))
+    .to("keycloak:admin?operation=createClient")
+
+    // Step 4: Create user
+    .setHeader("CamelKeycloakUsername", constant("admin.user"))
+    .setHeader("CamelKeycloakUserEmail", constant("admin@company.com"))
+    .to("keycloak:admin?operation=createUser")
+
+    // Step 5: Set password and assign role
+    .setHeader("CamelKeycloakUserPassword", constant("admin123"))
+    .to("keycloak:admin?operation=setUserPassword")
+    .setHeader("CamelKeycloakRoleName", constant("admin"))
+    .to("keycloak:admin?operation=assignRoleToUser")
+
+    .transform().constant("User environment setup completed successfully");
+----
+
+YAML::
++
+[source,yaml]
+----
+# Complete Keycloak producer configuration
+- route:
+    id: setup-user-environment
+    from:
+      uri: direct:setup-user-environment
+      steps:
+        - log:
+            message: "Setting up user environment..."
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-company"
+        - to:
+            uri: keycloak:admin
+            parameters:
+              operation: createRealm
+        - setHeader:
+            name: CamelKeycloakRoleName
+            constant: "admin"
+        - to:
+            uri: keycloak:admin
+            parameters:
+              operation: createRole
+        - setHeader:
+            name: CamelKeycloakClientId
+            constant: "my-app"
+        - to:
+            uri: keycloak:admin
+            parameters:
+              operation: createClient
+        - setHeader:
+            name: CamelKeycloakUsername
+            constant: "admin.user"
+        - setHeader:
+            name: CamelKeycloakUserEmail
+            constant: "admin@company.com"
+        - to:
+            uri: keycloak:admin
+            parameters:
+              operation: createUser
+        - setHeader:
+            name: CamelKeycloakUserPassword
+            constant: "admin123"
+        - to:
+            uri: keycloak:admin
+            parameters:
+              operation: setUserPassword
+        - setHeader:
+            name: CamelKeycloakRoleName
+            constant: "admin"
+        - to:
+            uri: keycloak:admin
+            parameters:
+              operation: assignRoleToUser
+        - transform:
+            constant: "User environment setup completed successfully"
+
+# Component configuration
+camel:
+  component:
+    keycloak:
+      server-url: "http://localhost:8080"
+      realm: "master"
+      username: "admin"
+      password: "admin"
+----
+====

@@ -35,6 +35,7 @@ import org.apache.camel.util.json.Jsoner;
 /**
  * MCP Tools for querying available Camel versions using Quarkus MCP Server.
  */
+@McpSecured
 @ApplicationScoped
 public class VersionTools {
 

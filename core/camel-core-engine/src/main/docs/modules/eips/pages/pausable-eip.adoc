@@ -1,0 +1,54 @@
+= Pausable EIP
+:doctitle: Pausable
+:shortname: pausable
+:description: Pauses a consumer based on a condition, allowing it to be resumed later from the last known offset. Useful for controlling ingestion rate on polling consumers.
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+The Pausable EIP provides pause and resume features for supported consumers.
+With this EIP, it is possible to implement logic that controls the behavior of the consumer
+based on conditions that are external to the component. For instance, it makes it possible
+to pause the consumer if an external system becomes unavailable.
+
+== EIP options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Example
+
+To use the Pausable EIP, you need an instance of a consumer listener along with a predicate
+that tests whether consumption should continue.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("kafka:topic")
+    .pausable(new KafkaConsumerListener(), o -> canContinue())
+    .process(exchange -> LOG.info("Received: {}", exchange.getMessage().getBody()))
+    .to("direct:destination");
+----
+====
+
+You can also integrate the Pausable EIP with the xref:circuitBreaker-eip.adoc[Circuit Breaker EIP]
+to pause consumption based on downstream system availability:
+
+[source,java]
+----
+from("kafka:topic")
+    .pausable(new KafkaConsumerListener(), o -> canContinue())
+    .circuitBreaker()
+        .resilience4jConfiguration().circuitBreaker("pausableCircuit").end()
+        .to("direct:downstream")
+    .end();
+----
+
+== See Also
+
+* xref:resume-strategies.adoc[Resume Strategies]
+* xref:resumable-eip.adoc[Resumable EIP]

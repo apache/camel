@@ -1,0 +1,171 @@
+= FOP Component
+:doctitle: FOP
+:shortname: fop
+:artifactid: camel-fop
+:description: Render messages into PDF and other output formats supported by Apache FOP.
+:since: 2.10
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The FOP component allows you to render a message into different output
+formats using http://xmlgraphics.apache.org/fop/index.html[Apache FOP].
+
+NOTE: When running on JDK 25 or later, Apache FOP encounters a re-entrant XML parsing error due to an internal JDK change (https://issues.apache.org/jira/browse/FOP-3275[FOP-3275]).
+To work around this, add `net.sf.saxon:Saxon-HE` to your classpath, which provides an alternative XSLT processor that is not affected by this issue.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-fop</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+----------------------------
+fop://outputFormat?[options]
+----------------------------
+
+== Usage
+
+=== Output Formats
+
+The primary output format is PDF, but other output
+http://xmlgraphics.apache.org/fop/0.95/output.html[formats] are also
+supported:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|name |outputFormat |description
+
+|PDF |application/pdf |Portable Document Format
+
+|PS |application/postscript |Adobe Postscript
+
+|PCL |application/x-pcl |Printer Control Language
+
+|PNG |image/png |PNG images
+
+|JPEG |image/jpeg |JPEG images
+
+|SVG |image/svg+xml |Scalable Vector Graphics
+
+|XML |application/X-fop-areatree |Area tree representation
+
+|MIF |application/mif |FrameMaker's MIF
+
+|RTF |application/rtf |Rich Text Format
+
+|TXT |text/plain |Text
+|=======================================================================
+
+The complete list of valid output formats can be found in the `MimeConstants.java` source file.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+=== Configuration file
+
+The location of a configuration file with the following
+http://xmlgraphics.apache.org/fop/1.0/configuration.html[structure].
+The file is loaded from the classpath by
+default. You can use `file:`, or `classpath:` as prefix to load the
+resource from file or classpath. In previous releases, the file is always
+loaded from the file system.
+
+=== Message Operations
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|name |default value |description
+
+|`CamelFop.Output.Format` |  | Overrides the output format for that message
+
+|`CamelFop.Encrypt.userPassword` |  | PDF user password
+
+|`CamelFop.Encrypt.ownerPassword` |  | PDF owner password
+
+|`CamelFop.Encrypt.allowPrint` | `true` |Allows printing the PDF
+
+|`CamelFop.Encrypt.allowCopyContent` |`true` |Allows copying content of the PDF
+
+|`CamelFop.Encrypt.allowEditContent` |`true` |Allows editing content of the PDF
+
+|`CamelFop.Encrypt.allowEditAnnotations` |`true` |Allows editing annotation of the PDF
+
+|`CamelFop.Render.producer` |Apache FOP |Metadata element for the system/software that produces the document
+
+|`CamelFop.Render.creator` |  | Metadata element for the user that created the document
+
+|`CamelFop.Render.creationDate` |  | Creation Date
+
+|`CamelFop.Render.author` |  | Author of the content of the document
+
+|`CamelFop.Render.title` |  | Title of the document
+
+|`CamelFop.Render.subject` |  | Subject of the document
+
+|`CamelFop.Render.keywords` |  | Set of keywords applicable to this document
+|=======================================================================
+
+=== Example
+
+Below is an example route that renders PDFs from XML data and XSLT
+template and saves the PDF files in the target folder:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:source/data/xml")
+    .to("xslt:xslt/template.xsl")
+    .to("fop:application/pdf")
+    .to("file:target/data");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:source/data/xml"/>
+  <to uri="xslt:xslt/template.xsl"/>
+  <to uri="fop:application/pdf"/>
+  <to uri="file:target/data"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:source/data/xml
+      steps:
+        - to:
+            uri: xslt:xslt/template.xsl
+        - to:
+            uri: fop:application/pdf
+        - to:
+            uri: file:target/data
+----
+====

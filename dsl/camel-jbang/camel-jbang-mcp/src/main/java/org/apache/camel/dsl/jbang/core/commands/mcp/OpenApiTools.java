@@ -43,6 +43,7 @@ import io.swagger.v3.parser.core.models.SwaggerParseResult;
  * Since Camel 4.6, the recommended approach is contract-first: referencing the OpenAPI spec directly at runtime via
  * rest:openApi. These tools help validate, scaffold, and provide mock guidance for that workflow.
  */
+@McpSecured
 @ApplicationScoped
 public class OpenApiTools {
 

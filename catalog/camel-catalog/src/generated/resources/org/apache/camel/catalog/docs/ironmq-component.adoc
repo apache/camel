@@ -1,0 +1,141 @@
+= IronMQ Component (deprecated)
+:doctitle: IronMQ
+:shortname: ironmq
+:artifactid: camel-ironmq
+:description: Send and receive messages to/from IronMQ an elastic and durable hosted message queue as a service.
+:since: 2.17
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The IronMQ component provides integration with http://www.iron.io/products/mq[IronMQ] an elastic and durable hosted message queue as a service.
+
+The component uses the
+https://github.com/iron-io/iron_mq_java[IronMQ java client]
+library.
+
+To run it requires an IronMQ account and a project id and token.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ironmq</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+-----------------------------
+ ironmq:queueName[?options]
+-----------------------------
+Where `queueName` identifies the IronMQ queue you want to publish or consume messages from.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Message Body
+
+It should be either a String or an array of Strings.
+In the latter case, the batch of strings will be sent to IronMQ as one request, creating one message per element in the array.
+
+== Examples
+
+=== Consumer example
+
+Consume 50 messages per poll from the queue `testqueue` on aws eu, and save the messages to files.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ironmq:testqueue?ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&projectId=myIronMQProjectid&token=myIronMQToken&maxMessagesPerPoll=50")
+  .to("file:somefolder");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ironmq:testqueue?ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&amp;projectId=myIronMQProjectid&amp;token=myIronMQToken&amp;maxMessagesPerPoll=50"/>
+  <to uri="file:somefolder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ironmq:testqueue
+      parameters:
+        ironMQCloud: "https://mq-aws-eu-west-1-1.iron.io"
+        projectId: myIronMQProjectid
+        token: myIronMQToken
+        maxMessagesPerPoll: 50
+      steps:
+        - to:
+            uri: file:somefolder
+----
+====
+
+=== Producer example
+
+Dequeue from activemq jms and enqueue the messages on IronMQ.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:foo")
+  .to("ironmq:testqueue?projectId=myIronMQProjectid&token=myIronMQToken");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:foo"/>
+  <to uri="ironmq:testqueue?projectId=myIronMQProjectid&amp;token=myIronMQToken"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:foo
+      steps:
+        - to:
+            uri: ironmq:testqueue
+            parameters:
+              projectId: myIronMQProjectid
+              token: myIronMQToken
+----
+====

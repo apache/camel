@@ -1,0 +1,241 @@
+= Delay EIP
+:doctitle: Delay
+:shortname: delay
+:description: Delays message processing for a specified duration, which can be a fixed value or computed dynamically per message
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+The Delay EIP is used for delaying messages during routing.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
+
+The example below will delay all messages received on *seda:b* 1 second before sending them to *mock:result*.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:b")
+  .delay(1000)
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="seda:b"/>
+    <delay>
+        <constant>1000</constant>
+    </delay>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:b
+      steps:
+        - delay:
+            expression:
+              constant: "1000"
+        - to:
+            uri: mock:result
+----
+====
+
+Note that delay creates its own block, so some DSLs (including Java) require the delay block be closed:
+
+._Java-only: closing the delay block with end() in Java DSL_
+[source,java]
+----
+.from("direct:delayBlockExample")
+    .to("direct:getJobState")
+    .loopDoWhile(simple("${body.state} = 'NOT_DONE'"))
+        .log(LoggingLevel.DEBUG, "Pausing")
+        .delay(10000)
+            .syncDelayed()
+        .end() // we must end the delay or else the log statement will be executed in each loop iteration
+        .to("direct:getJobState")
+    .end()
+    .log("and we're done");
+----
+
+The delayed value can be a dynamic xref:manual::expression.adoc[Expression].
+
+For example, to delay a random between 1 and 5 seconds, we can use
+the xref:languages:simple-language.adoc[Simple] language:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:b")
+  .delay(simple("${random(1000,5000)}"))
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="seda:b"/>
+    <delay>
+        <simple>${random(1000,5000)}</simple>
+    </delay>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:b
+      steps:
+        - delay:
+            expression:
+              simple:
+                expression: "${random(1000,5000)}"
+        - to:
+            uri: mock:result
+----
+====
+
+You can also call a xref:languages:bean-language.adoc[Bean Method] to compute the
+delayed value from Java code:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:foo")
+  .delay().method("someBean", "computeDelay")
+  .to("activemq:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:foo"/>
+    <delay>
+        <method ref="someBean" method="computeDelay"/>
+    </delay>
+    <to uri="activemq:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: foo
+      steps:
+        - delay:
+            expression:
+              method:
+                ref: someBean
+                method: computeDelay
+        - to:
+            uri: activemq
+            parameters:
+              destinationName: bar
+----
+====
+
+Then the bean would look something like this:
+
+._Java-only: bean class to compute the delay value_
+[source,java]
+----
+public class SomeBean {
+  public long computeDelay() {
+     long delay = 0;
+     // use java code to compute a delay value in millis
+     return delay;
+ }
+}
+----
+
+== Asynchronous delaying
+
+You can let the Delayer use non-blocking asynchronous delaying,
+which means Camel will use scheduled thread pool (`ScheduledExecutorService`)
+to schedule a task to be executed in the future.
+This allows the caller thread to not block and be able to service other messages.
+
+You use the `asyncDelayed()` to enable the async behavior.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:queue:foo")
+  .delay(1000).asyncDelayed()
+  .to("activemq:aDelayedQueue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+   <from uri="activemq:queue:foo"/>
+   <delay asyncDelayed="true">
+       <constant>1000</constant>
+   </delay>
+   <to uri="activemq:aDelayedQueue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:queue:foo
+      steps:
+        - delay:
+            expression:
+              constant: "1000"
+            asyncDelayed: true
+        - to:
+            uri: activemq:aDelayedQueue
+----
+====

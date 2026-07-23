@@ -63,7 +63,7 @@
         <activemq-artemis-version>2.55.0</activemq-artemis-version>
         <agroal-version>3.2.1</agroal-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
-        <amazon-kinesis-client-version>3.5.0</amazon-kinesis-client-version>
+        <amazon-kinesis-client-version>3.5.1</amazon-kinesis-client-version>
         <angus-mail-version>2.0.5</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
         <apache-drill-version>1.22.0</apache-drill-version>
@@ -80,7 +80,7 @@
         <avro-ipc-jetty-version>1.12.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.1</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.48.4</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.49.0</aws-java-sdk2-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.38</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
@@ -150,8 +150,8 @@
         <ehcache3-version>3.12.0</ehcache3-version>
         <!-- github-api (kohsuke) for camel-github2 -->
         <github-api-version>1.330</github-api-version>
-        <elasticsearch-java-client-version>9.4.3</elasticsearch-java-client-version>
-        <elasticsearch-java-client-sniffer-version>9.4.3</elasticsearch-java-client-sniffer-version>
+        <elasticsearch-java-client-version>9.4.4</elasticsearch-java-client-version>
+        <elasticsearch-java-client-sniffer-version>9.4.4</elasticsearch-java-client-sniffer-version>
         <endive-version>1.0.1</endive-version>
         <extjwnl-version>2.0.5</extjwnl-version>
         <extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
@@ -204,7 +204,7 @@
         <graphql-java-version>26.0</graphql-java-version>
         <greenmail-version>2.1.11</greenmail-version>
         <groovy-version>5.0.7</groovy-version>
-        <grpc-version>1.82.2</grpc-version>
+        <grpc-version>1.83.0</grpc-version>
         <grpc-java-jwt-version>4.6.0</grpc-java-jwt-version>
         <gson-version>2.14.0</gson-version>
         <guava-version>33.6.0-jre</guava-version>
@@ -213,8 +213,8 @@
         <hamcrest-version>3.0</hamcrest-version>
         <hapi-version>2.6.0</hapi-version>
         <hapi-base-version>2.6.0</hapi-base-version>
-        <hapi-fhir-version>8.10.0</hapi-fhir-version>
-        <hapi-fhir-utilities-version>6.9.12</hapi-fhir-utilities-version>
+        <hapi-fhir-version>8.10.1</hapi-fhir-version>
+        <hapi-fhir-core-version>6.9.12</hapi-fhir-core-version>
         <hawtio-version>4.6.2</hawtio-version>
         <!-- https://issues.apache.org/jira/browse/CAMEL-22041
             hazelcast needs to stay at 5.4.0 for 4.19.0 due to changes where the CP subsystem is only available in
@@ -383,7 +383,7 @@
         <milo-version>1.1.5</milo-version>
         <milvus-client-version>2.6.22</milvus-client-version>
         <mina-version>2.2.9</mina-version>
-        <minio-version>8.6.0</minio-version>
+        <minio-version>9.0.3</minio-version>
         <mockito-version>5.23.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
         <mongo-java-driver-version>5.9.0</mongo-java-driver-version>
@@ -506,7 +506,7 @@
         <tamboui-version>0.4.0</tamboui-version>
         <testcontainers-version>2.0.5</testcontainers-version>
         <thymeleaf-version>3.1.5.RELEASE</thymeleaf-version>
-        <tika-version>3.3.1</tika-version>
+        <tika-version>3.3.2</tika-version>
         <twilio-version>12.1.1</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
         <undertow-servlet-version>2.3.26.Final</undertow-servlet-version>

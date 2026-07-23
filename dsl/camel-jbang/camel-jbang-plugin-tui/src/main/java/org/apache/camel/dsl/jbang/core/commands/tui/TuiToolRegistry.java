@@ -32,6 +32,7 @@ import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -553,19 +554,23 @@ class TuiToolRegistry {
 
         tools.add(toToolDef(toolDef(
                 "tui_catalog_doc",
-                "Get documentation for a Camel catalog artifact (component, data format, language) "
+                "Get documentation for a Camel catalog artifact (component, data format, language, EIP) "
                                    + "including description, options, and Maven coordinates. "
                                    + "Use optionsFilter to search options by keyword (e.g., 'security', 'ssl', 'timeout'). "
                                    + "This enables queries like 'what options are there on kafka about security'. "
+                                   + "Set includeDoc=true to get the full AsciiDoc documentation for deep-dive questions. "
                                    + "Uses the Camel version from the selected integration.",
                 Map.of("name", propDef("string",
-                        "Artifact name (e.g., kafka, json-jackson, simple, timer)"),
+                        "Artifact name (e.g., kafka, json-jackson, simple, timer, choice, split)"),
                         "kind", propDef("string",
-                                "Artifact kind: component, dataformat, or language. "
-                                                  + "If omitted, auto-detects by trying component first, then dataformat, then language."),
+                                "Artifact kind: component, dataformat, language, or eip. "
+                                                  + "If omitted, auto-detects by trying component first, then dataformat, then language, then eip."),
                         "includeOptions", propDef("boolean",
                                 "Whether to include configuration options in the response (default: true). "
                                                              + "Set to false for a lightweight response with just metadata."),
+                        "includeDoc", propDef("boolean",
+                                "Whether to include the full AsciiDoc documentation text in the response (default: false). "
+                                                         + "Useful for deep-dive questions about usage, examples, and configuration patterns."),
                         "optionsFilter", propDef("string",
                                 "Filter options by keyword in name or description (case-insensitive substring match). "
                                                            + "Only used when includeOptions is true.")),
@@ -1622,6 +1627,7 @@ class TuiToolRegistry {
         String kind = args.get("kind") instanceof String v ? v : null;
         String optionsFilter = args.get("optionsFilter") instanceof String v ? v : null;
         boolean includeOptions = !Boolean.FALSE.equals(args.get("includeOptions"));
+        boolean includeDoc = Boolean.TRUE.equals(args.get("includeDoc"));
 
         String version = facade.getSelectedCamelVersion();
         try {
@@ -1629,7 +1635,7 @@ class TuiToolRegistry {
             if (catalog == null) {
                 return "{\"error\": \"Could not load catalog" + (version != null ? " for version " + version : "") + "\"}";
             }
-            return buildCatalogDocResult(catalog, name, kind, optionsFilter, includeOptions);
+            return buildCatalogDocResult(catalog, name, kind, optionsFilter, includeOptions, includeDoc);
         } catch (Exception e) {
             JsonObject err = new JsonObject();
             err.put("error", "Failed to load catalog: " + e.getMessage());
@@ -1638,13 +1644,15 @@ class TuiToolRegistry {
     }
 
     private String buildCatalogDocResult(
-            CamelCatalog catalog, String name, String kind, String optionsFilter, boolean includeOptions) {
+            CamelCatalog catalog, String name, String kind, String optionsFilter,
+            boolean includeOptions, boolean includeDoc) {
         String lowerFilter = optionsFilter != null ? optionsFilter.toLowerCase() : null;
 
         if (kind == null || "component".equals(kind)) {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
-                return buildComponentDocJson(cm, lowerFilter, includeOptions);
+                String doc = includeDoc ? catalog.asciiDoc(name + "-component") : null;
+                return buildComponentDocJson(cm, lowerFilter, includeOptions, doc);
             }
             if (kind != null) {
                 return "{\"error\": \"Component not found: " + name + "\"}";
@@ -1653,7 +1661,8 @@ class TuiToolRegistry {
         if (kind == null || "dataformat".equals(kind)) {
             DataFormatModel dm = catalog.dataFormatModel(name);
             if (dm != null) {
-                return buildDataFormatDocJson(dm, lowerFilter, includeOptions);
+                String doc = includeDoc ? catalog.asciiDoc(name + "-dataformat") : null;
+                return buildDataFormatDocJson(dm, lowerFilter, includeOptions, doc);
             }
             if (kind != null) {
                 return "{\"error\": \"Data format not found: " + name + "\"}";
@@ -1662,10 +1671,21 @@ class TuiToolRegistry {
         if (kind == null || "language".equals(kind)) {
             LanguageModel lm = catalog.languageModel(name);
             if (lm != null) {
-                return buildLanguageDocJson(lm, lowerFilter, includeOptions);
+                String doc = includeDoc ? catalog.asciiDoc(name + "-language") : null;
+                return buildLanguageDocJson(lm, lowerFilter, includeOptions, doc);
             }
             if (kind != null) {
                 return "{\"error\": \"Language not found: " + name + "\"}";
+            }
+        }
+        if (kind == null || "eip".equals(kind)) {
+            EipModel em = catalog.eipModel(name);
+            if (em != null) {
+                String doc = includeDoc ? catalog.asciiDoc(name + "-eip") : null;
+                return buildEipDocJson(em, lowerFilter, includeOptions, doc);
+            }
+            if (kind != null) {
+                return "{\"error\": \"EIP not found: " + name + "\"}";
             }
         }
         return "{\"error\": \"Artifact not found: " + name + "\"}";
@@ -1693,7 +1713,7 @@ class TuiToolRegistry {
         }
     }
 
-    private String buildComponentDocJson(ComponentModel model, String filter, boolean includeOptions) {
+    private String buildComponentDocJson(ComponentModel model, String filter, boolean includeOptions, String doc) {
         JsonObject result = new JsonObject();
         result.put("kind", "component");
         result.put("name", model.getScheme());
@@ -1731,10 +1751,13 @@ class TuiToolRegistry {
             result.put("options", options);
             result.put("matchedOptions", options.size());
         }
+        if (doc != null) {
+            result.put("doc", doc);
+        }
         return Jsoner.serialize(result);
     }
 
-    private String buildDataFormatDocJson(DataFormatModel model, String filter, boolean includeOptions) {
+    private String buildDataFormatDocJson(DataFormatModel model, String filter, boolean includeOptions, String doc) {
         JsonObject result = new JsonObject();
         result.put("kind", "dataformat");
         result.put("name", model.getName());
@@ -1759,10 +1782,13 @@ class TuiToolRegistry {
             result.put("options", options);
             result.put("matchedOptions", options.size());
         }
+        if (doc != null) {
+            result.put("doc", doc);
+        }
         return Jsoner.serialize(result);
     }
 
-    private String buildLanguageDocJson(LanguageModel model, String filter, boolean includeOptions) {
+    private String buildLanguageDocJson(LanguageModel model, String filter, boolean includeOptions, String doc) {
         JsonObject result = new JsonObject();
         result.put("kind", "language");
         result.put("name", model.getName());
@@ -1786,6 +1812,40 @@ class TuiToolRegistry {
             }
             result.put("options", options);
             result.put("matchedOptions", options.size());
+        }
+        if (doc != null) {
+            result.put("doc", doc);
+        }
+        return Jsoner.serialize(result);
+    }
+
+    private String buildEipDocJson(EipModel model, String filter, boolean includeOptions, String doc) {
+        JsonObject result = new JsonObject();
+        result.put("kind", "eip");
+        result.put("name", model.getName());
+        result.put("title", model.getTitle());
+        result.put("description", model.getDescription());
+        if (model.getLabel() != null) {
+            result.put("label", model.getLabel());
+        }
+        result.put("input", model.isInput());
+        result.put("output", model.isOutput());
+        addCommonModelFields(result, model);
+
+        if (includeOptions) {
+            JsonArray options = new JsonArray();
+            if (model.getOptions() != null) {
+                for (BaseOptionModel opt : model.getOptions()) {
+                    if (matchesOptionFilter(opt, filter)) {
+                        options.add(optionToJson(opt, null));
+                    }
+                }
+            }
+            result.put("options", options);
+            result.put("matchedOptions", options.size());
+        }
+        if (doc != null) {
+            result.put("doc", doc);
         }
         return Jsoner.serialize(result);
     }

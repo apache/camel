@@ -76,6 +76,7 @@ camel dev [options]
 | `--quarkus-version` | version of Quarkus Platform BOM; the default value is looked up in Quarkus Extension Registry |  | String
 | `--reload,--dev` | Enables dev mode (live reload when source files are updated and saved) |  | boolean
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
+| `--resource-dir,--resource-dirs` | Additional resource directories to include on the classpath (recursive, preserving structure) |  | List
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) | camel-main | RuntimeType
 | `--skip-plugins` | Skip resolving plugin dependencies | false | boolean
 | `--source-dir` | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String

@@ -268,6 +268,9 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.setMonitorContext(ctx);
         actionsPopup.setNotificationCallback((msg, error) -> setNotification(msg, error));
         ctx.notificationCallback = (msg, error) -> setNotification(msg, error);
+        ctx.openMarkdownCallback = actionsPopup::openMarkdown;
+        ctx.openOptionsCallback = actionsPopup::openOptions;
+        ctx.openCatalogDocCallback = actionsPopup::openCatalogDoc;
         actionsPopup.setResetStatsAction(this::resetStats);
         shellPanel.setContext(ctx);
         aiPanel.setContext(ctx);
@@ -746,7 +749,9 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
         }
-        if (ke.isFocusPrevious() && !textEditing) {
+        MonitorTab activeMonitorTab = tabRegistry.activeTab();
+        boolean overlayActive = activeMonitorTab != null && activeMonitorTab.isOverlayActive();
+        if (ke.isFocusPrevious() && !textEditing && !overlayActive) {
             if (isInfraSelected()) {
                 int prev = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
                 tabsState.select(prev);
@@ -756,7 +761,7 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
-        if (ke.isFocusNext() && !textEditing) {
+        if (ke.isFocusNext() && !textEditing && !overlayActive) {
             if (isInfraSelected()) {
                 int next = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
                 tabsState.select(next);

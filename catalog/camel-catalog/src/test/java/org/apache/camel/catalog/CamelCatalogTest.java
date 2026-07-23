@@ -1980,4 +1980,64 @@ public class CamelCatalogTest {
         }
     }
 
+    @Test
+    void testFindDocNames() {
+        List<String> names = catalog.findDocNames();
+        assertNotNull(names);
+        assertFalse(names.isEmpty());
+        assertTrue(names.contains("kafka-component"));
+        assertTrue(names.contains("split-eip"));
+        assertTrue(names.contains("simple-language"));
+        assertTrue(names.contains("jackson2-dataformat"));
+    }
+
+    @Test
+    void testAsciiDoc() {
+        String doc = catalog.asciiDoc("kafka-component");
+        assertNotNull(doc);
+        assertTrue(doc.contains("Kafka Component"));
+        assertTrue(doc.contains("kafka:topic"));
+    }
+
+    @Test
+    void testAsciiDocNotFound() {
+        String doc = catalog.asciiDoc("unknown-xyz");
+        assertNull(doc);
+    }
+
+    @Test
+    void testComponentAsciiDoc() {
+        String doc = catalog.componentAsciiDoc("kafka");
+        assertNotNull(doc);
+        assertTrue(doc.contains("Kafka Component"));
+    }
+
+    @Test
+    void testModelAsciiDoc() {
+        String doc = catalog.modelAsciiDoc("split-eip");
+        assertNotNull(doc);
+        assertTrue(doc.contains("Split"));
+    }
+
+    @Test
+    void testLanguageAsciiDoc() {
+        String doc = catalog.languageAsciiDoc("simple");
+        assertNotNull(doc);
+        assertTrue(doc.contains("Simple"));
+    }
+
+    @Test
+    void testDataFormatAsciiDoc() {
+        String doc = catalog.dataFormatAsciiDoc("jackson2");
+        assertNotNull(doc);
+        assertTrue(doc.contains("Jackson"));
+    }
+
+    @Test
+    void testOtherAsciiDoc() {
+        String doc = catalog.otherAsciiDoc("yaml-dsl");
+        assertNotNull(doc);
+        assertTrue(doc.contains("YAML"));
+    }
+
 }

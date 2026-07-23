@@ -1,0 +1,267 @@
+= Spring AI Image Component
+:doctitle: Spring AI Image
+:shortname: spring-ai-image
+:artifactid: camel-spring-ai-image
+:description: Spring AI Image Generation
+:since: 4.19
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Spring AI Image component generates images from text prompts using any image model
+supported by https://docs.spring.io/spring-ai/reference/[Spring AI], including OpenAI DALL-E,
+Stability AI, and local models via Ollama.
+
+Maven users will need to add the following dependency to their `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-ai-image</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+== URI format
+
+----
+spring-ai-image:imageId[?options]
+----
+
+Where *imageId* can be any string to uniquely identify the endpoint.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Configuring the ImageModel
+
+The component requires a Spring AI `ImageModel` bean. When using Spring Boot with a Spring AI starter
+(e.g., `spring-ai-starter-model-openai`), the `ImageModel` bean is auto-configured.
+
+=== Basic Image Generation
+
+Send a text prompt as the message body to generate an image:
+
+._Java-only: Java lambda Processor with Spring AI Image API_
+[source,java]
+----
+from("direct:generate")
+    .setBody(constant("A camel walking through the desert at sunset"))
+    .to("spring-ai-image:gen?imageModel=#imageModel")
+    .log("Generated image: ${body.getClass().getSimpleName()}")
+    .process(exchange -> {
+        Image image = exchange.getIn().getBody(Image.class);
+        String base64Data = image.getB64Json();  // Base64-encoded image bytes
+        String imageUrl = image.getUrl();         // URL (provider-dependent)
+        log.info("Image base64 length: {}, URL: {}",
+            base64Data != null ? base64Data.length() : "N/A", imageUrl);
+    });
+----
+
+The response body is a `org.springframework.ai.image.Image` object containing either base64-encoded
+image data (`b64Json`) or a URL (`url`), depending on the provider and `responseFormat` setting.
+
+The component includes built-in type converters that automatically convert `Image` objects to `byte[]`
+(by decoding the base64 data), `InputStream`, or `String`. This means downstream components like
+`file:` can consume the image directly without any intermediate processing.
+
+=== Image Options
+
+Control image generation parameters via endpoint configuration or headers.
+Headers override endpoint configuration at runtime.
+
+==== Via Endpoint Configuration
+
+._Java-only: Java string concatenation in URI_
+[source,java]
+----
+from("direct:generate")
+    .to("spring-ai-image:gen?imageModel=#imageModel"
+        + "&model=dall-e-3"
+        + "&width=512&height=512"
+        + "&responseFormat=b64_json"
+        + "&style=vivid");
+----
+
+==== Via Headers
+
+._Java-only: Java test API (ProducerTemplate with lambda)_
+[source,java]
+----
+Exchange exchange = template.request("direct:generate", e -> {
+    e.getIn().setBody("A red apple on a white table");
+    e.getIn().setHeader(SpringAiImageHeaders.WIDTH, 256);
+    e.getIn().setHeader(SpringAiImageHeaders.HEIGHT, 256);
+    e.getIn().setHeader(SpringAiImageHeaders.MODEL, "dall-e-3");
+    e.getIn().setHeader(SpringAiImageHeaders.RESPONSE_FORMAT, "b64_json");
+});
+----
+
+=== Saving Images to Files
+
+The component includes a built-in `TypeConverter` that automatically converts `Image` objects
+to `byte[]`. This means you can pipe generated images directly to the `file:` component
+without any intermediate processing:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Generate and save — no processor needed
+from("direct:generate")
+    .to("spring-ai-image:gen?imageModel=#imageModel&width=512&height=512")
+    .to("file:output?fileName=generated.png");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:generate"/>
+    <to uri="spring-ai-image:gen?imageModel=#imageModel&amp;width=512&amp;height=512"/>
+    <to uri="file:output?fileName=generated.png"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:generate
+    steps:
+      - to:
+          uri: spring-ai-image:gen
+          parameters:
+            imageModel: "#imageModel"
+            width: 512
+            height: 512
+      - to:
+          uri: file:output?fileName=generated.png
+----
+====
+
+The `Image` → `byte[]` conversion decodes the base64 data automatically.
+
+=== Using with Ollama (Local Image Generation)
+
+Ollama supports image generation models via its OpenAI-compatible API. Configure the
+Spring AI OpenAI `ImageModel` to point at Ollama:
+
+._Java-only: Java Spring AI SDK configuration_
+[source,java]
+----
+// Ollama returns application/x-ndjson — register a converter that handles it
+MappingJackson2HttpMessageConverter ndjsonConverter = new MappingJackson2HttpMessageConverter();
+ndjsonConverter.setSupportedMediaTypes(
+    List.of(MediaType.APPLICATION_JSON, MediaType.valueOf("application/x-ndjson")));
+
+RestClient.Builder restClientBuilder = RestClient.builder()
+    .messageConverters(converters -> converters.addFirst(ndjsonConverter));
+
+OpenAiImageApi imageApi = OpenAiImageApi.builder()
+    .baseUrl("http://localhost:11434")
+    .apiKey("unused")
+    .restClientBuilder(restClientBuilder)
+    .build();
+
+OpenAiImageOptions defaultOptions = OpenAiImageOptions.builder()
+    .model("x/flux2-klein:4b")
+    .build();
+
+ImageModel imageModel = new OpenAiImageModel(imageApi, defaultOptions,
+    RetryUtils.DEFAULT_RETRY_TEMPLATE);
+----
+
+Then use the Camel endpoint to control resolution:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:generate")
+    .to("spring-ai-image:gen?imageModel=#imageModel&width=512&height=512")
+    .to("file:output?fileName=camel-image.png");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:generate"/>
+    <to uri="spring-ai-image:gen?imageModel=#imageModel&amp;width=512&amp;height=512"/>
+    <to uri="file:output?fileName=camel-image.png"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:generate
+    steps:
+      - to:
+          uri: spring-ai-image:gen
+          parameters:
+            imageModel: "#imageModel"
+            width: 512
+            height: 512
+      - to:
+          uri: file:output?fileName=camel-image.png
+----
+====
+
+=== Multiple Image Generation
+
+Set the `n` parameter to generate multiple images. When `n > 1`, the body contains a
+`List<Image>` instead of a single `Image`:
+
+._Java-only: Java test API (ProducerTemplate)_
+[source,java]
+----
+from("direct:batch")
+    .to("spring-ai-image:gen?imageModel=#imageModel&n=3");
+
+// Usage:
+List<Image> images = template.requestBody("direct:batch",
+    "A camel in different art styles", List.class);
+----
+
+=== Type Converters
+
+The component registers automatic type converters for `Image` objects:
+
+[cols="1,1,2"]
+|===
+| From | To | Behavior
+
+| `Image` | `byte[]` | Decodes base64 data
+| `Image` | `InputStream` | Wraps decoded bytes in ByteArrayInputStream
+| `Image` | `String` | Returns base64 string or URL
+|===
+
+== See Also
+
+* https://docs.spring.io/spring-ai/reference/api/image.html[Spring AI Image API]
+* xref:spring-ai-chat-component.adoc[Spring AI Chat Component]

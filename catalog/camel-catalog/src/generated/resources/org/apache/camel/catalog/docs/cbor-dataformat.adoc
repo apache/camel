@@ -1,0 +1,127 @@
+= CBOR DataFormat
+:doctitle: CBOR
+:shortname: cbor
+:artifactid: camel-cbor
+:description: Unmarshal a CBOR payload to POJO and back
+:since: 3.0
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+CBOR is a Data Format that uses the
+https://github.com/FasterXML/jackson/[Jackson library] with the
+https://github.com/FasterXML/jackson-dataformats-binary/tree/master/cbor[CBOR extension]
+to unmarshal a CBOR payload into Java objects or to marshal Java objects
+into a CBOR payload.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:My.Queue")
+    .unmarshal().cbor()
+    .to("mqseries:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <unmarshal><cbor/></unmarshal>
+  <to uri="mqseries:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - unmarshal:
+            cbor: {}
+        - to:
+            uri: mqseries:Another.Queue
+----
+====
+
+== Usage
+
+=== CBOR Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+==== Using CBOR in Spring DSL
+
+When using Data Format in Spring DSL, you need to
+declare the data formats first. This is done in the *DataFormats* XML
+tag.
+
+._XML-only: Spring XML data format configuration_
+[source,xml]
+----
+<dataFormats>
+    <!-- here we define a CBOR data format with the id test, and that it should use the TestPojo as the class type when
+    doing unmarshal. -->
+    <cbor id="test" unmarshalType="org.apache.camel.component.cbor.TestPojo"/>
+</dataFormats>
+----
+
+And then you can refer to this id in the route:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:back")
+    .unmarshal("test")
+    .to("mock:reverse");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:back"/>
+    <unmarshal><custom ref="test"/></unmarshal>
+    <to uri="mock:reverse"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:back
+      steps:
+        - unmarshal:
+            ref: test
+        - to:
+            uri: mock:reverse
+----
+====
+
+== Dependencies
+
+[source,xml]
+-------------------------------------
+<dependency>
+   <groupId>org.apache.camel</groupId>
+   <artifactId>camel-cbor</artifactId>
+   <version>x.x.x</version>
+</dependency>
+-------------------------------------

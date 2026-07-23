@@ -1524,6 +1524,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
         doWriteAttribute("bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
         doWriteAttribute("bulkheadFairCallHandlingEnabled", def.getBulkheadFairCallHandlingEnabled(), "true");
+        doWriteAttribute("asynchronous", def.getAsynchronous(), "false");
         doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
         doWriteAttribute("timeoutExecutorService", def.getTimeoutExecutorService(), null);
         doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");

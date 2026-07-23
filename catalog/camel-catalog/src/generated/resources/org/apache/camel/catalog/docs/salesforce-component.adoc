@@ -1,0 +1,409 @@
+= Salesforce Component
+:doctitle: Salesforce
+:shortname: salesforce
+:artifactid: camel-salesforce
+:description: Communicate with Salesforce using Java DTOs.
+:since: 2.12
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+This component supports producer and consumer endpoints to communicate
+with Salesforce using Java DTOs. There is a companion <<MavenPlugin,maven plugin>> that
+generates these DTOs.
+
+[NOTE]
+====
+Developers wishing to contribute to the component are instructed
+to look at the https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-component/README.md[README.md] file on instructions on how to get started and
+set up your environment for running integration tests.
+====
+
+== Getting Started
+
+Follow these steps to get started with the Salesforce component.
+
+. *Create a salesforce org*. If you don't already have access to a salesforce org, you can create a https://developer.salesforce.com/signup[free developer org].
+. *Create a Connected App*. In salesforce, go to Setup > Apps > App Manager, then click on *New Connected App*. Make sure to check *Enable OAuth Settings* and include relevant OAuth Scopes, including the scope called *Perform requests at any time*. Click *Save*.
+. *Get the Consumer Key and Consumer Secret*. You'll need these to configure salesforce authentication. View your new connected app, then copy the key and secret and save in a safe place.
+. *Add Maven dependency*.
++
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-salesforce</artifactId>
+</dependency>
+----
+Spring Boot users should use the starter instead.
++
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-salesforce-starter</artifactId>
+</dependency>
+----
+
+. *Generate DTOs*. Optionally, generate Java DTOs to represent your salesforce objects. This step isn't a hard requirement per se, but most use cases will benefit from the type safety and auto-completion. Use the <<MavenPlugin,maven plugin>> to generate DTOs for the salesforce objects you'll be working with.
+. *Configure authentication*. Using the OAuth key and secret, you generated previously, configure salesforce <<AuthenticatingToSalesforce,authentication>>.
+. *Create routes*. Starting creating routes that interact with salesforce!
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Authenticating to Salesforce [[AuthenticatingToSalesforce]]
+
+The component supports four OAuth authentication flows:
+
+* https://help.salesforce.com/articleView?id=remoteaccess_oauth_username_password_flow.htm[OAuth 2.0 Username-Password Flow]
+* https://help.salesforce.com/articleView?id=remoteaccess_oauth_refresh_token_flow.htm[OAuth 2.0 Refresh Token Flow]
+* https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm[OAuth 2.0 JWT Bearer Token Flow]
+* https://help.salesforce.com/s/articleView?id=xcloud.remoteaccess_oauth_client_credentials_flow.htm[OAuth 2.0 Client Credentials Flow]
+
+For each of the flows, different sets of properties need to be set:
+
+.Properties to set for each authentication flow
+|===
+| Property     | Where to find it on Salesforce     | Flow
+
+| `clientId`     | Connected App, Consumer Key        | All flows
+| `clientSecret` | Connected App, Consumer Secret     | Username-Password, Refresh Token, Client Credentials
+| `userName`     | Salesforce user username           | Username-Password, JWT Bearer Token
+| `password`     | Salesforce user password           | Username-Password
+| `refreshToken` | From OAuth flow callback           | Refresh Token
+| `keystore`     | Connected App, Digital Certificate | JWT Bearer Token
+|===
+
+The component auto determines what flow you're trying to configure. In order to be explicit, set the
+`authenticationType` property.
+
+[NOTE]
+====
+Using Username-Password Flow in production is not encouraged.
+====
+
+[NOTE]
+====
+The certificate used in JWT Bearer Token Flow can be a self-signed
+certificate. The KeyStore holding the certificate and the private key
+must contain only a single certificate-private key entry.
+====
+
+=== General Usage
+
+==== URI format
+
+When used as a consumer, receiving streaming events, the URI scheme is:
+
+----
+salesforce:subscribe:topic?options
+----
+
+When used as a producer, invoking the Salesforce REST APIs, the URI
+scheme is:
+
+----
+salesforce:operationName?options
+----
+
+As a general example on using the operations in this salesforce component, the following producer endpoint uses
+the upsertSObject API, with the sObjectIdName parameter specifying 'Name' as the external id field.
+The request message body should be an SObject DTO generated using the maven plugin.
+
+._Java-only: endpoint URI snippet_
+[source,java]
+----
+...to("salesforce:upsertSObject?sObjectIdName=Name")...
+----
+
+==== Supplying operation parameters as message headers
+
+The operation parameters described in the per-operation tables below (such as `sObjectQuery`,
+`sObjectName`, `sObjectId`, `sObjectSearch`, `apexUrl`, `apexMethod`, the `apexQueryParam.` prefix and
+the Bulk/Analytics/RAW parameters) can be supplied either as endpoint options or as message headers.
+
+[IMPORTANT]
+====
+Starting with Camel 4.21, when these parameters are supplied as *message headers*, the header names
+follow the standard `CamelSalesforce` naming convention so that they are governed by the default
+`HeaderFilterStrategy` (which only filters `Camel`/`camel`-prefixed headers). For example, set the
+`CamelSalesforceSObjectQuery` header instead of `sObjectQuery`, `CamelSalesforceApexUrl` instead of
+`apexUrl`, and use the `CamelSalesforceApexQueryParam.` prefix instead of `apexQueryParam.`. The
+*endpoint option* spelling is unchanged (for example `salesforce:query?sObjectQuery=...` still works).
+
+Prefer referencing the constants in `SalesforceEndpointConfig` (for example
+`SalesforceEndpointConfig.SOBJECT_QUERY`) when setting these headers, so route code is unaffected by
+the value change. See the Camel 4.21 upgrade guide for the full list of renamed header names.
+====
+
+=== Passing in Salesforce headers and fetching Salesforce response headers
+
+There is support to pass https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/headers.htm[Salesforce headers]
+via inbound message headers, header names that start with `Sforce` or
+`x-sfdc` on the Camel message will be passed on in the request, and
+response headers that start with `Sforce` will be present in the outbound
+message headers.
+
+For example, to fetch API limits, you can specify:
+
+._Java-only: uses custom `Processor` implementation to read response headers_
+[source,java]
+----
+// in your Camel route set the header before Salesforce endpoint
+  .setHeader("Sforce-Limit-Info", constant("api-usage"))
+  .to("salesforce:getGlobalObjects")
+  .to(myProcessor);
+
+// myProcessor will receive `Sforce-Limit-Info` header on the outbound message
+class MyProcessor implements Processor {
+    public void process(Exchange exchange) throws Exception {
+        Message in = exchange.getIn();
+        String apiLimits = in.getHeader("Sforce-Limit-Info", String.class);
+   }
+}
+----
+
+In addition, HTTP response status code and text are available as headers `Exchange.HTTP_RESPONSE_CODE` and
+`Exchange.HTTP_RESPONSE_TEXT`.
+
+====  Sending null values to salesforce
+
+By default, SObject fields with null values are not sent to salesforce. In order to
+send null values to salesforce, use the `fieldsToNull` property, as follows:
+
+._Java-only: programmatic SObject field manipulation_
+[source,java]
+----
+accountSObject.getFieldsToNull().add("Site");
+----
+
+=== Supported Salesforce APIs
+
+Camel supports the following Salesforce APIs:
+
+* xref:others:salesforce-rest-api.adoc[REST API]
+* <<ApexRESTAPI,Apex REST API>>
+* xref:others:salesforce-bulk-api.adoc[Bulk 2 API]
+* xref:others:salesforce-bulk-api.adoc#BulkAPI[Bulk API]
+* xref:others:salesforce-streaming.adoc#PubSubAPI[Pub/Sub API]
+* xref:others:salesforce-streaming.adoc#StreamingAPI[Streaming API]
+* xref:others:salesforce-reports.adoc[Reports API]
+
+[[ApexRESTAPI]]
+==== Apex REST API
+
+[[apexCall]]
+===== Invoke an Apex REST Web Service method
+
+`apexCall`
+
+You can https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_intro.htm[expose your Apex class and methods]
+so that external applications can access your code and your application through the REST architecture.
+
+The URI format for invoking Apex REST is:
+
+----
+salesforce:apexCall[/yourApexRestUrl][?options]
+----
+
+You can supply the apexUrl either in the endpoint (see above), or as the `apexUrl` option as listed in the table below.
+In either case the Apex URL can contain placeholders in the format of `\{headerName}`. E.g., for the Apex URL `MyApexClass/\{id}`,
+the value of the header named `id` will be used to replace the placeholder. If `rawPayload` is false and neither
+`sObjectClass` nor `sObjectName` are set, Camel will attempt to determine the correct `AbstractQueryRecordsBase`
+sublcass based on the response.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `Map<String, Object>` if `GET`, otherwise `String` or `InputStream`| In the case of a `GET`, the body (`Map` instance)
+is transformed into query parameters. For other HTTP methods, the body is used for the HTTP body. | |
+| `apexUrl` | `String` | The portion of the endpoint URL after `https://instance.salesforce.com/services/apexrest/`, e.g., 'MyApexClass/' | | Yes, unless supplied in endpoint
+| `apexMethod` | `String` | The HTTP method (e.g. `GET`, `POST`) to use. | `GET` |
+| `rawPayload` | `Boolean` | If true, Camel will not serialize the request or response bodies. | false |
+| Header: `apexQueryParam.[paramName]` | Object | Headers that override apex parameters passed in the endpoint. |  |
+| `sObjectName` | `String` | Name of sObject (e.g. `Merchandise__c`) used to deserialize the response |  |
+| `sObjectClass` | `String` | Fully qualified class name used to deserialize the response |  |
+|===
+
+*Output*
+
+Type: Instance of class supplied in `sObjectClass` input header.
+
+
+== Sub-Pages
+
+For more details on specific Salesforce APIs, see:
+
+* xref:others:salesforce-rest-api.adoc[REST API] - CRUD operations, queries, composite requests, approvals, and more
+* xref:others:salesforce-bulk-api.adoc[Bulk API] - Bulk 2.0 and original Bulk API for large data operations
+* xref:others:salesforce-streaming.adoc[Streaming and Pub/Sub] - Platform events, push topics, change data capture, and Pub/Sub API
+* xref:others:salesforce-reports.adoc[Reports API] - Report execution, instances, and results
+
+
+=== Miscellaneous Operations
+
+* <<raw,raw>> - Send requests to salesforce and have full, raw control over endpoint, parameters, body, etc.
+
+[[raw]]
+==== Raw
+
+`raw`
+
+Sends HTTP requests to salesforce with full, raw control of all aspects of the call. Any serialization or deserialization of request and response bodies must be performed in the route. The `Content-Type` HTTP
+header will be automatically set based on the `format` option, but this can be overridden with the `rawHttpHeaders` option.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `String` or `InputStream` | Body of the HTTP request | |
+| `rawPath` | `String` | The portion of the endpoint URL after the domain name, e.g., '/services/data/v51.0/sobjects/Account/' | | x
+| `rawMethod` | `String` | The HTTP method | | x
+| `rawQueryParameters` | `String` | Comma separated list of message headers to include as query parameters. Do not url-encode values as this will be done automatically. | |
+| `rawHttpHeaders` | `String` | Comma separated list of message headers to include as HTTP headers | |
+|===
+
+*Output*
+
+Type: `InputStream`
+
+===== Query example
+
+In this example we'll send a query to the REST API. The query must be passed in a URL parameter called "q", so we'll create a message header called q and tell the
+raw operation to include that message header as a URL parameter:
+----
+from("direct:queryExample")
+  .setHeader("q", "SELECT Id, LastName FROM Contact")
+  .to("salesforce:raw?format=JSON&rawMethod=GET&rawQueryParameters=q&rawPath=/services/data/v51.0/query")
+  // deserialize JSON results or handle in some other way
+----
+
+===== SObject example
+
+In this example, we'll pass a Contact the REST API in a `create` operation. Since the `raw` operation does not perform any serialization,
+we make sure to pass XML in the message body
+
+----
+from("direct:createAContact")
+  .setBody(constant("<Contact><LastName>TestLast</LastName></Contact>"))
+  .to("salesforce:raw?format=XML&rawMethod=POST&rawPath=/services/data/v51.0/sobjects/Contact")
+----
+The response is:
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Result>
+    <id>0034x00000RnV6zAAF</id>
+    <success>true</success>
+</Result>
+----
+
+=== Uploading a document to a ContentWorkspace
+
+==== Using Binary Fields (Recommended)
+
+For efficient document uploads without base64 encoding overhead, use the binary field approach:
+
+._Java-only: Processor implementation with Salesforce DTO and binary fields_
+
+[source,java]
+----
+public class ContentProcessor implements Processor {
+    public void process(Exchange exchange) throws Exception {
+        Message message = exchange.getIn();
+
+        ContentVersion cv = new ContentVersion();
+        ContentWorkspace cw = getWorkspace(exchange);
+        cv.setFirstPublishLocationId(cw.getId());
+        cv.setTitle("test document");
+        cv.setPathOnClient("test_doc.html");
+        
+        // Use binary field for efficient upload - no base64 encoding needed
+        InputStream document = message.getBody(InputStream.class);
+        cv.setVersionDataBinary(document);  // Automatically triggers multipart request
+        message.setBody(cv);
+    }
+
+    protected ContentWorkspace getWorkSpace(Exchange exchange) {
+        // Look up the content workspace somehow, maybe use enrich() to add it to a
+        // header that can be extracted here
+        ....
+    }
+}
+----
+
+Give the output from the processor to the Salesforce component:
+
+._Java-only: inline Processor instantiation_
+
+[source,java]
+----
+from("file:///home/camel/library")
+    .to(new ContentProcessor())     // convert file stream into a ContentVersion SObject
+                                    // with binary field for efficient upload
+    .to("salesforce:createSObject");
+----
+
+==== Using Base64 Encoding (Legacy)
+
+The traditional base64 encoding approach is still supported for backward compatibility:
+
+._Java-only: Processor implementation with base64 encoding_
+
+[source,java]
+----
+public class ContentProcessor implements Processor {
+    public void process(Exchange exchange) throws Exception {
+        Message message = exchange.getIn();
+
+        ContentVersion cv = new ContentVersion();
+        ContentWorkspace cw = getWorkspace(exchange);
+        cv.setFirstPublishLocationId(cw.getId());
+        cv.setTitle("test document");
+        cv.setPathOnClient("test_doc.html");
+        byte[] document = message.getBody(byte[].class);
+        ObjectMapper mapper = new ObjectMapper();
+        String enc = mapper.convertValue(document, String.class);
+        cv.setVersionData(enc);  // Uses base64 encoding and standard JSON request
+        message.setBody(cv);
+    }
+
+    protected ContentWorkspace getWorkSpace(Exchange exchange) {
+        // Look up the content workspace somehow, maybe use enrich() to add it to a
+        // header that can be extracted here
+        ....
+    }
+}
+----
+
+=== Generating SOQL query strings
+
+`org.apache.camel.component.salesforce.api.utils.QueryHelper` contains helper
+methods to generate SOQL queries. For instance, to fetch all custom fields from
+_Account_ SObject, you can generate the SOQL SELECT by invoking:
+
+._Java-only: QueryHelper API_
+
+[source,java]
+----
+String allCustomFieldsQuery = QueryHelper.queryToFetchFilteredFieldsOf(new Account(), SObjectField::isCustom);
+----
+
+[[MavenPlugin]]
+=== Camel Salesforce Maven Plugin
+
+The Maven plugin generates Java DTOs to represent salesforce objects.
+
+Please refer to
+https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-maven-plugin[README.md]
+for details on how to use the plugin.

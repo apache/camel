@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import dev.tamboui.layout.Constraint;
+import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.markdown.MarkdownView;
 import dev.tamboui.style.Overflow;
@@ -44,6 +46,8 @@ import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
@@ -58,7 +62,15 @@ class DocViewerPopup {
     private String docTitle;
     private int docScroll;
     private Runnable onCloseCallback;
+    private String catalogEntryName;
+    private String catalogEntryKind;
+    private org.apache.camel.catalog.CamelCatalog catalogEntryRef;
+    private boolean wantsOptions;
+    private final TocPopup tocPopup = new TocPopup();
+    private int lastContentWidth;
+    private int lastTotalHeight;
 
+    private final ScrollbarState scrollbarState = new ScrollbarState();
     private final ListState pickerState = new ListState();
     private List<IntegrationInfo> pickerIntegrations;
     private Rect pickerRect;
@@ -105,10 +117,31 @@ class DocViewerPopup {
         return pickerIntegrations;
     }
 
+    boolean consumeWantsOptions() {
+        boolean v = wantsOptions;
+        wantsOptions = false;
+        return v;
+    }
+
+    String getCatalogEntryName() {
+        return catalogEntryName;
+    }
+
+    String getCatalogEntryKind() {
+        return catalogEntryKind;
+    }
+
+    org.apache.camel.catalog.CamelCatalog getCatalogEntryRef() {
+        return catalogEntryRef;
+    }
+
     void close() {
         showViewer = false;
         showPicker = false;
         onCloseCallback = null;
+        catalogEntryName = null;
+        catalogEntryKind = null;
+        catalogEntryRef = null;
     }
 
     void openMarkdown(String title, String markdown) {
@@ -116,6 +149,7 @@ class DocViewerPopup {
         docContent = markdown;
         docTitle = title;
         docScroll = 0;
+        lastTotalHeight = 0;
         showViewer = true;
         onCloseCallback = null;
     }
@@ -123,6 +157,15 @@ class DocViewerPopup {
     void openMarkdown(String title, String markdown, Runnable onClose) {
         openMarkdown(title, markdown);
         this.onCloseCallback = onClose;
+    }
+
+    void openCatalogDoc(
+            String title, String markdown, String entryName, String entryKind,
+            org.apache.camel.catalog.CamelCatalog catalog) {
+        openMarkdown(title, markdown);
+        this.catalogEntryName = entryName;
+        this.catalogEntryKind = entryKind;
+        this.catalogEntryRef = catalog;
     }
 
     void openLines(String title, List<Line> lines) {
@@ -136,6 +179,14 @@ class DocViewerPopup {
 
     boolean handleKeyEvent(KeyEvent ke) {
         if (showViewer) {
+            if (tocPopup.isVisible()) {
+                tocPopup.handleKeyEvent(ke);
+                TocPopup.TocEntry entry = tocPopup.consumePendingEntry();
+                if (entry != null) {
+                    jumpToHeading(entry);
+                }
+                return true;
+            }
             if (ke.isCancel()) {
                 showViewer = false;
                 Runnable cb = onCloseCallback;
@@ -143,6 +194,14 @@ class DocViewerPopup {
                 if (cb != null) {
                     cb.run();
                 }
+            } else if (ke.isCharIgnoreCase('t') && docContent != null) {
+                List<TocPopup.TocEntry> headings = TocPopup.extractHeadings(docContent);
+                if (!headings.isEmpty()) {
+                    tocPopup.open(headings);
+                }
+            } else if (ke.isCharIgnoreCase('o') && catalogEntryName != null) {
+                wantsOptions = true;
+                showViewer = false;
             } else if (ke.isUp() || ke.isChar('k')) {
                 docScroll = Math.max(0, docScroll - 1);
             } else if (ke.isDown() || ke.isChar('j')) {
@@ -177,6 +236,14 @@ class DocViewerPopup {
 
     boolean handleMouseEvent(MouseEvent me) {
         if (showViewer) {
+            if (tocPopup.isVisible()) {
+                tocPopup.handleMouseEvent(me);
+                TocPopup.TocEntry entry = tocPopup.consumePendingEntry();
+                if (entry != null) {
+                    jumpToHeading(entry);
+                }
+                return true;
+            }
             if (me.kind() == MouseEventKind.SCROLL_UP) {
                 docScroll = Math.max(0, docScroll - 3);
                 return true;
@@ -190,6 +257,19 @@ class DocViewerPopup {
         return false;
     }
 
+    private void jumpToHeading(TocPopup.TocEntry entry) {
+        if (docContent == null || lastContentWidth <= 0) {
+            return;
+        }
+        String prefix = docContent.substring(0, Math.min(entry.charOffset(), docContent.length()));
+        int offset = MarkdownView.builder()
+                .source(prefix)
+                .styles(Theme.markdownStyles())
+                .build()
+                .computeHeight(lastContentWidth);
+        docScroll = offset;
+    }
+
     void render(Frame frame, Rect area) {
         if (showPicker) {
             renderPicker(frame, area);
@@ -201,8 +281,14 @@ class DocViewerPopup {
 
     void renderFooter(List<Span> spans) {
         if (showViewer) {
+            hint(spans, "Esc", "back");
             hint(spans, "↑↓", "scroll");
-            hintLast(spans, "Esc", "back");
+            if (docContent != null) {
+                hint(spans, "t", "toc");
+            }
+            if (catalogEntryName != null) {
+                hintLast(spans, "o", "options");
+            }
         } else if (showPicker) {
             hint(spans, "↑↓", "navigate");
             hint(spans, "Enter", "view");
@@ -399,7 +485,6 @@ class DocViewerPopup {
 
     private void renderViewer(Frame frame, Rect area) {
         frame.renderWidget(Clear.INSTANCE, area);
-        Rect popup = new Rect(area.left() + 2, area.top() + 1, area.width() - 4, area.height() - 2);
         Title title;
         if (docTitle != null && docTitle.startsWith("Failed:")) {
             String rest = docTitle.substring("Failed:".length());
@@ -409,16 +494,35 @@ class DocViewerPopup {
         } else {
             title = Title.from(" " + docTitle + " ");
         }
+        List<Span> footerSpans = new ArrayList<>();
+        footerSpans.add(Span.styled(" Esc ", Theme.hintKey()));
+        footerSpans.add(Span.raw(" back  "));
+        footerSpans.add(Span.styled(" ↑↓ ", Theme.hintKey()));
+        footerSpans.add(Span.raw(" scroll  "));
+        if (docContent != null) {
+            footerSpans.add(Span.styled(" t ", Theme.hintKey()));
+            footerSpans.add(Span.raw(" toc  "));
+        }
+        if (catalogEntryName != null) {
+            footerSpans.add(Span.styled(" o ", Theme.hintKey()));
+            footerSpans.add(Span.raw(" options "));
+        }
+        Title footer = Title.from(Line.from(footerSpans));
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
+                .titleBottom(footer)
                 .build();
         if (docLines != null) {
-            frame.renderWidget(block, popup);
-            Rect inner = block.inner(popup);
-            int visibleLines = inner.height();
+            frame.renderWidget(block, area);
+            Rect inner = block.inner(area);
+            List<Rect> hChunks = Layout.horizontal()
+                    .constraints(Constraint.fill(), Constraint.length(1))
+                    .split(inner);
+            int visibleLines = hChunks.get(0).height();
             int totalLines = docLines.size();
             int clampedScroll = Math.min(docScroll, Math.max(0, totalLines - visibleLines));
+            docScroll = clampedScroll;
             int end = Math.min(clampedScroll + visibleLines, totalLines);
             List<Line> visible = new ArrayList<>(docLines.subList(clampedScroll, end));
             while (visible.size() < visibleLines) {
@@ -427,15 +531,46 @@ class DocViewerPopup {
             frame.renderWidget(
                     Paragraph.builder().text(Text.from(visible.toArray(Line[]::new)))
                             .overflow(Overflow.CLIP).build(),
-                    inner);
+                    hChunks.get(0));
+            if (totalLines > visibleLines) {
+                scrollbarState
+                        .contentLength(totalLines)
+                        .viewportContentLength(visibleLines)
+                        .position(clampedScroll);
+                frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), scrollbarState);
+            }
         } else {
+            frame.renderWidget(block, area);
+            Rect inner = block.inner(area);
+            List<Rect> hChunks = Layout.horizontal()
+                    .constraints(Constraint.fill(), Constraint.length(1))
+                    .split(inner);
+            lastContentWidth = hChunks.get(0).width();
+            int viewportHeight = hChunks.get(0).height();
+            if (lastTotalHeight > 0) {
+                int maxScroll = Math.max(0, lastTotalHeight - viewportHeight);
+                if (docScroll > maxScroll) {
+                    docScroll = maxScroll;
+                }
+            }
             MarkdownView view = MarkdownView.builder()
                     .source(docContent)
                     .scroll(docScroll)
-                    .block(block)
                     .styles(Theme.markdownStyles())
                     .build();
-            frame.renderWidget(view, popup);
+            frame.renderWidget(view, hChunks.get(0));
+            int totalHeight = view.computeHeight(lastContentWidth);
+            lastTotalHeight = totalHeight;
+            if (totalHeight > viewportHeight) {
+                scrollbarState
+                        .contentLength(totalHeight)
+                        .viewportContentLength(viewportHeight)
+                        .position(docScroll);
+                frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), scrollbarState);
+            }
+        }
+        if (tocPopup.isVisible()) {
+            tocPopup.render(frame, area);
         }
     }
 
