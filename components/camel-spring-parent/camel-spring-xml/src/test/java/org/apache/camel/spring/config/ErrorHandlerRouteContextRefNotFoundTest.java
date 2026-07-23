@@ -27,19 +27,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
+class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        Exception e = assertThrows(Exception.class, () -> {
-            super.setUp();
-        });
-        FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-        NoSuchBeanException nsbe = assertIsInstanceOf(NoSuchBeanException.class, cause.getCause());
-        assertEquals(
-                "No bean could be found in the registry for: bar of type: org.apache.camel.ErrorHandlerFactory",
-                nsbe.getMessage());
+        // Do NOT call super.setUp() — this test validates that context creation fails
     }
 
     @Override
@@ -48,7 +41,14 @@ public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
     }
 
     @Test
-    public void testDummy() {
-        // noop
+    void testErrorHandlerRouteContextRefNotFound() throws Exception {
+        Exception e = assertThrows(Exception.class, () -> {
+            super.setUp();
+        });
+        FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        NoSuchBeanException nsbe = assertIsInstanceOf(NoSuchBeanException.class, cause.getCause());
+        assertEquals(
+                "No bean could be found in the registry for: bar of type: org.apache.camel.ErrorHandlerFactory",
+                nsbe.getMessage());
     }
 }

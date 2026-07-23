@@ -17,6 +17,7 @@
 package org.apache.camel.language;
 
 import org.apache.camel.CamelContext;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
@@ -24,16 +25,17 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 /**
  *
  */
-public class SpringTokenXMLPairNamespaceSplitTest extends TokenXMLPairNamespaceSplitTest {
+class SpringTokenXMLPairNamespaceSplitTest extends TokenXMLPairNamespaceSplitTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/language/SpringTokenXMLPairNamespaceSplitTest.xml");
     }
 
+    @Disabled("Not applicable for Spring XML variant")
     @Override
     @Test
-    public void testTokenXMLPair2() throws Exception {
+    public void testTokenXMLPair2() {
         // noop
     }
 }

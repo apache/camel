@@ -25,24 +25,23 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SpringRouteNoFromTest extends SpringTestSupport {
+class SpringRouteNoFromTest extends SpringTestSupport {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        createApplicationContext();
+        // Do NOT call super.setUp() — this test validates that context creation fails
     }
 
     @Test
-    public void testRouteNoFrom() {
-        // noop
+    void testRouteNoFrom() {
+        assertThrows(RuntimeCamelException.class, () -> {
+            new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringRouteNoFromTest.xml");
+        });
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        assertThrows(RuntimeCamelException.class, () -> {
-            new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringRouteNoFromTest.xml");
-        });
         return null;
     }
 }

@@ -16,19 +16,25 @@
  */
 package org.apache.camel.spring.processor;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SpringTryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport {
+class SpringTryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
+        // Do NOT call super.setUp() — this test validates that context creation fails
+    }
+
+    @Test
+    void testTryCatchMustHaveExceptionConfigured() throws Exception {
         Exception e = assertThrows(Exception.class, () -> {
             createSpringCamelContext(this,
                     "org/apache/camel/spring/processor/SpringTryCatchMustHaveExceptionConfiguredTest.xml");
@@ -36,14 +42,6 @@ public class SpringTryCatchMustHaveExceptionConfiguredTest extends ContextTestSu
         FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
         IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ftcre.getCause());
         assertEquals("At least one Exception must be configured to catch", iae.getMessage());
-
-        // return a working context instead, to let this test pass
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/convertBody.xml");
-    }
-
-    @Test
-    public void testTryCatchMustHaveExceptionConfigured() {
-        // noop
     }
 
 }

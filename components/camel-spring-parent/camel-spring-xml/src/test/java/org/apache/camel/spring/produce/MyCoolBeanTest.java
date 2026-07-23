@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.produce;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +25,38 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @ContextConfiguration
 @ExtendWith(SpringExtension.class)
-public class MyCoolBeanTest {
+class MyCoolBeanTest {
 
     @Autowired
     ApplicationContext applicationContext;
 
     @Test
-    public void testProducerTemplate() throws Exception {
+    void testProducerTemplate() {
         MyCoolBean cool = applicationContext.getBean("cool", MyCoolBean.class);
-        cool.sendMsg();
+        assertNotNull(cool, "MyCoolBean should be resolved from application context");
+        assertNotNull(cool.producer, "ProducerTemplate should be injected via @Produce annotation");
+
+        // Verify the @Produce annotation correctly wired the template to log:foo
+        assertNotNull(cool.producer.getDefaultEndpoint(), "Default endpoint should be configured via @Produce");
+        assertEquals("log://foo", cool.producer.getDefaultEndpoint().getEndpointUri(),
+                "ProducerTemplate should target log:foo");
+
+        // Verify the CamelContext is started (required for message delivery)
+        CamelContext camelContext = applicationContext.getBean(CamelContext.class);
+        assertTrue(camelContext.getStatus().isStarted(), "CamelContext should be started");
+
+        // Verify message delivery through the @Produce-injected template
+        Exchange result = cool.producer.send(cool.producer.getDefaultEndpoint(),
+                e -> e.getMessage().setBody("Hello World"));
+        assertFalse(result.isFailed(), "Message delivery to log:foo should succeed");
+        assertNull(result.getException(), "No exception should occur during message delivery");
     }
 }
