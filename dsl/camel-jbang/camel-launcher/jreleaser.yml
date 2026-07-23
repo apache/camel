@@ -25,6 +25,12 @@
 #     to a currently installable JDK that still satisfies this project's Java 17+ minimum.
 #     The launcher's own JAVACMD/JAVA_HOME/PATH lookup order means this Homebrew dependency
 #     is a self-contained fallback, not the enforced runtime, so pinning buys nothing.
+#   - A packager's `livecheck:` field (used below under `brew:`) is a raw list of Homebrew-Ruby
+#     source lines, not a set of structured url/regex sub-keys - confirmed against JReleaser's own
+#     docs. Each list entry becomes one line inside the generated `livecheck do ... end` block, which
+#     is exactly what formula.rb.tpl's existing `{{#brewLivecheck}}{{.}}{{/brewLivecheck}}` Mustache
+#     loop already expects (this field has never actually been populated until this task, so the
+#     loop itself was unexercised code before now - see the trace-log check in Step 4 below).
 #   - SDKMAN has no boolean "default" flag; `command: MAJOR` publishes and sets the
 #     new version as the candidate default, `command: MINOR` publishes without
 #     moving the default. SDKMAN produces no local `prepare` output (API-only), so
@@ -52,12 +58,12 @@
 # versioned Homebrew formula (`camel@X.Y`) alongside the unversioned `camel`
 # formula. This file declares only one `brew` packager per distribution, so today
 # it only ever produces the single formula selected by CAMEL_PKG_BREW_FORMULA.
-# Producing both formulae from one release depends on the same publish-destination
-# decision `publish` itself is waiting on (see camel-package.sh) - whether the
-# versioned formula goes to this project's own tap or homebrew-core affects how
-# it can be produced alongside the unversioned one. Until that's settled, use a
-# separate `--channel lts --lts-line X.Y` run to produce the versioned formula
-# on its own.
+# Producing both formulae from one release would require a second `brew` packager block
+# on the same distribution, which JReleaser's schema doesn't support - unrelated to
+# *where* they publish (both now go to homebrew-core, decided; see Tasks 9-13 of the
+# launcher self-update/doctor/Homebrew-distribution implementation plan). Until that's
+# settled, use a separate `--channel lts --lts-line X.Y` run to produce the versioned
+# formula on its own.
 #
 # As of the pinned JReleaser plugin version, Homebrew's "AT" naming convention is not
 # applied to `formulaName` itself: a literal "camel@4.20" renders an invalid Ruby class
@@ -90,7 +96,7 @@ project:
   languages:
     java:
       groupId: org.apache.camel
-      version: 17
+      version: 21
 
 distributions:
   # The public distribution deliberately excludes the native Windows bootstraps. They are only
@@ -127,6 +133,9 @@ distributions:
         # formula.rb.tpl as a Mustache truthiness check (empty string == falsy)
         # to add `keg_only :versioned_formula` and its PATH caveat.
         versionedFormula: "{{ Env.CAMEL_PKG_BREW_VERSIONED }}"
+      livecheck:
+        - 'url "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/maven-metadata.xml"'
+        - 'regex(/{{ Env.CAMEL_PKG_BREW_LIVECHECK_REGEX }}/i)'
     sdkman:
       active: RELEASE
       candidate: camel

@@ -104,30 +104,40 @@ fi
 # --- Channel -> packaging plan ---
 if [ "$CHANNEL" = "stable" ]; then
   PACKAGERS="brew,sdkman,winget,scoop,chocolatey"
-  BREW_FORMULA="camel"
-  BREW_CLASS="Camel"
+  BREW_FORMULA="apache-camel"
+  BREW_CLASS="ApacheCamel"
   SDKMAN_DEFAULT="true"
   BREW_LTS_FORMULA=""
   WEBSITE_LATEST="true"
-  [ -n "$LTS_LINE" ] && BREW_LTS_FORMULA="camel@$LTS_LINE"
+  # The maven-metadata.xml <release> tag always reflects the newest published release across every
+  # line, which is exactly "latest stable" for this formula - no line-prefix filtering needed.
+  CAMEL_PKG_BREW_LIVECHECK_REGEX='<release>([0-9]+\.[0-9]+\.[0-9]+)<\/release>'
+  [ -n "$LTS_LINE" ] && BREW_LTS_FORMULA="apache-camel@$LTS_LINE"
 else
-  # Homebrew's own versioned-formula convention names the *file* "camel@X.Y.rb" but the
-  # Ruby *class* "CamelATxy" (dot removed) - e.g. real homebrew-core "python@3.11.rb"
-  # contains "class PythonAT311". As of the pinned JReleaser plugin version in pom.xml,
-  # JReleaser does not apply this convention itself:
-  # a literal formulaName "camel@4.20" renders invalid Ruby (`class Camel@4.20 < Formula`)
-  # and a wrong output filename ("20.rb"). So BREW_CLASS below is
-  # passed as formulaName (giving valid Ruby), and JReleaser's output file (itself
-  # kebab-cased from that class name, e.g. "camel-at-420.rb")
-  # is renamed to the real "camel@X.Y.rb" after packaging - see the rename step below the
-  # mvn invocation.
+  # Homebrew's own versioned-formula convention names the *file* "apache-camel@X.Y.rb" but the
+  # Ruby *class* "ApacheCamelATxy" (dot removed) - e.g. real homebrew-core "python@3.11.rb"
+  # contains "class PythonAT311", and the real homebrew-core "apache-flink@1.rb" contains
+  # "class ApacheFlinkAT1" (confirmed by reading both directly from homebrew-core during this
+  # plan's research). As of the pinned JReleaser plugin version in pom.xml, JReleaser does not
+  # apply this convention itself: a literal formulaName "apache-camel@4.20" renders invalid Ruby
+  # (`class ApacheCamel@4.20 < Formula`) and a wrong output filename ("20.rb"). So BREW_CLASS below
+  # is passed as formulaName (giving valid Ruby), and JReleaser's output file (itself kebab-cased
+  # from that class name, e.g. "apache-camel-at-420.rb") is renamed to the real
+  # "apache-camel@X.Y.rb" after packaging - see the rename step below the mvn invocation.
   PACKAGERS="brew,sdkman,winget,chocolatey"
-  BREW_FORMULA="camel@$LTS_LINE"
-  BREW_CLASS="CamelAT$(echo "$LTS_LINE" | tr -d '.')"
+  BREW_FORMULA="apache-camel@$LTS_LINE"
+  BREW_CLASS="ApacheCamelAT$(echo "$LTS_LINE" | tr -d '.')"
   SDKMAN_DEFAULT="false"
   BREW_LTS_FORMULA=""
   WEBSITE_LATEST="false"
+  # maven-metadata.xml lists every published version, not just the newest, so the LTS formula's
+  # livecheck must filter to this LTS line's own X.Y prefix (escaping the dot so it matches
+  # literally, not "any character") or it would report the project's overall latest release
+  # instead of this line's own latest patch.
+  lts_line_escaped=$(echo "$LTS_LINE" | sed 's/\./\\./g')
+  CAMEL_PKG_BREW_LIVECHECK_REGEX="<version>(${lts_line_escaped}\.[0-9]+)<\/version>"
 fi
+export CAMEL_PKG_BREW_LIVECHECK_REGEX
 
 if [ "$PRINT_PLAN" -eq 1 ]; then
   echo "CHANNEL=$CHANNEL"
