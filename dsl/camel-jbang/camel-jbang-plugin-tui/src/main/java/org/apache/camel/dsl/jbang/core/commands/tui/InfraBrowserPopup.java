@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -520,7 +519,7 @@ class InfraBrowserPopup {
             if (!portStr.isEmpty()) {
                 cmd.add("--port=" + portStr);
             }
-            Path outputFile = Files.createTempFile("camel-infra-", ".log");
+            Path outputFile = LaunchManager.createSecureTempFile("camel-infra-", ".log");
             outputFile.toFile().deleteOnExit();
             ProcessBuilder pb = new ProcessBuilder(cmd);
             pb.redirectErrorStream(true);

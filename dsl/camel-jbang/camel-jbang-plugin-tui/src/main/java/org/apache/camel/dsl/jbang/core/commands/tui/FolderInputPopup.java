@@ -345,7 +345,7 @@ class FolderInputPopup {
             }
             cmd.add("--logging-color=true");
             cmd.addAll(extraArgs);
-            Path outputFile = Files.createTempFile("camel-folder-", ".log");
+            Path outputFile = LaunchManager.createSecureTempFile("camel-folder-", ".log");
             outputFile.toFile().deleteOnExit();
             ProcessBuilder pb = new ProcessBuilder(cmd);
             pb.redirectErrorStream(true);
