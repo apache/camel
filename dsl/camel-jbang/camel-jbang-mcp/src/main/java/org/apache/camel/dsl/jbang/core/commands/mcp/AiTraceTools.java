@@ -59,7 +59,8 @@ public class AiTraceTools {
 
     private static final Set<String> AI_HEADER_PREFIXES = Set.of(
             "CamelAwsBedrock", "CamelAwsTextract",
-            "CamelLangChain4j", "CamelDocling", "CamelOpenAI",
+            "CamelLangChain4j", "CamelLangchain4j",
+            "CamelDocling", "CamelOpenAI",
             "CamelKServe", "CamelDjl", "CamelTensorFlowServing", "CamelHuggingFace");
 
     @Inject
@@ -69,7 +70,8 @@ public class AiTraceTools {
           description = "Trace AI-specific exchange flow in a running Camel application. "
                         + "Shows token usage, model IDs, guardrail outcomes, completion reasons, "
                         + "streaming chunk counts, and per-component latency for AI components "
-                        + "(Bedrock, LangChain4j, Docling, Textract, OpenAI). "
+                        + "(Bedrock, LangChain4j, Docling, Textract, OpenAI, KServe, DJL, "
+                        + "TensorFlow Serving, HuggingFace). "
                         + "Combines message history with processor statistics filtered to AI steps.")
     public AiTraceResult camel_runtime_ai_trace(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
@@ -211,7 +213,7 @@ public class AiTraceTools {
                 .map(AiHeaderInfo::value)
                 .findFirst().orElse(null);
         String modelId = headers.stream()
-                .filter(h -> h.header().contains("ModelId"))
+                .filter(h -> "model".equals(h.category()))
                 .map(AiHeaderInfo::value)
                 .findFirst().orElse(null);
         String completionReason = headers.stream()
@@ -255,7 +257,7 @@ public class AiTraceTools {
         if (header.contains("TokenCount") || header.contains("Usage")) {
             return "token_usage";
         }
-        if (header.contains("ModelId") || header.contains("Model")) {
+        if (header.contains("Model")) {
             return "model";
         }
         if (header.contains("Guardrail")) {
