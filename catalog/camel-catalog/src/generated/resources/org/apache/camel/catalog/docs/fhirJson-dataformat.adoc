@@ -1,0 +1,20 @@
+= FHIR JSon DataFormat
+:doctitle: FHIR JSon
+:shortname: fhirJson
+:artifactid: camel-fhir
+:description: Marshall and unmarshall FHIR objects to/from JSON
+:since: 2.21
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The FHIR-JSON Data Format leverages
+https://github.com/jamesagnew/hapi-fhir/blob/master/hapi-fhir-base/src/main/java/ca/uhn/fhir/parser/JsonParser.java[HAPI-FHIR's]
+JSON parser to parse to/from JSON format to/from a HAPI-FHIR's `IBaseResource`.
+
+== FHIR JSON Format Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END

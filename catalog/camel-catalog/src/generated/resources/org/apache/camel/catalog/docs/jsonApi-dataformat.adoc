@@ -1,0 +1,33 @@
+= JSonApi DataFormat
+:doctitle: JSonApi
+:shortname: jsonApi
+:artifactid: camel-jsonapi
+:description: Marshal and unmarshal JSON:API resources using JSONAPI-Converter library
+:since: 3.0
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+
+== Dependencies
+
+To use JsonAPI in your Camel routes, you need to add the dependency
+on *camel-jsonapi* which implements this data format.
+
+If you use Maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release.
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jsonapi</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----

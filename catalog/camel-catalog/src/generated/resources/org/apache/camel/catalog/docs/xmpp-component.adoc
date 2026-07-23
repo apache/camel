@@ -1,0 +1,277 @@
+= XMPP Component
+:doctitle: XMPP
+:shortname: xmpp
+:artifactid: camel-xmpp
+:description: Send and receive messages to/from an XMPP chat server.
+:since: 1.0
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The XMPP component implements an XMPP (Jabber) transport.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-xmpp</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+------------------------------------------------------
+xmpp://[login@]hostname[:port][/participant][?Options]
+------------------------------------------------------
+
+The component supports both room based and private person-person
+conversations. +
+ The component supports both producer and consumer (you can get messages
+from XMPP or send messages to XMPP). Consumer mode supports rooms
+starting.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Headers and setting Subject or Language
+
+Camel sets the message IN headers as properties on the XMPP message. You
+can configure a `HeaderFilterStategy` if you need custom filtering of
+headers. 
+The *Subject* and *Language* of the XMPP message are also set if they
+are provided as IN headers.
+
+== Examples
+
+User `superman` to join room `krypton` at `jabber` server with password,
+`secret`:
+
+------------------------------------------------------------------------------
+xmpp://superman@jabber.org/?room=krypton@conference.jabber.org&password=secret
+------------------------------------------------------------------------------
+
+User `superman` to send messages to `joker`:
+
+-----------------------------------------------------------
+xmpp://superman@jabber.org/joker@jabber.org?password=secret
+-----------------------------------------------------------
+
+Routing example:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer://kickoff?period=10000")
+    .setBody(constant("I will win! Your Superman."))
+    .to("xmpp://superman@jabber.org/joker@jabber.org?password=secret");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="timer://kickoff?period=10000"/>
+  <setBody>
+    <constant>I will win! Your Superman.</constant>
+  </setBody>
+  <to uri="xmpp://superman@jabber.org/joker@jabber.org?password=secret"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:kickoff
+      parameters:
+        period: 10000
+      steps:
+        - setBody:
+            constant: "I will win! Your Superman."
+        - to:
+            uri: xmpp://superman@jabber.org/joker@jabber.org
+            parameters:
+              password: secret
+----
+====
+
+Consumer configuration, which writes all messages from `joker` into the
+queue, `evil.talk`.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("xmpp://superman@jabber.org/joker@jabber.org?password=secret")
+    .to("activemq:evil.talk");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="xmpp://superman@jabber.org/joker@jabber.org?password=secret"/>
+  <to uri="activemq:evil.talk"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: xmpp://superman@jabber.org/joker@jabber.org
+      parameters:
+        password: secret
+      steps:
+        - to:
+            uri: activemq:evil.talk
+----
+====
+
+Consumer configuration, which listens to room messages:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("xmpp://superman@jabber.org/?password=secret&room=krypton@conference.jabber.org")
+    .to("activemq:krypton.talk");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="xmpp://superman@jabber.org/?password=secret&amp;room=krypton@conference.jabber.org"/>
+  <to uri="activemq:krypton.talk"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: xmpp://superman@jabber.org/
+      parameters:
+        password: secret
+        room: "krypton@conference.jabber.org"
+      steps:
+        - to:
+            uri: activemq:krypton.talk
+----
+====
+
+Room in short notation (no domain part):
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("xmpp://superman@jabber.org/?password=secret&room=krypton")
+    .to("activemq:krypton.talk");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="xmpp://superman@jabber.org/?password=secret&amp;room=krypton"/>
+  <to uri="activemq:krypton.talk"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: xmpp://superman@jabber.org/
+      parameters:
+        password: secret
+        room: krypton
+      steps:
+        - to:
+            uri: activemq:krypton.talk
+----
+====
+
+When connecting to the Google Chat service, you'll need to specify the
+`serviceName` as well as your credentials:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("xmpp://talk.google.com:5222/touser@gmail.com?serviceName=gmail.com&user=fromuser&password=secret")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="xmpp://talk.google.com:5222/touser@gmail.com?serviceName=gmail.com&amp;user=fromuser&amp;password=secret"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: xmpp://talk.google.com:5222/touser@gmail.com
+            parameters:
+              serviceName: gmail.com
+              user: fromuser
+              password: secret
+        - to:
+            uri: mock:result
+----
+====
+
+ 

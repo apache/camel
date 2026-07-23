@@ -1,0 +1,50 @@
+= Message Bus
+:tabs-sync-option:
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/MessageBus.html[Message
+Bus] from the xref:enterprise-integration-patterns.adoc[EIP patterns].
+You could view Camel as a Message Bus itself as it allows producers and
+consumers to be decoupled.
+
+image::eip/MessageBusSolution.gif[image]
+
+A messaging system such as Apache ActiveMQ can be used as a Message Bus.
+
+== Example
+
+The following demonstrates how the Camel message bus can be used to
+ingest a message into the bus with the xref:ROOT:jms-component.adoc[JMS] component.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox")
+    .to("jms:inbox");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:inbox"/>
+    <to uri="jms:inbox"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - to:
+            uri: jms:inbox
+----
+====

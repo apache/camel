@@ -1,0 +1,20 @@
+= FHIR XML DataFormat
+:doctitle: FHIR XML
+:shortname: fhirXml
+:artifactid: camel-fhir
+:description: Marshall and unmarshall FHIR objects to/from XML
+:since: 2.21
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The FHIR-XML Data Format leverages
+https://github.com/jamesagnew/hapi-fhir/blob/master/hapi-fhir-base/src/main/java/ca/uhn/fhir/parser/XmlParser.java[HAPI-FHIR's]
+XML parser to parse to/from XML format to/from a HAPI-FHIR's `IBaseResource`.
+
+== FHIR XML Format Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END

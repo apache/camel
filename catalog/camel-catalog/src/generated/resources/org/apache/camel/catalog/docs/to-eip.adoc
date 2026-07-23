@@ -1,0 +1,252 @@
+= To EIP
+:doctitle: To
+:shortname: to
+:description: Sends the message to a fixed endpoint URI
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/MessageEndpoint.html[Message
+Endpoint] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns] using the
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
+interface.
+
+How does an application connect to a messaging channel to send and receive messages?
+
+image::eip/MessageEndpointSolution.gif[image]
+
+Connect an application to a messaging channel using a Message Endpoint, a client of the messaging system that the application can then use to send or receive messages.
+
+In Camel the To EIP is used for sending xref:message.adoc[messages] to static xref:message-endpoint.adoc[endpoints].
+
+The To and xref:toD-eip.adoc[ToD] EIPs are the most common patterns to use in Camel xref:manual:ROOT:routes.adoc[routes].
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Different between To and ToD
+
+The `to` is used for sending messages to a static xref:message-endpoint.adoc[endpoint].
+In other words `to` sends messages only to the *same* endpoint.
+
+The `toD` is used for sending messages to a dynamic xref:message-endpoint.adoc[endpoint].
+The dynamic endpoint is evaluated _on-demand_ by an xref:manual:ROOT:expression.adoc[Expression].
+By default, the xref:components:languages:simple-language.adoc[Simple] expression is used to compute
+the dynamic endpoint URI.
+
+NOTE: the Java DSL also provides a `toF` EIP, which can be used to avoid concatenating route parameters and making the code harder to read.
+
+== Using To
+
+The following example route demonstrates the use of a xref:ROOT:file-component.adoc[File] consumer endpoint and a xref:ROOT:jms-component.adoc[JMS] producer endpoint,
+by their xref:manual::uris.adoc[URIs]:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:messages/foo")
+    .to("jms:queue:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:messages/foo"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:messages/foo
+      steps:
+        - to:
+            uri: jms:queue:foo
+----
+====
+
+== How to use a dynamic URI in to
+
+A dynamic URI is an endpoint URI that varies depending on inflight
+routing information, such as Exchange properties, message headers, the
+body, the Camel Context, etc.
+
+For example, if you're using a Freemarker producer and the template
+location is provided inside the current message, you might expect the
+following code to work, *but it will not*.
+
+[WARNING]
+====
+*This is not valid code*
+
+This snippet is not valid code. Read on.
+====
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:messages/foo")
+    .to("freemarker://templateHome/${body.templateName}.ftl")
+    .to("jms:queue:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:messages/foo"/>
+    <to uri="freemarker://templateHome/${body.templateName}.ftl"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:messages/foo
+      steps:
+        - to:
+            uri: "freemarker://templateHome/${body.templateName}.ftl"
+        - to:
+            uri: jms:queue:foo
+----
+====
+
+In this case, you must use an EIP (Enterprise Integration Pattern) that
+is capable of computing a dynamic URI using
+an xref:manual::expression.adoc[Expression], such as
+the xref:components:eips:toD-eip.adoc[toD] or xref:components:eips:recipientList-eip.adoc[Recipient List] EIP pattern.
+
+[TIP]
+====
+*This is valid code*
+
+This snippet is valid code.
+====
+
+To fix the above problem we can use either toD or recipientList.
+Using toD is easier as shown below:
+
+[tabs]
+====
+Java::
++
+Use `toD` for dynamic URIs
++
+[source,java]
+----
+from("file:messages/foo")
+    .toD("freemarker://templateHome/${body.templateName}.ftl")
+    .to("jms:queue:foo");
+----
+
+XML::
++
+Use `<toD>` for dynamic URIs
++
+[source,xml]
+----
+<route>
+    <from uri="file:messages/foo"/>
+    <toD uri="freemarker://templateHome/${body.templateName}.ftl"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+
+YAML::
++
+Use `- toD:` for dynamic URIs
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:messages/foo
+      steps:
+        - toD:
+            uri: "freemarker://templateHome/${body.templateName}.ftl"
+        - to:
+            uri: jms:queue:foo
+----
+====
+
+When using recipient list:
+
+[source,java]
+----
+.recipientList(simple("freemarker://templateHome/${body.templateName}.ftl"))
+----
+
+[tabs]
+====
+Java::
++
+Use `recipientList` for more flexible and dynamic URIs
++
+[source,java]
+----
+from("file:messages/foo")
+    .recipientList(simple("freemarker://templateHome/${body.templateName}.ftl"))
+    .to("jms:queue:foo");
+----
+
+XML::
++
+Use `<recipientList>` for more flexible and dynamic URIs
++
+[source,xml]
+----
+<route>
+    <from uri="file:messages/foo"/>
+    <recipientList>
+        <simple>freemarker://templateHome/${body.templateName}.ftl</simple>
+    </recipientList>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+
+YAML::
++
+Use `- recipientList:` for more flexible and dynamic URIs
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:messages/foo
+      steps:
+        - recipientList:
+            expression:
+              simple:
+                expression: "freemarker://templateHome/${body.templateName}.ftl"
+        - to:
+            uri: jms:queue:foo
+----
+====

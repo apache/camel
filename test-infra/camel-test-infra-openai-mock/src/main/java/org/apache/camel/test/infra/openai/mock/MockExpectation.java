@@ -33,6 +33,8 @@ public class MockExpectation {
     private String toolContentResponse;
     private BiFunction<HttpExchange, String, String> customResponseFunction;
     private Consumer<String> requestAssertion;
+    private Integer usagePromptTokens;
+    private Integer usageCompletionTokens;
 
     public MockExpectation(String expectedInput) {
         this.expectedInput = expectedInput;
@@ -87,6 +89,19 @@ public class MockExpectation {
 
     public void setToolContentResponse(String toolContentResponse) {
         this.toolContentResponse = toolContentResponse;
+    }
+
+    public void setUsage(int promptTokens, int completionTokens) {
+        this.usagePromptTokens = promptTokens;
+        this.usageCompletionTokens = completionTokens;
+    }
+
+    public Integer getUsagePromptTokens() {
+        return usagePromptTokens;
+    }
+
+    public Integer getUsageCompletionTokens() {
+        return usageCompletionTokens;
     }
 
     // Tool sequence delegation methods

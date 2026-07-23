@@ -1,0 +1,602 @@
+= MINA SFTP Component
+:doctitle: MINA SFTP
+:shortname: mina-sftp
+:artifactid: camel-mina-sftp
+:description: Upload and download files to/from SFTP servers using Apache MINA SSHD.
+:since: 4.18
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The MINA SFTP component provides access to remote file systems over the SFTP protocol using Apache MINA SSHD library.
+
+This component is designed as a near drop-in replacement for the JSch-based `sftp` component, requiring only a URI scheme change from `sftp://` to `mina-sftp://`. Most configuration options remain the same for supported features.
+
+== URI format
+
+----
+mina-sftp://[username@]host[:port]/directoryName[?options]
+----
+
+Where *directoryName* represents the underlying directory. The directory name is a relative path.
+
+// component-configure options: START
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+// endpoint options: START
+// endpoint options: END
+
+== Sub-Pages
+
+For detailed documentation on specific topics, see:
+
+* xref:others:mina-sftp-authentication.adoc[Authentication] - Password, public key, certificates, and authentication priority
+* xref:others:mina-sftp-security.adoc[SSH Security] - Host key verification, ciphers, key exchange protocols, and algorithm recommendations
+* xref:others:mina-sftp-migration.adoc[Migration from JSch] - Migration guide, behavioral differences, deprecated parameters, and logging
+
+== Username Resolution
+
+When no username is specified in the URI, the mina-sftp component follows the same username resolution order as the JSch-based camel-sftp component, matching standard SSH client behavior.
+
+=== Resolution Priority Order
+
+[cols="1,2,3"]
+|===
+| Priority | Source | Description
+
+| 1 (highest)
+| URI parameter
+| Username specified directly in URI: `mina-sftp://myuser@host/path`
+
+| 2
+| SSH config file
+| `User` directive in `~/.ssh/config` for the target host
+
+| 3 (lowest)
+| OS username
+| `System.getProperty("user.name")` - current operating system user
+|===
+
+=== SSH Config Resolution
+
+The component reads the user's `~/.ssh/config` file (if it exists) and applies matching `Host` entries. For example:
+
+[source]
+----
+# ~/.ssh/config
+Host myserver.example.com
+    User deployuser
+
+Host *.internal.example.com
+    User admin
+
+Host *
+    User defaultuser
+----
+
+With this configuration:
+* `mina-sftp://myserver.example.com/path` uses username `deployuser`
+* `mina-sftp://app.internal.example.com/path` uses username `admin`
+* `mina-sftp://other.example.com/path` uses username `defaultuser`
+
+=== OS Username Fallback
+
+If the SSH config file exists but does not contain a `User` directive for the target host, the component falls back to the operating system username (`System.getProperty("user.name")`).
+
+IMPORTANT: The OS username fallback only occurs when the SSH config file exists. If no `~/.ssh/config` file exists at all, the connection will fail with "No username specified when the session was created".
+
+=== Explicit Username Recommended
+
+For production deployments, always specify the username explicitly in the URI to ensure predictable behavior across different environments:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Recommended: explicit username
+from("mina-sftp://deployuser@host/path?password=secret")
+    .to("file:local");
+
+// Not recommended: relies on SSH config or OS username
+from("mina-sftp://host/path?password=secret")
+    .to("file:local");
+----
+
+XML::
++
+[source,xml]
+----
+<!-- Recommended: explicit username -->
+<route>
+  <from uri="mina-sftp://deployuser@host/path?password=secret"/>
+  <to uri="file:local"/>
+</route>
+
+<!-- Not recommended: relies on SSH config or OS username -->
+<route>
+  <from uri="mina-sftp://host/path?password=secret"/>
+  <to uri="file:local"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+# Recommended: explicit username
+- route:
+    from:
+      uri: mina-sftp://deployuser@host/path
+      parameters:
+        password: secret
+      steps:
+        - to:
+            uri: file:local
+
+# Not recommended: relies on SSH config or OS username
+- route:
+    from:
+      uri: mina-sftp://host/path
+      parameters:
+        password: secret
+      steps:
+        - to:
+            uri: file:local
+----
+====
+
+=== Compatibility with camel-sftp
+
+This username resolution behavior is identical to the JSch-based camel-sftp component, ensuring seamless migration. Both components:
+
+* Check the URI for an explicit username first
+* Fall back to `~/.ssh/config` if no username in URI
+* Fall back to OS username if SSH config exists but has no `User` directive
+
+== Examples
+
+=== Upload Files
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox")
+    .to("mina-sftp://user@sftp.example.com/upload?password=secret");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <to uri="mina-sftp://user@sftp.example.com/upload?password=secret"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - to:
+            uri: mina-sftp://user@sftp.example.com/upload
+            parameters:
+              password: secret
+----
+====
+
+=== Download Files
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mina-sftp://user@sftp.example.com/download?password=secret&delete=true")
+    .to("file:outbox");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina-sftp://user@sftp.example.com/download?password=secret&amp;delete=true"/>
+  <to uri="file:outbox"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina-sftp://user@sftp.example.com/download
+      parameters:
+        password: secret
+        delete: true
+      steps:
+        - to:
+            uri: file:outbox
+----
+====
+
+=== Poll and Move
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mina-sftp://user@host/inbox?password=secret&move=.done")
+    .to("file:local");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina-sftp://user@host/inbox?password=secret&amp;move=.done"/>
+  <to uri="file:local"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina-sftp://user@host/inbox
+      parameters:
+        password: secret
+        move: .done
+      steps:
+        - to:
+            uri: file:local
+----
+====
+
+=== Filter by Extension
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mina-sftp://user@host/data?password=secret&antInclude=*.csv")
+    .to("direct:process-csv");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina-sftp://user@host/data?password=secret&amp;antInclude=*.csv"/>
+  <to uri="direct:process-csv"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina-sftp://user@host/data
+      parameters:
+        password: secret
+        antInclude: "*.csv"
+      steps:
+        - to:
+            uri: direct:process-csv
+----
+====
+
+== Error Handling
+
+=== Connection Retry
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&maximumReconnectAttempts=5&reconnectDelay=2000")
+    .to("file:local");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina-sftp://user@host/path?password=secret&amp;maximumReconnectAttempts=5&amp;reconnectDelay=2000"/>
+  <to uri="file:local"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina-sftp://user@host/path
+      parameters:
+        password: secret
+        maximumReconnectAttempts: 5
+        reconnectDelay: 2000
+      steps:
+        - to:
+            uri: file:local
+----
+====
+
+=== Error Messages
+
+The component provides clear error messages for common failure scenarios:
+
+==== Connection Errors
+* **Host unreachable**: `Cannot connect to \{host\}:\{port\}`
+* **Connection timeout**: `Connection timed out after \{timeout\}ms`
+
+==== Authentication Errors
+* **Authentication failure**: `Authentication failed: \{reason\}`
+* **Authentication timeout**: `Authentication timed out after \{timeout\}ms`
+
+==== Configuration Errors
+* **Invalid chmod**: `Invalid chmod value: '999'. Must be a valid octal number (e.g., 644, 755)`
+* **Invalid cipher**: `Unknown or unsupported cipher: xxx. Available ciphers: [aes128-ctr, aes256-ctr, ...]`
+* **Invalid key exchange**: `Unknown or unsupported key exchange protocol: xxx. Available protocols: [curve25519-sha256, ...]`
+* **Invalid host key algorithm**: `Unknown or unsupported server host key algorithm: xxx. Available algorithms: [ssh-ed25519, ...]`
+
+==== Host Key Verification Errors
+* **Unknown host**: `Host key verification failed: server 'hostname:port' is not in the known_hosts file`
+* **Key mismatch**: `Host key verification failed: the host key for 'hostname:port' has changed!`
+* **Expired certificate**: `Host certificate has expired. Valid until <date>, current time: <date>`
+
+==== Unsupported Features
+* **Proxy**: `Proxy not supported in mina-sftp, use sftp component`
+
+The error messages include available options where applicable, making it easier to correct configuration issues.
+
+== Compression
+
+The mina-sftp component supports SSH data compression to reduce bandwidth usage for large file transfers over slow or metered connections.
+
+To enable compression, set the `compression` option to a value between 1 and 10:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&compression=5")
+    .to("file:local");
+----
+
+When compression is enabled, the component configures the following algorithms in order of preference:
+
+1. `zlib@openssh.com` (OpenSSH delayed compression - preferred for security)
+2. `zlib` (standard zlib compression)
+3. `none` (fallback if server doesn't support compression)
+
+If the server does not support compression, the connection falls back to uncompressed transfer and logs a WARNING.
+
+NOTE: Unlike the JSch-based `sftp` component which requires manually adding a zlib JAR to the classpath, Apache MINA SSHD includes built-in compression support. No additional dependencies are needed.
+
+By default (`compression=0`), compression is disabled to minimize CPU overhead.
+
+== Connection Keep-Alive
+
+The component supports SSH keep-alive (heartbeat) functionality to prevent connections from being dropped during long idle periods and to detect unresponsive servers.
+
+=== Configuration Options
+
+[cols="1,1,1,3"]
+|===
+| Option | Default | Type | Description
+
+| `serverAliveInterval`
+| `0`
+| int (ms)
+| Interval in milliseconds between keep-alive messages. Set to `0` to disable (default).
+
+| `serverAliveCountMax`
+| `1`
+| int
+| Maximum number of consecutive unanswered keep-alive messages before the connection is terminated.
+|===
+
+=== Preventing Connection Drops
+
+[source,java]
+----
+// Send keep-alive every 30 seconds, terminate after 3 unanswered (90s max detection time)
+from("mina-sftp://user@host/path?password=secret&serverAliveInterval=30000&serverAliveCountMax=3")
+    .to("file:local");
+----
+
+=== Behavioral Difference: serverAliveCountMax with Zero or Negative Values
+
+IMPORTANT: There is a behavioral difference between `mina-sftp` and `sftp` components when `serverAliveCountMax` is set to `0` or a negative value.
+
+[cols="1,2,2"]
+|===
+| Value | mina-sftp (MINA SSHD) | sftp (JSch)
+
+| `> 0`
+| Terminate connection after N unanswered heartbeats
+| Terminate connection after N unanswered heartbeats
+
+| `= 0`
+| *Fire-and-forget mode*: heartbeats sent but no reply expected
+| No keep-alive messages are sent
+
+| `< 0`
+| Same as `0` (fire-and-forget mode)
+| No keep-alive messages are sent
+|===
+
+Always use positive values for `serverAliveCountMax` for consistent behavior when migrating.
+
+== Local Interface Binding
+
+In multi-homed environments (servers with multiple network interfaces), specify which local network interface the SFTP connection should use:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&bindAddress=192.168.1.100")
+    .to("file:local");
+----
+
+=== Bind Address Formats
+
+[cols="2,2,2"]
+|===
+| Format | Example | Description
+
+| IPv4 address
+| `192.168.1.100`
+| Bind to IP, ephemeral port
+
+| IPv4 with port
+| `192.168.1.100:5000`
+| Bind to IP and specific port
+
+| IPv6 address
+| `::1`
+| Bind to IPv6, ephemeral port
+
+| IPv6 with port
+| `[::1]:5000`
+| Bind to IPv6 and port (bracketed notation)
+
+| Hostname
+| `localhost`
+| Bind to hostname, ephemeral port
+|===
+
+NOTE: Port specification is a mina-sftp enhancement not available in the JSch-based `sftp` component.
+
+When `bindAddress` is not specified, the operating system's routing table determines which local interface is used.
+
+== SFTP Buffer Size Configuration
+
+Configure buffer sizes for SFTP read and write operations to optimize file transfer performance:
+
+[source,java]
+----
+// Configure 64KB read buffer and 32KB write buffer
+from("mina-sftp://user@host/path?password=secret&readBufferSize=65536&writeBufferSize=32768")
+    .to("file:local");
+----
+
+[cols="2,1,3"]
+|===
+| Option | Default | Description
+
+| `readBufferSize`
+| MINA default
+| Buffer size in bytes for reading data from SFTP connections
+
+| `writeBufferSize`
+| MINA default
+| Buffer size in bytes for writing data to SFTP connections
+|===
+
+IMPORTANT: The maximum recommended buffer size is `126976` bytes (~124KB). Larger values may cause data corruption in Apache MINA SSHD.
+
+The deprecated `bulkRequests` parameter is still accepted for backward compatibility but new configurations should use `readBufferSize` and `writeBufferSize` directly.
+
+== File and Directory Permissions (chmod)
+
+Set POSIX file permissions on uploaded files and created directories:
+
+[source,java]
+----
+// Set file permissions to rw-r--r-- (644) and directory permissions to rwxr-xr-x (755)
+from("file:/data/outbound")
+    .to("mina-sftp://user@host/uploads?password=secret&chmod=644&chmodDirectory=755");
+----
+
+Common permission values:
+
+[cols="1,2,3"]
+|===
+| Value | Permissions | Description
+
+| `755`
+| `rwxr-xr-x`
+| Owner full, group/others read+execute
+
+| `644`
+| `rw-r--r--`
+| Owner read+write, group/others read-only
+
+| `600`
+| `rw-------`
+| Owner read+write only
+|===
+
+Values are validated at endpoint startup. Invalid values cause a clear error message.
+
+IMPORTANT: The `chmod` and `chmodDirectory` options only work on POSIX-compatible SFTP servers. Windows SFTP servers may ignore these settings.
+
+== Symbolic Links
+
+The consumer follows symbolic links to their target files. The producer writes to symlink targets.
+
+NOTE: **Absolute symlinks in chroot environments**: If the SFTP server uses a chroot jail, absolute symlinks may not resolve correctly. Use **relative symlinks** for maximum compatibility.
+
+[source,bash]
+----
+# Relative symlink (works in chroot) - RECOMMENDED
+ln -s ../actual-data/file.txt data/link.txt
+
+# Absolute symlink (may fail in chroot)
+ln -s /home/user/actual-data/file.txt data/link.txt
+----
+
+== Thread Safety
+
+The mina-sftp component handles thread safety internally. The underlying MINA SSHD session and SFTP client are not thread-safe, so the component uses internal locking to ensure safe concurrent access.
+
+Multiple Camel routes can safely share the same SFTP endpoint. Each endpoint maintains its own connection. For high-throughput scenarios, consider using multiple endpoints.
+
+== Filename Encoding
+
+By default, MINA SSHD uses UTF-8 encoding for filenames. For legacy servers using different regional encodings, configure the `filenameEncoding` option:
+
+[source,java]
+----
+// Connect to a legacy server using GBK encoding for Chinese filenames
+from("mina-sftp://user@host/path?password=secret&filenameEncoding=GBK")
+    .to("file:local");
+----
+
+Supported encodings include GBK, GB2312, Shift-JIS, EUC-JP, ISO-8859-1, and Windows-1252.

@@ -1,0 +1,57 @@
+= Kudu Component
+:doctitle: Kudu
+:shortname: kudu
+:artifactid: camel-kudu
+:description: Interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
+:since: 3.0
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Kudu component supports storing and retrieving data from/to https://kudu.apache.org/[Apache Kudu], a free and open source column-oriented data store of the Apache Hadoop ecosystem.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kudu</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== Prerequisites
+
+You must have a valid Kudu instance running. More information is available at https://kudu.apache.org/[Apache Kudu].
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Input Body formats
+
+==== Insert, delete, update, and upsert
+
+The input body format has to be a `java.util.Map<String, Object>`.
+This map will represent a row of the table whose elements are columns, where the key is the column name and the value is the value of the column.
+
+=== Output Body formats
+
+==== Scan
+
+The output body format will be a `java.util.List<java.util.Map<String, Object>>`.
+Each element of the list will be a different row of the table.
+Each row is a `Map<String, Object>` whose elements will be each pair of column name and column value for that row.

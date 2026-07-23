@@ -1,0 +1,109 @@
+= Specialized tokenizer for AI applications EIP
+:doctitle: Specialized tokenizer for AI applications
+:shortname: tokenizer
+:description: Tokenizes the message body for AI processing, splitting text into chunks suitable for embedding or LLM input
+:since: 4.8
+:supportlevel: Stable
+:tabs-sync-option:
+
+The Tokenizer EIP provides support to tokenize (chunk) larger blocks of text into text segments
+that can be used when interacting with LLMs. Tokenization is particularly helpful when used with
+https://en.wikipedia.org/wiki/Vector_database[vector databases] to provide better and more contextual search results
+for https://en.wikipedia.org/wiki/Retrieval-augmented_generation[retrieval-augmented generation (RAG)].
+
+This EIP uses the https://docs.langchain4j.dev/tutorials/rag/#document-splitter[LangChain4j document splitter]
+to handle chunking.
+
+== EIP options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Supported Splitters
+
+The following type of splitters is supported:
+
+* By paragraph: using the DSL `tokenizer().byParagraph()`
+* By sentence: using the DSL `tokenizer().bySentence()`
+* By word: using the DSL `tokenizer().byWord()`
+* By line: using the DSL `tokenizer().byLine()`
+* By character: using the DSL `tokenizer().byCharacter()`
+
+== Supported Tokenizers
+
+The following tokenizers are supported:
+
+* OpenAI: using `LangChain4jTokenizerDefinition.TokenizerType.OPEN_AI`
+* Azure: using `LangChain4jTokenizerDefinition.TokenizerType.AZURE`
+* Qwen: using `LangChain4jTokenizerDefinition.TokenizerType.QWEN`
+
+== Example
+
+The tokenization creates a composite message (an array of Strings). This composite message can be split
+using the xref:split-eip.adoc[Split EIP] so that each text segment is sent separately to an endpoint.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .tokenize(tokenizer()
+            .byParagraph()
+                .maxSegmentSize(1024)
+                .maxOverlap(10)
+                .using(LangChain4jTokenizerDefinition.TokenizerType.OPEN_AI)
+                .end())
+    .split().body()
+    .to("mock:result");
+----
+====
+
+=== Tokenize by tokens
+
+Starting with Camel 4.12, the code defaults to using segment sizes for determining the maximum amount of data to tokenize.
+To tokenize by tokens, you must specify the underlying model:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .tokenize(tokenizer()
+            .byParagraph()
+                .maxTokens(1024, "gpt-4o-mini")
+                .maxOverlap(10)
+                .using(LangChain4jTokenizerDefinition.TokenizerType.OPEN_AI)
+                .end())
+    .split().body()
+    .to("mock:result");
+----
+====
+
+== Dependencies
+
+Maven users will need to add the following dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-langchain4j-tokenizer</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+The application must also provide the specific tokenizer implementation from LangChain4j:
+
+* OpenAI: `dev.langchain4j:langchain4j-open-ai`
+* Azure: `dev.langchain4j:langchain4j-azure-open-ai`
+* Qwen: `dev.langchain4j:langchain4j-dashscope`
+
+== See Also
+
+* xref:split-eip.adoc[Split EIP]

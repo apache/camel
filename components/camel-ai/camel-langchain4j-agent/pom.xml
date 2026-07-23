@@ -67,11 +67,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-langchain4j-tools</artifactId>
+      <artifactId>camel-ai-tool</artifactId>
       <version>${project.version}</version>
     </dependency>
-
     <!-- for testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jackson</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring-junit6</artifactId>

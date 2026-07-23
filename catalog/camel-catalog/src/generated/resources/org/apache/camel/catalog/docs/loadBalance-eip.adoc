@@ -1,0 +1,25 @@
+= Load Balance EIP
+:doctitle: Load Balance
+:shortname: loadBalance
+:description: Distributes messages across multiple endpoints using a load balancing strategy such as round-robin, random, failover, or weighted
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+The Load Balancer Pattern allows you to delegate to one of a number of endpoints using a variety of different load balancing policies.
+
+== Built-in load balancing policies
+
+Camel provides the following policies out-of-the-box:
+
+[width="100%",cols="3,6",options="header"]
+|=======================================================================
+| Policy | Description
+| xref:customLoadBalancer-eip.adoc[Custom Load Balancer] | To use a custom load balancer implementation.
+| xref:failoverLoadBalancer-eip.adoc[Fail-over Load Balancer] | In case of failures, the exchange will be tried on the next endpoint.
+| xref:roundRobinLoadBalancer-eip.adoc[Round Robin Load Balancer] | The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.
+| xref:randomLoadBalancer-eip.adoc[Random Load Balancer] |  The destination endpoints are selected randomly.
+| xref:stickyLoadBalancer-eip.adoc[Sticky Load Balancer] | Sticky load balancing using an xref:manual::expression.adoc[Expression] to calculate a correlation key to perform the sticky load balancing.
+| xref:topicLoadBalancer-eip.adoc[Topic Load Balancer] | Topic which sends to all destinations.
+| xref:weightedLoadBalancer-eip.adoc[Weighted Loader Balancer] | Use a weighted load distribution ratio for each server with respect to others.
+|=======================================================================

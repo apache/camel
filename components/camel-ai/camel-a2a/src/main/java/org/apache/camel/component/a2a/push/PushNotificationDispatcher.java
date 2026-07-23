@@ -16,12 +16,8 @@
  */
 package org.apache.camel.component.a2a.push;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +40,17 @@ import org.apache.camel.component.a2a.model.TaskPushNotificationConfig;
 import org.apache.camel.component.a2a.state.A2ATaskStore;
 import org.apache.camel.component.a2a.util.A2AJsonMapper;
 import org.apache.camel.component.a2a.util.WebhookUrlValidator;
+import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
+import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
+import org.apache.hc.client5.http.async.methods.SimpleRequestBuilder;
+import org.apache.hc.client5.http.async.methods.SimpleRequestProducer;
+import org.apache.hc.client5.http.async.methods.SimpleResponseConsumer;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
+import org.apache.hc.core5.concurrent.FutureCallback;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +69,7 @@ public class PushNotificationDispatcher {
     private static final long MAX_RETRY_DELAY_MS = TimeUnit.HOURS.toMillis(1);
     private static final int MAX_PENDING_WORK = 1024;
 
-    private final HttpClient httpClient;
+    private final CloseableHttpAsyncClient httpClient;
     private final A2ATaskStore store;
     private final int maxRetries;
     private final long initialBackoffMs;
@@ -73,7 +80,7 @@ public class PushNotificationDispatcher {
     private final Set<CompletableFuture<?>> inFlightRequests = ConcurrentHashMap.newKeySet();
     private final Set<ScheduledFuture<?>> scheduledRetries = ConcurrentHashMap.newKeySet();
 
-    public PushNotificationDispatcher(HttpClient httpClient, A2ATaskStore store,
+    public PushNotificationDispatcher(CloseableHttpAsyncClient httpClient, A2ATaskStore store,
                                       int maxRetries, long initialBackoffMs,
                                       ScheduledExecutorService executor,
                                       boolean allowLocalWebhookUrls) {
@@ -133,51 +140,90 @@ public class PushNotificationDispatcher {
     }
 
     private void dispatchToWebhook(TaskPushNotificationConfig config, byte[] body) {
+        sendWithRetryAttempt(config, body, 0);
+    }
+
+    /**
+     * Builds a request target pinned to the address the webhook URL was just validated against.
+     * <p>
+     * The host is resolved once, by the validator, and the resulting address is carried on the {@link HttpHost} so the
+     * connection is opened to exactly that address. The original hostname is kept on the same {@link HttpHost}, so the
+     * {@code Host} header, TLS SNI and certificate hostname verification still use the hostname. Without this the HTTP
+     * client would resolve the hostname again at connection time and could reach a different address than the one that
+     * passed the SSRF checks (DNS rebinding).
+     */
+    static HttpHost pinnedTarget(URI uri, InetAddress validatedAddress) {
+        String scheme = uri.getScheme();
+        int port = uri.getPort();
+        if (port == -1) {
+            port = "https".equalsIgnoreCase(scheme) ? 443 : 80;
+        }
+        return new HttpHost(scheme, validatedAddress, uri.getHost(), port);
+    }
+
+    private SimpleHttpRequest buildRequest(URI uri, TaskPushNotificationConfig config, byte[] body) {
+        SimpleRequestBuilder requestBuilder = SimpleRequestBuilder.post(uri)
+                .setBody(body, ContentType.parse(A2AConstants.CONTENT_TYPE))
+                .setRequestConfig(RequestConfig.custom()
+                        .setResponseTimeout(Timeout.ofMilliseconds(REQUEST_TIMEOUT.toMillis()))
+                        .build());
+        applyAuth(requestBuilder, config);
+        return requestBuilder.build();
+    }
+
+    private void applyAuth(SimpleRequestBuilder builder, TaskPushNotificationConfig config) {
+        AuthenticationInfo auth = config.getAuthentication();
+        if (auth != null && auth.getScheme() != null && auth.getCredentials() != null) {
+            builder.setHeader("Authorization", auth.getScheme() + " " + auth.getCredentials());
+        } else if (config.getToken() != null) {
+            builder.setHeader("Authorization", "Bearer " + config.getToken());
+        }
+    }
+
+    private void sendWithRetryAttempt(TaskPushNotificationConfig config, byte[] body, int attempt) {
         if (closed.get()) {
             return;
         }
+
+        // Re-validate and re-resolve on every attempt: a config that was safe when first dispatched can be
+        // rebound between retries, which may be up to an hour apart.
+        URI uri;
+        InetAddress validatedAddress;
         try {
-            WebhookUrlValidator.validate(config.getUrl(), allowLocalWebhookUrls);
+            validatedAddress = WebhookUrlValidator.validateAndResolve(config.getUrl(), allowLocalWebhookUrls);
+            uri = URI.create(config.getUrl());
         } catch (IllegalArgumentException e) {
             LOG.warn("Skipping invalid push notification webhook for taskId={}: {}", config.getTaskId(), e.getMessage());
             return;
         }
 
-        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
-                .uri(URI.create(config.getUrl()))
-                .header("Content-Type", A2AConstants.CONTENT_TYPE)
-                .timeout(REQUEST_TIMEOUT)
-                .POST(HttpRequest.BodyPublishers.ofByteArray(body));
-
-        applyAuth(requestBuilder, config);
-        HttpRequest request = requestBuilder.build();
-
-        sendWithRetry(request, config);
-    }
-
-    private void applyAuth(HttpRequest.Builder builder, TaskPushNotificationConfig config) {
-        AuthenticationInfo auth = config.getAuthentication();
-        if (auth != null && auth.getScheme() != null && auth.getCredentials() != null) {
-            builder.header("Authorization", auth.getScheme() + " " + auth.getCredentials());
-        } else if (config.getToken() != null) {
-            builder.header("Authorization", "Bearer " + config.getToken());
-        }
-    }
-
-    private void sendWithRetry(HttpRequest request, TaskPushNotificationConfig config) {
-        sendWithRetryAttempt(request, config, 0);
-    }
-
-    private void sendWithRetryAttempt(HttpRequest request, TaskPushNotificationConfig config, int attempt) {
-        if (closed.get()) {
-            return;
-        }
         if (!tryAdmitWork(config, "HTTP request")) {
             return;
         }
-        CompletableFuture<HttpResponse<InputStream>> responseFuture;
+
+        CompletableFuture<SimpleHttpResponse> responseFuture = new CompletableFuture<>();
         try {
-            responseFuture = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream());
+            httpClient.execute(
+                    pinnedTarget(uri, validatedAddress),
+                    SimpleRequestProducer.create(buildRequest(uri, config, body)),
+                    SimpleResponseConsumer.create(),
+                    null, null,
+                    new FutureCallback<>() {
+                        @Override
+                        public void completed(SimpleHttpResponse response) {
+                            responseFuture.complete(response);
+                        }
+
+                        @Override
+                        public void failed(Exception e) {
+                            responseFuture.completeExceptionally(e);
+                        }
+
+                        @Override
+                        public void cancelled() {
+                            responseFuture.cancel(false);
+                        }
+                    });
         } catch (RuntimeException e) {
             releaseWork();
             throw e;
@@ -186,14 +232,10 @@ public class PushNotificationDispatcher {
         try {
             track(responseFuture.whenCompleteAsync((response, failure) -> {
                 if (closed.get()) {
-                    if (response != null) {
-                        closeResponseBody(response.body(), config);
-                    }
                     return;
                 }
-                boolean retry = false;
+                boolean retry;
                 if (failure == null) {
-                    closeResponseBody(response.body(), config);
                     retry = shouldRetry(response, config, attempt);
                 } else {
                     Throwable cause = failure instanceof CompletionException && failure.getCause() != null
@@ -204,7 +246,7 @@ public class PushNotificationDispatcher {
                     retry = true;
                 }
                 if (retry && attempt < maxRetries) {
-                    scheduleRetry(request, config, attempt);
+                    scheduleRetry(config, body, attempt);
                 } else if (retry) {
                     LOG.error("Push notification to {} exhausted all {} retries for taskId={}",
                             config.getUrl(), maxRetries + 1, config.getTaskId());
@@ -216,7 +258,7 @@ public class PushNotificationDispatcher {
         }
     }
 
-    private void scheduleRetry(HttpRequest request, TaskPushNotificationConfig config, int attempt) {
+    private void scheduleRetry(TaskPushNotificationConfig config, byte[] body, int attempt) {
         if (closed.get()) {
             return;
         }
@@ -229,7 +271,7 @@ public class PushNotificationDispatcher {
             ScheduledFuture<?> scheduled = executor.schedule(() -> {
                 scheduledRetries.remove(scheduledRef.get());
                 releaseWork();
-                sendWithRetryAttempt(request, config, attempt + 1);
+                sendWithRetryAttempt(config, body, attempt + 1);
             }, delay, TimeUnit.MILLISECONDS);
             scheduledRef.set(scheduled);
             scheduledRetries.add(scheduled);
@@ -287,8 +329,8 @@ public class PushNotificationDispatcher {
         pendingWork.updateAndGet(current -> current > 0 ? current - 1 : 0);
     }
 
-    private boolean shouldRetry(HttpResponse<InputStream> response, TaskPushNotificationConfig config, int attempt) {
-        int status = response.statusCode();
+    private boolean shouldRetry(SimpleHttpResponse response, TaskPushNotificationConfig config, int attempt) {
+        int status = response.getCode();
 
         if (status >= 200 && status < 300) {
             LOG.debug("Push notification delivered to {} for taskId={}",
@@ -327,15 +369,6 @@ public class PushNotificationDispatcher {
             }
             inFlightRequests.clear();
             executor.shutdownNow();
-        }
-    }
-
-    private static void closeResponseBody(InputStream body, TaskPushNotificationConfig config) {
-        try {
-            body.close();
-        } catch (IOException e) {
-            LOG.debug("Failed to close push notification response body for taskId={}: {}",
-                    config.getTaskId(), e.getMessage());
         }
     }
 }

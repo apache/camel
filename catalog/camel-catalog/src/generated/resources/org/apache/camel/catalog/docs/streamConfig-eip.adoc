@@ -1,0 +1,18 @@
+= Stream-config EIP
+:doctitle: StreamConfig
+:shortname: streamConfig
+:description: Configures stream-processing resequence eip.
+:since: 
+:supportlevel: Stable
+
+Configuring for xref:resequence-eip.adoc[Resequence EIP] in stream mode.
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END

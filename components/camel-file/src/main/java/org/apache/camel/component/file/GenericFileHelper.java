@@ -90,16 +90,28 @@ public final class GenericFileHelper {
 
     public static <T> Exchange createDummy(GenericFileEndpoint<T> endpoint, Exchange dynamic, Supplier<GenericFile<T>> file) {
         Exchange dummy = endpoint.createExchange(file.get());
+        enrichFromDynamic(dummy, dynamic);
+        return dummy;
+    }
+
+    public static <T> Exchange createDummy(GenericFileEndpoint<T> endpoint, Exchange dynamic) {
+        Exchange dummy = endpoint.createExchange();
+        enrichFromDynamic(dummy, dynamic);
+        return dummy;
+    }
+
+    private static void enrichFromDynamic(Exchange dummy, Exchange dynamic) {
         if (dynamic != null) {
-            // enrich with data from dynamic source
             if (dynamic.getMessage().hasHeaders()) {
                 MessageHelper.copyHeaders(dynamic.getMessage(), dummy.getMessage(), true);
-                if (dynamic.hasVariables()) {
-                    dummy.getVariables().putAll(dynamic.getVariables());
-                }
+            }
+            if (dynamic.hasVariables()) {
+                dummy.getVariables().putAll(dynamic.getVariables());
+            }
+            if (dynamic.hasProperties()) {
+                dummy.getProperties().putAll(dynamic.getProperties());
             }
         }
-        return dummy;
     }
 
 }

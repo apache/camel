@@ -34,6 +34,7 @@ public final class SensitiveUtils {
                     "accountkey",
                     "accountsid",
                     "acltoken",
+                    "api-key",
                     "api_key",
                     "api_secret",
                     "apikey",
@@ -42,6 +43,7 @@ public final class SensitiveUtils {
                     "apiusername",
                     "authenticationtoken",
                     "authkey",
+                    "authorization",
                     "authorizationtoken",
                     "authtoken",
                     "azureclientid",
@@ -131,6 +133,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qaccountkey\\E"
                                                     + "|\\Qaccountsid\\E"
                                                     + "|\\Qacltoken\\E"
+                                                    + "|\\Qapi-key\\E"
                                                     + "|\\Qapi_key\\E"
                                                     + "|\\Qapi_secret\\E"
                                                     + "|\\Qapikey\\E"
@@ -139,6 +142,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qapiusername\\E"
                                                     + "|\\Qauthenticationtoken\\E"
                                                     + "|\\Qauthkey\\E"
+                                                    + "|\\Qauthorization\\E"
                                                     + "|\\Qauthorizationtoken\\E"
                                                     + "|\\Qauthtoken\\E"
                                                     + "|\\Qazureclientid\\E"

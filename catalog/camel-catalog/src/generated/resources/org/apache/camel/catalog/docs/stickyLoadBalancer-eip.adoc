@@ -1,0 +1,84 @@
+= Sticky Load Balancer EIP
+:doctitle: Sticky Load Balancer
+:shortname: stickyLoadBalancer
+:description: Load balancer that routes messages to the same endpoint based on a correlation expression, ensuring session affinity
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+Sticky mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
+
+A stick mode means that a correlation key (calculated as xref:manual::expression.adoc[Expression])
+is used to determine the destination. This allows routing all messages with the same key to the same destination.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Examples
+
+In this case, we are using the header myKey as correlation expression:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .loadBalance().sticky(header("myKey"))
+        .to("seda:x")
+        .to("seda:y")
+        .to("seda:z")
+    .end();
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+<from uri="direct:start"/>
+    <loadBalance>
+       <stickyLoadBalancer>
+           <correlationExpression>
+               <header>myKey</header>
+           </correlationExpression>
+       </stickyLoadBalancer>
+       <to uri="seda:x"/>      
+       <to uri="seda:y"/>      
+       <to uri="seda:z"/>       
+    </loadBalance> 
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - loadBalance:
+            steps:
+              - stickyLoadBalancer:
+                  correlationExpression:
+                    header:
+                      expression: myKey
+              - to:
+                  uri: seda:x
+              - to:
+                  uri: seda:y
+              - to:
+                  uri: seda:z
+----
+====

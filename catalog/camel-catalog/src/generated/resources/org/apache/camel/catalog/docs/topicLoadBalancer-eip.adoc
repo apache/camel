@@ -1,0 +1,78 @@
+= Topic Load Balancer EIP
+:doctitle: Topic Load Balancer
+:shortname: topicLoadBalancer
+:description: Load balancer that sends every message to all destination endpoints, similar to a publish-subscribe pattern
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+Topic mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
+With this policy, then all destinations are selected.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+
+== Examples
+
+In this example, we send the message to all three endpoints:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .loadBalance().topic()
+        .to("seda:x")
+        .to("seda:y")
+        .to("seda:z")
+    .end();
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+<from uri="direct:start"/>
+    <loadBalance>
+       <topicLoadBalancer/>
+       <to uri="seda:x"/>      
+       <to uri="seda:y"/>      
+       <to uri="seda:z"/>       
+    </loadBalance> 
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - loadBalance:
+            steps:
+              - topicLoadBalancer: {}
+              - to:
+                  uri: seda:x
+              - to:
+                  uri: seda:y
+              - to:
+                  uri: seda:z
+----
+
+====

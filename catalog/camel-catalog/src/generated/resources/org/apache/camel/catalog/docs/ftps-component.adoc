@@ -1,0 +1,41 @@
+= FTPS Component
+:doctitle: FTPS
+:shortname: ftps
+:artifactid: camel-ftp
+:description: Upload and download files to/from FTP servers supporting the FTPS protocol.
+:since: 2.2
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+This component provides access to remote file systems over the FTP secure and
+SFTP protocols.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+-----------------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ftp</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+-----------------------------------------------------------------------
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== More Information
+
+For more information, you can look at xref:ftp-component.adoc[FTP component].

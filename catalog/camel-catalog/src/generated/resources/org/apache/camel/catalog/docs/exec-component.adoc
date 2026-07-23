@@ -1,0 +1,343 @@
+= Exec Component
+:doctitle: Exec
+:shortname: exec
+:artifactid: camel-exec
+:description: Execute commands on the underlying operating system.
+:since: 2.3
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+:core:
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Exec component can be used to execute system commands.
+
+== Dependencies
+
+Maven users need to add the following dependency to their `pom.xml`
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-exec</artifactId>
+  <version>${camel-version}</version>
+</dependency>
+----
+
+Where `${camel-version`} must be replaced by the actual version of Camel.
+
+== URI format
+
+----
+exec://executable[?options]
+----
+
+Where `executable` is the name, or file path, of the system command that
+will be executed. If executable name is used (e.g. `exec:java`), the
+executable must in the system path.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Message body
+
+If the component receives an `in` message body that is
+convertible to `java.io.InputStream`, it is used to feed input to the
+executable via its standard input (`stdin`).
+After execution,
+http://camel.apache.org/exchange.html[the message body] is the result of
+the execution.
+That is, an `org.apache.camel.components.exec.ExecResult` instance containing the
+`stdout`, `stderr`, _exit value_, and the _out file_.
+
+This component supports the following `ExecResult` http://camel.apache.org/type-converter.html[type converters]
+for convenience:
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|From |To
+
+|`ExecResult` |`java.io.InputStream`
+
+|`ExecResult` |`String`
+
+|`ExecResult` |`byte []`
+
+|`ExecResult` |`org.w3c.dom.Document`
+|=======================================================================
+
+If an _out file_ is specified (in the endpoint via `outFile` or the
+message headers via `ExecBinding.EXEC_COMMAND_OUT_FILE`), the converters
+will return the content of the _out file_. If no _out file_ is used, then
+this component will convert the `stdout` of the process to the target
+type. For more details, please refer to the xref:exec-component.adoc[usage examples] below.
+
+== Examples
+
+=== Executing word count (Linux)
+
+The example below executes `wc` (word count, Linux) to count the words
+in file `/usr/share/dict/words`. The word count (_output_) is written to
+the standard output stream of `wc`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// The body is an ExecResult instance, which can be auto-converted to String (stdout output)
+from("direct:exec")
+    .to("exec:wc?args=--words /usr/share/dict/words")
+    .to("log:result");
+----
+
+XML::
++
+[source,xml]
+----
+<!-- The body is an ExecResult instance, which can be auto-converted to String (stdout output) -->
+<route>
+  <from uri="direct:exec"/>
+  <to uri="exec:wc?args=--words /usr/share/dict/words"/>
+  <to uri="log:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+# The body is an ExecResult instance, which can be auto-converted to String (stdout output)
+- route:
+    from:
+      uri: direct:exec
+      steps:
+        - to:
+            uri: exec:wc
+            parameters:
+              args: "--words /usr/share/dict/words"
+        - to:
+            uri: log:result
+----
+====
+
+=== Executing `java`
+
+The example below executes `java` with two arguments: `-server` and
+`-version`, if `java` is in the system path.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:exec")
+    .to("exec:java?args=-server -version");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:exec"/>
+  <to uri="exec:java?args=-server -version"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:exec
+      steps:
+        - to:
+            uri: exec:java
+            parameters:
+              args: "-server -version"
+----
+====
+
+The example below executes `java` in `c:\temp` with three arguments:
+`-server`, `-version` and the system property `user.name`.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:exec")
+    .to("exec:c:/program files/jdk/bin/java?args=-server -version -Duser.name=Camel&workingDir=c:/temp");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:exec"/>
+  <to uri="exec:c:/program files/jdk/bin/java?args=-server -version -Duser.name=Camel&amp;workingDir=c:/temp"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:exec
+      steps:
+        - to:
+            uri: "exec:c:/program files/jdk/bin/java"
+            parameters:
+              args: "-server -version -Duser.name=Camel"
+              workingDir: "c:/temp"
+----
+====
+
+=== Executing Ant scripts
+
+The following example executes http://ant.apache.org/[Apache Ant]
+(Windows only) with the build file `CamelExecBuildFile.xml`, provided
+that `ant.bat` is in the system path, and that `CamelExecBuildFile.xml`
+is in the current directory.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:exec")
+    .to("exec:ant.bat?args=-f CamelExecBuildFile.xml");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:exec"/>
+  <to uri="exec:ant.bat?args=-f CamelExecBuildFile.xml"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:exec
+      steps:
+        - to:
+            uri: exec:ant.bat
+            parameters:
+              args: "-f CamelExecBuildFile.xml"
+----
+====
+
+In the next example, the `ant.bat` command redirects its output to
+`CamelExecOutFile.txt` with `-l`. The file `CamelExecOutFile.txt` is
+used as the _out file_ with `outFile=CamelExecOutFile.txt`. The example
+assumes that `ant.bat` is in the system path, and that
+`CamelExecBuildFile.xml` is in the current directory.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// When outFile is specified, the body is the content of that file (as InputStream)
+from("direct:exec")
+    .to("exec:ant.bat?args=-f CamelExecBuildFile.xml -l CamelExecOutFile.txt&outFile=CamelExecOutFile.txt")
+    .to("log:result");
+----
+
+XML::
++
+[source,xml]
+----
+<!-- When outFile is specified, the body is the content of that file (as InputStream) -->
+<route>
+  <from uri="direct:exec"/>
+  <to uri="exec:ant.bat?args=-f CamelExecBuildFile.xml -l CamelExecOutFile.txt&amp;outFile=CamelExecOutFile.txt"/>
+  <to uri="log:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+# When outFile is specified, the body is the content of that file (as InputStream)
+- route:
+    from:
+      uri: direct:exec
+      steps:
+        - to:
+            uri: exec:ant.bat
+            parameters:
+              args: "-f CamelExecBuildFile.xml -l CamelExecOutFile.txt"
+              outFile: CamelExecOutFile.txt
+        - to:
+            uri: log:result
+----
+====
+
+=== Executing `echo` (Windows)
+
+Commands such as `echo` and `dir` can be executed only with the command
+interpreter of the operating system. This example shows how to execute
+such a command - `echo` - in Windows.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:exec")
+    .to("exec:cmd?args=/C echo echoString");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:exec"/>
+  <to uri="exec:cmd?args=/C echo echoString"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:exec
+      steps:
+        - to:
+            uri: exec:cmd
+            parameters:
+              args: "/C echo echoString"
+----
+====

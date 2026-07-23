@@ -1,0 +1,295 @@
+= LangChain4j Agent - Multimodal Content Support
+:tabs-sync-option:
+
+xref:ROOT:langchain4j-agent-component.adoc[Back to LangChain4j Agent Component]
+
+== Multimodal Content Support
+
+The LangChain4j Agent component supports multimodal content, allowing you to send images, PDFs, audio, video, and text files to AI models that support vision and document understanding capabilities.
+
+=== Sending Multimodal Content via AiAgentBody
+
+You can explicitly create an `AiAgentBody` with multimodal content:
+
+._Java-only: `AiAgentBody` with `ImageContent`, `Files.readAllBytes()`, and ProducerTemplate test API_
+[source,java]
+----
+// Load an image and create ImageContent
+byte[] imageBytes = Files.readAllBytes(Path.of("image.png"));
+String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+Image image = Image.builder()
+    .base64Data(base64Image)
+    .mimeType("image/png")
+    .build();
+ImageContent imageContent = ImageContent.from(image);
+
+// Create request body with image content
+AiAgentBody<ImageContent> body = new AiAgentBody<ImageContent>()
+    .withUserMessage("What do you see in this image?")
+    .withContent(imageContent);
+
+String response = template.requestBody("direct:chat", body, String.class);
+----
+
+=== Automatic File Conversion from Camel Components
+
+The agent component automatically converts files from various Camel components to multimodal content. This enables seamless integration with file-based sources.
+
+==== Supported Input Types
+
+[cols="1,2,2"]
+|===
+|Input Type |Source Components |MIME Type Detection
+
+|`WrappedFile`
+|`file:`, `ftp:`, `sftp:`, `smb:`
+|From file extension or headers
+
+|`byte[]`
+|`aws2-s3:`, `azure-storage-blob:`, `google-storage:`
+|From content type headers (required)
+
+|`InputStream`
+|Various streaming components
+|From content type headers (required)
+|===
+
+==== Example: Processing Images from File Component
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox/images?noop=true&include=.*\\.png")
+    .setHeader("CamelLangChain4jAgentUserMessage", constant("Describe this image"))
+    .to("langchain4j-agent:vision?agent=#visionAgent")
+    .to("log:response");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox/images?noop=true&amp;include=.*\.png"/>
+  <setHeader name="CamelLangChain4jAgentUserMessage">
+    <constant>Describe this image</constant>
+  </setHeader>
+  <to uri="langchain4j-agent:vision?agent=#visionAgent"/>
+  <to uri="log:response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox/images
+      parameters:
+        noop: true
+        include: ".*\\.png"
+      steps:
+        - setHeader:
+            name: CamelLangChain4jAgentUserMessage
+            constant: Describe this image
+        - to:
+            uri: langchain4j-agent:vision
+            parameters:
+              agent: "#visionAgent"
+        - to:
+            uri: log:response
+----
+====
+
+==== Example: Processing Files from AWS S3
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("aws2-s3://my-bucket?prefix=images/&includeBody=true")
+    .setHeader("CamelLangChain4jAgentUserMessage", constant("What do you see in this image?"))
+    .to("langchain4j-agent:vision?agent=#visionAgent")
+    .to("log:response");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="aws2-s3://my-bucket?prefix=images/&amp;includeBody=true"/>
+  <setHeader name="CamelLangChain4jAgentUserMessage">
+    <constant>What do you see in this image?</constant>
+  </setHeader>
+  <to uri="langchain4j-agent:vision?agent=#visionAgent"/>
+  <to uri="log:response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws2-s3://my-bucket
+      parameters:
+        prefix: images/
+        includeBody: true
+      steps:
+        - setHeader:
+            name: CamelLangChain4jAgentUserMessage
+            constant: "What do you see in this image?"
+        - to:
+            uri: langchain4j-agent:vision
+            parameters:
+              agent: "#visionAgent"
+        - to:
+            uri: log:response
+----
+====
+
+[NOTE]
+====
+When using `byte[]` or `InputStream` inputs, a MIME type header is required since the type cannot be auto-detected from the content. The component checks for MIME type in this priority order:
+
+1. `CamelLangChain4jAgentMediaType` header (highest priority - explicit override)
+2. `CamelAwsS3ContentType` header (from AWS S3)
+3. `Content-Type` header
+4. `CamelFileContentType` header (from file components)
+====
+
+==== Example: Overriding MIME Type
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:process-file")
+    .setHeader("CamelLangChain4jAgentUserMessage", constant("Analyze this document"))
+    .setHeader("CamelLangChain4jAgentMediaType", constant("application/pdf"))
+    .to("langchain4j-agent:analyzer?agent=#analyzerAgent");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:process-file"/>
+  <setHeader name="CamelLangChain4jAgentUserMessage">
+    <constant>Analyze this document</constant>
+  </setHeader>
+  <setHeader name="CamelLangChain4jAgentMediaType">
+    <constant>application/pdf</constant>
+  </setHeader>
+  <to uri="langchain4j-agent:analyzer?agent=#analyzerAgent"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:process-file
+      steps:
+        - setHeader:
+            name: CamelLangChain4jAgentUserMessage
+            constant: Analyze this document
+        - setHeader:
+            name: CamelLangChain4jAgentMediaType
+            constant: application/pdf
+        - to:
+            uri: langchain4j-agent:analyzer
+            parameters:
+              agent: "#analyzerAgent"
+----
+====
+
+=== Complete Multimodal Route Example
+
+Here's a complete example showing how to process images from a file system and send them to an AI agent for analysis:
+
+._Java-only: `ChatModel` and `AgentConfiguration` bean registration_
+[source,java]
+----
+// Create a vision-capable chat model
+ChatModel chatModel = OpenAiChatModel.builder()
+    .apiKey(apiKey)
+    .modelName("gpt-4o")  // Vision-capable model
+    .build();
+
+// Create agent configuration
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel);
+
+Agent visionAgent = new AgentWithoutMemory(configuration);
+context.getRegistry().bind("visionAgent", visionAgent);
+----
+
+Route to process images:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox/images?noop=true&include=.*\\.(png|jpg|jpeg)")
+    .setHeader("CamelLangChain4jAgentUserMessage",
+        constant("Describe what you see in this image. Be detailed but concise."))
+    .to("langchain4j-agent:vision?agent=#visionAgent")
+    .log("AI Response: ${body}")
+    .to("file:outbox/descriptions");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox/images?noop=true&amp;include=.*\.(png|jpg|jpeg)"/>
+  <setHeader name="CamelLangChain4jAgentUserMessage">
+    <constant>Describe what you see in this image. Be detailed but concise.</constant>
+  </setHeader>
+  <to uri="langchain4j-agent:vision?agent=#visionAgent"/>
+  <log message="AI Response: ${body}"/>
+  <to uri="file:outbox/descriptions"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox/images
+      parameters:
+        noop: true
+        include: ".*\\.(png|jpg|jpeg)"
+      steps:
+        - setHeader:
+            name: CamelLangChain4jAgentUserMessage
+            constant: "Describe what you see in this image. Be detailed but concise."
+        - to:
+            uri: langchain4j-agent:vision
+            parameters:
+              agent: "#visionAgent"
+        - log:
+            message: "AI Response: ${body}"
+        - to:
+            uri: file:outbox/descriptions
+----
+====

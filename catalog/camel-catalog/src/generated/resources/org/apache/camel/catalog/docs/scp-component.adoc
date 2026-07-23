@@ -1,0 +1,70 @@
+= SCP Component
+:doctitle: SCP
+:shortname: scp
+:artifactid: camel-jsch
+:description: Copy files to/from remote hosts using the secure copy protocol (SCP).
+:since: 2.10
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Camel Jsch component supports the
+http://en.wikipedia.org/wiki/Secure_copy[SCP protocol] using the Client
+API of the http://www.jcraft.com/jsch/[Jsch] project. Jsch is already
+used in camel by the xref:ftp-component.adoc[FTP] component for the *sftp:*
+protocol.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jsch</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+scp://host[:port]/destination[?options]
+----
+
+The file name can be specified either in the <path> part of the URI or
+as a "CamelFileName" header on the message (`Exchange.FILE_NAME` if used
+in code).
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== OpenSSH Certificate Authentication
+
+Camel supports OpenSSH certificate-based authentication for SCP connections, where a user's public key is signed by a Certificate Authority (CA). This is configured using the `certFile`, `certUri`, or `certBytes` parameters alongside the private key:
+
+._Java-only: configuring certificate-based authentication_
+[source,java]
+----
+to("scp://host/path?username=myuser"
+   + "&privateKeyFile=/path/to/user_key"
+   + "&certFile=/path/to/user_key-cert.pub");
+----
+
+See the xref:sftp-component.adoc[SFTP component] documentation for more details on certificate authentication options.
+
+== Limitations
+
+Currently, camel-jsch only supports a
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Producer.html[Producer]
+(i.e., copy files to another host).

@@ -68,11 +68,12 @@ public final class OpenAIConstants {
     public static final String RESPONSE_ID = "CamelOpenAIResponseId";
     @Metadata(description = "The reason the completion finished (e.g., stop, length, content_filter)", javaType = "String")
     public static final String FINISH_REASON = "CamelOpenAIFinishReason";
-    @Metadata(description = "The number of tokens used in the prompt", javaType = "Integer")
+    @Metadata(description = "The number of tokens used in the prompt for the latest API call", javaType = "Long")
     public static final String PROMPT_TOKENS = "CamelOpenAIPromptTokens";
-    @Metadata(description = "The number of tokens used in the completion", javaType = "Integer")
+    @Metadata(description = "The number of tokens used in the completion for the latest API call", javaType = "Long")
     public static final String COMPLETION_TOKENS = "CamelOpenAICompletionTokens";
-    @Metadata(description = "The total number of tokens used (prompt + completion)", javaType = "Integer")
+    @Metadata(description = "The total number of tokens used (prompt + completion) for the latest API call",
+              javaType = "Long")
     public static final String TOTAL_TOKENS = "CamelOpenAITotalTokens";
 
     // MCP Tool Call Headers
@@ -84,6 +85,12 @@ public final class OpenAIConstants {
                             + "rather than from the LLM",
               javaType = "Boolean")
     public static final String MCP_RETURN_DIRECT = "CamelOpenAIMcpReturnDirect";
+    @Metadata(description = "Cumulative prompt tokens consumed across all agentic loop iterations", javaType = "Long")
+    public static final String AGENTIC_PROMPT_TOKENS = "CamelOpenAIAgenticPromptTokens";
+    @Metadata(description = "Cumulative completion tokens consumed across all agentic loop iterations", javaType = "Long")
+    public static final String AGENTIC_COMPLETION_TOKENS = "CamelOpenAIAgenticCompletionTokens";
+    @Metadata(description = "Cumulative total tokens consumed across all agentic loop iterations", javaType = "Long")
+    public static final String AGENTIC_TOTAL_TOKENS = "CamelOpenAIAgenticTotalTokens";
 
     // Output Exchange Properties
     @Metadata(description = "The complete OpenAI response object", javaType = "com.openai.models.ChatCompletion")

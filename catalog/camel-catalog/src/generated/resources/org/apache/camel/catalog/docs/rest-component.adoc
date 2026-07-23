@@ -1,0 +1,372 @@
+= REST Component
+:doctitle: REST
+:shortname: rest
+:artifactid: camel-rest
+:description: Expose REST services or call external REST services.
+:since: 2.14
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+:core:
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The REST component allows defining REST endpoints (consumer) using the
+Rest DSL and plugin to other Camel components as the REST transport.
+
+The REST component can also be used as a client (producer) to call REST services.
+
+== URI format
+
+----
+rest://method:path[:uriTemplate]?[options]
+----
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Supported REST components
+
+The following components support the REST consumer (Rest DSL):
+
+* camel-netty-http
+* camel-jetty
+* camel-servlet
+* camel-undertow
+* camel-platform-http
+
+The following components support the REST producer:
+
+* camel-http
+* camel-netty-http
+* camel-undertow
+* camel-vertx-http
+
+== Usage
+
+=== Path and uriTemplate syntax
+
+The path and uriTemplate option is defined using a REST syntax where you
+define the REST context path using support for parameters. 
+
+[TIP]
+====
+If no uriTemplate is configured then `path` option works the same way.
+
+It does not matter if you configure only `path` or if you configure both
+options. Though configuring both a path and uriTemplate is a more common
+practice with REST.
+====
+
+
+The following is a Camel route using a path only
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("rest:get:hello")
+  .transform().constant("Bye World");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rest:get:hello"/>
+  <transform>
+    <constant>Bye World</constant>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest:get:hello
+      steps:
+        - transform:
+            constant: "Bye World"
+----
+====
+
+And the following route uses a parameter which is mapped to a Camel
+header with the key "me".
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("rest:get:hello/{me}")
+  .transform().simple("Bye ${header.me}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rest:get:hello/{me}"/>
+  <transform>
+    <simple>Bye ${header.me}</simple>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest:get:hello/{me}
+      steps:
+        - transform:
+            simple: "Bye ${header.me}"
+----
+====
+
+The following examples have configured a base path as "hello" and then
+have two REST services configured using uriTemplates.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("rest:get:hello:/{me}")
+  .transform().simple("Hi ${header.me}");
+
+from("rest:get:hello:/french/{me}")
+  .transform().simple("Bonjour ${header.me}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rest:get:hello:/{me}"/>
+  <transform>
+    <simple>Hi ${header.me}</simple>
+  </transform>
+</route>
+<route>
+  <from uri="rest:get:hello:/french/{me}"/>
+  <transform>
+    <simple>Bonjour ${header.me}</simple>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest:get:hello:/{me}
+      steps:
+        - transform:
+            simple: "Hi ${header.me}"
+- route:
+    from:
+      uri: rest:get:hello:/french/{me}
+      steps:
+        - transform:
+            simple: "Bonjour ${header.me}"
+----
+====
+
+== Examples
+
+=== Rest producer examples
+
+You can use the REST component to call REST services like any other Camel component.
+
+For example, to call a REST service on using `hello/\{me}` you can do
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("rest:get:hello/{me}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="rest:get:hello/{me}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: rest:get:hello/{me}
+----
+====
+
+And then the dynamic value `\{me}` is mapped to a header or variable with the same name.
+So to call this REST service, you can send an empty message body and a header as shown:
+
+._Java-only: Java test API (ProducerTemplate)_
+[source,java]
+----
+template.sendBodyAndHeader("direct:start", null, "me", "Donald Duck");
+----
+
+Instead of a header you can also use exchange variable such as:
+
+._Java-only: Java test API (ProducerTemplate)_
+[source,java]
+----
+String response = template.withVariable("me", "Donald Duck").to("direct:start").request(String.class);
+----
+
+The Rest producer needs to know the hostname and port of the REST service, which you can configure
+using the host option as shown:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("rest:get:hello/{me}?host=myserver:8080/foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="rest:get:hello/{me}?host=myserver:8080/foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: rest:get:hello/{me}
+            parameters:
+              host: "myserver:8080/foo"
+----
+====
+
+Instead of using the host option, you can configure the host on the `restConfiguration` as shown:
+
+._Java-only: Java programmatic REST configuration API_
+[source,java]
+----
+restConfiguration().host("myserver:8080/foo");
+
+from("direct:start")
+  .to("rest:get:hello/{me}");
+----
+
+You can use the `producerComponent` to select which Camel component to use as the HTTP client, for example
+to use http, you can do:
+
+._Java-only: Java programmatic REST configuration API_
+[source,java]
+----
+restConfiguration().host("myserver:8080/foo").producerComponent("http");
+
+from("direct:start")
+  .to("rest:get:hello/{me}");
+----
+
+
+=== Rest producer binding
+
+The REST producer supports binding using JSON or XML like the rest-dsl does.
+
+For example, to use jetty with JSON binding mode turned on, you can configure this in the REST configuration:
+
+._Java-only: Java programmatic REST configuration API_
+[source,java]
+----
+restConfiguration().component("jetty").host("localhost").port(8080).bindingMode(RestBindingMode.json);
+
+from("direct:start")
+  .to("rest:post:user");
+----
+
+Then when calling the REST service using the REST producer, it will automatically bind any POJOs to JSON before calling the REST service:
+
+._Java-only: Java POJO API (ProducerTemplate)_
+[source,java]
+----
+  UserPojo user = new UserPojo();
+  user.setId(123);
+  user.setName("Donald Duck");
+
+  template.sendBody("direct:start", user);
+----
+
+In the example above we send a POJO instance `UserPojo` as the message body. And because we have turned on JSON binding
+in the REST configuration, then the POJO will be marshalled from POJO to JSON before calling the REST service.
+
+However, if you want to also perform binding for the response message (e.g., what the REST service sends back, as response) you
+would need to configure the `outType` option to specify what is the class name of the POJO to unmarshal from JSON to POJO.
+
+For example, if the REST service returns a JSON payload that binds to `com.foo.MyResponsePojo` you can configure this as shown:
+
+._Java-only: Java programmatic REST configuration API_
+[source,java]
+----
+  restConfiguration().component("jetty").host("localhost").port(8080).bindingMode(RestBindingMode.json);
+
+  from("direct:start")
+    .to("rest:post:user?outType=com.foo.MyResponsePojo");
+----
+
+IMPORTANT: You must configure `outType` option if you want POJO binding to happen for the response messages received from calling the REST service.
+
+
+=== More examples
+
+See Rest DSL, which offers more examples and how you
+can use the Rest DSL to define those in a nicer, restful way.
+
+There is a *camel-example-servlet-rest-tomcat* example in the Apache
+Camel distribution, that demonstrates how to use the
+Rest DSL with Servlet as
+transport that can be deployed on Apache Tomcat, or similar web
+containers.

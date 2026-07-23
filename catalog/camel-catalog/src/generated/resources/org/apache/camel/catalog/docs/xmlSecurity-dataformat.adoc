@@ -1,0 +1,318 @@
+= XML Security DataFormat
+:doctitle: XML Security
+:shortname: xmlSecurity
+:artifactid: camel-xmlsecurity
+:description: Encrypt and decrypt XML payloads using Apache Santuario
+:since: 2.0
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The XMLSecurity Data Format facilitates encryption and decryption of XML
+payloads at the Document, Element, and Element Content levels (including
+simultaneous multi-node encryption/decryption using XPath). To sign
+messages using the XML Signature specification, please see the Camel XML
+Security component.
+
+The encryption capability is based on formats supported using the Apache
+XML Security (Santuario) project. Symmetric encryption/decryption is
+currently supported using Triple-DES and AES (128, 192, and 256)
+encryption formats. Additional formats can be easily added later as
+needed. This capability allows Camel users to encrypt/decrypt payloads
+while being dispatched or received along a route.
+
+*Since Camel 2.9* +
+ The XMLSecurity Data Format supports asymmetric key encryption. In this
+encryption model, a symmetric key is generated and used to perform XML
+content encryption or decryption. This "content encryption key" is then
+itself encrypted using an asymmetric encryption algorithm that leverages
+the recipient's public key as the "key encryption key". Use of an
+asymmetric key encryption algorithm ensures that only the holder of the
+recipient's private key can access the generated symmetric encryption
+key. Thus, only the private key holder can decode the message. The
+XMLSecurity Data Format handles all the logic required to encrypt and
+decrypt the message content and encryption key(s) using asymmetric key
+encryption.
+
+The XMLSecurity Data Format also has improved support for namespaces
+when processing the XPath queries that select content for encryption. A
+namespace definition mapping can be included as part of the data format
+configuration. This enables true namespace matching, even if the prefix
+values in the XPath query and the target XML document are not equivalent
+strings.
+
+== XMLSecurity Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+
+=== Key Cipher Algorithm
+
+The default Key Cipher Algorithm is now
+`XMLCipher.RSA_OAEP` instead of `XMLCipher.RSA_v1dot5`. Usage of
+`XMLCipher.RSA_v1dot5` is discouraged due to various attacks. Requests
+that use RSA v1.5 as the key cipher algorithm will be rejected unless it
+has been explicitly configured as the key cipher algorithm.
+
+=== Data Cipher Algorithm
+
+The default data (payload) Cipher Algorithm is `XMLCipher.AES_256_GCM`.
+Usage of `XMLCipher.TRIPLEDES` (3DES) is discouraged as it is a legacy cipher; prefer an
+AES-GCM algorithm such as `XMLCipher.AES_256_GCM` (the default) or `XMLCipher.AES_128_GCM`.
+
+== Marshal
+
+To encrypt the payload, the `marshal` processor needs to be
+applied on the route followed by the *`xmlSecurity()`* tag.
+
+== Unmarshal
+
+To decrypt the payload, the `unmarshal` processor needs to be
+applied on the route followed by the *`xmlSecurity()`* tag.
+
+== Examples
+
+Given below are several examples of how marshalling could be performed
+at the Document, Element, and Content levels.
+
+=== Full Payload encryption/decryption
+
+._Java-only: full payload encryption using generated AES key_
+[source,java]
+----
+KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+keyGenerator.init(256);
+Key key = keyGenerator.generateKey();
+
+from("direct:start")
+    .marshal().xmlSecurity(key.getEncoded())
+    .unmarshal().xmlSecurity(key.getEncoded()
+    .to("direct:end");
+----
+
+=== Partial Payload Content Only encryption/decryption with choice of passPhrase(password)
+
+._Java-only: partial payload encryption with passPhrase_
+[source,java]
+----
+String tagXPATH = "//cheesesites/italy/cheese";
+boolean secureTagContent = true;
+...
+String passPhrase = "Just another 32 Byte key for AES";
+from("direct:start")
+    .marshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase)
+    .unmarshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase)
+    .to("direct:end");
+----
+
+=== Partial Payload Content Only encryption/decryption with passPhrase(password) and Algorithm
+
+._Java-only: partial payload encryption with passPhrase and algorithm_
+[source,java]
+----
+import org.apache.xml.security.encryption.XMLCipher;
+....
+String tagXPATH = "//cheesesites/italy/cheese";
+boolean secureTagContent = true;
+String passPhrase = "Just another 32 Byte key for AES";
+String algorithm = XMLCipher.AES_256_GCM;
+from("direct:start")
+    .marshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase, algorithm)
+    .unmarshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase, algorithm)
+    .to("direct:end");
+----
+
+=== Partial Payload Content with Namespace support
+
+[[XMLSecurityDataFormat-JavaDSL]]
+Java DSL
+
+._Java-only: namespace-aware encryption with asymmetric key and KeyStore_
+[source,java]
+----
+final Map<String, String> namespaces = new HashMap<String, String>();
+namespaces.put("cust", "http://cheese.xmlsecurity.camel.apache.org/");
+
+final KeyStoreParameters tsParameters = new KeyStoreParameters();
+tsParameters.setPassword("password");
+tsParameters.setResource("sender.truststore");
+
+from("direct:start")
+    .marshal().xmlSecurity("//cust:cheesesites/italy", namespaces, true, "recipient",
+                            testCypherAlgorithm, XMLCipher.RSA_v1dot5, tsParameters)
+    .to("mock:encrypted");
+----
+
+[[XMLSecurityDataFormat-SpringXML]]
+Spring XML
+
+A namespace prefix defined as part of the `camelContext`
+definition can be re-used in context within the data format `secureTag`
+attribute of the `xmlSecurity` element.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .marshal().xmlSecurity("//cheese:cheesesites/italy", true)
+    .to("...");
+----
+
+XML::
++
+[source,xml]
+----
+<camelContext id="springXmlSecurityDataFormatTestCamelContext"
+              xmlns="http://camel.apache.org/schema/spring"
+              xmlns:cheese="http://cheese.xmlsecurity.camel.apache.org/">
+    <route>
+        <from uri="direct://start"/>
+            <marshal>
+                <xmlSecurity secureTag="//cheese:cheesesites/italy"
+                           secureTagContents="true"/>
+            </marshal>
+            ...
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            xmlSecurity:
+              secureTag: "//cheese:cheesesites/italy"
+              secureTagContents: true
+----
+====
+
+=== Asymmetric Key Encryption
+
+[[XMLSecurityDataFormat-SpringXMLSender]]
+Spring XML Sender
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .marshal().xmlSecurity("//cheese:cheesesites/italy", namespaces, true,
+            "recipient", XMLCipher.AES_128_CBC, XMLCipher.RSA_v1dot5, trustStoreParams)
+    .to("...");
+----
+
+XML::
++
+[source,xml]
+----
+<!--  trust store configuration -->
+<camel:keyStoreParameters id="trustStoreParams" resource="./sender.truststore" password="password"/>
+
+<camelContext id="springXmlSecurityDataFormatTestCamelContext"
+              xmlns="http://camel.apache.org/schema/spring"
+              xmlns:cheese="http://cheese.xmlsecurity.camel.apache.org/">
+    <route>
+        <from uri="direct://start"/>
+            <marshal>
+                <xmlSecurity secureTag="//cheese:cheesesites/italy"
+                           secureTagContents="true"
+                           xmlCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"
+                           keyCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"
+                           recipientKeyAlias="recipient"
+                           keyOrTrustStoreParametersRef="trustStoreParams"/>
+            </marshal>
+            ...
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            xmlSecurity:
+              secureTag: "//cheese:cheesesites/italy"
+              secureTagContents: true
+              xmlCipherAlgorithm: "http://www.w3.org/2001/04/xmlenc#aes128-cbc"
+              keyCipherAlgorithm: "http://www.w3.org/2001/04/xmlenc#rsa-1_5"
+              recipientKeyAlias: recipient
+              keyOrTrustStoreParametersRef: "#trustStoreParams"
+----
+====
+
+[[XMLSecurityDataFormat-SpringXMLRecipient]]
+Spring XML Recipient
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:encrypted")
+    .unmarshal().xmlSecurity("//cheese:cheesesites/italy", namespaces, true,
+            "recipient", XMLCipher.AES_128_CBC, XMLCipher.RSA_v1dot5, keyStoreParams)
+    .to("...");
+----
+
+XML::
++
+[source,xml]
+----
+<!--  key store configuration -->
+<camel:keyStoreParameters id="keyStoreParams" resource="./recipient.keystore" password="password" />
+
+<camelContext id="springXmlSecurityDataFormatTestCamelContext"
+              xmlns="http://camel.apache.org/schema/spring"
+              xmlns:cheese="http://cheese.xmlsecurity.camel.apache.org/">
+    <route>
+        <from uri="direct://encrypted"/>
+            <unmarshal>
+                <xmlSecurity secureTag="//cheese:cheesesites/italy"
+                           secureTagContents="true"
+                           xmlCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"
+                           keyCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"
+                           recipientKeyAlias="recipient"
+                           keyOrTrustStoreParametersRef="keyStoreParams"
+                           keyPassword="privateKeyPassword" />
+            </unmarshal>
+            ...
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:encrypted
+      steps:
+        - unmarshal:
+            xmlSecurity:
+              secureTag: "//cheese:cheesesites/italy"
+              secureTagContents: true
+              xmlCipherAlgorithm: "http://www.w3.org/2001/04/xmlenc#aes128-cbc"
+              keyCipherAlgorithm: "http://www.w3.org/2001/04/xmlenc#rsa-1_5"
+              recipientKeyAlias: recipient
+              keyOrTrustStoreParametersRef: "#keyStoreParams"
+              keyPassword: privateKeyPassword
+----
+====
+
+== Dependencies
+
+This data format is provided within the *camel-xmlsecurity* component.

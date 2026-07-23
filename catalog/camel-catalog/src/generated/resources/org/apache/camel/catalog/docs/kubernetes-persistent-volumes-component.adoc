@@ -1,0 +1,100 @@
+= Kubernetes Persistent Volume Component
+:doctitle: Kubernetes Persistent Volume
+:shortname: kubernetes-persistent-volumes
+:artifactid: camel-kubernetes
+:description: Perform operations on Kubernetes Persistent Volumes and get notified on Persistent Volume changes.
+:since: 2.17
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Kubernetes
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Kubernetes Persistent Volume component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
+provides a producer to execute Kubernetes Persistent Volume (PV) operations.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Supported producer operation
+
+- `listPersistentVolumes`
+- `listPersistentVolumesByLabels`
+- `getPersistentVolume`
+
+== Examples
+
+=== Kubernetes Persistent Volumes Producer Examples
+
+- `listPersistentVolumes`: this operation lists the PVs on a kubernetes cluster
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:list")
+    .to("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumes")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&amp;operation=listPersistentVolumes"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+      steps:
+        - to:
+            uri: kubernetes-persistent-volumes:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listPersistentVolumes
+        - to:
+            uri: mock:result
+----
+====
+
+This operation returns a list of PVs from your cluster
+
+- `listPersistentVolumesByLabels`: this operation lists the PVs by labels on a kubernetes cluster
+
+._Java-only: sets a Map header for label selection_
+[source,java]
+----
+from("direct:listByLabels")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesPersistentVolumesLabels",
+            Map.of("key1", "value1", "key2", "value2"));
+    })
+    .to("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesByLabels")
+    .to("mock:result");
+----
+
+This operation returns a list of PVs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
+
+

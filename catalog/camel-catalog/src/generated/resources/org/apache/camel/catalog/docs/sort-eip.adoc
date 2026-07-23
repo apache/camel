@@ -1,0 +1,184 @@
+= Sort EIP
+:doctitle: Sort
+:shortname: sort
+:description: Sorts the items in a message body that is a List, using a specified comparator or the default ordering
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+How can you sort the content of the message?
+
+image::eip/MessageTranslator.gif[image]
+
+Use a special filter, a xref:message-translator.adoc[Message Translator], between other filters to sort the content of the message.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+
+== How sorting works
+
+Sort will by default sort the message body using a default `Comparator` that handles numeric values
+or uses the `String` representation.
+
+You can also configure a custom `Comparator` to control the sorting.
+
+An xref:manual::expression.adoc[Expression] can also be used, which performs the sorting, and returns the sorted message body.
+The value returned from the `Expression` must be convertible to `java.util.List` as this is required by the JDK sort operation.
+
+=== Using Sort EIP
+
+Imagine you consume text files and before processing each file, you want to be sure the content is sorted.
+
+In the route below, it will read the file content and tokenize by line breaks so each line can be sorted.
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("file:inbox")
+    .sort(body().tokenize("\n"))
+    .to("bean:MyServiceBean.processLine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <sort>
+    <tokenize token="\n"/>
+  </sort>
+  <to uri="bean:myServiceBean.processLine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - sort:
+            expression:
+              tokenize:
+                token: "\n"
+        - to:
+            uri: bean:myServiceBean.processLine
+----
+====
+
+You can control how to sort using a custom `java.util.Comparator`:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("file:inbox")
+    .sort().tokenize("\n").comparator("myComparator")
+    .to("bean:MyServiceBean.processLine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:inbox"/>
+    <sort comparator="myComparator">
+        <tokenize token="\n"/>
+    </sort>
+    <to uri="bean:MyServiceBean.processLine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - sort:
+            comparator: myComparator
+            expression:
+              tokenize:
+                token: "\n"
+        - to:
+            uri: bean:MyServiceBean.processLine
+----
+====
+
+TIP: You can also refer to the custom comparator using `#class:` syntax as shown below:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("file:inbox")
+    .sort().tokenize("\n").comparator("#class:com.mycompany.MyReverseComparator")
+    .to("bean:MyServiceBean.processLine");
+----
++
+In Java DSL you can also provide the custom `Comparator` directly as the object as follows:
++
+[source,java]
+----
+from("file:inbox")
+    .sort().body().comparator(new MyReverseComparator())
+    .to("bean:MyServiceBean.processLine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <sort comparator="#class:com.mycompany.MyReverseComparator">
+    <tokenize token="\n"/>
+  </sort>
+  <bean ref="MyServiceBean" method="processLine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - sort:
+            comparator: "#class:com.mycompany.MyReverseComparator"
+            expression:
+              tokenize:
+                token: "\n"
+        - bean:
+            ref: MyServiceBean
+            method: processLine
+----
+====

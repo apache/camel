@@ -1,0 +1,64 @@
+= Convert Body To EIP
+:doctitle: Convert Body To
+:shortname: convertBodyTo
+:description: Converts the message body to a specified Java type using Camel's built-in type converters
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+The ConvertBodyTo EIP allows you to transform the message body to a different type.
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+NOTE: The type is a FQN class name (fully qualified), so for example `java.lang.String`, `com.foo.MyBean` etc.
+However, Camel has shorthand for common Java types, most noticeable `String` can be used instead of `java.lang.String`.
+You can also use `byte[]` for a byte array.
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
+
+A common use-case is for converting the message body to a `String`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox")
+  .convertBodyTo(String.class)
+  .log("The file content: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <convertBodyTo type="String"/>
+  <log message="The file content: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - convertBodyTo:
+            type: String
+        - log:
+            message: "The file content: ${body}"
+----
+====

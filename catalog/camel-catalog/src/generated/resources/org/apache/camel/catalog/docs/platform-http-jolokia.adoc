@@ -1,0 +1,49 @@
+= Platform HTTP Jolokia Component
+:doctitle: Platform HTTP Jolokia
+:shortname: platform-http-jolokia
+:artifactid: camel-platform-http-jolokia
+:description: Jolokia plugin for standalone Camel HTTP Platform
+:since: 4.5
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Platform HTTP Jolokia component is used for Camel standalone to expose Jolokia over HTTP
+using the embedded management HTTP server.
+
+Jolokia can be enabled as follows in `application.properties`:
+
+[source,properties]
+----
+camel.management.enabled = true
+camel.management.jolokiaEnabled = true
+----
+
+After the application is started, you can query the Jolokia endpoint (default `/observe/jolokia`) as in this example:
+
+[source,bash]
+====
+$ curl http://localhost:8080/observe/jolokia/list/org.apache.camel | jq
+{
+  "request": {
+    "path": "org.apache.camel",
+    "type": "list"
+  },
+  "value": {
+    "context=test,name=\"timer://yaml\\?period=1000\",type=endpoints": {
+      "op": {
+        "getEndpointUri": {
+          "args": [],
+          "ret": "java.lang.String",
+          "desc": "EndpointUri"
+        },
+====
+
+== How to use it
+
+This component acts as a Jolokia agent exposing HTTP endpoints to access JMX services. It looks for default restrictor policies located in `classpath:/jolokia-access.xml`, allowing by default access to all MBeans if no policy is found.
+
+WARNING: this may be exposing sensitive information, make sure to protect the access to the endpoints accurately.
+
+Make sure to https://jolokia.org/reference/html/manual/security.html#security-policy-location[include a security policy] as provided in Jolokia documentation to avoid any security problem.

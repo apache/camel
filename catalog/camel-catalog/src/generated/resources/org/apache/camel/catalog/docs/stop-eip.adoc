@@ -1,0 +1,110 @@
+= Stop EIP
+:doctitle: Stop
+:shortname: stop
+:description: Stops processing of the current message and marks the exchange as completed without sending it to any further steps
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+How can I stop routing a message?
+
+image::eip/MessageExpirationIcon.gif[image]
+
+Use a special filter to mark the message to be stopped.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Using Stop
+
+We want to stop routing a message if the message body contains the word Bye.
+In the xref:choice-eip.adoc[Content-Based Router] below we use `stop` in such a case.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(body().contains("Hello")).to("mock:hello")
+        .when(body().contains("Bye")).to("mock:bye").stop()
+        .otherwise().to("mock:other")
+    .end()
+.to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <choice>
+    <when>
+      <simple>${body} contains 'Hello'</simple>
+      <to uri="mock:hello"/>
+    </when>
+    <when>
+      <simple>${body} contains 'Bye'</simple>
+      <stop/>
+    </when>
+    <otherwise>
+      <to uri="mock:other"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+In YAML you use an empty `stop: {}` node as shown:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - choice:
+            when:
+              - steps:
+                  - to:
+                      uri: mock:hello
+              - steps:
+                  - to:
+                      uri: mock:bye
+                  - stop: {}
+            otherwise:
+              steps:
+                - to:
+                    uri: mock:other
+        - to:
+            uri: mock:result
+----
+====
+
+=== Stopping Exchange from Java code
+
+You can also mark an `Exchange` to stop being routed using the `setRouteStop(true)` method
+using Java code:
+
+[source,java]
+----
+Exchange exchange = ...
+exchange.setRouteStop(true);
+----
+
+== See Also
+
+See also the related xref:throwException-eip.adoc[Throw Exception] EIP.

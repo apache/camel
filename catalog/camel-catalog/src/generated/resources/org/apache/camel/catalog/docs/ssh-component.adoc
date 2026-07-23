@@ -1,0 +1,193 @@
+= SSH Component
+:doctitle: SSH
+:shortname: ssh
+:artifactid: camel-ssh
+:description: Execute commands on remote hosts using SSH.
+:since: 2.10
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The SSH component enables access to SSH servers such that you can send
+an SSH command and process the response.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ssh</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+-----------------------------------------------
+ssh:[username[:password]@]host[:port][?options]
+-----------------------------------------------
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Usage as a Producer endpoint
+
+When the SSH Component is used as a Producer (`.to("ssh://...")`), it
+will send the message body as the command to execute on the remote SSH
+server.
+
+Here is an example of this. Note that the command has
+a newline (`+&#10;+`).
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:exampleSshProducer")
+    .setBody(constant("features:list\n"))
+    .to("ssh://user:pass@localhost:8101")
+    .log("${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route id="camel-example-ssh-producer">
+  <from uri="direct:exampleSshProducer"/>
+  <setBody>
+    <constant>features:list&#10;</constant>
+  </setBody>
+  <to uri="ssh://user:pass@localhost:8101"/>
+  <log message="${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: camel-example-ssh-producer
+    from:
+      uri: direct:exampleSshProducer
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: "features:list\n"
+        - to:
+            uri: ssh://user:pass@localhost:8101
+        - log:
+            message: "${body}"
+----
+====
+
+=== Authentication
+
+The SSH Component can authenticate against the remote SSH server using
+one of two mechanisms: Public Key certificate or username/password.
+Configuring how the SSH Component does authentication is based on how
+and which options are set.
+
+1.  First, it will look to see if the `certResource` option has been
+set, and if so, use it to locate the referenced Public Key certificate
+and use that for authentication.
+2.  If `certResource` is not set, it will look to see if a
+`keyPairProvider` has been set, and if so, it will use that for
+certificate-based authentication.
+3.  If neither `certResource` nor `keyPairProvider` are set, it will use
+the `username` and `password` options for authentication. Even though the `username` 
+and `password` are provided in the endpoint configuration and headers set with 
+`CamelSshUsername` and
+`CamelSshPassword`, the endpoint 
+configuration is surpassed and credentials set in the headers are used.
+
+The following route fragment shows an SSH polling consumer using a
+certificate from the classpath.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ssh://scott@localhost:8101?certResource=classpath:test_rsa&useFixedDelay=true&delay=5000&pollCommand=features:list%0A")
+    .log("${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ssh://scott@localhost:8101?certResource=classpath:test_rsa&amp;useFixedDelay=true&amp;delay=5000&amp;pollCommand=features:list%0A"/>
+  <log message="${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ssh://scott@localhost:8101
+      parameters:
+        certResource: "classpath:test_rsa"
+        useFixedDelay: true
+        delay: 5000
+        pollCommand: "features:list%0A"
+      steps:
+        - log:
+            message: "${body}"
+----
+====
+
+An example of using Public Key authentication is provided in
+`examples/camel-example-ssh-security`.
+
+[[SSH-CertificateDependencies]]
+=== Certificate Dependencies
+
+You will need to add some additional runtime dependencies if you use
+certificate-based authentication.
+You may need to use later versions depending on what version
+of Camel you are using.
+
+The component uses `sshd-core` library which is based on either `bouncycastle` or `eddsa` security providers. `camel-ssh` is picking explicitly `bouncycastle` as security provider.
+
+[source,xml]
+-----------------------------------------
+<dependency>
+  <groupId>org.apache.sshd</groupId>
+  <artifactId>sshd-core</artifactId>
+  <version>2.8.0</version>
+</dependency>
+<dependency>
+  <groupId>org.bouncycastle</groupId>
+  <artifactId>bcpg-jdk18on</artifactId>
+  <version>1.71</version>
+</dependency>
+<dependency>
+  <groupId>org.bouncycastle</groupId>
+  <artifactId>bcpkix-jdk18on</artifactId>
+  <version>1.71</version>
+</dependency>
+-----------------------------------------

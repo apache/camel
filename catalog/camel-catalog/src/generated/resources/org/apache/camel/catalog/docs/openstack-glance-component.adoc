@@ -1,0 +1,69 @@
+= OpenStack Glance Component
+:doctitle: OpenStack Glance
+:shortname: openstack-glance
+:artifactid: camel-openstack
+:description: Manage VM images and metadata definitions in OpenStack Glance.
+:since: 2.19
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: OpenStack
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Openstack Glance component allows messages to be sent to an OpenStack image services.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+.pom.xml
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-openstack</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel.
+
+
+== URI Format
+
+----------------------------
+openstack-glance://hosturl[?options]
+----------------------------
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+[width="100%",cols="20%,80%",options="header",]
+|=========================================================================
+|Operation | Description
+
+|`reserve` | Reserve image.
+
+|`create` | Create a new image.
+
+|`update` | Update image.
+
+|`upload` | Upload image.
+
+|`get` | Get the image.
+
+|`getAll` | Get all images.
+
+|`delete` | Delete the image.
+|=========================================================================
+
+

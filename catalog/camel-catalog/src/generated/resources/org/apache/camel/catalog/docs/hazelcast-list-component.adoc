@@ -1,0 +1,298 @@
+= Hazelcast List Component
+:doctitle: Hazelcast List
+:shortname: hazelcast-list
+:artifactid: camel-hazelcast
+:description: Perform operations on Hazelcast distributed list.
+:since: 2.7
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Hazelcast
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The http://www.hazelcast.com/[Hazelcast] List component is one of Camel Hazelcast Components which allows you to access a Hazelcast distributed list.
+
+== Options
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== List producer – to(“hazelcast-list:foo”)
+
+The list producer provides eight operations:
+
+* add
+* addAll
+* setvalue
+* get
+* removevalue
+* removeAll
+* clear
+* retainAll
+
+=== Example for *add*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:add")
+    .setHeader("CamelHazelcastOperationType", constant("add"))
+    .to("hazelcast-list:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:add"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>add</constant>
+  </setHeader>
+  <to uri="hazelcast-list:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:add
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: add
+        - to:
+            uri: hazelcast-list:bar
+----
+====
+
+=== Example for *get*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:get")
+    .setHeader("CamelHazelcastOperationType", constant("get"))
+    .to("hazelcast-list:bar")
+    .to("seda:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:get"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>get</constant>
+  </setHeader>
+  <to uri="hazelcast-list:bar"/>
+  <to uri="seda:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:get
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: get
+        - to:
+            uri: hazelcast-list:bar
+        - to:
+            uri: seda:out
+----
+====
+
+=== Example for *setvalue*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:set")
+    .setHeader("CamelHazelcastOperationType", constant("setvalue"))
+    .to("hazelcast-list:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:set"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>setvalue</constant>
+  </setHeader>
+  <to uri="hazelcast-list:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:set
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: setvalue
+        - to:
+            uri: hazelcast-list:bar
+----
+====
+
+=== Example for *removevalue*:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:removevalue")
+    .setHeader("CamelHazelcastOperationType", constant("removevalue"))
+    .to("hazelcast-list:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:removevalue"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>removevalue</constant>
+  </setHeader>
+  <to uri="hazelcast-list:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:removevalue
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: removevalue
+        - to:
+            uri: hazelcast-list:bar
+----
+====
+
+Note that *CamelHazelcastObjectIndex* header is used for indexing
+purpose.
+
+
+== List consumer – from(“hazelcast-list:foo”)
+
+The list consumer provides two operations:
+* add
+* remove
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("hazelcast-list:mm")
+    .log("object...")
+    .choice()
+        .when(header("CamelHazelcastListenerAction").isEqualTo("added"))
+            .log("...added")
+            .to("mock:added")
+        .when(header("CamelHazelcastListenerAction").isEqualTo("removed"))
+            .log("...removed")
+            .to("mock:removed")
+        .otherwise()
+            .log("fail!");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="hazelcast-list:mm"/>
+  <log message="object..."/>
+  <choice>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'added'</simple>
+      <log message="...added"/>
+      <to uri="mock:added"/>
+    </when>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'removed'</simple>
+      <log message="...removed"/>
+      <to uri="mock:removed"/>
+    </when>
+    <otherwise>
+      <log message="fail!"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: hazelcast-list:mm
+      steps:
+        - log:
+            message: "object..."
+        - choice:
+            when:
+              - simple: "${header.CamelHazelcastListenerAction} == 'added'"
+                steps:
+                  - log:
+                      message: "...added"
+                  - to:
+                      uri: mock:added
+              - simple: "${header.CamelHazelcastListenerAction} == 'removed'"
+                steps:
+                  - log:
+                      message: "...removed"
+                  - to:
+                      uri: mock:removed
+            otherwise:
+              steps:
+                - log:
+                    message: "fail!"
+----
+====
+
+

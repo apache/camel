@@ -1,0 +1,14 @@
+= JTA Component
+:doctitle: JTA
+:shortname: jta
+:artifactid: camel-jta
+:description: Using Camel With JTA Transaction Manager
+:since: 3.4
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The `camel-jta` component is used for integrating Camel's transaction support with JTA.
+
+See more details in the xref:eips:transactional-client.adoc[Transactional Client] documentation.

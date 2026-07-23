@@ -1,0 +1,18 @@
+= Batch-config EIP
+:doctitle: BatchConfig
+:shortname: batchConfig
+:description: Configures batch-processing resequence eip.
+:since: 
+:supportlevel: Stable
+
+Configuring for xref:resequence-eip.adoc[Resequence EIP] in batching mode.
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END

@@ -1,0 +1,189 @@
+= Content Filter
+:tabs-sync-option:
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/ContentFilter.html[Content
+Filter] from the
+xref:enterprise-integration-patterns.adoc[EIP patterns]
+using one of the following mechanisms in the routing logic to transform
+content from the inbound message.
+
+image::eip/ContentFilter.gif[image]
+
+* Using a xref:message-translator.adoc[Message Translator]
+* Invoking a xref:bean-eip.adoc[Bean] with the filtering programmed in Java
+* Using a xref:manual::processor.adoc[Processor] with the filtering programmed in Java
+* Using an xref:manual::expression.adoc[Expression]
+
+== Message Content filtering using a Processor
+
+In this example, we add our own xref:manual::processor.adoc[Processor] using
+explicit Java to filter the message:
+
+._Java-only: using an inline Processor to filter the message_
+[source,java]
+----
+from("direct:start")
+    .process(new Processor() {
+        public void process(Exchange exchange) {
+            String body = exchange.getMessage().getBody(String.class);
+            // do something with the body
+            // and replace it back
+            exchange.getMessage().setBody(body);
+        }
+    })
+    .to("mock:result");
+----
+
+In the Java code above we used an inlined `Processor` which is harder to do with XML or YAML DSL.
+A good practice is to use a class for your custom `Processor` which can then be referenced in the DSL:
+
+._Java-only: custom Processor class registered in the Registry_
+[source,java]
+----
+@BindToRegistry("myProcessor")
+public class MyProcessor implements Processor {
+
+    @Override
+    public void process(Exchange exchange) {
+        String body = exchange.getMessage().getBody(String.class);
+        // do something with the body
+        // and replace it back
+        exchange.getMessage().setBody(body);
+    }
+}
+----
+
+Then you can refer to this processor by its id.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .process("myProcessor")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <process ref="myProcessor"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct
+      parameters:
+        name: start
+      steps:
+        - process:
+            ref: myProcessor
+        - to:
+            uri: mock
+            parameters:
+              name: result
+----
+====
+
+
+== Message Content filtering using a Bean EIP
+
+We can use xref:bean-eip.adoc[Bean EIP] to use any Java
+method on any bean to act as a content filter:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:My.Queue")
+    .bean("myBeanName", "doFilter")
+    .to("activemq:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:Input"/>
+    <bean ref="myBeanName" method="doFilter"/>
+    <to uri="activemq:Output"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:Input
+      steps:
+        - bean:
+            ref: myBeanName
+            method: doFilter
+        - to:
+            uri: activemq:Output
+----
+====
+
+== Message Content filtering using expression
+
+Some languages like xref:languages:xpath-language.adoc[XPath], and xref:languages:xquery-language.adoc[XQuery]
+can be used to transform and filter content from messages.
+
+In the example we use xpath to filter a XML message to select all the `<foo><bar>` elements:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:Input")
+  .setBody().xpath("//foo:bar")
+  .to("activemq:Output");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:Input"/>
+  <setBody>
+    <xpath>//foo:bar</xpath>
+  </setBody>
+  <to uri="activemq:Output"/>
+</route> 
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:Input
+      steps:
+        - setBody:
+            expression:
+              xpath: //foo:bar
+        - to:
+            uri: activemq:Output
+----
+====

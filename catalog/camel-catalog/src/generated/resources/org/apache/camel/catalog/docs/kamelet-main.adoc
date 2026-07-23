@@ -1,0 +1,32 @@
+= Kamelet Main Component
+:doctitle: Kamelet Main
+:shortname: kamelet-main
+:artifactid: camel-kamelet-main
+:description: Main to run Kamelet standalone
+:since: 3.11
+:supportlevel: Preview
+:tabs-sync-option:
+//Manually maintained attributes
+:group: DSL
+
+*Since Camel {since}*
+
+A `main` class that is opinionated to boostrap and run Camel standalone with Kamelets (or plain YAML routes)
+for development and demo purposes.
+
+== Initial configuration
+
+The `KameletMain` is pre-configured with the following properties:
+
+[source,properties]
+----
+camel.component.kamelet.location = classpath:kamelets
+camel.component.rest.consumerComponentName = platform-http
+camel.component.rest.producerComponentName = vertx-http
+camel.main.jmxUpdateRouteEnabled = true
+----
+
+These settings can be overridden by configuration in `application.properties`.
+
+You can find an example with this at
+https://github.com/apache/camel-examples/tree/main/kamelet-main[kamelet-main].

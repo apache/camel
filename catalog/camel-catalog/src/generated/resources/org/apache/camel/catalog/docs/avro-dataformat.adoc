@@ -1,0 +1,122 @@
+= Avro DataFormat
+:doctitle: Avro
+:shortname: avro
+:artifactid: camel-avro
+:description: Serialize and deserialize messages using Apache Avro binary data format
+:since: 2.14
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+This component provides a dataformat for avro, which allows
+serialization and deserialization of messages using Apache Avro's binary
+dataformat. Since Camel 3.2 rpc functionality was moved into separate `camel-avro-rpc` component.
+
+TIP: There is also `camel-jackson-avro` which is a more powerful Camel dataformat for using Avro.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-avro</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+You can easily generate classes from a schema, using maven, ant etc.
+More details can be found at the
+http://avro.apache.org/docs/current/[Apache Avro documentation].
+
+
+== Avro Dataformat Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+== Examples
+
+=== Avro Data Format usage
+
+Using the avro data format is as easy as specifying that the class that
+you want to marshal or unmarshal in your route.
+
+._Java-only: programmatic AvroDataFormat with schema_
+[source,java]
+----
+AvroDataFormat format = new AvroDataFormat(Value.SCHEMA$);
+
+from("direct:in").marshal(format).to("direct:marshal");
+from("direct:back").unmarshal(format).to("direct:unmarshal");
+----
+
+Where Value is an Avro Maven Plugin Generated class.
+
+The same route can be expressed in XML or YAML:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .marshal().avro("org.apache.camel.dataformat.avro.Message")
+    .to("log:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:in"/>
+    <marshal>
+        <avro instanceClass="org.apache.camel.dataformat.avro.Message" library="ApacheAvro"/>
+    </marshal>
+    <to uri="log:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - marshal:
+            avro:
+              instanceClass: org.apache.camel.dataformat.avro.Message
+              library: ApacheAvro
+        - to:
+            uri: log:out
+----
+====
+
+An alternative can be to specify the dataformat inside the context and
+reference it from your route.
+
+._XML-only: Spring XML data format configuration_
+[source,xml]
+----
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+     <dataFormats>
+        <avro id="avro" instanceClass="org.apache.camel.dataformat.avro.Message" library="ApacheAvro"/>
+    </dataFormats>
+    <route>
+        <from uri="direct:in"/>
+        <marshal><custom ref="avro"/></marshal>
+        <to uri="log:out"/>
+    </route>
+</camelContext>
+----
+
+In the same manner, you can unmarshal using the avro data format.
