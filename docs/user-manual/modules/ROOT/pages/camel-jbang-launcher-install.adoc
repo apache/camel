@@ -42,8 +42,8 @@ Installation is always per-user and never requires elevation or `sudo`:
 Previously installed version directories are left in place after an upgrade or downgrade and must
 be removed manually. Reinstalling the same version replaces that version directory.
 
-This is also the layout the `camel self-update` and `camel doctor` commands below understand —
-neither one touches an installation made through Homebrew, Chocolatey, WinGet, Scoop, SDKMAN, or
+This is also the layout the `camel self-update` and `camel doctor` commands below understand.
+Neither one touches an installation made through Homebrew, Chocolatey, WinGet, Scoop, SDKMAN, or
 JBang, each of which manages its own install location and has its own upgrade command.
 
 == Upgrading and switching versions
@@ -59,14 +59,14 @@ camel self-update --check         # report only, install nothing
 
 `camel self-update` checks whether an update is actually needed first (no network cost for the
 archive itself if you're already current), then re-runs the same, published `install.sh`/
-`install.ps1` installer described above — pinned to the exact version it just resolved — rather
+`install.ps1` installer described above, pinned to the exact version it just resolved, rather
 than re-implementing the download/verify/extract/activate steps a second time. The installer
 script itself is downloaded fresh and verified against a SHA-256 published alongside it
 (`install.sha256`) before it's run.
 
 `camel self-update` refuses to run, with a message naming the detected package manager and its own
 upgrade command (e.g. `brew upgrade apache-camel`), when the currently running installation was not
-made by `install.sh`/`install.ps1` — installations managed by a package manager must be upgraded
+made by `install.sh`/`install.ps1`. Installations managed by a package manager must be upgraded
 through that manager.
 
 `camel self-update` also refuses to run when the installation was pinned to an explicit version by
@@ -88,7 +88,7 @@ The check runs on a background thread and never blocks or fails the command actu
 == Detecting conflicting installations
 
 If a machine has more than one Camel CLI installation (for example, both `install.sh` and Homebrew),
-whichever one is first on `PATH` is the one that actually runs — the others are silently unused.
+whichever one is first on `PATH` is the one that actually runs; the others sit unused.
 `camel doctor` reports every installation it finds and marks the active one:
 
 [source,bash]
