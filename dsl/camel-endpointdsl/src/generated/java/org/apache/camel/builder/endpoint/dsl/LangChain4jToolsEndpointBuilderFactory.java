@@ -386,6 +386,44 @@ public interface LangChain4jToolsEndpointBuilderFactory {
             doSetProperty("tags", tags);
             return this;
         }
+        /**
+         * Maximum number of tool-calling round trips (iterations) allowed
+         * before stopping. This prevents infinite loops when the LLM keeps
+         * requesting tool calls indefinitely. Each round trip consists of one
+         * LLM call and the execution of all tools requested in that call. Set
+         * to 0 for unlimited (not recommended).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: producer
+         * 
+         * @param maxToolCallingRoundTrips the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jToolsEndpointProducerBuilder maxToolCallingRoundTrips(int maxToolCallingRoundTrips) {
+            doSetProperty("maxToolCallingRoundTrips", maxToolCallingRoundTrips);
+            return this;
+        }
+        /**
+         * Maximum number of tool-calling round trips (iterations) allowed
+         * before stopping. This prevents infinite loops when the LLM keeps
+         * requesting tool calls indefinitely. Each round trip consists of one
+         * LLM call and the execution of all tools requested in that call. Set
+         * to 0 for unlimited (not recommended).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: producer
+         * 
+         * @param maxToolCallingRoundTrips the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jToolsEndpointProducerBuilder maxToolCallingRoundTrips(String maxToolCallingRoundTrips) {
+            doSetProperty("maxToolCallingRoundTrips", maxToolCallingRoundTrips);
+            return this;
+        }
     }
 
     /**
