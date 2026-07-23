@@ -239,7 +239,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             configuredAgent = agent;
         }
         if (configuredAgent instanceof AbstractAgent<?> abstractAgent) {
-            return abstractAgent.getMcpToolProviderFilter();
+            return AbstractAgent.mcpToolProviderFilter(abstractAgent);
         }
         return null;
     }

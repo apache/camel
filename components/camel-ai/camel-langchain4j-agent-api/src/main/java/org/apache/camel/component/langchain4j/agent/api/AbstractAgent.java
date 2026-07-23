@@ -65,12 +65,17 @@ public abstract class AbstractAgent<S> implements Agent {
     }
 
     /**
-     * Returns the MCP tool provider filter from this agent's configuration, if configured.
+     * Returns the MCP tool provider filter from the given agent's configuration.
      *
-     * @return the filter predicate, or {@code null} when no filter is configured
+     * @param  agent the abstract agent, may be {@code null}
+     * @return       the filter predicate, or {@code null} when the agent is {@code null} or no filter is configured
+     * @since        4.22
      */
-    public BiPredicate<McpClient, ToolSpecification> getMcpToolProviderFilter() {
-        return configuration.getMcpToolProviderFilter();
+    public static BiPredicate<McpClient, ToolSpecification> mcpToolProviderFilter(AbstractAgent<?> agent) {
+        if (agent == null) {
+            return null;
+        }
+        return agent.getConfiguration().getMcpToolProviderFilter();
     }
 
     /**
