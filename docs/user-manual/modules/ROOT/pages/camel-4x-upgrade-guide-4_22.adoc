@@ -994,7 +994,7 @@ from("direct:events")
 
 The component supports the `insert` (default), `query` and `ping` operations, and can either use a shared
 autowired `com.clickhouse.client.api.Client` bean or build its own client from the `serverUrl`, `username`,
-`password` and `ssl` endpoint options. See the xref:next@components:clickhouse-component.adoc[ClickHouse component]
+`password` and `ssl` endpoint options. See the xref:next@components::clickhouse-component.adoc[ClickHouse component]
 documentation for details.
 
 === camel-minio - Upgraded to minio 9.0.3 - Breaking Changes
