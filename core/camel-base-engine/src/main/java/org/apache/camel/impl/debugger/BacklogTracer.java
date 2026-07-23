@@ -62,8 +62,12 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     public static final int MAX_BACKLOG_SIZE = 1000;
     private final CamelContext camelContext;
     private final Language simple;
-    private boolean enabled;
-    private boolean standby;
+    // enabled, standby, and activityEnabled (further below) are toggled at runtime via
+    // JMX/management APIs while routing threads read them in shouldTrace() and traceEvent().
+    // Other boolean fields (removeOnDump, bodyIncludeStreams, traceRests, etc.) are set during
+    // initialization and do not change while routes are processing, so they do not need volatile.
+    private volatile boolean enabled;
+    private volatile boolean standby;
     private final AtomicLong traceCounter = new AtomicLong();
     // use a queue with an upper limit to avoid storing too many messages
     private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
@@ -87,7 +91,8 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     private boolean includeExchangeProperties = true;
     private boolean includeExchangeVariables = true;
     private boolean includeException = true;
-    private boolean activityEnabled;
+    // volatile: toggled at runtime via JMX, same rationale as enabled/standby above
+    private volatile boolean activityEnabled;
     private boolean traceRests;
     private boolean traceTemplates;
     // a pattern to filter tracing nodes
