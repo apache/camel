@@ -41,6 +41,7 @@ import org.apache.camel.util.json.JsonObject;
  * {@code @CamelSpringBootTest} for Spring Boot), mock endpoints for producers, and {@code @RegisterExtension} stubs for
  * infrastructure components like Kafka, JMS, MongoDB, etc.
  */
+@McpSecured
 @ApplicationScoped
 public class TestScaffoldTools {
 

@@ -36,6 +36,7 @@ import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
  * Boot or Quarkus). Wraps {@link CamelCatalog#validateConfigurationProperty(String)} so that misspelled option names,
  * invalid values and suggested corrections can be surfaced to LLMs.
  */
+@McpSecured
 @ApplicationScoped
 public class ConfigurationValidateTools {
 

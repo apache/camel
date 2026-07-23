@@ -37,6 +37,7 @@ import org.apache.camel.tooling.model.LanguageModel;
 /**
  * MCP Tools for querying the Camel Catalog using Quarkus MCP Server.
  */
+@McpSecured
 @ApplicationScoped
 public class CatalogTools {
 

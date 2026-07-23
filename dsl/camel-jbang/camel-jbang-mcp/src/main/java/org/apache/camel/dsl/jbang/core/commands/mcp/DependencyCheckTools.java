@@ -34,6 +34,7 @@ import org.apache.camel.tooling.model.ComponentModel;
  * Analyzes a project's pom.xml (and optionally route definitions) to detect outdated Camel dependencies, missing
  * dependencies for components used in routes, and version conflicts between the Camel BOM and explicit overrides.
  */
+@McpSecured
 @ApplicationScoped
 public class DependencyCheckTools {
 

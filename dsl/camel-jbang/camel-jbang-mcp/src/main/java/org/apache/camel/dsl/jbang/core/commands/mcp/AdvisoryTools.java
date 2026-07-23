@@ -33,6 +33,7 @@ import org.apache.camel.tooling.model.SecurityAdvisoryModel;
  * Lets an LLM answer questions such as "is my Camel 4.10.1 project affected by known CVEs?" or "which CVEs were
  * published for camel-kafka and in which versions are they fixed?".
  */
+@McpSecured
 @ApplicationScoped
 public class AdvisoryTools {
 

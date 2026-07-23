@@ -34,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 /**
  * MCP Tools for querying the Kamelet Catalog using Quarkus MCP Server.
  */
+@McpSecured
 @ApplicationScoped
 public class KameletTools {
 

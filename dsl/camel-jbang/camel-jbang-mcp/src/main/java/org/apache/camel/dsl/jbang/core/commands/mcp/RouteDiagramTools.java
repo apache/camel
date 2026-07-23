@@ -34,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.common.Printer;
  * MCP Tool for generating a visual diagram of Camel routes from a source file (non-running integration). Wraps the
  * {@code camel route-diagram} jbang command. Supports both PNG image output and plain-text ASCII/Unicode output.
  */
+@McpSecured
 @ApplicationScoped
 public class RouteDiagramTools {
 

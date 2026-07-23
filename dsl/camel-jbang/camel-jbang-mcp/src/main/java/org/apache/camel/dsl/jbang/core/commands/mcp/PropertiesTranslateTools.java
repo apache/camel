@@ -38,6 +38,7 @@ import io.quarkiverse.mcp.server.ToolCallException;
  * ({@code camel.server.*} / {@code camel.management.*} are jbang-only) and the legacy {@code camel.springboot.*}
  * configuration that was harmonized to {@code camel.main.*} in Camel 4.5 and removed in 4.13.
  */
+@McpSecured
 @ApplicationScoped
 public class PropertiesTranslateTools {
 
