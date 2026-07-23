@@ -133,6 +133,7 @@ class RouteCostEstimateToolsTest {
         List<String> schemes = tools.extractSchemes(AI_PIPELINE_ROUTE);
 
         assertThat(schemes).contains("docling", "aws-bedrock", "aws2-s3");
+        assertThat(schemes).doesNotContain("uri");
     }
 
     @Test

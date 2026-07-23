@@ -43,7 +43,8 @@ import io.quarkiverse.mcp.server.ToolCallException;
 public class RouteCostEstimateTools {
 
     private static final Pattern YAML_SCHEME_PATTERN = Pattern.compile(
-            "(?:uri:\\s*[\"']?|from:\\s+[\"']?|to:\\s+[\"']?|toD:\\s+[\"']?)([a-zA-Z][a-zA-Z0-9+.-]*):(?://)?",
+            "(?:uri:\\s*[\"']?|from:[ \\t]+[\"']?|to:[ \\t]+[\"']?|toD:[ \\t]+[\"']?)"
+                                                                       + "([a-zA-Z][a-zA-Z0-9+.-]*):(?://)?",
             Pattern.MULTILINE);
 
     private static final Pattern XML_SCHEME_PATTERN = Pattern.compile(
