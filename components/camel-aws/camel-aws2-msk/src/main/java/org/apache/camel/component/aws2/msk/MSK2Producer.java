@@ -176,7 +176,7 @@ public class MSK2Producer extends DefaultProducer {
                 Integer nodesNumber = exchange.getIn().getHeader(MSK2Constants.BROKER_NODES_NUMBER, Integer.class);
                 builder.numberOfBrokerNodes(nodesNumber);
             } else {
-                throw new IllegalArgumentException("Kafka Version must be specified");
+                throw new IllegalArgumentException("Number of Broker Nodes must be specified");
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSK2Constants.BROKER_NODES_GROUP_INFO))) {
                 BrokerNodeGroupInfo brokerNodesGroupInfo
