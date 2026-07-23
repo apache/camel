@@ -1,0 +1,223 @@
+= Mustache Component
+:doctitle: Mustache
+:shortname: mustache
+:artifactid: camel-mustache
+:description: Transform messages using a Mustache template.
+:since: 2.12
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Mustache component allows for processing a message using a
+http://mustache.github.io/[Mustache] template. This can be ideal when
+using Templating to generate responses for
+requests.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+---------------------------------------------------------------------------------
+<dependency>
+<groupId>org.apache.camel</groupId>
+<artifactId>camel-mustache</artifactId>
+<version>x.x.x</version> <!-- use the same version as your Camel core version -->
+</dependency>
+---------------------------------------------------------------------------------
+
+== URI format
+
+-------------------------------
+mustache:templateName[?options]
+-------------------------------
+
+Where *templateName* is the classpath-local URI of the template to
+invoke; or the complete URL of the remote template (e.g.:
+`\file://folder/myfile.mustache`).
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Mustache Context
+
+Camel will provide exchange information in the Mustache context (just a
+`Map`). The `Exchange` is transferred as:
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|key |value
+
+|`exchange` |The `Exchange` itself.
+
+|`exchange.properties` |The `Exchange` properties.
+
+|`variables` |The variables
+
+|`headers` |The headers of the In message.
+
+|`camelContext` |The Camel Context.
+
+|`request` |The In message.
+
+|`body` |The In message body.
+
+|`response` |The Out message (only for InOut message exchange pattern).
+|=======================================================================
+
+=== Dynamic templates
+
+Camel provides two headers by which you can define a different resource
+location for a template or the template content itself. If any of these
+headers is set, then Camel uses this over the endpoint configured
+resource. This allows you to provide a dynamic template at runtime.
+
+
+== Examples
+
+For example, you could use something like:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:My.Queue")
+    .to("mustache:com/acme/MyResponse.mustache");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="mustache:com/acme/MyResponse.mustache"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: mustache:com/acme/MyResponse.mustache
+----
+====
+
+To use a Mustache template to formulate a response for a message for
+InOut message exchanges (where there is a `JMSReplyTo` header).
+
+If you want to use InOnly and consume the message and send it to another
+destination, you could use:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:My.Queue")
+    .to("mustache:com/acme/MyResponse.mustache")
+    .to("activemq:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="mustache:com/acme/MyResponse.mustache"/>
+  <to uri="activemq:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: mustache:com/acme/MyResponse.mustache
+        - to:
+            uri: activemq:Another.Queue
+----
+====
+
+It's possible to specify what template the component should use
+dynamically via a header, so for example:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader("MustacheResourceUri").constant("path/to/my/template.mustache")
+    .to("mustache:dummy?allowTemplateFromHeader=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="MustacheResourceUri">
+    <constant>path/to/my/template.mustache</constant>
+  </setHeader>
+  <to uri="mustache:dummy?allowTemplateFromHeader=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: MustacheResourceUri
+            expression:
+              constant:
+                expression: path/to/my/template.mustache
+        - to:
+            uri: mustache:dummy
+            parameters:
+              allowTemplateFromHeader: true
+----
+====
+
+=== The Email Example
+
+In this sample, we want to use Mustache templating for an order
+confirmation email. The email template is laid out in Mustache as:
+
+-------------------------------------------------
+Dear {{headers.lastName}}, {{headers.firstName}}
+
+Thanks for the order of {{headers.item}}.
+
+Regards Camel Riders Bookstore
+{{body}}
+-------------------------------------------------

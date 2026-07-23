@@ -1,0 +1,94 @@
+= OpenStack Cinder Component
+:doctitle: OpenStack Cinder
+:shortname: openstack-cinder
+:artifactid: camel-openstack
+:description: Access data in OpenStack Cinder block storage.
+:since: 2.19
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: OpenStack
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Openstack Cinder component allows messages to be sent to an OpenStack block storage services.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+.pom.xml
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-openstack</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel.
+
+
+== URI Format
+
+----------------------------
+openstack-cinder://hosturl[?options]
+----------------------------
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+You can use the following settings for each subsystem:
+
+=== Volumes
+
+==== Operations you can perform with the Volume producer
+[width="100%",cols="20%,80%",options="header",]
+|=========================================================================
+|Operation | Description
+
+|`create` | Create new volume.
+
+|`get` | Get the volume.
+
+|`getAll` | Get all volumes.
+
+|`getAllTypes` | Get volume types.
+
+|`update` | Update the volume.
+
+|`delete` | Delete the volume.
+|=========================================================================
+
+If you need more precise volume settings, you can create a new object of the type `org.openstack4j.model.storage.block.Volume` and send in the message body.
+
+=== Snapshots
+
+==== Operations you can perform with the Snapshot producer
+[width="100%",cols="20%,80%",options="header",]
+|=========================================================================
+|Operation | Description
+
+|`create` | Create a new snapshot.
+
+|`get` | Get the snapshot.
+
+|`getAll` | Get all snapshots.
+
+|`update` | Get update the snapshot.
+
+|`delete` | Delete the snapshot.
+
+|=========================================================================
+
+If you need more precise server settings, you can create a new object of the type `org.openstack4j.model.storage.block.VolumeSnapshot` and send in the message body.
+

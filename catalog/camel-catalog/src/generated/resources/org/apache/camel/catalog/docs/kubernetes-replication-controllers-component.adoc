@@ -1,0 +1,151 @@
+= Kubernetes Replication Controller Component
+:doctitle: Kubernetes Replication Controller
+:shortname: kubernetes-replication-controllers
+:artifactid: camel-kubernetes
+:description: Perform operations on Kubernetes Replication Controllers and get notified on Replication Controllers changes.
+:since: 2.17
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Kubernetes
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Kubernetes Replication Controller component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
+provides a producer to execute Kubernetes Replication controller operations and a consumer to
+consume events related to Replication Controller (RC) objects.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Supported producer operation
+
+- `listReplicationControllers`
+- `listReplicationControllersByLabels`
+- `getReplicationController`
+- `createReplicationController`
+- `updateReplicationController`
+- `deleteReplicationController`
+- `scaleReplicationController`
+
+== Examples
+
+=== Kubernetes Replication Controllers Producer Examples
+
+- `listReplicationControllers`: this operation lists the RCs on a kubernetes cluster
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:list")
+    .to("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllers")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&amp;operation=listReplicationControllers"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+    steps:
+      - to:
+          uri: kubernetes-replication-controllers:///
+          parameters:
+            kubernetesClient: "#kubernetesClient"
+            operation: listReplicationControllers
+      - to:
+          uri: mock:result
+----
+====
+
+This operation returns a list of RCs from your cluster
+
+- `listReplicationControllersByLabels`: this operation lists the RCs by labels on a kubernetes cluster
+
+._Java-only: sets a Map header for label selection_
+[source,java]
+----
+from("direct:listByLabels")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesReplicationControllersLabels",
+            Map.of("key1", "value1", "key2", "value2"));
+    })
+    .to("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllersByLabels")
+    .to("mock:result");
+----
+
+This operation returns a list of RCs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
+
+=== Kubernetes Replication Controllers Consumer Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("kubernetes-replication-controllers://{{kubernetes-host}}?oauthToken={{kubernetes-token}}")
+    .to("log:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kubernetes-replication-controllers://{{kubernetes-host}}?oauthToken={{kubernetes-token}}"/>
+  <to uri="log:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kubernetes-replication-controllers://{{kubernetes-host}}
+      parameters:
+        oauthToken: "{{kubernetes-token}}"
+    steps:
+      - to:
+          uri: log:result
+----
+====
+
+This consumer returns a message per event received for all ReplicationControllers from all namespaces in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch Replication Controllers with the specified label in any namespace.
+- `namespace` - Watch all Replication Controllers in the specified namespace.
+- `namespace` + `resourceName` - Watch the Replication Controller with the specified name in the given namespace.
+- `namespace` + `labelKey` + `labelValue` - Watch Replication Controllers with the specified label in the given namespace.
+
+

@@ -1,0 +1,99 @@
+= Return Address
+:tabs-sync-option:
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/ReturnAddress.html[Return
+Address] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns].
+
+How does a replier know where to send the reply?
+
+image::eip/ReturnAddressSolution.gif[image]
+
+The request message should contain a Return Address that indicates where to send the reply message.
+
+Camel supports Return Address by messaging xref:ROOT:index.adoc[Components]
+that provides this functionality such as the xref:ROOT:jms-component.adoc[JMS]
+component via the `JMSReplyTo` header.
+
+== Example
+
+In the example below we send a message to the JMS cheese queue using `InOut` mode, this means
+that Camel will automatically configure the `JMSReplyTo` header with a temporary queue as the Return Address.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:foo")
+  .to(ExchangePattern.InOut, "jms:queue:cheese");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:foo"/>
+    <to pattern="InOut" uri="jms:queue:cheese"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:foo
+      steps:
+        - to:
+            uri: jms:queue:cheese
+            pattern: InOut
+----
+====
+
+You can also specify a named reply queue with the `replyTo` option (instead of a temporary queue).
+When doing so then `InOut` mode is implied:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:foo")
+  .to("jms:queue:cheese?replyTo=myReplyQueue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:foo"/>
+    <to uri="jms:queue:cheese?replyTo=myReplyQueue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:foo
+      steps:
+        - to:
+            uri: jms:queue:cheese
+            parameters:
+              replyTo: myReplyQueue
+----
+====
+
+== See Also
+
+See the related xref:requestReply-eip.adoc[Request Reply] EIP.
+

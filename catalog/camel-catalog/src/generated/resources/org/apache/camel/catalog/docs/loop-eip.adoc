@@ -1,0 +1,313 @@
+= Loop EIP
+:doctitle: Loop
+:shortname: loop
+:description: Processes the message body repeatedly for a specified number of iterations, or until a condition is met
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+The Loop EIP allows for processing a message a number of times, possibly in a different way for each iteration.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Looping modes
+
+The Loop EIP can run in three modes: default, copy, or while mode.
+
+In default mode the Loop EIP uses the same `Exchange` instance throughout the looping.
+So the result from the previous iteration will be used for the next iteration.
+
+In the copy mode, then the Loop EIP uses a copy of the original `Exchange` in each iteration.
+So the result from the previous iteration will *not* be used for the next iteration.
+
+In the while mode, then the Loop EIP will keep looping until the expression evaluates to `false` or `null`.
+
+NOTE: The Loop EIP is not intended to be looping a very high number. So keep the number of loops to a reasonable
+number such as 10000 or less. A very high number can degrade performance.
+
+== Example
+
+The following example shows how to take a request from the `direct:x` endpoint,
+then send the message repetitively to `mock:result`.
+
+The number of times the message is sent is either passed as an argument to `loop`,
+or determined at runtime by evaluating an expression.
+
+The xref:manual::expression.adoc[Expression] *must* evaluate to an `int`,
+otherwise a `RuntimeCamelException` is thrown.
+
+Pass loop count as an argument:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:a")
+    .loop(8)
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:a"/>
+  <loop>
+    <constant>8</constant>
+    <to uri="mock:result"/>
+  </loop>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - loop:
+            expression:
+              constant:
+                expression: 8
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
+
+
+You can also use a Camel language such as `header` that provides information how many times to loop:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:b")
+    .loop(header("loop"))
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:b"/>
+  <loop>
+    <header>loop</header>
+    <to uri="mock:result"/>
+  </loop>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:b
+      steps:
+        - loop:
+            expression:
+              header:
+                expression: loop
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
+
+If you work with XML then you can use xref:languages:xpath-language.adoc[XPath] language:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:c")
+    .loop(xpath("/hello/@times"))
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:c"/>
+    <loop>
+        <xpath>/hello/@times</xpath>
+        <to uri="mock:result"/>
+    </loop>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:c
+      steps:
+        - loop:
+            expression:
+              xpath:
+                expression: /hello/@times
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
+
+
+== Using copy mode
+
+Now suppose we send a message to direct:start endpoint containing the letter A.
+The output of processing this route will be that, each mock:loop endpoint will receive AB as the message.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    // instruct loop to use copy mode, which mean it will use a copy of the input exchange
+    // for each loop iteration, instead of keep using the same exchange all over
+    .loop(3).copy()
+        .transform(body().append("B"))
+        .to("mock:loop")
+    .end() // end loop
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <!-- enable copy mode for loop eip -->
+  <loop copy="true">
+    <constant>3</constant>
+    <transform>
+      <simple>${body}B</simple>
+    </transform>
+    <to uri="mock:loop"/>
+  </loop>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - loop:
+            copy: "true"
+            expression:
+              constant:
+                expression: 3
+            steps:
+              - transform:
+                  expression:
+                    simple:
+                      expression: "${body}B"
+              - to:
+                  uri: mock:loop
+        - to:
+            uri: mock:result
+----
+====
+
+However, if we do *not* enable copy mode, then mock:loop will receive `_"AB"_`, `_"ABB"_`, `_"ABBB"_`, etc. messages.
+
+
+== Looping using while
+
+The loop can act like a while loop that loops until the expression evaluates to `false` or `null`.
+
+For example, the route below loops while the length of the message body is five or fewer characters.
+Notice that the DSL uses `loopDoWhile`.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .loopDoWhile(simple("${body.length} <= 5"))
+        .to("mock:loop")
+        .transform(body().append("A"))
+    .end() // end loop
+    .to("mock:result");
+----
+
+XML::
++
+Notice that the while loop is turned on using the `doWhile` attribute.
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <loop doWhile="true">
+    <simple>${body.length} &lt;= 5</simple>
+    <to uri="mock:loop"/>
+    <transform>
+      <simple>A${body}</simple>
+    </transform>
+  </loop>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - loop:
+            doWhile: "true"
+            expression:
+              simple:
+                expression: "${body.length} <= 5"
+            steps:
+              - to:
+                  uri: mock:loop
+              - transform:
+                  expression:
+                    simple:
+                      expression: "A${body}"
+        - to:
+            uri: mock:result
+----
+====

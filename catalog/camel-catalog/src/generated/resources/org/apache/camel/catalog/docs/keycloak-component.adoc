@@ -1,0 +1,456 @@
+= Keycloak Component
+:doctitle: Keycloak
+:shortname: keycloak
+:artifactid: camel-keycloak
+:description: Manage Keycloak instances via Admin API.
+:since: 4.15
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Keycloak component supports running operations on Keycloak instance and policy enforcements.
+
+== Component Features
+
+The Keycloak component provides three main functionalities:
+
+1. **xref:others:keycloak-producer.adoc[Producer Operations]** - Manage Keycloak instances via the Admin API (realms, users, roles, clients, groups, sessions, tokens, and more)
+2. **xref:others:keycloak-consumer.adoc[Consumer Operations]** - Poll and consume user events and admin events from Keycloak for monitoring, auditing, and event-driven workflows
+3. **xref:others:keycloak-security.adoc[Security Policies]** - Route-level authorization using Keycloak authentication and authorization services, including role-based access, permission-based access, and OAuth 2.0 token introspection
+
+
+== URI Format
+
+----
+keycloak://label[?options]
+----
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Overview
+
+=== Producer
+
+The producer supports a comprehensive set of administrative operations on Keycloak via the Admin API, including user management, role management, client management, group management, session management, token management, identity providers, organizations, authorization services, and bulk operations.
+
+See xref:others:keycloak-producer.adoc[Keycloak Producer Operations] for the full list of supported operations, configuration details, and examples.
+
+=== Consumer
+
+The consumer allows you to poll Keycloak for user events (logins, logouts, registrations) and admin events (resource creates, updates, deletes). It supports filtering by event type, operation type, date range, user, client, and IP address, with built-in fingerprint-based deduplication.
+
+See xref:others:keycloak-consumer.adoc[Keycloak Consumer Operations] for configuration, event processing patterns, and examples.
+
+=== Security Policies
+
+The security policy provides route-level authorization by validating Keycloak access tokens. It supports role-based and permission-based authorization, local JWT parsing and OAuth 2.0 token introspection (RFC 7662) with pluggable cache implementations.
+
+See xref:others:keycloak-security.adoc[Keycloak Security Policies] for configuration, token introspection setup, and examples.
+
+== Usage
+
+=== Providing Access Tokens
+
+The security policy expects access tokens to be provided in one of the following ways:
+
+1. **Header**: `CamelKeycloakAccessToken`
+2. **Authorization Header**: `Authorization: Bearer <token>`
+3. **Exchange Property**: `CamelKeycloakAccessToken`
+
+._Java-only: accessing token from exchange_
+
+[source,java]
+----
+// Using header
+template.sendBodyAndHeader("direct:protected", "message",
+    "CamelKeycloakAccessToken", accessToken);
+
+// Using Authorization header
+template.sendBodyAndHeader("direct:protected", "message",
+    "Authorization", "Bearer " + accessToken);
+----
+
+=== Route Examples
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:admin-only")
+    .policy(adminPolicy)
+    .transform().constant("Admin access granted")
+    .to("mock:admin");
+
+from("direct:user-or-admin")
+    .policy(userPolicy)
+    .transform().constant("User access granted")
+    .to("mock:user");
+
+from("rest:get:/api/documents")
+    .policy(documentsPolicy)
+    .to("direct:list-documents");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:admin-only
+      steps:
+        - policy:
+            ref: adminPolicy
+        - transform:
+            constant: "Admin access granted"
+        - to:
+            uri: mock:admin
+
+- route:
+    from:
+      uri: direct:user-or-admin
+      steps:
+        - policy:
+            ref: userPolicy
+        - transform:
+            constant: "User access granted"
+        - to:
+            uri: mock:user
+
+- rest:
+    get:
+      - uri: /api/documents
+        to: direct:list-documents
+        route:
+          policy:
+            ref: documentsPolicy
+----
+====
+
+== Configuration Options
+
+[width="100%",cols="10%,10%,80%",options="header"]
+|===
+| Name | Default | Description
+
+| serverUrl | | Keycloak server URL (e.g., http://localhost:8080)
+| realm | | Keycloak realm name
+| clientId | | Keycloak client ID
+| clientSecret | | Keycloak client secret (for client credentials flow)
+| username | | Username (for resource owner password flow)
+| password | | Password (for resource owner password flow)
+| requiredRoles | "" | Comma-separated list of required roles (e.g., "admin,user,manager")
+| requiredPermissions | "" | Comma-separated list of required permissions (e.g., "read:documents,write:documents")
+| allRolesRequired | true | Whether ALL roles are required (true) or ANY role (false)
+| allPermissionsRequired | true | Whether ALL permissions are required (true) or ANY permission (false)
+| useResourceOwnerPasswordCredentials | false | Whether to use resource owner password flow
+|===
+
+== Security Considerations
+
+* Always use HTTPS in production environments
+* Store client secrets securely (environment variables, secret management systems)
+* Regularly rotate client secrets and user passwords
+* Use the principle of least privilege when assigning roles and permissions
+* Consider token expiration and refresh strategies
+
+== Error Handling
+
+The component throws `CamelAuthorizationException` when:
+
+* Access token is missing or invalid
+* User doesn't have required roles
+* User doesn't have required permissions
+* Keycloak server is unreachable
+* Token verification fails
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+onException(CamelAuthorizationException.class)
+    .handled(true)
+    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(403))
+    .transform().constant("Access denied");
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - "org.apache.camel.CamelAuthorizationException"
+    handled: true
+    steps:
+      - setHeader:
+          name: "CamelHttpResponseCode"
+          constant: 403
+      - transform:
+          constant: "Access denied"
+----
+====
+
+== Running Integration Tests
+
+The component includes integration tests that require a running Keycloak instance. These tests are disabled by default and only run when specific system properties are provided.
+
+The integration tests include comprehensive testing for:
+* Role-based authorization with different role requirements
+* Permission-based authorization using custom claims and scopes
+* Public key verification with JWKS endpoint integration
+* Combined roles and permissions validation
+* Token parsing with and without public key verification
+* Different authorization header formats (Bearer token, custom header)
+* Token expiration and validity checks
+* Error handling for invalid tokens and insufficient privileges
+
+=== Starting Keycloak with Docker
+
+==== 1. Start Keycloak Container
+
+[source,bash]
+----
+# Start Keycloak in development mode
+docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin \
+  quay.io/keycloak/keycloak:latest start-dev
+----
+
+==== 2. Access Keycloak Admin Console
+
+Open your browser to http://localhost:8080/admin and login with:
+- Username: `admin`
+- Password: `admin`
+
+=== Keycloak Configuration for Integration Tests
+
+==== 3. Create Test Realm
+
+1. In the Keycloak Admin Console, click **"Add realm"**
+2. Set realm name to: `test-realm`
+3. Click **"Create"**
+
+==== 4. Create Test Client
+
+1. In the `test-realm`, go to **Clients** -> **"Create client"**
+2. Set the following:
+   - Client type: `OpenID Connect`
+   - Client ID: `test-client`
+   - Next -> Client authentication: `ON`
+   - Authorization: `ON` (optional, for advanced features)
+   - Next -> Valid redirect URIs: `*`
+   - Click **"Save"**
+3. Go to **Credentials** tab and copy the **Client Secret**
+
+==== 5. Create Test Roles
+
+1. Go to **Realm roles** -> **"Create role"**
+2. Create the following roles:
+   - `admin-role`
+   - `user`
+   - `reader`
+
+==== 6. Create Test Users
+
+Create three test users with the following configuration:
+
+**User 1: myuser**
+1. Go to **Users** -> **"Add user"**
+2. Set:
+   - Username: `myuser`
+   - Email: `myuser@test.com`
+   - First name: `My`
+   - Last name: `User`
+   - Click **"Create"**
+3. Go to **Credentials** tab -> **"Set password"**
+   - Password: `pippo123`
+   - Temporary: `OFF`
+4. Go to **Role mapping** tab -> **"Assign role"**
+   - Assign role: `admin-role`
+
+**User 2: test-user**
+1. Create user with:
+   - Username: `test-user`
+   - Password: `user123` (temporary: OFF)
+   - Assign role: `user`
+
+**User 3: reader-user**
+1. Create user with:
+   - Username: `reader-user`
+   - Password: `reader123` (temporary: OFF)
+   - Assign role: `reader`
+
+=== Running the Integration Tests
+
+==== 7. Execute Tests with Maven
+
+**Run All Integration Tests:**
+[source,bash]
+----
+# Run integration tests with required properties
+mvn test -Dtest=KeycloakSecurityIT \
+  -Dkeycloak.server.url=http://localhost:8080 \
+  -Dkeycloak.realm=test-realm \
+  -Dkeycloak.client.id=test-client \
+  -Dkeycloak.client.secret=YOUR_CLIENT_SECRET
+----
+
+**Run Specific Test Categories:**
+[source,bash]
+----
+# Test only role-based authorization
+mvn test -Dtest=KeycloakSecurityIT#testKeycloakSecurityPolicyWithValidAdminToken,testKeycloakSecurityPolicyWithValidUserToken,testKeycloakSecurityPolicyUserCannotAccessAdminRoute \
+  -Dkeycloak.server.url=http://localhost:8080 \
+  -Dkeycloak.realm=test-realm \
+  -Dkeycloak.client.id=test-client \
+  -Dkeycloak.client.secret=YOUR_CLIENT_SECRET
+
+# Test only permissions-based authorization
+mvn test -Dtest=KeycloakSecurityIT#testKeycloakSecurityPolicyWithPermissions,testKeycloakSecurityPolicyWithScopeBasedPermissions,testKeycloakSecurityPolicyWithCombinedRolesAndPermissions \
+  -Dkeycloak.server.url=http://localhost:8080 \
+  -Dkeycloak.realm=test-realm \
+  -Dkeycloak.client.id=test-client \
+  -Dkeycloak.client.secret=YOUR_CLIENT_SECRET
+
+# Test only public key verification
+mvn test -Dtest=KeycloakSecurityIT#testKeycloakSecurityPolicyWithPublicKeyVerification,testParseTokenDirectlyWithPublicKey \
+  -Dkeycloak.server.url=http://localhost:8080 \
+  -Dkeycloak.realm=test-realm \
+  -Dkeycloak.client.id=test-client \
+  -Dkeycloak.client.secret=YOUR_CLIENT_SECRET
+----
+
+Replace `YOUR_CLIENT_SECRET` with the actual client secret from step 4.
+
+**Run Manual Producer Tests:**
+
+The `KeycloakProducerIT` test contains manual integration tests for producer operations. These tests are disabled by default and require explicit activation:
+
+[source,bash]
+----
+# Run manual producer integration tests
+mvn test -Dtest=KeycloakProducerIT \
+  -Dmanual.keycloak.test=true \
+  -Dkeycloak.server.url=http://localhost:8080 \
+  -Dkeycloak.realm=master \
+  -Dkeycloak.username=admin \
+  -Dkeycloak.password=admin
+----
+
+NOTE: The `-Dmanual.keycloak.test=true` flag is required to run `KeycloakProducerIT` tests. Without this flag, the tests will be skipped even if other Keycloak properties are provided. This prevents the tests from accidentally running in automated CI environments.
+
+==== 8. Alternative: Set Environment Variables
+
+[source,bash]
+----
+# For KeycloakSecurityIT tests
+export KEYCLOAK_SERVER_URL=http://localhost:8080
+export KEYCLOAK_REALM=test-realm
+export KEYCLOAK_CLIENT_ID=test-client
+export KEYCLOAK_CLIENT_SECRET=YOUR_CLIENT_SECRET
+
+# Run security tests
+mvn test -Dtest=KeycloakSecurityIT \
+  -Dkeycloak.server.url=$KEYCLOAK_SERVER_URL \
+  -Dkeycloak.realm=$KEYCLOAK_REALM \
+  -Dkeycloak.client.id=$KEYCLOAK_CLIENT_ID \
+  -Dkeycloak.client.secret=$KEYCLOAK_CLIENT_SECRET
+
+# For manual producer tests (KeycloakProducerIT)
+export KEYCLOAK_SERVER_URL=http://localhost:8080
+export KEYCLOAK_REALM=master
+export KEYCLOAK_USERNAME=admin
+export KEYCLOAK_PASSWORD=admin
+
+# Run manual producer tests (requires explicit flag)
+mvn test -Dtest=KeycloakProducerIT \
+  -Dmanual.keycloak.test=true \
+  -Dkeycloak.server.url=$KEYCLOAK_SERVER_URL \
+  -Dkeycloak.realm=$KEYCLOAK_REALM \
+  -Dkeycloak.username=$KEYCLOAK_USERNAME \
+  -Dkeycloak.password=$KEYCLOAK_PASSWORD
+----
+
+=== Troubleshooting
+
+**Tests are skipped**:
+- For `KeycloakSecurityIT`: Verify all four required properties are provided and Keycloak is running on the specified URL.
+- For `KeycloakProducerIT`: Ensure `-Dmanual.keycloak.test=true` is set along with the required Keycloak properties.
+
+**401 Unauthorized**: Check that:
+- Users exist with correct passwords
+- Users have the required roles assigned
+- Client credentials are correct
+
+**Connection refused**: Ensure Keycloak is running and accessible at the specified URL.
+
+**Token validation errors**: Verify the realm name and client configuration match exactly.
+
+=== Setting up Permissions in Keycloak
+
+For permissions-based authorization, you have several options to include permissions in tokens:
+
+==== Option 1: Custom Claims Mapper
+
+1. In your realm, go to **Client Scopes** -> **roles** -> **Mappers** -> **Create mapper**
+2. Set the following:
+   - Mapper Type: `User Attribute`
+   - Name: `permissions-mapper`
+   - User Attribute: `permissions`
+   - Token Claim Name: `permissions`
+   - Claim JSON Type: `JSON`
+   - Add to ID token: `ON`
+   - Add to access token: `ON`
+
+3. Add the `permissions` attribute to users:
+   - Go to **Users** -> Select user -> **Attributes** tab
+   - Add attribute: `permissions` with value like `["read:documents", "write:documents"]`
+
+==== Option 2: Scope-based Permissions
+
+1. Configure client scopes:
+   - Go to **Client Scopes** -> **Create client scope**
+   - Scope Name: `documents`
+   - Protocol: `openid-connect`
+
+2. Add scope to client:
+   - Go to **Clients** -> Your client -> **Client Scopes** tab
+   - Add the scope as **Default** or **Optional**
+
+3. In your application code, you can then use scopes as permissions:
+
+._Java-only: programmatic security policy configuration_
+
+[source,java]
+----
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
+policy.setRequiredPermissions("documents,users,admin");
+policy.setAllPermissionsRequired(false); // ANY permission
+----
+
+==== Option 3: Authorization Services (Advanced)
+
+For complex permission models, enable Keycloak Authorization Services:
+
+1. Go to **Clients** -> Your client -> **Settings** -> **Authorization Enabled**: `ON`
+2. Configure Resources, Scopes, and Policies in the **Authorization** tab
+3. Enable **Authorization** on the client
+
+Note: Full Authorization Services integration requires additional setup and is more complex than the simple approaches above.

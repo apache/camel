@@ -18,7 +18,8 @@ package org.apache.camel.component.a2a.push;
 
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
-import java.net.http.HttpClient;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,6 +35,8 @@ import org.apache.camel.component.a2a.model.TaskState;
 import org.apache.camel.component.a2a.model.TaskStatus;
 import org.apache.camel.component.a2a.model.TaskStatusUpdateEvent;
 import org.apache.camel.component.a2a.state.InMemoryTaskStore;
+import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
+import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,6 +52,17 @@ class PushNotificationDispatcherTest {
     private InMemoryTaskStore store;
     private PushNotificationDispatcher dispatcher;
     private ScheduledExecutorService executor;
+    private final List<CloseableHttpAsyncClient> httpClients = new ArrayList<>();
+
+    /**
+     * Creates and starts an async HTTP client, tracked so it is closed after the test.
+     */
+    private CloseableHttpAsyncClient startedClient() {
+        CloseableHttpAsyncClient client = HttpAsyncClients.custom().disableRedirectHandling().build();
+        client.start();
+        httpClients.add(client);
+        return client;
+    }
 
     @BeforeEach
     void setUp() throws Exception {
@@ -70,6 +84,14 @@ class PushNotificationDispatcherTest {
         if (mockServer != null) {
             mockServer.stop(0);
         }
+        for (CloseableHttpAsyncClient client : httpClients) {
+            try {
+                client.close();
+            } catch (Exception e) {
+                // ignore on teardown
+            }
+        }
+        httpClients.clear();
     }
 
     @Test
@@ -87,7 +109,7 @@ class PushNotificationDispatcherTest {
         mockServer.start();
 
         dispatcher = new PushNotificationDispatcher(
-                HttpClient.newHttpClient(), store, 0, 1000, executor, true);
+                startedClient(), store, 0, 1000, executor, true);
 
         TaskPushNotificationConfig config = new TaskPushNotificationConfig();
         config.setUrl("http://localhost:" + port + "/webhook");
@@ -122,7 +144,7 @@ class PushNotificationDispatcherTest {
         mockServer.start();
 
         dispatcher = new PushNotificationDispatcher(
-                HttpClient.newHttpClient(), store, 3, 50, executor, true);
+                startedClient(), store, 3, 50, executor, true);
 
         TaskPushNotificationConfig config = new TaskPushNotificationConfig();
         config.setUrl("http://localhost:" + port + "/webhook");
@@ -149,7 +171,7 @@ class PushNotificationDispatcherTest {
         mockServer.start();
 
         dispatcher = new PushNotificationDispatcher(
-                HttpClient.newHttpClient(), store, 0, 1000, executor, true);
+                startedClient(), store, 0, 1000, executor, true);
 
         TaskPushNotificationConfig config = new TaskPushNotificationConfig();
         config.setUrl("http://localhost:" + port + "/webhook");
@@ -179,7 +201,7 @@ class PushNotificationDispatcherTest {
         mockServer.start();
 
         dispatcher = new PushNotificationDispatcher(
-                HttpClient.newHttpClient(), store, 3, 50, executor, true);
+                startedClient(), store, 3, 50, executor, true);
 
         TaskPushNotificationConfig config = new TaskPushNotificationConfig();
         config.setUrl("http://localhost:" + port + "/webhook");
@@ -206,7 +228,7 @@ class PushNotificationDispatcherTest {
         mockServer.start();
 
         dispatcher = new PushNotificationDispatcher(
-                HttpClient.newHttpClient(), store, 1, 5000, executor, true);
+                startedClient(), store, 1, 5000, executor, true);
 
         TaskPushNotificationConfig config = new TaskPushNotificationConfig();
         config.setUrl("http://localhost:" + port + "/webhook");
@@ -243,7 +265,7 @@ class PushNotificationDispatcherTest {
         mockServer.start();
 
         dispatcher = new PushNotificationDispatcher(
-                HttpClient.newHttpClient(), store, 0, 1000, executor, true);
+                startedClient(), store, 0, 1000, executor, true);
 
         for (int i = 1; i <= 3; i++) {
             TaskPushNotificationConfig config = new TaskPushNotificationConfig();
@@ -263,7 +285,7 @@ class PushNotificationDispatcherTest {
     @Test
     void dispatchSkipsWhenNoConfigs() {
         dispatcher = new PushNotificationDispatcher(
-                HttpClient.newHttpClient(), store, 0, 1000, executor, true);
+                startedClient(), store, 0, 1000, executor, true);
 
         TaskStatusUpdateEvent event = TaskStatusUpdateEvent.builder()
                 .taskId("task-1")
@@ -275,7 +297,7 @@ class PushNotificationDispatcherTest {
     @Test
     void rejectsTightRetryLoopConfiguration() {
         assertThatThrownBy(() -> new PushNotificationDispatcher(
-                HttpClient.newHttpClient(), store, 1, 0, executor, true))
+                startedClient(), store, 1, 0, executor, true))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("initialBackoffMs");
     }
@@ -293,7 +315,7 @@ class PushNotificationDispatcherTest {
         mockServer.start();
 
         dispatcher = new PushNotificationDispatcher(
-                HttpClient.newHttpClient(), store, 0, 1000, executor, true);
+                startedClient(), store, 0, 1000, executor, true);
 
         TaskPushNotificationConfig config = new TaskPushNotificationConfig();
         config.setUrl("http://localhost:" + port + "/webhook");

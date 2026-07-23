@@ -1,0 +1,117 @@
+= Salesforce - Reports API
+:tabs-sync-option:
+
+xref:ROOT:salesforce-component.adoc[Back to Salesforce Component]
+
+* <<getRecentReports,getRecentReports>> - Gets up to 200 of the reports you most recently viewed.
+* <<getReportDescription,getReportDescription>> - Retrieves report description.
+* <<executeSyncReport,executeSyncReport>> - Runs a report synchronously.
+* <<executeAsyncReport,executeAsyncReport>> - Runs a report asynchronously.
+* <<getReportInstances,getReportInstances>> - Returns a list of instances for a report that you requested to be run asynchronously.
+* <<getReportResults,getReportResults>> - Retrieves results for an instance of a report run asynchronously.
+
+[[getRecentReports]]
+== Report List
+
+`getRecentReports`
+
+Gets up to 200 of the reports you most recently viewed.
+
+*Output*
+
+Type: `List<RecentReport>`
+
+[[getReportDescription]]
+== Describe Report
+
+`getReportDescription`
+
+Retrieves the report, report type, and related metadata for a report, either in a tabular or summary or matrix format.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `reportId` | `String` | Id of Report | | Required if not supplied in body
+| Body | `String` | Id of Report | | Required if not supplied in `reportId` parameter
+|===
+
+*Output*
+
+Type: `ReportDescription`
+
+[[executeSyncReport]]
+== Execute Sync
+
+`executeSyncReport`
+
+Runs a report synchronously with or without changing filters and returns the latest summary data.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `reportId` | `String` | Id of Report | | Required if not supplied in body
+| `includeDetails` | `Boolean` | Whether to include details | false|
+| `reportMetadata` | `ReportMetadata` | Optionally, pass ReportMetadata here instead of body | |
+| Body | `ReportMetadata` | If supplied, will use instead of `reportId` | | Required if not supplied in `reportId` parameter
+|===
+
+*Output*
+
+Type: `AbstractReportResultsBase`
+
+[[executeAsyncReport]]
+== Execute Async
+
+`executeAsyncReport`
+
+Runs an instance of a report asynchronously with or without filters and returns the summary data with or without details.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `reportId` | `String` | Id of Report | | Required if not supplied in body
+| `includeDetails` | `Boolean` | Whether to include details | false|
+| `reportMetadata` | `ReportMetadata` | Optionally, pass ReportMetadata here instead of body | |
+| Body | `ReportMetadata` | If supplied, will use instead of `reportId` parameter  | | Required if not supplied in `reportId` parameter
+|===
+
+*Output*
+
+Type: `ReportInstance`
+
+[[getReportInstances]]
+== Instances List
+
+`getReportInstances`
+
+Returns a list of instances for a report that you requested to be run asynchronously. Each item in the list is treated as a separate instance of the report.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `reportId` | `String` | Id of Report | | Required if not supplied in body
+| Body | `String` | If supplied, will use instead of `reportId` parameter  | | Required if not supplied in `reportId` parameter
+|===
+
+*Output*
+
+Type: `List<ReportInstance>`
+
+[[getReportResults]]
+== Instance Results
+
+`getReportResults`
+
+Contains the results of running a report.
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `reportId` | `String` | Id of Report | | Required if not supplied in body
+| `instanceId` | `String` | Id of Report instance | | x
+| Body | `String` | If supplied, will use instead of `reportId` parameter  | | Required if not supplied in `reportId` parameter
+|===
+
+*Output*
+
+Type: `AbstractReportResultsBase`

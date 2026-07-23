@@ -1,0 +1,458 @@
+= Undertow Component
+:doctitle: Undertow
+:shortname: undertow
+:artifactid: camel-undertow
+:description: Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket servers.
+:since: 2.16
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Undertow component provides HTTP and WebSocket based endpoints for consuming
+and producing HTTP/WebSocket requests.
+
+That is, the Undertow component behaves as a simple Web server.
+Undertow can also be used as an HTTP client that means you can also use
+it with Camel as a producer.
+
+Since the component also supports WebSocket
+connections, it can serve as a drop-in replacement for the Camel websocket
+component or atmosphere-websocket component.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-undertow</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+.HTTP
+----
+undertow:http://hostname[:port][/resourceUri][?options]
+undertow:https://hostname[:port][/resourceUri][?options]
+----
+
+.WebSocket
+----
+undertow:ws://hostname[:port][/resourceUri][?options]
+undertow:wss://hostname[:port][/resourceUri][?options]
+----
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== OAuth Bearer token validation
+
+Undertow HTTP and WebSocket consumers can validate incoming `Authorization: Bearer` tokens by setting the
+`oauthProfile` endpoint option.
+The profile is resolved through Camel's `OAuthTokenValidationFactory` SPI. The
+xref:components:others:oauth.adoc[camel-oauth] component provides the default implementation for
+standalone Camel applications; see its documentation for validation profile options and production
+hardening (expected issuer and audience, HTTPS for JWKS, OIDC discovery, and introspection
+endpoints). Runtimes can also provide their own implementation.
+
+[NOTE]
+====
+If `oauthProfile` is set but no `OAuthTokenValidationFactory` is available, the route fails to start.
+Add `camel-oauth` for the default provider or include a runtime-specific provider from the platform integration.
+====
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("undertow:http://0.0.0.0:8080/secure?oauthProfile=myprofile")
+    .to("direct:businessLogic");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="undertow:http://0.0.0.0:8080/secure?oauthProfile=myprofile"/>
+  <to uri="direct:businessLogic"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:http://0.0.0.0:8080/secure
+      parameters:
+        oauthProfile: myprofile
+      steps:
+        - to:
+            uri: direct:businessLogic
+----
+====
+
+When `oauthProfile` is set, static profile configuration is resolved and validated at route startup.
+Updates to OAuth profile properties require restarting the route or Camel context before they take effect.
+HTTP requests and WebSocket upgrade requests without a Bearer token or with an invalid token are
+rejected with HTTP 401 before the route is processed; missing credentials receive a
+`WWW-Authenticate: Bearer` response header and invalid tokens receive
+`WWW-Authenticate: Bearer error="invalid_token"`. Malformed `Authorization` headers are rejected with HTTP 400 and
+`WWW-Authenticate: Bearer error="invalid_request"`. Token validation infrastructure failures are
+rejected with HTTP 503.
+For valid tokens, the token validation result is stored on the exchange as the
+`CamelOAuthTokenValidationResult` exchange property. The raw `Authorization` header is removed before
+the route is invoked.
+
+[NOTE]
+====
+For WebSocket consumers, the token is validated during the HTTP upgrade handshake. The validation
+result is available on the `ONOPEN` event exchange when `fireWebSocketChannelEvents=true`, and on
+subsequent message exchanges for that connection; individual WebSocket messages are not revalidated.
+====
+
+[NOTE]
+====
+For HTTP consumers, automatic `OPTIONS` handling still runs before OAuth validation when
+`optionsEnabled=false`, so unauthenticated preflight and Allow requests keep the existing Undertow
+behavior. If an `OPTIONS` route is explicitly enabled, that route is protected by OAuth like other
+methods.
+
+Custom Undertow `handlers` and `UndertowSecurityProvider#wrapHttpHandler` wrap outside the OAuth
+handler and can observe the original request headers before OAuth validation. The
+`UndertowSecurityProvider#authenticate` callback runs after OAuth validation and sees the request
+after Camel has removed the `Authorization` header. See the Security provider section below for how
+`UndertowSecurityProvider` is configured.
+====
+
+== Host Options
+
+The `hostOptions` component option allows configuring the underlying Undertow server.
+These options apply to all endpoints sharing the same host and port.
+
+[width="100%",cols="2,1,5",options="header"]
+|===
+| Option | Type | Description
+
+| `workerThreads` | `Integer` | The number of worker threads to use in the Undertow host.
+| `ioThreads` | `Integer` | The number of I/O threads to use in the Undertow host.
+| `bufferSize` | `Integer` | The buffer size of the Undertow host.
+| `directBuffers` | `Boolean` | Whether the Undertow host should use direct buffers.
+| `http2Enabled` | `Boolean` | Whether the Undertow host should use the HTTP/2 protocol.
+| `maxEntitySize` | `Long` | The maximum size of the HTTP entity body, in bytes. Requests with a body larger than this will be rejected.
+| `multipartMaxEntitySize` | `Long` | The maximum size of a multipart HTTP entity body, in bytes. Multipart requests larger than this will be rejected.
+| `maxHeaderSize` | `Integer` | The maximum size of an HTTP request header, in bytes. Requests with headers larger than this will be rejected.
+| `noRequestTimeout` | `Integer` | The amount of time in milliseconds a connection can be idle with no current requests before it is closed.
+| `idleTimeout` | `Integer` | The idle timeout in milliseconds after which the channel will be closed.
+| `requestParseTimeout` | `Integer` | The maximum time in milliseconds to parse an HTTP request.
+| `maxParameters` | `Integer` | The maximum number of query and path parameters that will be parsed.
+| `maxHeaders` | `Integer` | The maximum number of HTTP headers that will be parsed.
+|===
+
+Configuration example:
+
+[source,properties]
+----
+camel.component.undertow.host-options.max-entity-size = 10485760
+camel.component.undertow.host-options.max-header-size = 65536
+camel.component.undertow.host-options.no-request-timeout = 30000
+----
+
+== Usage
+
+=== Message Headers
+
+Camel uses the same message headers as the xref:http-component.adoc[HTTP]
+component. It also uses `Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
+the chunked encoding on the camel-undertow consumer.
+
+Camel also populates *all* `request.parameter` and `request.headers`.
+For example, given a client request with the URL,
+`\http://myserver/myserver?orderid=123`, the exchange will contain a
+header named `orderid` with the value `123`.
+
+=== Using localhost as host
+
+When you specify `localhost` in a URL, Camel exposes the endpoint only
+on the local TCP/IP network interface, so it cannot be accessed from
+outside the machine it operates on.
+
+If you need to expose an Undertow endpoint on a specific network interface,
+the numerical IP address of this interface should be used as the host.
+If you need to expose an Undertow endpoint on all network interfaces, the
+`0.0.0.0` address should be used.
+
+If you actually want to expose routes by HTTP and already have a
+Servlet, you should instead refer to the
+xref:servlet-component.adoc[Servlet Transport].
+
+To listen across an entire URI prefix see next section.
+
+=== How do I let Undertow match wildcards?
+
+By default, Undertow will only match on exact uri's. But you can instruct Undertow to match prefixes. For example:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("undertow:http://0.0.0.0:8123/foo").to("mock:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="undertow:http://0.0.0.0:8123/foo"/>
+  <to uri="mock:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:http://0.0.0.0:8123/foo
+      steps:
+        - to:
+            uri: mock:foo
+----
+====
+
+In the route above Undertow will only match if the uri is
+an exact match, so it will match if you enter
+`\http://0.0.0.0:8123/foo` but not match if you do
+`\http://0.0.0.0:8123/foo/bar`.
+
+So if you want to enable wildcard matching you need to set `matchOnUriPrefix=true` as follows:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("undertow:http://0.0.0.0:8123/foo?matchOnUriPrefix=true").to("mock:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="undertow:http://0.0.0.0:8123/foo?matchOnUriPrefix=true"/>
+  <to uri="mock:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:http://0.0.0.0:8123/foo
+      parameters:
+        matchOnUriPrefix: true
+      steps:
+        - to:
+            uri: mock:foo
+----
+====
+
+So now Undertow matches any endpoints with starts with `foo`.
+
+To match *any* endpoint you can remove the prefix so it will match anything from the root:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("undertow:http://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="undertow:http://0.0.0.0:8123?matchOnUriPrefix=true"/>
+  <to uri="mock:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:http://0.0.0.0:8123
+      parameters:
+        matchOnUriPrefix: true
+      steps:
+        - to:
+            uri: mock:foo
+----
+====
+
+
+=== Security provider
+
+To plug in a security provider for endpoint authentication, implement SPI interface
+`org.apache.camel.component.undertow.spi.UndertowSecurityProvider`.
+
+Undertow component locates all implementations of `UndertowSecurityProvider` using
+Java SPI (Service Provider Interfaces).
+If there is an object passed to the component as parameter `securityConfiguration` and provider accepts it.
+Provider will be used
+for authentication of all requests.
+
+Property `requireServletContext` of security providers forces the Undertow server to start
+with servlet context. There will be no servlet actually handled. This feature is meant only
+for use with servlet filters, which needs servlet context for their functionality.
+
+== Examples
+
+=== HTTP Producer Example
+
+The following is a basic example of how to send an HTTP request to an
+existing HTTP endpoint.
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("undertow:http://www.google.com");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="undertow:http://www.google.com"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: undertow:http://www.google.com
+----
+
+====
+
+=== HTTP Consumer Example
+
+In this sample we define a route that exposes a HTTP service at
+`\http://localhost:8080/myapp/myservice`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("undertow:http://localhost:8080/myapp/myservice")
+    .to("bean:myBean");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="undertow:http://localhost:8080/myapp/myservice"/>
+  <to uri="bean:myBean"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:http://localhost:8080/myapp/myservice
+      steps:
+        - to:
+            uri: bean:myBean
+----
+====
+
+=== WebSocket Example
+
+In this sample we define a route that exposes a WebSocket service at
+`\http://localhost:8080/myapp/mysocket` and returns back a response to the same channel:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("undertow:ws://localhost:8080/myapp/mysocket")
+    .transform(simple("Echo ${body}"))
+    .to("undertow:ws://localhost:8080/myapp/mysocket");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="undertow:ws://localhost:8080/myapp/mysocket"/>
+  <transform><simple>Echo ${body}</simple></transform>
+  <to uri="undertow:ws://localhost:8080/myapp/mysocket"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:ws://localhost:8080/myapp/mysocket
+      steps:
+        - transform:
+            simple: "Echo ${body}"
+        - to:
+            uri: undertow:ws://localhost:8080/myapp/mysocket
+----
+====

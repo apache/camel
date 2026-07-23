@@ -1,0 +1,371 @@
+= Simple - Built-in Operators
+:tabs-sync-option:
+
+xref:simple-language.adoc[Back to Simple Language]
+
+== Built-in Operators
+
+The simple language has limited support for operators that are used in predicates to evaluate whether a condition is either _true_ or _false_.
+
+Camel operators require the left value must be enclosed in `${ }`.
+The syntax is:
+
+[source,text]
+----
+${leftValue} OP rightValue
+----
+
+Where the `rightValue` can be a string literal enclosed in `' '`,
+`null`, a constant value or another expression enclosed in `${ }`.
+
+IMPORTANT: There *must* be spaces around the operator.
+
+Camel will automatically type convert the rightValue type to the
+leftValue type, so it is able to e.g., convert a string into a numeric, so
+you can use `>` comparison for numeric values.
+
+=== Comparison Operators
+
+The following comparison operators are supported:
+
+[width="100%",cols="50%,50%",options="header",]
+|====
+|Operator |Description
+|`==` | equals
+|`=~` | equals ignore case (will ignore case when comparing String values)
+|`>` | greater than
+|`>=` | greater than or equals
+|`<` | less than
+|`+<=+` | less than or equals
+|`!=` | not equals
+|`!=~` | not equals ignore case (will ignore case when comparing String values)
+|`~~` | For testing if contains by ignoring case sensitivity in a string-based value
+|`!~~` | For testing if it does not contain by ignoring case sensitivity in a string-based value
+|`contains` | For testing if contains in a string-based value
+|`!contains` | For testing if it does not contain in a string-based value
+|`endsWith` | For testing if the left-hand side string ends with the right-hand string.
+|`!endsWith` | For testing if the left-hand side string does not end with the right-hand string.
+|`in` | For matching if in a set of values, each element must be separated by comma. If you want to include an empty value, then it must be defined using double comma, e.g. `",,bronze,silver,gold"`, which is a set of four values with an empty value and then the three medals.
+|`!in` | For matching if not in a set of values, each element must be separated by comma. If you want to include an empty value, then it must be defined using double comma, e.g. `",,bronze,silver,gold"`, which is a set of four values with an empty value and then the three medals.
+|`is` | For matching if the left-hand side type is an instance of the value.
+|`!is` | For matching if the left-hand side type is not an instance of the value.
+|`range` | For matching if the left-hand side is within a range of values defined as numbers: `from..to`.
+|`!range` | For matching if the left-hand side is not within a range of values defined as numbers: `from..to`.
+|`regex` | For matching against a given regular expression pattern defined as a String value
+|`!regex` | For not matching against a given regular expression pattern defined as a String value
+|`startsWith` | For testing if the left-hand side string starts with the right-hand string.
+|`!startsWith` | For testing if the left-hand side string does not start with the right-hand string.
+|====
+
+=== Numeric Operators
+
+The following numeric operators can be used:
+
+[width="100%",cols="50%,50%",options="header",]
+|====
+|Operator |Description
+|`++` | To increment a number by one. The left-hand side must be a function, otherwise parsed as literal.
+|`--` | To decrement a number by one. The left-hand side must be a function, otherwise parsed as literal.
+|====
+
+These operators are unary and requires to be attached directly next to a function:
+
+[source,text]
+----
+${function}OP
+----
+
+For example to increment the result of the function:
+
+[source,java]
+----
+simple("${header.myNumber}++ > 10");
+----
+
+And the same for decrement:
+
+[source,java]
+----
+simple("${header.myNumber}-- < 10");
+----
+
+
+=== Other Operators
+
+The following other operators can be used:
+
+[width="100%",cols="50%,50%",options="header",]
+|====
+|Operator |Description
+|`? :` | The ternary operator evaluates a condition and returns a value based on the result. If the condition is true, the first value (after `?`) is returned; otherwise, the second value (after `:`) is returned. There must be spaces around both `?` and `:` operators. This is similar to the ternary operator in Java.
+|`?:` | The elvis operator returns the left-hand side if it has an effective Boolean value of true, otherwise it returns the right-hand side. This is useful for providing fallback values when an expression may evaluate to a value with an effective Boolean value of false (such as `null`, `false`, `0`, empty/blank string).
+|`~>` | The chain operator is used in the situations where multiple nested functions need to be applied to a value, while making it easy to read. The value on the left-hand-side is evaluated, and set as the new message body before evaluating the right-hand-side function. This concept is similar to the xref:eips:pipeline-eip.adoc[Pipeline EIP].
+|`?~>` | The null-safe chain operator, where the chain will not continue when a function returned `null`.
+|====
+
+==== Ternary Operator
+
+The syntax for the ternary operator is:
+
+[source,text]
+----
+${leftValue} OP rightValue ? trueValue : falseValue
+----
+
+For example the following ternary operator will return `positive` if header `foo` is greater than 0, otherwise `negative`:
+
+[source,java]
+----
+simple("${header.foo > 0 ? 'positive' : 'negative'}");
+----
+
+Ternary operators can also be nested to handle multiple conditions:
+
+[source,java]
+----
+simple("${header.score >= 90 ? 'A' : ${header.score >= 80 ? 'B' : 'C'}}");
+----
+
+==== Elvis Operator
+
+For example the following elvis operator will return the username header unless its null or empty, which
+then the default value of `Guest` is returned.
+
+[source,java]
+----
+simple("${header.username} ?: 'Guest'");
+----
+
+==== Chain Operator
+
+The syntax for the chain operator is:
+
+[source,text]
+----
+${leftValue} ~> ${rightValue}
+----
+
+And there can be as many chains:
+
+[source,text]
+----
+${leftValue} ~> ${midValue} ~> ${midValue} ~> ${rightValue}
+----
+
+For example if the message body contains `Hello World` then the follow would return `WORLD`:
+
+[source,java]
+----
+simple("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()}");
+----
+
+The _null safe_ variant (`?~>`) can be used to avoid `NullPointerException` if it's accepted to not continue the chain when any function returned `null`:
+
+However, many of the simple functions have NPE protection built-in, so this variant is only needed in special situations.
+
+==== Using $param as input parameter value
+
+IMPORTANT: The chain operator will by default pass results via the message body. This usually works well with most functions.
+However, when you need to be in full control then use `$param` as the magic parameter which represents the passed value from the previous function in the chain.
+
+Suppose the message body contains `"   Hello World from the Camel "` then the following chain works out of the box:
+
+[source,java]
+----
+simple("${trim()} ~> ${replace('Hello','Hi')} ~> ${split(' ')} ~> ${size()}");
+----
+
+And here is the same example where we explicit use `$param` in the parameters where we need the input to be:
+
+[source,java]
+----
+simple("${trim()} ~> ${replace('Hello','Hi',$param)} ~> ${split($param,' ')} ~> ${size($param)}");
+----
+
+
+=== Boolean Operators
+
+And the following boolean operators can be used to group expressions:
+
+[width="100%",cols="50%,50%",options="header",]
+|====
+|Operator |Description
+|`&&` | The `and` operator is used to group two expressions if both operands evaluates to `true`.
+|`\|\|` | The `or` operator is used to group two expressions if any operand evaluates to `true`.
+|====
+
+The syntax for AND is:
+
+[source,text]
+----
+${leftValue} OP rightValue && ${leftValue} OP rightValue
+----
+
+And the syntax for OR is:
+
+[source,text]
+----
+${leftValue} OP rightValue || ${leftValue} OP rightValue
+----
+
+Some examples:
+
+[source,java]
+----
+// exact equals match
+simple("${header.foo} == 'foo'")
+
+// ignore case when comparing, so if the header has value FOO, this will match
+simple("${header.foo} =~ 'foo'")
+
+// here Camel will type convert '100' into the type of header.bar and if it is an Integer '100' will also be converter to an Integer
+simple("${header.bar} == '100'")
+
+simple("${header.bar} == 100")
+
+// 100 will be converter to the type of header.bar, so we can do > comparison
+simple("${header.bar} > 100")
+
+// if the value of header.bar was 100, value returned will be 101. header.bar itself will not be changed.
+simple("${header.bar}++")
+----
+
+=== Using Operators with different Java Object types
+
+When you compare with different types such as String and int, then you
+have to take a bit of care. Camel will use the type from the left-hand side
+as first priority. And fallback to the right-hand side type if both values
+couldn't be compared based on that type. This means you can flip the values
+to enforce a specific type. Suppose the bar value above is a String.
+
+Then you can flip the equation:
+
+[source,java]
+----
+simple("100 < ${header.bar}")
+----
+
+which then ensures the int type is used as first priority.
+
+This may change in the future if the Camel team improves the binary
+comparison operations to prefer numeric types to String-based. It's
+most often the String type which causes problems when comparing with
+numbers.
+
+[source,java]
+----
+// testing for null
+simple("${header.baz} == null")
+
+// testing for not null
+simple("${header.baz} != null")
+----
+
+And a bit more advanced example where the right value is another
+expression
+
+[source,java]
+----
+simple("${header.date} == ${date:now:yyyyMMdd}")
+
+simple("${header.type} == ${bean:orderService?method=getOrderType}")
+----
+
+And an example with `contains`, testing if the title contains the word Camel
+
+[source,java]
+----
+simple("${header.title} contains 'Camel'")
+----
+
+And an example with regex, testing if the number header is a 4-digit value:
+
+[source,java]
+----
+simple("${header.number} regex '\\d{4}'")
+----
+
+And finally an example if the header equals any of the values in the
+list. Each element must be separated by comma, and no space around.
+This also works for numbers etc., as Camel will convert each element
+into the type of the left-hand side.
+
+[source,java]
+----
+simple("${header.type} in 'gold,silver'")
+----
+
+And for all the last 3, we also support the negate test using not:
+
+[source,java]
+----
+simple("${header.type} !in 'gold,silver'")
+----
+
+And you can test if the type is a certain instance, e.g., for instance a
+String
+
+[source,java]
+----
+simple("${header.type} is 'java.lang.String'")
+----
+
+We have added a shorthand for all `java.lang` types, so you can write it as:
+
+[source,java]
+----
+simple("${header.type} is 'String'")
+----
+
+Ranges are also supported. The range interval requires numbers and both
+from and end are inclusive. For instance, to test whether a value is
+between 100 and 199:
+
+[source,java]
+----
+simple("${header.number} range 100..199")
+----
+
+Notice we use `..` in the range without spaces. It is based on the same
+syntax as Groovy.
+
+[source,java]
+----
+simple("${header.number} range '100..199'")
+----
+
+As the XML DSL does not have all the power as the Java DSL with all
+its various builder methods, you have to resort to using some other
+languages for testing with simple operators. Now you can do this with the simple
+language. In the sample below, we want to test it if the header is a widget
+order:
+
+._XML-only:_
+[source,xml]
+----
+<from uri="seda:orders">
+   <filter>
+       <simple>${header.type} == 'widget'</simple>
+       <to uri="bean:orderService?method=handleWidget"/>
+   </filter>
+</from>
+----
+
+=== Combining multiple expression using AND / OR Operator
+
+If you have two expressions you can combine them with the `&&` (and) or `||` (or) operator.
+
+For instance:
+
+[source,java]
+-----
+simple("${header.title} contains 'Camel' && ${header.type} == 'gold'")
+-----
+
+And of course the `||` is also supported. The sample would be:
+
+[source,java]
+-----
+simple("${header.title} contains 'Camel' || ${header.type} == 'gold'")
+-----
+

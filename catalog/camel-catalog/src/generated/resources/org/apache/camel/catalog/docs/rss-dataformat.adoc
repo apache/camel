@@ -1,0 +1,138 @@
+= RSS DataFormat
+:doctitle: RSS
+:shortname: rss
+:artifactid: camel-rss
+:description: Transform from ROME SyndFeed Java Objects to XML and vice-versa
+:since: 2.1
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The RSS component ships with an RSS dataformat that can be used to
+convert between String (as XML) and ROME RSS model objects.
+
+* marshal = from ROME `SyndFeed` to XML `String`
+* unmarshal = from XML `String` to ROME `SyndFeed`
+
+A route using this would look something like this:
+
+The purpose of this feature is to make it possible to use Camel's lovely
+built-in expressions for manipulating RSS messages. As shown below, an
+XPath expression can be used to filter the RSS message:
+
+[TIP]
+====
+*Query parameters*
+
+If the URL for the RSS feed uses query parameters, this component will
+understand them as well, for example if the feed uses `alt=rss`, then
+you can for example do 
+`from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&delay=1000").to("bean:rss");`
+====
+
+== Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+== Example
+
+The RSS component ships with an RSS dataformat that can be used to
+convert between String (as XML) and ROME RSS model objects.
+
+* marshal = from ROME `SyndFeed` to XML `String`
+* unmarshal = from XML `String` to ROME `SyndFeed`
+
+A route using the RSS dataformat will look like this:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1000")
+    .marshal().rss()
+    .to("mock:marshal");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rss:file:src/test/data/rss20.xml?splitEntries=false&amp;delay=1000"/>
+  <marshal><rss/></marshal>
+  <to uri="mock:marshal"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rss:file:src/test/data/rss20.xml
+      parameters:
+        splitEntries: false
+        delay: 1000
+      steps:
+        - marshal:
+            rss: {}
+        - to:
+            uri: mock:marshal
+----
+====
+
+The purpose of this feature is to make it possible to use Camel's built-in expressions for manipulating RSS messages. As shown below, an
+XPath expression can be used to filter the RSS message. In the following example, only entries with Camel in the title will get through the filter.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100")
+    .marshal().rss()
+    .filter().xpath("//item/title[contains(.,'Camel')]")
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rss:file:src/test/data/rss20.xml?splitEntries=true&amp;delay=100"/>
+  <marshal><rss/></marshal>
+  <filter>
+    <xpath>//item/title[contains(.,'Camel')]</xpath>
+    <to uri="mock:result"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rss:file:src/test/data/rss20.xml
+      parameters:
+        splitEntries: true
+        delay: 100
+      steps:
+        - marshal:
+            rss: {}
+        - filter:
+            xpath: "//item/title[contains(.,'Camel')]"
+            steps:
+              - to:
+                  uri: mock:result
+----
+====

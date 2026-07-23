@@ -1,0 +1,156 @@
+= ServiceNow Component
+:doctitle: ServiceNow
+:shortname: servicenow
+:artifactid: camel-servicenow
+:description: Interact with ServiceNow via its REST API.
+:since: 2.18
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The ServiceNow component provides access to ServiceNow platform through their REST API.
+
+The component supports multiple versions of ServiceNow platform with default to Helsinki.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-servicenow</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+----
+
+== URI format
+
+----
+servicenow://instanceName?[options]
+----
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+[[ServiceNow-Fuji]]
+[cols="10%a,10%a,10%a,70%a", options="header"]
+.API Mapping
+|===
+| CamelServiceNowResource | CamelServiceNowAction | Method | API URI
+1.5+<.^|TABLE
+| RETRIEVE | GET | /api/now/v1/table/\{table_name}/\{sys_id}
+| CREATE | POST | /api/now/v1/table/\{table_name}
+| MODIFY | PUT | /api/now/v1/table/\{table_name}/\{sys_id}
+| DELETE | DELETE | /api/now/v1/table/\{table_name}/\{sys_id}
+| UPDATE | PATCH | /api/now/v1/table/\{table_name}/\{sys_id}
+
+| AGGREGATE
+| RETRIEVE | GET | /api/now/v1/stats/\{table_name}
+
+1.2+<.^|IMPORT
+| RETRIEVE | GET | /api/now/import/\{table_name}/\{sys_id}
+| CREATE | POST | /api/now/import/\{table_name}
+|===
+
+[NOTE]
+====
+http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji REST API Documentation]
+====
+
+[[ServiceNow-Helsinki]]
+[cols="10%a,10%a,10%a,10%a,60%a", options="header"]
+.API Mapping
+|===
+| CamelServiceNowResource | CamelServiceNowAction | CamelServiceNowActionSubject | Method | API URI
+1.5+<.^|TABLE
+| RETRIEVE | | GET | /api/now/v1/table/\{table_name}/\{sys_id}
+| CREATE | | POST | /api/now/v1/table/\{table_name}
+| MODIFY | | PUT | /api/now/v1/table/\{table_name}/\{sys_id}
+| DELETE | | DELETE | /api/now/v1/table/\{table_name}/\{sys_id}
+| UPDATE | | PATCH | /api/now/v1/table/\{table_name}/\{sys_id}
+
+| AGGREGATE
+| RETRIEVE | | GET | /api/now/v1/stats/\{table_name}
+
+1.2+<.^|IMPORT
+| RETRIEVE | | GET | /api/now/import/\{table_name}/\{sys_id}
+| CREATE | | POST | /api/now/import/\{table_name}
+
+1.4+<.^|ATTACHMENT
+| RETRIEVE | | GET | /api/now/api/now/attachment/\{sys_id}
+| CONTENT | | GET | /api/now/attachment/\{sys_id}/file
+| UPLOAD | | POST | /api/now/api/now/attachment/file
+| DELETE | | DELETE | /api/now/attachment/\{sys_id}
+
+| SCORECARDS
+| RETRIEVE | PERFORMANCE_ANALYTICS | GET | /api/now/pa/scorecards
+
+1.2+<.^|MISC
+| RETRIEVE | USER_ROLE_INHERITANCE | GET | /api/global/user_role_inheritance
+| CREATE | IDENTIFY_RECONCILE | POST | /api/now/identifyreconcile
+
+1.2+<.^|SERVICE_CATALOG
+| RETRIEVE | | GET | /sn_sc/servicecatalog/catalogs/\{sys_id}
+| RETRIEVE | CATEGORIES |  GET | /sn_sc/servicecatalog/catalogs/\{sys_id}/categories
+
+1.5+<.^|SERVICE_CATALOG_ITEMS
+| RETRIEVE | | GET | /sn_sc/servicecatalog/items/\{sys_id}
+| RETRIEVE | SUBMIT_GUIDE | POST | /sn_sc/servicecatalog/items/\{sys_id}/submit_guide
+| RETRIEVE | CHECKOUT_GUIDE | POST | /sn_sc/servicecatalog/items/\{sys_id}/checkout_guide
+| CREATE | SUBJECT_CART | POST | /sn_sc/servicecatalog/items/\{sys_id}/add_to_cart
+| CREATE | SUBJECT_PRODUCER | POST | /sn_sc/servicecatalog/items/\{sys_id}/submit_producer
+
+1.6+<.^|SERVICE_CATALOG_CARTS
+| RETRIEVE | | GET | /sn_sc/servicecatalog/cart
+| RETRIEVE | DELIVERY_ADDRESS | GET | /sn_sc/servicecatalog/cart/delivery_address/\{user_id}
+| RETRIEVE | CHECKOUT | POST | /sn_sc/servicecatalog/cart/checkout
+| UPDATE | | POST | /sn_sc/servicecatalog/cart/\{cart_item_id}
+| UPDATE | CHECKOUT | POST | /sn_sc/servicecatalog/cart/submit_order
+| DELETE | | DELETE | /sn_sc/servicecatalog/cart/\{sys_id}/empty
+
+| SERVICE_CATALOG_CATEGORIES
+| RETRIEVE | | GET | /sn_sc/servicecatalog/categories/\{sys_id}
+
+|===
+
+[NOTE]
+====
+https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/inbound-rest/reference/r_RESTResources.html[Helsinki REST API Documentation]
+====
+
+== Examples:
+ 
+._Java-only: retrieving 10 Incidents with FluentProducerTemplate_
+[source,java]
+.Retrieve 10 Incidents
+----
+context.addRoutes(new RouteBuilder() {
+    public void configure() {
+       from("direct:servicenow")
+           .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
+               + "?userName={{env:SERVICENOW_USERNAME}}"
+               + "&password={{env:SERVICENOW_PASSWORD}}"
+               + "&oauthClientId={{env:SERVICENOW_OAUTH2_CLIENT_ID}}"
+               + "&oauthClientSecret={{env:SERVICENOW_OAUTH2_CLIENT_SECRET}}"
+           .to("mock:servicenow");
+    }
+});
+
+FluentProducerTemplate.on(context)
+    .withHeader(ServiceNowConstants.RESOURCE, "table")
+    .withHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+    .withHeader(ServiceNowConstants.SYSPARM_LIMIT.getId(), "10")
+    .withHeader(ServiceNowConstants.TABLE, "incident")
+    .withHeader(ServiceNowConstants.MODEL, Incident.class)
+    .to("direct:servicenow")
+    .send();
+----

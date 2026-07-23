@@ -1,0 +1,529 @@
+= PQC (Post-Quantum Cryptography) DataFormat
+:doctitle: PQC (Post-Quantum Cryptography)
+:shortname: pqc
+:artifactid: camel-pqc
+:description: Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM)
+:since: 4.16
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The PQC data format supports encrypting and decrypting payload using Post Quantum Cryptography algorithms.
+
+xref:ROOT:pqc-component.adoc[Back to PQC Component]
+
+== PGC DataFormat Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+== Overview
+
+The PQC DataFormat simplifies quantum-resistant encryption by combining:
+
+1. **Key Encapsulation Mechanism (KEM)** - Uses PQC algorithms (ML-KEM, BIKE, NTRU, etc.) to establish a shared secret
+2. **Symmetric Encryption** - Encrypts data with the shared secret using standard algorithms (AES, Camellia, etc.)
+3. **Automatic Key Management** - Handles encapsulation/decapsulation transparently
+
+This approach provides **defense-in-depth**: even if the symmetric algorithm is compromised, the shared secret is protected by quantum-resistant KEM.
+
+== Benefits
+
+* **Simplified API** - Single marshal/unmarshal operation instead of multiple KEM steps
+* **Authenticated Encryption** - AEAD (GCM or ChaCha20-Poly1305) protects both confidentiality and integrity
+* **Header-based Configuration** - Dynamic algorithm and key selection per message
+* **Standards-based** - Uses NIST-standardized ML-KEM and other PQC algorithms
+* **Drop-in Replacement** - Compatible with existing Camel DataFormat patterns
+
+== Wire Format
+
+The encrypted message produced by the PQC DataFormat is:
+
+[source,text]
+----
+[4 bytes: encapsulation length] [N bytes: encapsulation] [12 bytes: AEAD nonce] [M bytes: ciphertext + auth tag]
+----
+
+The KEM encapsulation allows the receiver to decapsulate the shared secret using their private key. The payload is then encrypted with an authenticated cipher (AEAD): 128-bit block ciphers use GCM and the ChaCha20 stream cipher uses ChaCha20-Poly1305, so both confidentiality and integrity are protected. Decryption fails if the ciphertext or its authentication tag has been modified.
+
+[NOTE]
+====
+The authenticated wire format was introduced in Camel 4.22. Data encrypted by earlier versions used unauthenticated ECB and did not include a nonce, and cannot be decrypted by Camel 4.22 or later. See the Camel 4.x upgrade guide for details.
+====
+
+== Basic Usage
+
+=== Java DSL
+
+._Java-only: PQC DataFormat basic encrypt and decrypt routes_
+[source,java]
+----
+// Create PQC DataFormat
+PQCDataFormat pqcFormat = new PQCDataFormat();
+pqcFormat.setKeyEncapsulationAlgorithm("MLKEM");
+pqcFormat.setSymmetricKeyAlgorithm("AES");
+pqcFormat.setSymmetricKeyLength(256);
+
+from("direct:encrypt")
+    .marshal(pqcFormat)
+    .to("file:encrypted");
+
+from("file:encrypted")
+    .unmarshal(pqcFormat)
+    .to("direct:decrypted");
+----
+
+=== YAML DSL
+
+[source,yaml]
+----
+- route:
+    id: encrypt-route
+    from:
+      uri: direct:encrypt
+    steps:
+      - marshal:
+          pqc:
+            keyEncapsulationAlgorithm: MLKEM
+            symmetricKeyAlgorithm: AES
+            symmetricKeyLength: 256
+      - to:
+          uri: file:encrypted
+
+- route:
+    id: decrypt-route
+    from:
+      uri: file:encrypted
+    steps:
+      - unmarshal:
+          pqc:
+            keyEncapsulationAlgorithm: MLKEM
+            symmetricKeyAlgorithm: AES
+            symmetricKeyLength: 256
+      - to:
+          uri: direct:decrypted
+----
+
+== Configuration Options
+
+[options="header"]
+|===
+|Option |Type |Default |Description
+
+|keyEncapsulationAlgorithm
+|String
+|MLKEM
+|PQC KEM algorithm (MLKEM, BIKE, HQC, CMCE, SABER, FRODO, NTRU, NTRULPRime, SNTRUPrime, KYBER)
+
+|symmetricKeyAlgorithm
+|String
+|AES
+|Symmetric encryption algorithm. Only AEAD-capable algorithms are supported: AES, ARIA, CAMELLIA, CAST6, DSTU7624, GOST3412-2015, SEED, SM4 (GCM) and CHACHA7539 (ChaCha20-Poly1305)
+
+|symmetricKeyLength
+|int
+|128
+|Length of the symmetric key in bits (128, 192, or 256 for AES)
+
+|keyPair
+|KeyPair
+|null
+|KeyPair to use for encryption/decryption. Can also be provided via header.
+
+|provider
+|String
+|null
+|JCE security provider (defaults to Bouncy Castle PQC provider)
+
+|keyGenerator
+|KeyGenerator
+|null
+|Custom KeyGenerator for KEM operations
+|===
+
+== Registering KeyPair
+
+The DataFormat requires a KeyPair to be available either:
+
+1. Configured on the DataFormat instance
+2. Registered in the Camel Registry
+3. Provided via message header
+
+=== Option 1: Registry-based Configuration
+
+._Java-only: registering ML-KEM KeyPair in Camel registry_
+[source,java]
+----
+@BindToRegistry("pqcKeyPair")
+public KeyPair createMLKEMKeyPair() throws Exception {
+    KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-KEM", "BCPQC");
+    kpg.initialize(MLKEMParameterSpec.ml_kem_768, new SecureRandom());
+    return kpg.generateKeyPair();
+}
+
+// DataFormat will automatically use the registered KeyPair
+PQCDataFormat pqcFormat = new PQCDataFormat();
+pqcFormat.setKeyEncapsulationAlgorithm("MLKEM");
+pqcFormat.setSymmetricKeyAlgorithm("AES");
+----
+
+=== Option 2: Direct Configuration
+
+._Java-only: configuring PQCDataFormat with KeyPair directly_
+[source,java]
+----
+KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-KEM", "BCPQC");
+kpg.initialize(MLKEMParameterSpec.ml_kem_768, new SecureRandom());
+KeyPair keyPair = kpg.generateKeyPair();
+
+PQCDataFormat pqcFormat = new PQCDataFormat();
+pqcFormat.setKeyPair(keyPair);
+pqcFormat.setKeyEncapsulationAlgorithm("MLKEM");
+pqcFormat.setSymmetricKeyAlgorithm("AES");
+----
+
+=== Option 3: Header-based Configuration
+
+._Java-only: providing KeyPair via message header_
+[source,java]
+----
+from("direct:encrypt")
+    .setHeader(PQCDataFormat.KEY_PAIR, () -> generateKeyPair())
+    .marshal(pqcFormat)
+    .to("direct:encrypted");
+----
+
+== Supported Algorithms
+
+=== Key Encapsulation Algorithms
+
+**Standardized (NIST)**
+
+* **MLKEM** - ML-KEM (FIPS 203) - Recommended for production use
+
+**Experimental**
+
+* BIKE - Bit Flipping Key Encapsulation
+* CMCE - Classic McEliece
+* HQC - Hamming Quasi-Cyclic
+* FRODO - FrodoKEM
+* SABER - Saber KEM
+* NTRU - NTRU Encrypt
+* NTRULPRime - NTRU LPRime
+* SNTRUPrime - Streamlined NTRU Prime
+* KYBER - Kyber (pre-standardization version)
+
+=== Symmetric Encryption Algorithms
+
+Only algorithms that support authenticated encryption (AEAD) are supported. All except CHACHA7539 are encrypted with GCM; CHACHA7539 is encrypted with ChaCha20-Poly1305 and requires a 256-bit key.
+
+* AES - Advanced Encryption Standard (recommended)
+* ARIA - Korean standard
+* CAMELLIA - Japanese standard
+* CAST6 - CAST-256
+* DSTU7624 - Ukrainian standard (Kalyna)
+* GOST3412-2015 - Russian standard (Kuznyechik)
+* SEED - Korean standard
+* SM4 - Chinese standard
+* CHACHA7539 - ChaCha20 (ChaCha20-Poly1305)
+
+The legacy ciphers RC2, RC5, CAST5, GOST28147 and DESEDE, and the unauthenticated stream ciphers GRAIN128, HC128, HC256 and SALSA20, cannot provide AEAD and are no longer supported.
+
+== Advanced Examples
+
+=== Secure File Transfer
+
+._Java-only: PQC DataFormat for secure file encrypt and decrypt_
+[source,java]
+----
+PQCDataFormat pqcFormat = new PQCDataFormat();
+pqcFormat.setKeyEncapsulationAlgorithm("MLKEM");
+pqcFormat.setSymmetricKeyAlgorithm("AES");
+pqcFormat.setSymmetricKeyLength(256);
+
+from("file:incoming?noop=true")
+    .log("Encrypting file: ${header.CamelFileName}")
+    .marshal(pqcFormat)
+    .to("file:encrypted?fileName=${header.CamelFileName}.pqc")
+    .log("File encrypted successfully");
+
+from("file:encrypted?noop=true")
+    .log("Decrypting file: ${header.CamelFileName}")
+    .unmarshal(pqcFormat)
+    .to("file:decrypted")
+    .log("File decrypted successfully");
+----
+
+=== API Message Encryption
+
+._Java-only: PQC DataFormat for API message encrypt and decrypt_
+[source,java]
+----
+from("direct:secure-api")
+    .marshal().json()  // Convert to JSON
+    .marshal(pqcFormat)  // Encrypt with PQC
+    .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+    .to("https://api.example.com/secure-endpoint")
+    .unmarshal(pqcFormat)  // Decrypt response
+    .unmarshal().json()  // Parse JSON response
+    .to("direct:result");
+----
+
+=== Multiple Algorithm Support
+
+._Java-only: PQC DataFormat with multiple security levels_
+[source,java]
+----
+// Different algorithms for different security levels
+PQCDataFormat highSecurity = new PQCDataFormat();
+highSecurity.setKeyEncapsulationAlgorithm("MLKEM");
+highSecurity.setSymmetricKeyAlgorithm("AES");
+highSecurity.setSymmetricKeyLength(256);
+
+PQCDataFormat mediumSecurity = new PQCDataFormat();
+mediumSecurity.setKeyEncapsulationAlgorithm("KYBER");
+mediumSecurity.setSymmetricKeyAlgorithm("CAMELLIA");
+mediumSecurity.setSymmetricKeyLength(128);
+
+from("direct:classify")
+    .choice()
+        .when(header("SecurityLevel").isEqualTo("HIGH"))
+            .marshal(highSecurity)
+        .when(header("SecurityLevel").isEqualTo("MEDIUM"))
+            .marshal(mediumSecurity)
+        .otherwise()
+            .log("No encryption for low security")
+    .end()
+    .to("direct:output");
+----
+
+=== Dynamic Algorithm Selection via Headers
+
+._Java-only: PQC DataFormat with dynamic algorithm selection_
+[source,java]
+----
+PQCDataFormat pqcFormat = new PQCDataFormat();
+
+from("direct:dynamic-encrypt")
+    .setHeader(PQCDataFormat.KEM_ALGORITHM, constant("MLKEM"))
+    .setHeader(PQCDataFormat.SYMMETRIC_ALGORITHM, constant("AES"))
+    .marshal(pqcFormat)
+    .to("direct:encrypted");
+----
+
+== Integration with Key Lifecycle Management
+
+The PQC DataFormat can be integrated with the xref:others:pqc-key-lifecycle.adoc[Key Lifecycle Manager] for automated key management:
+
+._Java-only: integrating PQC DataFormat with Key Lifecycle Manager_
+[source,java]
+----
+@BindToRegistry("keyLifecycleManager")
+public KeyLifecycleManager createKeyManager() {
+    return new FileBasedKeyLifecycleManager("/secure/keys");
+}
+
+@BindToRegistry("pqcKeyPair")
+public KeyPair createKeyPair() throws Exception {
+    KeyLifecycleManager manager = context.getRegistry()
+        .lookupByNameAndType("keyLifecycleManager", KeyLifecycleManager.class);
+
+    // Generate or retrieve key
+    KeyPair keyPair;
+    try {
+        keyPair = manager.getKey("dataformat-key");
+    } catch (Exception e) {
+        keyPair = manager.generateKeyPair("MLKEM", "dataformat-key",
+            MLKEMParameterSpec.ml_kem_768);
+    }
+
+    // Check if rotation needed
+    if (manager.needsRotation("dataformat-key", Duration.ofDays(90), 10000)) {
+        keyPair = manager.rotateKey("dataformat-key", "dataformat-key-new", "MLKEM");
+    }
+
+    return keyPair;
+}
+----
+
+== Comparison with Manual KEM Operations
+
+**Manual Approach (using PQC component endpoints):**
+
+._Java-only: manual KEM encrypt with multiple endpoint steps_
+[source,java]
+----
+from("direct:manual-encrypt")
+    .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+    .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+    .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=AES")
+    .setHeader(CryptoDataFormat.KEY, body())
+    .setBody(constant("Hello"))
+    .marshal(new CryptoDataFormat("AES", null))
+    .to("direct:encrypted");
+----
+
+**DataFormat Approach (simplified):**
+
+._Java-only: simplified encrypt using PQCDataFormat_
+[source,java]
+----
+from("direct:dataformat-encrypt")
+    .setBody(constant("Hello"))
+    .marshal(new PQCDataFormat("MLKEM", "AES", keyPair))
+    .to("direct:encrypted");
+----
+
+The DataFormat approach is significantly simpler and handles all KEM operations internally.
+
+== Security Considerations
+
+**1. Key Management**
+
+* **Private Key Protection**: The private key must be kept secure. Consider using:
+  - Hardware Security Modules (HSMs)
+  - Secure key storage (FileBasedKeyLifecycleManager with encrypted filesystem)
+  - Cloud key management services (HashicorpVaultKeyLifecycleManager, AwsSecretsManagerKeyLifecycleManager)
+
+* **Key Rotation**: Regularly rotate keys using the xref:others:pqc-key-lifecycle.adoc[Key Lifecycle Manager]
+
+**2. Algorithm Selection**
+
+* **Production Use**: Use MLKEM (NIST-standardized)
+* **High Security**: Use ML-KEM-1024 parameter spec
+* **Testing**: Experimental algorithms are suitable for research and testing
+
+**3. Symmetric Algorithm**
+
+* **Recommended**: AES-256 or AES-128
+* **Not supported**: legacy ciphers without AEAD (RC2, RC5, CAST5, GOST28147, DESEDE) and unauthenticated stream ciphers (GRAIN128, HC128, HC256, SALSA20) are rejected at startup
+
+**4. Wire Format Security**
+
+* The encapsulation is not secret and can be transmitted in the clear
+* The encrypted data is protected by the symmetric key
+* The symmetric layer always uses authenticated encryption (GCM or ChaCha20-Poly1305), protecting integrity as well as confidentiality
+
+== Performance Considerations
+
+**1. Caching KeyGenerator**
+
+Configure a KeyGenerator once to avoid repeated initialization:
+
+._Java-only: caching a KeyGenerator to avoid repeated initialization_
+[source,java]
+----
+@BindToRegistry("kemKeyGenerator")
+public KeyGenerator createKeyGenerator() throws Exception {
+    return KeyGenerator.getInstance("ML-KEM", "BCPQC");
+}
+
+PQCDataFormat pqcFormat = new PQCDataFormat();
+pqcFormat.setKeyGenerator(kemKeyGenerator);
+----
+
+**2. Large Payloads**
+
+To guarantee integrity, the authenticated (AEAD) cipher verifies the authentication tag before releasing any plaintext, so the payload is processed as a whole rather than incrementally. Enable stream caching to let Camel spill large bodies to disk on the route:
+
+._Java-only: stream caching large files with PQCDataFormat_
+[source,java]
+----
+from("file:large-files?noop=true")
+    .streamCache(true)  // Enable stream caching if needed
+    .marshal(pqcFormat)
+    .to("file:encrypted");
+----
+
+== Testing
+
+Example test demonstrating round-trip encryption/decryption:
+
+._Java-only: JUnit 5 test for PQC DataFormat round-trip encryption_
+[source,java]
+----
+@Test
+void testPQCDataFormatRoundTrip() throws Exception {
+    // Setup
+    Security.addProvider(new BouncyCastleProvider());
+    Security.addProvider(new BouncyCastlePQCProvider());
+
+    KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-KEM", "BCPQC");
+    kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
+    KeyPair keyPair = kpg.generateKeyPair();
+
+    PQCDataFormat pqcFormat = new PQCDataFormat();
+    pqcFormat.setKeyPair(keyPair);
+    pqcFormat.setKeyEncapsulationAlgorithm("MLKEM");
+    pqcFormat.setSymmetricKeyAlgorithm("AES");
+
+    from("direct:start")
+        .marshal(pqcFormat)
+        .to("mock:encrypted")
+        .unmarshal(pqcFormat)
+        .to("mock:decrypted");
+----
+
+== Troubleshooting
+
+**Issue**: `IllegalStateException: A valid KeyPair with public key is required`
+
+* **Solution**: Ensure KeyPair is registered in registry or configured on DataFormat
+
+**Issue**: `NoSuchAlgorithmException`
+
+* **Solution**: Add Bouncy Castle providers:
++
+._Java-only: adding Bouncy Castle security providers_
+[source,java]
+----
+Security.addProvider(new BouncyCastleProvider());
+Security.addProvider(new BouncyCastlePQCProvider());
+----
+
+**Issue**: Decryption fails with corrupted data
+
+* **Solution**: Ensure the same KeyPair is used for encryption and decryption
+* **Solution**: Verify encapsulation is not being corrupted during transmission
+
+**Issue**: OutOfMemoryError with large files
+
+* **Solution**: Authenticated (AEAD) encryption processes the payload as a whole; enable stream caching so Camel spills large bodies to disk:
++
+._Java-only: enabling stream caching for large files_
+[source,java]
+----
+from("file:large-files?noop=true").streamCache(true).marshal(pqcFormat)...
+----
+
+== Dependencies
+
+The PQC DataFormat is included in the camel-pqc component. Ensure you have:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-pqc</artifactId>
+    <version>${camel.version}</version>
+</dependency>
+
+<!-- Bouncy Castle PQC provider -->
+<dependency>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bcprov-jdk18on</artifactId>
+    <version>${bouncycastle.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bcpkix-jdk18on</artifactId>
+    <version>${bouncycastle.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bcpqc-jdk18on</artifactId>
+    <version>${bouncycastle.version}</version>
+</dependency>
+----

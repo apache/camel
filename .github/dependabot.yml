@@ -47,6 +47,8 @@ updates:
         patterns: ["org.apache.parquet:*"]
       CometD:
         patterns: ["org.cometd.java:*"]
+      Elasticsearch:
+        patterns: ["org.elasticsearch.client:*", "co.elastic.clients:*"]
       Google-cloud:
         patterns: ["com.google.cloud:*"]
     open-pull-requests-limit: 20

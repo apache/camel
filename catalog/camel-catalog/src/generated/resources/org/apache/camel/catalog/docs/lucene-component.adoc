@@ -1,0 +1,219 @@
+= Lucene Component
+:doctitle: Lucene
+:shortname: lucene
+:artifactid: camel-lucene
+:description: Perform inserts or queries against Apache Lucene databases.
+:since: 2.2
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Lucene component is based on the Apache Lucene project. Apache
+Lucene is a powerful high-performance, full-featured text search engine
+library written entirely in Java. For more details about Lucene, please
+see the following links
+
+* http://lucene.apache.org/java/docs/[http://lucene.apache.org/java/docs/]
+* http://lucene.apache.org/java/docs/features.html[http://lucene.apache.org/java/docs/features.html]
+
+The lucene component in camel facilitates integration and utilization of
+Lucene endpoints in enterprise integration patterns and scenarios. The
+lucene component does the following
+
+* builds a searchable index of documents when payloads are sent to the
+Lucene Endpoint
+* facilitates performing of indexed searches in Camel
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-lucene</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+lucene:searcherName:insert[?options]
+lucene:searcherName:query[?options]
+----
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Lucene Producers
+
+This component supports 2 producer endpoints.
+
+*insert*: the insert producer builds a searchable index by analyzing
+the body in incoming exchanges and associating it with a token
+("content").
+*query*: the query producer performs searches on a pre-created index.
+The query uses the searchable index to perform score & relevance based
+searches. Queries are sent via the incoming exchange contains a header
+property name called `CamelLuceneQuery`. The value of the header property `CamelLuceneQuery`
+is a Lucene Query. For more details on how to create Lucene Queries,
+check out https://lucene.apache.org/core/8_4_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package.description[Query Parser Classic syntax]
+
+=== Lucene Processor
+
+There is a processor called LuceneQueryProcessor available to perform
+queries against lucene without the need to create a producer.
+
+== Examples
+
+Lucene usage samples.
+
+=== Example 1: Creating a Lucene index
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("lucene:whitespaceQuotesIndex:insert?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&srcDir=#load_dir")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="lucene:whitespaceQuotesIndex:insert?analyzer=#whitespaceAnalyzer&amp;indexDir=#whitespace&amp;srcDir=#load_dir"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: lucene:whitespaceQuotesIndex:insert
+          parameters:
+            analyzer: "#whitespaceAnalyzer"
+            indexDir: "#whitespace"
+            srcDir: "#load_dir"
+      - to:
+          uri: mock:result
+----
+====
+
+=== Example 2: Loading properties into the JNDI registry in the Camel Context
+
+._Java-only: programmatic CamelContext and registry configuration_
+[source,java]
+----
+CamelContext context = new DefaultCamelContext(createRegistry());
+Registry registry = context.getRegistry();
+registry.bind("whitespace", new File("./whitespaceIndexDir"));
+registry.bind("load_dir", new File("src/test/resources/sources"));
+registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer());
+----
+
+=== Example 2: Performing searches using a Query Producer
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelLuceneQuery", constant("Seinfeld"))
+    .to("lucene:searchIndex:query?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&maxHits=20")
+    .to("direct:next");
+
+from("direct:next")
+    .to("bean:searchResultProcessor")
+    .to("mock:searchResult");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelLuceneQuery">
+    <constant>Seinfeld</constant>
+  </setHeader>
+  <to uri="lucene:searchIndex:query?analyzer=#whitespaceAnalyzer&amp;indexDir=#whitespace&amp;maxHits=20"/>
+  <to uri="direct:next"/>
+</route>
+
+<route>
+  <from uri="direct:next"/>
+  <to uri="bean:searchResultProcessor"/>
+  <to uri="mock:searchResult"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setHeader:
+          name: CamelLuceneQuery
+          constant: Seinfeld
+      - to:
+          uri: lucene:searchIndex:query
+          parameters:
+            analyzer: "#whitespaceAnalyzer"
+            indexDir: "#whitespace"
+            maxHits: 20
+      - to:
+          uri: direct:next
+
+- route:
+    from:
+      uri: direct:next
+    steps:
+      - to:
+          uri: bean:searchResultProcessor
+      - to:
+          uri: mock:searchResult
+----
+====
+
+=== Example 3: Performing searches using a Query Processor
+
+._Java-only: uses LuceneQueryProcessor_
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelLuceneQuery", constant("Rodney Dangerfield"))
+    .process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20))
+    .to("direct:next");
+
+from("direct:next")
+    .to("bean:searchResultProcessor")
+    .to("mock:searchResult");
+----

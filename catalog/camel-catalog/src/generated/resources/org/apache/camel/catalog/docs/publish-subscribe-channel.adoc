@@ -1,0 +1,89 @@
+= Publish Subscribe Channel
+:tabs-sync-option:
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/PublishSubscribeChannel.html[Publish-Subscribe Channel]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns].
+
+How can the sender broadcast an event to all interested receivers?
+
+image::eip/PublishSubscribeSolution.gif[image]
+
+Send the event on a Publish-Subscribe Channel, which delivers a copy of a particular event to each receiver.
+
+The Publish-Subscribe Channel is supported in Camel by messaging based xref:ROOT:index.adoc[Components], such as:
+
+* xref:ROOT:amqp-component.adoc[AMQP] for working with AMQP Queues
+* xref:ROOT:jms-component.adoc[ActiveMQ], or xref:ROOT:jms-component.adoc[JMS] for working with JMS Queues
+* xref:ROOT:seda-component.adoc[SEDA] for internal Camel seda queue based messaging
+* xref:ROOT:spring-rabbitmq-component.adoc[Spring RabbitMQ] for working with AMQP Queues (RabbitMQ)
+
+There is also messaging based in the cloud from cloud providers such as Amazon, Google and Azure.
+
+TIP: See also the related xref:point-to-point-channel.adoc[Point to Point Channel] EIP
+
+== Example
+
+The following example demonstrates publish subscriber messaging using
+the xref:ROOT:jms-component.adoc[JMS] component with JMS topics:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("jms:topic:cheese");
+
+from("jms:topic:cheese")
+    .to("bean:foo");
+
+from("jms:topic:cheese")
+    .to("bean:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<routes>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="jms:topic:cheese"/>
+    </route>
+    <route>
+        <from uri="jms:topic:cheese"/>
+        <to uri="bean:foo"/>
+    </route>
+    <route>
+        <from uri="jms:topic:cheese"/>
+        <to uri="bean:bar"/>
+    </route>
+</routes>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: jms:topic:cheese
+- route:
+    from:
+      uri: jms:topic:cheese
+      steps:
+        - to:
+            uri: bean:foo
+- route:
+    from:
+      uri: jms:topic:cheese
+      steps:
+        - to:
+            uri: bean:bar
+----
+====

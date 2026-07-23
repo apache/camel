@@ -1,0 +1,146 @@
+= Kubernetes Namespaces Component
+:doctitle: Kubernetes Namespaces
+:shortname: kubernetes-namespaces
+:artifactid: camel-kubernetes
+:description: Perform operations on Kubernetes Namespaces and get notified on Namespace changes.
+:since: 2.17
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Kubernetes
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Kubernetes Namespaces component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
+provides a producer to execute Kubernetes Namespace operations and a consumer to consume events related to Namespace events.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Supported producer operation
+
+- `listNamespaces`
+- `listNamespacesByLabels`
+- `getNamespace`
+- `createNamespace`
+- `updateNamespace`
+- `deleteNamespace`
+
+== Examples
+
+=== Kubernetes Namespaces Producer Examples
+
+- `listNamespaces`: this operation lists the namespaces on a kubernetes cluster
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:list")
+    .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespaces")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&amp;operation=listNamespaces"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+    steps:
+      - to:
+          uri: kubernetes-namespaces:///
+          parameters:
+            kubernetesClient: "#kubernetesClient"
+            operation: listNamespaces
+      - to:
+          uri: mock:result
+----
+====
+
+This operation returns a list of namespaces from your cluster
+
+- `listNamespacesByLabels`: this operation lists the namespaces by labels on a kubernetes cluster
+
+._Java-only: sets a Map header for label selection_
+[source,java]
+----
+from("direct:listByLabels")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesNamespaceLabels",
+            Map.of("key1", "value1", "key2", "value2"));
+    })
+    .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespacesByLabels")
+    .to("mock:result");
+----
+
+This operation returns a list of namespaces from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+
+=== Kubernetes Namespaces Consumer Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("kubernetes-namespaces://{{kubernetes-host}}?oauthToken={{kubernetes-token}}")
+    .to("log:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kubernetes-namespaces://{{kubernetes-host}}?oauthToken={{kubernetes-token}}"/>
+  <to uri="log:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kubernetes-namespaces://{{kubernetes-host}}
+      parameters:
+        oauthToken: "{{kubernetes-token}}"
+    steps:
+      - to:
+          uri: log:result
+----
+====
+
+This consumer returns a message per event received for all Namespaces in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch Namespaces with the specified label.
+- `resourceName` - Watch the Namespace with the specified name.
+
+

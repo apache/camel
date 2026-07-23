@@ -1,0 +1,318 @@
+= Simple JMS2 Component
+:doctitle: Simple JMS2
+:shortname: sjms2
+:artifactid: camel-sjms2
+:description: Send and receive messages to/from a JMS Queue or Topic using plain JMS 2.x API.
+:since: 2.19
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Simple JMS Component is a JMS component that only uses JMS APIs
+and no third-party framework such as Spring JMS.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-sjms2</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+sjms2:[queue:|topic:]destinationName[?options]
+----
+
+Where `destinationName` is a JMS queue or topic name. By default, the
+`destinationName` is interpreted as a queue name. For example, to
+connect to the queue, `FOO.BAR` use:
+
+----
+sjms2:FOO.BAR
+----
+
+You can include the optional `queue:` prefix, if you prefer:
+
+----
+sjms2:queue:FOO.BAR
+----
+
+To connect to a topic, you _must_ include the `topic:` prefix. For
+example, to connect to the topic, `Stocks.Prices`, use:
+
+----
+sjms2:topic:Stocks.Prices
+----
+
+You append query options to the URI using the following format,
+`?option=value&option=value&...`
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+The component was reworked from Camel 3.8 onwards
+to be similar to the existing Camel JMS component that is based on Spring JMS.
+
+The reason is to offer many of the same features and functionality from the JMS component,
+but for users that require lightweight without having to include the Spring Framework.
+
+There are some advanced features in the Spring JMS component that has been omitted, such as
+shared queues for request/reply. Spring JMS offers fine-grained tunings for concurrency settings,
+which can be tweaked for dynamic scaling up and down depending on load. This is a special feature in Spring JMS
+that would require substantial code to implement in SJMS2.
+
+The SJMS2 component does not support for Spring or JTA Transaction, however, support for internal local transactions
+is supported using JMS or Transaction or Client Acknowledge Mode. See further details below.
+
+=== Reuse endpoint and send to different destinations computed at runtime
+
+If you need to send messages to a lot of different JMS destinations, it
+makes sense to reuse a SJMS endpoint and specify the real destination in
+a message header. This allows Camel to reuse the same endpoint, but send
+to different destinations. This greatly reduces the number of endpoints
+created and economizes on memory and thread resources.
+
+TIP: Using xref:eips:toD-eip.adoc[toD] is easier than specifying the dynamic destination with a header
+
+You can specify the destination in the following headers:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=====================================================================
+|Header |Type |Description
+|`CamelJmsDestinationName` |`String` |The destination name.
+|=====================================================================
+
+For example, the following route shows how you can compute a destination
+at run time and use it to override the destination appearing in the JMS
+URL:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file://inbox")
+  .to("bean:computeDestination")
+  .to("sjms2:queue:dummy");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox"/>
+  <to uri="bean:computeDestination"/>
+  <to uri="sjms2:queue:dummy"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      steps:
+        - to:
+            uri: bean:computeDestination
+        - to:
+            uri: sjms2:queue:dummy
+----
+====
+
+The queue name, `dummy`, is just a placeholder. It must be provided as
+part of the JMS endpoint URL, but it will be ignored in this example.
+
+In the `computeDestination` bean, specify the real destination by
+setting the `CamelJmsDestinationName` header as follows:
+
+._Java-only: programmatic header manipulation with Exchange API_
+[source,java]
+----
+public void setJmsHeader(Exchange exchange) {
+   String id = ....
+   exchange.getIn().setHeader("CamelJmsDestinationName", "order:" + id");
+}
+----
+
+Then Camel will read this header and use it as the destination instead
+of the one configured on the endpoint. So, in this example Camel sends
+the message to `sjms2:queue:order:2`, assuming the `id` value was 2.
+
+Keep in mind that the JMS producer removes both `CamelJmsDestinationName`
+headers from the exchange and do not propagate  them to the created JMS
+message to avoid the accidental loops
+in the routes (in scenarios when the message will be forwarded to
+another JMS endpoint).
+
+=== Using toD
+
+If you need to send messages to a lot of different JMS destinations, it
+makes sense to reuse a SJMS2 endpoint and specify the dynamic destinations
+with simple language using xref:eips:toD-eip.adoc[toD].
+
+For example, suppose you need to send messages to queues with order types,
+then using toD could, for example, be done as follows:
+
+.Example SJMS2 route with `toD`
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:order")
+  .toD("sjms2:order-${header.orderType}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <toD uri="sjms2:order-${header.orderType}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - toD:
+            uri: "sjms2:order-${header.orderType}"
+----
+====
+
+=== Local transactions
+
+When using `transacted=true` then JMS Transacted Acknowledge Mode are in use.
+The SJMS2 component supports this from both the consumer and producers. If a consumer
+is transacted, then the active JMS Session will commit or rollback at the end of processing the message.
+
+SJMS2 producers that are `transacted=true` will also defer until the end of processing the message
+before the active JMS Session will commit or rollback.
+
+You can combine consumer and producer, such as:
+
+.Example transacted SJMS2 route with consumer and producer
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("sjms2:cheese?transacted=true")
+  .to("bean:foo")
+  .to("sjms2:foo?transacted=true")
+  .to("bean:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="sjms2:cheese?transacted=true"/>
+  <to uri="bean:foo"/>
+  <to uri="sjms2:foo?transacted=true"/>
+  <to uri="bean:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: sjms2:cheese
+      parameters:
+        transacted: true
+      steps:
+        - to:
+            uri: bean:foo
+        - to:
+            uri: sjms2:foo
+            parameters:
+              transacted: true
+        - to:
+            uri: bean:bar
+----
+====
+
+Here the consumer and producer are both transacted, which means that only at the end of processing the message,
+then both the consumer and the producer will commit (or rollback in case of an exception during routing).
+
+=== Message Header Format
+
+The SJMS2 Component uses the same header format strategy used in
+the Camel JMS Component. This pluggable strategy ensures that messages
+sent over the wire conform to the JMS Message spec.
+
+For the `exchange.in.header` the following rules apply for the header
+keys:
+
+* Keys starting with `JMS` or `JMSX` are reserved.
+* `exchange.in.headers` keys must be literals and all be valid Java
+identifiers (do not use dots in the key name).
+* Camel replaces dots & hyphens and the reverse when consuming JMS
+messages:
+
+** it is replaced by _DOT_ and the reverse replacement when Camel consumes
+the message.
+** it is replaced by _HYPHEN_ and the reverse replacement when Camel
+consumes the message.See also the option `jmsKeyFormatStrategy`,
+which allows use of your own custom strategy for formatting keys.
+
+=== Message Content
+
+To deliver content over the wire, we must ensure that the body of the
+message that is being delivered adheres to the JMS Message
+Specification. Therefore, all that are produced must either be
+primitives or their counter-objects (such as `Integer`, `Long`, `Character`).
+The types, `String`, `CharSequence`, `Date`, `BigDecimal` and `BigInteger` are all
+converted to their `toString()` representation. All other types are
+dropped.
+
+=== Clustering
+
+When using _InOut_ with SJMS2 in a clustered environment, you must either
+use TemporaryQueue destinations or use a unique reply to
+destination per InOut producer endpoint. The producer handles message correlation,
+not with message selectors at the broker.
+
+[NOTE]
+====
+You should only use queues as reply-to destination types, topics are not recommended or fully supported.
+====
+
+Currently, the only correlation strategy is to use the `JMSCorrelationId`.
+The _InOut_ Consumer uses this strategy as well ensuring that all
+response messages to the included `JMSReplyTo` destination also have the
+`JMSCorrelationId` copied from the request as well.

@@ -181,6 +181,43 @@ When RAG or tools are used, the agent producer also exposes `CamelLangChain4jAge
 (`List<dev.langchain4j.service.tool.ToolExecution>`) as exchange headers when present in the
 `Result`.
 
+==== Camel route tools now use ai-tool
+
+The `langchain4j-agent` producer now discovers Camel route tools from the `ai-tool` component
+(`AiToolRegistry`) instead of the `langchain4j-tools` component (`CamelToolExecutorCache`).
+
+Migrate your tool definition routes from `langchain4j-tools:` to `ai-tool:`:
+
+[source,java]
+----
+// Before (no longer works with langchain4j-agent)
+from("langchain4j-tools:userDb?tags=users&description=Query user database&parameter.userId=string")
+    .setBody(constant("{\"name\": \"John Doe\", \"id\": \"123\"}"));
+
+// After
+from("ai-tool:userDb?tags=users&description=Query user database&parameter.userId=string")
+    .setBody(constant("{\"name\": \"John Doe\", \"id\": \"123\"}"));
+----
+
+The `langchain4j-agent` producer endpoint is unchanged — only the tool consumer routes need
+to be migrated:
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=users");
+----
+
+Add the `camel-ai-tool` dependency to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-tool</artifactId>
+</dependency>
+----
+
 === camel-langchain4j-chat
 
 The helper classes `OpenAiChatLanguageModelBuilder` and `HugginFaceChatLanguageModelBuilder` have been removed.
@@ -196,6 +233,11 @@ Previously the option was accepted on the endpoint but ignored, so `safeSearch=f
 `safeSearch=true` to the search engine (the LangChain4j default).
 
 === camel-openai
+
+The per-call token usage headers `CamelOpenAIPromptTokens`, `CamelOpenAICompletionTokens`, and
+`CamelOpenAITotalTokens` now declare `javaType = Long` in component metadata (previously `Integer`).
+The OpenAI SDK returns `long` values, so routes that read these headers with `Integer.class` should
+switch to `Long.class`.
 
 The `conversationMemory` feature on the `chat-completion` operation has two behavior fixes:
 
@@ -519,6 +561,14 @@ The `camel infra list` table now sizes its `DESCRIPTION` column to the terminal 
 the `IMPLEMENTATION` and `SERVICE_DATA` columns with an ellipsis instead of letting the raw service
 data overflow the terminal. The complete, structured service data remains available via `--json`.
 
+=== camel-jsonpath
+
+The `writeAsString` option now correctly serializes single JSON object results (Maps) to a JSON String.
+Previously, a JsonPath expression evaluating to a JSON object (e.g. `$.args`) with `writeAsString=true`
+would return a `java.util.Map` with individually stringified values instead of a valid JSON String.
+If you were relying on the old behavior to split a Map result, change the expression to use a wildcard
+(e.g. `$.content.*` instead of `$.content`) to get a splittable list of JSON strings.
+
 === camel-aws2-kinesis - Fixed-shardId consumer no longer calls DescribeStream on every poll
 
 The Kinesis consumer with a configured `shardId` previously called the `DescribeStream` API on every
@@ -671,6 +721,40 @@ If you were relying on non-durable queues, you can restore the previous behavior
 setting `arg.queue.durable=false&arg.queue.exclusive=true` on the endpoint URI. Note that
 RabbitMQ 4.3+ requires non-durable queues to also be exclusive.
 
+=== camel-core - additional sensitive keywords redacted from sanitized URIs
+
+The URI sanitization used for logs, JMX attributes, exception messages and the developer console
+(`URISupport.sanitizeUri`) now also redacts endpoint parameters whose name contains `api-key` (hyphenated)
+or `authorization`. Previously a credential supplied through a hyphenated or `Authorization`-style
+parameter/header name — for example `additionalHeader.api-key=...` (the Azure OpenAI auth header) or
+`additionalHeader.Authorization=...` in `camel-openai` — was written in clear text in sanitized URIs, even
+though the camelCase `apiKey` option was already redacted.
+
+Because matching is a case-insensitive substring match, parameter names that merely contain `authorization`
+without being secrets — `adjustAuthorization`, `jwtAuthorizationType`, `proxyAuthorizationPolicy` — now also
+have their values shown as `xxxxxx` in sanitized URIs. This is a cosmetic change to sanitized output only and
+does not affect the actual endpoint configuration.
+
+=== camel-a2a - push notification webhooks pinned to the validated address
+
+Push notifications are now delivered with Apache HttpClient 5 instead of `java.net.http.HttpClient`, so the request
+can be pinned to the address the webhook URL was validated against.
+
+Previously `WebhookUrlValidator` resolved the webhook host and applied the SSRF checks, and the HTTP client then
+resolved the same hostname again when it opened the connection. The two lookups are independent, so the address that
+was validated and the address actually connected to could differ (DNS rebinding). The connection is now opened to the
+address that passed validation, while the hostname is still used for the `Host` header, TLS SNI and certificate
+hostname verification. Each retry attempt re-validates and re-resolves, so a config that was safe when first
+dispatched cannot be rebound between retries (which may be up to an hour apart).
+
+`camel-a2a` therefore has a new dependency on `org.apache.httpcomponents.client5:httpclient5`.
+
+The `PushNotificationDispatcher` constructor now takes an
+`org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient` instead of a `java.net.http.HttpClient`. This only
+affects code constructing the dispatcher directly; the client must be started before use. Endpoint behaviour is
+unchanged — redirects were already never followed for push webhooks, and still are not, since a redirect would be
+resolved by the client and escape the validation applied to the registered URL.
+
 === camel-core - Multicast UseOriginalAggregationStrategy fix
 
 The Multicast EIP now correctly honors `UseOriginalAggregationStrategy`, consistent with the Splitter
@@ -721,6 +805,15 @@ account for `OptimisticLockingException`.
 The `TemplateParser` now catches `TokenMgrError` (a JavaCC lexer error) and wraps it in
 `ParseRuntimeException`. Previously a malformed stored-procedure template with characters
 outside the token alphabet would propagate as a raw `java.lang.Error`.
+
+=== camel-aws - Migrated from apache-client to apache5-client
+
+All camel-aws modules now use `software.amazon.awssdk:apache5-client` (Apache HttpClient 5) instead of
+`software.amazon.awssdk:apache-client` (Apache HttpClient 4), aligning with the
+https://github.com/aws/aws-sdk-java-v2/issues/7007[new default] in AWS SDK for Java v2.46.0.
+
+If your project has `<dependencyManagement>` entries, exclusions, or explicit dependencies referencing
+`software.amazon.awssdk:apache-client`, update them to `software.amazon.awssdk:apache5-client`.
 
 === camel-aws-cloudtrail - consumer event delivery fixed
 

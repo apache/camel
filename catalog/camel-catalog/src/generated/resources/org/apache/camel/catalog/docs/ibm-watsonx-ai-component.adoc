@@ -1,0 +1,399 @@
+= IBM watsonx.ai Component
+:doctitle: IBM watsonx.ai
+:shortname: ibm-watsonx-ai
+:artifactid: camel-ibm-watsonx-ai
+:description: Interact with IBM watsonx.ai foundation models for text generation, chat, embeddings, and more.
+:since: 4.18
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: IBM
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The IBM watsonx.ai component allows you to interact with IBM watsonx.ai foundation models for text generation,
+chat, embeddings, reranking, content detection (PII/HAP), document processing, and other AI capabilities using the
+https://cloud.ibm.com/apidocs/watsonx-ai[IBM watsonx.ai API].
+
+This component is built on top of the https://github.com/IBM/watsonx-ai-java-sdk[IBM watsonx.ai Java SDK].
+
+== Prerequisites
+
+You must have a valid IBM Cloud account with access to watsonx.ai services.
+More information is available at https://www.ibm.com/products/watsonx-ai[IBM watsonx.ai].
+
+To use this component, you need:
+
+1. An IBM Cloud account
+2. Access to watsonx.ai services
+3. An API key from IBM Cloud IAM
+4. A project ID or deployment space ID
+5. (optional) IBM Content Object Storage connection to watsonx
+
+== URI Format
+
+----
+ibm-watsonx-ai:label[?options]
+----
+
+You can append query options to the URI in the following format:
+
+`?option=value&option2=value&...`
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Required watsonx.ai component options
+
+You must provide the following options to use this component:
+
+* `apiKey` - Your IBM Cloud API key for authentication
+* `baseUrl` - The watsonx.ai endpoint URL (e.g., https://us-south.ml.cloud.ibm.com)
+* `projectId` or `spaceId` - Your IBM Cloud project or deployment space ID
+* `modelId` - The foundation model ID (for model-specific operations)
+* (optional) `documentConnectionId`, `documentBucket`, `cosUrl` - needed by services like `textExtraction` or `textClassification`
+* (optional) `wxUrl` - For hosted IBM tools
+
+== OAuth Authentication
+
+When using an identity provider for service-to-service authentication instead of a static API key, set the `oauthProfile` parameter to acquire an access token via the OAuth 2.0 Client Credentials grant. The token is used as the `apiKey`. This requires `camel-oauth` on the classpath.
+
+[source,properties]
+----
+camel.oauth.ibm.client-id=my-client
+camel.oauth.ibm.client-secret=my-secret
+camel.oauth.ibm.token-endpoint=https://iam.cloud.ibm.com/identity/token
+----
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:generate")
+    .to("ibm-watsonx-ai:myLabel?oauthProfile=ibm&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=my-project&modelId=ibm/granite-13b-instruct-v2");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:generate"/>
+  <to uri="ibm-watsonx-ai:myLabel?oauthProfile=ibm&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=my-project&amp;modelId=ibm/granite-13b-instruct-v2"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:generate
+      steps:
+        - to:
+            uri: ibm-watsonx-ai:myLabel
+            parameters:
+              oauthProfile: ibm
+              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              projectId: my-project
+              modelId: ibm/granite-13b-instruct-v2
+----
+====
+
+== Security Considerations
+
+=== Sensitive Data Logging
+
+WARNING: When the `logRequests` option is enabled, HTTP requests to the watsonx.ai API may be logged, which can expose sensitive data including your API key. Only enable request logging in development or debugging scenarios, and ensure logs are properly secured. Never enable request logging in production environments where logs might be accessible to unauthorized parties.
+
+== Usage
+
+=== Supported Operations
+
+The IBM watsonx.ai component provides the following operations:
+
+==== Text Generation (Deprecated, use chat instead)
+
+* `textGeneration` - Generate text from a prompt
+* `textGenerationStreaming` - Generate text with streaming responses
+
+==== Chat
+
+* `chat` - Chat with conversation history supporting system, user, and assistant messages
+* `chatStreaming` - Chat with streaming responses via callback consumer
+
+==== Embeddings
+
+* `embedding` - Generate embeddings for text inputs (single or batch)
+
+==== Reranking
+
+* `rerank` - Rerank documents by relevance to a query
+
+==== Tokenization
+
+* `tokenize` - Count and retrieve tokens for text
+
+==== Content Detection
+
+* `detect` - Detect PII (Personal Identifiable Information) and HAP (Harmful, Abusive, Profane) content in text
+
+==== Document Processing
+
+Text Extraction operations:
+
+* `textExtraction` - Start text extraction from documents stored in Cloud Object Storage
+* `textExtractionFetch` - Fetch text extraction results by job ID
+* `textExtractionUpload` - Upload a local file and start extraction
+* `textExtractionUploadAndFetch` - Upload, extract, and return text synchronously
+* `textExtractionUploadFile` - Upload file to COS without starting extraction
+* `textExtractionReadFile` - Read file from COS result bucket
+* `textExtractionDeleteFile` - Delete file from COS
+* `textExtractionDeleteRequest` - Delete extraction job
+
+Text Classification operations:
+
+* `textClassification` - Start document classification for documents in Cloud Object Storage
+* `textClassificationFetch` - Fetch classification results by job ID
+* `textClassificationUpload` - Upload a local file and start classification
+* `textClassificationUploadAndFetch` - Upload, classify, and return result synchronously
+* `textClassificationUploadFile` - Upload file to COS without starting classification
+* `textClassificationDeleteFile` - Delete file from COS
+* `textClassificationDeleteRequest` - Delete classification job
+
+NOTE: Document processing operations require Cloud Object Storage (COS) configuration with HMAC credentials. See <<cos-connection-setup>> for details.
+
+==== Time Series
+
+* `forecast` - Generate time series forecasts using foundation models
+
+==== Model Discovery
+
+* `listModels` - List available foundation models
+* `listTasks` - List supported tasks
+
+==== Deployment Operations
+
+* `deploymentGenerate` - Generate text using deployed models
+* `deploymentChat` - Chat using deployed models
+* `deploymentForecast` - Forecast using deployed time series models
+
+==== Utility Tools (Experimental)
+
+* `runTool` - Run utility tools (GoogleSearch, Weather, WebCrawler, Wikipedia, etc.)
+* `listTools` - List available utility tools
+* `processToolCalls` - Execute tool calls from an assistant message and update the conversation
+
+If you don't specify an operation explicitly, you must set it via the `operation` parameter.
+
+=== Common Use Cases
+
+[cols="1,2,2"]
+|===
+|Use Case |Recommended Operation |Models
+
+|Conversational AI, chatbots, Text summarization, Q&A, translation
+|`chat`, `chatStreaming`
+|ibm/granite-4-h-small, meta-llama/llama-3-8b-instruct
+
+|Semantic search, similarity matching
+|`embedding`
+|ibm/granite-embedding-278m-multilingual
+
+|RAG document retrieval ranking
+|`rerank`
+|cross-encoder/ms-marco-minilm-l-12-v2
+
+|Token counting, context management
+|`tokenize`
+|Any text generation model
+
+|Content moderation, compliance
+|`detect`
+|N/A (uses built-in detectors)
+
+|Document text extraction
+|`textExtraction`, `textExtractionFetch`
+|N/A (uses document processing pipeline)
+
+|Document classification
+|`textClassification`, `textClassificationFetch`
+|N/A (uses document processing pipeline)
+
+|Time series forecasting
+|`forecast`, `deploymentForecast`
+|ibm/granite-ttm-1536-96-r2
+
+|Model catalog exploration
+|`listModels`, `listTasks`
+|N/A
+
+|Deployed model inference
+|`deploymentGenerate`, `deploymentChat`
+|Deployed models
+
+|Web search, weather, web crawling
+|`runTool`, `listTools`
+|N/A (uses utility tools)
+
+|Chat with tool calling (agentic)
+|`chat`, `processToolCalls`
+|ibm/granite-3-8b-instruct, ibm/granite-4-h-small
+|===
+
+== Sub-Pages
+
+For more details, see:
+
+* xref:others:ibm-watsonx-ai-examples.adoc[Examples] - Comprehensive examples for chat, embeddings, reranking, content detection, document processing, forecasting, and model operations
+
+== Spring Boot and Camel Main Configuration
+
+When using Spring Boot or Camel Main, you can configure the component in `application.properties`:
+
+NOTE: This configuration approach works with both Spring Boot (`camel-ibm-watsonx-ai-starter`) and Camel Main runtimes.
+
+[source,properties]
+----
+# watsonx.ai configuration
+camel.component.ibm-watsonx-ai.configuration.api-key=${IBM_WATSONX_API_KEY}
+camel.component.ibm-watsonx-ai.configuration.base-url=https://us-south.ml.cloud.ibm.com
+camel.component.ibm-watsonx-ai.configuration.project-id=${IBM_WATSONX_PROJECT_ID}
+camel.component.ibm-watsonx-ai.configuration.model-id=ibm/granite-13b-instruct-v2
+camel.component.ibm-watsonx-ai.configuration.temperature=0.7
+camel.component.ibm-watsonx-ai.configuration.max-new-tokens=200
+----
+
+Then use the component in routes without repeating configuration:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:generate")
+    .setBody(constant("Explain microservices architecture"))
+    .to("ibm-watsonx-ai:gen?operation=textGeneration")
+    .log("Generated: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:generate"/>
+  <setBody>
+    <constant>Explain microservices architecture</constant>
+  </setBody>
+  <to uri="ibm-watsonx-ai:gen?operation=textGeneration"/>
+  <log message="Generated: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:generate
+      steps:
+        - setBody:
+            constant: "Explain microservices architecture"
+        - to:
+            uri: ibm-watsonx-ai:gen
+            parameters:
+              operation: textGeneration
+        - log:
+            message: "Generated: ${body}"
+----
+====
+
+== watsonx.ai Authentication
+
+IBM watsonx.ai uses IBM Cloud IAM (Identity and Access Management) for authentication.
+You need to provide your IBM Cloud API key.
+
+You can create API keys in the IBM Cloud console:
+
+1. Go to https://cloud.ibm.com/iam/apikeys
+2. Click "Create an IBM Cloud API key"
+3. Copy the API key and use it in your Camel routes
+
+For more information about authentication, see the
+https://cloud.ibm.com/docs/watson?topic=watson-iam[IBM Cloud IAM documentation].
+
+[[cos-connection-setup]]
+== Cloud Object Storage Connection Setup
+
+Document processing operations (text extraction and classification) require a properly configured IBM Cloud Object Storage (COS) connection in your watsonx.ai project.
+
+IMPORTANT: The COS connection must include HMAC credentials (access_key_id and secret_access_key), not just IAM Service Credentials. Without HMAC credentials, you will encounter errors like "EmptyStaticCreds: static credentials are empty".
+
+=== Creating COS Credentials with HMAC
+
+1. Go to your IBM Cloud console
+2. Navigate to your Cloud Object Storage instance
+3. Go to **Service credentials** tab
+4. Click **New credential**
+5. **Important**: Expand "Advanced options" and enable **Include HMAC Credential**
+6. Create the credential
+7. The credential will include both IAM and HMAC keys:
++
+[source,json]
+----
+{
+  "apikey": "...",
+  "cos_hmac_keys": {
+    "access_key_id": "...",
+    "secret_access_key": "..."
+  },
+  ...
+}
+----
+
+=== Creating the COS Connection in watsonx.ai
+
+1. In your watsonx.ai project, go to **Manage** → **Connections**
+2. Click **New connection**
+3. Select **IBM Cloud Object Storage**
+4. Enter the HMAC credentials (access_key_id and secret_access_key)
+5. Save the connection and note the **Connection ID**
+
+The Connection ID is what you use for the `documentConnectionId` and `resultConnectionId` parameters.
+
+=== Additional Resources
+
+* For more information about how to create the *IBM Cloud Object Storage connection*, see the https://dataplatform.cloud.ibm.com/docs/content/wsj/manage-data/conn-cos.html?context=wx&locale=en[IBM watsonx.ai COS connection documentation].
+* To find the *bucket name* and COS endpoint for your region, see the https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-endpoints[IBM Cloud Object Storage buckets documentation].
+
+== Dependencies
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+*pom.xml*
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ibm-watsonx-ai</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+where `x.x.x` is the version number of Camel.
+
+// TODO restore once Spring Boot partials are released

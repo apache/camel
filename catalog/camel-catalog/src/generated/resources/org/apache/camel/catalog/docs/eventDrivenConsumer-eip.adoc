@@ -1,0 +1,58 @@
+= Event Driven Consumer
+:tabs-sync-option:
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/EventDrivenConsumer.html[Event Driven Consumer]
+from the
+xref:enterprise-integration-patterns.adoc[EIP patterns].
+
+The default consumer model is event-based (i.e., asynchronous)
+as this means that the Camel container can then manage pooling,
+threading and concurrency for you in a declarative manner.
+
+TIP: The alternative consumer mode is xref:polling-consumer.adoc[Polling Consumer].
+
+image::eip/EventDrivenConsumerSolution.gif[image]
+
+The Event Driven Consumer is implemented by consumers implementing the
+http://javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/Processor.html[Processor]
+interface which is invoked by the xref:message-endpoint.adoc[Message Endpoint]
+when a xref:message.adoc[Message] is available for processing.
+
+== Example
+
+The following demonstrates a xref:bean-eip.adoc[Bean] being invoked when
+an event occurs from a xref:ROOT:jms-component.adoc[JMS] queue.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jms:queue:foo")
+    .bean(MyBean.class);
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jms:queue:foo"/>
+    <bean beanType="com.foo.MyBean"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:foo
+      steps:
+        - bean:
+            beanType: com.foo.MyBean
+----
+====

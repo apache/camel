@@ -518,13 +518,18 @@ public class AWS2S3Producer extends DefaultProducer {
             }
 
             if (getConfiguration().isUseCustomerKey()) {
+                // the source object was stored with SSE-C, so the same customer key must also be supplied as the
+                // copy-source key, otherwise S3 cannot decrypt the source and rejects the copy
                 if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
+                    copyObjectRequest.copySourceSSECustomerKey(getConfiguration().getCustomerKeyId());
                     copyObjectRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
                 }
                 if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
+                    copyObjectRequest.copySourceSSECustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
                     copyObjectRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
                 }
                 if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
+                    copyObjectRequest.copySourceSSECustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
                     copyObjectRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
                 }
             }

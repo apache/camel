@@ -248,6 +248,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI")
     protected boolean packageScanJars;
 
+    @CommandLine.Option(names = { "--resource-dir", "--resource-dirs" },
+                        description = "Additional resource directories to include in src/main/resources (recursive, preserving structure)",
+                        split = ",")
+    protected List<String> resourceDirs = new ArrayList<>();
+
     @CommandLine.Option(names = { "--build-property" },
                         description = "Maven build properties, ex. --build-property=prop1=foo")
     protected List<String> buildProperties = new ArrayList<>();
@@ -574,6 +579,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.kameletsVersion = kameletsVersion;
         run.javaVersion = javaVersion;
         run.localKameletDir = localKameletDir;
+        run.resourceDirs = resourceDirs;
         run.ignoreLoadingError = ignoreLoadingError;
         run.lazyBean = lazyBean;
         run.property = applicationProperties;
@@ -896,6 +902,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     } else if (web) {
                         targetDir = srcResourcesDir.resolve("META-INF/resources");
                     } else {
+                        // skip files that belong to a resource dir (they are copied with structure preserved later)
+                        if (isUnderResourceDir(f)) {
+                            continue;
+                        }
                         targetDir = srcResourcesDir;
                     }
                     Files.createDirectories(targetDir);
@@ -980,6 +990,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
         }
 
+        copyResourceDirs(srcResourcesDir);
+
         if (!skipPlugins) {
             Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), mavenResolver.repos()).values()
                     .stream()
@@ -993,6 +1005,38 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         packageName, getMain().getOut());
             }
         }
+    }
+
+    private void copyResourceDirs(Path srcResourcesDir) throws Exception {
+        if (resourceDirs == null || resourceDirs.isEmpty()) {
+            return;
+        }
+        for (String dir : resourceDirs) {
+            Path dirPath = Run.validateResourceDir(dir);
+            // use the last component as the target directory name
+            // so ../shared/schemas -> src/main/resources/schemas/
+            Path baseName = dirPath.getFileName();
+            for (Path source : Run.walkResourceDir(dirPath)) {
+                Path relativePath = dirPath.relativize(source);
+                Path target = srcResourcesDir.resolve(baseName).resolve(relativePath);
+                Files.createDirectories(target.getParent());
+                Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+    }
+
+    private boolean isUnderResourceDir(String file) {
+        if (resourceDirs == null || resourceDirs.isEmpty()) {
+            return false;
+        }
+        Path filePath = Paths.get(file).normalize();
+        for (String dir : resourceDirs) {
+            Path dirPath = Paths.get(dir).normalize();
+            if (filePath.startsWith(dirPath)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void adjustJavaSourceFileLine(String line, OutputStream fos) throws Exception {
@@ -1236,7 +1280,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 // ignore
             }
         }
-        return answer != null ? answer : "3.5.1";
+        return answer != null ? answer : "3.5.2";
     }
 
     protected static String jkubeMavenPluginVersion(Path settings, Properties props) {
@@ -1254,7 +1298,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 // ignore
             }
         }
-        return answer != null ? answer : "1.19.0";
+        return answer != null ? answer : "1.20.0";
     }
 
     // This method is kept for backward compatibility with derived classes

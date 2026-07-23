@@ -123,6 +123,13 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     private String bulkheadFairCallHandlingEnabled;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to use asynchronous (non-blocking) processing with CompletionStage-based circuit breaker decorators."
+                            + " When enabled, the circuit breaker releases the caller thread immediately and completes processing asynchronously."
+                            + " This is most valuable when the downstream processor supports asynchronous processing (e.g. Netty HTTP, Kafka)."
+                            + " When used with timeout, the timeoutExecutorService must be a ScheduledExecutorService.")
+    private String asynchronous;
+    @XmlAttribute
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
               description = "Whether timeout is enabled or not on the circuit breaker.")
     private String timeoutEnabled;
     @XmlAttribute
@@ -177,6 +184,7 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
         this.bulkheadMaxConcurrentCalls = source.bulkheadMaxConcurrentCalls;
         this.bulkheadMaxWaitDuration = source.bulkheadMaxWaitDuration;
         this.bulkheadFairCallHandlingEnabled = source.bulkheadFairCallHandlingEnabled;
+        this.asynchronous = source.asynchronous;
         this.timeoutEnabled = source.timeoutEnabled;
         this.micrometerEnabled = source.micrometerEnabled;
         this.timeoutExecutorService = source.timeoutExecutorService;
@@ -343,6 +351,14 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     public void setBulkheadFairCallHandlingEnabled(String bulkheadFairCallHandlingEnabled) {
         this.bulkheadFairCallHandlingEnabled = bulkheadFairCallHandlingEnabled;
+    }
+
+    public String getAsynchronous() {
+        return asynchronous;
+    }
+
+    public void setAsynchronous(String asynchronous) {
+        this.asynchronous = asynchronous;
     }
 
     public String getTimeoutEnabled() {

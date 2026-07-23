@@ -1,0 +1,1088 @@
+= Dapr Component
+:doctitle: Dapr
+:shortname: dapr
+:artifactid: camel-dapr
+:description: Dapr component which interfaces with Dapr Building Blocks.
+:since: 4.12
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Dapr Component provides support for interacting with the https://docs.dapr.io/developing-applications/building-blocks/[Dapr Building Blocks].
+
+== URI format
+
+----
+dapr:operation[?options]
+----
+
+Where *operation* indicates the specific Dapr building block to interact with.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+=== Dapr Producer operations
+
+Camel Dapr component provides a wide range of operations on the producer side:
+
+=== 1. *invokeService*:
+Using service invocation, your application can reliably and securely communicate with other applications using the standard HTTP protocol. For this operation `serviceToInvoke` and `methodToInvoke` are mandatory.
+
+=== 2. *state*:
+State management in Dapr allows your application to save, get and delete key-value pairs in a reliable and consistent way. For these operations `stateStore` is required.
+
+==== State Operations
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`save` |Store or update a single key-value pair in the state store. For this operation `payload` and `key` are required.
+|`saveBulk` |Store or update multiple key-value pairs in the state store in a single operation. For this operation (List<State<?>>) `states` is a required field.
+|`get` |Retrieve the value of a specific key from the state store. For this operation `key` is a required field.
+|`getBulk` |Retrieve values for multiple keys from the state store in a single request. For this operation (List<String>) `keys` is a required field.
+|`delete` |Remove a specific key and its associated value from the state store. For this operation `key` is a required field.
+|`executeTransaction` |Execute a batch of operations (save or delete) atomically within a transaction. For this operation (List<TransactionalStateOperation<?>>) `transactions` is a required field.
+|===
+
+=== 2. *pubSub*:
+Dapr’s publish-subscribe (Pub/Sub) building block enables asynchronous, event-driven communication between microservices. For this operation, the pubSubName and topic are required.
+
+=== 3. *invokeBinding*:
+Dapr’s bindings building block allows interaction with external systems via input/output bindings. The invokeBinding operation enables sending data to a configured output binding. This operation requires specifying the bindingName (the name of the binding component) and the bindingOperation (such as create, get, or delete, depending on the binding's capabilities).
+
+=== 4. *secret*:
+Dapr’s secret management building block enables secure retrieval of secrets from external secret stores. The secret operation fetches a secret from the specified secret store. If a key is provided, the operation retrieves the corresponding secret; if no key is specified, a bulk retrieval of all secrets from the store is performed. This operation requires the secretStore name, and optionally the key.
+
+=== 5. *configuration*:
+Dapr’s configuration building block allows applications to retrieve dynamic configuration values from external configuration stores. The configuration operation fetches values associated with keys specified in configKeys. This operation requires the configStore name, and the configKeys.
+
+=== 6. *lock*:
+Lock management in Dapr allows your application to coordinate access to shared resources using a distributed lock mechanism. This is useful for ensuring mutual exclusion across services. For these operations, `storeName`, `resourceId` and `lockOwner` are mandatory.
+
+==== Lock Operations
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`tryLock` |Attempts to acquire a lock on a resource for a specific duration. For this operation `expiryInSeconds` is required. Returns a `Boolean` – `true` if the lock was successfully acquired, `false` otherwise.
+|`unlock` |Releases a previously acquired lock. Returns an `UnlockResponseStatus` enum indicating whether the lock was successfully released.
+|===
+
+=== 7. *workflow*:
+Dapr Workflows enable developers to write long-running, persistent, and reliable processes as code. Dapr Workflow simplifies complex, stateful coordination requirements in microservice architectures. 
+
+==== Workflow Operations
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`scheduleNew` |Schedules a new workflow instance to be created. Requires `workflowClass` and optional `workflowVersion`, `workflowInstanceId`, `workflowStartTime`. The message body is used as the workflow input.
+|`terminate` |Terminates a running workflow instance. Requires `workflowInstanceId`. The message body can be used to provide an output for the terminated workflow.
+|`purge` |Purges the metadata of a workflow instance from the state store. Requires `workflowInstanceId`.
+|`suspend` |Suspends a running workflow instance. Requires `workflowInstanceId` and a `reason`.
+|`resume` |Resumes a suspended workflow instance. Requires `workflowInstanceId` and a `reason`.
+|`state` |Gets the current runtime state of a workflow instance. Requires `workflowInstanceId`.
+|`waitForInstanceStart` |Waits for a workflow instance to start running. Requires `workflowInstanceId` and a `timeout`.
+|`waitForInstanceCompletion` |Waits for a workflow instance to complete. Requires `workflowInstanceId` and a `timeout`.
+|`raiseEvent` |Sends an event to a running workflow instance that is waiting for it. Requires `workflowInstanceId` and `eventName`. The message body is used as the event payload.
+|===
+
+=== Dapr Consumer operations
+
+=== 1. *pubSub*:
+The Dapr PubSub Consumer in Apache Camel allows your route to consume events from a Dapr-supported Pub/Sub system. It subscribes to a specified topic on a given pubsub component (pubSubName) and processes incoming CloudEvents as Camel Exchange objects.
+
+To configure a consumer, the pubSubName and topic must be provided. Alternatively, a preconfigured DaprPreviewClient can be registered in the Camel registry to allow the consumer to reuse it instead of creating a new one internally.
+
+=== 2. *configuration*:
+
+The Dapr Configuration Consumer in Apache Camel allows your route to receive real-time updates from a Dapr-supported configuration store. It listens for changes to specified keys in the configuration store and processes the updates as Camel Exchange objects.
+
+To configure the consumer, the configStore name and configKeys must be provided.
+
+== Examples
+
+=== Producer Operations Examples
+- `invokeService` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDaprVerb", constant("GET"))
+    .to("dapr:invokeService?serviceToInvoke=myService&methodToInvoke=myMethod")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprVerb">
+    <constant>GET</constant>
+  </setHeader>
+  <to uri="dapr:invokeService?serviceToInvoke=myService&amp;methodToInvoke=myMethod"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprVerb
+            constant: "GET"
+        - to:
+            uri: dapr:invokeService
+            parameters:
+              serviceToInvoke: myService
+              methodToInvoke: myMethod
+        - to:
+            uri: mock:result
+----
+====
+
+- `state: save` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setBody(constant("myValue"))
+    .to("dapr:state?stateOperation=save&stateStore=myStore&key=myKey")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>myValue</constant>
+  </setBody>
+  <to uri="dapr:state?stateOperation=save&amp;stateStore=myStore&amp;key=myKey"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: "myValue"
+        - to:
+            uri: dapr:state
+            parameters:
+              stateOperation: save
+              stateStore: myStore
+              key: myKey
+        - to:
+            uri: mock:result
+----
+====
+
+- `state: saveBulk` -
+
+._Java-only: uses Dapr SDK `State` types and `List.of()` to set bulk states_
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        State<String> state1 = new State<>("key1", "val1", "etag1");
+        State<String> state2 = new State<>("key2", "val1", "etag2");
+        List<State<?>> states = List.of(state1, state2);
+        exchange.getMessage().setHeader("CamelDaprStates", states);
+    })
+    .to("dapr:state?stateOperation=saveBulk&stateStore=myStore")
+    .to("mock:result");
+----
+
+- `state: get` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDaprConcurrency", constant("FIRST_WRITE"))
+    .setHeader("CamelDaprConsistency", constant("EVENTUAL"))
+    .to("dapr:state?stateOperation=get&stateStore=myStore&key=myKey")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprConcurrency">
+    <constant>FIRST_WRITE</constant>
+  </setHeader>
+  <setHeader name="CamelDaprConsistency">
+    <constant>EVENTUAL</constant>
+  </setHeader>
+  <to uri="dapr:state?stateOperation=get&amp;stateStore=myStore&amp;key=myKey"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprConcurrency
+            constant: "FIRST_WRITE"
+        - setHeader:
+            name: CamelDaprConsistency
+            constant: "EVENTUAL"
+        - to:
+            uri: dapr:state
+            parameters:
+              stateOperation: get
+              stateStore: myStore
+              key: myKey
+        - to:
+            uri: mock:result
+----
+====
+
+- `state: getBulk` -
+
+._Java-only: uses `List.of()` to set bulk key list_
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelDaprKeys", List.of("key1", "key2"));
+    })
+    .to("dapr:state?stateOperation=getBulk&stateStore=myStore")
+    .to("mock:result");
+----
+
+- `state: delete` -
+
+._Java-only: uses `Map.of()` to set metadata_
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelDaprMetadata", Map.of("partitionKey", "myPartitionKey"));
+    })
+    .to("dapr:state?stateOperation=delete&stateStore=myStore&key=myKey")
+    .to("mock:result");
+----
+
+- `state: executeTransaction` -
+
+._Java-only: uses Dapr SDK `TransactionalStateOperation` and `State` types_
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        TransactionalStateOperation.OperationType op = TransactionalStateOperation.OperationType.UPSERT;
+        List<TransactionalStateOperation<?>> transactions = List.of(new TransactionalStateOperation<>(op, new State<>("myKey")));
+        exchange.getIn().setHeader("CamelDaprTransactions", transactions);
+    })
+    .to("dapr:state?stateOperation=executeTransaction&stateStore=myStore")
+    .to("mock:result");
+----
+
+- `pubSub` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDaprContentType", constant("application/json"))
+    .to("dapr:pubSub?pubSubName=myPubSub&topic=myTopic")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprContentType">
+    <constant>application/json</constant>
+  </setHeader>
+  <to uri="dapr:pubSub?pubSubName=myPubSub&amp;topic=myTopic"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprContentType
+            constant: "application/json"
+        - to:
+            uri: dapr:pubSub
+            parameters:
+              pubSubName: myPubSub
+              topic: myTopic
+        - to:
+            uri: mock:result
+----
+====
+
+- `invokeBinding` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setBody(constant("myBody"))
+    .to("dapr:invokeBinding?bindingName=myBinding&bindingOperation=myOperation")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>myBody</constant>
+  </setBody>
+  <to uri="dapr:invokeBinding?bindingName=myBinding&amp;bindingOperation=myOperation"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: "myBody"
+        - to:
+            uri: dapr:invokeBinding
+            parameters:
+              bindingName: myBinding
+              bindingOperation: myOperation
+        - to:
+            uri: mock:result
+----
+====
+
+- `secret` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("dapr:secret?secretStore=myStore&key=mySecret")
+  .log("Received secret from Dapr: ${body}")
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="dapr:secret?secretStore=myStore&amp;key=mySecret"/>
+  <log message="Received secret from Dapr: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dapr:secret
+            parameters:
+              secretStore: myStore
+              key: mySecret
+        - log: "Received secret from Dapr: ${body}"
+        - to:
+            uri: mock:result
+----
+====
+
+- `secret: bulk` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  // when no secret key is passed, bulk retrieval is performed on secret store
+  .to("dapr:secret?secretStore=myStore")
+  .log("Received bulk secrets from Dapr: ${body}")
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="dapr:secret?secretStore=myStore"/>
+  <log message="Received bulk secrets from Dapr: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dapr:secret
+            parameters:
+              secretStore: myStore
+        - log: "Received bulk secrets from Dapr: ${body}"
+        - to:
+            uri: mock:result
+----
+====
+
+- `configuration` -
+
+._Java-only: uses `List.of()` to set configuration key list_
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelDaprConfigKeys", List.of("k1", "k2"));
+    })
+    .to("dapr:configuration?configStore=myStore")
+    .log("Received config updates from Dapr: ${body}")
+    .to("mock:result");
+----
+
+- `lock: tryLock` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDaprResourceId", constant("myResource"))
+    .to("dapr:lock?lockOperation=tryLock&storeName=myStore&expiryInSeconds=100")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprResourceId">
+    <constant>myResource</constant>
+  </setHeader>
+  <to uri="dapr:lock?lockOperation=tryLock&amp;storeName=myStore&amp;expiryInSeconds=100"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprResourceId
+            constant: "myResource"
+        - to:
+            uri: dapr:lock
+            parameters:
+              lockOperation: tryLock
+              storeName: myStore
+              expiryInSeconds: 100
+        - to:
+            uri: mock:result
+----
+====
+
+- `lock: unlock` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDaprResourceId", constant("myResource"))
+    .to("dapr:lock?lockOperation=unlock&storeName=myStore")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprResourceId">
+    <constant>myResource</constant>
+  </setHeader>
+  <to uri="dapr:lock?lockOperation=unlock&amp;storeName=myStore"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprResourceId
+            constant: "myResource"
+        - to:
+            uri: dapr:lock
+            parameters:
+              lockOperation: unlock
+              storeName: myStore
+        - to:
+            uri: mock:result
+----
+====
+
+- `workflow: scheduleNew` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDaprWorkflowClass", constant("my.package.MyWorkflow"))
+    .to("dapr:workflow?workflowOperation=scheduleNew")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowClass">
+    <constant>my.package.MyWorkflow</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=scheduleNew"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowClass
+            constant: "my.package.MyWorkflow"
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: scheduleNew
+        - to:
+            uri: mock:result
+----
+====
+
+- `workflow: terminate` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDaprWorkflowInstanceId", constant("myWorkflowInstanceId"))
+    .to("dapr:workflow?workflowOperation=terminate")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowInstanceId">
+    <constant>myWorkflowInstanceId</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=terminate"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowInstanceId
+            constant: "myWorkflowInstanceId"
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: terminate
+        - to:
+            uri: mock:result
+----
+====
+
+- `workflow: purge` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDaprWorkflowInstanceId", constant("myWorkflowInstanceId"))
+    .to("dapr:workflow?workflowOperation=purge")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowInstanceId">
+    <constant>myWorkflowInstanceId</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=purge"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowInstanceId
+            constant: "myWorkflowInstanceId"
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: purge
+        - to:
+            uri: mock:result
+----
+====
+
+- `workflow: suspend` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDaprWorkflowInstanceId", constant("myWorkflowInstanceId"))
+    .setHeader("CamelDaprSuspendReason", constant("Suspended for maintenance."))
+    .to("dapr:workflow?workflowOperation=suspend")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowInstanceId">
+    <constant>myWorkflowInstanceId</constant>
+  </setHeader>
+  <setHeader name="CamelDaprSuspendReason">
+    <constant>Suspended for maintenance.</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=suspend"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowInstanceId
+            constant: "myWorkflowInstanceId"
+        - setHeader:
+            name: CamelDaprSuspendReason
+            constant: "Suspended for maintenance."
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: suspend
+        - to:
+            uri: mock:result
+----
+====
+
+- `workflow: resume` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDaprWorkflowInstanceId", constant("myWorkflowInstanceId"))
+    .setHeader("CamelDaprSuspendReason", constant("Maintenance complete."))
+    .to("dapr:workflow?workflowOperation=resume")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowInstanceId">
+    <constant>myWorkflowInstanceId</constant>
+  </setHeader>
+  <setHeader name="CamelDaprSuspendReason">
+    <constant>Maintenance complete.</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=resume"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowInstanceId
+            constant: "myWorkflowInstanceId"
+        - setHeader:
+            name: CamelDaprSuspendReason
+            constant: "Maintenance complete."
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: resume
+        - to:
+            uri: mock:result
+----
+====
+
+- `workflow: state` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDaprWorkflowInstanceId", constant("myWorkflowInstanceId"))
+    .to("dapr:workflow?workflowOperation=state")
+    .log("Workflow state: ${body}")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowInstanceId">
+    <constant>myWorkflowInstanceId</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=state"/>
+  <log message="Workflow state: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowInstanceId
+            constant: "myWorkflowInstanceId"
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: state
+        - log:
+            message: "Workflow state: ${body}"
+        - to:
+            uri: mock:result
+----
+====
+
+- `workflow: waitForInstanceStart` -
+
+._Java-only: uses `Duration.ofSeconds()` to set timeout_
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelDaprWorkflowInstanceId", "myWorkflowInstanceId");
+        exchange.getIn().setHeader("CamelDaprTimeout", Duration.ofSeconds(30));
+    })
+    .to("dapr:workflow?workflowOperation=waitForInstanceStart")
+    .to("mock:result");
+----
+
+- `workflow: waitForInstanceCompletion` -
+
+._Java-only: uses `Duration.ofSeconds()` to set timeout_
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelDaprWorkflowInstanceId", "myWorkflowInstanceId");
+        exchange.getIn().setHeader("CamelDaprTimeout", Duration.ofSeconds(30));
+    })
+    .to("dapr:workflow?workflowOperation=waitForInstanceCompletion")
+    .to("mock:result");
+----
+
+- `workflow: raiseEvent` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelDaprWorkflowInstanceId", constant("myWorkflowInstanceId"))
+    .to("dapr:workflow?workflowOperation=raiseEvent&eventName=MyEvent")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowInstanceId">
+    <constant>myWorkflowInstanceId</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=raiseEvent&amp;eventName=MyEvent"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowInstanceId
+            constant: "myWorkflowInstanceId"
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: raiseEvent
+              eventName: MyEvent
+        - to:
+            uri: mock:result
+----
+====
+
+=== Consumer Operations Examples
+
+- `pubSub` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("dapr:pubSub?pubSubName=myPubSub&topic=myTopic")
+  .log("Received message from Dapr pubsub: ${body}")
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="dapr:pubSub?pubSubName=myPubSub&amp;topic=myTopic"/>
+  <log message="Received message from Dapr pubsub: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: dapr:pubSub
+      parameters:
+        pubSubName: myPubSub
+        topic: myTopic
+      steps:
+        - log: "Received message from Dapr pubsub: ${body}"
+        - to:
+            uri: mock:result
+----
+====
+
+- `configuration` -
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("dapr:configuration?configStore=myStore&configKeys=k1,k2")
+  .log("Received config updates from Dapr: ${body}")
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="dapr:configuration?configStore=myStore&amp;configKeys=k1,k2"/>
+  <log message="Received config updates from Dapr: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: dapr:configuration
+      parameters:
+        configStore: myStore
+        configKeys: "k1,k2"
+      steps:
+        - log: "Received config updates from Dapr: ${body}"
+        - to:
+            uri: mock:result
+----
+====

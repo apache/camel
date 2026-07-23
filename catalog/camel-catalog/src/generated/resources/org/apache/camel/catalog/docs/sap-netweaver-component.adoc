@@ -1,0 +1,169 @@
+= SAP NetWeaver Component
+:doctitle: SAP NetWeaver
+:shortname: sap-netweaver
+:artifactid: camel-sap-netweaver
+:description: Send requests to SAP NetWeaver Gateway using HTTP.
+:since: 2.12
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The SAP Netweaver integrates with the
+http://scn.sap.com/community/developer-center/netweaver-gateway[SAP
+NetWeaver Gateway] using HTTP transports.
+
+This camel component supports only producer endpoints.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-sap-netweaver</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+The URI scheme for a sap netweaver gateway component is as follows
+
+----
+sap-netweaver:https://host:8080/path?username=foo&password=secret
+----
+
+== Prerequisites
+
+You would need to have an account on the SAP NetWeaver system to be able
+to leverage this component. SAP provides a
+http://scn.sap.com/docs/DOC-31221#section6[demo setup] where you can
+request an account.
+
+This component uses the basic authentication scheme for logging into SAP
+NetWeaver.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Examples
+
+This example is using the flight demo example from SAP, which is
+available online over the internet
+http://scn.sap.com/docs/DOC-31221[here].
+
+In the route below we request the SAP NetWeaver demo server using the
+following url
+
+----
+https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT
+----
+
+And we want to execute the following command
+
+[source,text]
+----
+FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')
+----
+
+To get flight details for the given flight. The command syntax is in
+http://msdn.microsoft.com/en-us/library/cc956153.aspx[MS ADO.Net Data
+Service] format.
+
+We have the following Camel route
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelNetWeaverCommand", constant("FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')"))
+    .to("sap-netweaver:https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT?username=P1909969254&password=TODO")
+    .to("log:response")
+    .to("velocity:flight-info.vm");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelNetWeaverCommand">
+    <constant>FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')</constant>
+  </setHeader>
+  <to uri="sap-netweaver:https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT?username=P1909969254&amp;password=TODO"/>
+  <to uri="log:response"/>
+  <to uri="velocity:flight-info.vm"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setHeader:
+          name: CamelNetWeaverCommand
+          constant: "FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')"
+      - to:
+          uri: sap-netweaver:https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT
+          parameters:
+            username: P1909969254
+            password: TODO
+      - to:
+          uri: log:response
+      - to:
+          uri: velocity:flight-info.vm
+----
+====
+
+The password is invalid. You would need to create an account at SAP
+first to run the demo.
+
+The velocity template is used for formatting the response to a basic
+HTML page
+
+[source,xml]
+----
+<html>
+  <body>
+  Flight information:
+
+  <p/>
+  <br/>Airline ID: $body["AirLineID"]
+  <br/>Aircraft Type: $body["AirCraftType"]
+  <br/>Departure city: $body["FlightDetails"]["DepartureCity"]
+  <br/>Departure airport: $body["FlightDetails"]["DepartureAirPort"]
+  <br/>Destination city: $body["FlightDetails"]["DestinationCity"]
+  <br/>Destination airport: $body["FlightDetails"]["DestinationAirPort"]
+
+  </body>
+</html>
+----
+
+When running the application, you get sample output:
+
+----
+Flight information:
+Airline ID: AA
+Aircraft Type: 747-400
+Departure city: new york
+Departure airport: JFK
+Destination city: SAN FRANCISCO
+Destination airport: SFO
+----

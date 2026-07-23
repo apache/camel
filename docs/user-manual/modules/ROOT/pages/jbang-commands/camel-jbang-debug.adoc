@@ -83,6 +83,7 @@ camel debug [options]
 | `--reload,--dev` | Enables dev mode (live reload when source files are updated and saved) |  | boolean
 | `--remote-attach` | Attaches debugger remotely to an existing running Camel integration. (Add camel-cli-debug JAR to the existing Camel application and run before attaching this debugger) |  | boolean
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
+| `--resource-dir,--resource-dirs` | Additional resource directories to include on the classpath (recursive, preserving structure) |  | List
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) | camel-main | RuntimeType
 | `--show-body` | Show message body in debug messages | true | boolean
 | `--show-exception` | Show exception and stacktrace for failed messages | true | boolean

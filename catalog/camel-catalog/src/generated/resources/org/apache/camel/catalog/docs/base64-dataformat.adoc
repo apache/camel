@@ -1,0 +1,179 @@
+= Base64 DataFormat
+:doctitle: Base64
+:shortname: base64
+:artifactid: camel-base64
+:description: Encode and decode data using Base64
+:since: 2.11
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Base64 data format is used for base64 encoding and decoding.
+
+== Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+In Spring DSL, you configure the data format using this tag:
+
+._XML-only: Spring XML data format configuration_
+[source,xml]
+----
+<camelContext>
+    <dataFormats>
+        <!-- for a newline character (\n), use the HTML entity notation coupled with the ASCII code. -->
+        <base64 lineSeparator="&#10;" id="base64withNewLine" />
+        <base64 lineLength="64" id="base64withLineLength64" />
+    </dataFormats>
+    ...
+</camelContext>
+----
+
+Then you can use it later by its reference:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:startEncode")
+    .marshal("base64withLineLength64")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+     <from uri="direct:startEncode" />
+     <marshal ref="base64withLineLength64" />
+     <to uri="mock:result" />
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:startEncode
+      steps:
+        - marshal:
+            ref: base64withLineLength64
+        - to:
+            uri: mock:result
+----
+====
+
+Most of the time, you won't need to declare the data format if you use
+the default options. In that case, you can declare the data format
+inline as shown below.
+
+== Marshal
+
+In this example, we marshal the file content to a base64 object.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file://data.bin")
+    .marshal().base64()
+    .to("jms://myqueue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://data.bin"/>
+  <marshal>
+    <base64/>
+  </marshal>
+  <to uri="jms://myqueue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://data.bin
+      steps:
+        - marshal:
+            base64: {}
+        - to:
+            uri: jms://myqueue
+----
+====
+
+== Unmarshal
+
+In this example, we unmarshal the payload from the JMS queue to a byte[]
+object, before its processed by the `newOrder` processor.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jms://queue/order")
+    .unmarshal().base64()
+    .process("newOrder");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jms://queue/order"/>
+  <unmarshal>
+    <base64/>
+  </unmarshal>
+  <to uri="bean:newOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms://queue/order
+      steps:
+        - unmarshal:
+            base64: {}
+        - to:
+            uri: bean:newOrder
+----
+====
+
+== Dependencies
+
+To use Base64 in your Camel routes, you need to add a dependency on
+*camel-base64* which implements this data format.
+
+If you use Maven, you can add the following to your pom.xml:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-base64</artifactId>
+  <version>x.x.x</version>  <!-- use the same version as your Camel core version -->
+</dependency>
+----

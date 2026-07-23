@@ -1,0 +1,125 @@
+= SMB Component
+:doctitle: SMB
+:shortname: smb
+:artifactid: camel-smb
+:description: Read and write files to Server Message Block (SMB) file shares.
+:since: 4.3
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Server Message Block (SMB) component provides a way to connect natively to SMB file shares, such as those provided by Microsoft Windows or https://www.samba.org/[Samba].
+
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-smb</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+smb:address[:port]/shareName[?options]
+----
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Producer
+
+For the SMB producer to operate correctly, the header `Exchange.FILE_NAME` has to be included in the exchange.
+
+== Examples
+
+=== Polling files
+
+For instance, polling all the files from an SMB file share and reading their contents would look like this:
+
+._Java-only: uses fromF with string formatting and method reference Processor_
+[source,java]
+----
+private void process(Exchange exchange) throws IOException {
+    final byte[] data = exchange.getMessage().getBody(byte[].class);
+    LOG.debug("Read exchange as bytes with contents: {}", new String(data));
+}
+
+public void configure() {
+    fromF("smb:%s/%s?username=%s&password=%s", service.address(), service.shareName(), service.userName(), service.password())
+        .process(this::process)
+        .to("mock:result");
+}
+----
+
+NOTE: you may also get the file contents as an InputStream using `exchange.getMessage().getBody(InputStream.class)`.
+
+=== Polling files (advanced)
+
+
+You can also get access to the file using the underlying `File` implementation provided by Camel. In that case, polling all the
+files from an SMB file share and reading their contents would look like this:
+
+._Java-only: uses SmbFile class, type casts, fromF with string formatting, and method reference Processor_
+[source,java]
+----
+private void process(Exchange exchange) throws IOException {
+    final org.apache.camel.component.smb.SmbFile file = exchange.getMessage().getBody(org.apache.camel.component.smb.SmbFile.class);
+    LOG.debug("Read exchange: {}, with contents: {}", file.getFile(), new String((byte[]) file.getBody()));
+}
+
+public void configure() {
+    fromF("smb:%s/%s?username=%s&password=%s", service.address(), service.shareName(), service.userName(), service.password())
+        .process(this::process)
+        .to("mock:result");
+}
+----
+
+[NOTE]
+====
+Beware that the File object provided is not a `java.io.File` instance, but, instead a `org.apache.camel.component.smb.SmbFile` instance that extends Camel's `GenericFile`.
+Relying on the underlying implementation may make your code more susceptible to problems between version upgrades of the library
+used to implement this component.
+
+To maintain backward compatibility, a new Camel Header `CamelSmbUncPath` has been introduced that provides the full absolute path when a File is consumed from the SMB server.
+====
+
+
+== Permissions
+
+The Camel SMB component requires the authenticated user to have appropriate permissions on the SMB share.
+The exact permissions depend on the operations being performed:
+
+* **Reading files**: requires `Read Data` permission on the file.
+* **Writing files**: requires `Write Data` permission on the file and `Create Files` on the parent directory.
+* **Deleting files** (e.g., when using `delete=true` on a consumer): requires `Delete` permission on the file.
+
+=== STATUS_ACCESS_DENIED (0xc0000022) when deleting files
+
+If you receive a `STATUS_ACCESS_DENIED` error when the consumer attempts to delete a file after processing,
+the most common causes are:
+
+1. **The authenticated user lacks the DELETE permission** on the file or the parent directory.
+Ensure the SMB user has been granted the `Delete` and `Delete Child` permissions.
+
+2. **The server's volume uses UNIX security style instead of NTFS**.
+Some storage systems (such as NetApp ONTAP, TrueNAS, or other unified NAS platforms) support multiple
+volume security styles. When a volume uses UNIX security style, the server ignores NTFS ACLs and evaluates
+only UNIX file ownership and mode bits (`chmod`/`chown`). In this case, even if the Windows "Effective Access"
+UI shows full permissions, the delete operation can still be denied because the NTFS ACLs shown are not the
+actual access control mechanism.
+
+To resolve this, either:
+
+* Change the volume security style to NTFS so that NTFS ACLs are evaluated, or
+* Ensure the UNIX file ownership and mode bits grant the SMB user delete access on the files and their parent directory.

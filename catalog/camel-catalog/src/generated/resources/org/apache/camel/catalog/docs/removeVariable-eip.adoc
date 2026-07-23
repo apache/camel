@@ -1,0 +1,64 @@
+= Remove Variable EIP
+:doctitle: Remove Variable
+:shortname: removeVariable
+:description: Removes a specific variable by name
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+The Remove Variable EIP allows you to remove a single variable.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
+
+We want to remove a variable with key "myVar" from the exchange:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:b")
+  .removeVariable("myVar")
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:b"/>
+  <removeVariable name="myVar"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:b
+      steps:
+        - removeVariable:
+            name: myVar
+        - to:
+            uri: mock:result
+----
+====
+
+TIP: If you want to remove all variables from the `Exchange` then use `*` as the name.

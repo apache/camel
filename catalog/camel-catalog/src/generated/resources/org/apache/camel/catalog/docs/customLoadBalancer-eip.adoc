@@ -1,0 +1,111 @@
+= Custom Load Balancer EIP
+:doctitle: Custom Load Balancer
+:shortname: customLoadBalancer
+:description: References a custom load balancer implementation from the registry
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+This EIP allows you to use your own xref:loadBalance-eip.adoc[Load Balancer] implementation.
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
+
+An example using Java DSL:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    // using our custom load balancer
+    .loadBalance(new MyLoadBalancer())
+        .to("seda:x")
+        .to("seda:y")
+        .to("seda:z")
+    .end();
+----
+
+XML::
++
+[source,xml]
+----
+<!-- this is the implementation of our custom load balancer -->
+<bean id="myBalancer" class="com.foo.MyLoadBalancer"/>
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <loadBalance>
+      <!-- refer to my custom load balancer -->
+      <customLoadBalancer ref="myBalancer"/>
+      <!-- these are the endpoints to balance -->
+      <to uri="seda:x"/>
+      <to uri="seda:y"/>
+      <to uri="seda:z"/>
+    </loadBalance>
+  </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct
+      parameters:
+        name: start
+      steps:
+        - loadBalance:
+            steps:
+              - customLoadBalancer:
+                  ref: myBalancer
+              - to:
+                  uri: seda:x
+              - to:
+                  uri: seda:y
+              - to:
+                  uri: seda:z
+----
+====
+
+=== Implementing a custom Load Balancer
+
+To implement a custom load balancer, you can extend some support classes such as `LoadBalancerSupport` and `SimpleLoadBalancerSupport`.
+The former supports the asynchronous routing engine, and the latter does not. Here is an example of a custom load balancer implementation:
+
+[source,java]
+----
+public static class MyLoadBalancer extends LoadBalancerSupport {
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        String body = exchange.getIn().getBody(String.class);
+        try {
+            if ("x".equals(body)) {
+                getProcessors().get(0).process(exchange);
+            } else if ("y".equals(body)) {
+                getProcessors().get(1).process(exchange);
+            } else {
+                getProcessors().get(2).process(exchange);
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        callback.done(true);
+        return true;
+    }
+}
+----

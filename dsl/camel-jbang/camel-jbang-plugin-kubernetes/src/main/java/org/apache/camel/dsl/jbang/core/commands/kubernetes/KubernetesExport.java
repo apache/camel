@@ -185,6 +185,7 @@ public class KubernetesExport extends Export {
         logging = configurer.logging;
         loggingLevel = configurer.loggingLevel;
         verbose = configurer.verbose;
+        resourceDirs = configurer.resourceDirs;
         observe = true; // always include observability-services for kubernetes
     }
 
@@ -662,6 +663,7 @@ public class KubernetesExport extends Export {
             String loggingLevel,
             boolean verbose,
             boolean skipPlugins,
+            List<String> resourceDirs,
             String camelQuarkusGroupId,
             String camelQuarkusArtifactId,
             String camelQuarkusVersion) implements QuarkusPlatformMixinSpec, MavenResolverMixinSpec {

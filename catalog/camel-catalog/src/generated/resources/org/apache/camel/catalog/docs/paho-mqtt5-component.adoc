@@ -1,0 +1,233 @@
+= Paho MQTT 5 Component
+:doctitle: Paho MQTT 5
+:shortname: paho-mqtt5
+:artifactid: camel-paho-mqtt5
+:description: Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
+:since: 3.8
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+Paho MQTT5 component provides connector for the https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html[MQTT messaging protocol version 5.0]
+using the https://eclipse.org/paho/[Eclipse Paho] library.
+Paho is one of the most popular MQTT libraries, so if you would like to integrate it with
+your Java project - Camel Paho connector is a way to go.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-paho-mqtt5</artifactId>
+    <version>x.y.z</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+paho-mqtt5:topic[?options]
+----
+
+Where `topic` is the name of the topic.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Default payload type
+
+By default, the Camel Paho component operates on the binary payloads
+extracted out of (or put into) the MQTT message:
+
+._Java-only: receiving and sending binary payloads using the Paho MQTT5 component_
+[source,java]
+----
+// Receive payload
+byte[] payload = (byte[]) consumerTemplate.receiveBody("paho-mqtt5:topic");
+
+// Send payload
+byte[] payload = "message".getBytes();
+producerTemplate.sendBody("paho-mqtt5:topic", payload);
+----
+
+Of course, Camel build-in xref:manual::type-converter.adoc[type conversion
+API] can perform the automatic data type transformations for you. In the
+example below Camel automatically converts binary payload into `String`
+(and conversely):
+
+._Java-only: automatic type conversion of payloads_
+[source,java]
+----
+// Receive payload
+String payload = consumerTemplate.receiveBody("paho-mqtt5:topic", String.class);
+
+// Send payload
+String payload = "message";
+producerTemplate.sendBody("paho-mqtt5:topic", payload);
+----
+
+
+== Examples
+
+For example, the following snippet reads messages from the MQTT broker
+installed on the same host as the Camel router:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("paho-mqtt5:some/queue")
+    .to("mock:test");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="paho-mqtt5:some/queue"/>
+  <to uri="mock:test"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: paho-mqtt5:some/queue
+      steps:
+        - to:
+            uri: mock:test
+----
+====
+
+While the snippet below sends a message to the MQTT broker:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:test")
+    .to("paho-mqtt5:some/target/queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:test"/>
+  <to uri="paho-mqtt5:some/target/queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:test
+      steps:
+        - to:
+            uri: paho-mqtt5:some/target/queue
+----
+====
+
+For example, this is how to read messages from the remote MQTT broker:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("paho-mqtt5:some/queue?brokerUrl=tcp://iot.eclipse.org:1883")
+    .to("mock:test");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="paho-mqtt5:some/queue?brokerUrl=tcp://iot.eclipse.org:1883"/>
+  <to uri="mock:test"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: paho-mqtt5:some/queue
+      parameters:
+        brokerUrl: "tcp://iot.eclipse.org:1883"
+      steps:
+        - to:
+            uri: mock:test
+----
+====
+
+And here we override the default topic and set to a dynamic topic
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:test")
+    .setHeader("CamelPahoOverrideTopic", simple("${header.customerId}"))
+    .to("paho-mqtt5:some/target/queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:test"/>
+    <setHeader name="CamelPahoMqtt5OverrideTopic">
+        <simple>${header.customerId}</simple>
+    </setHeader>
+    <to uri="paho-mqtt5:some/target/queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:test
+    steps:
+      - setHeader:
+          name: CamelPahoMqtt5OverrideTopic
+          simple: "${header.customerId}"
+      - to:
+          uri: paho-mqtt5:some/target/queue
+----
+====

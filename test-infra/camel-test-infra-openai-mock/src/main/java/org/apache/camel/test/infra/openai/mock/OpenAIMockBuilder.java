@@ -105,6 +105,12 @@ public class OpenAIMockBuilder {
         return this;
     }
 
+    public OpenAIMockBuilder withUsage(int promptTokens, int completionTokens) {
+        validateCurrentExpectation("withUsage()");
+        currentExpectation.setUsage(promptTokens, completionTokens);
+        return this;
+    }
+
     public OpenAIMockBuilder withParam(String key, Object value) {
         validateCurrentExpectation("withParam()");
         validateHasToolSteps("withParam()");
