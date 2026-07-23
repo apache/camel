@@ -33,7 +33,7 @@ if [ -n "${CAMEL_PACKAGE_TEST_SUPPORTED_LTS:-}" ]; then
 fi
 
 usage() {
-  echo "Usage: camel-package.sh <prepare|publish> --channel <stable|lts> [--lts-line X.Y] [--print-plan]" 1>&2
+  echo "Usage: camel-package.sh <prepare> --channel <stable|lts> [--lts-line X.Y] [--print-plan]" 1>&2
   exit 2
 }
 
@@ -45,7 +45,7 @@ PRINT_PLAN=0
 [ $# -ge 1 ] || usage
 SUBCOMMAND="$1"; shift
 case "$SUBCOMMAND" in
-  prepare|publish) ;;
+  prepare) ;;
   *) echo "Error: unknown subcommand '$SUBCOMMAND'." 1>&2; usage ;;
 esac
 
@@ -162,16 +162,6 @@ if [ "$PRINT_PLAN" -eq 1 ]; then
   [ -n "$BREW_FORMULA" ] && echo "BREW_FORMULA=$BREW_FORMULA"
   [ -n "$BREW_CLASS" ] && echo "BREW_CLASS=$BREW_CLASS"
   exit 0
-fi
-
-if [ "$SUBCOMMAND" = "publish" ]; then
-  # Publication is intentionally unimplemented: where each packager's artifacts get
-  # pushed (e.g. Homebrew to the project's own tap vs. homebrew-core) is a decision
-  # for the Apache Camel PMC, not something this script should default on its own.
-  # This also covers the Homebrew dual-formula gap noted in jreleaser.yml above -
-  # both are blocked on that same publish-destination decision.
-  echo "Error: 'publish' is not yet implemented; awaiting a PMC decision on publish destinations." 1>&2
-  exit 2
 fi
 
 # --- prepare: no remote mutation, no credentials ---
