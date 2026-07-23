@@ -16,26 +16,43 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
+import dev.tamboui.markdown.MarkdownView;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -54,6 +71,18 @@ class DiagramTab extends AbstractTab {
     private final Deque<String> routeNavigationStack = new ArrayDeque<>();
     private int infoPanelWidth = 30;
     private final DragSplit hSplit = new DragSplit();
+
+    private boolean detailMode;
+    private int detailScroll;
+    private Rect lastDetailArea;
+    private final DragSplit vSplit = new DragSplit();
+    private final Map<String, CamelCatalog> catalogCache = new HashMap<>();
+    private final Set<String> catalogLoadFailed = new HashSet<>();
+    private volatile JsonObject cachedRouteDetail;
+    private volatile String cachedRouteDetailId;
+    private volatile boolean detailLoading;
+    private volatile String detailLoadingRouteId;
+    private String lastDetailNodeId;
 
     DiagramTab(MonitorContext ctx) {
         super(ctx);
@@ -151,12 +180,41 @@ class DiagramTab extends AbstractTab {
             }
         }
 
+        // Toggle detail panel in drill-down mode
+        if (!topologyMode && diagram.isShowDiagram() && !diagram.getEipNodeBoxes().isEmpty()
+                && ke.isCharIgnoreCase('d')) {
+            detailMode = !detailMode;
+            detailScroll = 0;
+            cachedRouteDetail = null;
+            cachedRouteDetailId = null;
+            detailLoadingRouteId = null;
+            detailLoading = false;
+            return true;
+        }
+
+        // Detail panel scroll
+        if (!topologyMode && detailMode && diagram.isShowDiagram()) {
+            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                detailScroll = Math.max(0, detailScroll - 10);
+                return true;
+            }
+            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                detailScroll += 10;
+                return true;
+            }
+        }
+
         // Jump back to topology from any depth
         if (!topologyMode && diagram.isShowDiagram() && ke.isChar('t')) {
             routeNavigationStack.clear();
             diagram.setPendingSelectionRouteId(drillDownRouteId);
             drillDownRouteId = null;
             topologyMode = true;
+            detailMode = false;
+            cachedRouteDetail = null;
+            cachedRouteDetailId = null;
+            detailLoadingRouteId = null;
+            detailLoading = false;
             diagram.setTopologyMode(true);
             diagram.setSelectedEipNodeIndex(-1);
             diagram.resetScroll();
@@ -248,6 +306,19 @@ class DiagramTab extends AbstractTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (detailMode && lastDetailArea != null && lastDetailArea.contains(me.x(), me.y())) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                detailScroll = Math.max(0, detailScroll - 3);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                detailScroll += 3;
+                return true;
+            }
+        }
+        if (vSplit.handleMouse(me, me.y())) {
+            return true;
+        }
         if (hSplit.handleMouse(me, me.x())) {
             if (hSplit.isDragging()) {
                 infoPanelWidth = Math.max(10, Math.min(me.x() - area.x(), area.width() - 20));
@@ -290,6 +361,11 @@ class DiagramTab extends AbstractTab {
             // Go back to topology
             diagram.setPendingSelectionRouteId(drillDownRouteId);
             topologyMode = true;
+            detailMode = false;
+            cachedRouteDetail = null;
+            cachedRouteDetailId = null;
+            detailLoadingRouteId = null;
+            detailLoading = false;
             diagram.setTopologyMode(true);
             diagram.setSelectedEipNodeIndex(-1);
             diagram.resetScroll();
@@ -334,6 +410,12 @@ class DiagramTab extends AbstractTab {
         topologyMode = true;
         drillDownRouteId = null;
         routeNavigationStack.clear();
+        detailMode = false;
+        cachedRouteDetail = null;
+        cachedRouteDetailId = null;
+        detailLoadingRouteId = null;
+        detailLoading = false;
+        lastDetailNodeId = null;
         diagram.reset();
         diagram.setTopologyMode(true);
     }
@@ -393,10 +475,33 @@ class DiagramTab extends AbstractTab {
                             .split(area);
                     hSplit.setBorderPos(hChunks.get(1).x());
                     renderEipInfoPanel(frame, hChunks.get(0));
-                    diagram.renderNativeRouteDiagram(
-                            frame, hChunks.get(1), title, diagramMetrics, drillDownRouteId, routeLayout);
+                    if (detailMode) {
+                        int detailH = Math.max(5, hChunks.get(1).height() * 60 / 100);
+                        List<Rect> vChunks = Layout.vertical()
+                                .constraints(Constraint.fill(), Constraint.length(detailH))
+                                .split(hChunks.get(1));
+                        vSplit.setBorderPos(vChunks.get(1).y());
+                        diagram.renderNativeRouteDiagram(
+                                frame, vChunks.get(0), title, diagramMetrics, drillDownRouteId, routeLayout);
+                        renderDetail(frame, vChunks.get(1), info);
+                    } else {
+                        diagram.renderNativeRouteDiagram(
+                                frame, hChunks.get(1), title, diagramMetrics, drillDownRouteId, routeLayout);
+                    }
                 } else {
-                    diagram.renderNativeRouteDiagram(frame, area, title, diagramMetrics, drillDownRouteId, routeLayout);
+                    if (detailMode) {
+                        int detailH = Math.max(5, area.height() * 60 / 100);
+                        List<Rect> vChunks = Layout.vertical()
+                                .constraints(Constraint.fill(), Constraint.length(detailH))
+                                .split(area);
+                        vSplit.setBorderPos(vChunks.get(1).y());
+                        diagram.renderNativeRouteDiagram(
+                                frame, vChunks.get(0), title, diagramMetrics, drillDownRouteId, routeLayout);
+                        renderDetail(frame, vChunks.get(1), info);
+                    } else {
+                        diagram.renderNativeRouteDiagram(
+                                frame, area, title, diagramMetrics, drillDownRouteId, routeLayout);
+                    }
                 }
                 return;
             }
@@ -712,6 +817,7 @@ class DiagramTab extends AbstractTab {
                 hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
+                hint(spans, "d", "detail" + (detailMode ? " [on]" : " [off]"));
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
                 hint(spans, "t", "topology");
@@ -887,6 +993,7 @@ class DiagramTab extends AbstractTab {
                 - `↑↓←→` — navigate between EIP nodes
                 - `Enter` — jump to linked route (when `↵` indicator shown)
                 - `c` — show source code at selected node
+                - `d` — toggle EIP detail panel (shows configured options)
                 - `Esc` — go back (previous route or topology)
                 - `t` — jump back to topology view
 
@@ -1023,6 +1130,273 @@ class DiagramTab extends AbstractTab {
             }
         }
         return bestBeforeIdx >= 0 ? bestBeforeIdx : bestAfterIdx;
+    }
+
+    private void renderDetail(Frame frame, Rect area, IntegrationInfo info) {
+        lastDetailArea = area;
+        var selected = diagram.getSelectedEipNodeBox();
+        if (selected == null || selected.layoutNode() == null) {
+            frame.renderWidget(
+                    MarkdownView.builder()
+                            .source("*Select an EIP node*")
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" EIP Detail ").build())
+                            .styles(Theme.markdownStyles())
+                            .build(),
+                    area);
+            return;
+        }
+
+        String nodeId = selected.layoutNode().id;
+        String eipType = selected.layoutNode().type;
+        if (nodeId == null || eipType == null) {
+            frame.renderWidget(
+                    MarkdownView.builder()
+                            .source("*No detail available*")
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" EIP Detail ").build())
+                            .styles(Theme.markdownStyles())
+                            .build(),
+                    area);
+            return;
+        }
+
+        // reset scroll when navigating to a different node
+        if (!nodeId.equals(lastDetailNodeId)) {
+            lastDetailNodeId = nodeId;
+            detailScroll = 0;
+        }
+
+        // load route detail once per route (covers all processors)
+        if (drillDownRouteId != null && !drillDownRouteId.equals(cachedRouteDetailId)
+                && !drillDownRouteId.equals(detailLoadingRouteId)) {
+            detailLoadingRouteId = drillDownRouteId;
+            detailLoading = true;
+            String rid = drillDownRouteId;
+            if (ctx.runner != null) {
+                ctx.runner.scheduler().execute(() -> {
+                    JsonObject result = requestRouteProcessorDetail(rid);
+                    cachedRouteDetail = result;
+                    cachedRouteDetailId = rid;
+                    detailLoading = false;
+                });
+            }
+        }
+
+        // find the selected processor in the cached route data
+        JsonObject processorEntry = findProcessorEntry(nodeId);
+
+        StringBuilder md = new StringBuilder();
+        CamelCatalog catalog = getCatalog(info);
+
+        if (processorEntry != null) {
+            String type = processorEntry.getString("type");
+            String endpointUri = processorEntry.getString("endpointUri");
+
+            if ("from".equals(type) && endpointUri != null && catalog != null) {
+                renderEndpointDetail(md, catalog, endpointUri);
+            } else if (type != null) {
+                renderEipDetail(md, catalog, type, processorEntry.getMap("options"));
+            } else {
+                md.append("*No detail available*\n");
+            }
+        } else if (detailLoading) {
+            md.append("*Loading...*\n");
+        } else {
+            md.append("*No detail available*\n");
+        }
+
+        String title = " " + eipType + " [" + nodeId + "] ";
+        if (CharWidth.of(title) > area.width() - 4) {
+            title = " " + CharWidth.truncateWithEllipsis(
+                    eipType + " [" + nodeId + "]", area.width() - 6, CharWidth.TruncatePosition.MIDDLE) + " ";
+        }
+
+        frame.renderWidget(
+                MarkdownView.builder()
+                        .source(md.toString())
+                        .scroll(detailScroll)
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(title).build())
+                        .styles(Theme.markdownStyles())
+                        .build(),
+                area);
+    }
+
+    private void renderEipDetail(StringBuilder md, CamelCatalog catalog, String type, JsonObject opts) {
+        EipModel model = catalog != null ? catalog.eipModel(type) : null;
+
+        if (model != null && model.getTitle() != null) {
+            md.append("## ").append(model.getTitle()).append("\n\n");
+            if (model.getDescription() != null && !model.getDescription().isEmpty()) {
+                md.append(model.getDescription()).append("\n\n");
+            }
+        } else {
+            md.append("## ").append(type).append("\n\n");
+        }
+
+        if (opts != null && !opts.isEmpty()) {
+            Map<String, BaseOptionModel> optionDocs = new LinkedHashMap<>();
+            if (model != null) {
+                for (BaseOptionModel opt : model.getOptions()) {
+                    if (opt.getName() != null) {
+                        optionDocs.put(opt.getName(), opt);
+                    }
+                }
+            }
+
+            for (Map.Entry<String, Object> entry : opts.entrySet()) {
+                String optName = entry.getKey();
+                String optValue = String.valueOf(entry.getValue());
+                appendOptionDetail(md, optName, optValue, optionDocs.get(optName));
+            }
+        } else {
+            md.append("*No configured options*\n");
+        }
+    }
+
+    private void renderEndpointDetail(StringBuilder md, CamelCatalog catalog, String uri) {
+        String component = uri.contains(":") ? uri.substring(0, uri.indexOf(':')) : uri;
+        ComponentModel model = catalog.componentModel(component);
+
+        if (model != null) {
+            String compTitle = model.getTitle() != null ? model.getTitle() : component;
+            md.append("## ").append(compTitle).append("\n\n");
+            if (model.getDescription() != null && !model.getDescription().isEmpty()) {
+                md.append(model.getDescription()).append("\n\n");
+            }
+
+            Map<String, String> parsedOptions;
+            try {
+                parsedOptions = catalog.endpointProperties(uri);
+            } catch (URISyntaxException e) {
+                parsedOptions = Map.of();
+            }
+
+            if (parsedOptions.isEmpty()) {
+                md.append("*No configured options*\n");
+            } else {
+                Map<String, BaseOptionModel> optionDocs = new LinkedHashMap<>();
+                for (ComponentModel.EndpointOptionModel opt : model.getEndpointOptions()) {
+                    if (opt.getName() != null) {
+                        optionDocs.put(opt.getName(), opt);
+                    }
+                }
+
+                for (Map.Entry<String, String> entry : parsedOptions.entrySet()) {
+                    appendOptionDetail(md, entry.getKey(), entry.getValue(), optionDocs.get(entry.getKey()));
+                }
+            }
+        } else {
+            md.append("## ").append(component).append("\n\n");
+            md.append("*No catalog documentation for: ").append(component).append("*\n");
+        }
+    }
+
+    private static void appendOptionDetail(StringBuilder md, String optName, String optValue, BaseOptionModel doc) {
+        md.append("---\n\n");
+        md.append("**").append(optName).append("** = **").append(optValue).append("**\n\n");
+
+        if (doc != null) {
+            if (doc.getDescription() != null && !doc.getDescription().isEmpty()) {
+                md.append(doc.getDescription()).append("\n\n");
+            }
+            List<String> meta = new ArrayList<>();
+            if (doc.getType() != null) {
+                meta.add("Type: `" + doc.getType() + "`");
+            }
+            if (doc.getDefaultValue() != null) {
+                meta.add("Default: `" + doc.getDefaultValue() + "`");
+            }
+            if (doc.isRequired()) {
+                meta.add("Required: yes");
+            }
+            if (doc.getEnums() != null && !doc.getEnums().isEmpty()) {
+                meta.add("Enum: " + String.join(", ", doc.getEnums()));
+            }
+            if (doc.getGroup() != null && !doc.getGroup().isEmpty()) {
+                meta.add("Group: " + doc.getGroup());
+            }
+            if (doc.isDeprecated()) {
+                String depText = "Deprecated";
+                if (doc.getDeprecationNote() != null && !doc.getDeprecationNote().isEmpty()) {
+                    depText += " — " + doc.getDeprecationNote();
+                }
+                meta.add(depText);
+            }
+            if (!meta.isEmpty()) {
+                for (String m : meta) {
+                    md.append("- ").append(m).append("\n");
+                }
+                md.append("\n");
+            }
+        }
+    }
+
+    private CamelCatalog getCatalog(IntegrationInfo info) {
+        String version = info.camelVersion;
+        if (version == null) {
+            return null;
+        }
+        CamelCatalog cached = catalogCache.get(version);
+        if (cached != null) {
+            return cached;
+        }
+        if (catalogLoadFailed.contains(version)) {
+            return null;
+        }
+        try {
+            cached = CatalogLoader.loadCatalog(null, version, true);
+            if (cached != null) {
+                catalogCache.put(version, cached);
+            } else {
+                catalogLoadFailed.add(version);
+            }
+            return cached;
+        } catch (Exception e) {
+            catalogLoadFailed.add(version);
+            return null;
+        }
+    }
+
+    private JsonObject findProcessorEntry(String nodeId) {
+        if (cachedRouteDetail == null || nodeId == null) {
+            return null;
+        }
+        JsonArray processors = (JsonArray) cachedRouteDetail.get("processors");
+        if (processors == null) {
+            return null;
+        }
+        for (Object obj : processors) {
+            JsonObject p = (JsonObject) obj;
+            if (nodeId.equals(p.getString("id"))) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    private JsonObject requestRouteProcessorDetail(String routeId) {
+        if (ctx.selectedPid == null) {
+            return null;
+        }
+        try {
+            Path outputFile = ctx.getOutputFile(ctx.selectedPid);
+            PathUtils.deleteFile(outputFile);
+
+            JsonObject root = new JsonObject();
+            root.put("action", "processor-detail");
+            root.put("routeId", routeId);
+
+            Path actionFile = ctx.getActionFile(ctx.selectedPid);
+            PathUtils.writeTextSafely(root.toJson(), actionFile);
+
+            JsonObject jo = pollJsonResponse(outputFile, 5000);
+            PathUtils.deleteFile(outputFile);
+            return jo;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static int numWidth(long... values) {

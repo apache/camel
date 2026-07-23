@@ -352,6 +352,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionRouteStructureTask(root);
             } else if ("route-topology".equals(action)) {
                 doActionRouteTopologyTask(root);
+            } else if ("processor-detail".equals(action)) {
+                doActionProcessorDetailTask(root);
             } else if ("route-controller".equals(action)) {
                 doActionRouteControllerTask(root);
             } else if ("startup-recorder".equals(action)) {
@@ -775,6 +777,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             JsonObject json
                     = (JsonObject) dc.call(DevConsole.MediaType.JSON,
                             Map.of("metric", metric, "external", external, "routes", routes));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionProcessorDetailTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("processor-detail");
+        if (dc != null) {
+            String routeId = root.getString("routeId");
+            JsonObject json
+                    = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("routeId", routeId != null ? routeId : ""));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {

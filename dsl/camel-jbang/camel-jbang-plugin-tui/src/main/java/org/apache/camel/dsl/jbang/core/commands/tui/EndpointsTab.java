@@ -374,7 +374,7 @@ class EndpointsTab extends AbstractTableTab {
             default -> "[off]";
         };
         hint(spans, "a", "chart " + chartLabel);
-        hint(spans, "d", "doc " + (panelMode == PANEL_DETAIL ? "[on]" : "[off]"));
+        hint(spans, "d", "detail " + (panelMode == PANEL_DETAIL ? "[on]" : "[off]"));
         if (panelMode == PANEL_DETAIL) {
             hintLast(spans, "PgUp/Dn", "scroll");
         }

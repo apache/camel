@@ -1,0 +1,31 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "processor-detail",
+    "title": "Processor Detail",
+    "description": "Show configured options for all processors in a route",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.ProcessorDetailDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.22.0-SNAPSHOT"
+  },
+  "options": {
+    "routeId": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Route Id",
+      "group": "query",
+      "label": "query",
+      "required": true,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "The route id to get processor details for"
+    }
+  }
+}
+
