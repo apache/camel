@@ -48,6 +48,11 @@ public final class UpdateChecker {
         if (InstallDetector.locate().method() != InstallDetector.InstallMethod.WEB_INSTALLER) {
             return;
         }
+        // A pinned install refuses `camel self-update` outright (see SelfUpdateCommand); telling the user to
+        // run it here would be advice they can't actually follow.
+        if (InstallDetector.pinnedVersion().isPresent()) {
+            return;
+        }
 
         Path cacheFile = cacheFile();
         Properties cache = readCache(cacheFile);

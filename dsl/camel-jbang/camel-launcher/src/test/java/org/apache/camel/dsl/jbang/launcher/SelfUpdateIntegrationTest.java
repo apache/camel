@@ -234,6 +234,47 @@ class SelfUpdateIntegrationTest {
     }
 
     @Test
+    void refusesWhenInstallIsPinned(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, "1.0.0");
+            Path pinnedVersionFile = xdgDataHome.resolve("camel-cli/pinned-version");
+            Files.writeString(pinnedVersionFile, "1.0.0");
+            // Deliberately do NOT publish install.sh/install.sha256: a pinned install must refuse before ever
+            // reaching InstallScriptFetcher.
+            WebsiteInstallTest.publishLatest(fixture, NEWER_VERSION);
+
+            int exit = run(fixture, home, xdgDataHome);
+
+            assertThat(exit).isEqualTo(1);
+            assertThat(printer.getOutput()).contains("pinned").contains("1.0.0");
+            assertThat(Files.isDirectory(xdgDataHome.resolve("camel-cli/versions/" + NEWER_VERSION))).isFalse();
+        }
+    }
+
+    // Guards the self-lockout bug this feature could otherwise introduce: without CAMEL_INSTALL_SELF_UPDATE
+    // suppressing install.sh's pin-state write, a bare `camel self-update` (which always passes --version for
+    // TOCTOU-safety, see SelfUpdateCommand.runInstaller) would pin itself on every successful run, and the very
+    // next self-update would then hit the refusal above and never run again.
+    @Test
+    void successfulSelfUpdateDoesNotCreateAPin(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, "1.0.0");
+            publishRealInstallSh(fixture);
+            WebsiteInstallTest.publishLatest(fixture, NEWER_VERSION);
+            WebsiteInstallTest.publishVersion(fixture, NEWER_VERSION);
+
+            int exit = run(fixture, home, xdgDataHome);
+
+            assertThat(exit).isZero();
+            assertThat(Files.exists(xdgDataHome.resolve("camel-cli/pinned-version"))).isFalse();
+        }
+    }
+
+    @Test
     void refusesNonWebInstallerInstall(@TempDir Path temp) throws Exception {
         try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
             Path home = Files.createDirectories(temp.resolve("home"));

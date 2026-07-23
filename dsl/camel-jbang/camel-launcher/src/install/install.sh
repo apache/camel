@@ -220,6 +220,20 @@ activate() {
     mv -f "$tmp_link" "$bin_dir/camel"
 }
 
+# Records whether this install is pinned to an explicit version, so `camel self-update` can refuse to move
+# a deliberately pinned install. Skipped when CAMEL_INSTALL_SELF_UPDATE=true: self-update always passes its
+# own resolved --version for TOCTOU-safety (see SelfUpdateCommand), which is not a human pinning a version
+# and must not create or clear a pin either way.
+update_pin_state() {
+    [ "${CAMEL_INSTALL_SELF_UPDATE:-}" = "true" ] && return 0
+    pinned_version_file="$camel_cli_root/pinned-version"
+    if [ -n "$requested_version" ]; then
+        printf '%s\n' "$version" > "$pinned_version_file"
+    else
+        rm -f "$pinned_version_file"
+    fi
+}
+
 requested_version=""
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -281,6 +295,7 @@ staged_root_dir="$extract_dir/camel-launcher-$version"
 verify_staged "$staged_root_dir/bin/camel.sh"
 
 activate "$version" "$staged_root_dir"
+update_pin_state
 
 case ":$PATH:" in
     *":$bin_dir:"*) ;;

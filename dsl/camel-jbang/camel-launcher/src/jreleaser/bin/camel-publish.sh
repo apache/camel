@@ -277,12 +277,12 @@ __dest_jreleaser() {
       jreleaser:config jreleaser:prepare jreleaser:package \
       "-Djreleaser.dry.run=false" 2>&1 | tee "$MODULE_DIR/target/jreleaser/jreleaser-output.log" || {
       _log "JReleaser failed. State marked as failed.";
-      state_mark jreleaser failed;
+      state_mark "jreleaser" "failed";
       _failed=1; _partial_failure="$_partial_failure JReleaser"; return 1;
     }
   fi
 
-  state_mark jreleaser done
+  state_mark "jreleaser" "done"
   _log "  JReleaser: done."
 }
 
@@ -300,11 +300,11 @@ __dest_homebrew() {
 
   FORMULA_SRC="$MODULE_DIR/target/jreleaser/package/camel-cli/brew/Formula/${BREW_FORMULA}.rb"
   if [ ! -f "$FORMULA_SRC" ]; then
-    _error "  Rendered formula not found: $FORMULA_SRC (did the JReleaser destination run first?)"; state_mark homebrew failed; return 1
+    _error "  Rendered formula not found: $FORMULA_SRC (did the JReleaser destination run first?)"; state_mark "homebrew" "failed"; return 1
   fi
 
   core_dir=$(__shallow_clone_or_reuse "homebrew/homebrew-core" "homebrew-core") || {
-    state_mark homebrew failed; return 1
+    state_mark "homebrew" "failed"; return 1
   }
 
   is_first_release=1
@@ -314,14 +314,14 @@ __dest_homebrew() {
   ( cd "$core_dir" \
     && git fetch upstream-repo "$(git symbolic-ref --short HEAD)" >&2 \
     && git checkout -B "$BRANCH" "upstream-repo/$(git symbolic-ref --short HEAD)" >&2 ) || {
-    _error "  could not branch homebrew-core checkout"; state_mark homebrew failed; return 1
+    _error "  could not branch homebrew-core checkout"; state_mark "homebrew" "failed"; return 1
   }
 
   if [ "$is_first_release" -eq 1 ]; then
     _log "  First release of $BREW_FORMULA: scaffolding via 'brew create --force'..."
     ( cd "$core_dir" && HOMEBREW_NO_AUTO_UPDATE=1 brew create --force --set-name "$BREW_FORMULA" \
         "$(sed -n 's/^[[:space:]]*url "\(.*\)"/\1/p' "$FORMULA_SRC" | head -n1)" >&2 ) || {
-      state_mark homebrew failed; return 1
+      state_mark "homebrew" "failed"; return 1
     }
     cp -p "$FORMULA_SRC" "$core_dir/Formula/a/${BREW_FORMULA}.rb"
     ( cd "$core_dir" && git add "Formula/a/${BREW_FORMULA}.rb" \
@@ -332,12 +332,12 @@ __dest_homebrew() {
     new_sha256="$(sed -n 's/^[[:space:]]*sha256 "\(.*\)"/\1/p' "$FORMULA_SRC" | head -n1)"
     ( cd "$core_dir" && HOMEBREW_NO_AUTO_UPDATE=1 brew bump-formula-pr --no-browse --no-pull-request \
         --url="$new_url" --sha256="$new_sha256" "$BREW_FORMULA" >&2 ) || {
-      state_mark homebrew failed; return 1
+      state_mark "homebrew" "failed"; return 1
     }
   fi
 
   ( cd "$core_dir" && git push "${CAMEL_PUB_FORK_REMOTE:-origin}" "$BRANCH" 2>&1 | tail -5 ) || {
-    state_mark homebrew failed; return 1
+    state_mark "homebrew" "failed"; return 1
   }
 
   ( cd "$core_dir" && gh pr create \
@@ -348,9 +348,9 @@ __dest_homebrew() {
       --body "_Published by camel-publish.sh on behalf of $_operator_$(if [ -n "$_attribution_line" ]; then printf '\n\n%s' "$_attribution_line"; fi)_" \
       2>&1 | tail -3 ) || true  # PR creation best-effort, matching every other destination in this file
 
-  # state_mark homebrew done means "PR opened," never "merged" - merge timing and BrewTestBot's
+  # state_mark "homebrew" "done" means "PR opened," never "merged" - merge timing and BrewTestBot's
   # bottle-building CI belong to homebrew-core's own maintainers, not to this script.
-  state_mark homebrew done
+  state_mark "homebrew" "done"
   _log "  Homebrew: PR opened against homebrew-core (not yet merged)."
 }
 
@@ -368,7 +368,7 @@ __dest_website() {
 
   WEBSITE_SRC="$MODULE_DIR/target/jreleaser/website"
   if [ ! -d "$WEBSITE_SRC" ]; then
-    _error "  Website staging dir not found."; state_mark website failed; return 1
+    _error "  Website staging dir not found."; state_mark "website" "failed"; return 1
   fi
 
   BRANCH="camel-publish-$VERSION-website"
@@ -392,7 +392,7 @@ __dest_website() {
   git commit -m "website: publish installers for camel-cli $VERSION" 2>/dev/null || true
 
   _remote="${hook_site:-${FORK_REMOTE:-upstream}}"
-  git push "$_remote" "$BRANCH" 2>&1 | tail -5 || { state_mark website failed; return 1; }
+  git push "$_remote" "$BRANCH" 2>&1 | tail -5 || { state_mark "website" "failed"; return 1; }
 
   gh pr create \
     --base main \
@@ -401,7 +401,7 @@ __dest_website() {
     --body "_Published by camel-publish.sh on behalf of $_operator_$(if [ -n "$_attribution_line" ]; then printf '\n\n%s' '$_attribution_line'; fi)_"\
     2>&1 | tail -3 || true
 
-  state_mark website done
+  state_mark "website" "done"
   _log "  Website: done."
 }
 
@@ -418,7 +418,7 @@ __dest_winget() {
   _log "Destination 4: WinGet package PR..."
 
   winget_dir=$(__shallow_clone_or_reuse "microsoft/winget-pkgs" "winget-pkgs") || {
-    state_mark winget failed; return 1
+    state_mark "winget" "failed"; return 1
   }
   BRANCH="camel-publish-$VERSION-winget"
   ( cd "$winget_dir" && git checkout -B "$BRANCH" ) 2>/dev/null || true
@@ -426,7 +426,7 @@ __dest_winget() {
   : > "$MODULE_DIR/target/jreleaser/winget-manifest.yaml" 2>/dev/null || true
 
   _remote="${FORK_REMOTE:-upstream}"
-  git push "$_remote" "$BRANCH" 2>&1 | tail -3 || { state_mark winget failed; return 1; }
+  git push "$_remote" "$BRANCH" 2>&1 | tail -3 || { state_mark "winget" "failed"; return 1; }
 
   gh pr create \
     --base main \
@@ -435,7 +435,7 @@ __dest_winget() {
     --body "_Published by camel-publish.sh on behalf of $_operator_$(if [ -n "$_attribution_line" ]; then printf '\n\n%s' '$_attribution_line'; fi)_"\
     2>&1 | tail -3 || true
 
-  state_mark winget done
+  state_mark "winget" "done"
   _log "  WinGet: done."
 }
 
@@ -452,7 +452,7 @@ __dest_scoop() {
   # LTS: exclude Scoop (no versioned formula)
   if [ "$CHANNEL" = "lts" ]; then
     _log "Destination 5 (Scoop): SKIPPED for LTS channel.";
-    state_mark scoop skipped; return 0
+    state_mark "scoop" "skipped"; return 0
   fi
 
   _log "Destination 5: Scoop package PR..."
@@ -462,7 +462,7 @@ __dest_scoop() {
   : > "$MODULE_DIR/target/jreleaser/scoop-bucket.json" 2>/dev/null || true
 
   _remote="${FORK_REMOTE:-upstream}"
-  git push "$_remote" "$BRANCH" 2>&1 | tail -3 || { state_mark scoop failed; return 1; }
+  git push "$_remote" "$BRANCH" 2>&1 | tail -3 || { state_mark "scoop" "failed"; return 1; }
 
   gh pr create \
     --base main \
@@ -471,7 +471,7 @@ __dest_scoop() {
     --body "_Published by camel-publish.sh on behalf of $_operator_$(if [ -n "$_attribution_line" ]; then printf '\n\n%s' '$_attribution_line'; fi)_"\
     2>&1 | tail -3 || true
 
-  state_mark scoop done
+  state_mark "scoop" "done"
   _log "  Scoop: done."
 }
 
@@ -488,7 +488,7 @@ __dest_sdkman() {
   # LTS: no SDKMAN release (only stable gets it)
   if [ "$CHANNEL" = "lts" ]; then
     _log "Destination 6 (SDKMAN): SKIPPED for LTS channel.";
-    state_mark sdkman skipped; return 0
+    state_mark "sdkman" "skipped"; return 0
   fi
 
   _log "Destination 6: SDKMAN Vendor API..."
@@ -502,10 +502,10 @@ __dest_sdkman() {
     -H "Content-Type: application/json" \
     -d "{\"candidate\": \"camel\", \"version\": \"$VERSION\", \"default\": $SDKMAN_DEFAULT}" 2>/dev/null || {
     _log "  SDKMAN release failed (likely no credentials in this env).";
-    state_mark sdkman failed; return 1;
+    state_mark "sdkman" "failed"; return 1;
   }
 
-  state_mark sdkman done
+  state_mark "sdkman" "done"
   _log "  SDKMAN: done."
 }
 
@@ -526,14 +526,14 @@ __dest_chocolatey() {
   # Submit via Chocolatey push endpoint
   choco apikey --source "$API_URL" --key "${CHOCO_API_KEY}" 2>/dev/null || true
   choco pack 2>/dev/null || {
-    _log "  Choco pack failed."; state_mark chocolatey failed; return 1;
+    _log "  Choco pack failed."; state_mark "chocolatey" "failed"; return 1;
   }
   choco push 2>/dev/null || {
     _log "  Chocolatey push failed (moderation queue).";
-    state_mark chocolatey done; return 0;  # Pushed to moderation = success
+    state_mark "chocolatey" "done"; return 0;  # Pushed to moderation = success
   }
 
-  state_mark chocolatey done
+  state_mark "chocolatey" "done"
   _log "  Chocolatey: done."
 }
 

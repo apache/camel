@@ -48,6 +48,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -265,6 +266,92 @@ class WebsiteInstallTest {
 
                 assertEquals(0, r.exit(), r.stderr());
                 assertVersionInstalled(home, "1.0.0");
+            }
+        }
+
+        private static Path pinnedVersionFile(Path home) {
+            return home.resolve(".local/share/camel-cli/pinned-version");
+        }
+
+        @Test
+        void pinsVersionWhenInstalledExplicitly(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishVersion(fixture, "1.0.0");
+
+                WebsiteInstallerFixture.Result r = install(fixture, home, "1.0.0");
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertThat(pinnedVersionFile(home)).hasContent("1.0.0");
+            }
+        }
+
+        @Test
+        void doesNotPinWhenInstallingLatest(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishLatest(fixture, "1.0.0");
+
+                WebsiteInstallerFixture.Result r = install(fixture, home, null);
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertThat(pinnedVersionFile(home)).doesNotExist();
+            }
+        }
+
+        @Test
+        void reinstallingLatestClearsAnExistingPin(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishVersion(fixture, "1.0.0");
+                assertEquals(0, install(fixture, home, "1.0.0").exit());
+                assertThat(pinnedVersionFile(home)).exists();
+                publishLatest(fixture, "2.0.0");
+
+                WebsiteInstallerFixture.Result r = install(fixture, home, null);
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertThat(pinnedVersionFile(home)).doesNotExist();
+            }
+        }
+
+        // Guards against a real self-lockout bug: SelfUpdateCommand always passes --version (the version it
+        // resolved, for TOCTOU-safety), even for a bare `camel self-update`. Without CAMEL_INSTALL_SELF_UPDATE
+        // suppressing the pin write, every self-update run would pin itself on the way out, and the very next
+        // self-update would then refuse to run at all (see SelfUpdateCommand's pinned-version refusal).
+        @Test
+        void selfUpdateInternalFlagNeverWritesAPin(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishVersion(fixture, "1.0.0");
+                Map<String, String> env = new HashMap<>(fixture.environment(home));
+                env.put("CAMEL_INSTALL_SELF_UPDATE", "true");
+
+                WebsiteInstallerFixture.Result r = fixture.run(
+                        List.of("/bin/sh", SCRIPT.toString(), "--version", "1.0.0"), env);
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertThat(pinnedVersionFile(home)).doesNotExist();
+            }
+        }
+
+        // A pre-existing pin must also survive an internal self-update run untouched (not just "never created").
+        @Test
+        void selfUpdateInternalFlagLeavesAnExistingPinUntouched(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishVersion(fixture, "1.0.0");
+                assertEquals(0, install(fixture, home, "1.0.0").exit());
+                assertThat(pinnedVersionFile(home)).hasContent("1.0.0");
+
+                publishVersion(fixture, "2.0.0");
+                Map<String, String> env = new HashMap<>(fixture.environment(home));
+                env.put("CAMEL_INSTALL_SELF_UPDATE", "true");
+                WebsiteInstallerFixture.Result r = fixture.run(
+                        List.of("/bin/sh", SCRIPT.toString(), "--version", "2.0.0"), env);
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertThat(pinnedVersionFile(home)).hasContent("1.0.0");
             }
         }
 
@@ -694,6 +781,98 @@ class WebsiteInstallTest {
 
                 assertEquals(0, r.exit(), r.stderr());
                 assertVersionInstalled(home, "2.5.0");
+            }
+        }
+
+        private static Path pinnedVersionFile(Path home) {
+            return home.resolve("AppData").resolve("Local").resolve("Apache Camel").resolve("cli")
+                    .resolve("pinned-version");
+        }
+
+        @Test
+        void pinsVersionWhenInstalledExplicitly(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishVersion(fixture, "1.0.0");
+
+                WebsiteInstallerFixture.Result r = install(fixture, home, "1.0.0");
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertThat(pinnedVersionFile(home)).hasContent("1.0.0");
+            }
+        }
+
+        @Test
+        void doesNotPinWhenInstallingLatest(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishLatest(fixture, "1.0.0");
+
+                WebsiteInstallerFixture.Result r = install(fixture, home, null);
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertThat(pinnedVersionFile(home)).doesNotExist();
+            }
+        }
+
+        @Test
+        void reinstallingLatestClearsAnExistingPin(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishVersion(fixture, "1.0.0");
+                assertEquals(0, install(fixture, home, "1.0.0").exit());
+                assertThat(pinnedVersionFile(home)).exists();
+                publishLatest(fixture, "2.0.0");
+
+                WebsiteInstallerFixture.Result r = install(fixture, home, null);
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertThat(pinnedVersionFile(home)).doesNotExist();
+            }
+        }
+
+        // Guards against a real self-lockout bug: SelfUpdateCommand always passes -Version (the version it
+        // resolved, for TOCTOU-safety), even for a bare `camel self-update`. Without CAMEL_INSTALL_SELF_UPDATE
+        // suppressing the pin write, every self-update run would pin itself on the way out, and the very next
+        // self-update would then refuse to run at all (see SelfUpdateCommand's pinned-version refusal).
+        @Test
+        void selfUpdateInternalFlagNeverWritesAPin(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishVersion(fixture, "1.0.0");
+                binDirsForCleanup.add(expectedBinDir(home).toString());
+                Map<String, String> env = new HashMap<>(fixture.environment(home));
+                env.put("CAMEL_INSTALL_SELF_UPDATE", "true");
+
+                WebsiteInstallerFixture.Result r = fixture.run(
+                        List.of("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", SCRIPT.toString(),
+                                "-Version", "1.0.0"),
+                        env);
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertThat(pinnedVersionFile(home)).doesNotExist();
+            }
+        }
+
+        // A pre-existing pin must also survive an internal self-update run untouched (not just "never created").
+        @Test
+        void selfUpdateInternalFlagLeavesAnExistingPinUntouched(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishVersion(fixture, "1.0.0");
+                assertEquals(0, install(fixture, home, "1.0.0").exit());
+                assertThat(pinnedVersionFile(home)).hasContent("1.0.0");
+
+                publishVersion(fixture, "2.0.0");
+                Map<String, String> env = new HashMap<>(fixture.environment(home));
+                env.put("CAMEL_INSTALL_SELF_UPDATE", "true");
+                WebsiteInstallerFixture.Result r = fixture.run(
+                        List.of("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", SCRIPT.toString(),
+                                "-Version", "2.0.0"),
+                        env);
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertThat(pinnedVersionFile(home)).hasContent("1.0.0");
             }
         }
 

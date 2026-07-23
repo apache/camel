@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -107,6 +109,44 @@ public final class InstallDetector {
         Path dataHome = xdgDataHome != null && !xdgDataHome.isBlank()
                 ? Paths.get(xdgDataHome) : Paths.get(System.getProperty("user.home"), ".local", "share");
         return dataHome.resolve("camel-cli").resolve("versions");
+    }
+
+    /**
+     * The version the web installer was last explicitly pinned to, if any. Written by {@code install.sh}/
+     * {@code install.ps1} whenever a human runs them with an explicit {@code --version}/{@code -Version} (and cleared
+     * on a bare, unversioned run); never written by {@code camel self-update}'s own delegated invocation, which always
+     * passes a resolved version for TOCTOU-safety but is not itself a pin request. Used by {@code camel self-update} to
+     * refuse overriding a deliberately pinned install.
+     */
+    public static Optional<String> pinnedVersion() {
+        return pinnedVersion(webInstallerVersionsRoot());
+    }
+
+    // Package-private overload: takes the web-installer versions root explicitly so tests never touch the real
+    // $HOME/$LOCALAPPDATA.
+    static Optional<String> pinnedVersion(Path webInstallerVersionsRoot) {
+        Path file = pinnedVersionFile(webInstallerVersionsRoot);
+        if (!Files.isRegularFile(file)) {
+            return Optional.empty();
+        }
+        try {
+            String content = Files.readString(file, StandardCharsets.UTF_8).strip();
+            return content.isEmpty() ? Optional.empty() : Optional.of(content);
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * The state file {@code install.sh}/{@code install.ps1} write the pinned version into, sibling to
+     * {@link #webInstallerVersionsRoot()} (mirrors {@code UpdateChecker}'s own cache-file placement).
+     */
+    public static Path pinnedVersionFile() {
+        return pinnedVersionFile(webInstallerVersionsRoot());
+    }
+
+    private static Path pinnedVersionFile(Path webInstallerVersionsRoot) {
+        return webInstallerVersionsRoot.getParent().resolve("pinned-version");
     }
 
     /**

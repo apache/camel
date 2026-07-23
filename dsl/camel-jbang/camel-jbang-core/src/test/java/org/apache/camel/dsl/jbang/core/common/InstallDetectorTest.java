@@ -102,6 +102,48 @@ class InstallDetectorTest {
     }
 
     @Test
+    void pinnedVersionIsEmptyWhenFileAbsent(@TempDir Path temp) {
+        Path versionsRoot = temp.resolve("camel-cli/versions");
+
+        var result = InstallDetector.pinnedVersion(versionsRoot);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void pinnedVersionReadsContentWhenFilePresent(@TempDir Path temp) throws Exception {
+        Path versionsRoot = temp.resolve("camel-cli/versions");
+        Files.createDirectories(versionsRoot.getParent());
+        Files.writeString(versionsRoot.getParent().resolve("pinned-version"), "4.21.0");
+
+        var result = InstallDetector.pinnedVersion(versionsRoot);
+
+        assertThat(result).contains("4.21.0");
+    }
+
+    @Test
+    void pinnedVersionStripsSurroundingWhitespace(@TempDir Path temp) throws Exception {
+        Path versionsRoot = temp.resolve("camel-cli/versions");
+        Files.createDirectories(versionsRoot.getParent());
+        Files.writeString(versionsRoot.getParent().resolve("pinned-version"), "4.21.0\n");
+
+        var result = InstallDetector.pinnedVersion(versionsRoot);
+
+        assertThat(result).contains("4.21.0");
+    }
+
+    @Test
+    void pinnedVersionIsEmptyWhenFileIsBlank(@TempDir Path temp) throws Exception {
+        Path versionsRoot = temp.resolve("camel-cli/versions");
+        Files.createDirectories(versionsRoot.getParent());
+        Files.writeString(versionsRoot.getParent().resolve("pinned-version"), "   \n");
+
+        var result = InstallDetector.pinnedVersion(versionsRoot);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
     void resolveActiveOnPathFindsExecutableOnPath(@TempDir Path temp) throws Exception {
         String exeName = FileUtil.isWindows() ? "camel.cmd" : "camel";
         Path binDir = Files.createDirectories(temp.resolve("bin"));

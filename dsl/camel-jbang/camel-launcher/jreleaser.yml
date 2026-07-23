@@ -117,6 +117,8 @@ distributions:
       - path: "dsl/camel-jbang/camel-launcher/target/camel-launcher-{{projectVersion}}-bin.zip"
     brew:
       active: RELEASE
+      skipTemplates:
+        - README.md.tpl
       formulaName: "{{ Env.CAMEL_PKG_BREW_FORMULA }}"
       # Homebrew's FormulaAudit::Urls cop requires the search.maven.org redirector
       # for Maven Central artifacts (not repo1.maven.org); see url_helper.rb in

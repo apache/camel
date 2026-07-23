@@ -24,6 +24,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -76,6 +77,13 @@ public class SelfUpdateCommand extends CamelCommand {
         InstallDetector.InstallInfo info = InstallDetector.locate();
         if (info.method() != InstallDetector.InstallMethod.WEB_INSTALLER) {
             printer().printErr(refusalMessage(info.method()));
+            return 1;
+        }
+
+        Optional<String> pinned = InstallDetector.pinnedVersion();
+        if (pinned.isPresent()) {
+            printer().printErr("this install is pinned to version " + pinned.get() + " - remove "
+                               + InstallDetector.pinnedVersionFile() + " to resume tracking new releases");
             return 1;
         }
 
@@ -143,6 +151,10 @@ public class SelfUpdateCommand extends CamelCommand {
                 pb.environment().put("PATH", System.getenv("PATH"));
                 pb.environment().putAll(installerEnvironmentOverride);
             }
+            // Tells install.sh/install.ps1 that the --version/-Version below is this command's own resolved
+            // target (TOCTOU-safety), not a human pinning a version - the script must not write or clear its
+            // pin-state file for this run. Set last so it can never be dropped by the override block above.
+            pb.environment().put("CAMEL_INSTALL_SELF_UPDATE", "true");
             Process process = pb.start();
             String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
             int exit = process.waitFor();
