@@ -56,7 +56,7 @@ public class Timestream2QueryProducerHealthCheck extends AbstractHealthCheck {
             if (ObjectHelper.isNotEmpty(e.statusCode())) {
                 builder.detail(SERVICE_STATUS_CODE, e.statusCode());
             }
-            if (ObjectHelper.isNotEmpty(e.awsErrorDetails().errorCode())) {
+            if (ObjectHelper.isNotEmpty(e.awsErrorDetails()) && ObjectHelper.isNotEmpty(e.awsErrorDetails().errorCode())) {
                 builder.detail(SERVICE_ERROR_CODE, e.awsErrorDetails().errorCode());
             }
             builder.down();
