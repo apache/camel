@@ -1048,6 +1048,33 @@ class ExportTest {
         }
     }
 
+    @Test
+    void shouldNotDuplicateMetricsDependency() throws Exception {
+        File profile = new File(".", "application.properties");
+        try {
+            Files.writeString(profile.toPath(), "camel.management.metricsEnabled=true\n");
+
+            Export command = new Export(new CamelJBangMain());
+            CommandLine.populateCommand(command,
+                    "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                    "--runtime=camel-main",
+                    "src/test/resources/route.yaml");
+            int exit = command.doCall();
+
+            assertThat(exit).isEqualTo(0);
+            Model model = readMavenModel();
+
+            long count = model.getDependencies().stream()
+                    .filter(d -> "camel-micrometer-prometheus".equals(d.getArtifactId()))
+                    .count();
+            assertThat(count)
+                    .as("camel-micrometer-prometheus should appear exactly once")
+                    .isEqualTo(1);
+        } finally {
+            FileUtil.deleteFile(profile);
+        }
+    }
+
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldContainJibProfile(RuntimeType rt) throws Exception {
