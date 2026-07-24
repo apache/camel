@@ -40,6 +40,15 @@ The new behavior activates automatically when all of the following are true:
 No configuration changes are required. The existing `maxAutoLockRenewDuration` option controls how long
 Camel will continue renewing a message's lock.
 
+=== camel-http - gzip double decompression with HttpClient 5.6+
+
+When using HttpClient 5.6+ (including transitively via a Spring Boot BOM on Camel 4.18.x), HttpClient
+auto-decompresses gzip response bodies but may leave stale `Content-Encoding`, `Content-Length`, and
+`Content-MD5` headers. Camel now reads content encoding from `entity.getContentEncoding()` instead of
+the response header and strips stale compression headers after the HTTP call. This prevents a second
+decompression attempt that could fail with `ZipException: Not in GZIP format` against gzip-compressing
+servers with default settings.
+
 === camel-mail - MimeMultipartDataFormat inbound header filtering
 
 When unmarshalling a MIME message with `headersInline=true`, the `mime-multipart` data format now applies a
