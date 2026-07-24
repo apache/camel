@@ -384,7 +384,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
 
         // load components
-        return Arrays.stream(files).sorted().toList();
+        return Arrays.stream(files).sorted(Comparator.comparing(File::getName)).toList();
     }
 
     public String camelCaseLower(String s) {
