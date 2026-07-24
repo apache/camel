@@ -58,6 +58,7 @@
         <module>camel-test-infra-dispatch-router</module>
         <module>camel-test-infra-jdbc</module>
         <module>camel-test-infra-arangodb</module>
+        <module>camel-test-infra-apicurio-registry</module>
         <module>camel-test-infra-consul</module>
         <module>camel-test-infra-google-pubsub</module>
         <module>camel-test-infra-infinispan</module>
