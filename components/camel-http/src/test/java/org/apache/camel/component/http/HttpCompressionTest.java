@@ -54,8 +54,7 @@ import static org.apache.camel.http.common.HttpMethods.POST;
 import static org.apache.hc.core5.http.ContentType.TEXT_PLAIN;
 import static org.apache.hc.core5.http.HttpHeaders.CONTENT_ENCODING;
 import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class HttpCompressionTest extends BaseHttpTest {
 
@@ -94,15 +93,68 @@ public class HttpCompressionTest extends BaseHttpTest {
                     exchange1.getIn().setBody(getBody());
                 });
 
-        assertNotNull(exchange);
+        assertThat(exchange).isNotNull();
 
         Message out = exchange.getMessage();
-        assertNotNull(out);
+        assertThat(out).isNotNull();
 
         Map<String, Object> headers = out.getHeaders();
-        assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
+        assertThat(headers.get(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(HttpStatus.SC_OK);
+        // CAMEL-24234: HttpClient 5.6+ auto-decompresses the body but no longer strips the stale gzip
+        // Content-Encoding header. Camel must remove it so downstream readers do not attempt a second
+        // decompression (which would fail with a ZipException).
+        assertThat(headers.get(Exchange.CONTENT_ENCODING)).isNull();
 
         assertBody(out.getBody(String.class));
+    }
+
+    @Test
+    public void compressedHttpPostWithEndpointContentCompressionDisabled() {
+        // CAMEL-24234: decompression can also be disabled per-endpoint via
+        // httpClient.contentCompressionEnabled=false. HttpClient then does not decompress, so the raw gzip body
+        // reaches Camel with a "gzip" Content-Encoding on the entity, and Camel must decompress it itself.
+        Exchange exchange = template.request(
+                "http://localhost:" + localServer.getLocalPort() + "/?httpClient.contentCompressionEnabled=false",
+                exchange1 -> {
+                    exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                    exchange1.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
+                    exchange1.getIn().setBody(getBody());
+                });
+
+        assertThat(exchange).isNotNull();
+
+        Message out = exchange.getMessage();
+        assertThat(out).isNotNull();
+        assertThat(out.getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(HttpStatus.SC_OK);
+
+        assertBody(out.getBody(String.class));
+    }
+
+    @Test
+    public void compressedHttpPostWithAutoDecompressionDisabled() {
+        HttpComponent http = context.getComponent("http", HttpComponent.class);
+        http.setContentCompressionDisabled(true);
+        try {
+            Exchange exchange = template.request(
+                    "http://localhost:" + localServer.getLocalPort() + "/",
+                    exchange1 -> {
+                        exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                        exchange1.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
+                        exchange1.getIn().setBody(getBody());
+                    });
+
+            assertThat(exchange).isNotNull();
+
+            Message out = exchange.getMessage();
+            assertThat(out).isNotNull();
+
+            Map<String, Object> headers = out.getHeaders();
+            assertThat(headers.get(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(HttpStatus.SC_OK);
+
+            assertBody(out.getBody(String.class));
+        } finally {
+            http.setContentCompressionDisabled(false);
+        }
     }
 
     @Override
