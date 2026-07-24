@@ -79,7 +79,7 @@ class TuiToolRegistry {
     }
 
     /**
-     * Returns all 40 tool definitions. The result is cached since it is immutable.
+     * Returns all 42 tool definitions. The result is cached since it is immutable.
      */
     List<ToolDef> getToolDefinitions() {
         List<ToolDef> tools = cachedTools;
@@ -137,6 +137,8 @@ class TuiToolRegistry {
             case "tui_animate_status" -> callAnimateStatus(args);
             case "tui_catalog_doc" -> callCatalogDoc(args);
             case "tui_get_processor_detail" -> callGetProcessorDetail(args);
+            case "tui_get_ai_log" -> callGetAiLog(args);
+            case "tui_get_mcp_log" -> callGetMcpLog(args);
             case "tui_list_examples" -> callListExamples(args);
             case "tui_run_example" -> callRunExample(args);
             default -> throw new IllegalArgumentException("Unknown tool: " + name);
@@ -590,6 +592,25 @@ class TuiToolRegistry {
                         "includeDocs", propDef("boolean",
                                 "If true, enrich each processor's options with documentation from the Camel catalog "
                                                           + "(description, type, group, defaultValue, required, deprecated, enum values)")))));
+
+        // --- AI and MCP log tools ---
+
+        tools.add(toToolDef(toolDef(
+                "tui_get_ai_log",
+                "Returns the TUI's built-in AI panel activity log as structured JSON. "
+                                  + "Shows the AI panel's questions, tool calls, tool results, responses, and errors. "
+                                  + "Useful to see what the built-in AI has already investigated "
+                                  + "before repeating the same work.",
+                Map.of("limit", propDef("integer",
+                        "Maximum number of entries to return (default 50)")))));
+
+        tools.add(toToolDef(toolDef(
+                "tui_get_mcp_log",
+                "Returns the TUI MCP server's tool call log as structured JSON. "
+                                   + "Shows external MCP client connections and tool call requests/responses. "
+                                   + "Useful for debugging and auditing MCP interactions.",
+                Map.of("limit", propDef("integer",
+                        "Maximum number of entries to return (default 50)")))));
 
         // --- Example tools ---
 
@@ -2035,6 +2056,56 @@ class TuiToolRegistry {
             doc.put("enum", toJsonArray(opt.getEnums()));
         }
         return doc;
+    }
+
+    private String callGetAiLog(Map<String, Object> args) {
+        int limit = args.get("limit") instanceof Number n ? n.intValue() : 50;
+        List<AiPanel.LogEntry> entries = facade.getAiActivityLog();
+        if (entries.size() > limit) {
+            entries = entries.subList(entries.size() - limit, entries.size());
+        }
+        JsonArray arr = new JsonArray();
+        for (AiPanel.LogEntry e : entries) {
+            JsonObject obj = new JsonObject();
+            obj.put("timestamp", e.timestamp());
+            obj.put("level", e.level().name());
+            obj.put("message", e.message());
+            if (e.detail() != null) {
+                obj.put("detail", e.detail());
+            }
+            arr.add(obj);
+        }
+        JsonObject result = new JsonObject();
+        result.put("entries", arr);
+        result.put("count", arr.size());
+        return result.toJson();
+    }
+
+    private String callGetMcpLog(Map<String, Object> args) {
+        int limit = args.get("limit") instanceof Number n ? n.intValue() : 50;
+        List<TuiMcpServer.LogEntry> entries = facade.getMcpActivityLog();
+        if (entries.size() > limit) {
+            entries = entries.subList(entries.size() - limit, entries.size());
+        }
+        JsonArray arr = new JsonArray();
+        for (TuiMcpServer.LogEntry e : entries) {
+            JsonObject obj = new JsonObject();
+            obj.put("timestamp", e.timestamp());
+            obj.put("level", e.level().name());
+            obj.put("message", e.message());
+            if (e.requestBody() != null) {
+                obj.put("requestBody", e.requestBody());
+            }
+            if (e.responseBody() != null) {
+                obj.put("responseBody", e.responseBody());
+            }
+            arr.add(obj);
+        }
+        JsonObject result = new JsonObject();
+        result.put("entries", arr);
+        result.put("count", arr.size());
+        result.put("toolCallCount", facade.getMcpToolCallCount());
+        return result.toJson();
     }
 
     @SuppressWarnings("unchecked")

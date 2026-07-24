@@ -1359,6 +1359,12 @@ class AiPanel {
         sb.append("- tui_get_errors: get error details with stack traces, WITHOUT navigating to the Errors tab\n");
         sb.append("- tui_get_diagram: view route diagrams as text, WITHOUT navigating to the Diagram tab\n");
         sb.append("- tui_get_topology: see how routes connect to each other, WITHOUT navigating to the Topology tab\n");
+        sb.append("- tui_get_processor_detail: get configured options for all processors in a route as structured JSON. ");
+        sb.append("USE THIS to explain what a route does, walk through each step, or understand EIP/component configuration. ");
+        sb.append("Set includeDocs=true to get catalog documentation for each option\n");
+        sb.append("- tui_catalog_doc: look up Camel catalog documentation for any component, EIP, data format, or language\n");
+        sb.append("- tui_get_ai_log: view the AI panel's own activity log (questions, tool calls, responses)\n");
+        sb.append("- tui_get_mcp_log: view the MCP server's tool call log (external client connections and requests)\n");
         sb.append("- tui_get_history: trace exchange processing steps, WITHOUT navigating to the History tab\n");
         sb.append("- tui_get_spans: OpenTelemetry span data, WITHOUT navigating to the Spans tab\n");
         sb.append("- tui_navigate: switch tabs, select integrations, select routes ");

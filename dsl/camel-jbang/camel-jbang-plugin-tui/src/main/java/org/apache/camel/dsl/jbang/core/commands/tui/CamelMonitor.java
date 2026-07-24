@@ -476,12 +476,14 @@ public class CamelMonitor extends CamelCommand {
                     }
                 });
         aiPanel.setMcpFacade(mcpFacade);
+        mcpFacade.setAiActivityLog(aiPanel::getActivityLog);
         Path mcpJsonFile = null;
         actionsPopup.setAiActivityLog(aiPanel::getActivityLog);
         if (mcp) {
             mcpServer = new TuiMcpServer(mcpPort, mcpFacade);
             try {
                 mcpServer.start();
+                mcpFacade.setMcpActivityLog(mcpServer::getActivityLog, mcpServer::getToolCallCount);
                 actionsPopup.setMcpEnabled(true, mcpPort, mcpServer::getConnectedClient,
                         mcpServer::getActivityLog, mcpServer::getToolCallCount);
                 mcpJsonFile = writeMcpJson(mcpPort);

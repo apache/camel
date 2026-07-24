@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
@@ -101,6 +102,10 @@ class McpFacade {
     private final Queue<PendingKey> pendingKeys;
     private final MonitorBridge bridge;
 
+    private volatile Supplier<List<AiPanel.LogEntry>> aiActivityLog;
+    private volatile Supplier<List<TuiMcpServer.LogEntry>> mcpActivityLog;
+    private volatile Supplier<Integer> mcpToolCallCount;
+
     McpFacade(
               MonitorContext ctx,
               AtomicReference<List<IntegrationInfo>> data,
@@ -128,6 +133,30 @@ class McpFacade {
         this.tabRegistry = tabRegistry;
         this.pendingKeys = pendingKeys;
         this.bridge = bridge;
+    }
+
+    void setAiActivityLog(Supplier<List<AiPanel.LogEntry>> aiActivityLog) {
+        this.aiActivityLog = aiActivityLog;
+    }
+
+    void setMcpActivityLog(Supplier<List<TuiMcpServer.LogEntry>> mcpActivityLog, Supplier<Integer> mcpToolCallCount) {
+        this.mcpActivityLog = mcpActivityLog;
+        this.mcpToolCallCount = mcpToolCallCount;
+    }
+
+    List<AiPanel.LogEntry> getAiActivityLog() {
+        Supplier<List<AiPanel.LogEntry>> s = aiActivityLog;
+        return s != null ? s.get() : List.of();
+    }
+
+    List<TuiMcpServer.LogEntry> getMcpActivityLog() {
+        Supplier<List<TuiMcpServer.LogEntry>> s = mcpActivityLog;
+        return s != null ? s.get() : List.of();
+    }
+
+    int getMcpToolCallCount() {
+        Supplier<Integer> s = mcpToolCallCount;
+        return s != null ? s.get() : 0;
     }
 
     // ---- Screen state ----
