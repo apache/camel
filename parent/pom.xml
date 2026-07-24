@@ -99,6 +99,7 @@
         <camunda-version>7.24.0</camunda-version>
         <camunda-client-java-version>8.9.13</camunda-client-java-version>
         <cassandra-driver-version>4.19.3</cassandra-driver-version>
+        <clickhouse-client-version>0.9.8</clickhouse-client-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <citrus-version>5.0.0-M2</citrus-version>
@@ -1100,6 +1101,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-chunk</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-clickhouse</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

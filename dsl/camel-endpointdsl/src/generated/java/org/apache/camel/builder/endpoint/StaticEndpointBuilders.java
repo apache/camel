@@ -3029,6 +3029,50 @@ public class StaticEndpointBuilders {
         return ClassEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * ClickHouse (camel-clickhouse)
+     * Interact with ClickHouse, the high-performance columnar OLAP database,
+     * for high-throughput ingestion and OLAP queries.
+     * 
+     * Category: database,bigdata
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-clickhouse
+     * 
+     * Syntax: <code>clickhouse:database</code>
+     * 
+     * Path parameter: database (required)
+     * The ClickHouse database. A table may also be provided using the
+     * database.table syntax.
+     * 
+     * @param path database
+     * @return the dsl builder
+     */
+    public static ClickHouseEndpointBuilderFactory.ClickHouseEndpointBuilder clickhouse(String path) {
+        return clickhouse("clickhouse", path);
+    }
+    /**
+     * ClickHouse (camel-clickhouse)
+     * Interact with ClickHouse, the high-performance columnar OLAP database,
+     * for high-throughput ingestion and OLAP queries.
+     * 
+     * Category: database,bigdata
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-clickhouse
+     * 
+     * Syntax: <code>clickhouse:database</code>
+     * 
+     * Path parameter: database (required)
+     * The ClickHouse database. A table may also be provided using the
+     * database.table syntax.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path database
+     * @return the dsl builder
+     */
+    public static ClickHouseEndpointBuilderFactory.ClickHouseEndpointBuilder clickhouse(String componentName, String path) {
+        return ClickHouseEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * ClickUp (camel-clickup)
      * Receives events from ClickUp
      * 

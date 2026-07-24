@@ -1047,6 +1047,25 @@ The `io.vavr:vavr` and `io.vavr:vavr-match` runtime dependencies have been remov
 `camel-resilience4j`. The single internal usage of Vavr's `Try` monad has been replaced with a
 plain try-catch. This eliminates two transitive runtime JARs. No user-facing behavior change.
 
+=== camel-clickhouse (new component)
+
+A new `camel-clickhouse` producer component has been added. It integrates with
+https://clickhouse.com/[ClickHouse], the high-performance columnar OLAP database, using the official
+ClickHouse Java client (client-v2). It exposes ClickHouse's native capabilities as first-class endpoint
+options: native format streaming inserts (`RowBinary`, `JSONEachRow`, `CSV`, `TSV`, `Parquet`),
+server-side asynchronous inserts, OLAP queries and health checks.
+
+[source,java]
+----
+from("direct:events")
+    .to("clickhouse://analytics.events?operation=insert&format=JSONEachRow");
+----
+
+The component supports the `insert` (default), `query` and `ping` operations, and can either use a shared
+autowired `com.clickhouse.client.api.Client` bean or build its own client from the `serverUrl`, `username`,
+`password` and `ssl` endpoint options. See the xref:next@components::clickhouse-component.adoc[ClickHouse component]
+documentation for details.
+
 === camel-minio - Upgraded to minio 9.0.3 - Breaking Changes
 
 The underlying `io.minio:minio` library has been upgraded from 8.x to 9.0.3.
@@ -1149,3 +1168,4 @@ Update any catch blocks or method `throws` declarations accordingly.
 // After:
 } catch (MinioException e) { ... }
 ----
+

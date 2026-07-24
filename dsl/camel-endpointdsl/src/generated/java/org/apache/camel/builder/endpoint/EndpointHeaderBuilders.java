@@ -789,6 +789,20 @@ public class EndpointHeaderBuilders {
         return ChunkEndpointBuilderFactory.ChunkHeaderNameBuilder.INSTANCE;
     }
     /**
+     * ClickHouse (camel-clickhouse)
+     * Interact with ClickHouse, the high-performance columnar OLAP database,
+     * for high-throughput ingestion and OLAP queries.
+     * 
+     * Category: database,bigdata
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-clickhouse
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static ClickHouseEndpointBuilderFactory.ClickHouseHeaderNameBuilder clickhouse() {
+        return ClickHouseEndpointBuilderFactory.ClickHouseHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
      * capable devices.

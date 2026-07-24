@@ -692,6 +692,17 @@
   "serviceVersion" : "1.2.1",
   "uiSupported" : false
 }, {
+  "service" : "org.apache.camel.test.infra.clickhouse.services.ClickHouseInfraService",
+  "description" : "ClickHouse is a high-performance columnar OLAP database",
+  "implementation" : "org.apache.camel.test.infra.clickhouse.services.ClickHouseLocalContainerInfraService",
+  "alias" : [ "clickhouse" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-clickhouse",
+  "version" : "4.22.0-SNAPSHOT",
+  "serviceVersion" : "24.8",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.ollama.services.OllamaInfraService",
   "description" : "Ollama is a tool for running large language models locally",
   "implementation" : "org.apache.camel.test.infra.ollama.services.OllamaLocalContainerInfraService",

@@ -100,6 +100,7 @@
 ** xref:cql-component.adoc[Cassandra CQL]
 ** xref:chunk-component.adoc[Chunk]
 ** xref:class-component.adoc[Class]
+** xref:clickhouse-component.adoc[ClickHouse]
 ** xref:clickup-component.adoc[ClickUp]
 ** xref:cm-sms-component.adoc[CM SMS Gateway]
 ** xref:coap-component.adoc[CoAP]

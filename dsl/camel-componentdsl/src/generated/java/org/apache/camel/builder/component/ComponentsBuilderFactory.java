@@ -955,6 +955,20 @@ public interface ComponentsBuilderFactory {
         return ClasComponentBuilderFactory.clas();
     }
     /**
+     * ClickHouse (camel-clickhouse)
+     * Interact with ClickHouse, the high-performance columnar OLAP database,
+     * for high-throughput ingestion and OLAP queries.
+     * 
+     * Category: database,bigdata
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-clickhouse
+     * 
+     * @return the dsl builder
+     */
+    static ClickhouseComponentBuilderFactory.ClickhouseComponentBuilder clickhouse() {
+        return ClickhouseComponentBuilderFactory.clickhouse();
+    }
+    /**
      * ClickUp (camel-clickup)
      * Receives events from ClickUp
      * 
