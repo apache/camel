@@ -27,6 +27,7 @@ components/camel-cxf/activemq-data
 .flattened-pom.xml
 .java-version
 node_modules/
+__pycache__/
 mvnd.zip*
 .camel-jbang
 .camel-jbang-run
