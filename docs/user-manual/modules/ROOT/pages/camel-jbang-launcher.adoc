@@ -6,6 +6,21 @@ A self-contained executable JAR for running Camel CLI without JBang. Uses Spring
 
 Download from https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/[Maven Central].
 
+== Install script (recommended)
+
+*Available as of Camel 4.22*
+
+The easiest way to install the launcher is the install script, which downloads, verifies, and puts
+a `camel` command on your `PATH`:
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh
+----
+
+See xref:camel-jbang-launcher-install.adoc[Installing the Camel CLI Launcher] for Windows, version
+pinning, and details.
+
 == Using the fat-jar directly
 
 [source,bash]

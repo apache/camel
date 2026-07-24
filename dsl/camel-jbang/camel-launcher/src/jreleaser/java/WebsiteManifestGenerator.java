@@ -56,6 +56,27 @@ public class WebsiteManifestGenerator {
             = new LinkedHashSet<>(List.of("--version", "--tar", "--zip", "--output", "--latest"));
     private static final String MANIFEST_FORMAT = "1";
 
+    // Properties-style ASF license header prepended to every generated manifest. These '#' comment
+    // lines carry no data and are skipped by this tool's own strict re-parser (parseStrictManifest)
+    // and by the installers (install.sh / install.ps1), which tolerate a commented manifest.
+    private static final String LICENSE_HEADER
+            = "## ---------------------------------------------------------------------------\n"
+              + "## Licensed to the Apache Software Foundation (ASF) under one or more\n"
+              + "## contributor license agreements.  See the NOTICE file distributed with\n"
+              + "## this work for additional information regarding copyright ownership.\n"
+              + "## The ASF licenses this file to You under the Apache License, Version 2.0\n"
+              + "## (the \"License\"); you may not use this file except in compliance with\n"
+              + "## the License.  You may obtain a copy of the License at\n"
+              + "##\n"
+              + "##      http://www.apache.org/licenses/LICENSE-2.0\n"
+              + "##\n"
+              + "## Unless required by applicable law or agreed to in writing, software\n"
+              + "## distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+              + "## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+              + "## See the License for the specific language governing permissions and\n"
+              + "## limitations under the License.\n"
+              + "## ---------------------------------------------------------------------------\n";
+
     public static void main(String[] args) {
         try {
             run(args);
@@ -139,7 +160,8 @@ public class WebsiteManifestGenerator {
     }
 
     private static byte[] renderManifest(String version, String tarSha256, String zipSha256) {
-        String content = "format=" + MANIFEST_FORMAT + "\n"
+        String content = LICENSE_HEADER
+                          + "format=" + MANIFEST_FORMAT + "\n"
                           + "version=" + version + "\n"
                           + "tar_sha256=" + tarSha256 + "\n"
                           + "zip_sha256=" + zipSha256 + "\n";
@@ -187,7 +209,9 @@ public class WebsiteManifestGenerator {
         String content = new String(bytes, StandardCharsets.UTF_8);
         Map<String, String> fields = new LinkedHashMap<>();
         for (String line : content.split("\n", -1)) {
-            if (line.isEmpty()) {
+            // Skip blank lines and '#' comment lines (e.g. the ASF license header this tool now
+            // prepends), so re-reading a previously generated latest.properties stays valid.
+            if (line.isEmpty() || line.startsWith("#")) {
                 continue;
             }
             int eq = line.indexOf('=');

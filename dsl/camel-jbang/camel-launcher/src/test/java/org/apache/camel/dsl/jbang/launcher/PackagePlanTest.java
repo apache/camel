@@ -594,7 +594,8 @@ class PackagePlanTest {
         Path latestManifest = websiteDir().resolve("camel-cli/releases/latest.properties");
         assertTrue(Files.exists(versionManifest));
         assertTrue(Files.exists(latestManifest));
-        String expected = "format=1\nversion=" + TEST_VERSION + "\ntar_sha256=" + sha256Hex(tar) + "\nzip_sha256="
+        String expected = WebsiteManifestGeneratorTest.LICENSE_HEADER
+                          + "format=1\nversion=" + TEST_VERSION + "\ntar_sha256=" + sha256Hex(tar) + "\nzip_sha256="
                           + sha256Hex(zip) + "\n";
         assertEquals(expected, Files.readString(versionManifest, StandardCharsets.UTF_8));
         assertArrayEquals(Files.readAllBytes(versionManifest), Files.readAllBytes(latestManifest));
