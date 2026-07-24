@@ -99,10 +99,11 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             routeId = subPath;
         }
 
-        JsonObject root = new JsonObject();
         if (routeId == null || routeId.isBlank()) {
-            return root;
+            routeId = "*";
         }
+
+        JsonObject root = new JsonObject();
 
         ManagedCamelContext mcc
                 = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
