@@ -110,7 +110,7 @@ When merging a PR, an agent MUST perform the following steps **in order**:
 
 4. **Categorize the PR with labels**:
    - Determine the PR category from the linked JIRA issue type or PR content:
-     - `bug` — for bug fixes (JIRA type: Bug)
+     - `bug` — for Camel end user facing bug fixes (JIRA type: Bug) - any CI, build system or internal project managed should be categorized as `task`. 
      - `enhancement` — for improvements and new features (JIRA type: Improvement, New Feature)
      - `documentation` — for documentation-only changes (JIRA type: Documentation)
      - `task` — for chores, refactoring, build changes (JIRA type: Task)
