@@ -97,3 +97,4 @@ org.apache.camel.telemetry.decorators.SqlSpanDecorator
 org.apache.camel.telemetry.decorators.TimerSpanDecorator
 org.apache.camel.telemetry.decorators.UndertowSpanDecorator
 org.apache.camel.telemetry.decorators.VertxHttpSpanDecorator
+org.apache.camel.telemetry.decorators.VertxWebsocketSpanDecorator
