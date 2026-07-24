@@ -50,4 +50,6 @@ The `--camel-version` option is not supported — it requires JBang to dynamical
 
 == More Information
 
-See the general xref:camel-jbang.adoc[Camel CLI] documentation.
+See xref:camel-jbang-launcher-install.adoc[Installing the Camel CLI Launcher] for the website
+installer scripts, `camel self-update`, and `camel doctor`'s multi-install detection, and the
+general xref:camel-jbang.adoc[Camel CLI] documentation.

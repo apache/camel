@@ -1,0 +1,105 @@
+= Installing the Camel CLI Launcher
+
+*Available as of Camel 4.22*
+
+Two canonical installer scripts install the xref:camel-jbang-launcher.adoc[Camel CLI Launcher]
+without a package manager:
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh
+----
+
+[source,powershell]
+----
+irm https://camel.apache.org/install.ps1 | iex
+----
+
+With no arguments, both installers resolve and install the latest published release. An exact
+version can be requested instead with `--version X.Y.Z` (`install.sh`) or `-Version X.Y.Z`
+(`install.ps1`).
+
+Both installers download the release archive from Maven Central, verify it against a SHA-256
+recorded in a signed-path manifest before extracting it, and reject archives containing absolute
+paths, `../` traversal, escaping symlinks/reparse points, or more than one top-level directory. The
+staged launcher is run once to confirm a Java 17+ runtime can be discovered; if that check fails,
+the previously active installation, if any, is left untouched and the installer exits nonzero.
+
+== Where the CLI is installed
+
+Installation is always per-user and never requires elevation or `sudo`:
+
+* POSIX (`install.sh`) installs under
+  `${XDG_DATA_HOME:-$HOME/.local/share}/camel-cli/versions/<version>` and activates it via a
+  symlink at `$HOME/.local/bin/camel`. The installer never writes to shell profile files
+  (`.bashrc`, `.profile`, etc.); if `$HOME/.local/bin` is not already on `PATH`, it prints guidance
+  instead.
+* Windows (`install.ps1`) installs under `%LOCALAPPDATA%\Apache Camel\cli\versions\<version>` and
+  activates it via a `camel.cmd` shim at `%LOCALAPPDATA%\Apache Camel\bin\camel.cmd` that delegates
+  to the staged `camel.bat`. The bin directory is added once, case-insensitively, to the current
+  user's `PATH`; the machine `PATH` is never modified.
+
+Previously installed version directories are left in place after an upgrade or downgrade and must
+be removed manually. Reinstalling the same version replaces that version directory.
+
+This is also the layout the `camel self-update` and `camel doctor` commands below understand.
+Neither one touches an installation made through Homebrew, Chocolatey, WinGet, Scoop, SDKMAN, or
+JBang, each of which manages its own install location and has its own upgrade command.
+
+== Upgrading and switching versions
+
+Once installed through `install.sh`/`install.ps1`, run:
+
+[source,bash]
+----
+camel self-update                 # install the latest release, if newer than what's running
+camel self-update --version 4.23.0  # install a specific version (upgrade or downgrade)
+camel self-update --check         # report only, install nothing
+----
+
+`camel self-update` checks whether an update is actually needed first (no network cost for the
+archive itself if you're already current), then re-runs the same, published `install.sh`/
+`install.ps1` installer described above, pinned to the exact version it just resolved, rather
+than re-implementing the download/verify/extract/activate steps a second time. The installer
+script itself is downloaded fresh and verified against a SHA-256 published alongside it
+(`install.sha256`) before it's run.
+
+`camel self-update` refuses to run in two cases. If the currently running installation was not made
+by `install.sh`/`install.ps1` (it was installed through Homebrew, Chocolatey, WinGet, Scoop,
+SDKMAN, or JBang instead), the message names that manager and its own upgrade command, e.g.
+`brew upgrade apache-camel`. If the installation was pinned to an explicit version by a user running
+`install.sh --version 4.22.0`/`install.ps1 -Version 4.22.0` directly (running
+`camel self-update --version ...` does not create a pin), the message names the pin file to remove
+to resume tracking new releases.
+
+Every `camel` invocation (except `camel self-update` itself) checks, at most once every 24 hours,
+whether a newer release has been published, and prints a one-line notice if so:
+
+[source]
+----
+camel: a new version is available (4.22.0 -> 4.23.0). Run 'camel self-update' to install it.
+----
+
+The check runs on a background thread and never blocks or fails the command actually being run. Set
+`CAMEL_SELF_UPDATE_CHECK=false` to disable it entirely.
+
+== Detecting conflicting installations
+
+If a machine has more than one Camel CLI installation (for example, both `install.sh` and Homebrew),
+whichever one is first on `PATH` is the one that actually runs; the others sit unused.
+`camel doctor` reports every installation it finds and marks the active one:
+
+[source,bash]
+----
+$ camel doctor
+...
+Installs:    Found 2 Camel CLI installations
+             ~/.local/share/camel-cli/versions/4.22.0 (WEB_INSTALLER) <- active
+             /opt/homebrew/Cellar/apache-camel/4.21.0/libexec (HOMEBREW)
+
+Warning: more than one Camel CLI installation was found. The one marked active is the one your
+shell currently runs; the others are unused but still present.
+----
+
+`camel doctor` exits non-zero when more than one installation is found, so the check is scriptable
+in CI.
