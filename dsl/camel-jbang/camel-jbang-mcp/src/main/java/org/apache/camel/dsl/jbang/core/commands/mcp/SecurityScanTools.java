@@ -43,7 +43,7 @@ import org.apache.camel.util.SecurityUtils;
 public class SecurityScanTools {
 
     private static final Pattern SECRET_IN_URI = Pattern.compile(
-            "(?i)(password|passwd|pwd|secret|token|apikey|api[_-]?key|access[_-]?key)\\s*[=:]\\s*(?!\\{\\{)(?!\\$\\{)(?!RAW\\()([^\\s,;}'\"\\]&]+)");
+            "(?i)(password|passwd|pwd|secret|token|apikey|api[_-]?key|access[_-]?key)\\s*[=:]\\s*(?!\\{\\{)(?!\\$\\{)([^\\s,;}'\"\\]&]+)");
 
     private static final Pattern CONNECTION_STRING_CREDS = Pattern.compile(
             "(?i)(mongodb(\\+srv)?://|amqp://|redis://|jdbc:)\\S+:\\S+@");
@@ -113,6 +113,9 @@ public class SecurityScanTools {
                 String insecureValue = entry.getValue().insecureValue();
                 String category = entry.getValue().category();
 
+                if (insecureValue == null || insecureValue.isEmpty()) {
+                    continue;
+                }
                 if (lower.contains(optionKey + "=" + insecureValue)
                         || lower.contains(optionKey + ":" + insecureValue)
                         || lower.contains(optionKey + "\":" + insecureValue)
@@ -198,23 +201,47 @@ public class SecurityScanTools {
     }
 
     private void scanMissingHeaderFilters(String route, String[] lines, List<Finding> findings) {
-        String lower = route.toLowerCase(Locale.ROOT);
-        for (String consumer : CONSUMER_COMPONENTS) {
-            if (containsScheme(lower, consumer)) {
-                if (!lower.contains("removeheaders") && !lower.contains("headerfilter")
-                        && !lower.contains("camel*")) {
-                    int lineNum = findLineContaining(lines, consumer + ":");
-                    findings.add(new Finding(
-                            "high",
-                            "header-injection",
-                            "Consumer '" + consumer + "' without Camel* header filter",
-                            lineNum,
-                            "Add removeHeaders(\"Camel*\") or a HeaderFilterStrategy to prevent "
-                                     + "external clients from injecting Camel-internal headers "
-                                     + "(CVE-2025-27636 and related)"));
+        for (int i = 0; i < lines.length; i++) {
+            String lower = lines[i].toLowerCase(Locale.ROOT);
+            for (String consumer : CONSUMER_COMPONENTS) {
+                if (containsScheme(lower, consumer)) {
+                    if (!hasHeaderFilterNearby(lines, i)) {
+                        findings.add(new Finding(
+                                "high",
+                                "header-injection",
+                                "Consumer '" + consumer + "' without Camel* header filter",
+                                i + 1,
+                                "Add removeHeaders(\"Camel*\") or a HeaderFilterStrategy to prevent "
+                                       + "external clients from injecting Camel-internal headers "
+                                       + "(CVE-2025-27636 and related)"));
+                    }
                 }
             }
         }
+    }
+
+    private boolean hasHeaderFilterNearby(String[] lines, int consumerLine) {
+        int searchEnd = Math.min(lines.length, consumerLine + 20);
+        for (int i = consumerLine; i < searchEnd; i++) {
+            String lower = lines[i].toLowerCase(Locale.ROOT);
+            if (lower.contains("removeheaders") || lower.contains("headerfilter")
+                    || lower.contains("\"camel*\"") || lower.contains("'camel*'")) {
+                return true;
+            }
+            if (i > consumerLine && containsAnyConsumerScheme(lower)) {
+                break;
+            }
+        }
+        return false;
+    }
+
+    private boolean containsAnyConsumerScheme(String lower) {
+        for (String consumer : CONSUMER_COMPONENTS) {
+            if (containsScheme(lower, consumer)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void scanExecComponent(String[] lines, List<Finding> findings) {
@@ -260,7 +287,13 @@ public class SecurityScanTools {
     }
 
     private static boolean containsScheme(String text, String scheme) {
-        return text.contains(scheme + ":") || text.contains("\"" + scheme + "\"") || text.contains("'" + scheme + "'");
+        int idx = text.indexOf(scheme + ":");
+        if (idx >= 0) {
+            if (idx == 0 || !Character.isLetterOrDigit(text.charAt(idx - 1)) && text.charAt(idx - 1) != '-') {
+                return true;
+            }
+        }
+        return text.contains("\"" + scheme + "\"") || text.contains("'" + scheme + "'");
     }
 
     private static int findLineContaining(String[] lines, String text) {
