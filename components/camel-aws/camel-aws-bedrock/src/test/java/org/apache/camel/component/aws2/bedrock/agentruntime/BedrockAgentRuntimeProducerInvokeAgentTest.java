@@ -39,17 +39,13 @@ import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeAgentResp
 import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeInlineAgentRequest;
 import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeInlineAgentResponseHandler;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
-public class BedrockAgentRuntimeProducerInvokeAgentTest {
+class BedrockAgentRuntimeProducerInvokeAgentTest {
 
     @Mock
     private BedrockAgentRuntimeAsyncClient asyncClient;
@@ -60,7 +56,7 @@ public class BedrockAgentRuntimeProducerInvokeAgentTest {
     private AtomicReference<InvokeInlineAgentRequest> capturedInlineRequest;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         capturedAgentRequest = new AtomicReference<>();
         capturedInlineRequest = new AtomicReference<>();
         // Capture the request and complete the future immediately. No events are emitted, so the tests focus on how
@@ -111,7 +107,7 @@ public class BedrockAgentRuntimeProducerInvokeAgentTest {
     }
 
     @AfterEach
-    public void teardown() {
+    void teardown() {
         if (template != null) {
             template.stop();
         }
@@ -121,24 +117,24 @@ public class BedrockAgentRuntimeProducerInvokeAgentTest {
     }
 
     @Test
-    public void invokeAgentBuildsRequestFromStringBodyAndEndpointConfig() {
+    void invokeAgentBuildsRequestFromStringBodyAndEndpointConfig() {
         Exchange result = template.send("direct:agent", exchange -> exchange.getMessage().setBody("hello agent"));
 
-        assertNotNull(result);
+        assertThat(result).isNotNull();
         InvokeAgentRequest request = capturedAgentRequest.get();
-        assertNotNull(request, "Producer must have invoked the async client");
-        assertEquals("agent-1", request.agentId());
-        assertEquals("alias-1", request.agentAliasId());
-        assertEquals("session-1", request.sessionId());
-        assertEquals("hello agent", request.inputText(), "The body is sent as the agent input text");
-        assertEquals(Boolean.FALSE, request.enableTrace());
+        assertThat(request).as("Producer must have invoked the async client").isNotNull();
+        assertThat(request.agentId()).isEqualTo("agent-1");
+        assertThat(request.agentAliasId()).isEqualTo("alias-1");
+        assertThat(request.sessionId()).isEqualTo("session-1");
+        assertThat(request.inputText()).as("The body is sent as the agent input text").isEqualTo("hello agent");
+        assertThat(request.enableTrace()).isFalse();
 
         // The session id is echoed back so a route can reuse it to continue the conversation.
-        assertEquals("session-1", result.getMessage().getHeader(BedrockAgentRuntimeConstants.SESSION_ID));
+        assertThat(result.getMessage().getHeader(BedrockAgentRuntimeConstants.SESSION_ID)).isEqualTo("session-1");
     }
 
     @Test
-    public void invokeAgentAllowsHeaderOverrides() {
+    void invokeAgentAllowsHeaderOverrides() {
         template.send("direct:agent", exchange -> {
             exchange.getMessage().setHeader(BedrockAgentRuntimeConstants.AGENT_ID, "agent-override");
             exchange.getMessage().setHeader(BedrockAgentRuntimeConstants.AGENT_ALIAS_ID, "alias-override");
@@ -150,75 +146,77 @@ public class BedrockAgentRuntimeProducerInvokeAgentTest {
         });
 
         InvokeAgentRequest request = capturedAgentRequest.get();
-        assertNotNull(request);
-        assertEquals("agent-override", request.agentId(), "AGENT_ID header must override the endpoint agentId");
-        assertEquals("alias-override", request.agentAliasId(),
-                "AGENT_ALIAS_ID header must override the endpoint agentAliasId");
-        assertEquals("session-override", request.sessionId(), "SESSION_ID header must override the endpoint sessionId");
-        assertEquals(Boolean.TRUE, request.enableTrace());
-        assertEquals(Boolean.TRUE, request.endSession());
-        assertEquals("memory-1", request.memoryId());
+        assertThat(request).isNotNull();
+        assertThat(request.agentId()).as("AGENT_ID header must override the endpoint agentId").isEqualTo("agent-override");
+        assertThat(request.agentAliasId()).as("AGENT_ALIAS_ID header must override the endpoint agentAliasId")
+                .isEqualTo("alias-override");
+        assertThat(request.sessionId()).as("SESSION_ID header must override the endpoint sessionId")
+                .isEqualTo("session-override");
+        assertThat(request.enableTrace()).isTrue();
+        assertThat(request.endSession()).isTrue();
+        assertThat(request.memoryId()).isEqualTo("memory-1");
     }
 
     @Test
-    public void invokeAgentGeneratesSessionIdWhenNotConfigured() {
+    void invokeAgentGeneratesSessionIdWhenNotConfigured() {
         template.send("direct:agent-chunks", exchange -> exchange.getMessage().setBody("hi"));
 
         InvokeAgentRequest request = capturedAgentRequest.get();
-        assertNotNull(request);
+        assertThat(request).isNotNull();
         // The API requires a session id, so one is generated when neither config nor header supplies it.
-        assertNotNull(request.sessionId(), "A session id must always be sent");
-        assertNotEquals("", request.sessionId());
+        assertThat(request.sessionId()).as("A session id must always be sent").isNotNull().isNotEmpty();
     }
 
     @Test
-    public void invokeAgentFailsWhenAgentIdIsMissing() {
-        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:agent-no-config", "hi"));
-        Throwable cause = ex.getCause();
-        assertInstanceOf(IllegalArgumentException.class, cause);
-        assertTrue(cause.getMessage().contains("agentId"),
-                "Error message should mention the missing agentId — was: " + cause.getMessage());
+    void invokeAgentFailsWhenAgentIdIsMissing() {
+        assertThatThrownBy(() -> template.sendBody("direct:agent-no-config", "hi"))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .as("Error message should mention the missing agentId")
+                .hasMessageContaining("agentId");
     }
 
     @Test
-    public void completeModeReturnsTheAccumulatedTextAndChunksModeReturnsTheChunkList() {
+    void completeModeReturnsTheAccumulatedTextAndChunksModeReturnsTheChunkList() {
         // No events are emitted by the mock, so complete mode yields the empty accumulated string while chunks mode
         // yields an empty list. This asserts the streamOutputMode branching shapes the body differently.
         Exchange complete = template.send("direct:agent", exchange -> exchange.getMessage().setBody("hi"));
-        assertInstanceOf(String.class, complete.getMessage().getBody(),
-                "complete mode (the default) must produce the accumulated text as a String");
+        assertThat(complete.getMessage().getBody())
+                .as("complete mode (the default) must produce the accumulated text as a String")
+                .isInstanceOf(String.class);
 
         Exchange chunks = template.send("direct:agent-chunks", exchange -> exchange.getMessage().setBody("hi"));
-        assertInstanceOf(List.class, chunks.getMessage().getBody(),
-                "chunks mode must produce the list of chunks");
+        assertThat(chunks.getMessage().getBody()).as("chunks mode must produce the list of chunks")
+                .isInstanceOf(List.class);
     }
 
     @Test
-    public void streamOutputModeCanBeOverriddenByHeader() {
+    void streamOutputModeCanBeOverriddenByHeader() {
         Exchange result = template.send("direct:agent", exchange -> {
             exchange.getMessage().setHeader(BedrockAgentRuntimeConstants.AGENT_STREAM_OUTPUT_MODE, "chunks");
             exchange.getMessage().setBody("hi");
         });
 
-        assertInstanceOf(List.class, result.getMessage().getBody(),
-                "AGENT_STREAM_OUTPUT_MODE header must override the endpoint streamOutputMode");
+        assertThat(result.getMessage().getBody())
+                .as("AGENT_STREAM_OUTPUT_MODE header must override the endpoint streamOutputMode")
+                .isInstanceOf(List.class);
     }
 
     @Test
-    public void invokeInlineAgentBuildsRequestFromEndpointConfig() {
+    void invokeInlineAgentBuildsRequestFromEndpointConfig() {
         template.send("direct:inline", exchange -> exchange.getMessage().setBody("hello inline"));
 
         InvokeInlineAgentRequest request = capturedInlineRequest.get();
-        assertNotNull(request, "Producer must have invoked the async client");
-        assertEquals("anthropic.claude-3-haiku-20240307-v1:0", request.foundationModel());
-        assertEquals("Be helpful", request.instruction());
-        assertEquals("hello inline", request.inputText());
-        assertNotNull(request.sessionId(), "A session id must always be sent");
+        assertThat(request).as("Producer must have invoked the async client").isNotNull();
+        assertThat(request.foundationModel()).isEqualTo("anthropic.claude-3-haiku-20240307-v1:0");
+        assertThat(request.instruction()).isEqualTo("Be helpful");
+        assertThat(request.inputText()).isEqualTo("hello inline");
+        assertThat(request.sessionId()).as("A session id must always be sent").isNotNull();
     }
 
     @Test
-    public void invokeInlineAgentAllowsHeaderOverrides() {
+    void invokeInlineAgentAllowsHeaderOverrides() {
         template.send("direct:inline", exchange -> {
             exchange.getMessage().setHeader(BedrockAgentRuntimeConstants.AGENT_FOUNDATION_MODEL, "model-override");
             exchange.getMessage().setHeader(BedrockAgentRuntimeConstants.AGENT_INSTRUCTION, "instruction-override");
@@ -226,18 +224,18 @@ public class BedrockAgentRuntimeProducerInvokeAgentTest {
         });
 
         InvokeInlineAgentRequest request = capturedInlineRequest.get();
-        assertNotNull(request);
-        assertEquals("model-override", request.foundationModel());
-        assertEquals("instruction-override", request.instruction());
+        assertThat(request).isNotNull();
+        assertThat(request.foundationModel()).isEqualTo("model-override");
+        assertThat(request.instruction()).isEqualTo("instruction-override");
     }
 
     @Test
-    public void invokeInlineAgentFailsWhenFoundationModelIsMissing() {
-        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:inline-no-config", "hi"));
-        Throwable cause = ex.getCause();
-        assertInstanceOf(IllegalArgumentException.class, cause);
-        assertTrue(cause.getMessage().contains("foundationModel"),
-                "Error message should mention the missing foundationModel — was: " + cause.getMessage());
+    void invokeInlineAgentFailsWhenFoundationModelIsMissing() {
+        assertThatThrownBy(() -> template.sendBody("direct:inline-no-config", "hi"))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .as("Error message should mention the missing foundationModel")
+                .hasMessageContaining("foundationModel");
     }
 }
