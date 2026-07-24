@@ -39,6 +39,7 @@ import software.amazon.awssdk.services.mq.model.ListBrokersResponse;
 import software.amazon.awssdk.services.mq.model.UpdateBrokerResponse;
 import software.amazon.awssdk.services.mq.model.User;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MQProducerTest extends CamelTestSupport {
@@ -170,6 +171,22 @@ public class MQProducerTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
         UpdateBrokerResponse resultGet = (UpdateBrokerResponse) exchange.getIn().getBody();
         assertEquals("1", resultGet.brokerId());
+    }
+
+    @Test
+    void mqUpdateBrokerWithoutBrokerIdReportsThatParameter() {
+        assertThatThrownBy(() -> template.requestBody("direct:updateBroker", "body"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("Broker Id must be specified");
+    }
+
+    @Test
+    void mqUpdateBrokerWithoutConfigurationIdReportsThatParameter() {
+        // the broker id IS supplied, so the error must name the missing configuration id
+        assertThatThrownBy(() -> template.requestBodyAndHeader("direct:updateBroker", "body",
+                MQ2Constants.BROKER_ID, "1"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("Configuration Id must be specified");
     }
 
     @Test

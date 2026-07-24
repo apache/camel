@@ -56,6 +56,8 @@ public class MQ2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MQ2Producer.class);
     public static final String MISSING_BROKER_NAME = "Broker Name must be specified";
+    public static final String MISSING_BROKER_ID = "Broker Id must be specified";
+    public static final String MISSING_CONFIGURATION_ID = "Configuration Id must be specified";
 
     private transient String mqProducerToString;
     private HealthCheck producerHealthCheck;
@@ -247,7 +249,7 @@ public class MQ2Producer extends DefaultProducer {
                 brokerId = exchange.getIn().getHeader(MQ2Constants.BROKER_ID, String.class);
                 builder.brokerId(brokerId);
             } else {
-                throw new IllegalArgumentException(MISSING_BROKER_NAME);
+                throw new IllegalArgumentException(MISSING_BROKER_ID);
             }
             DeleteBrokerResponse result;
             try {
@@ -282,7 +284,7 @@ public class MQ2Producer extends DefaultProducer {
                 brokerId = exchange.getIn().getHeader(MQ2Constants.BROKER_ID, String.class);
                 builder.brokerId(brokerId);
             } else {
-                throw new IllegalArgumentException(MISSING_BROKER_NAME);
+                throw new IllegalArgumentException(MISSING_BROKER_ID);
             }
             RebootBrokerResponse result;
             try {
@@ -318,13 +320,13 @@ public class MQ2Producer extends DefaultProducer {
                 brokerId = exchange.getIn().getHeader(MQ2Constants.BROKER_ID, String.class);
                 builder.brokerId(brokerId);
             } else {
-                throw new IllegalArgumentException(MISSING_BROKER_NAME);
+                throw new IllegalArgumentException(MISSING_BROKER_ID);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQ2Constants.CONFIGURATION_ID))) {
                 configurationId = exchange.getIn().getHeader(MQ2Constants.CONFIGURATION_ID, ConfigurationId.class);
                 builder.configuration(configurationId);
             } else {
-                throw new IllegalArgumentException(MISSING_BROKER_NAME);
+                throw new IllegalArgumentException(MISSING_CONFIGURATION_ID);
             }
             UpdateBrokerResponse result;
             try {
@@ -359,7 +361,7 @@ public class MQ2Producer extends DefaultProducer {
                 brokerId = exchange.getIn().getHeader(MQ2Constants.BROKER_ID, String.class);
                 builder.brokerId(brokerId);
             } else {
-                throw new IllegalArgumentException(MISSING_BROKER_NAME);
+                throw new IllegalArgumentException(MISSING_BROKER_ID);
             }
             DescribeBrokerResponse result;
             try {
