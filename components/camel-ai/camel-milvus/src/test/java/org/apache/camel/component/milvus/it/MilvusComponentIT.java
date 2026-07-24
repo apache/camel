@@ -143,7 +143,7 @@ public class MilvusComponentIT extends MilvusTestSupport {
         Random ran = new Random();
         List<Integer> ages = new ArrayList<>();
         for (long i = 0L; i < 2; ++i) {
-            ages.add(ran.nextInt(99));
+            ages.add(ran.nextInt(1, 99));
         }
         List<InsertParam.Field> fields = new ArrayList<>();
         fields.add(new InsertParam.Field("userAge", ages));
@@ -170,7 +170,7 @@ public class MilvusComponentIT extends MilvusTestSupport {
         Random ran = new Random();
         List<Integer> ages = new ArrayList<>();
         for (long i = 0L; i < 2; ++i) {
-            ages.add(ran.nextInt(99));
+            ages.add(ran.nextInt(1, 99));
         }
         List<UpsertParam.Field> fields = new ArrayList<>();
         fields.add(new UpsertParam.Field("userAge", ages));
