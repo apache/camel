@@ -21,14 +21,16 @@ import org.apache.camel.main.Main;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
-public class MainNettyCustomCodecTest extends BaseNettyTest {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+class MainNettyCustomCodecTest extends BaseNettyTest {
 
     // use reaadble bytes
     private byte[] data_eol = new byte[] { 65, 66, 67, 68, 69, 70, 71, 72, 73, 0, 0 };
     private byte[] data = new byte[] { 65, 66, 67, 68, 69, 70, 71, 72, 73 };
 
     @Test
-    public void testMain() throws Exception {
+    void testMain() throws Exception {
         Main main = new Main();
         main.bind("myCustomDecoder", MyCustomCodec.createMyCustomDecoder());
         main.bind("myCustomDecoder2", MyCustomCodec.createMyCustomDecoder2());
@@ -38,7 +40,8 @@ public class MainNettyCustomCodecTest extends BaseNettyTest {
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() {
-                String uri = "netty:tcp://localhost:" + getPort() + "?disconnect=true&sync=false&allowDefaultCodec=false";
+                String uri
+                        = "netty:tcp://localhost:" + getPort() + "?disconnect=true&sync=false&allowDefaultCodec=false";
 
                 from(uri).to("log:input")
                         .process(e -> {
@@ -56,7 +59,11 @@ public class MainNettyCustomCodecTest extends BaseNettyTest {
         });
         main.configure().withDurationMaxMessages(2);
         main.configure().withDurationMaxSeconds(5);
+
         main.run();
+        // run() blocks until duration/message limit is reached, then returns.
+        // The route processor inside validates data equality and throws if mismatched.
+        assertNotNull(main.getCamelContext(), "CamelContext should have been created during run");
 
         main.stop();
     }

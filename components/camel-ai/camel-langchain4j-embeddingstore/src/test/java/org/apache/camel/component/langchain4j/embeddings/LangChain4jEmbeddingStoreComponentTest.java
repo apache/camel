@@ -27,9 +27,13 @@ import org.apache.camel.Message;
 import org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStore;
 import org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreComponent;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -51,16 +55,26 @@ public class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSimpleEmbedding() {
-
+    void testEmbeddingModel() {
         EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
 
         TextSegment segment1 = TextSegment.from("I like football.");
         Embedding testEmbedding = embeddingModel.embed(segment1).content();
+        assertNotNull(testEmbedding, "embedding model should produce a non-null embedding");
+        assertFalse(testEmbedding.vectorAsList().isEmpty(), "embedding vector should not be empty");
+    }
+
+    @Disabled("Requires a running Weaviate instance — convert to an integration test with Testcontainers")
+    @Test
+    void testStoreRouting() throws Exception {
+        EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+        Embedding testEmbedding = embeddingModel.embed(TextSegment.from("I like football.")).content();
 
         Message first = fluentTemplate.to("langchain4j-embeddingstore:first")
                 .withBody(testEmbedding)
                 .request(Message.class);
-
+        assertNotNull(first, "response message should not be null");
+        assertNotNull(first.getBody(), "response body should not be null");
+        assertFalse(first.getBody(String.class).isEmpty(), "response body should contain store content");
     }
 }

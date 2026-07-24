@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.snakeyaml;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -26,12 +23,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext
-public class SnakeYAMLSpringTest extends CamelSpringTestSupport {
+class SnakeYAMLSpringTest extends CamelSpringTestSupport {
     @Test
-    public void testMarshalAndUnmarshalMap() throws Exception {
-        Map<String, String> in = new HashMap<>();
-        in.put("name", "Camel");
-
+    void testMarshalAndUnmarshalMap() throws Exception {
         SnakeYAMLTestHelper.marshalAndUnmarshal(
                 context(),
                 SnakeYAMLTestHelper.createTestMap(),

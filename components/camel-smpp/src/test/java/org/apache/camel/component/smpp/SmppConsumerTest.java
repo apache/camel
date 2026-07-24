@@ -47,6 +47,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -54,7 +55,7 @@ import static org.mockito.Mockito.when;
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConsumer</code>
  */
-public class SmppConsumerTest {
+class SmppConsumerTest {
 
     private ExchangeFactory exchangeFactory;
     private CamelContext context;
@@ -120,11 +121,13 @@ public class SmppConsumerTest {
     }
 
     @Test
-    public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
+    void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
         when(endpoint.getConnectionString())
                 .thenReturn("smpp://smppclient@localhost:2775");
 
         consumer.doStop();
+
+        verify(session, never()).unbindAndClose();
     }
 
     @Test

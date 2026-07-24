@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
+class WorkdayCommonAPIProducerTest extends CamelTestSupport {
 
     @Test
     public void createProducerMinimalConfiguration() throws Exception {
@@ -121,7 +121,7 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerCurrenciesValidConfiguration() throws Exception {
+    void createProducerCurrenciesValidConfiguration() throws Exception {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
         WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
@@ -132,7 +132,9 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
 
         WorkdayCommonAPIProducer workdayProducer = new WorkdayCommonAPIProducer(workdayEndpoint);
 
-        workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration());
+        String workdayUri = workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration());
+
+        assertEquals("https://impl.workday.com/ccx/api/v1/camel/currencies", workdayUri);
     }
 
     @Test

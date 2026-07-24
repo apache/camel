@@ -37,7 +37,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XmlToYamlTest {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+class XmlToYamlTest {
 
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
 
@@ -49,12 +52,16 @@ public class XmlToYamlTest {
     void testRoutes(String xml) throws Exception {
         try (InputStream is = new FileInputStream("../camel-xml-io/src/test/resources/" + xml)) {
             RoutesDefinition expected = new ModelParser(is, NAMESPACE).parseRoutesDefinition().get();
+            assertNotNull(expected, "Parsed routes definition should not be null for " + xml);
+            assertFalse(expected.getRoutes().isEmpty(), "Routes should not be empty for " + xml);
             YamlModelWriter writer = new YamlModelWriter();
             List<JsonObject> roots = new ArrayList<>();
             for (RouteDefinition route : expected.getRoutes()) {
                 roots.add(writer.writeRouteDefinition(route));
             }
             String out = writer.printAsYaml(roots);
+            assertNotNull(out, "YAML output should not be null for " + xml);
+            assertFalse(out.isEmpty(), "YAML output should not be empty for " + xml);
             LOG.info("xml={}\n{}\n", xml, out);
         }
     }

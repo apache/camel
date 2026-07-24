@@ -25,9 +25,10 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class GroovyLogEipTest extends CamelTestSupport {
+class GroovyLogEipTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -37,8 +38,9 @@ public class GroovyLogEipTest extends CamelTestSupport {
     }
 
     @Test
-    public void testLogOkay() {
-        template.sendBody("direct:start", 3);
+    void testLogOkay() {
+        Exchange result = template.send("direct:start", e -> e.getIn().setBody(3));
+        assertNull(result.getException(), "Groovy log EIP should evaluate expressions without error");
     }
 
     @Test

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SSLEngineFactoryTest {
+class SSLEngineFactoryTest {
 
     @Test
     public void testApplyPqcNamedGroupsOnSupportedJdk() throws Exception {
@@ -66,13 +66,17 @@ public class SSLEngineFactoryTest {
     }
 
     @Test
-    public void testApplyPqcNamedGroupsDoesNotThrow() throws Exception {
+    void testApplyPqcNamedGroupsDoesNotThrow() throws Exception {
         SSLContext context = SSLContext.getInstance("TLSv1.3");
         context.init(null, null, null);
         SSLEngine engine = context.createSSLEngine();
 
-        // Must not throw on any JDK version
         SSLEngineFactory.applyPqcNamedGroups(engine);
+
+        // Verify the engine is still functional after applying PQC named groups
+        assertNotNull(engine.getSSLParameters(), "SSL parameters should remain valid");
+        assertNotNull(engine.getEnabledProtocols(), "Enabled protocols should remain valid");
+        assertTrue(engine.getEnabledProtocols().length > 0, "At least one protocol should be enabled");
     }
 
     @Test

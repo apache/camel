@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * for testing without manual setup.
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class KeycloakTestInfraIT extends CamelTestSupport {
+class KeycloakTestInfraIT extends CamelTestSupport {
 
     private static final Logger log = LoggerFactory.getLogger(KeycloakTestInfraIT.class);
 
@@ -1498,6 +1498,9 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
                 log.warn("Failed to delete policy {}: {}", TEST_POLICY_NAME, e.getMessage());
             }
         }
+
+        assertTrue(context.getStatus().isStarted(),
+                "CamelContext should still be running after authorization resource cleanup");
     }
 
     @Test

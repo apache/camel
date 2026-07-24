@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.component.a2a.model.Artifact;
 import org.apache.camel.component.a2a.model.Message;
@@ -175,11 +176,50 @@ class InMemoryTaskStoreTest {
     @Test
     void subscribeAndUnsubscribe() {
         store.put("t1", createTask("t1", TaskState.WORKING));
-        A2AStreamEmitter emitter = createNoOpEmitter();
-        A2ATaskSubscriber subscriber = new StreamSubscriber(emitter);
+        AtomicInteger callCount = new AtomicInteger(0);
+        A2AStreamEmitter countingEmitter = new A2AStreamEmitter() {
+            @Override
+            public void emitStatus(TaskState state, String message) {
+                callCount.incrementAndGet();
+            }
+
+            @Override
+            public void emitArtifact(Artifact artifact, Boolean append, Boolean lastChunk) {
+                callCount.incrementAndGet();
+            }
+
+            @Override
+            public void emitMessage(Message message) {
+                callCount.incrementAndGet();
+            }
+
+            @Override
+            public boolean isClosed() {
+                return false;
+            }
+        };
+        StreamSubscriber subscriber = new StreamSubscriber(countingEmitter);
 
         store.addSubscriber("t1", subscriber);
+
+        // Notify while subscribed -- subscriber should be called
+        TaskStatusUpdateEvent statusEvent = TaskStatusUpdateEvent.builder()
+                .taskId("t1")
+                .status(new TaskStatus(TaskState.WORKING))
+                .build();
+        store.notifySubscribers("t1", StreamResponse.ofStatusUpdate(statusEvent));
+        assertThat(callCount.get()).as("subscriber should be called once while subscribed").isEqualTo(1);
+
+        // Unsubscribe
         store.removeSubscriber("t1", subscriber);
+
+        // Notify again -- unsubscribed subscriber should NOT be called
+        store.notifySubscribers("t1", StreamResponse.ofStatusUpdate(statusEvent));
+        assertThat(callCount.get()).as("subscriber should not be called after removal").isEqualTo(1);
+
+        // Task should still be intact after subscribe/unsubscribe cycle
+        assertThat(store.get("t1")).isNotNull();
+        assertThat(store.get("t1").status().state()).isEqualTo(TaskState.WORKING);
     }
 
     @Test
