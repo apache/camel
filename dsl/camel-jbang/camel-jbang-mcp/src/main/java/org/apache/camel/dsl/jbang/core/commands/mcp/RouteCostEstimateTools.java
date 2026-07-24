@@ -56,9 +56,11 @@ public class RouteCostEstimateTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Estimate API costs for a Camel route based on its component usage. "
                         + "Analyzes a YAML or XML route definition and identifies components with "
-                        + "pay-per-use pricing (Bedrock LLM, Textract, S3, SQS, SNS, etc.). "
+                        + "pay-per-use pricing. Currently covers: Bedrock (runtime and agent-runtime), "
+                        + "Textract, S3, SQS, SNS, Kinesis, OpenAI, LangChain4j (chat and embeddings), "
+                        + "and Docling (free/self-hosted). "
                         + "Returns per-execution cost estimate and monthly projection at a given throughput. "
-                        + "Cost data is approximate based on published AWS pricing.")
+                        + "Cost data is approximate based on published AWS pricing (2025-Q2).")
     public CostEstimateResult camel_route_cost_estimate(
             @ToolArg(description = "The Camel route definition (YAML or XML)") String route,
             @ToolArg(description = "Expected messages per hour for cost projection (default: 100)") Integer messagesPerHour,
@@ -133,7 +135,8 @@ public class RouteCostEstimateTools {
                 projection, summary,
                 optimizationTips.isEmpty() ? null : optimizationTips,
                 "Cost estimates are approximate based on published AWS pricing (us-east-1). "
-                                                                      + "Actual costs vary by region, volume tier, and model.");
+                                                                      + "Actual costs vary by region, volume tier, and model.",
+                "2025-Q2");
     }
 
     List<String> extractSchemes(String route) {
@@ -192,6 +195,16 @@ public class RouteCostEstimateTools {
             @Override
             double estimateCostPerExecution(int pages, int inputTokens, int outputTokens) {
                 return (inputTokens * 3.0 / 1_000_000) + (outputTokens * 15.0 / 1_000_000);
+            }
+        });
+
+        profiles.put("aws-bedrock-agent-runtime", new ComponentCostProfile(
+                "AWS Bedrock Agent Runtime (RAG/Flows)", "per-session",
+                "RetrieveAndGenerate: model invocation cost + ~$0.02/1000 retrieval units. "
+                                                                        + "InvokeFlow: depends on flow steps") {
+            @Override
+            double estimateCostPerExecution(int pages, int inputTokens, int outputTokens) {
+                return (inputTokens * 3.0 / 1_000_000) + (outputTokens * 15.0 / 1_000_000) + 0.02 / 1000;
             }
         });
 
@@ -261,7 +274,7 @@ public class RouteCostEstimateTools {
 
         profiles.put("langchain4j-embeddings", new ComponentCostProfile(
                 "LangChain4j Embeddings (model-dependent)", "per-token",
-                "Embedding: ~$0.02/1M tokens (Titan Embed)") {
+                "Estimated as Titan Embed (~$0.02/1M tokens); free with Ollama/local models") {
             @Override
             double estimateCostPerExecution(int pages, int inputTokens, int outputTokens) {
                 return inputTokens * 0.02 / 1_000_000;
@@ -315,7 +328,8 @@ public class RouteCostEstimateTools {
             CostProjection projection,
             CostSummary summary,
             List<String> optimizationTips,
-            String disclaimer) {
+            String disclaimer,
+            String pricingDataAsOf) {
     }
 
     public record ComponentCostBreakdown(
