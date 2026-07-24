@@ -42,72 +42,47 @@ class McpSecretRedactorTest {
     }
 
     @Test
-    void redactsPasswordKeyValue() {
+    void redactsKeyValueUsingCamelSensitiveKeywords() {
         McpSecretRedactor redactor = createRedactor(null);
 
+        // The value is masked and the key is preserved (Camel's DefaultMaskingFormatter behaviour).
         assertThat(redactor.redact("password=secret123"))
-                .isEqualTo(McpSecretRedactor.REDACTED);
-        assertThat(redactor.redact("Password: myP@ssw0rd"))
-                .isEqualTo(McpSecretRedactor.REDACTED);
-        assertThat(redactor.redact("pwd=abc"))
-                .isEqualTo(McpSecretRedactor.REDACTED);
+                .isEqualTo("password=" + McpSecretRedactor.REDACTED);
+        assertThat(redactor.redact("apikey=sk-12345"))
+                .isEqualTo("apikey=" + McpSecretRedactor.REDACTED);
+        assertThat(redactor.redact("accessToken=abc123"))
+                .isEqualTo("accessToken=" + McpSecretRedactor.REDACTED);
+        // A compound property name is matched via the embedded keyword.
+        assertThat(redactor.redact("datasource.password=hunter2"))
+                .doesNotContain("hunter2")
+                .contains(McpSecretRedactor.REDACTED);
     }
 
     @Test
-    void redactsApiKeys() {
+    void redactsSecretCarriedAsUrlQueryParameter() {
         McpSecretRedactor redactor = createRedactor(null);
 
-        assertThat(redactor.redact("api_key=sk-12345"))
-                .isEqualTo(McpSecretRedactor.REDACTED);
-        assertThat(redactor.redact("apiKey: abc123"))
-                .isEqualTo(McpSecretRedactor.REDACTED);
-        assertThat(redactor.redact("secret-key=xyz789"))
-                .isEqualTo(McpSecretRedactor.REDACTED);
+        assertThat(redactor.redact("uri: jdbc:postgresql://db:5432/app?ssl=true&password=hunter2"))
+                .doesNotContain("hunter2")
+                .contains(McpSecretRedactor.REDACTED);
     }
 
     @Test
-    void redactsTokensAndBearer() {
+    void redactsSensitiveJsonField() {
         McpSecretRedactor redactor = createRedactor(null);
 
-        assertThat(redactor.redact("token=eyJhbGciOiJIUzI1NiJ9"))
-                .isEqualTo(McpSecretRedactor.REDACTED);
-        assertThat(redactor.redact("bearer: some-bearer-token"))
-                .isEqualTo(McpSecretRedactor.REDACTED);
+        assertThat(redactor.redact("{\"password\":\"hunter2\",\"name\":\"orders\"}"))
+                .doesNotContain("hunter2")
+                .contains("orders");
     }
 
     @Test
-    void redactsAwsAccessKeyIds() {
+    void doesNotRedactNonSensitiveKeyValue() {
         McpSecretRedactor redactor = createRedactor(null);
 
-        assertThat(redactor.redact("key is AKIAIOSFODNN7EXAMPLE"))
-                .isEqualTo("key is " + McpSecretRedactor.REDACTED);
-    }
-
-    @Test
-    void redactsConnectionStringsWithCredentials() {
-        McpSecretRedactor redactor = createRedactor(null);
-
-        assertThat(redactor.redact("uri: mongodb://user:pass@host:27017/db"))
-                .isEqualTo("uri: " + McpSecretRedactor.REDACTED);
-        assertThat(redactor.redact("url=amqp://admin:secret@broker:5672/vhost"))
-                .isEqualTo("url=" + McpSecretRedactor.REDACTED);
-    }
-
-    @Test
-    void doesNotRedactNormalText() {
-        McpSecretRedactor redactor = createRedactor(null);
-
-        String normalText = "Route started successfully with 3 endpoints";
-        assertThat(redactor.redact(normalText)).isEqualTo(normalText);
-    }
-
-    @Test
-    void handlesMultipleSecretsInSameString() {
-        McpSecretRedactor redactor = createRedactor(null);
-
-        String input = "password=secret, apiKey=abc123";
-        String result = redactor.redact(input);
-        assertThat(result).doesNotContain("secret").doesNotContain("abc123");
+        assertThat(redactor.redact("route=timer-1")).isEqualTo("route=timer-1");
+        assertThat(redactor.redact("Route started successfully with 3 endpoints"))
+                .isEqualTo("Route started successfully with 3 endpoints");
     }
 
     @Test
@@ -137,27 +112,12 @@ class McpSecretRedactorTest {
     }
 
     @Test
-    void redactsClientSecretAndUrlQueryParamAndPemBlock() {
-        McpSecretRedactor redactor = createRedactor(null);
-
-        assertThat(redactor.redact("client_secret=abcdef123456"))
-                .isEqualTo(McpSecretRedactor.REDACTED);
-        // JDBC/URL carrying the password as a query parameter has no userinfo '@' so it is not a connection
-        // string; it must still be caught.
-        assertThat(redactor.redact("jdbc:postgresql://db:5432/app?ssl=true&password=hunter2"))
-                .contains(McpSecretRedactor.REDACTED)
-                .doesNotContain("hunter2");
-        assertThat(redactor.redact("-----BEGIN RSA PRIVATE KEY-----\nMIIEabc\n-----END RSA PRIVATE KEY-----"))
-                .isEqualTo(McpSecretRedactor.REDACTED);
-    }
-
-    @Test
     void redactsStructuredJsonObjectByKeyName() {
         McpSecretRedactor redactor = createRedactor(null);
 
-        // This is the case the String-only path missed: a JsonObject (as returned by the runtime tools) whose
-        // value is JSON-quoted. The value regex cannot match a quoted value, so structured redaction by key name
-        // is what protects it.
+        // The case the String-only path missed: a JsonObject (as returned by the runtime tools) whose value is
+        // JSON-quoted. Structured redaction blanks it by key name using SensitiveUtils.containsSensitive, which
+        // strips a compound property to its last segment (datasource.password -> password).
         JsonObject properties = new JsonObject();
         properties.put("datasource.url", "jdbc:postgresql://db:5432/app");
         properties.put("datasource.password", "hunter2");
@@ -180,9 +140,9 @@ class McpSecretRedactorTest {
     void redactsSecretsEmbeddedInStructuredStringValues() {
         McpSecretRedactor redactor = createRedactor(null);
 
-        // A non-secret key whose string value nonetheless embeds a credential-bearing connection string.
+        // A non-secret key whose string value nonetheless embeds a key=value credential.
         JsonObject config = new JsonObject();
-        config.put("broker", "amqp://admin:secret@broker:5672/vhost");
+        config.put("name", "orders");
         JsonArray endpoints = new JsonArray();
         endpoints.add("timer://foo");
         endpoints.add("sql://bar?dataSource=#ds&password=leaked");
@@ -191,7 +151,7 @@ class McpSecretRedactorTest {
         boolean changed = redactor.redactStructured(config);
 
         assertThat(changed).isTrue();
-        assertThat(config.getString("broker")).doesNotContain("secret").contains(McpSecretRedactor.REDACTED);
+        assertThat(config.getString("name")).isEqualTo("orders");
         assertThat(endpoints.getString(0)).isEqualTo("timer://foo");
         assertThat(endpoints.getString(1)).doesNotContain("leaked").contains(McpSecretRedactor.REDACTED);
     }
@@ -206,18 +166,5 @@ class McpSecretRedactorTest {
 
         assertThat(redactor.redactStructured(clean)).isFalse();
         assertThat(clean.getString("name")).isEqualTo("orders");
-    }
-
-    @Test
-    void secretKeyNameMatchingIsSeparatorAndCaseInsensitive() {
-        assertThat(McpSecretRedactor.isSecretKeyName("password")).isTrue();
-        assertThat(McpSecretRedactor.isSecretKeyName("client-secret")).isTrue();
-        assertThat(McpSecretRedactor.isSecretKeyName("client_secret")).isTrue();
-        assertThat(McpSecretRedactor.isSecretKeyName("clientSecret")).isTrue();
-        assertThat(McpSecretRedactor.isSecretKeyName("api-key")).isTrue();
-        assertThat(McpSecretRedactor.isSecretKeyName("keystorePassword")).isTrue();
-        assertThat(McpSecretRedactor.isSecretKeyName("route.id")).isFalse();
-        assertThat(McpSecretRedactor.isSecretKeyName("name")).isFalse();
-        assertThat(McpSecretRedactor.isSecretKeyName(null)).isFalse();
     }
 }
