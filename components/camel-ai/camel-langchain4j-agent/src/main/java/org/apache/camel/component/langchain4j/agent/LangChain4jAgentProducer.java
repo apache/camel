@@ -70,9 +70,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         // tags for Camel Routes as Tools
         String tags = endpoint.getConfiguration().getTags();
 
-        if (agentFactory != null) {
-            agent = agentFactory.createAgent(exchange);
-        }
+        Agent agent = agentFactory != null ? agentFactory.createAgent(exchange) : this.agent;
 
         AiAgentBody<?> aiAgentBody = agent.processBody(messagePayload, exchange);
 
