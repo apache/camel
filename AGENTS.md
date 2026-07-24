@@ -179,7 +179,7 @@ assertTrue(list.contains("a"));
 
 **Rules:**
 
-- New test code SHOULD use AssertJ assertions (`assertThat(...)`) instead of JUnit assertions
+- New test code is preferred to use AssertJ assertions (`assertThat(...)`) instead of JUnit assertions
   (`assertEquals`, `assertTrue`, `assertFalse`, `assertNotNull`, etc.).
 - When modifying existing test code that uses JUnit assertions, migrate touched assertions to
   AssertJ where it improves readability. No need to migrate the entire file.
