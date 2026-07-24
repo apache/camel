@@ -161,6 +161,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Dumps the route as Java DSL")
     String dumpRouteAsJava(boolean resolvePlaceholders, boolean generatedIds) throws Exception;
 
+    @ManagedOperation(description = "Dumps the route as Java DSL")
+    String dumpRouteAsJava(boolean resolvePlaceholders, boolean generatedIds, boolean sourceLocation) throws Exception;
+
     @ManagedOperation(description = "Dumps the route stats as XML")
     String dumpRouteStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception;
 

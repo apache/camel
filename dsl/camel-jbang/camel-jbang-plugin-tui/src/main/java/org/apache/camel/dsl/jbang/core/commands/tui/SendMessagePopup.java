@@ -17,12 +17,11 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ExecutorService;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -46,7 +45,6 @@ import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -484,8 +482,8 @@ class SendMessagePopup {
         }
     }
 
-    void doSend(MonitorContext ctx, ScheduledExecutorService scheduler) {
-        if (!visible || sending || ctx == null || scheduler == null) {
+    void doSend(MonitorContext ctx, ExecutorService executor) {
+        if (!visible || sending || ctx == null || executor == null) {
             return;
         }
         sending = true;
@@ -509,11 +507,8 @@ class SendMessagePopup {
         List<FormHelper.HeaderEntry> hdrs = headers != null ? new ArrayList<>(headers) : null;
         String routeId = route.routeId;
 
-        scheduler.execute(() -> {
+        executor.execute(() -> {
             try {
-                Path outputFile = ctx.getOutputFile(targetPid);
-                PathUtils.deleteFile(outputFile);
-
                 JsonObject root = new JsonObject();
                 root.put("action", "send");
                 root.put("endpoint", endpoint);
@@ -539,11 +534,7 @@ class SendMessagePopup {
                     }
                 }
 
-                Path actionFile = ctx.getActionFile(targetPid);
-                PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-                JsonObject response = TuiHelper.pollJsonResponse(outputFile, 25000);
-                PathUtils.deleteFile(outputFile);
+                JsonObject response = ctx.executeAction(targetPid, root, 25000);
 
                 if (response == null) {
                     applyResult(routeId, sendBody, hdrs, captureInOut,

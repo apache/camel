@@ -18,12 +18,17 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
 import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.util.json.JsonObject;
 
 /**
  * Shared state accessible to all {@link MonitorTab} implementations.
@@ -33,6 +38,11 @@ class MonitorContext {
     final AtomicReference<List<IntegrationInfo>> data;
     final AtomicReference<List<InfraInfo>> infraData;
     TuiRunner runner;
+    final ExecutorService backgroundExecutor = Executors.newCachedThreadPool(r -> {
+        Thread t = new Thread(r, "camel-tui-bg");
+        t.setDaemon(true);
+        return t;
+    });
 
     volatile String selectedPid;
     volatile String lastSelectedName;
@@ -92,6 +102,31 @@ class MonitorContext {
             return TuiHelper.truncate(infra.alias, 20);
         }
         return "?";
+    }
+
+    private final ConcurrentHashMap<String, Object> actionLocks = new ConcurrentHashMap<>();
+
+    void fireAction(String pid, JsonObject request) {
+        Object lock = actionLocks.computeIfAbsent(pid, k -> new Object());
+        synchronized (lock) {
+            Path actionFile = getActionFile(pid);
+            PathUtils.writeTextSafely(request.toJson(), actionFile);
+        }
+    }
+
+    JsonObject executeAction(String pid, JsonObject request, long timeoutMs) {
+        Object lock = actionLocks.computeIfAbsent(pid, k -> new Object());
+        synchronized (lock) {
+            Path outputFile = getOutputFile(pid);
+            PathUtils.deleteFile(outputFile);
+            Path actionFile = getActionFile(pid);
+            PathUtils.writeTextSafely(request.toJson(), actionFile);
+            try {
+                return TuiHelper.pollJsonResponse(outputFile, timeoutMs);
+            } finally {
+                PathUtils.deleteFile(outputFile);
+            }
+        }
     }
 
     Path getActionFile(String pid) {

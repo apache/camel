@@ -478,8 +478,7 @@ class LogTab extends AbstractTab {
         root.put("command", "set-logging-level");
         root.put("logger-name", "root");
         root.put("logging-level", level);
-        Path actionFile = ctx.getActionFile(pid);
-        org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
+        ctx.fireAction(pid, root);
     }
 
     boolean isSearchInputActive() {

@@ -56,7 +56,6 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -708,7 +707,7 @@ class HttpTab extends AbstractTableTab {
         }
         List<FormHelper.HeaderEntry> hdrs = headerSnapshot;
 
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 doProbeRequestInBackground(baseUrl, method, path, sendBody, hdrs);
             } finally {
@@ -1429,7 +1428,7 @@ class HttpTab extends AbstractTableTab {
         String specUri = ep.specificationUri;
         String operationId = ep.operationId;
 
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 loadSpecInBackground(pid, specUri, operationId);
             } finally {
@@ -1439,18 +1438,11 @@ class HttpTab extends AbstractTableTab {
     }
 
     private void loadSpecInBackground(String pid, String specUri, String operationId) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "rest-spec");
         root.put("filter", specUri);
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = ctx.executeAction(pid, root, 5000);
 
         if (jo == null) {
             applySpecResult(specUri, List.of("(No response from integration)"), 0);

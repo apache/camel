@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,7 +58,6 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutEdge;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -547,7 +545,7 @@ class DiagramSupport {
         }
         preloading = true;
         if (ctx.runner != null) {
-            ctx.runner.scheduler().execute(() -> {
+            ctx.backgroundExecutor.execute(() -> {
                 try {
                     setTopologyMode(true);
                     loadAllDiagramsInBackground(ctx, pid, false, 0);
@@ -2029,42 +2027,23 @@ class DiagramSupport {
     }
 
     private JsonObject requestRouteTopology(MonitorContext ctx, String pid, boolean external, boolean routes) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "route-topology");
         root.put("metric", "true");
-        // Always request external endpoints so route diagrams can show dashed borders
         root.put("external", "true");
         if (routes) {
             root.put("routes", "true");
         }
-
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
-        return jo;
+        return ctx.executeAction(pid, root, 5000);
     }
 
     private JsonObject requestRouteStructure(MonitorContext ctx, String pid) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "route-structure");
         root.put("filter", "*");
         root.put("brief", false);
         root.put("metric", true);
-
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
-        return jo;
+        return ctx.executeAction(pid, root, 5000);
     }
 
     static void addParentNodes(List<RouteDiagramLayoutEngine.NodeInfo> nodes, Set<String> nodeIds) {

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -49,7 +48,6 @@ import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -534,7 +532,7 @@ class BrowseTab extends AbstractTab {
             return;
         }
         String pid = ctx.selectedPid;
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 loadEndpointsInBackground(pid);
             } finally {
@@ -544,20 +542,13 @@ class BrowseTab extends AbstractTab {
     }
 
     private void loadEndpointsInBackground(String pid) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "browse");
         root.put("filter", "*");
         root.put("limit", 100);
         root.put("dump", false);
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = ctx.executeAction(pid, root, 5000);
 
         if (jo == null) {
             return;
@@ -595,7 +586,7 @@ class BrowseTab extends AbstractTab {
             return;
         }
         String pid = ctx.selectedPid;
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 loadMessagesInBackground(pid, endpointUri);
             } finally {
@@ -605,9 +596,6 @@ class BrowseTab extends AbstractTab {
     }
 
     private void loadMessagesInBackground(String pid, String endpointUri) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "browse");
         root.put("filter", endpointUri);
@@ -615,11 +603,7 @@ class BrowseTab extends AbstractTab {
         root.put("dump", true);
         root.put("includeBody", true);
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = ctx.executeAction(pid, root, 5000);
 
         if (jo == null) {
             return;

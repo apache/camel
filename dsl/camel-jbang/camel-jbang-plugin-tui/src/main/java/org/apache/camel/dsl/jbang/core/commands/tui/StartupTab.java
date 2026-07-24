@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +39,6 @@ import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -270,19 +268,12 @@ class StartupTab extends AbstractTab {
         }
 
         String pid = ctx.selectedPid;
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
-                Path outputFile = ctx.getOutputFile(pid);
-                PathUtils.deleteFile(outputFile);
-
                 JsonObject root = new JsonObject();
                 root.put("action", "startup-recorder");
 
-                Path actionFile = ctx.getActionFile(pid);
-                PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-                JsonObject jo = pollJsonResponse(outputFile, 5000);
-                PathUtils.deleteFile(outputFile);
+                JsonObject jo = ctx.executeAction(pid, root, 5000);
 
                 if (jo == null) {
                     applyResult(Collections.emptyList(), "No response from integration");

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,6 @@ import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
@@ -334,12 +332,9 @@ class DocViewerPopup {
         docLines = null;
         showPicker = false;
         try {
-            Path outputFile = ctx.getOutputFile(info.pid);
-            Files.deleteIfExists(outputFile);
             org.apache.camel.util.json.JsonObject action = new org.apache.camel.util.json.JsonObject();
             action.put("action", "readme");
-            PathUtils.writeTextSafely(action.toJson(), ctx.getActionFile(info.pid));
-            org.apache.camel.util.json.JsonObject response = TuiHelper.pollJsonResponse(outputFile, 5000);
+            org.apache.camel.util.json.JsonObject response = ctx.executeAction(info.pid, action, 5000);
             if (response != null && response.getString("content") != null) {
                 String raw = response.getString("content");
                 String file = response.getStringOrDefault("file", "README");

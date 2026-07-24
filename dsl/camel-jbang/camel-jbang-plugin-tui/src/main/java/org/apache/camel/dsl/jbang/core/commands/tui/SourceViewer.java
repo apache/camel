@@ -46,14 +46,11 @@ import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-
-import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.pollJsonResponse;
 
 /**
  * Reusable source code viewer with syntax highlighting, scrolling, and line-number display. Can be used by any tab that
@@ -512,7 +509,7 @@ class SourceViewer {
         scrollX = 0;
         visible = true;
 
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 loadInBackground(ctx, pid, routeId, targetLine);
             } finally {
@@ -561,18 +558,11 @@ class SourceViewer {
     }
 
     private void loadInBackground(MonitorContext ctx, String pid, String routeId, int targetLine) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "source");
         root.put("filter", routeId);
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = ctx.executeAction(pid, root, 5000);
 
         if (jo == null) {
             applyResult(ctx, routeId, null, List.of("(No response from integration)"), Collections.emptyList(), 0, -1);
@@ -760,7 +750,7 @@ class SourceViewer {
         MonitorContext ctx = currentCtx;
         String pid = currentPid;
         String routeId = currentRouteId;
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 if (format.equals(originalFormat)) {
                     loadInBackground(ctx, pid, routeId, 0);
@@ -774,20 +764,13 @@ class SourceViewer {
     }
 
     private void loadFormatInBackground(MonitorContext ctx, String pid, String routeId, String format) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "route-dump");
         root.put("filter", routeId);
         root.put("format", format);
         root.put("uriAsParameters", "yaml".equals(format) ? "true" : "false");
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = ctx.executeAction(pid, root, 5000);
 
         if (jo == null) {
             applyFormatResult(ctx, format, List.of("(No response from integration)"), Collections.emptyList());

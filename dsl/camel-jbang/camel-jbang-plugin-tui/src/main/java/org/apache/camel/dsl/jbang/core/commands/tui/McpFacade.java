@@ -35,7 +35,6 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.widgets.tabs.TabsState;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -463,19 +462,13 @@ class McpFacade {
             return err;
         }
         try {
-            Path outputFile = ctx.getOutputFile(pid);
-            PathUtils.deleteFile(outputFile);
-
             JsonObject action = new JsonObject();
             action.put("action", "span");
             action.put("dump", "true");
             action.put("limit", String.valueOf(limit));
-            Path actionFile = ctx.getActionFile(pid);
-            PathUtils.writeTextSafely(action.toJson(), actionFile);
 
-            JsonObject response = TuiHelper.pollJsonResponse(outputFile, 3000);
+            JsonObject response = ctx.executeAction(pid, action, 3000);
             if (response != null) {
-                PathUtils.deleteFile(outputFile);
                 Boolean enabled = response.getBoolean("enabled");
                 if (enabled == null || !enabled) {
                     JsonObject err = new JsonObject();
@@ -516,17 +509,11 @@ class McpFacade {
             return err;
         }
         try {
-            Path outputFile = ctx.getOutputFile(pid);
-            PathUtils.deleteFile(outputFile);
-
             JsonObject action = new JsonObject();
             action.put("action", "processor-detail");
             action.put("routeId", routeId != null ? routeId : "*");
-            Path actionFile = ctx.getActionFile(pid);
-            PathUtils.writeTextSafely(action.toJson(), actionFile);
 
-            JsonObject response = TuiHelper.pollJsonResponse(outputFile, 5000);
-            PathUtils.deleteFile(outputFile);
+            JsonObject response = ctx.executeAction(pid, action, 5000);
             return response;
         } catch (Exception e) {
             JsonObject err = new JsonObject();
@@ -720,12 +707,9 @@ class McpFacade {
             return null;
         }
         try {
-            Path outputFile = ctx.getOutputFile(target.pid);
-            Files.deleteIfExists(outputFile);
             JsonObject action = new JsonObject();
             action.put("action", "readme");
-            PathUtils.writeTextSafely(action.toJson(), ctx.getActionFile(target.pid));
-            return TuiHelper.pollJsonResponse(outputFile, 5000);
+            return ctx.executeAction(target.pid, action, 5000);
         } catch (Exception e) {
             return null;
         }

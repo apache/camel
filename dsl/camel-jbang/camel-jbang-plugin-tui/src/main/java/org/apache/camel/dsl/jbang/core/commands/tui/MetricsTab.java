@@ -576,7 +576,7 @@ class MetricsTab extends AbstractTableTab {
         }
         rawTitle = url;
 
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 HttpClient client = HttpClient.newBuilder()
                         .connectTimeout(Duration.ofSeconds(5))

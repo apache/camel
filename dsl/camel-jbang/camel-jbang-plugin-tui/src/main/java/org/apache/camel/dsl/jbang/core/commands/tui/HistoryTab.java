@@ -1124,7 +1124,7 @@ class HistoryTab extends AbstractTab {
 
         boolean isFailed = failed;
         int step = initialStep;
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 diagram.loadHighlightedNativeDiagramInBackground(ctx, pid, messageHistory, isFailed, step);
             } finally {

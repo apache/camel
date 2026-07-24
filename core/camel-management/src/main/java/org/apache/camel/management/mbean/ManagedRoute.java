@@ -496,11 +496,17 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
 
     @Override
     public String dumpRouteAsJava(boolean resolvePlaceholders, boolean generatedIds) throws Exception {
+        return dumpRouteAsJava(resolvePlaceholders, generatedIds, false);
+    }
+
+    @Override
+    public String dumpRouteAsJava(boolean resolvePlaceholders, boolean generatedIds, boolean sourceLocation)
+            throws Exception {
         String id = route.getId();
         RouteDefinition def = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
         if (def != null) {
             return PluginHelper.getModelToJavaDumper(context).dumpModelAsJava(context, def, resolvePlaceholders,
-                    generatedIds);
+                    generatedIds, sourceLocation);
         }
 
         return null;

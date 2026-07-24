@@ -500,7 +500,6 @@ public class CamelMonitor extends CamelCommand {
             this.runner = tui;
             aiPanel.setExitCallbackForTestingOrRuntime(tui::quit);
             ctx.runner = tui;
-            actionsPopup.setScheduler(tui.scheduler());
             actionsPopup.setResetScreenAction(() -> tui.terminal().clear());
             actionsPopup.setThemeRefreshAction(() -> tui.terminal().clear());
             actionsPopup.setClearScreenAction(() -> tui.terminal().clear());
@@ -521,6 +520,7 @@ public class CamelMonitor extends CamelCommand {
         } finally {
             shellPanel.destroy();
             aiPanel.destroy();
+            ctx.backgroundExecutor.shutdownNow();
             if (mcpServer != null) {
                 mcpServer.stop();
             }
@@ -1759,9 +1759,11 @@ public class CamelMonitor extends CamelCommand {
         ph.destroy();
         setNotification("Restarting: " + name, false);
 
-        // re-launch in background after process terminates
+        // re-launch in background after process terminates (use the background executor
+        // instead of runner.scheduler() — the scheduler is single-threaded and generates
+        // tick events; blocking it would freeze the notification wave animation)
         if (runner != null) {
-            runner.scheduler().execute(() -> {
+            ctx.backgroundExecutor.execute(() -> {
                 try {
                     // wait for termination (max 10 seconds, then force kill)
                     CompletableFuture<ProcessHandle> exitFuture = ph.onExit().toCompletableFuture();
@@ -1851,8 +1853,7 @@ public class CamelMonitor extends CamelCommand {
         String pid = info.pid;
         JsonObject root = new JsonObject();
         root.put("action", "reset-stats");
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
+        ctx.fireAction(pid, root);
         dataService.metrics().resetStats(pid);
 
         info.activity = List.of();
@@ -1898,8 +1899,7 @@ public class CamelMonitor extends CamelCommand {
         root.put("action", "route");
         root.put("id", routeId);
         root.put("command", command);
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
+        ctx.fireAction(pid, root);
     }
 
     private void renderFooter(Frame frame, Rect area) {

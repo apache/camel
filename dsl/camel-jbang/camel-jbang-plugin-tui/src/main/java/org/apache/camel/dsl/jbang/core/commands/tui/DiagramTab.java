@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -49,7 +48,6 @@ import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -901,7 +899,7 @@ class DiagramTab extends AbstractTab {
             diagram.setLoadingPlaceholder();
         }
 
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 diagram.setTopologyMode(topologyMode);
                 diagram.loadAllDiagramsInBackground(ctx, pid, showMetrics, external);
@@ -1206,7 +1204,7 @@ class DiagramTab extends AbstractTab {
             detailLoading = true;
             String rid = drillDownRouteId;
             if (ctx.runner != null) {
-                ctx.runner.scheduler().execute(() -> {
+                ctx.backgroundExecutor.execute(() -> {
                     JsonObject result = requestRouteProcessorDetail(rid);
                     cachedRouteDetail = result;
                     cachedRouteDetailId = rid;
@@ -1413,19 +1411,10 @@ class DiagramTab extends AbstractTab {
             return null;
         }
         try {
-            Path outputFile = ctx.getOutputFile(ctx.selectedPid);
-            PathUtils.deleteFile(outputFile);
-
             JsonObject root = new JsonObject();
             root.put("action", "processor-detail");
             root.put("routeId", routeId);
-
-            Path actionFile = ctx.getActionFile(ctx.selectedPid);
-            PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-            JsonObject jo = pollJsonResponse(outputFile, 5000);
-            PathUtils.deleteFile(outputFile);
-            return jo;
+            return ctx.executeAction(ctx.selectedPid, root, 5000);
         } catch (Exception e) {
             return null;
         }

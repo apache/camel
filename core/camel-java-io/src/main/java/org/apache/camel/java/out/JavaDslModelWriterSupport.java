@@ -152,9 +152,24 @@ public abstract class JavaDslModelWriterSupport {
     private boolean inDataFormatBuilder;
     private boolean inSubBuilder;
     private boolean inRestParam;
+    private boolean generatedIds;
+    private boolean sourceLocation;
+    private boolean currentNodeCustomId;
 
     protected int indentLevel = 1;
     protected final Set<String> handledAttributes = new HashSet<>();
+
+    public void setGeneratedIds(boolean generatedIds) {
+        this.generatedIds = generatedIds;
+    }
+
+    public void setSourceLocation(boolean sourceLocation) {
+        this.sourceLocation = sourceLocation;
+    }
+
+    public boolean isSourceLocation() {
+        return sourceLocation;
+    }
 
     protected void resetState() {
         indentLevel = 1;
@@ -186,13 +201,19 @@ public abstract class JavaDslModelWriterSupport {
 
         if (def.getInput() != null) {
             sb.append("from(").append(quote(def.getInput().getUri())).append(")");
+            if (sourceLocation) {
+                int line = def.getInput().getLineNumber();
+                if (line != -1) {
+                    sb.append(NL).append("// sourceLineNumber: ").append(line);
+                }
+            }
         }
         handledAttributes.add("input");
         handledAttributes.add("uri");
-        if (def.getId() != null) {
+        if (def.getId() != null && (generatedIds || Boolean.TRUE.equals(def.getCustomId()))) {
             sb.append(NL).append(indent()).append(".routeId(").append(quote(def.getId())).append(")");
-            handledAttributes.add("id");
         }
+        handledAttributes.add("id");
         handledAttributes.add("customId");
         if (def.getRouteProperties() != null) {
             for (PropertyDefinition prop : def.getRouteProperties()) {
@@ -206,6 +227,9 @@ public abstract class JavaDslModelWriterSupport {
         indentLevel--;
         doWriteRouteDefinition(sb, def);
         indentLevel++;
+        if (sourceLocation) {
+            sb.append(NL);
+        }
         sb.append(";");
     }
 
@@ -482,6 +506,12 @@ public abstract class JavaDslModelWriterSupport {
 
     protected void doWriteAttribute(StringBuilder sb, String key, String value, String defaultValue) {
         if (value == null || handledAttributes.contains(key) || SKIP_ATTRIBUTES.contains(key)) {
+            if ("customId".equals(key)) {
+                currentNodeCustomId = "true".equals(value);
+            }
+            return;
+        }
+        if ("id".equals(key) && !generatedIds && !currentNodeCustomId) {
             return;
         }
         if (defaultValue != null && defaultValue.equals(value)) {

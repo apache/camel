@@ -62,6 +62,14 @@ public class LwModelToJavaDumper implements ModelToJavaDumper {
             CamelContext context, NamedNode definition,
             boolean resolvePlaceholders, boolean generatedIds)
             throws Exception {
+        return dumpModelAsJava(context, definition, resolvePlaceholders, generatedIds, false);
+    }
+
+    @Override
+    public String dumpModelAsJava(
+            CamelContext context, NamedNode definition,
+            boolean resolvePlaceholders, boolean generatedIds, boolean sourceLocation)
+            throws Exception {
 
         Properties properties = new Properties();
         List<Runnable> restorers = new ArrayList<>();
@@ -79,7 +87,9 @@ public class LwModelToJavaDumper implements ModelToJavaDumper {
             restorers.add(resolveEndpointDslUris(route));
         }
 
-        org.apache.camel.java.out.JavaDslModelWriter writer = new org.apache.camel.java.out.JavaDslModelWriter();
+        org.apache.camel.java.out.JavaDslModelWriter writer = createWriter(sourceLocation);
+        writer.setGeneratedIds(generatedIds);
+        writer.setSourceLocation(sourceLocation);
 
         StringBuilder sb = new StringBuilder();
         try {
@@ -146,6 +156,23 @@ public class LwModelToJavaDumper implements ModelToJavaDumper {
         }
 
         return result;
+    }
+
+    private static org.apache.camel.java.out.JavaDslModelWriter createWriter(boolean sourceLocation) {
+        if (!sourceLocation) {
+            return new org.apache.camel.java.out.JavaDslModelWriter();
+        }
+        return new org.apache.camel.java.out.JavaDslModelWriter() {
+            @Override
+            protected void doWriteOptionalIdentifiedDefinitionAttributes(
+                    StringBuilder sb, org.apache.camel.model.OptionalIdentifiedDefinition<?> def) {
+                int line = (def instanceof RouteDefinition rd ? rd.getInput() : def).getLineNumber();
+                if (line != -1) {
+                    sb.append("\n// sourceLineNumber: ").append(line);
+                }
+                super.doWriteOptionalIdentifiedDefinitionAttributes(sb, def);
+            }
+        };
     }
 
     private static void collectTemplateProperties(RouteTemplateDefinition template, Properties properties) {

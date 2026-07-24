@@ -132,7 +132,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                     dump = mrb.dumpRouteAsYaml(true, uriAsParameters, false, true);
                 } else if ("java".equals(format)) {
                     jo.put("format", "java");
-                    dump = mrb.dumpRouteAsJava(true, false);
+                    dump = mrb.dumpRouteAsJava(true, false, true);
                 }
                 if (dump != null) {
                     JsonArray code;
@@ -259,6 +259,17 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
             IOHelper.close(lnr);
         } catch (Exception e) {
             // ignore
+        }
+
+        // merge trailing ; with previous code line (sourceLineNumber comments may have separated them)
+        if (code.size() > 1) {
+            JsonObject last = (JsonObject) code.get(code.size() - 1);
+            String lastCode = Jsoner.unescape(last.getString("code")).trim();
+            if (";".equals(lastCode)) {
+                code.remove(code.size() - 1);
+                JsonObject prev = (JsonObject) code.get(code.size() - 1);
+                prev.put("code", prev.getString("code") + ";");
+            }
         }
 
         return code.isEmpty() ? null : code;

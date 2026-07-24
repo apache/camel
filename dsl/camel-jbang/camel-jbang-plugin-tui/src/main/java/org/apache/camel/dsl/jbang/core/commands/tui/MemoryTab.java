@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +36,6 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
@@ -459,8 +457,7 @@ class MemoryTab extends AbstractTab {
         }
         JsonObject root = new JsonObject();
         root.put("action", "gc");
-        Path actionFile = ctx.getActionFile(info.pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
+        ctx.fireAction(info.pid, root);
     }
 
     @Override

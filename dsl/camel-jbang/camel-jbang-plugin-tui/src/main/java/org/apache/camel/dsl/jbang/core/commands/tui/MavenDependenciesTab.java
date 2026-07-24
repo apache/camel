@@ -351,7 +351,7 @@ class MavenDependenciesTab extends AbstractTableTab {
             return;
         }
 
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 DependencyLoader.LoadResult result = DependencyLoader.loadDependencies(info);
                 applyResult(result.entries(), result.source(), result.error());
@@ -368,7 +368,7 @@ class MavenDependenciesTab extends AbstractTableTab {
             return;
         }
         transitiveLoading = true;
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 List<DependencyLoader.DepEntry> entries = DependencyLoader.resolveTransitives(allEntries);
                 applyTransitiveResult(entries);

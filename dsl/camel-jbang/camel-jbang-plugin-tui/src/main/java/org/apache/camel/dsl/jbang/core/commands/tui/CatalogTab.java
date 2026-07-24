@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -44,7 +43,6 @@ import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;
@@ -462,7 +460,7 @@ class CatalogTab extends AbstractTableTab {
         }
 
         boolean full = fullCatalog;
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 Set<String> appArtifacts = null;
                 if (!full) {
@@ -554,18 +552,14 @@ class CatalogTab extends AbstractTableTab {
                 eipNames = new HashSet<>(catalog.findModelNames());
             } else {
                 eipNames = new HashSet<>();
-                Path outputFile = ctx.getOutputFile(pid);
-                PathUtils.deleteFile(outputFile);
 
                 JsonObject root = new JsonObject();
                 root.put("action", "route-structure");
                 root.put("filter", "*");
                 root.put("brief", true);
                 root.put("metric", false);
-                PathUtils.writeTextSafely(root.toJson(), ctx.getActionFile(pid));
 
-                JsonObject jo = TuiHelper.pollJsonResponse(outputFile, 5000);
-                PathUtils.deleteFile(outputFile);
+                JsonObject jo = ctx.executeAction(pid, root, 5000);
                 if (jo == null) {
                     return;
                 }

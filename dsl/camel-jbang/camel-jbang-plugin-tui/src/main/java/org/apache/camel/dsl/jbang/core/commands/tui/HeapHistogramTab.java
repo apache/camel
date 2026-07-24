@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +38,6 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -476,7 +474,7 @@ class HeapHistogramTab extends AbstractTableTab {
             return;
         }
         String pid = ctx.selectedPid;
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 loadHeapHistogramInBackground(pid);
             } finally {
@@ -486,17 +484,10 @@ class HeapHistogramTab extends AbstractTableTab {
     }
 
     private void loadHeapHistogramInBackground(String pid) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "heap-histogram");
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = ctx.executeAction(pid, root, 5000);
 
         if (jo == null) {
             return;
@@ -540,17 +531,10 @@ class HeapHistogramTab extends AbstractTableTab {
     }
 
     private List<ClasspathTab.JarEntry> loadClasspathEntries(String pid) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject action = new JsonObject();
         action.put("action", "jvm");
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(action.toJson(), actionFile);
-
-        JsonObject response = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject response = ctx.executeAction(pid, action, 5000);
 
         if (response == null) {
             return Collections.emptyList();

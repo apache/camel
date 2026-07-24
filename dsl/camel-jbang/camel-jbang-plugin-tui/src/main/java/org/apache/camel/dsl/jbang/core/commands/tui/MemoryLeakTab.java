@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -43,7 +42,6 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -1504,19 +1502,12 @@ class MemoryLeakTab extends AbstractTab {
     }
 
     private void sendStartCommand(String pid, int dur) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "jfr-memory-leak");
         root.put("command", "start");
         root.put("duration", String.valueOf(dur));
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 15000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = ctx.executeAction(pid, root, 15000);
 
         if (jo != null && "recording".equals(jo.getString("status"))) {
             if (ctx.runner != null) {
@@ -1584,19 +1575,12 @@ class MemoryLeakTab extends AbstractTab {
     }
 
     private boolean sendStopAndLoadResults(String pid) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "jfr-memory-leak");
         root.put("command", "stop");
         root.put("stacktrace", "true");
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 30000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = ctx.executeAction(pid, root, 30000);
 
         if (jo != null && "completed".equals(jo.getString("status"))) {
             List<SampleEntry> result = parseSamples(jo);
@@ -1709,35 +1693,21 @@ class MemoryLeakTab extends AbstractTab {
     }
 
     private boolean isRecordingActive(String pid) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "jfr-memory-leak");
         root.put("command", "status");
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = ctx.executeAction(pid, root, 5000);
 
         return jo == null || "recording".equals(jo.getString("status"));
     }
 
     private void sendStatusCommand(String pid) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "jfr-memory-leak");
         root.put("command", "status");
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = ctx.executeAction(pid, root, 5000);
 
         if (jo == null) {
             return;
@@ -1769,19 +1739,12 @@ class MemoryLeakTab extends AbstractTab {
     }
 
     private void loadQueryResults(String pid) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "jfr-memory-leak");
         root.put("command", "query");
         root.put("stacktrace", "true");
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 10000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = ctx.executeAction(pid, root, 10000);
 
         if (jo != null && "completed".equals(jo.getString("status"))) {
             List<SampleEntry> result = parseSamples(jo);
@@ -1815,19 +1778,12 @@ class MemoryLeakTab extends AbstractTab {
 
     private void sendStopAndLoadComparison(String pid) {
         // stop the second recording
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "jfr-memory-leak");
         root.put("command", "stop");
         root.put("stacktrace", "true");
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 30000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = ctx.executeAction(pid, root, 30000);
 
         if (jo == null || !"completed".equals(jo.getString("status"))) {
             if (ctx.runner != null) {
@@ -1841,19 +1797,12 @@ class MemoryLeakTab extends AbstractTab {
     }
 
     private void loadComparisonResults(String pid) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject cmpRoot = new JsonObject();
         cmpRoot.put("action", "jfr-memory-leak");
         cmpRoot.put("command", "compare");
         cmpRoot.put("stacktrace", "true");
 
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(cmpRoot.toJson(), actionFile);
-
-        JsonObject cmpResult = pollJsonResponse(outputFile, 10000);
-        PathUtils.deleteFile(outputFile);
+        JsonObject cmpResult = ctx.executeAction(pid, cmpRoot, 10000);
 
         if (cmpResult != null && "compared".equals(cmpResult.getString("status"))) {
             List<ComparisonEntry> entries = parseComparisons(cmpResult);

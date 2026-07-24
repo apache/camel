@@ -761,7 +761,7 @@ class ErrorsTab extends AbstractTableTab {
 
         diagram.setLoadingPlaceholder();
 
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 diagram.loadHighlightedNativeDiagramInBackground(ctx, pid, messageHistory, true, -1);
             } finally {

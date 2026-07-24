@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 
 import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -186,7 +185,7 @@ class DataRefreshService {
             return;
         }
         lastRefresh = System.currentTimeMillis();
-        runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 refreshSync(logRefresher, conditionalRefresher);
             } finally {
@@ -564,19 +563,12 @@ class DataRefreshService {
             return;
         }
         try {
-            // Send action to request span data
-            Path outputFile = ctx.getOutputFile(pid);
-            PathUtils.deleteFile(outputFile);
-
             JsonObject action = new JsonObject();
             action.put("action", "span");
             action.put("dump", "true");
             action.put("limit", "500");
-            Path actionFile = ctx.getActionFile(pid);
-            PathUtils.writeTextSafely(action.toJson(), actionFile);
 
-            // Poll for response
-            JsonObject response = TuiHelper.pollJsonResponse(outputFile, 3000);
+            JsonObject response = ctx.executeAction(pid, action, 3000);
             if (response != null) {
                 Boolean enabled = response.getBoolean("enabled");
                 if (enabled != null && enabled) {
@@ -590,7 +582,6 @@ class DataRefreshService {
                         otelSpans.set(entries);
                     }
                 }
-                PathUtils.deleteFile(outputFile);
             }
         } catch (Exception e) {
             // ignore

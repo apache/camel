@@ -68,4 +68,22 @@ public interface ModelToJavaDumper {
             boolean resolvePlaceholders, boolean generatedIds)
             throws Exception;
 
+    /**
+     * Dumps the definition as Java DSL
+     *
+     * @param  context             the CamelContext
+     * @param  definition          the definition, such as a {@link NamedNode}
+     * @param  resolvePlaceholders whether to resolve property placeholders in the dumped Java DSL
+     * @param  generatedIds        whether to include auto generated IDs
+     * @param  sourceLocation      whether to include source location information as comments
+     * @return                     the output in Java DSL (is formatted)
+     * @throws Exception           is throw if error marshalling to Java DSL
+     */
+    default String dumpModelAsJava(
+            CamelContext context, NamedNode definition,
+            boolean resolvePlaceholders, boolean generatedIds, boolean sourceLocation)
+            throws Exception {
+        return dumpModelAsJava(context, definition, resolvePlaceholders, generatedIds);
+    }
+
 }

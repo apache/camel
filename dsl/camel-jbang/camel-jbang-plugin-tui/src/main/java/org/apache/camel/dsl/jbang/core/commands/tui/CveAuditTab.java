@@ -384,7 +384,7 @@ class CveAuditTab extends AbstractTableTab {
             return;
         }
 
-        ctx.runner.scheduler().execute(() -> {
+        ctx.backgroundExecutor.execute(() -> {
             try {
                 DependencyLoader.LoadResult loadResult = DependencyLoader.loadDependencies(info);
                 if (loadResult.error() != null && loadResult.entries().isEmpty()) {

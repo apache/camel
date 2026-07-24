@@ -20,7 +20,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiConsumer;
 import java.util.function.IntPredicate;
 import java.util.function.Supplier;
@@ -130,7 +129,6 @@ class ActionsPopup {
     private final SendMessagePopup sendMessagePopup = new SendMessagePopup();
     private final StopAllPopup stopAllPopup;
     private final CaptionOverlay captionOverlay;
-    private ScheduledExecutorService scheduler;
 
     private final LaunchManager launchManager;
     private BiConsumer<String, Boolean> notificationCallback;
@@ -174,10 +172,6 @@ class ActionsPopup {
 
     LaunchManager getLaunchManager() {
         return launchManager;
-    }
-
-    void setScheduler(ScheduledExecutorService scheduler) {
-        this.scheduler = scheduler;
     }
 
     void setPreSelectedRouteId(String routeId) {
@@ -487,7 +481,7 @@ class ActionsPopup {
     boolean handleKeyEvent(KeyEvent ke) {
         if (sendMessagePopup.isVisible()) {
             if (ke.isKey(KeyCode.F5) && !sendFileBrowser.isVisible()) {
-                sendMessagePopup.doSend(ctx, scheduler);
+                sendMessagePopup.doSend(ctx, ctx.backgroundExecutor);
             } else {
                 sendMessagePopup.handleKeyEvent(ke);
             }
