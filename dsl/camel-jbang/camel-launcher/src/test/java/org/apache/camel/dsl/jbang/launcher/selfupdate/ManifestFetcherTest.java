@@ -88,6 +88,24 @@ class ManifestFetcherTest {
     }
 
     @Test
+    void parsesManifestWithAsfLicenseHeader() {
+        // Mirrors the header WebsiteManifestGenerator.renderManifest() prepends to every published
+        // manifest; the '#' lines (including a bare '##') must not count toward the four-line total.
+        String header = "## ---------------------------------------------------------------------------\n"
+                        + "## Licensed to the Apache Software Foundation (ASF) under one or more\n"
+                        + "## contributor license agreements.  See the NOTICE file distributed with\n"
+                        + "##\n"
+                        + "## ---------------------------------------------------------------------------\n";
+        String content = header + "format=1\nversion=4.22.0\ntar_sha256=" + HASH + "\nzip_sha256=" + HASH + "\n";
+
+        ManifestFetcher.Manifest manifest = ManifestFetcher.parse(content.getBytes(StandardCharsets.UTF_8));
+
+        assertThat(manifest.version()).isEqualTo("4.22.0");
+        assertThat(manifest.tarSha256()).isEqualTo(HASH);
+        assertThat(manifest.zipSha256()).isEqualTo(HASH);
+    }
+
+    @Test
     void fromEnvironmentUsesProductionDefaultsWhenUnset() {
         ManifestFetcher fetcher = ManifestFetcher.fromEnvironment();
 

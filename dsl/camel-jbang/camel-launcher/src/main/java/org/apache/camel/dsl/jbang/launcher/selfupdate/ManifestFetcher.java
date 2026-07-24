@@ -24,6 +24,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +108,10 @@ public final class ManifestFetcher {
             return response.body();
         } catch (SelfUpdateException e) {
             throw e;
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
+            throw new SelfUpdateException("failed to download manifest from " + url, e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new SelfUpdateException("failed to download manifest from " + url, e);
         }
     }
@@ -115,23 +119,33 @@ public final class ManifestFetcher {
     // Package-visible for direct unit testing without a network round-trip. Mirrors install.sh's parse_manifest:
     // exactly 4 non-blank key=value lines, no duplicate/unknown keys, format=1, X.Y.Z version, 64-char lowercase
     // hex hashes. CRLF-tolerant (a trailing '\r' is stripped per line) because install.ps1 may have produced or
-    // re-served the same manifest.
+    // re-served the same manifest. '#' comment lines (e.g. the ASF license header WebsiteManifestGenerator
+    // prepends) are skipped and don't count toward the four-line total, matching install.sh/install.ps1 and
+    // WebsiteManifestGenerator's own parseStrictManifest.
     static Manifest parse(byte[] content) {
         String text = new String(content, StandardCharsets.UTF_8);
         String[] rawLines = text.split("\n", -1);
-        int lineCount = rawLines.length > 0 && rawLines[rawLines.length - 1].isEmpty()
+        int rawLineCount = rawLines.length > 0 && rawLines[rawLines.length - 1].isEmpty()
                 ? rawLines.length - 1
                 : rawLines.length;
-        if (lineCount != 4) {
-            throw new SelfUpdateException("manifest must contain exactly four lines");
-        }
 
-        Map<String, String> values = new HashMap<>();
-        for (int i = 0; i < lineCount; i++) {
+        List<String> dataLines = new ArrayList<>();
+        for (int i = 0; i < rawLineCount; i++) {
             String line = rawLines[i];
             if (line.endsWith("\r")) {
                 line = line.substring(0, line.length() - 1);
             }
+            if (line.startsWith("#")) {
+                continue;
+            }
+            dataLines.add(line);
+        }
+        if (dataLines.size() != 4) {
+            throw new SelfUpdateException("manifest must contain exactly four lines");
+        }
+
+        Map<String, String> values = new HashMap<>();
+        for (String line : dataLines) {
             int eq = line.indexOf('=');
             if (eq <= 0 || eq == line.length() - 1) {
                 throw new SelfUpdateException("manifest contains a blank line");

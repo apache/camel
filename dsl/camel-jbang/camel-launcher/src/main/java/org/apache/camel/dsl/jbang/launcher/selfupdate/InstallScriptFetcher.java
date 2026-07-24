@@ -107,7 +107,10 @@ public final class InstallScriptFetcher {
             return response.body();
         } catch (SelfUpdateException e) {
             throw e;
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
+            throw new SelfUpdateException("failed to download " + url, e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new SelfUpdateException("failed to download " + url, e);
         }
     }

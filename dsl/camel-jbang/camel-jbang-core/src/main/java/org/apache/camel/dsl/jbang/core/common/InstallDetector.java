@@ -81,7 +81,7 @@ public final class InstallDetector {
         if (normalized.toLowerCase().contains("/chocolatey/")) {
             return InstallMethod.CHOCOLATEY;
         }
-        if (normalized.contains("/WinGet/Packages/")) {
+        if (normalized.toLowerCase().contains("/winget/packages/")) {
             return InstallMethod.WINGET;
         }
         if (normalized.toLowerCase().contains("/scoop/apps/")) {

@@ -490,7 +490,7 @@ __dest_sdkman() {
   # Use vendor release endpoint
   curl -s -X POST "$API_URL/release" \
     -H "Consumer-Key: ${SDKMAN_CONSUMER_KEY}" \
-    -H "Consumer-Secret: [REDACTED]" \
+    -H "Consumer-Secret: ${SDKMAN_CONSUMER_SECRET}" \
     -H "Content-Type: application/json" \
     -d "{\"candidate\": \"camel\", \"version\": \"$VERSION\", \"default\": $SDKMAN_DEFAULT}" 2>/dev/null || {
     _log "  SDKMAN release failed (likely no credentials in this env).";
