@@ -263,7 +263,7 @@
         <java-util-version>4.108.0</java-util-version>
         <jnats-version>2.26.0</jnats-version>
         <javacc-maven-plugin-version>3.2.0</javacc-maven-plugin-version>
-        <javapoet-version>0.17.0</javapoet-version>
+        <javapoet-version>0.18.0</javapoet-version>
         <javassist-version>3.32.0-GA</javassist-version>
         <jakarta-el-api-version>6.0.1</jakarta-el-api-version>
         <jakarta-el-expressly-version>6.0.0</jakarta-el-expressly-version>
