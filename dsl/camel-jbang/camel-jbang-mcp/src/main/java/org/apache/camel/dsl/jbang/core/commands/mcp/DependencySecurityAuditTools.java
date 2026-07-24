@@ -101,6 +101,7 @@ public class DependencySecurityAuditTools {
                 }
             }
 
+            // Check components used in routes but not declared as POM dependencies (transitively available)
             for (String compName : catalog.findComponentNames()) {
                 ComponentModel model = catalog.componentModel(compName);
                 if (model == null || model.getArtifactId() == null) {

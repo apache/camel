@@ -81,7 +81,7 @@ class DependencySecurityAuditToolsTest {
         assertThat(result.summary()).isNotNull();
         assertThat(result.summary().camelVersion()).isEqualTo("4.10.0");
         assertThat(result.summary().totalDependencies()).isGreaterThan(0);
-        assertThat(result.summary().totalCves()).isGreaterThanOrEqualTo(0);
+        assertThat(result.summary().totalCves()).isGreaterThan(0);
         assertThat(result.recommendations()).isNotNull();
     }
 
@@ -93,6 +93,7 @@ class DependencySecurityAuditToolsTest {
         assertThat(result).isNotNull();
         assertThat(result.summary()).isNotNull();
         assertThat(result.summary().camelVersion()).isEqualTo("4.22.0");
+        assertThat(result.summary().clean()).isTrue();
     }
 
     @Test
@@ -104,6 +105,7 @@ class DependencySecurityAuditToolsTest {
         assertThat(result).isNotNull();
         assertThat(result.summary()).isNotNull();
         assertThat(result.summary().totalDependencies()).isGreaterThan(0);
+        assertThat(result.summary().reachableVulnerableArtifacts()).isGreaterThanOrEqualTo(0);
     }
 
     @Test
