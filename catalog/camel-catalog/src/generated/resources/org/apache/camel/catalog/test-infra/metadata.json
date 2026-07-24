@@ -340,6 +340,17 @@
   "serviceVersion" : "0.3",
   "uiSupported" : false
 }, {
+  "service" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultInfraService",
+  "description" : "CyberArk Conjur is an open source secrets management solution",
+  "implementation" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultLocalContainerInfraService",
+  "alias" : [ "cyberark" ],
+  "aliasImplementation" : [ "conjur" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-cyberark-vault",
+  "version" : "4.22.0-SNAPSHOT",
+  "serviceVersion" : "1.24.0",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.opensearch.services.OpenSearchInfraService",
   "description" : "OpenSearch is a distributed search and analytics engine",
   "implementation" : "org.apache.camel.test.infra.opensearch.services.OpenSearchLocalContainerInfraService",
