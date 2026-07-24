@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.Optional;
 
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -132,5 +134,90 @@ class McpSecretRedactorTest {
 
         assertThat(redactor.redact("value: CUSTOM_12345 here"))
                 .isEqualTo("value: " + McpSecretRedactor.REDACTED + " here");
+    }
+
+    @Test
+    void redactsClientSecretAndUrlQueryParamAndPemBlock() {
+        McpSecretRedactor redactor = createRedactor(null);
+
+        assertThat(redactor.redact("client_secret=abcdef123456"))
+                .isEqualTo(McpSecretRedactor.REDACTED);
+        // JDBC/URL carrying the password as a query parameter has no userinfo '@' so it is not a connection
+        // string; it must still be caught.
+        assertThat(redactor.redact("jdbc:postgresql://db:5432/app?ssl=true&password=hunter2"))
+                .contains(McpSecretRedactor.REDACTED)
+                .doesNotContain("hunter2");
+        assertThat(redactor.redact("-----BEGIN RSA PRIVATE KEY-----\nMIIEabc\n-----END RSA PRIVATE KEY-----"))
+                .isEqualTo(McpSecretRedactor.REDACTED);
+    }
+
+    @Test
+    void redactsStructuredJsonObjectByKeyName() {
+        McpSecretRedactor redactor = createRedactor(null);
+
+        // This is the case the String-only path missed: a JsonObject (as returned by the runtime tools) whose
+        // value is JSON-quoted. The value regex cannot match a quoted value, so structured redaction by key name
+        // is what protects it.
+        JsonObject properties = new JsonObject();
+        properties.put("datasource.url", "jdbc:postgresql://db:5432/app");
+        properties.put("datasource.password", "hunter2");
+        properties.put("app.name", "orders");
+        JsonObject nested = new JsonObject();
+        nested.put("client-secret", "s3cr3t");
+        properties.put("oauth", nested);
+
+        boolean changed = redactor.redactStructured(properties);
+
+        assertThat(changed).isTrue();
+        assertThat(properties.getString("datasource.password")).isEqualTo(McpSecretRedactor.REDACTED);
+        assertThat(properties.getString("app.name")).isEqualTo("orders");
+        assertThat(properties.getString("datasource.url")).isEqualTo("jdbc:postgresql://db:5432/app");
+        assertThat(((JsonObject) properties.get("oauth")).getString("client-secret"))
+                .isEqualTo(McpSecretRedactor.REDACTED);
+    }
+
+    @Test
+    void redactsSecretsEmbeddedInStructuredStringValues() {
+        McpSecretRedactor redactor = createRedactor(null);
+
+        // A non-secret key whose string value nonetheless embeds a credential-bearing connection string.
+        JsonObject config = new JsonObject();
+        config.put("broker", "amqp://admin:secret@broker:5672/vhost");
+        JsonArray endpoints = new JsonArray();
+        endpoints.add("timer://foo");
+        endpoints.add("sql://bar?dataSource=#ds&password=leaked");
+        config.put("endpoints", endpoints);
+
+        boolean changed = redactor.redactStructured(config);
+
+        assertThat(changed).isTrue();
+        assertThat(config.getString("broker")).doesNotContain("secret").contains(McpSecretRedactor.REDACTED);
+        assertThat(endpoints.getString(0)).isEqualTo("timer://foo");
+        assertThat(endpoints.getString(1)).doesNotContain("leaked").contains(McpSecretRedactor.REDACTED);
+    }
+
+    @Test
+    void structuredRedactionReportsNoChangeForCleanData() {
+        McpSecretRedactor redactor = createRedactor(null);
+
+        JsonObject clean = new JsonObject();
+        clean.put("name", "orders");
+        clean.put("routes", 3);
+
+        assertThat(redactor.redactStructured(clean)).isFalse();
+        assertThat(clean.getString("name")).isEqualTo("orders");
+    }
+
+    @Test
+    void secretKeyNameMatchingIsSeparatorAndCaseInsensitive() {
+        assertThat(McpSecretRedactor.isSecretKeyName("password")).isTrue();
+        assertThat(McpSecretRedactor.isSecretKeyName("client-secret")).isTrue();
+        assertThat(McpSecretRedactor.isSecretKeyName("client_secret")).isTrue();
+        assertThat(McpSecretRedactor.isSecretKeyName("clientSecret")).isTrue();
+        assertThat(McpSecretRedactor.isSecretKeyName("api-key")).isTrue();
+        assertThat(McpSecretRedactor.isSecretKeyName("keystorePassword")).isTrue();
+        assertThat(McpSecretRedactor.isSecretKeyName("route.id")).isFalse();
+        assertThat(McpSecretRedactor.isSecretKeyName("name")).isFalse();
+        assertThat(McpSecretRedactor.isSecretKeyName(null)).isFalse();
     }
 }
