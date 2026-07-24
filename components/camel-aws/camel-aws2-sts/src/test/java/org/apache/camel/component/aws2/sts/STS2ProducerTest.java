@@ -28,6 +28,7 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 import software.amazon.awssdk.services.sts.model.GetFederationTokenResponse;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class STS2ProducerTest extends CamelTestSupport {
@@ -90,6 +91,13 @@ public class STS2ProducerTest extends CamelTestSupport {
 
         GetFederationTokenResponse resultGet = (GetFederationTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());
+    }
+
+    @Test
+    void stsGetFederationTokenWithoutFederatedNameReportsTheCorrectOperation() {
+        assertThatThrownBy(() -> template.requestBody("direct:getFederationToken", "body"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("Federated name needs to be specified for getFederationToken operation");
     }
 
     @Override
