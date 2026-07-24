@@ -62,9 +62,10 @@ public class Textract2ProducerHealthCheck extends AbstractHealthCheck {
             // This will likely fail because "test" is not a valid document, but it will validate credentials and connectivity
             textractClient.detectDocumentText(testRequest);
         } catch (AwsServiceException e) {
+            // awsErrorDetails() is nullable, so read the error code defensively before using it below
+            String errorCode = e.awsErrorDetails() != null ? e.awsErrorDetails().errorCode() : null;
             // For health check, we consider certain errors as "healthy" since they indicate the service is reachable
-            if ("InvalidParameterException".equals(e.awsErrorDetails().errorCode()) ||
-                    "UnsupportedDocumentException".equals(e.awsErrorDetails().errorCode())) {
+            if ("InvalidParameterException".equals(errorCode) || "UnsupportedDocumentException".equals(errorCode)) {
                 // These errors mean the service is reachable but our test document is invalid - this is expected
                 builder.up();
                 return;
@@ -75,8 +76,8 @@ public class Textract2ProducerHealthCheck extends AbstractHealthCheck {
             if (ObjectHelper.isNotEmpty(e.statusCode())) {
                 builder.detail(SERVICE_STATUS_CODE, e.statusCode());
             }
-            if (ObjectHelper.isNotEmpty(e.awsErrorDetails().errorCode())) {
-                builder.detail(SERVICE_ERROR_CODE, e.awsErrorDetails().errorCode());
+            if (ObjectHelper.isNotEmpty(errorCode)) {
+                builder.detail(SERVICE_ERROR_CODE, errorCode);
             }
             builder.down();
             return;
