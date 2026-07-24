@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +32,17 @@ public class RedeliveryErrorHandlerNonBlockedRedeliveryHeaderTest extends Contex
 
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryErrorHandlerNonBlockedRedeliveryHeaderTest.class);
 
-    private static final LongAdder attempt = new LongAdder();
+    private static LongAdder attempt;
+
+    @BeforeEach
+    void setup() {
+        attempt = new LongAdder();
+    }
 
     @Test
     public void testRedelivery() throws Exception {
-        MockEndpoint before = getMockEndpoint("mock:result");
-        before.expectedBodiesReceived("Hello World", "Hello Camel");
+        MockEndpoint before = getMockEndpoint("mock:before");
+        before.expectedBodiesReceived("World", "Camel");
 
         // we use NON blocked redelivery delay so the messages arrive which
         // completes first
