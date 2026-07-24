@@ -47,6 +47,7 @@ import org.keycloak.authorization.client.resource.AuthorizationResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.ClientScopeRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.FederatedIdentityRepresentation;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.IdentityProviderRepresentation;
 import org.keycloak.representations.idm.MemberRepresentation;
@@ -78,6 +79,8 @@ public class KeycloakProducer extends DefaultProducer {
     public static final String MISSING_CLIENT_ID = "Client ID must be specified";
     public static final String MISSING_CLIENT_UUID = "Client UUID must be specified";
     public static final String MISSING_PASSWORD = "Password must be specified";
+    public static final String MISSING_IDENTITY_PROVIDER = "Identity provider alias must be specified";
+    public static final String MISSING_FEDERATED_USER_ID = "Federated user ID must be specified";
     public static final String MISSING_ORGANIZATION_ID = "Organization ID must be specified";
     public static final String MISSING_ORGANIZATION_NAME = "Organization name must be specified";
     public static final String MISSING_ORGANIZATION_MEMBER_ID = "Organization member (user) ID must be specified";
@@ -399,6 +402,15 @@ public class KeycloakProducer extends DefaultProducer {
                 break;
             case listOrganizationIdentityProviders:
                 listOrganizationIdentityProviders(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case addFederatedIdentity:
+                addFederatedIdentity(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case removeFederatedIdentity:
+                removeFederatedIdentity(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case getFederatedIdentities:
+                getFederatedIdentities(getEndpoint().getKeycloakClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
@@ -2905,6 +2917,89 @@ public class KeycloakProducer extends DefaultProducer {
                 = keycloakClient.realm(realmName).organizations().get(orgId).identityProviders().getIdentityProviders();
         Message message = getMessageForResponse(exchange);
         message.setBody(idps);
+    }
+
+    private void addFederatedIdentity(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        String identityProvider = exchange.getIn().getHeader(KeycloakConstants.IDENTITY_PROVIDER, String.class);
+        if (ObjectHelper.isEmpty(identityProvider)) {
+            throw new IllegalArgumentException(MISSING_IDENTITY_PROVIDER);
+        }
+
+        String federatedUserId = exchange.getIn().getHeader(KeycloakConstants.FEDERATED_USER_ID, String.class);
+        if (ObjectHelper.isEmpty(federatedUserId)) {
+            throw new IllegalArgumentException(MISSING_FEDERATED_USER_ID);
+        }
+
+        FederatedIdentityRepresentation federatedIdentity = new FederatedIdentityRepresentation();
+        federatedIdentity.setIdentityProvider(identityProvider);
+        federatedIdentity.setUserId(federatedUserId);
+
+        // Keycloak shows the external username in the admin console; fall back to the external user id when the
+        // caller does not provide one, so the link is never created with a blank username.
+        String federatedUsername = exchange.getIn().getHeader(KeycloakConstants.FEDERATED_USERNAME, String.class);
+        federatedIdentity.setUserName(ObjectHelper.isNotEmpty(federatedUsername) ? federatedUsername : federatedUserId);
+
+        try (Response response
+                = keycloakClient.realm(realmName).users().get(userId).addFederatedIdentity(identityProvider,
+                        federatedIdentity)) {
+            if (response.getStatus() < 200 || response.getStatus() >= 300) {
+                throw new IllegalStateException(
+                        "Failed to add federated identity, status: " + response.getStatus());
+            }
+        }
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Federated identity added successfully");
+    }
+
+    private void removeFederatedIdentity(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        String identityProvider = exchange.getIn().getHeader(KeycloakConstants.IDENTITY_PROVIDER, String.class);
+        if (ObjectHelper.isEmpty(identityProvider)) {
+            throw new IllegalArgumentException(MISSING_IDENTITY_PROVIDER);
+        }
+
+        keycloakClient.realm(realmName).users().get(userId).removeFederatedIdentity(identityProvider);
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Federated identity removed successfully");
+    }
+
+    private void getFederatedIdentities(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        List<FederatedIdentityRepresentation> federatedIdentities
+                = keycloakClient.realm(realmName).users().get(userId).getFederatedIdentity();
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(federatedIdentities);
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

@@ -133,5 +133,8 @@ public enum KeycloakOperations {
     listOrganizationMembers,
     linkOrganizationIdentityProvider,
     unlinkOrganizationIdentityProvider,
-    listOrganizationIdentityProviders
+    listOrganizationIdentityProviders,
+    addFederatedIdentity,
+    removeFederatedIdentity,
+    getFederatedIdentities
 }

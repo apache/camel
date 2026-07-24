@@ -142,6 +142,70 @@ YAML::
 ----
 ====
 
+=== Federated Identity Operations
+
+Federated identity operations manage the links between a Keycloak user and an external identity provider account
+(Google, GitHub, a SAML provider, and so on). They are useful for SSO scenarios and for provisioning users with
+pre-linked IdP accounts during a migration.
+
+* `addFederatedIdentity` — link a user to an identity provider account.
+* `removeFederatedIdentity` — unlink a user from an identity provider.
+* `getFederatedIdentities` — list all identity provider links for a user.
+
+All three require `CamelKeycloakRealmName` and `CamelKeycloakUserId`. In addition:
+
+* `addFederatedIdentity` requires `CamelKeycloakIdentityProvider` (the IdP alias) and `CamelKeycloakFederatedUserId`
+  (the user id at the provider). `CamelKeycloakFederatedUsername` is optional — when it is not supplied the external
+  user id is used as the username.
+* `removeFederatedIdentity` requires `CamelKeycloakIdentityProvider`.
+
+`getFederatedIdentities` sets the out-message body to the `List<FederatedIdentityRepresentation>` of links.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:linkAccount")
+    .setHeader(KeycloakConstants.REALM_NAME, constant("myrealm"))
+    .setHeader(KeycloakConstants.USER_ID, constant("user-uuid"))
+    .setHeader(KeycloakConstants.IDENTITY_PROVIDER, constant("google"))
+    .setHeader(KeycloakConstants.FEDERATED_USER_ID, constant("google-account-id"))
+    .setHeader(KeycloakConstants.FEDERATED_USERNAME, constant("jane@example.com"))
+    .to("keycloak:admin?operation=addFederatedIdentity");
+
+from("direct:listLinks")
+    .setHeader(KeycloakConstants.REALM_NAME, constant("myrealm"))
+    .setHeader(KeycloakConstants.USER_ID, constant("user-uuid"))
+    .to("keycloak:admin?operation=getFederatedIdentities");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:linkAccount
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "myrealm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            constant: "user-uuid"
+        - setHeader:
+            name: CamelKeycloakIdentityProvider
+            constant: "google"
+        - setHeader:
+            name: CamelKeycloakFederatedUserId
+            constant: "google-account-id"
+        - to:
+            uri: keycloak:admin?operation=addFederatedIdentity
+----
+====
+
 == Configuration Options
 
 [width="100%",cols="10%,10%,80%",options="header"]

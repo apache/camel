@@ -3299,6 +3299,42 @@ public interface KeycloakEndpointBuilderFactory {
         public String keycloakOrganizationSearch() {
             return "CamelKeycloakOrganizationSearch";
         }
+        /**
+         * The identity provider alias for a federated identity link.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakIdentityProvider}.
+         */
+        public String keycloakIdentityProvider() {
+            return "CamelKeycloakIdentityProvider";
+        }
+        /**
+         * The user id at the external identity provider.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakFederatedUserId}.
+         */
+        public String keycloakFederatedUserId() {
+            return "CamelKeycloakFederatedUserId";
+        }
+        /**
+         * The username at the external identity provider.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakFederatedUsername}.
+         */
+        public String keycloakFederatedUsername() {
+            return "CamelKeycloakFederatedUsername";
+        }
     }
     static KeycloakEndpointBuilder endpointBuilder(String componentName, String path) {
         class KeycloakEndpointBuilderImpl extends AbstractEndpointBuilder implements KeycloakEndpointBuilder, AdvancedKeycloakEndpointBuilder {
