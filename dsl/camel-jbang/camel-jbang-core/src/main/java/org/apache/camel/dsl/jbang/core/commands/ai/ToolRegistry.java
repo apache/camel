@@ -28,7 +28,9 @@ import java.util.stream.Collectors;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -234,6 +236,33 @@ public final class ToolRegistry {
                     String routeId = args.get("routeId");
                     return ctx.executeAction("route-structure",
                             root -> root.put("id", routeId != null ? routeId : "*"));
+                }));
+
+        register(tool("get_processor_detail",
+                "Show configured options for all processors in a route. "
+                                              + "Returns each processor's type, id, and configured options (attributes, expressions). "
+                                              + "Use includeDocs=true to enrich the response with documentation from the Camel catalog "
+                                              + "for each EIP option and component endpoint option.")
+                .param("routeId", "string", "Route ID to inspect (use * for all routes)", false)
+                .param("includeDocs", "string",
+                        "If true, enrich each processor's options with documentation from the Camel catalog", false)
+                .executor((ctx, args) -> {
+                    String routeId = args.get("routeId");
+                    String result = ctx.executeAction("processor-detail",
+                            root -> root.put("routeId", routeId != null ? routeId : "*"));
+                    String includeDocs = args.get("includeDocs");
+                    if ("true".equalsIgnoreCase(includeDocs)) {
+                        try {
+                            Object parsed = Jsoner.deserialize(result);
+                            if (parsed instanceof JsonObject jo) {
+                                enrichWithDocs(jo, ctx);
+                                return jo.toJson();
+                            }
+                        } catch (Exception e) {
+                            // return unenriched result
+                        }
+                    }
+                    return result;
                 }));
 
         register(tool("get_top_processors",
@@ -977,6 +1006,115 @@ public final class ToolRegistry {
                                + ExampleHelper.getGithubUrl(entry) + "/" + file;
                     }
                 }));
+    }
+
+    // ---- Processor detail enrichment ----
+
+    private static void enrichWithDocs(JsonObject json, ToolContext ctx) {
+        CamelCatalog cat = ctx.catalog();
+        JsonArray routes = (JsonArray) json.get("routes");
+        if (routes != null) {
+            for (Object routeObj : routes) {
+                if (routeObj instanceof JsonObject routeJson) {
+                    enrichRouteProcessors(routeJson, cat);
+                }
+            }
+        } else {
+            enrichRouteProcessors(json, cat);
+        }
+    }
+
+    private static void enrichRouteProcessors(JsonObject routeJson, CamelCatalog cat) {
+        JsonArray processors = (JsonArray) routeJson.get("processors");
+        if (processors == null) {
+            return;
+        }
+        for (Object obj : processors) {
+            if (!(obj instanceof JsonObject processor)) {
+                continue;
+            }
+            String type = processor.getString("type");
+            if (type == null) {
+                continue;
+            }
+            JsonObject opts = processor.getMap("options");
+            if ("from".equals(type) || "to".equals(type) || "toD".equals(type) || "wireTap".equals(type)
+                    || "enrich".equals(type) || "pollEnrich".equals(type)) {
+                enrichComponentOptions(processor, opts, cat);
+            } else {
+                enrichEipOptions(processor, type, opts, cat);
+            }
+        }
+    }
+
+    private static void enrichComponentOptions(JsonObject processor, JsonObject opts, CamelCatalog cat) {
+        String uri = processor.getString("endpointUri");
+        if (uri == null) {
+            uri = opts != null ? opts.getString("uri") : null;
+        }
+        if (uri == null) {
+            return;
+        }
+        String scheme = uri.contains(":") ? uri.substring(0, uri.indexOf(':')) : uri;
+        ComponentModel model = cat.componentModel(scheme);
+        if (model == null) {
+            return;
+        }
+        processor.put("componentDescription", model.getDescription());
+
+        if (opts != null && model.getEndpointOptions() != null) {
+            JsonObject optionDocs = new JsonObject();
+            for (BaseOptionModel opt : model.getEndpointOptions()) {
+                if (opts.containsKey(opt.getName())) {
+                    optionDocs.put(opt.getName(), buildOptionDoc(opt));
+                }
+            }
+            if (!optionDocs.isEmpty()) {
+                processor.put("optionDocs", optionDocs);
+            }
+        }
+    }
+
+    private static void enrichEipOptions(JsonObject processor, String type, JsonObject opts, CamelCatalog cat) {
+        EipModel model = cat.eipModel(type);
+        if (model == null) {
+            return;
+        }
+        processor.put("eipDescription", model.getDescription());
+
+        if (opts != null && model.getOptions() != null) {
+            JsonObject optionDocs = new JsonObject();
+            for (BaseOptionModel opt : model.getOptions()) {
+                if (opts.containsKey(opt.getName())) {
+                    optionDocs.put(opt.getName(), buildOptionDoc(opt));
+                }
+            }
+            if (!optionDocs.isEmpty()) {
+                processor.put("optionDocs", optionDocs);
+            }
+        }
+    }
+
+    private static JsonObject buildOptionDoc(BaseOptionModel opt) {
+        JsonObject doc = new JsonObject();
+        doc.put("description", opt.getDescription());
+        doc.put("type", opt.getType());
+        if (opt.getGroup() != null && !opt.getGroup().isEmpty()) {
+            doc.put("group", opt.getGroup());
+        }
+        if (opt.getDefaultValue() != null) {
+            doc.put("defaultValue", opt.getDefaultValue().toString());
+        }
+        if (opt.isRequired()) {
+            doc.put("required", true);
+        }
+        if (opt.isDeprecated()) {
+            doc.put("deprecated", true);
+        }
+        if (opt.getEnums() != null && !opt.getEnums().isEmpty()) {
+            doc.put("enum", opt.getEnums());
+        }
+        return doc;
     }
 
     // ---- Utility ----
