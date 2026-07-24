@@ -23,6 +23,8 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
 /**
  * Test infra service for Ftp
  */
+// Credentials are intentional test-only fixtures for testcontainer services — no security risk
+@SuppressWarnings("java:S2068")
 public interface FtpInfraService extends InfrastructureService {
     @Deprecated
     // Use port

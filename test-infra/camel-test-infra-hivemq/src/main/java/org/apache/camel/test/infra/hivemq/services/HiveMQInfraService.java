@@ -18,6 +18,8 @@ package org.apache.camel.test.infra.hivemq.services;
 
 import org.apache.camel.test.infra.common.services.InfrastructureService;
 
+// Credentials are intentional test-only fixtures for testcontainer services — no security risk
+@SuppressWarnings("java:S2068")
 public interface HiveMQInfraService extends InfrastructureService {
 
     @Deprecated
