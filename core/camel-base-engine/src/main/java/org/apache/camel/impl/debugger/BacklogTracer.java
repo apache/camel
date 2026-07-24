@@ -62,17 +62,15 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     public static final int MAX_BACKLOG_SIZE = 1000;
     private final CamelContext camelContext;
     private final Language simple;
-    // enabled, standby, and activityEnabled (further below) are toggled at runtime via
-    // JMX/management APIs while routing threads read them in shouldTrace() and traceEvent().
-    // Other boolean fields (removeOnDump, bodyIncludeStreams, traceRests, etc.) are set during
-    // initialization and do not change while routes are processing, so they do not need volatile.
+    // Fields below marked volatile are writable at runtime via JMX/management APIs
+    // while routing threads read them in shouldTrace() and traceEvent().
     private volatile boolean enabled;
     private volatile boolean standby;
     private final AtomicLong traceCounter = new AtomicLong();
     // use a queue with an upper limit to avoid storing too many messages
     private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     // how many of the last messages to keep in the backlog at total
-    private int backlogSize = 100;
+    private volatile int backlogSize = 100;
     // use tracer to capture additional information for capturing latest completed exchange message-history
     private final Queue<BacklogTracerEventMessage> provisionalHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     private final Queue<BacklogTracerEventMessage> completeHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE + 1);
@@ -80,26 +78,31 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     private final Queue<BacklogTracerActivityMessage> activityQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     private final ConcurrentHashMap<String, DefaultBacklogTracerActivityMessage> inflightActivity = new ConcurrentHashMap<>();
     private final ActivityEventNotifier activityEventNotifier = new ActivityEventNotifier();
-    private int activitySize = 100;
+    private volatile int activitySize = 100;
     private static final long INFLIGHT_EVICTION_MILLIS = 5 * 60 * 1000;
     private final Object historyLock = new Object();
     private volatile String lastCompletedBreadcrumbId;
-    private boolean removeOnDump = true;
-    private int bodyMaxChars = 32 * 1024;
-    private boolean bodyIncludeStreams;
-    private boolean bodyIncludeFiles = true;
-    private boolean includeExchangeProperties = true;
-    private boolean includeExchangeVariables = true;
-    private boolean includeException = true;
-    // volatile: toggled at runtime via JMX, same rationale as enabled/standby above
+    private volatile boolean removeOnDump = true;
+    private volatile int bodyMaxChars = 32 * 1024;
+    private volatile boolean bodyIncludeStreams;
+    private volatile boolean bodyIncludeFiles = true;
+    private volatile boolean includeExchangeProperties = true;
+    private volatile boolean includeExchangeVariables = true;
+    private volatile boolean includeException = true;
     private volatile boolean activityEnabled;
-    private boolean traceRests;
-    private boolean traceTemplates;
+    private volatile boolean traceRests;
+    private volatile boolean traceTemplates;
+
+    // immutable holders for compound fields that must be visible atomically on routing threads
+    private record TracePatternHolder(String tracePattern, String[] patterns) {
+    }
+
+    private record TraceFilterHolder(String traceFilter, Predicate predicate) {
+    }
+
     // a pattern to filter tracing nodes
-    private String tracePattern;
-    private String[] patterns;
-    private String traceFilter;
-    private Predicate predicate;
+    private volatile TracePatternHolder tracePatternHolder;
+    private volatile TraceFilterHolder traceFilterHolder;
 
     BacklogTracer(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -135,17 +138,20 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         boolean pattern = true;
         boolean filter = true;
 
-        if (patterns != null) {
-            pattern = shouldTracePattern(definition);
+        // snapshot the volatile holders once for consistent reads
+        TracePatternHolder ph = tracePatternHolder;
+        if (ph != null) {
+            pattern = shouldTracePattern(definition, ph.patterns());
         }
-        if (predicate != null) {
-            filter = shouldTraceFilter(exchange);
+        TraceFilterHolder fh = traceFilterHolder;
+        if (fh != null) {
+            filter = shouldTraceFilter(exchange, fh.predicate());
         }
 
         return pattern && filter;
     }
 
-    private boolean shouldTracePattern(NamedNode definition) {
+    private boolean shouldTracePattern(NamedNode definition, String[] patterns) {
         for (String pattern : patterns) {
             // match either route id, or node id
             String id = definition.getId();
@@ -326,7 +332,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         }
     }
 
-    private boolean shouldTraceFilter(Exchange exchange) {
+    private boolean shouldTraceFilter(Exchange exchange, Predicate predicate) {
         return predicate.matches(exchange);
     }
 
@@ -478,37 +484,41 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
 
     @Override
     public String getTracePattern() {
-        return tracePattern;
+        TracePatternHolder ph = tracePatternHolder;
+        return ph != null ? ph.tracePattern() : null;
     }
 
     @Override
     public void setTracePattern(String tracePattern) {
-        this.tracePattern = tracePattern;
         if (tracePattern != null) {
             // the pattern can have multiple nodes separated by comma
-            this.patterns = tracePattern.split(",");
+            this.tracePatternHolder = new TracePatternHolder(tracePattern, tracePattern.split(","));
         } else {
-            this.patterns = null;
+            this.tracePatternHolder = null;
         }
     }
 
     @Override
     public String getTraceFilter() {
-        return traceFilter;
+        TraceFilterHolder fh = traceFilterHolder;
+        return fh != null ? fh.traceFilter() : null;
     }
 
     @Override
     public void setTraceFilter(String filter) {
-        this.traceFilter = filter;
         if (filter != null) {
             // assume simple language
+            Predicate p;
             String name = StringHelper.before(filter, ":");
             if (name != null) {
-                predicate = camelContext.resolveLanguage(name).createPredicate(filter);
+                p = camelContext.resolveLanguage(name).createPredicate(filter);
             } else {
                 // use simple language by default
-                predicate = simple.createPredicate(filter);
+                p = simple.createPredicate(filter);
             }
+            this.traceFilterHolder = new TraceFilterHolder(filter, p);
+        } else {
+            this.traceFilterHolder = null;
         }
     }
 

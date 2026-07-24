@@ -24,7 +24,7 @@ import org.apache.camel.support.AsyncProcessorSupport;
  */
 public abstract class BaseProcessorSupport extends AsyncProcessorSupport implements DisabledAware {
 
-    private boolean disabled;
+    private volatile boolean disabled;
 
     @Override
     public boolean isDisabled() {

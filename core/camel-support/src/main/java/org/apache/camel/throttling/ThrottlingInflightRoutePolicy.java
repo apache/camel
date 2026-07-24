@@ -71,14 +71,21 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     private final Lock lock = new ReentrantLock();
     @Metadata(description = "Sets which scope the throttling should be based upon, either route or total scoped.",
               enums = "Context,Route", defaultValue = "Route")
-    private ThrottlingScope scope = ThrottlingScope.Route;
+    private volatile ThrottlingScope scope = ThrottlingScope.Route;
     @Metadata(description = "Sets the upper limit of number of concurrent inflight exchanges at which point reached the throttler should suspend the route.",
               defaultValue = "1000")
-    private int maxInflightExchanges = 1000;
+    private volatile int maxInflightExchanges = 1000;
     @Metadata(description = "Sets at which percentage of the max the throttler should start resuming the route.",
               defaultValue = "70")
-    private int resumePercentOfMax = 70;
-    private int resumeInflightExchanges = 700;
+    private volatile int resumePercentOfMax = 70;
+    private volatile int resumeInflightExchanges = 700;
+
+    // immutable holder for throttling limits that must be visible atomically on routing threads
+    private record ThrottlingLimits(int maxInflightExchanges, int resumeInflightExchanges) {
+    }
+
+    private volatile ThrottlingLimits throttlingLimits = new ThrottlingLimits(1000, 700);
+
     @Metadata(description = "Sets the logging level to report the throttling activity.",
               javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
@@ -128,15 +135,20 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         // this works the best when this logic is executed when the exchange is done
         Consumer consumer = route.getConsumer();
 
+        // snapshot the volatile holder once for consistent reads
+        ThrottlingLimits limits = this.throttlingLimits;
+        int maxInflight = limits.maxInflightExchanges();
+        int resumeInflight = limits.resumeInflightExchanges();
+
         int size = getSize(route, exchange);
-        boolean stop = maxInflightExchanges > 0 && size > maxInflightExchanges;
+        boolean stop = maxInflight > 0 && size > maxInflight;
         if (LOG.isTraceEnabled()) {
-            LOG.trace("{} > 0 && {} > {} evaluated as {}", maxInflightExchanges, size, maxInflightExchanges, stop);
+            LOG.trace("{} > 0 && {} > {} evaluated as {}", maxInflight, size, maxInflight, stop);
         }
         if (stop) {
             try {
                 lock.lock();
-                stopConsumer(size, consumer);
+                stopConsumer(size, consumer, maxInflight);
             } catch (Exception e) {
                 handleException(e);
             } finally {
@@ -147,14 +159,14 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         // reload size in case a race condition with too many at once being invoked
         // so we need to ensure that we read the most current size and start the consumer if we are already to low
         size = getSize(route, exchange);
-        boolean start = size <= resumeInflightExchanges;
+        boolean start = size <= resumeInflight;
         if (LOG.isTraceEnabled()) {
-            LOG.trace("{} <= {} evaluated as {}", size, resumeInflightExchanges, start);
+            LOG.trace("{} <= {} evaluated as {}", size, resumeInflight, start);
         }
         if (start) {
             try {
                 lock.lock();
-                startConsumer(size, consumer);
+                startConsumer(size, consumer, resumeInflight);
             } catch (Exception e) {
                 handleException(e);
             } finally {
@@ -178,7 +190,10 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     public void setMaxInflightExchanges(int maxInflightExchanges) {
         this.maxInflightExchanges = maxInflightExchanges;
         // recalculate, must be at least at 1
-        this.resumeInflightExchanges = Math.max(resumePercentOfMax * maxInflightExchanges / 100, 1);
+        int resume = Math.max(resumePercentOfMax * maxInflightExchanges / 100, 1);
+        this.resumeInflightExchanges = resume;
+        // atomically publish both values for routing threads
+        this.throttlingLimits = new ThrottlingLimits(maxInflightExchanges, resume);
     }
 
     public int getResumePercentOfMax() {
@@ -199,7 +214,10 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
 
         this.resumePercentOfMax = resumePercentOfMax;
         // recalculate, must be at least at 1
-        this.resumeInflightExchanges = Math.max(resumePercentOfMax * maxInflightExchanges / 100, 1);
+        int resume = Math.max(resumePercentOfMax * maxInflightExchanges / 100, 1);
+        this.resumeInflightExchanges = resume;
+        // atomically publish both values for routing threads
+        this.throttlingLimits = new ThrottlingLimits(maxInflightExchanges, resume);
     }
 
     public ThrottlingScope getScope() {
@@ -258,18 +276,18 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         }
     }
 
-    private void startConsumer(int size, Consumer consumer) throws Exception {
+    private void startConsumer(int size, Consumer consumer, int resumeInflight) throws Exception {
         boolean started = resumeOrStartConsumer(consumer);
         if (started) {
-            getLogger().log("Throttling consumer: " + size + " <= " + resumeInflightExchanges
+            getLogger().log("Throttling consumer: " + size + " <= " + resumeInflight
                             + " inflight exchange by resuming consumer: " + consumer);
         }
     }
 
-    private void stopConsumer(int size, Consumer consumer) throws Exception {
+    private void stopConsumer(int size, Consumer consumer, int maxInflight) throws Exception {
         boolean stopped = suspendOrStopConsumer(consumer);
         if (stopped) {
-            getLogger().log("Throttling consumer: " + size + " > " + maxInflightExchanges
+            getLogger().log("Throttling consumer: " + size + " > " + maxInflight
                             + " inflight exchange by suspending consumer: " + consumer);
         }
     }
