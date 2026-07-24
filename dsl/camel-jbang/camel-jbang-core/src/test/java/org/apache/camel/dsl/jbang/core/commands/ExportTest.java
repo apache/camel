@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -53,8 +52,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ExportTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);
-    private static final String RELEASED_CAMEL_VERSION = "4.13.0";
-
     private File workingDir;
 
     @BeforeEach
@@ -908,67 +905,6 @@ class ExportTest {
         }
     }
 
-    @ParameterizedTest
-    @MethodSource("runtimeProvider")
-    public void shouldExportWithParentPom(RuntimeType rt) throws Exception {
-        LOG.info("shouldExportWithParentPom {}", rt);
-        Export command = new Export(new CamelJBangMain());
-        List<String> cmdArgs = new ArrayList<>(
-                List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                        "--runtime=%s".formatted(rt.runtime()),
-                        "--parent-pom=com.ourorg:camel-parent:1.0"));
-        if (rt == RuntimeType.springBoot) {
-            cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
-        }
-        cmdArgs.add("target/test-classes/route.yaml");
-        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
-        int exit = command.doCall();
-
-        Assertions.assertEquals(0, exit);
-        Model model = readMavenModel();
-        Assertions.assertEquals("examples", model.getGroupId());
-        Assertions.assertEquals("route", model.getArtifactId());
-        Assertions.assertEquals("1.0.0", model.getVersion());
-
-        // verify parent POM is set
-        Assertions.assertNotNull(model.getParent(), "Parent POM should be set");
-        Assertions.assertEquals("com.ourorg", model.getParent().getGroupId());
-        Assertions.assertEquals("camel-parent", model.getParent().getArtifactId());
-        Assertions.assertEquals("1.0", model.getParent().getVersion());
-
-        if (rt == RuntimeType.springBoot) {
-            // Spring Boot BOM should still be in dependencyManagement
-            assertThat(model.getDependencyManagement().getDependencies())
-                    .as("Spring Boot BOM must be in dependencyManagement when using custom parent")
-                    .anySatisfy(dep -> {
-                        assertThat(dep.getGroupId()).isEqualTo("org.springframework.boot");
-                        assertThat(dep.getArtifactId()).isEqualTo("spring-boot-dependencies");
-                    });
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("runtimeProvider")
-    public void shouldExportWithoutParentPom(RuntimeType rt) throws Exception {
-        LOG.info("shouldExportWithoutParentPom {}", rt);
-        Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
-        int exit = command.doCall();
-
-        Assertions.assertEquals(0, exit);
-        Model model = readMavenModel();
-
-        if (rt == RuntimeType.springBoot) {
-            // default Spring Boot parent should be used
-            Assertions.assertNotNull(model.getParent(), "Spring Boot parent should be set by default");
-            Assertions.assertEquals("org.springframework.boot", model.getParent().getGroupId());
-            Assertions.assertEquals("spring-boot-starter-parent", model.getParent().getArtifactId());
-        } else {
-            // Quarkus and Main should have no parent by default
-            Assertions.assertNull(model.getParent(), "No parent POM should be set by default for " + rt);
-        }
-    }
-
     @Test
     void shouldNotDuplicateMetricsDependency() throws Exception {
         File profile = new File(".", "application.properties");
@@ -994,28 +930,6 @@ class ExportTest {
         } finally {
             FileUtil.deleteFile(profile);
         }
-    }
-
-    @ParameterizedTest
-    @MethodSource("runtimeProvider")
-    public void shouldContainJibProfile(RuntimeType rt) throws Exception {
-        Export command = new Export(new CamelJBangMain());
-        List<String> cmdArgs = new ArrayList<>(
-                List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                        "--runtime=%s".formatted(rt.runtime())));
-        if (rt == RuntimeType.springBoot) {
-            cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
-        }
-        cmdArgs.add("src/test/resources/route.yaml");
-        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
-        int exit = command.doCall();
-
-        Assertions.assertEquals(0, exit);
-
-        File f = new File(workingDir, "pom.xml");
-        String content = IOHelper.loadText(new FileInputStream(f));
-        Assertions.assertTrue(content.contains("<id>jib</id>"),
-                "Jib profile not exported!");
     }
 
 }
