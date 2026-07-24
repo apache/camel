@@ -17,6 +17,8 @@
 
 package org.apache.camel.test.infra.ftp.services.embedded;
 
+// Credentials are intentional test-only fixtures for embedded FTP services — no security risk
+@SuppressWarnings("java:S2068")
 public final class EmbeddedConfigurationBuilder {
     private final EmbeddedConfiguration embeddedConfiguration = new EmbeddedConfiguration();
 

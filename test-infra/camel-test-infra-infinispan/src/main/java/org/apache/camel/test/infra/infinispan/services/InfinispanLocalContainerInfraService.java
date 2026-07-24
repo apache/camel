@@ -32,6 +32,8 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.containers.wait.strategy.Wait;
 
+// Credentials are intentional test-only fixtures for testcontainer services — no security risk
+@SuppressWarnings("java:S2068")
 @InfraService(service = InfinispanInfraService.class,
               description = "Infinispan is a distributed in-memory key/value data store",
               serviceAlias = { "infinispan" },
