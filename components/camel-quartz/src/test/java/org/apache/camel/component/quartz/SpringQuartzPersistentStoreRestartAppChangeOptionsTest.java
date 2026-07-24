@@ -115,7 +115,7 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         // After that it asserts that two options are not equal.
 
         // load spring app
-        AbstractXmlApplicationContext app = newAppContext("SpringQuartzPersistentStoreRestartAppChangeOptionsTest1.xml");
+        app = newAppContext("SpringQuartzPersistentStoreRestartAppChangeOptionsTest1.xml");
         app.start();
         CamelContext camel = app.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
         assertNotNull(camel);
@@ -128,7 +128,7 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         log.info("Restarting ...");
 
         // load spring app
-        AbstractXmlApplicationContext app2 = newAppContext("SpringQuartzPersistentStoreRestartAppChangeOptionsTest2.xml");
+        app2 = newAppContext("SpringQuartzPersistentStoreRestartAppChangeOptionsTest2.xml");
         app2.start();
         CamelContext camel2 = app2.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
         assertNotNull(camel2);
