@@ -263,7 +263,7 @@ class RoutesTabRenderTest {
 
         assertTrue(footer.contains("Esc"), "Footer should contain Esc hint");
         assertTrue(footer.contains("sort"), "Footer should contain sort hint");
-        assertTrue(footer.contains("topology"), "Footer should contain topology hint");
+        assertTrue(footer.contains("diagram"), "Footer should contain diagram hint");
     }
 
     @Test

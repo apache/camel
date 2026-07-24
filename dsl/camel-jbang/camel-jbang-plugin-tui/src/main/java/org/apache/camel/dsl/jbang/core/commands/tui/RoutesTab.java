@@ -16,21 +16,30 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
+import dev.tamboui.markdown.MarkdownView;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -43,7 +52,12 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -86,6 +100,20 @@ class RoutesTab extends AbstractTab {
     private String drillDownRouteId;
     private final Deque<String> routeNavigationStack = new ArrayDeque<>();
 
+    // Detail panel (d toggle in drill-down mode)
+    private boolean detailMode;
+    private int detailScroll;
+    private String lastDetailNodeId;
+    private volatile JsonObject cachedRouteDetail;
+    private volatile String cachedRouteDetailId;
+    private volatile String detailLoadingRouteId;
+    private volatile boolean detailLoading;
+    private final Map<String, CamelCatalog> catalogCache = new HashMap<>();
+    private final Set<String> catalogLoadFailed = new HashSet<>();
+
+    // Go-to node popup (g in drill-down mode)
+    private final GotoNodePopup gotoNodePopup = new GotoNodePopup();
+
     RoutesTab(MonitorContext ctx) {
         super(ctx);
     }
@@ -104,11 +132,22 @@ class RoutesTab extends AbstractTab {
 
     @Override
     public boolean isOverlayActive() {
-        return sourceViewer.isVisible();
+        return sourceViewer.isVisible() || gotoNodePopup.isVisible();
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        // Go-to node popup (takes priority when active)
+        if (gotoNodePopup.isVisible()) {
+            gotoNodePopup.handleKeyEvent(ke);
+            int sel = gotoNodePopup.consumeSelectedIndex();
+            if (sel >= 0) {
+                diagram.setSelectedEipNodeIndex(sel);
+                diagram.scrollToSelectedEipNode();
+            }
+            return true;
+        }
+
         // Source view scrolling (takes priority when active)
         if (sourceViewer.handleKeyEvent(ke)) {
             return true;
@@ -210,6 +249,18 @@ class RoutesTab extends AbstractTab {
             diagram.endLoad();
             reloadDiagram();
             return true;
+        }
+
+        // Detail panel scrolling (PgUp/PgDn when detail mode is active)
+        if (detailMode && diagram.isShowDiagram() && !topologyMode) {
+            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                detailScroll = Math.max(0, detailScroll - 5);
+                return true;
+            }
+            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                detailScroll += 5;
+                return true;
+            }
         }
 
         // Diagram scrolling (PgUp/PgDn etc)
@@ -320,19 +371,28 @@ class RoutesTab extends AbstractTab {
             return true;
         }
 
-        // Enter in table mode opens topology
+        // Enter in table mode opens route diagram
         if (!diagram.isShowDiagram() && !sourceViewer.isVisible() && ke.isConfirm()) {
-            openTopology();
+            openRouteDiagram();
             return true;
         }
 
-        // d in table mode opens route diagram, in diagram mode closes it
-        if (ke.isCharIgnoreCase('d')) {
-            if (diagram.isShowDiagram()) {
-                closeDiagram();
-            } else {
-                openRouteDiagram();
-            }
+        // d in drill-down mode toggles detail panel
+        if (diagram.isShowDiagram() && !topologyMode && !diagram.getEipNodeBoxes().isEmpty()
+                && ke.isCharIgnoreCase('d')) {
+            detailMode = !detailMode;
+            detailScroll = 0;
+            cachedRouteDetail = null;
+            cachedRouteDetailId = null;
+            detailLoadingRouteId = null;
+            detailLoading = false;
+            return true;
+        }
+
+        // g in drill-down mode opens go-to node popup
+        if (diagram.isShowDiagram() && !topologyMode && !diagram.getEipNodeBoxes().isEmpty()
+                && ke.isChar('g')) {
+            gotoNodePopup.open(diagram.getEipNodeBoxes(), diagram.getSelectedEipNodeIndex());
             return true;
         }
 
@@ -363,6 +423,10 @@ class RoutesTab extends AbstractTab {
 
     @Override
     public boolean handleEscape() {
+        if (gotoNodePopup.isVisible()) {
+            gotoNodePopup.close();
+            return true;
+        }
         if (sourceViewer.isVisible()) {
             sourceViewer.hide();
             return true;
@@ -397,6 +461,9 @@ class RoutesTab extends AbstractTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (gotoNodePopup.isVisible()) {
+            return true;
+        }
         if (!diagram.isShowDiagram() && vSplit.handleMouse(me, me.y())) {
             if (vSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
                 topPanelHeight = Math.max(3, Math.min(me.y() - area.y(), area.height() - 5));
@@ -518,17 +585,35 @@ class RoutesTab extends AbstractTab {
                     && diagram.getRouteLayout(drillDownRouteId) != null) {
                 Line title = buildBreadcrumbTitle();
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
-                if (area.width() > 60) {
-                    infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));
+
+                // Split for detail panel when active
+                Rect diagramArea = area;
+                if (detailMode) {
+                    int detailH = Math.max(5, area.height() * 60 / 100);
+                    List<Rect> vChunks = Layout.vertical()
+                            .constraints(Constraint.fill(), Constraint.length(detailH))
+                            .split(area);
+                    diagramArea = vChunks.get(0);
+                    renderDetail(frame, vChunks.get(1), info);
+                }
+
+                if (diagramArea.width() > 60) {
+                    infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, diagramArea.width() - 20));
                     List<Rect> hChunks = Layout.horizontal()
                             .constraints(Constraint.length(infoPanelWidth), Constraint.fill())
-                            .split(area);
+                            .split(diagramArea);
                     hSplit.setBorderPos(hChunks.get(1).x());
                     renderEipInfoPanel(frame, hChunks.get(0));
                     diagram.renderNativeRouteDiagram(
                             frame, hChunks.get(1), title, diagramMetrics, drillDownRouteId, routeLayout);
                 } else {
-                    diagram.renderNativeRouteDiagram(frame, area, title, diagramMetrics, drillDownRouteId, routeLayout);
+                    diagram.renderNativeRouteDiagram(frame, diagramArea, title, diagramMetrics, drillDownRouteId,
+                            routeLayout);
+                }
+
+                // Render go-to popup overlay
+                if (gotoNodePopup.isVisible()) {
+                    gotoNodePopup.render(frame, area);
                 }
                 return;
             }
@@ -569,15 +654,17 @@ class RoutesTab extends AbstractTab {
                 routeRows.add(Row.from(
                         Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                         Cell.from(routeFromLabel(route)),
-                        rightCell(route.total > 0 ? String.valueOf(route.meanTime) : "", 6, topTimeStyle(route.meanTime)),
-                        rightCell(route.total > 0 ? String.valueOf(route.maxTime) : "", 6, topTimeStyle(route.maxTime)),
-                        rightCell(route.total > 0 ? String.valueOf(route.minTime) : "", 6),
-                        rightCell(route.total > 0 ? String.valueOf(route.lastTime) : "", 6),
-                        rightCell(route.deltaTime != 0 ? String.valueOf(route.deltaTime) : "", 6,
+                        rightCell(route.total > 0 ? formatDurationMs(route.meanTime) : "", 8,
+                                topTimeStyle(route.meanTime)),
+                        rightCell(route.total > 0 ? formatDurationMs(route.maxTime) : "", 8,
+                                topTimeStyle(route.maxTime)),
+                        rightCell(route.total > 0 ? formatDurationMs(route.minTime) : "", 8),
+                        rightCell(route.total > 0 ? formatDurationMs(route.lastTime) : "", 8),
+                        rightCell(route.deltaTime != 0 ? formatDurationMs(route.deltaTime) : "", 8,
                                 topDeltaStyle(route.deltaTime)),
-                        rightCell(route.p50Time >= 0 ? String.valueOf(route.p50Time) : "", 6),
-                        rightCell(route.p95Time >= 0 ? String.valueOf(route.p95Time) : "", 6),
-                        rightCell(route.p99Time >= 0 ? String.valueOf(route.p99Time) : "", 6),
+                        rightCell(route.p50Time >= 0 ? formatDurationMs(route.p50Time) : "", 8),
+                        rightCell(route.p95Time >= 0 ? formatDurationMs(route.p95Time) : "", 8),
+                        rightCell(route.p99Time >= 0 ? formatDurationMs(route.p99Time) : "", 8),
                         rightCell(String.valueOf(route.total), 8),
                         rightCell(String.valueOf(route.failed), 6, failStyle),
                         rightCell(String.valueOf(route.inflight), 8),
@@ -591,14 +678,14 @@ class RoutesTab extends AbstractTab {
                 routeRows.add(Row.from(
                         Cell.from(Span.styled("GLOBAL", ts)),
                         Cell.from(""),
-                        rightCell(String.valueOf(selTop.meanTime), 6, ts),
-                        rightCell(String.valueOf(selTop.maxTime), 6, ts),
-                        rightCell(String.valueOf(selTop.minTime), 6, ts),
-                        rightCell(String.valueOf(selTop.lastTime), 6, ts),
-                        rightCell(selTop.deltaTime != 0 ? String.valueOf(selTop.deltaTime) : "", 6, ts),
-                        rightCell(selTop.p50Time >= 0 ? String.valueOf(selTop.p50Time) : "", 6, ts),
-                        rightCell(selTop.p95Time >= 0 ? String.valueOf(selTop.p95Time) : "", 6, ts),
-                        rightCell(selTop.p99Time >= 0 ? String.valueOf(selTop.p99Time) : "", 6, ts),
+                        rightCell(formatDurationMs(selTop.meanTime), 8, ts),
+                        rightCell(formatDurationMs(selTop.maxTime), 8, ts),
+                        rightCell(formatDurationMs(selTop.minTime), 8, ts),
+                        rightCell(formatDurationMs(selTop.lastTime), 8, ts),
+                        rightCell(selTop.deltaTime != 0 ? formatDurationMs(selTop.deltaTime) : "", 8, ts),
+                        rightCell(selTop.p50Time >= 0 ? formatDurationMs(selTop.p50Time) : "", 8, ts),
+                        rightCell(selTop.p95Time >= 0 ? formatDurationMs(selTop.p95Time) : "", 8, ts),
+                        rightCell(selTop.p99Time >= 0 ? formatDurationMs(selTop.p99Time) : "", 8, ts),
                         rightCell(String.valueOf(selTop.exchangesTotal), 8, ts),
                         rightCell(String.valueOf(selTop.failed), 6,
                                 selTop.failed > 0 ? Theme.error().bold() : ts),
@@ -613,14 +700,14 @@ class RoutesTab extends AbstractTab {
                     .header(Row.from(
                             Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
                             Cell.from(Span.styled("FROM", Style.EMPTY.bold())),
-                            rightCell(routeTopSortLabel("MEAN", "mean"), 6, routeTopSortStyle("mean")),
-                            rightCell(routeTopSortLabel("MAX", "max"), 6, routeTopSortStyle("max")),
-                            rightCell(routeTopSortLabel("MIN", "min"), 6, routeTopSortStyle("min")),
-                            rightCell(routeTopSortLabel("LAST", "last"), 6, routeTopSortStyle("last")),
-                            rightCell(routeTopSortLabel("DELTA", "delta"), 6, routeTopSortStyle("delta")),
-                            rightCell(routeTopSortLabel("P50", "p50"), 6, routeTopSortStyle("p50")),
-                            rightCell(routeTopSortLabel("P95", "p95"), 6, routeTopSortStyle("p95")),
-                            rightCell(routeTopSortLabel("P99", "p99"), 6, routeTopSortStyle("p99")),
+                            rightCell(routeTopSortLabel("MEAN", "mean"), 8, routeTopSortStyle("mean")),
+                            rightCell(routeTopSortLabel("MAX", "max"), 8, routeTopSortStyle("max")),
+                            rightCell(routeTopSortLabel("MIN", "min"), 8, routeTopSortStyle("min")),
+                            rightCell(routeTopSortLabel("LAST", "last"), 8, routeTopSortStyle("last")),
+                            rightCell(routeTopSortLabel("DELTA", "delta"), 8, routeTopSortStyle("delta")),
+                            rightCell(routeTopSortLabel("P50", "p50"), 8, routeTopSortStyle("p50")),
+                            rightCell(routeTopSortLabel("P95", "p95"), 8, routeTopSortStyle("p95")),
+                            rightCell(routeTopSortLabel("P99", "p99"), 8, routeTopSortStyle("p99")),
                             rightCell("TOTAL", 8, Style.EMPTY.bold()),
                             rightCell("FAIL", 6, Style.EMPTY.bold()),
                             rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
@@ -629,14 +716,14 @@ class RoutesTab extends AbstractTab {
                     .widths(
                             Constraint.length(24),
                             Constraint.fill(),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
+                            Constraint.length(8),
+                            Constraint.length(8),
+                            Constraint.length(8),
+                            Constraint.length(8),
+                            Constraint.length(8),
+                            Constraint.length(8),
+                            Constraint.length(8),
+                            Constraint.length(8),
                             Constraint.length(8),
                             Constraint.length(6),
                             Constraint.length(8),
@@ -777,7 +864,9 @@ class RoutesTab extends AbstractTab {
                 hint(spans, "Esc", "back");
                 hint(spans, "t", "topology");
                 hint(spans, TuiIcons.HINT_NAV, "navigate");
-                hint(spans, "PgUp/PgDn", "page");
+                hint(spans, "d", "detail" + (detailMode ? " [on]" : " [off]"));
+                hint(spans, "g", "go to");
+                hint(spans, "PgUp/PgDn", detailMode ? "detail" : "page");
                 hint(spans, "c", "source");
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
@@ -801,8 +890,7 @@ class RoutesTab extends AbstractTab {
         } else {
             hint(spans, "Esc", "back");
             hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-            hint(spans, "Enter", "topology");
-            hint(spans, "d", "diagram");
+            hint(spans, "Enter", "diagram");
             hint(spans, "s", "sort");
             hint(spans, "n", "description" + (showDescription ? " [on]" : " [off]"));
             hint(spans, "t", routeTopMode ? "top [on]" : "top [off]");
@@ -942,28 +1030,26 @@ class RoutesTab extends AbstractTab {
 
             lines.add(Line.from(Span.raw("")));
             if (route.total > 0) {
-                int tw = numWidth(route.meanTime, route.maxTime, route.minTime);
                 lines.add(Line.from(
                         Span.styled(" Mean: ", Theme.muted()),
-                        Span.raw(String.format("%" + tw + "d ms", route.meanTime))));
+                        Span.raw(formatDurationMs(route.meanTime))));
                 lines.add(Line.from(
                         Span.styled(" Max:  ", Theme.muted()),
-                        Span.raw(String.format("%" + tw + "d ms", route.maxTime))));
+                        Span.raw(formatDurationMs(route.maxTime))));
                 lines.add(Line.from(
                         Span.styled(" Min:  ", Theme.muted()),
-                        Span.raw(String.format("%" + tw + "d ms", route.minTime))));
+                        Span.raw(formatDurationMs(route.minTime))));
                 if (route.p50Time >= 0) {
-                    int pw = numWidth(route.p50Time, route.p95Time, route.p99Time);
                     lines.add(Line.from(Span.raw("")));
                     lines.add(Line.from(
                             Span.styled(" p50:  ", Theme.muted()),
-                            Span.raw(String.format("%" + pw + "d ms", route.p50Time))));
+                            Span.raw(formatDurationMs(route.p50Time))));
                     lines.add(Line.from(
                             Span.styled(" p95:  ", Theme.muted()),
-                            Span.raw(String.format("%" + pw + "d ms", route.p95Time))));
+                            Span.raw(formatDurationMs(route.p95Time))));
                     lines.add(Line.from(
                             Span.styled(" p99:  ", Theme.muted()),
-                            Span.raw(String.format("%" + pw + "d ms", route.p99Time))));
+                            Span.raw(formatDurationMs(route.p99Time))));
                     lines.add(buildPercentileBarLine(
                             route.p50Time, route.p95Time, route.p99Time, area.width() - 3));
                 }
@@ -1102,33 +1188,29 @@ class RoutesTab extends AbstractTab {
 
                 if (stat.exchangesTotal > 0) {
                     lines.add(Line.from(Span.raw("")));
-                    int tw = numWidth(stat.meanProcessingTime, stat.maxProcessingTime,
-                            stat.minProcessingTime, stat.lastProcessingTime);
                     lines.add(Line.from(
                             Span.styled(" Mean: ", Style.EMPTY.dim()),
-                            Span.raw(String.format("%" + tw + "d ms", stat.meanProcessingTime))));
+                            Span.raw(formatDurationMs(stat.meanProcessingTime))));
                     lines.add(Line.from(
                             Span.styled(" Max:  ", Style.EMPTY.dim()),
-                            Span.raw(String.format("%" + tw + "d ms", stat.maxProcessingTime))));
+                            Span.raw(formatDurationMs(stat.maxProcessingTime))));
                     lines.add(Line.from(
                             Span.styled(" Min:  ", Style.EMPTY.dim()),
-                            Span.raw(String.format("%" + tw + "d ms", stat.minProcessingTime))));
+                            Span.raw(formatDurationMs(stat.minProcessingTime))));
                     lines.add(Line.from(
                             Span.styled(" Last: ", Style.EMPTY.dim()),
-                            Span.raw(String.format("%" + tw + "d ms", stat.lastProcessingTime))));
+                            Span.raw(formatDurationMs(stat.lastProcessingTime))));
                     if (stat.p50ProcessingTime >= 0) {
-                        int pw = numWidth(stat.p50ProcessingTime, stat.p95ProcessingTime,
-                                stat.p99ProcessingTime);
                         lines.add(Line.from(Span.raw("")));
                         lines.add(Line.from(
                                 Span.styled(" p50:  ", Style.EMPTY.dim()),
-                                Span.raw(String.format("%" + pw + "d ms", stat.p50ProcessingTime))));
+                                Span.raw(formatDurationMs(stat.p50ProcessingTime))));
                         lines.add(Line.from(
                                 Span.styled(" p95:  ", Style.EMPTY.dim()),
-                                Span.raw(String.format("%" + pw + "d ms", stat.p95ProcessingTime))));
+                                Span.raw(formatDurationMs(stat.p95ProcessingTime))));
                         lines.add(Line.from(
                                 Span.styled(" p99:  ", Style.EMPTY.dim()),
-                                Span.raw(String.format("%" + pw + "d ms", stat.p99ProcessingTime))));
+                                Span.raw(formatDurationMs(stat.p99ProcessingTime))));
                         lines.add(buildPercentileBarLine(
                                 stat.p50ProcessingTime, stat.p95ProcessingTime,
                                 stat.p99ProcessingTime, area.width() - 3));
@@ -1693,6 +1775,271 @@ class RoutesTab extends AbstractTab {
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Routes");
     }
 
+    // ---- Detail panel ----
+
+    private void renderDetail(Frame frame, Rect area, IntegrationInfo info) {
+        var selected = diagram.getSelectedEipNodeBox();
+        if (selected == null || selected.layoutNode() == null) {
+            frame.renderWidget(
+                    MarkdownView.builder()
+                            .source("*Select an EIP node*")
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" EIP Detail ").build())
+                            .styles(Theme.markdownStyles())
+                            .build(),
+                    area);
+            return;
+        }
+
+        String nodeId = selected.layoutNode().id;
+        String eipType = selected.layoutNode().type;
+        if (nodeId == null || eipType == null) {
+            frame.renderWidget(
+                    MarkdownView.builder()
+                            .source("*No detail available*")
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" EIP Detail ").build())
+                            .styles(Theme.markdownStyles())
+                            .build(),
+                    area);
+            return;
+        }
+
+        if (!nodeId.equals(lastDetailNodeId)) {
+            lastDetailNodeId = nodeId;
+            detailScroll = 0;
+        }
+
+        if (drillDownRouteId != null && !drillDownRouteId.equals(cachedRouteDetailId)
+                && !drillDownRouteId.equals(detailLoadingRouteId)) {
+            detailLoadingRouteId = drillDownRouteId;
+            detailLoading = true;
+            String rid = drillDownRouteId;
+            if (ctx.runner != null) {
+                ctx.runner.scheduler().execute(() -> {
+                    JsonObject result = requestRouteProcessorDetail(rid);
+                    cachedRouteDetail = result;
+                    cachedRouteDetailId = rid;
+                    detailLoading = false;
+                });
+            }
+        }
+
+        JsonObject processorEntry = findProcessorEntry(nodeId);
+
+        StringBuilder md = new StringBuilder();
+        CamelCatalog catalog = getCatalog(info);
+
+        if (processorEntry != null) {
+            String type = processorEntry.getString("type");
+            String endpointUri = processorEntry.getString("endpointUri");
+
+            if ("from".equals(type) && endpointUri != null && catalog != null) {
+                renderEndpointDetail(md, catalog, endpointUri);
+            } else if (type != null) {
+                renderEipDetail(md, catalog, type, processorEntry.getMap("options"));
+            } else {
+                md.append("*No detail available*\n");
+            }
+        } else if (detailLoading) {
+            md.append("*Loading...*\n");
+        } else {
+            md.append("*No detail available*\n");
+        }
+
+        String title = " " + eipType + " [" + nodeId + "] ";
+        if (CharWidth.of(title) > area.width() - 4) {
+            title = " " + CharWidth.truncateWithEllipsis(
+                    eipType + " [" + nodeId + "]", area.width() - 6, CharWidth.TruncatePosition.MIDDLE) + " ";
+        }
+
+        frame.renderWidget(
+                MarkdownView.builder()
+                        .source(md.toString())
+                        .scroll(detailScroll)
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(title).build())
+                        .styles(Theme.markdownStyles())
+                        .build(),
+                area);
+    }
+
+    private void renderEipDetail(StringBuilder md, CamelCatalog catalog, String type, JsonObject opts) {
+        EipModel model = catalog != null ? catalog.eipModel(type) : null;
+
+        if (model != null && model.getTitle() != null) {
+            md.append("## ").append(model.getTitle()).append("\n\n");
+            if (model.getDescription() != null && !model.getDescription().isEmpty()) {
+                md.append(model.getDescription()).append("\n\n");
+            }
+        } else {
+            md.append("## ").append(type).append("\n\n");
+        }
+
+        if (opts != null && !opts.isEmpty()) {
+            Map<String, BaseOptionModel> optionDocs = new LinkedHashMap<>();
+            if (model != null) {
+                for (BaseOptionModel opt : model.getOptions()) {
+                    if (opt.getName() != null) {
+                        optionDocs.put(opt.getName(), opt);
+                    }
+                }
+            }
+
+            for (Map.Entry<String, Object> entry : opts.entrySet()) {
+                String optName = entry.getKey();
+                String optValue = String.valueOf(entry.getValue());
+                appendOptionDetail(md, optName, optValue, optionDocs.get(optName));
+            }
+        } else {
+            md.append("*No configured options*\n");
+        }
+    }
+
+    private void renderEndpointDetail(StringBuilder md, CamelCatalog catalog, String uri) {
+        String component = uri.contains(":") ? uri.substring(0, uri.indexOf(':')) : uri;
+        ComponentModel model = catalog.componentModel(component);
+
+        if (model != null) {
+            String compTitle = model.getTitle() != null ? model.getTitle() : component;
+            md.append("## ").append(compTitle).append("\n\n");
+            if (model.getDescription() != null && !model.getDescription().isEmpty()) {
+                md.append(model.getDescription()).append("\n\n");
+            }
+
+            Map<String, String> parsedOptions;
+            try {
+                parsedOptions = catalog.endpointProperties(uri);
+            } catch (URISyntaxException e) {
+                parsedOptions = Map.of();
+            }
+
+            if (parsedOptions.isEmpty()) {
+                md.append("*No configured options*\n");
+            } else {
+                Map<String, BaseOptionModel> optionDocs = new LinkedHashMap<>();
+                for (ComponentModel.EndpointOptionModel opt : model.getEndpointOptions()) {
+                    if (opt.getName() != null) {
+                        optionDocs.put(opt.getName(), opt);
+                    }
+                }
+
+                for (Map.Entry<String, String> entry : parsedOptions.entrySet()) {
+                    appendOptionDetail(md, entry.getKey(), entry.getValue(), optionDocs.get(entry.getKey()));
+                }
+            }
+        } else {
+            md.append("## ").append(component).append("\n\n");
+            md.append("*No catalog documentation for: ").append(component).append("*\n");
+        }
+    }
+
+    private static void appendOptionDetail(StringBuilder md, String optName, String optValue, BaseOptionModel doc) {
+        md.append("---\n\n");
+        md.append("**").append(optName).append("** = **").append(optValue).append("**\n\n");
+
+        if (doc != null) {
+            if (doc.getDescription() != null && !doc.getDescription().isEmpty()) {
+                md.append(doc.getDescription()).append("\n\n");
+            }
+            List<String> meta = new ArrayList<>();
+            if (doc.getType() != null) {
+                meta.add("Type: `" + doc.getType() + "`");
+            }
+            if (doc.getDefaultValue() != null) {
+                meta.add("Default: `" + doc.getDefaultValue() + "`");
+            }
+            if (doc.isRequired()) {
+                meta.add("Required: yes");
+            }
+            if (doc.getEnums() != null && !doc.getEnums().isEmpty()) {
+                meta.add("Enum: " + String.join(", ", doc.getEnums()));
+            }
+            if (doc.getGroup() != null && !doc.getGroup().isEmpty()) {
+                meta.add("Group: " + doc.getGroup());
+            }
+            if (doc.isDeprecated()) {
+                String depText = "Deprecated";
+                if (doc.getDeprecationNote() != null && !doc.getDeprecationNote().isEmpty()) {
+                    depText += " — " + doc.getDeprecationNote();
+                }
+                meta.add(depText);
+            }
+            if (!meta.isEmpty()) {
+                for (String m : meta) {
+                    md.append("- ").append(m).append("\n");
+                }
+                md.append("\n");
+            }
+        }
+    }
+
+    private CamelCatalog getCatalog(IntegrationInfo info) {
+        String version = info.camelVersion;
+        if (version == null) {
+            return null;
+        }
+        CamelCatalog cached = catalogCache.get(version);
+        if (cached != null) {
+            return cached;
+        }
+        if (catalogLoadFailed.contains(version)) {
+            return null;
+        }
+        try {
+            cached = CatalogLoader.loadCatalog(null, version, true);
+            if (cached != null) {
+                catalogCache.put(version, cached);
+            } else {
+                catalogLoadFailed.add(version);
+            }
+            return cached;
+        } catch (Exception e) {
+            catalogLoadFailed.add(version);
+            return null;
+        }
+    }
+
+    private JsonObject requestRouteProcessorDetail(String routeId) {
+        if (ctx.selectedPid == null) {
+            return null;
+        }
+        try {
+            Path outputFile = ctx.getOutputFile(ctx.selectedPid);
+            PathUtils.deleteFile(outputFile);
+
+            JsonObject root = new JsonObject();
+            root.put("action", "processor-detail");
+            root.put("routeId", routeId);
+
+            Path actionFile = ctx.getActionFile(ctx.selectedPid);
+            PathUtils.writeTextSafely(root.toJson(), actionFile);
+
+            JsonObject jo = TuiHelper.pollJsonResponse(outputFile, 5000);
+            PathUtils.deleteFile(outputFile);
+            return jo;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private JsonObject findProcessorEntry(String nodeId) {
+        if (cachedRouteDetail == null || nodeId == null) {
+            return null;
+        }
+        JsonArray processors = (JsonArray) cachedRouteDetail.get("processors");
+        if (processors == null) {
+            return null;
+        }
+        for (Object obj : processors) {
+            JsonObject p = (JsonObject) obj;
+            if (nodeId.equals(p.getString("id"))) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String description() {
         return "Route list with state, message counts, throughput, and failure statistics";
@@ -1815,9 +2162,9 @@ class RoutesTab extends AbstractTab {
 
                 **Route table:**
                 - `Up/Down` — select route
+                - `Enter` — open route diagram
                 - `p` — start/stop selected route
                 - `P` — suspend/resume selected route
-                - `d` — show topology diagram
                 - `c` — show route source code
                 - `n` — toggle description labels
                 - `s` — cycle sort column
@@ -1836,11 +2183,14 @@ class RoutesTab extends AbstractTab {
                 **Route diagram (drill-down):**
                 - `↑↓←→` — navigate between EIP nodes
                 - `Enter` — jump to linked route (when `↵` indicator shown)
+                - `d` — toggle detail panel (EIP/component catalog docs)
+                - `g` — go to node (fuzzy search popup)
                 - `c` — show source code at selected node
                 - `Esc` — go back (previous route or topology)
                 - `t` — jump back to topology view
                 - `m` — toggle metrics
                 - `n` — toggle description labels
+                - `PgUp/PgDn` — scroll detail panel (when detail is on)
 
                 **Source view:**
                 - `↑↓` — move cursor between lines

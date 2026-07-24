@@ -63,6 +63,7 @@ class DiagramTab extends AbstractTab {
 
     private final DiagramSupport diagram = new DiagramSupport();
     private final SourceViewer sourceViewer = new SourceViewer();
+    private final GotoNodePopup gotoNodePopup = new GotoNodePopup();
     private boolean diagramMetrics = true;
     private static final String[] EXTERNAL_LABELS = { " [off]", " [edges]", " [all]" };
     private int externalMode;
@@ -93,7 +94,23 @@ class DiagramTab extends AbstractTab {
     }
 
     @Override
+    public boolean isOverlayActive() {
+        return sourceViewer.isVisible() || gotoNodePopup.isVisible();
+    }
+
+    @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        // Go-to node popup (takes priority when active)
+        if (gotoNodePopup.isVisible()) {
+            gotoNodePopup.handleKeyEvent(ke);
+            int sel = gotoNodePopup.consumeSelectedIndex();
+            if (sel >= 0) {
+                diagram.setSelectedEipNodeIndex(sel);
+                diagram.scrollToSelectedEipNode();
+            }
+            return true;
+        }
+
         // Source view scrolling (takes priority when active)
         if (sourceViewer.handleKeyEvent(ke)) {
             return true;
@@ -189,6 +206,13 @@ class DiagramTab extends AbstractTab {
             cachedRouteDetailId = null;
             detailLoadingRouteId = null;
             detailLoading = false;
+            return true;
+        }
+
+        // Go-to node popup in drill-down mode
+        if (!topologyMode && diagram.isShowDiagram() && !diagram.getEipNodeBoxes().isEmpty()
+                && ke.isChar('g')) {
+            gotoNodePopup.open(diagram.getEipNodeBoxes(), diagram.getSelectedEipNodeIndex());
             return true;
         }
 
@@ -306,6 +330,9 @@ class DiagramTab extends AbstractTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (gotoNodePopup.isVisible()) {
+            return true;
+        }
         if (detailMode && lastDetailArea != null && lastDetailArea.contains(me.x(), me.y())) {
             if (me.kind() == MouseEventKind.SCROLL_UP) {
                 detailScroll = Math.max(0, detailScroll - 3);
@@ -346,6 +373,10 @@ class DiagramTab extends AbstractTab {
 
     @Override
     public boolean handleEscape() {
+        if (gotoNodePopup.isVisible()) {
+            gotoNodePopup.close();
+            return true;
+        }
         if (sourceViewer.isVisible()) {
             sourceViewer.hide();
             return true;
@@ -503,6 +534,11 @@ class DiagramTab extends AbstractTab {
                                 frame, area, title, diagramMetrics, drillDownRouteId, routeLayout);
                     }
                 }
+
+                // Render go-to popup overlay
+                if (gotoNodePopup.isVisible()) {
+                    gotoNodePopup.render(frame, area);
+                }
                 return;
             }
         }
@@ -575,28 +611,26 @@ class DiagramTab extends AbstractTab {
 
             lines.add(Line.from(Span.raw("")));
             if (route.total > 0) {
-                int tw = numWidth(route.meanTime, route.maxTime, route.minTime);
                 lines.add(Line.from(
                         Span.styled(" Mean: ", Theme.muted()),
-                        Span.raw(String.format("%" + tw + "d ms", route.meanTime))));
+                        Span.raw(formatDurationMs(route.meanTime))));
                 lines.add(Line.from(
                         Span.styled(" Max:  ", Theme.muted()),
-                        Span.raw(String.format("%" + tw + "d ms", route.maxTime))));
+                        Span.raw(formatDurationMs(route.maxTime))));
                 lines.add(Line.from(
                         Span.styled(" Min:  ", Theme.muted()),
-                        Span.raw(String.format("%" + tw + "d ms", route.minTime))));
+                        Span.raw(formatDurationMs(route.minTime))));
                 if (route.p50Time >= 0) {
-                    int pw = numWidth(route.p50Time, route.p95Time, route.p99Time);
                     lines.add(Line.from(Span.raw("")));
                     lines.add(Line.from(
                             Span.styled(" p50:  ", Theme.muted()),
-                            Span.raw(String.format("%" + pw + "d ms", route.p50Time))));
+                            Span.raw(formatDurationMs(route.p50Time))));
                     lines.add(Line.from(
                             Span.styled(" p95:  ", Theme.muted()),
-                            Span.raw(String.format("%" + pw + "d ms", route.p95Time))));
+                            Span.raw(formatDurationMs(route.p95Time))));
                     lines.add(Line.from(
                             Span.styled(" p99:  ", Theme.muted()),
-                            Span.raw(String.format("%" + pw + "d ms", route.p99Time))));
+                            Span.raw(formatDurationMs(route.p99Time))));
                     lines.add(buildPercentileBarLine(
                             route.p50Time, route.p95Time, route.p99Time, area.width() - 3));
                 }
@@ -739,33 +773,29 @@ class DiagramTab extends AbstractTab {
 
                 if (stat.exchangesTotal > 0) {
                     lines.add(Line.from(Span.raw("")));
-                    int tw = numWidth(stat.meanProcessingTime, stat.maxProcessingTime,
-                            stat.minProcessingTime, stat.lastProcessingTime);
                     lines.add(Line.from(
                             Span.styled(" Mean: ", Theme.muted()),
-                            Span.raw(String.format("%" + tw + "d ms", stat.meanProcessingTime))));
+                            Span.raw(formatDurationMs(stat.meanProcessingTime))));
                     lines.add(Line.from(
                             Span.styled(" Max:  ", Theme.muted()),
-                            Span.raw(String.format("%" + tw + "d ms", stat.maxProcessingTime))));
+                            Span.raw(formatDurationMs(stat.maxProcessingTime))));
                     lines.add(Line.from(
                             Span.styled(" Min:  ", Theme.muted()),
-                            Span.raw(String.format("%" + tw + "d ms", stat.minProcessingTime))));
+                            Span.raw(formatDurationMs(stat.minProcessingTime))));
                     lines.add(Line.from(
                             Span.styled(" Last: ", Theme.muted()),
-                            Span.raw(String.format("%" + tw + "d ms", stat.lastProcessingTime))));
+                            Span.raw(formatDurationMs(stat.lastProcessingTime))));
                     if (stat.p50ProcessingTime >= 0) {
-                        int pw = numWidth(stat.p50ProcessingTime, stat.p95ProcessingTime,
-                                stat.p99ProcessingTime);
                         lines.add(Line.from(Span.raw("")));
                         lines.add(Line.from(
                                 Span.styled(" p50:  ", Theme.muted()),
-                                Span.raw(String.format("%" + pw + "d ms", stat.p50ProcessingTime))));
+                                Span.raw(formatDurationMs(stat.p50ProcessingTime))));
                         lines.add(Line.from(
                                 Span.styled(" p95:  ", Theme.muted()),
-                                Span.raw(String.format("%" + pw + "d ms", stat.p95ProcessingTime))));
+                                Span.raw(formatDurationMs(stat.p95ProcessingTime))));
                         lines.add(Line.from(
                                 Span.styled(" p99:  ", Theme.muted()),
-                                Span.raw(String.format("%" + pw + "d ms", stat.p99ProcessingTime))));
+                                Span.raw(formatDurationMs(stat.p99ProcessingTime))));
                         lines.add(buildPercentileBarLine(
                                 stat.p50ProcessingTime, stat.p95ProcessingTime,
                                 stat.p99ProcessingTime, area.width() - 3));
@@ -818,6 +848,7 @@ class DiagramTab extends AbstractTab {
                 hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
                 hint(spans, "d", "detail" + (detailMode ? " [on]" : " [off]"));
+                hint(spans, "g", "go to");
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
                 hint(spans, "t", "topology");
@@ -994,6 +1025,7 @@ class DiagramTab extends AbstractTab {
                 - `Enter` — jump to linked route (when `↵` indicator shown)
                 - `c` — show source code at selected node
                 - `d` — toggle EIP detail panel (shows configured options)
+                - `g` — go to node (fuzzy search popup)
                 - `Esc` — go back (previous route or topology)
                 - `t` — jump back to topology view
 

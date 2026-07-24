@@ -382,17 +382,17 @@ class OverviewTab extends AbstractTab {
                     }
                     rows.add(Row.from(
                             Cell.from(nameLine),
-                            rightCell(info.exchangesTotal > 0 ? String.valueOf(info.meanTime) : "", 6,
+                            rightCell(info.exchangesTotal > 0 ? formatDurationMs(info.meanTime) : "", 8,
                                     TuiHelper.topTimeStyle(info.meanTime)),
-                            rightCell(info.exchangesTotal > 0 ? String.valueOf(info.maxTime) : "", 6,
+                            rightCell(info.exchangesTotal > 0 ? formatDurationMs(info.maxTime) : "", 8,
                                     TuiHelper.topTimeStyle(info.maxTime)),
-                            rightCell(info.exchangesTotal > 0 ? String.valueOf(info.minTime) : "", 6),
-                            rightCell(info.exchangesTotal > 0 ? String.valueOf(info.lastTime) : "", 6),
-                            rightCell(info.deltaTime != 0 ? String.valueOf(info.deltaTime) : "", 6,
+                            rightCell(info.exchangesTotal > 0 ? formatDurationMs(info.minTime) : "", 8),
+                            rightCell(info.exchangesTotal > 0 ? formatDurationMs(info.lastTime) : "", 8),
+                            rightCell(info.deltaTime != 0 ? formatDurationMs(info.deltaTime) : "", 8,
                                     TuiHelper.topDeltaStyle(info.deltaTime)),
-                            rightCell(info.p50Time >= 0 ? String.valueOf(info.p50Time) : "", 6),
-                            rightCell(info.p95Time >= 0 ? String.valueOf(info.p95Time) : "", 6),
-                            rightCell(info.p99Time >= 0 ? String.valueOf(info.p99Time) : "", 6),
+                            rightCell(info.p50Time >= 0 ? formatDurationMs(info.p50Time) : "", 8),
+                            rightCell(info.p95Time >= 0 ? formatDurationMs(info.p95Time) : "", 8),
+                            rightCell(info.p99Time >= 0 ? formatDurationMs(info.p99Time) : "", 8),
                             rightCell(String.valueOf(info.exchangesTotal), 8),
                             rightCell(String.valueOf(info.failed), 6, failStyle),
                             rightCell(String.valueOf(info.inflight), 8),
@@ -405,14 +405,14 @@ class OverviewTab extends AbstractTab {
 
             header = Row.from(
                     Cell.from(Span.styled("NAME", Style.EMPTY.bold())),
-                    rightCell(topSortLabel("MEAN", "mean"), 6, topSortStyle("mean")),
-                    rightCell(topSortLabel("MAX", "max"), 6, topSortStyle("max")),
-                    rightCell(topSortLabel("MIN", "min"), 6, topSortStyle("min")),
-                    rightCell(topSortLabel("LAST", "last"), 6, topSortStyle("last")),
-                    rightCell(topSortLabel("DELTA", "delta"), 6, topSortStyle("delta")),
-                    rightCell(topSortLabel("P50", "p50"), 6, topSortStyle("p50")),
-                    rightCell(topSortLabel("P95", "p95"), 6, topSortStyle("p95")),
-                    rightCell(topSortLabel("P99", "p99"), 6, topSortStyle("p99")),
+                    rightCell(topSortLabel("MEAN", "mean"), 8, topSortStyle("mean")),
+                    rightCell(topSortLabel("MAX", "max"), 8, topSortStyle("max")),
+                    rightCell(topSortLabel("MIN", "min"), 8, topSortStyle("min")),
+                    rightCell(topSortLabel("LAST", "last"), 8, topSortStyle("last")),
+                    rightCell(topSortLabel("DELTA", "delta"), 8, topSortStyle("delta")),
+                    rightCell(topSortLabel("P50", "p50"), 8, topSortStyle("p50")),
+                    rightCell(topSortLabel("P95", "p95"), 8, topSortStyle("p95")),
+                    rightCell(topSortLabel("P99", "p99"), 8, topSortStyle("p99")),
                     rightCell("TOTAL", 8, Style.EMPTY.bold()),
                     rightCell("FAIL", 6, Style.EMPTY.bold()),
                     rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
@@ -421,14 +421,14 @@ class OverviewTab extends AbstractTab {
 
             widths = new Constraint[] {
                     Constraint.fill(),
-                    Constraint.length(6),
-                    Constraint.length(6),
-                    Constraint.length(6),
-                    Constraint.length(6),
-                    Constraint.length(6),
-                    Constraint.length(6),
-                    Constraint.length(6),
-                    Constraint.length(6),
+                    Constraint.length(8),
+                    Constraint.length(8),
+                    Constraint.length(8),
+                    Constraint.length(8),
+                    Constraint.length(8),
+                    Constraint.length(8),
+                    Constraint.length(8),
+                    Constraint.length(8),
                     Constraint.length(8),
                     Constraint.length(6),
                     Constraint.length(8),
@@ -511,9 +511,11 @@ class OverviewTab extends AbstractTab {
                     }
                     String timingCol;
                     if (hasPercentiles && info.p50Time >= 0) {
-                        timingCol = info.p50Time + "/" + info.p95Time + "/" + info.p99Time;
+                        timingCol = formatDurationMs(info.p50Time) + "/" + formatDurationMs(info.p95Time) + "/"
+                                    + formatDurationMs(info.p99Time);
                     } else if (info.exchangesTotal > 0) {
-                        timingCol = info.minTime + "/" + info.maxTime + "/" + info.meanTime;
+                        timingCol = formatDurationMs(info.minTime) + "/" + formatDurationMs(info.maxTime) + "/"
+                                    + formatDurationMs(info.meanTime);
                     } else {
                         timingCol = "";
                     }

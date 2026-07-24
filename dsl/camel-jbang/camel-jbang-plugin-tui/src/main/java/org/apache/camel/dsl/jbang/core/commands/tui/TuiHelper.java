@@ -543,6 +543,29 @@ final class TuiHelper {
         }
     }
 
+    static String formatDurationMs(long ms) {
+        if (ms <= 0) {
+            return "0ms";
+        }
+        if (ms < 1000) {
+            return ms + "ms";
+        }
+        long seconds = ms / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+        if (days > 0) {
+            return days + "d" + (hours % 24) + "h";
+        }
+        if (hours > 0) {
+            return hours + "h" + (minutes % 60) + "m";
+        }
+        if (minutes > 0) {
+            return minutes + "m" + (seconds % 60) + "s";
+        }
+        return seconds + "s" + (ms % 1000) + "ms";
+    }
+
     static String formatLoad(String l1, String l5, String l15) {
         String s1 = l1 != null && !"0.00".equals(l1) ? l1 : "0";
         String s5 = l5 != null && !"0.00".equals(l5) ? l5 : "0";
