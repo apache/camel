@@ -306,12 +306,16 @@ jobs:
             # Create and switch to new branch
             git checkout -b "$BRANCH_NAME"
 
-            # Update serviceVersion in metadata.json files
+            # Update serviceVersion in metadata.json files.
+            # A failure here must not abort the loop: the remaining containers
+            # still deserve their own PR.
             METADATA_INFRA="test-infra/camel-test-infra-all/src/generated/resources/META-INF/metadata.json"
             METADATA_CATALOG="catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/test-infra/metadata.json"
-            python3 .github/actions/check-container-upgrade/update-metadata-version.py \
-              "$MODULE_NAME" "$OLD_VERSION" "$NEW_VERSION" \
-              "$METADATA_INFRA" "$METADATA_CATALOG"
+            if ! python3 .github/actions/check-container-upgrade/update-metadata-version.py \
+              "$PROPERTY_NAME" "$OLD_VERSION" "$NEW_VERSION" \
+              "$METADATA_INFRA" "$METADATA_CATALOG"; then
+              echo "⚠️ Failed to update the metadata for $PROPERTY_NAME, continuing"
+            fi
 
             # Add and commit changes
             git add "$FILE_PATH" "$METADATA_INFRA" "$METADATA_CATALOG"
