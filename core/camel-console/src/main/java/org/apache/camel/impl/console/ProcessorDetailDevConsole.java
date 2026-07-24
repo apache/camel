@@ -17,6 +17,7 @@
 package org.apache.camel.impl.console;
 
 import java.io.StringReader;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -44,8 +45,8 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole(name = "processor-detail", description = "Show configured options for all processors in a route")
 public class ProcessorDetailDevConsole extends AbstractDevConsole {
 
-    @Metadata(label = "query", required = true,
-              description = "The route id to get processor details for",
+    @Metadata(label = "query",
+              description = "The route id to get processor details for (use * for all routes)",
               javaType = "java.lang.String")
     public static final String ROUTE_ID = "routeId";
 
@@ -58,10 +59,22 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
         JsonObject json = doCallJson(options);
         StringBuilder sb = new StringBuilder();
 
-        String routeId = json.getString("routeId");
+        JsonArray routes = (JsonArray) json.get("routes");
+        if (routes != null) {
+            for (Object routeObj : routes) {
+                appendRouteText(sb, (JsonObject) routeObj);
+            }
+        } else {
+            appendRouteText(sb, json);
+        }
+        return sb.toString();
+    }
+
+    private static void appendRouteText(StringBuilder sb, JsonObject routeJson) {
+        String routeId = routeJson.getString("routeId");
         if (routeId != null) {
             sb.append(String.format("Route: %s%n", routeId));
-            JsonArray processors = (JsonArray) json.get("processors");
+            JsonArray processors = (JsonArray) routeJson.get("processors");
             if (processors != null) {
                 for (Object obj : processors) {
                     JsonObject p = (JsonObject) obj;
@@ -75,7 +88,6 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
                 }
             }
         }
-        return sb.toString();
     }
 
     @Override
@@ -87,10 +99,11 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             routeId = subPath;
         }
 
-        JsonObject root = new JsonObject();
         if (routeId == null || routeId.isBlank()) {
-            return root;
+            routeId = "*";
         }
+
+        JsonObject root = new JsonObject();
 
         ManagedCamelContext mcc
                 = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
@@ -98,15 +111,35 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             return root;
         }
 
+        if ("*".equals(routeId)) {
+            List<ManagedRouteMBean> managedRoutes = mcc.getManagedRoutes();
+            if (managedRoutes == null || managedRoutes.isEmpty()) {
+                return root;
+            }
+            JsonArray routes = new JsonArray();
+            for (ManagedRouteMBean mr : managedRoutes) {
+                JsonObject routeJson = buildRouteDetail(mr);
+                if (routeJson != null) {
+                    routes.add(routeJson);
+                }
+            }
+            root.put("routes", routes);
+            return root;
+        }
+
         ManagedRouteMBean mr = mcc.getManagedRoute(routeId);
         if (mr == null) {
             return root;
         }
+        return buildRouteDetail(mr);
+    }
 
+    private static JsonObject buildRouteDetail(ManagedRouteMBean mr) {
+        String routeId = mr.getRouteId();
+        JsonObject root = new JsonObject();
         root.put("routeId", routeId);
         JsonArray processors = new JsonArray();
 
-        // add the "from" node (uses the route ID as its processor ID in the diagram)
         JsonObject fromEntry = new JsonObject();
         fromEntry.put("id", routeId);
         fromEntry.put("type", "from");
@@ -114,7 +147,6 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
         fromEntry.put("options", new JsonObject());
         processors.add(fromEntry);
 
-        // parse the route XML to extract all processor elements with their configured options
         try {
             String xml = mr.dumpRouteAsXml();
             if (xml != null && !xml.isBlank()) {
