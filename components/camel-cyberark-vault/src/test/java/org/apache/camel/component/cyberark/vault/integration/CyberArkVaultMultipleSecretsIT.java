@@ -20,31 +20,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 /**
  * Integration test demonstrating multiple secret retrieval in a single route
  */
-// Must be manually tested. Provide CyberArk Conjur connection details using system properties:
-// -Dcamel.cyberark.url=http://localhost:8080
-// -Dcamel.cyberark.account=myConjurAccount
-// -Dcamel.cyberark.username=admin
-// -Dcamel.cyberark.apiKey=your-api-key
-@EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.cyberark.url", matches = ".*",
-                                 disabledReason = "CyberArk Conjur URL not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.account", matches = ".*",
-                                 disabledReason = "CyberArk Conjur account not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.username", matches = ".*",
-                                 disabledReason = "CyberArk Conjur username not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.apiKey", matches = ".*",
-                                 disabledReason = "CyberArk Conjur API key not provided")
-})
-public class CyberArkVaultMultipleSecretsIT extends CyberArkTestSupport {
+class CyberArkVaultMultipleSecretsIT extends CyberArkTestSupport {
 
     @BeforeAll
-    public static void setupSecrets() throws Exception {
+    static void setupSecrets() throws Exception {
 
         // Declare variables
         loadPolicy("""
@@ -62,11 +45,8 @@ public class CyberArkVaultMultipleSecretsIT extends CyberArkTestSupport {
     }
 
     @Test
-    public void testMultipleSecretsInSingleRoute() throws Exception {
-        context.getVaultConfiguration().cyberark().setUrl(System.getProperty("camel.cyberark.url"));
-        context.getVaultConfiguration().cyberark().setAccount(System.getProperty("camel.cyberark.account"));
-        context.getVaultConfiguration().cyberark().setUsername(System.getProperty("camel.cyberark.username"));
-        context.getVaultConfiguration().cyberark().setApiKey(System.getProperty("camel.cyberark.apiKey"));
+    void testMultipleSecretsInSingleRoute() throws Exception {
+        configureVault();
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -93,11 +73,8 @@ public class CyberArkVaultMultipleSecretsIT extends CyberArkTestSupport {
     }
 
     @Test
-    public void testMultipleDatabaseConfigs() throws Exception {
-        context.getVaultConfiguration().cyberark().setUrl(System.getProperty("camel.cyberark.url"));
-        context.getVaultConfiguration().cyberark().setAccount(System.getProperty("camel.cyberark.account"));
-        context.getVaultConfiguration().cyberark().setUsername(System.getProperty("camel.cyberark.username"));
-        context.getVaultConfiguration().cyberark().setApiKey(System.getProperty("camel.cyberark.apiKey"));
+    void testMultipleDatabaseConfigs() throws Exception {
+        configureVault();
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -122,11 +99,8 @@ public class CyberArkVaultMultipleSecretsIT extends CyberArkTestSupport {
     }
 
     @Test
-    public void testMixedSecretTypes() throws Exception {
-        context.getVaultConfiguration().cyberark().setUrl(System.getProperty("camel.cyberark.url"));
-        context.getVaultConfiguration().cyberark().setAccount(System.getProperty("camel.cyberark.account"));
-        context.getVaultConfiguration().cyberark().setUsername(System.getProperty("camel.cyberark.username"));
-        context.getVaultConfiguration().cyberark().setApiKey(System.getProperty("camel.cyberark.apiKey"));
+    void testMixedSecretTypes() throws Exception {
+        configureVault();
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -151,11 +125,8 @@ public class CyberArkVaultMultipleSecretsIT extends CyberArkTestSupport {
     }
 
     @Test
-    public void testConnectionStringConstruction() throws Exception {
-        context.getVaultConfiguration().cyberark().setUrl(System.getProperty("camel.cyberark.url"));
-        context.getVaultConfiguration().cyberark().setAccount(System.getProperty("camel.cyberark.account"));
-        context.getVaultConfiguration().cyberark().setUsername(System.getProperty("camel.cyberark.username"));
-        context.getVaultConfiguration().cyberark().setApiKey(System.getProperty("camel.cyberark.apiKey"));
+    void testConnectionStringConstruction() throws Exception {
+        configureVault();
 
         context.addRoutes(new RouteBuilder() {
             @Override

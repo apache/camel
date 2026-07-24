@@ -19,33 +19,15 @@ package org.apache.camel.component.cyberark.vault.integration;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.vault.CyberArkVaultConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-// Must be manually tested. Provide CyberArk Conjur connection details using system properties:
-// -Dcamel.cyberark.url=http://localhost:8080
-// -Dcamel.cyberark.account=myConjurAccount
-// -Dcamel.cyberark.username=admin
-// -Dcamel.cyberark.apiKey=your-api-key
-@EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.cyberark.url", matches = ".*",
-                                 disabledReason = "CyberArk Conjur URL not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.account", matches = ".*",
-                                 disabledReason = "CyberArk Conjur account not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.username", matches = ".*",
-                                 disabledReason = "CyberArk Conjur username not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.apiKey", matches = ".*",
-                                 disabledReason = "CyberArk Conjur API key not provided")
-})
-public class CyberArkVaultPropertiesSourceIT extends CyberArkTestSupport {
+class CyberArkVaultPropertiesSourceIT extends CyberArkTestSupport {
 
     @BeforeAll
-    public static void init() throws Exception {
+    static void init() throws Exception {
 
         // Declare variables
         loadPolicy("""
@@ -61,12 +43,8 @@ public class CyberArkVaultPropertiesSourceIT extends CyberArkTestSupport {
     }
 
     @Test
-    public void testSimpleSecretRetrieval() throws Exception {
-        CyberArkVaultConfiguration cyberark = context.getVaultConfiguration().cyberark();
-        cyberark.setUrl(System.getProperty("camel.cyberark.url"));
-        cyberark.setAccount(System.getProperty("camel.cyberark.account"));
-        cyberark.setUsername(System.getProperty("camel.cyberark.username"));
-        cyberark.setApiKey(System.getProperty("camel.cyberark.apiKey"));
+    void testSimpleSecretRetrieval() throws Exception {
+        configureVault();
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -84,12 +62,8 @@ public class CyberArkVaultPropertiesSourceIT extends CyberArkTestSupport {
     }
 
     @Test
-    public void testJsonFieldExtraction() throws Exception {
-        CyberArkVaultConfiguration cyberark = context.getVaultConfiguration().cyberark();
-        cyberark.setUrl(System.getProperty("camel.cyberark.url"));
-        cyberark.setAccount(System.getProperty("camel.cyberark.account"));
-        cyberark.setUsername(System.getProperty("camel.cyberark.username"));
-        cyberark.setApiKey(System.getProperty("camel.cyberark.apiKey"));
+    void testJsonFieldExtraction() throws Exception {
+        configureVault();
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -111,12 +85,8 @@ public class CyberArkVaultPropertiesSourceIT extends CyberArkTestSupport {
     }
 
     @Test
-    public void testDefaultValue() throws Exception {
-        CyberArkVaultConfiguration cyberark = context.getVaultConfiguration().cyberark();
-        cyberark.setUrl(System.getProperty("camel.cyberark.url"));
-        cyberark.setAccount(System.getProperty("camel.cyberark.account"));
-        cyberark.setUsername(System.getProperty("camel.cyberark.username"));
-        cyberark.setApiKey(System.getProperty("camel.cyberark.apiKey"));
+    void testDefaultValue() throws Exception {
+        configureVault();
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -134,12 +104,8 @@ public class CyberArkVaultPropertiesSourceIT extends CyberArkTestSupport {
     }
 
     @Test
-    public void testFieldWithDefaultValue() throws Exception {
-        CyberArkVaultConfiguration cyberark = context.getVaultConfiguration().cyberark();
-        cyberark.setUrl(System.getProperty("camel.cyberark.url"));
-        cyberark.setAccount(System.getProperty("camel.cyberark.account"));
-        cyberark.setUsername(System.getProperty("camel.cyberark.username"));
-        cyberark.setApiKey(System.getProperty("camel.cyberark.apiKey"));
+    void testFieldWithDefaultValue() throws Exception {
+        configureVault();
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -157,12 +123,9 @@ public class CyberArkVaultPropertiesSourceIT extends CyberArkTestSupport {
     }
 
     @Test
-    public void testSecretNotFound() {
+    void testSecretNotFound() {
         assertThrows(FailedToCreateRouteException.class, () -> {
-            context.getVaultConfiguration().cyberark().setUrl(System.getProperty("camel.cyberark.url"));
-            context.getVaultConfiguration().cyberark().setAccount(System.getProperty("camel.cyberark.account"));
-            context.getVaultConfiguration().cyberark().setUsername(System.getProperty("camel.cyberark.username"));
-            context.getVaultConfiguration().cyberark().setApiKey(System.getProperty("camel.cyberark.apiKey"));
+            configureVault();
 
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -179,11 +142,8 @@ public class CyberArkVaultPropertiesSourceIT extends CyberArkTestSupport {
     }
 
     @Test
-    public void testMultipleSecretsWithFields() throws Exception {
-        context.getVaultConfiguration().cyberark().setUrl(System.getProperty("camel.cyberark.url"));
-        context.getVaultConfiguration().cyberark().setAccount(System.getProperty("camel.cyberark.account"));
-        context.getVaultConfiguration().cyberark().setUsername(System.getProperty("camel.cyberark.username"));
-        context.getVaultConfiguration().cyberark().setApiKey(System.getProperty("camel.cyberark.apiKey"));
+    void testMultipleSecretsWithFields() throws Exception {
+        configureVault();
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -205,11 +165,8 @@ public class CyberArkVaultPropertiesSourceIT extends CyberArkTestSupport {
     }
 
     @Test
-    public void testComplexSecretPath() throws Exception {
-        context.getVaultConfiguration().cyberark().setUrl(System.getProperty("camel.cyberark.url"));
-        context.getVaultConfiguration().cyberark().setAccount(System.getProperty("camel.cyberark.account"));
-        context.getVaultConfiguration().cyberark().setUsername(System.getProperty("camel.cyberark.username"));
-        context.getVaultConfiguration().cyberark().setApiKey(System.getProperty("camel.cyberark.apiKey"));
+    void testComplexSecretPath() throws Exception {
+        configureVault();
 
         context.addRoutes(new RouteBuilder() {
             @Override

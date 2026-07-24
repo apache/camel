@@ -26,13 +26,20 @@ import java.time.Duration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultService;
+import org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.vault.CyberArkVaultConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class CyberArkTestSupport extends CamelTestSupport {
+
+    @RegisterExtension
+    static CyberArkVaultService service = CyberArkVaultServiceFactory.createService();
 
     static final Logger LOG = LoggerFactory.getLogger(CyberArkTestSupport.class);
 
@@ -57,17 +64,28 @@ abstract class CyberArkTestSupport extends CamelTestSupport {
         httpClient = null;
     }
 
+    /**
+     * Points the context wide vault configuration at the Conjur instance started by the test infra.
+     */
+    void configureVault() {
+        CyberArkVaultConfiguration cyberark = context.getVaultConfiguration().cyberark();
+        cyberark.setUrl(service.url());
+        cyberark.setAccount(service.account());
+        cyberark.setUsername(service.username());
+        cyberark.setApiKey(service.apiKey());
+    }
+
     private static String authenticate() throws Exception {
         String url = String.format("%s/authn/%s/%s/authenticate",
-                System.getProperty("camel.cyberark.url"),
-                System.getProperty("camel.cyberark.account"),
-                System.getProperty("camel.cyberark.username"));
+                service.url(),
+                service.account(),
+                service.username());
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "text/plain")
                 .header("Accept-Encoding", "base64")
-                .POST(HttpRequest.BodyPublishers.ofString(System.getProperty("camel.cyberark.apiKey")))
+                .POST(HttpRequest.BodyPublishers.ofString(service.apiKey()))
                 .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -79,8 +97,8 @@ abstract class CyberArkTestSupport extends CamelTestSupport {
     static void loadPolicy(String policy) throws Exception {
 
         String policyUrl = String.format("%s/policies/%s/policy/%s",
-                System.getProperty("camel.cyberark.url"),
-                System.getProperty("camel.cyberark.account"),
+                service.url(),
+                service.account(),
                 URLEncoder.encode("root", StandardCharsets.UTF_8));
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -96,8 +114,8 @@ abstract class CyberArkTestSupport extends CamelTestSupport {
 
     static void createSecret(String secretId, String secretValue) throws Exception {
         String url = String.format("%s/secrets/%s/variable/%s",
-                System.getProperty("camel.cyberark.url"),
-                System.getProperty("camel.cyberark.account"),
+                service.url(),
+                service.account(),
                 URLEncoder.encode(secretId, StandardCharsets.UTF_8));
 
         HttpRequest request = HttpRequest.newBuilder()
