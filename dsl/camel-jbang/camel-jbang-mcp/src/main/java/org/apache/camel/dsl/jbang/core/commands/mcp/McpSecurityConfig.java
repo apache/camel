@@ -93,7 +93,9 @@ public class McpSecurityConfig {
         if (cached != null) {
             return cached;
         }
-        List<Pattern> patterns = new ArrayList<>(McpSecretRedactor.DEFAULT_PATTERNS);
+        // Built-in secret detection is handled by McpSecretRedactor via Camel's DefaultMaskingFormatter and
+        // SensitiveUtils. These are only the extra, operator-supplied patterns.
+        List<Pattern> patterns = new ArrayList<>();
         if (redactionPatterns.isPresent()) {
             for (String p : redactionPatterns.get().split(",")) {
                 String trimmed = p.trim();
