@@ -35,6 +35,51 @@ public interface BedrockAgentRuntimeConstants {
               javaType = "String")
     String SESSION_ID = "CamelAwsBedrockAgentRuntimeSessionId";
 
+    @Metadata(description = "The unique identifier of the agent to invoke. Overrides the agentId configured on the endpoint.",
+              javaType = "String")
+    String AGENT_ID = "CamelAwsBedrockAgentRuntimeAgentId";
+
+    @Metadata(description = "The unique identifier of the agent alias to invoke. Overrides the agentAliasId configured on the endpoint.",
+              javaType = "String")
+    String AGENT_ALIAS_ID = "CamelAwsBedrockAgentRuntimeAgentAliasId";
+
+    @Metadata(description = "Enables tracing for the agent invocation. When set, overrides the enableTrace option on the endpoint.",
+              javaType = "Boolean")
+    String AGENT_ENABLE_TRACE = "CamelAwsBedrockAgentRuntimeAgentEnableTrace";
+
+    @Metadata(description = "Ends the agent session after this invocation.", javaType = "Boolean")
+    String AGENT_END_SESSION = "CamelAwsBedrockAgentRuntimeAgentEndSession";
+
+    @Metadata(description = "The unique identifier of the agent memory to use across sessions.", javaType = "String")
+    String AGENT_MEMORY_ID = "CamelAwsBedrockAgentRuntimeAgentMemoryId";
+
+    @Metadata(description = "The streaming output mode (complete or chunks) for an agent invocation. When set, overrides the "
+                            + "streamOutputMode option on the endpoint.",
+              javaType = "String")
+    String AGENT_STREAM_OUTPUT_MODE = "CamelAwsBedrockAgentRuntimeAgentStreamOutputMode";
+
+    @Metadata(description = "The foundation model used by an inline agent. Overrides the foundationModel configured on the endpoint.",
+              javaType = "String")
+    String AGENT_FOUNDATION_MODEL = "CamelAwsBedrockAgentRuntimeAgentFoundationModel";
+
+    @Metadata(description = "The instruction given to an inline agent. Overrides the instruction configured on the endpoint.",
+              javaType = "String")
+    String AGENT_INSTRUCTION = "CamelAwsBedrockAgentRuntimeAgentInstruction";
+
+    @Metadata(description = "When invoking an agent with tracing enabled, this header will contain the list of TracePart emitted "
+                            + "during the invocation. The elements are TracePart for invokeAgent and InlineAgentTracePart for invokeInlineAgent.",
+              javaType = "java.util.List")
+    String AGENT_TRACES = "CamelAwsBedrockAgentRuntimeAgentTraces";
+
+    @Metadata(description = "When an agent invocation requires the caller to fulfil an action, this header will contain the list "
+                            + "of return-control payloads emitted by the agent. The elements are ReturnControlPayload for invokeAgent and InlineAgentReturnControlPayload for invokeInlineAgent.",
+              javaType = "java.util.List")
+    String AGENT_RETURN_CONTROL = "CamelAwsBedrockAgentRuntimeAgentReturnControl";
+
+    @Metadata(description = "When an agent invocation returns files, this header will contain the files emitted by the agent. The elements are FilePart for invokeAgent and InlineAgentFilePart for invokeInlineAgent.",
+              javaType = "java.util.List")
+    String AGENT_FILES = "CamelAwsBedrockAgentRuntimeAgentFiles";
+
     @Metadata(description = "The unique identifier of the flow to invoke. Overrides the flowIdentifier configured on the endpoint.",
               javaType = "String")
     String FLOW_IDENTIFIER = "CamelAwsBedrockAgentRuntimeFlowIdentifier";

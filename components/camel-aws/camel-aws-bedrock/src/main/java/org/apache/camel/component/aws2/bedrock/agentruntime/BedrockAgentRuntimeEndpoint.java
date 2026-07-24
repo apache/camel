@@ -71,12 +71,14 @@ public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implement
                 ? configuration.getBedrockAgentRuntimeClient()
                 : BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(configuration);
 
-        // Only build the async client when the operation needs event-stream support (invokeFlow), or when the user
-        // explicitly supplied one. This avoids creating a Netty-based async HTTP client for users that only need
-        // synchronous operations like retrieveAndGenerate.
+        // Only build the async client when the operation needs event-stream support (invokeFlow, invokeAgent,
+        // invokeInlineAgent), or when the user explicitly supplied one. This avoids creating a Netty-based async HTTP
+        // client for users that only need synchronous operations like retrieveAndGenerate.
         if (ObjectHelper.isNotEmpty(configuration.getBedrockAgentRuntimeAsyncClient())) {
             bedrockAgentRuntimeAsyncClient = configuration.getBedrockAgentRuntimeAsyncClient();
-        } else if (configuration.getOperation() == BedrockAgentRuntimeOperations.invokeFlow) {
+        } else if (configuration.getOperation() == BedrockAgentRuntimeOperations.invokeFlow
+                || configuration.getOperation() == BedrockAgentRuntimeOperations.invokeAgent
+                || configuration.getOperation() == BedrockAgentRuntimeOperations.invokeInlineAgent) {
             bedrockAgentRuntimeAsyncClient
                     = BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeAsyncClient(configuration);
         }
