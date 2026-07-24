@@ -23,6 +23,10 @@
 
 STATE_FILE="${PUBLISH_STATE_FILE:-}"
 
+# POSIX sh has no $'\n' (bash ANSI-C quoting); use a literal newline instead.
+_NL='
+'
+
 __ensure_file() {
   if [ -z "$STATE_FILE" ]; then
     STATE_FILE="$(pwd)/target/jreleaser/publish-state.json"
@@ -86,14 +90,14 @@ state_set() {
       [ -z "$line" ] && continue
       k="$(echo "$line" | sed 's|=.*||')"
       if [ "$k" = "$_key" ]; then
-        __state_pairs="${__state_pairs}${_key}=$(_json_escape "$_val")"$'\n'
+        __state_pairs="${__state_pairs}${_key}=$(_json_escape "$_val")${_NL}"
         _found=1
       else
-        __state_pairs="${__state_pairs}${line}"$'\n'
+        __state_pairs="${__state_pairs}${line}${_NL}"
       fi
     done < "$_f"
     if [ "$_found" -eq 0 ]; then
-      __state_pairs="${__state_pairs}${_key}=$(_json_escape "$_val")"$'\n'
+      __state_pairs="${__state_pairs}${_key}=$(_json_escape "$_val")${_NL}"
     fi
   else
     printf '%s\n' "${_key}=$(_json_escape "$_val")" > "$_f"

@@ -36,7 +36,7 @@ MODULE_DIR="$(CDPATH= cd -- "$SCRIPT_DIR/../../.." && pwd)"
 LIB_DIR="$SCRIPT_DIR/lib"
 
 # Source helpers
-sh "$LIB_DIR/publish-state.sh"
+. "$LIB_DIR/publish-state.sh"
 
 # ── argument parsing ────────────────────────────────────────────────────────
 
@@ -90,7 +90,6 @@ fi
 
 # Override hooks — set these to redirect irreversible actions for testing
 #   CAMEL_PUB_JRELEASER=...  command to run JReleaser (default: mvn ...)
-#   CAMEL_PUB_GH_PUSH        remote name for git push (default: upstream)
 #   CAMEL_PUB_HEATWAVE=      path to heatwave stub dir
 #   CAMEL_PUB_SDKMAN=        SDKMAN vendor API base URL (default: https://vendor.sdkman.io)
 #   CAMEL_PUB_CHOCO=         Chocolatey API URL (default: https://push.chocolatey.org/)
@@ -129,7 +128,7 @@ _get_operator() {
   [ "$_resolve_done" -eq 1 ] && return 0
   _operator="$(resolve_operator)"
   if [ -n "$_operator" ]; then
-    _attribution_line="Co-authored-by: ai-assisted <$(_operator)@>"
+    _attribution_line="Co-authored-by: ai-assisted <$_operator@>"
   fi
   _resolve_done=1
 }
@@ -267,9 +266,8 @@ __dest_jreleaser() {
   fi
 
   _log "Destination 1: JReleaser package..."
-  hook="CAMEL_PUB_JRELEASER"
-  if [ -n "${!hook:-}" ]; then
-    eval "$hook 'mvn -B -ntp -pl \"$MODULE_DIR\" jreleaser:config jreleaser:prepare jreleaser:package'"
+  if [ -n "${CAMEL_PUB_JRELEASER:-}" ]; then
+    eval "$CAMEL_PUB_JRELEASER 'mvn -B -ntp -pl \"$MODULE_DIR\" jreleaser:config jreleaser:prepare jreleaser:package'"
   else
     mvn -B -ntp -pl "$MODULE_DIR" \
       -Djreleaser.distributions=camel-cli \
@@ -373,12 +371,6 @@ __dest_website() {
 
   BRANCH="camel-publish-$VERSION-website"
 
-  hook_push="CAMEL_PUB_GH_PUSH"
-  hook_site="CAMEL_PUB_WEBSITE_REMOTE"
-  if [ -n "${hook_site:-}" ]; then
-    _log "  Using override: $hook_site=${!hook_site}";
-  fi
-
   # Push installers + manifest to website fork (best-effort PR)
   git checkout -B "$BRANCH" 2>/dev/null || true
   # Copy artifacts from staging
@@ -391,14 +383,14 @@ __dest_website() {
   git add . 2>/dev/null || true
   git commit -m "website: publish installers for camel-cli $VERSION" 2>/dev/null || true
 
-  _remote="${hook_site:-${FORK_REMOTE:-upstream}}"
+  _remote="${FORK_REMOTE:-upstream}"
   git push "$_remote" "$BRANCH" 2>&1 | tail -5 || { state_mark "website" "failed"; return 1; }
 
   gh pr create \
     --base main \
     --head "$BRANCH" \
     --title "Website installers for camel-cli $VERSION" \
-    --body "_Published by camel-publish.sh on behalf of $_operator_$(if [ -n "$_attribution_line" ]; then printf '\n\n%s' '$_attribution_line'; fi)_"\
+    --body "_Published by camel-publish.sh on behalf of $_operator_$(if [ -n "$_attribution_line" ]; then printf '\n\n%s' "$_attribution_line"; fi)_"\
     2>&1 | tail -3 || true
 
   state_mark "website" "done"
@@ -432,7 +424,7 @@ __dest_winget() {
     --base main \
     --head "$BRANCH" \
     --title "WinGet manifest for camel-cli $VERSION" \
-    --body "_Published by camel-publish.sh on behalf of $_operator_$(if [ -n "$_attribution_line" ]; then printf '\n\n%s' '$_attribution_line'; fi)_"\
+    --body "_Published by camel-publish.sh on behalf of $_operator_$(if [ -n "$_attribution_line" ]; then printf '\n\n%s' "$_attribution_line"; fi)_"\
     2>&1 | tail -3 || true
 
   state_mark "winget" "done"
@@ -468,7 +460,7 @@ __dest_scoop() {
     --base main \
     --head "$BRANCH" \
     --title "Scoop manifest for camel-cli $VERSION" \
-    --body "_Published by camel-publish.sh on behalf of $_operator_$(if [ -n "$_attribution_line" ]; then printf '\n\n%s' '$_attribution_line'; fi)_"\
+    --body "_Published by camel-publish.sh on behalf of $_operator_$(if [ -n "$_attribution_line" ]; then printf '\n\n%s' "$_attribution_line"; fi)_"\
     2>&1 | tail -3 || true
 
   state_mark "scoop" "done"
