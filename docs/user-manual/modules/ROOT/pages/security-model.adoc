@@ -251,7 +251,7 @@ against core code, and the triager needs the core-side statement to judge it.
 | Message body or header content reaches placeholder or `#class:` / `#bean:` resolution and is resolved or instantiated
 | Critical (CVSS 9.0-9.8)
 
-| The engine and the `Exchange` / `Message` model never promote a body field, attachment or transport metadata into the internal `Camel*` / `org.apache.camel.*` header namespace; populating that namespace from untrusted wire input is a _consumer_ responsibility governed by the inbound `HeaderFilterStrategy` (the CVE-2025-27636 family), not an engine action
+| The engine and the `Exchange` / `Message` model never promote a body field, attachment or transport metadata into the internal `Camel*` header namespace; populating that namespace from untrusted wire input is a _consumer_ responsibility governed by the inbound `HeaderFilterStrategy` (the CVE-2025-27636 family), not an engine action
 | Core machinery, rather than a specific consumer, copies an untrusted-origin value into the internal header namespace
 | Critical (CVSS 9.0-9.8)
 
@@ -301,7 +301,8 @@ routed to "X was not built to do Y" rather than re-argued case by case.
   invariants_.
 * *No automatic sanitisation of application-level semantic headers.* The
   framework's automatic header filtering is scoped to the internal
-  `Camel*` / `org.apache.camel.*` namespace only. Application-level
+  `Camel*` namespace only (matched case-insensitively, so `Camel`, `CAMEL`
+  and `caMEL` are all covered). Application-level
   headers that components consume as part of their documented header
   contract - `To`, `Cc`, `Bcc`, `Subject`, `From` in `camel-mail`;
   arbitrary HTTP header names; JMS properties; AMQP, MQTT, CoAP and Kafka
@@ -315,13 +316,15 @@ routed to "X was not built to do Y" rather than re-argued case by case.
   to pick up an upstream fix, but the CVE itself is closed against the
   upstream project. See the third-party-dependency entry in _Out of
   scope_.
-* *No production guarantees under the non-default `dev` or `test`
-  profile.* The dev console, debug and trace endpoints, the backlog
-  debugger and verbose diagnostics are enabled, and the security policy
-  default relaxes from `fail` to `warn`. Camel may reveal configuration,
-  route and `Exchange` detail that it would not reveal under the default
-  `prod` profile. See the profile entry in _Out of scope_ and
-  `design/security.adoc`.
+* *No production guarantees under the `dev` or `test` profile.* Under the
+  opt-in `dev` profile the dev console, debug and trace endpoints, the
+  backlog debugger and verbose diagnostics are enabled, and the
+  `insecure:dev` policy is relaxed to `allow`. Camel may reveal
+  configuration, route and `Exchange` detail that it would not reveal in a
+  `prod` deployment. The framework applies no profile by default (security
+  policy `warn`); `prod` must be selected explicitly to escalate the policy
+  to `fail`. See the profile entry in _Out of scope_, _Configuration
+  variants that change the model_ and `design/security.adoc`.
 * *No production-grade information-hiding guarantees under non-default
   diagnostic log levels.* DEBUG and TRACE log levels are diagnostic, not
   production, configurations; they are expected to log internal
@@ -353,8 +356,8 @@ for one. Each is documented here so that a report whose claim rests on
 the misunderstanding can be closed against the correct contract.
 
 * *`DefaultHeaderFilterStrategy` is an internal-namespace filter, not an
-  application-header sanitiser.* It filters the `Camel*` /
-  `org.apache.camel.*` namespace case-insensitively, which is what
+  application-header sanitiser.* It filters the `Camel*` namespace
+  case-insensitively (`Camel`, `CAMEL` and `caMEL` alike), which is what
   contains the internal-dispatch family (the CVE-2025-27636 class). It
   does not, and cannot, strip the application-level headers a component
   reads as semantic input. Route authors who need application-header
@@ -419,6 +422,17 @@ Historical examples:
 * CVE-2026-40860 (`camel-jms`, `camel-sjms`, `camel-sjms2`, `camel-amqp`) -
   `JmsBinding.extractBodyFromJms()` calling `ObjectMessage.getObject()` with no
   filter while `mapJmsMessage=true` (the default).
+* CVE-2026-43866 (`camel-jms`, `camel-sjms`, `camel-sjms2`) - a forged
+  `DefaultExchangeHolder` carried in a JMS `ObjectMessage` bypassing the
+  `ObjectInputFilter` added for CVE-2026-40860 (a filter-bypass follow-on).
+* CVE-2026-40859 (`camel-vertx-http`, `camel-netty-http`) - raw
+  `ObjectInputStream` deserialisation of HTTP response bodies.
+* CVE-2026-43865 (`camel-hazelcast`) - unsafe Java deserialisation in
+  default-configured managed Hazelcast instances (also an insecure-default
+  case).
+* CVE-2026-46590, CVE-2026-43867 (`camel-pqc`) - HashiCorp Vault and AWS
+  Secrets Manager key-lifecycle managers deserialising persisted key metadata
+  with `ObjectInputStream` (a follow-on to CVE-2026-40048).
 
 ==== XML external entity (XXE) and remote DTD/stylesheet resolution
 
@@ -476,7 +490,17 @@ Historical examples: CVE-2025-27636, CVE-2025-29891 (default HTTP
 `HeaderFilterStrategy` bypass), CVE-2025-30177 (`camel-undertow` inbound
 filter), CVE-2026-33453 (`camel-coap`), CVE-2026-33454 (`camel-mail`),
 CVE-2026-40453 (`camel-jms`, `camel-sjms`, `camel-coap`, `camel-google-pubsub`
-case-variant follow-on).
+case-variant follow-on). The class recurred throughout 2026 in two shapes -
+consumers mapping inbound message headers without an effective
+`HeaderFilterStrategy` (CVE-2026-46456 `camel-aws2-sqs`, CVE-2026-46457
+`camel-nats`, CVE-2026-46726 `camel-vertx-websocket`) and components whose
+non-`Camel`-prefixed header constants bypass the HTTP header filter
+(CVE-2026-46585 `camel-lucene`, CVE-2026-48203 `camel-solr`, CVE-2026-48205
+`camel-dns`, CVE-2026-48206 `camel-jira`, CVE-2026-49098 `camel-kafka`,
+CVE-2026-49099 `camel-salesforce`, among others). This recurrence is what
+motivated centralising the default `Camel*` filter in
+`DefaultHeaderFilterStrategy` (CAMEL-23543, Camel 4.21) so consumers and
+producers block the internal namespace without per-component boilerplate.
 
 The prefixed headers of the API-based components - `CamelFhir.*`,
 `CamelBox.*`, `CamelOlingo4.*`, `CamelAs2.*` and the other
@@ -505,7 +529,11 @@ Historical examples: CVE-2026-23552 (`camel-keycloak` not validating the JWT
 `iss` claim against the configured realm), CVE-2026-40022
 (`camel-platform-http-main` Vert.x sub-router mounted at `<path>*` while the
 auth handler was at the exact path, exposing subpaths of `/api`, `/admin`,
-`/observe/info`).
+`/observe/info`), CVE-2026-46455 (`camel-keycloak` missing the token
+`IS_ACTIVE` check, so an expired access token is accepted) and CVE-2026-53913
+(`camel-keycloak` fail-open: the bearer token is verified only inside the role
+and permission checks, so a deployment configuring neither accepts the request
+unauthenticated).
 
 ==== Information disclosure of secrets or sensitive Exchange state
 
@@ -515,7 +543,10 @@ response.
 
 Historical examples: CVE-2023-34442 (`camel-jira` writing attachments to
 world-readable temp files), CVE-2024-22371 (`EventFactory` exposing sensitive
-Exchange data via a custom event).
+Exchange data via a custom event), CVE-2026-49365 (`camel-netty-http`) and
+CVE-2026-56139 (`camel-undertow`) - the `muteException` consumer option
+defaulting to `false`, so a processing error returned the full exception and
+stack trace to the caller.
 
 Judged against the default production log levels (INFO, WARN, ERROR);
 findings whose impact only manifests when the operator has enabled the
@@ -533,17 +564,21 @@ deserialisation, TLS validation disabled, an admin endpoint listening on
 question is what an attacker can do against a component the operator simply
 added to a route without further configuration.
 
-Historical examples: CVE-2020-11972, CVE-2020-11973 and CVE-2026-40860 are all
-insecure-default cases that also fall into the deserialisation class.
+Historical examples: CVE-2020-11972, CVE-2020-11973, CVE-2026-40860 and
+CVE-2026-43865 are insecure-default cases that also fall into the
+deserialisation class; CVE-2026-49365 and CVE-2026-56139 (`muteException`
+defaulting to `false`) are insecure-default cases in the
+information-disclosure class.
 
 ==== Injection into back-end queries built by Camel
 
 Components that build a query in another language from inputs they receive
 must not splice untrusted input directly into that query.
 
-Historical examples: CVE-2025-66169 (`camel-neo4j` Cypher injection),
-CVE-2014-0003 (`camel-xslt` extension-function invocation from untrusted
-stylesheet input).
+Historical examples: CVE-2025-66169 and its incomplete-fix follow-on
+CVE-2026-46591 (`camel-neo4j` Cypher injection via JSON property names
+interpolated into the query), CVE-2014-0003 (`camel-xslt` extension-function
+invocation from untrusted stylesheet input).
 
 === Out of scope
 
@@ -568,18 +603,21 @@ be closed as `not a vulnerability`.
   `hostnameVerificationEnabled=false`, explicit selection of an
   `ObjectInputStream`-using data format - these are documented opt-ins and the
   operator has signed up for the consequences.
-* *Behaviour that is only present under the non-default `dev` or `test`
-  profile.* Camel defaults to the `prod` profile; the `dev` and `test`
-  profiles (set explicitly via `camel.main.profile`, or selected for you by
-  tooling such as Camel CLI) are development-only and deliberately less
-  guarded - they enable the developer console, debug and trace endpoints, the
-  backlog debugger and more verbose diagnostics, and relax the security policy
-  default from `fail` to `warn`. Camel may, by design, reveal configuration,
-  route and `Exchange` detail in these modes that it would not reveal under
-  `prod`. A report whose impact only manifests under `camel.main.profile = dev`
-  or `test` is out of scope as a non-default, development-only configuration;
-  the production posture against which findings are judged is the default
-  `prod` profile (see _Deployment hardening_ and the `design/security.adoc`
+* *Behaviour that is only present under the `dev` or `test` profile.* The
+  framework applies *no* profile by default; `dev`, `test` and `prod` are all
+  opt-in, set explicitly via `camel.main.profile` (or selected for you by
+  tooling such as Camel CLI, which uses `dev` for local development). The
+  `dev` profile is development-only and deliberately less guarded - it enables
+  the developer console, debug and trace endpoints, the backlog debugger and
+  more verbose diagnostics, and relaxes the `insecure:dev` policy to `allow`.
+  Camel may, by design, reveal configuration, route and `Exchange` detail in
+  these modes that it would not reveal in a production deployment. A report
+  whose impact only manifests under `camel.main.profile = dev` or `test` is
+  out of scope as a development-only configuration. Production deployments are
+  expected to run `camel.main.profile = prod`, under which the security policy
+  escalates from its `warn` default to `fail`; that production posture is the
+  reference against which findings are judged (see _Configuration variants
+  that change the model_, _Deployment hardening_ and the `design/security.adoc`
   design document for the profile-aware policy defaults).
 * *Denial of service via resource exhaustion.* Unthrottled routes, unbounded
   aggregators, an HTTP consumer with no rate limit, a JMS consumer that
@@ -657,11 +695,14 @@ they are, the change is announced through the normal upgrade-guide channel.
   `CamelBeanMethodName`, `CamelFileName`, `CamelExecCommandExecutable` and
   `CamelJmsDestinationName` are the public contract for letting a route control
   component behaviour. Route authors must filter Camel-internal headers from
-  untrusted producers (see _Deployment hardening_ below); component authors
-  must apply a strict `HeaderFilterStrategy` on the inbound path.
+  untrusted producers (see _Deployment hardening_ below); on the component
+  side the inbound `Camel*` `HeaderFilterStrategy` is applied by default since
+  4.21 (CAMEL-23543), and component authors must not opt out of it.
 * *The framework's automatic header filtering is scoped to the internal
-  `Camel*` / `org.apache.camel.*` namespace.* `DefaultHeaderFilterStrategy`
-  filters that namespace case-insensitively; it does not, and cannot, filter
+  `Camel*` namespace.* Since 4.21 (CAMEL-23543) `DefaultHeaderFilterStrategy`
+  filters that namespace case-insensitively *by default, in both directions,
+  for every consumer and producer that uses it*, with no per-component
+  configuration; it does not, and cannot, filter
   the non-prefixed application-level headers a component reads as semantic
   input - `To`, `Cc`, `Bcc`, `Subject`, `From` in `camel-mail`; HTTP header
   names; JMS properties; and so on. Those headers are part of each component's
@@ -716,7 +757,7 @@ Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
   reference allows RCE."* These are route-author primitives by design.
   Route code is trusted code; see the route-author entry in _Out of
   scope_ and the route-author row in _Roles_.
-* *"A `Camel*` / `org.apache.camel.*` header controls dispatch, therefore
+* *"A `Camel*` header controls dispatch, therefore
   the consumer is vulnerable."* Bean-based dispatch via internal headers
   is the public contract for letting a route control component behaviour;
   see the second bullet under _Known limitations_. A finding is in scope
@@ -861,19 +902,133 @@ not provided_), not to close the report ad hoc.
 | _Reporting a vulnerability_ (PMC review), upgrade-guide entry
 |===
 
+== Configuration variants that change the model
+
+The posture described above is not a single fixed setting; a small number of
+profile selections, policy levels and per-component options move where the
+trust boundary sits or how strictly the framework reacts to insecure
+configuration. This section consolidates the knobs that change which
+properties hold, so a report can be judged against the configuration it
+actually requires. It restates facts stated elsewhere in this document in one
+place; it introduces no new commitment.
+
+=== Profiles
+
+Camel applies *no profile by default*. A profile is selected explicitly with
+`camel.main.profile` (or by tooling - the Camel CLI selects `dev` for local
+development). The profile sets the default security-policy level and, for
+`dev`, switches on a set of development features.
+
+[cols="1,3,2",options="header"]
+|===
+| `camel.main.profile` | Security-relevant effect | Triage consequence
+
+| _unset_ (default)
+| The security policy framework defaults to `warn`: insecure configuration in
+  the four categories is logged at startup but does not prevent it. No
+  development features (dev console, backlog debugger, trace endpoints) are
+  enabled.
+| Baseline posture. Insecure *options* remain explicit opt-ins regardless of
+  the policy level (see _Per-option opt-ins_).
+
+| `prod`
+| The security policy framework defaults to `fail`: insecure configuration in
+  the four categories prevents startup. This is the reference posture against
+  which findings are judged.
+| A finding reachable only because the operator relied on the un-profiled
+  `warn` default rather than `fail` is still triaged on the merits of the
+  underlying option, which is itself an opt-in.
+
+| `dev`
+| Development-only. Enables the developer console, debug and trace endpoints,
+  the backlog debugger and verbose diagnostics, and relaxes the `insecure:dev`
+  policy to `allow`.
+| A finding that only manifests under `dev` is `OUT-OF-MODEL:
+  non-default-build`.
+
+| `test`
+| Testing profile used by test tooling. Does not relax the security policy and
+  does not enable the developer console.
+| A finding that only manifests under `test` is `OUT-OF-MODEL:
+  non-default-build`.
+|===
+
+=== Security policy levels
+
+Independently of the profile, each of the four categories (`secret`,
+`insecure:ssl`, `insecure:serialization`, `insecure:dev`) can be set to
+`allow`, `warn` (the un-profiled default) or `fail` through
+`camel.security.policy` and the per-category overrides
+(`camel.security.secretPolicy`, `insecureSslPolicy`,
+`insecureSerializationPolicy`, `insecureDevPolicy`). The policy framework is a
+*configuration linter* that detects insecure configuration at startup (see the
+false-friend note under _Security properties not provided_); it does not
+intercept runtime data. Lowering a category to `allow`, or exempting a property
+via `camel.security.allowedProperties`, is an operator decision and does not by
+itself create a framework vulnerability. See `design/security.adoc` for the
+enforcement design.
+
+=== Per-option opt-ins
+
+A small set of per-component options relaxes a security default when set to a
+non-default value. Their risk is documented and selecting them is an operator
+decision; a finding that requires one of them is `OUT-OF-MODEL:
+non-default-build` (or `BY-DESIGN: property-disclaimed`), per the
+explicit-opt-in entry under _Out of scope_.
+
+[cols="2,1,3",options="header"]
+|===
+| Option | Default | Effect at the insecure value
+
+| `allowJavaSerializedObject=true`
+| `false`
+| An HTTP (or similar) consumer accepts and deserialises
+  `application/x-java-serialized-object` request bodies.
+
+| `transferException=true`
+| `false`
+| Serialised exception objects are transferred over the wire, adding a
+  deserialisation surface on the receiving side.
+
+| `mapJmsMessage=true`
+| `true` (heritage)
+| A JMS `ObjectMessage` body is materialised via `getObject()`; on an untrusted
+  broker this is a deserialisation surface. This heritage default is guarded by
+  an `ObjectInputFilter` (CVE-2026-40860) and a holder-forgery check
+  (CVE-2026-43866).
+
+| `trustAllCertificates=true`
+| `false`
+| TLS server-certificate validation is disabled.
+
+| `hostnameVerificationEnabled=false`
+| component-dependent
+| TLS hostname verification is disabled.
+|===
+
+A machine-readable index of these variants, the entry-point trust levels, the
+in/out-of-scope component families, the claimed and disclaimed properties, the
+known non-findings and the triage dispositions is published alongside this page
+as `security-model.yaml` (an attachment); it is a derived index for automated
+triage and this prose page remains canonical.
+
 == Deployment hardening
 
 Operators are responsible for the following. None of these are framework
 vulnerabilities if skipped; all of them reduce the attack surface materially.
 
-* *Stay on the default `prod` profile in production.* Camel defaults to the
-  `prod` profile, under which the security policy framework defaults to `fail`
-  for the four categories (`secret`, `insecure:ssl`, `insecure:serialization`,
-  `insecure:dev`). Setting `camel.main.profile = dev` or `test` is an explicit
-  opt-in to development-only behaviour (extra services, dev console, debug
-  endpoints) and should not be used in production. Override individual
-  categories explicitly when a deployment genuinely needs a relaxed policy.
-  See the `design/security.adoc` design document for details.
+* *Explicitly select the `prod` profile in production.* The framework applies
+  no profile by default, and with no profile the security policy framework
+  defaults to `warn` for the four categories (`secret`, `insecure:ssl`,
+  `insecure:serialization`, `insecure:dev`) - insecure configuration is logged
+  but does not stop startup. Set `camel.main.profile = prod` so the policy
+  escalates to `fail` and insecure configuration prevents startup. Setting
+  `camel.main.profile = dev` or `test` is an explicit opt-in to
+  development-only behaviour (extra services, dev console, debug endpoints)
+  and should not be used in production. Override individual categories
+  explicitly when a deployment genuinely needs a relaxed policy. See
+  _Configuration variants that change the model_ and the `design/security.adoc`
+  design document for details.
 * *Resolve secrets through a vault.* Use one of the supported backends
   (xref:security.adoc[AWS Secrets Manager, Azure Key Vault, Google Secret
   Manager, HashiCorp Vault, IBM Secrets Manager, CyberArk Conjur]) rather than
@@ -947,13 +1102,17 @@ When writing a new component or reviewing a pull request that touches an
 existing one, the following questions decide whether the change is in line
 with the security model.
 
-* *Does the component consume untrusted input?* If yes, the inbound side must
-  apply a `HeaderFilterStrategy` that blocks `Camel*` and any internal headers
-  the component itself uses. The default `DefaultHeaderFilterStrategy` is
-  case-insensitive out of the box (so `Camel`, `CAMEL` and `caMEL` are all
-  filtered identically); custom strategies must either extend
-  `DefaultHeaderFilterStrategy` to inherit this behaviour or implement the
-  case-insensitive matching themselves.
+* *Does the component consume untrusted input?* Since 4.21 (CAMEL-23543)
+  `DefaultHeaderFilterStrategy` blocks the `Camel*` namespace by default, in
+  both directions, for every consumer and producer that uses it -
+  case-insensitively (so `Camel`, `CAMEL` and `caMEL` are filtered identically)
+  and with no per-component boilerplate. The remaining responsibilities for a
+  component author are: do not *opt out* of that default (as
+  `ClassicJmsHeaderFilterStrategy` deliberately does for legacy JMS
+  pass-through); when supplying a custom strategy, extend
+  `DefaultHeaderFilterStrategy` (or re-implement the case-insensitive `Camel*`
+  match); and add any of the component's *own* internal headers that fall
+  outside the `Camel*` namespace to the filter set explicitly.
 * *Does the component deserialise into a Java object?* If it uses
   `ObjectInputStream.readObject()`, an XStream-style unmarshaller or a
   polymorphic Jackson reader on input the operator did not explicitly control,
@@ -1009,3 +1168,7 @@ reference to this document.
 * link:/security/[Apache Camel Security] - the public
   advisory index and reporting process.
 * `SECURITY.md` (in the source tree) - the GitHub-rendered security pointer.
+* `security-model.yaml` (attachment to this page) - a machine-readable index of
+  this model (entry-point trust, in/out-of-scope families, config variants,
+  claimed and disclaimed properties, known non-findings, triage dispositions)
+  for automated triage tooling. The prose page is canonical.

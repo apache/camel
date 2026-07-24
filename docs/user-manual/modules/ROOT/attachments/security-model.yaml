@@ -1,0 +1,219 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Apache Camel - Security Model (machine-readable companion)
+#
+# Derived index of docs/user-manual/modules/ROOT/pages/security-model.adoc.
+# The prose page is canonical; regenerate this file whenever it changes.
+# This companion encodes only triage-relevant facts already stated in the
+# prose page and introduces no security commitment not stated there.
+
+meta:
+  title: Apache Camel Security Model
+  canonical_page: docs/user-manual/modules/ROOT/pages/security-model.adoc
+  project_version: 4.22.0-SNAPSHOT
+  status: accepted
+  advisory_index: https://camel.apache.org/security/
+  report_to: private-security@camel.apache.org
+  note: "A report against Camel version N is triaged against this model as it stood at N, not at HEAD. Provenance and rationale live in the prose page."
+
+roles:
+  - role: committers_and_component_authors
+    trust: trusted
+  - role: route_authors
+    trust: fully_trusted
+    note: "Arbitrary Java/expression execution by a route author is by design."
+  - role: deployment_operators
+    trust: fully_trusted
+    note: "Misconfiguration is operator territory unless a framework default exposed it."
+  - role: external_message_senders
+    trust: untrusted
+    note: "Primary adversary model - body, headers, attachments, transport metadata."
+
+trust_boundary:
+  trusted: "the route plus everything the operator configured"
+  untrusted: "the data flowing through the route (Exchange body, headers, attachments)"
+
+adversary_in_scope:
+  controls: [message_body, message_headers, attachments, transport_metadata]
+  goals: [rce, endpoint_or_bean_redirect, unsafe_deserialization, xxe_ssrf, path_traversal, auth_bypass, secret_disclosure, backend_query_injection]
+adversary_out_of_scope:
+  - route_authors
+  - deployment_operators
+  - management_surface_network_peers   # camel-management, dev console, jolokia, JMX
+  - transitive_third_party_dependency_authors
+
+component_families:
+  - family: core_router_engine        # core/camel-*
+    in_scope: true
+    judged_against: core_router_engine_invariants
+  - family: components                 # components/camel-*
+    in_scope: true
+  - family: management_surfaces        # camel-management, dev console, camel-jolokia, JMX
+    in_scope: false
+    reason: "trust boundary is the management surface itself, not the MBean method"
+  - family: deprecated_components
+    in_scope: limited
+    reason: "primary remediation is the documented migration"
+  - family: removed_components
+    in_scope: false
+  - family: examples_and_samples
+    in_scope: false
+
+config_variants:
+  profiles:
+    default: unset
+    values:
+      unset:
+        security_policy_default: warn
+        dev_features: false
+        note: "baseline posture; insecure options remain explicit opt-ins"
+      prod:
+        security_policy_default: fail
+        note: "reference posture against which findings are judged; must be set explicitly"
+      dev:
+        security_policy_insecure_dev: allow
+        dev_features: true            # dev console, debug/trace endpoints, backlog debugger
+        disposition_if_only_here: "OUT-OF-MODEL: non-default-build"
+      test:
+        security_policy_default: warn
+        dev_features: false
+        disposition_if_only_here: "OUT-OF-MODEL: non-default-build"
+  security_policy:
+    property: camel.security.policy
+    categories: [secret, "insecure:ssl", "insecure:serialization", "insecure:dev"]
+    levels: [allow, warn, fail]
+    unprofiled_default: warn
+    nature: configuration_linter_at_startup   # not a runtime sandbox
+  per_option_opt_ins:
+    - option: allowJavaSerializedObject
+      insecure_value: true
+      default: false
+    - option: transferException
+      insecure_value: true
+      default: false
+    - option: mapJmsMessage
+      insecure_value: true
+      default: true                  # heritage default, guarded (CVE-2026-40860, CVE-2026-43866)
+    - option: trustAllCertificates
+      insecure_value: true
+      default: false
+    - option: hostnameVerificationEnabled
+      insecure_value: false
+      default: component-dependent
+
+properties_provided:
+  # id, violation symptom, indicative severity tier
+  - id: no_untrusted_code_execution
+    symptom: "deserialization gadget / bean-method-command dispatch / expression eval not requested by route"
+    severity: critical
+  - id: no_untrusted_endpoint_redirect
+    symptom: "wire-injected internal header changes dispatch target (CamelBeanMethodName, CamelHttpUri, ...)"
+    severity: critical
+  - id: no_arbitrary_deserialization
+    symptom: "attacker-chosen types instantiated via ObjectInputStream/XStream/Hessian/polymorphic-Jackson without filter"
+    severity: critical_when_gadget_reachable
+  - id: no_external_resource_resolution_on_parse
+    symptom: "XML/XSLT/XSD/XPath parse of attacker input reads file / SSRF / fetches remote DTD/stylesheet"
+    severity: high
+  - id: no_path_escape
+    symptom: "file/mail/ftp path escapes configured root via ../ or absolute header"
+    severity: high
+  - id: auth_components_enforce
+    symptom: "request served without valid token / unvalidated issuer-audience-signature / uncovered subpath"
+    severity: critical
+  - id: no_secret_or_state_disclosure
+    symptom: "secrets/bodies/config reach a log (INFO/WARN/ERROR), event, world-readable file, or HTTP response"
+    severity: medium_to_high
+  - id: no_backend_query_injection
+    symptom: "attacker alters the structure of a Cypher/XSLT-extension/etc query Camel builds"
+    severity: high_to_critical
+
+core_router_engine_invariants:
+  - no_engine_expression_eval_without_route_author_expression
+  - no_engine_promoted_dispatch_from_untrusted_content
+  - no_type_converter_auto_deserialization_of_arbitrary_types
+  - placeholder_and_bean_ref_resolution_only_on_route_and_config_text
+  - engine_never_promotes_wire_input_into_camel_header_namespace   # consumer HFS responsibility (CVE-2025-27636 family)
+  - error_handling_and_inband_trace_no_eval_or_cross_exchange_disclosure
+  - no_unbounded_resource_guarantee   # out of scope
+
+properties_not_provided:
+  - jvm_or_route_sandboxing
+  - availability_under_attacker_volume         # DoS / resource exhaustion
+  - application_level_header_sanitisation      # only Camel* namespace is filtered
+  - transitive_dependency_cve_shielding
+  - production_guarantees_under_dev_or_test_profile
+  - information_hiding_at_debug_or_trace_log_levels
+  - protection_from_operator_misconfiguration_outside_defaults
+  - constant_time_or_side_channel_resistant_comparison
+
+false_friends:
+  - "DefaultHeaderFilterStrategy filters the internal Camel* namespace only, not application headers"
+  - "removeHeaders(Camel*) strips internal-dispatch headers, not every untrusted header"
+  - "security policy framework is a startup linter, not a runtime sandbox"
+  - "component deprecation is not a security boundary"
+  - "TLS-by-default is not peer authentication"
+
+in_scope_classes:
+  - id: unsafe_deserialization
+    examples: [CVE-2026-40860, CVE-2026-43866, CVE-2026-40859, CVE-2026-43865, CVE-2026-46590, CVE-2026-40473]
+  - id: xxe_and_remote_resource_resolution
+    examples: [CVE-2014-0002, CVE-2018-8027, CVE-2019-0188]
+  - id: expression_or_template_injection
+    examples: [CVE-2013-4330, CVE-2020-11994]
+  - id: path_traversal
+    examples: [CVE-2018-8041, CVE-2019-0194]
+  - id: ssrf_or_remote_fetch_on_parse
+    examples: [CVE-2017-5643]
+  - id: camel_header_bean_dispatch_abuse
+    examples: [CVE-2025-27636, CVE-2026-40453, CVE-2026-46456, CVE-2026-46457, CVE-2026-46726, CVE-2026-48205, CVE-2026-48206, CVE-2026-49098, CVE-2026-49099]
+    mitigation_default: "DefaultHeaderFilterStrategy blocks Camel* by default since 4.21 (CAMEL-23543)"
+  - id: auth_or_authz_bypass
+    examples: [CVE-2026-23552, CVE-2026-40022, CVE-2026-46455, CVE-2026-53913]
+  - id: information_disclosure
+    examples: [CVE-2023-34442, CVE-2024-22371, CVE-2026-49365, CVE-2026-56139]
+  - id: insecure_defaults
+    examples: [CVE-2020-11972, CVE-2020-11973, CVE-2026-40860, CVE-2026-43865]
+  - id: backend_query_injection
+    examples: [CVE-2025-66169, CVE-2026-46591, CVE-2014-0003]
+
+known_non_findings:
+  - "transitive dependency CVE not reachable through Camel code"
+  - "route-author simple/xpath/groovy/jexl/mvel evaluation"
+  - "route-author .bean/.process/Runtime.exec/Class reference"
+  - "Camel* header controls dispatch (intentional contract)"
+  - "application-level header (To/Subject/HTTP X-/JMS/AMQP/MQTT/CoAP/Kafka) not stripped"
+  - "DefaultHeaderFilterStrategy case bypass (it is case-insensitive by default)"
+  - "management surface (dev console, backlog debugger, tracer, JMX, jolokia) exposes code/state"
+  - "finding only under camel.main.profile=dev or test"
+  - "camel-FOO logs Exchange/header/config at DEBUG or TRACE"
+  - "non-cryptographic hash (MD5/SHA-1) used for idempotency/routing/cache keys"
+  - "deprecated component still ships and has a CVE"
+  - "documented opt-in option enables unsafe behaviour"
+  - "finding in core/camel-* where every core invariant held"
+
+dispositions:
+  - VALID
+  - VALID-HARDENING
+  - "OUT-OF-MODEL: trusted-input"
+  - "OUT-OF-MODEL: adversary-not-in-scope"
+  - "OUT-OF-MODEL: unsupported-component"
+  - "OUT-OF-MODEL: non-default-build"
+  - "BY-DESIGN: property-disclaimed"
+  - KNOWN-NON-FINDING
+  - MODEL-GAP
