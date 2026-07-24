@@ -113,8 +113,7 @@ public class AbstractEndpointBuilder {
                     changed = camelContext.getCamelContextExtension().resolvePropertyPlaceholders(text, true);
                 }
                 if (changed != null && !changed.startsWith(PropertiesComponent.PREFIX_OPTIONAL_TOKEN)) {
-                    // resolve then use
-                    params.put(key, changed);
+                    params.put(key, wrapRawIfNeeded(changed));
                 }
             } else if (val instanceof Number || val instanceof Boolean || val instanceof Enum<?>) {
                 params.put(key, val.toString());
@@ -126,6 +125,26 @@ public class AbstractEndpointBuilder {
                 remaining.put(key, val);
             }
         }
+    }
+
+    /**
+     * Wraps the value in RAW() if it contains characters that would be mangled during URI encoding/decoding round-trip
+     * (+ is decoded as space by URLDecoder, % causes double-decode issues).
+     */
+    private static String wrapRawIfNeeded(String value) {
+        if (value.startsWith("RAW(")) {
+            return value;
+        }
+        if (value.startsWith("#")) {
+            return value;
+        }
+        for (int i = 0; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            if (ch == '+' || ch == '%') {
+                return "RAW(" + value + ")";
+            }
+        }
+        return value;
     }
 
     @Override
