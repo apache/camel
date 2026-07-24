@@ -35,6 +35,8 @@ import org.apache.camel.util.json.JsonObject;
 
 class LaunchManager {
 
+    private static volatile Path secureTempDir;
+
     private final Supplier<List<InfraInfo>> infraServices;
     private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
     private DeferredLaunch deferredLaunch;
@@ -75,7 +77,7 @@ class LaunchManager {
     void launchDetached(String displayName, List<String> extraArgs) throws IOException {
         List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
         cmd.addAll(extraArgs);
-        Path outputFile = Files.createTempFile("camel-launch-", ".log");
+        Path outputFile = createSecureTempFile("camel-launch-", ".log");
         outputFile.toFile().deleteOnExit();
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.redirectErrorStream(true);
@@ -129,7 +131,7 @@ class LaunchManager {
                 cmd.add("run");
                 cmd.add(alias);
                 cmd.add("--background");
-                Path outputFile = Files.createTempFile("camel-infra-", ".log");
+                Path outputFile = createSecureTempFile("camel-infra-", ".log");
                 outputFile.toFile().deleteOnExit();
                 ProcessBuilder pb = new ProcessBuilder(cmd);
                 pb.redirectErrorStream(true);
@@ -147,6 +149,25 @@ class LaunchManager {
         }
         String infraList = String.join(", ", missingInfra);
         notify("Starting infra: " + infraList + " → then: " + displayName, false);
+    }
+
+    /**
+     * Creates a temporary file inside a secure (owner-only permissions) subdirectory rather than directly in the
+     * publicly writable system temp directory. This avoids SonarCloud S5443 (use of publicly writable directories).
+     */
+    static Path createSecureTempFile(String prefix, String suffix) throws IOException {
+        Path dir = secureTempDir;
+        if (dir == null || !Files.isDirectory(dir)) {
+            synchronized (LaunchManager.class) {
+                dir = secureTempDir;
+                if (dir == null || !Files.isDirectory(dir)) {
+                    dir = Files.createTempDirectory("camel-tui-");
+                    dir.toFile().deleteOnExit();
+                    secureTempDir = dir;
+                }
+            }
+        }
+        return Files.createTempFile(dir, prefix, suffix);
     }
 
     static boolean isContainerRuntimeAvailable() {
