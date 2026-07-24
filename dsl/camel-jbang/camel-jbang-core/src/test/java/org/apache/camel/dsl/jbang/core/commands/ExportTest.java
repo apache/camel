@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -51,7 +52,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ExportTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);
-
     private File workingDir;
 
     @BeforeEach
@@ -902,6 +902,33 @@ class ExportTest {
             String content = IOHelper.loadText(new FileInputStream(appProperties));
             Assertions.assertTrue(content.contains("quarkus.hawtio.authenticationEnabled=false"),
                     "should contain quarkus.hawtio.authenticationEnabled property, was " + content);
+        }
+    }
+
+    @Test
+    void shouldNotDuplicateMetricsDependency() throws Exception {
+        File profile = new File(".", "application.properties");
+        try {
+            Files.writeString(profile.toPath(), "camel.management.metricsEnabled=true\n");
+
+            Export command = new Export(new CamelJBangMain());
+            CommandLine.populateCommand(command,
+                    "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                    "--runtime=camel-main",
+                    "src/test/resources/route.yaml");
+            int exit = command.doCall();
+
+            assertThat(exit).isEqualTo(0);
+            Model model = readMavenModel();
+
+            long count = model.getDependencies().stream()
+                    .filter(d -> "camel-micrometer-prometheus".equals(d.getArtifactId()))
+                    .count();
+            assertThat(count)
+                    .as("camel-micrometer-prometheus should appear exactly once")
+                    .isEqualTo(1);
+        } finally {
+            FileUtil.deleteFile(profile);
         }
     }
 
