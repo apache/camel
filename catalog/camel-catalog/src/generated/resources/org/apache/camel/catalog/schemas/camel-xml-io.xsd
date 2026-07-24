@@ -718,6 +718,15 @@ Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="jactl" type="tns:jactlExpression">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Evaluates a Jactl script
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="java" type="tns:javaExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -2709,6 +2718,7 @@ ensuring the aggregation repository is empty before shutdown. Default value: fal
       <xs:element ref="tns:groovy"/>
       <xs:element ref="tns:header"/>
       <xs:element ref="tns:hl7terser"/>
+      <xs:element ref="tns:jactl"/>
       <xs:element ref="tns:java"/>
       <xs:element ref="tns:js"/>
       <xs:element ref="tns:joor"/>
@@ -3107,6 +3117,7 @@ The exception class names (fully qualified) to catch.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -3163,6 +3174,7 @@ placeholders or simple expressions using only property placeholders are supporte
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
@@ -4224,6 +4236,7 @@ To use a specific charset when converting.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -4286,6 +4299,7 @@ To use a custom thread pool if asyncDelay has been enabled.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -4350,6 +4364,7 @@ to turn off caching.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -4960,6 +4975,7 @@ The logging level to use for logging transactional rollback. Default is WARN. De
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
@@ -5212,6 +5228,7 @@ Global option value.
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
@@ -6001,6 +6018,7 @@ The language to use for evaluating the log message, such as simple, groovy, or o
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
@@ -10485,6 +10503,7 @@ Timeout in millis when polling from the external service. The default value is 2
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -10659,6 +10678,7 @@ The property value.
       <xs:element ref="tns:groovy"/>
       <xs:element ref="tns:header"/>
       <xs:element ref="tns:hl7terser"/>
+      <xs:element ref="tns:jactl"/>
       <xs:element ref="tns:java"/>
       <xs:element ref="tns:js"/>
       <xs:element ref="tns:joor"/>
@@ -10701,6 +10721,7 @@ The property key.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -10992,6 +11013,7 @@ Name of the variable to remove.
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
@@ -11690,6 +11712,7 @@ Description of the template parameter for documentation purposes.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -11932,6 +11955,7 @@ The frequency of samples as a message count, using a message-frequency approach.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -11983,6 +12007,7 @@ The uri of the endpoint to send to.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -12034,6 +12059,7 @@ The new exchange pattern to use from this point forward.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -12088,6 +12114,7 @@ Otherwise a constant name will be used.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -12133,6 +12160,7 @@ name. Otherwise a constant name will be used.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -12187,6 +12215,7 @@ Otherwise a constant name will be used.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -12232,6 +12261,7 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
@@ -12892,6 +12922,7 @@ handler. Default value: true
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
             <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
             <xs:element ref="tns:joor"/>
@@ -13363,6 +13394,7 @@ into.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -13566,6 +13598,7 @@ Indicates whether null is allowed as value of a body to unmarshall. Default valu
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>
@@ -15054,6 +15087,11 @@ Otherwise, the source is assumed to be a variable. Use empty or null to use defa
       <xs:extension base="tns:singleInputTypedExpressionDefinition"/>
     </xs:simpleContent>
   </xs:complexType>
+  <xs:complexType name="jactlExpression">
+    <xs:simpleContent>
+      <xs:extension base="tns:typedExpressionDefinition"/>
+    </xs:simpleContent>
+  </xs:complexType>
   <xs:complexType name="javaExpression">
     <xs:simpleContent>
       <xs:extension base="tns:typedExpressionDefinition">
@@ -15965,6 +16003,7 @@ URI of the Endpoint used for validation.
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
           <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
           <xs:element ref="tns:joor"/>

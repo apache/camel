@@ -571,6 +571,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeHl7TerserExpression(Hl7TerserExpression def) {
         return wrapNode("hl7terser", doWriteHl7TerserExpression(def));
     }
+    public JsonObject writeJactlExpression(JactlExpression def) {
+        return wrapNode("jactl", doWriteJactlExpression(def));
+    }
     public JsonObject writeJavaExpression(JavaExpression def) {
         return wrapNode("java", doWriteJavaExpression(def));
     }
@@ -2897,6 +2900,12 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteValue(jo, def.getExpression());
         return jo;
     }
+    protected JsonObject doWriteJactlExpression(JactlExpression def) {
+        JsonObject jo = new JsonObject();
+        doWriteTypedExpressionDefinitionAttributes(jo, def);
+        doWriteValue(jo, def.getExpression());
+        return jo;
+    }
     protected JsonObject doWriteJavaExpression(JavaExpression def) {
         JsonObject jo = new JsonObject();
         doWriteTypedExpressionDefinitionAttributes(jo, def);
@@ -3874,6 +3883,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "GroovyExpression" -> wrapNode("groovy", doWriteGroovyExpression((GroovyExpression) v));
                 case "HeaderExpression" -> wrapNode("header", doWriteHeaderExpression((HeaderExpression) v));
                 case "Hl7TerserExpression" -> wrapNode("hl7terser", doWriteHl7TerserExpression((Hl7TerserExpression) v));
+                case "JactlExpression" -> wrapNode("jactl", doWriteJactlExpression((JactlExpression) v));
                 case "JavaExpression" -> wrapNode("java", doWriteJavaExpression((JavaExpression) v));
                 case "JavaScriptExpression" -> wrapNode("js", doWriteJavaScriptExpression((JavaScriptExpression) v));
                 case "JoorExpression" -> wrapNode("joor", doWriteJoorExpression((JoorExpression) v));

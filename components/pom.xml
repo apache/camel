@@ -178,6 +178,7 @@
         <module>camel-jackson3-avro</module>
         <module>camel-jackson3-protobuf</module>
         <module>camel-jackson3xml</module>
+        <module>camel-jactl</module>
         <module>camel-jandex</module>
         <module>camel-jasypt</module>
         <module>camel-javascript</module>

@@ -1265,6 +1265,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteHl7TerserExpression(sb, def);
         return sb.toString();
     }
+    public String writeJactlExpression(JactlExpression def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "jactl", def);
+        doWriteJactlExpression(sb, def);
+        return sb.toString();
+    }
     public String writeJavaExpression(JavaExpression def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -3445,6 +3452,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteHl7TerserExpression(StringBuilder sb, Hl7TerserExpression def) {
         doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteValue(sb, def.getExpression());
+    }
+    protected void doWriteJactlExpression(StringBuilder sb, JactlExpression def) {
+        doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
     protected void doWriteJavaExpression(StringBuilder sb, JavaExpression def) {
@@ -6237,6 +6248,11 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     beginStep(sb, "hl7terser", v);
                     doWriteHl7TerserExpression(sb, (Hl7TerserExpression) v);
                     endStep(sb, "hl7terser", v);
+                }
+                case "JactlExpression" -> {
+                    beginStep(sb, "jactl", v);
+                    doWriteJactlExpression(sb, (JactlExpression) v);
+                    endStep(sb, "jactl", v);
                 }
                 case "JavaExpression" -> {
                     beginStep(sb, "java", v);

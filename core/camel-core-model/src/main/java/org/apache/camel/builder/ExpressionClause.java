@@ -368,6 +368,16 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
+     * Evaluates a <a href="https://jactl.io">Jactl expression</a>
+     *
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
+     */
+    public T jactl(String text) {
+        return delegate.jactl(text);
+    }
+
+    /**
      * Returns a JOOR expression value builder
      */
     @Deprecated(since = "4.3.0")

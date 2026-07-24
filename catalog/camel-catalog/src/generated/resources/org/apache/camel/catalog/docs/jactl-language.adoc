@@ -1,0 +1,195 @@
+= Jactl Language
+:doctitle: Jactl
+:shortname: jactl
+:artifactid: camel-jactl
+:description: Evaluates a Jactl script
+:since: 4.22
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+Camel has support for using https://jactl.io[Jactl].
+
+Jactl is a scripting language with syntax borrowed from Groovy with a little Perl mixed in.
+
+It compiles to bytecode for fast execution speed while providing a secure,
+locked down, sandbox environment out-of-the-box.
+
+If you need Jactl scripts to have access to Java classes you can configure which classes
+are permitted, to provide fine-grained control over what the scripts are allowed to do.
+If no security is required, users can open it up so that Jactl scripts have access to all
+classes.
+
+== Dependency
+
+To enable the use of Jactl scripts in your Camel routes you will need to add a dependency
+on *camel-jactl*.
+
+For example with Maven, in the `dependencies` section of your `pom.xml`:
+[source,xml]
+----
+<dependency>
+ <groupId>org.apache.camel</groupId>
+ <artifactId>camel-jactl</artifactId>
+ <version>x.y.z</version>
+</dependency>
+----
+
+== Usage
+
+[source,java]
+----
+import static org.apache.camel.language.jactl.JactlLanguage.jactl;
+
+public class MyRouteBuilder extends RouteBuilder {
+    @Override
+    public void configure() {
+        from("direct:orders")
+            .filter(jactl("body.amount > 100 && body.status == 'NEW'"))
+            .to("direct:big-orders");
+    }
+}
+
+// Or via the Language SPI:
+Language jactl = camelContext.resolveLanguage("jactl");
+Predicate p    = jactl.createPredicate("body.age > 20");
+Expression e   = jactl.createExpression("'Hello ' + body.name");
+----
+
+=== Results
+
+To return a result from a multi-line script, you can use `return` or, if there is no `return` statement,
+the result of the last expression in the script will be returned:
+
+[source,groovy]
+----
+def cost = body.item.count * body.item.cost
+cost > 10000   // return true if high cost
+----
+
+=== Standard Variables
+
+Scripts see these variables:
+
+[width="100%",cols="25%m,10%m,65%",options="header",]
+|=======================================================================
+|Variable |Type |Description
+|`body` | Object |The message body.
+|`header` / `headers` | Map | The headers of the message.
+| `variable` / `variables` | Map | The exchange variables.
+|=======================================================================
+
+If `withAllowContextMapAll(true)` is configured, these variables are also available:
+
+[width="100%",cols="25%m,10%m,65%",options="header",]
+|=======================================================================
+|Variable |Type |Description
+|`request` | Message |The message.
+|`response` | Message |*Deprecated* The Out message (only for InOut message exchange pattern).
+| 'exception` | Exception | If failure then this has the cause.
+| `exchange` | Exchange | The Exchange itself.
+| `exchangeProperty` / `exchangeProperties` | Map | The exchange properties.
+| `camelContext` | CamelContext | The Camel Context.
+|=======================================================================
+
+NOTE: The types of the `request`, `response`, `exception`, `exchange`, and
+`camelContext` variables are not standard supported types in Jactl so if you need to invoke
+methods on these objects you should configure this using the `withHostAccess()` or `withHostAccess(predicate)`.
+
+== Security
+
+The sandbox security model of Jactl, by default, prevents access to any class outside the Jactl provided
+types.
+If you want to allow Jactl scripts to invoke methods on objects of other types you need to use
+`withHostAccesss()` or `withHostAccess(predicate)`.
+
+=== `withHostAccess()`
+
+If the parameterless `withHostAccess()` is used, it completely opens up the sandbox and any method on any object can be invoked from a Jactl script.
+
+IMPORTANT: `withHostAccess()` should only be used in scenarios where you have complete trust in the scripts being invoked.
+
+=== `withHostAccess(Predicate<String> predicate)`
+
+When a predicate is supplied to `withHostAccess(Predicate<String>)` it will be invoked with the full Java classname
+and should return true if the class is a permitted class.
+
+Whenever there is a method invocation in a script, the predicate is invoked twice:
+
+. The classname of the runtime type (e.g. "com.acme.ApplicationContext") of the object is
+   passed to the predicate to see if we are allowed to invoke methods on it. The predicate
+   should return true if it is an allowed class.
+. The class where the method is declared is passed to the predicate to make sure that not only
+  the object's class is permitted but the class in which the method is implemented is also
+  permitted (this could be the same class, or it could be a base class if the method is inherited).
+
+== Binding the Jactl Language
+
+To configure `withAllowContextMapAll()` or `withHostAccess()` you should
+bind the `jactl` language to the configured `JactlLanguage` instance before the
+first usage.
+
+For example:
+
+[source,java]
+----
+Predicate<String> predicate = name -> name.startsWith("com.acme.");
+
+JactlLanguage jactl = JactlLanguage.withHostAccess(predicate)
+                                   .withAllowContextMapAll();   
+camelContext.getRegistry().bind("jactl", jactl);
+----
+
+For more control over configuration of the `Jactl` language, pass your own https://jactl.io/docs/integration-guide/jactl-context[JactlContext] to the `JactlLanguage` constructor:
+
+[source,java]
+----
+Predicate<String> predicate = name -> name.startsWith("com.acme.");
+
+JactlContext context = JactlContext.create()
+                                   ... various setters ...
+                                   .build();
+
+JactlLanguage jactl = new JactlLanguage(context);
+camelContext.getRegistry().bind("jactl", jactl);
+----
+
+
+== Script Cache
+
+Compiled scripts are cached by script text in a cache that defaults to 1000 entries
+but whose size can be overridden with the `camel-jactl.maxCacheSize` system property.
+Note that all scripts create Java classes which are kept by the class loader owned by
+the `JactlContext` so don't keep dynamically creating new scripts as you will eventually
+run out of memory.
+
+## Similarities with Groovy
+
+Jactl and Groovy have many similarities in terms of syntax and simple scripts written in one
+language can often be run without change in the other.
+
+For example, here are some of the things that are the same:
+
+* `//` and `/* */` style commends.
+* Semicolons are optional unless there are multiple statements on the same line.
+* Closures: `{ x,y -> x + y}`, the implicit `it` variable, and trailing closure-call syntax `list.map{ it * 2 }`.
+* `def` for dynamic types
+* Numeric literals are `int` by default unless a suffix of `L` for `long` or `D` for double is used.
+* Numeric literals with decimal points default to `BigDecimal` values (called `Decimal` in Jactl).
+* Hex values are prefixed with `0x`.
+* Binary values are prefixed with `0b`.
+* Jactl has support for the standard `boolean`, `int`, `long`, `double`, `String`, `List`, and `Map` types.
+* Jactl also supports `byte` values but in Jactl `byte` values are unsigned.
+* List literals `[1,2,3]` and Map literals `[a:1, b:2]` are the same as in Groovy.
+* Double-quoted interpolation strings: `"Value is ${a * a + 2 * b + c}"`.
+* Triple quoted strings for multi-line strings.
+* `/.../` is another way to delimit interpolated strings - useful when used as regex patterns.
+* `=~` operator for doing a regex find.
+* `?.` (safe navigation), `?:` (Elvis/default value), `<=>` (spaceship/comparator), `==`/`!=`, and `===`/`!==` (identity comparison) are the same.
+* `as` for coercion.
+* `in` for membership tests.
+* Truthiness: `0`, `null`, `''`, `[]`, and `[:]` are all false, everything else is true.
+* List and Map object support `+`, `-`, `<<`, `+=`, and support subscript access as well as null-safe subscript `?[`.
+
+Please see the https://jactl.io/docs/language-guide/introduction[Jactl Language Guide] for more information about Jactl, the language.

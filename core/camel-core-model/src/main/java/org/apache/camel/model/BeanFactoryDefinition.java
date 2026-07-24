@@ -384,6 +384,20 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     }
 
     /**
+     * Calls a Jactl script for creating the local bean
+     *
+     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.jactl</tt>,
+     * <tt>resource:file:/var/myscript.jactl</tt>, then its loaded from the external resource.
+     *
+     * @param script the script
+     */
+    public P jactl(String script) {
+        setScriptLanguage("jactl");
+        setScript(script);
+        return parent;
+    }
+
+    /**
      * Calls joor script (Java source that is runtime compiled to Java bytecode) for creating the local bean
      *
      * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,

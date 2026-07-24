@@ -23,6 +23,7 @@ import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
+import org.apache.camel.model.language.JactlExpression;
 import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JoorExpression;
@@ -162,6 +163,22 @@ public final class LanguageBuilderFactory {
      */
     public Hl7TerserExpression.Builder hl7terser(String expression) {
         var builder = hl7terser();
+        builder.expression(expression);
+        return builder;
+    }
+
+    /**
+     * Uses the Jactl language
+     */
+    public JactlExpression.Builder jactl() {
+        return new JactlExpression.Builder();
+    }
+
+    /**
+     * Uses the Jactl language
+     */
+    public JactlExpression.Builder jactl(String expression) {
+        var builder = jactl();
         builder.expression(expression);
         return builder;
     }

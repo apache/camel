@@ -2258,6 +2258,9 @@ public class ModelParser extends BaseParser {
     protected Hl7TerserExpression doParseHl7TerserExpression() throws IOException, XmlPullParserException {
         return doParse(new Hl7TerserExpression(), singleInputTypedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
+    protected JactlExpression doParseJactlExpression() throws IOException, XmlPullParserException {
+        return doParse(new JactlExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
+    }
     protected JavaExpression doParseJavaExpression() throws IOException, XmlPullParserException {
         return doParse(new JavaExpression(), (def, key, val) -> switch (key) {
                 case "preCompile": def.setPreCompile(val); yield true;
@@ -2880,6 +2883,7 @@ public class ModelParser extends BaseParser {
             case "groovy": return doParseGroovyExpression();
             case "header": return doParseHeaderExpression();
             case "hl7terser": return doParseHl7TerserExpression();
+            case "jactl": return doParseJactlExpression();
             case "java": return doParseJavaExpression();
             case "js": return doParseJavaScriptExpression();
             case "joor": return doParseJoorExpression();

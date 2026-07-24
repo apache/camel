@@ -169,6 +169,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.Iso8583DataFormat": return new ModelDeserializers.Iso8583DataFormatDeserializer();
             case "jacksonXml": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.JacksonXMLDataFormat": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
+            case "jactl": return new ModelDeserializers.JactlExpressionDeserializer();
+            case "org.apache.camel.model.language.JactlExpression": return new ModelDeserializers.JactlExpressionDeserializer();
             case "java": return new ModelDeserializers.JavaExpressionDeserializer();
             case "org.apache.camel.model.language.JavaExpression": return new ModelDeserializers.JavaExpressionDeserializer();
             case "js": return new ModelDeserializers.JavaScriptExpressionDeserializer();
