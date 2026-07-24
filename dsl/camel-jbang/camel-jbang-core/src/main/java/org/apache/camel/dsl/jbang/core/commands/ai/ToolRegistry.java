@@ -35,6 +35,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor.tool;
 
@@ -44,6 +46,8 @@ import static org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor.tool;
  * direct filesystem access remain in {@code AskTools}.
  */
 public final class ToolRegistry {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ToolRegistry.class);
 
     private static final List<ToolDescriptor> TOOLS = new ArrayList<>();
     private static final Map<String, ToolDescriptor> BY_NAME = new LinkedHashMap<>();
@@ -244,7 +248,7 @@ public final class ToolRegistry {
                                               + "Use includeDocs=true to enrich the response with documentation from the Camel catalog "
                                               + "for each EIP option and component endpoint option.")
                 .param("routeId", "string", "Route ID to inspect (use * for all routes)", false)
-                .param("includeDocs", "string",
+                .param("includeDocs", "boolean",
                         "If true, enrich each processor's options with documentation from the Camel catalog", false)
                 .executor((ctx, args) -> {
                     String routeId = args.get("routeId");
@@ -259,7 +263,7 @@ public final class ToolRegistry {
                                 return jo.toJson();
                             }
                         } catch (Exception e) {
-                            // return unenriched result
+                            LOG.debug("Failed to enrich processor detail with docs: {}", e.getMessage(), e);
                         }
                     }
                     return result;
