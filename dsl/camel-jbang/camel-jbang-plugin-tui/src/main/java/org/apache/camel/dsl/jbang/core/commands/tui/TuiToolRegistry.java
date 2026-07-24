@@ -79,7 +79,7 @@ class TuiToolRegistry {
     }
 
     /**
-     * Returns all 39 tool definitions. The result is cached since it is immutable.
+     * Returns all 40 tool definitions. The result is cached since it is immutable.
      */
     List<ToolDef> getToolDefinitions() {
         List<ToolDef> tools = cachedTools;
@@ -136,6 +136,7 @@ class TuiToolRegistry {
             case "tui_animate" -> callAnimate(args);
             case "tui_animate_status" -> callAnimateStatus(args);
             case "tui_catalog_doc" -> callCatalogDoc(args);
+            case "tui_get_processor_detail" -> callGetProcessorDetail(args);
             case "tui_list_examples" -> callListExamples(args);
             case "tui_run_example" -> callRunExample(args);
             default -> throw new IllegalArgumentException("Unknown tool: " + name);
@@ -575,6 +576,20 @@ class TuiToolRegistry {
                                 "Filter options by keyword in name or description (case-insensitive substring match). "
                                                            + "Only used when includeOptions is true.")),
                 List.of("name"))));
+
+        tools.add(toToolDef(toolDef(
+                "tui_get_processor_detail",
+                "Returns configured options for all processors in a route as structured JSON. "
+                                            + "Each processor entry includes type, id, endpointUri (for from/to), "
+                                            + "and the configured options (attributes, expressions). "
+                                            + "Use includeDocs=true to enrich the response with documentation from "
+                                            + "the Camel catalog for each EIP option and component endpoint option. "
+                                            + "This is the programmatic equivalent of the Diagram tab's detail panel.",
+                Map.of("routeId", propDef("string",
+                        "Route ID to inspect (use * for all routes). Defaults to * if omitted."),
+                        "includeDocs", propDef("boolean",
+                                "If true, enrich each processor's options with documentation from the Camel catalog "
+                                                          + "(description, type, group, defaultValue, required, deprecated, enum values)")))));
 
         // --- Example tools ---
 
@@ -1885,6 +1900,141 @@ class TuiToolRegistry {
             o.put("enumValues", toJsonArray(opt.getEnums()));
         }
         return o;
+    }
+
+    private String callGetProcessorDetail(Map<String, Object> args) {
+        String routeId = args.get("routeId") instanceof String v ? v : "*";
+        boolean includeDocs = Boolean.TRUE.equals(args.get("includeDocs"));
+
+        JsonObject response = facade.getProcessorDetail(routeId);
+        if (response == null) {
+            return "{\"error\": \"No response from integration\"}";
+        }
+        if (response.containsKey("error")) {
+            return Jsoner.serialize(response);
+        }
+
+        if (includeDocs) {
+            enrichProcessorDetailWithDocs(response);
+        }
+        return Jsoner.serialize(response);
+    }
+
+    private void enrichProcessorDetailWithDocs(JsonObject json) {
+        String version = facade.getSelectedCamelVersion();
+        CamelCatalog catalog;
+        try {
+            catalog = CatalogLoader.loadCatalog(null, version, true);
+        } catch (Exception e) {
+            return;
+        }
+        if (catalog == null) {
+            return;
+        }
+
+        JsonArray routes = (JsonArray) json.get("routes");
+        if (routes != null) {
+            for (Object routeObj : routes) {
+                if (routeObj instanceof JsonObject routeJson) {
+                    enrichRouteProcessors(routeJson, catalog);
+                }
+            }
+        } else {
+            enrichRouteProcessors(json, catalog);
+        }
+    }
+
+    private static void enrichRouteProcessors(JsonObject routeJson, CamelCatalog catalog) {
+        JsonArray processors = (JsonArray) routeJson.get("processors");
+        if (processors == null) {
+            return;
+        }
+        for (Object obj : processors) {
+            if (!(obj instanceof JsonObject processor)) {
+                continue;
+            }
+            String type = processor.getString("type");
+            if (type == null) {
+                continue;
+            }
+            JsonObject opts = processor.getMap("options");
+            if ("from".equals(type) || "to".equals(type) || "toD".equals(type) || "wireTap".equals(type)
+                    || "enrich".equals(type) || "pollEnrich".equals(type)) {
+                enrichComponentProcessorOptions(processor, opts, catalog);
+            } else {
+                enrichEipProcessorOptions(processor, type, opts, catalog);
+            }
+        }
+    }
+
+    private static void enrichComponentProcessorOptions(JsonObject processor, JsonObject opts, CamelCatalog catalog) {
+        String uri = processor.getString("endpointUri");
+        if (uri == null) {
+            uri = opts != null ? opts.getString("uri") : null;
+        }
+        if (uri == null) {
+            return;
+        }
+        String scheme = uri.contains(":") ? uri.substring(0, uri.indexOf(':')) : uri;
+        ComponentModel model = catalog.componentModel(scheme);
+        if (model == null) {
+            return;
+        }
+        processor.put("componentDescription", model.getDescription());
+
+        if (opts != null && model.getEndpointOptions() != null) {
+            JsonObject optDocs = new JsonObject();
+            for (BaseOptionModel opt : model.getEndpointOptions()) {
+                if (opts.containsKey(opt.getName())) {
+                    optDocs.put(opt.getName(), buildProcessorOptionDoc(opt));
+                }
+            }
+            if (!optDocs.isEmpty()) {
+                processor.put("optionDocs", optDocs);
+            }
+        }
+    }
+
+    private static void enrichEipProcessorOptions(JsonObject processor, String type, JsonObject opts, CamelCatalog catalog) {
+        EipModel model = catalog.eipModel(type);
+        if (model == null) {
+            return;
+        }
+        processor.put("eipDescription", model.getDescription());
+
+        if (opts != null && model.getOptions() != null) {
+            JsonObject optDocs = new JsonObject();
+            for (BaseOptionModel opt : model.getOptions()) {
+                if (opts.containsKey(opt.getName())) {
+                    optDocs.put(opt.getName(), buildProcessorOptionDoc(opt));
+                }
+            }
+            if (!optDocs.isEmpty()) {
+                processor.put("optionDocs", optDocs);
+            }
+        }
+    }
+
+    private static JsonObject buildProcessorOptionDoc(BaseOptionModel opt) {
+        JsonObject doc = new JsonObject();
+        doc.put("description", opt.getDescription());
+        doc.put("type", opt.getType());
+        if (opt.getGroup() != null && !opt.getGroup().isEmpty()) {
+            doc.put("group", opt.getGroup());
+        }
+        if (opt.getDefaultValue() != null) {
+            doc.put("defaultValue", opt.getDefaultValue().toString());
+        }
+        if (opt.isRequired()) {
+            doc.put("required", true);
+        }
+        if (opt.isDeprecated()) {
+            doc.put("deprecated", true);
+        }
+        if (opt.getEnums() != null && !opt.getEnums().isEmpty()) {
+            doc.put("enum", toJsonArray(opt.getEnums()));
+        }
+        return doc;
     }
 
     @SuppressWarnings("unchecked")

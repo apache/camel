@@ -479,6 +479,33 @@ class McpFacade {
         }
     }
 
+    JsonObject getProcessorDetail(String routeId) {
+        String pid = ctx.selectedPid;
+        if (pid == null) {
+            JsonObject err = new JsonObject();
+            err.put("error", "No integration selected");
+            return err;
+        }
+        try {
+            Path outputFile = ctx.getOutputFile(pid);
+            PathUtils.deleteFile(outputFile);
+
+            JsonObject action = new JsonObject();
+            action.put("action", "processor-detail");
+            action.put("routeId", routeId != null ? routeId : "*");
+            Path actionFile = ctx.getActionFile(pid);
+            PathUtils.writeTextSafely(action.toJson(), actionFile);
+
+            JsonObject response = TuiHelper.pollJsonResponse(outputFile, 5000);
+            PathUtils.deleteFile(outputFile);
+            return response;
+        } catch (Exception e) {
+            JsonObject err = new JsonObject();
+            err.put("error", e.getMessage());
+            return err;
+        }
+    }
+
     // ---- Diagram navigation ----
 
     String navigateDiagramToRoute(String routeId) {
