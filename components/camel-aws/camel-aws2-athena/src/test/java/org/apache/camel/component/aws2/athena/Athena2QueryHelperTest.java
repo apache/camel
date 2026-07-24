@@ -187,6 +187,60 @@ public class Athena2QueryHelperTest {
     }
 
     @Test
+    void aStillRunningQueryIsNotRelaunchedWhenTheWaitTimeoutExpires() {
+        Athena2Configuration configuration = new Athena2Configuration();
+        configuration.setMaxAttempts(3);
+        configuration.setWaitTimeout(1);
+        configuration.setInitialDelay(1);
+        configuration.setDelay(1);
+        configuration.setRetry("always");
+
+        Athena2QueryHelper helper = new Athena2QueryHelper(
+                new DefaultExchange(new DefaultCamelContext()),
+                configuration);
+
+        assertThat(helper.shouldAttempt()).isTrue();
+        helper.markAttempt();
+
+        // the query is still running when the wait window elapses, so no completion state gets set
+        helper.doWait();
+        helper.setStatusFrom(newGetQueryExecutionResponse(QueryExecutionState.RUNNING));
+
+        assertThat(helper.shouldWait()).isFalse();
+        assertThat(helper.isSuccess()).isFalse();
+        assertThat(helper.isFailure()).isFalse();
+        assertThat(helper.isRetry()).isFalse();
+
+        // attempts are reserved for retrying completed-and-retryable queries; relaunching here would
+        // orphan the running query and bill the same SQL twice
+        assertThat(helper.shouldAttempt()).isFalse();
+        assertThat(helper.getAttempts()).isEqualTo(1);
+    }
+
+    @Test
+    void aRetryableFailureStillConsumesAnotherAttemptAfterTheWaitTimeout() {
+        Athena2Configuration configuration = new Athena2Configuration();
+        configuration.setMaxAttempts(3);
+        configuration.setWaitTimeout(1);
+        configuration.setInitialDelay(1);
+        configuration.setDelay(1);
+        configuration.setRetry("always");
+
+        Athena2QueryHelper helper = new Athena2QueryHelper(
+                new DefaultExchange(new DefaultCamelContext()),
+                configuration);
+
+        assertThat(helper.shouldAttempt()).isTrue();
+        helper.markAttempt();
+
+        helper.doWait();
+        helper.setStatusFrom(newGetQueryExecutionResponse(QueryExecutionState.FAILED, "GENERIC_INTERNAL_ERROR"));
+
+        assertThat(helper.isRetry()).isTrue();
+        assertThat(helper.shouldAttempt()).isTrue();
+    }
+
+    @Test
     public void isComplete() {
         Athena2QueryHelper helper = defaultAthena2QueryHelper();
 
