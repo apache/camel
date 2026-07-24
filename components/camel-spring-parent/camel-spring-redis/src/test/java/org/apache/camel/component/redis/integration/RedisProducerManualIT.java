@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RedisProducerManualIT extends RedisTestSupport {
 
     @RegisterExtension
-    static RedisService service = RedisServiceFactory.createService();
+    static RedisService service = RedisServiceFactory.createSingletonService();
     private static JedisConnectionFactory connectionFactory;
 
     @BeforeAll

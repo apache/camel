@@ -63,7 +63,8 @@ public class HashicorpProducerCreateMultiVersionSecretIT extends HashicorpVaultB
         exchange = template.request("direct:readSecret", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getMessage().setHeader(HashicorpVaultConstants.SECRET_PATH, "test");
+                exchange.getMessage().setHeader(HashicorpVaultConstants.SECRET_PATH,
+                        secretPath());
             }
         });
 
@@ -76,12 +77,13 @@ public class HashicorpProducerCreateMultiVersionSecretIT extends HashicorpVaultB
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+        final String path = secretPath();
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:createSecret")
-                        .toF("hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
-                                service.token(), service.host(), service.port())
+                        .toF("hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=%s",
+                                service.token(), service.host(), service.port(), path)
                         .to("mock:result-write");
 
                 from("direct:readSecret")

@@ -17,10 +17,45 @@
 
 package org.apache.camel.test.infra.azure.storage.blob.services;
 
+import org.apache.camel.test.infra.azure.common.AzureCredentialsHolder;
 import org.apache.camel.test.infra.azure.common.services.AzureService;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class AzureStorageBlobServiceFactory {
+
+    private static class SingletonAzureStorageBlobService extends SingletonService<AzureService>
+            implements AzureService {
+        public SingletonAzureStorageBlobService(AzureService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public AzureCredentialsHolder azureCredentials() {
+            return getService().azureCredentials();
+        }
+
+        @Override
+        public String accountName() {
+            return getService().accountName();
+        }
+
+        @Override
+        public String accessKey() {
+            return getService().accessKey();
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+    }
+
     private AzureStorageBlobServiceFactory() {
 
     }
@@ -34,6 +69,21 @@ public final class AzureStorageBlobServiceFactory {
                 .addLocalMapping(AzureStorageBlobLocalContainerService::new)
                 .addRemoteMapping(AzureStorageBlobRemoteService::new)
                 .build();
+    }
+
+    public static AzureService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final AzureService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<AzureService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonAzureStorageBlobService(new AzureStorageBlobLocalContainerService(), "azure"))
+                    .addRemoteMapping(AzureStorageBlobRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     static class AzureStorageBlobLocalContainerService extends AzureStorageBlobLocalContainerInfraService

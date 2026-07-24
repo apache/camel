@@ -34,12 +34,12 @@ import org.junit.jupiter.api.Test;
 
 public class DeadLetterIT extends PubsubTestSupport {
 
-    private static final String INPUT_TOPIC_NAME = "camel.input-topic";
-    private static final String INPUT_SUBSCRIPTION_NAME = "camel.input-topic-subscription";
-    private static final String OUTPUT_TOPIC_NAME = "camel.output-topic";
-    private static final String OUTPUT_SUBSCRIPTION_NAME = "camel.output-topic-subscription";
-    private static final String DEAD_LETTER_TOPIC_NAME = "camel.dead-letter-topic";
-    private static final String DEAD_LETTER_SUBSCRIPTION_NAME = "camel.dead-letter-topic-subscription";
+    private static final String INPUT_TOPIC_NAME = "camel.dl-input-topic";
+    private static final String INPUT_SUBSCRIPTION_NAME = "camel.dl-input-topic-subscription";
+    private static final String OUTPUT_TOPIC_NAME = "camel.dl-output-topic";
+    private static final String OUTPUT_SUBSCRIPTION_NAME = "camel.dl-output-topic-subscription";
+    private static final String DEAD_LETTER_TOPIC_NAME = "camel.dl-dead-letter-topic";
+    private static final String DEAD_LETTER_SUBSCRIPTION_NAME = "camel.dl-dead-letter-topic-subscription";
     private static int count = 1;
 
     @EndpointInject("google-pubsub:{{project.id}}:" + INPUT_SUBSCRIPTION_NAME)

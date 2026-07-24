@@ -56,11 +56,12 @@ public class RabbitMQInOutIT extends RabbitMQITSupport {
                 from("direct:start")
                         .setVariable("global:mycrmb", header(Exchange.BREADCRUMB_ID))
                         .to("log:request")
-                        .to(ExchangePattern.InOut, "spring-rabbitmq:cheese?routingKey=foo.bar")
+                        .to(ExchangePattern.InOut, "spring-rabbitmq:" + uniqueName("cheese") + "?routingKey=foo.bar")
                         .to("log:response")
                         .to("mock:result");
 
-                from("spring-rabbitmq:cheese?queues=myqueue&routingKey=foo.bar")
+                from("spring-rabbitmq:" + uniqueName("cheese") + "?queues=" + uniqueName("myqueue")
+                     + "&routingKey=foo.bar")
                         .to("log:input")
                         .to("mock:input")
                         .transform(body().prepend("Hello "));

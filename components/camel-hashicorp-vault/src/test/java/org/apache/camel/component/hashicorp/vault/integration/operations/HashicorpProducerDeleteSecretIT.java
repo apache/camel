@@ -58,17 +58,18 @@ public class HashicorpProducerDeleteSecretIT extends HashicorpVaultBase {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+        final String path = secretPath();
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:createSecret")
-                        .toF("hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
-                                service.token(), service.host(), service.port())
+                        .toF("hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=%s",
+                                service.token(), service.host(), service.port(), path)
                         .to("mock:result-write");
 
                 from("direct:deleteSecret")
-                        .toF("hashicorp-vault://secret?operation=deleteSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
-                                service.token(), service.host(), service.port())
+                        .toF("hashicorp-vault://secret?operation=deleteSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=%s",
+                                service.token(), service.host(), service.port(), path)
                         .to("mock:result-delete");
             }
         };

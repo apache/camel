@@ -17,8 +17,21 @@
 package org.apache.camel.test.infra.docling.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class DoclingServiceFactory {
+
+    private static class SingletonDoclingService extends SingletonService<DoclingService> implements DoclingService {
+        public SingletonDoclingService(DoclingService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String doclingServerUrl() {
+            return getService().doclingServerUrl();
+        }
+    }
+
     private DoclingServiceFactory() {
 
     }
@@ -31,6 +44,20 @@ public final class DoclingServiceFactory {
         return builder()
                 .addLocalMapping(DoclingLocalContainerService::new)
                 .build();
+    }
+
+    public static DoclingService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final DoclingService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<DoclingService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonDoclingService(new DoclingLocalContainerService(), "docling"));
+            INSTANCE = instance.build();
+        }
     }
 
     public static class DoclingLocalContainerService extends DoclingLocalContainerInfraService

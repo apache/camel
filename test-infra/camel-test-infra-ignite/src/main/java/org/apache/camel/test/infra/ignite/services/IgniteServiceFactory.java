@@ -17,8 +17,21 @@
 package org.apache.camel.test.infra.ignite.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
+import org.apache.ignite.configuration.IgniteConfiguration;
 
 public final class IgniteServiceFactory {
+
+    private static class SingletonIgniteService extends SingletonService<IgniteService> implements IgniteService {
+        public SingletonIgniteService(IgniteService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public IgniteConfiguration createConfiguration() {
+            return getService().createConfiguration();
+        }
+    }
 
     private IgniteServiceFactory() {
 
@@ -32,6 +45,20 @@ public final class IgniteServiceFactory {
         return builder()
                 .addLocalMapping(IgniteEmbeddedService::new)
                 .build();
+    }
+
+    public static IgniteService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final IgniteService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<IgniteService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonIgniteService(new IgniteEmbeddedService(), "ignite"));
+            INSTANCE = instance.build();
+        }
     }
 
     public static class IgniteEmbeddedService extends IgniteEmbeddedInfraService implements IgniteService {

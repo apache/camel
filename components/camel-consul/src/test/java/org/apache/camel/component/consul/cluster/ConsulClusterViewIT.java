@@ -30,7 +30,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class ConsulClusterViewIT {
     @RegisterExtension
-    public static ConsulService service = ConsulServiceFactory.createService();
+    public static ConsulService service = ConsulServiceFactory.createSingletonService();
 
     @Test
     public void getLeaderTest() throws Exception {

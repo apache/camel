@@ -31,8 +31,8 @@ import org.junit.jupiter.api.Test;
 
 public class CustomSerializerIT extends PubsubTestSupport {
 
-    private static final String TOPIC_NAME = "typesSend";
-    private static final String SUBSCRIPTION_NAME = "TypesReceive";
+    private static final String TOPIC_NAME = "customTypesSend";
+    private static final String SUBSCRIPTION_NAME = "customTypesReceive";
 
     @EndpointInject("direct:from")
     private Endpoint directIn;

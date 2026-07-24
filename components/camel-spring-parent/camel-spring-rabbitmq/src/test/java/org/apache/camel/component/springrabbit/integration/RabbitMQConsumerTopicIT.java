@@ -73,9 +73,10 @@ public class RabbitMQConsumerTopicIT extends RabbitMQITSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("spring-rabbitmq:foo?routingKey=foo.bar");
+                        .to("spring-rabbitmq:" + uniqueName("foo") + "?routingKey=foo.bar");
 
-                from("spring-rabbitmq:foo?exchangeType=topic&queues=myqueue&routingKey=foo.#")
+                from("spring-rabbitmq:" + uniqueName("foo") + "?exchangeType=topic&queues=" + uniqueName("myqueue")
+                     + "&routingKey=foo.#")
                         .to("log:result")
                         .to("mock:result");
             }

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 public class ConsulClusteredRoutePolicyFactoryIT {
     @RegisterExtension
-    public static ConsulService service = ConsulServiceFactory.createService();
+    public static ConsulService service = ConsulServiceFactory.createSingletonService();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyFactoryIT.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).toList();
