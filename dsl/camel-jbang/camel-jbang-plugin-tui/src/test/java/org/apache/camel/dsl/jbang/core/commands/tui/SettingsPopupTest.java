@@ -176,7 +176,8 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(6, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(7, popup.selectedRow());
         assertEquals("auto", popup.selectedAiProvider());
         popup.handleKeyEvent(KeyEvent.ofChar(' '));
         assertEquals("ollama", popup.selectedAiProvider());
@@ -199,6 +200,40 @@ class SettingsPopupTest {
         assertEquals("ollama", persisted.getAiProvider());
         assertEquals("gemini-3.5-flash", persisted.getAiModel());
         assertEquals("https://example.test", persisted.getAiUrl());
+    }
+
+    @Test
+    void historyFieldsPersistValues(@TempDir Path tempDir) {
+        useHome(tempDir);
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(tabs());
+        popup.open();
+
+        // navigate to Shell History (row 6)
+        for (int i = 0; i < 6; i++) {
+            popup.handleKeyEvent(key(KeyCode.DOWN));
+        }
+        assertEquals(6, popup.selectedRow());
+        for (char c : "50".toCharArray()) {
+            popup.handleKeyEvent(KeyEvent.ofChar(c));
+        }
+        assertEquals("50", popup.shellHistoryText());
+
+        // navigate to AI Prompt History (row 10)
+        for (int i = 0; i < 4; i++) {
+            popup.handleKeyEvent(key(KeyCode.DOWN));
+        }
+        assertEquals(10, popup.selectedRow());
+        for (char c : "200".toCharArray()) {
+            popup.handleKeyEvent(KeyEvent.ofChar(c));
+        }
+        assertEquals("200", popup.aiPromptHistoryText());
+
+        popup.handleKeyEvent(key(KeyCode.ENTER));
+
+        TuiSettings persisted = TuiSettings.load();
+        assertEquals("50", persisted.getShellHistory());
+        assertEquals("200", persisted.getAiPromptHistory());
     }
 
     @Test

@@ -52,10 +52,12 @@ class SettingsPopup {
     private static final int ROW_LOG_PIN = 3;
     private static final int ROW_RATE_PER = 4;
     private static final int ROW_FOLDER = 5;
-    private static final int ROW_AI_PROVIDER = 6;
-    private static final int ROW_AI_MODEL = 7;
-    private static final int ROW_AI_URL = 8;
-    private static final int ROW_COUNT = 9;
+    private static final int ROW_SHELL_HISTORY = 6;
+    private static final int ROW_AI_PROVIDER = 7;
+    private static final int ROW_AI_MODEL = 8;
+    private static final int ROW_AI_URL = 9;
+    private static final int ROW_AI_PROMPT_HISTORY = 10;
+    private static final int ROW_COUNT = 11;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
     private static final String[] RATE_PER_OPTIONS = { "seconds", "minutes" };
@@ -81,8 +83,10 @@ class SettingsPopup {
     private int ratePerIndex;
     private int aiProviderIndex;
     private TextInputState folderInput;
+    private TextInputState shellHistoryInput;
     private TextInputState aiModelInput;
     private TextInputState aiUrlInput;
+    private TextInputState aiPromptHistoryInput;
     private List<String> tabNames = new ArrayList<>();
 
     private List<TabRegistry.TabEntry> tabEntries;
@@ -151,11 +155,14 @@ class SettingsPopup {
         ratePerIndex = "minutes".equals(currentRatePer) ? 1 : 0;
 
         folderInput = new TextInputState(settings.getDefaultFolder() != null ? settings.getDefaultFolder() : "");
+        shellHistoryInput = new TextInputState(settings.getShellHistory() != null ? settings.getShellHistory() : "");
         String currentProvider = settings.getAiProvider() != null ? settings.getAiProvider() : "auto";
         int providerIdx = AI_PROVIDERS.indexOf(currentProvider);
         aiProviderIndex = providerIdx >= 0 ? providerIdx : AI_PROVIDERS.indexOf("auto");
         aiModelInput = new TextInputState(settings.getAiModel() != null ? settings.getAiModel() : "");
         aiUrlInput = new TextInputState(settings.getAiUrl() != null ? settings.getAiUrl() : "");
+        aiPromptHistoryInput = new TextInputState(
+                settings.getAiPromptHistory() != null ? settings.getAiPromptHistory() : "");
         selectedRow = ROW_THEME;
         visible = true;
     }
@@ -244,6 +251,10 @@ class SettingsPopup {
             handleTextInput(ke, folderInput);
             return true;
         }
+        if (selectedRow == ROW_SHELL_HISTORY) {
+            handleTextInput(ke, shellHistoryInput);
+            return true;
+        }
         if (selectedRow == ROW_AI_PROVIDER) {
             if (ke.isChar(' ') || ke.isRight()) {
                 aiProviderIndex = (aiProviderIndex + 1) % AI_PROVIDERS.size();
@@ -258,6 +269,10 @@ class SettingsPopup {
         }
         if (selectedRow == ROW_AI_URL) {
             handleTextInput(ke, aiUrlInput);
+            return true;
+        }
+        if (selectedRow == ROW_AI_PROMPT_HISTORY) {
+            handleTextInput(ke, aiPromptHistoryInput);
             return true;
         }
         return true;
@@ -281,9 +296,11 @@ class SettingsPopup {
             monitorContext.ratePerMinute = "minutes".equals(ratePerValue);
         }
         settings.setDefaultFolder(stripControlChars(folderInput.text().trim()));
+        settings.setShellHistory(stripControlChars(shellHistoryInput.text().trim()));
         settings.setAiProvider(AI_PROVIDERS.get(aiProviderIndex));
         settings.setAiModel(stripControlChars(aiModelInput.text().trim()));
         settings.setAiUrl(stripControlChars(aiUrlInput.text().trim()));
+        settings.setAiPromptHistory(stripControlChars(aiPromptHistoryInput.text().trim()));
         settings.save();
         if (Theme.mode().equals(selectedThemeId)) {
             // Already active via live preview (or unchanged): just persist and clear the preview marker.
@@ -297,7 +314,7 @@ class SettingsPopup {
     }
 
     void render(Frame frame, Rect area) {
-        int popupW = Math.min(80, area.width() - 4);
+        int popupW = Math.min(60, area.width() - 4);
         int popupH = 2 + ROW_COUNT;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
@@ -344,6 +361,11 @@ class SettingsPopup {
         renderFolder(frame, innerX + labelW, rowY, fieldW, selectedRow == ROW_FOLDER);
         rowY++;
 
+        renderLabel(frame, innerX, rowY, labelW, "Shell History:", selectedRow == ROW_SHELL_HISTORY);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, shellHistoryInput,
+                selectedRow == ROW_SHELL_HISTORY, "(100)");
+        rowY++;
+
         renderLabel(frame, innerX, rowY, labelW, "AI Provider:", selectedRow == ROW_AI_PROVIDER);
         renderValue(frame, innerX + labelW, rowY, fieldW, AI_PROVIDERS.get(aiProviderIndex),
                 selectedRow == ROW_AI_PROVIDER);
@@ -355,12 +377,18 @@ class SettingsPopup {
 
         renderLabel(frame, innerX, rowY, labelW, "AI Base URL:", selectedRow == ROW_AI_URL);
         renderTextInput(frame, innerX + labelW, rowY, fieldW, aiUrlInput, selectedRow == ROW_AI_URL, "(auto)");
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "AI History:", selectedRow == ROW_AI_PROMPT_HISTORY);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, aiPromptHistoryInput,
+                selectedRow == ROW_AI_PROMPT_HISTORY, "(100)");
     }
 
     void renderFooter(List<Span> spans) {
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_SELECT_TAB
-                || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER || selectedRow == ROW_AI_PROVIDER) {
+                || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER
+                || selectedRow == ROW_AI_PROVIDER) {
             hint(spans, "Space", "cycle");
         }
         hint(spans, "Enter", "save");
@@ -499,5 +527,13 @@ class SettingsPopup {
 
     String aiUrlText() {
         return aiUrlInput != null ? aiUrlInput.text() : "";
+    }
+
+    String shellHistoryText() {
+        return shellHistoryInput != null ? shellHistoryInput.text() : "";
+    }
+
+    String aiPromptHistoryText() {
+        return aiPromptHistoryInput != null ? aiPromptHistoryInput.text() : "";
     }
 }

@@ -82,5 +82,7 @@ class SettingsPopupRenderTest {
         assertTrue(rendered.contains("AI Provider"), "the AI Provider row should be shown");
         assertTrue(rendered.contains("AI Model"), "the AI Model row should be shown");
         assertTrue(rendered.contains("AI Base URL"), "the AI Base URL row should be shown");
+        assertTrue(rendered.contains("Shell History"), "the Shell History row should be shown");
+        assertTrue(rendered.contains("AI History"), "the AI History row should be shown");
     }
 }
