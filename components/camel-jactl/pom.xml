@@ -37,7 +37,7 @@
     <dependency>
       <groupId>io.jactl</groupId>
       <artifactId>jactl</artifactId>
-      <version>2.9.2</version>
+      <version>${jactl-version}</version>
     </dependency>
 
     <dependency>

@@ -258,6 +258,7 @@
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
         <jandex-version>3.6.0</jandex-version>
         <jansi-version>2.4.3</jansi-version>
+        <jactl-version>2.9.2</jactl-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.2.0</java-grok-version>
         <java-util-version>4.108.0</java-util-version>

@@ -58,19 +58,19 @@ import org.apache.camel.support.TypedLanguageSupport;
  * <p>
  * NOTE: The types of the {@code request}, {@code response}, {@code exception}, {@code exchange}, and
  * {@code camelContext} variables are not standard supported types in Jactl so if you need to invoke methods on these
- * objects you will need to either use {@code withHostAccess()} which completely disables the sandbox security and
- * allows Jactl code to invoke methods on any objects, or use {@code withHostAccess(Predicate<String>)} to selectively
+ * objects you will need to either use {@code createWithHostAccess()} which completely disables the sandbox security and
+ * allows Jactl code to invoke methods on any objects, or use {@code createWithHostAccess(Predicate)} to selectively
  * configure which additional classes you will allow Jactl code to access.
  * </p>
  *
  * <p>
- * To configure {@code withAllowContextMapAll()} or {@code withHostAccess()} you should bind the "jactl" language to the
- * configured {@code JactlLanguage} instance before the first usage. For example:
+ * To configure {@code withAllowContextMapAll(boolean)} or {@code createWithHostAccess()} you should bind the "jactl"
+ * language to the configured {@code JactlLanguage} instance before the first usage. For example:
  * </p>
  *
  * <pre>
- * JactlLanguage jactl = JactlLanguage.withHostAccess(name -> name.startsWith("com.acme."))
- *         .withAllowContextMapAll();
+ * JactlLanguage jactl = JactlLanguage.createWithHostAccess(name -> name.startsWith("com.acme."))
+ *         .withAllowContextMapAll(true);
  * camelContext.getRegistry().bind("jactl", jactl);
  * </pre>
  *

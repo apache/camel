@@ -93,7 +93,7 @@ If `withAllowContextMapAll(true)` is configured, these variables are also availa
 |Variable |Type |Description
 |`request` | Message |The message.
 |`response` | Message |*Deprecated* The Out message (only for InOut message exchange pattern).
-| 'exception` | Exception | If failure then this has the cause.
+| `exception` | Exception | If failure then this has the cause.
 | `exchange` | Exchange | The Exchange itself.
 | `exchangeProperty` / `exchangeProperties` | Map | The exchange properties.
 | `camelContext` | CamelContext | The Camel Context.
@@ -101,24 +101,24 @@ If `withAllowContextMapAll(true)` is configured, these variables are also availa
 
 NOTE: The types of the `request`, `response`, `exception`, `exchange`, and
 `camelContext` variables are not standard supported types in Jactl so if you need to invoke
-methods on these objects you should configure this using the `withHostAccess()` or `withHostAccess(predicate)`.
+methods on these objects you should configure this using `createWithHostAccess()` or `createWithHostAccess(predicate)`.
 
 == Security
 
 The sandbox security model of Jactl, by default, prevents access to any class outside the Jactl provided
 types.
 If you want to allow Jactl scripts to invoke methods on objects of other types you need to use
-`withHostAccesss()` or `withHostAccess(predicate)`.
+`createWithHostAccess()` or `createWithHostAccess(predicate)`.
 
-=== `withHostAccess()`
+=== `createWithHostAccess()`
 
-If the parameterless `withHostAccess()` is used, it completely opens up the sandbox and any method on any object can be invoked from a Jactl script.
+If the parameterless `createWithHostAccess()` is used, it completely opens up the sandbox and any method on any object can be invoked from a Jactl script.
 
-IMPORTANT: `withHostAccess()` should only be used in scenarios where you have complete trust in the scripts being invoked.
+IMPORTANT: `createWithHostAccess()` should only be used in scenarios where you have complete trust in the scripts being invoked.
 
-=== `withHostAccess(Predicate<String> predicate)`
+=== `createWithHostAccess(Predicate<String> predicate)`
 
-When a predicate is supplied to `withHostAccess(Predicate<String>)` it will be invoked with the full Java classname
+When a predicate is supplied to `createWithHostAccess(Predicate<String>)` it will be invoked with the full Java classname
 and should return true if the class is a permitted class.
 
 Whenever there is a method invocation in a script, the predicate is invoked twice:
@@ -132,7 +132,7 @@ Whenever there is a method invocation in a script, the predicate is invoked twic
 
 == Binding the Jactl Language
 
-To configure `withAllowContextMapAll()` or `withHostAccess()` you should
+To configure `withAllowContextMapAll(boolean)` or `createWithHostAccess()` you should
 bind the `jactl` language to the configured `JactlLanguage` instance before the
 first usage.
 
@@ -142,8 +142,8 @@ For example:
 ----
 Predicate<String> predicate = name -> name.startsWith("com.acme.");
 
-JactlLanguage jactl = JactlLanguage.withHostAccess(predicate)
-                                   .withAllowContextMapAll();   
+JactlLanguage jactl = JactlLanguage.createWithHostAccess(predicate)
+                                   .withAllowContextMapAll(true);
 camelContext.getRegistry().bind("jactl", jactl);
 ----
 
@@ -170,7 +170,7 @@ Note that all scripts create Java classes which are kept by the class loader own
 the `JactlContext` so don't keep dynamically creating new scripts as you will eventually
 run out of memory.
 
-## Similarities with Groovy
+== Similarities with Groovy
 
 Jactl and Groovy have many similarities in terms of syntax and simple scripts written in one
 language can often be run without change in the other.
