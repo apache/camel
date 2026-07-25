@@ -81,10 +81,25 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: Build camel-launcher distribution
+      # camel-repackager-maven-plugin builds the launcher's self-executing JAR. It is not in the
+      # -pl list below, so without this step Maven resolves it from the Apache snapshot repository.
+      # This workflow only triggers on dsl/camel-jbang/camel-launcher and tooling/camel-exe changes
+      # (see the `paths:` filters above), so the plugin's own sources are never what's under test here.
+      - name: Install camel-repackager-maven-plugin (build-time plugin, unresolvable from this reactor pass)
         shell: bash
         run: |
-          mvn -B -ntp -pl buildingtools,dsl/camel-jbang/camel-launcher -am install -DskipTests
+          mvn -B -P apache-snapshots -ntp \
+            -pl tooling/maven/camel-repackager-maven-plugin install -DskipTests
+
+      - name: Build camel-launcher distribution
+        shell: bash
+        # No -am: build only the listed modules. camel-launcher's other in-repo dependencies
+        # (camel-jbang-core, its jbang plugins, camel-core, ...) resolve as the current version's
+        # published snapshot instead of being rebuilt from source, which is what previously turned
+        # this into a ~626-module reactor build. -P apache-snapshots is required for that resolution.
+        run: |
+          mvn -B -P apache-snapshots -ntp \
+            -pl buildingtools,dsl/camel-jbang/camel-launcher install -DskipTests
 
       - name: Stage a synthetic release version for offline validation
         shell: bash
@@ -143,10 +158,25 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: Build camel-launcher module
+      # camel-repackager-maven-plugin builds the launcher's self-executing JAR. It is not in the
+      # -pl list below, so without this step Maven resolves it from the Apache snapshot repository.
+      # This workflow only triggers on dsl/camel-jbang/camel-launcher and tooling/camel-exe changes
+      # (see the `paths:` filters above), so the plugin's own sources are never what's under test here.
+      - name: Install camel-repackager-maven-plugin (build-time plugin, unresolvable from this reactor pass)
         shell: bash
         run: |
-          mvn -B -ntp -pl buildingtools,dsl/camel-jbang/camel-launcher -am install -DskipTests
+          mvn -B -P apache-snapshots -ntp \
+            -pl tooling/maven/camel-repackager-maven-plugin install -DskipTests
+
+      - name: Build camel-launcher module
+        shell: bash
+        # No -am: build only the listed modules. camel-launcher's other in-repo dependencies
+        # (camel-jbang-core, its jbang plugins, camel-core, ...) resolve as the current version's
+        # published snapshot instead of being rebuilt from source, which is what previously turned
+        # this into a ~626-module reactor build. -P apache-snapshots is required for that resolution.
+        run: |
+          mvn -B -P apache-snapshots -ntp \
+            -pl buildingtools,dsl/camel-jbang/camel-launcher install -DskipTests
 
       - name: Run Windows installer unit tests
         shell: bash
