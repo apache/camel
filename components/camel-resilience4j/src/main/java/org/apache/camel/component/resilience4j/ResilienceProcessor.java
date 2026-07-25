@@ -469,7 +469,7 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
     @ManagedAttribute
     public long getCircuitBreakerWaitDurationInOpenState() {
-        return Duration.ofMillis(circuitBreakerConfig.getWaitIntervalFunctionInOpenState().apply(1)).getSeconds();
+        return Duration.ofMillis(circuitBreakerConfig.getWaitIntervalFunctionInOpenState().apply(1)).toMillis();
     }
 
     @ManagedAttribute
