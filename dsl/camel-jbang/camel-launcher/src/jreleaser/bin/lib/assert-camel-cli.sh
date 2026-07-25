@@ -20,11 +20,12 @@
 # Shared POSIX assertions for camel-validate.sh / assertion library tests
 #
 # Usage (caller must source this file):
-#   assert_camel_version <actual_output> <expected_version>    -- exits 1 on mismatch
+#   assert_camel_version <actual_output> <expected_version>    -- returns 1 on mismatch
 #   assert_init_content <directory> <filename>                 -- verifies content matches fixture
-#   assert_uninstalled <path_or_prefix ...>                    -- each must not exist after uninstall
+#   assert_uninstalled <path ...>                               -- each exact path must not exist after
+#                                                                   uninstall (not called by camel-validate.sh's
+#                                                                   own validators, which inline this check)
 #   assert_camel_cli <camel-cmd> <workdir> [expected-version] -- full version+init assertion wrapper
-#   assert_camel_absent <path>                                -- verify a camel symlink/entry is gone
 # ============================================================================
 
 if [ -n "${BASH_SOURCE+set}" ]; then
@@ -36,14 +37,14 @@ else
 fi
 
 if [ -n "$_raw_source" ]; then
-    _ASSERT_LIB_DIR=$(CDPATH= cd -- "$(dirname -- "$_raw_source")" && pwd)
+    _ASSERT_LIB_DIR=$(CDPATH='' cd -- "$(dirname -- "$_raw_source")" && pwd)
 else
-    _ASSERT_LIB_DIR=$(CDPATH= cd -- "$(dirname -- "${0:-.}")" && pwd)
+    _ASSERT_LIB_DIR=$(CDPATH='' cd -- "$(dirname -- "${0:-.}")" && pwd)
 fi
 unset _raw_source
 
 assertion_pass() { echo "PASS: $1"; }
-assertion_fail()  { echo "FAIL: $1"; assertion_error=1; return 1; }
+assertion_fail()  { echo "FAIL: $1"; return 1; }
 
 assert_camel_version() {
     local actual="$1" expected="$2"
@@ -98,45 +99,45 @@ assert_camel_cli() {
     local _orig_dir
     _orig_dir=$(pwd)
 
-    # Step 1: version check
+    # Step 1: version check. When an expected version is given, a mismatch is a real failure
+    # that must propagate out of this wrapper (empty output stays a soft skip - the caller may
+    # be validating a CLI that cannot print a version on this host).
     local camv_output
     camv_output=$("$CAMELCMD" --version 2>/dev/null) || true
     if [ -z "$camv_output" ]; then
-        echo "WARN: camel version returned empty output (skipped)"
+        local camv_err=""
+        camv_err=$("$CAMELCMD" --version 2>&1 >/dev/null) || true
+        echo "WARN: camel version returned empty output (skipped)${camv_err:+ (stderr: $camv_err)}"
     elif [ -n "$EXPECTED_VERSION" ]; then
-        assert_camel_version "$camv_output" "$EXPECTED_VERSION"
+        assert_camel_version "$camv_output" "$EXPECTED_VERSION" || return 1
     else
         echo "INFO: camel version reported: $camv_output (no expected version given, skipping comparison)"
     fi
 
     # Step 2: init content check. Uses "hello.java" (not an arbitrary name) because the
-    # fixture's class name is derived from this filename, same as the real POSIX validators.
+    # fixture's class name is derived from this filename, same as the real POSIX validators. A
+    # failing init is a genuine defect, not something to warn past - matches the inline validators
+    # in camel-validate.sh, which FAIL on the same condition.
     cd "$WORKDIR" || { echo "FAIL: cannot cd to $WORKDIR"; return 1; }
     if [ -f hello.java ]; then rm -f hello.java; fi
-    if "$CAMELCMD" init hello.java >/dev/null 2>&1; then
-        assert_init_content "$WORKDIR" "hello.java" || { echo "FAIL: generated route missing expected content"; cd "$_orig_dir"; return 1; }
+    local init_err=""
+    if init_err=$("$CAMELCMD" init hello.java 2>&1 >/dev/null); then
+        assert_init_content "$WORKDIR" "hello.java" || { echo "FAIL: generated route missing expected content"; cd "$_orig_dir" || exit; return 1; }
     else
-        echo "WARN: camel init failed (skipped)"
+        echo "FAIL: camel init failed${init_err:+: $init_err}"
+        cd "$_orig_dir" || exit
+        return 1
     fi
-    cd "$_orig_dir"
+    cd "$_orig_dir" || exit
 
-    # Step 3: assert the executable exists
+    # Step 3: final sanity check that the resolved command is executable, independent of how
+    # the version/init calls above happened to succeed.
     if [ -x "$CAMELCMD" ]; then
         assertion_pass "camel CLI executable found"
     else
-        echo "WARN: camel CLI not executable at '$CAMELCMD' (skipped)"
+        echo "FAIL: camel CLI not executable at '$CAMELCMD'"
+        return 1
     fi
 
     return 0
-}
-
-assert_camel_absent() {
-    local path="$1"
-    if [ -e "$path" ] || [ -L "$path" ]; then
-        assertion_fail "uninstall left behind: $path"
-        return 1
-    else
-        assertion_pass "'$path' does not exist (removed by uninstall)"
-        return 0
-    fi
 }

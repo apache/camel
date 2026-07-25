@@ -23,21 +23,37 @@
 #   camel-validate.sh <command> [options]
 #
 # Commands:
-#   all      Run all available validators (homebrew, sdkman). Each is host-gated.
+#   all      Run every validator: local (always, if the archive is present), plus the
+#            host-gated homebrew and sdkman validators.
+#   local    Validate this build's own archive directly (no package manager involved)
 #   homebrew Validate via Homebrew (audit + install + version + init + uninstall)
-#   sdkman   Validate via SDKMAN (descriptor check + offline archive + version + init)
+#   sdkman   Validate via SDKMAN (descriptor + archive checks only; version/init are not
+#            exercised offline - see validate_sdkman)
 #   help     Show usage
 #
 # Host-gating:
-#   Each validator checks for its package manager. If absent, prints "SKIP:" and exits 0.
-#   If present but a failure occurs, exits nonzero.
+#   The homebrew and sdkman validators check for their package manager and print "SKIP:"
+#   (exit 0) if it is absent. The local validator is not package-manager-gated; it runs
+#   whenever the staged archive exists. Any genuine validation failure exits nonzero.
 # ============================================================================
 
 set -eu
 
-SCRIPT_DIR=`CDPATH= cd -- "$(dirname -- "$0")" && pwd`
-MODULE_DIR=`CDPATH= cd -- "$SCRIPT_DIR/../../.." && pwd`
+SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+MODULE_DIR=$(CDPATH='' cd -- "$SCRIPT_DIR/../../.." && pwd)
 LIB_DIR="$SCRIPT_DIR/lib"
+
+# Prepare/build outputs live under target/. Overridable in test mode only, so unit tests can
+# point the archive validators at a synthetic staging dir instead of the real target/.
+if [ -n "${CAMEL_VALIDATE_TARGET_DIR:-}" ]; then
+    if [ "${CAMEL_PACKAGE_TEST_MODE:-}" != "true" ]; then
+        echo "Error: CAMEL_VALIDATE_TARGET_DIR requires CAMEL_PACKAGE_TEST_MODE=true." >&2
+        exit 2
+    fi
+    TARGET_DIR="$CAMEL_VALIDATE_TARGET_DIR"
+else
+    TARGET_DIR="$MODULE_DIR/target"
+fi
 
 usage() {
     cat <<EOF
@@ -48,7 +64,8 @@ Commands:
              validators are host-gated; "local" always runs if the archive is present.
   local      Validate this build's own archive directly (no package manager involved)
   homebrew   Validate via Homebrew (audit + install + version + init + uninstall)
-  sdkman     Validate via SDKMAN (descriptor check + offline archive + version + init)
+  sdkman     Validate via SDKMAN (descriptor + archive checks only; version/init are not
+             exercised offline)
   help       Show this help message
 
 Options:
@@ -88,12 +105,22 @@ done
 
 case "$COMMAND" in help) usage ;; esac
 
+case "$CHANNEL" in
+  stable|lts) ;;
+  *) echo "Error: --channel must be 'stable' or 'lts' (got '$CHANNEL')." >&2; usage ;;
+esac
+
+if [ "$CHANNEL" = "lts" ] && [ -z "$LTS_LINE" ]; then
+    echo "Error: --channel lts requires --lts-line X.Y." >&2
+    usage
+fi
+
 # ---------- sourcing ----------
 
 . "$LIB_DIR/assert-camel-cli.sh"
 
 # ---------- shared temp workspace ----------
-# Used by every validator (homebrew, sdkman); created once and cleaned on exit. Kept at script
+# Used by every validator (local, homebrew, sdkman); created once and cleaned on exit. Kept at script
 # scope (not local to a validator) so both functions and the EXIT trap can see it under 'set -u'.
 TMPDIR_BASE=$(mktemp -d)
 
@@ -140,6 +167,17 @@ formula_name() {
     esac
 }
 
+# Portable sha256 of a file (stdout = bare hex digest). Mirrors install.sh's fallback chain.
+sha256_of() {
+    if command -v sha256sum >/dev/null 2>&1; then
+        sha256sum "$1" | awk '{print $1}'
+    elif command -v shasum >/dev/null 2>&1; then
+        shasum -a 256 "$1" | awk '{print $1}'
+    else
+        openssl dgst -sha256 "$1" | awk '{print $NF}'
+    fi
+}
+
 # ============================================================
 # Homebrew validator
 # ============================================================
@@ -159,7 +197,7 @@ validate_homebrew() {
     #   target/jreleaser/package/camel-cli/brew/Formula/<formula-name>.rb
     # (empirically verified with a real, non-stubbed jreleaser:package dry run; there is no
     # target/jreleaser/distributions/ directory at all in this JReleaser version).
-    formula_file="$MODULE_DIR/target/jreleaser/package/camel-cli/brew/Formula/${fmla}.rb"
+    formula_file="$TARGET_DIR/jreleaser/package/camel-cli/brew/Formula/${fmla}.rb"
 
     if [ ! -f "$formula_file" ]; then
         echo "SKIP: homebrew formula not found: $formula_file (did prepare run?)"
@@ -186,28 +224,68 @@ validate_homebrew() {
     BREW_TAP_NAME="$tap_name"
 
     tap_dir=$(brew --repository "$tap_name")
-    cp -p "$formula_file" "$tap_dir/Formula/${fmla}.rb"
-    chmod a+r "$tap_dir/Formula/${fmla}.rb"
+    if ! cp -p "$formula_file" "$tap_dir/Formula/${fmla}.rb"; then
+        echo "FAIL: could not copy the generated formula into the validation tap"
+        return 1
+    fi
+    # 644, not `a+r`: a world-writable formula file trips `brew audit --strict`
+    # (FormulaAudit/Files "Incorrect file permissions (777)"), which would be a false
+    # failure of the audit gate below caused by the tap copy itself, not by the formula.
+    chmod 644 "$tap_dir/Formula/${fmla}.rb"
 
     # Step 1: Homebrew style + audit, referenced by tap-qualified name (not a path).
-    local audit_output=""
-    audit_output=$(HOMEBREW_NO_AUTO_UPDATE=1 brew style --fix "$tap_name/$fmla" 2>&1 || true)
+    # `brew style --fix` only normalizes formatting; its output is informational.
+    local style_output=""
+    style_output=$(HOMEBREW_NO_AUTO_UPDATE=1 brew style --fix "$tap_name/$fmla" 2>&1 || true)
     echo "INFO: homebrew style output:"
-    echo "$audit_output"
+    echo "$style_output"
 
-    # --new (not just --strict): homebrew-core enforces additional checks specific to a first-time
-    # formula submission - the bar apache-camel needs to clear before homebrew-core will accept it.
-    # Plain --strict is the bar for an *already-accepted* formula being updated, which understates
-    # what's needed for this PR.
-    audit_output=$(HOMEBREW_NO_AUTO_UPDATE=1 brew audit --new --strict "$tap_name/$fmla" 2>&1 || true)
-    if echo "$audit_output" | grep -Eqi "Error|error:"; then
-        echo "WARN: homebrew audit reported issues:"
-        echo "$audit_output"
+    # `brew audit --strict` is a real gate: a nonzero exit means a defect in the generated
+    # formula and must fail validation, not warn past it. --online is deliberately omitted so
+    # audit stays offline and never fails merely because the (test-mode, unpublished) download
+    # URL is unreachable - only the offline structural/style/naming checks run here.
+    local audit_output audit_rc=0
+    audit_output=$(HOMEBREW_NO_AUTO_UPDATE=1 brew audit --strict "$tap_name/$fmla" 2>&1) || audit_rc=$?
+    # Always echo the audit output (even on success) so the log shows the gate actually ran and
+    # surfaces any advisory lines that did not rise to a nonzero exit.
+    echo "INFO: homebrew audit --strict output:"
+    echo "$audit_output"
+    if [ "$audit_rc" -ne 0 ]; then
+        echo "FAIL: homebrew audit --strict reported issues (exit $audit_rc)"
+        rc=1
     else
         echo "PASS: homebrew style/audit passed"
     fi
 
-    # Step 2: Install the formula from the tap
+    # Step 2: Install the formula from the tap.
+    #
+    # In test mode the formula's download URL points at a Maven coordinate for a version that
+    # is not published yet (in CI the real POM version is a -SNAPSHOT, and JReleaser renders
+    # the URL from that POM version - Central never hosts SNAPSHOTs). Rather than let `brew
+    # install` fail to download and skip the whole install/version/init/uninstall chain,
+    # rewrite the tapped formula's url to a file:// path for this build's own staged archive
+    # and recompute its sha256, so brew genuinely downloads, verifies, extracts and installs
+    # the real binary this build produced - fully offline and deterministic. Real release runs
+    # (not test mode) keep the published Central URL untouched. This runs after `brew audit`
+    # above, so audit still validates the real published-style formula, not the file:// one.
+    if [ "${CAMEL_PACKAGE_TEST_MODE:-}" = "true" ]; then
+        local url_basename staged_archive staged_sha
+        url_basename=$(sed -n 's/^[[:space:]]*url "[^"]*\/\([^/"]*\)"/\1/p' "$tap_dir/Formula/${fmla}.rb" | head -n1)
+        staged_archive="$TARGET_DIR/$url_basename"
+        if [ -z "$url_basename" ] || [ ! -f "$staged_archive" ]; then
+            echo "FAIL: test-mode formula rewrite could not locate the staged archive for '$url_basename' under $TARGET_DIR"
+            return 1
+        fi
+        staged_sha=$(sha256_of "$staged_archive")
+        if ! sed -e "s|^\([[:space:]]*\)url \"[^\"]*\"|\1url \"file://$staged_archive\"|" \
+                 -e "s|^\([[:space:]]*\)sha256 \"[^\"]*\"|\1sha256 \"$staged_sha\"|" \
+                 "$tap_dir/Formula/${fmla}.rb" > "$tap_dir/Formula/${fmla}.rb.new"; then
+            echo "FAIL: could not rewrite the tapped formula for offline install"
+            return 1
+        fi
+        mv -f "$tap_dir/Formula/${fmla}.rb.new" "$tap_dir/Formula/${fmla}.rb"
+    fi
+
     local BREW_HOME="$TMPDIR_BASE/brew-home"
     mkdir -p "$BREW_HOME"
     local brew_output install_rc=0
@@ -219,21 +297,23 @@ validate_homebrew() {
         if echo "$brew_output" | grep -Eqi "no suitable java"; then
             # A missing/incompatible Java dependency is a host-resolution limitation, not a
             # defect in the generated formula; nothing was installed, so there is nothing
-            # left to validate.
+            # left to validate. Still propagate $rc: an audit failure recorded above is a real
+            # defect and must not be masked just because install itself couldn't proceed.
             echo "SKIP: homebrew install could not resolve a Java dependency on this host:"
             echo "$brew_output"
-            return 0
+            return "$rc"
         fi
-        if echo "$brew_output" | grep -Eqi "Failed to download resource|curl: \("; then
-            # The formula's download URL always points at the real Maven Central release
-            # coordinates (see jreleaser.yml); for a local/offline or synthetic-version
-            # validation run, no artifact was ever actually published there, so the fetch
-            # can never succeed here regardless of whether the generated formula is
-            # correct. Host/environment limitation, not a defect in the formula itself;
-            # empirically confirmed on this machine.
-            echo "SKIP: homebrew install could not download the release artifact (not published for this version, expected for local/offline validation):"
+        if [ "${CAMEL_PACKAGE_TEST_MODE:-}" != "true" ] \
+                && echo "$brew_output" | grep -Eqi "Failed to download resource|curl: \("; then
+            # Non-test (real release) runs only: if the release artifact is not yet published at
+            # its Central coordinate, the fetch cannot succeed regardless of whether the formula
+            # is correct, so treat it as an environment limitation. In test mode the url was
+            # rewritten to a local file:// archive above, so a download failure there is a
+            # genuine defect and falls through to FAIL below. Propagate $rc for the same reason
+            # as the Java-dependency SKIP above: an already-recorded audit failure must survive.
+            echo "SKIP: homebrew install could not download the release artifact (not published yet, expected for an unpublished release):"
             echo "$brew_output"
-            return 0
+            return "$rc"
         fi
         echo "FAIL: homebrew install failed (exit $install_rc):"
         echo "$brew_output"
@@ -245,16 +325,18 @@ validate_homebrew() {
     # is not proof the executable actually works, so a missing/empty/mismatched result here
     # is a real failure, not something to warn past.
     #
-    # Expected version comes from the formula's own `version` line, not $RESOLVED_VERSION:
-    # camel-package.sh's test-mode-only hack patches url/version/sha256 to a real,
-    # already-published camel-launcher release so `brew install` can genuinely download
-    # and verify it (see the comment in camel-package.sh), so what actually gets installed
-    # here may differ from this build's own synthetic version. Reading it back out of the
-    # tapped formula keeps this assertion correct in both that case and real releases
-    # (where it's simply $RESOLVED_VERSION again).
+    # Expected version comes from the formula's own `version` line, not $RESOLVED_VERSION.
+    # JReleaser renders the formula version from the real POM version, which in test mode is
+    # the -SNAPSHOT that the offline file:// install above actually installs; that differs from
+    # $RESOLVED_VERSION (which strips -SNAPSHOT for local-archive lookups). Reading the expected
+    # value back out of the tapped formula keeps this assertion correct in both the test-mode
+    # case and a real release (where the formula version is $RESOLVED_VERSION anyway).
     local expected_version
     expected_version=$(sed -n 's/^[[:space:]]*version "\(.*\)"/\1/p' "$tap_dir/Formula/${fmla}.rb" | head -n1)
-    [ -n "$expected_version" ] || expected_version="$RESOLVED_VERSION"
+    if [ -z "$expected_version" ]; then
+        echo "WARN: could not read 'version' from tapped formula ${fmla}.rb, falling back to \$RESOLVED_VERSION ($RESOLVED_VERSION)"
+        expected_version="$RESOLVED_VERSION"
+    fi
 
     local camv_output=""
     if ! command -v camel >/dev/null 2>&1; then
@@ -263,7 +345,9 @@ validate_homebrew() {
     else
         camv_output=$(camel --version 2>/dev/null) || true
         if [ -z "$camv_output" ]; then
-            echo "FAIL: 'camel --version' returned empty output after install"
+            local camv_err=""
+            camv_err=$(camel --version 2>&1 >/dev/null) || true
+            echo "FAIL: 'camel --version' returned empty output after install${camv_err:+ (stderr: $camv_err)}"
             rc=1
         else
             assert_camel_version "$camv_output" "$expected_version" && \
@@ -277,30 +361,43 @@ validate_homebrew() {
     if ! command -v camel >/dev/null 2>&1; then
         echo "FAIL: camel not available for init test (install reported success but binary is missing)"
         rc=1
-    elif ! (cd "$init_dir" && camel init hello.java >/dev/null 2>&1); then
-        echo "FAIL: camel init failed after a successful homebrew install"
-        rc=1
     else
-        assert_init_content "$init_dir" "hello.java" || rc=1
+        local init_err=""
+        if ! init_err=$(cd "$init_dir" && camel init hello.java 2>&1 >/dev/null); then
+            echo "FAIL: camel init failed after a successful homebrew install${init_err:+: $init_err}"
+            rc=1
+        else
+            assert_init_content "$init_dir" "hello.java" || rc=1
+        fi
     fi
 
     # Step 5: Uninstall (tap-qualified name, matching the install above; the tap itself is
     # removed afterward by the script's EXIT trap, once nothing installed from it remains).
-    local uninstall_rc=0
-    if command -v brew >/dev/null 2>&1; then
-        local brew_uninst_output=""
-        brew_uninst_output=$(HOME="$BREW_HOME" \
-            HOMEBREW_NO_AUTO_UPDATE=1 \
-            brew uninstall "$tap_name/$fmla" --force 2>&1 || true)
-        echo "INFO: homebrew uninstall output:"
-        echo "$brew_uninst_output"
-    fi
+    # Capture where the installed `camel` actually resolves BEFORE uninstalling, so the
+    # post-uninstall check targets Homebrew's real prefix (e.g. /opt/homebrew/bin on Apple
+    # Silicon, /home/linuxbrew/.linuxbrew/bin on Linux) rather than a hardcoded path that is
+    # never populated on either CI runner.
+    local installed_camel=""
+    installed_camel=$(command -v camel 2>/dev/null || true)
 
-    # Verify removal of symlink/bin entry
-    if [ -L "/usr/local/bin/camel" ] || [ -e "/usr/local/bin/camel" ]; then
-        echo "WARN: homebrew uninstall left /usr/local/bin/camel"
+    local brew_uninst_output=""
+    brew_uninst_output=$(HOME="$BREW_HOME" \
+        HOMEBREW_NO_AUTO_UPDATE=1 \
+        brew uninstall "$tap_name/$fmla" --force 2>&1) || {
+            echo "FAIL: homebrew uninstall command failed:"
+            echo "$brew_uninst_output"
+            rc=1
+        }
+    echo "INFO: homebrew uninstall output:"
+    echo "$brew_uninst_output"
+
+    # A binary still resolvable at its install location means uninstall did not remove it -
+    # a real failure, not a warning.
+    if [ -n "$installed_camel" ] && { [ -e "$installed_camel" ] || [ -L "$installed_camel" ]; }; then
+        echo "FAIL: homebrew uninstall left the camel executable at $installed_camel"
+        rc=1
     else
-        echo "PASS: homebrew uninstall removed camel executable"
+        echo "PASS: homebrew uninstall removed the camel executable"
     fi
 
     return $rc
@@ -309,15 +406,15 @@ validate_homebrew() {
 # ============================================================
 # Local archive validator (no package manager involved)
 # ============================================================
-# The Homebrew validator's test-mode hack (see camel-package.sh) can install a real,
-# already-published camel-launcher release instead of this build's own synthetic one, so
-# it no longer guarantees this build's own zip/tar.gz ever actually gets run. This
-# validator always runs, independent of any package manager, so that coverage isn't lost:
-# it extracts the locally staged archive directly and runs its bin/camel.sh in place.
+# Runs this build's own archive directly, with no package manager in the loop. Even though the
+# Homebrew validator now installs this build's own binary via a file:// rewrite in test mode,
+# this validator is still the one leg guaranteed to run regardless of whether Homebrew or SDKMAN
+# is present on the host: it extracts the locally staged archive and runs its bin/camel.sh in
+# place.
 
 validate_local_archive() {
     local rc=0
-    local archive_file="$MODULE_DIR/target/camel-launcher-${RESOLVED_VERSION}-bin.tar.gz"
+    local archive_file="$TARGET_DIR/camel-launcher-${RESOLVED_VERSION}-bin.tar.gz"
 
     if [ ! -f "$archive_file" ]; then
         echo "SKIP: local archive not found: $archive_file (did the build run?)"
@@ -344,17 +441,33 @@ validate_local_archive() {
     local camv_output=""
     camv_output=$("$camel_sh" --version 2>/dev/null) || true
     if [ -z "$camv_output" ]; then
-        echo "FAIL: 'camel.sh --version' returned empty output"
+        local camv_err=""
+        camv_err=$("$camel_sh" --version 2>&1 >/dev/null) || true
+        echo "FAIL: 'camel.sh --version' returned empty output${camv_err:+ (stderr: $camv_err)}"
         rc=1
     else
-        assert_camel_version "$camv_output" "$RESOLVED_VERSION" && \
-            echo "PASS: local archive version OK" || rc=1
+        # In test mode this archive can be a byte-for-byte copy of a real SNAPSHOT build, staged
+        # under a -SNAPSHOT-stripped filename (see the CI workflow's "stage a synthetic release
+        # version" step, which `cp`s the archive rather than rebuilding it). The binary's embedded
+        # catalog version is whatever the real build produced, so it genuinely reports
+        # "$RESOLVED_VERSION-SNAPSHOT" there, not "$RESOLVED_VERSION" - confirmed empirically
+        # against a real build. A non-test release never runs in a SNAPSHOT state, so only test
+        # mode accepts the suffixed form.
+        local actual_ver
+        actual_ver=$(echo "$camv_output" | head -n 1 | awk '{print $NF}')
+        if [ "${CAMEL_PACKAGE_TEST_MODE:-}" = "true" ] && [ "$actual_ver" = "${RESOLVED_VERSION}-SNAPSHOT" ]; then
+            echo "PASS: local archive version OK (test-mode staged archive reports its real build version '$actual_ver')"
+        else
+            assert_camel_version "$camv_output" "$RESOLVED_VERSION" && \
+                echo "PASS: local archive version OK" || rc=1
+        fi
     fi
 
     local init_dir="$TMPDIR_BASE/local-archive-init"
     mkdir -p "$init_dir"
-    if ! (cd "$init_dir" && "$camel_sh" init hello.java >/dev/null 2>&1); then
-        echo "FAIL: camel init failed against the locally extracted archive"
+    local init_err=""
+    if ! init_err=$(cd "$init_dir" && "$camel_sh" init hello.java 2>&1 >/dev/null); then
+        echo "FAIL: camel init failed against the locally extracted archive${init_err:+: $init_err}"
         rc=1
     else
         assert_init_content "$init_dir" "hello.java" || rc=1
@@ -379,7 +492,7 @@ validate_sdkman() {
     # API-only and writes no local descriptor file under target/jreleaser at all, so this always
     # SKIPs offline regardless of the path below; kept for parity with the Homebrew validator and
     # in case a future JReleaser version starts writing one.
-    local DESCRIPTOR_FILE="$MODULE_DIR/target/jreleaser/package/camel-cli/sdkman/camel.json"
+    local DESCRIPTOR_FILE="$TARGET_DIR/jreleaser/package/camel-cli/sdkman/camel.json"
 
     if [ ! -f "$DESCRIPTOR_FILE" ]; then
         echo "SKIP: SDKMAN descriptor not found: $DESCRIPTOR_FILE (did prepare run?)"
@@ -396,7 +509,10 @@ validate_sdkman() {
     if command -v jq >/dev/null 2>&1; then
         local desc_version
         desc_version=$(jq -r '.version' "$DESCRIPTOR_FILE" 2>/dev/null) || true
-        if [ -z "$desc_version" ]; then
+        # jq prints the literal string "null" (not empty) when the key is absent, so that
+        # must be checked explicitly - otherwise a descriptor missing 'version' would still
+        # print a false "PASS: ... valid version: null".
+        if [ -z "$desc_version" ] || [ "$desc_version" = "null" ]; then
             echo "FAIL: SDKMAN descriptor missing 'version' field"
             return 1
         fi
@@ -412,7 +528,7 @@ validate_sdkman() {
     fi
 
     # Step 2: Verify offline archive structure (tar.gz)
-    local ARCHIVE_FILE="$MODULE_DIR/target/camel-launcher-${RESOLVED_VERSION}-bin.tar.gz"
+    local ARCHIVE_FILE="$TARGET_DIR/camel-launcher-${RESOLVED_VERSION}-bin.tar.gz"
     if [ ! -f "$ARCHIVE_FILE" ]; then
         echo "SKIP: SDKMAN archive not found: $ARCHIVE_FILE (did prepare run?)"
         return 0
@@ -432,19 +548,27 @@ validate_sdkman() {
         return 1
     fi
 
-    # Step 3: Verify camel version
-    # For offline validation, we verify the descriptor + archive integrity.
-    # A real sdk install would call the SDKMAN Vendor Release API which is stubbed in Phase 5.
-    echo "SKIP: SDKMAN vendor release API stubbed (offline validation)"
+    # Step 3: Verify camel version.
+    # For offline validation, we verify the descriptor + archive integrity. A real `sdk install`
+    # would call the SDKMAN Vendor Release API, which requires a published release and network
+    # access, so it is not exercised in this offline validation.
+    echo "SKIP: SDKMAN vendor release API not exercised (offline validation)"
 
-    # Step 4: Verify offline camel init route content (same assertion as Homebrew)
+    # Step 4: Verify offline camel init route content (same assertion as Homebrew).
+    # Unlike the Homebrew/local validators, a failing `camel init` here stays a WARN rather
+    # than a FAIL: SDKMAN never actually installs anything in this offline validation (see
+    # Step 3 above), so any `camel` found on PATH is unrelated host state this validator did
+    # not produce - treating its failure as a defect in the SDKMAN packaging would be a false
+    # failure. A successful init IS still checked against the content fixture below, since
+    # that's a legitimate signal when it happens to be available.
     local init_dir="$TMPDIR_BASE/init-test-sdkman"
     mkdir -p "$init_dir"
     if command -v camel >/dev/null 2>&1; then
-        if cd "$init_dir" && camel init hello.java >/dev/null 2>&1; then
+        local init_err=""
+        if init_err=$(cd "$init_dir" && camel init hello.java 2>&1 >/dev/null); then
             assert_init_content "$init_dir" "hello.java" || rc=1
         else
-            echo "WARN: camel init skipped (not installed via SDKMAN)"
+            echo "WARN: camel init skipped (not installed via SDKMAN)${init_err:+ (stderr: $init_err)}"
         fi
     else
         echo "WARN: camel not available for init test via SDKMAN (skipped)"
@@ -463,9 +587,9 @@ validate_sdkman() {
 main() {
     local rc=0
     case "$COMMAND" in
-        local)    validate_local_archive; rc=$? ;;
-        homebrew) validate_homebrew; rc=$? ;;
-        sdkman)   validate_sdkman; rc=$? ;;
+        local)    validate_local_archive || rc=1 ;;
+        homebrew) validate_homebrew || rc=1 ;;
+        sdkman)   validate_sdkman || rc=1 ;;
         all)
             validate_local_archive || rc=1
             validate_homebrew || rc=1

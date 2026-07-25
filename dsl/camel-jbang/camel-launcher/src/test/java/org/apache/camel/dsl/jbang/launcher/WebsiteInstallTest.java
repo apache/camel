@@ -699,6 +699,17 @@ class WebsiteInstallTest {
                     .resolve(version);
         }
 
+        // Runs the installed 'camel' shim by name, resolved through PATH+PATHEXT with binDir prepended,
+        // the way an end user invokes it after install. See forwardsArgumentsAndExitCodeThroughShim for
+        // why a bare command name is used rather than the shim's absolute path.
+        private static ProcessBuilder shimProcess(Path binDir, String... args) {
+            List<String> command = new ArrayList<>(List.of("cmd.exe", "/c", "camel"));
+            command.addAll(Arrays.asList(args));
+            ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
+            pb.environment().put("PATH", binDir + File.pathSeparator + System.getenv("PATH"));
+            return pb;
+        }
+
         private static void assertVersionInstalled(Path home, String version) throws Exception {
             Path shim = expectedBinDir(home).resolve("camel.cmd");
             assertTrue(Files.isRegularFile(shim), "expected shim at " + shim);
@@ -1020,16 +1031,20 @@ class WebsiteInstallTest {
                 publishLatest(fixture, "1.0.0");
                 assertEquals(0, install(fixture, home, null).exit());
 
-                Path shim = expectedBinDir(home).resolve("camel.cmd");
+                Path binDir = expectedBinDir(home);
+                assertTrue(Files.isRegularFile(binDir.resolve("camel.cmd")), "expected shim in " + binDir);
 
-                Process argsProc = new ProcessBuilder("cmd.exe", "/c", shim.toString(), "echo-args", "foo", "bar baz")
-                        .redirectErrorStream(true).start();
+                // Invoke the shim by name via PATH, exactly as an end user would after install adds bin to
+                // PATH. Passing the shim's absolute path to `cmd /c` together with a second quoted argument
+                // ("bar baz") trips cmd.exe's quote-stripping rule (it only preserves quotes when there are
+                // exactly two), which would unquote the space in "Apache Camel" and break the call. A bare
+                // command name resolved through PATH+PATHEXT avoids that quirk and mirrors real usage.
+                Process argsProc = shimProcess(binDir, "echo-args", "foo", "bar baz").start();
                 String argsOut = new String(argsProc.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
                 argsProc.waitFor(30, TimeUnit.SECONDS);
                 assertTrue(argsOut.contains("foo") && argsOut.contains("bar baz"), argsOut);
 
-                Process exitProc = new ProcessBuilder("cmd.exe", "/c", shim.toString(), "exit-code", "7")
-                        .redirectErrorStream(true).start();
+                Process exitProc = shimProcess(binDir, "exit-code", "7").start();
                 exitProc.waitFor(30, TimeUnit.SECONDS);
                 assertEquals(7, exitProc.exitValue());
             }

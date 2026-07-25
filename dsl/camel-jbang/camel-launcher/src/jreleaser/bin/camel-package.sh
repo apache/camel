@@ -111,7 +111,11 @@ if [ "$CHANNEL" = "stable" ]; then
   WEBSITE_LATEST="true"
   # The maven-metadata.xml <release> tag always reflects the newest published release across every
   # line, which is exactly "latest stable" for this formula - no line-prefix filtering needed.
-  CAMEL_PKG_BREW_LIVECHECK_REGEX='<release>([0-9]+\.[0-9]+\.[0-9]+)<\/release>'
+  # %r{} (not /.../ ) per Homebrew's Style/RegexpLiteral cop, which the pattern's escaped "/"
+  # would otherwise trip; wrapped here (not in jreleaser.yml) because livecheck's Mustache tag
+  # must stay a clean, unpadded {{{ }}} - butting a literal %r{ or trailing }i) directly against
+  # the triple-mustache braces confuses the tag scanner and silently drops the substitution.
+  CAMEL_PKG_BREW_LIVECHECK_REGEX='regex(%r{<release>([0-9]+\.[0-9]+\.[0-9]+)</release>}i)'
   [ -n "$LTS_LINE" ] && BREW_LTS_FORMULA="apache-camel@$LTS_LINE"
 else
   # Homebrew's own versioned-formula convention names the *file* "apache-camel@X.Y.rb" but the
@@ -135,7 +139,7 @@ else
   # literally, not "any character") or it would report the project's overall latest release
   # instead of this line's own latest patch.
   lts_line_escaped=$(echo "$LTS_LINE" | sed 's/\./\\./g')
-  CAMEL_PKG_BREW_LIVECHECK_REGEX="<version>(${lts_line_escaped}\.[0-9]+)<\/version>"
+  CAMEL_PKG_BREW_LIVECHECK_REGEX="regex(%r{<version>(${lts_line_escaped}\.[0-9]+)</version>}i)"
   # deprecate! fires 6 months before the line's own documented support end; disable! fires on the
   # support-end date itself. supported_ends was already resolved and validated (non-empty, a real
   # entry in supported-lts.yml) by the --lts-line validation earlier in this script - re-used here

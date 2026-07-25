@@ -49,33 +49,75 @@ function Test-ValidSha256 {
     }
 }
 
+$UseSkipCertificateCheck = $false
 if ($CaCertPath) {
     # Test seam only: trusts the loopback fixture's self-signed CA for this process without touching
     # the real Windows certificate store. Production installs never set CAMEL_INSTALL_CA_CERT.
-    $installerCaCert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($CaCertPath)
-    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
-    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {
-        param($sender, $certificate, $chain, $sslPolicyErrors)
-        $verifyChain = New-Object System.Security.Cryptography.X509Certificates.X509Chain
-        $verifyChain.ChainPolicy.ExtraStore.Add($installerCaCert) | Out-Null
-        $verifyChain.ChainPolicy.RevocationMode = [System.Security.Cryptography.X509Certificates.X509RevocationMode]::NoCheck
-        $verifyChain.ChainPolicy.VerificationFlags = [System.Security.Cryptography.X509Certificates.X509VerificationFlags]::AllowUnknownCertificateAuthority
-        $leaf = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificate)
-        if (-not $verifyChain.Build($leaf)) {
-            return $false
+    if ($PSVersionTable.PSEdition -eq 'Core') {
+        # PowerShell 7+'s Invoke-WebRequest runs on HttpClient, which never consults
+        # ServicePointManager.ServerCertificateValidationCallback (a Windows PowerShell/.NET Framework-
+        # only hook) - it's silently ignored, so the callback below never rejects a bad cert either.
+        # Pin trust via -SkipCertificateCheck on the call instead.
+        $UseSkipCertificateCheck = $true
+    } else {
+        $installerCaCert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($CaCertPath)
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+
+        # ServerCertificateValidationCallback is invoked by the CLR on whatever thread performs the TLS
+        # handshake - for HttpWebRequest that is often a thread-pool/IO-completion-port thread with no
+        # PowerShell Runspace bound to it. A scriptblock delegate then fails intermittently with "There is
+        # no Runspace available to run scripts in this thread." A compiled type has no such dependency, so
+        # validate via Add-Type instead of a scriptblock.
+        if (-not ('CamelInstallCertValidator' -as [type])) {
+            Add-Type -TypeDefinition @"
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+
+public static class CamelInstallCertValidator {
+    public static X509Certificate2 CaCert;
+
+    public static bool Validate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
+        using (var verifyChain = new X509Chain()) {
+            verifyChain.ChainPolicy.ExtraStore.Add(CaCert);
+            verifyChain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+            verifyChain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+            var leaf = new X509Certificate2(certificate);
+            if (!verifyChain.Build(leaf)) {
+                return false;
+            }
+            var root = verifyChain.ChainElements[verifyChain.ChainElements.Count - 1].Certificate;
+            return root.Thumbprint == CaCert.Thumbprint;
         }
-        $root = $verifyChain.ChainElements[$verifyChain.ChainElements.Count - 1].Certificate
-        return $root.Thumbprint -eq $installerCaCert.Thumbprint
-    }.GetNewClosure()
+    }
+}
+"@
+        }
+        [CamelInstallCertValidator]::CaCert = $installerCaCert
+        # Windows PowerShell 5.1 cannot implicitly convert a bare method reference (PSMethod) to a
+        # custom delegate type - "Cannot convert ... value of type System.Management.Automation.PSMethod
+        # to type System.Net.Security.RemoteCertificateValidationCallback." Build the delegate explicitly.
+        [System.Net.ServicePointManager]::ServerCertificateValidationCallback = [System.Delegate]::CreateDelegate(
+            [System.Net.Security.RemoteCertificateValidationCallback],
+            [CamelInstallCertValidator],
+            'Validate')
+    }
 }
 
 # Downloads $Url to $OutFile; used for both the manifest and archive fetches.
 function Save-RemoteFile {
     param([string] $Url, [string] $OutFile)
     try {
-        Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing | Out-Null
+        if ($UseSkipCertificateCheck) {
+            Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing -SkipCertificateCheck | Out-Null
+        } else {
+            Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing | Out-Null
+        }
     } catch {
-        Fail "failed to download $Url"
+        $detail = $_.Exception.Message
+        if ($_.Exception.InnerException) {
+            $detail = "$detail -- $($_.Exception.InnerException.Message)"
+        }
+        Fail "failed to download $Url ($detail)"
     }
 }
 
@@ -157,7 +199,11 @@ function Test-ArchiveEntry {
             if ($segments -contains '..') {
                 Fail "archive contains a path traversal entry: $name"
             }
-            $unixMode = ([uint32]$entry.ExternalAttributes -shr 16) -band 0xF000
+            # ExternalAttributes is a signed Int32 whose upper 16 bits carry the Unix mode; any entry
+            # with mode bits set (e.g. 0100644, universal for a POSIX-built archive) overflows into
+            # negative range there. [uint32] is a checked cast that throws on a negative input, so mask
+            # to the low 32 bits as Int64 first to reinterpret the same bit pattern unsigned.
+            $unixMode = ([uint32]($entry.ExternalAttributes -band 0xFFFFFFFFL) -shr 16) -band 0xF000
             if ($unixMode -eq 0xA000) {
                 Fail "archive contains a symbolic link or reparse point entry, which is not allowed"
             }
@@ -205,8 +251,13 @@ function Set-CamelShim {
     Move-Item -LiteralPath $StagedRoot -Destination $targetDir
 
     New-Item -ItemType Directory -Force -Path $BinDir | Out-Null
-    $launcherPath = Join-Path $targetDir 'bin\camel.bat'
-    $shimContent = "@echo off`r`ncall `"$launcherPath`" %*`r`nexit /b %ERRORLEVEL%`r`n"
+    # Resolve the launcher relative to the shim's own location (%~dp0 = <InstallRoot>\bin\) rather than
+    # embedding the absolute install path as literal text. cmd.exe parses batch-file bytes in the OEM
+    # code page, so a non-ASCII install path (e.g. a user profile containing 'über') written into the
+    # file as UTF-8 would be misread and 'call' would fail with "The system cannot find the path
+    # specified." %~dp0 supplies that path as a runtime value instead, which cmd handles correctly - the
+    # same self-location pattern camel.bat itself uses. Only the version (validated ASCII) is embedded.
+    $shimContent = "@echo off`r`ncall `"%~dp0..\cli\versions\$Version\bin\camel.bat`" %*`r`nexit /b %ERRORLEVEL%`r`n"
     $tempShim = Join-Path $BinDir ".camel.$PID.tmp.cmd"
     # Write without a BOM: Windows PowerShell 5.1's 'Set-Content -Encoding UTF8' prepends one, which
     # cmd.exe treats as part of the first line, breaking '@echo off' and emitting a stray error.
@@ -311,4 +362,7 @@ try {
     if (Test-Path -LiteralPath $stagingRoot) {
         Remove-Item -LiteralPath $stagingRoot -Recurse -Force -ErrorAction SilentlyContinue
     }
+    # ServerCertificateValidationCallback is process-wide static state; clear it even though this
+    # process is about to exit, in case a caller dot-sources install.ps1 into a longer-lived session.
+    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null
 }

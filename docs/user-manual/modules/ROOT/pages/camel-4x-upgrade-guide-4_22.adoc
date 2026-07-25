@@ -178,6 +178,15 @@ Two new commands are available in the xref:camel-jbang-launcher.adoc[Camel CLI L
 
 See xref:camel-jbang-launcher-install.adoc[Installing the Camel CLI Launcher] for full details.
 
+==== Camel CLI package-native validation (maintainers)
+
+The `camel-launcher` module adds an offline package-native validator
+(`src/jreleaser/bin/camel-validate.sh`) that installs each generated package, asserts
+`camel version` and an offline `camel init`, then uninstalls. Each validator self-skips
+when its package manager is absent, so the same entry point runs on macOS, Linux, and
+Windows x64 CI. Validation performs no remote publication and calls no SDKMAN Vendor
+API; that is the `publish` workflow.
+
 === camel-langchain4j-agent
 
 The `Agent.chat()` method return type has changed from `String` to `Result<String>` (from `dev.langchain4j.service.Result`).

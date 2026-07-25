@@ -40,6 +40,12 @@
         <supportLevel>Stable</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
 
+        <!-- WebsiteInstallTest's Windows PowerShell suite spawns install.ps1 through a fresh
+             powershell.exe per test (~25 tests); on GitHub's windows-latest runners each invocation
+             costs ~24s of PowerShell startup/Defender-scan overhead, so the class alone runs past the
+             default 600s fork budget even though no single test hangs. -->
+        <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>
+
         <!-- Dependency versions -->
         <camel-kamelets-version>4.20.0</camel-kamelets-version>
         <maven-version>3.9.16</maven-version>
