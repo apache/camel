@@ -100,8 +100,6 @@ public class KameletMainInjector implements Injector {
                 } else {
                     accept = true;
                 }
-            } else {
-                accept = true;
             }
         }
         return accept;
