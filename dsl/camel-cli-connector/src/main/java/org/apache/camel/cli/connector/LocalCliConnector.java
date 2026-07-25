@@ -789,8 +789,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 .resolveById("processor-detail");
         if (dc != null) {
             String routeId = root.getString("routeId");
+            if (routeId == null || routeId.isBlank()) {
+                routeId = root.getString("id");
+            }
             JsonObject json
-                    = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("routeId", routeId != null ? routeId : ""));
+                    = (JsonObject) dc.call(DevConsole.MediaType.JSON,
+                            Map.of("routeId", routeId != null ? routeId : "*"));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {

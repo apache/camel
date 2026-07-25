@@ -18,13 +18,13 @@
       "displayName": "Route Id",
       "group": "query",
       "label": "query",
-      "required": true,
+      "required": false,
       "type": "string",
       "javaType": "java.lang.String",
       "deprecated": false,
       "autowired": false,
       "secret": false,
-      "description": "The route id to get processor details for"
+      "description": "The route id to get processor details for (use * for all routes)"
     }
   }
 }

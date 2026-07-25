@@ -221,6 +221,24 @@ public class RuntimeTools {
                 Map.of("routeId", routeId != null ? routeId : "*"));
     }
 
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Show configured options for all processors in a route. \
+                  Returns each processor's type, id, and configured options (attributes, expressions). \
+                  Use includeDocs=true to enrich the response with documentation from the Camel catalog \
+                  for each EIP option and component endpoint option.""")
+    public JsonObject camel_runtime_processor_detail(
+            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = "Route ID to inspect (use * for all routes)") String routeId,
+            @ToolArg(description = "If true, enrich each processor's options with documentation from the Camel catalog") Boolean includeDocs) {
+        Map<String, String> args = new HashMap<>();
+        args.put("routeId", routeId != null ? routeId : "*");
+        if (includeDocs != null && includeDocs) {
+            args.put("includeDocs", "true");
+        }
+        return delegateToRegistry("get_processor_detail", nameOrPid, args);
+    }
+
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = "Control a route: start, stop, suspend, or resume it.")
     public JsonObject camel_runtime_route_control(
