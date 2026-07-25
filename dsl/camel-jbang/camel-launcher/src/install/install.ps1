@@ -62,19 +62,38 @@ if ($CaCertPath) {
     } else {
         $installerCaCert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($CaCertPath)
         [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
-        [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {
-            param($sender, $certificate, $chain, $sslPolicyErrors)
-            $verifyChain = New-Object System.Security.Cryptography.X509Certificates.X509Chain
-            $verifyChain.ChainPolicy.ExtraStore.Add($installerCaCert) | Out-Null
-            $verifyChain.ChainPolicy.RevocationMode = [System.Security.Cryptography.X509Certificates.X509RevocationMode]::NoCheck
-            $verifyChain.ChainPolicy.VerificationFlags = [System.Security.Cryptography.X509Certificates.X509VerificationFlags]::AllowUnknownCertificateAuthority
-            $leaf = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificate)
-            if (-not $verifyChain.Build($leaf)) {
-                return $false
+
+        # ServerCertificateValidationCallback is invoked by the CLR on whatever thread performs the TLS
+        # handshake - for HttpWebRequest that is often a thread-pool/IO-completion-port thread with no
+        # PowerShell Runspace bound to it. A scriptblock delegate then fails intermittently with "There is
+        # no Runspace available to run scripts in this thread." A compiled type has no such dependency, so
+        # validate via Add-Type instead of a scriptblock.
+        if (-not ('CamelInstallCertValidator' -as [type])) {
+            Add-Type -TypeDefinition @"
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+
+public static class CamelInstallCertValidator {
+    public static X509Certificate2 CaCert;
+
+    public static bool Validate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
+        using (var verifyChain = new X509Chain()) {
+            verifyChain.ChainPolicy.ExtraStore.Add(CaCert);
+            verifyChain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+            verifyChain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+            var leaf = new X509Certificate2(certificate);
+            if (!verifyChain.Build(leaf)) {
+                return false;
             }
-            $root = $verifyChain.ChainElements[$verifyChain.ChainElements.Count - 1].Certificate
-            return $root.Thumbprint -eq $installerCaCert.Thumbprint
-        }.GetNewClosure()
+            var root = verifyChain.ChainElements[verifyChain.ChainElements.Count - 1].Certificate;
+            return root.Thumbprint == CaCert.Thumbprint;
+        }
+    }
+}
+"@
+        }
+        [CamelInstallCertValidator]::CaCert = $installerCaCert
+        [System.Net.ServicePointManager]::ServerCertificateValidationCallback = [CamelInstallCertValidator]::Validate
     }
 }
 
@@ -332,4 +351,7 @@ try {
     if (Test-Path -LiteralPath $stagingRoot) {
         Remove-Item -LiteralPath $stagingRoot -Recurse -Force -ErrorAction SilentlyContinue
     }
+    # ServerCertificateValidationCallback is process-wide static state; clear it even though this
+    # process is about to exit, in case a caller dot-sources install.ps1 into a longer-lived session.
+    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null
 }
