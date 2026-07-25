@@ -55,6 +55,7 @@ import org.jline.builtins.PosixCommandGroup;
 import org.jline.picocli.PicocliCommandRegistry;
 import org.jline.reader.LineReader;
 import org.jline.shell.Shell;
+import org.jline.shell.ShellBuilder;
 import org.jline.shell.impl.DefaultCommandDispatcher;
 import org.jline.terminal.Size;
 import org.jline.terminal.impl.LineDisciplineTerminal;
@@ -496,20 +497,7 @@ class ShellPanel {
                 EnvironmentHelper.setSelectedProcess(ctx.selectedName());
             }
 
-            try (Shell shell = Shell.builder()
-                    .terminal(terminal)
-                    .prompt(ShellPanel::buildPrompt)
-                    .groups(registry, new PosixCommandGroup(), new InteractiveCommandGroup())
-                    .historyCommands(true)
-                    .helpCommands(true)
-                    .commandHighlighter(false)
-                    .variable(LineReader.LIST_MAX, 50)
-                    .onReaderReady((reader, dispatcher) -> {
-                        if (dispatcher instanceof DefaultCommandDispatcher dcd) {
-                            dcd.session().setWorkingDirectory(Path.of("").toAbsolutePath());
-                        }
-                    })
-                    .build()) {
+            try (Shell shell = buildShell(terminal, registry)) {
                 EnvironmentHelper.setActiveTerminal(terminal);
                 shell.run();
                 shellExited = true;
@@ -521,6 +509,23 @@ class ShellPanel {
         } catch (Exception e) {
             startError = "Shell crashed: " + e.getClass().getSimpleName() + ": " + e.getMessage();
         }
+    }
+
+    private static Shell buildShell(LineDisciplineTerminal terminal, PicocliCommandRegistry registry) throws IOException {
+        ShellBuilder builder = Shell.builder()
+                .terminal(terminal)
+                .prompt(ShellPanel::buildPrompt)
+                .groups(registry, new PosixCommandGroup(), new InteractiveCommandGroup())
+                .helpCommands(true)
+                .commandHighlighter(false)
+                .variable(LineReader.LIST_MAX, 50)
+                .onReaderReady((reader, dispatcher) -> {
+                    if (dispatcher instanceof DefaultCommandDispatcher dcd) {
+                        dcd.session().setWorkingDirectory(Path.of("").toAbsolutePath());
+                    }
+                });
+        TuiShellHistorySupport.configure(builder, TuiSettings.load());
+        return builder.build();
     }
 
     private static String buildPrompt() {

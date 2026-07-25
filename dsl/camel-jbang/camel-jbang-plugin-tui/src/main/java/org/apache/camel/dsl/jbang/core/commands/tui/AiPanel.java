@@ -98,6 +98,7 @@ class AiPanel {
     // Input state
     private final StringBuilder inputBuffer = new StringBuilder();
     private int cursorPos;
+    private TuiPromptHistory promptHistory;
 
     // TAB completion cycle state. completionMatches holds the candidate command names for the active cycle;
     // completionSnapshot is the buffer text a TAB press last produced. The cycle continues only while the buffer still
@@ -252,6 +253,7 @@ class AiPanel {
 
     void open() {
         visible = true;
+        reloadPromptHistory();
         if (client == null) {
             initClient();
         }
@@ -412,6 +414,14 @@ class AiPanel {
             }
             return true;
         }
+        if (!statsView && ke.isKey(KeyCode.UP) && promptHistory != null && promptHistory.isEnabled()) {
+            promptHistory.previous(inputBuffer.toString()).ifPresent(this::replaceInputBuffer);
+            return true;
+        }
+        if (!statsView && ke.isKey(KeyCode.DOWN) && promptHistory != null && promptHistory.isEnabled()) {
+            promptHistory.next(inputBuffer.toString()).ifPresent(this::replaceInputBuffer);
+            return true;
+        }
         if (thinking.get()) {
             if (ke.isCtrlC() || ke.isKey(KeyCode.ESCAPE)) {
                 interruptBusyOperation();
@@ -433,6 +443,9 @@ class AiPanel {
         }
         if (ke.isKey(KeyCode.BACKSPACE)) {
             if (cursorPos > 0) {
+                if (promptHistory != null) {
+                    promptHistory.resetNavigation();
+                }
                 inputBuffer.deleteCharAt(cursorPos - 1);
                 cursorPos--;
             }
@@ -440,6 +453,9 @@ class AiPanel {
         }
         if (ke.isKey(KeyCode.DELETE)) {
             if (cursorPos < inputBuffer.length()) {
+                if (promptHistory != null) {
+                    promptHistory.resetNavigation();
+                }
                 inputBuffer.deleteCharAt(cursorPos);
             }
             return true;
@@ -469,6 +485,9 @@ class AiPanel {
             return true;
         }
         if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
+            if (promptHistory != null) {
+                promptHistory.resetNavigation();
+            }
             inputBuffer.insert(cursorPos, ke.character());
             cursorPos++;
             return true;
@@ -553,6 +572,9 @@ class AiPanel {
 
     private void submitInput() {
         String input = inputBuffer.toString().trim();
+        if (promptHistory != null) {
+            promptHistory.remember(input);
+        }
         inputBuffer.setLength(0);
         cursorPos = 0;
         scrollOffset = 0;
@@ -561,6 +583,22 @@ class AiPanel {
         } else {
             submitQuestion(input);
         }
+    }
+
+    private void reloadPromptHistory() {
+        TuiSettings settings = TuiSettings.load();
+        promptHistory = TuiPromptHistory.load(settings.getAiPromptHistoryLimit(), TuiHistoryFiles.aiPromptHistoryFile());
+    }
+
+    private void replaceInputBuffer(String text) {
+        inputBuffer.setLength(0);
+        if (text != null) {
+            inputBuffer.append(text);
+        }
+        cursorPos = inputBuffer.length();
+        completionMatches = null;
+        completionCycleIndex = -1;
+        completionSnapshot = null;
     }
 
     private void executeSlashCommand(String input) {
@@ -1466,6 +1504,14 @@ class AiPanel {
         if (messages != null) {
             messages.clear();
         }
+    }
+
+    void setPromptHistoryForTesting(TuiPromptHistory history) {
+        this.promptHistory = history;
+    }
+
+    List<String> promptHistoryEntriesForTesting() {
+        return promptHistory == null ? List.of() : promptHistory.entriesForTesting();
     }
 
     void setClientForTesting(LlmClient client) {

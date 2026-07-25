@@ -36,6 +36,8 @@ final class TuiSettings {
     static final String PROP_AI_PROVIDER = "camel.tui.ai.provider";
     static final String PROP_AI_MODEL = "camel.tui.ai.model";
     static final String PROP_AI_URL = "camel.tui.ai.url";
+    static final String PROP_SHELL_HISTORY = "camel.tui.shell.history";
+    static final String PROP_AI_PROMPT_HISTORY = "camel.tui.ai.promptHistory";
 
     private String themeId;
     private String startTab;
@@ -46,6 +48,8 @@ final class TuiSettings {
     private String aiProvider;
     private String aiModel;
     private String aiUrl;
+    private String shellHistory;
+    private String aiPromptHistory;
 
     String getThemeId() {
         return themeId;
@@ -119,6 +123,30 @@ final class TuiSettings {
         this.aiUrl = aiUrl;
     }
 
+    String getShellHistory() {
+        return shellHistory;
+    }
+
+    void setShellHistory(String shellHistory) {
+        this.shellHistory = shellHistory;
+    }
+
+    String getAiPromptHistory() {
+        return aiPromptHistory;
+    }
+
+    void setAiPromptHistory(String aiPromptHistory) {
+        this.aiPromptHistory = aiPromptHistory;
+    }
+
+    int getShellHistoryLimit() {
+        return TuiHistoryLimits.resolveLimit(shellHistory);
+    }
+
+    int getAiPromptHistoryLimit() {
+        return TuiHistoryLimits.resolveLimit(aiPromptHistory);
+    }
+
     /**
      * Loads the current settings, resolving each key with per-key local/global precedence via {@link TuiUserConfig}.
      * Unset keys yield {@code null} fields; a read failure yields an object with {@code null} fields rather than
@@ -136,6 +164,8 @@ final class TuiSettings {
             settings.aiProvider = trimToNull(TuiUserConfig.read(PROP_AI_PROVIDER));
             settings.aiModel = trimToNull(TuiUserConfig.read(PROP_AI_MODEL));
             settings.aiUrl = trimToNull(TuiUserConfig.read(PROP_AI_URL));
+            settings.shellHistory = trimToNull(TuiUserConfig.read(PROP_SHELL_HISTORY));
+            settings.aiPromptHistory = trimToNull(TuiUserConfig.read(PROP_AI_PROMPT_HISTORY));
         } catch (RuntimeException e) {
             // best-effort: return an object with null fields on read failure
         }
@@ -158,6 +188,8 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_AI_PROVIDER, aiProvider);
             TuiUserConfig.write(PROP_AI_MODEL, aiModel);
             TuiUserConfig.write(PROP_AI_URL, aiUrl);
+            TuiUserConfig.write(PROP_SHELL_HISTORY, shellHistory);
+            TuiUserConfig.write(PROP_AI_PROMPT_HISTORY, aiPromptHistory);
         } catch (RuntimeException e) {
             // best-effort: a save failure must not disrupt the TUI
         }
