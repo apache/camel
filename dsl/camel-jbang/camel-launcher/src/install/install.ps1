@@ -88,7 +88,11 @@ function Save-RemoteFile {
             Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing | Out-Null
         }
     } catch {
-        Fail "failed to download $Url"
+        $detail = $_.Exception.Message
+        if ($_.Exception.InnerException) {
+            $detail = "$detail -- $($_.Exception.InnerException.Message)"
+        }
+        Fail "failed to download $Url ($detail)"
     }
 }
 
