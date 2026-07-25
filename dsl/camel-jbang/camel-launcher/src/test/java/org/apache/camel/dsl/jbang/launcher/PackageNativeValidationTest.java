@@ -446,20 +446,21 @@ class PackageNativeValidationTest {
     }
 
     /**
-     * Stages {@code <targetDir>/jreleaser/package/camel-cli/brew/Formula/camel.rb} (the path {@code validate_homebrew}
-     * reads) plus a same-named dummy archive under {@code targetDir}, so the script's real {@code sed}-based url/sha256
-     * rewrite for the offline install has something to operate on.
+     * Stages {@code <targetDir>/jreleaser/package/camel-cli/brew/Formula/apache-camel.rb} (the path
+     * {@code validate_homebrew} reads for the default "stable" channel) plus a same-named dummy archive under
+     * {@code targetDir}, so the script's real {@code sed}-based url/sha256 rewrite for the offline install has
+     * something to operate on.
      */
     private static void stageHomebrewFormula(Path targetDir, String archiveBasename) throws Exception {
         Path formulaDir = Files.createDirectories(targetDir.resolve("jreleaser/package/camel-cli/brew/Formula"));
         Files.writeString(targetDir.resolve(archiveBasename), "dummy archive content");
-        String formula = "class Camel < Formula\n"
+        String formula = "class ApacheCamel < Formula\n"
                          + "  url \"https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/9.9.9/"
                          + archiveBasename + "\"\n"
                          + "  sha256 \"" + "0".repeat(64) + "\"\n"
                          + "  version \"9.9.9\"\n"
                          + "end\n";
-        Files.writeString(formulaDir.resolve("camel.rb"), formula);
+        Files.writeString(formulaDir.resolve("apache-camel.rb"), formula);
     }
 
     private static Path writeExecutable(Path file, String body) throws IOException {
