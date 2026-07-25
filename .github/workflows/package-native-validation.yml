@@ -139,9 +139,13 @@ jobs:
 
       - name: Run POSIX validator unit tests
         shell: bash
+        # WebsiteInstallTest's PosixShell suite only gets targeted CI coverage today as a side
+        # effect of the generic incremental-build check noticing a direct change under
+        # dsl/camel-jbang/camel-launcher; a PR that only touches an upstream dependency wouldn't
+        # trigger it. Run it here explicitly so this dedicated validation workflow covers it too.
         run: |
           cd dsl/camel-jbang/camel-launcher
-          mvn -B -ntp test -pl . -Dtest=PackageNativeValidationTest
+          mvn -B -ntp test -pl . -Dtest=PackageNativeValidationTest,WebsiteInstallTest
 
   # ── Windows (install.ps1 unit tests) ──────────────────────────────
   windows-validator:
