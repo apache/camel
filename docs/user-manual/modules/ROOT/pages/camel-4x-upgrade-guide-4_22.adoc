@@ -1077,6 +1077,24 @@ with the option itself, which was changed from seconds to milliseconds in the sa
 If you have JMX-based monitoring that reads this attribute, update the expected unit from seconds
 to milliseconds.
 
+=== camel-microprofile-fault-tolerance
+
+The deprecated `timeoutPoolSize` option has been removed from the Fault Tolerance configuration.
+This option was never used by SmallRye Fault Tolerance and had no effect. Remove any references
+to `timeoutPoolSize` from your configuration.
+
+The JMX attribute `FailureRate` has been renamed to `FailureRatio` to match the configuration
+property name and avoid confusion with live failure rate metrics.
+
+New JMX attributes have been added for live call monitoring:
+
+- `NumberOfSuccessfulCalls` - count of successful executions
+- `NumberOfFailedCalls` - count of failed executions
+- `NumberOfNotPermittedCalls` - count of calls rejected by an open circuit breaker
+
+A new `transitionToCloseState` JMX operation resets the circuit breaker to CLOSED and clears
+the call counters.
+
 === camel-clickhouse (new component)
 
 A new `camel-clickhouse` producer component has been added. It integrates with

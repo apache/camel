@@ -56,12 +56,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
               description = "Configures the thread execution timeout. Default value is 1 second.")
     private String timeoutDuration;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer",
-              description = "Deprecated: no longer in use since the switch to TypedGuard API (CAMEL-21857).",
-              deprecationNote = "No longer in use")
-    @Deprecated(since = "4.22.0")
-    private String timeoutPoolSize;
-    @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
               description = "Whether bulkhead is enabled or not on the circuit breaker.")
     private String bulkheadEnabled;
@@ -89,7 +83,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         this.failureRatio = source.failureRatio;
         this.timeoutEnabled = source.timeoutEnabled;
         this.timeoutDuration = source.timeoutDuration;
-        this.timeoutPoolSize = source.timeoutPoolSize;
         this.bulkheadEnabled = source.bulkheadEnabled;
         this.bulkheadMaxConcurrentCalls = source.bulkheadMaxConcurrentCalls;
         this.bulkheadWaitingTaskQueue = source.bulkheadWaitingTaskQueue;
@@ -157,16 +150,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
 
     public void setTimeoutDuration(String timeoutDuration) {
         this.timeoutDuration = timeoutDuration;
-    }
-
-    @Deprecated(since = "4.22.0")
-    public String getTimeoutPoolSize() {
-        return timeoutPoolSize;
-    }
-
-    @Deprecated(since = "4.22.0")
-    public void setTimeoutPoolSize(String timeoutPoolSize) {
-        this.timeoutPoolSize = timeoutPoolSize;
     }
 
     public String getBulkheadEnabled() {

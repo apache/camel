@@ -29,7 +29,7 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
     private MainConfigurationProperties parent;
 
     private String typedGuard;
-    @Metadata(defaultValue = "5")
+    @Metadata(defaultValue = "5000")
     private Long delay;
     @Metadata(defaultValue = "1")
     private Integer successThreshold;
@@ -41,8 +41,6 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
     private Boolean timeoutEnabled;
     @Metadata(defaultValue = "1000")
     private Long timeoutDuration;
-    @Metadata(defaultValue = "10")
-    private Integer timeoutPoolSize;
     @Metadata(defaultValue = "false")
     private Boolean bulkheadEnabled;
     @Metadata(defaultValue = "10")
@@ -84,7 +82,7 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
     }
 
     /**
-     * Control how long the circuit breaker stays open. The value are in seconds and the default is 5 seconds.
+     * Control how long the circuit breaker stays open. The default is 5 seconds.
      */
     public void setDelay(Long delay) {
         this.delay = delay;
@@ -148,17 +146,6 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
         this.timeoutDuration = timeoutDuration;
     }
 
-    public Integer getTimeoutPoolSize() {
-        return timeoutPoolSize;
-    }
-
-    /**
-     * Configures the pool size of the thread pool when timeout is enabled. Default value is 10.
-     */
-    public void setTimeoutPoolSize(Integer timeoutPoolSize) {
-        this.timeoutPoolSize = timeoutPoolSize;
-    }
-
     public Boolean getBulkheadEnabled() {
         return bulkheadEnabled;
     }
@@ -213,7 +200,7 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
     }
 
     /**
-     * Control how long the circuit breaker stays open. The value are in seconds and the default is 5 seconds.
+     * Control how long the circuit breaker stays open. The default is 5 seconds.
      */
     public FaultToleranceConfigurationProperties withDelay(Long delay) {
         this.delay = delay;
@@ -260,14 +247,6 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
      */
     public FaultToleranceConfigurationProperties withTimeoutDuration(Long timeoutDuration) {
         this.timeoutDuration = timeoutDuration;
-        return this;
-    }
-
-    /**
-     * Configures the pool size of the thread pool when timeout is enabled. Default value is 10.
-     */
-    public FaultToleranceConfigurationProperties withTimeoutPoolSize(Integer timeoutPoolSize) {
-        this.timeoutPoolSize = timeoutPoolSize;
         return this;
     }
 

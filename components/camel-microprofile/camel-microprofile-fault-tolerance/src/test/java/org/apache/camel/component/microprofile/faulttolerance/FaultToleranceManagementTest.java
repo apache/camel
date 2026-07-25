@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FaultToleranceManagementTest extends CamelTestSupport {
+class FaultToleranceManagementTest extends CamelTestSupport {
 
     @Override
     protected boolean useJmx() {
@@ -38,30 +38,55 @@ public class FaultToleranceManagementTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFaultTolerance() throws Exception {
+    void testFaultTolerance() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         template.sendBody("direct:start", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
 
-        // look inside jmx
-        // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-
-        // context name
         String name = context.getManagementName();
-
-        // get the object name for the delayer
         ObjectName on
                 = ObjectName.getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"myFaultTolerance\"");
 
-        // should be on start
+        // configuration attributes
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("start", routeId);
 
-        Long num = (Long) mbeanServer.getAttribute(on, "Delay");
-        assertEquals("5000", num.toString());
+        Long delay = (Long) mbeanServer.getAttribute(on, "Delay");
+        assertEquals(5000L, delay);
+
+        Float failureRatio = (Float) mbeanServer.getAttribute(on, "FailureRatio");
+        assertEquals(0.5f, failureRatio);
+
+        Integer requestVolumeThreshold = (Integer) mbeanServer.getAttribute(on, "RequestVolumeThreshold");
+        assertEquals(20, requestVolumeThreshold);
+
+        Integer successThreshold = (Integer) mbeanServer.getAttribute(on, "SuccessThreshold");
+        assertEquals(1, successThreshold);
+
+        String state = (String) mbeanServer.getAttribute(on, "CircuitBreakerState");
+        assertEquals("CLOSED", state);
+
+        // live call counters (one successful call was made above)
+        Long successfulCalls = (Long) mbeanServer.getAttribute(on, "NumberOfSuccessfulCalls");
+        assertEquals(1L, successfulCalls);
+
+        Long failedCalls = (Long) mbeanServer.getAttribute(on, "NumberOfFailedCalls");
+        assertEquals(0L, failedCalls);
+
+        Long notPermittedCalls = (Long) mbeanServer.getAttribute(on, "NumberOfNotPermittedCalls");
+        assertEquals(0L, notPermittedCalls);
+
+        // test reset operation
+        mbeanServer.invoke(on, "transitionToCloseState", null, null);
+        state = (String) mbeanServer.getAttribute(on, "CircuitBreakerState");
+        assertEquals("CLOSED", state);
+
+        // counters should be reset after transitionToCloseState
+        successfulCalls = (Long) mbeanServer.getAttribute(on, "NumberOfSuccessfulCalls");
+        assertEquals(0L, successfulCalls);
     }
 
     @Override

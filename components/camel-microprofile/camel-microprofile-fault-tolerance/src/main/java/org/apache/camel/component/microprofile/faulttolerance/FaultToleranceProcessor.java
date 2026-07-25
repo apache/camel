@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import io.smallrye.faulttolerance.api.CircuitBreakerMaintenance;
 import io.smallrye.faulttolerance.api.CircuitBreakerState;
@@ -38,6 +39,7 @@ import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.Suspendable;
 import org.apache.camel.Traceable;
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.processor.BaseProcessorSupport;
 import org.apache.camel.processor.PooledExchangeTask;
@@ -80,6 +82,9 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     private PooledExchangeTaskFactory fallbackTaskFactory;
     private TypedGuard.Builder<Exchange> typedGuardBuilder;
     private TypedGuard<Exchange> typedGuard;
+    private final AtomicLong successfulCalls = new AtomicLong();
+    private final AtomicLong failedCalls = new AtomicLong();
+    private final AtomicLong notPermittedCalls = new AtomicLong();
 
     public FaultToleranceProcessor(
                                    FaultToleranceConfiguration config,
@@ -155,7 +160,7 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     }
 
     @ManagedAttribute(description = "Returns the configured failure ratio threshold (0.0-1.0).")
-    public float getFailureRate() {
+    public float getFailureRatio() {
         return config.getFailureRatio();
     }
 
@@ -177,12 +182,6 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     @ManagedAttribute(description = "The timeout wait duration")
     public long getTimeoutDuration() {
         return config.getTimeoutDuration();
-    }
-
-    @Deprecated(since = "4.22.0")
-    @ManagedAttribute(description = "Deprecated: no longer in use since the switch to TypedGuard API (CAMEL-21857)")
-    public int getTimeoutPoolSize() {
-        return config.getTimeoutPoolSize();
     }
 
     @ManagedAttribute(description = "Is bulkhead enabled")
@@ -207,6 +206,33 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
             return circuitBreakerState.name();
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    @ManagedAttribute(description = "Returns the number of successful calls")
+    public long getNumberOfSuccessfulCalls() {
+        return successfulCalls.get();
+    }
+
+    @ManagedAttribute(description = "Returns the number of failed calls")
+    public long getNumberOfFailedCalls() {
+        return failedCalls.get();
+    }
+
+    @ManagedAttribute(description = "Returns the number of not permitted calls when the circuit breaker is open")
+    public long getNumberOfNotPermittedCalls() {
+        return notPermittedCalls.get();
+    }
+
+    @ManagedOperation(description = "Resets the circuit breaker to CLOSED state and clears call counters.")
+    public void transitionToCloseState() {
+        try {
+            CircuitBreakerMaintenance.get().reset(id);
+            successfulCalls.set(0);
+            failedCalls.set(0);
+            notPermittedCalls.set(0);
+        } catch (Exception e) {
+            // ignored
         }
     }
 
@@ -350,6 +376,9 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
                     .failureRatio(config.getFailureRatio())
                     .requestVolumeThreshold(config.getRequestVolumeThreshold())
                     .successThreshold(config.getSuccessThreshold())
+                    .onSuccess(successfulCalls::incrementAndGet)
+                    .onFailure(failedCalls::incrementAndGet)
+                    .onPrevented(notPermittedCalls::incrementAndGet)
                     .done();
 
             if (config.isTimeoutEnabled()) {
