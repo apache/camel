@@ -663,13 +663,15 @@ class AiPanelTest {
         panel.open();
         type(panel, "/c");
 
-        // /c matches both /clear and /close, so the first TAB fills in their common prefix without choosing one.
+        // /c matches /clear, /clear-history, and /close, so the first TAB fills in their common prefix.
         tab(panel);
         assertEquals("/cl", panel.inputBufferForTesting());
 
         // No further prefix can be added, so subsequent TABs cycle through the matches and wrap around.
         tab(panel);
         assertEquals("/clear", panel.inputBufferForTesting());
+        tab(panel);
+        assertEquals("/clear-history", panel.inputBufferForTesting());
         tab(panel);
         assertEquals("/close", panel.inputBufferForTesting());
         tab(panel);
@@ -687,6 +689,8 @@ class AiPanelTest {
         // Shift+TAB from the common prefix selects the last match, then walks backward through the list.
         shiftTab(panel);
         assertEquals("/close", panel.inputBufferForTesting());
+        shiftTab(panel);
+        assertEquals("/clear-history", panel.inputBufferForTesting());
         shiftTab(panel);
         assertEquals("/clear", panel.inputBufferForTesting());
     }
@@ -711,11 +715,17 @@ class AiPanelTest {
         tab(panel);
         assertEquals("/clear", panel.inputBufferForTesting());
 
-        // Backspacing breaks the cycle; the next TAB recomputes from the edited buffer instead of jumping to /close.
+        // Backspacing breaks the cycle; the next TAB recomputes from the edited buffer.
+        // /clea matches /clear and /clear-history, so TAB fills common prefix /clear.
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.BACKSPACE, KeyModifiers.NONE));
         assertEquals("/clea", panel.inputBufferForTesting());
         tab(panel);
-        assertEquals("/clear ", panel.inputBufferForTesting());
+        assertEquals("/clear", panel.inputBufferForTesting());
+        // First cycle step lands on /clear (index 0, same as prefix), next advances to /clear-history.
+        tab(panel);
+        assertEquals("/clear", panel.inputBufferForTesting());
+        tab(panel);
+        assertEquals("/clear-history", panel.inputBufferForTesting());
     }
 
     private static void type(AiPanel panel, String text) {
@@ -823,6 +833,10 @@ class AiPanelTest {
 
         @Override
         public void clearConversation() {
+        }
+
+        @Override
+        public void clearHistory() {
         }
 
         @Override

@@ -361,8 +361,7 @@ class DocViewerPopup {
                                              + "with timing. The tape can be replayed inside the TUI to produce\n"
                                              + "an Asciinema `.cast` recording.\n\n"
                                              + "## Starting and Stopping\n\n"
-                                             + "- Press **Ctrl+R** to start/stop recording at any time\n"
-                                             + "- Or use the **F2** actions menu → Start/Stop Tape Recording\n\n"
+                                             + "- Use the **F2** actions menu → Start/Stop Tape Recording\n\n"
                                              + "When recording stops, the tape is saved to the current directory as\n"
                                              + "`camel-tui-tape-<timestamp>.tape`.\n\n"
                                              + "## Replaying a Tape\n\n"
@@ -376,7 +375,7 @@ class DocViewerPopup {
                                              + "    agg recording.cast demo.gif\n\n"
                                              + "Or upload to [asciinema.org](https://asciinema.org) for a shareable link.\n\n"
                                              + "## Tips\n\n"
-                                             + "- **Ctrl+R** is not captured in the tape, keeping the script clean\n"
+                                             + "- Tape recording toggle is not captured in the tape, keeping the script clean\n"
                                              + "- Natural pauses between keystrokes are preserved as `Sleep` commands\n"
                                              + "- Keep recordings focused — one workflow at a time works best\n");
     }

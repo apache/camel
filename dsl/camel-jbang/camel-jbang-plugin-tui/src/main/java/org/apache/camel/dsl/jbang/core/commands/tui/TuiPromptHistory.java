@@ -112,6 +112,34 @@ final class TuiPromptHistory {
         return Optional.of(entries.get(browseIndex));
     }
 
+    int size() {
+        return entries.size();
+    }
+
+    String get(int index) {
+        return entries.get(index);
+    }
+
+    int searchBackward(String query, int fromIndex) {
+        if (!isEnabled() || query == null || query.isEmpty() || entries.isEmpty()) {
+            return -1;
+        }
+        String lower = query.toLowerCase(java.util.Locale.ROOT);
+        int start = Math.min(fromIndex, entries.size() - 1);
+        for (int i = start; i >= 0; i--) {
+            if (entries.get(i).toLowerCase(java.util.Locale.ROOT).contains(lower)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    void clear() {
+        entries.clear();
+        resetNavigation();
+        persist();
+    }
+
     void resetNavigation() {
         browseIndex = -1;
         draft = "";

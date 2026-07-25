@@ -100,6 +100,12 @@ class AiPanel {
     private int cursorPos;
     private TuiPromptHistory promptHistory;
 
+    // Reverse-i-search state (Ctrl+R)
+    private boolean historySearchActive;
+    private final StringBuilder searchTerm = new StringBuilder();
+    private int searchIndex = -1;
+    private String savedInput;
+
     // TAB completion cycle state. completionMatches holds the candidate command names for the active cycle;
     // completionSnapshot is the buffer text a TAB press last produced. The cycle continues only while the buffer still
     // equals that snapshot, so any other edit (typing, backspace, cursor move) transparently starts a fresh completion.
@@ -374,12 +380,20 @@ class AiPanel {
             }
             return true;
         }
+        if (historySearchActive) {
+            return handleSearchKeyEvent(ke);
+        }
         if (ke.isKey(KeyCode.F8)) {
             close();
             return true;
         }
         if (isFunctionKey(ke)) {
             return false;
+        }
+        if (!statsView && !thinking.get() && ke.hasCtrl() && ke.isCharIgnoreCase('r')
+                && promptHistory != null && promptHistory.isEnabled() && promptHistory.size() > 0) {
+            enterHistorySearch();
+            return true;
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('p') && !thinking.get() && activeCliCommand == null) {
             openProviderSwitch();
@@ -493,6 +507,78 @@ class AiPanel {
             return true;
         }
         return true;
+    }
+
+    // ---- Reverse-i-search (Ctrl+R) ----
+
+    private void enterHistorySearch() {
+        savedInput = inputBuffer.toString();
+        historySearchActive = true;
+        searchTerm.setLength(0);
+        searchIndex = -1;
+    }
+
+    private void exitHistorySearch(boolean accept) {
+        historySearchActive = false;
+        if (accept && searchIndex >= 0) {
+            replaceInputBuffer(promptHistory.get(searchIndex));
+        } else {
+            replaceInputBuffer(savedInput);
+        }
+        searchTerm.setLength(0);
+        searchIndex = -1;
+        savedInput = null;
+    }
+
+    private void performSearch(int fromIndex) {
+        if (searchTerm.isEmpty()) {
+            searchIndex = -1;
+            return;
+        }
+        searchIndex = promptHistory.searchBackward(searchTerm.toString(), fromIndex);
+    }
+
+    private boolean handleSearchKeyEvent(KeyEvent ke) {
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('r')) {
+            if (searchIndex > 0) {
+                performSearch(searchIndex - 1);
+            }
+            return true;
+        }
+        if (ke.isKey(KeyCode.ENTER)) {
+            exitHistorySearch(true);
+            return true;
+        }
+        if (ke.isKey(KeyCode.ESCAPE) || ke.isCtrlC()) {
+            exitHistorySearch(false);
+            return true;
+        }
+        if (ke.isKey(KeyCode.BACKSPACE)) {
+            if (searchTerm.isEmpty()) {
+                exitHistorySearch(false);
+            } else {
+                searchTerm.deleteCharAt(searchTerm.length() - 1);
+                performSearch(promptHistory.size() - 1);
+            }
+            return true;
+        }
+        if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
+            searchTerm.append(ke.character());
+            int from = searchIndex >= 0 ? searchIndex : promptHistory.size() - 1;
+            performSearch(from);
+            return true;
+        }
+        // Any other key: accept match and let the key be processed normally
+        exitHistorySearch(true);
+        return handleKeyEvent(ke);
+    }
+
+    boolean isHistorySearchActive() {
+        return historySearchActive;
+    }
+
+    String searchTermForTesting() {
+        return searchTerm.toString();
     }
 
     /**
@@ -1060,6 +1146,11 @@ class AiPanel {
     }
 
     private void renderInput(Frame frame, Rect area) {
+        if (historySearchActive) {
+            renderSearchInput(frame, area);
+            return;
+        }
+
         String prompt = INPUT_PROMPT;
         String text = inputBuffer.toString();
 
@@ -1105,6 +1196,33 @@ class AiPanel {
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 
+    private void renderSearchInput(Frame frame, Rect area) {
+        boolean failing = !searchTerm.isEmpty() && searchIndex < 0;
+        String label = failing ? "failing bck-i-search: " : "bck-i-search: ";
+        String query = searchTerm.toString();
+
+        List<Span> spans = new ArrayList<>();
+        Style labelStyle = failing
+                ? Theme.error()
+                : Style.EMPTY.fg(Theme.accent());
+        spans.add(Span.styled(label, labelStyle));
+        spans.add(Span.raw(query));
+        spans.add(Span.styled("_", Style.EMPTY.reversed()));
+
+        if (searchIndex >= 0) {
+            String matched = promptHistory.get(searchIndex);
+            int maxWidth = area.width() - label.length() - query.length() - 1;
+            if (maxWidth > 4) {
+                String preview = matched.length() > maxWidth
+                        ? matched.substring(0, maxWidth - 1) + "…"
+                        : matched;
+                spans.add(Span.styled("  " + preview, Style.EMPTY.dim()));
+            }
+        }
+
+        frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+    }
+
     void renderFooter(List<Span> spans) {
         TuiHelper.hint(spans, "F8", "close");
         if (statsView) {
@@ -1120,6 +1238,7 @@ class AiPanel {
             TuiHelper.hint(spans, "Ctrl+P", "provider");
             if (!thinking.get()) {
                 TuiHelper.hint(spans, "Enter", "send");
+                TuiHelper.hint(spans, "Ctrl+R", "search");
             } else {
                 TuiHelper.hint(spans, "Esc/Ctrl+C", "interrupt");
             }
@@ -1600,6 +1719,13 @@ class AiPanel {
         @Override
         public void clearConversation() {
             AiPanel.this.clearConversation();
+        }
+
+        @Override
+        public void clearHistory() {
+            if (promptHistory != null) {
+                promptHistory.clear();
+            }
         }
 
         @Override

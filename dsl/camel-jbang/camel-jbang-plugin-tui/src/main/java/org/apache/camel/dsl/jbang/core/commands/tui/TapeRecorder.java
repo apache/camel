@@ -33,6 +33,7 @@ class TapeRecorder {
     private long lastEventTime;
     private int keyCount;
     private boolean active;
+    private int preKeyPosition = -1;
 
     void start(String title) {
         lines.clear();
@@ -56,6 +57,7 @@ class TapeRecorder {
         if (!active || key == null) {
             return;
         }
+        preKeyPosition = lines.size();
         long now = System.currentTimeMillis();
         long elapsed = now - lastEventTime;
         if (elapsed > 200) {
@@ -69,6 +71,17 @@ class TapeRecorder {
         }
         keyCount++;
         lastEventTime = now;
+    }
+
+    int preKeyPosition() {
+        return preKeyPosition;
+    }
+
+    void trimTo(int position) {
+        if (position >= 0 && position < lines.size()) {
+            lines.subList(position, lines.size()).clear();
+            lastEventTime = System.currentTimeMillis();
+        }
     }
 
     void recordKeys(List<String> keys, int delay) {

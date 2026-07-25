@@ -75,6 +75,12 @@ final class AiSlashCommandRegistry {
                     return CommandResult.system("");
                 }));
         commands.add(new Descriptor(
+                "clear-history", List.of(), "Clear the prompt history", null,
+                (context, arguments) -> {
+                    context.clearHistory();
+                    return CommandResult.system("Prompt history cleared");
+                }));
+        commands.add(new Descriptor(
                 "close", List.of(), "Close the AI panel", null,
                 (context, arguments) -> {
                     context.closePanel();

@@ -50,6 +50,7 @@ class RecordingManager {
     private volatile boolean pendingScreenshot;
     private final List<KeyRecord> recentKeys = new ArrayList<>();
     private TuiEventLog eventLog;
+    private int menuTapePosition = -1;
 
     RecordingManager(CaptionOverlay captionOverlay) {
         this.captionOverlay = captionOverlay;
@@ -151,6 +152,23 @@ class RecordingManager {
         return null;
     }
 
+    // ---- Tape menu rollback ----
+
+    void markMenuOpened() {
+        TapeRecorder tr = tapeRecorderRef.get();
+        if (tr != null && tr.isActive()) {
+            menuTapePosition = tr.preKeyPosition();
+        }
+    }
+
+    void rollbackMenu() {
+        TapeRecorder tr = tapeRecorderRef.get();
+        if (tr != null && tr.isActive() && menuTapePosition >= 0) {
+            tr.trimTo(menuTapePosition);
+        }
+        menuTapePosition = -1;
+    }
+
     // ---- Tape recording ----
 
     AtomicReference<TapeRecorder> tapeRecorderRef() {
@@ -179,6 +197,7 @@ class RecordingManager {
     void toggleTapeRecording() {
         TapeRecorder rec = tapeRecorderRef.get();
         if (rec != null && rec.isActive()) {
+            rollbackMenu();
             String tape = rec.stop();
             tapeRecorderRef.set(null);
             String timestamp = LocalDateTime.now()

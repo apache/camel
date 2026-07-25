@@ -33,7 +33,7 @@ class AiSlashCommandRegistryTest {
     void descriptorsKeepStableOrder() {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
-        assertEquals(List.of("help", "provider", "model", "clear", "close", "quit", "run", "infra", "send"),
+        assertEquals(List.of("help", "provider", "model", "clear", "clear-history", "close", "quit", "run", "infra", "send"),
                 registry.descriptors().stream().map(AiSlashCommandRegistry.Descriptor::name).toList());
     }
 
@@ -73,7 +73,7 @@ class AiSlashCommandRegistryTest {
     void completionsIncludeAllCommandsForBareSlash() {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
-        assertEquals(9, registry.completionsFor("/").size());
+        assertEquals(10, registry.completionsFor("/").size());
         assertFalse(registry.completionsFor("/").stream().anyMatch(descriptor -> "exit".equals(descriptor.name())));
     }
 
@@ -288,6 +288,10 @@ class AiSlashCommandRegistryTest {
 
         @Override
         public void clearConversation() {
+        }
+
+        @Override
+        public void clearHistory() {
         }
 
         @Override

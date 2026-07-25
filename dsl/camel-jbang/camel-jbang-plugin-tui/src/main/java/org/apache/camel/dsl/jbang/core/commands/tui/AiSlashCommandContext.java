@@ -28,6 +28,8 @@ interface AiSlashCommandContext {
 
     void clearConversation();
 
+    void clearHistory();
+
     String currentModel();
 
     List<String> availableModels();

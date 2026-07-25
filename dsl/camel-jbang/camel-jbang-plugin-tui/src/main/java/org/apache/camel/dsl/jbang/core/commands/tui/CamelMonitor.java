@@ -588,7 +588,9 @@ public class CamelMonitor extends CamelCommand {
         if (event instanceof KeyEvent ke) {
             recordingManager.recordKey(ke, mcpInjectedKey);
             if (ke.hasCtrl() && ke.isChar('r')) {
-                recordingManager.toggleTapeRecording();
+                if (aiPanel.isOpen()) {
+                    return aiPanel.handleKeyEvent(ke);
+                }
                 return true;
             }
             if (captionOverlay.isVisible()) {
@@ -621,7 +623,11 @@ public class CamelMonitor extends CamelCommand {
                 return shellPanel.handleKeyEvent(ke);
             }
             if (actionsPopup.isVisible()) {
-                return actionsPopup.handleKeyEvent(ke);
+                boolean result = actionsPopup.handleKeyEvent(ke);
+                if (!actionsPopup.isVisible()) {
+                    recordingManager.rollbackMenu();
+                }
+                return result;
             }
             if (popupManager.handleKeyEvent(ke, tabRegistry.selectedTabIndex(), TAB_LOG)) {
                 return true;
@@ -831,6 +837,7 @@ public class CamelMonitor extends CamelCommand {
             return true;
         }
         if (ke.isKey(KeyCode.F2)) {
+            recordingManager.markMenuOpened();
             if (tabRegistry.selectedTabIndex() == TAB_ROUTES && tabRegistry.routesTab() != null) {
                 actionsPopup.setPreSelectedRouteId(tabRegistry.routesTab().selectedRouteId());
             }
@@ -948,7 +955,11 @@ public class CamelMonitor extends CamelCommand {
 
         // Modal popups capture all mouse events (including tab bar and footer)
         if (actionsPopup.isVisible()) {
-            return actionsPopup.handleMouseEvent(me);
+            boolean result = actionsPopup.handleMouseEvent(me);
+            if (!actionsPopup.isVisible()) {
+                recordingManager.rollbackMenu();
+            }
+            return result;
         }
 
         // Tab bar clicks: detect which tab was clicked and switch to it
