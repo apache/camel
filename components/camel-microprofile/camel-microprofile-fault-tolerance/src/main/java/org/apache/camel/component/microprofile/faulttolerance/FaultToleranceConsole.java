@@ -84,6 +84,22 @@ public class FaultToleranceConsole extends AbstractDevConsole {
             jo.put("id", cb.getId());
             jo.put("routeId", cb.getRouteId());
             jo.put("state", cb.getCircuitBreakerState());
+            // configuration
+            JsonObject config = new JsonObject();
+            config.put("delay", cb.getDelay());
+            config.put("failureRate", cb.getFailureRate());
+            config.put("requestVolumeThreshold", cb.getRequestVolumeThreshold());
+            config.put("successThreshold", cb.getSuccessThreshold());
+            config.put("bulkheadEnabled", cb.isBulkheadEnabled());
+            if (cb.isBulkheadEnabled()) {
+                config.put("bulkheadMaxConcurrentCalls", cb.getBulkheadMaxConcurrentCalls());
+                config.put("bulkheadWaitingTaskQueue", cb.getBulkheadWaitingTaskQueue());
+            }
+            config.put("timeoutEnabled", cb.isTimeoutEnabled());
+            if (cb.isTimeoutEnabled()) {
+                config.put("timeoutDuration", cb.getTimeoutDuration());
+            }
+            jo.put("configuration", config);
             list.add(jo);
         }
         root.put("circuitBreakers", list);
