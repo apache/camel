@@ -93,7 +93,13 @@ public static class CamelInstallCertValidator {
 "@
         }
         [CamelInstallCertValidator]::CaCert = $installerCaCert
-        [System.Net.ServicePointManager]::ServerCertificateValidationCallback = [CamelInstallCertValidator]::Validate
+        # Windows PowerShell 5.1 cannot implicitly convert a bare method reference (PSMethod) to a
+        # custom delegate type - "Cannot convert ... value of type System.Management.Automation.PSMethod
+        # to type System.Net.Security.RemoteCertificateValidationCallback." Build the delegate explicitly.
+        [System.Net.ServicePointManager]::ServerCertificateValidationCallback = [System.Delegate]::CreateDelegate(
+            [System.Net.Security.RemoteCertificateValidationCallback],
+            [CamelInstallCertValidator],
+            'Validate')
     }
 }
 
