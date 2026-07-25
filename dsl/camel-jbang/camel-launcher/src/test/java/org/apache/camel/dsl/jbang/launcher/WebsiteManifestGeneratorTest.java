@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -45,6 +46,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class WebsiteManifestGeneratorTest {
 
     private static final Path GENERATOR = Paths.get("src/jreleaser/java/WebsiteManifestGenerator.java");
+
+    // Must stay byte-identical to WebsiteManifestGenerator.LICENSE_HEADER: the generator now prepends
+    // this ASF header to every manifest, and the assertions below compare the output byte-for-byte.
+    // Package-private so PackagePlanTest (which runs the generator via camel-package.sh) can reuse it.
+    static final String LICENSE_HEADER
+            = "## ---------------------------------------------------------------------------\n"
+              + "## Licensed to the Apache Software Foundation (ASF) under one or more\n"
+              + "## contributor license agreements.  See the NOTICE file distributed with\n"
+              + "## this work for additional information regarding copyright ownership.\n"
+              + "## The ASF licenses this file to You under the Apache License, Version 2.0\n"
+              + "## (the \"License\"); you may not use this file except in compliance with\n"
+              + "## the License.  You may obtain a copy of the License at\n"
+              + "##\n"
+              + "##      http://www.apache.org/licenses/LICENSE-2.0\n"
+              + "##\n"
+              + "## Unless required by applicable law or agreed to in writing, software\n"
+              + "## distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+              + "## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+              + "## See the License for the specific language governing permissions and\n"
+              + "## limitations under the License.\n"
+              + "## ---------------------------------------------------------------------------\n";
 
     private static final class Result {
         int exit;
@@ -81,8 +103,8 @@ class WebsiteManifestGeneratorTest {
     }
 
     private String expectedManifest(String version, String tarSha256, String zipSha256) {
-        return "format=1\n" + "version=" + version + "\n" + "tar_sha256=" + tarSha256 + "\n" + "zip_sha256="
-               + zipSha256 + "\n";
+        return LICENSE_HEADER + "format=1\n" + "version=" + version + "\n" + "tar_sha256=" + tarSha256 + "\n"
+               + "zip_sha256=" + zipSha256 + "\n";
     }
 
     @Test
@@ -318,5 +340,44 @@ class WebsiteManifestGeneratorTest {
                 Files.readString(output.resolve("releases").resolve("4.22.0.properties"), StandardCharsets.UTF_8));
         assertEquals(expected,
                 Files.readString(output.resolve("releases").resolve("latest.properties"), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void writesInstallChecksums(@TempDir Path temp) throws Exception {
+        Path tar = writeFixture(temp, "camel-launcher-4.22.0-bin.tar.gz", "tar-content");
+        Path zip = writeFixture(temp, "camel-launcher-4.22.0-bin.zip", "zip-content");
+        Path installSh = writeFixture(temp, "install.sh", "#!/bin/sh\necho hi\n");
+        Path installPs1 = writeFixture(temp, "install.ps1", "Write-Host 'hi'\n");
+        Path websiteRoot = temp.resolve("website");
+        Path output = websiteRoot.resolve("camel-cli");
+        Files.createDirectories(output);
+
+        Result r = run("--version", "4.22.0", "--tar", tar.toString(), "--zip", zip.toString(),
+                "--install-sh", installSh.toString(), "--install-ps1", installPs1.toString(),
+                "--output", output.toString(), "--latest", "true");
+
+        assertThat(r.exit).isZero();
+        Path checksumFile = websiteRoot.resolve("install.sha256");
+        assertThat(checksumFile).exists();
+        List<String> lines = Files.readAllLines(checksumFile);
+        assertThat(lines).containsExactly(
+                "install_sh_sha256=" + sha256Hex(installSh),
+                "install_ps1_sha256=" + sha256Hex(installPs1));
+    }
+
+    @Test
+    void failsWhenInstallShMissing(@TempDir Path temp) throws Exception {
+        Path tar = writeFixture(temp, "camel-launcher-4.22.0-bin.tar.gz", "tar-content");
+        Path zip = writeFixture(temp, "camel-launcher-4.22.0-bin.zip", "zip-content");
+        Path output = temp.resolve("website/camel-cli");
+        Files.createDirectories(output);
+
+        Result r = run("--version", "4.22.0", "--tar", tar.toString(), "--zip", zip.toString(),
+                "--install-sh", temp.resolve("missing-install.sh").toString(),
+                "--install-ps1", temp.resolve("missing-install.ps1").toString(),
+                "--output", output.toString(), "--latest", "true");
+
+        assertThat(r.exit).isEqualTo(2);
+        assertThat(r.stderr).contains("install.sh not found");
     }
 }

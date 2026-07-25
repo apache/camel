@@ -38,21 +38,12 @@ is_valid_version() {
         '' | .* | *. | *..* | *[!0-9.]*) return 1 ;;
     esac
     # The case above guarantees digits and single dots only, with no leading, trailing, or doubled
-    # dot, so a valid X.Y.Z is exactly the value containing two dots (three non-empty components).
-    rest="$v"
-    dots=0
-    while :; do
-        case "$rest" in
-            *.*)
-                dots=$((dots + 1))
-                rest="${rest#*.}"
-                ;;
-            *)
-                break
-                ;;
-        esac
-    done
-    [ "$dots" -eq 2 ]
+    # dot, so a valid X.Y.Z is exactly the value with three non-empty components (two dots).
+    case "$v" in
+        *.*.*.*) return 1 ;;
+        *.*.*) return 0 ;;
+        *) return 1 ;;
+    esac
 }
 
 validate_sha256() {
@@ -75,9 +66,9 @@ fetch() {
         fi
     elif command -v wget >/dev/null 2>&1; then
         if [ -n "$ca_cert" ]; then
-            wget -q --ca-certificate="$ca_cert" -O "$outfile" "$url"
+            wget -nv --ca-certificate="$ca_cert" -O "$outfile" "$url"
         else
-            wget -q -O "$outfile" "$url"
+            wget -nv -O "$outfile" "$url"
         fi
     else
         fail "curl or wget is required to install the Camel CLI"
@@ -114,6 +105,12 @@ parse_manifest() {
         # Tolerate a manifest served with CRLF line endings, matching the PowerShell parser.
         key="${key%"$cr"}"
         value="${value%"$cr"}"
+        # Skip comment lines (properties-style '#', and the '##' ASF license header the website's
+        # manifest generator prepends). They carry no data, so they are neither counted toward the
+        # required line total nor validated as key=value pairs. Blank lines are still rejected below.
+        case "$key" in
+            \#*) continue ;;
+        esac
         line_count=$((line_count + 1))
         [ -n "$key" ] || fail "manifest contains a blank line"
         [ -n "$value" ] || fail "manifest key '$key' has an empty value"
@@ -163,11 +160,12 @@ validate_tar() {
     expected_root="camel-launcher-$version"
 
     listing="$staging_dir/listing.txt"
-    tar -tzf "$archive" > "$listing" 2>/dev/null || fail "archive is not a valid tar.gz"
+    tar_err=$(tar -tzf "$archive" 2>&1 1>"$listing") || fail "archive is not a valid tar.gz${tar_err:+: $tar_err}"
 
     verbose_listing="$staging_dir/listing-verbose.txt"
     # LC_ALL=C keeps tar's hard-link annotation as the literal 'link to' string; GNU tar localizes it.
-    LC_ALL=C tar -tvzf "$archive" > "$verbose_listing" 2>/dev/null || fail "archive is not a valid tar.gz"
+    tar_err=$(LC_ALL=C tar -tvzf "$archive" 2>&1 1>"$verbose_listing") \
+        || fail "archive is not a valid tar.gz${tar_err:+: $tar_err}"
     # tar -tv renders symlinks as 'name -> target' and hard links as 'name link to target'. Matching
     # those substrings could in theory over-reject a regular file whose name contains ' -> ' or
     # ' link to '; that fail-closed bias is deliberate, the release archive never carries such names.
@@ -218,6 +216,20 @@ activate() {
     rm -f "$tmp_link"
     ln -s "$target_dir/bin/camel.sh" "$tmp_link"
     mv -f "$tmp_link" "$bin_dir/camel"
+}
+
+# Records whether this install is pinned to an explicit version, so `camel self-update` can refuse to move
+# a deliberately pinned install. Skipped when CAMEL_INSTALL_SELF_UPDATE=true: self-update always passes its
+# own resolved --version for TOCTOU-safety (see SelfUpdateCommand), which is not a human pinning a version
+# and must not create or clear a pin either way.
+update_pin_state() {
+    [ "${CAMEL_INSTALL_SELF_UPDATE:-}" = "true" ] && return 0
+    pinned_version_file="$camel_cli_root/pinned-version"
+    if [ -n "$requested_version" ]; then
+        printf '%s\n' "$version" > "$pinned_version_file"
+    else
+        rm -f "$pinned_version_file"
+    fi
 }
 
 requested_version=""
@@ -281,6 +293,7 @@ staged_root_dir="$extract_dir/camel-launcher-$version"
 verify_staged "$staged_root_dir/bin/camel.sh"
 
 activate "$version" "$staged_root_dir"
+update_pin_state
 
 case ":$PATH:" in
     *":$bin_dir:"*) ;;

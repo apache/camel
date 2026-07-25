@@ -29,6 +29,7 @@ $CaCertPath = $env:CAMEL_INSTALL_CA_CERT
 $InstallRoot = Join-Path $env:LOCALAPPDATA 'Apache Camel'
 $DataRoot = Join-Path $InstallRoot 'cli\versions'
 $BinDir = Join-Path $InstallRoot 'bin'
+$PinnedVersionFile = Join-Path $InstallRoot 'cli\pinned-version'
 
 function Fail {
     param([string] $Message)
@@ -82,7 +83,10 @@ function Save-RemoteFile {
 function Read-Manifest {
     param([string] $Path)
 
-    $lines = @(Get-Content -LiteralPath $Path -Encoding UTF8)
+    # Drop comment lines (properties-style '#', and the '##' ASF license header the website's manifest
+    # generator prepends) before validation; they carry no data. Blank lines are kept so they still
+    # trip the exactly-four-lines / blank-line checks below.
+    $lines = @(Get-Content -LiteralPath $Path -Encoding UTF8 | Where-Object { -not $_.StartsWith('#') })
     if ($lines.Count -ne 4) {
         Fail "manifest must contain exactly four lines"
     }
@@ -211,6 +215,23 @@ function Set-CamelShim {
     Move-Item -LiteralPath $tempShim -Destination $finalShim -Force
 }
 
+# Records whether this install is pinned to an explicit version, so `camel self-update` can refuse to move
+# a deliberately pinned install. Skipped when CAMEL_INSTALL_SELF_UPDATE=true: self-update always passes its
+# own resolved -Version for TOCTOU-safety (see SelfUpdateCommand), which is not a human pinning a version
+# and must not create or clear a pin either way.
+function Update-PinState {
+    param([string] $RequestedVersion, [string] $ResolvedVersion)
+
+    if ($env:CAMEL_INSTALL_SELF_UPDATE -eq 'true') {
+        return
+    }
+    if ($RequestedVersion) {
+        Set-Content -LiteralPath $PinnedVersionFile -Value $ResolvedVersion -NoNewline
+    } elseif (Test-Path -LiteralPath $PinnedVersionFile) {
+        Remove-Item -LiteralPath $PinnedVersionFile -Force
+    }
+}
+
 # Adds $Dir once, case-insensitively, to the current user's PATH (registry-level, no elevation) and to
 # this process; the machine PATH is never written. The value is read and written through the registry
 # with DoNotExpandEnvironmentNames so existing %VAR% references are preserved rather than flattened,
@@ -282,6 +303,7 @@ try {
     Test-StagedLauncher -LauncherPath $stagedLauncher
 
     Set-CamelShim -Version $resolvedVersion -StagedRoot $stagedRoot
+    Update-PinState -RequestedVersion $Version -ResolvedVersion $resolvedVersion
     Add-UserPath -Dir $BinDir
 
     Write-Host "Installed Camel CLI $resolvedVersion to $(Join-Path $DataRoot $resolvedVersion)"

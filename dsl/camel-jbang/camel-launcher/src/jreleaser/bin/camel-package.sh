@@ -33,7 +33,7 @@ if [ -n "${CAMEL_PACKAGE_TEST_SUPPORTED_LTS:-}" ]; then
 fi
 
 usage() {
-  echo "Usage: camel-package.sh <prepare|publish> --channel <stable|lts> [--lts-line X.Y] [--print-plan]" 1>&2
+  echo "Usage: camel-package.sh <prepare> --channel <stable|lts> [--lts-line X.Y] [--print-plan]" 1>&2
   exit 2
 }
 
@@ -45,7 +45,7 @@ PRINT_PLAN=0
 [ $# -ge 1 ] || usage
 SUBCOMMAND="$1"; shift
 case "$SUBCOMMAND" in
-  prepare|publish) ;;
+  prepare) ;;
   *) echo "Error: unknown subcommand '$SUBCOMMAND'." 1>&2; usage ;;
 esac
 
@@ -104,29 +104,50 @@ fi
 # --- Channel -> packaging plan ---
 if [ "$CHANNEL" = "stable" ]; then
   PACKAGERS="brew,sdkman,winget,scoop,chocolatey"
-  BREW_FORMULA="camel"
-  BREW_CLASS="Camel"
+  BREW_FORMULA="apache-camel"
+  BREW_CLASS="ApacheCamel"
   SDKMAN_DEFAULT="true"
   BREW_LTS_FORMULA=""
   WEBSITE_LATEST="true"
-  [ -n "$LTS_LINE" ] && BREW_LTS_FORMULA="camel@$LTS_LINE"
+  # The maven-metadata.xml <release> tag always reflects the newest published release across every
+  # line, which is exactly "latest stable" for this formula - no line-prefix filtering needed.
+  CAMEL_PKG_BREW_LIVECHECK_REGEX='<release>([0-9]+\.[0-9]+\.[0-9]+)<\/release>'
+  [ -n "$LTS_LINE" ] && BREW_LTS_FORMULA="apache-camel@$LTS_LINE"
 else
-  # Homebrew's own versioned-formula convention names the *file* "camel@X.Y.rb" but the
-  # Ruby *class* "CamelATxy" (dot removed) - e.g. real homebrew-core "python@3.11.rb"
-  # contains "class PythonAT311". As of the pinned JReleaser plugin version in pom.xml,
-  # JReleaser does not apply this convention itself:
-  # a literal formulaName "camel@4.20" renders invalid Ruby (`class Camel@4.20 < Formula`)
-  # and a wrong output filename ("20.rb"). So BREW_CLASS below is
-  # passed as formulaName (giving valid Ruby), and JReleaser's output file (itself
-  # kebab-cased from that class name, e.g. "camel-at-420.rb")
-  # is renamed to the real "camel@X.Y.rb" after packaging - see the rename step below the
-  # mvn invocation.
+  # Homebrew's own versioned-formula convention names the *file* "apache-camel@X.Y.rb" but the
+  # Ruby *class* "ApacheCamelATxy" (dot removed) - e.g. real homebrew-core "python@3.11.rb"
+  # contains "class PythonAT311", and the real homebrew-core "apache-flink@1.rb" contains
+  # "class ApacheFlinkAT1" (confirmed by reading both directly from homebrew-core during this
+  # plan's research). As of the pinned JReleaser plugin version in pom.xml, JReleaser does not
+  # apply this convention itself: a literal formulaName "apache-camel@4.20" renders invalid Ruby
+  # (`class ApacheCamel@4.20 < Formula`) and a wrong output filename ("20.rb"). So BREW_CLASS below
+  # is passed as formulaName (giving valid Ruby), and JReleaser's output file (itself kebab-cased
+  # from that class name, e.g. "apache-camel-at-420.rb") is renamed to the real
+  # "apache-camel@X.Y.rb" after packaging - see the rename step below the mvn invocation.
   PACKAGERS="brew,sdkman,winget,chocolatey"
-  BREW_FORMULA="camel@$LTS_LINE"
-  BREW_CLASS="CamelAT$(echo "$LTS_LINE" | tr -d '.')"
+  BREW_FORMULA="apache-camel@$LTS_LINE"
+  BREW_CLASS="ApacheCamelAT$(echo "$LTS_LINE" | tr -d '.')"
   SDKMAN_DEFAULT="false"
   BREW_LTS_FORMULA=""
   WEBSITE_LATEST="false"
+  # maven-metadata.xml lists every published version, not just the newest, so the LTS formula's
+  # livecheck must filter to this LTS line's own X.Y prefix (escaping the dot so it matches
+  # literally, not "any character") or it would report the project's overall latest release
+  # instead of this line's own latest patch.
+  lts_line_escaped=$(echo "$LTS_LINE" | sed 's/\./\\./g')
+  CAMEL_PKG_BREW_LIVECHECK_REGEX="<version>(${lts_line_escaped}\.[0-9]+)<\/version>"
+  # deprecate! fires 6 months before the line's own documented support end; disable! fires on the
+  # support-end date itself. supported_ends was already resolved and validated (non-empty, a real
+  # entry in supported-lts.yml) by the --lts-line validation earlier in this script - re-used here
+  # rather than re-parsed.
+  CAMEL_PKG_BREW_DEPRECATE_DATE=$(date -u -d "$supported_ends -6 months" +%F 2>/dev/null \
+    || date -u -j -v-6m -f %Y-%m-%d "$supported_ends" +%F)
+  CAMEL_PKG_BREW_DISABLE_DATE="$supported_ends"
+fi
+export CAMEL_PKG_BREW_LIVECHECK_REGEX
+if [ "$CHANNEL" = "lts" ]; then
+  export CAMEL_PKG_BREW_DEPRECATE_DATE
+  export CAMEL_PKG_BREW_DISABLE_DATE
 fi
 
 if [ "$PRINT_PLAN" -eq 1 ]; then
@@ -141,16 +162,6 @@ if [ "$PRINT_PLAN" -eq 1 ]; then
   [ -n "$BREW_FORMULA" ] && echo "BREW_FORMULA=$BREW_FORMULA"
   [ -n "$BREW_CLASS" ] && echo "BREW_CLASS=$BREW_CLASS"
   exit 0
-fi
-
-if [ "$SUBCOMMAND" = "publish" ]; then
-  # Publication is intentionally unimplemented: where each packager's artifacts get
-  # pushed (e.g. Homebrew to the project's own tap vs. homebrew-core) is a decision
-  # for the Apache Camel PMC, not something this script should default on its own.
-  # This also covers the Homebrew dual-formula gap noted in jreleaser.yml above -
-  # both are blocked on that same publish-destination decision.
-  echo "Error: 'publish' is not yet implemented; awaiting a PMC decision on publish destinations." 1>&2
-  exit 2
 fi
 
 # --- prepare: no remote mutation, no credentials ---
@@ -250,6 +261,7 @@ fi
 
 if ! java "$MODULE_DIR/src/jreleaser/java/WebsiteManifestGenerator.java" \
     --version "$PROJECT_VERSION" --tar "$TAR" --zip "$ZIP" \
+    --install-sh "$WEBSITE_DIR/install.sh" --install-ps1 "$WEBSITE_DIR/install.ps1" \
     --output "$WEBSITE_DIR/camel-cli" \
     --latest "$WEBSITE_LATEST"; then
   echo "Error: website manifest generation failed." 1>&2
@@ -298,10 +310,12 @@ if [ "${CAMEL_PACKAGE_TEST_MODE:-}" = "true" ] && [ -n "${CAMEL_PACKAGE_TEST_VER
   SNAPSHOT_PATTERN_ARGS=(-Djreleaser.project.snapshot.pattern=CAMEL_LAUNCHER_NEVER_MATCH_SNAPSHOT_PATTERN)
 fi
 echo "Preparing packages for channel '$CHANNEL' (packagers: $PACKAGERS)..."
+# The "${arr[@]+"${arr[@]}"}" form expands to nothing for an empty array; a bare "${arr[@]}"
+# trips `set -u` as an unbound variable on bash < 4.4 (e.g. the bash 3.2 shipped by macOS).
 mvn -B -ntp -f "$MODULE_DIR/pom.xml" \
   -Djreleaser.distributions=camel-cli,camel-cli-winget \
   -Djreleaser.packagers="$PACKAGERS" \
-  "${SNAPSHOT_PATTERN_ARGS[@]}" \
+  "${SNAPSHOT_PATTERN_ARGS[@]+"${SNAPSHOT_PATTERN_ARGS[@]}"}" \
   jreleaser:config jreleaser:prepare jreleaser:package \
   -Djreleaser.dry.run=true
 

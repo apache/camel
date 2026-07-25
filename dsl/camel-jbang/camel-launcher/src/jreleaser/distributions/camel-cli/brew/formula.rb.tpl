@@ -30,6 +30,9 @@ class {{brewFormulaName}} < Formula
 {{#brewVersionedFormula}}
 
   keg_only :versioned_formula
+
+  deprecate! date: "{{brewDeprecateDate}}", because: :unsupported
+  disable! date: "{{brewDisableDate}}", because: :unsupported
 {{/brewVersionedFormula}}
 {{#brewHasLivecheck}}
 
@@ -39,31 +42,15 @@ class {{brewFormulaName}} < Formula
     {{/brewLivecheck}}
   end
 {{/brewHasLivecheck}}
+{{#brewDependencies}}
 
-  depends_on "openjdk"
+  depends_on {{.}}
+{{/brewDependencies}}
 
   def install
     libexec.install Dir["*"]
     (bin/"{{distributionExecutableName}}").write_env_script libexec/"bin/camel.sh",
-      CAMEL_FALLBACK_JAVA: "#{formula_opt_bin("openjdk")}/java"
-  end
-
-  def caveats
-    <<~EOS
-      Apache Camel CLI installs its own Homebrew OpenJDK dependency even if a
-      compatible Java 17+ is already present. The launcher selects a Java runtime in
-      this order: JAVACMD, JAVA_HOME/bin/java, the first java on PATH, then
-      CAMEL_FALLBACK_JAVA (which this formula points at the Homebrew OpenJDK).
-
-      Run "camel version" to verify the install.
-{{#brewVersionedFormula}}
-
-      #{name} is keg-only: it was not symlinked into #{HOMEBREW_PREFIX} because
-      another version of this formula may also be installed. To use this version's
-      "camel" first in your PATH, run:
-        echo 'export PATH="#{opt_bin}:$PATH"' >> ~/.zshrc
-{{/brewVersionedFormula}}
-    EOS
+      Language::Java.overridable_java_home_env("21")
   end
 
   test do

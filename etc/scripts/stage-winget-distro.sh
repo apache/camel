@@ -74,7 +74,9 @@ GPG_KEY_ARGS=()
 if [ -n "${CAMEL_GPG_KEY:-}" ]; then
   GPG_KEY_ARGS=(--local-user "$CAMEL_GPG_KEY")
 fi
-gpg --batch --verbose --armor --detach-sign "${GPG_KEY_ARGS[@]}" \
+# The "${arr[@]+"${arr[@]}"}" form expands to nothing for an empty array; a bare "${arr[@]}"
+# trips `set -u` as an unbound variable on bash < 4.4 (e.g. the bash 3.2 shipped by macOS).
+gpg --batch --verbose --armor --detach-sign "${GPG_KEY_ARGS[@]+"${GPG_KEY_ARGS[@]}"}" \
   --output "$CANDIDATE_DIR/$FILE_NAME.asc" "$CANDIDATE_DIR/$FILE_NAME"
 (
   cd "$CANDIDATE_DIR"

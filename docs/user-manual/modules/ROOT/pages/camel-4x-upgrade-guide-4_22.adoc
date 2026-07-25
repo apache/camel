@@ -159,6 +159,25 @@ Installation is always per-user and never requires elevation or `sudo`:
 Previously installed version directories are left in place after an upgrade or downgrade and
 must be removed manually. Reinstalling the same version replaces that version directory.
 
+==== camel self-update and camel doctor
+
+Two new commands are available in the xref:camel-jbang-launcher.adoc[Camel CLI Launcher]:
+
+* `camel self-update` checks for and installs newer launcher releases, re-running the same
+  published `install.sh`/`install.ps1` installer described above (see "Website installers for the
+  Camel CLI" above) pinned to the resolved version, after checking whether an update is actually
+  needed. Refuses to act on an installation managed by a package manager (Homebrew, Chocolatey,
+  WinGet, Scoop, SDKMAN) or by JBang, naming that manager's own upgrade command instead. Also
+  refuses on an installation pinned to an explicit version at install time (`--version`/`-Version`),
+  naming the pin file to remove to resume tracking new releases. Every `camel` invocation (except
+  `self-update` itself) also prints a one-line notice, at most once every 24 hours, when a newer
+  release is available; set `CAMEL_SELF_UPDATE_CHECK=false` to disable it.
+* `camel doctor` now additionally reports every Camel CLI installation found on the machine across
+  the web installer and all supported package managers, marking which one is actually active on
+  `PATH`, and exits non-zero when more than one is found.
+
+See xref:camel-jbang-launcher-install.adoc[Installing the Camel CLI Launcher] for full details.
+
 === camel-langchain4j-agent
 
 The `Agent.chat()` method return type has changed from `String` to `Result<String>` (from `dev.langchain4j.service.Result`).

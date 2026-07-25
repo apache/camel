@@ -55,18 +55,19 @@ public class CamelLauncher {
                     .getCodeSource().getLocation();
             if (location != null) {
                 String urlStr = location.toString();
+                String path = null;
                 // Handle nested JAR (Spring Boot loader)
                 if (urlStr.startsWith("jar:file:")) {
                     int idx = urlStr.indexOf("!/");
                     if (idx > 0) {
-                        String path = urlStr.substring(9, idx);
-                        // Decode URL-encoded characters (spaces, special chars)
-                        return URLDecoder.decode(path, StandardCharsets.UTF_8);
+                        path = urlStr.substring("jar:file:".length(), idx);
                     }
+                } else if (urlStr.startsWith("file:")) {
+                    // Handle direct file URL
+                    path = urlStr.substring("file:".length());
                 }
-                // Handle direct file URL
-                if (urlStr.startsWith("file:")) {
-                    String path = urlStr.substring(5);
+                if (path != null) {
+                    // Decode URL-encoded characters (spaces, special chars)
                     return URLDecoder.decode(path, StandardCharsets.UTF_8);
                 }
             }
