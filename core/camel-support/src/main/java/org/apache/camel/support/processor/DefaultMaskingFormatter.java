@@ -33,6 +33,10 @@ import org.slf4j.LoggerFactory;
  * <p>
  * By default all the known secret keys from {@link SensitiveUtils#getSensitiveKeys()} are used. Custom keywords can be
  * added with the {@link #addKeyword(String)} method.
+ * <p>
+ * In addition to name-based masking, this formatter also masks URI userinfo passwords
+ * ({@code scheme://user:password@host}) and PEM private-key blocks via
+ * {@link SensitiveUtils#maskSensitiveValueShapes(String, String)}.
  */
 public class DefaultMaskingFormatter implements MaskingFormatter {
 
@@ -113,28 +117,32 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
 
     @Override
     public String format(String source) {
-        if (keywords == null || keywords.isEmpty()) {
+        if (source == null || source.isEmpty()) {
             return source;
         }
 
-        // xml,json or key=value pairs is the formats supported
-        boolean xml = maskXmlElement && source.startsWith("<");
-        boolean json = maskJson && !xml && (source.startsWith("{") || source.startsWith("["));
-
         String answer = source;
-        if (xml) {
-            answer = xmlElementMaskPattern.matcher(answer).replaceAll("$1" + maskString + "$3");
-            if (maskKeyValue) {
-                // used for the attributes in the XML tags
+        if (keywords != null && !keywords.isEmpty()) {
+            // xml,json or key=value pairs is the formats supported
+            boolean xml = maskXmlElement && source.startsWith("<");
+            boolean json = maskJson && !xml && (source.startsWith("{") || source.startsWith("["));
+
+            if (xml) {
+                answer = xmlElementMaskPattern.matcher(answer).replaceAll("$1" + maskString + "$3");
+                if (maskKeyValue) {
+                    // used for the attributes in the XML tags
+                    answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);
+                }
+            } else if (json) {
+                answer = jsonMaskPattern.matcher(answer).replaceAll("\"$1\"$2:$3\"" + maskString + "\"");
+            } else if (maskKeyValue) {
+                // key=value paris
                 answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);
             }
-        } else if (json) {
-            answer = jsonMaskPattern.matcher(answer).replaceAll("\"$1\"$2:$3\"" + maskString + "\"");
-        } else if (maskKeyValue) {
-            // key=value paris
-            answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);
         }
 
+        // Value-shape secrets (URI userinfo passwords, PEM private keys) are not name-based
+        answer = SensitiveUtils.maskSensitiveValueShapes(answer, maskString);
         return answer;
     }
 
