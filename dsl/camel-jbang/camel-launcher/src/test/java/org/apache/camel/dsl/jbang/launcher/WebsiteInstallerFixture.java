@@ -96,27 +96,57 @@ final class WebsiteInstallerFixture implements AutoCloseable {
 
     static WebsiteInstallerFixture start(Path temp) throws Exception {
         Files.createDirectories(temp);
-        Path keystore = temp.resolve("installer-test.p12");
-        Path caCertPem = temp.resolve("installer-test-ca.pem");
-        generateSelfSignedKeystore(keystore, caCertPem);
-
-        KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        try (var in = Files.newInputStream(keystore)) {
-            keyStore.load(in, KEYSTORE_PASSWORD.toCharArray());
-        }
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        kmf.init(keyStore, KEYSTORE_PASSWORD.toCharArray());
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(kmf.getKeyManagers(), null, new SecureRandom());
+        SharedTls tls = sharedTls();
 
         HttpsServer server = HttpsServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
-        server.setHttpsConfigurator(new HttpsConfigurator(sslContext));
+        server.setHttpsConfigurator(new HttpsConfigurator(tls.sslContext()));
 
-        WebsiteInstallerFixture fixture = new WebsiteInstallerFixture(server, temp, caCertPem);
+        WebsiteInstallerFixture fixture = new WebsiteInstallerFixture(server, temp, tls.caCertPem());
         server.createContext("/", fixture::handle);
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();
         return fixture;
+    }
+
+    /** Loopback TLS material (server key pair + exported CA) shared by every fixture instance in the JVM. */
+    private record SharedTls(SSLContext sslContext, Path caCertPem) {
+    }
+
+    private static volatile SharedTls sharedTls;
+
+    // Minting the self-signed cert costs two keytool.exe launches (each a full JVM cold start on Windows),
+    // which dominated per-test wall time when done in every start(). The cert is not test-specific
+    // (CN=127.0.0.1), so generate it once and reuse it - every fixture still binds its own ephemeral port
+    // and serves its own content. Double-checked locking keeps the one-time generation thread-safe.
+    private static SharedTls sharedTls() throws Exception {
+        SharedTls local = sharedTls;
+        if (local != null) {
+            return local;
+        }
+        synchronized (WebsiteInstallerFixture.class) {
+            if (sharedTls != null) {
+                return sharedTls;
+            }
+            Path dir = Files.createTempDirectory("camel-installer-tls");
+            dir.toFile().deleteOnExit();
+            Path keystore = dir.resolve("installer-test.p12");
+            Path caCertPem = dir.resolve("installer-test-ca.pem");
+            keystore.toFile().deleteOnExit();
+            caCertPem.toFile().deleteOnExit();
+            generateSelfSignedKeystore(keystore, caCertPem);
+
+            KeyStore keyStore = KeyStore.getInstance("PKCS12");
+            try (var in = Files.newInputStream(keystore)) {
+                keyStore.load(in, KEYSTORE_PASSWORD.toCharArray());
+            }
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            kmf.init(keyStore, KEYSTORE_PASSWORD.toCharArray());
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(), null, new SecureRandom());
+
+            sharedTls = new SharedTls(sslContext, caCertPem);
+            return sharedTls;
+        }
     }
 
     private static void generateSelfSignedKeystore(Path keystore, Path caCertPem) throws Exception {
@@ -126,7 +156,10 @@ final class WebsiteInstallerFixture implements AutoCloseable {
                 "-alias", KEY_ALIAS,
                 "-keyalg", "RSA",
                 "-keysize", "2048",
-                "-validity", "2",
+                // Long validity because a single shared cert now backs every fixture for the whole JVM
+                // lifetime, which under a reused mvnd daemon can span days. Loopback-only, never trusted
+                // system-wide, so a wide window is harmless.
+                "-validity", "3650",
                 "-keystore", keystore.toString(),
                 "-storetype", "PKCS12",
                 "-storepass", KEYSTORE_PASSWORD,
