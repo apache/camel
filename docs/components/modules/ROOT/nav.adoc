@@ -135,6 +135,7 @@
 ** xref:docker-component.adoc[Docker]
 ** xref:drill-component.adoc[Drill]
 ** xref:dropbox-component.adoc[Dropbox]
+** xref:duckdb-component.adoc[DuckDB]
 ** xref:dynamic-router-component.adoc[Dynamic Router]
 ** xref:dynamic-router-control-component.adoc[Dynamic Router Control]
 ** xref:ehcache-component.adoc[Ehcache]

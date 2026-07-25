@@ -1128,6 +1128,20 @@ public class EndpointHeaderBuilders {
         return DropboxEndpointBuilderFactory.DropboxHeaderNameBuilder.INSTANCE;
     }
     /**
+     * DuckDB (camel-duckdb)
+     * Interact with DuckDB, the in-process analytical SQL database, for
+     * embedded analytics workloads.
+     * 
+     * Category: database,bigdata
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-duckdb
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static DuckDbEndpointBuilderFactory.DuckDbHeaderNameBuilder duckdb() {
+        return DuckDbEndpointBuilderFactory.DuckDbHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Dynamic Router Control (camel-dynamic-router)
      * The Dynamic Router control endpoint for operations that allow routing
      * participants to subscribe or unsubscribe to participate in dynamic

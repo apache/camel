@@ -1,0 +1,54 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "duckdb",
+    "title": "DuckDB",
+    "description": "Interact with DuckDB, the in-process analytical SQL database, for embedded analytics workloads.",
+    "deprecated": false,
+    "firstVersion": "4.22.0",
+    "label": "database,bigdata",
+    "javaType": "org.apache.camel.component.duckdb.DuckDbComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-duckdb",
+    "version": "4.22.0-SNAPSHOT",
+    "scheme": "duckdb",
+    "extendsScheme": "",
+    "syntax": "duckdb:databasePath",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "databasePath": { "index": 0, "kind": "property", "displayName": "Database Path", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": ":memory:", "description": "Embedded database path (:memory: or a file path). Used when jdbcUrl is not set." },
+    "dataSource": { "index": 1, "kind": "property", "displayName": "Data Source", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "javax.sql.DataSource", "deprecated": false, "autowired": true, "secret": false, "description": "Shared JDBC DataSource for all endpoints." },
+    "jdbcUrl": { "index": 2, "kind": "property", "displayName": "Jdbc Url", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Full JDBC URL override (for example jdbc:duckdb:\/path\/to\/db). When set, databasePath is ignored." },
+    "lazyStartProducer": { "index": 3, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 4, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "headers": {
+    "CamelDuckDbOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Overrides the operation configured on the endpoint.", "constantName": "org.apache.camel.component.duckdb.DuckDbConstants#OPERATION" },
+    "CamelDuckDbDatabasePath": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Overrides the database path configured on the endpoint.", "constantName": "org.apache.camel.component.duckdb.DuckDbConstants#DATABASE_PATH" },
+    "CamelDuckDbTable": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Overrides the target table configured on the endpoint.", "constantName": "org.apache.camel.component.duckdb.DuckDbConstants#TABLE" },
+    "CamelDuckDbQuery": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Overrides the SQL for query or execute operations.", "constantName": "org.apache.camel.component.duckdb.DuckDbConstants#QUERY" },
+    "CamelDuckDbRowsWritten": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The number of rows written or affected.", "constantName": "org.apache.camel.component.duckdb.DuckDbConstants#ROWS_WRITTEN" },
+    "CamelDuckDbRowsRead": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The number of rows returned by a query.", "constantName": "org.apache.camel.component.duckdb.DuckDbConstants#ROWS_READ" },
+    "CamelDuckDbPingOk": { "index": 6, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The boolean result of a ping operation.", "constantName": "org.apache.camel.component.duckdb.DuckDbConstants#PING_OK" }
+  },
+  "properties": {
+    "databasePath": { "index": 0, "kind": "path", "displayName": "Database Path", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Database path, either :memory: or a relative or absolute file path." },
+    "batchSize": { "index": 1, "kind": "parameter", "displayName": "Batch Size", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 0, "description": "Batch size for insert when the body is a List. 0 inserts all rows in one JDBC batch." },
+    "format": { "index": 2, "kind": "parameter", "displayName": "Format", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "auto", "description": "File format for copy: csv, parquet, json or auto (inferred from the file extension)." },
+    "jdbcUrl": { "index": 3, "kind": "parameter", "displayName": "Jdbc Url", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Full JDBC URL override. When set, databasePath is not used to build the URL." },
+    "operation": { "index": 4, "kind": "parameter", "displayName": "Operation", "group": "producer", "label": "", "required": false, "type": "enum", "javaType": "org.apache.camel.component.duckdb.DuckDbOperation", "enum": [ "EXECUTE", "QUERY", "INSERT", "COPY", "PING" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "EXECUTE", "description": "The operation to perform: execute, query, insert, copy or ping." },
+    "query": { "index": 5, "kind": "parameter", "displayName": "Query", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Static SQL for query when the message body is empty." },
+    "readOnly": { "index": 6, "kind": "parameter", "displayName": "Read Only", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Open the embedded database file in read-only mode. Only applies to connections created by this endpoint from databasePath or jdbcUrl, and requires an existing database file." },
+    "resultFormat": { "index": 7, "kind": "parameter", "displayName": "Result Format", "group": "producer", "label": "", "required": false, "type": "enum", "javaType": "org.apache.camel.component.duckdb.DuckDbResultFormat", "enum": [ "LIST_MAP", "JSON" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "LIST_MAP", "description": "How query results are returned: LIST_MAP (List of Map) or JSON array string." },
+    "table": { "index": 8, "kind": "parameter", "displayName": "Table", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Target table for insert and copy operations. Can be overridden per message with the CamelDuckDbTable header." },
+    "lazyStartProducer": { "index": 9, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  }
+}

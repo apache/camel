@@ -1509,6 +1509,20 @@ public interface ComponentsBuilderFactory {
         return DropboxComponentBuilderFactory.dropbox();
     }
     /**
+     * DuckDB (camel-duckdb)
+     * Interact with DuckDB, the in-process analytical SQL database, for
+     * embedded analytics workloads.
+     * 
+     * Category: database,bigdata
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-duckdb
+     * 
+     * @return the dsl builder
+     */
+    static DuckdbComponentBuilderFactory.DuckdbComponentBuilder duckdb() {
+        return DuckdbComponentBuilderFactory.duckdb();
+    }
+    /**
      * Dynamic Router (camel-dynamic-router)
      * The Dynamic Router component routes exchanges to recipients, and the
      * recipients (and their rules) may change at runtime.

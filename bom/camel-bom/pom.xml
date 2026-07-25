@@ -824,6 +824,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-duckdb</artifactId>
+        <version>4.22.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-dynamic-router</artifactId>
         <version>4.22.0-SNAPSHOT</version>
       </dependency>

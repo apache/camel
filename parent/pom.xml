@@ -148,6 +148,7 @@
         <docling-java-version>0.6.0</docling-java-version>
         <docker-java-version>3.7.1</docker-java-version>
         <dropbox-version>7.1.1</dropbox-version>
+        <duckdb-jdbc-version>1.3.1.0</duckdb-jdbc-version>
         <ehcache3-version>3.12.0</ehcache3-version>
         <!-- github-api (kohsuke) for camel-github2 -->
         <github-api-version>1.330</github-api-version>
@@ -1347,6 +1348,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-dropbox</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-duckdb</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

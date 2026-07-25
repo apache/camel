@@ -108,6 +108,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.DoclingEndpointBuilderFactory.DoclingBuilders,
             org.apache.camel.builder.endpoint.dsl.DrillEndpointBuilderFactory.DrillBuilders,
             org.apache.camel.builder.endpoint.dsl.DropboxEndpointBuilderFactory.DropboxBuilders,
+            org.apache.camel.builder.endpoint.dsl.DuckDbEndpointBuilderFactory.DuckDbBuilders,
             org.apache.camel.builder.endpoint.dsl.DynamicRouterControlEndpointBuilderFactory.DynamicRouterControlBuilders,
             org.apache.camel.builder.endpoint.dsl.DynamicRouterEndpointBuilderFactory.DynamicRouterBuilders,
             org.apache.camel.builder.endpoint.dsl.ECS2EndpointBuilderFactory.ECS2Builders,

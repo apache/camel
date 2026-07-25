@@ -141,11 +141,13 @@ extractPomDiff() {
   local diff_body="$1"
   local pom_path="$2"
 
-  echo "$diff_body" | awk -v target="a/${pom_path}" '
+  # Feed awk via here-string: piping from echo fails with pipefail when awk exits
+  # early at the next "diff --git" hunk (common for parent/pom.xml PR changes).
+  awk -v target="a/${pom_path}" '
     /^diff --git/ && found { exit }
     /^diff --git/ && index($0, target) { found=1 }
     found { print }
-  '
+  ' <<< "$diff_body"
 }
 
 # Detect which properties changed in a pom.xml diff.

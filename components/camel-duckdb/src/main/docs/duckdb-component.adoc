@@ -1,0 +1,79 @@
+= DuckDB Component
+:doctitle: DuckDB
+:shortname: duckdb
+:artifactid: camel-duckdb
+:description: Interact with DuckDB, the in-process analytical SQL database, for embedded analytics workloads.
+:since: 4.22
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+This component integrates with https://duckdb.org/[DuckDB] using the official JDBC driver
+(`org.duckdb:duckdb_jdbc`). It focuses on embedded databases (`:memory:` or file paths), SQL
+`execute`/`query`, structured batch `insert`, file `copy` (CSV, Parquet, JSON), and `ping`.
+
+While DuckDB can be used through xref:jdbc-component.adoc[JDBC] and xref:sql-component.adoc[SQL],
+this component exposes DuckDB-oriented URI options and headers without hand-wiring JDBC URLs in
+every route.
+
+Maven users will need to add the following dependency to their `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-duckdb</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+duckdb:databasePath?[options]
+----
+
+Configure `databasePath` as `:memory:` or a file path, either relative (`analytics.db`) or absolute
+(`/data/analytics.db`). The default table for `insert` and `copy` is set with the `table` option.
+Alternatively set `jdbcUrl=jdbc:duckdb:...` to override the built URL, or autowire a shared
+`javax.sql.DataSource`.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Operations
+
+The producer supports:
+
+* `execute` (default) — run DDL/DML from the message body (or `query` option / `CamelDuckDbQuery` header)
+* `query` — run a SELECT and return rows as `List<Map>` (default) or JSON (`resultFormat=JSON`)
+* `insert` — insert a `List` of `Map` rows into `table`
+* `copy` — bulk load from a `File` or path `String` using DuckDB `read_csv` / `read_parquet` / `read_json`
+* `ping` — `SELECT 1` connectivity check; sets `CamelDuckDbPingOk`
+
+The endpoint reuses one JDBC connection for its configured `databasePath` / `jdbcUrl` and serializes access for
+thread safety. Prefer a shared `DataSource` when you need concurrent producers. Set the
+`CamelDuckDbDatabasePath` header to open a short-lived connection to a different database file for a single
+message.
+
+== Example
+
+[source,java]
+----
+from("direct:metrics")
+    .to("duckdb:local.db?operation=insert&table=metrics&batchSize=500");
+----
+
+[source,java]
+----
+from("file:incoming?include=.*\\.csv")
+    .to("duckdb:warehouse.db?operation=copy&table=staging&format=csv");
+----

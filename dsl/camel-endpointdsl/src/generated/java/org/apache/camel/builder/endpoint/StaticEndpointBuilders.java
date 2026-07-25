@@ -4824,6 +4824,48 @@ public class StaticEndpointBuilders {
         return DropboxEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * DuckDB (camel-duckdb)
+     * Interact with DuckDB, the in-process analytical SQL database, for
+     * embedded analytics workloads.
+     * 
+     * Category: database,bigdata
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-duckdb
+     * 
+     * Syntax: <code>duckdb:databasePath</code>
+     * 
+     * Path parameter: databasePath
+     * Database path, either :memory: or a relative or absolute file path.
+     * 
+     * @param path databasePath
+     * @return the dsl builder
+     */
+    public static DuckDbEndpointBuilderFactory.DuckDbEndpointBuilder duckdb(String path) {
+        return duckdb("duckdb", path);
+    }
+    /**
+     * DuckDB (camel-duckdb)
+     * Interact with DuckDB, the in-process analytical SQL database, for
+     * embedded analytics workloads.
+     * 
+     * Category: database,bigdata
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-duckdb
+     * 
+     * Syntax: <code>duckdb:databasePath</code>
+     * 
+     * Path parameter: databasePath
+     * Database path, either :memory: or a relative or absolute file path.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path databasePath
+     * @return the dsl builder
+     */
+    public static DuckDbEndpointBuilderFactory.DuckDbEndpointBuilder duckdb(String componentName, String path) {
+        return DuckDbEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Dynamic Router (camel-dynamic-router)
      * The Dynamic Router component routes exchanges to recipients, and the
      * recipients (and their rules) may change at runtime.

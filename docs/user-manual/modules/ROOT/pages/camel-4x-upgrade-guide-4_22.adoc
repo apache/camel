@@ -1096,6 +1096,21 @@ autowired `com.clickhouse.client.api.Client` bean or build its own client from t
 `password` and `ssl` endpoint options. See the xref:next@components::clickhouse-component.adoc[ClickHouse component]
 documentation for details.
 
+=== camel-duckdb (new component)
+
+A new `camel-duckdb` producer component integrates with https://duckdb.org/[DuckDB] using the
+official JDBC driver. It targets embedded analytics: in-memory or file-backed databases, SQL
+`execute` and `query`, batch `insert`, bulk file `copy` (CSV, Parquet, JSON), and `ping`.
+
+[source,java]
+----
+from("direct:events")
+    .to("duckdb:analytics.db?operation=insert&table=events&batchSize=1000");
+----
+
+See the xref:next@components::duckdb-component.adoc[DuckDB component] documentation for details.
+Test support is provided by the `camel-test-infra-duckdb` module (in-process embedded database).
+
 === camel-minio - Upgraded to minio 9.0.3 - Breaking Changes
 
 The underlying `io.minio:minio` library has been upgraded from 8.x to 9.0.3.
