@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -67,14 +68,14 @@ class TuiSettingsTest {
         settings.save();
 
         TuiSettings loaded = TuiSettings.load();
-        assertEquals("light", loaded.getThemeId());
-        assertEquals("Health", loaded.getStartTab());
-        assertEquals("/tmp/projects", loaded.getDefaultFolder());
-        assertEquals("gemini", loaded.getAiProvider());
-        assertEquals("gemini-3.5-flash", loaded.getAiModel());
-        assertEquals("https://generativelanguage.googleapis.com", loaded.getAiUrl());
-        assertEquals("25", loaded.getShellHistory());
-        assertEquals("50", loaded.getAiPromptHistory());
+        assertThat(loaded.getThemeId()).isEqualTo("light");
+        assertThat(loaded.getStartTab()).isEqualTo("Health");
+        assertThat(loaded.getDefaultFolder()).isEqualTo("/tmp/projects");
+        assertThat(loaded.getAiProvider()).isEqualTo("gemini");
+        assertThat(loaded.getAiModel()).isEqualTo("gemini-3.5-flash");
+        assertThat(loaded.getAiUrl()).isEqualTo("https://generativelanguage.googleapis.com");
+        assertThat(loaded.getShellHistory()).isEqualTo("25");
+        assertThat(loaded.getAiPromptHistory()).isEqualTo("50");
     }
 
     @Test
@@ -110,11 +111,11 @@ class TuiSettingsTest {
         useHome(tempDir);
 
         TuiSettings settings = TuiSettings.load();
-        assertNull(settings.getThemeId());
-        assertNull(settings.getStartTab());
-        assertNull(settings.getDefaultFolder());
-        assertEquals(TuiHistoryLimits.DEFAULT_LIMIT, settings.getShellHistoryLimit());
-        assertEquals(TuiHistoryLimits.DEFAULT_LIMIT, settings.getAiPromptHistoryLimit());
+        assertThat(settings.getThemeId()).isNull();
+        assertThat(settings.getStartTab()).isNull();
+        assertThat(settings.getDefaultFolder()).isNull();
+        assertThat(settings.getShellHistoryLimit()).isEqualTo(TuiHistoryLimits.DEFAULT_LIMIT);
+        assertThat(settings.getAiPromptHistoryLimit()).isEqualTo(TuiHistoryLimits.DEFAULT_LIMIT);
     }
 
     @Test
