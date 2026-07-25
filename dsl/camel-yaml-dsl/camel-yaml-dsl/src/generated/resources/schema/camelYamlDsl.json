@@ -2107,13 +2107,6 @@
             "description" : "Whether timeout is enabled or not on the circuit breaker.",
             "default" : false
           },
-          "timeoutPoolSize" : {
-            "type" : "number",
-            "title" : "Timeout Pool Size",
-            "description" : "Deprecated: no longer in use since the switch to TypedGuard API (CAMEL-21857).",
-            "deprecated" : true,
-            "default" : 10
-          },
           "typedGuard" : {
             "type" : "string",
             "title" : "Typed Guard",

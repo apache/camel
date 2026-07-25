@@ -5300,7 +5300,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "threadOffloadExecutorService", type = "string", description = "References a custom thread pool to use when offloading a guarded action to another thread.", displayName = "Thread Offload Executor Service"),
                     @YamlProperty(name = "timeoutDuration", type = "string", defaultValue = "1000", description = "Configures the thread execution timeout. Default value is 1 second.", displayName = "Timeout Duration"),
                     @YamlProperty(name = "timeoutEnabled", type = "boolean", defaultValue = "false", description = "Whether timeout is enabled or not on the circuit breaker.", displayName = "Timeout Enabled"),
-                    @YamlProperty(name = "timeoutPoolSize", type = "number", deprecated = true, defaultValue = "10", description = "Deprecated: no longer in use since the switch to TypedGuard API (CAMEL-21857).", displayName = "Timeout Pool Size"),
                     @YamlProperty(name = "typedGuard", type = "string", description = "Refers to an existing io.smallrye.faulttolerance.api.TypedGuard instance to lookup and use from the registry. When using this, then any other TypedGuard circuit breaker options are not in use.", displayName = "Typed Guard")
             }
     )
@@ -5372,11 +5371,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "timeoutEnabled": {
                     String val = asText(node);
                     target.setTimeoutEnabled(val);
-                    break;
-                }
-                case "timeoutPoolSize": {
-                    String val = asText(node);
-                    target.setTimeoutPoolSize(val);
                     break;
                 }
                 case "typedGuard": {
