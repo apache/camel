@@ -99,6 +99,28 @@ public class ResilienceConsole extends AbstractDevConsole {
             jo.put("failedCalls", cb.getNumberOfFailedCalls());
             jo.put("notPermittedCalls", cb.getNumberOfNotPermittedCalls());
             jo.put("failureRate", cb.getFailureRate());
+            // configuration
+            JsonObject config = new JsonObject();
+            config.put("failureRateThreshold", cb.getCircuitBreakerFailureRateThreshold());
+            config.put("slowCallRateThreshold", cb.getCircuitBreakerSlowCallRateThreshold());
+            config.put("minimumNumberOfCalls", cb.getCircuitBreakerMinimumNumberOfCalls());
+            config.put("permittedNumberOfCallsInHalfOpenState",
+                    cb.getCircuitBreakerPermittedNumberOfCallsInHalfOpenState());
+            config.put("slidingWindowSize", cb.getCircuitBreakerSlidingWindowSize());
+            config.put("slidingWindowType", cb.getCircuitBreakerSlidingWindowType());
+            config.put("waitDurationInOpenState", cb.getCircuitBreakerWaitDurationInOpenState());
+            config.put("automaticTransitionFromOpenToHalfOpen",
+                    cb.isCircuitBreakerTransitionFromOpenToHalfOpenEnabled());
+            config.put("bulkheadEnabled", cb.isBulkheadEnabled());
+            if (cb.isBulkheadEnabled()) {
+                config.put("bulkheadMaxConcurrentCalls", cb.getBulkheadMaxConcurrentCalls());
+                config.put("bulkheadMaxWaitDuration", cb.getBulkheadMaxWaitDuration());
+            }
+            config.put("timeoutEnabled", cb.isTimeoutEnabled());
+            if (cb.isTimeoutEnabled()) {
+                config.put("timeoutDuration", cb.getTimeoutDuration());
+            }
+            jo.put("configuration", config);
             list.add(jo);
         }
         root.put("circuitBreakers", list);
