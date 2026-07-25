@@ -75,7 +75,7 @@
 
 project:
   name: camel-cli
-  description: Apache Camel CLI
+  description: CLI for building and running Apache Camel integration routes
   links:
     homepage: https://camel.apache.org/
   authors:
@@ -138,8 +138,8 @@ distributions:
         deprecateDate: "{{ Env.CAMEL_PKG_BREW_DEPRECATE_DATE }}"
         disableDate: "{{ Env.CAMEL_PKG_BREW_DISABLE_DATE }}"
       livecheck:
-        - 'url "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/maven-metadata.xml"'
-        - 'regex(/{{{ Env.CAMEL_PKG_BREW_LIVECHECK_REGEX }}}/i)'
+        - 'url "https://search.maven.org/remotecontent?filepath=org/apache/camel/camel-launcher/maven-metadata.xml"'
+        - '{{{ Env.CAMEL_PKG_BREW_LIVECHECK_REGEX }}}'
     sdkman:
       active: RELEASE
       candidate: camel
