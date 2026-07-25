@@ -97,7 +97,9 @@ public final class AiToolExecutor {
 
         // Filter out undeclared arguments -- LLMs frequently hallucinate extra parameters
         // and the generated schema advertises additionalProperties: false.
-        if (!argsCopy.isEmpty() && !spec.getParameterDefs().isEmpty()) {
+        // A tool that declares no parameters accepts none, so an empty declaration must filter
+        // everything rather than let every argument through.
+        if (!argsCopy.isEmpty()) {
             Set<String> declaredParams = spec.getParameterDefs().keySet();
 
             argsCopy.keySet().removeIf(name -> {

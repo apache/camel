@@ -49,6 +49,16 @@ public class AiToolExecutorTest extends CamelTestSupport {
                      + "&description=A tool with no parameters")
                         .setBody(constant("no-param result"));
 
+                // declares the Camel-prefixed names so they survive the undeclared-argument filter
+                // and actually reach the Camel-prefix rejection this tool is used to test
+                from("ai-tool:prefixTool"
+                     + "?tags=test"
+                     + "&description=A tool declaring Camel-prefixed parameters"
+                     + "&parameter.CamelOverrideEndpoint=string"
+                     + "&parameter.camelFoo=string"
+                     + "&parameter.safeParam=string")
+                        .setBody(constant("prefix result"));
+
                 from("ai-tool:nullBodyTool"
                      + "?tags=test"
                      + "&description=A tool that returns null body")
@@ -115,6 +125,29 @@ public class AiToolExecutorTest extends CamelTestSupport {
         assertThat(result).isInstanceOf(AiToolResult.Success.class);
         assertThat(((AiToolResult.Success) result).value())
                 .isEqualTo("no-param result");
+    }
+
+    @Test
+    public void testExecuteIgnoresUndeclaredArgumentsForToolWithoutParameters() {
+        AiToolSpec spec = findSpec("noParams");
+        Exchange exchange = new DefaultExchange(context);
+
+        // a tool declaring no parameters accepts none, so every supplied argument is undeclared
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("injected", "should-be-ignored");
+        arguments.put("anotherOne", 42);
+
+        AiToolResult result = AiToolExecutor.execute(spec, arguments, exchange);
+
+        assertThat(result).isInstanceOf(AiToolResult.Success.class);
+        assertThat(((AiToolResult.Success) result).value())
+                .isEqualTo("no-param result");
+        assertThat(exchange.getMessage().getHeader("injected"))
+                .as("Undeclared argument must not be set as header on a tool with no parameters")
+                .isNull();
+        assertThat(exchange.getMessage().getHeader("anotherOne"))
+                .as("Undeclared argument must not be set as header on a tool with no parameters")
+                .isNull();
     }
 
     @Test
@@ -236,7 +269,9 @@ public class AiToolExecutorTest extends CamelTestSupport {
 
     @Test
     public void testCamelPrefixedArgumentsRejectedFromHeaders() {
-        AiToolSpec spec = findSpec("noParams");
+        // prefixTool declares these names, so they reach the Camel-prefix check rather than being
+        // dropped earlier as undeclared -- otherwise this test would pass even without that check
+        AiToolSpec spec = findSpec("prefixTool");
         Exchange exchange = new DefaultExchange(context);
 
         Map<String, Object> arguments = new HashMap<>();
@@ -253,11 +288,13 @@ public class AiToolExecutorTest extends CamelTestSupport {
         assertThat(exchange.getMessage().getHeader("camelFoo"))
                 .as("camel-prefixed argument must not be set as header")
                 .isNull();
+        // a dotted name cannot be declared through the endpoint URI (the key is split on the first
+        // dot), so this one is dropped as an undeclared argument rather than by the prefix check
         assertThat(exchange.getMessage().getHeader("org.apache.camel.hack"))
                 .as("org.apache.camel. prefixed argument must not be set as header")
                 .isNull();
         assertThat(exchange.getMessage().getHeader("safeParam", String.class))
-                .as("Non-Camel argument should be set as header")
+                .as("Declared non-Camel argument should be set as header")
                 .isEqualTo("ok");
     }
 
