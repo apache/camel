@@ -56,7 +56,11 @@ public class FaultToleranceConsole extends AbstractDevConsole {
             String id = cb.getId();
             String rid = cb.getRouteId();
             String state = cb.getCircuitBreakerState();
-            sb.append(String.format("    %s/%s: %s%n", rid, id, state));
+            long sc = cb.getNumberOfSuccessfulCalls();
+            long fc = cb.getNumberOfFailedCalls();
+            long npc = cb.getNumberOfNotPermittedCalls();
+            sb.append(String.format("    %s/%s: %s (success: %d failure: %d not-permitted: %d)%n",
+                    rid, id, state, sc, fc, npc));
         }
 
         return sb.toString();
@@ -84,10 +88,13 @@ public class FaultToleranceConsole extends AbstractDevConsole {
             jo.put("id", cb.getId());
             jo.put("routeId", cb.getRouteId());
             jo.put("state", cb.getCircuitBreakerState());
+            jo.put("successfulCalls", cb.getNumberOfSuccessfulCalls());
+            jo.put("failedCalls", cb.getNumberOfFailedCalls());
+            jo.put("notPermittedCalls", cb.getNumberOfNotPermittedCalls());
             // configuration
             JsonObject config = new JsonObject();
             config.put("delay", cb.getDelay());
-            config.put("failureRate", cb.getFailureRate());
+            config.put("failureRatio", cb.getFailureRatio());
             config.put("requestVolumeThreshold", cb.getRequestVolumeThreshold());
             config.put("successThreshold", cb.getSuccessThreshold());
             config.put("bulkheadEnabled", cb.isBulkheadEnabled());

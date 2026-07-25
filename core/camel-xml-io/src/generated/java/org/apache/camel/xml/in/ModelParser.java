@@ -418,7 +418,6 @@ public class ModelParser extends BaseParser {
             case "threadOffloadExecutorService": def.setThreadOffloadExecutorService(val); yield true;
             case "timeoutDuration": def.setTimeoutDuration(val); yield true;
             case "timeoutEnabled": def.setTimeoutEnabled(val); yield true;
-            case "timeoutPoolSize": def.setTimeoutPoolSize(val); yield true;
             case "typedGuard": def.setTypedGuard(val); yield true;
             default: yield identifiedTypeAttributeHandler().accept(def, key, val);
         };

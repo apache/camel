@@ -45,7 +45,6 @@ public class FaultToleranceRefConfigurationTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         FaultToleranceConfigurationDefinition config = new FaultToleranceConfigurationDefinition();
-        config.setTimeoutPoolSize("5");
         config.setFailureRatio("25");
         config.setRequestVolumeThreshold("10");
         config.setDelay("5000");
@@ -90,7 +89,7 @@ public class FaultToleranceRefConfigurationTest extends CamelTestSupport {
         num = (Long) mbeanServer.getAttribute(on, "TimeoutDuration");
         assertEquals("5000", num.toString());
 
-        Float fl = (Float) mbeanServer.getAttribute(on, "FailureRate");
+        Float fl = (Float) mbeanServer.getAttribute(on, "FailureRatio");
         assertEquals("0.25", fl.toString());
     }
 

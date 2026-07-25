@@ -3848,15 +3848,6 @@ Configures the thread execution timeout. Default value is 1 second. Default valu
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="timeoutPoolSize" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: Deprecated: no longer in use since the switch to TypedGuard API (CAMEL-21857). Default value: 10
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="bulkheadEnabled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

@@ -42,7 +42,6 @@ public class FaultToleranceRefConfigurationNoReflectionTest extends CamelTestSup
         bi.resetCounters();
 
         FaultToleranceConfigurationDefinition config = new FaultToleranceConfigurationDefinition();
-        config.setTimeoutPoolSize("5");
         config.setFailureRatio("25");
         config.setRequestVolumeThreshold("10");
         config.setDelay("5000");

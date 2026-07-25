@@ -33,7 +33,6 @@ public class FaultToleranceConfigurationDefinitionConfigurer extends org.apache.
         map.put("ThreadOffloadExecutorService", java.lang.String.class);
         map.put("TimeoutDuration", java.lang.String.class);
         map.put("TimeoutEnabled", java.lang.String.class);
-        map.put("TimeoutPoolSize", java.lang.String.class);
         map.put("TypedGuard", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -62,8 +61,6 @@ public class FaultToleranceConfigurationDefinitionConfigurer extends org.apache.
         case "timeoutDuration": target.setTimeoutDuration(property(camelContext, java.lang.String.class, value)); return true;
         case "timeoutenabled":
         case "timeoutEnabled": target.setTimeoutEnabled(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeoutpoolsize":
-        case "timeoutPoolSize": target.setTimeoutPoolSize(property(camelContext, java.lang.String.class, value)); return true;
         case "typedguard":
         case "typedGuard": target.setTypedGuard(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -98,8 +95,6 @@ public class FaultToleranceConfigurationDefinitionConfigurer extends org.apache.
         case "timeoutDuration": return java.lang.String.class;
         case "timeoutenabled":
         case "timeoutEnabled": return java.lang.String.class;
-        case "timeoutpoolsize":
-        case "timeoutPoolSize": return java.lang.String.class;
         case "typedguard":
         case "typedGuard": return java.lang.String.class;
         default: return null;
@@ -130,8 +125,6 @@ public class FaultToleranceConfigurationDefinitionConfigurer extends org.apache.
         case "timeoutDuration": return target.getTimeoutDuration();
         case "timeoutenabled":
         case "timeoutEnabled": return target.getTimeoutEnabled();
-        case "timeoutpoolsize":
-        case "timeoutPoolSize": return target.getTimeoutPoolSize();
         case "typedguard":
         case "typedGuard": return target.getTypedGuard();
         default: return null;

@@ -1621,7 +1621,7 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
         assertEquals("12x5", result.getInvalidNumber().get("camel.resilience4j.slow-call-rate-threshold"));
 
-        text = "camel.faulttolerance.timeoutPoolSize=5";
+        text = "camel.faulttolerance.timeoutDuration=5000";
         result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 

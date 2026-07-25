@@ -166,24 +166,6 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
-     * @deprecated No longer in use since the switch to TypedGuard API (CAMEL-21857).
-     */
-    @Deprecated(since = "4.22.0")
-    public FaultToleranceConfigurationDefinition timeoutPoolSize(int poolSize) {
-        setTimeoutPoolSize(Integer.toString(poolSize));
-        return this;
-    }
-
-    /**
-     * @deprecated No longer in use since the switch to TypedGuard API (CAMEL-21857).
-     */
-    @Deprecated(since = "4.22.0")
-    public FaultToleranceConfigurationDefinition timeoutPoolSize(String poolSize) {
-        setTimeoutPoolSize(poolSize);
-        return this;
-    }
-
-    /**
      * Whether bulkhead is enabled or not on the circuit breaker. Default is false.
      */
     public FaultToleranceConfigurationDefinition bulkheadEnabled(boolean bulkheadEnabled) {

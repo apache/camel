@@ -1009,7 +1009,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "failureRatio", def.getFailureRatio(), "50");
         doWriteAttribute(jo, "timeoutEnabled", def.getTimeoutEnabled(), "false");
         doWriteAttribute(jo, "timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute(jo, "timeoutPoolSize", def.getTimeoutPoolSize(), "10");
         doWriteAttribute(jo, "bulkheadEnabled", def.getBulkheadEnabled(), "false");
         doWriteAttribute(jo, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
         doWriteAttribute(jo, "bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
