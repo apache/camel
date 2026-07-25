@@ -251,8 +251,13 @@ function Set-CamelShim {
     Move-Item -LiteralPath $StagedRoot -Destination $targetDir
 
     New-Item -ItemType Directory -Force -Path $BinDir | Out-Null
-    $launcherPath = Join-Path $targetDir 'bin\camel.bat'
-    $shimContent = "@echo off`r`ncall `"$launcherPath`" %*`r`nexit /b %ERRORLEVEL%`r`n"
+    # Resolve the launcher relative to the shim's own location (%~dp0 = <InstallRoot>\bin\) rather than
+    # embedding the absolute install path as literal text. cmd.exe parses batch-file bytes in the OEM
+    # code page, so a non-ASCII install path (e.g. a user profile containing 'über') written into the
+    # file as UTF-8 would be misread and 'call' would fail with "The system cannot find the path
+    # specified." %~dp0 supplies that path as a runtime value instead, which cmd handles correctly - the
+    # same self-location pattern camel.bat itself uses. Only the version (validated ASCII) is embedded.
+    $shimContent = "@echo off`r`ncall `"%~dp0..\cli\versions\$Version\bin\camel.bat`" %*`r`nexit /b %ERRORLEVEL%`r`n"
     $tempShim = Join-Path $BinDir ".camel.$PID.tmp.cmd"
     # Write without a BOM: Windows PowerShell 5.1's 'Set-Content -Encoding UTF8' prepends one, which
     # cmd.exe treats as part of the first line, breaking '@echo off' and emitting a stray error.
