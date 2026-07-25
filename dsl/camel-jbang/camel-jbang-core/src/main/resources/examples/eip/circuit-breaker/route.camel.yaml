@@ -27,7 +27,7 @@
         - circuitBreaker:
             resilience4jConfiguration:
               minimumNumberOfCalls: 10
-              waitDurationInOpenState: 20
+              waitDurationInOpenState: 20000
             steps:
               - filter:
                   expression:
