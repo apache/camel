@@ -132,7 +132,12 @@ final class WebsiteInstallerFixture implements AutoCloseable {
                 "-storepass", KEYSTORE_PASSWORD,
                 "-keypass", KEYSTORE_PASSWORD,
                 "-dname", "CN=127.0.0.1",
-                "-ext", "san=ip:127.0.0.1"));
+                "-ext", "san=ip:127.0.0.1",
+                // install.ps1's Windows PowerShell 5.1 path builds a .NET X509Chain against this
+                // exported cert (see install.ps1's ServerCertificateValidationCallback); X509Chain.Build
+                // only accepts a chain anchor whose Basic Constraints mark it as a CA, which keytool does
+                // not set by default.
+                "-ext", "bc:c"));
 
         runTool(new ProcessBuilder(
                 keytool(),
