@@ -190,7 +190,7 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
         this.timeoutExecutorService = source.timeoutExecutorService;
         this.timeoutDuration = source.timeoutDuration;
         this.timeoutCancelRunningFuture = source.timeoutCancelRunningFuture;
-        this.recordExceptions = new ArrayList<>(source.ignoreExceptions);
+        this.recordExceptions = new ArrayList<>(source.recordExceptions);
         this.ignoreExceptions = new ArrayList<>(source.ignoreExceptions);
     }
 

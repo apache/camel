@@ -92,6 +92,7 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         this.timeoutPoolSize = source.timeoutPoolSize;
         this.bulkheadEnabled = source.bulkheadEnabled;
         this.bulkheadMaxConcurrentCalls = source.bulkheadMaxConcurrentCalls;
+        this.bulkheadWaitingTaskQueue = source.bulkheadWaitingTaskQueue;
         this.threadOffloadExecutorService = source.threadOffloadExecutorService;
     }
 
