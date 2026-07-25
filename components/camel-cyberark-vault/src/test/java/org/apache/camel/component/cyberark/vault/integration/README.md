@@ -4,9 +4,27 @@ This directory contains integration tests for the Camel CyberArk Vault component
 
 ## Overview
 
-The integration tests require a running CyberArk Conjur instance and use system properties for configuration. Tests are disabled by default and only run when the required system properties are provided via command line.
+The tests run against a real CyberArk Conjur instance started automatically by
+`camel-test-infra-cyberark-vault`. No manual setup and no system properties are required - a
+working container runtime (Docker or Podman) is the only prerequisite.
+
+Conjur cannot run standalone, so the test infra starts **two** containers wired together on a
+private network:
+
+- `mirror.gcr.io/cyberark/conjur` - the Conjur server
+- `mirror.gcr.io/postgres` - the database Conjur stores its data in
+
+On startup the infra also creates the Conjur account and captures the generated admin API key,
+which is what the tests authenticate with.
+
+> **Architecture note:** the `cyberark/conjur` image is only published for `amd64` and `arm64`.
+> The ITs are therefore disabled on `ppc64le` and `s390x` via the `skipITs.ppc64le` and
+> `skipITs.s390x` properties in the component `pom.xml`.
 
 ## Test Classes
+
+All test classes extend `CyberArkTestSupport`, which registers the test infra service and exposes
+the `loadPolicy`, `createSecret` and `configureVault` helpers.
 
 ### CyberArkVaultPropertiesSourceIT
 Tests for the properties function (`{{cyberark:...}}`):
@@ -21,7 +39,6 @@ Tests for the component endpoint (`cyberark-vault://secretId`):
 - Basic secret retrieval via component endpoint
 - Dynamic secret ID via headers
 - Header verification (SECRET_ID, SECRET_VALUE constants)
-- Multiple secret retrieval
 
 ### CyberArkVaultMultipleSecretsIT
 Tests for complex scenarios with multiple secrets:
@@ -32,385 +49,90 @@ Tests for complex scenarios with multiple secrets:
 
 ## Running the Tests
 
-### Prerequisites
-
-- A running CyberArk Conjur instance (see Setup section below)
-- Maven 3.6+
-- Java 11+
-- CyberArk Conjur admin credentials
-
-### Required System Properties
-
-The tests require the following system properties:
-
-- `camel.cyberark.url` - CyberArk Conjur URL (e.g., `http://localhost:8080`)
-- `camel.cyberark.account` - Conjur account name (e.g., `myConjurAccount`)
-- `camel.cyberark.username` - Admin username (e.g., `admin`)
-- `camel.cyberark.apiKey` - Admin API key
-
-### Run All Integration Tests
-
 ```bash
 cd components/camel-cyberark-vault
-mvn clean verify \
-  -Dcamel.cyberark.url=http://localhost:8080 \
-  -Dcamel.cyberark.account=myConjurAccount \
-  -Dcamel.cyberark.username=admin \
-  -Dcamel.cyberark.apiKey=your-api-key
+
+# all integration tests
+mvn clean verify
+
+# a single test class
+mvn clean verify -Dit.test=CyberArkVaultPropertiesSourceIT
+
+# a single test method
+mvn clean verify -Dit.test=CyberArkVaultPropertiesSourceIT#testSimpleSecretRetrieval
 ```
 
-### Run Specific Test Class
+## Declaring Secrets
 
-```bash
-mvn clean verify -Dit.test=CyberArkVaultPropertiesSourceIT \
-  -Dcamel.cyberark.url=http://localhost:8080 \
-  -Dcamel.cyberark.account=myConjurAccount \
-  -Dcamel.cyberark.username=admin \
-  -Dcamel.cyberark.apiKey=your-api-key
-```
+A Conjur secret is two distinct things:
 
-### Run Specific Test Method
+1. a `variable` resource **declared by a policy**, and
+2. a value assigned to that variable through the Secrets API.
 
-```bash
-mvn clean verify -Dit.test=CyberArkVaultPropertiesSourceIT#testSimpleSecretRetrieval \
-  -Dcamel.cyberark.url=http://localhost:8080 \
-  -Dcamel.cyberark.account=myConjurAccount \
-  -Dcamel.cyberark.username=admin \
-  -Dcamel.cyberark.apiKey=your-api-key
-```
-
-### Skip Integration Tests (Default)
-
-By default, integration tests are skipped if system properties are not provided:
-
-```bash
-mvn clean install
-```
-
-## Setting Up CyberArk Conjur for Testing
-
-### Option 1: Using Docker (Recommended)
-
-Use the official CyberArk Conjur quickstart setup:
-
-```bash
-# Clone the quickstart repository
-git clone https://github.com/cyberark/conjur-quickstart.git
-cd conjur-quickstart
-
-# Generate the master key 
-docker compose run --no-deps --rm conjur data-key generate > data_key
-
-# Load master key as an environment variable
-export CONJUR_DATA_KEY="$(< data_key)"
-
-# Start Conjur and database
-docker compose up -d
-
-# Create an admin account (in another terminal)
-docker compose exec conjur conjurctl account create myConjurAccount > admin_data
-
-# The admin API key will be in the admin_data file
-cat admin_data | grep "API key"
-```
-
-Default connection details:
-- **URL**: `http://localhost:8080`
-- **Account**: `myConjurAccount`
-- **Username**: `admin`
-- **API Key**: See admin_data
-
-### Option 2: Using Existing Conjur Instance
-
-If you have an existing CyberArk Conjur instance:
-
-1. Ensure you have admin access
-2. Get your admin API key
-3. Use your instance URL and account name
-
-## Test Infrastructure
-
-### Authentication
-
-The tests authenticate using the provided credentials before running:
+The Secrets API can only update the value - it cannot create the variable. Setting a value for a
+variable that was never declared returns `404 Variable not found`, so every test must load a
+policy before creating its secrets:
 
 ```java
 @BeforeAll
-public static void init() throws Exception {
-    // Authenticate and get token
-    authToken = authenticate();
+static void init() throws Exception {
+    // 1. declare the variables
+    loadPolicy("""
+            - !variable simple-secret
+            - !variable database
+            """);
 
-    // Create test secrets
+    // 2. then assign their values
     createSecret("simple-secret", "my-simple-value");
     createSecret("database", "{\"username\":\"dbuser\",\"password\":\"dbpass\"}");
 }
 ```
 
-### Creating Test Secrets
-
-The tests create secrets using the Conjur REST API:
+## Adding New Tests
 
 ```java
-private static void createSecret(String secretId, String secretValue) {
-    String url = String.format("%s/secrets/%s/variable/%s",
-            System.getProperty("camel.cyberark.url"),
-            System.getProperty("camel.cyberark.account"),
-            secretId);
+class MyNewIT extends CyberArkTestSupport {
 
-    HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .header("Authorization", "Token token=\"" + encodedToken + "\"")
-            .POST(HttpRequest.BodyPublishers.ofString(secretValue))
-            .build();
+    @BeforeAll
+    static void setup() throws Exception {
+        loadPolicy("- !variable my/secret");
+        createSecret("my/secret", "value");
+    }
 
-    httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    @Test
+    void testSomething() throws Exception {
+        // for the properties function, point the vault configuration at the test infra
+        configureVault();
+        ...
+    }
 }
 ```
 
-## Test Scenarios Covered
+Use unique secret IDs per test class to avoid clashes, since the Conjur instance is shared across
+the test classes running in the same JVM.
 
-### Properties Function Tests
+When the component endpoint is used directly, the connection details come from the service:
 
-1. **Simple Secret Retrieval**
-   ```java
-   {{cyberark:simple-secret}} → "my-simple-value"
-   ```
-
-2. **JSON Field Extraction**
-   ```java
-   {{cyberark:database#username}} → "dbuser"
-   {{cyberark:database#password}} → "dbpass"
-   ```
-
-3. **Default Values**
-   ```java
-   {{cyberark:nonexistent:defaultValue}} → "defaultValue"
-   {{cyberark:database#missing:defaultUser}} → "defaultUser"
-   ```
-
-4. **Complex Paths**
-   ```java
-   {{cyberark:api/credentials#token}} → "secret-token"
-   ```
-
-5. **Error Handling**
-   ```java
-   {{cyberark:nonexistent}} → FailedToCreateRouteException
-   ```
-
-### Component Endpoint Tests
-
-1. **Basic Retrieval**
-   ```java
-   from("direct:start")
-       .to("cyberark-vault:test/secret?url=...&account=...&apiKey=...")
-       .to("mock:result");
-   ```
-
-2. **Dynamic Secret ID**
-   ```java
-   exchange.getMessage().setHeader(CyberArkVaultConstants.SECRET_ID, "production/database");
-   ```
-
-3. **Header Verification**
-   - `CyberArkVaultConstants.SECRET_ID`
-   - `CyberArkVaultConstants.SECRET_VALUE`
+```java
+service.url()       // e.g. http://localhost:32768
+service.account()   // myConjurAccount
+service.username()  // admin
+service.apiKey()    // generated on startup
+```
 
 ## Troubleshooting
 
-### Tests are Skipped
+### Tests fail to start the containers
 
-If you see messages like `CyberArk Conjur URL not provided`, ensure you're passing all required system properties:
+- Verify the container runtime is running and reachable by Testcontainers
+- The first run pulls both images, which can take a while on a slow connection
 
-```bash
-mvn verify \
-  -Dcamel.cyberark.url=http://localhost:8080 \
-  -Dcamel.cyberark.account=myConjurAccount \
-  -Dcamel.cyberark.username=admin \
-  -Dcamel.cyberark.apiKey=your-api-key
-```
+### Secret creation fails with 404
 
-### Authentication Failures
-
-If authentication fails:
-- Verify the URL is accessible
-- Check that the account name is correct
-- Verify the username and API key are valid
-- Ensure Conjur is fully started and accepting connections
-
-### Connection Refused
-
-If you get connection refused errors:
-- Check that Conjur is running: `docker ps | grep conjur`
-- Verify the URL and port are correct
-- Check firewall settings if using remote instance
-
-### Secret Creation Failures
-
-The tests automatically create secrets they need. If secret creation fails:
-- Ensure the API key has permission to create secrets
-- Check Conjur logs for policy-related errors
-- Verify the account name is correct
-
-## CI/CD Integration
-
-### GitHub Actions Example
-
-```yaml
-name: Integration Tests
-on: [push, pull_request]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: SuperSecretPg
-        ports:
-          - 5432:5432
-
-      conjur:
-        image: cyberark/conjur
-        env:
-          DATABASE_URL: postgres://postgres:SuperSecretPg@postgres/postgres
-          CONJUR_DATA_KEY: W0BuL24xJMVfGNTKRxcC4xv76cKE7wNJh0AKXdvmnxk=
-        ports:
-          - 8080:80
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-
-      - name: Initialize Conjur Account
-        run: |
-          # Wait for Conjur to start
-          sleep 10
-          # Create account and extract API key
-          API_KEY=$(docker exec conjur conjurctl account create myConjurAccount | grep "API key" | awk '{print $NF}')
-          echo "CONJUR_API_KEY=$API_KEY" >> $GITHUB_ENV
-
-      - name: Run Integration Tests
-        run: |
-          mvn clean verify \
-            -Dcamel.cyberark.url=http://localhost:8080 \
-            -Dcamel.cyberark.account=myConjurAccount \
-            -Dcamel.cyberark.username=admin \
-            -Dcamel.cyberark.apiKey=${{ env.CONJUR_API_KEY }}
-```
-
-### Jenkins Example
-
-```groovy
-pipeline {
-    agent any
-
-    stages {
-        stage('Setup Conjur') {
-            steps {
-                sh '''
-                    docker-compose -f test-resources/conjur-docker-compose.yml up -d
-                    sleep 10
-                '''
-            }
-        }
-
-        stage('Run Integration Tests') {
-            steps {
-                sh '''
-                    API_KEY=$(docker exec conjur conjurctl account create myConjurAccount | grep "API key" | awk '{print $NF}')
-                    mvn clean verify \
-                        -Dcamel.cyberark.url=http://localhost:8080 \
-                        -Dcamel.cyberark.account=myConjurAccount \
-                        -Dcamel.cyberark.username=admin \
-                        -Dcamel.cyberark.apiKey=$API_KEY
-                '''
-            }
-        }
-    }
-
-    post {
-        always {
-            sh 'docker-compose -f test-resources/conjur-docker-compose.yml down'
-        }
-    }
-}
-```
-
-## Test Data
-
-### Created Secrets
-
-The integration tests create the following secrets:
-
-| Secret ID | Value | Purpose |
-|-----------|-------|---------|
-| `simple-secret` | `my-simple-value` | Basic retrieval test |
-| `database` | `{"username":"dbuser",...}` | JSON field extraction |
-| `api/credentials` | `{"token":"secret-token",...}` | Complex path test |
-| `test/secret` | `mySecretValue` | Component endpoint test |
-| `production/database` | `{"username":"prod-user",...}` | Dynamic retrieval test |
-| `app/config` | `{"port":"8080",...}` | Multiple secrets test |
-| `db/primary` | `{"host":"db1.example.com",...}` | Multiple configs test |
-| `db/replica` | `{"host":"db2.example.com",...}` | Multiple configs test |
-| `cache/redis` | `{"host":"redis.example.com",...}` | Mixed types test |
-
-## Adding New Tests
-
-To add new integration tests:
-
-1. **Create Test Class**:
-   ```java
-   @EnabledIfSystemProperties({
-       @EnabledIfSystemProperty(named = "camel.cyberark.url", matches = ".*",
-                                disabledReason = "CyberArk Conjur URL not provided"),
-       @EnabledIfSystemProperty(named = "camel.cyberark.account", matches = ".*",
-                                disabledReason = "CyberArk Conjur account not provided"),
-       @EnabledIfSystemProperty(named = "camel.cyberark.username", matches = ".*",
-                                disabledReason = "CyberArk Conjur username not provided"),
-       @EnabledIfSystemProperty(named = "camel.cyberark.apiKey", matches = ".*",
-                                disabledReason = "CyberArk Conjur API key not provided")
-   })
-   public class MyNewIT extends CamelTestSupport {
-       // Tests here
-   }
-   ```
-
-2. **Create Secrets in @BeforeAll**:
-   ```java
-   @BeforeAll
-   public static void setup() throws Exception {
-       authToken = authenticate();
-       createSecret("my/secret", "value");
-   }
-   ```
-
-3. **Use System Properties for Connection**:
-   ```java
-   String url = System.getProperty("camel.cyberark.url");
-   String account = System.getProperty("camel.cyberark.account");
-   String username = System.getProperty("camel.cyberark.username");
-   String apiKey = System.getProperty("camel.cyberark.apiKey");
-   ```
-
-## Best Practices
-
-1. **Cleanup**: Secrets can be cleaned up manually or will be reset when Conjur restarts
-2. **Isolation**: Use unique secret IDs for each test to avoid conflicts
-3. **Logging**: Use SLF4J logger to debug issues
-4. **Assertions**: Use MockEndpoint.assertIsSatisfied() for async verification
-5. **Error Testing**: Use assertThrows() for expected failures
-6. **System Properties**: Always use System.getProperty() to read configuration
+The variable was not declared - add it to the `loadPolicy` call as described above.
 
 ## References
 
-- [CyberArk Conjur Documentation](https://docs.cyberark.com/Product-Doc/OnlineHelp/AAM-DAP/Latest/en/Content/Resources/_TopNav/cc_Home.htm)
-- [CyberArk Conjur Quickstart](https://github.com/cyberark/conjur-quickstart)
+- [CyberArk Conjur Documentation](https://docs.cyberark.com/conjur-open-source/latest/en/content/resources/_topnav/cc_home.htm)
+- [Conjur Policy Reference](https://docs.cyberark.com/conjur-open-source/latest/en/content/operations/policy/policy-syntax.htm)
 - [Camel Testing Guide](https://camel.apache.org/manual/testing.html)
-- [JUnit 5 Conditional Test Execution](https://junit.org/junit5/docs/current/user-guide/#writing-tests-conditional-execution)

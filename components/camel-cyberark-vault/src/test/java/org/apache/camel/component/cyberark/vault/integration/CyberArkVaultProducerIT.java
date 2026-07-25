@@ -21,31 +21,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cyberark.vault.CyberArkVaultConstants;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-// Must be manually tested. Provide CyberArk Conjur connection details using system properties:
-// -Dcamel.cyberark.url=http://localhost:8080
-// -Dcamel.cyberark.account=myConjurAccount
-// -Dcamel.cyberark.username=admin
-// -Dcamel.cyberark.apiKey=your-api-key
-@EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.cyberark.url", matches = ".*",
-                                 disabledReason = "CyberArk Conjur URL not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.account", matches = ".*",
-                                 disabledReason = "CyberArk Conjur account not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.username", matches = ".*",
-                                 disabledReason = "CyberArk Conjur username not provided"),
-        @EnabledIfSystemProperty(named = "camel.cyberark.apiKey", matches = ".*",
-                                 disabledReason = "CyberArk Conjur API key not provided")
-})
-public class CyberArkVaultProducerIT extends CyberArkTestSupport {
+class CyberArkVaultProducerIT extends CyberArkTestSupport {
 
     @BeforeAll
-    public static void setupSecrets() throws Exception {
+    static void setupSecrets() throws Exception {
 
         // Declare variables
         loadPolicy("""
@@ -112,10 +95,10 @@ public class CyberArkVaultProducerIT extends CyberArkTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String url = System.getProperty("camel.cyberark.url");
-                String account = System.getProperty("camel.cyberark.account");
-                String username = System.getProperty("camel.cyberark.username");
-                String apiKey = System.getProperty("camel.cyberark.apiKey");
+                String url = service.url();
+                String account = service.account();
+                String username = service.username();
+                String apiKey = service.apiKey();
 
                 from("direct:getSecret")
                         .toF("cyberark-vault:secret?secretId=test/secret&url=%s&account=%s&username=%s&apiKey=%s",

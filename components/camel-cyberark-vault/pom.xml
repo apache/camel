@@ -35,6 +35,9 @@
     <properties>
         <firstVersion>4.17.0</firstVersion>
         <label>cloud,security</label>
+        <!-- the cyberark/conjur image is only published for amd64 and arm64 -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
@@ -64,21 +67,11 @@
 	    <scope>test</scope>
 	    <version>${mockito-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-cyberark-vault</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <camel.cyberark.url>http://localhost:8080</camel.cyberark.url>
-                        <camel.cyberark.account>myConjurAccount</camel.cyberark.account>
-                        <camel.cyberark.username>admin</camel.cyberark.username>
-                        <!--camel.cyberark.apiKey>your-api-key</camel.cyberark.apiKey-->
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
