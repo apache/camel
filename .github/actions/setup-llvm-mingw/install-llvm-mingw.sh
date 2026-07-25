@@ -39,7 +39,7 @@ DEST="${INSTALL_DIR}/llvm-mingw-${VERSION}-ucrt-ubuntu-22.04-x86_64"
 
 if [ ! -x "${DEST}/bin/x86_64-w64-mingw32-clang" ]; then
     mkdir -p "$INSTALL_DIR"
-    curl -fsSL -o "${INSTALL_DIR}/${TARBALL}" \
+    curl -fsSL --proto '=https' -o "${INSTALL_DIR}/${TARBALL}" \
         "https://github.com/mstorsjo/llvm-mingw/releases/download/${VERSION}/${TARBALL}"
     echo "${SHA256}  ${INSTALL_DIR}/${TARBALL}" | sha256sum -c -
     tar -xf "${INSTALL_DIR}/${TARBALL}" -C "$INSTALL_DIR"

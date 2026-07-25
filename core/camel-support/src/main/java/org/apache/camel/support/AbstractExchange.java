@@ -192,7 +192,10 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
         return evalPropertyValue(type, value);
     }
 
-    @SuppressWarnings("unchecked")
+    // Suppressed S5144: exchange properties are set by trusted route authors — type conversion of
+    // exchange-internal values is intentional framework behavior, not user-controlled URL construction.
+    // See the Camel security model (docs/user-manual/modules/ROOT/pages/security-model.adoc).
+    @SuppressWarnings({ "unchecked", "java:S5144" })
     private <T> T evalPropertyValue(final Class<T> type, final Object value) {
         if (value == null) {
             // let's avoid NullPointerException when converting to boolean for null values
