@@ -1178,6 +1178,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -1275,6 +1277,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -1323,6 +1326,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "jactl" ]
               }, {
                 "required" : [ "java" ]
               }, {
@@ -1421,6 +1426,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -1469,6 +1475,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "jactl" ]
               }, {
                 "required" : [ "java" ]
               }, {
@@ -1610,6 +1618,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -1747,6 +1756,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -1832,6 +1843,14 @@
             "properties" : {
               "hl7terser" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.Hl7TerserExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "jactl" ],
+            "properties" : {
+              "jactl" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JactlExpression"
               }
             }
           }, {
@@ -1996,6 +2015,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -2128,6 +2148,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -2219,6 +2241,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -2369,6 +2392,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -2484,6 +2509,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -2933,6 +2959,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -3042,6 +3070,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -3976,6 +4005,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -4050,6 +4081,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -4431,6 +4463,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -4566,6 +4600,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -4667,6 +4702,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -4731,6 +4768,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -4780,6 +4818,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "jactl" ]
               }, {
                 "required" : [ "java" ]
               }, {
@@ -4947,6 +4987,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -5355,6 +5396,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -5467,6 +5510,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -6095,6 +6139,8 @@
                 }, {
                   "required" : [ "hl7terser" ]
                 }, {
+                  "required" : [ "jactl" ]
+                }, {
                   "required" : [ "java" ]
                 }, {
                   "required" : [ "joor" ]
@@ -6192,6 +6238,7 @@
             "groovy" : { },
             "header" : { },
             "hl7terser" : { },
+            "jactl" : { },
             "java" : { },
             "joor" : { },
             "jq" : { },
@@ -6363,6 +6410,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -6443,6 +6492,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -6491,6 +6541,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "jactl" ]
               }, {
                 "required" : [ "java" ]
               }, {
@@ -6572,6 +6624,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -6661,6 +6714,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -6746,6 +6801,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -6833,6 +6889,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -6918,6 +6976,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -6967,6 +7026,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "jactl" ]
               }, {
                 "required" : [ "java" ]
               }, {
@@ -7053,6 +7114,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -7140,6 +7202,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -7225,6 +7289,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -7273,6 +7338,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "jactl" ]
               }, {
                 "required" : [ "java" ]
               }, {
@@ -7465,6 +7532,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -7779,6 +7847,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -7900,6 +7970,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -8312,6 +8383,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -8392,6 +8465,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -8969,6 +9043,8 @@
               }, {
                 "required" : [ "hl7terser" ]
               }, {
+                "required" : [ "jactl" ]
+              }, {
                 "required" : [ "java" ]
               }, {
                 "required" : [ "joor" ]
@@ -9054,6 +9130,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -9119,6 +9196,8 @@
                 "required" : [ "header" ]
               }, {
                 "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "jactl" ]
               }, {
                 "required" : [ "java" ]
               }, {
@@ -9206,6 +9285,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -13084,6 +13164,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "jactl" ],
+            "properties" : {
+              "jactl" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JactlExpression"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "java" ],
             "properties" : {
               "java" : {
@@ -13244,6 +13332,7 @@
           "groovy" : { },
           "header" : { },
           "hl7terser" : { },
+          "jactl" : { },
           "java" : { },
           "joor" : { },
           "jq" : { },
@@ -13356,6 +13445,40 @@
               "type" : "string",
               "title" : "Source",
               "description" : "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body."
+            },
+            "trim" : {
+              "type" : "boolean",
+              "title" : "Trim",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+              "default" : true
+            }
+          }
+        } ],
+        "required" : [ "expression" ]
+      },
+      "org.apache.camel.model.language.JactlExpression" : {
+        "title" : "Jactl",
+        "description" : "Evaluates a Jactl script",
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "additionalProperties" : false,
+          "properties" : {
+            "expression" : {
+              "type" : "string",
+              "title" : "Expression",
+              "description" : "The expression value in your chosen language syntax."
+            },
+            "id" : {
+              "type" : "string",
+              "title" : "Id",
+              "description" : "The id of this node."
+            },
+            "resultType" : {
+              "type" : "string",
+              "title" : "Result Type",
+              "description" : "The class of the result type (type from output)."
             },
             "trim" : {
               "type" : "boolean",

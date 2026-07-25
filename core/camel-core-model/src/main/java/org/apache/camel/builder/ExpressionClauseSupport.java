@@ -32,6 +32,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
+import org.apache.camel.model.language.JactlExpression;
 import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JoorExpression;
@@ -376,6 +377,16 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T groovy(String text) {
         return expression(new GroovyExpression(text));
+    }
+
+    /**
+     * Evaluates a <a href="https://jactl.io">Jactl expression</a>
+     *
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
+     */
+    public T jactl(String text) {
+        return expression(new JactlExpression(text));
     }
 
     /**
