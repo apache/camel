@@ -156,7 +156,6 @@ class RoutesTab extends AbstractTab {
             loadSourceForSelectedNode();
             return true;
         }
-
         // Source viewer toggle (topology mode)
         if (topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
             loadSourceForSelectedTopologyRoute();
@@ -1663,6 +1662,8 @@ class RoutesTab extends AbstractTab {
                 diagram.scrollToSelectedEipNode();
             }
         });
+        sourceViewer.setQuickDocProvider(this::provideAllQuickDocs);
+        ensureProcessorDetailLoaded(routeId);
         var rl = diagram.getRouteLayout(routeId);
         sourceViewer.loadSource(ctx, routeId, 0, rl != null ? rl.source : null);
     }
@@ -1695,6 +1696,8 @@ class RoutesTab extends AbstractTab {
                 diagram.scrollToSelectedEipNode();
             }
         });
+        sourceViewer.setQuickDocProvider(this::provideAllQuickDocs);
+        ensureProcessorDetailLoaded(routeId);
         var rl2 = diagram.getRouteLayout(routeId);
         sourceViewer.loadSource(ctx, routeId, 0, rl2 != null ? rl2.source : null);
     }
@@ -1717,6 +1720,8 @@ class RoutesTab extends AbstractTab {
                 sourceViewer.hide();
             }
         });
+        sourceViewer.setQuickDocProvider(this::provideAllQuickDocs);
+        ensureProcessorDetailLoaded(drillDownRouteId);
         var rl3 = diagram.getRouteLayout(drillDownRouteId);
         sourceViewer.loadSource(ctx, drillDownRouteId, targetLine, rl3 != null ? rl3.source : null);
     }
@@ -2026,6 +2031,275 @@ class RoutesTab extends AbstractTab {
             }
         }
         return null;
+    }
+
+    // ---- Quick doc (q toggle in source viewer) ----
+
+    private Map<Integer, List<String>> provideAllQuickDocs(List<JsonObject> cd) {
+        if (cachedRouteDetail == null || cd.isEmpty()) {
+            return Map.of();
+        }
+
+        JsonArray processors = (JsonArray) cachedRouteDetail.get("processors");
+        if (processors == null || processors.isEmpty()) {
+            return Map.of();
+        }
+
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        CamelCatalog catalog = info != null ? getCatalog(info) : null;
+
+        Map<Integer, List<String>> result = new LinkedHashMap<>();
+        for (Object obj : processors) {
+            JsonObject proc = (JsonObject) obj;
+            Integer line = proc.getInteger("line");
+            if (line == null || line <= 0) {
+                continue;
+            }
+
+            int eipIdx = findCodeDataIndex(cd, line, -1);
+            if (eipIdx < 0 || result.containsKey(eipIdx)) {
+                continue;
+            }
+            String endpointUri = proc.getString("endpointUri");
+            String type = proc.getString("type");
+
+            if (endpointUri != null && catalog != null) {
+                buildEndpointInlineDoc(result, cd, catalog, endpointUri, eipIdx);
+            } else if (type != null) {
+                buildEipInlineDoc(result, cd, catalog, type, proc.getMap("options"), eipIdx);
+            }
+        }
+        return result;
+    }
+
+    private void ensureProcessorDetailLoaded(String routeId) {
+        if (routeId != null && cachedRouteDetail == null
+                && !routeId.equals(detailLoadingRouteId)) {
+            detailLoadingRouteId = routeId;
+            detailLoading = true;
+            if (ctx.runner != null) {
+                ctx.backgroundExecutor.execute(() -> {
+                    JsonObject result = requestRouteProcessorDetail(routeId);
+                    cachedRouteDetail = result;
+                    cachedRouteDetailId = routeId;
+                    detailLoading = false;
+                });
+            }
+        }
+    }
+
+    static void buildEndpointInlineDoc(
+            Map<Integer, List<String>> result, List<JsonObject> cd,
+            CamelCatalog catalog, String endpointUri, int eipIdx) {
+
+        String component = endpointUri.contains(":") ? endpointUri.substring(0, endpointUri.indexOf(':')) : endpointUri;
+        ComponentModel model = catalog.componentModel(component);
+        if (model == null) {
+            return;
+        }
+
+        String compTitle = model.getTitle() != null ? model.getTitle() : component;
+        String desc = model.getDescription() != null ? truncateText(model.getDescription(), 80) : "";
+
+        Map<String, BaseOptionModel> optionDocs = new LinkedHashMap<>();
+        for (ComponentModel.EndpointOptionModel opt : model.getEndpointOptions()) {
+            if (opt.getName() != null) {
+                optionDocs.put(opt.getName(), opt);
+            }
+        }
+
+        int beforeSize = result.size();
+        List<String> titleLines = new ArrayList<>();
+        titleLines.add(compTitle + " — " + desc);
+        result.put(eipIdx, titleLines);
+
+        inlineParameterDocs(result, cd, eipIdx, optionDocs);
+
+        // For Java/XML where params are in the URI (not on separate source lines),
+        // cluster the option docs under the title
+        if (result.size() == beforeSize + 1) {
+            clusterEndpointOptions(titleLines, catalog, endpointUri, optionDocs);
+        }
+    }
+
+    private static void clusterEndpointOptions(
+            List<String> docLines, CamelCatalog catalog,
+            String endpointUri, Map<String, BaseOptionModel> optionDocs) {
+        try {
+            Map<String, String> props = catalog.endpointProperties(endpointUri);
+            if (props != null) {
+                for (Map.Entry<String, String> entry : props.entrySet()) {
+                    BaseOptionModel optModel = optionDocs.get(entry.getKey());
+                    if (optModel != null) {
+                        String optDoc = formatOptionDoc(optModel);
+                        if (optDoc != null) {
+                            docLines.add(entry.getKey() + ": " + entry.getValue() + " — " + optDoc);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore URI parse errors
+        }
+    }
+
+    static void buildEipInlineDoc(
+            Map<Integer, List<String>> result, List<JsonObject> cd,
+            CamelCatalog catalog, String type, JsonObject opts, int eipIdx) {
+
+        EipModel model = catalog != null ? catalog.eipModel(type) : null;
+        List<String> titleLines = new ArrayList<>();
+        if (model != null && model.getTitle() != null) {
+            String desc = model.getDescription() != null ? truncateText(model.getDescription(), 80) : "";
+            titleLines.add(model.getTitle() + " — " + desc);
+        } else {
+            titleLines.add(type);
+        }
+
+        int beforeSize = result.size();
+        result.put(eipIdx, titleLines);
+
+        if (model != null) {
+            Map<String, BaseOptionModel> optionDocs = new LinkedHashMap<>();
+            for (BaseOptionModel opt : model.getOptions()) {
+                if (opt.getName() != null) {
+                    optionDocs.put(opt.getName(), opt);
+                }
+            }
+            inlineParameterDocs(result, cd, eipIdx, optionDocs);
+
+            // For Java/XML where options are on the same line,
+            // cluster the option docs under the title
+            if (result.size() == beforeSize + 1 && opts != null) {
+                clusterEipOptions(titleLines, opts, optionDocs);
+            }
+        }
+    }
+
+    private static void clusterEipOptions(
+            List<String> docLines, JsonObject opts,
+            Map<String, BaseOptionModel> optionDocs) {
+        for (Map.Entry<String, Object> entry : opts.entrySet()) {
+            BaseOptionModel optModel = optionDocs.get(entry.getKey());
+            if (optModel != null) {
+                String optDoc = formatOptionDoc(optModel);
+                if (optDoc != null) {
+                    docLines.add(entry.getKey() + ": " + entry.getValue() + " — " + optDoc);
+                }
+            }
+        }
+    }
+
+    static void inlineParameterDocs(
+            Map<Integer, List<String>> result, List<JsonObject> cd,
+            int eipIdx, Map<String, BaseOptionModel> optionDocs) {
+
+        if (optionDocs.isEmpty()) {
+            return;
+        }
+
+        int eipIndent = lineIndent(cd, eipIdx);
+        int childIndent = -1;
+
+        for (int i = eipIdx + 1; i < cd.size(); i++) {
+            String code = cd.get(i).get("code") != null ? cd.get(i).get("code").toString() : "";
+            int indent = leadingSpaces(code);
+            if (indent < eipIndent && !code.isBlank()) {
+                break;
+            }
+            if (childIndent < 0 && indent > eipIndent) {
+                childIndent = indent;
+            }
+            if (childIndent > 0 && indent != childIndent) {
+                continue;
+            }
+            String trimmed = code.stripLeading();
+            int colon = trimmed.indexOf(':');
+            if (colon <= 0) {
+                continue;
+            }
+            String key = trimmed.substring(0, colon).strip();
+            if ("parameters".equals(key) || "uri".equals(key) || "steps".equals(key)
+                    || "id".equals(key) || "description".equals(key)) {
+                continue;
+            }
+
+            BaseOptionModel doc = optionDocs.get(key);
+            if (doc != null) {
+                String docLine = formatOptionDoc(doc);
+                if (docLine != null) {
+                    result.put(i, List.of(docLine));
+                }
+            }
+        }
+    }
+
+    static String formatOptionDoc(BaseOptionModel doc) {
+        StringBuilder sb = new StringBuilder();
+        if (doc.getDescription() != null && !doc.getDescription().isEmpty()) {
+            sb.append(truncateText(doc.getDescription(), 80));
+        }
+        List<String> meta = new ArrayList<>();
+        if (doc.getType() != null) {
+            meta.add(doc.getType());
+        }
+        if (doc.isRequired()) {
+            meta.add("required");
+        }
+        if (doc.getDefaultValue() != null) {
+            meta.add("default: " + doc.getDefaultValue());
+        }
+        if (!meta.isEmpty()) {
+            if (!sb.isEmpty()) {
+                sb.append(" ");
+            }
+            sb.append("(").append(String.join(", ", meta)).append(")");
+        }
+        return !sb.isEmpty() ? sb.toString() : null;
+    }
+
+    static int lineIndent(List<JsonObject> cd, int idx) {
+        if (idx < 0 || idx >= cd.size()) {
+            return 0;
+        }
+        String code = cd.get(idx).get("code") != null ? cd.get(idx).get("code").toString() : "";
+        return leadingSpaces(code);
+    }
+
+    static int leadingSpaces(String s) {
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == ' ') {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
+    }
+
+    static int findCodeDataIndex(List<JsonObject> cd, int targetLine, int fallback) {
+        for (int i = 0; i < cd.size(); i++) {
+            Integer lineNum = cd.get(i).getInteger("line");
+            if (lineNum != null && lineNum == targetLine) {
+                return i;
+            }
+        }
+        return Math.max(0, fallback);
+    }
+
+    static String truncateText(String text, int maxLen) {
+        if (text == null) {
+            return "";
+        }
+        int dot = text.indexOf('.');
+        if (dot > 0 && dot < maxLen) {
+            return text.substring(0, dot + 1);
+        }
+        if (text.length() <= maxLen) {
+            return text;
+        }
+        return text.substring(0, maxLen - 3) + "...";
     }
 
     @Override

@@ -58,6 +58,11 @@ import org.apache.camel.util.json.Jsoner;
  */
 class SourceViewer {
 
+    @FunctionalInterface
+    interface QuickDocProvider {
+        Map<Integer, List<String>> provideAll(List<JsonObject> codeData);
+    }
+
     private boolean visible;
     private List<String> lines = Collections.emptyList();
     private List<JsonObject> codeData = Collections.emptyList();
@@ -85,6 +90,9 @@ class SourceViewer {
     private boolean markdownMode;
     private String rawMarkdownContent;
     private int markdownScroll;
+    private QuickDocProvider quickDocProvider;
+    private boolean quickDocEnabled;
+    private Map<Integer, List<String>> quickDocEntries = Collections.emptyMap();
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
@@ -98,6 +106,8 @@ class SourceViewer {
     void hide() {
         visible = false;
         onLineSelected = null;
+        quickDocEnabled = false;
+        quickDocEntries = Collections.emptyMap();
     }
 
     void reset() {
@@ -122,10 +132,40 @@ class SourceViewer {
         markdownMode = false;
         rawMarkdownContent = null;
         markdownScroll = 0;
+        quickDocProvider = null;
+        quickDocEnabled = false;
+        quickDocEntries = Collections.emptyMap();
     }
 
     void setOnLineSelected(IntConsumer callback) {
         this.onLineSelected = callback;
+    }
+
+    void toggleQuickDoc() {
+        if (quickDocProvider != null) {
+            quickDocEnabled = !quickDocEnabled;
+            if (quickDocEnabled) {
+                quickDocEntries = quickDocProvider.provideAll(codeData);
+                if (quickDocEntries == null) {
+                    quickDocEntries = Collections.emptyMap();
+                }
+            } else {
+                quickDocEntries = Collections.emptyMap();
+            }
+        }
+    }
+
+    private void refreshQuickDoc() {
+        if (quickDocEnabled && quickDocProvider != null && !codeData.isEmpty()) {
+            quickDocEntries = quickDocProvider.provideAll(codeData);
+            if (quickDocEntries == null) {
+                quickDocEntries = Collections.emptyMap();
+            }
+        }
+    }
+
+    void setQuickDocProvider(QuickDocProvider provider) {
+        this.quickDocProvider = provider;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -153,7 +193,7 @@ class SourceViewer {
             onLineSelected = null;
             return true;
         }
-        if (isMarkdownFile && (ke.isKey(KeyCode.TAB) || ke.isLeft() || ke.isRight())) {
+        if (isMarkdownFile && ke.isKey(KeyCode.TAB)) {
             markdownMode = !markdownMode;
             return true;
         }
@@ -173,8 +213,7 @@ class SourceViewer {
             }
             return true;
         }
-        if (currentRouteId != null
-                && (ke.isKey(KeyCode.TAB) || ke.isRight() || ke.isLeft())) {
+        if (currentRouteId != null && ke.isKey(KeyCode.TAB)) {
             String[] formats = { "yaml", "java", "xml" };
             int idx = 0;
             for (int i = 0; i < formats.length; i++) {
@@ -183,11 +222,12 @@ class SourceViewer {
                     break;
                 }
             }
-            if (ke.isLeft()) {
+            if (ke.hasShift()) {
                 idx = (idx - 1 + formats.length) % formats.length;
             } else {
                 idx = (idx + 1) % formats.length;
             }
+            quickDocEntries = Collections.emptyMap();
             switchFormat(formats[idx]);
             return true;
         }
@@ -196,6 +236,10 @@ class SourceViewer {
             if (matchLine >= 0) {
                 selectedLine = matchLine;
             }
+            return true;
+        }
+        if (ke.isChar('i') && quickDocProvider != null) {
+            toggleQuickDoc();
             return true;
         }
         if (ke.isChar('w')) {
@@ -348,14 +392,37 @@ class SourceViewer {
 
         int currentMatchLine = search.currentMatchLine();
 
-        int end = Math.min(scrollY + visibleLines, lines.size());
+        int gutterWidth = quickDocEnabled && !quickDocEntries.isEmpty() ? computeGutterWidth() : 0;
+
         List<Line> visible = new ArrayList<>();
-        for (int i = scrollY; i < end; i++) {
+        for (int i = scrollY; i < lines.size() && visible.size() < visibleLines; i++) {
             String raw = lines.get(i);
             boolean isSelected = (i == selectedLine);
             Line line = highlightSourceLine(raw, hSkip, isSelected, inner.width());
             line = search.applyHighlights(line, i, currentMatchLine);
             visible.add(line);
+
+            List<String> docLines = quickDocEnabled ? quickDocEntries.get(i) : null;
+            if (docLines != null) {
+                String code = i < codeData.size() && codeData.get(i).get("code") != null
+                        ? codeData.get(i).get("code").toString()
+                        : "";
+                int si = 0;
+                while (si < code.length() && code.charAt(si) == ' ') {
+                    si++;
+                }
+                for (String docText : docLines) {
+                    for (Line docLine : renderQuickDocLines(docText, si, gutterWidth, inner.width())) {
+                        if (visible.size() >= visibleLines) {
+                            break;
+                        }
+                        if (hSkip > 0) {
+                            docLine = applyHorizontalSkip(docLine, hSkip);
+                        }
+                        visible.add(docLine);
+                    }
+                }
+            }
         }
 
         List<Rect> hChunks = Layout.horizontal()
@@ -365,8 +432,10 @@ class SourceViewer {
         Overflow overflow = wordWrap ? Overflow.WRAP_WORD : Overflow.CLIP;
         frame.renderWidget(Paragraph.builder().text(Text.from(visible)).overflow(overflow).build(), hChunks.get(0));
 
-        if (lines.size() > visibleLines) {
-            vScrollState.contentLength(lines.size()).viewportContentLength(visibleLines).position(scrollY);
+        int totalDocLines = quickDocEnabled ? quickDocEntries.values().stream().mapToInt(List::size).sum() : 0;
+        int totalContentLines = lines.size() + totalDocLines;
+        if (totalContentLines > visibleLines) {
+            vScrollState.contentLength(totalContentLines).viewportContentLength(visibleLines).position(scrollY);
             frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), vScrollState);
         }
         if (!wordWrap) {
@@ -384,7 +453,7 @@ class SourceViewer {
         if (markdownMode) {
             TuiHelper.hint(spans, "Esc/c", "close");
             TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "scroll");
-            TuiHelper.hint(spans, "←→", "tab");
+            TuiHelper.hint(spans, "Tab", "format");
             TuiHelper.hint(spans, "PgUp/PgDn", "page");
             return;
         }
@@ -397,19 +466,15 @@ class SourceViewer {
         } else {
             TuiHelper.hint(spans, "Esc/c", "close");
         }
-        TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-        if (isMarkdownFile) {
-            TuiHelper.hint(spans, "←→", "tab");
+        if (quickDocProvider != null) {
+            TuiHelper.hint(spans, "i", "quick doc" + (quickDocEnabled ? " [on]" : ""));
         }
-        if (currentRouteId != null) {
-            TuiHelper.hint(spans, "←→", "tab");
+        TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
+        if (isMarkdownFile || currentRouteId != null) {
+            TuiHelper.hint(spans, "Tab", "format");
         }
         search.renderSearchHints(spans);
         TuiHelper.hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
-        if (!wordWrap) {
-            TuiHelper.hint(spans, TuiIcons.HINT_H, "horizontal");
-        }
-        TuiHelper.hint(spans, "PgUp/PgDn", "page");
         if (onLineSelected != null) {
             TuiHelper.hint(spans, "Enter", "select node");
         }
@@ -735,6 +800,7 @@ class SourceViewer {
             scrollX = 0;
             pendingScroll = true;
             search.reset();
+            refreshQuickDoc();
             return;
         }
 
@@ -824,6 +890,7 @@ class SourceViewer {
             scrollX = 0;
             pendingScroll = true;
             search.reset();
+            refreshQuickDoc();
         });
     }
 
@@ -935,6 +1002,91 @@ class SourceViewer {
             break;
         }
         return lastCommentLine >= 0 ? lastCommentLine + 1 : 0;
+    }
+
+    private static Line applyHorizontalSkip(Line line, int hSkip) {
+        List<Span> scrolled = new ArrayList<>();
+        int skipped = 0;
+        for (Span span : line.spans()) {
+            String content = span.content();
+            if (skipped >= hSkip) {
+                scrolled.add(span);
+            } else if (skipped + content.length() > hSkip) {
+                int offset = hSkip - skipped;
+                scrolled.add(Span.styled(content.substring(offset), span.style()));
+                skipped = hSkip;
+            } else {
+                skipped += content.length();
+            }
+        }
+        return scrolled.isEmpty() ? Line.from(List.of(Span.raw(""))) : Line.from(scrolled);
+    }
+
+    private int computeGutterWidth() {
+        for (String line : lines) {
+            int w = 0;
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
+                if (c != ' ' && !Character.isDigit(c)) {
+                    break;
+                }
+                w++;
+            }
+            if (w > 0) {
+                return w;
+            }
+        }
+        return 0;
+    }
+
+    private List<Line> renderQuickDocLines(String text, int sourceIndent, int gutterWidth, int viewportWidth) {
+        String prefix = " ".repeat(gutterWidth + 5 + sourceIndent);
+        String marker = "ℹ ";
+        Style docStyle = Style.EMPTY.dim().italic();
+        int prefixWidth = prefix.length() + marker.length();
+
+        if (!wordWrap || viewportWidth <= 0 || prefixWidth + text.length() <= viewportWidth) {
+            return List.of(Line.from(List.of(
+                    Span.raw(prefix),
+                    Span.styled(marker, docStyle),
+                    Span.styled(text, docStyle))));
+        }
+
+        int textWidth = viewportWidth - prefixWidth;
+        if (textWidth <= 10) {
+            return List.of(Line.from(List.of(
+                    Span.raw(prefix),
+                    Span.styled(marker, docStyle),
+                    Span.styled(text, docStyle))));
+        }
+
+        String contPrefix = " ".repeat(prefixWidth);
+        List<Line> result = new ArrayList<>();
+        int pos = 0;
+        boolean first = true;
+        while (pos < text.length()) {
+            int end = Math.min(pos + textWidth, text.length());
+            if (end < text.length()) {
+                int space = text.lastIndexOf(' ', end);
+                if (space > pos) {
+                    end = space + 1;
+                }
+            }
+            String chunk = text.substring(pos, end).stripTrailing();
+            if (first) {
+                result.add(Line.from(List.of(
+                        Span.raw(prefix),
+                        Span.styled(marker, docStyle),
+                        Span.styled(chunk, docStyle))));
+                first = false;
+            } else {
+                result.add(Line.from(List.of(
+                        Span.raw(contPrefix),
+                        Span.styled(chunk, docStyle))));
+            }
+            pos = end;
+        }
+        return result;
     }
 
     private static String objToString(Object o) {

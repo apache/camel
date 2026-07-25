@@ -1098,6 +1098,8 @@ class DiagramTab extends AbstractTab {
                 diagram.scrollToSelectedEipNode();
             }
         });
+        sourceViewer.setQuickDocProvider(this::provideAllQuickDocs);
+        ensureProcessorDetailLoaded(routeId);
         var rl = diagram.getRouteLayout(routeId);
         sourceViewer.loadSource(ctx, routeId, 0, rl != null ? rl.source : null);
     }
@@ -1120,6 +1122,8 @@ class DiagramTab extends AbstractTab {
                 sourceViewer.hide();
             }
         });
+        sourceViewer.setQuickDocProvider(this::provideAllQuickDocs);
+        ensureProcessorDetailLoaded(drillDownRouteId);
         var rl2 = diagram.getRouteLayout(drillDownRouteId);
         sourceViewer.loadSource(ctx, drillDownRouteId, targetLine, rl2 != null ? rl2.source : null);
     }
@@ -1417,6 +1421,61 @@ class DiagramTab extends AbstractTab {
             return ctx.executeAction(ctx.selectedPid, root, 5000);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    // ---- Quick doc (i toggle in source viewer) ----
+
+    private Map<Integer, List<String>> provideAllQuickDocs(List<JsonObject> cd) {
+        if (cachedRouteDetail == null || cd.isEmpty()) {
+            return Map.of();
+        }
+
+        JsonArray processors = (JsonArray) cachedRouteDetail.get("processors");
+        if (processors == null || processors.isEmpty()) {
+            return Map.of();
+        }
+
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        CamelCatalog catalog = info != null ? getCatalog(info) : null;
+
+        Map<Integer, List<String>> result = new LinkedHashMap<>();
+        for (Object obj : processors) {
+            JsonObject proc = (JsonObject) obj;
+            Integer line = proc.getInteger("line");
+            if (line == null || line <= 0) {
+                continue;
+            }
+
+            int eipIdx = RoutesTab.findCodeDataIndex(cd, line, -1);
+            if (eipIdx < 0 || result.containsKey(eipIdx)) {
+                continue;
+            }
+            String endpointUri = proc.getString("endpointUri");
+            String type = proc.getString("type");
+
+            if (endpointUri != null && catalog != null) {
+                RoutesTab.buildEndpointInlineDoc(result, cd, catalog, endpointUri, eipIdx);
+            } else if (type != null) {
+                RoutesTab.buildEipInlineDoc(result, cd, catalog, type, proc.getMap("options"), eipIdx);
+            }
+        }
+        return result;
+    }
+
+    private void ensureProcessorDetailLoaded(String routeId) {
+        if (routeId != null && cachedRouteDetail == null
+                && !routeId.equals(detailLoadingRouteId)) {
+            detailLoadingRouteId = routeId;
+            detailLoading = true;
+            if (ctx.runner != null) {
+                ctx.backgroundExecutor.execute(() -> {
+                    JsonObject result = requestRouteProcessorDetail(routeId);
+                    cachedRouteDetail = result;
+                    cachedRouteDetailId = routeId;
+                    detailLoading = false;
+                });
+            }
         }
     }
 

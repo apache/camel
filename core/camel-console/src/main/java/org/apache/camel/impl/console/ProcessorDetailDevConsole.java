@@ -148,7 +148,7 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
         processors.add(fromEntry);
 
         try {
-            String xml = mr.dumpRouteAsXml();
+            String xml = mr.dumpRouteAsXml(false, true, true);
             if (xml != null && !xml.isBlank()) {
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -157,6 +157,12 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 Document doc = builder.parse(new InputSource(new StringReader(xml)));
                 Element routeElement = doc.getDocumentElement();
+
+                // extract source line number for the from entry from the <from> child element
+                NodeList fromNodes = routeElement.getElementsByTagName("from");
+                if (fromNodes.getLength() > 0) {
+                    extractSourceLineNumber((Element) fromNodes.item(0), fromEntry);
+                }
 
                 collectProcessors(routeElement, processors);
             }
@@ -184,16 +190,23 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             }
 
             String type = elem.getTagName();
+            // skip <from> elements — already handled as the manual fromEntry with endpointUri
+            if ("from".equals(type)) {
+                continue;
+            }
             JsonObject entry = new JsonObject();
             entry.put("id", id);
             entry.put("type", type);
+
+            extractSourceLineNumber(elem, entry);
 
             JsonObject opts = new JsonObject();
             NamedNodeMap attrs = elem.getAttributes();
             for (int j = 0; j < attrs.getLength(); j++) {
                 Attr attr = (Attr) attrs.item(j);
                 String name = attr.getName();
-                if (!"id".equals(name) && !"customId".equals(name) && !name.startsWith("xmlns")) {
+                if (!"id".equals(name) && !"customId".equals(name) && !name.startsWith("xmlns")
+                        && !"sourceLineNumber".equals(name) && !"sourceLocation".equals(name)) {
                     opts.put(name, attr.getValue());
                 }
             }
@@ -271,5 +284,16 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             }
         }
         return null;
+    }
+
+    private static void extractSourceLineNumber(Element elem, JsonObject entry) {
+        String lineStr = elem.getAttribute("sourceLineNumber");
+        if (lineStr != null && !lineStr.isEmpty()) {
+            try {
+                entry.put("line", Integer.parseInt(lineStr));
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+        }
     }
 }

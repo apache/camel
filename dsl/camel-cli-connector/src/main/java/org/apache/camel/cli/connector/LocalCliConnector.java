@@ -740,9 +740,18 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             String filter = root.getString("filter");
             String format = root.getString("format");
             String uriAsParameters = root.getString("uriAsParameters");
+            Map<String, Object> params = new HashMap<>();
+            if (filter != null) {
+                params.put("filter", filter);
+            }
+            if (format != null) {
+                params.put("format", format);
+            }
+            if (uriAsParameters != null) {
+                params.put("uriAsParameters", uriAsParameters);
+            }
             JsonObject json
-                    = (JsonObject) dc.call(DevConsole.MediaType.JSON,
-                            Map.of("filter", filter, "format", format, "uriAsParameters", uriAsParameters));
+                    = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
