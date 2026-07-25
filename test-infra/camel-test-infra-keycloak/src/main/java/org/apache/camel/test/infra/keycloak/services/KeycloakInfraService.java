@@ -22,6 +22,8 @@ import org.keycloak.admin.client.Keycloak;
 /**
  * Test infra service for Keycloak
  */
+// Credentials are intentional test-only fixtures for testcontainer services — no security risk
+@SuppressWarnings("java:S2068")
 public interface KeycloakInfraService extends InfrastructureService {
 
     @Deprecated
