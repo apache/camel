@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.text.CharWidth;
@@ -82,8 +81,8 @@ class TabRegistryTest {
     }
 
     @Test
-    void moreTabsHasTwentySixEntries() {
-        assertEquals(26, registry.moreTabs().size());
+    void moreTabsHasTwentySevenEntries() {
+        assertEquals(27, registry.moreTabs().size());
     }
 
     @Test
@@ -109,17 +108,22 @@ class TabRegistryTest {
         // MORE_SHORTCUTS array carried before the MoreTab refactor. A label edit that repoints a key must fail here.
         List<Character> shortcuts = registry.moreTabs().stream().map(TabRegistry.MoreTab::shortcut).toList();
         assertEquals(
-                List.of('W', 'C', 'N', 'F', 'U', 'Z', 'E', 'I', 'X', 'O', 'J', 'K', 'Q', 'R', 'A', 'H', 'M', 'Y', 'P', 'S',
-                        'T', 'B', 'L', 'G', 'V', 'D'),
+                List.of('W', 'C', 'N', 'H', 'F', 'U', 'Z', 'E', 'I', 'X', 'O', 'J', 'K', 'Q', 'R', 'A', 'H', 'M', 'Y',
+                        'P', 'S', 'T', 'B', 'L', 'G', 'V', 'D'),
                 shortcuts, "More tab shortcut letters must match the historical sequence");
     }
 
     @Test
-    void moreTabShortcutsAreUnique() {
-        // morePopupShortcut() returns the first matching tab, so a duplicated letter would silently shadow a later tab.
+    void moreTabShortcutsHaveAtMostTwoDuplicates() {
+        // Duplicate mnemonics are allowed; the popup cycles through them on repeated key press.
         List<Character> shortcuts = registry.moreTabs().stream().map(TabRegistry.MoreTab::shortcut).toList();
-        assertEquals(shortcuts.size(), Set.copyOf(shortcuts).size(),
-                "More tab shortcut letters must be unique: " + shortcuts);
+        java.util.Map<Character, Long> counts = shortcuts.stream()
+                .collect(java.util.stream.Collectors.groupingBy(c -> c, java.util.stream.Collectors.counting()));
+        for (var entry : counts.entrySet()) {
+            assertTrue(entry.getValue() <= 2,
+                    "More tab shortcut '" + entry.getKey() + "' appears " + entry.getValue()
+                                              + " times (max 2): " + shortcuts);
+        }
     }
 
     @Test
@@ -196,12 +200,12 @@ class TabRegistryTest {
     @Test
     void tabConstantsAreSequential() {
         assertEquals(0, TabRegistry.TAB_OVERVIEW, "TAB_OVERVIEW should be 0");
-        assertEquals(1, TabRegistry.TAB_LOG, "TAB_LOG should be 1");
-        assertEquals(2, TabRegistry.TAB_ACTIVITY, "TAB_ACTIVITY should be 2");
-        assertEquals(3, TabRegistry.TAB_DIAGRAM, "TAB_DIAGRAM should be 3");
-        assertEquals(4, TabRegistry.TAB_ROUTES, "TAB_ROUTES should be 4");
-        assertEquals(5, TabRegistry.TAB_ENDPOINTS, "TAB_ENDPOINTS should be 5");
-        assertEquals(6, TabRegistry.TAB_HTTP, "TAB_HTTP should be 6");
+        assertEquals(1, TabRegistry.TAB_SOURCE, "TAB_SOURCE should be 1");
+        assertEquals(2, TabRegistry.TAB_LOG, "TAB_LOG should be 2");
+        assertEquals(3, TabRegistry.TAB_ACTIVITY, "TAB_ACTIVITY should be 3");
+        assertEquals(4, TabRegistry.TAB_DIAGRAM, "TAB_DIAGRAM should be 4");
+        assertEquals(5, TabRegistry.TAB_ROUTES, "TAB_ROUTES should be 5");
+        assertEquals(6, TabRegistry.TAB_ENDPOINTS, "TAB_ENDPOINTS should be 6");
         assertEquals(7, TabRegistry.TAB_HISTORY, "TAB_HISTORY should be 7");
         assertEquals(8, TabRegistry.TAB_ERRORS, "TAB_ERRORS should be 8");
         assertEquals(9, TabRegistry.TAB_MORE, "TAB_MORE should be 9");
@@ -223,7 +227,7 @@ class TabRegistryTest {
         int[] tabs = {
                 TabRegistry.TAB_OVERVIEW, TabRegistry.TAB_LOG, TabRegistry.TAB_ACTIVITY,
                 TabRegistry.TAB_DIAGRAM, TabRegistry.TAB_ROUTES, TabRegistry.TAB_ENDPOINTS,
-                TabRegistry.TAB_HTTP, TabRegistry.TAB_HISTORY, TabRegistry.TAB_ERRORS,
+                TabRegistry.TAB_SOURCE, TabRegistry.TAB_HISTORY, TabRegistry.TAB_ERRORS,
                 TabRegistry.TAB_MORE
         };
         for (int i = 0; i < tabs.length; i++) {
@@ -242,7 +246,7 @@ class TabRegistryTest {
         assertTrue(TabRegistry.TAB_DIAGRAM >= 0, "TAB_DIAGRAM should be non-negative");
         assertTrue(TabRegistry.TAB_ROUTES >= 0, "TAB_ROUTES should be non-negative");
         assertTrue(TabRegistry.TAB_ENDPOINTS >= 0, "TAB_ENDPOINTS should be non-negative");
-        assertTrue(TabRegistry.TAB_HTTP >= 0, "TAB_HTTP should be non-negative");
+        assertTrue(TabRegistry.TAB_SOURCE >= 0, "TAB_SOURCE should be non-negative");
         assertTrue(TabRegistry.TAB_HISTORY >= 0, "TAB_HISTORY should be non-negative");
         assertTrue(TabRegistry.TAB_ERRORS >= 0, "TAB_ERRORS should be non-negative");
         assertTrue(TabRegistry.TAB_MORE >= 0, "TAB_MORE should be non-negative");
@@ -256,7 +260,7 @@ class TabRegistryTest {
         assertTrue(TabRegistry.TAB_DIAGRAM < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_ROUTES < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_ENDPOINTS < TabRegistry.NUM_TABS);
-        assertTrue(TabRegistry.TAB_HTTP < TabRegistry.NUM_TABS);
+        assertTrue(TabRegistry.TAB_SOURCE < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_HISTORY < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_ERRORS < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_MORE < TabRegistry.NUM_TABS);

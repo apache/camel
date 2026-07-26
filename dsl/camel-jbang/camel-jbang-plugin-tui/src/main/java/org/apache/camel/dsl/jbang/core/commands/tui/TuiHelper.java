@@ -818,7 +818,7 @@ final class TuiHelper {
         return TuiIcons.CLIPBOARD;
     }
 
-    private static boolean isCamelYaml(Path path) {
+    static boolean isCamelYaml(Path path) {
         try {
             String content = Files.readString(path, StandardCharsets.UTF_8);
             for (String marker : CAMEL_YAML_MARKERS) {
@@ -832,7 +832,7 @@ final class TuiHelper {
         return false;
     }
 
-    private static boolean isCamelXml(Path path) {
+    static boolean isCamelXml(Path path) {
         try {
             String content = Files.readString(path, StandardCharsets.UTF_8);
             for (String marker : CAMEL_XML_MARKERS) {

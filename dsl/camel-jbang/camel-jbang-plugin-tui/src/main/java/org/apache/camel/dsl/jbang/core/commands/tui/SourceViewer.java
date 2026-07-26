@@ -93,6 +93,8 @@ class SourceViewer {
     private QuickDocProvider quickDocProvider;
     private boolean quickDocEnabled;
     private Map<Integer, List<String>> quickDocEntries = Collections.emptyMap();
+    private Style titleStyle;
+    private boolean focused = true;
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
@@ -101,6 +103,14 @@ class SourceViewer {
 
     boolean isVisible() {
         return visible;
+    }
+
+    void setTitleStyle(Style style) {
+        this.titleStyle = style;
+    }
+
+    void setFocused(boolean focused) {
+        this.focused = focused;
     }
 
     void hide() {
@@ -193,7 +203,7 @@ class SourceViewer {
             onLineSelected = null;
             return true;
         }
-        if (isMarkdownFile && ke.isKey(KeyCode.TAB)) {
+        if (isMarkdownFile && ke.isChar(' ')) {
             markdownMode = !markdownMode;
             return true;
         }
@@ -213,7 +223,7 @@ class SourceViewer {
             }
             return true;
         }
-        if (currentRouteId != null && ke.isKey(KeyCode.TAB)) {
+        if (currentRouteId != null && ke.isChar(' ')) {
             String[] formats = { "yaml", "java", "xml" };
             int idx = 0;
             for (int i = 0; i < formats.length; i++) {
@@ -222,11 +232,7 @@ class SourceViewer {
                     break;
                 }
             }
-            if (ke.hasShift()) {
-                idx = (idx - 1 + formats.length) % formats.length;
-            } else {
-                idx = (idx + 1) % formats.length;
-            }
+            idx = (idx + 1) % formats.length;
             quickDocEntries = Collections.emptyMap();
             switchFormat(formats[idx]);
             return true;
@@ -475,7 +481,7 @@ class SourceViewer {
         if (markdownMode) {
             TuiHelper.hint(spans, "Esc/c", "close");
             TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "scroll");
-            TuiHelper.hint(spans, "Tab", "format");
+            TuiHelper.hint(spans, "Space", "format");
             TuiHelper.hint(spans, "PgUp/PgDn", "page");
             return;
         }
@@ -493,7 +499,7 @@ class SourceViewer {
         }
         TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (isMarkdownFile || currentRouteId != null) {
-            TuiHelper.hint(spans, "Tab", "format");
+            TuiHelper.hint(spans, "Space", "format");
         }
         search.renderSearchHints(spans);
         TuiHelper.hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
@@ -755,9 +761,10 @@ class SourceViewer {
 
     private Title buildTitle() {
         String info = title != null ? title : "";
+        Style ts = titleStyle != null ? titleStyle : Style.EMPTY;
         if (isMarkdownFile) {
             List<Span> spans = new ArrayList<>();
-            spans.add(Span.raw(" Source [" + info + "]  "));
+            spans.add(Span.styled(" Source [" + info + "]  ", ts));
             String mdLabel = "Markdown*";
             if (markdownMode) {
                 spans.add(Span.styled(mdLabel, Style.EMPTY.bold()));
@@ -774,11 +781,11 @@ class SourceViewer {
             return Title.from(Line.from(spans));
         }
         if (currentRouteId == null) {
-            return Title.from(Line.from(List.of(Span.raw(" Source [" + info + "] "))));
+            return Title.from(Line.from(List.of(Span.styled(" Source [" + info + "] ", ts))));
         }
 
         List<Span> spans = new ArrayList<>();
-        spans.add(Span.raw(" Source [" + info + "]  "));
+        spans.add(Span.styled(" Source [" + info + "]  ", ts));
 
         String[] formats = { "yaml", "java", "xml" };
         String[] labels = { "YAML", "Java", "XML" };
@@ -946,11 +953,11 @@ class SourceViewer {
         Line highlighted = SyntaxHighlighter.highlightLine(code, language);
 
         List<Span> spans = new ArrayList<>();
-        Style selBg = Theme.selectionBg();
+        Style selBg = focused ? Theme.selectionBg() : Theme.selectionBg().dim();
         if (isSelected) {
-            spans.add(Span.styled(">> ", Theme.label().bold()));
+            spans.add(Span.styled(">> ", focused ? Theme.label().bold() : Theme.label().dim()));
             if (!prefix.isEmpty()) {
-                spans.add(Span.styled(prefix, Theme.label().bold().patch(selBg)));
+                spans.add(Span.styled(prefix, (focused ? Theme.label().bold() : Theme.label().dim()).patch(selBg)));
             }
             for (Span s : highlighted.spans()) {
                 spans.add(Span.styled(s.content(), s.style().patch(selBg)));

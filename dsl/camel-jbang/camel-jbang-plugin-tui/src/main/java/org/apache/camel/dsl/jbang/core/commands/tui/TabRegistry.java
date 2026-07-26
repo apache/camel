@@ -29,12 +29,12 @@ class TabRegistry {
 
     // Tab indices
     static final int TAB_OVERVIEW = 0;
-    static final int TAB_LOG = 1;
-    static final int TAB_ACTIVITY = 2;
-    static final int TAB_DIAGRAM = 3;
-    static final int TAB_ROUTES = 4;
-    static final int TAB_ENDPOINTS = 5;
-    static final int TAB_HTTP = 6;
+    static final int TAB_SOURCE = 1;
+    static final int TAB_LOG = 2;
+    static final int TAB_ACTIVITY = 3;
+    static final int TAB_DIAGRAM = 4;
+    static final int TAB_ROUTES = 5;
+    static final int TAB_ENDPOINTS = 6;
     static final int TAB_HISTORY = 7;
     static final int TAB_ERRORS = 8;
     static final int TAB_MORE = 9;
@@ -75,6 +75,7 @@ class TabRegistry {
     private RouteControllerTab routeControllerTab;
     private EndpointsTab endpointsTab;
     private HttpTab httpTab;
+    private SourceTab sourceTab;
     private HealthTab healthTab;
     private HistoryTab historyTab;
     private CircuitBreakerTab circuitBreakerTab;
@@ -129,6 +130,7 @@ class TabRegistry {
         sqlTraceTab = new SqlTraceTab(ctx);
         endpointsTab = new EndpointsTab(ctx, dataService.metrics());
         httpTab = new HttpTab(ctx);
+        sourceTab = new SourceTab(ctx);
         healthTab = new HealthTab(ctx);
         historyTab = new HistoryTab(ctx, dataService.traces(), dataService.traceFilePositions());
         circuitBreakerTab = new CircuitBreakerTab(ctx, dataService.metrics());
@@ -165,6 +167,7 @@ class TabRegistry {
                 new MoreTab(TuiIcons.TAB_BROWSE, "Browse", "Bro&wse", browseTab, "Routing"),
                 new MoreTab(TuiIcons.TAB_CIRCUIT_BREAKER, "Circuit Breaker", "&Circuit Breaker", circuitBreakerTab, "Routing"),
                 new MoreTab(TuiIcons.TAB_CONSUMERS, "Consumers", "Co&nsumers", consumersTab, "Routing"),
+                new MoreTab(TuiIcons.TAB_HTTP, "HTTP", "&HTTP", httpTab, "Routing"),
                 new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "In&flight", inflightTab, "Routing"),
                 new MoreTab(TuiIcons.TAB_PRODUCERS, "Producers", "Prod&ucers", producersTab, "Routing"),
                 new MoreTab(
@@ -208,7 +211,7 @@ class TabRegistry {
             case TAB_DIAGRAM -> diagramTab;
             case TAB_ROUTES -> routesTab;
             case TAB_ENDPOINTS -> endpointsTab;
-            case TAB_HTTP -> httpTab;
+            case TAB_SOURCE -> sourceTab;
             case TAB_HISTORY -> historyTab;
             case TAB_ERRORS -> errorsTab;
             case TAB_MORE -> activeMoreTab;
@@ -301,7 +304,7 @@ class TabRegistry {
     void resetIntegrationTabState(DataRefreshService dataService, FilesBrowser filesBrowser) {
         diagramTab.onIntegrationChanged();
         routesTab.onIntegrationChanged();
-        httpTab.onIntegrationChanged();
+        sourceTab.onIntegrationChanged();
         logTab.onIntegrationChanged();
         historyTab.onIntegrationChanged();
         for (MoreTab mt : moreTabs) {
@@ -336,6 +339,10 @@ class TabRegistry {
 
     HttpTab httpTab() {
         return httpTab;
+    }
+
+    SourceTab sourceTab() {
+        return sourceTab;
     }
 
     HealthTab healthTab() {
@@ -447,14 +454,14 @@ class TabRegistry {
         List<TabEntry> entries = new ArrayList<>();
         entries.add(
                 new TabEntry(icon(TAB_OVERVIEW), "Overview", overviewTab.description(), "1", TAB_OVERVIEW, -1, overviewTab));
-        entries.add(new TabEntry(icon(TAB_LOG), "Log", logTab.description(), "2", TAB_LOG, -1, logTab));
+        entries.add(new TabEntry(icon(TAB_SOURCE), "Source", sourceTab.description(), "2", TAB_SOURCE, -1, sourceTab));
+        entries.add(new TabEntry(icon(TAB_LOG), "Log", logTab.description(), "3", TAB_LOG, -1, logTab));
         entries.add(
-                new TabEntry(icon(TAB_ACTIVITY), "Activity", activityTab.description(), "3", TAB_ACTIVITY, -1, activityTab));
-        entries.add(new TabEntry(icon(TAB_DIAGRAM), "Diagram", diagramTab.description(), "4", TAB_DIAGRAM, -1, diagramTab));
-        entries.add(new TabEntry(icon(TAB_ROUTES), "Routes", routesTab.description(), "5", TAB_ROUTES, -1, routesTab));
+                new TabEntry(icon(TAB_ACTIVITY), "Activity", activityTab.description(), "4", TAB_ACTIVITY, -1, activityTab));
+        entries.add(new TabEntry(icon(TAB_DIAGRAM), "Diagram", diagramTab.description(), "5", TAB_DIAGRAM, -1, diagramTab));
+        entries.add(new TabEntry(icon(TAB_ROUTES), "Routes", routesTab.description(), "6", TAB_ROUTES, -1, routesTab));
         entries.add(new TabEntry(
-                icon(TAB_ENDPOINTS), "Endpoints", endpointsTab.description(), "6", TAB_ENDPOINTS, -1, endpointsTab));
-        entries.add(new TabEntry(icon(TAB_HTTP), "HTTP", httpTab.description(), "7", TAB_HTTP, -1, httpTab));
+                icon(TAB_ENDPOINTS), "Endpoints", endpointsTab.description(), "7", TAB_ENDPOINTS, -1, endpointsTab));
         entries.add(new TabEntry(icon(TAB_HISTORY), "Inspect", historyTab.description(), "8", TAB_HISTORY, -1, historyTab));
         entries.add(new TabEntry(icon(TAB_ERRORS), "Errors", errorsTab.description(), "9", TAB_ERRORS, -1, errorsTab));
         for (int i = 0; i < moreTabs.size(); i++) {

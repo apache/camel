@@ -691,8 +691,11 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
-        boolean probeEditing = tabRegistry.selectedTabIndex() == TAB_HTTP
+        boolean probeEditing = tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.httpTab()
                 && tabRegistry.httpTab().isProbeMode();
+        boolean sourceSearchActive = tabRegistry.selectedTabIndex() == TAB_SOURCE
+                && tabRegistry.sourceTab().isSourceViewerSearchActive();
         boolean logSearchActive = tabRegistry.selectedTabIndex() == TAB_LOG
                 && tabRegistry.logTab().isSearchInputActive();
         boolean spanFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
@@ -713,8 +716,9 @@ public class CamelMonitor extends CamelCommand {
         boolean catalogFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
                 && tabRegistry.getActiveMoreTab() == tabRegistry.catalogTab()
                 && tabRegistry.catalogTab().isFilterInputActive();
-        boolean textEditing = probeEditing || logSearchActive || spanFilterActive || beanFilterActive
-                || classpathFilterActive || mavenDepsFilterActive || sqlInputActive || catalogFilterActive;
+        boolean textEditing = probeEditing || sourceSearchActive || logSearchActive || spanFilterActive
+                || beanFilterActive || classpathFilterActive || mavenDepsFilterActive || sqlInputActive
+                || catalogFilterActive;
         if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
             runner.quit();
             return true;
@@ -728,23 +732,23 @@ public class CamelMonitor extends CamelCommand {
                 return tabRegistry.handleTabKey(TAB_OVERVIEW, ctx, dataService);
             }
             if (ke.isChar('2')) {
+                return tabRegistry.handleTabKey(TAB_SOURCE, ctx, dataService);
+            }
+            if (ke.isChar('3')) {
                 return tabRegistry.handleTabKey(TAB_LOG, ctx, dataService);
             }
             if (!isInfraSelected()) {
-                if (ke.isChar('3')) {
+                if (ke.isChar('4')) {
                     return tabRegistry.handleTabKey(TAB_ACTIVITY, ctx, dataService);
                 }
-                if (ke.isChar('4')) {
+                if (ke.isChar('5')) {
                     return tabRegistry.handleTabKey(TAB_DIAGRAM, ctx, dataService);
                 }
-                if (ke.isChar('5')) {
+                if (ke.isChar('6')) {
                     return tabRegistry.handleTabKey(TAB_ROUTES, ctx, dataService);
                 }
-                if (ke.isChar('6')) {
-                    return tabRegistry.handleTabKey(TAB_ENDPOINTS, ctx, dataService);
-                }
                 if (ke.isChar('7')) {
-                    return tabRegistry.handleTabKey(TAB_HTTP, ctx, dataService);
+                    return tabRegistry.handleTabKey(TAB_ENDPOINTS, ctx, dataService);
                 }
                 if (ke.isChar('8')) {
                     return tabRegistry.handleTabKey(TAB_HISTORY, ctx, dataService);
@@ -759,26 +763,6 @@ public class CamelMonitor extends CamelCommand {
         }
         MonitorTab activeMonitorTab = tabRegistry.activeTab();
         boolean overlayActive = activeMonitorTab != null && activeMonitorTab.isOverlayActive();
-        if (ke.isFocusPrevious() && !textEditing && !overlayActive) {
-            if (isInfraSelected()) {
-                int prev = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
-                tabsState.select(prev);
-            } else {
-                int prev = (tabRegistry.selectedTabIndex() - 1 + NUM_TABS) % NUM_TABS;
-                tabRegistry.handleTabKey(prev, ctx, dataService);
-            }
-            return true;
-        }
-        if (ke.isFocusNext() && !textEditing && !overlayActive) {
-            if (isInfraSelected()) {
-                int next = tabRegistry.selectedTabIndex() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
-                tabsState.select(next);
-            } else {
-                int next = (tabRegistry.selectedTabIndex() + 1) % NUM_TABS;
-                tabRegistry.handleTabKey(next, ctx, dataService);
-            }
-            return true;
-        }
         if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
             recordingManager.takeScreenshot();
             return true;
@@ -1164,6 +1148,10 @@ public class CamelMonitor extends CamelCommand {
             filesBrowser.handlePaste(pe.text());
             return true;
         }
+        if (tabRegistry.sourceTab().isSourceViewerSearchActive()) {
+            tabRegistry.sourceTab().handlePaste(pe.text());
+            return true;
+        }
         if (tabRegistry.getActiveMoreTab() == tabRegistry.sqlQueryTab()
                 && tabRegistry.sqlQueryTab().isInputActive()) {
             tabRegistry.sqlQueryTab().handlePaste(pe.text());
@@ -1474,7 +1462,7 @@ public class CamelMonitor extends CamelCommand {
             // Infra mode: only Overview and Log tabs
             Line[] labels = {
                     Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
-                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log"))
+                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "3", "Log"))
             };
 
             // Map real tab index to infra tab index for highlight
@@ -1498,12 +1486,12 @@ public class CamelMonitor extends CamelCommand {
 
         Line[] labels = {
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ACTIVITY, "3", "Activity")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "4", "Diagram")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "5", "Route")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "6", "Endpoint")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HTTP, "7", "HTTP")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_SOURCE, "2", "Source")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "3", "Log")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ACTIVITY, "4", "Activity")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "5", "Diagram")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "6", "Route")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "7", "Endpoint")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_INSPECT, "8", "Inspect")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ERRORS, "9", "Errors")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_MORE, "0", TuiIcons.moreTabLabel())),
@@ -1614,10 +1602,6 @@ public class CamelMonitor extends CamelCommand {
         int endpointCount = hasSelection ? sel.endpoints.size() : 0;
         if (endpointCount > 0) {
             badgeTexts[TAB_ENDPOINTS] = "(" + endpointCount + ")";
-        }
-        int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
-        if (httpCount > 0) {
-            badgeTexts[TAB_HTTP] = "(" + httpCount + ")";
         }
         boolean hasTraces = hasSelection && !dataService.traces().get().isEmpty();
         if (hasTraces) {

@@ -33,7 +33,7 @@ class TabBarRenderTest {
 
     @Test
     void primaryTabHeadersStartWithIconAndTwoSpaces() {
-        String[] names = { "Overview", "Log", "Diagram", "Route", "Endpoint", "HTTP", "Health", "Inspect", "Errors" };
+        String[] names = { "Overview", "Source", "Log", "Activity", "Diagram", "Route", "Endpoint", "Inspect", "Errors" };
         for (int i = 0; i < names.length; i++) {
             String header
                     = Line.from(TuiIcons.primaryTabHeader(TuiIcons.PRIMARY_TAB_ICONS.get(i), String.valueOf(i + 1), names[i]))
@@ -53,8 +53,8 @@ class TabBarRenderTest {
     @Test
     void routeAndTopLabelsHaveEqualWidth() {
         // toggling Top mode must not shift the tab bar
-        int route = Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "4", "Route")).width();
-        int top = Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "4", " Top ")).width();
+        int route = Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "6", "Route")).width();
+        int top = Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "6", " Top ")).width();
         assertEquals(route, top, "Route and Top tab cells must be the same width");
     }
 
@@ -79,12 +79,12 @@ class TabBarRenderTest {
     private static Line[] fullTabLabels(String routesLabel) {
         return new Line[] {
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "2", "Log")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "3", "Diagram")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "4", routesLabel)),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "5", "Endpoint")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HTTP, "6", "HTTP")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_HEALTH, "7", "Health")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_SOURCE, "2", "Source")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "3", "Log")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ACTIVITY, "4", "Activity")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "5", "Diagram")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "6", routesLabel)),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "7", "Endpoint")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_INSPECT, "8", "Inspect")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ERRORS, "9", "Errors")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_MORE, "0", TuiIcons.moreTabLabel())),

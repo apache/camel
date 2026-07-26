@@ -40,12 +40,12 @@ class TuiIconsTest {
         // Guards that PRIMARY_TAB_ICONS is indexed by the TAB_* constants: reordering the list must break this,
         // otherwise TabRegistry.icon(index) would attach the wrong emoji to Go-to entries.
         assertEquals(TuiIcons.TAB_OVERVIEW, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_OVERVIEW));
+        assertEquals(TuiIcons.TAB_SOURCE, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_SOURCE));
         assertEquals(TuiIcons.TAB_LOG, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_LOG));
         assertEquals(TuiIcons.TAB_ACTIVITY, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_ACTIVITY));
         assertEquals(TuiIcons.TAB_DIAGRAM, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_DIAGRAM));
         assertEquals(TuiIcons.TAB_ROUTES, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_ROUTES));
         assertEquals(TuiIcons.TAB_ENDPOINTS, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_ENDPOINTS));
-        assertEquals(TuiIcons.TAB_HTTP, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_HTTP));
         assertEquals(TuiIcons.TAB_INSPECT, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_HISTORY));
         assertEquals(TuiIcons.TAB_ERRORS, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_ERRORS));
         assertEquals(TuiIcons.TAB_MORE, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_MORE));

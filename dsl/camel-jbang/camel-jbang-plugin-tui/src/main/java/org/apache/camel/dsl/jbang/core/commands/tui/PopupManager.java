@@ -77,6 +77,8 @@ class PopupManager {
     private final ListState morePopupState = new ListState();
     private final ScrollbarState moreScrollbarState = new ScrollbarState();
     private int lastMoreSelection;
+    private char lastShortcutLetter;
+    private int lastShortcutIndex = -1;
     private Line[] currentTabLabels;
 
     // Kill confirm
@@ -654,18 +656,43 @@ class PopupManager {
 
     int morePopupShortcut(KeyEvent ke) {
         List<TabRegistry.MoreTab> tabs = moreTabsSupplier.get();
+        List<Integer> matches = new ArrayList<>();
+        char pressedUpper = 0;
+
         for (int i = 0; i < tabs.size(); i++) {
             int idx = tabs.get(i).mnemonicIndex();
             if (idx < 0) {
                 continue;
             }
             char letter = tabs.get(i).displayName().charAt(idx);
-            // trigger on either case so Shift+letter works too
             if (ke.isChar(Character.toLowerCase(letter)) || ke.isChar(Character.toUpperCase(letter))) {
-                return i;
+                if (pressedUpper == 0) {
+                    pressedUpper = Character.toUpperCase(letter);
+                }
+                matches.add(i);
             }
         }
-        return -1;
+
+        if (matches.isEmpty()) {
+            return -1;
+        }
+        if (matches.size() == 1) {
+            lastShortcutLetter = pressedUpper;
+            lastShortcutIndex = matches.get(0);
+            return matches.get(0);
+        }
+
+        // cycle through duplicate mnemonics
+        if (pressedUpper == lastShortcutLetter && lastShortcutIndex >= 0) {
+            int pos = matches.indexOf(lastShortcutIndex);
+            int next = (pos + 1) % matches.size();
+            lastShortcutIndex = matches.get(next);
+            return matches.get(next);
+        }
+
+        lastShortcutLetter = pressedUpper;
+        lastShortcutIndex = matches.get(0);
+        return matches.get(0);
     }
 
     List<IntegrationInfo> getNonVanishingIntegrations() {
