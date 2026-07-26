@@ -21,7 +21,6 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DefaultMaskingFormatterTest {
 
@@ -30,16 +29,15 @@ class DefaultMaskingFormatterTest {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
-        assertEquals("key=value, myPassword=xxxxx,\n myPassphrase=\"xxxxx\", secretKey='xxxxx'", answer);
+        assertThat(answer).isEqualTo("key=value, myPassword=xxxxx,\n myPassphrase=\"xxxxx\", secretKey='xxxxx'");
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
-        assertEquals("<xmlPassword>\n xxxxx \n</xmlPassword>\n<user password=\"xxxxx\"/>", answer);
+        assertThat(answer).isEqualTo("<xmlPassword>\n xxxxx \n</xmlPassword>\n<user password=\"xxxxx\"/>");
 
         answer = formatter.format(
                 "{\"key\" : \"value\", \"Password\":\"foo\", \"Passphrase\" : \"foo bar\", \"SecretKey\" : \"!@#$%^&*() -+[]{};:'\"}");
-        assertEquals(
-                "{\"key\" : \"value\", \"Password\":\"xxxxx\", \"Passphrase\" : \"xxxxx\", \"SecretKey\" : \"xxxxx\"}",
-                answer);
+        assertThat(answer).isEqualTo(
+                "{\"key\" : \"value\", \"Password\":\"xxxxx\", \"Passphrase\" : \"xxxxx\", \"SecretKey\" : \"xxxxx\"}");
     }
 
     @Test
@@ -47,16 +45,15 @@ class DefaultMaskingFormatterTest {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(false, true, true);
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
-        assertEquals("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'", answer);
+        assertThat(answer).isEqualTo("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
-        assertEquals("<xmlPassword>\n xxxxx \n</xmlPassword>\n<user password=\"asdf qwert\"/>", answer);
+        assertThat(answer).isEqualTo("<xmlPassword>\n xxxxx \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
 
         answer = formatter.format(
                 "{\"key\" : \"value\", \"Password\":\"foo\", \"Passphrase\" : \"foo bar\", \"SecretKey\" : \"!@#$%^&*() -+[]{};:'\"}");
-        assertEquals(
-                "{\"key\" : \"value\", \"Password\":\"xxxxx\", \"Passphrase\" : \"xxxxx\", \"SecretKey\" : \"xxxxx\"}",
-                answer);
+        assertThat(answer).isEqualTo(
+                "{\"key\" : \"value\", \"Password\":\"xxxxx\", \"Passphrase\" : \"xxxxx\", \"SecretKey\" : \"xxxxx\"}");
     }
 
     @Test
@@ -64,16 +61,15 @@ class DefaultMaskingFormatterTest {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(true, false, true);
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
-        assertEquals("key=value, myPassword=xxxxx,\n myPassphrase=\"xxxxx\", secretKey='xxxxx'", answer);
+        assertThat(answer).isEqualTo("key=value, myPassword=xxxxx,\n myPassphrase=\"xxxxx\", secretKey='xxxxx'");
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
-        assertEquals("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"xxxxx\"/>", answer);
+        assertThat(answer).isEqualTo("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"xxxxx\"/>");
 
         answer = formatter.format(
                 "{\"key\" : \"value\", \"Password\":\"foo\", \"Passphrase\" : \"foo bar\", \"SecretKey\" : \"!@#$%^&*() -+[]{};:'\"}");
-        assertEquals(
-                "{\"key\" : \"value\", \"Password\":\"xxxxx\", \"Passphrase\" : \"xxxxx\", \"SecretKey\" : \"xxxxx\"}",
-                answer);
+        assertThat(answer).isEqualTo(
+                "{\"key\" : \"value\", \"Password\":\"xxxxx\", \"Passphrase\" : \"xxxxx\", \"SecretKey\" : \"xxxxx\"}");
     }
 
     @Test
@@ -81,16 +77,15 @@ class DefaultMaskingFormatterTest {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(true, true, false);
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
-        assertEquals("key=value, myPassword=xxxxx,\n myPassphrase=\"xxxxx\", secretKey='xxxxx'", answer);
+        assertThat(answer).isEqualTo("key=value, myPassword=xxxxx,\n myPassphrase=\"xxxxx\", secretKey='xxxxx'");
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
-        assertEquals("<xmlPassword>\n xxxxx \n</xmlPassword>\n<user password=\"xxxxx\"/>", answer);
+        assertThat(answer).isEqualTo("<xmlPassword>\n xxxxx \n</xmlPassword>\n<user password=\"xxxxx\"/>");
 
         answer = formatter.format(
                 "{\"key\" : \"value\", \"My Password\":\"foo\", \"My SecretPassphrase\" : \"foo bar\", \"My SecretKey2\" : \"!@#$%^&*() -+[]{};:'\"}");
-        assertEquals(
-                "{\"key\" : \"value\", \"My Password\":\"foo\", \"My SecretPassphrase\" : \"foo bar\", \"My SecretKey2\" : \"!@#$%^&*() -+[]{};:'\"}",
-                answer);
+        assertThat(answer).isEqualTo(
+                "{\"key\" : \"value\", \"My Password\":\"foo\", \"My SecretPassphrase\" : \"foo bar\", \"My SecretKey2\" : \"!@#$%^&*() -+[]{};:'\"}");
     }
 
     @Test
@@ -99,16 +94,15 @@ class DefaultMaskingFormatterTest {
         formatter.setMaskString("**********");
         String answer
                 = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
-        assertEquals("key=value, myPassword=**********,\n myPassphrase=\"**********\", secretKey='**********'", answer);
+        assertThat(answer).isEqualTo("key=value, myPassword=**********,\n myPassphrase=\"**********\", secretKey='**********'");
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
-        assertEquals("<xmlPassword>\n ********** \n</xmlPassword>\n<user password=\"**********\"/>", answer);
+        assertThat(answer).isEqualTo("<xmlPassword>\n ********** \n</xmlPassword>\n<user password=\"**********\"/>");
 
         answer = formatter.format(
                 "{\"key\" : \"value\", \"Password\":\"foo\", \"Passphrase\" : \"foo bar\", \"SecretKey\" : \"!@#$%^&*() -+[]{};:'\"}");
-        assertEquals(
-                "{\"key\" : \"value\", \"Password\":\"**********\", \"Passphrase\" : \"**********\", \"SecretKey\" : \"**********\"}",
-                answer);
+        assertThat(answer).isEqualTo(
+                "{\"key\" : \"value\", \"Password\":\"**********\", \"Passphrase\" : \"**********\", \"SecretKey\" : \"**********\"}");
     }
 
     @Test
@@ -116,16 +110,15 @@ class DefaultMaskingFormatterTest {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         String answer
                 = formatter.format("key=value, myAccessKey=foo,\n authkey=\"foo bar\", refreshtoken='!@#$%^&*() -+[]{};:'");
-        assertEquals("key=value, myAccessKey=xxxxx,\n authkey=\"xxxxx\", refreshtoken='xxxxx'", answer);
+        assertThat(answer).isEqualTo("key=value, myAccessKey=xxxxx,\n authkey=\"xxxxx\", refreshtoken='xxxxx'");
 
         answer = formatter.format("<subscribeKey>\n foo bar \n</subscribeKey>\n<user verificationCode=\"asdf qwert\"/>");
-        assertEquals("<subscribeKey>\n xxxxx \n</subscribeKey>\n<user verificationCode=\"xxxxx\"/>", answer);
+        assertThat(answer).isEqualTo("<subscribeKey>\n xxxxx \n</subscribeKey>\n<user verificationCode=\"xxxxx\"/>");
 
         answer = formatter.format(
                 "{\"key\" : \"value\", \"subscribeKey\":\"foo\", \"verificationCode\" : \"foo bar\", \"RefreshToken\" : \"!@#$%^&*() -+[]{};:'\"}");
-        assertEquals(
-                "{\"key\" : \"value\", \"subscribeKey\":\"xxxxx\", \"verificationCode\" : \"xxxxx\", \"RefreshToken\" : \"xxxxx\"}",
-                answer);
+        assertThat(answer).isEqualTo(
+                "{\"key\" : \"value\", \"subscribeKey\":\"xxxxx\", \"verificationCode\" : \"xxxxx\", \"RefreshToken\" : \"xxxxx\"}");
     }
 
     @Test
@@ -136,20 +129,18 @@ class DefaultMaskingFormatterTest {
         String answer
                 = formatter.format(
                         "key=value, Cheese=gauda, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
-        assertEquals(
-                "key=value, Cheese=**********, myPassword=**********,\n myPassphrase=\"**********\", secretKey='**********'",
-                answer);
+        assertThat(answer).isEqualTo(
+                "key=value, Cheese=**********, myPassword=**********,\n myPassphrase=\"**********\", secretKey='**********'");
 
         answer = formatter
                 .format("<chEEse>Gauda</chEEse><xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
-        assertEquals("<chEEse>**********</chEEse><xmlPassword>\n ********** \n</xmlPassword>\n<user password=\"**********\"/>",
-                answer);
+        assertThat(answer).isEqualTo(
+                "<chEEse>**********</chEEse><xmlPassword>\n ********** \n</xmlPassword>\n<user password=\"**********\"/>");
 
         answer = formatter.format(
                 "{\"key\" : \"value\", \"Cheese\": \"gauda\", \"Password\":\"foo\", \"Passphrase\" : \"foo bar\", \"SecretKey\" : \"!@#$%^&*() -+[]{};:'\"}");
-        assertEquals(
-                "{\"key\" : \"value\", \"Cheese\": \"**********\", \"Password\":\"**********\", \"Passphrase\" : \"**********\", \"SecretKey\" : \"**********\"}",
-                answer);
+        assertThat(answer).isEqualTo(
+                "{\"key\" : \"value\", \"Cheese\": \"**********\", \"Password\":\"**********\", \"Passphrase\" : \"**********\", \"SecretKey\" : \"**********\"}");
     }
 
     @Test
@@ -248,6 +239,14 @@ class DefaultMaskingFormatterTest {
     void formatPlainTextUnchanged() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         assertThat(formatter.format("Hello World")).isEqualTo("Hello World");
+    }
+
+    @Test
+    void formatKeywordMaskingUsesLiteralMaskStringWithRegexMetacharacters() {
+        DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
+        formatter.setMaskString("$1");
+        // Without Matcher.quoteReplacement, $1 would expand to the regex capture group (the key prefix)
+        assertThat(formatter.format("myPassword=foo")).isEqualTo("myPassword=$1");
     }
 
     @Test

@@ -19,6 +19,7 @@ package org.apache.camel.support.processor;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
@@ -125,21 +126,22 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
 
         String answer = source;
         if (keywords != null && !keywords.isEmpty()) {
+            String replacement = Matcher.quoteReplacement(maskString);
             // xml,json or key=value pairs is the formats supported
             boolean xml = maskXmlElement && source.startsWith("<");
             boolean json = maskJson && !xml && (source.startsWith("{") || source.startsWith("["));
 
             if (xml) {
-                answer = xmlElementMaskPattern.matcher(answer).replaceAll("$1" + maskString + "$3");
+                answer = xmlElementMaskPattern.matcher(answer).replaceAll("$1" + replacement + "$3");
                 if (maskKeyValue) {
                     // used for the attributes in the XML tags
-                    answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);
+                    answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + replacement);
                 }
             } else if (json) {
-                answer = jsonMaskPattern.matcher(answer).replaceAll("\"$1\"$2:$3\"" + maskString + "\"");
+                answer = jsonMaskPattern.matcher(answer).replaceAll("\"$1\"$2:$3\"" + replacement + "\"");
             } else if (maskKeyValue) {
-                // key=value paris
-                answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);
+                // key=value pairs
+                answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + replacement);
             }
         }
 
