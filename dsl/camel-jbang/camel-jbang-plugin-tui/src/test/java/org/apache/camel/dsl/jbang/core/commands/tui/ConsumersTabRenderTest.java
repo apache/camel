@@ -206,6 +206,27 @@ class ConsumersTabRenderTest {
         assertTrue(footer.contains("sort"), "Footer should contain sort hint");
     }
 
+    @Test
+    void serverProvidedSchedulePreferred() {
+        ConsumerInfo ci = addConsumer("quartz-route", "quartz://myGroup/myTimer?cron=0+0/5+*+*+*+?", "Started",
+                "org.apache.camel.component.quartz.QuartzConsumer");
+        ci.schedule = "0 0/1 * * * ?";
+
+        String schedule = ConsumersTab.consumerSchedule(ci);
+        assertTrue(schedule.equals("0 0/1 * * * ?"),
+                "Server-provided schedule should take precedence over URI parsing");
+    }
+
+    @Test
+    void quartzCronExtractedFromUri() {
+        ConsumerInfo ci = addConsumer("quartz-route", "quartz://myGroup/myTimer?cron=0+0/5+*+*+*+?", "Started",
+                "org.apache.camel.component.quartz.QuartzConsumer");
+
+        String schedule = ConsumersTab.consumerSchedule(ci);
+        assertTrue(schedule.equals("0 0/5 * * * ?"),
+                "Cron should be extracted and decoded from quartz URI");
+    }
+
     // ---- Helper methods ----
 
     private ConsumerInfo addConsumer(String id, String uri, String state, String className) {

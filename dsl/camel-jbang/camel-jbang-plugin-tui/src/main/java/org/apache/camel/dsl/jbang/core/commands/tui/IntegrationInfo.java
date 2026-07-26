@@ -89,6 +89,7 @@ class IntegrationInfo {
     final List<RouteControllerInfo> routeControllerRoutes = new ArrayList<>();
     final List<HealthCheckInfo> healthChecks = new ArrayList<>();
     final List<EndpointInfo> endpoints = new ArrayList<>();
+    final List<ServiceInfo> services = new ArrayList<>();
     final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
     final List<KafkaConsumerInfo> kafkaConsumers = new ArrayList<>();
     int errorCount;

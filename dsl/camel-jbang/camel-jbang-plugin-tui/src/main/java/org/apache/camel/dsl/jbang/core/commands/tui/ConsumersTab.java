@@ -207,6 +207,10 @@ class ConsumersTab extends AbstractTableTab {
     }
 
     static String consumerSchedule(ConsumerInfo ci) {
+        // Prefer server-provided schedule (e.g., from quartz dev console)
+        if (ci.schedule != null) {
+            return ci.schedule;
+        }
         // Try to extract cron expression from URI for cron/quartz components
         String cron = extractCronFromUri(ci.uri);
         if (cron != null) {

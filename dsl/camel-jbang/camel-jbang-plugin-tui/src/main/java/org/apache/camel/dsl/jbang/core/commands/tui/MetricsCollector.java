@@ -72,6 +72,22 @@ class MetricsCollector {
     private final Map<String, LinkedList<long[]>> perEndpointSamples = new ConcurrentHashMap<>();
     private final Map<String, Long> previousPerEndpointTime = new ConcurrentHashMap<>();
 
+    // Per-endpoint payload size history — keyed by pid + "|" + uri
+    private final Map<String, LinkedList<Long>> perEndpointInSizeHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<Long>> perEndpointOutSizeHistory = new ConcurrentHashMap<>();
+    private final Map<String, Long> previousPerEndpointSizeTime = new ConcurrentHashMap<>();
+
+    // Service in/out sliding window history per PID (network services)
+    private final Map<String, LinkedList<Long>> serviceInHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<Long>> serviceOutHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<long[]>> serviceSamples = new ConcurrentHashMap<>();
+    private final Map<String, Long> previousServiceTime = new ConcurrentHashMap<>();
+
+    // Service payload size (mean body size) history per PID
+    private final Map<String, LinkedList<Long>> serviceInSizeHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<Long>> serviceOutSizeHistory = new ConcurrentHashMap<>();
+    private final Map<String, Long> previousServiceSizeTime = new ConcurrentHashMap<>();
+
     // Circuit breaker throughput history per PID/cbId
     private final Map<String, LinkedList<Long>> cbSuccessHistory = new ConcurrentHashMap<>();
     private final Map<String, LinkedList<Long>> cbFailHistory = new ConcurrentHashMap<>();
@@ -138,6 +154,30 @@ class MetricsCollector {
 
     Map<String, LinkedList<Long>> getPerEndpointOutHistory() {
         return perEndpointOutHistory;
+    }
+
+    Map<String, LinkedList<Long>> getPerEndpointInSizeHistory() {
+        return perEndpointInSizeHistory;
+    }
+
+    Map<String, LinkedList<Long>> getPerEndpointOutSizeHistory() {
+        return perEndpointOutSizeHistory;
+    }
+
+    Map<String, LinkedList<Long>> getServiceInHistory() {
+        return serviceInHistory;
+    }
+
+    Map<String, LinkedList<Long>> getServiceOutHistory() {
+        return serviceOutHistory;
+    }
+
+    Map<String, LinkedList<Long>> getServiceInSizeHistory() {
+        return serviceInSizeHistory;
+    }
+
+    Map<String, LinkedList<Long>> getServiceOutSizeHistory() {
+        return serviceOutSizeHistory;
     }
 
     Map<String, LinkedList<Long>> getCbSuccessHistory() {
@@ -260,6 +300,63 @@ class MetricsCollector {
                     perEndpointSamples, previousPerEndpointTime,
                     perEndpointInHistory, perEndpointOutHistory);
         }
+
+        // Per-endpoint payload size history (keyed by pid|uri)
+        for (EndpointInfo ep : info.endpoints) {
+            if (ep.uri == null || ep.meanBodySize < 0) {
+                continue;
+            }
+            String key = pid + "|" + ep.uri;
+            Long lastTime = previousPerEndpointSizeTime.get(key);
+            if (lastTime == null || now - lastTime >= 1000) {
+                previousPerEndpointSizeTime.put(key, now);
+                if ("in".equals(ep.direction)) {
+                    addToHistory(perEndpointInSizeHistory, key, ep.meanBodySize, MAX_ENDPOINT_CHART_POINTS);
+                } else if ("out".equals(ep.direction)) {
+                    addToHistory(perEndpointOutSizeHistory, key, ep.meanBodySize, MAX_ENDPOINT_CHART_POINTS);
+                }
+            }
+        }
+    }
+
+    void updateServiceHistory(IntegrationInfo info) {
+        long inTotal = info.services.stream()
+                .filter(s -> "in".equals(s.direction))
+                .mapToLong(s -> s.hits).sum();
+        long outTotal = info.services.stream()
+                .filter(s -> "out".equals(s.direction))
+                .mapToLong(s -> s.hits).sum();
+
+        long now = System.currentTimeMillis();
+        recordEndpointSample(info.pid, now, inTotal, outTotal,
+                serviceSamples, previousServiceTime, serviceInHistory, serviceOutHistory);
+
+        // Correlate services with endpoint statistics to get payload size data.
+        // Services reference endpointUri which matches the endpoint's uri field.
+        Map<String, EndpointInfo> epByUri = new LinkedHashMap<>();
+        for (EndpointInfo ep : info.endpoints) {
+            if (ep.uri != null) {
+                epByUri.put(ep.uri, ep);
+            }
+        }
+        long inMeanSize = 0;
+        long outMeanSize = 0;
+        for (ServiceInfo si : info.services) {
+            EndpointInfo ep = si.endpointUri != null ? epByUri.get(si.endpointUri) : null;
+            if (ep != null && ep.meanBodySize >= 0) {
+                if ("in".equals(si.direction)) {
+                    inMeanSize = Math.max(inMeanSize, ep.meanBodySize);
+                } else if ("out".equals(si.direction)) {
+                    outMeanSize = Math.max(outMeanSize, ep.meanBodySize);
+                }
+            }
+        }
+        Long lastSizeTime = previousServiceSizeTime.get(info.pid);
+        if (lastSizeTime == null || now - lastSizeTime >= 1000) {
+            previousServiceSizeTime.put(info.pid, now);
+            addToHistory(serviceInSizeHistory, info.pid, inMeanSize, MAX_ENDPOINT_CHART_POINTS);
+            addToHistory(serviceOutSizeHistory, info.pid, outMeanSize, MAX_ENDPOINT_CHART_POINTS);
+        }
     }
 
     private void recordEndpointSample(
@@ -368,6 +465,16 @@ class MetricsCollector {
 
         removeByPrefix(pid + "|", perEndpointInHistory, perEndpointOutHistory,
                 perEndpointSamples, previousPerEndpointTime);
+        removeByPrefix(pid + "|", perEndpointInSizeHistory, perEndpointOutSizeHistory,
+                previousPerEndpointSizeTime);
+
+        serviceInHistory.remove(pid);
+        serviceOutHistory.remove(pid);
+        serviceSamples.remove(pid);
+        previousServiceTime.remove(pid);
+        serviceInSizeHistory.remove(pid);
+        serviceOutSizeHistory.remove(pid);
+        previousServiceSizeTime.remove(pid);
 
         heapMemHistory.remove(pid);
         previousHeapTime.remove(pid);
@@ -396,6 +503,14 @@ class MetricsCollector {
         previousEndpointSizeTime.remove(pid);
         previousEndpointRemoteStubTime.remove(pid);
 
+        serviceInHistory.remove(pid);
+        serviceOutHistory.remove(pid);
+        serviceSamples.remove(pid);
+        previousServiceTime.remove(pid);
+        serviceInSizeHistory.remove(pid);
+        serviceOutSizeHistory.remove(pid);
+        previousServiceSizeTime.remove(pid);
+
         heapMemHistory.remove(pid);
         previousHeapTime.remove(pid);
         cpuLoadAvg.remove(pid);
@@ -405,6 +520,8 @@ class MetricsCollector {
                 cbThroughputSamples, previousCbTime);
         removeByPrefix(pid + "|", perEndpointInHistory, perEndpointOutHistory,
                 perEndpointSamples, previousPerEndpointTime);
+        removeByPrefix(pid + "|", perEndpointInSizeHistory, perEndpointOutSizeHistory,
+                previousPerEndpointSizeTime);
     }
 
     /**

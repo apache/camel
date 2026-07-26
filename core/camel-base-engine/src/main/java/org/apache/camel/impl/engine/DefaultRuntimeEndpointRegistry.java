@@ -34,6 +34,7 @@ import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.CamelEvent.RouteAddedEvent;
 import org.apache.camel.spi.CamelEvent.RouteRemovedEvent;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
@@ -324,17 +325,48 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                 if (key != null) {
                     outputUtilization.onHit(key);
                     if (messageSizeEnabled) {
+                        // Record the request body size being sent to the endpoint.
+                        // ExchangeSentEvent will also fire after the producer completes
+                        // and record the max of request vs response body size.
                         Message message = exchange.getIn();
                         MessageSizeStrategy strategy = getCamelContext().getMessageSizeStrategy();
                         long bodySize = strategy.computeBodySize(message);
                         long headersSize = strategy.computeHeadersSize(message);
-                        outputSizeStats.onHit(key, bodySize, headersSize);
+                        // Store the request body size so ExchangeSentEvent can compare
+                        exchange.setProperty("CamelMessageBodySizeSending", bodySize);
+                        exchange.setProperty("CamelMessageHeadersSizeSending", headersSize);
                         // reset stream cache so the body is re-readable when sending
                         if (message.getBody() instanceof StreamCache sc) {
                             sc.reset();
                         }
                     }
                 }
+            }
+        } else if (extended && messageSizeEnabled && event instanceof ExchangeSentEvent ese) {
+            // Record the max of request and response body size.
+            // For SQL SELECT the response (List<Map>) is the meaningful payload.
+            // For SQL INSERT the request (the data being inserted) is the meaningful payload.
+            // Taking the max ensures the most relevant size is reported in both cases.
+            Endpoint endpoint = ese.getEndpoint();
+            Exchange exchange = ese.getExchange();
+            String routeId = ExchangeHelper.getRouteId(exchange);
+            String uri = endpoint.getEndpointUri();
+            String key = asUtilizationKey(routeId, uri);
+            if (key != null) {
+                MessageSizeStrategy strategy = getCamelContext().getMessageSizeStrategy();
+                long responseBodySize = strategy.computeBodySize(exchange.getMessage());
+                long responseHeadersSize = strategy.computeHeadersSize(exchange.getMessage());
+                if (exchange.getMessage().getBody() instanceof StreamCache sc) {
+                    sc.reset();
+                }
+                Long requestBodySize = exchange.getProperty("CamelMessageBodySizeSending", Long.class);
+                Long requestHeadersSize = exchange.getProperty("CamelMessageHeadersSizeSending", Long.class);
+                long bodySize = Math.max(responseBodySize, requestBodySize != null ? requestBodySize : 0);
+                long headersSize = Math.max(responseHeadersSize, requestHeadersSize != null ? requestHeadersSize : 0);
+                outputSizeStats.onHit(key, bodySize, headersSize);
+                // cleanup temporary properties
+                exchange.removeProperty("CamelMessageBodySizeSending");
+                exchange.removeProperty("CamelMessageHeadersSizeSending");
             }
         } else if (event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent) {
             // InOut consumers send a reply back when the exchange completes;
@@ -381,6 +413,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     public boolean isEnabled(CamelEvent event) {
         return enabled && event instanceof ExchangeCreatedEvent
                 || event instanceof ExchangeSendingEvent
+                || event instanceof ExchangeSentEvent
                 || event instanceof ExchangeCompletedEvent
                 || event instanceof ExchangeFailedEvent
                 || event instanceof RouteAddedEvent

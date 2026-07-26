@@ -16,19 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-class ConsumerInfo {
-    String id;
-    String uri;
-    String state;
-    String className;
-    boolean scheduled;
-    int inflight;
-    Boolean polling;
-    Long totalCounter;
-    Long delay;
-    Long period;
-    String schedule;
-    String sinceLastStarted;
-    String sinceLastCompleted;
-    String sinceLastFailed;
+class ServiceInfo {
+    String component;
+    String direction;
+    boolean hosted;
+    String protocol;
+    String serviceUrl;
+    String endpointUri;
+    String routeId;
+    long hits;
 }

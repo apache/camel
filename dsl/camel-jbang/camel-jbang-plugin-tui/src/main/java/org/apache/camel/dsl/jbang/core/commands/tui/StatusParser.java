@@ -326,6 +326,34 @@ final class StatusParser {
             }
         }
 
+        // Enrich consumers with quartz trigger schedule data
+        JsonObject quartzObj = (JsonObject) root.get("quartz");
+        if (quartzObj != null) {
+            JsonArray triggers = (JsonArray) quartzObj.get("triggers");
+            if (triggers != null) {
+                for (Object t : triggers) {
+                    JsonObject tj = (JsonObject) t;
+                    String routeId = tj.getString("routeId");
+                    if (routeId != null) {
+                        for (ConsumerInfo ci : info.consumers) {
+                            if (routeId.equals(ci.id)) {
+                                String cron = tj.getString("cron");
+                                if (cron != null) {
+                                    ci.schedule = cron;
+                                } else {
+                                    String interval = tj.getString("repeatInterval");
+                                    if (interval != null) {
+                                        ci.schedule = interval;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // Parse producers
         JsonObject producersObj = (JsonObject) root.get("producers");
         if (producersObj != null) {
@@ -405,6 +433,27 @@ final class StatusParser {
                         ep.component = idx > 0 ? ep.uri.substring(0, idx) : ep.uri;
                     }
                     info.endpoints.add(ep);
+                }
+            }
+        }
+
+        // Parse services (network endpoints from service dev console)
+        JsonObject serviceObj = (JsonObject) root.get("services");
+        if (serviceObj != null) {
+            JsonArray serviceList = (JsonArray) serviceObj.get("services");
+            if (serviceList != null) {
+                for (Object s : serviceList) {
+                    JsonObject sj = (JsonObject) s;
+                    ServiceInfo si = new ServiceInfo();
+                    si.component = sj.getString("component");
+                    si.direction = sj.getString("direction");
+                    si.hosted = Boolean.TRUE.equals(sj.get("hosted"));
+                    si.protocol = sj.getString("protocol");
+                    si.serviceUrl = sj.getString("serviceUrl");
+                    si.endpointUri = sj.getString("endpointUri");
+                    si.routeId = sj.getString("routeId");
+                    si.hits = TuiHelper.objToLong(sj.get("hits"));
+                    info.services.add(si);
                 }
             }
         }

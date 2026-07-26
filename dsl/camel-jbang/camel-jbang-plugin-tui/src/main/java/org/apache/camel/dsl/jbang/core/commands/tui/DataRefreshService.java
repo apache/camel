@@ -264,6 +264,7 @@ class DataRefreshService {
                     infos.add(info);
                     metrics.updateThroughputHistory(info);
                     metrics.updateEndpointHistory(info);
+                    metrics.updateServiceHistory(info);
                     metrics.updateCbHistory(info);
                     metrics.updateHeapHistory(info);
                     metrics.updateLoadMetrics(ph, info);

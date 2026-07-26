@@ -20,6 +20,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -83,6 +84,12 @@ public class DefaultMessageSizeStrategy extends ServiceSupport implements CamelC
             if (body instanceof Path p) {
                 return Files.size(p);
             }
+            if (body instanceof Collection<?> col) {
+                return estimateCollectionSize(col);
+            }
+            if (body instanceof Map<?, ?> map) {
+                return estimateMapSize(map);
+            }
             // fallback to Content-Length header (e.g. HTTP components where body is a stream)
             Long cl = message.getHeader(Exchange.CONTENT_LENGTH, Long.class);
             if (cl != null && cl >= 0) {
@@ -121,5 +128,40 @@ public class DefaultMessageSizeStrategy extends ServiceSupport implements CamelC
             // ignore
         }
         return -1;
+    }
+
+    private long estimateCollectionSize(Collection<?> col) {
+        long total = 0;
+        for (Object item : col) {
+            if (item instanceof Map<?, ?> map) {
+                total += estimateMapSize(map);
+            } else if (item instanceof String str) {
+                total += str.getBytes(StandardCharsets.UTF_8).length;
+            } else if (item instanceof byte[] bytes) {
+                total += bytes.length;
+            } else if (item != null) {
+                total += item.toString().getBytes(StandardCharsets.UTF_8).length;
+            }
+        }
+        return total;
+    }
+
+    private long estimateMapSize(Map<?, ?> map) {
+        long total = 0;
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            Object key = entry.getKey();
+            if (key != null) {
+                total += key.toString().getBytes(StandardCharsets.UTF_8).length;
+            }
+            Object value = entry.getValue();
+            if (value instanceof String str) {
+                total += str.getBytes(StandardCharsets.UTF_8).length;
+            } else if (value instanceof byte[] bytes) {
+                total += bytes.length;
+            } else if (value != null) {
+                total += value.toString().getBytes(StandardCharsets.UTF_8).length;
+            }
+        }
+        return total;
     }
 }

@@ -20,14 +20,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerMetaData;
+import org.quartz.impl.matchers.GroupMatcher;
 
 @DevConsole(name = "quartz", description = "Quartz Scheduler")
 public class QuartzConsole extends AbstractDevConsole {
@@ -190,6 +194,37 @@ public class QuartzConsole extends AbstractDevConsole {
                         jo.put("refireCount", job.getRefireCount());
                         jo.put("misfireInstruction", job.getTrigger().getMisfireInstruction());
                         arr.add(jo);
+                    }
+                }
+
+                // all scheduled triggers (for TUI consumer schedule display)
+                Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.anyGroup());
+                if (!jobKeys.isEmpty()) {
+                    JsonArray arr = new JsonArray();
+                    root.put("triggers", arr);
+                    for (JobKey jobKey : jobKeys) {
+                        JobDetail job = scheduler.getJobDetail(jobKey);
+                        if (job != null) {
+                            JsonObject jo = new JsonObject();
+                            String routeId = (String) job.getJobDataMap().get("routeId");
+                            if (routeId != null) {
+                                jo.put("routeId", routeId);
+                            }
+                            String type = (String) job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE);
+                            if (type != null) {
+                                jo.put("triggerType", type);
+                            }
+                            String cron = (String) job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION);
+                            if (cron != null) {
+                                jo.put("cron", cron);
+                            }
+                            String interval
+                                    = (String) job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL);
+                            if (interval != null) {
+                                jo.put("repeatInterval", interval);
+                            }
+                            arr.add(jo);
+                        }
                     }
                 }
             } catch (Exception e) {

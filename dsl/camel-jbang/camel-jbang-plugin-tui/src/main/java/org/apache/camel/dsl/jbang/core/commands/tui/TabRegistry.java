@@ -74,6 +74,7 @@ class TabRegistry {
     private EventTab eventTab;
     private RouteControllerTab routeControllerTab;
     private EndpointsTab endpointsTab;
+    private NetworkTab networkTab;
     private HttpTab httpTab;
     private SourceTab sourceTab;
     private HealthTab healthTab;
@@ -129,6 +130,7 @@ class TabRegistry {
         sqlQueryTab = new SqlQueryTab(ctx);
         sqlTraceTab = new SqlTraceTab(ctx);
         endpointsTab = new EndpointsTab(ctx, dataService.metrics());
+        networkTab = new NetworkTab(ctx, dataService.metrics());
         httpTab = new HttpTab(ctx);
         sourceTab = new SourceTab(ctx);
         healthTab = new HealthTab(ctx);
@@ -176,6 +178,7 @@ class TabRegistry {
                 // Observability
                 new MoreTab(TuiIcons.TAB_HEALTH, "Health", "H&ealth", healthTab, "Observability"),
                 new MoreTab(TuiIcons.TAB_METRICS, "Metrics", "Metr&ics", metricsTab, "Observability"),
+                new MoreTab(TuiIcons.TAB_NETWORK, "Network Services", "&Network Services", networkTab, "Observability"),
                 new MoreTab(TuiIcons.TAB_EVENTS, "Events", "E&xchange Events", eventTab, "Observability"),
                 new MoreTab(TuiIcons.TAB_SPANS, "Spans", "&OTel Spans", spansTab, "Observability"),
                 // Data

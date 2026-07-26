@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,7 +33,6 @@ import dev.tamboui.markdown.MarkdownView;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.CharWidth;
-import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
@@ -43,9 +41,6 @@ import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.block.Title;
-import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.sparkline.DualSparkline;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -78,6 +73,8 @@ class EndpointsTab extends AbstractTableTab {
     private final Map<String, LinkedList<Long>> endpointOutSizeHistory;
     private final Map<String, LinkedList<Long>> perEndpointInHistory;
     private final Map<String, LinkedList<Long>> perEndpointOutHistory;
+    private final Map<String, LinkedList<Long>> perEndpointInSizeHistory;
+    private final Map<String, LinkedList<Long>> perEndpointOutSizeHistory;
 
     private int filter;
     private int chartMode = CHART_ALL;
@@ -106,6 +103,8 @@ class EndpointsTab extends AbstractTableTab {
         this.endpointOutSizeHistory = metrics.getEndpointOutSizeHistory();
         this.perEndpointInHistory = metrics.getPerEndpointInHistory();
         this.perEndpointOutHistory = metrics.getPerEndpointOutHistory();
+        this.perEndpointInSizeHistory = metrics.getPerEndpointInSizeHistory();
+        this.perEndpointOutSizeHistory = metrics.getPerEndpointOutSizeHistory();
     }
 
     @Override
@@ -236,8 +235,8 @@ class EndpointsTab extends AbstractTableTab {
             cells.add(Cell.from(Span.styled(arrow + dir, dirStyle)));
             cells.add(rightCell(ep.hits > 0 ? String.valueOf(ep.hits) : "", 8));
             if (hasSize) {
-                cells.add(rightCell(sizeToString(ep.meanBodySize), 10));
-                cells.add(rightCell(sizeToString(ep.meanHeadersSize), 10));
+                cells.add(rightCell(FlowHelper.sizeToString(ep.meanBodySize), 10));
+                cells.add(rightCell(FlowHelper.sizeToString(ep.meanHeadersSize), 10));
             }
             cells.add(centerCell(ep.stub ? "x" : "", 6));
             cells.add(centerCell(ep.remote ? "x" : "", 8));
@@ -291,8 +290,9 @@ class EndpointsTab extends AbstractTableTab {
 
         boolean hasSizeHistory;
         try {
-            hasSizeHistory = !endpointInSizeHistory.isEmpty()
-                    && endpointInSizeHistory.values().stream()
+            hasSizeHistory = endpointInSizeHistory.values().stream()
+                    .anyMatch(h -> new ArrayList<>(h).stream().anyMatch(v -> v > 0))
+                    || endpointOutSizeHistory.values().stream()
                             .anyMatch(h -> new ArrayList<>(h).stream().anyMatch(v -> v > 0));
         } catch (java.util.ConcurrentModificationException e) {
             hasSizeHistory = false;
@@ -442,57 +442,7 @@ class EndpointsTab extends AbstractTableTab {
                 .split(area);
         hSplit.setBorderPos(hParts.get(1).x());
 
-        int w = Math.max(10, hParts.get(0).width() - 2);
-
-        String label = name != null ? name : "INTEGRATION";
-        if (CharWidth.of(label) > 20) {
-            label = CharWidth.truncateWithEllipsis(label, 20, CharWidth.TruncatePosition.END);
-        }
-        String box = "[ " + label + " ]";
-        int boxLen = CharWidth.of(box);
-
-        int sideLen = Math.max(4, (w - boxLen - 2) / 2);
-        String arm = "─".repeat(Math.max(1, sideLen - 1));
-        String arrowStr = arm + TuiIcons.POINTER;
-
-        String inStr = String.valueOf(inTotal);
-        String outStr = String.valueOf(outTotal);
-
-        int inPad = Math.max(0, sideLen - inStr.length());
-        int centerGap = boxLen + 2;
-        int outPad = Math.max(0, sideLen - outStr.length());
-
-        int inLabelPad = (sideLen - 2) / 2;
-        int outLabelPad = (sideLen - 3) / 2;
-        String inLabelStr = " ".repeat(inLabelPad) + "in" + " ".repeat(sideLen - inLabelPad - 2);
-        String outLabelStr = " ".repeat(outLabelPad) + "out";
-
-        Style inStyle = Theme.success();
-        Style outStyle = Style.EMPTY.fg(Theme.accent());
-        Style dimStyle = Style.EMPTY.dim();
-
-        List<Line> flowLines = new ArrayList<>();
-        flowLines.add(Line.from(Span.raw("")));
-        flowLines.add(Line.from(Span.raw("")));
-        flowLines.add(Line.from(
-                Span.styled(" ".repeat(inPad) + inStr, inTotal > 0 ? inStyle : dimStyle),
-                Span.raw(" ".repeat(centerGap)),
-                Span.styled(outStr + " ".repeat(outPad), outTotal > 0 ? outStyle : dimStyle)));
-        flowLines.add(Line.from(
-                Span.styled(arrowStr, inStyle),
-                Span.raw(" "),
-                Span.styled(box, Theme.label().bold()),
-                Span.raw(" "),
-                Span.styled(arrowStr, outStyle)));
-        flowLines.add(Line.from(
-                Span.styled(inLabelStr, inStyle.dim()),
-                Span.raw(" ".repeat(centerGap)),
-                Span.styled(outLabelStr, outStyle.dim())));
-
-        frame.renderWidget(Paragraph.builder()
-                .text(dev.tamboui.text.Text.from(flowLines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Flow ").build())
-                .build(), hParts.get(0));
+        FlowHelper.renderFlowPanel(frame, hParts.get(0), inTotal, outTotal, name);
 
         Map<String, LinkedList<Long>> inHistMap = switch (filter) {
             case 1 -> endpointRemoteInHistory;
@@ -507,40 +457,7 @@ class EndpointsTab extends AbstractTableTab {
         LinkedList<Long> inHist = inHistMap.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = outHistMap.getOrDefault(pid, new LinkedList<>());
 
-        int renderPoints = Math.max(20, (Math.min(MAX_CHART_POINTS, hParts.get(1).width() - 6) / 20) * 20);
-        long[] inArr = new long[renderPoints];
-        long[] outArr = new long[renderPoints];
-        for (int i = 0; i < renderPoints; i++) {
-            int idx = inHist.size() - renderPoints + i;
-            if (idx >= 0) {
-                inArr[i] = unbox(inHist.get(idx));
-            }
-            idx = outHist.size() - renderPoints + i;
-            if (idx >= 0) {
-                outArr[i] = unbox(outHist.get(idx));
-            }
-        }
-        long curIn = inArr[renderPoints - 1];
-        long curOut = outArr[renderPoints - 1];
-
-        Line chartTitle = Line.from(
-                Span.styled("▬", Theme.success()),
-                Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
-                Span.styled("▬", Style.EMPTY.fg(Theme.accent())),
-                Span.raw(String.format(" out:%-4s msg/s ", MetricsCollector.formatThroughput(curOut))));
-
-        Rect rightArea = hParts.get(1);
-        frame.renderWidget(DualSparkline.builder()
-                .topData(inArr)
-                .bottomData(outArr)
-                .topStyle(Theme.success())
-                .bottomStyle(Style.EMPTY.fg(Theme.accent()))
-                .showYAxis(true)
-                .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
-                        "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(Title.from(chartTitle)).build())
-                .build(), rightArea);
+        FlowHelper.renderThroughputChart(frame, hParts.get(1), inHist, outHist);
     }
 
     private void renderSingleEndpointChart(Frame frame, Rect area, String selectedUri, IntegrationInfo info) {
@@ -559,139 +476,37 @@ class EndpointsTab extends AbstractTableTab {
                 .split(area);
         hSplit.setBorderPos(hParts.get(1).x());
 
-        // Flow diagram with endpoint URI as label
-        int w = Math.max(10, hParts.get(0).width() - 2);
-        String label = selectedUri;
-        if (CharWidth.of(label) > 20) {
-            label = CharWidth.truncateWithEllipsis(label, 20, CharWidth.TruncatePosition.END);
-        }
-        String box = "[ " + label + " ]";
-        int boxLen = CharWidth.of(box);
-        int sideLen = Math.max(4, (w - boxLen - 2) / 2);
-        String arm = "─".repeat(Math.max(1, sideLen - 1));
-        String arrowStr = arm + TuiIcons.POINTER;
-        String inStr = String.valueOf(inTotal);
-        String outStr = String.valueOf(outTotal);
-        int inPad = Math.max(0, sideLen - inStr.length());
-        int centerGap = boxLen + 2;
-        int outPad = Math.max(0, sideLen - outStr.length());
-        int inLabelPad = (sideLen - 2) / 2;
-        int outLabelPad = (sideLen - 3) / 2;
-        String inLabelStr = " ".repeat(inLabelPad) + "in" + " ".repeat(sideLen - inLabelPad - 2);
-        String outLabelStr = " ".repeat(outLabelPad) + "out";
+        FlowHelper.renderFlowPanel(frame, hParts.get(0), inTotal, outTotal, selectedUri);
 
-        Style inStyle = Theme.success();
-        Style outStyle = Style.EMPTY.fg(Theme.accent());
-        Style dimStyle = Style.EMPTY.dim();
-
-        List<Line> flowLines = new ArrayList<>();
-        flowLines.add(Line.from(Span.raw("")));
-        flowLines.add(Line.from(Span.raw("")));
-        flowLines.add(Line.from(
-                Span.styled(" ".repeat(inPad) + inStr, inTotal > 0 ? inStyle : dimStyle),
-                Span.raw(" ".repeat(centerGap)),
-                Span.styled(outStr + " ".repeat(outPad), outTotal > 0 ? outStyle : dimStyle)));
-        flowLines.add(Line.from(
-                Span.styled(arrowStr, inStyle),
-                Span.raw(" "),
-                Span.styled(box, Theme.label().bold()),
-                Span.raw(" "),
-                Span.styled(arrowStr, outStyle)));
-        flowLines.add(Line.from(
-                Span.styled(inLabelStr, inStyle.dim()),
-                Span.raw(" ".repeat(centerGap)),
-                Span.styled(outLabelStr, outStyle.dim())));
-
-        frame.renderWidget(Paragraph.builder()
-                .text(dev.tamboui.text.Text.from(flowLines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Flow ").build())
-                .build(), hParts.get(0));
-
-        // Per-endpoint sparkline
         String key = info.pid + "|" + selectedUri;
         LinkedList<Long> inHist = perEndpointInHistory.getOrDefault(key, new LinkedList<>());
         LinkedList<Long> outHist = perEndpointOutHistory.getOrDefault(key, new LinkedList<>());
 
-        int renderPoints = Math.max(20, (Math.min(MAX_CHART_POINTS, hParts.get(1).width() - 6) / 20) * 20);
-        long[] inArr = new long[renderPoints];
-        long[] outArr = new long[renderPoints];
-        for (int i = 0; i < renderPoints; i++) {
-            int idx = inHist.size() - renderPoints + i;
-            if (idx >= 0) {
-                inArr[i] = unbox(inHist.get(idx));
-            }
-            idx = outHist.size() - renderPoints + i;
-            if (idx >= 0) {
-                outArr[i] = unbox(outHist.get(idx));
-            }
-        }
-        long curIn = inArr[renderPoints - 1];
-        long curOut = outArr[renderPoints - 1];
-
-        String uriLabel = selectedUri;
-        if (CharWidth.of(uriLabel) > 30) {
-            uriLabel = CharWidth.truncateWithEllipsis(uriLabel, 30, CharWidth.TruncatePosition.END);
+        LinkedList<Long> inSizeHist = perEndpointInSizeHistory.getOrDefault(key, new LinkedList<>());
+        LinkedList<Long> outSizeHist = perEndpointOutSizeHistory.getOrDefault(key, new LinkedList<>());
+        boolean hasSizeData;
+        try {
+            hasSizeData = new ArrayList<>(inSizeHist).stream().anyMatch(v -> v > 0)
+                    || new ArrayList<>(outSizeHist).stream().anyMatch(v -> v > 0);
+        } catch (java.util.ConcurrentModificationException e) {
+            hasSizeData = false;
         }
 
-        Line chartTitle = Line.from(
-                Span.raw(" ["),
-                Span.styled(uriLabel, Theme.label().bold()),
-                Span.raw("] "),
-                Span.styled("▬", Theme.success()),
-                Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))),
-                Span.styled("▬", Style.EMPTY.fg(Theme.accent())),
-                Span.raw(String.format(" out:%-4s msg/s ", MetricsCollector.formatThroughput(curOut))));
-
-        frame.renderWidget(DualSparkline.builder()
-                .topData(inArr)
-                .bottomData(outArr)
-                .topStyle(Theme.success())
-                .bottomStyle(Style.EMPTY.fg(Theme.accent()))
-                .showYAxis(true)
-                .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
-                        "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(Title.from(chartTitle)).build())
-                .build(), hParts.get(1));
+        if (hasSizeData) {
+            List<Rect> chartSplit = Layout.horizontal()
+                    .constraints(Constraint.percentage(50), Constraint.percentage(50))
+                    .split(hParts.get(1));
+            FlowHelper.renderThroughputChart(frame, chartSplit.get(0), inHist, outHist, selectedUri);
+            FlowHelper.renderPayloadSizeChart(frame, chartSplit.get(1), inSizeHist, outSizeHist);
+        } else {
+            FlowHelper.renderThroughputChart(frame, hParts.get(1), inHist, outHist, selectedUri);
+        }
     }
 
     private void renderPayloadSizeChart(Frame frame, Rect area, String pid) {
         LinkedList<Long> inHist = endpointInSizeHistory.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = endpointOutSizeHistory.getOrDefault(pid, new LinkedList<>());
-
-        int renderPoints = Math.max(20, (Math.min(MAX_CHART_POINTS, area.width() - 6) / 20) * 20);
-        long[] inArr = new long[renderPoints];
-        long[] outArr = new long[renderPoints];
-        for (int i = 0; i < renderPoints; i++) {
-            int idx = inHist.size() - renderPoints + i;
-            if (idx >= 0) {
-                inArr[i] = unbox(inHist.get(idx));
-            }
-            idx = outHist.size() - renderPoints + i;
-            if (idx >= 0) {
-                outArr[i] = unbox(outHist.get(idx));
-            }
-        }
-        long curIn = inArr[renderPoints - 1];
-        long curOut = outArr[renderPoints - 1];
-
-        Line chartTitle = Line.from(
-                Span.styled("▬", Theme.label()),
-                Span.raw(String.format(" in:%-8s ", sizeToString(curIn))),
-                Span.styled("▬", Theme.notice()),
-                Span.raw(String.format(" out:%-8s avg body ", sizeToString(curOut))));
-
-        frame.renderWidget(DualSparkline.builder()
-                .topData(inArr)
-                .bottomData(outArr)
-                .topStyle(Theme.label())
-                .bottomStyle(Theme.notice())
-                .showYAxis(true)
-                .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
-                        "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(Title.from(chartTitle)).build())
-                .build(), area);
+        FlowHelper.renderPayloadSizeChart(frame, area, inHist, outHist);
     }
 
     private void renderDetail(Frame frame, Rect area, List<EndpointInfo> sortedEndpoints, IntegrationInfo info) {
@@ -845,26 +660,6 @@ class EndpointsTab extends AbstractTableTab {
         } catch (Exception e) {
             catalogLoadFailed.add(version);
             return null;
-        }
-    }
-
-    private static long unbox(Long value) {
-        return value != null ? value : 0L;
-    }
-
-    static String sizeToString(long size) {
-        if (size < 0) {
-            return "-";
-        }
-        if (size == 0) {
-            return "0 B";
-        }
-        if (size < 1024) {
-            return size + " B";
-        } else if (size < 1024 * 1024) {
-            return String.format(Locale.US, "%.1f KB", size / 1024.0);
-        } else {
-            return String.format(Locale.US, "%.1f MB", size / (1024.0 * 1024.0));
         }
     }
 
