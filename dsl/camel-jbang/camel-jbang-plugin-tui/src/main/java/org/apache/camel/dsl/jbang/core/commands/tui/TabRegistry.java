@@ -70,6 +70,9 @@ class TabRegistry {
     private DiagramTab diagramTab;
     private RoutesTab routesTab;
     private ConsumersTab consumersTab;
+    private ProducersTab producersTab;
+    private EventTab eventTab;
+    private RouteControllerTab routeControllerTab;
     private EndpointsTab endpointsTab;
     private HttpTab httpTab;
     private HealthTab healthTab;
@@ -115,6 +118,9 @@ class TabRegistry {
         diagramTab = new DiagramTab(ctx);
         routesTab = new RoutesTab(ctx);
         consumersTab = new ConsumersTab(ctx);
+        producersTab = new ProducersTab(ctx);
+        eventTab = new EventTab(ctx);
+        routeControllerTab = new RouteControllerTab(ctx);
         kafkaTab = new KafkaTab(ctx);
         dataSourceTab = new DataSourceTab(ctx);
         heapHistogramTab = new HeapHistogramTab(ctx);
@@ -160,9 +166,14 @@ class TabRegistry {
                 new MoreTab(TuiIcons.TAB_CIRCUIT_BREAKER, "Circuit Breaker", "&Circuit Breaker", circuitBreakerTab, "Routing"),
                 new MoreTab(TuiIcons.TAB_CONSUMERS, "Consumers", "Co&nsumers", consumersTab, "Routing"),
                 new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "In&flight", inflightTab, "Routing"),
+                new MoreTab(TuiIcons.TAB_PRODUCERS, "Producers", "Prod&ucers", producersTab, "Routing"),
+                new MoreTab(
+                        TuiIcons.TAB_ROUTE_CONTROLLER, "Route Controller", "Route Contr&oller", routeControllerTab,
+                        "Routing"),
                 // Observability
                 new MoreTab(TuiIcons.TAB_HEALTH, "Health", "H&ealth", healthTab, "Observability"),
                 new MoreTab(TuiIcons.TAB_METRICS, "Metrics", "Metr&ics", metricsTab, "Observability"),
+                new MoreTab(TuiIcons.TAB_EVENTS, "Events", "&Events", eventTab, "Observability"),
                 new MoreTab(TuiIcons.TAB_SPANS, "Spans", "&OTel Spans", spansTab, "Observability"),
                 // Data
                 new MoreTab(TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab, "Data"),
