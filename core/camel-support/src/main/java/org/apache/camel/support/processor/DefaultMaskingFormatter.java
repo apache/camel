@@ -36,7 +36,9 @@ import org.slf4j.LoggerFactory;
  * <p>
  * In addition to name-based masking, this formatter also masks URI userinfo passwords
  * ({@code scheme://user:password@host}) and PEM private-key blocks via
- * {@link SensitiveUtils#maskSensitiveValueShapes(String, String)}.
+ * {@link SensitiveUtils#maskSensitiveValueShapes(String, String)}. Value-shape masking runs even when the keyword set
+ * is empty (for example a custom formatter constructed with no sensitive key names), so embedded credentials in
+ * connection strings are still redacted.
  */
 public class DefaultMaskingFormatter implements MaskingFormatter {
 

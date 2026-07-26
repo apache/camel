@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support.processor;
 
+import java.util.Collections;
+
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -240,6 +242,20 @@ class DefaultMaskingFormatterTest {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         assertThat(formatter.format(null)).isNull();
         assertThat(formatter.format("")).isEmpty();
+    }
+
+    @Test
+    void formatPlainTextUnchanged() {
+        DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
+        assertThat(formatter.format("Hello World")).isEqualTo("Hello World");
+    }
+
+    @Test
+    void formatMasksValueShapesWhenKeywordsEmpty() {
+        DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(Collections.emptySet(), true, true, true);
+        assertThat(formatter.format("mongodb://user:pass@host/db"))
+                .isEqualTo("mongodb://user:xxxxx@host/db");
+        assertThat(formatter.format("password=visible")).isEqualTo("password=visible");
     }
 
 }

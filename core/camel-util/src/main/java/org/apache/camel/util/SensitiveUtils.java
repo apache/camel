@@ -31,11 +31,15 @@ public final class SensitiveUtils {
      * captures the password as group 2. The scheme may contain {@code +} / {@code .} / {@code -} (e.g.
      * {@code mongodb+srv}). Does not match user-only userinfo without a password ({@code scheme://user@host}).
      * <p>
-     * Passwords must not contain a raw {@code @} (use percent-encoding such as {@code %40}); capture stops at the
-     * first {@code @} that ends userinfo.
+     * Stricter than {@link URISupport}'s {@code USERINFO_PASSWORD} (used in {@link URISupport#sanitizeUri}): requires a
+     * scheme and a colon before the password. Used for free-text log masking. The user/password prefix uses a
+     * non-greedy match so passwords may contain {@code :} (aligned with {@link URISupport#sanitizeUri}).
+     * <p>
+     * Passwords must not contain a raw {@code @} (use percent-encoding such as {@code %40}); capture stops at the first
+     * {@code @} that ends userinfo.
      */
-    private static final Pattern USERINFO_PASSWORD
-            = Pattern.compile("([a-zA-Z][a-zA-Z0-9+.-]*://[^/@\\s\"']*:)([^@\\s\"']+)(@)");
+    private static final Pattern URI_USERINFO_PASSWORD_IN_TEXT
+            = Pattern.compile("([a-zA-Z][a-zA-Z0-9+.-]*://[^/@\\s\"']*?:)([^@\\s\"']+)(@)");
 
     /**
      * Matches PEM private-key blocks ({@code -----BEGIN ... PRIVATE KEY-----} … {@code -----END ... PRIVATE KEY-----})
@@ -293,7 +297,11 @@ public final class SensitiveUtils {
         if (source == null || source.isEmpty() || mask == null) {
             return source;
         }
-        return USERINFO_PASSWORD.matcher(source).replaceAll("$1" + Matcher.quoteReplacement(mask) + "$3");
+        if (!source.contains("://")) {
+            return source;
+        }
+        return URI_USERINFO_PASSWORD_IN_TEXT.matcher(source)
+                .replaceAll("$1" + Matcher.quoteReplacement(mask) + "$3");
     }
 
     /**
@@ -307,6 +315,9 @@ public final class SensitiveUtils {
      */
     public static String maskPemPrivateKeyBlocks(String source, String mask) {
         if (source == null || source.isEmpty() || mask == null) {
+            return source;
+        }
+        if (!StringHelper.containsIgnoreCase(source, "-----BEGIN")) {
             return source;
         }
         return PEM_PRIVATE_KEY.matcher(source).replaceAll("$1" + Matcher.quoteReplacement(mask) + "$3");

@@ -68,6 +68,15 @@ class SensitiveUtilsTest {
         // Redis / some brokers allow empty username with password-only userinfo
         assertThat(SensitiveUtils.maskUserInfoCredentials("redis://:s3cret@redis:6379/0", "xxxxx"))
                 .isEqualTo("redis://:xxxxx@redis:6379/0");
+        assertThat(SensitiveUtils.maskUserInfoCredentials("http://user:pass:word@host/path", "xxxxx"))
+                .isEqualTo("http://user:xxxxx@host/path");
+    }
+
+    @Test
+    void maskValueShapeHelpersSkipRegexWhenMarkersAbsent() {
+        assertThat(SensitiveUtils.maskUserInfoCredentials("Hello World", "xxxxx")).isEqualTo("Hello World");
+        assertThat(SensitiveUtils.maskPemPrivateKeyBlocks("plain log line", "xxxxx")).isEqualTo("plain log line");
+        assertThat(SensitiveUtils.maskSensitiveValueShapes("Hello World", "xxxxx")).isEqualTo("Hello World");
     }
 
     @Test
@@ -161,6 +170,13 @@ class SensitiveUtilsTest {
                 -----END PUBLIC KEY-----
                 """;
         assertThat(SensitiveUtils.maskPemPrivateKeyBlocks(publicKey, "xxxxx")).isEqualTo(publicKey);
+
+        String lowerCaseHeader = """
+                -----begin rsa private key-----
+                secretEcMaterial
+                -----end rsa private key-----
+                """;
+        assertThat(SensitiveUtils.maskPemPrivateKeyBlocks(lowerCaseHeader, "xxxxx")).doesNotContain("secretEcMaterial");
     }
 
     @Test

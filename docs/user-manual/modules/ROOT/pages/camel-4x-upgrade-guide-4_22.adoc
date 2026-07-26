@@ -825,6 +825,9 @@ Helpers for these value shapes live on `org.apache.camel.util.SensitiveUtils`
 (`maskUserInfoCredentials`, `maskPemPrivateKeyBlocks`, `maskSensitiveValueShapes`). This is a cosmetic change
 to masked/logged output only and does not affect endpoint configuration.
 
+If you use `DefaultMaskingFormatter` with an empty keyword set, `format()` previously returned the source unchanged;
+it now still applies URI userinfo and PEM private-key masking on the text.
+
 === camel-a2a - push notification webhooks pinned to the validated address
 
 Push notifications are now delivered with Apache HttpClient 5 instead of `java.net.http.HttpClient`, so the request
