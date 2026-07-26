@@ -168,12 +168,12 @@ class TabRegistry {
                 new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "In&flight", inflightTab, "Routing"),
                 new MoreTab(TuiIcons.TAB_PRODUCERS, "Producers", "Prod&ucers", producersTab, "Routing"),
                 new MoreTab(
-                        TuiIcons.TAB_ROUTE_CONTROLLER, "Route Controller", "Route Contr&oller", routeControllerTab,
+                        TuiIcons.TAB_ROUTE_CONTROLLER, "Route Controller", "Route Organi&zer", routeControllerTab,
                         "Routing"),
                 // Observability
                 new MoreTab(TuiIcons.TAB_HEALTH, "Health", "H&ealth", healthTab, "Observability"),
                 new MoreTab(TuiIcons.TAB_METRICS, "Metrics", "Metr&ics", metricsTab, "Observability"),
-                new MoreTab(TuiIcons.TAB_EVENTS, "Events", "&Events", eventTab, "Observability"),
+                new MoreTab(TuiIcons.TAB_EVENTS, "Events", "E&xchange Events", eventTab, "Observability"),
                 new MoreTab(TuiIcons.TAB_SPANS, "Spans", "&OTel Spans", spansTab, "Observability"),
                 // Data
                 new MoreTab(TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab, "Data"),
