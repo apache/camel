@@ -1201,17 +1201,16 @@ class DiagramTab extends AbstractTab {
             detailScroll = 0;
         }
 
-        // load route detail once per route (covers all processors)
-        if (drillDownRouteId != null && !drillDownRouteId.equals(cachedRouteDetailId)
-                && !drillDownRouteId.equals(detailLoadingRouteId)) {
-            detailLoadingRouteId = drillDownRouteId;
+        // load route detail once (covers all routes and processors)
+        if (drillDownRouteId != null && cachedRouteDetail == null
+                && !"*".equals(detailLoadingRouteId)) {
+            detailLoadingRouteId = "*";
             detailLoading = true;
-            String rid = drillDownRouteId;
             if (ctx.runner != null) {
                 ctx.backgroundExecutor.execute(() -> {
-                    JsonObject result = requestRouteProcessorDetail(rid);
+                    JsonObject result = requestRouteProcessorDetail("*");
                     cachedRouteDetail = result;
-                    cachedRouteDetailId = rid;
+                    cachedRouteDetailId = "*";
                     detailLoading = false;
                 });
             }
@@ -1397,12 +1396,7 @@ class DiagramTab extends AbstractTab {
         if (cachedRouteDetail == null || nodeId == null) {
             return null;
         }
-        JsonArray processors = (JsonArray) cachedRouteDetail.get("processors");
-        if (processors == null) {
-            return null;
-        }
-        for (Object obj : processors) {
-            JsonObject p = (JsonObject) obj;
+        for (JsonObject p : RoutesTab.getAllProcessors(cachedRouteDetail)) {
             if (nodeId.equals(p.getString("id"))) {
                 return p;
             }
@@ -1417,7 +1411,7 @@ class DiagramTab extends AbstractTab {
         try {
             JsonObject root = new JsonObject();
             root.put("action", "processor-detail");
-            root.put("routeId", routeId);
+            root.put("routeId", "*");
             return ctx.executeAction(ctx.selectedPid, root, 5000);
         } catch (Exception e) {
             return null;
@@ -1431,8 +1425,8 @@ class DiagramTab extends AbstractTab {
             return Map.of();
         }
 
-        JsonArray processors = (JsonArray) cachedRouteDetail.get("processors");
-        if (processors == null || processors.isEmpty()) {
+        List<JsonObject> processors = RoutesTab.getAllProcessors(cachedRouteDetail);
+        if (processors.isEmpty()) {
             return Map.of();
         }
 
@@ -1440,8 +1434,7 @@ class DiagramTab extends AbstractTab {
         CamelCatalog catalog = info != null ? getCatalog(info) : null;
 
         Map<Integer, List<String>> result = new LinkedHashMap<>();
-        for (Object obj : processors) {
-            JsonObject proc = (JsonObject) obj;
+        for (JsonObject proc : processors) {
             Integer line = proc.getInteger("line");
             if (line == null || line <= 0) {
                 continue;
@@ -1465,14 +1458,14 @@ class DiagramTab extends AbstractTab {
 
     private void ensureProcessorDetailLoaded(String routeId) {
         if (routeId != null && cachedRouteDetail == null
-                && !routeId.equals(detailLoadingRouteId)) {
-            detailLoadingRouteId = routeId;
+                && !"*".equals(detailLoadingRouteId)) {
+            detailLoadingRouteId = "*";
             detailLoading = true;
             if (ctx.runner != null) {
                 ctx.backgroundExecutor.execute(() -> {
-                    JsonObject result = requestRouteProcessorDetail(routeId);
+                    JsonObject result = requestRouteProcessorDetail("*");
                     cachedRouteDetail = result;
-                    cachedRouteDetailId = routeId;
+                    cachedRouteDetailId = "*";
                     detailLoading = false;
                 });
             }
