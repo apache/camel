@@ -94,6 +94,7 @@ class OsvClient {
         try {
             HttpClient client = HttpClient.newBuilder()
                     .connectTimeout(Duration.ofSeconds(5))
+                    .proxy(TuiSettings.proxySelector())
                     .build();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(BATCH_URL))

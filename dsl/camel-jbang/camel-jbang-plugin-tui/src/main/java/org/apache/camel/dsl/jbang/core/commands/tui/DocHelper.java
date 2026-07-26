@@ -18,9 +18,12 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 
@@ -42,17 +45,23 @@ final class DocHelper {
 
     static String downloadContent(String url) {
         try {
-            HttpURLConnection conn = (HttpURLConnection) URI.create(url).toURL().openConnection();
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(10000);
-            try (InputStream is = conn.getInputStream()) {
-                return new String(is.readAllBytes(), StandardCharsets.UTF_8);
-            } finally {
-                conn.disconnect();
+            HttpClient client = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(5))
+                    .proxy(TuiSettings.proxySelector())
+                    .build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .timeout(Duration.ofSeconds(10))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return response.body();
             }
         } catch (Exception e) {
-            return null;
+            // ignore
         }
+        return null;
     }
 
     static String asciidocToMarkdown(String adoc) {

@@ -52,12 +52,14 @@ class SettingsPopup {
     private static final int ROW_LOG_PIN = 3;
     private static final int ROW_RATE_PER = 4;
     private static final int ROW_FOLDER = 5;
-    private static final int ROW_SHELL_HISTORY = 6;
-    private static final int ROW_AI_PROVIDER = 7;
-    private static final int ROW_AI_MODEL = 8;
-    private static final int ROW_AI_URL = 9;
-    private static final int ROW_AI_PROMPT_HISTORY = 10;
-    private static final int ROW_COUNT = 11;
+    private static final int ROW_PROXY_HOST = 6;
+    private static final int ROW_PROXY_PORT = 7;
+    private static final int ROW_SHELL_HISTORY = 8;
+    private static final int ROW_AI_PROVIDER = 9;
+    private static final int ROW_AI_MODEL = 10;
+    private static final int ROW_AI_URL = 11;
+    private static final int ROW_AI_PROMPT_HISTORY = 12;
+    private static final int ROW_COUNT = 13;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
     private static final String[] RATE_PER_OPTIONS = { "seconds", "minutes" };
@@ -83,6 +85,8 @@ class SettingsPopup {
     private int ratePerIndex;
     private int aiProviderIndex;
     private TextInputState folderInput;
+    private TextInputState proxyHostInput;
+    private TextInputState proxyPortInput;
     private TextInputState shellHistoryInput;
     private TextInputState aiModelInput;
     private TextInputState aiUrlInput;
@@ -155,6 +159,8 @@ class SettingsPopup {
         ratePerIndex = "minutes".equals(currentRatePer) ? 1 : 0;
 
         folderInput = new TextInputState(settings.getDefaultFolder() != null ? settings.getDefaultFolder() : "");
+        proxyHostInput = new TextInputState(settings.getProxyHost() != null ? settings.getProxyHost() : "");
+        proxyPortInput = new TextInputState(settings.getProxyPort() != null ? settings.getProxyPort() : "");
         shellHistoryInput = new TextInputState(settings.getShellHistory() != null ? settings.getShellHistory() : "");
         String currentProvider = settings.getAiProvider() != null ? settings.getAiProvider() : "auto";
         int providerIdx = AI_PROVIDERS.indexOf(currentProvider);
@@ -251,6 +257,14 @@ class SettingsPopup {
             handleTextInput(ke, folderInput);
             return true;
         }
+        if (selectedRow == ROW_PROXY_HOST) {
+            handleTextInput(ke, proxyHostInput);
+            return true;
+        }
+        if (selectedRow == ROW_PROXY_PORT) {
+            handleTextInput(ke, proxyPortInput);
+            return true;
+        }
         if (selectedRow == ROW_SHELL_HISTORY) {
             handleTextInput(ke, shellHistoryInput);
             return true;
@@ -296,6 +310,8 @@ class SettingsPopup {
             monitorContext.ratePerMinute = "minutes".equals(ratePerValue);
         }
         settings.setDefaultFolder(stripControlChars(folderInput.text().trim()));
+        settings.setProxyHost(stripControlChars(proxyHostInput.text().trim()));
+        settings.setProxyPort(stripControlChars(proxyPortInput.text().trim()));
         settings.setShellHistory(stripControlChars(shellHistoryInput.text().trim()));
         settings.setAiProvider(AI_PROVIDERS.get(aiProviderIndex));
         settings.setAiModel(stripControlChars(aiModelInput.text().trim()));
@@ -359,6 +375,16 @@ class SettingsPopup {
 
         renderLabel(frame, innerX, rowY, labelW, "Default Folder:", selectedRow == ROW_FOLDER);
         renderFolder(frame, innerX + labelW, rowY, fieldW, selectedRow == ROW_FOLDER);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Proxy Host:", selectedRow == ROW_PROXY_HOST);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, proxyHostInput,
+                selectedRow == ROW_PROXY_HOST, "proxy.corp.com");
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Proxy Port:", selectedRow == ROW_PROXY_PORT);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, proxyPortInput,
+                selectedRow == ROW_PROXY_PORT, "(8080)");
         rowY++;
 
         renderLabel(frame, innerX, rowY, labelW, "Shell History:", selectedRow == ROW_SHELL_HISTORY);

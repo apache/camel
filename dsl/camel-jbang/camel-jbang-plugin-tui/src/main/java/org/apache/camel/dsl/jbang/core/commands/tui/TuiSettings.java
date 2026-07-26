@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
+
 /**
  * User-facing preferences for the Camel TUI, persisted under {@code camel.tui.*} keys in the CLI user configuration
  * files. The object is loaded as a whole ({@link #load()}), mutated in memory, and written back ({@link #save()}),
@@ -36,6 +39,8 @@ final class TuiSettings {
     static final String PROP_AI_PROVIDER = "camel.tui.ai.provider";
     static final String PROP_AI_MODEL = "camel.tui.ai.model";
     static final String PROP_AI_URL = "camel.tui.ai.url";
+    static final String PROP_PROXY_HOST = "camel.tui.proxyHost";
+    static final String PROP_PROXY_PORT = "camel.tui.proxyPort";
     static final String PROP_SHELL_HISTORY = "camel.tui.shell.history";
     static final String PROP_AI_PROMPT_HISTORY = "camel.tui.ai.promptHistory";
 
@@ -45,6 +50,8 @@ final class TuiSettings {
     private String logPin;
     private String ratePer;
     private String defaultFolder;
+    private String proxyHost;
+    private String proxyPort;
     private String aiProvider;
     private String aiModel;
     private String aiUrl;
@@ -97,6 +104,22 @@ final class TuiSettings {
 
     void setDefaultFolder(String defaultFolder) {
         this.defaultFolder = defaultFolder;
+    }
+
+    String getProxyHost() {
+        return proxyHost;
+    }
+
+    void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    String getProxyPort() {
+        return proxyPort;
+    }
+
+    void setProxyPort(String proxyPort) {
+        this.proxyPort = proxyPort;
     }
 
     String getAiProvider() {
@@ -161,6 +184,8 @@ final class TuiSettings {
             settings.logPin = trimToNull(TuiUserConfig.read(PROP_LOG_PIN));
             settings.ratePer = trimToNull(TuiUserConfig.read(PROP_RATE_PER));
             settings.defaultFolder = trimToNull(TuiUserConfig.read(PROP_DEFAULT_FOLDER));
+            settings.proxyHost = trimToNull(TuiUserConfig.read(PROP_PROXY_HOST));
+            settings.proxyPort = trimToNull(TuiUserConfig.read(PROP_PROXY_PORT));
             settings.aiProvider = trimToNull(TuiUserConfig.read(PROP_AI_PROVIDER));
             settings.aiModel = trimToNull(TuiUserConfig.read(PROP_AI_MODEL));
             settings.aiUrl = trimToNull(TuiUserConfig.read(PROP_AI_URL));
@@ -185,6 +210,8 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_LOG_PIN, logPin);
             TuiUserConfig.write(PROP_RATE_PER, ratePer);
             TuiUserConfig.write(PROP_DEFAULT_FOLDER, defaultFolder);
+            TuiUserConfig.write(PROP_PROXY_HOST, proxyHost);
+            TuiUserConfig.write(PROP_PROXY_PORT, proxyPort);
             TuiUserConfig.write(PROP_AI_PROVIDER, aiProvider);
             TuiUserConfig.write(PROP_AI_MODEL, aiModel);
             TuiUserConfig.write(PROP_AI_URL, aiUrl);
@@ -193,6 +220,27 @@ final class TuiSettings {
         } catch (RuntimeException e) {
             // best-effort: a save failure must not disrupt the TUI
         }
+    }
+
+    /**
+     * Returns a {@link ProxySelector} based on the configured proxy settings, falling back to the JVM default.
+     */
+    static ProxySelector proxySelector() {
+        TuiSettings s = load();
+        String host = s.getProxyHost();
+        if (host != null && !host.isEmpty()) {
+            int port = 8080;
+            String portStr = s.getProxyPort();
+            if (portStr != null) {
+                try {
+                    port = Integer.parseInt(portStr);
+                } catch (NumberFormatException e) {
+                    // use default port
+                }
+            }
+            return ProxySelector.of(new InetSocketAddress(host, port));
+        }
+        return ProxySelector.getDefault();
     }
 
     private static String trimToNull(String value) {

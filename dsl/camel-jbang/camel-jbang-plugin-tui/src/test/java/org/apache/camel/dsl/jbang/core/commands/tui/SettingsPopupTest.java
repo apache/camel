@@ -177,7 +177,9 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(7, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(9, popup.selectedRow());
         assertEquals("auto", popup.selectedAiProvider());
         popup.handleKeyEvent(KeyEvent.ofChar(' '));
         assertEquals("ollama", popup.selectedAiProvider());
@@ -209,21 +211,21 @@ class SettingsPopupTest {
         popup.setTabEntries(tabs());
         popup.open();
 
-        // navigate to Shell History (row 6)
-        for (int i = 0; i < 6; i++) {
+        // navigate to Shell History (row 8)
+        for (int i = 0; i < 8; i++) {
             popup.handleKeyEvent(key(KeyCode.DOWN));
         }
-        assertEquals(6, popup.selectedRow());
+        assertEquals(8, popup.selectedRow());
         for (char c : "50".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));
         }
         assertEquals("50", popup.shellHistoryText());
 
-        // navigate to AI Prompt History (row 10)
+        // navigate to AI Prompt History (row 12)
         for (int i = 0; i < 4; i++) {
             popup.handleKeyEvent(key(KeyCode.DOWN));
         }
-        assertEquals(10, popup.selectedRow());
+        assertEquals(12, popup.selectedRow());
         for (char c : "200".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));
         }
