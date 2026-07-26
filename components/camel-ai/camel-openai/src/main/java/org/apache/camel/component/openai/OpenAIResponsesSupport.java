@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.openai;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +32,6 @@ import com.openai.models.responses.ResponseOutputItem;
 import com.openai.models.responses.ResponseOutputMessage;
 import com.openai.models.responses.ResponseOutputText;
 import com.openai.models.responses.ResponseTextConfig;
-import com.openai.models.responses.ResponseUsage;
 import com.openai.models.responses.Tool;
 import com.openai.models.responses.WebSearchTool;
 import org.apache.camel.util.ObjectHelper;
@@ -195,23 +192,5 @@ final class OpenAIResponsesSupport {
             }
         }
         return response.status().map(Object::toString);
-    }
-
-    static List<String> collectBuiltinToolTypesInRequest(String requestBody) throws Exception {
-        List<String> types = new ArrayList<>();
-        JsonNode root = OBJECT_MAPPER.readTree(requestBody);
-        JsonNode tools = root.get("tools");
-        if (tools != null && tools.isArray()) {
-            for (JsonNode tool : tools) {
-                if (tool.has("type")) {
-                    types.add(tool.get("type").asText());
-                }
-            }
-        }
-        return types;
-    }
-
-    static ResponseUsage usageOrNull(Response response) {
-        return response.usage().orElse(null);
     }
 }

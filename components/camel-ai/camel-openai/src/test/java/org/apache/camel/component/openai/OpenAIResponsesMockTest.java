@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
@@ -60,7 +62,7 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
             .when("tools-request")
             .assertRequest(request -> {
                 try {
-                    assertThat(OpenAIResponsesSupport.collectBuiltinToolTypesInRequest(request))
+                    assertThat(collectBuiltinToolTypesInRequest(request))
                             .contains("web_search", "file_search");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -159,5 +161,19 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThatThrownBy(() -> OpenAIResponsesSupport.applyHostedMcpTools(
                 ResponseCreateParams.builder(), "not-json"))
                 .isInstanceOf(Exception.class);
+    }
+
+    private static List<String> collectBuiltinToolTypesInRequest(String requestBody) throws Exception {
+        List<String> types = new ArrayList<>();
+        JsonNode root = OBJECT_MAPPER.readTree(requestBody);
+        JsonNode tools = root.get("tools");
+        if (tools != null && tools.isArray()) {
+            for (JsonNode tool : tools) {
+                if (tool.has("type")) {
+                    types.add(tool.get("type").asText());
+                }
+            }
+        }
+        return types;
     }
 }
