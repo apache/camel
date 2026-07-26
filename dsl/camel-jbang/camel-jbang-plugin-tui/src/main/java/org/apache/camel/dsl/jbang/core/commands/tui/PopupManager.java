@@ -278,10 +278,15 @@ class PopupManager {
             }
             return true;
         }
-        int shortcutSel = morePopupShortcut(ke);
+        int[] shortcutResult = morePopupShortcut(ke);
+        int shortcutSel = shortcutResult[0];
+        boolean uniqueShortcut = shortcutResult[1] == 1;
         if (shortcutSel >= 0) {
             int visualSel = moreToVisualIndex(shortcutSel);
             morePopupState.select(visualSel);
+            if (!uniqueShortcut) {
+                return true;
+            }
         }
         if (ke.isConfirm() || shortcutSel >= 0) {
             Integer visualSel = shortcutSel >= 0 ? moreToVisualIndex(shortcutSel) : morePopupState.selected();
@@ -540,6 +545,17 @@ class PopupManager {
     private ListItem[] morePopupItems(Style keyStyle) {
         List<TabRegistry.MoreTab> visual = buildMoreVisualList();
         ListItem[] items = new ListItem[visual.size()];
+
+        // Compute circuit breaker badge
+        long cbOpenCount = 0;
+        IntegrationInfo sel = ctx.findSelectedIntegration();
+        if (sel != null) {
+            cbOpenCount = sel.circuitBreakers.stream()
+                    .filter(cb -> cb.state != null && (cb.state.equalsIgnoreCase("open")
+                            || cb.state.equalsIgnoreCase("forced_open")))
+                    .count();
+        }
+
         String currentGroup = null;
         for (int i = 0; i < visual.size(); i++) {
             TabRegistry.MoreTab tab = visual.get(i);
@@ -558,14 +574,27 @@ class PopupManager {
                 String name = tab.displayName();
                 String prefix = TuiIcons.indent(tab.icon());
                 int keyPos = tab.mnemonicIndex();
-                if (keyPos >= 0 && keyPos < name.length()) {
-                    items[i] = ListItem.from(Line.from(
-                            Span.raw(prefix + name.substring(0, keyPos)),
-                            Span.styled(String.valueOf(name.charAt(keyPos)), keyStyle),
-                            Span.raw(name.substring(keyPos + 1))));
-                } else {
-                    items[i] = ListItem.from(prefix + name);
+
+                // Append badge for Circuit Breaker when breakers are open
+                String badge = "";
+                Style badgeStyle = null;
+                if ("Circuit Breaker".equals(tab.name()) && cbOpenCount > 0) {
+                    badge = " " + cbOpenCount + " OPEN";
+                    badgeStyle = Theme.error();
                 }
+
+                List<Span> spans = new ArrayList<>();
+                if (keyPos >= 0 && keyPos < name.length()) {
+                    spans.add(Span.raw(prefix + name.substring(0, keyPos)));
+                    spans.add(Span.styled(String.valueOf(name.charAt(keyPos)), keyStyle));
+                    spans.add(Span.raw(name.substring(keyPos + 1)));
+                } else {
+                    spans.add(Span.raw(prefix + name));
+                }
+                if (!badge.isEmpty()) {
+                    spans.add(Span.styled(badge, badgeStyle));
+                }
+                items[i] = ListItem.from(Line.from(spans));
             }
         }
         return items;
@@ -654,7 +683,7 @@ class PopupManager {
                 inner);
     }
 
-    int morePopupShortcut(KeyEvent ke) {
+    int[] morePopupShortcut(KeyEvent ke) {
         List<TabRegistry.MoreTab> tabs = moreTabsSupplier.get();
         List<Integer> matches = new ArrayList<>();
         char pressedUpper = 0;
@@ -674,12 +703,12 @@ class PopupManager {
         }
 
         if (matches.isEmpty()) {
-            return -1;
+            return new int[] { -1, 0 };
         }
         if (matches.size() == 1) {
             lastShortcutLetter = pressedUpper;
             lastShortcutIndex = matches.get(0);
-            return matches.get(0);
+            return new int[] { matches.get(0), 1 };
         }
 
         // cycle through duplicate mnemonics
@@ -687,12 +716,12 @@ class PopupManager {
             int pos = matches.indexOf(lastShortcutIndex);
             int next = (pos + 1) % matches.size();
             lastShortcutIndex = matches.get(next);
-            return matches.get(next);
+            return new int[] { matches.get(next), matches.size() };
         }
 
         lastShortcutLetter = pressedUpper;
         lastShortcutIndex = matches.get(0);
-        return matches.get(0);
+        return new int[] { matches.get(0), matches.size() };
     }
 
     List<IntegrationInfo> getNonVanishingIntegrations() {

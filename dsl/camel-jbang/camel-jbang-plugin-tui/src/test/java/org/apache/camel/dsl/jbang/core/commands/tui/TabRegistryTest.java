@@ -108,21 +108,22 @@ class TabRegistryTest {
         // MORE_SHORTCUTS array carried before the MoreTab refactor. A label edit that repoints a key must fail here.
         List<Character> shortcuts = registry.moreTabs().stream().map(TabRegistry.MoreTab::shortcut).toList();
         assertEquals(
-                List.of('W', 'C', 'N', 'H', 'F', 'U', 'Z', 'E', 'I', 'N', 'X', 'O', 'J', 'K', 'Q', 'R', 'A', 'H', 'M', 'Y',
-                        'P', 'S', 'T', 'B', 'L', 'G', 'V', 'D'),
+                List.of('B', 'C', 'H', 'I', 'P', 'R', 'C', 'H', 'M', 'N', 'E', 'O', 'J', 'K', 'Q', 'Q', 'C', 'M', 'M', 'M',
+                        'P', 'S', 'T', 'B', 'C', 'C', 'V', 'M'),
                 shortcuts, "More tab shortcut letters must match the historical sequence");
     }
 
     @Test
-    void moreTabShortcutsHaveAtMostTwoDuplicates() {
+    void moreTabShortcutsHaveReasonableGroupSizes() {
         // Duplicate mnemonics are allowed; the popup cycles through them on repeated key press.
+        // Natural first-letter mnemonics create groups of up to 5 (e.g. C, M) which is acceptable.
         List<Character> shortcuts = registry.moreTabs().stream().map(TabRegistry.MoreTab::shortcut).toList();
         java.util.Map<Character, Long> counts = shortcuts.stream()
                 .collect(java.util.stream.Collectors.groupingBy(c -> c, java.util.stream.Collectors.counting()));
         for (var entry : counts.entrySet()) {
-            assertTrue(entry.getValue() <= 2,
+            assertTrue(entry.getValue() <= 5,
                     "More tab shortcut '" + entry.getKey() + "' appears " + entry.getValue()
-                                              + " times (max 2): " + shortcuts);
+                                              + " times (max 5): " + shortcuts);
         }
     }
 
@@ -173,13 +174,13 @@ class TabRegistryTest {
     void browseAndConfigurationHighlightTheirShortcutLetter() {
         // Regression guard: these two historically underlined the wrong letter when a hand-maintained index array
         // drifted. The '&' marker now pins the highlight to the actual shortcut.
-        TabRegistry.MoreTab browse = moreTabNamed("Browse");
-        assertEquals(3, browse.mnemonicIndex(), "Should underline the 'w' in Bro[w]se");
-        assertEquals('W', browse.shortcut());
+        TabRegistry.MoreTab browse = moreTabNamed("Browse Endpoints");
+        assertEquals(0, browse.mnemonicIndex(), "Should underline the 'B' in [B]rowse Endpoints");
+        assertEquals('B', browse.shortcut());
 
         TabRegistry.MoreTab configuration = moreTabNamed("Configuration");
-        assertEquals(5, configuration.mnemonicIndex(), "Should underline the 'g' in Confi[g]uration");
-        assertEquals('G', configuration.shortcut());
+        assertEquals(0, configuration.mnemonicIndex(), "Should underline the 'C' in [C]onfiguration");
+        assertEquals('C', configuration.shortcut());
     }
 
     @Test

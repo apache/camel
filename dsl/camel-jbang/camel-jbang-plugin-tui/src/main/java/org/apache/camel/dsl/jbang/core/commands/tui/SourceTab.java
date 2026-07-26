@@ -542,6 +542,7 @@ class SourceTab extends AbstractTab {
     }
 
     private void renderFileList(Frame frame, Rect area) {
+        Style fileBorderStyle = focusOnViewer ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
         if (entries.isEmpty()) {
             String noFilesMsg = rootDir == null ? "No source directory found" : "No files found";
             frame.renderWidget(
@@ -549,6 +550,7 @@ class SourceTab extends AbstractTab {
                             .text(Text.from(Line.from(Span.styled("   " + noFilesMsg, Style.EMPTY.dim()))))
                             .block(Block.builder()
                                     .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(fileBorderStyle)
                                     .title(Title.from(Line.from(
                                             Span.styled(" Files ",
                                                     focusOnViewer ? Style.EMPTY.fg(Theme.accent()) : Theme.title()))))
@@ -585,6 +587,7 @@ class SourceTab extends AbstractTab {
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .borderStyle(fileBorderStyle)
                         .title(Title.from(Line.from(Span.styled(panelTitle, titleStyle))))
                         .build())
                 .build();
@@ -641,11 +644,13 @@ class SourceTab extends AbstractTab {
             }
         }
 
+        Style infoBorderStyle = focusOnViewer ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
                         .block(Block.builder()
                                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .borderStyle(infoBorderStyle)
                                 .title(Title.from(Line.from(
                                         Span.styled(" Info ", focusOnViewer ? Style.EMPTY.fg(Theme.accent()) : Theme.title()))))
                                 .build())
@@ -655,8 +660,10 @@ class SourceTab extends AbstractTab {
 
     private void renderSourcePanel(Frame frame, Rect area) {
         Style sourceTitleStyle = focusOnViewer ? Theme.title() : Style.EMPTY.fg(Theme.accent());
+        Style sourceBorderStyle = focusOnViewer ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
         if (sourceViewer.isVisible()) {
             sourceViewer.setTitleStyle(sourceTitleStyle);
+            sourceViewer.setBorderStyle(sourceBorderStyle);
             sourceViewer.setFocused(focusOnViewer);
             sourceViewer.render(frame, area);
         } else {
@@ -669,6 +676,7 @@ class SourceTab extends AbstractTab {
                             .text(Text.from(lines))
                             .block(Block.builder()
                                     .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(sourceBorderStyle)
                                     .title(Title.from(Line.from(
                                             Span.styled(" Source ", sourceTitleStyle))))
                                     .build())

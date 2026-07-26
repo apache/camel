@@ -218,14 +218,14 @@ class SqlTraceTab extends AbstractTableTab {
 
         List<Rect> chunks = showDetail
                 ? Layout.vertical()
-                        .constraints(Constraint.length(13), Constraint.length(1), Constraint.fill())
+                        .constraints(Constraint.length(13), Constraint.fill())
                         .split(area)
                 : List.of(area);
 
         renderTable(frame, chunks.get(0), sorted);
 
         if (showDetail) {
-            renderDetail(frame, chunks.get(2), selected);
+            renderDetail(frame, chunks.get(1), selected);
         }
     }
 

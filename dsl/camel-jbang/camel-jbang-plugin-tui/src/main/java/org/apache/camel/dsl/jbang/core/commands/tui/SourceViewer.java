@@ -94,6 +94,7 @@ class SourceViewer {
     private boolean quickDocEnabled;
     private Map<Integer, List<String>> quickDocEntries = Collections.emptyMap();
     private Style titleStyle;
+    private Style borderStyle;
     private boolean focused = true;
 
     private record CachedSource(
@@ -107,6 +108,10 @@ class SourceViewer {
 
     void setTitleStyle(Style style) {
         this.titleStyle = style;
+    }
+
+    void setBorderStyle(Style style) {
+        this.borderStyle = style;
     }
 
     void setFocused(boolean focused) {
@@ -272,9 +277,9 @@ class SourceViewer {
                 selectedLine = Math.min(lines.size() - 1, selectedLine + page);
             }
         } else if (!wordWrap && ke.isLeft()) {
-            scrollX = Math.max(0, scrollX - 1);
+            scrollX = Math.max(0, scrollX - 8);
         } else if (!wordWrap && ke.isRight()) {
-            scrollX++;
+            scrollX += 8;
         } else if (ke.isHome()) {
             selectedLine = 0;
             scrollX = 0;
@@ -341,10 +346,13 @@ class SourceViewer {
 
     void render(Frame frame, Rect area) {
         if (markdownMode && rawMarkdownContent != null) {
-            Block block = Block.builder()
+            Block.Builder bb = Block.builder()
                     .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                    .title(buildTitle())
-                    .build();
+                    .title(buildTitle());
+            if (borderStyle != null) {
+                bb.borderStyle(borderStyle);
+            }
+            Block block = bb.build();
             MarkdownView view = MarkdownView.builder()
                     .source(rawMarkdownContent)
                     .scroll(markdownScroll)
@@ -355,10 +363,13 @@ class SourceViewer {
             return;
         }
 
-        Block block = Block.builder()
+        Block.Builder blockBuilder = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(buildTitle())
-                .build();
+                .title(buildTitle());
+        if (borderStyle != null) {
+            blockBuilder.borderStyle(borderStyle);
+        }
+        Block block = blockBuilder.build();
         Rect inner = block.inner(area);
         lastInnerArea = inner;
         frame.renderWidget(block, area);
@@ -368,6 +379,15 @@ class SourceViewer {
         }
 
         int visibleLines = inner.height();
+
+        // Reserve bottom row for horizontal scrollbar when content is wider than viewport
+        if (!wordWrap) {
+            int cursorWidth = 3;
+            int maxLineWidth = lines.stream().mapToInt(String::length).max().orElse(0) + cursorWidth;
+            if (maxLineWidth > inner.width()) {
+                visibleLines = Math.max(1, visibleLines - 1);
+            }
+        }
         lastVisibleLines = visibleLines;
 
         // On initial load, position selected line at 2/3 of viewport
@@ -377,12 +397,15 @@ class SourceViewer {
             pendingScroll = false;
         }
 
-        // Auto-scroll to keep selected line visible (accounting for inline doc lines)
+        int contentWidth = inner.width() - 1;
+
+        // Auto-scroll to keep selected line visible (accounting for word wrap and inline doc lines)
         if (selectedLine >= 0) {
             if (selectedLine < scrollY) {
                 scrollY = selectedLine;
-            } else if (quickDocEnabled && !quickDocEntries.isEmpty()) {
-                while (scrollY < selectedLine && countVisualRows(scrollY, selectedLine) + 1 > visibleLines) {
+            } else if (wordWrap || (quickDocEnabled && !quickDocEntries.isEmpty())) {
+                while (scrollY < selectedLine
+                        && countVisualRows(scrollY, selectedLine + 1, contentWidth) > visibleLines) {
                     scrollY++;
                 }
             } else if (selectedLine >= scrollY + visibleLines) {
@@ -391,14 +414,16 @@ class SourceViewer {
         }
 
         int maxScroll;
-        if (quickDocEnabled && !quickDocEntries.isEmpty()) {
+        if (wordWrap || (quickDocEnabled && !quickDocEntries.isEmpty())) {
             maxScroll = 0;
             int visualFromEnd = 0;
             for (int i = lines.size() - 1; i >= 0; i--) {
-                visualFromEnd++;
-                List<String> docs = quickDocEntries.get(i);
-                if (docs != null) {
-                    visualFromEnd += docs.size();
+                visualFromEnd += wrapRowCount(lines.get(i), contentWidth);
+                if (quickDocEnabled) {
+                    List<String> docs = quickDocEntries.get(i);
+                    if (docs != null) {
+                        visualFromEnd += docs.size();
+                    }
                 }
                 if (visualFromEnd >= visibleLines) {
                     maxScroll = i;
@@ -1118,10 +1143,10 @@ class SourceViewer {
         return result;
     }
 
-    private int countVisualRows(int fromLine, int toLine) {
+    private int countVisualRows(int fromLine, int toLine, int contentWidth) {
         int count = 0;
         for (int i = fromLine; i < toLine && i < lines.size(); i++) {
-            count++;
+            count += wrapRowCount(lines.get(i), contentWidth);
             if (quickDocEnabled) {
                 List<String> docs = quickDocEntries.get(i);
                 if (docs != null) {
@@ -1130,6 +1155,13 @@ class SourceViewer {
             }
         }
         return count;
+    }
+
+    private int wrapRowCount(String line, int contentWidth) {
+        if (!wordWrap || contentWidth <= 0 || line.length() <= contentWidth) {
+            return 1;
+        }
+        return (line.length() + contentWidth - 1) / contentWidth;
     }
 
     private static String objToString(Object o) {

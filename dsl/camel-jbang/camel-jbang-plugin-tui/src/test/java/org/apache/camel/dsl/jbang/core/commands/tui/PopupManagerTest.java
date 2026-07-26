@@ -25,6 +25,7 @@ import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -74,7 +75,7 @@ class PopupManagerTest {
                 ctx, () -> List.of(info),
                 () -> List.of(
                         new TabRegistry.MoreTab(TuiIcons.TAB_BEANS, "Beans", "&Beans", null),
-                        new TabRegistry.MoreTab(TuiIcons.TAB_BROWSE, "Browse", "Bro&wse", null)),
+                        new TabRegistry.MoreTab(TuiIcons.TAB_BROWSE, "Browse", "&Browse", null)),
                 new FilesBrowser(), callbacks);
     }
 
@@ -126,10 +127,16 @@ class PopupManagerTest {
 
     @Test
     void morePopupShortcutMatchesEitherCase() {
-        // 'w'/'W' both select Browse (index 1); Shift+letter must work too
-        assertEquals(1, popupManager.morePopupShortcut(KeyEvent.ofChar('w', KeyModifiers.NONE)));
-        assertEquals(1, popupManager.morePopupShortcut(KeyEvent.ofChar('W', KeyModifiers.NONE)));
-        assertEquals(0, popupManager.morePopupShortcut(KeyEvent.ofChar('B', KeyModifiers.NONE)));
-        assertEquals(-1, popupManager.morePopupShortcut(KeyEvent.ofChar('z', KeyModifiers.NONE)));
+        // Both Beans and Browse use 'B' — pressing 'b'/'B' cycles between them (matchCount=2)
+        // morePopupShortcut returns int[] {selectedIndex, matchCount}
+        int[] bResult = popupManager.morePopupShortcut(KeyEvent.ofChar('b', KeyModifiers.NONE));
+        assertEquals(0, bResult[0]);
+        assertEquals(2, bResult[1]);
+        // second press cycles to next match
+        int[] bUpperResult = popupManager.morePopupShortcut(KeyEvent.ofChar('B', KeyModifiers.NONE));
+        assertEquals(1, bUpperResult[0]);
+        assertEquals(2, bUpperResult[1]);
+        // 'z' matches nothing
+        assertArrayEquals(new int[] { -1, 0 }, popupManager.morePopupShortcut(KeyEvent.ofChar('z', KeyModifiers.NONE)));
     }
 }

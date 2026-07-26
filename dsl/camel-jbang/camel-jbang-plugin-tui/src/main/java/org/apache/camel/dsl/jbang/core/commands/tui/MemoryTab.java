@@ -114,12 +114,7 @@ class MemoryTab extends AbstractTab {
 
         renderStats(frame, chunks.get(0), info);
 
-        List<Rect> vChunks = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(chunks.get(1));
-
-        renderSparkline(frame, vChunks.get(0), info);
-        renderTimeAxis(frame, vChunks.get(1), info);
+        renderSparkline(frame, chunks.get(1), info);
     }
 
     private void renderStats(Frame frame, Rect area, IntegrationInfo info) {
@@ -283,7 +278,10 @@ class MemoryTab extends AbstractTab {
         }
 
         int chartW = inner.width();
-        int chartH = inner.height();
+        int chartH = inner.height() - 1;
+        if (chartH < 1) {
+            return;
+        }
 
         // Build data array right-aligned: latest data on the right
         long[] data = new long[chartW];
@@ -326,27 +324,26 @@ class MemoryTab extends AbstractTab {
                 }
             }
         }
+
+        // Render time axis on the bottom row of the inner area (inside the block border)
+        renderTimeAxis(frame, inner, info, chartW);
     }
 
-    private void renderTimeAxis(Frame frame, Rect area, IntegrationInfo info) {
+    private void renderTimeAxis(Frame frame, Rect inner, IntegrationInfo info, int chartW) {
         LinkedList<Long> hist = heapMemHistory.get(info.pid);
         int points = hist != null ? hist.size() : 0;
 
-        int w = area.width();
-        if (w < 10) {
+        if (chartW < 10) {
             return;
         }
 
-        // The chart area has the same width; each column = 1 data point = 5 seconds
-        // chartW columns map to the rightmost `chartW` points of history
-        int chartW = w;
         int totalPoints = Math.min(points, chartW);
         long totalSeconds = totalPoints * 5L;
 
         Buffer buf = frame.buffer();
         Style dimStyle = Style.EMPTY.dim();
-        int xAxisY = area.y();
-        int startX = area.x();
+        int xAxisY = inner.y() + inner.height() - 1;
+        int startX = inner.x();
 
         // "now" label at the right edge
         int nowX = startX + chartW - 3;

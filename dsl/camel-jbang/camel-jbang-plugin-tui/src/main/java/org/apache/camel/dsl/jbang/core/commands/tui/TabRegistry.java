@@ -166,41 +166,44 @@ class TabRegistry {
         // The group field drives divider rendering in the More popup.
         moreTabs = List.of(
                 // Routing
-                new MoreTab(TuiIcons.TAB_BROWSE, "Browse", "Bro&wse", browseTab, "Routing"),
-                new MoreTab(TuiIcons.TAB_CIRCUIT_BREAKER, "Circuit Breaker", "&Circuit Breaker", circuitBreakerTab, "Routing"),
-                new MoreTab(TuiIcons.TAB_CONSUMERS, "Consumers", "Co&nsumers", consumersTab, "Routing"),
+                new MoreTab(TuiIcons.TAB_BROWSE, "Browse Endpoints", "&Browse Endpoints", browseTab, "Routing"),
+                new MoreTab(TuiIcons.TAB_CONSUMERS, "Consumers", "&Consumers", consumersTab, "Routing"),
                 new MoreTab(TuiIcons.TAB_HTTP, "HTTP", "&HTTP", httpTab, "Routing"),
-                new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "In&flight", inflightTab, "Routing"),
-                new MoreTab(TuiIcons.TAB_PRODUCERS, "Producers", "Prod&ucers", producersTab, "Routing"),
+                new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "&Inflight", inflightTab, "Routing"),
+                new MoreTab(TuiIcons.TAB_PRODUCERS, "Producers", "&Producers", producersTab, "Routing"),
                 new MoreTab(
-                        TuiIcons.TAB_ROUTE_CONTROLLER, "Route Controller", "Route Organi&zer", routeControllerTab,
+                        TuiIcons.TAB_ROUTE_CONTROLLER, "Route Controller", "&Route Controller", routeControllerTab,
                         "Routing"),
                 // Observability
-                new MoreTab(TuiIcons.TAB_HEALTH, "Health", "H&ealth", healthTab, "Observability"),
-                new MoreTab(TuiIcons.TAB_METRICS, "Metrics", "Metr&ics", metricsTab, "Observability"),
+                new MoreTab(
+                        TuiIcons.TAB_CIRCUIT_BREAKER, "Circuit Breaker", "&Circuit Breaker", circuitBreakerTab,
+                        "Observability"),
+                new MoreTab(TuiIcons.TAB_HEALTH, "Health", "&Health", healthTab, "Observability"),
+                new MoreTab(TuiIcons.TAB_METRICS, "Metrics", "&Metrics", metricsTab, "Observability"),
                 new MoreTab(TuiIcons.TAB_NETWORK, "Network Services", "&Network Services", networkTab, "Observability"),
-                new MoreTab(TuiIcons.TAB_EVENTS, "Events", "E&xchange Events", eventTab, "Observability"),
+                new MoreTab(TuiIcons.TAB_EVENTS, "Events", "&Exchange Events", eventTab, "Observability"),
                 new MoreTab(TuiIcons.TAB_SPANS, "Spans", "&OTel Spans", spansTab, "Observability"),
                 // Data
                 new MoreTab(TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab, "Data"),
                 new MoreTab(TuiIcons.TAB_KAFKA, "Kafka", "&Kafka", kafkaTab, "Data"),
                 new MoreTab(TuiIcons.TAB_SQL_QUERY, "SQL Query", "S&QL Query", sqlQueryTab, "Data"),
-                new MoreTab(TuiIcons.TAB_SQL_TRACE, "SQL Trace", "SQL T&race", sqlTraceTab, "Data"),
+                new MoreTab(TuiIcons.TAB_SQL_TRACE, "SQL Trace", "S&QL Trace", sqlTraceTab, "Data"),
                 // JVM
-                new MoreTab(TuiIcons.TAB_CLASSPATH, "Classpath", "Cl&asspath", classpathTab, "JVM"),
-                new MoreTab(TuiIcons.TAB_HEAP, "Heap Histogram", "&Heap Histogram", heapHistogramTab, "JVM"),
-                new MoreTab(TuiIcons.TAB_MEMORY, "Memory", "&Memory", memoryTab, "JVM"),
-                new MoreTab(TuiIcons.TAB_MEMORY_LEAK, "Memory Leak", "Memor&y Leak", memoryLeakTab, "JVM"),
+                new MoreTab(TuiIcons.TAB_CLASSPATH, "Classpath", "&Classpath", classpathTab, "JVM"),
+                new MoreTab(TuiIcons.TAB_HEAP, "Heap Memory Histogram", "Heap &Memory Histogram", heapHistogramTab, "JVM"),
+                new MoreTab(TuiIcons.TAB_MEMORY, "Memory Usage", "&Memory Usage", memoryTab, "JVM"),
+                new MoreTab(TuiIcons.TAB_MEMORY_LEAK, "Memory Leak", "&Memory Leak", memoryLeakTab, "JVM"),
                 new MoreTab(TuiIcons.TAB_PROCESS, "Process", "&Process", processTab, "JVM"),
                 new MoreTab(TuiIcons.TAB_STARTUP, "Startup", "&Startup", startupTab, "JVM"),
                 new MoreTab(TuiIcons.TAB_THREADS, "Threads", "&Threads", threadsTab, "JVM"),
                 // Project
                 new MoreTab(TuiIcons.TAB_BEANS, "Beans", "&Beans", beansTab, "Project"),
-                new MoreTab(TuiIcons.TAB_CATALOG, "Catalog", "Cata&log", catalogTab, "Project"),
-                new MoreTab(TuiIcons.TAB_CONFIGURATION, "Configuration", "Confi&guration", configurationTab, "Project"),
+                new MoreTab(TuiIcons.TAB_CATALOG, "Catalog", "&Catalog", catalogTab, "Project"),
+                new MoreTab(TuiIcons.TAB_CONFIGURATION, "Configuration", "&Configuration", configurationTab, "Project"),
                 new MoreTab(TuiIcons.TAB_CVE_AUDIT, "CVE Audit", "C&VE Audit", cveAuditTab, "Project"),
                 new MoreTab(
-                        TuiIcons.TAB_MAVEN_DEPENDENCIES, "Maven Dependencies", "Maven &Dependencies", mavenDependenciesTab,
+                        TuiIcons.TAB_MAVEN_DEPENDENCIES, "Maven Dependencies", "&Maven Dependencies",
+                        mavenDependenciesTab,
                         "Project"));
     }
 
