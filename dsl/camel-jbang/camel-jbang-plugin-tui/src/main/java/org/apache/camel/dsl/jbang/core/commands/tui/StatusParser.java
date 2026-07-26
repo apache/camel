@@ -326,6 +326,60 @@ final class StatusParser {
             }
         }
 
+        // Parse producers
+        JsonObject producersObj = (JsonObject) root.get("producers");
+        if (producersObj != null) {
+            JsonArray producerList = (JsonArray) producersObj.get("producers");
+            if (producerList != null) {
+                for (Object p : producerList) {
+                    JsonObject pj = (JsonObject) p;
+                    ProducerInfo pi = new ProducerInfo();
+                    pi.uri = pj.getString("uri");
+                    pi.state = pj.getString("state");
+                    pi.className = pj.getString("class");
+                    pi.routeId = pj.getString("routeId");
+                    pi.stepId = pj.getString("stepId");
+                    pi.remote = Boolean.TRUE.equals(pj.get("remote"));
+                    pi.singleton = Boolean.TRUE.equals(pj.get("singleton"));
+                    info.producers.add(pi);
+                }
+            }
+        }
+
+        // Parse events
+        JsonObject eventsObj = (JsonObject) root.get("events");
+        if (eventsObj != null) {
+            parseEventArray(eventsObj, "events", "general", info);
+            parseEventArray(eventsObj, "routeEvents", "route", info);
+            parseEventArray(eventsObj, "exchangeEvents", "exchange", info);
+        }
+
+        // Parse route controller
+        JsonObject rcObj = (JsonObject) root.get("routeController");
+        if (rcObj != null) {
+            info.routeControllerType = rcObj.getString("controller");
+            info.routeControllerUnhealthy = Boolean.TRUE.equals(rcObj.get("unhealthyRoutes"));
+            info.routeControllerRestartingRoutes = rcObj.getIntegerOrDefault("restartingRoutes", 0);
+            info.routeControllerExhaustedRoutes = rcObj.getIntegerOrDefault("exhaustedRoutes", 0);
+            JsonArray rcRoutes = (JsonArray) rcObj.get("routes");
+            if (rcRoutes != null) {
+                for (Object r : rcRoutes) {
+                    JsonObject rj = (JsonObject) r;
+                    RouteControllerInfo rc = new RouteControllerInfo();
+                    rc.routeId = rj.getString("routeId");
+                    rc.status = rj.getString("status");
+                    rc.uri = rj.getString("uri");
+                    rc.supervising = rj.getString("supervising");
+                    rc.attempts = rj.getLongOrDefault("attempts", 0);
+                    rc.lastAttempt = rj.getLongOrDefault("lastAttempt", 0);
+                    rc.nextAttempt = rj.getLongOrDefault("nextAttempt", 0);
+                    rc.elapsed = rj.getLongOrDefault("elapsed", 0);
+                    rc.error = rj.getString("error");
+                    info.routeControllerRoutes.add(rc);
+                }
+            }
+        }
+
         // Parse endpoints (top-level "endpoints" is a JsonObject with nested "endpoints" array)
         JsonObject endpointsObj = (JsonObject) root.get("endpoints");
         if (endpointsObj != null) {
@@ -1219,5 +1273,21 @@ final class StatusParser {
 
     static long objToLong(Object o) {
         return TuiHelper.objToLong(o);
+    }
+
+    private static void parseEventArray(JsonObject eventsObj, String arrayKey, String category, IntegrationInfo info) {
+        JsonArray arr = (JsonArray) eventsObj.get(arrayKey);
+        if (arr != null) {
+            for (Object e : arr) {
+                JsonObject ej = (JsonObject) e;
+                EventInfo ei = new EventInfo();
+                ei.type = ej.getString("type");
+                ei.category = category;
+                ei.timestamp = ej.getLongOrDefault("timestamp", 0);
+                ei.exchangeId = ej.getString("exchangeId");
+                ei.message = ej.getString("message");
+                info.events.add(ei);
+            }
+        }
     }
 }

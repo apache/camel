@@ -146,6 +146,9 @@ final class TuiIcons {
     static final String TAB_PROCESS = CLIPBOARD;
     static final String TAB_STARTUP = QUARKUS;
     static final String TAB_THREADS = "🧵";
+    static final String TAB_PRODUCERS = "📤";
+    static final String TAB_EVENTS = "📣";
+    static final String TAB_ROUTE_CONTROLLER = "🚦";
 
     /** Icons for {@link TabRegistry#TAB_OVERVIEW}..{@link TabRegistry#TAB_MORE} (in order). */
     static final List<String> PRIMARY_TAB_ICONS = List.of(

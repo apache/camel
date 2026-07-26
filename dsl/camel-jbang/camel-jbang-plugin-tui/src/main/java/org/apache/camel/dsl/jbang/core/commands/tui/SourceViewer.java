@@ -363,7 +363,6 @@ class SourceViewer {
 
         int visibleLines = inner.height();
         lastVisibleLines = visibleLines;
-        int maxScroll = Math.max(0, lines.size() - visibleLines);
 
         // On initial load, position selected line at 2/3 of viewport
         if (pendingScroll && selectedLine >= 0) {
@@ -372,13 +371,36 @@ class SourceViewer {
             pendingScroll = false;
         }
 
-        // Auto-scroll to keep selected line visible
+        // Auto-scroll to keep selected line visible (accounting for inline doc lines)
         if (selectedLine >= 0) {
             if (selectedLine < scrollY) {
                 scrollY = selectedLine;
+            } else if (quickDocEnabled && !quickDocEntries.isEmpty()) {
+                while (scrollY < selectedLine && countVisualRows(scrollY, selectedLine) + 1 > visibleLines) {
+                    scrollY++;
+                }
             } else if (selectedLine >= scrollY + visibleLines) {
                 scrollY = selectedLine - visibleLines + 1;
             }
+        }
+
+        int maxScroll;
+        if (quickDocEnabled && !quickDocEntries.isEmpty()) {
+            maxScroll = 0;
+            int visualFromEnd = 0;
+            for (int i = lines.size() - 1; i >= 0; i--) {
+                visualFromEnd++;
+                List<String> docs = quickDocEntries.get(i);
+                if (docs != null) {
+                    visualFromEnd += docs.size();
+                }
+                if (visualFromEnd >= visibleLines) {
+                    maxScroll = i;
+                    break;
+                }
+            }
+        } else {
+            maxScroll = Math.max(0, lines.size() - visibleLines);
         }
         scrollY = Math.min(scrollY, maxScroll);
 
@@ -1087,6 +1109,20 @@ class SourceViewer {
             pos = end;
         }
         return result;
+    }
+
+    private int countVisualRows(int fromLine, int toLine) {
+        int count = 0;
+        for (int i = fromLine; i < toLine && i < lines.size(); i++) {
+            count++;
+            if (quickDocEnabled) {
+                List<String> docs = quickDocEntries.get(i);
+                if (docs != null) {
+                    count += docs.size();
+                }
+            }
+        }
+        return count;
     }
 
     private static String objToString(Object o) {

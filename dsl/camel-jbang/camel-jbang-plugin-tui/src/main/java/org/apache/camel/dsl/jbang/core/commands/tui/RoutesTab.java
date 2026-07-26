@@ -1812,16 +1812,15 @@ class RoutesTab extends AbstractTab {
             detailScroll = 0;
         }
 
-        if (drillDownRouteId != null && !drillDownRouteId.equals(cachedRouteDetailId)
-                && !drillDownRouteId.equals(detailLoadingRouteId)) {
-            detailLoadingRouteId = drillDownRouteId;
+        if (drillDownRouteId != null && cachedRouteDetail == null
+                && !"*".equals(detailLoadingRouteId)) {
+            detailLoadingRouteId = "*";
             detailLoading = true;
-            String rid = drillDownRouteId;
             if (ctx.runner != null) {
                 ctx.backgroundExecutor.execute(() -> {
-                    JsonObject result = requestRouteProcessorDetail(rid);
+                    JsonObject result = requestRouteProcessorDetail("*");
                     cachedRouteDetail = result;
-                    cachedRouteDetailId = rid;
+                    cachedRouteDetailId = "*";
                     detailLoading = false;
                 });
             }
@@ -2009,7 +2008,7 @@ class RoutesTab extends AbstractTab {
         try {
             JsonObject root = new JsonObject();
             root.put("action", "processor-detail");
-            root.put("routeId", routeId);
+            root.put("routeId", "*");
             return ctx.executeAction(ctx.selectedPid, root, 5000);
         } catch (Exception e) {
             return null;
@@ -2020,17 +2019,41 @@ class RoutesTab extends AbstractTab {
         if (cachedRouteDetail == null || nodeId == null) {
             return null;
         }
-        JsonArray processors = (JsonArray) cachedRouteDetail.get("processors");
-        if (processors == null) {
-            return null;
-        }
-        for (Object obj : processors) {
-            JsonObject p = (JsonObject) obj;
+        for (JsonObject p : getAllProcessors(cachedRouteDetail)) {
             if (nodeId.equals(p.getString("id"))) {
                 return p;
             }
         }
         return null;
+    }
+
+    static List<JsonObject> getAllProcessors(JsonObject routeDetail) {
+        if (routeDetail == null) {
+            return List.of();
+        }
+        JsonArray routes = (JsonArray) routeDetail.get("routes");
+        if (routes != null) {
+            List<JsonObject> all = new ArrayList<>();
+            for (Object obj : routes) {
+                JsonObject route = (JsonObject) obj;
+                JsonArray procs = (JsonArray) route.get("processors");
+                if (procs != null) {
+                    for (Object p : procs) {
+                        all.add((JsonObject) p);
+                    }
+                }
+            }
+            return all;
+        }
+        JsonArray procs = (JsonArray) routeDetail.get("processors");
+        if (procs != null) {
+            List<JsonObject> all = new ArrayList<>();
+            for (Object p : procs) {
+                all.add((JsonObject) p);
+            }
+            return all;
+        }
+        return List.of();
     }
 
     // ---- Quick doc (q toggle in source viewer) ----
@@ -2040,8 +2063,8 @@ class RoutesTab extends AbstractTab {
             return Map.of();
         }
 
-        JsonArray processors = (JsonArray) cachedRouteDetail.get("processors");
-        if (processors == null || processors.isEmpty()) {
+        List<JsonObject> processors = getAllProcessors(cachedRouteDetail);
+        if (processors.isEmpty()) {
             return Map.of();
         }
 
@@ -2049,8 +2072,7 @@ class RoutesTab extends AbstractTab {
         CamelCatalog catalog = info != null ? getCatalog(info) : null;
 
         Map<Integer, List<String>> result = new LinkedHashMap<>();
-        for (Object obj : processors) {
-            JsonObject proc = (JsonObject) obj;
+        for (JsonObject proc : processors) {
             Integer line = proc.getInteger("line");
             if (line == null || line <= 0) {
                 continue;
@@ -2074,14 +2096,14 @@ class RoutesTab extends AbstractTab {
 
     private void ensureProcessorDetailLoaded(String routeId) {
         if (routeId != null && cachedRouteDetail == null
-                && !routeId.equals(detailLoadingRouteId)) {
-            detailLoadingRouteId = routeId;
+                && !"*".equals(detailLoadingRouteId)) {
+            detailLoadingRouteId = "*";
             detailLoading = true;
             if (ctx.runner != null) {
                 ctx.backgroundExecutor.execute(() -> {
-                    JsonObject result = requestRouteProcessorDetail(routeId);
+                    JsonObject result = requestRouteProcessorDetail("*");
                     cachedRouteDetail = result;
-                    cachedRouteDetailId = routeId;
+                    cachedRouteDetailId = "*";
                     detailLoading = false;
                 });
             }
@@ -2148,10 +2170,31 @@ class RoutesTab extends AbstractTab {
             CamelCatalog catalog, String type, JsonObject opts, int eipIdx) {
 
         EipModel model = catalog != null ? catalog.eipModel(type) : null;
+
+        // For endpoint-bearing EIPs, resolve the component from the uri option
+        ComponentModel compModel = null;
+        if (opts != null && catalog != null) {
+            Object uriObj = opts.get("uri");
+            if (uriObj != null) {
+                String uri = uriObj.toString();
+                String comp = uri.contains(":") ? uri.substring(0, uri.indexOf(':')) : uri;
+                compModel = catalog.componentModel(comp);
+            }
+        }
+
         List<String> titleLines = new ArrayList<>();
         if (model != null && model.getTitle() != null) {
-            String desc = model.getDescription() != null ? truncateText(model.getDescription(), 80) : "";
-            titleLines.add(model.getTitle() + " — " + desc);
+            String eipTitle = model.getTitle();
+            if (compModel != null && compModel.getTitle() != null) {
+                eipTitle += " (" + compModel.getTitle() + ")";
+            }
+            String desc;
+            if (compModel != null && compModel.getDescription() != null) {
+                desc = truncateText(compModel.getDescription(), 80);
+            } else {
+                desc = model.getDescription() != null ? truncateText(model.getDescription(), 80) : "";
+            }
+            titleLines.add(eipTitle + " — " + desc);
         } else {
             titleLines.add(type);
         }
@@ -2166,20 +2209,31 @@ class RoutesTab extends AbstractTab {
                     optionDocs.put(opt.getName(), opt);
                 }
             }
+            if (compModel != null) {
+                for (ComponentModel.EndpointOptionModel opt : compModel.getEndpointOptions()) {
+                    if (opt.getName() != null && !optionDocs.containsKey(opt.getName())) {
+                        optionDocs.put(opt.getName(), opt);
+                    }
+                }
+            }
             inlineParameterDocs(result, cd, eipIdx, optionDocs);
 
             // For Java/XML where options are on the same line,
             // cluster the option docs under the title
             if (result.size() == beforeSize + 1 && opts != null) {
-                clusterEipOptions(titleLines, opts, optionDocs);
+                boolean hasParams = hasParametersChild(cd, eipIdx);
+                clusterEipOptions(titleLines, opts, optionDocs, hasParams);
             }
         }
     }
 
     private static void clusterEipOptions(
             List<String> docLines, JsonObject opts,
-            Map<String, BaseOptionModel> optionDocs) {
+            Map<String, BaseOptionModel> optionDocs, boolean skipUri) {
         for (Map.Entry<String, Object> entry : opts.entrySet()) {
+            if (skipUri && "uri".equals(entry.getKey())) {
+                continue;
+            }
             BaseOptionModel optModel = optionDocs.get(entry.getKey());
             if (optModel != null) {
                 String optDoc = formatOptionDoc(optModel);
@@ -2188,6 +2242,22 @@ class RoutesTab extends AbstractTab {
                 }
             }
         }
+    }
+
+    static boolean hasParametersChild(List<JsonObject> cd, int eipIdx) {
+        int eipIndent = lineIndent(cd, eipIdx);
+        for (int i = eipIdx + 1; i < cd.size(); i++) {
+            String code = cd.get(i).get("code") != null ? cd.get(i).get("code").toString() : "";
+            int indent = leadingSpaces(code);
+            if (indent < eipIndent && !code.isBlank()) {
+                break;
+            }
+            String trimmed = code.stripLeading();
+            if (trimmed.startsWith("parameters:")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static void inlineParameterDocs(
@@ -2200,6 +2270,9 @@ class RoutesTab extends AbstractTab {
 
         int eipIndent = lineIndent(cd, eipIdx);
         int childIndent = -1;
+        boolean inParameters = false;
+        int paramIndent = -1;
+        int parametersLineIndent = -1;
 
         for (int i = eipIdx + 1; i < cd.size(); i++) {
             String code = cd.get(i).get("code") != null ? cd.get(i).get("code").toString() : "";
@@ -2210,6 +2283,35 @@ class RoutesTab extends AbstractTab {
             if (childIndent < 0 && indent > eipIndent) {
                 childIndent = indent;
             }
+
+            if (inParameters) {
+                if (paramIndent < 0 && indent > parametersLineIndent && !code.isBlank()) {
+                    paramIndent = indent;
+                }
+                if (paramIndent > 0 && indent <= parametersLineIndent && !code.isBlank()) {
+                    inParameters = false;
+                    paramIndent = -1;
+                    parametersLineIndent = -1;
+                } else if (paramIndent > 0 && indent == paramIndent) {
+                    String trimmed = code.stripLeading();
+                    int colon = trimmed.indexOf(':');
+                    if (colon > 0) {
+                        String key = trimmed.substring(0, colon).strip();
+                        BaseOptionModel doc = optionDocs.get(key);
+                        if (doc != null) {
+                            String docLine = formatOptionDoc(doc);
+                            if (docLine != null) {
+                                int docIdx = lastContinuationLine(cd, i, indent);
+                                result.put(docIdx, List.of(docLine));
+                            }
+                        }
+                    }
+                    continue;
+                } else {
+                    continue;
+                }
+            }
+
             if (childIndent > 0 && indent != childIndent) {
                 continue;
             }
@@ -2219,7 +2321,12 @@ class RoutesTab extends AbstractTab {
                 continue;
             }
             String key = trimmed.substring(0, colon).strip();
-            if ("parameters".equals(key) || "uri".equals(key) || "steps".equals(key)
+            if ("parameters".equals(key)) {
+                inParameters = true;
+                parametersLineIndent = indent;
+                continue;
+            }
+            if ("uri".equals(key) || "steps".equals(key)
                     || "id".equals(key) || "description".equals(key)) {
                 continue;
             }
@@ -2228,10 +2335,27 @@ class RoutesTab extends AbstractTab {
             if (doc != null) {
                 String docLine = formatOptionDoc(doc);
                 if (docLine != null) {
-                    result.put(i, List.of(docLine));
+                    int docIdx = lastContinuationLine(cd, i, indent);
+                    result.put(docIdx, List.of(docLine));
                 }
             }
         }
+    }
+
+    static int lastContinuationLine(List<JsonObject> cd, int keyIdx, int keyIndent) {
+        int last = keyIdx;
+        for (int j = keyIdx + 1; j < cd.size(); j++) {
+            String c = cd.get(j).get("code") != null ? cd.get(j).get("code").toString() : "";
+            if (c.isBlank()) {
+                continue;
+            }
+            if (leadingSpaces(c) > keyIndent) {
+                last = j;
+            } else {
+                break;
+            }
+        }
+        return last;
     }
 
     static String formatOptionDoc(BaseOptionModel doc) {

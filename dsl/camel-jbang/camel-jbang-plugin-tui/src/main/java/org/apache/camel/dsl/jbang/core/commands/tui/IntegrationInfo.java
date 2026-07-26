@@ -80,6 +80,13 @@ class IntegrationInfo {
     long vanishStart;
     final List<RouteInfo> routes = new ArrayList<>();
     final List<ConsumerInfo> consumers = new ArrayList<>();
+    final List<ProducerInfo> producers = new ArrayList<>();
+    final List<EventInfo> events = new ArrayList<>();
+    String routeControllerType;
+    boolean routeControllerUnhealthy;
+    int routeControllerRestartingRoutes;
+    int routeControllerExhaustedRoutes;
+    final List<RouteControllerInfo> routeControllerRoutes = new ArrayList<>();
     final List<HealthCheckInfo> healthChecks = new ArrayList<>();
     final List<EndpointInfo> endpoints = new ArrayList<>();
     final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
