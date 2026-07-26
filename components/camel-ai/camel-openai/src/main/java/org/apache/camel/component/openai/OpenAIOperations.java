@@ -19,6 +19,7 @@ package org.apache.camel.component.openai;
 public enum OpenAIOperations {
 
     chatCompletion("chat-completion"),
+    responses("responses"),
     embeddings("embeddings"),
     toolExecution("tool-execution"),
     audioTranscription("audio-transcription"),
@@ -39,7 +40,7 @@ public enum OpenAIOperations {
         }
         throw new IllegalArgumentException(
                 "Unknown operation: " + value
-                                           + ". Supported: chat-completion, embeddings, tool-execution, "
+                                           + ". Supported: chat-completion, responses, embeddings, tool-execution, "
                                            + "audio-transcription, audio-translation, audio-speech");
     }
 

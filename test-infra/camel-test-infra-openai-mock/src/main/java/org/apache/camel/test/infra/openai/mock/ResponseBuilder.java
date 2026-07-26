@@ -66,6 +66,37 @@ public class ResponseBuilder {
         return objectMapper.writeValueAsString(chatCompletion);
     }
 
+    public String createResponsesTextResponse(String content, int inputTokens, int outputTokens) throws Exception {
+        Map<String, Object> outputText = new HashMap<>();
+        outputText.put("type", "output_text");
+        outputText.put("text", content);
+
+        Map<String, Object> message = new HashMap<>();
+        message.put("type", "message");
+        message.put("id", "msg_" + UUID.randomUUID());
+        message.put("role", "assistant");
+        message.put("status", "completed");
+        message.put("content", List.of(outputText));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", "resp_" + UUID.randomUUID());
+        response.put("object", "response");
+        response.put("created_at", System.currentTimeMillis() / 1000.0);
+        response.put("model", "openai-mock");
+        response.put("output", List.of(message));
+        response.put("parallel_tool_calls", true);
+        response.put("tool_choice", "auto");
+        response.put("tools", List.of());
+
+        Map<String, Object> usage = new HashMap<>();
+        usage.put("input_tokens", inputTokens);
+        usage.put("output_tokens", outputTokens);
+        usage.put("total_tokens", inputTokens + outputTokens);
+        response.put("usage", usage);
+
+        return objectMapper.writeValueAsString(response);
+    }
+
     public String createToolCallResponse(String content, List<ToolCallDefinition> toolCalls) throws Exception {
         return createToolCallResponse(content, toolCalls, DEFAULT_PROMPT_TOKENS, DEFAULT_COMPLETION_TOKENS);
     }
