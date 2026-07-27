@@ -18,17 +18,12 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -720,72 +715,24 @@ class HttpTab extends AbstractTableTab {
             String baseUrl, String method, String path, String body, List<FormHelper.HeaderEntry> hdrs) {
 
         String url = baseUrl + path;
+        HttpHelper.HttpResult result = HttpHelper.sendRequest(url, method, body, hdrs);
+
         String statusText;
-        long elapsed = 0;
-        boolean error = false;
-        List<String> headerLines = new ArrayList<>();
-        String rawBody = null;
-        int httpStatus = 0;
+        boolean error;
+        List<String> headerLines;
+        int httpStatus;
 
-        try {
-            HttpClient client = HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(10))
-                    .build();
-
-            boolean hasBody = body != null && !body.isEmpty();
-            HttpRequest.BodyPublisher bodyPublisher = hasBody
-                    ? HttpRequest.BodyPublishers.ofString(body)
-                    : HttpRequest.BodyPublishers.noBody();
-
-            HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .timeout(Duration.ofSeconds(20))
-                    .method(method, bodyPublisher);
-
-            // Add user headers
-            if (hdrs != null) {
-                for (FormHelper.HeaderEntry he : hdrs) {
-                    String k = he.keyInput().text().trim();
-                    String v = he.valueInput().text();
-                    if (!k.isEmpty()) {
-                        reqBuilder.header(k, v);
-                    }
-                }
-            }
-
-            long start = System.currentTimeMillis();
-            HttpResponse<String> response = client.send(reqBuilder.build(),
-                    HttpResponse.BodyHandlers.ofString());
-            elapsed = System.currentTimeMillis() - start;
-
-            httpStatus = response.statusCode();
-            statusText = String.valueOf(httpStatus);
-
-            // Response headers
-            for (Map.Entry<String, List<String>> entry : response.headers().map().entrySet()) {
-                String k = entry.getKey();
-                if (k == null || k.startsWith(":")) {
-                    continue;
-                }
-                for (String v : entry.getValue()) {
-                    headerLines.add(k + ": " + v);
-                }
-            }
-
-            // Response body
-            String responseBody = response.body();
-            if (responseBody != null && !responseBody.isEmpty()) {
-                rawBody = responseBody;
-            }
-
-            if (httpStatus >= 400) {
-                error = true;
-            }
-        } catch (Exception e) {
+        if (result.error() != null) {
             statusText = "Error";
             error = true;
-            String msg = e.getMessage();
-            headerLines.add(msg != null ? msg : e.getClass().getSimpleName());
+            httpStatus = 0;
+            headerLines = new ArrayList<>();
+            headerLines.add(result.error());
+        } else {
+            httpStatus = result.statusCode();
+            statusText = String.valueOf(httpStatus);
+            error = httpStatus >= 400;
+            headerLines = result.headerLines();
         }
 
         // Build history entry
@@ -795,21 +742,17 @@ class HttpTab extends AbstractTableTab {
         }
         ProbeHistoryEntry histEntry = new ProbeHistoryEntry(
                 method, path, histHeaders, body,
-                httpStatus, elapsed, statusText, error);
+                httpStatus, result.elapsed(), statusText, error);
 
         // Apply results on render thread
-        String finalStatus = statusText;
-        long finalElapsed = elapsed;
-        boolean finalError = error;
-        List<String> finalHeaderLines = headerLines;
-        String finalRawBody = rawBody;
+        String finalRawBody = result.body();
 
         if (ctx.runner != null) {
             ctx.runner.runOnRenderThread(() -> {
-                probeResponseStatus = finalStatus;
-                probeResponseElapsed = finalElapsed;
-                probeResponseError = finalError;
-                probeResponseHeaderLines = finalHeaderLines;
+                probeResponseStatus = statusText;
+                probeResponseElapsed = result.elapsed();
+                probeResponseError = error;
+                probeResponseHeaderLines = headerLines;
                 probeResponseRawBody = finalRawBody;
                 probeResponseScroll = 0;
                 rebuildResponseLines();

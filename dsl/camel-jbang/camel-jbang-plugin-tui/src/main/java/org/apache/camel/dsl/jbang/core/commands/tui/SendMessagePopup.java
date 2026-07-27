@@ -17,17 +17,11 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.File;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 
@@ -653,10 +647,10 @@ class SendMessagePopup {
             RouteInfo route, String body, List<FormHelper.HeaderEntry> hdrs,
             boolean captureInOut, String routeId) {
         try {
-            String path = extractPlatformHttpPath(route.from);
+            String path = HttpHelper.extractPlatformHttpPath(route.from);
             String baseUrl = httpServer.replace("0.0.0.0", "localhost");
             String url = baseUrl + path;
-            String method = extractHttpMethod(route.from, body);
+            String method = HttpHelper.extractHttpMethod(route.from, body);
 
             // read file content if body references a file
             String sendBody = body;
@@ -664,99 +658,35 @@ class SendMessagePopup {
                 sendBody = Files.readString(Path.of(sendBody.substring(5)));
             }
 
-            HttpClient client = HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(10))
-                    .build();
+            HttpHelper.HttpResult result = HttpHelper.sendRequest(url, method, sendBody, hdrs);
 
-            boolean hasBody = sendBody != null && !sendBody.isEmpty();
-            HttpRequest.BodyPublisher bodyPublisher = hasBody
-                    ? HttpRequest.BodyPublishers.ofString(sendBody)
-                    : HttpRequest.BodyPublishers.noBody();
-
-            HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .timeout(Duration.ofSeconds(20))
-                    .method(method, bodyPublisher);
-
-            if (hdrs != null) {
-                for (FormHelper.HeaderEntry he : hdrs) {
-                    String k = he.keyInput().text().trim();
-                    String v = he.valueInput().text();
-                    if (!k.isEmpty()) {
-                        reqBuilder.header(k, v);
-                    }
-                }
+            if (result.error() != null) {
+                applyResult(routeId, body, hdrs, captureInOut,
+                        null, 0, null, null, null,
+                        true, "Error: " + result.error());
+                return;
             }
 
-            long start = System.currentTimeMillis();
-            HttpResponse<String> response = client.send(reqBuilder.build(),
-                    HttpResponse.BodyHandlers.ofString());
-            long elapsed = System.currentTimeMillis() - start;
-
-            int httpStatus = response.statusCode();
-            boolean error = httpStatus >= 400;
+            boolean error = result.statusCode() >= 400;
 
             List<String> hdrLines = new ArrayList<>();
             hdrLines.add("HTTP " + method + " " + url);
-            hdrLines.add("status: " + httpStatus);
+            hdrLines.add("status: " + result.statusCode());
 
             if (captureInOut) {
-                for (Map.Entry<String, List<String>> entry : response.headers().map().entrySet()) {
-                    String k = entry.getKey();
-                    if (k == null || k.startsWith(":")) {
-                        continue;
-                    }
-                    for (String v : entry.getValue()) {
-                        hdrLines.add(k + ": " + v);
-                    }
-                }
+                hdrLines.addAll(result.headerLines());
             }
 
-            String rawBody = captureInOut ? response.body() : null;
+            String rawBody = captureInOut ? result.body() : null;
 
             applyResult(routeId, body, hdrs, captureInOut,
-                    String.valueOf(httpStatus), elapsed, null, hdrLines, rawBody,
-                    error, error ? "HTTP " + httpStatus : null);
+                    String.valueOf(result.statusCode()), result.elapsed(), null, hdrLines, rawBody,
+                    error, error ? "HTTP " + result.statusCode() : null);
         } catch (Exception e) {
             applyResult(routeId, body, hdrs, captureInOut,
                     null, 0, null, null, null,
                     true, "Error: " + e.getMessage());
         }
-    }
-
-    private static String extractPlatformHttpPath(String fromUri) {
-        // platform-http:///path?opts or platform-http:/path?opts
-        String path = fromUri.substring("platform-http:".length());
-        // strip query parameters
-        int q = path.indexOf('?');
-        if (q >= 0) {
-            path = path.substring(0, q);
-        }
-        // strip leading slashes from scheme separator (platform-http:///path -> /path)
-        while (path.startsWith("//")) {
-            path = path.substring(1);
-        }
-        if (!path.startsWith("/")) {
-            path = "/" + path;
-        }
-        return path;
-    }
-
-    private static String extractHttpMethod(String fromUri, String body) {
-        int q = fromUri.indexOf('?');
-        if (q >= 0) {
-            String query = fromUri.substring(q + 1);
-            for (String param : query.split("&")) {
-                if (param.startsWith("httpMethodRestrict=")) {
-                    String methods = param.substring("httpMethodRestrict=".length());
-                    // take the first method if comma-separated
-                    int comma = methods.indexOf(',');
-                    return comma > 0 ? methods.substring(0, comma).trim() : methods.trim();
-                }
-            }
-        }
-        // default: POST if body is present, GET otherwise
-        return (body != null && !body.isEmpty()) ? "POST" : "GET";
     }
 
     private void applyResult(
