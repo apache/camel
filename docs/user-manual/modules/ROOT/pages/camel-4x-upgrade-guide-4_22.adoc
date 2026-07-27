@@ -1274,3 +1274,20 @@ Update any catch blocks or method `throws` declarations accordingly.
 } catch (MinioException e) { ... }
 ----
 
+=== camel-aws2 - producers now fail fast on a wrong POJO request type
+
+When an AWS2 producer is configured with `pojoRequest=true`, it expects the
+Exchange body to be the AWS SDK request object for the selected operation
+(for example an `AssumeRoleRequest` for the `assumeRole` operation of
+`camel-aws2-sts`). Previously, if the body was some other type, the operation
+silently did nothing: no AWS call was made, no response was set, and the
+original body was returned with no error.
+
+These producers now throw an `IllegalArgumentException` naming the required
+request type, consistent with the behaviour already shipped for
+`camel-aws-bedrock` in 4.21 (CAMEL-23462). This roll-out across the remaining
+AWS2 producers is tracked by CAMEL-24261.
+
+If you relied on the previous silent no-op, ensure the body is the correct
+request type when `pojoRequest=true`, or drive the operation through headers
+with `pojoRequest=false`.
