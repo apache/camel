@@ -35,8 +35,8 @@ import org.keycloak.representations.idm.FederatedIdentityRepresentation;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.when;
 /**
  * Unit tests for the federated identity (identity provider link) operations.
  */
-public class KeycloakProducerFederatedIdentityTest extends CamelTestSupport {
+class KeycloakProducerFederatedIdentityTest extends CamelTestSupport {
 
     @BindToRegistry("keycloakClient")
     private Keycloak keycloakClient = Mockito.mock(Keycloak.class);
@@ -73,7 +73,7 @@ public class KeycloakProducerFederatedIdentityTest extends CamelTestSupport {
     }
 
     @Test
-    public void testAddFederatedIdentity() throws Exception {
+    void testAddFederatedIdentity() throws Exception {
         stubUserLookup();
         when(response.getStatus()).thenReturn(204);
         when(userResource.addFederatedIdentity(anyString(), any(FederatedIdentityRepresentation.class)))
@@ -94,13 +94,13 @@ public class KeycloakProducerFederatedIdentityTest extends CamelTestSupport {
         verify(userResource).addFederatedIdentity(eq("google"), captor.capture());
 
         FederatedIdentityRepresentation sent = captor.getValue();
-        assertEquals("google", sent.getIdentityProvider());
-        assertEquals("google-123", sent.getUserId());
-        assertEquals("jane@example.com", sent.getUserName());
+        assertThat(sent.getIdentityProvider()).isEqualTo("google");
+        assertThat(sent.getUserId()).isEqualTo("google-123");
+        assertThat(sent.getUserName()).isEqualTo("jane@example.com");
     }
 
     @Test
-    public void testAddFederatedIdentityFallsBackToUserIdAsUsername() throws Exception {
+    void testAddFederatedIdentityFallsBackToUserIdAsUsername() throws Exception {
         stubUserLookup();
         when(response.getStatus()).thenReturn(204);
         when(userResource.addFederatedIdentity(anyString(), any(FederatedIdentityRepresentation.class)))
@@ -115,28 +115,25 @@ public class KeycloakProducerFederatedIdentityTest extends CamelTestSupport {
         verify(userResource).addFederatedIdentity(eq("github"), captor.capture());
 
         // no username supplied, so the external user id is used rather than leaving the link with a blank username
-        assertEquals("gh-42", captor.getValue().getUserName());
+        assertThat(captor.getValue().getUserName()).isEqualTo("gh-42");
     }
 
     @Test
-    public void testAddFederatedIdentityFailsOnErrorStatus() throws Exception {
+    void testAddFederatedIdentityFailsOnErrorStatus() throws Exception {
         stubUserLookup();
         when(response.getStatus()).thenReturn(409);
         when(userResource.addFederatedIdentity(anyString(), any(FederatedIdentityRepresentation.class)))
                 .thenReturn(response);
 
-        try {
-            template.sendBodyAndHeaders("direct:addFederatedIdentity", null,
-                    headers(KeycloakConstants.IDENTITY_PROVIDER, "google",
-                            KeycloakConstants.FEDERATED_USER_ID, "google-123"));
-        } catch (Exception e) {
-            assertTrue(e.getCause().getMessage().contains("409"),
-                    "The failing status should be reported — was: " + e.getCause().getMessage());
-        }
+        assertThatThrownBy(() -> template.sendBodyAndHeaders("direct:addFederatedIdentity", null,
+                headers(KeycloakConstants.IDENTITY_PROVIDER, "google",
+                        KeycloakConstants.FEDERATED_USER_ID, "google-123")))
+                .cause()
+                .hasMessageContaining("409");
     }
 
     @Test
-    public void testRemoveFederatedIdentity() throws Exception {
+    void testRemoveFederatedIdentity() throws Exception {
         stubUserLookup();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -150,7 +147,7 @@ public class KeycloakProducerFederatedIdentityTest extends CamelTestSupport {
     }
 
     @Test
-    public void testGetFederatedIdentities() throws Exception {
+    void testGetFederatedIdentities() throws Exception {
         stubUserLookup();
 
         FederatedIdentityRepresentation link = new FederatedIdentityRepresentation();
@@ -167,52 +164,40 @@ public class KeycloakProducerFederatedIdentityTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         List<?> body = mock.getExchanges().get(0).getMessage().getBody(List.class);
-        assertEquals(1, body.size());
-        assertEquals("google", ((FederatedIdentityRepresentation) body.get(0)).getIdentityProvider());
+        assertThat(body).hasSize(1);
+        assertThat(((FederatedIdentityRepresentation) body.get(0)).getIdentityProvider()).isEqualTo("google");
     }
 
     @Test
-    public void testMissingIdentityProvider() throws Exception {
-        try {
-            template.sendBodyAndHeaders("direct:addFederatedIdentity", null,
-                    headers(KeycloakConstants.FEDERATED_USER_ID, "google-123"));
-        } catch (Exception e) {
-            assertTrue(e.getCause().getMessage().contains("Identity provider alias must be specified"),
-                    "was: " + e.getCause().getMessage());
-        }
+    void testMissingIdentityProvider() throws Exception {
+        assertThatThrownBy(() -> template.sendBodyAndHeaders("direct:addFederatedIdentity", null,
+                headers(KeycloakConstants.FEDERATED_USER_ID, "google-123")))
+                .cause()
+                .hasMessageContaining("Identity provider alias must be specified");
     }
 
     @Test
-    public void testMissingFederatedUserId() throws Exception {
-        try {
-            template.sendBodyAndHeaders("direct:addFederatedIdentity", null,
-                    headers(KeycloakConstants.IDENTITY_PROVIDER, "google"));
-        } catch (Exception e) {
-            assertTrue(e.getCause().getMessage().contains("Federated user ID must be specified"),
-                    "was: " + e.getCause().getMessage());
-        }
+    void testMissingFederatedUserId() throws Exception {
+        assertThatThrownBy(() -> template.sendBodyAndHeaders("direct:addFederatedIdentity", null,
+                headers(KeycloakConstants.IDENTITY_PROVIDER, "google")))
+                .cause()
+                .hasMessageContaining("Federated user ID must be specified");
     }
 
     @Test
-    public void testMissingUserId() throws Exception {
-        try {
-            template.sendBodyAndHeader("direct:getFederatedIdentities", null,
-                    KeycloakConstants.REALM_NAME, "testRealm");
-        } catch (Exception e) {
-            assertTrue(e.getCause().getMessage().contains("User ID must be specified"),
-                    "was: " + e.getCause().getMessage());
-        }
+    void testMissingUserId() throws Exception {
+        assertThatThrownBy(() -> template.sendBodyAndHeader("direct:getFederatedIdentities", null,
+                KeycloakConstants.REALM_NAME, "testRealm"))
+                .cause()
+                .hasMessageContaining("User ID must be specified");
     }
 
     @Test
-    public void testMissingRealmName() throws Exception {
-        try {
-            template.sendBodyAndHeader("direct:getFederatedIdentities", null,
-                    KeycloakConstants.USER_ID, "user-1");
-        } catch (Exception e) {
-            assertTrue(e.getCause().getMessage().contains("Realm name must be specified"),
-                    "was: " + e.getCause().getMessage());
-        }
+    void testMissingRealmName() throws Exception {
+        assertThatThrownBy(() -> template.sendBodyAndHeader("direct:getFederatedIdentities", null,
+                KeycloakConstants.USER_ID, "user-1"))
+                .cause()
+                .hasMessageContaining("Realm name must be specified");
     }
 
     @Override
