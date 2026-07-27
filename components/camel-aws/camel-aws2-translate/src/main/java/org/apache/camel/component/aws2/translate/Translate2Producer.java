@@ -100,6 +100,10 @@ public class Translate2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.translatedText());
+            } else {
+                throw new IllegalArgumentException(
+                        "translateText operation requires TranslateTextRequest in POJO mode" +
+                        " or non-POJO mode with String body and source/target language specified");
             }
         } else {
             Builder request = TranslateTextRequest.builder();
