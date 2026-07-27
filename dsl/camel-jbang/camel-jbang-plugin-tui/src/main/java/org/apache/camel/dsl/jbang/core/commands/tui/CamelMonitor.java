@@ -748,13 +748,13 @@ public class CamelMonitor extends CamelCommand {
             if (ke.isChar('1')) {
                 return tabRegistry.handleTabKey(TAB_OVERVIEW, ctx, dataService);
             }
-            if (ke.isChar('2')) {
-                return tabRegistry.handleTabKey(TAB_SOURCE, ctx, dataService);
-            }
             if (ke.isChar('3')) {
                 return tabRegistry.handleTabKey(TAB_LOG, ctx, dataService);
             }
             if (!isInfraSelected()) {
+                if (ke.isChar('2')) {
+                    return tabRegistry.handleTabKey(TAB_SOURCE, ctx, dataService);
+                }
                 if (ke.isChar('4')) {
                     return tabRegistry.handleTabKey(TAB_ACTIVITY, ctx, dataService);
                 }
