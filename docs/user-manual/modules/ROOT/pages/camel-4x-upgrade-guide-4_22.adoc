@@ -819,6 +819,24 @@ without being secrets — `adjustAuthorization`, `jwtAuthorizationType`, `proxyA
 have their values shown as `xxxxxx` in sanitized URIs. This is a cosmetic change to sanitized output only and
 does not affect the actual endpoint configuration.
 
+=== camel-support - DefaultMaskingFormatter masks URI userinfo and PEM private keys
+
+`DefaultMaskingFormatter` (used when `logMask=true`, and by tooling that reuses the same formatter) previously
+masked secrets only when a known sensitive *key name* appeared in key/value, XML or JSON text. Two credential
+shapes that have no such key are now also masked:
+
+* URI userinfo passwords such as `mongodb://user:pass@host/db` or `amqp://admin:secret@broker/vhost`
+  (the `:pass` / `:secret` portion is replaced; the username and host remain).
+* PEM private-key blocks (`-----BEGIN … PRIVATE KEY-----` … `-----END … PRIVATE KEY-----`); the key body is
+  replaced while the BEGIN/END markers are kept. Certificates and public keys are not masked.
+
+Helpers for these value shapes live on `org.apache.camel.util.SensitiveUtils`
+(`maskUserInfoCredentials`, `maskPemPrivateKeyBlocks`, `maskSensitiveValueShapes`). This is a cosmetic change
+to masked/logged output only and does not affect endpoint configuration.
+
+If you use `DefaultMaskingFormatter` with an empty keyword set, `format()` previously returned the source unchanged;
+it now still applies URI userinfo and PEM private-key masking on the text.
+
 === camel-a2a - push notification webhooks pinned to the validated address
 
 Push notifications are now delivered with Apache HttpClient 5 instead of `java.net.http.HttpClient`, so the request
