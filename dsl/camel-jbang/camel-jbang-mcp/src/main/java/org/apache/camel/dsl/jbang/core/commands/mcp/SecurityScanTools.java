@@ -107,27 +107,60 @@ public class SecurityScanTools {
         Map<String, SecurityUtils.SecurityOption> securityOptions = SecurityUtils.getSecurityOptions();
 
         for (int i = 0; i < lines.length; i++) {
-            String lower = lines[i].toLowerCase(Locale.ROOT).replaceAll("[\\s-]", "");
+            String normalized = lines[i].toLowerCase(Locale.ROOT).replaceAll("[\\s-]", "");
             for (Map.Entry<String, SecurityUtils.SecurityOption> entry : securityOptions.entrySet()) {
                 String optionKey = entry.getKey();
-                String insecureValue = entry.getValue().insecureValue();
                 String category = entry.getValue().category();
 
-                if (insecureValue == null || insecureValue.isEmpty()) {
+                String value = extractOptionValue(normalized, optionKey);
+                if (value == null) {
                     continue;
                 }
-                if (lower.contains(optionKey + "=" + insecureValue)
-                        || lower.contains(optionKey + ":" + insecureValue)
-                        || lower.contains(optionKey + "\":" + insecureValue)
-                        || lower.contains("\"" + optionKey + "\":" + insecureValue)) {
+                // Delegate the insecure-value decision to SecurityUtils rather than reimplementing string
+                // comparison here. That keeps the scanner in sync with the canonical logic — case-insensitive
+                // matching, and the sslEndpointAlgorithm case where the *empty*/none/false value is the insecure
+                // one — so an empty insecureValue no longer either false-positives on any assignment nor gets
+                // skipped entirely.
+                if (SecurityUtils.isInsecureValue(optionKey, value)) {
                     findings.add(new Finding(
                             severityForCategory(category),
                             category,
-                            "Insecure option: " + optionKey + "=" + insecureValue,
+                            "Insecure option: " + optionKey + "=" + value,
                             i + 1,
                             remediationForCategory(category, optionKey)));
                 }
             }
+        }
+    }
+
+    /**
+     * Extract the value assigned to {@code optionKey} on a normalized (lowercased, whitespace/dash-stripped) line,
+     * covering the URI-query ({@code key=value}) and YAML/JSON ({@code key:value}, {@code "key":value}) forms. Returns
+     * {@code null} when the option does not appear with an assignment on the line, or an empty string when it is
+     * assigned an empty value — which is itself the insecure case for some options (e.g. sslEndpointAlgorithm).
+     */
+    private static String extractOptionValue(String normalized, String optionKey) {
+        int from = 0;
+        while (true) {
+            int idx = normalized.indexOf(optionKey, from);
+            if (idx < 0) {
+                return null;
+            }
+            int after = idx + optionKey.length();
+            // a quoted key ("key":value) leaves a closing quote before the separator
+            if (after < normalized.length() && normalized.charAt(after) == '"') {
+                after++;
+            }
+            if (after < normalized.length()
+                    && (normalized.charAt(after) == '=' || normalized.charAt(after) == ':')) {
+                int valStart = after + 1;
+                int valEnd = valStart;
+                while (valEnd < normalized.length() && "=:,;}'\"]&".indexOf(normalized.charAt(valEnd)) < 0) {
+                    valEnd++;
+                }
+                return normalized.substring(valStart, valEnd);
+            }
+            from = idx + 1;
         }
     }
 

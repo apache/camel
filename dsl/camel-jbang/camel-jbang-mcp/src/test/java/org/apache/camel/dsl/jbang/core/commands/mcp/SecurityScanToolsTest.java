@@ -370,6 +370,17 @@ class SecurityScanToolsTest {
     }
 
     @Test
+    void flagsSslEndpointAlgorithmDisabled() {
+        // sslEndpointAlgorithm is the option with an empty insecureValue: the insecure case is the empty/none/false
+        // value (no hostname verification), which SecurityUtils.isInsecureValue models. The scanner must flag it.
+        String route = "- route:\n    from:\n      uri: \"https:endpoint?sslEndpointAlgorithm=none\"";
+        SecurityScanTools.SecurityScanResult result = tools.camel_security_scan(route, "yaml");
+
+        assertThat(result.findings())
+                .anyMatch(f -> f.issue().contains("sslendpointalgorithm") && "insecure:ssl".equals(f.category()));
+    }
+
+    @Test
     void doesNotFlagCompositeSchemeAsSql() {
         String route = "- route:\n    from:\n      uri: \"google-bigquery-sql:project:dataset.table\"";
         SecurityScanTools.SecurityScanResult result = tools.camel_security_scan(route, "yaml");
