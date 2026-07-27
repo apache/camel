@@ -58,8 +58,8 @@ public class Aws2EventbridgeBase extends CamelTestSupport {
 
     /**
      * Cleans up all EventBridge rules on the default event bus before each test. This prevents test interference when
-     * using a singleton LocalStack container shared across test classes — leftover rules from a prior test could cause
-     * assertions on rule counts or rule state to fail.
+     * using a singleton container (floci/LocalStack) shared across test classes — leftover rules from a prior test
+     * could cause assertions on rule counts or rule state to fail.
      */
     @BeforeEach
     void cleanUpEventBridgeRules() {
