@@ -1102,6 +1102,29 @@ camel.resilience4j.waitDurationInOpenState = 60s
 camel.resilience4j.waitDurationInOpenState = 60000
 ----
 
+*Programmatic configuration (camel-main):*
+
+The same change applies to the Java API in `org.apache.camel.main.Resilience4jConfigurationProperties`.
+The getters, setters and fluent builders for `waitDurationInOpenState`, `slowCallDurationThreshold`,
+`timeoutDuration` and `bulkheadMaxWaitDuration` now use `String` instead of `Integer`, so code that
+configures the circuit breaker through `MainConfigurationProperties` must be updated:
+
+[source,java]
+----
+// Before:
+main.configure().resilience4j().withTimeoutDuration(1000);
+
+// After (milliseconds):
+main.configure().resilience4j().withTimeoutDuration("1000");
+
+// Or using a duration string (preferred):
+main.configure().resilience4j().withTimeoutDuration("1s");
+----
+
+`timeoutDuration` and `bulkheadMaxWaitDuration` were already expressed in milliseconds, so for those
+two this is only a type change (quote the value) with no unit conversion; `waitDurationInOpenState`
+and `slowCallDurationThreshold` additionally change from seconds to milliseconds as described above.
+
 === camel-resilience4j - Vavr dependency removed
 
 The `io.vavr:vavr` and `io.vavr:vavr-match` runtime dependencies have been removed from
