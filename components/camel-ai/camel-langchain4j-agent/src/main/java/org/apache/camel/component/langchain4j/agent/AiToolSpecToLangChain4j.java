@@ -32,12 +32,16 @@ import dev.langchain4j.model.chat.request.json.JsonStringSchema;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolSpec;
 
-final class AiToolSpecToLangChain4j {
+/**
+ * Converts {@link AiToolSpec} instances to langchain4j {@link ToolSpecification} objects, mapping Camel parameter
+ * definitions to the corresponding JSON Schema types.
+ */
+public final class AiToolSpecToLangChain4j {
 
     private AiToolSpecToLangChain4j() {
     }
 
-    static ToolSpecification toToolSpecification(AiToolSpec spec) {
+    public static ToolSpecification toToolSpecification(AiToolSpec spec) {
         ToolSpecification.Builder builder = ToolSpecification.builder()
                 .name(spec.getName())
                 .description(spec.getDescription());
