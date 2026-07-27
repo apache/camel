@@ -23,12 +23,12 @@ import org.apache.camel.telemetry.mock.MockSpanAdapter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class GoogleSpeechToTextSpanDecoratorTest {
+class GoogleSpeechToTextSpanDecoratorTest {
 
     @Test
-    public void testPre() {
+    void testPre() {
         String operation = "someOperation";
 
         Endpoint endpoint = Mockito.mock(Endpoint.class);
@@ -46,6 +46,6 @@ public class GoogleSpeechToTextSpanDecoratorTest {
 
         decorator.beforeTracingEvent(span, exchange, endpoint);
 
-        assertEquals(operation, span.tags().get(GoogleSpeechToTextSpanDecorator.SPEECH_TO_TEXT_OPERATION));
+        assertThat(span.tags()).containsEntry(GoogleSpeechToTextSpanDecorator.SPEECH_TO_TEXT_OPERATION, operation);
     }
 }

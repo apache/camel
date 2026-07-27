@@ -23,13 +23,12 @@ import org.apache.camel.telemetry.mock.MockSpanAdapter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class GoogleVertexAISpanDecoratorTest {
+class GoogleVertexAISpanDecoratorTest {
 
     @Test
-    public void testPre() {
+    void testPre() {
         String operation = "chatCompletion";
         String modelId = "gemini-1.5-pro";
         String location = "us-central1";
@@ -51,11 +50,11 @@ public class GoogleVertexAISpanDecoratorTest {
 
         decorator.beforeTracingEvent(span, exchange, endpoint);
 
-        assertEquals(operation, span.tags().get(GoogleVertexAISpanDecorator.VERTEXAI_OPERATION));
-        assertEquals(modelId, span.tags().get(GoogleVertexAISpanDecorator.VERTEXAI_MODEL_ID));
-        assertEquals(location, span.tags().get(GoogleVertexAISpanDecorator.VERTEXAI_LOCATION));
+        assertThat(span.tags()).containsEntry(GoogleVertexAISpanDecorator.VERTEXAI_OPERATION, operation);
+        assertThat(span.tags()).containsEntry(GoogleVertexAISpanDecorator.VERTEXAI_MODEL_ID, modelId);
+        assertThat(span.tags()).containsEntry(GoogleVertexAISpanDecorator.VERTEXAI_LOCATION, location);
         // the prompt and chat messages carry user content and must never be emitted as tags
-        assertNull(span.tags().get("prompt"));
-        assertNull(span.tags().get("chatMessages"));
+        assertThat(span.tags()).doesNotContainKey("prompt");
+        assertThat(span.tags()).doesNotContainKey("chatMessages");
     }
 }

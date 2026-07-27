@@ -23,12 +23,12 @@ import org.apache.camel.telemetry.mock.MockSpanAdapter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class GoogleSecretManagerSpanDecoratorTest {
+class GoogleSecretManagerSpanDecoratorTest {
 
     @Test
-    public void testPre() {
+    void testPre() {
         String operation = "getSecretVersion";
         String secretId = "my-secret";
         String versionId = "3";
@@ -50,8 +50,8 @@ public class GoogleSecretManagerSpanDecoratorTest {
 
         decorator.beforeTracingEvent(span, exchange, endpoint);
 
-        assertEquals(operation, span.tags().get(GoogleSecretManagerSpanDecorator.SECRET_MANAGER_OPERATION));
-        assertEquals(secretId, span.tags().get(GoogleSecretManagerSpanDecorator.SECRET_MANAGER_SECRET_ID));
-        assertEquals(versionId, span.tags().get(GoogleSecretManagerSpanDecorator.SECRET_MANAGER_VERSION_ID));
+        assertThat(span.tags()).containsEntry(GoogleSecretManagerSpanDecorator.SECRET_MANAGER_OPERATION, operation);
+        assertThat(span.tags()).containsEntry(GoogleSecretManagerSpanDecorator.SECRET_MANAGER_SECRET_ID, secretId);
+        assertThat(span.tags()).containsEntry(GoogleSecretManagerSpanDecorator.SECRET_MANAGER_VERSION_ID, versionId);
     }
 }

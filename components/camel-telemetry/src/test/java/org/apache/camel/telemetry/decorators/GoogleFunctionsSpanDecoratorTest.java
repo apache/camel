@@ -23,12 +23,12 @@ import org.apache.camel.telemetry.mock.MockSpanAdapter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class GoogleFunctionsSpanDecoratorTest {
+class GoogleFunctionsSpanDecoratorTest {
 
     @Test
-    public void testPre() {
+    void testPre() {
         String operation = "callFunction";
         String entryPoint = "myEntryPoint";
         String runtime = "java17";
@@ -50,8 +50,8 @@ public class GoogleFunctionsSpanDecoratorTest {
 
         decorator.beforeTracingEvent(span, exchange, endpoint);
 
-        assertEquals(operation, span.tags().get(GoogleFunctionsSpanDecorator.FUNCTIONS_OPERATION));
-        assertEquals(entryPoint, span.tags().get(GoogleFunctionsSpanDecorator.FUNCTIONS_ENTRY_POINT));
-        assertEquals(runtime, span.tags().get(GoogleFunctionsSpanDecorator.FUNCTIONS_RUNTIME));
+        assertThat(span.tags()).containsEntry(GoogleFunctionsSpanDecorator.FUNCTIONS_OPERATION, operation);
+        assertThat(span.tags()).containsEntry(GoogleFunctionsSpanDecorator.FUNCTIONS_ENTRY_POINT, entryPoint);
+        assertThat(span.tags()).containsEntry(GoogleFunctionsSpanDecorator.FUNCTIONS_RUNTIME, runtime);
     }
 }
