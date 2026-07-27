@@ -18,6 +18,7 @@ package org.apache.camel.component.hazelcast.seda;
 
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.collection.BaseQueue;
@@ -46,6 +47,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
     private final HazelcastSedaEndpoint endpoint;
     private final AsyncProcessor processor;
     private ExecutorService executor;
+    private ScheduledExecutorService taskExecutor;
 
     public HazelcastSedaConsumer(final Endpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -55,6 +57,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
 
     @Override
     protected void doStart() throws Exception {
+        taskExecutor = endpoint.getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, "HazelcastSedaRecoveryTask");
         int concurrentConsumers = endpoint.getConfiguration().getConcurrentConsumers();
         executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
                 concurrentConsumers);
@@ -67,6 +71,10 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
 
     @Override
     protected void doStop() throws Exception {
+        if (taskExecutor != null) {
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
+            taskExecutor = null;
+        }
         if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
             executor = null;
@@ -153,12 +161,14 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
                 // Use Camel's task API for error recovery delay instead of Thread.sleep()
                 // We use initialDelay for the actual delay, and maxIterations(1) to run once
-                Tasks.foregroundTask()
-                        .withBudget(Budgets.iterationBudget()
+                Tasks.backgroundTask()
+                        .withBudget(Budgets.iterationTimeBudget()
                                 .withMaxIterations(1)
                                 .withInitialDelay(Duration.ofMillis(endpoint.getConfiguration().getOnErrorDelay()))
                                 .withInterval(Duration.ZERO)
+                                .withUnlimitedDuration()
                                 .build())
+                        .withScheduledExecutor(taskExecutor)
                         .withName("HazelcastSedaErrorRecoveryDelay")
                         .build()
                         .run(getEndpoint().getCamelContext(), () -> true);

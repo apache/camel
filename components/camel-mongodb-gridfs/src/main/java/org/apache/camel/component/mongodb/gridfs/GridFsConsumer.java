@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
@@ -36,7 +37,6 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
-import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -49,6 +49,7 @@ import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.PERSISTE
 
 public class GridFsConsumer extends DefaultConsumer implements Runnable {
     private final GridFsEndpoint endpoint;
+    private volatile ScheduledExecutorService taskExecutor;
     private volatile ExecutorService executor;
 
     public GridFsConsumer(GridFsEndpoint endpoint, Processor processor) {
@@ -59,6 +60,10 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        if (taskExecutor != null) {
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
+            taskExecutor = null;
+        }
         if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
             executor = null;
@@ -68,6 +73,8 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        taskExecutor = endpoint.getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, "GridFsPollingTask");
         executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
                 1);
         executor.execute(this);
@@ -107,12 +114,15 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
             fromDate = new Date();
         }
 
-        BlockingTask task = Tasks.foregroundTask()
-                .withBudget(Budgets.iterationBudget()
-                        .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+        BlockingTask task = Tasks.backgroundTask()
+                .withBudget(Budgets.iterationTimeBudget()
+                        .withMaxIterations(Integer.MAX_VALUE)
                         .withInterval(Duration.ofMillis(endpoint.getDelay()))
                         .withInitialDelay(Duration.ofMillis(endpoint.getInitialDelay()))
+                        .withUnlimitedDuration()
                         .build())
+                .withScheduledExecutor(taskExecutor)
+                .withName("GridFsPolling")
                 .build();
 
         MongoCollection<Document> finalPtsCollection = ptsCollection;

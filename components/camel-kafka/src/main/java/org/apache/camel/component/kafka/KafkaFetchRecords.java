@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
@@ -43,7 +44,7 @@ import org.apache.camel.component.kafka.consumer.support.subcription.DefaultSubs
 import org.apache.camel.component.kafka.consumer.support.subcription.SubscribeAdapter;
 import org.apache.camel.component.kafka.consumer.support.subcription.TopicInfo;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
-import org.apache.camel.support.task.ForegroundTask;
+import org.apache.camel.support.task.BackgroundTask;
 import org.apache.camel.support.task.TaskRunFailureException;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
@@ -129,6 +130,10 @@ public class KafkaFetchRecords implements Runnable {
             return;
         }
 
+        ScheduledExecutorService taskExecutor = kafkaConsumer.getEndpoint().getCamelContext()
+                .getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(kafkaConsumer, "KafkaFetchRecordsTask-" + threadId);
+
         do {
             terminated = false;
 
@@ -141,14 +146,16 @@ public class KafkaFetchRecords implements Runnable {
 
                 // task that deals with creating kafka consumer
                 currentBackoffInterval = kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffInterval();
-                ForegroundTask task = Tasks.foregroundTask()
-                        .withName("Create KafkaConsumer")
-                        .withBudget(Budgets.iterationBudget()
+                BackgroundTask task = Tasks.backgroundTask()
+                        .withBudget(Budgets.iterationTimeBudget()
                                 .withMaxIterations(
                                         kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffMaxAttempts())
                                 .withInitialDelay(Duration.ZERO)
                                 .withInterval(Duration.ofMillis(currentBackoffInterval))
+                                .withUnlimitedDuration()
                                 .build())
+                        .withScheduledExecutor(taskExecutor)
+                        .withName("Create KafkaConsumer")
                         .build();
                 boolean success = task.run(kafkaConsumer.getEndpoint().getCamelContext(), this::createConsumerTask);
                 if (!success) {
@@ -161,14 +168,16 @@ public class KafkaFetchRecords implements Runnable {
 
                 // task that deals with subscribing kafka consumer
                 currentBackoffInterval = kafkaConsumer.getEndpoint().getComponent().getSubscribeConsumerBackoffInterval();
-                task = Tasks.foregroundTask()
-                        .withName("Subscribe KafkaConsumer")
-                        .withBudget(Budgets.iterationBudget()
+                task = Tasks.backgroundTask()
+                        .withBudget(Budgets.iterationTimeBudget()
                                 .withMaxIterations(
                                         kafkaConsumer.getEndpoint().getComponent().getSubscribeConsumerBackoffMaxAttempts())
                                 .withInitialDelay(Duration.ZERO)
                                 .withInterval(Duration.ofMillis(currentBackoffInterval))
+                                .withUnlimitedDuration()
                                 .build())
+                        .withScheduledExecutor(taskExecutor)
+                        .withName("Subscribe KafkaConsumer")
                         .build();
                 success = task.run(kafkaConsumer.getEndpoint().getCamelContext(), this::initializeConsumerTask);
                 if (!success) {
@@ -194,10 +203,11 @@ public class KafkaFetchRecords implements Runnable {
             LOG.info("Terminating KafkaConsumer thread {} receiving from {}", threadId, getPrintableTopic());
         }
 
+        kafkaConsumer.getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
         safeConsumerClose();
     }
 
-    private void setupInitializeErrorException(ForegroundTask task, int max) {
+    private void setupInitializeErrorException(BackgroundTask task, int max) {
         String time = TimeUtils.printDuration(task.elapsed(), true);
         String topic = getPrintableTopic();
         String msg = "Gave up subscribing org.apache.kafka.clients.consumer.KafkaConsumer " +
@@ -206,7 +216,7 @@ public class KafkaFetchRecords implements Runnable {
         setLastError(new KafkaConsumerFatalException(msg, lastError));
     }
 
-    private void setupCreateConsumerException(ForegroundTask task, int max) {
+    private void setupCreateConsumerException(BackgroundTask task, int max) {
         String time = TimeUtils.printDuration(task.elapsed(), true);
         String topic = getPrintableTopic();
         String msg = "Gave up creating org.apache.kafka.clients.consumer.KafkaConsumer "

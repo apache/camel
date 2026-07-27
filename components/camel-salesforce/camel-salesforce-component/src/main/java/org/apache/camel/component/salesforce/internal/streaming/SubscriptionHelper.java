@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
@@ -93,6 +94,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
     BayeuxClient client;
 
+    private ScheduledExecutorService taskExecutor;
     private final SalesforceComponent component;
     private SalesforceSession session;
 
@@ -151,12 +153,14 @@ public class SubscriptionHelper extends ServiceSupport {
                 } else {
                     LOG.debug("Pausing for {} msecs before handshake retry", backoff);
                     if (backoff > 0) {
-                        Tasks.foregroundTask()
-                                .withBudget(Budgets.iterationBudget()
+                        Tasks.backgroundTask()
+                                .withBudget(Budgets.iterationTimeBudget()
                                         .withMaxIterations(1)
                                         .withInitialDelay(Duration.ofMillis(backoff))
                                         .withInterval(Duration.ZERO)
+                                        .withUnlimitedDuration()
                                         .build())
+                                .withScheduledExecutor(taskExecutor)
                                 .withName("SalesforceHandshakeRetryDelay")
                                 .build()
                                 .run(component.getCamelContext(), () -> true);
@@ -286,12 +290,14 @@ public class SubscriptionHelper extends ServiceSupport {
                 LOG.debug("Pausing for {} msecs before subscribe attempt", backoff);
                 // Use Camel's task API for backoff delay instead of Thread.sleep()
                 // We use initialDelay for the actual delay, and maxIterations(1) to run once
-                Tasks.foregroundTask()
-                        .withBudget(Budgets.iterationBudget()
+                Tasks.backgroundTask()
+                        .withBudget(Budgets.iterationTimeBudget()
                                 .withMaxIterations(1)
                                 .withInitialDelay(Duration.ofMillis(backoff))
                                 .withInterval(Duration.ZERO)
+                                .withUnlimitedDuration()
                                 .build())
+                        .withScheduledExecutor(taskExecutor)
                         .withName("SalesforceSubscribeRetryDelay")
                         .build()
                         .run(component.getCamelContext(), () -> true);
@@ -329,6 +335,9 @@ public class SubscriptionHelper extends ServiceSupport {
         if (component.getLoginConfig().isLazyLogin()) {
             throw new CamelException("Lazy login is not supported by salesforce consumers.");
         }
+
+        taskExecutor = component.getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, "SalesforceReconnectTask");
 
         // create CometD client
         client = createClient(component, session);
@@ -397,6 +406,11 @@ public class SubscriptionHelper extends ServiceSupport {
 
     @Override
     protected void doStop() throws Exception {
+        if (taskExecutor != null) {
+            component.getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
+            taskExecutor = null;
+        }
+
         closeChannel(META_CONNECT);
         closeChannel(META_SUBSCRIBE);
         closeChannel(META_HANDSHAKE);

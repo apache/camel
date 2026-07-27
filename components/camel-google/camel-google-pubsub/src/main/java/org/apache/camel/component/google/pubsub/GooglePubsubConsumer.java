@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.api.core.AbstractApiService;
@@ -67,6 +68,7 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
     private final Processor processor;
     private final AtomicInteger pendingExchanges = new AtomicInteger();
     private ExecutorService executor;
+    private ScheduledExecutorService taskExecutor;
     private final List<Subscriber> subscribers;
     private final Set<ApiFuture<PullResponse>> pendingSynchronousPullResponses;
     private final HeaderFilterStrategy headerFilterStrategy;
@@ -101,6 +103,8 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
         }
 
         executor = endpoint.createExecutor(this);
+        taskExecutor = endpoint.getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, "PubSubReconnectTask");
         for (int i = 0; i < endpoint.getConcurrentConsumers(); i++) {
             executor.submit(new SubscriberWrapper());
         }
@@ -122,6 +126,10 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
 
     @Override
     protected void doShutdown() throws Exception {
+        if (taskExecutor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
+            taskExecutor = null;
+        }
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
@@ -285,12 +293,14 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
 
                     // Add backoff delay for recoverable errors to prevent tight loop
                     // We use initialDelay for the actual delay, and maxIterations(1) to run once
-                    Tasks.foregroundTask()
-                            .withBudget(Budgets.iterationBudget()
+                    Tasks.backgroundTask()
+                            .withBudget(Budgets.iterationTimeBudget()
                                     .withMaxIterations(1)
                                     .withInitialDelay(Duration.ofSeconds(5))
                                     .withInterval(Duration.ZERO)
+                                    .withUnlimitedDuration()
                                     .build())
+                            .withScheduledExecutor(taskExecutor)
                             .withName("PubSubRetryDelay")
                             .build()
                             .run(getEndpoint().getCamelContext(), () -> true);

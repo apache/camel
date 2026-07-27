@@ -19,13 +19,14 @@ package org.apache.camel.component.infinispan.remote;
 import java.time.Duration;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.infinispan.InfinispanManager;
 import org.apache.camel.component.infinispan.InfinispanUtil;
 import org.apache.camel.component.infinispan.remote.embeddingstore.EmbeddingStoreUtil;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.support.task.ForegroundTask;
+import org.apache.camel.support.task.BackgroundTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.util.ObjectHelper;
@@ -148,38 +149,45 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
      */
     private void registerSchemaWithRetry() throws Exception {
         Duration timeout = configuration.getEmbeddingStoreSchemaRegistrationTimeout();
-        ForegroundTask task = Tasks.foregroundTask()
-                .withName("infinispan-schema-registration")
-                .withBudget(Budgets.iterationTimeBudget()
-                        .withInterval(Duration.ofSeconds(1))
-                        .withMaxDuration(timeout)
-                        .build())
-                .build();
+        ScheduledExecutorService ses = camelContext.getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, "infinispan-schema-registration-task");
+        try {
+            BackgroundTask task = Tasks.backgroundTask()
+                    .withBudget(Budgets.iterationTimeBudget()
+                            .withInterval(Duration.ofSeconds(1))
+                            .withMaxDuration(timeout)
+                            .build())
+                    .withScheduledExecutor(ses)
+                    .withName("infinispan-schema-registration")
+                    .build();
 
-        final boolean[] firstAttempt = { true };
-        boolean registered = task.run(camelContext, () -> {
-            try {
-                EmbeddingStoreUtil.registerSchema(configuration, cacheContainer);
-                return true;
-            } catch (HotRodClientException e) {
-                if (!isIllegalLifecycleStateException(e)) {
-                    throw e;
+            final boolean[] firstAttempt = { true };
+            boolean registered = task.run(camelContext, () -> {
+                try {
+                    EmbeddingStoreUtil.registerSchema(configuration, cacheContainer);
+                    return true;
+                } catch (HotRodClientException e) {
+                    if (!isIllegalLifecycleStateException(e)) {
+                        throw e;
+                    }
+                    if (firstAttempt[0]) {
+                        firstAttempt[0] = false;
+                        LOG.info("Infinispan server not ready for schema registration, will retry for up to {}: {}",
+                                timeout, e.getMessage());
+                    } else {
+                        LOG.debug("Schema registration failed (server not ready), retrying: {}", e.getMessage());
+                    }
+                    return false;
                 }
-                if (firstAttempt[0]) {
-                    firstAttempt[0] = false;
-                    LOG.info("Infinispan server not ready for schema registration, will retry for up to {}: {}",
-                            timeout, e.getMessage());
-                } else {
-                    LOG.debug("Schema registration failed (server not ready), retrying: {}", e.getMessage());
-                }
-                return false;
+            });
+
+            if (!registered) {
+                throw new IllegalStateException(
+                        "Failed to register Infinispan schema after " + timeout
+                                                + " of retries. The server may not be fully started.");
             }
-        });
-
-        if (!registered) {
-            throw new IllegalStateException(
-                    "Failed to register Infinispan schema after " + timeout
-                                            + " of retries. The server may not be fully started.");
+        } finally {
+            camelContext.getExecutorServiceManager().shutdown(ses);
         }
     }
 
