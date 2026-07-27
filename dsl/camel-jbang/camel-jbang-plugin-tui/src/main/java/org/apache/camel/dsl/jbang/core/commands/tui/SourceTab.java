@@ -99,17 +99,9 @@ class SourceTab extends AbstractTab {
     private boolean springBootMetadataLoaded;
 
     private static final Pattern YAML_URI_PATTERN = Pattern.compile(
-            "^\\s*-?\\s*(?:uri|from|to|toD|wireTap|enrich|pollEnrich|deadLetterChannel):\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*:[^\"\\s]*)");
-    private static final Pattern YAML_EIP_PATTERN = Pattern.compile(
-            "^\\s*-?\\s*(aggregate|bean|choice|circuitBreaker|claim[Cc]heck|convertBodyTo|convertHeaderTo|"
-                                                                    + "delay|dynamicRouter|enrich|filter|idempotentConsumer|"
-                                                                    + "intercept|kamelet|loadBalance|log|loop|marshal|multicast|"
-                                                                    + "onException|otherwise|pipeline|pollEnrich|process|"
-                                                                    + "recipientList|removeHeader|removeHeaders|removeProperty|"
-                                                                    + "resequence|rollback|routingSlip|saga|sample|"
-                                                                    + "script|serviceCall|setBody|setHeader|setProperty|"
-                                                                    + "sort|split|step|stop|threads|throttle|"
-                                                                    + "to|toD|transform|unmarshal|validate|when|wireTap)\\s*:");
+            "^\\s*-?\\s*(?:uri|from|to|toD|wireTap|enrich|pollEnrich|deadLetterChannel):\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*(?::[^\"\\s]*)?)");
+    private static final Pattern YAML_KEY_PATTERN = Pattern.compile(
+            "^\\s*-?\\s*([a-zA-Z][a-zA-Z0-9]*)\\s*:");
 
     SourceTab(MonitorContext ctx) {
         super(ctx);
@@ -557,10 +549,12 @@ class SourceTab extends AbstractTab {
                 continue;
             }
 
-            Matcher eipMatcher = YAML_EIP_PATTERN.matcher(code);
-            if (eipMatcher.find()) {
-                String eipName = eipMatcher.group(1);
-                RoutesTab.buildEipInlineDoc(result, codeData, catalog, eipName, null, i);
+            Matcher keyMatcher = YAML_KEY_PATTERN.matcher(code);
+            if (keyMatcher.find()) {
+                String key = keyMatcher.group(1);
+                if (catalog.eipModel(key) != null) {
+                    RoutesTab.buildEipInlineDoc(result, codeData, catalog, key, null, i);
+                }
             }
         }
         return result;
