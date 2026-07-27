@@ -26,12 +26,9 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.parquet.ParquetReadOptions;
 import org.apache.parquet.hadoop.ParquetFileReader;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisabledForJreRange(min = JRE.JAVA_22, disabledReason = "Hadoop does not support JDK 22+ - see HADOOP-19486")
 public class ParquetAvroDataFormatWithoutUnmarshalTypeTest extends CamelTestSupport {
 
     @Test
