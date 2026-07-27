@@ -28,8 +28,44 @@ from("direct:continue")
     .to("openai:responses?model=gpt-4o")
     .setVariable("lastId", header("CamelOpenAIResponseId"));
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:ask
+      steps:
+        - to:
+            uri: openai:responses
+            parameters:
+              model: gpt-4o
+              systemMessage: You are a support assistant
+        - log:
+            message: "Answer: ${body} id: ${header.CamelOpenAIResponseId}"
+
+- route:
+    from:
+      uri: direct:continue
+      steps:
+        - setHeader:
+            name: CamelOpenAIPreviousResponseId
+            expression:
+              simple:
+                expression: "${variable.lastId}"
+        - to:
+            uri: openai:responses
+            parameters:
+              model: gpt-4o
+        - setVariable:
+            name: lastId
+            expression:
+              simple:
+                expression: "${header.CamelOpenAIResponseId}"
+----
 ====
 
 Streaming is not supported on this operation; use `chat-completion` for streaming.
 
-Function tools wired to Camel routes are intentionally deferred (see CAMEL-23382 / CAMEL-23969).
+Function tools wired to Camel routes are not yet supported on this operation.

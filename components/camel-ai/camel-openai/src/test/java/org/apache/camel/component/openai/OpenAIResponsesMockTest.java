@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
