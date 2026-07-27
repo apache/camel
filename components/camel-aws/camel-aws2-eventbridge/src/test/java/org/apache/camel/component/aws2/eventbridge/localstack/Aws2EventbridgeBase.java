@@ -35,6 +35,7 @@ import software.amazon.awssdk.services.eventbridge.model.ListRulesRequest;
 import software.amazon.awssdk.services.eventbridge.model.ListRulesResponse;
 import software.amazon.awssdk.services.eventbridge.model.ListTargetsByRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.ListTargetsByRuleResponse;
+import software.amazon.awssdk.services.eventbridge.model.PutRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.RemoveTargetsRequest;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
@@ -61,10 +62,10 @@ public class Aws2EventbridgeBase extends CamelTestSupport {
     }
 
     /**
-     * Waits for the EventBridge service to be ready (the container health check may pass before all services are
-     * available), then cleans up all rules on the default event bus. This prevents test interference when using a
-     * singleton container (floci/LocalStack) shared across test classes — leftover rules from a prior test could cause
-     * assertions on rule counts or rule state to fail.
+     * Waits for the EventBridge service to be fully ready for both read and write operations (the container health
+     * check may pass before all services are available), then cleans up all rules on the default event bus. This
+     * prevents test interference when using a singleton container (floci/LocalStack) shared across test classes —
+     * leftover rules from a prior test could cause assertions on rule counts or rule state to fail.
      */
     @BeforeEach
     void waitForServiceAndCleanUp() {
@@ -72,26 +73,41 @@ public class Aws2EventbridgeBase extends CamelTestSupport {
             return;
         }
 
-        // Wait for the EventBridge service to accept requests — the container health check
-        // may return 200 before all services are fully initialized
-        ListRulesResponse listResponse;
+        // Wait for the EventBridge service to accept write requests — the container health
+        // check may return 200, and even listRules may succeed, before write operations like
+        // putRule are ready. We probe with a real putRule + deleteRule cycle to confirm the
+        // service is fully initialized.
         try {
-            listResponse = await().atMost(30, TimeUnit.SECONDS)
+            await().atMost(30, TimeUnit.SECONDS)
                     .pollInterval(2, TimeUnit.SECONDS)
                     .ignoreExceptions()
-                    .until(() -> eventBridgeClient.listRules(
-                            ListRulesRequest.builder().eventBusName(DEFAULT_EVENT_BUS).build()),
-                            r -> r != null);
+                    .until(() -> {
+                        eventBridgeClient.putRule(PutRuleRequest.builder()
+                                .name("__readiness_probe__")
+                                .eventBusName(DEFAULT_EVENT_BUS)
+                                .eventPattern("{\"source\":[\"readiness-probe\"]}")
+                                .build());
+                        eventBridgeClient.deleteRule(DeleteRuleRequest.builder()
+                                .name("__readiness_probe__")
+                                .eventBusName(DEFAULT_EVENT_BUS)
+                                .build());
+                        return true;
+                    });
         } catch (Exception e) {
-            LOG.warn("EventBridge service not ready after 30s, proceeding anyway: {}", e.getMessage());
-            return;
+            LOG.warn("EventBridge service not ready for writes after 30s, proceeding anyway: {}", e.getMessage());
         }
 
         // Clean up any leftover rules from previous test classes
-        if (listResponse != null && listResponse.hasRules()) {
-            for (var rule : listResponse.rules()) {
-                removeTargetsAndDeleteRule(rule.name());
+        try {
+            ListRulesResponse listResponse = eventBridgeClient.listRules(
+                    ListRulesRequest.builder().eventBusName(DEFAULT_EVENT_BUS).build());
+            if (listResponse != null && listResponse.hasRules()) {
+                for (var rule : listResponse.rules()) {
+                    removeTargetsAndDeleteRule(rule.name());
+                }
             }
+        } catch (Exception e) {
+            LOG.warn("Failed to clean up rules: {}", e.getMessage());
         }
     }
 
