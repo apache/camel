@@ -460,6 +460,28 @@ final class StatusParser {
             }
         }
 
+        // Parse internal tasks
+        JsonObject internalTasksObj = (JsonObject) root.get("internal-tasks");
+        if (internalTasksObj != null) {
+            JsonArray taskArr = (JsonArray) internalTasksObj.get("tasks");
+            if (taskArr != null) {
+                for (Object t : taskArr) {
+                    JsonObject tj = (JsonObject) t;
+                    InternalTaskInfo ti = new InternalTaskInfo();
+                    ti.name = tj.getString("name");
+                    ti.status = tj.getString("status");
+                    ti.attempts = tj.getLongOrDefault("attempts", 0);
+                    ti.delay = tj.getLongOrDefault("delay", 0);
+                    ti.elapsed = tj.getLongOrDefault("elapsed", 0);
+                    ti.firstTime = tj.getLongOrDefault("firstTime", 0);
+                    ti.lastTime = tj.getLongOrDefault("lastTime", 0);
+                    ti.nextTime = tj.getLongOrDefault("nextTime", 0);
+                    ti.error = tj.getString("error");
+                    info.internalTasks.add(ti);
+                }
+            }
+        }
+
         // Parse circuit breakers: resilience4j, fault-tolerance, core
         parseCbSection(root, "resilience4j", info);
         parseCbSection(root, "fault-tolerance", info);

@@ -103,6 +103,7 @@ class TabRegistry {
     private KafkaTab kafkaTab;
     private DataSourceTab dataSourceTab;
     private SqlQueryTab sqlQueryTab;
+    private InternalTasksTab internalTasksTab;
     private SqlTraceTab sqlTraceTab;
 
     private MonitorTab activeMoreTab;
@@ -129,6 +130,7 @@ class TabRegistry {
         heapHistogramTab = new HeapHistogramTab(ctx);
         memoryLeakTab = new MemoryLeakTab(ctx);
         sqlQueryTab = new SqlQueryTab(ctx);
+        internalTasksTab = new InternalTasksTab(ctx);
         sqlTraceTab = new SqlTraceTab(ctx);
         endpointsTab = new EndpointsTab(ctx, dataService.metrics());
         networkTab = new NetworkTab(ctx, dataService.metrics());
@@ -195,6 +197,10 @@ class TabRegistry {
                         TuiIcons.TAB_NETWORK, "Network Services", "&Network Services", networkTab, "Observability",
                         List.of(), info -> !info.services.isEmpty()),
                 new MoreTab(TuiIcons.TAB_EVENTS, "Events", "&Exchange Events", eventTab, "Observability"),
+                new MoreTab(
+                        TuiIcons.TAB_INTERNAL_TASKS, "Internal Tasks", "In&ternal Tasks", internalTasksTab,
+                        "Observability",
+                        List.of(), info -> !info.internalTasks.isEmpty()),
                 new MoreTab(
                         TuiIcons.TAB_SPANS, "Spans", "&OTel Spans", spansTab, "Observability",
                         List.of("opentelemetry")),
