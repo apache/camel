@@ -645,7 +645,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-jaeger",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "2.19.0",
+  "serviceVersion" : "2.20.0",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.infinispan.services.InfinispanInfraService",
