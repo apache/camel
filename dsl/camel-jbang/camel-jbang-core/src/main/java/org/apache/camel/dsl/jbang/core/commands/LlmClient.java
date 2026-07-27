@@ -52,6 +52,8 @@ public class LlmClient {
     private static final String DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6";
     private static final String DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
     private static final String DEFAULT_OLLAMA_MODEL = "llama3.2";
+    private static final String DEFAULT_GITHUB_MODELS_URL = "https://models.inference.ai.azure.com";
+    private static final String DEFAULT_AZURE_API_VERSION = "2024-10-21";
     private static final int CONNECT_TIMEOUT_SECONDS = 10;
     private static final int HEALTH_CHECK_TIMEOUT_SECONDS = 5;
 
@@ -65,6 +67,11 @@ public class LlmClient {
         ollama,
         openai,
         anthropic
+    }
+
+    enum OpenAiAuthMode {
+        bearer,
+        api_key
     }
 
     // -- Unified abstractions for tool-calling across API formats --
@@ -156,6 +163,10 @@ public class LlmClient {
     private String vertexRegion;
     private String vertexProjectId;
 
+    /** Azure OpenAI uses {@code api-key} instead of {@code Authorization: Bearer}. */
+    private OpenAiAuthMode openAiAuthMode = OpenAiAuthMode.bearer;
+    private String azureApiVersion = DEFAULT_AZURE_API_VERSION;
+
     public String model() {
         return model;
     }
@@ -229,18 +240,23 @@ public class LlmClient {
         } else if (apiType != null) {
             found = switch (apiType) {
                 case anthropic -> tryAnthropicOrVertex();
-                case openai -> tryOpenAi();
+                case openai -> tryAzureOpenAi() || tryGitHubModels() || tryOpenAi();
                 case ollama -> tryInfraOllama() || tryDefaultOllama();
             };
         } else {
-            // auto-detect priority: anthropic → vertex → openai → ollama
+            // auto-detect priority: anthropic → vertex → azure openai → github models → openai → ollama
             found = tryAnthropicApiKey()
                     || tryVertexAi()
+                    || tryAzureOpenAi()
+                    || tryGitHubModels()
                     || tryOpenAi()
                     || tryInfraOllama()
                     || tryDefaultOllama();
         }
         if (found) {
+            if (apiType == ApiType.openai && url != null && isAzureOpenAiEndpoint(url)) {
+                openAiAuthMode = OpenAiAuthMode.api_key;
+            }
             applyDefaultModel();
         }
         return found;
@@ -288,12 +304,20 @@ public class LlmClient {
             // Vertex AI uses gcloud token, not API key
             return null;
         }
+        if (apiType == ApiType.openai && openAiAuthMode == OpenAiAuthMode.api_key) {
+            String key = System.getenv("AZURE_OPENAI_API_KEY");
+            if (key != null && !key.isBlank()) {
+                apiKey = key;
+                return key;
+            }
+        }
         return Stream.of("OPENAI_API_KEY", "LLM_API_KEY")
                 .map(System::getenv)
                 .filter(k -> k != null && !k.isBlank())
                 .findFirst()
                 .map(k -> {
                     apiKey = k;
+                    openAiAuthMode = OpenAiAuthMode.bearer;
                     return k;
                 })
                 .orElse(null);
@@ -345,13 +369,22 @@ public class LlmClient {
     }
 
     private List<String> listOpenAiModels() {
-        Map<String, String> headers = new HashMap<>();
-        String key = resolveApiKey();
-        if (key != null) {
-            headers.put("Authorization", "Bearer " + key);
-        }
+        Map<String, String> headers = buildOpenAiAuthHeaders(resolveApiKey());
         JsonObject response = sendGetRequest(normalizeOpenAiModelsUrl(url), headers);
         return extractStringList(response, "data", "id");
+    }
+
+    Map<String, String> buildOpenAiAuthHeaders(String key) {
+        Map<String, String> headers = new HashMap<>();
+        if (key == null || key.isBlank()) {
+            return headers;
+        }
+        if (openAiAuthMode == OpenAiAuthMode.api_key) {
+            headers.put("api-key", key);
+        } else {
+            headers.put("Authorization", "Bearer " + key);
+        }
+        return headers;
     }
 
     private List<String> listAnthropicModels() {
@@ -380,7 +413,10 @@ public class LlmClient {
     }
 
     String normalizeOpenAiModelsUrl(String endpoint) {
-        String u = endpoint.endsWith("/") ? endpoint.substring(0, endpoint.length() - 1) : endpoint;
+        String u = stripTrailingSlash(endpoint);
+        if (isAzureOpenAiEndpoint(u)) {
+            return appendAzureApiVersionQuery(azureResourceBase(u) + "/openai/models");
+        }
         // A configured full chat endpoint (.../v1/chat/completions) shares the same /v1 base as the models
         // endpoint, so strip the chat suffix rather than appending /v1/models onto it.
         if (u.endsWith("/v1/chat/completions")) {
@@ -1080,7 +1116,7 @@ public class LlmClient {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody));
 
             if (authKey != null && !authKey.isBlank()) {
-                builder.header("Authorization", "Bearer " + authKey);
+                applyOpenAiAuthorization(builder, authKey);
             }
 
             HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
@@ -1152,7 +1188,7 @@ public class LlmClient {
                     .POST(HttpRequest.BodyPublishers.ofString(body.toJson()));
 
             if (authKey != null && !authKey.isBlank()) {
-                builder.header("Authorization", "Bearer " + authKey);
+                applyOpenAiAuthorization(builder, authKey);
             }
 
             HttpResponse<Stream<String>> response = httpClient.send(
@@ -1334,12 +1370,46 @@ public class LlmClient {
         if (key != null && !key.isBlank()) {
             apiType = ApiType.openai;
             apiKey = key;
+            openAiAuthMode = OpenAiAuthMode.bearer;
             if (url == null || url.isBlank()) {
                 url = "https://api.openai.com";
             }
             return true;
         }
         return false;
+    }
+
+    private boolean tryAzureOpenAi() {
+        String key = System.getenv("AZURE_OPENAI_API_KEY");
+        String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
+        if (key == null || key.isBlank() || endpoint == null || endpoint.isBlank()) {
+            return false;
+        }
+        apiType = ApiType.openai;
+        apiKey = key;
+        openAiAuthMode = OpenAiAuthMode.api_key;
+        url = stripTrailingSlash(endpoint);
+        String version = System.getenv("AZURE_OPENAI_API_VERSION");
+        if (version != null && !version.isBlank()) {
+            azureApiVersion = version;
+        }
+        String deployment = System.getenv("AZURE_OPENAI_DEPLOYMENT_NAME");
+        if (deployment != null && !deployment.isBlank()) {
+            model = deployment;
+        }
+        return true;
+    }
+
+    private boolean tryGitHubModels() {
+        String token = System.getenv("GITHUB_TOKEN");
+        if (token == null || token.isBlank()) {
+            return false;
+        }
+        apiType = ApiType.openai;
+        apiKey = token;
+        openAiAuthMode = OpenAiAuthMode.bearer;
+        url = DEFAULT_GITHUB_MODELS_URL;
+        return true;
     }
 
     private boolean tryInfraOllama() {
@@ -1429,6 +1499,10 @@ public class LlmClient {
     }
 
     boolean isEndpointReachable(String endpoint) {
+        if (isAzureOpenAiEndpoint(endpoint)) {
+            String base = azureResourceBase(stripTrailingSlash(endpoint));
+            return tryHealthCheck(appendAzureApiVersionQuery(base + "/openai/models"));
+        }
         return tryHealthCheck(endpoint + "/api/tags")
                 || tryHealthCheck(endpoint + "/v1/models")
                 || tryHealthCheck(endpoint);
@@ -1481,8 +1555,71 @@ public class LlmClient {
 
     // ---- URL helpers ----
 
+    static boolean isAzureOpenAiEndpoint(String endpoint) {
+        if (endpoint == null || endpoint.isBlank()) {
+            return false;
+        }
+        return endpoint.contains(".openai.azure.com") || endpoint.contains("/openai/deployments/");
+    }
+
+    static String stripTrailingSlash(String endpoint) {
+        if (endpoint == null || endpoint.isEmpty()) {
+            return endpoint;
+        }
+        return endpoint.endsWith("/") ? endpoint.substring(0, endpoint.length() - 1) : endpoint;
+    }
+
+    String azureResourceBase(String endpoint) {
+        String u = stripTrailingSlash(endpoint);
+        int openAiPath = u.indexOf("/openai");
+        if (openAiPath > 0) {
+            return u.substring(0, openAiPath);
+        }
+        return u;
+    }
+
+    String resolveAzureApiVersion() {
+        String fromEnv = System.getenv("AZURE_OPENAI_API_VERSION");
+        if (fromEnv != null && !fromEnv.isBlank()) {
+            return fromEnv;
+        }
+        return azureApiVersion != null ? azureApiVersion : DEFAULT_AZURE_API_VERSION;
+    }
+
+    String appendAzureApiVersionQuery(String url) {
+        if (url.contains("api-version=")) {
+            return url;
+        }
+        return url + (url.contains("?") ? "&" : "?") + "api-version=" + resolveAzureApiVersion();
+    }
+
+    String normalizeAzureOpenAiChatUrl(String endpoint) {
+        String u = stripTrailingSlash(endpoint);
+        if (u.contains("/openai/deployments/") && u.contains("/chat/completions")) {
+            return appendAzureApiVersionQuery(u);
+        }
+        String deployment = (model != null && !model.isBlank()) ? model : "gpt-4o";
+        String base = azureResourceBase(u);
+        return appendAzureApiVersionQuery(
+                base + "/openai/deployments/" + deployment + "/chat/completions");
+    }
+
+    void applyOpenAiAuthorization(HttpRequest.Builder builder, String authKey) {
+        if (authKey == null || authKey.isBlank()) {
+            return;
+        }
+        if (apiType == ApiType.openai && openAiAuthMode == OpenAiAuthMode.api_key) {
+            builder.header("api-key", authKey);
+        } else {
+            builder.header("Authorization", "Bearer " + authKey);
+        }
+    }
+
     String normalizeOpenAiUrl(String endpoint) {
-        String u = endpoint.endsWith("/") ? endpoint.substring(0, endpoint.length() - 1) : endpoint;
+        String u = stripTrailingSlash(endpoint);
+        if (isAzureOpenAiEndpoint(u)) {
+            return normalizeAzureOpenAiChatUrl(u);
+        }
         if (!u.endsWith("/v1/chat/completions")) {
             u = u.endsWith("/v1") ? u : u + "/v1";
             u = u + "/chat/completions";
