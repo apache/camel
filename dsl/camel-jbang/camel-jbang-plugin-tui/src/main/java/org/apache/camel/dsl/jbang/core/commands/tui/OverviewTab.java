@@ -31,6 +31,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -163,7 +164,7 @@ class OverviewTab extends AbstractTab {
             topMode = !topMode;
             return true;
         }
-        if (ke.isChar('i') && !ctx.infraData.get().isEmpty()) {
+        if (ke.isKey(KeyCode.TAB) && !ctx.infraData.get().isEmpty()) {
             infraFocused = !infraFocused;
             if (infraFocused && infraTableState.selected() == null) {
                 infraTableState.select(0);
@@ -1015,7 +1016,7 @@ class OverviewTab extends AbstractTab {
         }
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (!ctx.infraData.get().isEmpty()) {
-            hint(spans, "i", infraFocused ? "integrations" : "infra");
+            hint(spans, "Tab", infraFocused ? "integrations" : "infra");
         }
         if (infraFocused) {
             hint(spans, "d", "details");

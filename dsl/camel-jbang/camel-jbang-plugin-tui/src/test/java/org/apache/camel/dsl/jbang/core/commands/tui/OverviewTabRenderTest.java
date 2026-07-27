@@ -26,6 +26,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.tui.event.MouseButton;
@@ -305,11 +306,11 @@ class OverviewTabRenderTest {
 
         assertFalse(tab.infraFocused, "infra panel should not be focused initially");
 
-        tab.handleKeyEvent(KeyEvent.ofChar('i', KeyModifiers.NONE));
-        assertTrue(tab.infraFocused, "pressing 'i' should toggle focus to infra panel");
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
+        assertTrue(tab.infraFocused, "pressing Tab should toggle focus to infra panel");
 
-        tab.handleKeyEvent(KeyEvent.ofChar('i', KeyModifiers.NONE));
-        assertFalse(tab.infraFocused, "pressing 'i' again should toggle back to integrations");
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
+        assertFalse(tab.infraFocused, "pressing Tab again should toggle back to integrations");
     }
 
     @Test
@@ -320,8 +321,8 @@ class OverviewTabRenderTest {
         });
 
         assertFalse(tab.infraFocused);
-        tab.handleKeyEvent(KeyEvent.ofChar('i', KeyModifiers.NONE));
-        assertFalse(tab.infraFocused, "pressing 'i' with no infra services should have no effect");
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
+        assertFalse(tab.infraFocused, "pressing Tab with no infra services should have no effect");
     }
 
     @Test
@@ -344,7 +345,7 @@ class OverviewTabRenderTest {
         renderOnce(tab, area);
 
         // Toggle to infra panel
-        tab.handleKeyEvent(KeyEvent.ofChar('i', KeyModifiers.NONE));
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
         assertTrue(tab.infraFocused);
 
         // Default infra sort is SERVICE - pressing 's' should cycle to VERSION
@@ -354,7 +355,7 @@ class OverviewTabRenderTest {
                 "After sort cycle in infra panel, indicator should move to VERSION");
 
         // Integration sort should remain unchanged on NAME
-        tab.handleKeyEvent(KeyEvent.ofChar('i', KeyModifiers.NONE));
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
         assertFalse(tab.infraFocused);
         rendered = TuiTestHelper.renderToString(tab, 160, 30);
         assertTrue(rendered.contains("NAME▼") || rendered.contains("NAME▲"),
