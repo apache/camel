@@ -20,5 +20,7 @@ public enum BedrockAgentRuntimeOperations {
 
     retrieveAndGenerate,
     invokeFlow,
+    invokeAgent,
+    invokeInlineAgent,
     retrieve
 }

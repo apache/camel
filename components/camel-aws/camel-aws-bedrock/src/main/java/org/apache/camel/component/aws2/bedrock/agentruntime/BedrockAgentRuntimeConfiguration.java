@@ -57,8 +57,20 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
     private String flowIdentifier;
     @UriParam(label = "flow")
     private String flowAliasIdentifier;
-    @UriParam(label = "flow", defaultValue = "false")
+    @UriParam(label = "flow,agent", defaultValue = "false")
     private boolean enableTrace;
+    @UriParam(label = "agent")
+    private String agentId;
+    @UriParam(label = "agent")
+    private String agentAliasId;
+    @UriParam(label = "agent")
+    private String sessionId;
+    @UriParam(label = "agent", enums = "complete,chunks", defaultValue = "complete")
+    private String streamOutputMode;
+    @UriParam(label = "agent")
+    private String foundationModel;
+    @UriParam(label = "agent")
+    private String instruction;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "proxy")
@@ -335,13 +347,81 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         this.flowAliasIdentifier = flowAliasIdentifier;
     }
 
+    public String getAgentId() {
+        return agentId;
+    }
+
+    /**
+     * The unique identifier of the agent to invoke, used by the invokeAgent operation.
+     */
+    public void setAgentId(String agentId) {
+        this.agentId = agentId;
+    }
+
+    public String getAgentAliasId() {
+        return agentAliasId;
+    }
+
+    /**
+     * The unique identifier of the agent alias to invoke, used by the invokeAgent operation.
+     */
+    public void setAgentAliasId(String agentAliasId) {
+        this.agentAliasId = agentAliasId;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    /**
+     * The unique identifier of the agent session. Reuse the same value across invocations to continue the same
+     * conversation. When not set, a random session id is generated for each invocation.
+     */
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getStreamOutputMode() {
+        return streamOutputMode;
+    }
+
+    /**
+     * The streaming output mode (complete or chunks) used by the agent operations. In complete mode the response chunks
+     * are accumulated and the body is the full text. In chunks mode the body is the list of chunks.
+     */
+    public void setStreamOutputMode(String streamOutputMode) {
+        this.streamOutputMode = streamOutputMode;
+    }
+
+    public String getFoundationModel() {
+        return foundationModel;
+    }
+
+    /**
+     * The foundation model used by the invokeInlineAgent operation.
+     */
+    public void setFoundationModel(String foundationModel) {
+        this.foundationModel = foundationModel;
+    }
+
+    public String getInstruction() {
+        return instruction;
+    }
+
+    /**
+     * The instruction given to the agent defined by the invokeInlineAgent operation.
+     */
+    public void setInstruction(String instruction) {
+        this.instruction = instruction;
+    }
+
     public boolean isEnableTrace() {
         return enableTrace;
     }
 
     /**
-     * Enables tracing for the invokeFlow operation. When enabled, the producer collects FlowTraceEvent entries and
-     * publishes them in the CamelAwsBedrockAgentRuntimeFlowTraces header.
+     * Enables tracing for the invokeFlow and agent operations. When enabled, the producer collects the trace events and
+     * publishes them in the CamelAwsBedrockAgentRuntimeFlowTraces or CamelAwsBedrockAgentRuntimeAgentTraces header.
      */
     public void setEnableTrace(boolean enableTrace) {
         this.enableTrace = enableTrace;

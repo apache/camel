@@ -283,14 +283,45 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enables tracing for the invokeFlow operation. When enabled, the
-         * producer collects FlowTraceEvent entries and publishes them in the
-         * CamelAwsBedrockAgentRuntimeFlowTraces header.
+         * The unique identifier of the agent alias to invoke, used by the
+         * invokeAgent operation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: agent
+         * 
+         * @param agentAliasId the value to set
+         * @return the dsl builder
+         */
+        default BedrockAgentRuntimeEndpointBuilder agentAliasId(String agentAliasId) {
+            doSetProperty("agentAliasId", agentAliasId);
+            return this;
+        }
+        /**
+         * The unique identifier of the agent to invoke, used by the invokeAgent
+         * operation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: agent
+         * 
+         * @param agentId the value to set
+         * @return the dsl builder
+         */
+        default BedrockAgentRuntimeEndpointBuilder agentId(String agentId) {
+            doSetProperty("agentId", agentId);
+            return this;
+        }
+        /**
+         * Enables tracing for the invokeFlow and agent operations. When
+         * enabled, the producer collects the trace events and publishes them in
+         * the CamelAwsBedrockAgentRuntimeFlowTraces or
+         * CamelAwsBedrockAgentRuntimeAgentTraces header.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: flow
+         * Group: agent
          * 
          * @param enableTrace the value to set
          * @return the dsl builder
@@ -300,20 +331,84 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enables tracing for the invokeFlow operation. When enabled, the
-         * producer collects FlowTraceEvent entries and publishes them in the
-         * CamelAwsBedrockAgentRuntimeFlowTraces header.
+         * Enables tracing for the invokeFlow and agent operations. When
+         * enabled, the producer collects the trace events and publishes them in
+         * the CamelAwsBedrockAgentRuntimeFlowTraces or
+         * CamelAwsBedrockAgentRuntimeAgentTraces header.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: flow
+         * Group: agent
          * 
          * @param enableTrace the value to set
          * @return the dsl builder
          */
         default BedrockAgentRuntimeEndpointBuilder enableTrace(String enableTrace) {
             doSetProperty("enableTrace", enableTrace);
+            return this;
+        }
+        /**
+         * The foundation model used by the invokeInlineAgent operation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: agent
+         * 
+         * @param foundationModel the value to set
+         * @return the dsl builder
+         */
+        default BedrockAgentRuntimeEndpointBuilder foundationModel(String foundationModel) {
+            doSetProperty("foundationModel", foundationModel);
+            return this;
+        }
+        /**
+         * The instruction given to the agent defined by the invokeInlineAgent
+         * operation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: agent
+         * 
+         * @param instruction the value to set
+         * @return the dsl builder
+         */
+        default BedrockAgentRuntimeEndpointBuilder instruction(String instruction) {
+            doSetProperty("instruction", instruction);
+            return this;
+        }
+        /**
+         * The unique identifier of the agent session. Reuse the same value
+         * across invocations to continue the same conversation. When not set, a
+         * random session id is generated for each invocation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: agent
+         * 
+         * @param sessionId the value to set
+         * @return the dsl builder
+         */
+        default BedrockAgentRuntimeEndpointBuilder sessionId(String sessionId) {
+            doSetProperty("sessionId", sessionId);
+            return this;
+        }
+        /**
+         * The streaming output mode (complete or chunks) used by the agent
+         * operations. In complete mode the response chunks are accumulated and
+         * the body is the full text. In chunks mode the body is the list of
+         * chunks.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: complete
+         * Group: agent
+         * 
+         * @param streamOutputMode the value to set
+         * @return the dsl builder
+         */
+        default BedrockAgentRuntimeEndpointBuilder streamOutputMode(String streamOutputMode) {
+            doSetProperty("streamOutputMode", streamOutputMode);
             return this;
         }
         /**
@@ -766,6 +861,163 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
          */
         public String awsBedrockAgentRuntimeSessionId() {
             return "CamelAwsBedrockAgentRuntimeSessionId";
+        }
+        /**
+         * The unique identifier of the agent to invoke. Overrides the agentId
+         * configured on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockAgentRuntimeAgentId}.
+         */
+        public String awsBedrockAgentRuntimeAgentId() {
+            return "CamelAwsBedrockAgentRuntimeAgentId";
+        }
+        /**
+         * The unique identifier of the agent alias to invoke. Overrides the
+         * agentAliasId configured on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentAliasId}.
+         */
+        public String awsBedrockAgentRuntimeAgentAliasId() {
+            return "CamelAwsBedrockAgentRuntimeAgentAliasId";
+        }
+        /**
+         * Enables tracing for the agent invocation. When set, overrides the
+         * enableTrace option on the endpoint.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentEnableTrace}.
+         */
+        public String awsBedrockAgentRuntimeAgentEnableTrace() {
+            return "CamelAwsBedrockAgentRuntimeAgentEnableTrace";
+        }
+        /**
+         * Ends the agent session after this invocation.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentEndSession}.
+         */
+        public String awsBedrockAgentRuntimeAgentEndSession() {
+            return "CamelAwsBedrockAgentRuntimeAgentEndSession";
+        }
+        /**
+         * The unique identifier of the agent memory to use across sessions.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentMemoryId}.
+         */
+        public String awsBedrockAgentRuntimeAgentMemoryId() {
+            return "CamelAwsBedrockAgentRuntimeAgentMemoryId";
+        }
+        /**
+         * The streaming output mode (complete or chunks) for an agent
+         * invocation. When set, overrides the streamOutputMode option on the
+         * endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentStreamOutputMode}.
+         */
+        public String awsBedrockAgentRuntimeAgentStreamOutputMode() {
+            return "CamelAwsBedrockAgentRuntimeAgentStreamOutputMode";
+        }
+        /**
+         * The foundation model used by an inline agent. Overrides the
+         * foundationModel configured on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentFoundationModel}.
+         */
+        public String awsBedrockAgentRuntimeAgentFoundationModel() {
+            return "CamelAwsBedrockAgentRuntimeAgentFoundationModel";
+        }
+        /**
+         * The instruction given to an inline agent. Overrides the instruction
+         * configured on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentInstruction}.
+         */
+        public String awsBedrockAgentRuntimeAgentInstruction() {
+            return "CamelAwsBedrockAgentRuntimeAgentInstruction";
+        }
+        /**
+         * When invoking an agent with tracing enabled, this header will contain
+         * the list of TracePart emitted during the invocation. The elements are
+         * TracePart for invokeAgent and InlineAgentTracePart for
+         * invokeInlineAgent.
+         * 
+         * The option is a: {@code java.util.List} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentTraces}.
+         */
+        public String awsBedrockAgentRuntimeAgentTraces() {
+            return "CamelAwsBedrockAgentRuntimeAgentTraces";
+        }
+        /**
+         * When an agent invocation requires the caller to fulfil an action,
+         * this header will contain the list of return-control payloads emitted
+         * by the agent. The elements are ReturnControlPayload for invokeAgent
+         * and InlineAgentReturnControlPayload for invokeInlineAgent.
+         * 
+         * The option is a: {@code java.util.List} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentReturnControl}.
+         */
+        public String awsBedrockAgentRuntimeAgentReturnControl() {
+            return "CamelAwsBedrockAgentRuntimeAgentReturnControl";
+        }
+        /**
+         * When an agent invocation returns files, this header will contain the
+         * files emitted by the agent. The elements are FilePart for invokeAgent
+         * and InlineAgentFilePart for invokeInlineAgent.
+         * 
+         * The option is a: {@code java.util.List} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentFiles}.
+         */
+        public String awsBedrockAgentRuntimeAgentFiles() {
+            return "CamelAwsBedrockAgentRuntimeAgentFiles";
         }
         /**
          * The unique identifier of the flow to invoke. Overrides the
