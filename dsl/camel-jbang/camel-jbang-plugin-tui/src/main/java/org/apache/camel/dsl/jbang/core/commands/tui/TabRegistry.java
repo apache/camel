@@ -105,6 +105,7 @@ class TabRegistry {
     private SqlQueryTab sqlQueryTab;
     private InternalTasksTab internalTasksTab;
     private SqlTraceTab sqlTraceTab;
+    private TypeConvertersTab typeConvertersTab;
 
     private MonitorTab activeMoreTab;
     private List<MoreTab> moreTabs;
@@ -132,6 +133,7 @@ class TabRegistry {
         sqlQueryTab = new SqlQueryTab(ctx);
         internalTasksTab = new InternalTasksTab(ctx);
         sqlTraceTab = new SqlTraceTab(ctx);
+        typeConvertersTab = new TypeConvertersTab(ctx);
         endpointsTab = new EndpointsTab(ctx, dataService.metrics());
         networkTab = new NetworkTab(ctx, dataService.metrics());
         httpTab = new HttpTab(ctx);
@@ -233,7 +235,10 @@ class TabRegistry {
                 new MoreTab(
                         TuiIcons.TAB_MAVEN_DEPENDENCIES, "Maven Dependencies", "&Maven Dependencies",
                         mavenDependenciesTab,
-                        "Project"));
+                        "Project"),
+                new MoreTab(
+                        TuiIcons.TAB_TYPE_CONVERTERS, "Type Converters", "T&ype Converters",
+                        typeConvertersTab, "Project"));
     }
 
     // ---- Tab access ----

@@ -180,6 +180,17 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
     int size();
 
     /**
+     * Lists all registered type converters with their from-to type pairs.
+     *
+     * @return an unmodifiable map of all registered type convertible pairs to their converters, or an empty map if not
+     *         supported.
+     * @since  4.22
+     */
+    default Map<TypeConvertible<?, ?>, TypeConverter> listTypeConverters() {
+        return Map.of();
+    }
+
+    /**
      * The logging level to use when logging that a type converter already exists when attempting to add a duplicate
      * type converter.
      * <p/>
