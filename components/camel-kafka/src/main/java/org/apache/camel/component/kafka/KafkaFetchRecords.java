@@ -226,6 +226,10 @@ public class KafkaFetchRecords implements Runnable {
             }
 
             initializeConsumer();
+
+            // verify broker is reachable by requesting topic metadata
+            String topic = topicName != null ? topicName : "*";
+            consumer.partitionsFor(topic, Duration.ofMillis(currentBackoffInterval));
         } catch (Exception e) {
             setConnected(false);
             LOG.warn("Error creating/subscribing org.apache.kafka.clients.consumer.KafkaConsumer due to: {}",
