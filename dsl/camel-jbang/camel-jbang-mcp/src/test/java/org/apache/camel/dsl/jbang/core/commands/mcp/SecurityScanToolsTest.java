@@ -351,6 +351,56 @@ class SecurityScanToolsTest {
                 .allMatch(f -> f.line() == 3);
     }
 
+    @Test
+    void detectsRawWrappedPasswordAsPlainTextSecret() {
+        String route = "- route:\n    from:\n      uri: \"kafka:topic?password=RAW(mysecret123)\"";
+        SecurityScanTools.SecurityScanResult result = tools.camel_security_scan(route, "yaml");
+
+        assertThat(result.findings())
+                .anyMatch(f -> "secret".equals(f.category()) && f.issue().contains("password"));
+    }
+
+    @Test
+    void doesNotFlagSecureOptionValuesAsInsecure() {
+        String route = "- route:\n    from:\n      uri: \"https:endpoint?sslEndpointAlgorithm=HTTPS\"";
+        SecurityScanTools.SecurityScanResult result = tools.camel_security_scan(route, "yaml");
+
+        assertThat(result.findings())
+                .noneMatch(f -> f.issue().contains("sslendpointalgorithm"));
+    }
+
+    @Test
+    void doesNotFlagCompositeSchemeAsSql() {
+        String route = "- route:\n    from:\n      uri: \"google-bigquery-sql:project:dataset.table\"";
+        SecurityScanTools.SecurityScanResult result = tools.camel_security_scan(route, "yaml");
+
+        assertThat(result.findings())
+                .noneMatch(f -> "sql-injection".equals(f.category()));
+    }
+
+    @Test
+    void perConsumerHeaderFilterCheckDoesNotSuppressGlobally() {
+        String route = """
+                - route:
+                    from:
+                      uri: "platform-http:/api/a"
+                    steps:
+                      - removeHeaders:
+                          pattern: "Camel*"
+                      - to: "direct:a"
+                - route:
+                    from:
+                      uri: "netty-http:0.0.0.0:8080/api/b"
+                    steps:
+                      - to: "direct:b"
+                """;
+        SecurityScanTools.SecurityScanResult result = tools.camel_security_scan(route, "yaml");
+
+        assertThat(result.findings())
+                .anyMatch(f -> "header-injection".equals(f.category())
+                        && f.issue().contains("netty-http"));
+    }
+
     private static int severityRank(String severity) {
         return switch (severity) {
             case "critical" -> 0;

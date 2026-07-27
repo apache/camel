@@ -289,21 +289,11 @@ public class SecurityScanTools {
     private static boolean containsScheme(String text, String scheme) {
         int idx = text.indexOf(scheme + ":");
         if (idx >= 0) {
-            if (idx == 0 || !Character.isLetterOrDigit(text.charAt(idx - 1)) && text.charAt(idx - 1) != '-') {
+            if (idx == 0 || (!Character.isLetterOrDigit(text.charAt(idx - 1)) && text.charAt(idx - 1) != '-')) {
                 return true;
             }
         }
         return text.contains("\"" + scheme + "\"") || text.contains("'" + scheme + "'");
-    }
-
-    private static int findLineContaining(String[] lines, String text) {
-        String lower = text.toLowerCase(Locale.ROOT);
-        for (int i = 0; i < lines.length; i++) {
-            if (lines[i].toLowerCase(Locale.ROOT).contains(lower)) {
-                return i + 1;
-            }
-        }
-        return 0;
     }
 
     private static String severityForCategory(String category) {
