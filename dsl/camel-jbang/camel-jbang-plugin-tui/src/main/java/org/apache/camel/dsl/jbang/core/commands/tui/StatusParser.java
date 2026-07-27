@@ -303,6 +303,7 @@ final class StatusParser {
                     ci.state = cj.getString("state");
                     ci.className = cj.getString("class");
                     ci.scheduled = Boolean.TRUE.equals(cj.get("scheduled"));
+                    ci.remote = Boolean.TRUE.equals(cj.get("remote"));
                     ci.inflight = cj.getIntegerOrDefault("inflight", 0);
                     ci.polling = Boolean.TRUE.equals(cj.get("polling"));
                     ci.totalCounter = cj.getLong("totalCounter");

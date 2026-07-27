@@ -43,7 +43,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 class ConsumersTab extends AbstractTableTab {
 
     ConsumersTab(MonitorContext ctx) {
-        super(ctx, "id", "status", "type", "inflight", "polls", "uri");
+        super(ctx, "id", "status", "type", "remote", "inflight", "polls", "uri");
     }
 
     @Override
@@ -102,6 +102,7 @@ class ConsumersTab extends AbstractTableTab {
                     Cell.from(Span.styled(" " + (ci.id != null ? ci.id : ""), Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(statusText, statusStyle)),
                     Cell.from(type),
+                    Cell.from(ci.remote ? "x" : ""),
                     rightCell(String.valueOf(ci.inflight), 8),
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     Cell.from(schedule),
@@ -110,7 +111,7 @@ class ConsumersTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No consumers", 8));
+            rows.add(emptyRow("No consumers", 9));
         }
 
         Table table = Table.builder()
@@ -119,6 +120,7 @@ class ConsumersTab extends AbstractTableTab {
                         Cell.from(Span.styled(" " + sortLabel("ROUTE", "id"), sortStyle("id"))),
                         Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
                         Cell.from(Span.styled(sortLabel("TYPE", "type"), sortStyle("type"))),
+                        Cell.from(Span.styled(sortLabel("REMOTE", "remote"), sortStyle("remote"))),
                         rightCell(sortLabel("INFLIGHT", "inflight"), 8, sortStyle("inflight")),
                         rightCell(sortLabel("POLLS", "polls"), 8, sortStyle("polls")),
                         Cell.from(Span.styled("SCHEDULE", Style.EMPTY.bold())),
@@ -128,6 +130,7 @@ class ConsumersTab extends AbstractTableTab {
                         Constraint.length(20),
                         Constraint.length(10),
                         Constraint.length(16),
+                        Constraint.length(8),
                         Constraint.length(8),
                         Constraint.length(8),
                         Constraint.length(22),
@@ -154,6 +157,7 @@ class ConsumersTab extends AbstractTableTab {
                 String tb = consumerType(b);
                 yield ta.compareToIgnoreCase(tb);
             }
+            case "remote" -> Boolean.compare(b.remote, a.remote);
             case "inflight" -> Integer.compare(b.inflight, a.inflight);
             case "polls" -> {
                 long la = a.totalCounter != null ? a.totalCounter : 0;
@@ -398,6 +402,7 @@ class ConsumersTab extends AbstractTableTab {
             row.put("state", ci.state);
             row.put("className", ci.className);
             row.put("scheduled", ci.scheduled);
+            row.put("remote", ci.remote);
             row.put("inflight", ci.inflight);
             if (ci.totalCounter != null) {
                 row.put("totalCounter", ci.totalCounter);

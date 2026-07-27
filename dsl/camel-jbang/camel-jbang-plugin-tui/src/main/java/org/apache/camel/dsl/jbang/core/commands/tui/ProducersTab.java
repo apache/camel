@@ -87,7 +87,7 @@ class ProducersTab extends AbstractTableTab {
                     Cell.from(Span.styled(" " + (pi.routeId != null ? pi.routeId : ""), Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(pi.state != null ? pi.state : "", statusStyle)),
                     Cell.from(type),
-                    Cell.from(pi.remote ? "Yes" : "No"),
+                    Cell.from(pi.remote ? "x" : ""),
                     Cell.from(pi.uri != null ? pi.uri : "")));
         }
 
