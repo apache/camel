@@ -561,7 +561,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     private static final class UtilizationStatistics implements Statistics {
 
         private final Lock lock = new ReentrantLock();
-        private boolean statisticsEnabled;
+        private volatile boolean statisticsEnabled;
         private final AtomicLong memoryCounter = new AtomicLong();
         private final AtomicLong memorySize = new AtomicLong();
         private final AtomicLong memoryAverageSize = new AtomicLong();

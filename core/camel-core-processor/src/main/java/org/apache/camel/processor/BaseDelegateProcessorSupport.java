@@ -28,7 +28,7 @@ public abstract class BaseDelegateProcessorSupport extends DelegateAsyncProcesso
         super(processor);
     }
 
-    private boolean disabled;
+    private volatile boolean disabled;
 
     @Override
     public boolean isDisabled() {

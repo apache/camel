@@ -56,10 +56,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     // if adding more options then align with org.apache.camel.support.ScheduledPollEndpoint
 
     private boolean startScheduler = true;
-    private long initialDelay = 1000;
+    private volatile long initialDelay = 1000;
     private volatile long delay = 500;
-    private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
-    private boolean useFixedDelay = true;
+    private volatile TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+    private volatile boolean useFixedDelay = true;
     private PollingConsumerPollStrategy pollStrategy;
     private volatile LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
     private volatile boolean sendEmptyMessageWhenIdle;
