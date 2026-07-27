@@ -69,6 +69,10 @@ class PopupManagerTest {
             @Override
             public void stopSelectedProcess(boolean forceKill) {
             }
+
+            @Override
+            public void fallbackToOverviewIfTabInactive() {
+            }
         };
 
         popupManager = new PopupManager(

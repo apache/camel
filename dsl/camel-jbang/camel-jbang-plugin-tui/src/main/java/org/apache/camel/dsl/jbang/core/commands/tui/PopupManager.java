@@ -60,6 +60,8 @@ class PopupManager {
         void refreshLogData();
 
         void stopSelectedProcess(boolean forceKill);
+
+        void fallbackToOverviewIfTabInactive();
     }
 
     private final MonitorContext ctx;
@@ -100,14 +102,16 @@ class PopupManager {
 
     private List<TabRegistry.MoreTab> buildMoreVisualList() {
         List<TabRegistry.MoreTab> tabs = moreTabsSupplier.get();
+        IntegrationInfo info = ctx.findSelectedIntegration();
         List<TabRegistry.MoreTab> visual = new ArrayList<>();
         String currentGroup = null;
         for (TabRegistry.MoreTab tab : tabs) {
+            if (!TabRegistry.isMoreTabActive(tab, info)) {
+                continue;
+            }
             String group = tab.group();
             if (group != null && !group.equals(currentGroup)) {
-                if (currentGroup != null) {
-                    visual.add(null);
-                }
+                visual.add(null);
                 currentGroup = group;
             }
             visual.add(tab);
@@ -129,24 +133,21 @@ class PopupManager {
         if (visualIndex < 0 || visualIndex >= visual.size() || visual.get(visualIndex) == null) {
             return -1;
         }
-        int moreIndex = 0;
-        for (int i = 0; i < visualIndex; i++) {
-            if (visual.get(i) != null) {
-                moreIndex++;
-            }
-        }
-        return moreIndex;
+        TabRegistry.MoreTab selected = visual.get(visualIndex);
+        List<TabRegistry.MoreTab> fullList = moreTabsSupplier.get();
+        return fullList.indexOf(selected);
     }
 
     private int moreToVisualIndex(int moreIndex) {
+        List<TabRegistry.MoreTab> fullList = moreTabsSupplier.get();
+        if (moreIndex < 0 || moreIndex >= fullList.size()) {
+            return 0;
+        }
+        TabRegistry.MoreTab target = fullList.get(moreIndex);
         List<TabRegistry.MoreTab> visual = buildMoreVisualList();
-        int count = 0;
         for (int i = 0; i < visual.size(); i++) {
-            if (visual.get(i) != null) {
-                if (count == moreIndex) {
-                    return i;
-                }
-                count++;
+            if (target.equals(visual.get(i))) {
+                return i;
             }
         }
         return 0;
@@ -199,7 +200,11 @@ class PopupManager {
     void openMorePopup() {
         showMorePopup = !showMorePopup;
         if (showMorePopup) {
-            morePopupState.select(lastMoreSelection);
+            int sel = lastMoreSelection;
+            if (isMoreDividerIndex(sel)) {
+                sel++;
+            }
+            morePopupState.select(sel);
         }
     }
 
@@ -373,6 +378,7 @@ class PopupManager {
                 ctx.selectedPid = chosen.pid;
                 ctx.lastSelectedName = chosen.name;
                 callbacks.resetIntegrationTabState();
+                callbacks.fallbackToOverviewIfTabInactive();
                 if (selectedTab == tabLog) {
                     callbacks.refreshLogData();
                 }
@@ -480,6 +486,7 @@ class PopupManager {
             ctx.selectedPid = chosen.pid;
             ctx.lastSelectedName = chosen.name;
             callbacks.resetIntegrationTabState();
+            callbacks.fallbackToOverviewIfTabInactive();
             if (selectedTab == tabLog) {
                 callbacks.refreshLogData();
             }
@@ -685,15 +692,20 @@ class PopupManager {
 
     int[] morePopupShortcut(KeyEvent ke) {
         List<TabRegistry.MoreTab> tabs = moreTabsSupplier.get();
+        IntegrationInfo info = ctx.findSelectedIntegration();
         List<Integer> matches = new ArrayList<>();
         char pressedUpper = 0;
 
         for (int i = 0; i < tabs.size(); i++) {
-            int idx = tabs.get(i).mnemonicIndex();
+            TabRegistry.MoreTab tab = tabs.get(i);
+            if (!TabRegistry.isMoreTabActive(tab, info)) {
+                continue;
+            }
+            int idx = tab.mnemonicIndex();
             if (idx < 0) {
                 continue;
             }
-            char letter = tabs.get(i).displayName().charAt(idx);
+            char letter = tab.displayName().charAt(idx);
             if (ke.isChar(Character.toLowerCase(letter)) || ke.isChar(Character.toUpperCase(letter))) {
                 if (pressedUpper == 0) {
                     pressedUpper = Character.toUpperCase(letter);

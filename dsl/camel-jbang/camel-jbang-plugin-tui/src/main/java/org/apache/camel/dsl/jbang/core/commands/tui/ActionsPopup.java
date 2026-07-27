@@ -216,6 +216,12 @@ class ActionsPopup {
         settingsPopup.setTabEntries(entries);
     }
 
+    void setActiveTabFilter(
+            java.util.function.Supplier<IntegrationInfo> integrationSupplier,
+            java.util.function.Supplier<List<TabRegistry.MoreTab>> moreTabsSupplier) {
+        gotoTabPopup.setActiveTabFilter(integrationSupplier, moreTabsSupplier);
+    }
+
     void setClearScreenAction(Runnable clearScreen) {
         settingsPopup.setClearScreen(clearScreen);
     }

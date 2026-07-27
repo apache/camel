@@ -49,6 +49,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
@@ -68,6 +69,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BacklogTracer;
+import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
@@ -1661,7 +1663,18 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("sqlTrace", json);
                     }
                 }
+                JsonArray consoleIds = new JsonArray();
+                consoleIds.addAll(dcr.getConsoleIDs());
+                root.put("devConsoles", consoleIds);
             }
+            boolean hasBrowseable = false;
+            for (Endpoint ep : getCamelContext().getEndpoints()) {
+                if (ep instanceof BrowsableEndpoint) {
+                    hasBrowseable = true;
+                    break;
+                }
+            }
+            root.put("hasBrowseableEndpoints", hasBrowseable);
             // various details
             JsonObject mem = collectMemory();
             if (mem != null) {

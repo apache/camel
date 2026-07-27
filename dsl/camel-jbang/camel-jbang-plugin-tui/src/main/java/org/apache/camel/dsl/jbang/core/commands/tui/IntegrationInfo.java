@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 class IntegrationInfo {
     String pid;
@@ -109,4 +110,6 @@ class IntegrationInfo {
     long sqlTraceFailedCount;
     String httpServer;
     String readmeFiles;
+    Set<String> devConsoles = Set.of();
+    boolean hasBrowseableEndpoints;
 }

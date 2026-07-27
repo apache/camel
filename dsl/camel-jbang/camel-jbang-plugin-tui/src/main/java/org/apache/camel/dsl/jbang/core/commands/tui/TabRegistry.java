@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import dev.tamboui.widgets.tabs.TabsState;
 
@@ -166,28 +167,50 @@ class TabRegistry {
         // The group field drives divider rendering in the More popup.
         moreTabs = List.of(
                 // Routing
-                new MoreTab(TuiIcons.TAB_BROWSE, "Browse Endpoints", "&Browse Endpoints", browseTab, "Routing"),
+                new MoreTab(
+                        TuiIcons.TAB_BROWSE, "Browse Endpoints", "&Browse Endpoints", browseTab, "Routing",
+                        List.of(), info -> info.hasBrowseableEndpoints),
                 new MoreTab(TuiIcons.TAB_CONSUMERS, "Consumers", "&Consumers", consumersTab, "Routing"),
-                new MoreTab(TuiIcons.TAB_HTTP, "HTTP", "&HTTP", httpTab, "Routing"),
+                new MoreTab(
+                        TuiIcons.TAB_HTTP, "HTTP", "&HTTP", httpTab, "Routing",
+                        List.of("platform-http"), info -> !info.httpEndpoints.isEmpty()),
                 new MoreTab(TuiIcons.TAB_INFLIGHT, "Inflight", "&Inflight", inflightTab, "Routing"),
-                new MoreTab(TuiIcons.TAB_PRODUCERS, "Producers", "&Producers", producersTab, "Routing"),
+                new MoreTab(
+                        TuiIcons.TAB_PRODUCERS, "Producers", "&Producers", producersTab, "Routing",
+                        List.of(), info -> !info.producers.isEmpty()),
                 new MoreTab(
                         TuiIcons.TAB_ROUTE_CONTROLLER, "Route Controller", "&Route Controller", routeControllerTab,
-                        "Routing"),
+                        "Routing",
+                        List.of(), info -> "SupervisingRouteController".equals(info.routeControllerType)),
                 // Observability
                 new MoreTab(
                         TuiIcons.TAB_CIRCUIT_BREAKER, "Circuit Breaker", "&Circuit Breaker", circuitBreakerTab,
-                        "Observability"),
+                        "Observability",
+                        List.of("resilience4j", "fault-tolerance")),
                 new MoreTab(TuiIcons.TAB_HEALTH, "Health", "&Health", healthTab, "Observability"),
-                new MoreTab(TuiIcons.TAB_METRICS, "Metrics", "&Metrics", metricsTab, "Observability"),
-                new MoreTab(TuiIcons.TAB_NETWORK, "Network Services", "&Network Services", networkTab, "Observability"),
+                new MoreTab(
+                        TuiIcons.TAB_METRICS, "Metrics", "&Metrics", metricsTab, "Observability",
+                        List.of("micrometer")),
+                new MoreTab(
+                        TuiIcons.TAB_NETWORK, "Network Services", "&Network Services", networkTab, "Observability",
+                        List.of(), info -> !info.services.isEmpty()),
                 new MoreTab(TuiIcons.TAB_EVENTS, "Events", "&Exchange Events", eventTab, "Observability"),
-                new MoreTab(TuiIcons.TAB_SPANS, "Spans", "&OTel Spans", spansTab, "Observability"),
+                new MoreTab(
+                        TuiIcons.TAB_SPANS, "Spans", "&OTel Spans", spansTab, "Observability",
+                        List.of("opentelemetry")),
                 // Data
-                new MoreTab(TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab, "Data"),
-                new MoreTab(TuiIcons.TAB_KAFKA, "Kafka", "&Kafka", kafkaTab, "Data"),
-                new MoreTab(TuiIcons.TAB_SQL_QUERY, "SQL Query", "S&QL Query", sqlQueryTab, "Data"),
-                new MoreTab(TuiIcons.TAB_SQL_TRACE, "SQL Trace", "S&QL Trace", sqlTraceTab, "Data"),
+                new MoreTab(
+                        TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab, "Data",
+                        List.of(), info -> !info.dataSources.isEmpty()),
+                new MoreTab(
+                        TuiIcons.TAB_KAFKA, "Kafka", "&Kafka", kafkaTab, "Data",
+                        List.of("kafka")),
+                new MoreTab(
+                        TuiIcons.TAB_SQL_QUERY, "SQL Query", "S&QL Query", sqlQueryTab, "Data",
+                        List.of(), info -> !info.dataSources.isEmpty()),
+                new MoreTab(
+                        TuiIcons.TAB_SQL_TRACE, "SQL Trace", "S&QL Trace", sqlTraceTab, "Data",
+                        List.of(), info -> !info.dataSources.isEmpty()),
                 // JVM
                 new MoreTab(TuiIcons.TAB_CLASSPATH, "Classpath", "&Classpath", classpathTab, "JVM"),
                 new MoreTab(TuiIcons.TAB_HEAP, "Heap Memory Histogram", "Heap &Memory Histogram", heapHistogramTab, "JVM"),
@@ -415,10 +438,25 @@ class TabRegistry {
      * shortcut letter and its highlight offset are derived from {@code label} via
      * {@link TuiIcons#mnemonicIndex(String)}, so there is no separate index or shortcut list to keep aligned.
      */
-    record MoreTab(String icon, String name, String label, MonitorTab tab, String group) {
+    /**
+     * @param requiredConsoles dev console IDs that must be present (any-of) for this tab to be active; empty = always
+     *                         active
+     * @param activeWhen       runtime predicate on IntegrationInfo; null = always active (after console check)
+     */
+    record MoreTab(String icon, String name, String label, MonitorTab tab, String group,
+            List<String> requiredConsoles, Predicate<IntegrationInfo> activeWhen) {
+
+        MoreTab(String icon, String name, String label, MonitorTab tab, String group,
+                List<String> requiredConsoles) {
+            this(icon, name, label, tab, group, requiredConsoles, null);
+        }
+
+        MoreTab(String icon, String name, String label, MonitorTab tab, String group) {
+            this(icon, name, label, tab, group, List.of(), null);
+        }
 
         MoreTab(String icon, String name, String label, MonitorTab tab) {
-            this(icon, name, label, tab, null);
+            this(icon, name, label, tab, null, List.of(), null);
         }
 
         MoreTab {
@@ -446,6 +484,30 @@ class TabRegistry {
         return moreTabs;
     }
 
+    static boolean isMoreTabActive(MoreTab mt, IntegrationInfo info) {
+        if (mt.requiredConsoles().isEmpty() && mt.activeWhen() == null) {
+            return true;
+        }
+        if (info == null) {
+            return true;
+        }
+        if (!mt.requiredConsoles().isEmpty()) {
+            if (info.devConsoles.isEmpty()) {
+                // old Camel without devConsoles reporting — show all
+            } else if (mt.requiredConsoles().stream().noneMatch(info.devConsoles::contains)) {
+                return false;
+            }
+        }
+        if (mt.activeWhen() != null && !mt.activeWhen().test(info)) {
+            return false;
+        }
+        return true;
+    }
+
+    List<MoreTab> activeMoreTabs(IntegrationInfo info) {
+        return moreTabs.stream().filter(mt -> isMoreTabActive(mt, info)).toList();
+    }
+
     /** Position of the More tab with the given programmatic {@link MoreTab#name() name}, or -1 when absent. */
     int moreTabIndex(String name) {
         for (int i = 0; i < moreTabs.size(); i++) {
@@ -457,6 +519,10 @@ class TabRegistry {
     }
 
     List<TabEntry> allTabEntries() {
+        return allTabEntries(null);
+    }
+
+    List<TabEntry> allTabEntries(IntegrationInfo info) {
         List<TabEntry> entries = new ArrayList<>();
         entries.add(
                 new TabEntry(icon(TAB_OVERVIEW), "Overview", overviewTab.description(), "1", TAB_OVERVIEW, -1, overviewTab));
@@ -472,6 +538,9 @@ class TabRegistry {
         entries.add(new TabEntry(icon(TAB_ERRORS), "Errors", errorsTab.description(), "9", TAB_ERRORS, -1, errorsTab));
         for (int i = 0; i < moreTabs.size(); i++) {
             MoreTab mt = moreTabs.get(i);
+            if (!isMoreTabActive(mt, info)) {
+                continue;
+            }
             entries.add(new TabEntry(
                     mt.icon(), mt.name(), mt.tab().description(), String.valueOf(mt.shortcut()),
                     TAB_MORE, i, mt.tab()));

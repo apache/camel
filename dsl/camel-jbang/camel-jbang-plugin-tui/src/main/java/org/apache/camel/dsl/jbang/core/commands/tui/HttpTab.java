@@ -80,7 +80,7 @@ class HttpTab extends AbstractTableTab {
     private final AtomicBoolean specLoading = new AtomicBoolean(false);
 
     private int filter;
-    private boolean showManagement;
+    private boolean showManagement = true;
 
     private boolean showSpec;
     private List<String> specLines = Collections.emptyList();
@@ -1249,7 +1249,7 @@ class HttpTab extends AbstractTableTab {
         }
         if (mgmtCount > 0) {
             spans.add(Span.raw("  "));
-            spans.add(Span.styled("Mgmt: ", Theme.label().dim()));
+            spans.add(Span.styled("Management: ", Theme.label().dim()));
             spans.add(Span.raw(mgmtCount + ""));
         }
         spans.add(Span.raw(" "));
@@ -1265,7 +1265,7 @@ class HttpTab extends AbstractTableTab {
             String produces = ep.produces != null ? ep.produces : "";
             String source;
             if (ep.management) {
-                source = "Mgmt";
+                source = "Management";
             } else if (ep.specification) {
                 source = "API Spec";
             } else if (ep.fromRest) {
@@ -1611,8 +1611,8 @@ class HttpTab extends AbstractTableTab {
                  METHOD  PATH                  TOTAL  CONSUMES          PRODUCES          SOURCE        STATE
                  GET     /api/users            142    application/json  application/json  REST(code)    Started
                  POST    /api/users            38     application/json  application/json  REST(code)    Started
-                 GET     /observe/health       97                                         Mgmt          Started
-                 GET     /observe/metrics      52                       text/plain        Mgmt          Started
+                 GET     /observe/health       97                                         Management          Started
+                 GET     /observe/metrics      52                       text/plain        Management          Started
                  GET     /q/openapi            15                       application/json  REST(contract) Started
                 ```
 
@@ -1623,7 +1623,7 @@ class HttpTab extends AbstractTableTab {
                 - **REST(code)** — Defined in Camel REST DSL code. The developer wrote `rest("/api").get("/users").to("direct:getUsers")` in the route definition
                 - **REST(contract)** — Generated from an OpenAPI/Swagger specification file (contract-first approach). The API structure comes from a `.json` or `.yaml` spec file
                 - **HTTP** — Registered directly via the `platform-http` component using `from("platform-http:/path")`
-                - **Mgmt** — Management endpoint added automatically by Camel for observability: health checks, metrics, OpenAPI specs, developer console
+                - **Management** — Management endpoint added automatically by Camel for observability: health checks, metrics, OpenAPI specs, developer console
 
                 ## HTTP Probe
 

@@ -21,9 +21,11 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -674,6 +676,19 @@ final class StatusParser {
                     info.sqlTraceStatements.add(si);
                 }
             }
+        }
+
+        // Parse registered dev console IDs
+        JsonArray devConsolesArr = (JsonArray) root.get("devConsoles");
+        if (devConsolesArr != null) {
+            Set<String> ids = new LinkedHashSet<>();
+            for (Object o : devConsolesArr) {
+                ids.add(o.toString());
+            }
+            info.devConsoles = Set.copyOf(ids);
+        }
+        if (root.containsKey("hasBrowseableEndpoints")) {
+            info.hasBrowseableEndpoints = root.getBooleanOrDefault("hasBrowseableEndpoints", false);
         }
 
         return info;
