@@ -106,6 +106,7 @@ class TabRegistry {
     private InternalTasksTab internalTasksTab;
     private SqlTraceTab sqlTraceTab;
     private TypeConvertersTab typeConvertersTab;
+    private TransformersTab transformersTab;
 
     private MonitorTab activeMoreTab;
     private List<MoreTab> moreTabs;
@@ -134,6 +135,7 @@ class TabRegistry {
         internalTasksTab = new InternalTasksTab(ctx);
         sqlTraceTab = new SqlTraceTab(ctx);
         typeConvertersTab = new TypeConvertersTab(ctx);
+        transformersTab = new TransformersTab(ctx);
         endpointsTab = new EndpointsTab(ctx, dataService.metrics());
         networkTab = new NetworkTab(ctx, dataService.metrics());
         httpTab = new HttpTab(ctx);
@@ -238,7 +240,11 @@ class TabRegistry {
                         "Project"),
                 new MoreTab(
                         TuiIcons.TAB_TYPE_CONVERTERS, "Type Converters", "T&ype Converters",
-                        typeConvertersTab, "Project"));
+                        typeConvertersTab, "Project"),
+                new MoreTab(
+                        TuiIcons.TAB_TRANSFORMERS, "Transformers", "Trans&formers",
+                        transformersTab, "Project",
+                        List.of(), info -> info.transformerCount > 0));
     }
 
     // ---- Tab access ----

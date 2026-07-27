@@ -394,6 +394,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionSpringBootConfigurationTask(root);
             } else if ("type-converters".equals(action)) {
                 doActionTypeConvertersTask();
+            } else if ("transformers".equals(action)) {
+                doActionTransformersTask();
             }
         } catch (Exception e) {
             LOG.warn("Error executing action: {} due to: {}. This exception is ignored.", action != null ? action : af,
@@ -859,6 +861,18 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private void doActionTypeConvertersTask() throws IOException {
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("type-converters");
+        if (dc != null) {
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionTransformersTask() throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("transformers");
         if (dc != null) {
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
             LOG.trace("Updating output file: {}", outputFile);

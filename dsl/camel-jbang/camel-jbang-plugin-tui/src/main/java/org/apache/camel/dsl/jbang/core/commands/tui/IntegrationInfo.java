@@ -113,4 +113,5 @@ class IntegrationInfo {
     String readmeFiles;
     Set<String> devConsoles = Set.of();
     boolean hasBrowseableEndpoints;
+    int transformerCount;
 }

@@ -712,6 +712,10 @@ final class StatusParser {
         if (root.containsKey("hasBrowseableEndpoints")) {
             info.hasBrowseableEndpoints = root.getBooleanOrDefault("hasBrowseableEndpoints", false);
         }
+        JsonObject trObj = (JsonObject) root.get("transformers");
+        if (trObj != null) {
+            info.transformerCount = trObj.getIntegerOrDefault("size", 0);
+        }
 
         return info;
     }
