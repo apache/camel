@@ -165,7 +165,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                         .withBudget(Budgets.iterationTimeBudget()
                                 .withMaxIterations(1)
                                 .withInitialDelay(Duration.ofMillis(endpoint.getConfiguration().getOnErrorDelay()))
-                                .withInterval(Duration.ZERO)
+                                .withInterval(Duration.ofMillis(1))
                                 .withUnlimitedDuration()
                                 .build())
                         .withScheduledExecutor(taskExecutor)

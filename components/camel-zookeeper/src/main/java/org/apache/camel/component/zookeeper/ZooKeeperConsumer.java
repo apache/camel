@@ -191,7 +191,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                             .withBudget(Budgets.iterationTimeBudget()
                                     .withMaxIterations(1)
                                     .withInitialDelay(Duration.ofMillis(configuration.getBackoff()))
-                                    .withInterval(Duration.ZERO)
+                                    .withInterval(Duration.ofMillis(1))
                                     .withUnlimitedDuration()
                                     .build())
                             .withScheduledExecutor(taskExecutor)

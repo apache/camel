@@ -297,7 +297,7 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
                             .withBudget(Budgets.iterationTimeBudget()
                                     .withMaxIterations(1)
                                     .withInitialDelay(Duration.ofSeconds(5))
-                                    .withInterval(Duration.ZERO)
+                                    .withInterval(Duration.ofMillis(1))
                                     .withUnlimitedDuration()
                                     .build())
                             .withScheduledExecutor(taskExecutor)
