@@ -91,8 +91,11 @@ public class McpSecurityInterceptor {
             // which is what catches JSON-quoted values the value regex cannot match.
             if (config.isRedactionEnabled() && result != null) {
                 if (result instanceof String s) {
-                    if (redactor.containsSecret(s)) {
-                        result = redactor.redact(s);
+                    // redact() is the single source of truth: if it changes the string, a secret was masked.
+                    // Calling containsSecret() first would run the full masking pipeline a second time.
+                    String redacted = redactor.redact(s);
+                    if (!redacted.equals(s)) {
+                        result = redacted;
                         wasRedacted = true;
                     }
                 } else if (result instanceof Map<?, ?> || result instanceof List<?>) {
