@@ -131,7 +131,7 @@
         </sonar.cpd.exclusions>
 
         <cyclonedx-maven-plugin-version>2.9.2</cyclonedx-maven-plugin-version>
-        <flatten-maven-plugin-version>1.7.3</flatten-maven-plugin-version>
+        <flatten-maven-plugin-version>1.8.0</flatten-maven-plugin-version>
         <jacoco-version>0.8.15</jacoco-version>
         <license-maven-plugin-version>5.1.1</license-maven-plugin-version>
         <maven-assembly-plugin-version>3.8.0</maven-assembly-plugin-version>
