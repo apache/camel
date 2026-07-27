@@ -766,7 +766,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-fhir",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "v8.10.0-2",
+  "serviceVersion" : "v8.10.0-3",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.pinecone.services.PineconeInfraService",
