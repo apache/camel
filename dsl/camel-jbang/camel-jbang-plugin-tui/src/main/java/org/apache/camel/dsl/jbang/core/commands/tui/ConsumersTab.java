@@ -104,8 +104,8 @@ class ConsumersTab extends AbstractTableTab {
                     Cell.from(type),
                     Cell.from(ci.remote ? "x" : ""),
                     rightCell(String.valueOf(ci.inflight), 8),
-                    rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     Cell.from(schedule),
+                    rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     Cell.from(sinceLast),
                     Cell.from(Span.styled(uri, healthDown ? Theme.error() : Style.EMPTY))));
         }
@@ -122,8 +122,8 @@ class ConsumersTab extends AbstractTableTab {
                         Cell.from(Span.styled(sortLabel("TYPE", "type"), sortStyle("type"))),
                         Cell.from(Span.styled(sortLabel("REMOTE", "remote"), sortStyle("remote"))),
                         rightCell(sortLabel("INFLIGHT", "inflight"), 8, sortStyle("inflight")),
-                        rightCell(sortLabel("POLLS", "polls"), 8, sortStyle("polls")),
                         Cell.from(Span.styled("SCHEDULE", Style.EMPTY.bold())),
+                        rightCell(sortLabel("POLLS", "polls"), 8, sortStyle("polls")),
                         Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())),
                         Cell.from(Span.styled(sortLabel("URI", "uri"), sortStyle("uri")))))
                 .widths(
@@ -132,8 +132,8 @@ class ConsumersTab extends AbstractTableTab {
                         Constraint.length(16),
                         Constraint.length(8),
                         Constraint.length(8),
-                        Constraint.length(8),
                         Constraint.length(22),
+                        Constraint.length(8),
                         Constraint.length(22),
                         Constraint.fill())
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
