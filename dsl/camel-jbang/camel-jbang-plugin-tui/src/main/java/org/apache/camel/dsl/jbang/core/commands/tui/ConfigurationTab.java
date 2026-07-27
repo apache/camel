@@ -61,6 +61,10 @@ class ConfigurationTab extends AbstractTableTab {
     private Map<String, BaseOptionModel> mainOptionsMap;
     private final Map<String, Map<String, BaseOptionModel>> componentOptionsCache = new HashMap<>();
 
+    // Spring Boot configuration metadata cache (lazy-loaded on-demand via IPC)
+    private Map<String, JsonObject> springBootMetadataCache;
+    private boolean springBootMetadataLoaded;
+
     ConfigurationTab(MonitorContext ctx) {
         super(ctx, "key", "value", "source");
     }
@@ -318,11 +322,34 @@ class ConfigurationTab extends AbstractTableTab {
                 String optionName = rest.substring(dot + 1);
                 Map<String, BaseOptionModel> compOptions = getComponentOptions(componentName);
                 if (compOptions != null) {
-                    return compOptions.get(optionName);
+                    BaseOptionModel opt = compOptions.get(optionName);
+                    if (opt != null) {
+                        return opt;
+                    }
                 }
             }
         }
+        // fallback to Spring Boot configuration metadata
+        ensureSpringBootMetadataCache();
+        if (springBootMetadataCache != null) {
+            JsonObject sbProp = springBootMetadataCache.get(key);
+            if (sbProp != null) {
+                return SpringBootMetadataHelper.toOptionModel(sbProp);
+            }
+        }
         return null;
+    }
+
+    private void ensureSpringBootMetadataCache() {
+        if (springBootMetadataLoaded) {
+            return;
+        }
+        springBootMetadataLoaded = true;
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || !"Spring Boot".equals(info.platform)) {
+            return;
+        }
+        springBootMetadataCache = SpringBootMetadataHelper.fetchMetadata(ctx, info.pid);
     }
 
     private void initCatalog() {
@@ -342,6 +369,8 @@ class ConfigurationTab extends AbstractTableTab {
         catalogVersion = version;
         mainOptionsMap = new HashMap<>();
         componentOptionsCache.clear();
+        springBootMetadataCache = null;
+        springBootMetadataLoaded = false;
         MainModel mainModel = catalog.mainModel();
         if (mainModel != null) {
             for (MainModel.MainOptionModel opt : mainModel.getOptions()) {

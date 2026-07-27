@@ -2058,7 +2058,7 @@ class RoutesTab extends AbstractTab {
 
     // ---- Quick doc (q toggle in source viewer) ----
 
-    private Map<Integer, List<String>> provideAllQuickDocs(List<JsonObject> cd) {
+    private Map<Integer, List<SourceViewer.DocEntry>> provideAllQuickDocs(List<JsonObject> cd) {
         if (cachedRouteDetail == null || cd.isEmpty()) {
             return Map.of();
         }
@@ -2071,7 +2071,7 @@ class RoutesTab extends AbstractTab {
         IntegrationInfo info = ctx.findSelectedIntegration();
         CamelCatalog catalog = info != null ? getCatalog(info) : null;
 
-        Map<Integer, List<String>> result = new LinkedHashMap<>();
+        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
         for (JsonObject proc : processors) {
             Integer line = proc.getInteger("line");
             if (line == null || line <= 0) {
@@ -2111,7 +2111,7 @@ class RoutesTab extends AbstractTab {
     }
 
     static void buildEndpointInlineDoc(
-            Map<Integer, List<String>> result, List<JsonObject> cd,
+            Map<Integer, List<SourceViewer.DocEntry>> result, List<JsonObject> cd,
             CamelCatalog catalog, String endpointUri, int eipIdx) {
 
         String component = endpointUri.contains(":") ? endpointUri.substring(0, endpointUri.indexOf(':')) : endpointUri;
@@ -2131,8 +2131,8 @@ class RoutesTab extends AbstractTab {
         }
 
         int beforeSize = result.size();
-        List<String> titleLines = new ArrayList<>();
-        titleLines.add(compTitle + " — " + desc);
+        List<SourceViewer.DocEntry> titleLines = new ArrayList<>();
+        titleLines.add(SourceViewer.DocEntry.of(compTitle + " — " + desc));
         result.put(eipIdx, titleLines);
 
         inlineParameterDocs(result, cd, eipIdx, optionDocs);
@@ -2145,7 +2145,7 @@ class RoutesTab extends AbstractTab {
     }
 
     private static void clusterEndpointOptions(
-            List<String> docLines, CamelCatalog catalog,
+            List<SourceViewer.DocEntry> docLines, CamelCatalog catalog,
             String endpointUri, Map<String, BaseOptionModel> optionDocs) {
         try {
             Map<String, String> props = catalog.endpointProperties(endpointUri);
@@ -2155,7 +2155,10 @@ class RoutesTab extends AbstractTab {
                     if (optModel != null) {
                         String optDoc = formatOptionDoc(optModel);
                         if (optDoc != null) {
-                            docLines.add(entry.getKey() + ": " + entry.getValue() + " — " + optDoc);
+                            String text = entry.getKey() + ": " + entry.getValue() + " — " + optDoc;
+                            docLines.add(optModel.isDeprecated()
+                                    ? SourceViewer.DocEntry.deprecated(text)
+                                    : SourceViewer.DocEntry.of(text));
                         }
                     }
                 }
@@ -2166,7 +2169,7 @@ class RoutesTab extends AbstractTab {
     }
 
     static void buildEipInlineDoc(
-            Map<Integer, List<String>> result, List<JsonObject> cd,
+            Map<Integer, List<SourceViewer.DocEntry>> result, List<JsonObject> cd,
             CamelCatalog catalog, String type, JsonObject opts, int eipIdx) {
 
         EipModel model = catalog != null ? catalog.eipModel(type) : null;
@@ -2182,7 +2185,7 @@ class RoutesTab extends AbstractTab {
             }
         }
 
-        List<String> titleLines = new ArrayList<>();
+        List<SourceViewer.DocEntry> titleLines = new ArrayList<>();
         if (model != null && model.getTitle() != null) {
             String eipTitle = model.getTitle();
             if (compModel != null && compModel.getTitle() != null) {
@@ -2194,9 +2197,9 @@ class RoutesTab extends AbstractTab {
             } else {
                 desc = model.getDescription() != null ? truncateText(model.getDescription(), 80) : "";
             }
-            titleLines.add(eipTitle + " — " + desc);
+            titleLines.add(SourceViewer.DocEntry.of(eipTitle + " — " + desc));
         } else {
-            titleLines.add(type);
+            titleLines.add(SourceViewer.DocEntry.of(type));
         }
 
         int beforeSize = result.size();
@@ -2228,7 +2231,7 @@ class RoutesTab extends AbstractTab {
     }
 
     private static void clusterEipOptions(
-            List<String> docLines, JsonObject opts,
+            List<SourceViewer.DocEntry> docLines, JsonObject opts,
             Map<String, BaseOptionModel> optionDocs, boolean skipUri) {
         for (Map.Entry<String, Object> entry : opts.entrySet()) {
             if (skipUri && "uri".equals(entry.getKey())) {
@@ -2238,7 +2241,10 @@ class RoutesTab extends AbstractTab {
             if (optModel != null) {
                 String optDoc = formatOptionDoc(optModel);
                 if (optDoc != null) {
-                    docLines.add(entry.getKey() + ": " + entry.getValue() + " — " + optDoc);
+                    String text = entry.getKey() + ": " + entry.getValue() + " — " + optDoc;
+                    docLines.add(optModel.isDeprecated()
+                            ? SourceViewer.DocEntry.deprecated(text)
+                            : SourceViewer.DocEntry.of(text));
                 }
             }
         }
@@ -2261,7 +2267,7 @@ class RoutesTab extends AbstractTab {
     }
 
     static void inlineParameterDocs(
-            Map<Integer, List<String>> result, List<JsonObject> cd,
+            Map<Integer, List<SourceViewer.DocEntry>> result, List<JsonObject> cd,
             int eipIdx, Map<String, BaseOptionModel> optionDocs) {
 
         if (optionDocs.isEmpty()) {
@@ -2302,7 +2308,9 @@ class RoutesTab extends AbstractTab {
                             String docLine = formatOptionDoc(doc);
                             if (docLine != null) {
                                 int docIdx = lastContinuationLine(cd, i, indent);
-                                result.put(docIdx, List.of(docLine));
+                                result.put(docIdx, List.of(doc.isDeprecated()
+                                        ? SourceViewer.DocEntry.deprecated(docLine)
+                                        : SourceViewer.DocEntry.of(docLine)));
                             }
                         }
                     }
@@ -2336,7 +2344,9 @@ class RoutesTab extends AbstractTab {
                 String docLine = formatOptionDoc(doc);
                 if (docLine != null) {
                     int docIdx = lastContinuationLine(cd, i, indent);
-                    result.put(docIdx, List.of(docLine));
+                    result.put(docIdx, List.of(doc.isDeprecated()
+                            ? SourceViewer.DocEntry.deprecated(docLine)
+                            : SourceViewer.DocEntry.of(docLine)));
                 }
             }
         }

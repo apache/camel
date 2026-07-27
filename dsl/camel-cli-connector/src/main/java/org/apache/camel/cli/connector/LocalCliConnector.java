@@ -388,6 +388,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionJfrMemoryLeakTask(root);
             } else if ("cli-debug".equals(action)) {
                 doActionCliDebug(root);
+            } else if ("spring-boot-configuration".equals(action)) {
+                doActionSpringBootConfigurationTask(root);
             }
         } catch (Exception e) {
             LOG.warn("Error executing action: {} due to: {}. This exception is ignored.", action != null ? action : af,
@@ -879,6 +881,23 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 .resolveById("heap-histogram");
         if (dc != null) {
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionSpringBootConfigurationTask(JsonObject root) throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("spring-boot-configuration");
+        if (dc != null) {
+            Map<String, Object> params = new HashMap<>();
+            String filter = root.getString("filter");
+            if (filter != null) {
+                params.put("filter", filter);
+            }
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
