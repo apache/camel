@@ -28,6 +28,7 @@ import com.sun.net.httpserver.HttpHandler;
  */
 public class OpenAIMockServerHandler implements HttpHandler {
     private final RequestHandler chatRequestHandler;
+    private final ResponsesRequestHandler responsesRequestHandler;
     private final EmbeddingRequestHandler embeddingRequestHandler;
     private final AudioTranscriptionRequestHandler audioTranscriptionRequestHandler;
     private final AudioTranscriptionRequestHandler audioTranslationRequestHandler;
@@ -35,6 +36,7 @@ public class OpenAIMockServerHandler implements HttpHandler {
 
     public OpenAIMockServerHandler(OpenAIMockExpectations expectations, ObjectMapper objectMapper) {
         this.chatRequestHandler = new RequestHandler(expectations.chat(), objectMapper);
+        this.responsesRequestHandler = new ResponsesRequestHandler(expectations.chat(), objectMapper);
         this.embeddingRequestHandler = new EmbeddingRequestHandler(expectations.embeddings(), objectMapper);
         this.audioTranscriptionRequestHandler
                 = new AudioTranscriptionRequestHandler(expectations.transcriptions(), objectMapper);
@@ -62,6 +64,8 @@ public class OpenAIMockServerHandler implements HttpHandler {
                     response = audioTranslationRequestHandler.handleRequest(exchange);
                 } else if (path.endsWith("/embeddings")) {
                     response = embeddingRequestHandler.handleRequest(exchange);
+                } else if (path.endsWith("/responses")) {
+                    response = responsesRequestHandler.handleRequest(exchange);
                 } else {
                     response = chatRequestHandler.handleRequest(exchange);
                 }

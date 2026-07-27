@@ -12586,8 +12586,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion, embeddings, audio transcription,
-     * audio translation, and text-to-speech.
+     * OpenAI endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech.
      * 
      * Category: ai
      * Since: 4.17
@@ -12596,12 +12596,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'embeddings',
+     * The operation to perform: 'chat-completion', 'responses', 'embeddings',
      * 'tool-execution', 'audio-transcription', 'audio-translation', or
      * 'audio-speech'
-     * There are 6 enums and the value can be one of: chat-completion,
-     * embeddings, tool-execution, audio-transcription, audio-translation,
-     * audio-speech
+     * There are 7 enums and the value can be one of: chat-completion,
+     * responses, embeddings, tool-execution, audio-transcription,
+     * audio-translation, audio-speech
      * 
      * @param path operation
      * @return the dsl builder
@@ -12611,8 +12611,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion, embeddings, audio transcription,
-     * audio translation, and text-to-speech.
+     * OpenAI endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech.
      * 
      * Category: ai
      * Since: 4.17
@@ -12621,12 +12621,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'embeddings',
+     * The operation to perform: 'chat-completion', 'responses', 'embeddings',
      * 'tool-execution', 'audio-transcription', 'audio-translation', or
      * 'audio-speech'
-     * There are 6 enums and the value can be one of: chat-completion,
-     * embeddings, tool-execution, audio-transcription, audio-translation,
-     * audio-speech
+     * There are 7 enums and the value can be one of: chat-completion,
+     * responses, embeddings, tool-execution, audio-transcription,
+     * audio-translation, audio-speech
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

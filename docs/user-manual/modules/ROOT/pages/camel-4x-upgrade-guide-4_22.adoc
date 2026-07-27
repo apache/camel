@@ -323,6 +323,12 @@ The per-call token usage headers `CamelOpenAIPromptTokens`, `CamelOpenAICompleti
 The OpenAI SDK returns `long` values, so routes that read these headers with `Integer.class` should
 switch to `Long.class`.
 
+Component metadata for exchange property `CamelOpenAIResponse` (`storeFullResponse=true` on
+`chat-completion`) now declares `javaType = com.openai.models.chat.completions.ChatCompletion`
+(previously `com.openai.models.ChatCompletion`). The runtime type was already the nested SDK class;
+update imports and `exchange.getProperty(..., ChatCompletion.class)` references if your code still
+uses the old package name.
+
 The `conversationMemory` feature on the `chat-completion` operation has two behavior fixes:
 
 * User messages are now stored in the `CamelOpenAIConversationHistory` exchange property (configurable via
@@ -332,6 +338,15 @@ The `conversationMemory` feature on the `chat-completion` operation has two beha
 * When `systemMessage` is set together with `conversationMemory=true`, the conversation history is now
   correctly cleared via `exchange.removeProperty()`. Previously `removeHeader()` was used on a property that
   is stored as an exchange property, so the documented reset had no effect and stale history was kept.
+
+A new `responses` operation calls the OpenAI Responses API (non-streaming). Use `openai:responses` with the same
+ergonomics as chat completion for text/image input, `systemMessage` (sent as `instructions`), `model`, `temperature`,
+`maxTokens` (mapped to `maxOutputTokens`), structured output (`outputClass` / `jsonSchema`), and response headers
+including `CamelOpenAIResponseId`. Server-side multi-turn state uses `previousResponseId` / `CamelOpenAIPreviousResponseId`.
+Hosted tools: `builtinTools` (`web_search`, `file_search`, `code_interpreter`; `file_search` requires
+`fileSearchVectorStoreIds`) and optional `hostedMcpTools` JSON for Tool.Mcp pass-through. Streaming is not supported
+on this operation. The full SDK response is stored in exchange property `CamelOpenAIResponsesResponse` when
+`storeFullResponse=true`.
 
 === camel-management - Throughput MBean attribute uses EWMA smoothing
 

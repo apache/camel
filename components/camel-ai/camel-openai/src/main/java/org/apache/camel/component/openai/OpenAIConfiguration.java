@@ -93,6 +93,23 @@ public class OpenAIConfiguration implements Cloneable {
               inputLanguage = "json")
     private String jsonSchema;
 
+    @UriParam
+    @Metadata(description = "Previous response id for OpenAI server-side conversation state (Responses API only)")
+    private String previousResponseId;
+
+    @UriParam
+    @Metadata(description = "Comma-separated hosted tools for the Responses API: web_search, file_search, code_interpreter")
+    private String builtinTools;
+
+    @UriParam
+    @Metadata(description = "JSON array of hosted MCP tool definitions (OpenAI Tool.Mcp) passed through to the Responses API",
+              inputLanguage = "json", largeInput = true)
+    private String hostedMcpTools;
+
+    @UriParam
+    @Metadata(description = "Comma-separated vector store ids required when builtinTools includes file_search")
+    private String fileSearchVectorStoreIds;
+
     @UriParam(defaultValue = "false")
     @Metadata(description = "Enable conversation memory per Exchange")
     private boolean conversationMemory = false;
@@ -131,7 +148,8 @@ public class OpenAIConfiguration implements Cloneable {
     private String developerMessage;
 
     @UriParam(defaultValue = "false")
-    @Metadata(description = "Store the full response in the exchange property 'CamelOpenAIResponse' in non-streaming mode")
+    @Metadata(description = "Store the full SDK response in non-streaming mode: chat-completion uses exchange property "
+                            + "'CamelOpenAIResponse'; responses uses 'CamelOpenAIResponsesResponse'")
     private boolean storeFullResponse = false;
 
     @UriParam(defaultValue = "false")
@@ -388,6 +406,38 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setMaxTokens(Integer maxTokens) {
         this.maxTokens = maxTokens;
+    }
+
+    public String getPreviousResponseId() {
+        return previousResponseId;
+    }
+
+    public void setPreviousResponseId(String previousResponseId) {
+        this.previousResponseId = previousResponseId;
+    }
+
+    public String getBuiltinTools() {
+        return builtinTools;
+    }
+
+    public void setBuiltinTools(String builtinTools) {
+        this.builtinTools = builtinTools;
+    }
+
+    public String getHostedMcpTools() {
+        return hostedMcpTools;
+    }
+
+    public void setHostedMcpTools(String hostedMcpTools) {
+        this.hostedMcpTools = hostedMcpTools;
+    }
+
+    public String getFileSearchVectorStoreIds() {
+        return fileSearchVectorStoreIds;
+    }
+
+    public void setFileSearchVectorStoreIds(String fileSearchVectorStoreIds) {
+        this.fileSearchVectorStoreIds = fileSearchVectorStoreIds;
     }
 
     public boolean isStreaming() {
