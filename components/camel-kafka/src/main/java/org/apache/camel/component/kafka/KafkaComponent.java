@@ -56,8 +56,10 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
     private int createConsumerBackoffMaxAttempts;
     @Metadata(label = "consumer,advanced", defaultValue = "5000")
     private long createConsumerBackoffInterval = 5000;
+    @Deprecated
     @Metadata(label = "consumer,advanced")
     private int subscribeConsumerBackoffMaxAttempts;
+    @Deprecated
     @Metadata(label = "consumer,advanced", defaultValue = "5000")
     private long subscribeConsumerBackoffInterval = 5000;
     @Metadata(label = "consumer,advanced")
@@ -207,6 +209,12 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
         this.createConsumerBackoffInterval = createConsumerBackoffInterval;
     }
 
+    /**
+     * @deprecated Use {@link #getCreateConsumerBackoffMaxAttempts()} instead. Since Camel 4.22, the consumer creation
+     *             and subscription are handled by a single reconnection task that uses the createConsumerBackoff*
+     *             options.
+     */
+    @Deprecated
     public int getSubscribeConsumerBackoffMaxAttempts() {
         return subscribeConsumerBackoffMaxAttempts;
     }
@@ -221,18 +229,33 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
      * Camel will by default retry forever, and therefore never give up. If you want to give up after many attempts,
      * then set this option and Camel will then when giving up terminate the consumer. You can manually restart the
      * consumer by stopping and starting the route, to try again.
+     *
+     * @deprecated Use {@link #setCreateConsumerBackoffMaxAttempts(int)} instead. Since Camel 4.22, the consumer
+     *             creation and subscription are handled by a single reconnection task that uses the
+     *             createConsumerBackoff* options.
      */
+    @Deprecated
     public void setSubscribeConsumerBackoffMaxAttempts(int subscribeConsumerBackoffMaxAttempts) {
         this.subscribeConsumerBackoffMaxAttempts = subscribeConsumerBackoffMaxAttempts;
     }
 
+    /**
+     * @deprecated Use {@link #getCreateConsumerBackoffInterval()} instead. Since Camel 4.22, the consumer creation and
+     *             subscription are handled by a single reconnection task that uses the createConsumerBackoff* options.
+     */
+    @Deprecated
     public long getSubscribeConsumerBackoffInterval() {
         return subscribeConsumerBackoffInterval;
     }
 
     /**
      * The delay in millis seconds to wait before trying again to subscribe to the kafka broker.
+     *
+     * @deprecated Use {@link #setCreateConsumerBackoffInterval(long)} instead. Since Camel 4.22, the consumer creation
+     *             and subscription are handled by a single reconnection task that uses the createConsumerBackoff*
+     *             options.
      */
+    @Deprecated
     public void setSubscribeConsumerBackoffInterval(long subscribeConsumerBackoffInterval) {
         this.subscribeConsumerBackoffInterval = subscribeConsumerBackoffInterval;
     }
@@ -247,8 +270,8 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
      * topic, until it's created on the Kafka broker; and until then the Camel Kafka consumer will fail and log a WARN
      * about UNKNOWN_TOPIC_OR_PARTITION.
      *
-     * The option subscribeConsumerBackoffMaxAttempts can be configured to give up trying to subscribe after a given
-     * number of attempts.
+     * The option createConsumerBackoffMaxAttempts can be configured to give up trying to subscribe after a given number
+     * of attempts.
      */
     public void setSubscribeConsumerTopicMustExists(boolean subscribeConsumerTopicMustExists) {
         this.subscribeConsumerTopicMustExists = subscribeConsumerTopicMustExists;

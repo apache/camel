@@ -885,6 +885,22 @@ that naturally differ, such as `CamelKafkaOffset`, are not set on the batch exch
 This is additive — these headers were previously absent from the batch exchange, so nothing that worked before
 changes. The headers on the individual record exchanges in the body are unchanged.
 
+=== camel-kafka - Unified reconnection task
+
+The Kafka consumer's internal reconnection logic has been simplified. Previously, creating a
+`KafkaConsumer` (kafka-client) and subscribing to topics were handled by two separate foreground
+tasks with independent backoff settings. These have been merged into a single background
+reconnection task that is visible via Camel management, including the TUI, CLI, Hawtio, and other tooling.
+
+As a result, the `subscribeConsumerBackoffMaxAttempts` and `subscribeConsumerBackoffInterval`
+component options are now deprecated and no longer used. The unified reconnection task uses the
+`createConsumerBackoffMaxAttempts` and `createConsumerBackoffInterval` options to control retry
+behavior for both consumer creation and topic subscription.
+
+If you previously configured `subscribeConsumerBackoffMaxAttempts` or
+`subscribeConsumerBackoffInterval`, migrate those settings to use
+`createConsumerBackoffMaxAttempts` and `createConsumerBackoffInterval` instead.
+
 === camel-core - Multicast UseOriginalAggregationStrategy fix
 
 The Multicast EIP now correctly honors `UseOriginalAggregationStrategy`, consistent with the Splitter

@@ -1084,6 +1084,7 @@ public interface KafkaComponentBuilderFactory {
          * @param subscribeConsumerBackoffInterval the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default KafkaComponentBuilder subscribeConsumerBackoffInterval(long subscribeConsumerBackoffInterval) {
             doSetProperty("subscribeConsumerBackoffInterval", subscribeConsumerBackoffInterval);
             return this;
@@ -1107,6 +1108,7 @@ public interface KafkaComponentBuilderFactory {
          * @param subscribeConsumerBackoffMaxAttempts the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default KafkaComponentBuilder subscribeConsumerBackoffMaxAttempts(int subscribeConsumerBackoffMaxAttempts) {
             doSetProperty("subscribeConsumerBackoffMaxAttempts", subscribeConsumerBackoffMaxAttempts);
             return this;
@@ -1120,8 +1122,8 @@ public interface KafkaComponentBuilderFactory {
          * consume from the topic, until it's created on the Kafka broker; and
          * until then the Camel Kafka consumer will fail and log a WARN about
          * UNKNOWN_TOPIC_OR_PARTITION. The option
-         * subscribeConsumerBackoffMaxAttempts can be configured to give up
-         * trying to subscribe after a given number of attempts.
+         * createConsumerBackoffMaxAttempts can be configured to give up trying
+         * to subscribe after a given number of attempts.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
