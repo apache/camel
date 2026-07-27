@@ -21,6 +21,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
     private static final String PAYLOAD
@@ -38,7 +39,9 @@ class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
 
     @Test
     void testTransformWithDefaultNamespace() {
-        Object result = template.requestBody("direct:start", PAYLOAD);
+        String result = template.requestBody("direct:start", PAYLOAD, String.class);
         assertNotNull(result, "XSLT transformation with default namespace should produce output");
+        assertTrue(result.contains("transformed"), "Output should contain the 'transformed' root element from the XSLT");
+        assertTrue(result.contains("cheese"), "Output should contain the 'cheese' element from the XSLT");
     }
 }

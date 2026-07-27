@@ -21,6 +21,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -28,18 +30,20 @@ class StreamRouteBuilderTest extends CamelTestSupport {
 
     @Test
     void testStringContent() {
-        Exchange result = template.send("direct:start", exchange -> exchange.getIn().setBody("this is text\n"));
+        String body = "this is text\n";
+        Exchange result = template.send("direct:start", exchange -> exchange.getIn().setBody(body));
         assertNotNull(result);
         assertFalse(result.isFailed(), "Sending string content should not cause an exchange failure");
-        assertNotNull(result.getIn().getBody(), "Exchange body should be preserved after sending");
+        assertEquals(body, result.getIn().getBody(String.class), "Body content should be preserved after sending");
     }
 
     @Test
     void testBinaryContent() {
-        Exchange result = template.send("direct:start", exchange -> exchange.getIn().setBody("This is bytes\n".getBytes()));
+        byte[] body = "This is bytes\n".getBytes();
+        Exchange result = template.send("direct:start", exchange -> exchange.getIn().setBody(body));
         assertNotNull(result);
         assertFalse(result.isFailed(), "Sending binary content should not cause an exchange failure");
-        assertNotNull(result.getIn().getBody(), "Exchange body should be preserved after sending");
+        assertArrayEquals(body, result.getIn().getBody(byte[].class), "Binary body content should be preserved after sending");
     }
 
     @Override

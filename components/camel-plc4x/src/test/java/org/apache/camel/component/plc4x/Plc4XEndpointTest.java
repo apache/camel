@@ -56,13 +56,11 @@ class Plc4XEndpointTest {
     }
 
     @Test
-    void doStopBadConnection() throws Exception {
+    void doStopDisconnectedConnection() throws Exception {
         PlcConnection plcConnectionMock = mock(PlcConnection.class);
         sut.connection = plcConnectionMock;
-        doThrow(new RuntimeException("oh noes")).when(plcConnectionMock).close();
+        // isConnected() returns false by default on the mock, so doStop() should skip close()
         sut.doStop();
-
-        // isConnected() returns false (mock default), so close is skipped
         verify(plcConnectionMock, never()).close();
     }
 

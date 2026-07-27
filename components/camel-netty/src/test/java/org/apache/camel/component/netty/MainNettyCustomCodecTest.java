@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.netty;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MainNettyCustomCodecTest extends BaseNettyTest {
 
@@ -31,6 +34,8 @@ class MainNettyCustomCodecTest extends BaseNettyTest {
 
     @Test
     void testMain() throws Exception {
+        AtomicBoolean routeProcessed = new AtomicBoolean(false);
+
         Main main = new Main();
         main.bind("myCustomDecoder", MyCustomCodec.createMyCustomDecoder());
         main.bind("myCustomDecoder2", MyCustomCodec.createMyCustomDecoder2());
@@ -50,6 +55,7 @@ class MainNettyCustomCodecTest extends BaseNettyTest {
                             if (!eq) {
                                 throw new IllegalArgumentException("Data received is not as expected");
                             }
+                            routeProcessed.set(true);
                         });
 
                 from("timer:once?repeatCount=1")
@@ -61,9 +67,9 @@ class MainNettyCustomCodecTest extends BaseNettyTest {
         main.configure().withDurationMaxSeconds(5);
 
         main.run();
-        // run() blocks until duration/message limit is reached, then returns.
-        // The route processor inside validates data equality and throws if mismatched.
+
         assertNotNull(main.getCamelContext(), "CamelContext should have been created during run");
+        assertTrue(routeProcessed.get(), "Route should have processed and validated the custom-codec message");
 
         main.stop();
     }

@@ -229,7 +229,7 @@ class CoverageResultsProcessorTest {
     }
 
     @Test
-    void testGenerateHtml() throws IllegalAccessException, IOException {
+    void testHtmlGenerationCalledWhenHtmlFormatAsked() throws IllegalAccessException, IOException {
 
         Mockito
                 .doNothing()

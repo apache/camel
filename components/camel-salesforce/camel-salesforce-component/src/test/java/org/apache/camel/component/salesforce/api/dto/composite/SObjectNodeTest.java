@@ -24,7 +24,6 @@ import org.apache.camel.component.salesforce.dto.generated.Contact;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class SObjectNodeTest extends CompositeTestBase {
@@ -133,8 +132,7 @@ class SObjectNodeTest extends CompositeTestBase {
     @Test
     void shouldCreateNodeWithoutChildRecords() {
         SObjectNode node = new SObjectNode(new SObjectTree(), simpleAccount);
-        assertNotNull(node);
-        assertSame(simpleAccount, node.getObject());
+        assertSame(simpleAccount, node.getObject(), "Node should hold the account object");
         assertEquals(1, node.size(), "Node without children should have size 1");
     }
 

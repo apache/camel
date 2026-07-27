@@ -34,6 +34,10 @@ class RestUndertowProducerEncodingTest extends BaseUndertowTest {
                 exchange -> exchange.getIn().setBody("Hello World"));
         assertNotNull(result);
         assertFalse(result.isFailed(), "Request with select parameter should complete without failure");
+        // The route processor validates that select=personId,personName is correctly decoded;
+        // a failure in the processor would mark the exchange as failed
+        assertEquals("validated", result.getMessage().getBody(String.class),
+                "Route processor should have validated and returned the result");
     }
 
     @Test
@@ -44,6 +48,8 @@ class RestUndertowProducerEncodingTest extends BaseUndertowTest {
                 exchange -> exchange.getIn().setBody("Bye World"));
         assertNotNull(result);
         assertFalse(result.isFailed(), "Request with filter parameter should complete without failure");
+        assertEquals("validated", result.getMessage().getBody(String.class),
+                "Route processor should have validated select and filter parameters and returned the result");
     }
 
     @Override
@@ -71,6 +77,7 @@ class RestUndertowProducerEncodingTest extends BaseUndertowTest {
                             if (filter != null) {
                                 assertEquals("date(time/date) ge 2020-06-01 and personId eq 'R10019'", filter);
                             }
+                            exchange.getMessage().setBody("validated");
                         });
             }
         };

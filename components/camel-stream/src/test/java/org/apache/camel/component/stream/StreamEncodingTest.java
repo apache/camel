@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -31,13 +32,13 @@ class StreamEncodingTest extends CamelTestSupport {
 
     @Test
     void testStringContent() {
-        // include a UTF-8 char in the text \u0E08 is a Thai elephant
-        String body = "Hello Thai Elephant \u0E08";
+        // include a UTF-8 char in the text จ is a Thai elephant
+        String body = "Hello Thai Elephant จ";
 
         Exchange result = template.send("direct:in", exchange -> exchange.getIn().setBody(body));
         assertNotNull(result);
         assertFalse(result.isFailed(), "Sending UTF-8 content should not cause an exchange failure");
-        assertNotNull(result.getIn().getBody(), "Exchange body should be preserved after sending");
+        assertEquals(body, result.getIn().getBody(String.class), "Body content should be preserved after sending");
     }
 
     @Override

@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.apache.camel.RuntimeCamelException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest
         extends TcpClientProducerEndOfDataAndValidationTestSupport {
@@ -38,11 +39,7 @@ class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest
     public void testSendSingleMessageWithoutEndOfData() {
         expectedTimeoutCount = 1;
 
-        try {
-            runSendSingleMessageWithoutEndOfData();
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
-        }
+        assertDoesNotThrow(() -> runSendSingleMessageWithoutEndOfData());
     }
 
     @Disabled("Test scenario sets expectedTimeoutCount but has no runner implementation for this configuration")
@@ -55,21 +52,13 @@ class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest
     @Override
     @Test
     public void testEmptyAcknowledgement() {
-        try {
-            runEmptyAcknowledgement(aa);
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
-        }
+        assertDoesNotThrow(() -> runEmptyAcknowledgement(aa));
     }
 
     @Override
     @Test
     public void testInvalidAcknowledgement() {
-        try {
-            runInvalidAcknowledgement(aa);
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
-        }
+        assertDoesNotThrow(() -> runInvalidAcknowledgement(aa));
     }
 
     @Override
@@ -78,11 +67,7 @@ class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest
         expectedAACount = 2;
         expectedTimeoutCount = 1;
 
-        try {
-            runMissingEndOfDataByte();
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
-        }
+        assertDoesNotThrow(() -> runMissingEndOfDataByte());
     }
 
     @Override
@@ -90,7 +75,7 @@ class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest
     public void testInvalidAcknowledgementContainingEmbeddedStartOfBlock() {
         expectedAACount = 1;
 
-        runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte();
+        assertDoesNotThrow(() -> runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte());
     }
 
     @Override
@@ -98,7 +83,7 @@ class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest
     public void testInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() {
         expectedTimeoutCount = 1;
 
-        runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte();
+        assertDoesNotThrow(() -> runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte());
     }
 
     @Override
@@ -107,11 +92,7 @@ class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest
         expectedAACount = 2;
         expectedTimeoutCount = 1;
 
-        try {
-            runSendMultipleMessagesWithoutSomeEndOfDataByte();
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
-        }
+        assertDoesNotThrow(() -> runSendMultipleMessagesWithoutSomeEndOfDataByte());
     }
 
 }
