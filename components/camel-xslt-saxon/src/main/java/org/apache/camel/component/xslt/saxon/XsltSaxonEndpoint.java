@@ -231,6 +231,17 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
             if (strategy != null) {
                 strategy.configure(factory, this);
             }
+
+            int effectiveXpathTotalOpLimit = getXpathTotalOpLimit() > 0
+                    ? getXpathTotalOpLimit()
+                    : ((XsltSaxonComponent) getComponent()).getXpathTotalOpLimit();
+            if (effectiveXpathTotalOpLimit > 0) {
+                try {
+                    factory.setAttribute("jdk.xml.xpathTotalOpLimit", effectiveXpathTotalOpLimit);
+                } catch (IllegalArgumentException e) {
+                    LOG.debug("TransformerFactory does not support jdk.xml.xpathTotalOpLimit");
+                }
+            }
         }
 
         LOG.debug("Using TransformerFactory {}", factory);
