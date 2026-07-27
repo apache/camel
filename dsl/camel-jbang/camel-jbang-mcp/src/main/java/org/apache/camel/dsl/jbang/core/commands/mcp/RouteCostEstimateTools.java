@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -134,8 +135,10 @@ public class RouteCostEstimateTools {
                 breakdown.isEmpty() ? null : breakdown,
                 projection, summary,
                 optimizationTips.isEmpty() ? null : optimizationTips,
-                "Cost estimates are approximate based on published AWS pricing (us-east-1). "
-                                                                      + "Actual costs vary by region, volume tier, and model.",
+                "Cost estimates are approximate based on published AWS pricing (us-east-1). Token-based (LLM) "
+                                                                      + "components are priced as a specific model — see each component's pricingNote — and are NOT a "
+                                                                      + "provider-wide figure: a route on Nova Lite, Haiku or a local/self-hosted model (Ollama) will cost "
+                                                                      + "far less, often ~zero. Actual costs vary by region, volume tier, and model.",
                 "2025-Q2");
     }
 
@@ -179,10 +182,12 @@ public class RouteCostEstimateTools {
     }
 
     private static String formatCost(double cost) {
+        // Locale.ROOT so the decimal separator is always '.' regardless of the server locale — MCP clients
+        // parse these strings and a comma separator (e.g. "$0,003000" under a French locale) would break them.
         if (cost < 0.01) {
-            return String.format("$%.6f", cost);
+            return String.format(Locale.ROOT, "$%.6f", cost);
         }
-        return String.format("$%.4f", cost);
+        return String.format(Locale.ROOT, "$%.4f", cost);
     }
 
     private static Map<String, ComponentCostProfile> buildCostProfiles() {

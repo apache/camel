@@ -76,10 +76,18 @@ class RouteCostEstimateToolsTest {
 
         assertThat(result).isNotNull();
         assertThat(result.costBreakdown()).isNotNull();
-        assertThat(result.costBreakdown()).hasSizeGreaterThanOrEqualTo(2);
+        // docling, aws-bedrock and aws2-s3 have cost profiles; the file: scheme does not, so exactly 3 are priced.
+        assertThat(result.costBreakdown()).hasSize(3);
         assertThat(result.summary().mostExpensiveComponent()).isEqualTo("aws-bedrock");
         assertThat(result.projection().messagesPerHour()).isEqualTo(100);
         assertThat(result.disclaimer()).isNotBlank();
+
+        // aws-bedrock is estimated at Claude Sonnet 4 pricing: 1000 in * $3/MTok + 500 out * $15/MTok.
+        double expectedBedrock = 1000 * 3.0 / 1_000_000 + 500 * 15.0 / 1_000_000;
+        assertThat(result.costBreakdown())
+                .filteredOn(c -> "aws-bedrock".equals(c.scheme()))
+                .singleElement()
+                .satisfies(c -> assertThat(c.estimatedCostPerExecution()).isEqualTo(expectedBedrock));
     }
 
     @Test
@@ -132,8 +140,9 @@ class RouteCostEstimateToolsTest {
     void shouldExtractSchemesCorrectly() {
         List<String> schemes = tools.extractSchemes(AI_PIPELINE_ROUTE);
 
-        assertThat(schemes).contains("docling", "aws-bedrock", "aws2-s3");
-        assertThat(schemes).doesNotContain("uri");
+        // Exact set: the from: uri is file, then the three to: schemes. This catches both a false "uri" capture
+        // (from the multi-line from:\n  uri: form) and a dropped "file" scheme.
+        assertThat(schemes).containsExactlyInAnyOrder("file", "docling", "aws-bedrock", "aws2-s3");
     }
 
     @Test
