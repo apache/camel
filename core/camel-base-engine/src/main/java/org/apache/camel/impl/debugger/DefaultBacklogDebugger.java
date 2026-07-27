@@ -68,7 +68,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBacklogDebugger.class);
 
-    private long fallbackTimeout = 300;
+    private volatile long fallbackTimeout = 300;
     private final CamelContext camelContext;
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
     private final CamelLogger logger = new CamelLogger(LOG, loggingLevel);
@@ -87,13 +87,13 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
 
     private boolean suspendMode;
     private String initialBreakpoints;
-    private boolean singleStepIncludeStartEnd;
-    private int bodyMaxChars = 32 * 1024;
-    private boolean bodyIncludeStreams;
-    private boolean bodyIncludeFiles = true;
-    private boolean includeExchangeProperties = true;
-    private boolean includeExchangeVariables = true;
-    private boolean includeException = true;
+    private volatile boolean singleStepIncludeStartEnd;
+    private volatile int bodyMaxChars = 32 * 1024;
+    private volatile boolean bodyIncludeStreams;
+    private volatile boolean bodyIncludeFiles = true;
+    private volatile boolean includeExchangeProperties = true;
+    private volatile boolean includeExchangeVariables = true;
+    private volatile boolean includeException = true;
 
     /**
      * An {@link Exchange} suspended at a breakpoint.

@@ -61,7 +61,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     private Statistic lastExchangeFailureTimestamp;
     private String lastExchangeFailureExchangeId;
     private final LoadThroughput thp = new LoadThroughput();
-    private boolean statisticsEnabled = true;
+    private volatile boolean statisticsEnabled = true;
 
     // sliding window ring buffer for percentile computation (Extended statistics only)
     private long[] percentileWindow;
