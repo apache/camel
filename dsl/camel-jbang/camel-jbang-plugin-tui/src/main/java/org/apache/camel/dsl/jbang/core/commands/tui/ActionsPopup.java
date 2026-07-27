@@ -1180,7 +1180,7 @@ class ActionsPopup {
             setNotification("No routes available", true);
             return;
         }
-        sendMessagePopup.open(ctx, pid, info.name, info.routes, preSelectedRouteId, info.directory);
+        sendMessagePopup.open(ctx, pid, info.name, info.routes, preSelectedRouteId, info.directory, info.httpServer);
         preSelectedRouteId = null;
     }
 
