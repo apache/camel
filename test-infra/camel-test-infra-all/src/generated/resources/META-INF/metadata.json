@@ -711,7 +711,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-clickhouse",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "24.8",
+  "serviceVersion" : "26.7",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ollama.services.OllamaInfraService",
