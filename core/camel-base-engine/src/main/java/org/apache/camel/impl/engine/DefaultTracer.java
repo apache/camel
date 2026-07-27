@@ -19,6 +19,7 @@ package org.apache.camel.impl.engine;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -59,7 +60,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     private volatile boolean standby;
     private volatile boolean traceRests;
     private volatile boolean traceTemplates;
-    private long traceCounter;
+    private final AtomicLong traceCounter = new AtomicLong();
 
     // immutable holder for compound tracePattern+patterns that must be visible atomically
     private record TracePatternHolder(String tracePattern, String[] patterns) {
@@ -92,7 +93,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     @Override
     public void traceBeforeNode(NamedNode node, Exchange exchange) {
         if (shouldTrace(node)) {
-            traceCounter++;
+            traceCounter.incrementAndGet();
             String routeId = ExpressionBuilder.routeIdExpression().evaluate(exchange, String.class);
 
             // we need to avoid leak the sensible information here
@@ -258,12 +259,12 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
 
     @Override
     public long getTraceCounter() {
-        return traceCounter;
+        return traceCounter.get();
     }
 
     @Override
     public void resetTraceCounter() {
-        traceCounter = 0;
+        traceCounter.set(0);
     }
 
     @Override
