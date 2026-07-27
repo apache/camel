@@ -103,6 +103,7 @@ public class KafkaFetchRecords implements Runnable {
     private volatile boolean connected; // this is the state (connected or not)
     private final AtomicReference<State> state = new AtomicReference<>(State.RUNNING);
 
+    private ScheduledExecutorService reconnectPool;
     private final DevConsoleMetricsCollector metricsCollector;
 
     KafkaFetchRecords(KafkaConsumer kafkaConsumer,
@@ -130,125 +131,82 @@ public class KafkaFetchRecords implements Runnable {
             return;
         }
 
-        ScheduledExecutorService taskExecutor = kafkaConsumer.getEndpoint().getCamelContext()
-                .getExecutorServiceManager()
-                .newSingleThreadScheduledExecutor(kafkaConsumer, "KafkaFetchRecordsTask-" + threadId);
+        try {
+            do {
+                terminated = false;
 
-        do {
-            terminated = false;
+                if (!isConnected()) {
 
-            if (!isConnected()) {
+                    // shutdown existing consumer instance to release resources (heartbeat)
+                    if (this.consumer != null) {
+                        safeConsumerClose();
+                    }
 
-                // shutdown existing consumer instance to release resources (heartbeat)
-                if (this.consumer != null) {
-                    safeConsumerClose();
+                    // background task that creates and subscribes the kafka consumer
+                    // this stays registered in the internal task registry for visibility via management (TUI/CLI/Hawtio)
+                    currentBackoffInterval
+                            = kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffInterval();
+                    int maxAttempts
+                            = kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffMaxAttempts();
+                    if (reconnectPool == null) {
+                        reconnectPool = kafkaConsumer.getEndpoint().getCamelContext().getExecutorServiceManager()
+                                .newSingleThreadScheduledExecutor(this, "KafkaReconnect");
+                    }
+                    BackgroundTask task = Tasks.backgroundTask()
+                            .withScheduledExecutor(reconnectPool)
+                            .withBudget(Budgets.iterationTimeBudget()
+                                    .withMaxIterations(maxAttempts)
+                                    .withInterval(Duration.ofMillis(currentBackoffInterval))
+                                    .withInitialDelay(Duration.ZERO)
+                                    .withUnlimitedDuration()
+                                    .build())
+                            .withName("KafkaReconnect-" + getPrintableTopic())
+                            .build();
+                    boolean success
+                            = task.run(kafkaConsumer.getEndpoint().getCamelContext(), this::reconnectTask);
+                    if (!success) {
+                        setupReconnectException(task, maxAttempts);
+                        // give up and terminate this consumer
+                        terminated = true;
+                        break;
+                    }
+
+                    setConnected(true);
                 }
 
-                // task that deals with creating kafka consumer
-                currentBackoffInterval = kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffInterval();
-                BackgroundTask task = Tasks.backgroundTask()
-                        .withBudget(Budgets.iterationTimeBudget()
-                                .withMaxIterations(
-                                        kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffMaxAttempts())
-                                .withInitialDelay(Duration.ZERO)
-                                .withInterval(Duration.ofMillis(currentBackoffInterval))
-                                .withUnlimitedDuration()
-                                .build())
-                        .withScheduledExecutor(taskExecutor)
-                        .withName("Create KafkaConsumer")
-                        .build();
-                boolean success = task.run(kafkaConsumer.getEndpoint().getCamelContext(), this::createConsumerTask);
-                if (!success) {
-                    int max = kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffMaxAttempts();
-                    setupCreateConsumerException(task, max);
-                    // give up and terminate this consumer
-                    terminated = true;
-                    break;
+                if (isConnected()) {
+                    metricsCollector.storeMetadata(consumer);
                 }
 
-                // task that deals with subscribing kafka consumer
-                currentBackoffInterval = kafkaConsumer.getEndpoint().getComponent().getSubscribeConsumerBackoffInterval();
-                task = Tasks.backgroundTask()
-                        .withBudget(Budgets.iterationTimeBudget()
-                                .withMaxIterations(
-                                        kafkaConsumer.getEndpoint().getComponent().getSubscribeConsumerBackoffMaxAttempts())
-                                .withInitialDelay(Duration.ZERO)
-                                .withInterval(Duration.ofMillis(currentBackoffInterval))
-                                .withUnlimitedDuration()
-                                .build())
-                        .withScheduledExecutor(taskExecutor)
-                        .withName("Subscribe KafkaConsumer")
-                        .build();
-                success = task.run(kafkaConsumer.getEndpoint().getCamelContext(), this::initializeConsumerTask);
-                if (!success) {
-                    int max = kafkaConsumer.getEndpoint().getComponent().getSubscribeConsumerBackoffMaxAttempts();
-                    setupInitializeErrorException(task, max);
-                    // give up and terminate this consumer
-                    terminated = true;
-                    break;
-                }
+                setLastError(null);
+                startPolling();
+            } while ((pollExceptionStrategy.canContinue() || isReconnect()) && isKafkaConsumerRunnable());
 
-                setConnected(true);
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Terminating KafkaConsumer thread {} receiving from {}", threadId, getPrintableTopic());
             }
 
-            if (isConnected()) {
-                metricsCollector.storeMetadata(consumer);
+            safeConsumerClose();
+        } finally {
+            if (reconnectPool != null) {
+                kafkaConsumer.getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(reconnectPool);
+                reconnectPool = null;
             }
-
-            setLastError(null);
-            startPolling();
-        } while ((pollExceptionStrategy.canContinue() || isReconnect()) && isKafkaConsumerRunnable());
-
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Terminating KafkaConsumer thread {} receiving from {}", threadId, getPrintableTopic());
         }
-
-        kafkaConsumer.getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
-        safeConsumerClose();
     }
 
-    private void setupInitializeErrorException(BackgroundTask task, int max) {
+    private void setupReconnectException(BackgroundTask task, int max) {
         String time = TimeUtils.printDuration(task.elapsed(), true);
         String topic = getPrintableTopic();
-        String msg = "Gave up subscribing org.apache.kafka.clients.consumer.KafkaConsumer " +
-                     threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
+        String msg = "Gave up creating/subscribing org.apache.kafka.clients.consumer.KafkaConsumer "
+                     + threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
         LOG.warn(msg);
         setLastError(new KafkaConsumerFatalException(msg, lastError));
     }
 
-    private void setupCreateConsumerException(BackgroundTask task, int max) {
-        String time = TimeUtils.printDuration(task.elapsed(), true);
-        String topic = getPrintableTopic();
-        String msg = "Gave up creating org.apache.kafka.clients.consumer.KafkaConsumer "
-                     + threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
-
-        setLastError(new KafkaConsumerFatalException(msg, lastError));
-    }
-
-    private boolean initializeConsumerTask() {
+    private boolean reconnectTask() {
         try {
-            initializeConsumer();
-        } catch (Exception e) {
-            setConnected(false);
-            // ensure this is logged so users can see the problem
-            LOG.warn("Error subscribing org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", e.getMessage(),
-                    e);
-            setLastError(e);
-
-            // allow camel error handler to be aware
-            if (kafkaConsumer.getEndpoint().isBridgeErrorHandler()) {
-                kafkaConsumer.getExceptionHandler().handleException(e);
-            }
-
-            // make the task runner aware of the exception (will retry)
-            throw new TaskRunFailureException(e);
-        }
-
-        return true;
-    }
-
-    private boolean createConsumerTask() {
-        try {
+            safeConsumerClose();
             createConsumer();
             commitManager
                     = CommitManagers.createCommitManager(consumer, kafkaConsumer, threadId, getPrintableTopic());
@@ -266,19 +224,18 @@ public class KafkaFetchRecords implements Runnable {
 
                 consumerListener.setSeekPolicy(seekPolicy);
             }
+
+            initializeConsumer();
         } catch (Exception e) {
             setConnected(false);
-            // ensure this is logged so users can see the problem
-            LOG.warn("Error creating org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", e.getMessage(),
-                    e);
+            LOG.warn("Error creating/subscribing org.apache.kafka.clients.consumer.KafkaConsumer due to: {}",
+                    e.getMessage(), e);
             setLastError(e);
 
-            // allow camel error handler to be aware
             if (kafkaConsumer.getEndpoint().isBridgeErrorHandler()) {
                 kafkaConsumer.getExceptionHandler().handleException(e);
             }
 
-            // make the task runner aware of the exception (will retry)
             throw new TaskRunFailureException(e);
         }
 

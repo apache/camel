@@ -7,7 +7,7 @@ It makes your integration visible -- you can see your route topology, watch mess
 processors, step through exchanges like scrubbing through a video timeline, and understand what Camel actually does
 with your routes. No more black box.
 
-image::jbang/camel-tui-topology-overview.svg[TUI Overview showing multiple routes]
+image::jbang/camel-tui-overview.png[TUI Overview showing multiple routes]
 
 == Getting Started
 
@@ -30,8 +30,6 @@ camel tui
 ----
 
 The TUI auto-discovers every running Camel integration on your machine -- no configuration needed.
-
-image::jbang/camel-tui-hello-overview.svg[TUI showing a simple hello route]
 
 === Option 2: Built-in Examples
 
@@ -79,6 +77,10 @@ to any tab, or use *Tab* / *Shift+Tab* to cycle.
 | 0 | More | Additional tabs: Beans, Browse, Circuit Breaker, Classpath, Configuration, Consumers, CVE Audit, Health, Inflight, Memory, Metrics, Spans, Process, Startup, and more.
 |===
 
+Tabs appear dynamically based on what the integration uses. For example, the SQL tab appears
+when a DataSource is present, Circuit Breaker when resilience4j is in use, and Spans when
+OpenTelemetry is enabled. The TUI adapts to show only what's relevant to your integration.
+
 Tab badges show live counts -- the Errors tab shows a red badge when errors exist
 and Routes shows the route count.
 
@@ -106,7 +108,7 @@ Use *s* to cycle sort order, *S* to reverse, and *F5* to clear the activity list
 The Diagram tab (Tab 4) renders the route topology as interactive ASCII art. It shows how routes
 connect to each other through shared endpoints (direct, seda, kafka, etc.).
 
-image::jbang/camel-tui-topology-diagram.svg[Diagram topology view]
+image::jbang/camel-tui-diagram.png[Diagram topology view]
 
 === Topology View
 
@@ -124,8 +126,6 @@ on the left showing state, uptime, throughput, exchange counts, and processing t
 Press *Enter* on a selected route to drill down into its internal EIP structure. Each processor
 and EIP node is displayed with its type (colored by category), endpoint URI, and per-node statistics.
 
-image::jbang/camel-tui-topology-diagram-drilldown.svg[Drill-down showing internal processors]
-
 Nodes that connect to other routes show a *Enter* indicator -- press *Enter* to jump directly
 to the linked route. Navigation history is maintained as a breadcrumb stack: press *Esc* to go
 back to the previous route, and eventually back to the topology view.
@@ -140,8 +140,6 @@ Press *e* to cycle through three modes for external endpoints:
 * *edges* -- external systems (kafka brokers, HTTP endpoints, databases) shown as dashed boxes
 * *all* -- routes sharing an external endpoint are connected through an intermediary box
 
-image::jbang/camel-tui-topology-diagram-external.svg[Diagram with external endpoints visible]
-
 === Metrics and Source Code
 
 * Press *m* to toggle metrics overlay (message counts on each node)
@@ -153,6 +151,8 @@ image::jbang/camel-tui-topology-diagram-external.svg[Diagram with external endpo
 The Inspect tab lets you step through an exchange processor by processor -- like
 scrubbing through a video timeline of your message's journey. This is the key to understanding
 what Camel does with your data at every step.
+
+image::jbang/camel-tui-inspect.png[Inspect tab showing message history and exchange details]
 
 === History of Last Exchange
 
@@ -226,8 +226,6 @@ Press *F5* to clear captured traces.
 The Errors tab collects failures with full stack traces and exchange context.
 When errors occur, a red badge appears on the tab.
 
-image::jbang/camel-tui-topology-errors.svg[Errors tab with failure details]
-
 For deeper troubleshooting, switch to the Inspect tab and use the diagram replay
 (press *d*) to visualize exactly where the failure occurred:
 
@@ -298,6 +296,8 @@ Press *F2* to open the actions menu with quick access to common operations:
 === Sending Test Messages
 
 Select *Send Message* from the F2 menu (or press *F2* then choose it):
+
+image::jbang/camel-tui-send.png[Send Message view with body editor and response area]
 
 * *Choose the route* -- use left/right arrows to pick the target route
 * *Enter the body* -- type the message body, or use `file:path/to/file` to load from a file

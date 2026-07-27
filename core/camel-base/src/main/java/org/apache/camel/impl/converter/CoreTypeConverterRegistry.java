@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.converter;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -623,6 +624,17 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
 
     public int size() {
         return converters.size();
+    }
+
+    @Override
+    public Map<TypeConvertible<?, ?>, TypeConverter> listTypeConverters() {
+        Map<TypeConvertible<?, ?>, TypeConverter> answer = new LinkedHashMap<>();
+        for (var e : converters.entrySet()) {
+            if (e.getValue() != MISS_CONVERTER) {
+                answer.put(e.getKey(), e.getValue());
+            }
+        }
+        return Collections.unmodifiableMap(answer);
     }
 
     public LoggingLevel getTypeConverterExistsLoggingLevel() {

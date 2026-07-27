@@ -18,9 +18,12 @@ package org.apache.camel.impl.console;
 
 import java.util.Map;
 
+import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.TypeConvertible;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "type-converters", description = "Camel Type Converter information")
@@ -65,11 +68,22 @@ public class TypeConverterConsole extends AbstractDevConsole {
         statistics.computeIfEnabled(statistics::getHitCounter, v -> props.put("hitCounter", v));
         statistics.computeIfEnabled(statistics::getMissCounter, v -> props.put("missCounter", v));
         statistics.computeIfEnabled(statistics::getFailedCounter, v -> props.put("failedCounter", v));
-        statistics.computeIfEnabled(statistics::getFailedCounter, v -> props.put("noopCounter", v));
+        statistics.computeIfEnabled(statistics::getNoopCounter, v -> props.put("noopCounter", v));
 
         if (!props.isEmpty()) {
             root.put("statistics", props);
         }
+
+        JsonArray arr = new JsonArray();
+        for (Map.Entry<TypeConvertible<?, ?>, TypeConverter> e : reg.listTypeConverters().entrySet()) {
+            TypeConvertible<?, ?> tc = e.getKey();
+            JsonObject jo = new JsonObject();
+            jo.put("from", tc.getFrom().getCanonicalName());
+            jo.put("to", tc.getTo().getCanonicalName());
+            jo.put("converterClass", e.getValue().getClass().getName());
+            arr.add(jo);
+        }
+        root.put("converters", arr);
 
         return root;
     }

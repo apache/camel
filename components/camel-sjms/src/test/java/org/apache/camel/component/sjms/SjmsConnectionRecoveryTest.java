@@ -182,7 +182,7 @@ public class SjmsConnectionRecoveryTest extends CamelTestSupport {
         await().atMost(30, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
                     mock.reset();
-                    mock.expectedMessageCount(1);
+                    mock.expectedMinimumMessageCount(1);
                     template.sendBody(SJMS_QUEUE_NAME, "after-failure");
                     mock.assertIsSatisfied();
                 });

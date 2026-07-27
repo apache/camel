@@ -21,13 +21,17 @@ import java.util.List;
 import java.util.Locale;
 
 import dev.tamboui.layout.Constraint;
+import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -61,6 +65,15 @@ class KafkaTab extends AbstractTableTab {
         List<KafkaConsumerInfo> sorted = new ArrayList<>(info.kafkaConsumers);
         sorted.sort(this::sortKafka);
 
+        List<Rect> chunks = Layout.vertical()
+                .constraints(Constraint.fill(), Constraint.length(7))
+                .split(area);
+
+        renderTable(frame, chunks.get(0), sorted);
+        renderDetail(frame, chunks.get(1), sorted);
+    }
+
+    private void renderTable(Frame frame, Rect area, List<KafkaConsumerInfo> sorted) {
         List<Row> rows = new ArrayList<>();
         for (KafkaConsumerInfo ki : sorted) {
             String state = ki.state != null ? ki.state : "";
@@ -83,8 +96,8 @@ class KafkaTab extends AbstractTableTab {
                     Cell.from(topic),
                     rightCell(partition, 9),
                     rightCell(offset, 10),
-                    Cell.from(Span.styled(error, error.isEmpty() ? Style.EMPTY : Theme.error())),
-                    Cell.from(Span.styled(uri, Style.EMPTY.dim()))));
+                    Cell.from(Span.styled(uri, Style.EMPTY.dim())),
+                    Cell.from(Span.styled(error, error.isEmpty() ? Style.EMPTY : Theme.error()))));
         }
 
         if (rows.isEmpty()) {
@@ -100,8 +113,8 @@ class KafkaTab extends AbstractTableTab {
                         Cell.from(Span.styled(sortLabel("TOPIC", "topic"), sortStyle("topic"))),
                         rightCell("PARTITION", 9, Style.EMPTY.bold()),
                         rightCell("OFFSET", 10, Style.EMPTY.bold()),
-                        Cell.from(Span.styled("ERROR", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("ENDPOINT", Style.EMPTY.bold()))))
+                        Cell.from(Span.styled("ENDPOINT", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("ERROR", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.length(20),
                         Constraint.length(12),
@@ -109,7 +122,7 @@ class KafkaTab extends AbstractTableTab {
                         Constraint.length(20),
                         Constraint.length(9),
                         Constraint.length(10),
-                        Constraint.length(30),
+                        Constraint.length(25),
                         Constraint.fill())
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
@@ -120,6 +133,51 @@ class KafkaTab extends AbstractTableTab {
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
         renderScrollbar(frame, sorted.size());
+    }
+
+    private void renderDetail(Frame frame, Rect area, List<KafkaConsumerInfo> sorted) {
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= sorted.size()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(Span.styled(" Select a consumer", Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .title(" Detail ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        KafkaConsumerInfo ki = sorted.get(sel);
+        List<Line> lines = new ArrayList<>();
+
+        if (ki.groupId != null && !ki.groupId.isEmpty()) {
+            lines.add(Line.from(
+                    Span.styled("  Group-ID: ", Theme.muted()),
+                    Span.styled(ki.groupId, Style.EMPTY.fg(Theme.baseFg()))));
+        }
+        if (ki.uri != null && !ki.uri.isEmpty()) {
+            lines.add(Line.from(
+                    Span.styled("  Endpoint: ", Theme.muted()),
+                    Span.styled(ki.uri, Style.EMPTY.fg(Theme.baseFg()))));
+        }
+        if (ki.lastError != null && !ki.lastError.isEmpty()) {
+            lines.add(Line.from(
+                    Span.styled("  Error:    ", Theme.muted()),
+                    Span.styled(ki.lastError, Theme.error())));
+        }
+
+        String title = ki.routeId != null ? " " + ki.routeId + " " : " Detail ";
+
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(lines.isEmpty()
+                                ? List.of(Line.from(Span.styled(" No details", Style.EMPTY.dim())))
+                                : lines))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(title).build())
+                        .build(),
+                area);
     }
 
     private int sortKafka(KafkaConsumerInfo a, KafkaConsumerInfo b) {
@@ -179,8 +237,8 @@ class KafkaTab extends AbstractTableTab {
                 - **TOPIC** — Topic of the last consumed record
                 - **PARTITION** — Partition number of the last consumed record
                 - **OFFSET** — Offset of the last consumed record
+                - **ENDPOINT** — Camel endpoint URI for this consumer
                 - **ERROR** — Last error message if the consumer is unhealthy
-                - **ENDPOINT** — Full Camel endpoint URI for this consumer
 
                 ## What to Look For
 
