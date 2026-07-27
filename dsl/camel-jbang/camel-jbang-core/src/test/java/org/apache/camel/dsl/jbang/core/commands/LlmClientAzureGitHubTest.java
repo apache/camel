@@ -79,8 +79,13 @@ class LlmClientAzureGitHubTest {
     void normalizeOpenAiUrlNormalizesGitHubModelsHostLikeOpenAiCompatibleApi() {
         LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.openai);
 
-        assertThat(client.normalizeOpenAiUrl("https://models.inference.ai.azure.com"))
-                .isEqualTo("https://models.inference.ai.azure.com/v1/chat/completions");
+        assertThat(client.normalizeOpenAiUrl("https://models.github.ai/inference"))
+                .isEqualTo("https://models.github.ai/inference/chat/completions");
+    }
+
+    @Test
+    void isGitHubModelsAutoDetectRequiresExplicitOptIn() {
+        assertThat(LlmClient.isGitHubModelsAutoDetectEnabled()).isFalse();
     }
 
     @Test

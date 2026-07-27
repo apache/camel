@@ -290,7 +290,7 @@ class DoctorPopup {
             provider = "Vertex AI";
         } else if (envSet("AZURE_OPENAI_API_KEY") && envSet("AZURE_OPENAI_ENDPOINT")) {
             provider = "Azure OpenAI";
-        } else if (envSet("GITHUB_TOKEN")) {
+        } else if (envSet("GITHUB_MODELS") && envSet("GITHUB_TOKEN")) {
             provider = "GitHub Models";
         } else if (envSet("OPENAI_API_KEY")) {
             provider = "OpenAI";
@@ -310,7 +310,7 @@ class DoctorPopup {
                     Span.raw(String.format("%-30s", "No API key configured")),
                     Span.raw(" " + TuiIcons.WARN)));
             result.add(Line.from(Span.styled(
-                    "                    Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GITHUB_TOKEN, or OPENAI_API_KEY",
+                    "                    Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GITHUB_MODELS+GITHUB_TOKEN, or OPENAI_API_KEY",
                     Style.EMPTY.dim())));
         }
     }

@@ -52,7 +52,7 @@ public class LlmClient {
     private static final String DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6";
     private static final String DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
     private static final String DEFAULT_OLLAMA_MODEL = "llama3.2";
-    private static final String DEFAULT_GITHUB_MODELS_URL = "https://models.inference.ai.azure.com";
+    private static final String DEFAULT_GITHUB_MODELS_URL = "https://models.github.ai/inference";
     private static final String DEFAULT_AZURE_API_VERSION = "2024-10-21";
     private static final int CONNECT_TIMEOUT_SECONDS = 10;
     private static final int HEALTH_CHECK_TIMEOUT_SECONDS = 5;
@@ -317,7 +317,9 @@ public class LlmClient {
                 .findFirst()
                 .map(k -> {
                     apiKey = k;
-                    openAiAuthMode = OpenAiAuthMode.bearer;
+                    if (openAiAuthMode != OpenAiAuthMode.api_key) {
+                        openAiAuthMode = OpenAiAuthMode.bearer;
+                    }
                     return k;
                 })
                 .orElse(null);
@@ -1394,13 +1396,17 @@ public class LlmClient {
             azureApiVersion = version;
         }
         String deployment = System.getenv("AZURE_OPENAI_DEPLOYMENT_NAME");
-        if (deployment != null && !deployment.isBlank()) {
+        if (deployment != null && !deployment.isBlank()
+                && (model == null || model.isBlank() || DEFAULT_OLLAMA_MODEL.equals(model))) {
             model = deployment;
         }
         return true;
     }
 
     private boolean tryGitHubModels() {
+        if (!isGitHubModelsAutoDetectEnabled()) {
+            return false;
+        }
         String token = System.getenv("GITHUB_TOKEN");
         if (token == null || token.isBlank()) {
             return false;
@@ -1410,6 +1416,15 @@ public class LlmClient {
         openAiAuthMode = OpenAiAuthMode.bearer;
         url = DEFAULT_GITHUB_MODELS_URL;
         return true;
+    }
+
+    static boolean isGitHubModelsAutoDetectEnabled() {
+        String flag = System.getenv("GITHUB_MODELS");
+        return flag != null && !flag.isBlank() && !"0".equals(flag) && !"false".equalsIgnoreCase(flag);
+    }
+
+    static boolean isGitHubModelsEndpoint(String endpoint) {
+        return endpoint != null && endpoint.contains("models.github.ai");
     }
 
     private boolean tryInfraOllama() {
@@ -1501,22 +1516,32 @@ public class LlmClient {
     boolean isEndpointReachable(String endpoint) {
         if (isAzureOpenAiEndpoint(endpoint)) {
             String base = azureResourceBase(stripTrailingSlash(endpoint));
-            return tryHealthCheck(appendAzureApiVersionQuery(base + "/openai/models"));
+            String healthUrl = appendAzureApiVersionQuery(base + "/openai/models");
+            return tryHealthCheck(healthUrl, buildOpenAiAuthHeaders(resolveApiKey()), true);
         }
-        return tryHealthCheck(endpoint + "/api/tags")
-                || tryHealthCheck(endpoint + "/v1/models")
-                || tryHealthCheck(endpoint);
+        return tryHealthCheck(endpoint + "/api/tags", Map.of(), false)
+                || tryHealthCheck(endpoint + "/v1/models", Map.of(), false)
+                || tryHealthCheck(endpoint, Map.of(), false);
     }
 
     private boolean tryHealthCheck(String healthUrl) {
+        return tryHealthCheck(healthUrl, Map.of(), false);
+    }
+
+    private boolean tryHealthCheck(String healthUrl, Map<String, String> headers, boolean azureEndpoint) {
         try {
-            HttpRequest request = HttpRequest.newBuilder()
+            HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(healthUrl))
                     .timeout(Duration.ofSeconds(HEALTH_CHECK_TIMEOUT_SECONDS))
-                    .GET()
-                    .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            return response.statusCode() == 200;
+                    .GET();
+            headers.forEach(builder::header);
+            HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            int status = response.statusCode();
+            if (status == 200) {
+                return true;
+            }
+            // Azure returns 401 without a valid key; treat as reachable when probing explicit URLs with a key configured
+            return azureEndpoint && status == 401 && !headers.isEmpty();
         } catch (Exception e) {
             return false;
         }
@@ -1617,6 +1642,12 @@ public class LlmClient {
 
     String normalizeOpenAiUrl(String endpoint) {
         String u = stripTrailingSlash(endpoint);
+        if (isGitHubModelsEndpoint(u)) {
+            if (u.endsWith("/chat/completions")) {
+                return u;
+            }
+            return u + "/chat/completions";
+        }
         if (isAzureOpenAiEndpoint(u)) {
             return normalizeAzureOpenAiChatUrl(u);
         }

@@ -116,9 +116,11 @@ All commands auto-detect the LLM provider. The detection order is:
 
 1. `ANTHROPIC_API_KEY` environment variable → Anthropic API (`ask` and `explain` only)
 2. `CLOUD_ML_REGION` + `ANTHROPIC_VERTEX_PROJECT_ID` → Vertex AI (`ask` and `explain` only)
-3. `OPENAI_API_KEY` or `LLM_API_KEY` → OpenAI-compatible API
-4. Ollama running via `camel infra` → local Ollama
-5. Ollama at `localhost:11434` → local Ollama
+3. `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` → Azure OpenAI (uses the `api-key` header; optional `AZURE_OPENAI_DEPLOYMENT_NAME` and `AZURE_OPENAI_API_VERSION`)
+4. `GITHUB_MODELS` (non-false) + `GITHUB_TOKEN` → GitHub Models at `https://models.github.ai/inference` (Bearer token). GitHub Models is scheduled for retirement on 2026-07-30; prefer Azure OpenAI or another provider for new integrations.
+5. `OPENAI_API_KEY` or `LLM_API_KEY` → OpenAI-compatible API
+6. Ollama running via `camel infra` → local Ollama
+7. Ollama at `localhost:11434` → local Ollama
 
 Override with explicit options:
 
