@@ -573,13 +573,17 @@ class OverviewTab extends AbstractTab {
             };
         }
 
+        String integrationTitle = infraCount > 0 ? " Integrations " : " Overview ";
+        Style intBorderStyle = infraFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style intTitleStyle = infraFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
         Table.Builder tableBuilder = Table.builder()
                 .rows(rows)
                 .header(header)
                 .widths(widths)
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(infraCount > 0 ? " Integrations " : " Overview ").build());
+                        .borderStyle(intBorderStyle)
+                        .title(Title.from(Line.from(Span.styled(integrationTitle, intTitleStyle)))).build());
         if (!infraFocused) {
             tableBuilder.highlightStyle(Theme.selectionBg());
         }
@@ -988,7 +992,11 @@ class OverviewTab extends AbstractTab {
                         Constraint.fill())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Dev/Infra Services ").build());
+                        .borderStyle(infraFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted())
+                        .title(Title.from(Line.from(
+                                Span.styled(" Dev/Infra Services ",
+                                        infraFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent())))))
+                        .build());
         if (infraFocused) {
             infraBuilder.highlightStyle(Theme.selectionBg());
         }
