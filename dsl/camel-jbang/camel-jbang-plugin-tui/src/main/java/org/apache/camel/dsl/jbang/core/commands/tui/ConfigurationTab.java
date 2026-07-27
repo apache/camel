@@ -40,7 +40,7 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.MainModel;
@@ -57,6 +57,7 @@ class ConfigurationTab extends AbstractTableTab {
     private int detailScroll;
 
     private CamelCatalog catalog;
+    private String catalogVersion;
     private Map<String, BaseOptionModel> mainOptionsMap;
     private final Map<String, Map<String, BaseOptionModel>> componentOptionsCache = new HashMap<>();
 
@@ -325,11 +326,22 @@ class ConfigurationTab extends AbstractTableTab {
     }
 
     private void initCatalog() {
-        if (catalog != null) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        String version = info != null ? info.camelVersion : null;
+        if (catalog != null && (version == null || version.equals(catalogVersion))) {
             return;
         }
-        catalog = new DefaultCamelCatalog();
+        try {
+            catalog = version != null ? CatalogLoader.loadCatalog(null, version, true) : null;
+        } catch (Exception e) {
+            catalog = null;
+        }
+        if (catalog == null) {
+            return;
+        }
+        catalogVersion = version;
         mainOptionsMap = new HashMap<>();
+        componentOptionsCache.clear();
         MainModel mainModel = catalog.mainModel();
         if (mainModel != null) {
             for (MainModel.MainOptionModel opt : mainModel.getOptions()) {

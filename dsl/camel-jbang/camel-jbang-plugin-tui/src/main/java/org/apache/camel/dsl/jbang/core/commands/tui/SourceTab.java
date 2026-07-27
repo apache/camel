@@ -56,6 +56,11 @@ import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -79,6 +84,13 @@ class SourceTab extends AbstractTab {
     private Rect rightArea;
 
     private final Map<String, CamelCatalog> catalogCache = new HashMap<>();
+
+    // Properties quick-doc caches (invalidated when catalog version changes)
+    private String propsCatalogVersion;
+    private Map<String, BaseOptionModel> mainOptionsCache;
+    private final Map<String, Map<String, BaseOptionModel>> componentOptionsCache = new HashMap<>();
+    private final Map<String, Map<String, BaseOptionModel>> languageOptionsCache = new HashMap<>();
+    private final Map<String, Map<String, BaseOptionModel>> dataformatOptionsCache = new HashMap<>();
 
     private static final Pattern YAML_URI_PATTERN = Pattern.compile(
             "^\\s*-?\\s*(?:uri|from|to|toD|wireTap|enrich|pollEnrich|deadLetterChannel):\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*:[^\"\\s]*)");
@@ -467,6 +479,10 @@ class SourceTab extends AbstractTab {
                 sourceViewer.loadFile(filePath);
                 if (isCamelSourceFile(filePath)) {
                     sourceViewer.setQuickDocProvider(this::provideCamelQuickDocs);
+                } else if (isPropertiesFile(filePath)) {
+                    sourceViewer.setQuickDocProvider(this::providePropertiesQuickDocs);
+                } else {
+                    sourceViewer.setQuickDocProvider(null);
                 }
                 focusOnViewer = true;
             }
@@ -539,6 +555,127 @@ class SourceTab extends AbstractTab {
             }
         }
         return result;
+    }
+
+    private static boolean isPropertiesFile(Path path) {
+        return path.getFileName().toString().toLowerCase().endsWith(".properties");
+    }
+
+    private Map<Integer, List<String>> providePropertiesQuickDocs(List<JsonObject> codeData) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null || codeData.isEmpty()) {
+            return Map.of();
+        }
+        ensureMainOptionsCache(catalog);
+
+        Map<Integer, List<String>> result = new LinkedHashMap<>();
+        for (int i = 0; i < codeData.size(); i++) {
+            String code = codeData.get(i).getString("code");
+            if (code == null) {
+                continue;
+            }
+            String trimmed = code.trim();
+            if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
+                continue;
+            }
+            int eq = trimmed.indexOf('=');
+            if (eq <= 0) {
+                continue;
+            }
+            String key = trimmed.substring(0, eq).trim();
+            if (!key.startsWith("camel.")) {
+                continue;
+            }
+            BaseOptionModel opt = lookupPropertyOption(catalog, key);
+            if (opt != null) {
+                String doc = RoutesTab.formatOptionDoc(opt);
+                if (doc != null) {
+                    result.put(i, List.of(doc));
+                }
+            }
+        }
+        return result;
+    }
+
+    private BaseOptionModel lookupPropertyOption(CamelCatalog catalog, String key) {
+        if (mainOptionsCache != null) {
+            BaseOptionModel opt = mainOptionsCache.get(key);
+            if (opt != null) {
+                return opt;
+            }
+        }
+        if (key.startsWith("camel.component.")) {
+            return lookupPrefixedOption(key, "camel.component.", componentOptionsCache,
+                    name -> {
+                        ComponentModel m = catalog.componentModel(name);
+                        return m != null ? m.getComponentOptions() : null;
+                    });
+        }
+        if (key.startsWith("camel.language.")) {
+            return lookupPrefixedOption(key, "camel.language.", languageOptionsCache,
+                    name -> {
+                        LanguageModel m = catalog.languageModel(name);
+                        return m != null ? m.getOptions() : null;
+                    });
+        }
+        if (key.startsWith("camel.dataformat.")) {
+            return lookupPrefixedOption(key, "camel.dataformat.", dataformatOptionsCache,
+                    name -> {
+                        DataFormatModel m = catalog.dataFormatModel(name);
+                        return m != null ? m.getOptions() : null;
+                    });
+        }
+        return null;
+    }
+
+    private BaseOptionModel lookupPrefixedOption(
+            String key, String prefix,
+            Map<String, Map<String, BaseOptionModel>> cache,
+            java.util.function.Function<String, List<? extends BaseOptionModel>> optionsLoader) {
+        String rest = key.substring(prefix.length());
+        int dot = rest.indexOf('.');
+        if (dot <= 0) {
+            return null;
+        }
+        String name = rest.substring(0, dot);
+        String optionName = rest.substring(dot + 1);
+        Map<String, BaseOptionModel> opts = cache.computeIfAbsent(name, n -> {
+            List<? extends BaseOptionModel> options = optionsLoader.apply(n);
+            if (options == null) {
+                return Map.of();
+            }
+            Map<String, BaseOptionModel> map = new HashMap<>();
+            for (BaseOptionModel o : options) {
+                if (o.getName() != null) {
+                    map.put(o.getName(), o);
+                }
+            }
+            return map;
+        });
+        return opts.get(optionName);
+    }
+
+    private void ensureMainOptionsCache(CamelCatalog catalog) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        String version = info != null ? info.camelVersion : null;
+        if (version != null && !version.equals(propsCatalogVersion)) {
+            mainOptionsCache = null;
+            componentOptionsCache.clear();
+            languageOptionsCache.clear();
+            dataformatOptionsCache.clear();
+            propsCatalogVersion = version;
+        }
+        if (mainOptionsCache == null) {
+            mainOptionsCache = new HashMap<>();
+            MainModel mainModel = catalog.mainModel();
+            if (mainModel != null) {
+                for (MainModel.MainOptionModel opt : mainModel.getOptions()) {
+                    if (opt.getName() != null) {
+                        mainOptionsCache.put(opt.getName(), opt);
+                    }
+                }
+            }
+        }
     }
 
     private void renderFileList(Frame frame, Rect area) {
