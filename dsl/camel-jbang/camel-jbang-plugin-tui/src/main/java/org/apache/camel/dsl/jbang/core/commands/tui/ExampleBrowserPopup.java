@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -264,7 +263,7 @@ class ExampleBrowserPopup {
             if (exampleName.contains("/") && extraArgs.stream().noneMatch(a -> a.startsWith("--name"))) {
                 cmd.add("--name=" + TuiHelper.stripCategory(exampleName));
             }
-            Path outputFile = Files.createTempFile("camel-example-", ".log");
+            Path outputFile = LaunchManager.createSecureTempFile("camel-example-", ".log");
             outputFile.toFile().deleteOnExit();
             ProcessBuilder pb = new ProcessBuilder(cmd);
             pb.redirectErrorStream(true);

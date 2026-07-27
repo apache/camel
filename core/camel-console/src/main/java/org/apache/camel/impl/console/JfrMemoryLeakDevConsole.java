@@ -215,9 +215,11 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             return cachedResults != null ? cachedResults : errorJson("No active recording.");
         }
 
+        Path tempDir = null;
         Path tempFile = null;
         try {
-            tempFile = Files.createTempFile("camel-jfr-memory-leak-", ".jfr");
+            tempDir = Files.createTempDirectory("camel-jfr-");
+            tempFile = Files.createTempFile(tempDir, "camel-jfr-memory-leak-", ".jfr");
             // trigger GC before stopping to flush objects into the recording
             System.gc();
             try {
@@ -255,6 +257,13 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             if (tempFile != null) {
                 try {
                     Files.deleteIfExists(tempFile);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (tempDir != null) {
+                try {
+                    Files.deleteIfExists(tempDir);
                 } catch (IOException e) {
                     // ignore
                 }
