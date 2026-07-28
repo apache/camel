@@ -107,6 +107,7 @@ class HistoryTab extends AbstractTab {
 
     private boolean showDescription;
 
+    private boolean detailFocused;
     private boolean showWaterfall;
     private int waterfallScroll;
     private final ScrollbarState waterfallScrollState = new ScrollbarState();
@@ -264,9 +265,16 @@ class HistoryTab extends AbstractTab {
 
         boolean tracerActive = !traces.get().isEmpty();
 
+        if (ke.isKey(KeyCode.TAB)) {
+            if (!showWaterfall && ((tracerActive && traceDetailView) || !tracerActive)) {
+                detailFocused = !detailFocused;
+            }
+            return true;
+        }
+
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
             if (tracerActive && traceDetailView) {
-                if (showWaterfall) {
+                if (showWaterfall || !detailFocused) {
                     for (int i = 0; i < 10; i++) {
                         traceStepTableState.selectPrevious();
                     }
@@ -274,7 +282,7 @@ class HistoryTab extends AbstractTab {
                     traceDetailScroll = Math.max(0, traceDetailScroll - 5);
                 }
             } else {
-                if (showWaterfall) {
+                if (showWaterfall || !detailFocused) {
                     for (int i = 0; i < 10; i++) {
                         historyTableState.selectPrevious();
                     }
@@ -286,7 +294,7 @@ class HistoryTab extends AbstractTab {
         }
         if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
             if (tracerActive && traceDetailView) {
-                if (showWaterfall) {
+                if (showWaterfall || !detailFocused) {
                     List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
                     for (int i = 0; i < 10; i++) {
                         traceStepTableState.selectNext(steps.size());
@@ -295,7 +303,7 @@ class HistoryTab extends AbstractTab {
                     traceDetailScroll += 5;
                 }
             } else {
-                if (showWaterfall) {
+                if (showWaterfall || !detailFocused) {
                     for (int i = 0; i < 10; i++) {
                         historyTableState.selectNext(historyVisibleCount);
                     }
@@ -379,6 +387,7 @@ class HistoryTab extends AbstractTab {
             }
             if (ke.isCharIgnoreCase('g')) {
                 showWaterfall = !showWaterfall;
+                detailFocused = false;
                 waterfallScroll = 0;
                 return true;
             }
@@ -398,6 +407,7 @@ class HistoryTab extends AbstractTab {
                 if (sel != null && sel >= 0 && sel < traceSortedExchangeIds.size()) {
                     traceSelectedExchangeId = traceSortedExchangeIds.get(sel);
                     traceDetailView = true;
+                    detailFocused = false;
                     traceStepTableState.select(0);
                     traceDetailScroll = 0;
                 }
@@ -435,6 +445,7 @@ class HistoryTab extends AbstractTab {
             }
             if (ke.isCharIgnoreCase('g')) {
                 showWaterfall = !showWaterfall;
+                detailFocused = false;
                 waterfallScroll = 0;
                 return true;
             }
@@ -458,6 +469,7 @@ class HistoryTab extends AbstractTab {
         traceFilePositions.clear();
         traces.set(Collections.emptyList());
         traceDetailView = false;
+        detailFocused = false;
         traceSelectedExchangeId = null;
         traceDetailScroll = 0;
         traceDetailHScroll = 0;
@@ -479,6 +491,7 @@ class HistoryTab extends AbstractTab {
         }
         if (traceDetailView) {
             traceDetailView = false;
+            detailFocused = false;
             traceSelectedExchangeId = null;
             traceDetailScroll = 0;
             showWaterfall = false;
@@ -614,14 +627,22 @@ class HistoryTab extends AbstractTab {
     public void navigateUp() {
         if (!traces.get().isEmpty()) {
             if (traceDetailView) {
-                traceStepTableState.selectPrevious();
-                traceDetailScroll = 0;
+                if (detailFocused && !showWaterfall) {
+                    traceDetailScroll = Math.max(0, traceDetailScroll - 1);
+                } else {
+                    traceStepTableState.selectPrevious();
+                    traceDetailScroll = 0;
+                }
             } else {
                 traceTableState.selectPrevious();
             }
         } else {
-            historyTableState.selectPrevious();
-            historyDetailScroll = 0;
+            if (detailFocused && !showWaterfall) {
+                historyDetailScroll = Math.max(0, historyDetailScroll - 1);
+            } else {
+                historyTableState.selectPrevious();
+                historyDetailScroll = 0;
+            }
         }
     }
 
@@ -629,16 +650,24 @@ class HistoryTab extends AbstractTab {
     public void navigateDown() {
         if (!traces.get().isEmpty()) {
             if (traceDetailView) {
-                List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
-                traceStepTableState.selectNext(steps.size());
-                traceDetailScroll = 0;
+                if (detailFocused && !showWaterfall) {
+                    traceDetailScroll++;
+                } else {
+                    List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
+                    traceStepTableState.selectNext(steps.size());
+                    traceDetailScroll = 0;
+                }
             } else {
                 List<String> exchangeIds = getTraceExchangeIds();
                 traceTableState.selectNext(exchangeIds.size());
             }
         } else {
-            historyTableState.selectNext(historyVisibleCount);
-            historyDetailScroll = 0;
+            if (detailFocused && !showWaterfall) {
+                historyDetailScroll++;
+            } else {
+                historyTableState.selectNext(historyVisibleCount);
+                historyDetailScroll = 0;
+            }
         }
     }
 
@@ -770,8 +799,10 @@ class HistoryTab extends AbstractTab {
         boolean tracerActive = !traces.get().isEmpty();
         if (tracerActive && traceDetailView) {
             hint(spans, "Esc", "back");
+            if (!showWaterfall) {
+                hint(spans, "Tab", detailFocused ? "table" : "detail");
+            }
             hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-            hint(spans, "PgUp/PgDn", "scroll");
             if (!showWaterfall && !traceWordWrap) {
                 hint(spans, TuiIcons.HINT_H, "h-scroll");
             }
@@ -792,8 +823,10 @@ class HistoryTab extends AbstractTab {
             hintLast(spans, "F5", "refresh");
         } else {
             hint(spans, "Esc", "back");
+            if (!showWaterfall) {
+                hint(spans, "Tab", detailFocused ? "table" : "detail");
+            }
             hint(spans, TuiIcons.HINT_SCROLL, "navigate");
-            hint(spans, "PgUp/PgDn", "scroll");
             if (!showWaterfall && !historyWordWrap) {
                 hint(spans, TuiIcons.HINT_H, "h-scroll");
             }
@@ -1264,12 +1297,16 @@ class HistoryTab extends AbstractTab {
 
         String stepTitle
                 = String.format(" Trace [%s] — %d steps ", TuiHelper.truncate(traceSelectedExchangeId, 30), steps.size());
+        boolean showFocus = !showWaterfall;
+        Style tableBorderStyle = showFocus && detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableHighlight = showFocus && detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg();
         lastTraceStepArea = chunks.get(0);
         detailSplit.setBorderPos(chunks.get(1).y());
         int stepVisibleRows = Math.max(0, chunks.get(0).height() - 3);
         traceStepTableState.scrollToSelected(stepVisibleRows, rows);
         frame.renderStatefulWidget(
-                buildStepTable(rows, stepTitle, showDescription), chunks.get(0), traceStepTableState);
+                buildStepTable(rows, stepTitle, showDescription, tableBorderStyle, tableHighlight),
+                chunks.get(0), traceStepTableState);
         renderTableScrollbar(frame, lastTraceStepArea, traceStepTableState, traceStepScrollState,
                 steps.size());
 
@@ -1283,6 +1320,8 @@ class HistoryTab extends AbstractTab {
     }
 
     private void renderTraceStepDetail(Frame frame, Rect area, List<TraceEntry> steps) {
+        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
         Integer sel = traceStepTableState.selected();
 
         if (sel == null || sel < 0 || sel >= steps.size()) {
@@ -1291,7 +1330,8 @@ class HistoryTab extends AbstractTab {
                             .text(Text.from(Line.from(
                                     Span.styled(" Select a trace step to view details",
                                             Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(detailBorderStyle).build())
                             .build(),
                     area);
             return;
@@ -1327,7 +1367,8 @@ class HistoryTab extends AbstractTab {
 
         int[] scroll = { traceDetailScroll };
         int[] hScroll = { traceDetailHScroll };
-        renderDetailPanel(frame, area, lines, traceWordWrap, hScroll, scroll, traceDetailScrollState, " Detail ");
+        renderDetailPanel(frame, area, lines, traceWordWrap, hScroll, scroll, traceDetailScrollState,
+                " Detail ", detailBorderStyle, Title.from(Line.from(Span.styled(" Detail ", detailTitleStyle))));
         traceDetailScroll = scroll[0];
         traceDetailHScroll = hScroll[0];
     }
@@ -1542,12 +1583,16 @@ class HistoryTab extends AbstractTab {
         }
 
         Title historyTitle = buildHistoryTitle(current);
+        boolean showFocus = !showWaterfall;
+        Style tableBorderStyle = showFocus && detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableHighlight = showFocus && detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg();
         lastHistoryTableArea = chunks.get(0);
         vSplit.setBorderPos(chunks.get(1).y());
         int histVisibleRows = Math.max(0, chunks.get(0).height() - 3);
         historyTableState.scrollToSelected(histVisibleRows, rows);
         frame.renderStatefulWidget(
-                buildStepTable(rows, historyTitle, showDescription), chunks.get(0), historyTableState);
+                buildStepTable(rows, historyTitle, showDescription, tableBorderStyle, tableHighlight),
+                chunks.get(0), historyTableState);
         renderTableScrollbar(frame, lastHistoryTableArea, historyTableState, historyTableScrollState,
                 current.size());
 
@@ -1561,6 +1606,8 @@ class HistoryTab extends AbstractTab {
     }
 
     private void renderHistoryDetail(Frame frame, Rect area, List<HistoryEntry> current) {
+        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
         Integer sel = historyTableState.selected();
 
         if (sel == null || sel < 0 || sel >= current.size()) {
@@ -1570,7 +1617,8 @@ class HistoryTab extends AbstractTab {
                                     Span.styled(" Select a history entry to view details",
                                             Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" Detail ").build())
+                                    .borderStyle(detailBorderStyle)
+                                    .title(Title.from(Line.from(Span.styled(" Detail ", detailTitleStyle)))).build())
                             .build(),
                     area);
             return;
@@ -1606,7 +1654,8 @@ class HistoryTab extends AbstractTab {
 
         int[] scroll = { historyDetailScroll };
         int[] hScroll = { historyDetailHScroll };
-        renderDetailPanel(frame, area, lines, historyWordWrap, hScroll, scroll, historyDetailScrollState, " Detail ");
+        renderDetailPanel(frame, area, lines, historyWordWrap, hScroll, scroll, historyDetailScrollState,
+                " Detail ", detailBorderStyle, Title.from(Line.from(Span.styled(" Detail ", detailTitleStyle))));
         historyDetailScroll = scroll[0];
         historyDetailHScroll = hScroll[0];
     }
@@ -1964,6 +2013,12 @@ class HistoryTab extends AbstractTab {
     }
 
     private static Table buildStepTable(List<Row> rows, Object title, boolean descriptionMode) {
+        return buildStepTable(rows, title, descriptionMode, Style.EMPTY, Theme.selectionBg());
+    }
+
+    private static Table buildStepTable(
+            List<Row> rows, Object title, boolean descriptionMode,
+            Style borderStyle, Style highlightStyle) {
         Row header = Row.from(
                 rightCell("#", 3, Style.EMPTY.bold()),
                 Cell.from(Span.styled("", Style.EMPTY.bold())),
@@ -1974,8 +2029,9 @@ class HistoryTab extends AbstractTab {
                 Cell.from(Span.styled("BHPV", Style.EMPTY.bold())),
                 rightCell("ELAPSED", 10, Style.EMPTY.bold()));
         Block block = title instanceof Title t
-                ? Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(t).build()
-                : Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title.toString()).build();
+                ? Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(borderStyle).title(t).build()
+                : Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(borderStyle)
+                        .title(title.toString()).build();
         return Table.builder()
                 .rows(rows)
                 .header(header)
@@ -1988,7 +2044,7 @@ class HistoryTab extends AbstractTab {
                         Constraint.fill(),
                         Constraint.length(4),
                         Constraint.length(11))
-                .highlightStyle(Theme.selectionBg())
+                .highlightStyle(highlightStyle)
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(block)
                 .build();
@@ -2188,8 +2244,17 @@ class HistoryTab extends AbstractTab {
     static void renderDetailPanel(
             Frame frame, Rect area, List<Line> lines,
             boolean wordWrap, int[] hScroll, int[] scroll, ScrollbarState scrollState, String title) {
-        Block.Builder bb = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL);
-        if (title != null) {
+        renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, scrollState, title, Style.EMPTY, null);
+    }
+
+    static void renderDetailPanel(
+            Frame frame, Rect area, List<Line> lines,
+            boolean wordWrap, int[] hScroll, int[] scroll, ScrollbarState scrollState,
+            String title, Style borderStyle, Title styledTitle) {
+        Block.Builder bb = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(borderStyle);
+        if (styledTitle != null) {
+            bb.title(styledTitle);
+        } else if (title != null) {
             bb.title(title);
         }
         Block block = bb.build();
@@ -2311,6 +2376,21 @@ class HistoryTab extends AbstractTab {
                 .toList();
         Integer sel = historyTableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "History");
+    }
+
+    @Override
+    public Boolean isDetailFocused() {
+        if (showWaterfall) {
+            return null;
+        }
+        boolean tracerActive = !traces.get().isEmpty();
+        if (tracerActive && traceDetailView) {
+            return detailFocused;
+        }
+        if (!tracerActive) {
+            return detailFocused;
+        }
+        return null;
     }
 
     @Override

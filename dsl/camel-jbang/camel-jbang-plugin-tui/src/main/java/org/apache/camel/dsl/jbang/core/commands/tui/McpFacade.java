@@ -329,6 +329,11 @@ class McpFacade {
         return tab != null ? tab.getSelectionContext() : null;
     }
 
+    Boolean isDetailFocused() {
+        MonitorTab tab = bridge.activeTab();
+        return tab != null ? tab.isDetailFocused() : null;
+    }
+
     List<String> getIntegrationNames() {
         return data.get().stream()
                 .filter(i -> !i.vanishing)

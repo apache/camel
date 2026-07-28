@@ -417,6 +417,13 @@ class DataRefreshService {
                             continue;
                         }
                         boolean alive = ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false);
+                        if (!alive) {
+                            Files.deleteIfExists(jsonFile);
+                            Path logFile = jsonFile.resolveSibling(
+                                    fn.substring(0, fn.lastIndexOf('.')) + ".log");
+                            Files.deleteIfExists(logFile);
+                            continue;
+                        }
 
                         InfraInfo info = new InfraInfo();
                         info.pid = pidStr;

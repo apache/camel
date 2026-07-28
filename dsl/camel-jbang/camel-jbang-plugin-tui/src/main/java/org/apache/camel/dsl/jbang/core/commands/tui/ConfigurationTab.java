@@ -35,6 +35,7 @@ import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -55,6 +56,7 @@ class ConfigurationTab extends AbstractTableTab {
     private static final Style SECRET_STYLE = Theme.muted();
 
     private int detailScroll;
+    private boolean detailFocused;
 
     private CamelCatalog catalog;
     private String catalogVersion;
@@ -77,29 +79,43 @@ class ConfigurationTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            detailScroll = Math.max(0, detailScroll - 10);
+        if (ke.isKey(KeyCode.TAB)) {
+            detailFocused = !detailFocused;
             return true;
         }
-        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            detailScroll += 10;
-            return true;
+        if (detailFocused) {
+            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                detailScroll = Math.max(0, detailScroll - 10);
+                return true;
+            }
+            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                detailScroll += 10;
+                return true;
+            }
         }
         return false;
     }
 
     @Override
     public void navigateUp() {
-        tableState.selectPrevious();
-        detailScroll = 0;
+        if (detailFocused) {
+            detailScroll = Math.max(0, detailScroll - 1);
+        } else {
+            tableState.selectPrevious();
+            detailScroll = 0;
+        }
     }
 
     @Override
     public void navigateDown() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        int count = info != null ? info.configProperties.size() : 0;
-        tableState.selectNext(count);
-        detailScroll = 0;
+        if (detailFocused) {
+            detailScroll++;
+        } else {
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            int count = info != null ? info.configProperties.size() : 0;
+            tableState.selectNext(count);
+            detailScroll = 0;
+        }
     }
 
     @Override
@@ -171,6 +187,9 @@ class ConfigurationTab extends AbstractTableTab {
 
         String title = String.format(" Configuration [%d] ", props.size());
 
+        Style tableBorderStyle = detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableTitleStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
+
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
@@ -181,9 +200,11 @@ class ConfigurationTab extends AbstractTableTab {
                         Constraint.percentage(35),
                         Constraint.fill(),
                         Constraint.length(20))
-                .highlightStyle(Theme.selectionBg())
+                .highlightStyle(detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .borderStyle(tableBorderStyle)
+                        .title(Title.from(Line.from(Span.styled(title, tableTitleStyle)))).build())
                 .build();
 
         lastTableArea = area;
@@ -192,13 +213,17 @@ class ConfigurationTab extends AbstractTableTab {
     }
 
     private void renderDetail(Frame frame, Rect area, List<ConfigProperty> props) {
+        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
+
         Integer sel = tableState.selected();
         if (sel == null || sel < 0 || sel >= props.size()) {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Select a property", Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" Property Detail ").build())
+                                    .borderStyle(detailBorderStyle)
+                                    .title(Title.from(Line.from(Span.styled(" Property Detail ", detailTitleStyle)))).build())
                             .build(),
                     area);
             return;
@@ -268,7 +293,8 @@ class ConfigurationTab extends AbstractTableTab {
                 Paragraph.builder()
                         .text(Text.from(visible))
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                .title(title).build())
+                                .borderStyle(detailBorderStyle)
+                                .title(Title.from(Line.from(Span.styled(title, detailTitleStyle)))).build())
                         .build(),
                 area);
     }
@@ -401,6 +427,7 @@ class ConfigurationTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         super.renderFooter(spans);
+        hint(spans, "Tab", detailFocused ? "table" : "detail");
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hintLast(spans, "PgUp/Dn", "scroll");
     }
@@ -414,6 +441,11 @@ class ConfigurationTab extends AbstractTableTab {
         List<String> items = sortedProperties(info).stream().map(p -> p.key).toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Configuration");
+    }
+
+    @Override
+    public Boolean isDetailFocused() {
+        return detailFocused;
     }
 
     static int compareCamelFirst(ConfigProperty a, ConfigProperty b) {
