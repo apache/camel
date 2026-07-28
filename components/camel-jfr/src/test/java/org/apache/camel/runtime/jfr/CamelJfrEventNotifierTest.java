@@ -59,4 +59,31 @@ class CamelJfrEventNotifierTest extends JfrRecordingTestSupport {
                 .filteredOn(e -> "org.apache.camel.exchange.send".equals(e.getEventType().getName()))
                 .anySatisfy(e -> assertThat(e.getString("endpointUri")).contains("mock://out"));
     }
+
+    @Test
+    void endpointUriIsSanitized() throws Exception {
+        List<RecordedEvent> events = recordAndRun(new Class<?>[] { CamelExchangeSendEvent.class }, () -> {
+            try (DefaultCamelContext context = new DefaultCamelContext()) {
+                CamelJfrEventNotifier notifier = new CamelJfrEventNotifier();
+                notifier.setCamelContext(context);
+                context.getManagementStrategy().addEventNotifier(notifier);
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("direct:start").routeId("main").to("mock:out?password=secret");
+                    }
+                });
+                context.start();
+                MockEndpoint mock = context.getEndpoint("mock:out?password=secret", MockEndpoint.class);
+                mock.expectedMessageCount(1);
+                context.createProducerTemplate().sendBody("direct:start", "hi");
+                mock.assertIsSatisfied();
+            }
+        });
+
+        assertThat(events)
+                .filteredOn(e -> "org.apache.camel.exchange.send".equals(e.getEventType().getName()))
+                .isNotEmpty()
+                .allSatisfy(e -> assertThat(e.getString("endpointUri")).doesNotContain("secret"));
+    }
 }

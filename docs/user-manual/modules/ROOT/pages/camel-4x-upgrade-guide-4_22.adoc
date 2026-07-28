@@ -1421,3 +1421,15 @@ entry name could escape the intended directory (Tar Slip / Zip Slip).
 data format and the iterator/splitter modes. The full, unmodified entry name remains available
 so routes that intentionally recreate the archive's directory structure keep working — read it
 from `CamelTarFileEntryName` for tar and from `zipFileName` for zip instead of `CamelFileName`.
+
+=== camel-jfr
+
+Placing `camel-jfr` on the classpath now also installs *runtime instrumentation*
+in addition to the existing startup instrumentation. This registers a
+`RoutePolicyFactory`, an `InterceptStrategy` and an `EventNotifier` that emit JFR
+events for exchanges, routes, processors, endpoint sends, failures and
+redeliveries. The events are cheap when no recording is active.
+
+To restore the previous behavior (startup instrumentation only), set
+`runtimeEnabled` to `false` on the `FlightRecorderStartupStepRecorder`
+instance, for example via a `CamelContextCustomizer`.

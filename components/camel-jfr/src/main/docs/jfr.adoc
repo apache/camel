@@ -28,3 +28,43 @@ JFR recordings can be started at:
 - When starting Camel by setting `camel.main.startup-recorder-recording=true`.
 
 See the `flight-recorder` from the Camel Examples.
+
+== Runtime instrumentation
+
+Since *4.22*, placing `camel-jfr` on the classpath also installs runtime
+instrumentation that emits JFR events during message routing. This lets you
+attach a Flight Recorder to a *running* application (no restart required) and
+inspect per-exchange, per-route, per-processor and per-endpoint timing in the
+JVM's own profiler.
+
+The following event types are emitted under the `Camel Application / Runtime`
+category:
+
+[cols="2,3,2",options="header"]
+|===
+| Event | Description | Fields
+| `org.apache.camel.route` | Time an exchange spends in a single route | routeId, exchangeId, failed
+| `org.apache.camel.processor` | Time spent in an individual processor | exchangeId, routeId, processorId, processorType, failed
+| `org.apache.camel.exchange` | End-to-end time of an exchange | exchangeId, routeId, failed
+| `org.apache.camel.exchange.send` | Time to send to an endpoint | exchangeId, endpointUri, failed
+| `org.apache.camel.exchange.failed` | Emitted when an exchange fails | exchangeId, routeId, exceptionType, exceptionMessage
+| `org.apache.camel.redelivery` | Emitted on each redelivery attempt | exchangeId, routeId, attempt, maxAttempts
+|===
+
+Endpoint URIs are sanitized so credentials are not written to the recording.
+
+To capture the events on a running application:
+
+[source,bash]
+----
+jcmd <pid> JFR.start name=camel duration=60s filename=camel.jfr
+----
+
+Then open `camel.jfr` in Java Mission Control and look under
+*Event Browser -> Camel Application -> Runtime*.
+
+=== Disabling runtime instrumentation
+
+Runtime instrumentation is on by default. Disable it by setting
+`runtimeEnabled` to `false` on the `FlightRecorderStartupStepRecorder`,
+for example via a `CamelContextCustomizer` or Camel Main configuration.
