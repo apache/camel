@@ -155,6 +155,19 @@ class LlmClientGeminiTest {
     }
 
     @Test
+    void detectEndpointRecognizesGeminiCompatibleProxyWithApiKeyHeader() throws IOException {
+        AtomicReference<String> apiKeyHeader = new AtomicReference<>();
+        String baseUrl = startGeminiModelsServer(apiKeyHeader);
+        LlmClient client = LlmClient.create()
+                .withUrl(baseUrl)
+                .withApiKey("proxy-key");
+
+        assertThat(client.detectEndpoint()).isTrue();
+        assertThat(client.apiType()).isEqualTo(LlmClient.ApiType.gemini);
+        assertThat(apiKeyHeader.get()).isEqualTo("proxy-key");
+    }
+
+    @Test
     void detectEndpointAcceptsConfiguredGeminiApiKeyWithoutEnv() {
         LlmClient client = LlmClient.create()
                 .withApiType(LlmClient.ApiType.gemini)

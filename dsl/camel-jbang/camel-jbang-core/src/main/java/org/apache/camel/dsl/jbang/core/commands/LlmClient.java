@@ -1696,8 +1696,8 @@ public class LlmClient {
             return isEndpointReachable(url);
         }
         for (Map.Entry<String, ApiType> check : EXPLICIT_URL_HEALTH_CHECK_SUFFIXES) {
-            if (check.getValue() == ApiType.gemini && isGeminiEndpoint(url)) {
-                if (isEndpointReachable(url)) {
+            if (check.getValue() == ApiType.gemini) {
+                if (tryDetectGeminiAtExplicitUrl(url)) {
                     apiType = ApiType.gemini;
                     return true;
                 }
@@ -1713,6 +1713,22 @@ public class LlmClient {
             return true;
         }
         return false;
+    }
+
+    private boolean tryDetectGeminiAtExplicitUrl(String endpoint) {
+        if (isGeminiEndpoint(endpoint)) {
+            return isEndpointReachable(endpoint);
+        }
+        String key = apiKey;
+        if (key == null || key.isBlank()) {
+            key = resolveGeminiApiKeyFromEnv();
+        }
+        if (key == null || key.isBlank()) {
+            return false;
+        }
+        apiKey = key;
+        String base = normalizeGeminiBaseUrl(endpoint);
+        return tryHealthCheck(base + "/models", buildGeminiHeaders(key));
     }
 
     private boolean isOllamaRoot(String endpoint) {
