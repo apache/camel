@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LlmClientAzureGitHubTest {
+class LlmClientAzureTest {
 
     private HttpServer server;
 
@@ -83,30 +83,6 @@ class LlmClientAzureGitHubTest {
     }
 
     @Test
-    void normalizeOpenAiUrlNormalizesGitHubModelsHostLikeOpenAiCompatibleApi() {
-        LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.openai);
-
-        assertThat(client.normalizeOpenAiUrl("https://models.github.ai/inference"))
-                .isEqualTo("https://models.github.ai/inference/chat/completions");
-    }
-
-    @Test
-    void isGitHubModelsAutoDetectRequiresExplicitOptIn() {
-        assertThat(LlmClient.isGitHubModelsAutoDetectEnabled()).isFalse();
-    }
-
-    @Test
-    void isGitHubModelsOptInFlagRejectsDisabledValues() {
-        assertThat(LlmClient.isGitHubModelsOptInFlag(null)).isFalse();
-        assertThat(LlmClient.isGitHubModelsOptInFlag("")).isFalse();
-        assertThat(LlmClient.isGitHubModelsOptInFlag("0")).isFalse();
-        assertThat(LlmClient.isGitHubModelsOptInFlag("false")).isFalse();
-        assertThat(LlmClient.isGitHubModelsOptInFlag("FALSE")).isFalse();
-        assertThat(LlmClient.isGitHubModelsOptInFlag("1")).isTrue();
-        assertThat(LlmClient.isGitHubModelsOptInFlag("true")).isTrue();
-    }
-
-    @Test
     void detectEndpointReplacesLlamaPlaceholderWithFirstAzureDeploymentFromModelsApi() throws IOException {
         AtomicReference<String> apiKeyHeader = new AtomicReference<>();
         String baseUrl = startAzureModelsServer(apiKeyHeader);
@@ -152,20 +128,6 @@ class LlmClientAzureGitHubTest {
         assertThat(client.buildOpenAiAuthHeaders("azure-secret")).containsEntry("api-key", "azure-secret");
     }
 
-    @Test
-    void listsGitHubModelsWithBearerAuth() throws IOException {
-        AtomicReference<String> authHeader = new AtomicReference<>();
-        String baseUrl = startOpenAiCompatibleModelsServer(authHeader);
-        LlmClient client = LlmClient.create()
-                .withApiType(LlmClient.ApiType.openai)
-                .withUrl(baseUrl)
-                .withApiKey("ghp_test");
-
-        assertThat(client.detectEndpoint()).isTrue();
-        assertThat(client.listModels()).containsExactly("gpt-4o", "gpt-4o-mini");
-        assertThat(authHeader.get()).isEqualTo("Bearer ghp_test");
-    }
-
     private String startAzureModelsServer(AtomicReference<String> capturedApiKey) throws IOException {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         server.createContext("/openai/models", exchange -> {
@@ -179,23 +141,6 @@ class LlmClientAzureGitHubTest {
                 return;
             }
             byte[] bytes = "{\"data\":[{\"id\":\"deployment-a\"},{\"id\":\"deployment-b\"}]}"
-                    .getBytes(StandardCharsets.UTF_8);
-            exchange.sendResponseHeaders(200, bytes.length);
-            try (OutputStream os = exchange.getResponseBody()) {
-                os.write(bytes);
-            }
-        });
-        server.start();
-        return "http://127.0.0.1:" + server.getAddress().getPort();
-    }
-
-    private String startOpenAiCompatibleModelsServer(AtomicReference<String> capturedAuth) throws IOException {
-        server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
-        server.createContext("/v1/models", exchange -> {
-            if (capturedAuth != null) {
-                capturedAuth.set(exchange.getRequestHeaders().getFirst("Authorization"));
-            }
-            byte[] bytes = "{\"data\":[{\"id\":\"gpt-4o\"},{\"id\":\"gpt-4o-mini\"}]}"
                     .getBytes(StandardCharsets.UTF_8);
             exchange.sendResponseHeaders(200, bytes.length);
             try (OutputStream os = exchange.getResponseBody()) {

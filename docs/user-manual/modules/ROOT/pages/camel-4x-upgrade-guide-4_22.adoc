@@ -24,10 +24,7 @@ instead of hardcoded `3.33.1.1` (https://github.com/apache/camel/commit/d1f4713e
 The Camel CLI and TUI AI prompt (`camel ask`, TUI F8 panel) now auto-detect **Azure OpenAI**
 when `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT` are set (optional `AZURE_OPENAI_DEPLOYMENT_NAME`
 and `AZURE_OPENAI_API_VERSION`). Azure requests use the `api-key` header instead of `Authorization: Bearer`.
-
-**GitHub Models** is opt-in: set `GITHUB_MODELS=1` (or any non-false value) together with `GITHUB_TOKEN`
-to use `https://models.github.ai/inference`. A bare `GITHUB_TOKEN` alone does not select an LLM provider — the opt-in `GITHUB_MODELS` flag is required.
-GitHub Models is scheduled for retirement on 2026-07-30; see xref:camel-jbang-ai.adoc[Camel CLI - AI Tools] for the full detection order.
+See xref:camel-jbang-ai.adoc[Camel CLI - AI Tools] for the full detection order.
 
 The `camel cmd route-diagram` and `camel cmd route-topology` now accept one or more Camel route source files
 (instead of only the name/pid of a running integration), so diagrams and inter-route topology can be

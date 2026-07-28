@@ -52,7 +52,6 @@ public class LlmClient {
     private static final String DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6";
     private static final String DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
     private static final String DEFAULT_OLLAMA_MODEL = "llama3.2";
-    private static final String DEFAULT_GITHUB_MODELS_URL = "https://models.github.ai/inference";
     private static final String DEFAULT_AZURE_API_VERSION = "2024-10-21";
     /** Last-resort Azure deployment segment when URL normalization runs before model detection completes. */
     private static final String DEFAULT_AZURE_DEPLOYMENT_FALLBACK = "gpt-4o";
@@ -242,15 +241,14 @@ public class LlmClient {
         } else if (apiType != null) {
             found = switch (apiType) {
                 case anthropic -> tryAnthropicOrVertex();
-                case openai -> tryAzureOpenAi() || tryGitHubModels() || tryOpenAi();
+                case openai -> tryAzureOpenAi() || tryOpenAi();
                 case ollama -> tryInfraOllama() || tryDefaultOllama();
             };
         } else {
-            // auto-detect priority: anthropic → vertex → azure openai → github models → openai → ollama
+            // auto-detect priority: anthropic → vertex → azure openai → openai → ollama
             found = tryAnthropicApiKey()
                     || tryVertexAi()
                     || tryAzureOpenAi()
-                    || tryGitHubModels()
                     || tryOpenAi()
                     || tryInfraOllama()
                     || tryDefaultOllama();
@@ -1431,33 +1429,6 @@ public class LlmClient {
         }
     }
 
-    private boolean tryGitHubModels() {
-        if (!isGitHubModelsAutoDetectEnabled()) {
-            return false;
-        }
-        String token = System.getenv("GITHUB_TOKEN");
-        if (token == null || token.isBlank()) {
-            return false;
-        }
-        apiType = ApiType.openai;
-        apiKey = token;
-        openAiAuthMode = OpenAiAuthMode.bearer;
-        url = DEFAULT_GITHUB_MODELS_URL;
-        return true;
-    }
-
-    public static boolean isGitHubModelsAutoDetectEnabled() {
-        return isGitHubModelsOptInFlag(System.getenv("GITHUB_MODELS"));
-    }
-
-    static boolean isGitHubModelsOptInFlag(String flag) {
-        return flag != null && !flag.isBlank() && !"0".equals(flag) && !"false".equalsIgnoreCase(flag);
-    }
-
-    static boolean isGitHubModelsEndpoint(String endpoint) {
-        return endpoint != null && endpoint.contains("models.github.ai");
-    }
-
     private boolean tryInfraOllama() {
         try {
             Map<Long, Path> pids = findOllamaPids();
@@ -1691,12 +1662,6 @@ public class LlmClient {
 
     String normalizeOpenAiUrl(String endpoint) {
         String u = stripTrailingSlash(endpoint);
-        if (isGitHubModelsEndpoint(u)) {
-            if (u.endsWith("/chat/completions")) {
-                return u;
-            }
-            return u + "/chat/completions";
-        }
         if (isAzureOpenAiEndpoint(u)) {
             return normalizeAzureOpenAiChatUrl(u);
         }

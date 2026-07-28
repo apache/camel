@@ -291,7 +291,7 @@ class AiPanel {
             client = created;
             if (!client.detectEndpoint()) {
                 initError
-                        = "No LLM service reachable. Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GITHUB_MODELS+GITHUB_TOKEN, OPENAI_API_KEY, or start Ollama.";
+                        = "No LLM service reachable. Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, OPENAI_API_KEY, or start Ollama.";
                 client = null;
                 return;
             }

@@ -39,7 +39,6 @@ import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
@@ -291,8 +290,6 @@ class DoctorPopup {
             provider = "Vertex AI";
         } else if (envSet("AZURE_OPENAI_API_KEY") && envSet("AZURE_OPENAI_ENDPOINT")) {
             provider = "Azure OpenAI";
-        } else if (LlmClient.isGitHubModelsAutoDetectEnabled() && envSet("GITHUB_TOKEN")) {
-            provider = "GitHub Models";
         } else if (envSet("OPENAI_API_KEY")) {
             provider = "OpenAI";
         } else if (envSet("LLM_API_KEY")) {
@@ -311,7 +308,7 @@ class DoctorPopup {
                     Span.raw(String.format("%-30s", "No API key configured")),
                     Span.raw(" " + TuiIcons.WARN)));
             result.add(Line.from(Span.styled(
-                    "                    Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GITHUB_MODELS+GITHUB_TOKEN, or OPENAI_API_KEY",
+                    "                    Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, or OPENAI_API_KEY",
                     Style.EMPTY.dim())));
         }
     }
