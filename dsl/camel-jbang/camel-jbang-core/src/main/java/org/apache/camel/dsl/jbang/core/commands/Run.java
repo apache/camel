@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
@@ -42,6 +43,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import jdk.jfr.Configuration;
+import jdk.jfr.Recording;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -1256,6 +1259,9 @@ public class Run extends CamelCommand {
                 writeSetting(main, profileProperties, "camel.server.enabled", "true");
             }
         }
+        if (jfrEnabled()) {
+            dependencies.add("camel:jfr");
+        }
         if (!dependencies.isEmpty()) {
             var joined = String.join(",", dependencies);
             main.addInitialProperty(DEPENDENCIES, joined);
@@ -1344,6 +1350,39 @@ public class Run extends CamelCommand {
         dependencies.addAll(depsList);
     }
 
+    boolean jfrEnabled() {
+        return debugOptions.jfr || debugOptions.jfrProfile != null;
+    }
+
+    String jfrFileName() {
+        return (name != null ? name : "camel") + ".jfr";
+    }
+
+    /**
+     * Builds the {@code -XX:StartFlightRecording} JVM argument for runtimes that fork a subprocess (Quarkus, Spring
+     * Boot), or {@code null} when JFR was not requested.
+     */
+    String buildJfrJvmArgs() {
+        if (!jfrEnabled()) {
+            return null;
+        }
+        StringBuilder arg = new StringBuilder("-XX:StartFlightRecording=filename=").append(jfrFileName());
+        if (debugOptions.jfrProfile != null) {
+            arg.append(",settings=").append(debugOptions.jfrProfile);
+        }
+        return arg.toString();
+    }
+
+    static String mergeJvmArgs(String existing, String extra) {
+        if (extra == null) {
+            return existing;
+        }
+        if (existing == null || existing.isBlank()) {
+            return extra;
+        }
+        return existing.trim() + " " + extra;
+    }
+
     protected int runQuarkus() throws Exception {
         if (background) {
             printer().printErr("Run Camel Quarkus with --background is not supported");
@@ -1426,6 +1465,9 @@ public class Run extends CamelCommand {
         }
         eq.dependencies = this.dependencies;
         eq.addDependencies("camel:cli-connector");
+        if (jfrEnabled()) {
+            eq.addDependencies("camel:jfr");
+        }
         eq.mavenResolver = this.mavenResolver;
         eq.skipPlugins = this.skipPlugins;
         eq.packageScanJars = this.packageScanJars;
@@ -1469,8 +1511,9 @@ public class Run extends CamelCommand {
         mvnCmd.add("--quiet");
         mvnCmd.add("--file");
         mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
-        if (jvmArgs != null && !jvmArgs.isBlank()) {
-            mvnCmd.add("-Djvm.args=" + jvmArgs.trim());
+        String quarkusRunJvmArgs = mergeJvmArgs(jvmArgs, buildJfrJvmArgs());
+        if (quarkusRunJvmArgs != null && !quarkusRunJvmArgs.isBlank()) {
+            mvnCmd.add("-Djvm.args=" + quarkusRunJvmArgs.trim());
         }
         mvnCmd.add("package");
         mvnCmd.add("quarkus:" + (dev ? "dev" : "run"));
@@ -1508,6 +1551,16 @@ public class Run extends CamelCommand {
             d.setGroupId("org.apache.camel");
             d.setArtifactId("camel-cli-connector");
             model.getDependencies().add(d);
+        }
+        if (jfrEnabled()) {
+            boolean hasJfr = model.getDependencies().stream()
+                    .anyMatch(d -> "camel-jfr".equals(d.getArtifactId()));
+            if (!hasJfr) {
+                Dependency d = new Dependency();
+                d.setGroupId("org.apache.camel");
+                d.setArtifactId("camel-jfr");
+                model.getDependencies().add(d);
+            }
         }
 
         // write temporary pom with cli-connector injected
@@ -1554,6 +1607,13 @@ public class Run extends CamelCommand {
         if (profile != null && !"prod".equals(profile)) {
             camelJvmArgs.append("-Dcamel.main.profile=").append(profile);
         }
+        String camelJfrArg = buildJfrJvmArgs();
+        if (camelJfrArg != null) {
+            if (!camelJvmArgs.isEmpty()) {
+                camelJvmArgs.append(" ");
+            }
+            camelJvmArgs.append(camelJfrArg);
+        }
         if (jvmArgs != null && !jvmArgs.isBlank()) {
             if (!camelJvmArgs.isEmpty()) {
                 camelJvmArgs.append(" ");
@@ -1596,6 +1656,16 @@ public class Run extends CamelCommand {
             d.setGroupId("org.apache.camel.quarkus");
             d.setArtifactId("camel-quarkus-cli-connector");
             model.getDependencies().add(d);
+        }
+        if (jfrEnabled()) {
+            boolean hasJfr = model.getDependencies().stream()
+                    .anyMatch(d -> "camel-jfr".equals(d.getArtifactId()));
+            if (!hasJfr) {
+                Dependency d = new Dependency();
+                d.setGroupId("org.apache.camel");
+                d.setArtifactId("camel-jfr");
+                model.getDependencies().add(d);
+            }
         }
 
         // write temporary pom with cli-connector injected
@@ -1641,6 +1711,13 @@ public class Run extends CamelCommand {
         StringBuilder quarkusJvmArgs = new StringBuilder();
         if (profile != null && !"prod".equals(profile)) {
             quarkusJvmArgs.append("-Dcamel.main.profile=").append(profile);
+        }
+        String quarkusJfrArg = buildJfrJvmArgs();
+        if (quarkusJfrArg != null) {
+            if (!quarkusJvmArgs.isEmpty()) {
+                quarkusJvmArgs.append(" ");
+            }
+            quarkusJvmArgs.append(quarkusJfrArg);
         }
         if (jvmArgs != null && !jvmArgs.isBlank()) {
             if (!quarkusJvmArgs.isEmpty()) {
@@ -1749,6 +1826,9 @@ public class Run extends CamelCommand {
         }
         eq.dependencies.addAll(this.dependencies);
         eq.addDependencies("camel:cli-connector");
+        if (jfrEnabled()) {
+            eq.addDependencies("camel:jfr");
+        }
         if (this.dev) {
             // hot-reload of spring-boot
             eq.addDependencies("mvn:org.springframework.boot:spring-boot-devtools");
@@ -1789,8 +1869,9 @@ public class Run extends CamelCommand {
         mvnCmd.add("--quiet");
         mvnCmd.add("--file");
         mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
-        if (jvmArgs != null && !jvmArgs.isBlank()) {
-            mvnCmd.add("-Dspring-boot.run.jvmArguments=" + jvmArgs.trim());
+        String springBootRunJvmArgs = mergeJvmArgs(jvmArgs, buildJfrJvmArgs());
+        if (springBootRunJvmArgs != null && !springBootRunJvmArgs.isBlank()) {
+            mvnCmd.add("-Dspring-boot.run.jvmArguments=" + springBootRunJvmArgs.trim());
         }
         mvnCmd.add("spring-boot:run");
         pb.command(mvnCmd);
@@ -1821,6 +1902,16 @@ public class Run extends CamelCommand {
             d.setGroupId("org.apache.camel.springboot");
             d.setArtifactId("camel-cli-connector-starter");
             model.getDependencies().add(d);
+        }
+        if (jfrEnabled()) {
+            boolean hasJfr = model.getDependencies().stream()
+                    .anyMatch(d -> "camel-jfr".equals(d.getArtifactId()));
+            if (!hasJfr) {
+                Dependency d = new Dependency();
+                d.setGroupId("org.apache.camel");
+                d.setArtifactId("camel-jfr");
+                model.getDependencies().add(d);
+            }
         }
 
         // write temporary pom with cli-connector injected
@@ -1875,6 +1966,10 @@ public class Run extends CamelCommand {
         StringBuilder sbJvmArgs = new StringBuilder("-Dlogging.config=classpath:logback-camel-jbang.xml");
         if (profile != null && !"prod".equals(profile)) {
             sbJvmArgs.append(" -Dcamel.main.profile=").append(profile);
+        }
+        String sbJfrArg = buildJfrJvmArgs();
+        if (sbJfrArg != null) {
+            sbJvmArgs.append(" ").append(sbJfrArg);
         }
         if (jvmArgs != null && !jvmArgs.isBlank()) {
             sbJvmArgs.append(" ").append(jvmArgs.trim());
@@ -2346,16 +2441,47 @@ public class Run extends CamelCommand {
     }
 
     protected int runKameletMain(KameletMain main) throws Exception {
+        Recording jfrRecording = startJfrRecording();
         try {
             main.start();
             main.run();
         } finally {
+            stopJfrRecording(jfrRecording);
             // cleanup and delete log file
             if (logFile != null) {
                 FileUtil.deleteFile(logFile);
             }
         }
         return main.getExitCode();
+    }
+
+    /**
+     * Starts a JDK Flight Recorder recording for the in-process run (this JVM never forks, so the
+     * {@code -XX:StartFlightRecording} JVM flag used for the Quarkus/Spring Boot runtimes cannot apply here).
+     */
+    private Recording startJfrRecording() {
+        if (!jfrEnabled()) {
+            return null;
+        }
+        try {
+            Configuration config = Configuration.getConfiguration(
+                    debugOptions.jfrProfile != null ? debugOptions.jfrProfile : "default");
+            Recording recording = new Recording(config);
+            recording.setDestination(Paths.get(jfrFileName()));
+            recording.start();
+            printer().println("Java Flight Recorder recording to " + jfrFileName());
+            return recording;
+        } catch (IOException | ParseException e) {
+            printer().printErr("WARN: Failed to start Java Flight Recorder: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private void stopJfrRecording(Recording recording) {
+        if (recording != null) {
+            recording.stop();
+            recording.close();
+        }
     }
 
     private String loadFromCode(String code, String name, boolean file) throws IOException {
@@ -2865,11 +2991,13 @@ public class Run extends CamelCommand {
 
     static class DebugOptions {
         @Option(names = { "--jfr" }, defaultValue = "false",
-                description = "Enables Java Flight Recorder saving recording to disk on exit")
+                description = "Enables Java Flight Recorder, saving a recording to <name>.jfr on exit. "
+                              + "Automatically adds camel-jfr so runtime instrumentation events "
+                              + "(route, processor, exchange, etc.) are captured.")
         boolean jfr;
 
         @Option(names = { "--jfr-profile" },
-                description = "Java Flight Recorder profile to use (such as default or profile)")
+                description = "Java Flight Recorder settings profile to use (such as default or profile). Implies --jfr.")
         String jfrProfile;
 
         @Option(names = { "--trace" }, defaultValue = "false",

@@ -155,6 +155,25 @@ The `--open-telemetry-agent-export` option has been extended with new values and
 The `camel.opentelemetry2.exportTarget` property in `OpenTelemetryTracer` now accepts any
 non-empty value to signal external export mode (previously only `"jaeger"` was recognized).
 
+==== `camel run --jfr` now actually enables Java Flight Recorder
+
+`--jfr` and `--jfr-profile` were previously accepted by `camel run` but had no effect on any
+runtime (`main`, `quarkus`, `springBoot`): the flags only wrote an internal
+`camel.jbang.jfr`/`camel.jbang.jfr-profile` property that nothing read.
+
+They now start a real recording:
+
+* For the default in-process runtime, a `jdk.jfr.Recording` is started before the routes start
+  and stopped/dumped to `<name>.jfr` on shutdown.
+* For `quarkus` and `springBoot` (including running against an existing Maven project), a
+  `-XX:StartFlightRecording=filename=<name>.jfr[,settings=<jfr-profile>]` JVM argument is passed
+  to the forked process.
+
+In both cases, `camel:jfr` (`camel-jfr`) is now automatically added as a dependency so the
+runtime instrumentation events (route, processor, exchange, send, failed, redelivery) are
+captured, not just JVM-level events. If you were passing `--jfr` expecting no effect, this now
+writes a `.jfr` file and adds `camel-jfr` to the classpath.
+
 ==== Website installers for the Camel CLI
 
 Two canonical installer scripts are now available for installing the
