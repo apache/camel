@@ -96,6 +96,7 @@ class TabRegistry {
     private MemoryTab memoryTab;
     private HeapHistogramTab heapHistogramTab;
     private MemoryLeakTab memoryLeakTab;
+    private JfrTab jfrTab;
     private ThreadsTab threadsTab;
     private SpansTab spansTab;
     private ProcessTab processTab;
@@ -132,6 +133,7 @@ class TabRegistry {
         dataSourceTab = new DataSourceTab(ctx);
         heapHistogramTab = new HeapHistogramTab(ctx);
         memoryLeakTab = new MemoryLeakTab(ctx);
+        jfrTab = new JfrTab(ctx);
         sqlQueryTab = new SqlQueryTab(ctx);
         internalTasksTab = new InternalTasksTab(ctx);
         sqlTraceTab = new SqlTraceTab(ctx);
@@ -231,6 +233,9 @@ class TabRegistry {
                 // JVM
                 new MoreTab(TuiIcons.TAB_CLASSPATH, "Classpath", "&Classpath", classpathTab, "JVM"),
                 new MoreTab(TuiIcons.TAB_HEAP, "Heap Memory Histogram", "Heap &Memory Histogram", heapHistogramTab, "JVM"),
+                new MoreTab(
+                        TuiIcons.TAB_JFR, "JFR", "&JFR", jfrTab, "JVM",
+                        List.of("jfr")),
                 new MoreTab(TuiIcons.TAB_MEMORY, "Memory Usage", "&Memory Usage", memoryTab, "JVM"),
                 new MoreTab(TuiIcons.TAB_MEMORY_LEAK, "Memory Leak", "&Memory Leak", memoryLeakTab, "JVM"),
                 new MoreTab(TuiIcons.TAB_PROCESS, "Process", "&Process", processTab, "JVM"),
