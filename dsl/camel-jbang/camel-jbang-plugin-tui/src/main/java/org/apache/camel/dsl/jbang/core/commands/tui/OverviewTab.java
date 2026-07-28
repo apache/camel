@@ -560,7 +560,7 @@ class OverviewTab extends AbstractTab {
                             rightCell(throughputDisplay != null ? throughputDisplay : "", 8),
                             Cell.from(totalCell),
                             Cell.from(failCell),
-                            rightCell(timingCol, 14),
+                            rightCell(timingCol, 20),
                             Cell.from(buildPercentileBarLine(info.p50Time, info.p95Time, info.p99Time, 10))).style(rowBg));
                 }
             }
@@ -576,7 +576,7 @@ class OverviewTab extends AbstractTab {
                     rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
                     centerCell(sortLabel("TOTAL", "total"), 14, sortStyle("total")),
                     centerCell(sortLabel("FAIL", "fail"), 14, sortStyle("fail")),
-                    rightCell(timingHeader, 14, Style.EMPTY.bold()),
+                    rightCell(timingHeader, 20, Style.EMPTY.bold()),
                     Cell.from(""));
 
             widths = new Constraint[] {
@@ -589,8 +589,8 @@ class OverviewTab extends AbstractTab {
                     Constraint.length(8),
                     Constraint.length(14),
                     Constraint.length(14),
-                    Constraint.length(14),
-                    Constraint.fill()
+                    Constraint.min(20),
+                    Constraint.length(0)
             };
         }
 

@@ -751,9 +751,11 @@ class RoutesTab extends AbstractTab {
 
                 String timingCol;
                 if (hasPercentiles && route.p50Time >= 0) {
-                    timingCol = route.p50Time + "/" + route.p95Time + "/" + route.p99Time;
+                    timingCol = formatDurationMs(route.p50Time) + "/" + formatDurationMs(route.p95Time) + "/"
+                                + formatDurationMs(route.p99Time);
                 } else if (route.total > 0) {
-                    timingCol = route.minTime + "/" + route.maxTime + "/" + route.meanTime;
+                    timingCol = formatDurationMs(route.minTime) + "/" + formatDurationMs(route.maxTime) + "/"
+                                + formatDurationMs(route.meanTime);
                 } else {
                     timingCol = "";
                 }
@@ -774,7 +776,7 @@ class RoutesTab extends AbstractTab {
                         rightCell(formatThroughput(route.throughput), 8),
                         Cell.from(totalCell),
                         Cell.from(failCell),
-                        rightCell(timingCol, 14),
+                        rightCell(timingCol, 20),
                         Cell.from(buildPercentileBarLine(route.p50Time, route.p95Time, route.p99Time, 10))));
             }
 
@@ -783,9 +785,11 @@ class RoutesTab extends AbstractTab {
                 Style ts = Theme.label();
                 String totalTimingCol;
                 if (hasPercentiles && selDef.p50Time >= 0) {
-                    totalTimingCol = selDef.p50Time + "/" + selDef.p95Time + "/" + selDef.p99Time;
+                    totalTimingCol = formatDurationMs(selDef.p50Time) + "/" + formatDurationMs(selDef.p95Time) + "/"
+                                     + formatDurationMs(selDef.p99Time);
                 } else {
-                    totalTimingCol = selDef.minTime + "/" + selDef.maxTime + "/" + selDef.meanTime;
+                    totalTimingCol = formatDurationMs(selDef.minTime) + "/" + formatDurationMs(selDef.maxTime) + "/"
+                                     + formatDurationMs(selDef.meanTime);
                 }
                 routeRows.add(Row.from(
                         Cell.from(Span.styled("GLOBAL", ts)),
@@ -795,7 +799,7 @@ class RoutesTab extends AbstractTab {
                         Cell.from(Span.styled(String.format("%" + tw + "d", selDef.exchangesTotal), ts)),
                         Cell.from(Span.styled(String.format("%" + fw + "d", selDef.failed),
                                 selDef.failed > 0 ? Theme.error().bold() : ts)),
-                        rightCell(totalTimingCol, 14, ts),
+                        rightCell(totalTimingCol, 20, ts),
                         Cell.from(buildPercentileBarLine(selDef.p50Time, selDef.p95Time, selDef.p99Time, 10))));
             }
 
@@ -810,7 +814,7 @@ class RoutesTab extends AbstractTab {
                             rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
                             centerCell(routeSortLabel("TOTAL", "total"), 14, routeSortStyle("total")),
                             centerCell(routeSortLabel("FAIL", "failed"), 14, routeSortStyle("failed")),
-                            rightCell(timingHeader, 14, Style.EMPTY.bold()),
+                            rightCell(timingHeader, 20, Style.EMPTY.bold()),
                             Cell.from("")))
                     .widths(
                             Constraint.length(24),
@@ -819,7 +823,7 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(10),
                             Constraint.length(14),
                             Constraint.length(14),
-                            Constraint.length(14),
+                            Constraint.min(20),
                             Constraint.length(12))
                     .highlightStyle(Theme.selectionBg())
                     .highlightSpacing(Table.HighlightSpacing.ALWAYS)
@@ -1360,9 +1364,11 @@ class RoutesTab extends AbstractTab {
             Style routeStyle = route.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
             String routeTimingCol;
             if (hasProcPercentiles && route.p50Time >= 0) {
-                routeTimingCol = route.p50Time + "/" + route.p95Time + "/" + route.p99Time;
+                routeTimingCol = formatDurationMs(route.p50Time) + "/" + formatDurationMs(route.p95Time) + "/"
+                                 + formatDurationMs(route.p99Time);
             } else if (route.total > 0) {
-                routeTimingCol = route.minTime + "/" + route.maxTime + "/" + route.meanTime;
+                routeTimingCol = formatDurationMs(route.minTime) + "/" + formatDurationMs(route.maxTime) + "/"
+                                 + formatDurationMs(route.meanTime);
             } else {
                 routeTimingCol = "";
             }
@@ -1374,7 +1380,7 @@ class RoutesTab extends AbstractTab {
                     rightCell(String.valueOf(route.failed), 6,
                             route.failed > 0 ? Theme.error() : Style.EMPTY),
                     rightCell(String.valueOf(route.inflight), 8),
-                    rightCell(routeTimingCol, 14),
+                    rightCell(routeTimingCol, 20),
                     Cell.from(buildPercentileBarLine(route.p50Time, route.p95Time, route.p99Time, 10))));
 
             for (ProcessorInfo proc : route.processors) {
@@ -1383,9 +1389,11 @@ class RoutesTab extends AbstractTab {
 
                 String procTimingCol;
                 if (hasProcPercentiles && proc.p50Time >= 0) {
-                    procTimingCol = proc.p50Time + "/" + proc.p95Time + "/" + proc.p99Time;
+                    procTimingCol = formatDurationMs(proc.p50Time) + "/" + formatDurationMs(proc.p95Time) + "/"
+                                    + formatDurationMs(proc.p99Time);
                 } else if (proc.total > 0) {
-                    procTimingCol = proc.minTime + "/" + proc.maxTime + "/" + proc.meanTime;
+                    procTimingCol = formatDurationMs(proc.minTime) + "/" + formatDurationMs(proc.maxTime) + "/"
+                                    + formatDurationMs(proc.meanTime);
                 } else {
                     procTimingCol = "";
                 }
@@ -1398,7 +1406,7 @@ class RoutesTab extends AbstractTab {
                         rightCell(String.valueOf(proc.failed), 6,
                                 proc.failed > 0 ? Theme.error() : Style.EMPTY),
                         rightCell(String.valueOf(proc.inflight), 8),
-                        rightCell(procTimingCol, 14),
+                        rightCell(procTimingCol, 20),
                         Cell.from(buildPercentileBarLine(proc.p50Time, proc.p95Time, proc.p99Time, 10))));
             }
             String procTimingHeader = hasProcPercentiles ? "P50/P95/P99" : "MIN/MAX/MEAN";
@@ -1412,7 +1420,7 @@ class RoutesTab extends AbstractTab {
                             rightCell("TOTAL", 8, Style.EMPTY.bold()),
                             rightCell("FAIL", 6, Style.EMPTY.bold()),
                             rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                            rightCell(procTimingHeader, 14, Style.EMPTY.bold()),
+                            rightCell(procTimingHeader, 20, Style.EMPTY.bold()),
                             Cell.from("")))
                     .widths(
                             Constraint.length(20),
@@ -1421,7 +1429,7 @@ class RoutesTab extends AbstractTab {
                             Constraint.length(8),
                             Constraint.length(6),
                             Constraint.length(8),
-                            Constraint.length(14),
+                            Constraint.min(20),
                             Constraint.length(12))
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(" Processors [" + route.routeId + "] ")
