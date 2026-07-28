@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* Camel TUI Gruvbox Light theme. Warm sepia-toned light palette with earthy colors. */
+/* Camel TUI Gruvbox Light theme. Retro groove palette on a warm light base. */
 
 $brand: #AF3A03;
 $gruvbox-bg: #FBF1C7;
@@ -28,19 +28,19 @@ $gruvbox-fg: #3C3836;
 #title          { color: $brand; text-style: bold; }
 #success        { color: #79740E; }
 #warning        { color: #B57614; }
-#error          { color: #CC241D; }
+#error          { color: #9D0006; }
 #muted          { color: #928374; }
-#selection      { color: white; background: #D65D0E; text-style: bold; }
+#selection      { color: white; background: #AF3A03; text-style: bold; }
 #info           { color: #076678; }
 #notice         { color: #8F3F71; }
-#row-alt        { background: #F2E5BC; }
+#row-alt        { background: #EBDBB2; }
 #base-bg        { background: $gruvbox-bg; }
 #base-fg        { color: $gruvbox-fg; }
 
 /* Content tokens — labels, change indicators, search highlight */
 #label          { color: #B57614; }
 #change         { color: #B57614; }
-#search-match   { color: $gruvbox-fg; background: #B57614; }
+#search-match   { color: #3C3836; background: #B57614; }
 #mnemonic       { color: #B57614; text-style: bold underline; }
 
 /* Diagram tokens */

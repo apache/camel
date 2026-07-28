@@ -51,15 +51,16 @@ class SettingsPopup {
     private static final int ROW_SELECT_TAB = 2;
     private static final int ROW_LOG_PIN = 3;
     private static final int ROW_RATE_PER = 4;
-    private static final int ROW_FOLDER = 5;
-    private static final int ROW_PROXY_HOST = 6;
-    private static final int ROW_PROXY_PORT = 7;
-    private static final int ROW_SHELL_HISTORY = 8;
-    private static final int ROW_AI_PROVIDER = 9;
-    private static final int ROW_AI_MODEL = 10;
-    private static final int ROW_AI_URL = 11;
-    private static final int ROW_AI_PROMPT_HISTORY = 12;
-    private static final int ROW_COUNT = 13;
+    private static final int ROW_CONFIRM_ACTIONS = 5;
+    private static final int ROW_FOLDER = 6;
+    private static final int ROW_PROXY_HOST = 7;
+    private static final int ROW_PROXY_PORT = 8;
+    private static final int ROW_SHELL_HISTORY = 9;
+    private static final int ROW_AI_PROVIDER = 10;
+    private static final int ROW_AI_MODEL = 11;
+    private static final int ROW_AI_URL = 12;
+    private static final int ROW_AI_PROMPT_HISTORY = 13;
+    private static final int ROW_COUNT = 14;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
     private static final String[] RATE_PER_OPTIONS = { "seconds", "minutes" };
@@ -83,6 +84,7 @@ class SettingsPopup {
     private int selectTabIndex;
     private int logPinIndex;
     private int ratePerIndex;
+    private int confirmActionsIndex;
     private int aiProviderIndex;
     private TextInputState folderInput;
     private TextInputState proxyHostInput;
@@ -157,6 +159,8 @@ class SettingsPopup {
 
         String currentRatePer = settings.getRatePer() != null ? settings.getRatePer() : "seconds";
         ratePerIndex = "minutes".equals(currentRatePer) ? 1 : 0;
+
+        confirmActionsIndex = settings.isConfirmActions() ? 1 : 0;
 
         folderInput = new TextInputState(settings.getDefaultFolder() != null ? settings.getDefaultFolder() : "");
         proxyHostInput = new TextInputState(settings.getProxyHost() != null ? settings.getProxyHost() : "");
@@ -253,6 +257,12 @@ class SettingsPopup {
             }
             return true;
         }
+        if (selectedRow == ROW_CONFIRM_ACTIONS) {
+            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
+                confirmActionsIndex = confirmActionsIndex == 0 ? 1 : 0;
+            }
+            return true;
+        }
         if (selectedRow == ROW_FOLDER) {
             handleTextInput(ke, folderInput);
             return true;
@@ -308,6 +318,10 @@ class SettingsPopup {
         settings.setRatePer("seconds".equals(ratePerValue) ? null : ratePerValue);
         if (monitorContext != null) {
             monitorContext.ratePerMinute = "minutes".equals(ratePerValue);
+        }
+        settings.setConfirmActions(confirmActionsIndex == 1 ? "true" : "false");
+        if (monitorContext != null) {
+            monitorContext.confirmActions = confirmActionsIndex == 1;
         }
         settings.setDefaultFolder(stripControlChars(folderInput.text().trim()));
         settings.setProxyHost(stripControlChars(proxyHostInput.text().trim()));
@@ -373,6 +387,11 @@ class SettingsPopup {
         renderValue(frame, innerX + labelW, rowY, fieldW, RATE_PER_OPTIONS[ratePerIndex], selectedRow == ROW_RATE_PER);
         rowY++;
 
+        renderLabel(frame, innerX, rowY, labelW, "Confirm:", selectedRow == ROW_CONFIRM_ACTIONS);
+        renderValue(frame, innerX + labelW, rowY, fieldW, confirmActionsIndex == 1 ? "on" : "off",
+                selectedRow == ROW_CONFIRM_ACTIONS);
+        rowY++;
+
         renderLabel(frame, innerX, rowY, labelW, "Default Folder:", selectedRow == ROW_FOLDER);
         renderFolder(frame, innerX + labelW, rowY, fieldW, selectedRow == ROW_FOLDER);
         rowY++;
@@ -414,7 +433,7 @@ class SettingsPopup {
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_SELECT_TAB
                 || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER
-                || selectedRow == ROW_AI_PROVIDER) {
+                || selectedRow == ROW_CONFIRM_ACTIONS || selectedRow == ROW_AI_PROVIDER) {
             hint(spans, "Space", "cycle");
         }
         hint(spans, "Enter", "save");

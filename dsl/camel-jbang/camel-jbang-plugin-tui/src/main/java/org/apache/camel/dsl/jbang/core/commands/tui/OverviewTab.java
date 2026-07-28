@@ -72,6 +72,8 @@ class OverviewTab extends AbstractTab {
         void openDoc(IntegrationInfo info);
 
         void openFilesPopup();
+
+        void showConfirm(String title, String message, Runnable onConfirm);
     }
 
     private static final long VANISH_DURATION_MS = 6000;
@@ -196,12 +198,25 @@ class OverviewTab extends AbstractTab {
                 IntegrationInfo selInfo = ctx.findSelectedIntegration();
                 if (selInfo != null) {
                     String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
-                    actions.sendRouteCommand(ctx.selectedPid, "*", cmd);
+                    if (ctx.confirmActions) {
+                        String label = selInfo.routeStarted > 0 ? "Stop" : "Start";
+                        actions.showConfirm("Confirm " + label + " Routes",
+                                " " + label + " all routes for " + ctx.selectedName() + "? ",
+                                () -> actions.sendRouteCommand(ctx.selectedPid, "*", cmd));
+                    } else {
+                        actions.sendRouteCommand(ctx.selectedPid, "*", cmd);
+                    }
                 }
                 return true;
             }
             if (ke.isChar('x') && ctx.selectedPid != null) {
-                actions.stopSelectedProcess(false);
+                if (ctx.confirmActions) {
+                    actions.showConfirm("Confirm Stop",
+                            " Stop " + ctx.selectedName() + " (PID: " + ctx.selectedPid + ")? ",
+                            () -> actions.stopSelectedProcess(false));
+                } else {
+                    actions.stopSelectedProcess(false);
+                }
                 return true;
             }
             if (ke.isChar('X') && ctx.selectedPid != null) {
@@ -209,7 +224,13 @@ class OverviewTab extends AbstractTab {
                 return true;
             }
             if (ke.isChar('r') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
-                actions.restartSelectedProcess();
+                if (ctx.confirmActions) {
+                    actions.showConfirm("Confirm Restart",
+                            " Restart " + ctx.selectedName() + " (PID: " + ctx.selectedPid + ")? ",
+                            () -> actions.restartSelectedProcess());
+                } else {
+                    actions.restartSelectedProcess();
+                }
                 return true;
             }
             if (ke.isChar('f') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
@@ -1374,6 +1395,18 @@ class OverviewTab extends AbstractTab {
                 - `S` — reverse sort order
                 - `F2` — actions menu (includes theme toggle, go to tab, etc.)
                 - `F3` — switch integration
+
+                ## Process Control
+
+                - `p` — stop or start all routes for the selected integration
+                - `x` — stop the selected integration (graceful shutdown)
+                - `X` — kill the selected integration (force terminate, always confirms)
+                - `r` — restart the selected integration
+                - `q` — quit the TUI
+
+                By default, these actions show a confirmation dialog before executing.
+                You can turn this off in Settings (`F2` → `Settings...` → `Confirm`).
+                Kill (`X`) always confirms regardless of this setting.
                 """;
     }
 

@@ -418,6 +418,11 @@ public class CamelMonitor extends CamelCommand {
             public void openFilesPopup() {
                 CamelMonitor.this.openFilesPopup();
             }
+
+            @Override
+            public void showConfirm(String title, String message, Runnable onConfirm) {
+                popupManager.showConfirm(title, message, onConfirm);
+            }
         });
 
         // Initial data load (synchronous before TUI starts)
@@ -533,6 +538,7 @@ public class CamelMonitor extends CamelCommand {
             applyStartingTab();
             applyLogPin();
             applyRatePer();
+            applyConfirmActions();
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -602,6 +608,10 @@ public class CamelMonitor extends CamelCommand {
     private void applyRatePer() {
         String ratePer = TuiSettings.load().getRatePer();
         ctx.ratePerMinute = "minutes".equals(ratePer);
+    }
+
+    private void applyConfirmActions() {
+        ctx.confirmActions = TuiSettings.load().isConfirmActions();
     }
 
     // ---- Event Handling ----
@@ -742,7 +752,11 @@ public class CamelMonitor extends CamelCommand {
                 || beanFilterActive || classpathFilterActive || mavenDepsFilterActive || sqlInputActive
                 || catalogFilterActive;
         if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
-            runner.quit();
+            if (!ke.isCtrlC() && ctx.confirmActions) {
+                popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> runner.quit());
+            } else {
+                runner.quit();
+            }
             return true;
         }
         if (ke.isCtrlC()) {
@@ -1347,6 +1361,9 @@ public class CamelMonitor extends CamelCommand {
         }
         if (popupManager.isKillConfirmVisible()) {
             popupManager.renderKillConfirm(frame, contentArea);
+        }
+        if (popupManager.isConfirmVisible()) {
+            popupManager.renderConfirm(frame, contentArea);
         }
         actionsPopup.render(frame, contentArea);
         if (captionOverlay.isCaptionVisible()) {

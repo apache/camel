@@ -475,6 +475,9 @@ Open the *F2* actions menu and choose *Settings...* to change TUI preferences in
   chosen. Defaults to *Overview*.
 * *Select Tab* -- the tab to switch to when selecting an integration from the Overview tab.
   Defaults to *Log*.
+* *Confirm* -- whether destructive actions (quit, stop, restart, stop/start routes) show a
+  confirmation dialog before executing. Defaults to *on*. Kill (*X*) always confirms regardless
+  of this setting.
 * *Default Folder* -- the folder pre-filled in *Run from Folder*. The most recently used folder
   still takes precedence; this default is used only when there is no remembered folder.
 
@@ -482,8 +485,8 @@ Use *↑*/*↓* to move between rows, *Space* (or *←*/*→*) to cycle the them
 edit the default folder, *Enter* to save, and *Esc* to cancel.
 
 Settings are stored under `camel.tui.*` keys (`camel.tui.theme`, `camel.tui.startTab`,
-`camel.tui.selectTab`, `camel.tui.defaultFolder`, `camel.tui.shell.history`,
-`camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
+`camel.tui.selectTab`, `camel.tui.confirmActions`, `camel.tui.defaultFolder`,
+`camel.tui.shell.history`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
 written back to the file where it currently lives: a key present in the local
 `./camel-cli.properties` is treated as a project-level override and stays local, while every
 other key defaults to the global `~/.camel-cli.properties`. This means a project can
