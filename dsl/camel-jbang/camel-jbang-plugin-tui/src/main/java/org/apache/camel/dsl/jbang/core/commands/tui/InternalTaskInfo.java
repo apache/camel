@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 class InternalTaskInfo {
     String name;
     String status;
+    boolean attempting;
     long attempts;
     long delay;
     long elapsed;

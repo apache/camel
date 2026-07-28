@@ -26,8 +26,6 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyCode;
-import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -44,24 +42,6 @@ class ConsumersTab extends AbstractTableTab {
 
     ConsumersTab(MonitorContext ctx) {
         super(ctx, "id", "status", "type", "remote", "inflight", "polls", "uri");
-    }
-
-    @Override
-    public void navigateUp() {
-    }
-
-    @Override
-    public void navigateDown() {
-    }
-
-    @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)
-                || ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)
-                || ke.isHome() || ke.isEnd()) {
-            return false;
-        }
-        return super.handleKeyEvent(ke);
     }
 
     @Override
@@ -136,6 +116,8 @@ class ConsumersTab extends AbstractTableTab {
                         Constraint.length(8),
                         Constraint.length(22),
                         Constraint.fill())
+                .highlightStyle(Theme.selectionBg())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Consumers ").build())
                 .build();

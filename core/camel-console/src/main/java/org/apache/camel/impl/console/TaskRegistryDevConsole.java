@@ -63,6 +63,7 @@ public class TaskRegistryDevConsole extends AbstractDevConsole {
             JsonObject jo = new JsonObject();
             jo.put("name", task.getName());
             jo.put("status", task.getStatus().name());
+            jo.put("attempting", task.isAttempting());
             jo.put("attempts", task.iteration());
             jo.put("delay", task.getCurrentDelay());
             jo.put("elapsed", task.getCurrentElapsedTime());

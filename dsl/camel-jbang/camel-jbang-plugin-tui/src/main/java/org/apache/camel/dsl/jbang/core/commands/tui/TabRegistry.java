@@ -202,7 +202,7 @@ class TabRegistry {
                         List.of(), info -> !info.services.isEmpty()),
                 new MoreTab(TuiIcons.TAB_EVENTS, "Events", "&Exchange Events", eventTab, "Observability"),
                 new MoreTab(
-                        TuiIcons.TAB_INTERNAL_TASKS, "Internal Tasks", "In&ternal Tasks", internalTasksTab,
+                        TuiIcons.TAB_RECOVERY_TASKS, "Recovery Tasks", "&Recovery Tasks", internalTasksTab,
                         "Observability",
                         List.of(), info -> !info.internalTasks.isEmpty()),
                 new MoreTab(

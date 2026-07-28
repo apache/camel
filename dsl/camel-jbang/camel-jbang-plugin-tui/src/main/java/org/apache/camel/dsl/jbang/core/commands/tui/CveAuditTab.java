@@ -66,7 +66,7 @@ class CveAuditTab extends AbstractTableTab {
     private int scannedCount;
 
     CveAuditTab(MonitorContext ctx) {
-        super(ctx, "severity", "id", "artifact");
+        super(ctx, "severity", "id", "artifact", "via");
     }
 
     @Override
@@ -209,22 +209,21 @@ class CveAuditTab extends AbstractTableTab {
             String firstParent = group.affectedGavs.isEmpty() ? null : group.gavParents.get(firstArtifact);
             int artCount = group.affectedGavs.size();
             String artDisplay = firstArtifact;
-            if (firstParent != null) {
-                artDisplay += " (via " + firstParent + ")";
-            }
             if (artCount > 1) {
                 artDisplay += " (+" + (artCount - 1) + ")";
             }
+            String viaDisplay = firstParent != null ? firstParent : "";
 
             rows.add(Row.from(
                     Cell.from(Span.styled(group.severity != null ? group.severity : "", severityStyle(group.severity))),
                     Cell.from(Span.styled(group.canonicalId != null ? group.canonicalId : "", Style.EMPTY.bold())),
                     Cell.from(Span.styled(artDisplay, Style.EMPTY.fg(Theme.accent()))),
+                    Cell.from(Span.styled(viaDisplay, Style.EMPTY.dim())),
                     Cell.from(Span.styled(group.summary != null ? group.summary : "", Style.EMPTY.dim()))));
         }
 
         if (rows.isEmpty() && dataLoaded) {
-            rows.add(emptyRow("No matching vulnerabilities", 4));
+            rows.add(emptyRow("No matching vulnerabilities", 5));
         }
 
         String title = buildTitle();
@@ -235,11 +234,13 @@ class CveAuditTab extends AbstractTableTab {
                         Cell.from(Span.styled(sortLabel("SEVERITY", "severity"), sortStyle("severity"))),
                         Cell.from(Span.styled(sortLabel("CVE ID", "id"), sortStyle("id"))),
                         Cell.from(Span.styled(sortLabel("ARTIFACT", "artifact"), sortStyle("artifact"))),
+                        Cell.from(Span.styled(sortLabel("VIA", "via"), sortStyle("via"))),
                         Cell.from(Span.styled("SUMMARY", Style.EMPTY.dim()))))
                 .widths(
                         Constraint.length(10),
-                        Constraint.length(20),
-                        Constraint.percentage(30),
+                        Constraint.length(16),
+                        Constraint.percentage(25),
+                        Constraint.percentage(15),
                         Constraint.fill())
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
@@ -448,6 +449,7 @@ class CveAuditTab extends AbstractTableTab {
                 case "artifact" -> compareStr(
                         a.affectedGavs.isEmpty() ? "" : a.affectedGavs.get(0),
                         b.affectedGavs.isEmpty() ? "" : b.affectedGavs.get(0));
+                case "via" -> compareStr(firstParent(a), firstParent(b));
                 default -> Integer.compare(severityIndex(a.severity), severityIndex(b.severity));
             };
             return sortReversed ? -cmp : cmp;
@@ -534,6 +536,14 @@ class CveAuditTab extends AbstractTableTab {
         };
     }
 
+    private static String firstParent(VulnGroup g) {
+        if (g.affectedGavs.isEmpty()) {
+            return "";
+        }
+        String parent = g.gavParents.get(g.affectedGavs.get(0));
+        return parent != null ? parent : "";
+    }
+
     private static int severityIndex(String severity) {
         int idx = SEVERITY_ORDER.indexOf(severity);
         return idx >= 0 ? idx : SEVERITY_ORDER.size();
@@ -574,6 +584,7 @@ class CveAuditTab extends AbstractTableTab {
                 - **SEVERITY** — CRITICAL (red), HIGH (red), MEDIUM (yellow), LOW (dim)
                 - **CVE ID** — the canonical vulnerability identifier (prefers CVE- over GHSA-)
                 - **ARTIFACT** — the affected Maven artifact (groupId:artifactId:version)
+                - **VIA** — the direct dependency that pulls in the affected artifact (transitive dependency chain)
                 - **SUMMARY** — brief description of the vulnerability
 
                 ## Detail View
@@ -612,6 +623,7 @@ class CveAuditTab extends AbstractTableTab {
             JsonObject row = new JsonObject();
             row.put("cveId", g.canonicalId);
             row.put("severity", g.severity);
+            row.put("via", firstParent(g));
             row.put("summary", g.summary);
             row.put("published", g.published);
             JsonArray arts = new JsonArray();

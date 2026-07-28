@@ -82,6 +82,7 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
     private final AtomicBoolean running = new AtomicBoolean();
     private final AtomicBoolean completed = new AtomicBoolean();
     private volatile boolean registeredByRun;
+    private volatile boolean attempting;
 
     BackgroundTask(TimeBudget budget, ScheduledExecutorService service, String name) {
         super(name);
@@ -132,7 +133,8 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
             cause = e;
             throw e;
         }
-        nextAttemptTime = lastAttemptTime + budget.interval();
+        // scheduleWithFixedDelay waits interval after this run finishes, so compute from now
+        nextAttemptTime = System.currentTimeMillis() + budget.interval();
     }
 
     /**
@@ -162,15 +164,22 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
         return completed.get();
     }
 
+    @Override
+    public boolean isAttempting() {
+        return attempting;
+    }
+
     protected boolean doRun(BooleanSupplier supplier) {
         try {
-            cause = null;
+            attempting = true;
             return supplier.getAsBoolean();
         } catch (TaskRunFailureException e) {
             LOG.debug("Task {} failed at {} iterations and will attempt again on next interval: {}",
                     getName(), budget.iteration(), e.getMessage());
             cause = e;
             return false;
+        } finally {
+            attempting = false;
         }
     }
 

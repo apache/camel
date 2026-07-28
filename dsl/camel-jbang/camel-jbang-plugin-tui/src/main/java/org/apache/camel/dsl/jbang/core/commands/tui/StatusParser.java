@@ -471,6 +471,7 @@ final class StatusParser {
                     InternalTaskInfo ti = new InternalTaskInfo();
                     ti.name = tj.getString("name");
                     ti.status = tj.getString("status");
+                    ti.attempting = tj.getBooleanOrDefault("attempting", false);
                     ti.attempts = tj.getLongOrDefault("attempts", 0);
                     ti.delay = tj.getLongOrDefault("delay", 0);
                     ti.elapsed = tj.getLongOrDefault("elapsed", 0);
