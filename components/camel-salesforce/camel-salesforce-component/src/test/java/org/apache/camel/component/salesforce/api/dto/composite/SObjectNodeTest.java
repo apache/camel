@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class SObjectNodeTest extends CompositeTestBase {
+class SObjectNodeTest extends CompositeTestBase {
 
     static SObjectNode[] toArray(final Stream<SObjectNode> children) {
         return children.toArray(l -> new SObjectNode[l]);
@@ -130,8 +130,10 @@ public class SObjectNodeTest extends CompositeTestBase {
     }
 
     @Test
-    public void shouldCreateNodeWithoutChildRecords() {
-        new SObjectNode(new SObjectTree(), simpleAccount);
+    void shouldCreateNodeWithoutChildRecords() {
+        SObjectNode node = new SObjectNode(new SObjectTree(), simpleAccount);
+        assertSame(simpleAccount, node.getObject(), "Node should hold the account object");
+        assertEquals(1, node.size(), "Node without children should have size 1");
     }
 
     @Test

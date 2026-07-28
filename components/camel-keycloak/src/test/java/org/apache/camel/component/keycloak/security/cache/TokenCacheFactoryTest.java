@@ -90,9 +90,13 @@ class TokenCacheFactoryTest {
     void testNoOpCacheClear() {
         TokenCache cache = TokenCacheFactory.createCache(TokenCacheType.NONE, 60, 0, false);
 
-        // Should not throw exception
         cache.clear();
+        assertEquals(0, cache.size(), "Cache should remain empty after clear");
+
         cache.remove("any-token");
+        assertEquals(0, cache.size(), "Cache should remain empty after remove");
+
         cache.close();
+        assertNull(cache.get("any-token"), "Cache should return null after close");
     }
 }

@@ -418,14 +418,18 @@ class MavenDownloaderImplTest {
             downloader.setMavenApacheSnapshotEnabled(true);
             downloader.build();
 
+            assertNotNull(downloader.getRepositoryResolver(),
+                    "Repository resolver should be initialized with Apache Snapshots enabled");
+
             // Try to resolve a recent Camel SNAPSHOT (may not always be available)
             // This test verifies that Apache Snapshots repository can be used
             try {
-                downloader.resolveAvailableVersions(
+                List<MavenGav> versions = downloader.resolveAvailableVersions(
                         "org.apache.camel",
                         "camel-core",
                         "https://repository.apache.org/snapshots");
                 // If this succeeds, Apache Snapshots is accessible
+                assertNotNull(versions, "Resolved versions list should not be null");
             } catch (MavenResolutionException e) {
                 // This may fail if there are no snapshots or network issues
                 // Just log and continue
@@ -545,8 +549,9 @@ class MavenDownloaderImplTest {
             downloader.setMavenSettingsLocation("false");
             downloader.build();
 
-            // Should still work with default configuration
-            // This is tested in offline mode to avoid network dependency
+            // Verify the downloader built successfully without settings.xml
+            assertNotNull(downloader.getRepositoryResolver(),
+                    "Repository resolver should be initialized even with settings.xml disabled");
         }
     }
 

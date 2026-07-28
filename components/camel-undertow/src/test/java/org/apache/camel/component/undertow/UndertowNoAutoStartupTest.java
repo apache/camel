@@ -16,12 +16,23 @@
  */
 package org.apache.camel.component.undertow;
 
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class UndertowNoAutoStartupTest extends BaseUndertowTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+class UndertowNoAutoStartupTest extends BaseUndertowTest {
     @Test
-    public void testUndertow() {
+    void testUndertow() {
+        // Verify the route was registered but not started due to autoStartup(false)
+        assertFalse(context.getRoutes().isEmpty(), "Route should be registered");
+        String routeId = context.getRoutes().get(0).getRouteId();
+        assertNotNull(routeId);
+        ServiceStatus status = context.getRouteController().getRouteStatus(routeId);
+        assertEquals(ServiceStatus.Stopped, status, "Route with autoStartup=false should be stopped");
     }
 
     @Override

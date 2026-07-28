@@ -16,19 +16,26 @@
  */
 package org.apache.camel.component.netty;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
-public class MainNettyCustomCodecTest extends BaseNettyTest {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class MainNettyCustomCodecTest extends BaseNettyTest {
 
     // use reaadble bytes
     private byte[] data_eol = new byte[] { 65, 66, 67, 68, 69, 70, 71, 72, 73, 0, 0 };
     private byte[] data = new byte[] { 65, 66, 67, 68, 69, 70, 71, 72, 73 };
 
     @Test
-    public void testMain() throws Exception {
+    void testMain() throws Exception {
+        AtomicBoolean routeProcessed = new AtomicBoolean(false);
+
         Main main = new Main();
         main.bind("myCustomDecoder", MyCustomCodec.createMyCustomDecoder());
         main.bind("myCustomDecoder2", MyCustomCodec.createMyCustomDecoder2());
@@ -38,7 +45,8 @@ public class MainNettyCustomCodecTest extends BaseNettyTest {
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() {
-                String uri = "netty:tcp://localhost:" + getPort() + "?disconnect=true&sync=false&allowDefaultCodec=false";
+                String uri
+                        = "netty:tcp://localhost:" + getPort() + "?disconnect=true&sync=false&allowDefaultCodec=false";
 
                 from(uri).to("log:input")
                         .process(e -> {
@@ -47,6 +55,7 @@ public class MainNettyCustomCodecTest extends BaseNettyTest {
                             if (!eq) {
                                 throw new IllegalArgumentException("Data received is not as expected");
                             }
+                            routeProcessed.set(true);
                         });
 
                 from("timer:once?repeatCount=1")
@@ -56,7 +65,11 @@ public class MainNettyCustomCodecTest extends BaseNettyTest {
         });
         main.configure().withDurationMaxMessages(2);
         main.configure().withDurationMaxSeconds(5);
+
         main.run();
+
+        assertNotNull(main.getCamelContext(), "CamelContext should have been created during run");
+        assertTrue(routeProcessed.get(), "Route should have processed and validated the custom-codec message");
 
         main.stop();
     }

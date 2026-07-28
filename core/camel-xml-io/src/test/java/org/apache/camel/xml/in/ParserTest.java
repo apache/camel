@@ -27,9 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Run manually to check how the MX parser works")
-public class ParserTest {
+class ParserTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ParserTest.class);
 
@@ -136,7 +137,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parseTheEdge() throws XmlPullParserException, IOException {
+    void parseTheEdge() throws XmlPullParserException, IOException {
         StringBuilder sb = new StringBuilder(256);
         sb.append("<?xml version='1.0'?>\n");
         sb.append("<!--\n");
@@ -147,13 +148,22 @@ public class ParserTest {
         sb.append("<root><child a=\"b\" /></root>\n");
         BaseParser p = new BaseParser(new StringReader(sb.toString()));
         MXParser xpp = p.parser;
+        assertNotNull(xpp);
+        String rootName = null;
+        String childAttr = null;
         int eventType = xpp.getEventType();
         while (eventType != MXParser.END_DOCUMENT) {
             eventType = xpp.next();
             if (eventType == MXParser.START_TAG) {
-                LOG.debug(xpp.getName());
+                if ("root".equals(xpp.getName())) {
+                    rootName = xpp.getName();
+                } else if ("child".equals(xpp.getName())) {
+                    childAttr = xpp.getAttributeValue(null, "a");
+                }
             }
         }
+        assertEquals("root", rootName, "Parser should find the root element after a large comment block");
+        assertEquals("b", childAttr, "Parser should correctly read attributes near buffer boundary");
     }
 
 }

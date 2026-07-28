@@ -39,14 +39,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class IOHelperTest {
 
     @Test
-    public void testIOException() {
+    void testIOException() {
         IOException io = new IOException("Damn", new IllegalArgumentException("Damn"));
         assertEquals("Damn", io.getMessage());
         assertInstanceOf(IllegalArgumentException.class, io.getCause());
     }
 
     @Test
-    public void testIOExceptionWithMessage() {
+    void testIOExceptionWithMessage() {
         IOException io = new IOException("Not again", new IllegalArgumentException("Damn"));
         assertEquals("Not again", io.getMessage());
         assertInstanceOf(IllegalArgumentException.class, io.getCause());
@@ -61,7 +61,7 @@ class IOHelperTest {
     }
 
     @Test
-    public void testCharsetNormalize() {
+    void testCharsetNormalize() {
         assertEquals("UTF-8", IOHelper.normalizeCharset("'UTF-8'"));
         assertEquals("UTF-8", IOHelper.normalizeCharset("\"UTF-8\""));
         assertEquals("UTF-8", IOHelper.normalizeCharset("\"UTF-8 \""));
@@ -69,22 +69,22 @@ class IOHelperTest {
     }
 
     @Test
-    public void testLine1() throws Exception {
+    void testLine1() throws Exception {
         assertReadAsWritten("line1", "line1", "line1\n");
     }
 
     @Test
-    public void testLine1LF() throws Exception {
+    void testLine1LF() throws Exception {
         assertReadAsWritten("line1LF", "line1\n", "line1\n");
     }
 
     @Test
-    public void testLine2() throws Exception {
+    void testLine2() throws Exception {
         assertReadAsWritten("line2", "line1\nline2", "line1\nline2\n");
     }
 
     @Test
-    public void testLine2LF() throws Exception {
+    void testLine2LF() throws Exception {
         assertReadAsWritten("line2LF", "line1\nline2\n", "line1\nline2\n");
     }
 
@@ -106,7 +106,7 @@ class IOHelperTest {
     }
 
     @Test
-    public void testCharsetName() {
+    void testCharsetName() {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
         assertNull(ExchangeHelper.getCharsetName(exchange, false));
@@ -121,7 +121,7 @@ class IOHelperTest {
     }
 
     @Test
-    public void testGetCharsetNameFromContentType() {
+    void testGetCharsetNameFromContentType() {
         String charsetName = IOHelper.getCharsetNameFromContentType("text/html; charset=iso-8859-1");
         assertEquals("iso-8859-1", charsetName);
 
@@ -130,7 +130,7 @@ class IOHelperTest {
     }
 
     @Test
-    public void testCharset() {
+    void testCharset() {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
         assertNull(ExchangeHelper.getCharset(exchange, false));
