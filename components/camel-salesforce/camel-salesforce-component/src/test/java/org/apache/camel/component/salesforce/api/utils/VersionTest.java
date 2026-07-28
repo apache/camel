@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class VersionTest {
+class VersionTest {
 
     private static final Version V34_0 = Version.create("34.0");
 
@@ -39,10 +39,17 @@ public class VersionTest {
     }
 
     @Test
-    public void shouldObserveApiLimits() {
+    void shouldObserveApiLimits() {
+        // These calls throw UnsupportedOperationException if the version requirement is not met
         V34_0.requireAtLeast(34, 0);
         V34_0.requireAtLeast(33, 9);
         V35_0.requireAtLeast(34, 0);
+
+        // Verify the versions used are what we expect
+        assertEquals(34, V34_0.getMajor());
+        assertEquals(0, V34_0.getMinor());
+        assertEquals(35, V35_0.getMajor());
+        assertEquals(0, V35_0.getMinor());
     }
 
     @Test

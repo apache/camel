@@ -75,12 +75,14 @@ import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.ResourceReloadStrategy;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownPrepared;
+import org.apache.camel.spi.annotations.PeriodicTask;
 import org.apache.camel.support.LoadOnDemandReloadStrategy;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
@@ -396,6 +398,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionTypeConvertersTask();
             } else if ("transformers".equals(action)) {
                 doActionTransformersTask();
+            } else if ("vault-refresh".equals(action)) {
+                doActionVaultRefreshTask();
             }
         } catch (Exception e) {
             LOG.warn("Error executing action: {} due to: {}. This exception is ignored.", action != null ? action : af,
@@ -1919,6 +1923,19 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             return root;
         }
         return null;
+    }
+
+    private void doActionVaultRefreshTask() {
+        PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
+        if (scheduler == null) {
+            return;
+        }
+        for (Runnable task : scheduler.getTasks()) {
+            PeriodicTask pt = task.getClass().getAnnotation(PeriodicTask.class);
+            if (pt != null && pt.value().endsWith("-refresh")) {
+                task.run();
+            }
+        }
     }
 
     private JsonObject collectVaults() {

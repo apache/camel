@@ -16,24 +16,40 @@
  */
 package org.apache.camel.component.undertow.rest;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class RestUndertowProducerEncodingTest extends BaseUndertowTest {
+class RestUndertowProducerEncodingTest extends BaseUndertowTest {
 
     @Test
-    public void testSelect() {
-        template.sendBody("rest:get:bw-web-api/v1/objects/timesheets?companyId=RD&select=personId,personName", "Hello World");
+    void testSelect() {
+        Exchange result = template.request(
+                "rest:get:bw-web-api/v1/objects/timesheets?companyId=RD&select=personId,personName",
+                exchange -> exchange.getIn().setBody("Hello World"));
+        assertNotNull(result);
+        assertFalse(result.isFailed(), "Request with select parameter should complete without failure");
+        // The route processor validates that select=personId,personName is correctly decoded;
+        // a failure in the processor would mark the exchange as failed
+        assertEquals("validated", result.getMessage().getBody(String.class),
+                "Route processor should have validated and returned the result");
     }
 
     @Test
-    public void testFilter() {
-        template.sendBody("rest:get:bw-web-api/v1/objects/timesheets?companyId=RD&select=personId,personName"
-                          + "&filter=date(time/date) ge 2020-06-01 and personId eq 'R10019'",
-                "Bye World");
+    void testFilter() {
+        Exchange result = template.request(
+                "rest:get:bw-web-api/v1/objects/timesheets?companyId=RD&select=personId,personName"
+                                           + "&filter=date(time/date) ge 2020-06-01 and personId eq 'R10019'",
+                exchange -> exchange.getIn().setBody("Bye World"));
+        assertNotNull(result);
+        assertFalse(result.isFailed(), "Request with filter parameter should complete without failure");
+        assertEquals("validated", result.getMessage().getBody(String.class),
+                "Route processor should have validated select and filter parameters and returned the result");
     }
 
     @Override
@@ -61,6 +77,7 @@ public class RestUndertowProducerEncodingTest extends BaseUndertowTest {
                             if (filter != null) {
                                 assertEquals("date(time/date) ge 2020-06-01 and personId eq 'R10019'", filter);
                             }
+                            exchange.getMessage().setBody("validated");
                         });
             }
         };

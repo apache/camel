@@ -31,6 +31,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -163,7 +164,7 @@ class OverviewTab extends AbstractTab {
             topMode = !topMode;
             return true;
         }
-        if (ke.isChar('i') && !ctx.infraData.get().isEmpty()) {
+        if (ke.isKey(KeyCode.TAB) && !ctx.infraData.get().isEmpty()) {
             infraFocused = !infraFocused;
             if (infraFocused && infraTableState.selected() == null) {
                 infraTableState.select(0);
@@ -572,13 +573,17 @@ class OverviewTab extends AbstractTab {
             };
         }
 
+        String integrationTitle = infraCount > 0 ? " Integrations " : " Overview ";
+        Style intBorderStyle = infraFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style intTitleStyle = infraFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
         Table.Builder tableBuilder = Table.builder()
                 .rows(rows)
                 .header(header)
                 .widths(widths)
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(infraCount > 0 ? " Integrations " : " Overview ").build());
+                        .borderStyle(intBorderStyle)
+                        .title(Title.from(Line.from(Span.styled(integrationTitle, intTitleStyle)))).build());
         if (!infraFocused) {
             tableBuilder.highlightStyle(Theme.selectionBg());
         }
@@ -987,7 +992,11 @@ class OverviewTab extends AbstractTab {
                         Constraint.fill())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Dev/Infra Services ").build());
+                        .borderStyle(infraFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted())
+                        .title(Title.from(Line.from(
+                                Span.styled(" Dev/Infra Services ",
+                                        infraFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent())))))
+                        .build());
         if (infraFocused) {
             infraBuilder.highlightStyle(Theme.selectionBg());
         }
@@ -1015,7 +1024,7 @@ class OverviewTab extends AbstractTab {
         }
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (!ctx.infraData.get().isEmpty()) {
-            hint(spans, "i", infraFocused ? "integrations" : "infra");
+            hint(spans, "Tab", infraFocused ? "integrations" : "infra");
         }
         if (infraFocused) {
             hint(spans, "d", "details");

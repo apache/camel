@@ -24,7 +24,6 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
@@ -46,24 +45,6 @@ class HealthTab extends AbstractTableTab {
         super(ctx, "group", "name", "status");
         sortIndex = 1;
         sort = "name";
-    }
-
-    @Override
-    public void navigateUp() {
-    }
-
-    @Override
-    public void navigateDown() {
-    }
-
-    @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)
-                || ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)
-                || ke.isHome() || ke.isEnd()) {
-            return false;
-        }
-        return super.handleKeyEvent(ke);
     }
 
     @Override
@@ -150,6 +131,8 @@ class HealthTab extends AbstractTableTab {
                         Constraint.length(12),
                         Constraint.length(6),
                         Constraint.fill())
+                .highlightStyle(Theme.selectionBg())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 

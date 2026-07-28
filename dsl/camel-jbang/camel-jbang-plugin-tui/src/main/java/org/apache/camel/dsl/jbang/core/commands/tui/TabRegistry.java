@@ -107,6 +107,7 @@ class TabRegistry {
     private SqlTraceTab sqlTraceTab;
     private TypeConvertersTab typeConvertersTab;
     private TransformersTab transformersTab;
+    private SecretsTab secretsTab;
 
     private MonitorTab activeMoreTab;
     private List<MoreTab> moreTabs;
@@ -136,6 +137,7 @@ class TabRegistry {
         sqlTraceTab = new SqlTraceTab(ctx);
         typeConvertersTab = new TypeConvertersTab(ctx);
         transformersTab = new TransformersTab(ctx);
+        secretsTab = new SecretsTab(ctx);
         endpointsTab = new EndpointsTab(ctx, dataService.metrics());
         networkTab = new NetworkTab(ctx, dataService.metrics());
         httpTab = new HttpTab(ctx);
@@ -202,7 +204,7 @@ class TabRegistry {
                         List.of(), info -> !info.services.isEmpty()),
                 new MoreTab(TuiIcons.TAB_EVENTS, "Events", "&Exchange Events", eventTab, "Observability"),
                 new MoreTab(
-                        TuiIcons.TAB_INTERNAL_TASKS, "Internal Tasks", "In&ternal Tasks", internalTasksTab,
+                        TuiIcons.TAB_RECOVERY_TASKS, "Recovery Tasks", "&Recovery Tasks", internalTasksTab,
                         "Observability",
                         List.of(), info -> !info.internalTasks.isEmpty()),
                 new MoreTab(
@@ -215,6 +217,11 @@ class TabRegistry {
                 new MoreTab(
                         TuiIcons.TAB_KAFKA, "Kafka", "&Kafka", kafkaTab, "Data",
                         List.of("kafka")),
+                new MoreTab(
+                        TuiIcons.TAB_SECRETS, "Secrets", "&Secrets", secretsTab, "Data",
+                        List.of("aws-secrets", "azure-secrets", "gcp-secrets", "hashicorp-secrets",
+                                "ibm-secrets", "kubernetes-secrets", "kubernetes-configmaps"),
+                        info -> !info.vaultSecrets.isEmpty()),
                 new MoreTab(
                         TuiIcons.TAB_SQL_QUERY, "SQL Query", "S&QL Query", sqlQueryTab, "Data",
                         List.of(), info -> !info.dataSources.isEmpty()),

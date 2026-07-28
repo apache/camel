@@ -55,16 +55,18 @@ class InternalTasksTab extends AbstractTableTab {
 
         List<Row> rows = new ArrayList<>();
         for (InternalTaskInfo ti : sorted) {
-            Style statusStyle = statusStyle(ti.status);
+            String statusText = ti.attempting
+                    ? "Attempting" : ("Active".equals(ti.status) ? "Waiting" : (ti.status != null ? ti.status : ""));
+            Style statusStyle = ti.attempting ? Theme.warning() : statusStyle(ti.status);
             String elapsed = TimeUtils.printAge(ti.elapsed);
             String first = ti.firstTime > 0 ? TimeUtils.printSince(ti.firstTime) : "";
-            String last = ti.lastTime > 0 ? TimeUtils.printSince(ti.lastTime, true) : "";
+            String last = ti.lastTime > 0 ? TimeUtils.printSince(ti.lastTime) : "";
             String next = formatNext(ti.nextTime);
             String error = ti.error != null ? ti.error : "";
 
             rows.add(Row.from(
                     Cell.from(Span.styled(" " + (ti.name != null ? ti.name : ""), Style.EMPTY.fg(Theme.accent()))),
-                    Cell.from(Span.styled(ti.status != null ? ti.status : "", statusStyle)),
+                    Cell.from(Span.styled(statusText, statusStyle)),
                     rightCell(String.valueOf(ti.attempts), 8),
                     rightCell(String.valueOf(ti.delay), 8),
                     Cell.from(elapsed),
@@ -75,7 +77,7 @@ class InternalTasksTab extends AbstractTableTab {
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No internal tasks", 9));
+            rows.add(emptyRow("No recovery tasks", 9));
         }
 
         Table table = Table.builder()
@@ -100,8 +102,10 @@ class InternalTasksTab extends AbstractTableTab {
                         Constraint.length(10),
                         Constraint.length(10),
                         Constraint.fill())
+                .highlightStyle(Theme.selectionBg())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Internal Tasks ").build())
+                        .title(" Recovery Tasks ").build())
                 .build();
 
         lastTableArea = area;
@@ -144,36 +148,26 @@ class InternalTasksTab extends AbstractTableTab {
             return "";
         }
         long age = nextTime - System.currentTimeMillis();
-        return TimeUtils.printDuration(age, true);
-    }
-
-    @Override
-    public SelectionContext getSelectionContext() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null || info.internalTasks.isEmpty()) {
-            return null;
+        if (age <= 0) {
+            return "";
         }
-        List<InternalTaskInfo> sorted = new ArrayList<>(info.internalTasks);
-        sorted.sort(this::sortTask);
-        List<String> items = sorted.stream().map(t -> t.name != null ? t.name : "").toList();
-        Integer sel = tableState.selected();
-        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Internal Tasks");
+        return TimeUtils.printDuration(age);
     }
 
     @Override
     public String description() {
-        return "Background task registry (reconnections, retries)";
+        return "Recovery and reconnection tasks (retries, leader election)";
     }
 
     @Override
     public String getHelpText() {
         return """
-                # Internal Tasks
+                # Recovery Tasks
 
-                Internal tasks are background operations that Camel components schedule
-                for retry and reconnection purposes. For example, when a JMS or SMPP
-                connection drops, the component registers an internal task that periodically
-                attempts to reconnect.
+                Recovery tasks are background operations that Camel components schedule
+                for reconnection and retry purposes. For example, when a Kafka broker or
+                JMS connection drops, the component registers a recovery task that
+                periodically attempts to reconnect.
 
                 Tasks self-register when they start running and are removed when they
                 complete, fail permanently, or exhaust their retry budget. The table
@@ -182,7 +176,7 @@ class InternalTasksTab extends AbstractTableTab {
                 ## Table Columns
 
                 - **NAME** — Descriptive name of the task (e.g., connection target or component)
-                - **STATUS** — Current state: `Active` (running), `Completed` (finished successfully), `Failed` (gave up), `Exhausted` (retry budget spent)
+                - **STATUS** — Current state: `Waiting` (waiting for next attempt), `Attempting` (actively trying now), `Completed` (finished successfully), `Failed` (gave up), `Exhausted` (retry budget spent)
                 - **ATTEMPTS** — Number of retry attempts made so far
                 - **DELAY** — Current delay between attempts in milliseconds
                 - **ELAPSED** — Total time since the task started
@@ -193,7 +187,7 @@ class InternalTasksTab extends AbstractTableTab {
 
                 ## When Tasks Appear
 
-                You will typically see internal tasks when:
+                You will typically see recovery tasks when:
                 - A messaging broker connection is lost and the consumer is reconnecting
                 - A leader election is in progress (e.g., camel-master)
                 - A component is retrying a failed initialization
@@ -215,7 +209,7 @@ class InternalTasksTab extends AbstractTableTab {
             return null;
         }
         JsonObject result = new JsonObject();
-        result.put("tab", "Internal Tasks");
+        result.put("tab", "Recovery Tasks");
         JsonArray rows = new JsonArray();
         List<InternalTaskInfo> sorted = new ArrayList<>(info.internalTasks);
         sorted.sort(this::sortTask);
@@ -223,6 +217,7 @@ class InternalTasksTab extends AbstractTableTab {
             JsonObject row = new JsonObject();
             row.put("name", ti.name);
             row.put("status", ti.status);
+            row.put("attempting", ti.attempting);
             row.put("attempts", ti.attempts);
             row.put("delay", ti.delay);
             row.put("elapsed", ti.elapsed);

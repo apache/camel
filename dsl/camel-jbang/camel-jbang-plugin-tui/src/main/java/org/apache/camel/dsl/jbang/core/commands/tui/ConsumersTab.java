@@ -26,8 +26,6 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyCode;
-import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -43,25 +41,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 class ConsumersTab extends AbstractTableTab {
 
     ConsumersTab(MonitorContext ctx) {
-        super(ctx, "id", "status", "type", "inflight", "polls", "uri");
-    }
-
-    @Override
-    public void navigateUp() {
-    }
-
-    @Override
-    public void navigateDown() {
-    }
-
-    @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)
-                || ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)
-                || ke.isHome() || ke.isEnd()) {
-            return false;
-        }
-        return super.handleKeyEvent(ke);
+        super(ctx, "id", "status", "type", "remote", "inflight", "polls", "uri");
     }
 
     @Override
@@ -102,15 +82,16 @@ class ConsumersTab extends AbstractTableTab {
                     Cell.from(Span.styled(" " + (ci.id != null ? ci.id : ""), Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(statusText, statusStyle)),
                     Cell.from(type),
+                    Cell.from(ci.remote ? "x" : ""),
                     rightCell(String.valueOf(ci.inflight), 8),
-                    rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     Cell.from(schedule),
+                    rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     Cell.from(sinceLast),
                     Cell.from(Span.styled(uri, healthDown ? Theme.error() : Style.EMPTY))));
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No consumers", 8));
+            rows.add(emptyRow("No consumers", 9));
         }
 
         Table table = Table.builder()
@@ -119,9 +100,10 @@ class ConsumersTab extends AbstractTableTab {
                         Cell.from(Span.styled(" " + sortLabel("ROUTE", "id"), sortStyle("id"))),
                         Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
                         Cell.from(Span.styled(sortLabel("TYPE", "type"), sortStyle("type"))),
+                        Cell.from(Span.styled(sortLabel("REMOTE", "remote"), sortStyle("remote"))),
                         rightCell(sortLabel("INFLIGHT", "inflight"), 8, sortStyle("inflight")),
-                        rightCell(sortLabel("POLLS", "polls"), 8, sortStyle("polls")),
                         Cell.from(Span.styled("SCHEDULE", Style.EMPTY.bold())),
+                        rightCell(sortLabel("POLLS", "polls"), 8, sortStyle("polls")),
                         Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())),
                         Cell.from(Span.styled(sortLabel("URI", "uri"), sortStyle("uri")))))
                 .widths(
@@ -131,8 +113,11 @@ class ConsumersTab extends AbstractTableTab {
                         Constraint.length(8),
                         Constraint.length(8),
                         Constraint.length(22),
+                        Constraint.length(8),
                         Constraint.length(22),
                         Constraint.fill())
+                .highlightStyle(Theme.selectionBg())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Consumers ").build())
                 .build();
@@ -154,6 +139,7 @@ class ConsumersTab extends AbstractTableTab {
                 String tb = consumerType(b);
                 yield ta.compareToIgnoreCase(tb);
             }
+            case "remote" -> Boolean.compare(b.remote, a.remote);
             case "inflight" -> Integer.compare(b.inflight, a.inflight);
             case "polls" -> {
                 long la = a.totalCounter != null ? a.totalCounter : 0;
@@ -398,6 +384,7 @@ class ConsumersTab extends AbstractTableTab {
             row.put("state", ci.state);
             row.put("className", ci.className);
             row.put("scheduled", ci.scheduled);
+            row.put("remote", ci.remote);
             row.put("inflight", ci.inflight);
             if (ci.totalCounter != null) {
                 row.put("totalCounter", ci.totalCounter);

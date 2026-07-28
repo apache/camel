@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.executor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.junit.jupiter.api.AfterEach;
@@ -24,7 +26,11 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PooledExecutorTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class PooledExecutorTest {
     static final int THREAD_COUNT = 2;
     Logger log = LoggerFactory.getLogger(this.getClass());
     TestExecutor instance;
@@ -40,29 +46,39 @@ public class PooledExecutorTest {
     }
 
     /**
-     * Description of test.
-     *
-     * @throws Exception in the event of a test error.
+     * Verify that the executor accepts runnables up to the thread pool capacity and rejects excess ones. With a
+     * SynchronousQueue and THREAD_COUNT threads, at most THREAD_COUNT runnables can be accepted simultaneously.
      */
     @Test
-    public void testAddRunnable() throws Exception {
+    void testAddRunnable() {
         int runnableCount = 3;
         int runCount = 5;
 
         log.info("Starting first set of runnables");
-        startRunnables(runnableCount, runCount);
+        List<TestRunnable> firstBatch = startRunnables(runnableCount, runCount);
+        // SynchronousQueue with 2 threads: at most THREAD_COUNT runnables can be accepted
+        assertTrue(firstBatch.size() <= THREAD_COUNT,
+                "Accepted runnables should not exceed thread pool size, but got " + firstBatch.size());
+        assertFalse(firstBatch.isEmpty(), "At least one runnable should have been accepted");
 
         log.info("Starting second set of runnables");
-        startRunnables(runnableCount, runCount);
+        // Second batch: threads are still occupied by first batch (each runnable sleeps runCount seconds),
+        // so all should be rejected
+        List<TestRunnable> secondBatch = startRunnables(runnableCount, runCount);
+        assertEquals(0, secondBatch.size(), "All runnables in second batch should be rejected (threads still busy)");
     }
 
-    void startRunnables(int runnableCount, int runCount) {
+    List<TestRunnable> startRunnables(int runnableCount, int runCount) {
+        List<TestRunnable> accepted = new ArrayList<>();
         for (int id = 1; id <= runnableCount; ++id) {
+            TestRunnable runnable = new TestRunnable(id, runCount);
             try {
-                instance.addRunnable(new TestRunnable(id, runCount));
+                instance.addRunnable(runnable);
+                accepted.add(runnable);
             } catch (RejectedExecutionException rejectedEx) {
                 log.warn("Unable to add Runnable {}", id, rejectedEx);
             }
         }
+        return accepted;
     }
 }

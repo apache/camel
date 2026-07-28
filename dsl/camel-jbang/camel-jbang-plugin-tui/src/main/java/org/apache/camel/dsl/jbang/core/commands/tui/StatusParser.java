@@ -303,6 +303,7 @@ final class StatusParser {
                     ci.state = cj.getString("state");
                     ci.className = cj.getString("class");
                     ci.scheduled = Boolean.TRUE.equals(cj.get("scheduled"));
+                    ci.remote = Boolean.TRUE.equals(cj.get("remote"));
                     ci.inflight = cj.getIntegerOrDefault("inflight", 0);
                     ci.polling = Boolean.TRUE.equals(cj.get("polling"));
                     ci.totalCounter = cj.getLong("totalCounter");
@@ -470,6 +471,7 @@ final class StatusParser {
                     InternalTaskInfo ti = new InternalTaskInfo();
                     ti.name = tj.getString("name");
                     ti.status = tj.getString("status");
+                    ti.attempting = tj.getBooleanOrDefault("attempting", false);
                     ti.attempts = tj.getLongOrDefault("attempts", 0);
                     ti.delay = tj.getLongOrDefault("delay", 0);
                     ti.elapsed = tj.getLongOrDefault("elapsed", 0);
@@ -715,6 +717,18 @@ final class StatusParser {
         JsonObject trObj = (JsonObject) root.get("transformers");
         if (trObj != null) {
             info.transformerCount = trObj.getIntegerOrDefault("size", 0);
+        }
+
+        // Parse vaults / secrets
+        JsonObject vaults = (JsonObject) root.get("vaults");
+        if (vaults != null) {
+            parseVaultSecrets(vaults, "aws-secrets", "AWS", info, true);
+            parseVaultSecrets(vaults, "gcp-secrets", "GCP", info, false);
+            parseVaultSecrets(vaults, "azure-secrets", "Azure", info, false);
+            parseVaultSecrets(vaults, "ibm-secrets", "IBM", info, false);
+            parseVaultSecrets(vaults, "kubernetes-secrets", "Kubernetes", info, false);
+            parseVaultConfigmaps(vaults, info);
+            parseVaultHashicorp(vaults, info);
         }
 
         return info;
@@ -1363,6 +1377,65 @@ final class StatusParser {
 
     static long objToLong(Object o) {
         return TuiHelper.objToLong(o);
+    }
+
+    private static void parseVaultSecrets(
+            JsonObject vaults, String key, String vaultName, IntegrationInfo info, boolean hasRegion) {
+        JsonObject vo = (JsonObject) vaults.get(key);
+        if (vo == null) {
+            return;
+        }
+        long lastCheck = vo.getLongOrDefault("lastCheckTimestamp", 0);
+        long lastReload = vo.getLongOrDefault("lastReloadTimestamp", 0);
+        String region = hasRegion ? vo.getString("region") : null;
+        JsonArray arr = (JsonArray) vo.get("secrets");
+        if (arr != null) {
+            for (int i = 0; i < arr.size(); i++) {
+                JsonObject jo = (JsonObject) arr.get(i);
+                VaultSecretInfo vi = new VaultSecretInfo();
+                vi.vault = vaultName;
+                vi.region = region;
+                vi.secret = jo.getString("name");
+                vi.timestamp = jo.getLongOrDefault("timestamp", 0);
+                vi.lastCheck = lastCheck;
+                vi.lastReload = lastReload;
+                info.vaultSecrets.add(vi);
+            }
+        }
+    }
+
+    private static void parseVaultConfigmaps(JsonObject vaults, IntegrationInfo info) {
+        JsonObject vo = (JsonObject) vaults.get("kubernetes-configmaps");
+        if (vo == null) {
+            return;
+        }
+        long lastCheck = vo.getLongOrDefault("startCheckTimestamp", 0);
+        long lastReload = vo.getLongOrDefault("lastReloadTimestamp", 0);
+        JsonArray arr = (JsonArray) vo.get("configmap");
+        if (arr != null) {
+            for (int i = 0; i < arr.size(); i++) {
+                JsonObject jo = (JsonObject) arr.get(i);
+                VaultSecretInfo vi = new VaultSecretInfo();
+                vi.vault = "Kubernetes-cm";
+                vi.secret = jo.getString("name");
+                vi.timestamp = jo.getLongOrDefault("timestamp", 0);
+                vi.lastCheck = lastCheck;
+                vi.lastReload = lastReload;
+                info.vaultSecrets.add(vi);
+            }
+        }
+    }
+
+    private static void parseVaultHashicorp(JsonObject vaults, IntegrationInfo info) {
+        JsonObject vo = (JsonObject) vaults.get("hashicorp-secrets");
+        if (vo == null) {
+            return;
+        }
+        VaultSecretInfo vi = new VaultSecretInfo();
+        vi.vault = "Hashicorp";
+        vi.lastCheck = vo.getLongOrDefault("startCheckTimestamp", 0);
+        vi.lastReload = vo.getLongOrDefault("lastReloadTimestamp", 0);
+        info.vaultSecrets.add(vi);
     }
 
     private static void parseEventArray(JsonObject eventsObj, String arrayKey, String category, IntegrationInfo info) {

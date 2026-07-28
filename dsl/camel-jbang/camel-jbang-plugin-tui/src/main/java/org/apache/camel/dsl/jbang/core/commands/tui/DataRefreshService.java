@@ -252,6 +252,8 @@ class DataRefreshService {
         } else {
             refreshPids = pids;
         }
+        Map<String, IntegrationInfo> previousByPid = data.get().stream()
+                .collect(Collectors.toMap(i -> i.pid, i -> i, (a, b) -> a));
         for (Long pid : refreshPids) {
             JsonObject root = loadStatus(pid);
             if (root != null) {
@@ -261,6 +263,11 @@ class DataRefreshService {
                 }
                 IntegrationInfo info = StatusParser.parseIntegration(ph, root);
                 if (info != null) {
+                    IntegrationInfo prev = previousByPid.get(info.pid);
+                    if (prev != null) {
+                        info.activity = prev.activity;
+                        info.errors = prev.errors;
+                    }
                     infos.add(info);
                     metrics.updateThroughputHistory(info);
                     metrics.updateEndpointHistory(info);

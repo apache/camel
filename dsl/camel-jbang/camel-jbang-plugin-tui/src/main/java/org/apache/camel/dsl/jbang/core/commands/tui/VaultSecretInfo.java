@@ -16,15 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-class InternalTaskInfo {
-    String name;
-    String status;
-    boolean attempting;
-    long attempts;
-    long delay;
-    long elapsed;
-    long firstTime;
-    long lastTime;
-    long nextTime;
-    String error;
+class VaultSecretInfo {
+    String vault;
+    String region;
+    String secret;
+    long timestamp;
+    long lastCheck;
+    long lastReload;
 }

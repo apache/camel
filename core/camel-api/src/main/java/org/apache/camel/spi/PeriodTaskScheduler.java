@@ -16,6 +16,9 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -54,5 +57,15 @@ public interface PeriodTaskScheduler {
      * @return      the task, or <tt>null</tt> if no tasks exists
      */
     <T> @Nullable T getTaskByType(Class<T> type);
+
+    /**
+     * Gets all scheduled tasks.
+     *
+     * @return the tasks, or an empty collection if no tasks are scheduled
+     * @since  4.22
+     */
+    default Collection<Runnable> getTasks() {
+        return Collections.emptyList();
+    }
 
 }
