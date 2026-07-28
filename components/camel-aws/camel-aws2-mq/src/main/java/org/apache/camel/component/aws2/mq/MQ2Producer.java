@@ -133,6 +133,9 @@ public class MQ2Producer extends DefaultProducer {
                 message.setBody(result);
                 message.setHeader(MQ2Constants.NEXT_TOKEN, result.nextToken());
                 message.setHeader(MQ2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextToken()));
+            } else {
+                throw new IllegalArgumentException(
+                        "listBrokers operation requires ListBrokersRequest in POJO mode");
             }
         } else {
             ListBrokersRequest.Builder builder = ListBrokersRequest.builder();
@@ -179,6 +182,9 @@ public class MQ2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "createBroker operation requires CreateBrokerRequest in POJO mode");
             }
         } else {
             CreateBrokerRequest.Builder builder = CreateBrokerRequest.builder();
@@ -252,6 +258,9 @@ public class MQ2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteBroker operation requires DeleteBrokerRequest in POJO mode");
             }
         } else {
             DeleteBrokerRequest.Builder builder = DeleteBrokerRequest.builder();
@@ -287,6 +296,9 @@ public class MQ2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "rebootBroker operation requires RebootBrokerRequest in POJO mode");
             }
         } else {
             RebootBrokerRequest.Builder builder = RebootBrokerRequest.builder();
@@ -323,6 +335,9 @@ public class MQ2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "updateBroker operation requires UpdateBrokerRequest in POJO mode");
             }
         } else {
             UpdateBrokerRequest.Builder builder = UpdateBrokerRequest.builder();
@@ -364,6 +379,9 @@ public class MQ2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeBroker operation requires DescribeBrokerRequest in POJO mode");
             }
         } else {
             DescribeBrokerRequest.Builder builder = DescribeBrokerRequest.builder();
