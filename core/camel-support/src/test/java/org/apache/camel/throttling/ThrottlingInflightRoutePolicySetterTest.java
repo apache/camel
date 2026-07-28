@@ -17,6 +17,7 @@
 package org.apache.camel.throttling;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
@@ -53,8 +54,8 @@ class ThrottlingInflightRoutePolicySetterTest {
         limitsField.setAccessible(true);
         // the record class is a private inner type — use its accessor methods via reflection
         Class<?> limitsClass = limitsField.getType();
-        java.lang.reflect.Method getMax = limitsClass.getMethod("maxInflightExchanges");
-        java.lang.reflect.Method getResume = limitsClass.getMethod("resumeInflightExchanges");
+        Method getMax = limitsClass.getMethod("maxInflightExchanges");
+        Method getResume = limitsClass.getMethod("resumeInflightExchanges");
 
         int iterations = 5_000;
         CyclicBarrier barrier = new CyclicBarrier(2);
@@ -119,8 +120,8 @@ class ThrottlingInflightRoutePolicySetterTest {
         Field limitsField = ThrottlingInflightRoutePolicy.class.getDeclaredField("throttlingLimits");
         limitsField.setAccessible(true);
         Class<?> limitsClass = limitsField.getType();
-        java.lang.reflect.Method getMax = limitsClass.getMethod("maxInflightExchanges");
-        java.lang.reflect.Method getResume = limitsClass.getMethod("resumeInflightExchanges");
+        Method getMax = limitsClass.getMethod("maxInflightExchanges");
+        Method getResume = limitsClass.getMethod("resumeInflightExchanges");
 
         // set max first, then percent
         policy.setMaxInflightExchanges(2000);
@@ -149,7 +150,7 @@ class ThrottlingInflightRoutePolicySetterTest {
         Field limitsField = ThrottlingInflightRoutePolicy.class.getDeclaredField("throttlingLimits");
         limitsField.setAccessible(true);
         Class<?> limitsClass = limitsField.getType();
-        java.lang.reflect.Method getResume = limitsClass.getMethod("resumeInflightExchanges");
+        Method getResume = limitsClass.getMethod("resumeInflightExchanges");
 
         policy.setMaxInflightExchanges(1);
         policy.setResumePercentOfMax(1);
