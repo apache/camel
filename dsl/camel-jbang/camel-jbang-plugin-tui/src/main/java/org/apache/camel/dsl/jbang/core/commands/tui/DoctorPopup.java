@@ -290,7 +290,7 @@ class DoctorPopup {
             provider = "Vertex AI";
         } else if (envSet("AZURE_OPENAI_API_KEY") && envSet("AZURE_OPENAI_ENDPOINT")) {
             provider = "Azure OpenAI";
-        } else if (envSet("GITHUB_MODELS") && envSet("GITHUB_TOKEN")) {
+        } else if (LlmClient.isGitHubModelsAutoDetectEnabled() && envSet("GITHUB_TOKEN")) {
             provider = "GitHub Models";
         } else if (envSet("OPENAI_API_KEY")) {
             provider = "OpenAI";

@@ -277,7 +277,10 @@ public class LlmClient {
                 }
             }
             case openai -> {
-                if (model == null || model.isBlank()) {
+                if (openAiAuthMode == OpenAiAuthMode.api_key
+                        || (url != null && isAzureOpenAiEndpoint(url))) {
+                    resolveAzureOpenAiModel();
+                } else if (model == null || model.isBlank()) {
                     model = DEFAULT_OPENAI_MODEL;
                 }
             }
@@ -1397,10 +1400,33 @@ public class LlmClient {
         }
         String deployment = System.getenv("AZURE_OPENAI_DEPLOYMENT_NAME");
         if (deployment != null && !deployment.isBlank()
-                && (model == null || model.isBlank() || DEFAULT_OLLAMA_MODEL.equals(model))) {
+                && (model == null || model.isBlank() || isGenericPlaceholderModel(model))) {
             model = deployment;
         }
         return true;
+    }
+
+    private boolean isGenericPlaceholderModel(String configuredModel) {
+        return DEFAULT_OLLAMA_MODEL.equals(configuredModel) || DEFAULT_OPENAI_MODEL.equals(configuredModel);
+    }
+
+    /**
+     * Azure chat URLs use deployment names, not OpenAI model ids. Replace CLI placeholders with env, then the first
+     * listed deployment when reachable.
+     */
+    private void resolveAzureOpenAiModel() {
+        if (model != null && !model.isBlank() && !isGenericPlaceholderModel(model)) {
+            return;
+        }
+        String deployment = System.getenv("AZURE_OPENAI_DEPLOYMENT_NAME");
+        if (deployment != null && !deployment.isBlank()) {
+            model = deployment;
+            return;
+        }
+        List<String> deployments = listModels();
+        if (!deployments.isEmpty()) {
+            model = deployments.get(0);
+        }
     }
 
     private boolean tryGitHubModels() {
@@ -1419,7 +1445,10 @@ public class LlmClient {
     }
 
     static boolean isGitHubModelsAutoDetectEnabled() {
-        String flag = System.getenv("GITHUB_MODELS");
+        return isGitHubModelsOptInFlag(System.getenv("GITHUB_MODELS"));
+    }
+
+    static boolean isGitHubModelsOptInFlag(String flag) {
         return flag != null && !flag.isBlank() && !"0".equals(flag) && !"false".equalsIgnoreCase(flag);
     }
 

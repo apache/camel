@@ -89,6 +89,31 @@ class LlmClientAzureGitHubTest {
     }
 
     @Test
+    void isGitHubModelsOptInFlagRejectsDisabledValues() {
+        assertThat(LlmClient.isGitHubModelsOptInFlag(null)).isFalse();
+        assertThat(LlmClient.isGitHubModelsOptInFlag("")).isFalse();
+        assertThat(LlmClient.isGitHubModelsOptInFlag("0")).isFalse();
+        assertThat(LlmClient.isGitHubModelsOptInFlag("false")).isFalse();
+        assertThat(LlmClient.isGitHubModelsOptInFlag("FALSE")).isFalse();
+        assertThat(LlmClient.isGitHubModelsOptInFlag("1")).isTrue();
+        assertThat(LlmClient.isGitHubModelsOptInFlag("true")).isTrue();
+    }
+
+    @Test
+    void detectEndpointReplacesLlamaPlaceholderWithFirstAzureDeploymentFromModelsApi() throws IOException {
+        AtomicReference<String> apiKeyHeader = new AtomicReference<>();
+        String baseUrl = startAzureModelsServer(apiKeyHeader);
+        LlmClient client = LlmClient.create()
+                .withApiType(LlmClient.ApiType.openai)
+                .withUrl(baseUrl + "/openai/deployments/ignored")
+                .withApiKey("azure-secret")
+                .withModel("llama3.2");
+
+        assertThat(client.detectEndpoint()).isTrue();
+        assertThat(client.model()).isEqualTo("deployment-a");
+    }
+
+    @Test
     void normalizeOpenAiModelsUrlBuildsAzureModelsPathWithApiVersion() {
         LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.openai);
 
