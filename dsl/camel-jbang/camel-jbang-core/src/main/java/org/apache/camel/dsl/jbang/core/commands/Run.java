@@ -915,6 +915,7 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.main.durationMaxIdleSeconds",
                 () -> executionLimitOptions.maxIdleSeconds > 0
                         ? String.valueOf(executionLimitOptions.maxIdleSeconds) : null);
+        prepareOpenApiUiServerOptions();
         if (serverOptions.port != -1) {
             // enable the main HTTP server when --port is explicitly specified
             writeSetting(main, profileProperties, "camel.server.enabled", "true");
@@ -1252,15 +1253,18 @@ public class Run extends CamelCommand {
             main.addOverrideProperty("camel.metrics.logMetricsOnShutdown", "false");
         }
         if (serverOptions.openapiUi) {
-            if (serverOptions.port == -1) {
-                serverOptions.port = 8080;
-            }
             dependencies.add("camel:platform-http-main");
             dependencies.add("camel:openapi-java");
             main.addOverrideProperty("camel.rest.apiContextPath", "/q/openapi.json");
+            main.addOverrideProperty("camel.rest.component", "platform-http");
             main.addOverrideProperty("camel.management.openapiUiEnabled", "true");
+            main.addOverrideProperty("camel.server.enabled", "true");
+            main.addOverrideProperty("camel.management.enabled", "true");
             writeSetting(main, profileProperties, "camel.rest.apiContextPath", "/q/openapi.json");
+            writeSetting(main, profileProperties, "camel.rest.component", "platform-http");
             writeSetting(main, profileProperties, "camel.management.openapiUiEnabled", "true");
+            writeSetting(main, profileProperties, "camel.server.enabled", "true");
+            writeSetting(main, profileProperties, "camel.management.enabled", "true");
         }
         if (debugOptions.openTelemetryAgent) {
             dependencies.add("camel:opentelemetry2");
@@ -3110,6 +3114,22 @@ public class Run extends CamelCommand {
         @Option(names = { "--observe" }, defaultValue = "false",
                 description = "Enable observability services (health, metrics, dev console, and lightweight Camel-only tracing in the TUI Spans tab)")
         boolean observe;
+    }
+
+    /**
+     * Align HTTP and management ports when OpenAPI UI is enabled so Swagger UI and the REST OpenAPI document are
+     * co-hosted (same Vert.x server when ports match).
+     */
+    void prepareOpenApiUiServerOptions() {
+        if (!serverOptions.openapiUi) {
+            return;
+        }
+        if (serverOptions.port == -1) {
+            serverOptions.port = 8080;
+        }
+        if (serverOptions.managementPort == -1) {
+            serverOptions.managementPort = serverOptions.port;
+        }
     }
 
     static class FilesConsumer extends ParameterConsumer<Run> {

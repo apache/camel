@@ -14,34 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.component.platform.http.main;
 
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class RunOpenApiUiOptionsTest {
+class OpenApiUiSupportTest {
 
     @Test
-    void shouldParseOpenApiUiFlag() {
-        Run run = new Run(new CamelJBangMain());
-        CommandLine cmd = new CommandLine(run);
-
-        cmd.parseArgs("--openapi-ui", "hello.java");
-
-        assertThat(run.serverOptions.openapiUi).isTrue();
-        assertThat(run.files).containsExactly("hello.java");
+    void normalizeSpecPathDefaultsToOpenApiJson() {
+        assertThat(OpenApiUiSupport.normalizeSpecPath(null)).isEqualTo(OpenApiUiSupport.DEFAULT_SPEC_PATH);
+        assertThat(OpenApiUiSupport.normalizeSpecPath("")).isEqualTo(OpenApiUiSupport.DEFAULT_SPEC_PATH);
     }
 
     @Test
-    void shouldAlignManagementPortWithAppPortForOpenApiUi() {
-        Run run = new Run(new CamelJBangMain());
-        new CommandLine(run).parseArgs("--openapi-ui", "--port=9090", "hello.java");
+    void normalizeSpecPathAddsLeadingSlashForRelativePaths() {
+        assertThat(OpenApiUiSupport.normalizeSpecPath("api-docs.json")).isEqualTo("/api-docs.json");
+    }
 
-        run.prepareOpenApiUiServerOptions();
-
-        assertThat(run.serverOptions.port).isEqualTo(9090);
-        assertThat(run.serverOptions.managementPort).isEqualTo(9090);
+    @Test
+    void normalizeSpecPathPreservesAbsoluteHttpUrls() {
+        String url = "http://localhost:9090/q/openapi.json";
+        assertThat(OpenApiUiSupport.normalizeSpecPath(url)).isEqualTo(url);
     }
 }

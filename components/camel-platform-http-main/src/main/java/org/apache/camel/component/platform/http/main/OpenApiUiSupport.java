@@ -42,10 +42,7 @@ final class OpenApiUiSupport {
     static void setup(VertxPlatformHttpRouter router, PlatformHttpComponent platformHttpComponent, String specPath) {
         ObjectHelper.notNull(router, "router");
         ObjectHelper.notNull(platformHttpComponent, "platformHttpComponent");
-        String spec = ObjectHelper.isNotEmpty(specPath) ? specPath : DEFAULT_SPEC_PATH;
-        if (!spec.startsWith("/")) {
-            spec = "/" + spec;
-        }
+        String spec = normalizeSpecPath(specPath);
 
         String webjarsRoot = "META-INF/resources/webjars/swagger-ui/" + SWAGGER_UI_WEBJAR_VERSION;
         StaticHandler assets = StaticHandler.create(webjarsRoot).setCachingEnabled(true);
@@ -101,5 +98,16 @@ final class OpenApiUiSupport {
                 </body>
                 </html>
                 """.formatted(prefix, prefix, prefix, specPath);
+    }
+
+    static String normalizeSpecPath(String specPath) {
+        String spec = ObjectHelper.isNotEmpty(specPath) ? specPath : DEFAULT_SPEC_PATH;
+        if (spec.startsWith("http://") || spec.startsWith("https://")) {
+            return spec;
+        }
+        if (!spec.startsWith("/")) {
+            spec = "/" + spec;
+        }
+        return spec;
     }
 }
