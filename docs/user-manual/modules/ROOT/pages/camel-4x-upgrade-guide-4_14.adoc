@@ -1343,3 +1343,17 @@ by the file-based consumers.
 
 Ordinary object names are unaffected. A name that resolves outside `fileDir` is now rejected with an
 `IllegalArgumentException`.
+
+=== camel-google-storage - downloads are confined to the configured directory
+
+When the consumer is configured with `downloadFileName` pointing at a directory, the
+remote object name is appended to that directory to build the local file to write.
+The resolved path is now verified to stay within the configured directory, and an
+`IllegalArgumentException` is thrown if it does not.
+
+Object names are still allowed to contain `/` and are mapped to sub-directories of the
+download directory as before, so nested object names keep working unchanged. Only names
+that resolve outside the configured directory are rejected.
+
+If `downloadFileName` is configured with an expression (i.e. it contains `$`), the local
+path is built by that expression as before and is not subject to this check.
