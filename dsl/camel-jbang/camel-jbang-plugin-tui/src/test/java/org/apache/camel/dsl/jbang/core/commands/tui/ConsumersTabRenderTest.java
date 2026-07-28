@@ -30,6 +30,7 @@ import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -61,10 +62,8 @@ class ConsumersTabRenderTest {
         ConsumersTab tab = new ConsumersTab(ctx);
         String rendered = TuiTestHelper.renderToString(tab, 160, 20);
 
-        assertTrue(rendered.contains("ROUTE"), "Should show ROUTE header");
-        assertTrue(rendered.contains("STATUS"), "Should show STATUS header");
-        assertTrue(rendered.contains("TYPE"), "Should show TYPE header");
-        assertTrue(rendered.contains("URI"), "Should show URI header");
+        assertThat(rendered).as("Should show ROUTE, STATUS, TYPE and URI headers")
+                .contains("ROUTE", "STATUS", "TYPE", "URI");
     }
 
     @Test
