@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Duration;
 import java.util.Iterator;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -131,33 +132,43 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     client.getConnectTimeout());
         }
 
-        BlockingTask task = Tasks.foregroundTask()
-                .withBudget(Budgets.iterationBudget()
-                        .withMaxIterations(Budgets.atLeastOnce(endpoint.getMaximumReconnectAttempts()))
-                        .withInterval(Duration.ofMillis(endpoint.getReconnectDelay()))
-                        .build())
-                .build();
+        ScheduledExecutorService ses = endpoint.getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, "FtpReconnect");
+        try {
+            BlockingTask task = Tasks.backgroundTask()
+                    .withBudget(Budgets.iterationTimeBudget()
+                            .withMaxIterations(Budgets.atLeastOnce(endpoint.getMaximumReconnectAttempts()))
+                            .withUnlimitedDuration()
+                            .withInterval(Duration.ofMillis(endpoint.getReconnectDelay()))
+                            .build())
+                    .withScheduledExecutor(ses)
+                    .withName("FtpReconnect")
+                    .build();
 
-        TaskPayload payload = new TaskPayload(configuration);
+            TaskPayload payload = new TaskPayload(configuration);
 
-        if (!task.run(endpoint.getCamelContext(), this::tryConnect, payload)) {
-            if (exchange != null) {
-                exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
-                exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
-            }
+            if (!task.run(endpoint.getCamelContext(), this::tryConnect, payload)) {
+                if (exchange != null) {
+                    exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
+                    exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
+                }
 
-            if (payload.exception != null) {
-                if (payload.exception instanceof GenericFileOperationFailedException genericFileOperationFailedException) {
-                    throw genericFileOperationFailedException;
+                if (payload.exception != null) {
+                    if (payload.exception instanceof GenericFileOperationFailedException genericFileOperationFailedException) {
+                        throw genericFileOperationFailedException;
+                    } else {
+                        throw new GenericFileOperationFailedException(
+                                client.getReplyCode(), client.getReplyString(), payload.exception.getMessage(),
+                                payload.exception);
+                    }
                 } else {
                     throw new GenericFileOperationFailedException(
-                            client.getReplyCode(), client.getReplyString(), payload.exception.getMessage(), payload.exception);
+                            client.getReplyCode(), client.getReplyString(),
+                            "Server refused connection");
                 }
-            } else {
-                throw new GenericFileOperationFailedException(
-                        client.getReplyCode(), client.getReplyString(),
-                        "Server refused connection");
             }
+        } finally {
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(ses);
         }
 
         // we are now connected

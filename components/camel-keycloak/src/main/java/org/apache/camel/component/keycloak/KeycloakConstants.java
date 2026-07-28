@@ -221,6 +221,15 @@ public final class KeycloakConstants {
     @Metadata(description = "Search query for organizations", javaType = "String")
     public static final String ORGANIZATION_SEARCH = "CamelKeycloakOrganizationSearch";
 
+    @Metadata(description = "The identity provider alias for a federated identity link", javaType = "String")
+    public static final String IDENTITY_PROVIDER = "CamelKeycloakIdentityProvider";
+
+    @Metadata(description = "The user id at the external identity provider", javaType = "String")
+    public static final String FEDERATED_USER_ID = "CamelKeycloakFederatedUserId";
+
+    @Metadata(description = "The username at the external identity provider", javaType = "String")
+    public static final String FEDERATED_USERNAME = "CamelKeycloakFederatedUsername";
+
     private KeycloakConstants() {
         // Utility class
     }

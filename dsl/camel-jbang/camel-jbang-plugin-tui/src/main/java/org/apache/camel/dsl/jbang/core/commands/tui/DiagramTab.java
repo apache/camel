@@ -1420,7 +1420,7 @@ class DiagramTab extends AbstractTab {
 
     // ---- Quick doc (i toggle in source viewer) ----
 
-    private Map<Integer, List<String>> provideAllQuickDocs(List<JsonObject> cd) {
+    private Map<Integer, List<SourceViewer.DocEntry>> provideAllQuickDocs(List<JsonObject> cd) {
         if (cachedRouteDetail == null || cd.isEmpty()) {
             return Map.of();
         }
@@ -1433,7 +1433,7 @@ class DiagramTab extends AbstractTab {
         IntegrationInfo info = ctx.findSelectedIntegration();
         CamelCatalog catalog = info != null ? getCatalog(info) : null;
 
-        Map<Integer, List<String>> result = new LinkedHashMap<>();
+        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
         for (JsonObject proc : processors) {
             Integer line = proc.getInteger("line");
             if (line == null || line <= 0) {

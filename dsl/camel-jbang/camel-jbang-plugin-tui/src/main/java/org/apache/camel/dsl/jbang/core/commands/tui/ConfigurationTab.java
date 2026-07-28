@@ -35,12 +35,13 @@ import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.MainModel;
@@ -55,10 +56,16 @@ class ConfigurationTab extends AbstractTableTab {
     private static final Style SECRET_STYLE = Theme.muted();
 
     private int detailScroll;
+    private boolean detailFocused;
 
     private CamelCatalog catalog;
+    private String catalogVersion;
     private Map<String, BaseOptionModel> mainOptionsMap;
     private final Map<String, Map<String, BaseOptionModel>> componentOptionsCache = new HashMap<>();
+
+    // Spring Boot configuration metadata cache (lazy-loaded on-demand via IPC)
+    private Map<String, JsonObject> springBootMetadataCache;
+    private boolean springBootMetadataLoaded;
 
     ConfigurationTab(MonitorContext ctx) {
         super(ctx, "key", "value", "source");
@@ -72,29 +79,43 @@ class ConfigurationTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            detailScroll = Math.max(0, detailScroll - 10);
+        if (ke.isKey(KeyCode.TAB)) {
+            detailFocused = !detailFocused;
             return true;
         }
-        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            detailScroll += 10;
-            return true;
+        if (detailFocused) {
+            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                detailScroll = Math.max(0, detailScroll - 10);
+                return true;
+            }
+            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                detailScroll += 10;
+                return true;
+            }
         }
         return false;
     }
 
     @Override
     public void navigateUp() {
-        tableState.selectPrevious();
-        detailScroll = 0;
+        if (detailFocused) {
+            detailScroll = Math.max(0, detailScroll - 1);
+        } else {
+            tableState.selectPrevious();
+            detailScroll = 0;
+        }
     }
 
     @Override
     public void navigateDown() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        int count = info != null ? info.configProperties.size() : 0;
-        tableState.selectNext(count);
-        detailScroll = 0;
+        if (detailFocused) {
+            detailScroll++;
+        } else {
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            int count = info != null ? info.configProperties.size() : 0;
+            tableState.selectNext(count);
+            detailScroll = 0;
+        }
     }
 
     @Override
@@ -166,6 +187,9 @@ class ConfigurationTab extends AbstractTableTab {
 
         String title = String.format(" Configuration [%d] ", props.size());
 
+        Style tableBorderStyle = detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableTitleStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
+
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
@@ -176,9 +200,11 @@ class ConfigurationTab extends AbstractTableTab {
                         Constraint.percentage(35),
                         Constraint.fill(),
                         Constraint.length(20))
-                .highlightStyle(Theme.selectionBg())
+                .highlightStyle(detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .borderStyle(tableBorderStyle)
+                        .title(Title.from(Line.from(Span.styled(title, tableTitleStyle)))).build())
                 .build();
 
         lastTableArea = area;
@@ -187,13 +213,17 @@ class ConfigurationTab extends AbstractTableTab {
     }
 
     private void renderDetail(Frame frame, Rect area, List<ConfigProperty> props) {
+        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
+
         Integer sel = tableState.selected();
         if (sel == null || sel < 0 || sel >= props.size()) {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Select a property", Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" Property Detail ").build())
+                                    .borderStyle(detailBorderStyle)
+                                    .title(Title.from(Line.from(Span.styled(" Property Detail ", detailTitleStyle)))).build())
                             .build(),
                     area);
             return;
@@ -263,7 +293,8 @@ class ConfigurationTab extends AbstractTableTab {
                 Paragraph.builder()
                         .text(Text.from(visible))
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                .title(title).build())
+                                .borderStyle(detailBorderStyle)
+                                .title(Title.from(Line.from(Span.styled(title, detailTitleStyle)))).build())
                         .build(),
                 area);
     }
@@ -317,19 +348,55 @@ class ConfigurationTab extends AbstractTableTab {
                 String optionName = rest.substring(dot + 1);
                 Map<String, BaseOptionModel> compOptions = getComponentOptions(componentName);
                 if (compOptions != null) {
-                    return compOptions.get(optionName);
+                    BaseOptionModel opt = compOptions.get(optionName);
+                    if (opt != null) {
+                        return opt;
+                    }
                 }
+            }
+        }
+        // fallback to Spring Boot configuration metadata
+        ensureSpringBootMetadataCache();
+        if (springBootMetadataCache != null) {
+            JsonObject sbProp = springBootMetadataCache.get(key);
+            if (sbProp != null) {
+                return SpringBootMetadataHelper.toOptionModel(sbProp);
             }
         }
         return null;
     }
 
-    private void initCatalog() {
-        if (catalog != null) {
+    private void ensureSpringBootMetadataCache() {
+        if (springBootMetadataLoaded) {
             return;
         }
-        catalog = new DefaultCamelCatalog();
+        springBootMetadataLoaded = true;
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || !"Spring Boot".equals(info.platform)) {
+            return;
+        }
+        springBootMetadataCache = SpringBootMetadataHelper.fetchMetadata(ctx, info.pid);
+    }
+
+    private void initCatalog() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        String version = info != null ? info.camelVersion : null;
+        if (catalog != null && (version == null || version.equals(catalogVersion))) {
+            return;
+        }
+        try {
+            catalog = version != null ? CatalogLoader.loadCatalog(null, version, true) : null;
+        } catch (Exception e) {
+            catalog = null;
+        }
+        if (catalog == null) {
+            return;
+        }
+        catalogVersion = version;
         mainOptionsMap = new HashMap<>();
+        componentOptionsCache.clear();
+        springBootMetadataCache = null;
+        springBootMetadataLoaded = false;
         MainModel mainModel = catalog.mainModel();
         if (mainModel != null) {
             for (MainModel.MainOptionModel opt : mainModel.getOptions()) {
@@ -360,6 +427,7 @@ class ConfigurationTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         super.renderFooter(spans);
+        hint(spans, "Tab", detailFocused ? "table" : "detail");
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hintLast(spans, "PgUp/Dn", "scroll");
     }
@@ -373,6 +441,11 @@ class ConfigurationTab extends AbstractTableTab {
         List<String> items = sortedProperties(info).stream().map(p -> p.key).toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Configuration");
+    }
+
+    @Override
+    public Boolean isDetailFocused() {
+        return detailFocused;
     }
 
     static int compareCamelFirst(ConfigProperty a, ConfigProperty b) {

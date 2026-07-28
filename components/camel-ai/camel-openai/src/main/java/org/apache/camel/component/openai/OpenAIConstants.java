@@ -40,6 +40,8 @@ public final class OpenAIConstants {
     public static final String TOP_P = "CamelOpenAITopP";
     @Metadata(description = "The maximum number of tokens to generate in the completion", javaType = "Integer")
     public static final String MAX_TOKENS = "CamelOpenAIMaxTokens";
+    @Metadata(description = "Previous response id for server-side conversation state on the Responses API", javaType = "String")
+    public static final String PREVIOUS_RESPONSE_ID = "CamelOpenAIPreviousResponseId";
     @Metadata(description = "Whether to stream the response back incrementally", javaType = "Boolean")
     public static final String STREAMING = "CamelOpenAIStreaming";
     @Metadata(description = "The Java class name (FQCN) to use for structured output parsing", javaType = "String")
@@ -93,8 +95,12 @@ public final class OpenAIConstants {
     public static final String AGENTIC_TOTAL_TOKENS = "CamelOpenAIAgenticTotalTokens";
 
     // Output Exchange Properties
-    @Metadata(description = "The complete OpenAI response object", javaType = "com.openai.models.ChatCompletion")
+    @Metadata(description = "The complete OpenAI chat completion response object",
+              javaType = "com.openai.models.chat.completions.ChatCompletion")
     public static final String RESPONSE = "CamelOpenAIResponse";
+    @Metadata(description = "The complete OpenAI Responses API response object",
+              javaType = "com.openai.models.responses.Response")
+    public static final String RESPONSES_RESPONSE = "CamelOpenAIResponsesResponse";
 
     // Embeddings Input Headers
     @Metadata(description = "The model to use for embeddings", javaType = "String")

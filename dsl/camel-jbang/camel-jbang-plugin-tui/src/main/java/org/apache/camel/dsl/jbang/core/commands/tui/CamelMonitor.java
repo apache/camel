@@ -346,6 +346,7 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
         });
+        actionsPopup.setActiveTabFilter(ctx::findSelectedIntegration, tabRegistry::moreTabs);
 
         popupManager = new PopupManager(
                 ctx, this::getNonVanishingIntegrations, tabRegistry::moreTabs, filesBrowser,
@@ -368,6 +369,22 @@ public class CamelMonitor extends CamelCommand {
                     @Override
                     public void stopSelectedProcess(boolean forceKill) {
                         CamelMonitor.this.stopSelectedProcess(forceKill);
+                    }
+
+                    @Override
+                    public void fallbackToOverviewIfTabInactive() {
+                        if (tabRegistry.selectedTabIndex() == TabRegistry.TAB_MORE) {
+                            MonitorTab active = tabRegistry.getActiveMoreTab();
+                            if (active != null) {
+                                IntegrationInfo info = ctx.findSelectedIntegration();
+                                for (TabRegistry.MoreTab mt : tabRegistry.moreTabs()) {
+                                    if (mt.tab() == active && !TabRegistry.isMoreTabActive(mt, info)) {
+                                        tabsState.select(TabRegistry.TAB_OVERVIEW);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                     }
                 });
 
@@ -731,13 +748,13 @@ public class CamelMonitor extends CamelCommand {
             if (ke.isChar('1')) {
                 return tabRegistry.handleTabKey(TAB_OVERVIEW, ctx, dataService);
             }
-            if (ke.isChar('2')) {
-                return tabRegistry.handleTabKey(TAB_SOURCE, ctx, dataService);
-            }
             if (ke.isChar('3')) {
                 return tabRegistry.handleTabKey(TAB_LOG, ctx, dataService);
             }
             if (!isInfraSelected()) {
+                if (ke.isChar('2')) {
+                    return tabRegistry.handleTabKey(TAB_SOURCE, ctx, dataService);
+                }
                 if (ke.isChar('4')) {
                     return tabRegistry.handleTabKey(TAB_ACTIVITY, ctx, dataService);
                 }

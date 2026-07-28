@@ -2271,6 +2271,163 @@ public interface BedrockAgentEndpointBuilderFactory {
             return "CamelAwsBedrockAgentRuntimeSessionId";
         }
         /**
+         * The unique identifier of the agent to invoke. Overrides the agentId
+         * configured on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsBedrockAgentRuntimeAgentId}.
+         */
+        public String awsBedrockAgentRuntimeAgentId() {
+            return "CamelAwsBedrockAgentRuntimeAgentId";
+        }
+        /**
+         * The unique identifier of the agent alias to invoke. Overrides the
+         * agentAliasId configured on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentAliasId}.
+         */
+        public String awsBedrockAgentRuntimeAgentAliasId() {
+            return "CamelAwsBedrockAgentRuntimeAgentAliasId";
+        }
+        /**
+         * Enables tracing for the agent invocation. When set, overrides the
+         * enableTrace option on the endpoint.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentEnableTrace}.
+         */
+        public String awsBedrockAgentRuntimeAgentEnableTrace() {
+            return "CamelAwsBedrockAgentRuntimeAgentEnableTrace";
+        }
+        /**
+         * Ends the agent session after this invocation.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentEndSession}.
+         */
+        public String awsBedrockAgentRuntimeAgentEndSession() {
+            return "CamelAwsBedrockAgentRuntimeAgentEndSession";
+        }
+        /**
+         * The unique identifier of the agent memory to use across sessions.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentMemoryId}.
+         */
+        public String awsBedrockAgentRuntimeAgentMemoryId() {
+            return "CamelAwsBedrockAgentRuntimeAgentMemoryId";
+        }
+        /**
+         * The streaming output mode (complete or chunks) for an agent
+         * invocation. When set, overrides the streamOutputMode option on the
+         * endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentStreamOutputMode}.
+         */
+        public String awsBedrockAgentRuntimeAgentStreamOutputMode() {
+            return "CamelAwsBedrockAgentRuntimeAgentStreamOutputMode";
+        }
+        /**
+         * The foundation model used by an inline agent. Overrides the
+         * foundationModel configured on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentFoundationModel}.
+         */
+        public String awsBedrockAgentRuntimeAgentFoundationModel() {
+            return "CamelAwsBedrockAgentRuntimeAgentFoundationModel";
+        }
+        /**
+         * The instruction given to an inline agent. Overrides the instruction
+         * configured on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentInstruction}.
+         */
+        public String awsBedrockAgentRuntimeAgentInstruction() {
+            return "CamelAwsBedrockAgentRuntimeAgentInstruction";
+        }
+        /**
+         * When invoking an agent with tracing enabled, this header will contain
+         * the list of TracePart emitted during the invocation. The elements are
+         * TracePart for invokeAgent and InlineAgentTracePart for
+         * invokeInlineAgent.
+         * 
+         * The option is a: {@code java.util.List} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentTraces}.
+         */
+        public String awsBedrockAgentRuntimeAgentTraces() {
+            return "CamelAwsBedrockAgentRuntimeAgentTraces";
+        }
+        /**
+         * When an agent invocation requires the caller to fulfil an action,
+         * this header will contain the list of return-control payloads emitted
+         * by the agent. The elements are ReturnControlPayload for invokeAgent
+         * and InlineAgentReturnControlPayload for invokeInlineAgent.
+         * 
+         * The option is a: {@code java.util.List} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentReturnControl}.
+         */
+        public String awsBedrockAgentRuntimeAgentReturnControl() {
+            return "CamelAwsBedrockAgentRuntimeAgentReturnControl";
+        }
+        /**
+         * When an agent invocation returns files, this header will contain the
+         * files emitted by the agent. The elements are FilePart for invokeAgent
+         * and InlineAgentFilePart for invokeInlineAgent.
+         * 
+         * The option is a: {@code java.util.List} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeAgentFiles}.
+         */
+        public String awsBedrockAgentRuntimeAgentFiles() {
+            return "CamelAwsBedrockAgentRuntimeAgentFiles";
+        }
+        /**
          * The unique identifier of the flow to invoke. Overrides the
          * flowIdentifier configured on the endpoint.
          * 

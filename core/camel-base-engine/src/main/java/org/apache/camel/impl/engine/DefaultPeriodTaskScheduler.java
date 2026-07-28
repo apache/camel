@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -55,6 +58,17 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
             }
         }
         return null;
+    }
+
+    @Override
+    public Collection<Runnable> getTasks() {
+        List<Runnable> answer = new ArrayList<>();
+        for (TimerListener listener : getListeners()) {
+            if (listener instanceof TaskWrapper wrapper) {
+                answer.add(wrapper.getTask());
+            }
+        }
+        return answer;
     }
 
     @Override

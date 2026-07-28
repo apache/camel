@@ -19,6 +19,7 @@ package org.apache.camel.impl.engine;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -55,16 +56,19 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
 
     private String tracingFormat = TRACING_OUTPUT;
     private CamelContext camelContext;
-    private boolean enabled = true;
-    private boolean standby;
-    private boolean traceRests;
-    private boolean traceTemplates;
-    private long traceCounter;
+    private volatile boolean enabled = true;
+    private volatile boolean standby;
+    private volatile boolean traceRests;
+    private volatile boolean traceTemplates;
+    private final AtomicLong traceCounter = new AtomicLong();
+
+    // immutable holder for compound tracePattern+patterns that must be visible atomically
+    private record TracePatternHolder(String tracePattern, String[] patterns) {
+    }
 
     private ExchangeFormatter exchangeFormatter;
-    private String tracePattern;
-    private transient String[] patterns;
-    private boolean traceBeforeAndAfterRoute = true;
+    private volatile TracePatternHolder tracePatternHolder;
+    private volatile boolean traceBeforeAndAfterRoute = true;
 
     public DefaultTracer() {
         DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
@@ -89,7 +93,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     @Override
     public void traceBeforeNode(NamedNode node, Exchange exchange) {
         if (shouldTrace(node)) {
-            traceCounter++;
+            traceCounter.incrementAndGet();
             String routeId = ExpressionBuilder.routeIdExpression().evaluate(exchange, String.class);
 
             // we need to avoid leak the sensible information here
@@ -241,8 +245,10 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
 
         boolean pattern = true;
 
-        if (patterns != null) {
-            pattern = shouldTracePattern(definition);
+        // snapshot the volatile holder once for consistent reads
+        TracePatternHolder ph = tracePatternHolder;
+        if (ph != null) {
+            pattern = shouldTracePattern(definition, ph.patterns());
         }
 
         if (LOG.isTraceEnabled()) {
@@ -253,12 +259,12 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
 
     @Override
     public long getTraceCounter() {
-        return traceCounter;
+        return traceCounter.get();
     }
 
     @Override
     public void resetTraceCounter() {
-        traceCounter = 0;
+        traceCounter.set(0);
     }
 
     @Override
@@ -303,17 +309,17 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
 
     @Override
     public String getTracePattern() {
-        return tracePattern;
+        TracePatternHolder ph = tracePatternHolder;
+        return ph != null ? ph.tracePattern() : null;
     }
 
     @Override
     public void setTracePattern(String tracePattern) {
-        this.tracePattern = tracePattern;
         if (tracePattern != null) {
             // the pattern can have multiple nodes separated by comma
-            this.patterns = tracePattern.split(",");
+            this.tracePatternHolder = new TracePatternHolder(tracePattern, tracePattern.split(","));
         } else {
-            this.patterns = null;
+            this.tracePatternHolder = null;
         }
     }
 
@@ -347,7 +353,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         }
     }
 
-    protected boolean shouldTracePattern(NamedNode definition) {
+    protected boolean shouldTracePattern(NamedNode definition, String[] patterns) {
         for (String pattern : patterns) {
             // match either route id, or node id
             String id = definition.getId();

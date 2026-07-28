@@ -216,6 +216,12 @@ class ActionsPopup {
         settingsPopup.setTabEntries(entries);
     }
 
+    void setActiveTabFilter(
+            java.util.function.Supplier<IntegrationInfo> integrationSupplier,
+            java.util.function.Supplier<List<TabRegistry.MoreTab>> moreTabsSupplier) {
+        gotoTabPopup.setActiveTabFilter(integrationSupplier, moreTabsSupplier);
+    }
+
     void setClearScreenAction(Runnable clearScreen) {
         settingsPopup.setClearScreen(clearScreen);
     }
@@ -1174,7 +1180,7 @@ class ActionsPopup {
             setNotification("No routes available", true);
             return;
         }
-        sendMessagePopup.open(ctx, pid, info.name, info.routes, preSelectedRouteId, info.directory);
+        sendMessagePopup.open(ctx, pid, info.name, info.routes, preSelectedRouteId, info.directory, info.httpServer);
         preSelectedRouteId = null;
     }
 

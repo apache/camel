@@ -830,7 +830,20 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> 
                     LOG.debug("Error closing session: {}", e.getMessage(), e);
                 }
             }
+            // Stop the SSH client to release NIO2 and timer daemon threads (CAMEL-24273).
+            // Without this, each connect/disconnect cycle leaks threads that accumulate
+            // until the system's thread limit is exhausted.
+            if (sshClient != null) {
+                try {
+                    sshClient.stop();
+                } catch (Exception e) {
+                    LOG.debug("Error stopping SSH client: {}", e.getMessage(), e);
+                }
+            }
         } finally {
+            sftpClient = null;
+            session = null;
+            sshClient = null;
             lock.unlock();
         }
     }

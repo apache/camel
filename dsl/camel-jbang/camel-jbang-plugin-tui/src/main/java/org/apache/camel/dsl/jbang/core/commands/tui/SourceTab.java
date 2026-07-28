@@ -26,9 +26,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,6 +58,11 @@ import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -80,18 +87,21 @@ class SourceTab extends AbstractTab {
 
     private final Map<String, CamelCatalog> catalogCache = new HashMap<>();
 
+    // Properties quick-doc caches (invalidated when catalog version changes)
+    private String propsCatalogVersion;
+    private Map<String, BaseOptionModel> mainOptionsCache;
+    private final Map<String, Map<String, BaseOptionModel>> componentOptionsCache = new HashMap<>();
+    private final Map<String, Map<String, BaseOptionModel>> languageOptionsCache = new HashMap<>();
+    private final Map<String, Map<String, BaseOptionModel>> dataformatOptionsCache = new HashMap<>();
+
+    // Spring Boot configuration metadata cache (lazy-loaded on-demand via IPC)
+    private Map<String, JsonObject> springBootMetadataCache;
+    private boolean springBootMetadataLoaded;
+
     private static final Pattern YAML_URI_PATTERN = Pattern.compile(
-            "^\\s*-?\\s*(?:uri|from|to|toD|wireTap|enrich|pollEnrich|deadLetterChannel):\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*:[^\"\\s]*)");
-    private static final Pattern YAML_EIP_PATTERN = Pattern.compile(
-            "^\\s*-?\\s*(aggregate|bean|choice|circuitBreaker|claim[Cc]heck|convertBodyTo|convertHeaderTo|"
-                                                                    + "delay|dynamicRouter|enrich|filter|idempotentConsumer|"
-                                                                    + "intercept|kamelet|loadBalance|log|loop|marshal|multicast|"
-                                                                    + "onException|otherwise|pipeline|pollEnrich|process|"
-                                                                    + "recipientList|removeHeader|removeHeaders|removeProperty|"
-                                                                    + "resequence|rollback|routingSlip|saga|sample|"
-                                                                    + "script|serviceCall|setBody|setHeader|setProperty|"
-                                                                    + "sort|split|step|stop|threads|throttle|"
-                                                                    + "to|toD|transform|unmarshal|validate|when|wireTap)\\s*:");
+            "^\\s*-?\\s*(?:uri|from|to|toD|wireTap|enrich|pollEnrich|deadLetterChannel):\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*(?::[^\"\\s]*)?)");
+    private static final Pattern YAML_KEY_PATTERN = Pattern.compile(
+            "^\\s*-?\\s*([a-zA-Z][a-zA-Z0-9]*)\\s*:");
 
     SourceTab(MonitorContext ctx) {
         super(ctx);
@@ -464,10 +474,17 @@ class SourceTab extends AbstractTab {
                 loadDirectory(Path.of(entry.path()));
             } else {
                 Path filePath = Path.of(entry.path());
-                sourceViewer.loadFile(filePath);
                 if (isCamelSourceFile(filePath)) {
                     sourceViewer.setQuickDocProvider(this::provideCamelQuickDocs);
+                    sourceViewer.setDeprecatedLineScanner(null);
+                } else if (isPropertiesFile(filePath)) {
+                    sourceViewer.setQuickDocProvider(this::providePropertiesQuickDocs);
+                    sourceViewer.setDeprecatedLineScanner(this::scanDeprecatedProperties);
+                } else {
+                    sourceViewer.setQuickDocProvider(null);
+                    sourceViewer.setDeprecatedLineScanner(null);
                 }
+                sourceViewer.loadFile(filePath);
                 focusOnViewer = true;
             }
         }
@@ -509,13 +526,13 @@ class SourceTab extends AbstractTab {
         }
     }
 
-    private Map<Integer, List<String>> provideCamelQuickDocs(List<JsonObject> codeData) {
+    private Map<Integer, List<SourceViewer.DocEntry>> provideCamelQuickDocs(List<JsonObject> codeData) {
         CamelCatalog catalog = getCatalog();
         if (catalog == null || codeData.isEmpty()) {
             return Map.of();
         }
 
-        Map<Integer, List<String>> result = new LinkedHashMap<>();
+        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
         for (int i = 0; i < codeData.size(); i++) {
             String code = codeData.get(i).getString("code");
             if (code == null) {
@@ -532,13 +549,204 @@ class SourceTab extends AbstractTab {
                 continue;
             }
 
-            Matcher eipMatcher = YAML_EIP_PATTERN.matcher(code);
-            if (eipMatcher.find()) {
-                String eipName = eipMatcher.group(1);
-                RoutesTab.buildEipInlineDoc(result, codeData, catalog, eipName, null, i);
+            Matcher keyMatcher = YAML_KEY_PATTERN.matcher(code);
+            if (keyMatcher.find()) {
+                String key = keyMatcher.group(1);
+                if (catalog.eipModel(key) != null) {
+                    RoutesTab.buildEipInlineDoc(result, codeData, catalog, key, null, i);
+                }
             }
         }
         return result;
+    }
+
+    private static boolean isPropertiesFile(Path path) {
+        return path.getFileName().toString().toLowerCase().endsWith(".properties");
+    }
+
+    private Map<Integer, List<SourceViewer.DocEntry>> providePropertiesQuickDocs(List<JsonObject> codeData) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null || codeData.isEmpty()) {
+            return Map.of();
+        }
+        ensureMainOptionsCache(catalog);
+
+        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
+        for (int i = 0; i < codeData.size(); i++) {
+            String code = codeData.get(i).getString("code");
+            if (code == null) {
+                continue;
+            }
+            String trimmed = code.trim();
+            if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
+                continue;
+            }
+            int eq = trimmed.indexOf('=');
+            if (eq <= 0) {
+                continue;
+            }
+            String key = trimmed.substring(0, eq).trim();
+            BaseOptionModel opt = lookupPropertyOption(catalog, key);
+            if (opt != null) {
+                String doc = RoutesTab.formatOptionDoc(opt);
+                if (doc != null) {
+                    result.put(i, List.of(opt.isDeprecated()
+                            ? SourceViewer.DocEntry.deprecated(doc)
+                            : SourceViewer.DocEntry.of(doc)));
+                }
+                continue;
+            }
+            // fallback to Spring Boot configuration metadata for non-camel properties
+            ensureSpringBootMetadataCache();
+            if (springBootMetadataCache != null) {
+                JsonObject sbProp = springBootMetadataCache.get(key);
+                if (sbProp != null) {
+                    String doc = SpringBootMetadataHelper.formatDoc(sbProp);
+                    if (doc != null) {
+                        boolean deprecated = Boolean.TRUE.equals(sbProp.get("deprecated"));
+                        result.put(i, List.of(deprecated
+                                ? SourceViewer.DocEntry.deprecated(doc)
+                                : SourceViewer.DocEntry.of(doc)));
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private Set<Integer> scanDeprecatedProperties(List<JsonObject> codeData) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null || codeData.isEmpty()) {
+            return Set.of();
+        }
+        ensureMainOptionsCache(catalog);
+
+        Set<Integer> result = new HashSet<>();
+        for (int i = 0; i < codeData.size(); i++) {
+            String code = codeData.get(i).getString("code");
+            if (code == null) {
+                continue;
+            }
+            String trimmed = code.trim();
+            if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
+                continue;
+            }
+            int eq = trimmed.indexOf('=');
+            if (eq <= 0) {
+                continue;
+            }
+            String key = trimmed.substring(0, eq).trim();
+            BaseOptionModel opt = lookupPropertyOption(catalog, key);
+            if (opt != null) {
+                if (opt.isDeprecated()) {
+                    result.add(i);
+                }
+                continue;
+            }
+            ensureSpringBootMetadataCache();
+            if (springBootMetadataCache != null) {
+                JsonObject sbProp = springBootMetadataCache.get(key);
+                if (sbProp != null && Boolean.TRUE.equals(sbProp.get("deprecated"))) {
+                    result.add(i);
+                }
+            }
+        }
+        return result;
+    }
+
+    private BaseOptionModel lookupPropertyOption(CamelCatalog catalog, String key) {
+        if (mainOptionsCache != null) {
+            BaseOptionModel opt = mainOptionsCache.get(key);
+            if (opt != null) {
+                return opt;
+            }
+        }
+        if (key.startsWith("camel.component.")) {
+            return lookupPrefixedOption(key, "camel.component.", componentOptionsCache,
+                    name -> {
+                        ComponentModel m = catalog.componentModel(name);
+                        return m != null ? m.getComponentOptions() : null;
+                    });
+        }
+        if (key.startsWith("camel.language.")) {
+            return lookupPrefixedOption(key, "camel.language.", languageOptionsCache,
+                    name -> {
+                        LanguageModel m = catalog.languageModel(name);
+                        return m != null ? m.getOptions() : null;
+                    });
+        }
+        if (key.startsWith("camel.dataformat.")) {
+            return lookupPrefixedOption(key, "camel.dataformat.", dataformatOptionsCache,
+                    name -> {
+                        DataFormatModel m = catalog.dataFormatModel(name);
+                        return m != null ? m.getOptions() : null;
+                    });
+        }
+        return null;
+    }
+
+    private BaseOptionModel lookupPrefixedOption(
+            String key, String prefix,
+            Map<String, Map<String, BaseOptionModel>> cache,
+            java.util.function.Function<String, List<? extends BaseOptionModel>> optionsLoader) {
+        String rest = key.substring(prefix.length());
+        int dot = rest.indexOf('.');
+        if (dot <= 0) {
+            return null;
+        }
+        String name = rest.substring(0, dot);
+        String optionName = rest.substring(dot + 1);
+        Map<String, BaseOptionModel> opts = cache.computeIfAbsent(name, n -> {
+            List<? extends BaseOptionModel> options = optionsLoader.apply(n);
+            if (options == null) {
+                return Map.of();
+            }
+            Map<String, BaseOptionModel> map = new HashMap<>();
+            for (BaseOptionModel o : options) {
+                if (o.getName() != null) {
+                    map.put(o.getName(), o);
+                }
+            }
+            return map;
+        });
+        return opts.get(optionName);
+    }
+
+    private void ensureMainOptionsCache(CamelCatalog catalog) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        String version = info != null ? info.camelVersion : null;
+        if (version != null && !version.equals(propsCatalogVersion)) {
+            mainOptionsCache = null;
+            componentOptionsCache.clear();
+            languageOptionsCache.clear();
+            dataformatOptionsCache.clear();
+            springBootMetadataCache = null;
+            springBootMetadataLoaded = false;
+            propsCatalogVersion = version;
+        }
+        if (mainOptionsCache == null) {
+            mainOptionsCache = new HashMap<>();
+            MainModel mainModel = catalog.mainModel();
+            if (mainModel != null) {
+                for (MainModel.MainOptionModel opt : mainModel.getOptions()) {
+                    if (opt.getName() != null) {
+                        mainOptionsCache.put(opt.getName(), opt);
+                    }
+                }
+            }
+        }
+    }
+
+    private void ensureSpringBootMetadataCache() {
+        if (springBootMetadataLoaded) {
+            return;
+        }
+        springBootMetadataLoaded = true;
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || !"Spring Boot".equals(info.platform)) {
+            return;
+        }
+        springBootMetadataCache = SpringBootMetadataHelper.fetchMetadata(ctx, info.pid);
     }
 
     private void renderFileList(Frame frame, Rect area) {

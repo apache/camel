@@ -26,8 +26,6 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
-import dev.tamboui.tui.event.KeyCode;
-import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -55,24 +53,6 @@ class InflightTab extends AbstractTableTab {
         super(ctx, "status", "exchange", "route", "duration");
         sortIndex = 3;
         sort = "duration";
-    }
-
-    @Override
-    public void navigateUp() {
-    }
-
-    @Override
-    public void navigateDown() {
-    }
-
-    @Override
-    public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)
-                || ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)
-                || ke.isHome() || ke.isEnd()) {
-            return false;
-        }
-        return super.handleKeyEvent(ke);
     }
 
     @Override
@@ -105,7 +85,7 @@ class InflightTab extends AbstractTableTab {
                     ? Theme.error().bold()
                     : Theme.success();
 
-            String duration = TimeUtils.printDuration(ii.duration, true);
+            String duration = TimeUtils.printDuration(ii.duration, false);
             Style durationStyle = durationColor(ii.duration);
 
             String route = ii.atRouteId != null ? ii.atRouteId : "";
@@ -142,6 +122,8 @@ class InflightTab extends AbstractTableTab {
                         Constraint.fill(),
                         Constraint.length(14),
                         Constraint.length(23))
+                .highlightStyle(Theme.selectionBg())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
 

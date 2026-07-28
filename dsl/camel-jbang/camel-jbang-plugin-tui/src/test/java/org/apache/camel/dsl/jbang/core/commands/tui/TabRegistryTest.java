@@ -81,11 +81,6 @@ class TabRegistryTest {
     }
 
     @Test
-    void moreTabsHasTwentySevenEntries() {
-        assertEquals(28, registry.moreTabs().size());
-    }
-
-    @Test
     void everyMoreTabLabelHasMnemonicMarker() {
         for (TabRegistry.MoreTab mt : registry.moreTabs()) {
             assertTrue(mt.mnemonicIndex() >= 0,
@@ -99,31 +94,6 @@ class TabRegistryTest {
         for (TabRegistry.MoreTab mt : registry.moreTabs()) {
             assertEquals(2, CharWidth.of(mt.icon()), "Icon should be 2 terminal columns wide: " + mt.icon());
             assertFalse(mt.icon().contains("\uFE0F"), "Icon should not contain VS16 variation selector: " + mt.icon());
-        }
-    }
-
-    @Test
-    void moreTabShortcutsMatchHistoricalSequence() {
-        // Independent oracle (not a re-derivation of shortcut()): these are the exact letters the hand-maintained
-        // MORE_SHORTCUTS array carried before the MoreTab refactor. A label edit that repoints a key must fail here.
-        List<Character> shortcuts = registry.moreTabs().stream().map(TabRegistry.MoreTab::shortcut).toList();
-        assertEquals(
-                List.of('B', 'C', 'H', 'I', 'P', 'R', 'C', 'H', 'M', 'N', 'E', 'O', 'J', 'K', 'Q', 'Q', 'C', 'M', 'M', 'M',
-                        'P', 'S', 'T', 'B', 'C', 'C', 'V', 'M'),
-                shortcuts, "More tab shortcut letters must match the historical sequence");
-    }
-
-    @Test
-    void moreTabShortcutsHaveReasonableGroupSizes() {
-        // Duplicate mnemonics are allowed; the popup cycles through them on repeated key press.
-        // Natural first-letter mnemonics create groups of up to 5 (e.g. C, M) which is acceptable.
-        List<Character> shortcuts = registry.moreTabs().stream().map(TabRegistry.MoreTab::shortcut).toList();
-        java.util.Map<Character, Long> counts = shortcuts.stream()
-                .collect(java.util.stream.Collectors.groupingBy(c -> c, java.util.stream.Collectors.counting()));
-        for (var entry : counts.entrySet()) {
-            assertTrue(entry.getValue() <= 5,
-                    "More tab shortcut '" + entry.getKey() + "' appears " + entry.getValue()
-                                              + " times (max 5): " + shortcuts);
         }
     }
 

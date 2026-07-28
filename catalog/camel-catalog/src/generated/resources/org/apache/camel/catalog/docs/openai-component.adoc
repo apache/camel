@@ -2,7 +2,7 @@
 :doctitle: OpenAI
 :shortname: openai
 :artifactid: camel-openai
-:description: OpenAI endpoint for chat completion, embeddings, audio transcription, audio translation, and text-to-speech.
+:description: OpenAI endpoint for chat completion, Responses API, embeddings, audio transcription, audio translation, and text-to-speech.
 :since: 4.17
 :supportlevel: Stable
 :tabs-sync-option:
@@ -38,6 +38,10 @@ openai:operation[?options]
 Supported operations:
 
 * `chat-completion` - Generate chat completions using language models
+* `responses` - Call the OpenAI Responses API (hosted tools, server-side conversation state; non-streaming)
+
+See xref:others:openai-responses.adoc[Responses API operation] for usage (`previousResponseId`, builtin tools, MCP pass-through).
+
 * `embeddings` - Generate vector embeddings from text for semantic search and RAG applications
 * `tool-execution` - Execute MCP tool calls from a stored chat completion response (used in manual tool loops)
 * `audio-transcription` - Transcribe audio files to text using speech-to-text models (e.g., Whisper, GPT-4o Transcribe)
@@ -1008,6 +1012,7 @@ NOTE: This maps fields from the response message's additional properties (fields
 
 For more details on specific features, see:
 
+* xref:others:openai-responses.adoc[Responses API operation] - OpenAI Responses API, hosted tools, and server-side conversation state
 * xref:others:openai-mcp.adoc[MCP Tool Calling] - Model Context Protocol server configuration, agentic loop, streaming, and connection recovery
 * xref:others:openai-providers.adoc[OpenAI-Compatible Providers] - Using Ollama, LM Studio, vLLM, and OpenRouter as alternative backends
 * xref:others:openai-operations.adoc[Embeddings and Audio Operations] - Text embeddings, vector database integration, and audio transcription

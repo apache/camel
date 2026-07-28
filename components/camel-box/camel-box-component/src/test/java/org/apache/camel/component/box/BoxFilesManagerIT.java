@@ -54,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 @EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
            disabledReason = "Box credentials were not provided")
-public class BoxFilesManagerIT extends AbstractBoxITSupport {
+class BoxFilesManagerIT extends AbstractBoxITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxFilesManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
@@ -132,9 +132,20 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testDeleteFile() {
+    void testDeleteFile() {
+        assertNotNull(testFile.getID(), "test file should have an ID before deletion");
         // using String message body for single parameter "fileId"
         requestBody("direct://DELETEFILE", testFile.getID());
+
+        // Verify the file no longer exists (same pattern as testDeleteFileMetadata)
+        try {
+            testFile.getInfo();
+        } catch (BoxAPIException e) {
+            if (e.getResponseCode() == 404) {
+                return;
+            }
+        }
+        fail("deleteFile file still accessible");
     }
 
     @Test

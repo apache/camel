@@ -36,12 +36,12 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "internal-tasks",
+@Command(name = "internal-task",
          description = "List internal tasks of Camel integrations", sortOptions = false, showDefaultValues = true,
          footer = {
                  "%nExamples:",
-                 "  camel get internal-tasks",
-                 "  camel get internal-tasks --watch" })
+                 "  camel get internal-task",
+                 "  camel get internal-task --watch" })
 public class ListInternalTask extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -67,6 +69,7 @@ class SendMessagePopup {
     private boolean sending;
     private String pid;
     private String integrationName;
+    private String httpServer;
     private List<RouteInfo> routes;
     private int selectedRouteIndex;
     private final TextAreaState bodyState = new TextAreaState("");
@@ -104,17 +107,18 @@ class SendMessagePopup {
     }
 
     void open(MonitorContext ctx, String pid, String name, List<RouteInfo> routes, String preSelectRouteId) {
-        open(ctx, pid, name, routes, preSelectRouteId, null);
+        open(ctx, pid, name, routes, preSelectRouteId, null, null);
     }
 
     void open(
             MonitorContext ctx, String pid, String name, List<RouteInfo> routes,
-            String preSelectRouteId, String sourceDirectory) {
+            String preSelectRouteId, String sourceDirectory, String httpServer) {
         if (pid == null || routes == null || routes.isEmpty()) {
             return;
         }
         this.pid = pid;
         this.integrationName = name;
+        this.httpServer = httpServer;
         this.routes = new ArrayList<>(routes);
         this.selectedRouteIndex = findSmartDefault(preSelectRouteId);
         this.bodyState.clear();
@@ -507,6 +511,18 @@ class SendMessagePopup {
         List<FormHelper.HeaderEntry> hdrs = headers != null ? new ArrayList<>(headers) : null;
         String routeId = route.routeId;
 
+        // platform-http routes are consumer-only so we send an HTTP request directly
+        if (route.from != null && route.from.startsWith("platform-http:") && httpServer != null) {
+            executor.execute(() -> {
+                try {
+                    doSendHttp(route, sendBody, hdrs, captureInOut, routeId);
+                } finally {
+                    sending = false;
+                }
+            });
+            return;
+        }
+
         executor.execute(() -> {
             try {
                 JsonObject root = new JsonObject();
@@ -625,6 +641,52 @@ class SendMessagePopup {
                 sending = false;
             }
         });
+    }
+
+    private void doSendHttp(
+            RouteInfo route, String body, List<FormHelper.HeaderEntry> hdrs,
+            boolean captureInOut, String routeId) {
+        try {
+            String path = HttpHelper.extractPlatformHttpPath(route.from);
+            String baseUrl = httpServer.replace("0.0.0.0", "localhost");
+            String url = baseUrl + path;
+            String method = HttpHelper.extractHttpMethod(route.from, body);
+
+            // read file content if body references a file
+            String sendBody = body;
+            if (sendBody != null && sendBody.startsWith("file:")) {
+                sendBody = Files.readString(Path.of(sendBody.substring(5)));
+            }
+
+            HttpHelper.HttpResult result = HttpHelper.sendRequest(url, method, sendBody, hdrs);
+
+            if (result.error() != null) {
+                applyResult(routeId, body, hdrs, captureInOut,
+                        null, 0, null, null, null,
+                        true, "Error: " + result.error());
+                return;
+            }
+
+            boolean error = result.statusCode() >= 400;
+
+            List<String> hdrLines = new ArrayList<>();
+            hdrLines.add("HTTP " + method + " " + url);
+            hdrLines.add("status: " + result.statusCode());
+
+            if (captureInOut) {
+                hdrLines.addAll(result.headerLines());
+            }
+
+            String rawBody = captureInOut ? result.body() : null;
+
+            applyResult(routeId, body, hdrs, captureInOut,
+                    String.valueOf(result.statusCode()), result.elapsed(), null, hdrLines, rawBody,
+                    error, error ? "HTTP " + result.statusCode() : null);
+        } catch (Exception e) {
+            applyResult(routeId, body, hdrs, captureInOut,
+                    null, 0, null, null, null,
+                    true, "Error: " + e.getMessage());
+        }
     }
 
     private void applyResult(

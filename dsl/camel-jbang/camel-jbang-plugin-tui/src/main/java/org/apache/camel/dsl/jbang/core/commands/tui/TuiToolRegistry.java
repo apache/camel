@@ -155,7 +155,8 @@ class TuiToolRegistry {
                                   + "Shows exactly what the user sees in their terminal. "
                                   + "Use ansi=true to include ANSI color codes for color-related questions. "
                                   + "Also returns a 'selection' field with structured metadata about the active list/table "
-                                  + "(type, items, selectedIndex, totalItems, label) when available.",
+                                  + "(type, items, selectedIndex, totalItems, label) when available. "
+                                  + "On tabs with master/detail panels, includes 'detailFocused' (true=detail, false=table).",
                 Map.of("ansi", propDef("boolean", "Include ANSI color codes in the output (default false)")))));
         tools.add(toToolDef(toolDef(
                 "tui_get_events",
@@ -168,7 +169,10 @@ class TuiToolRegistry {
                                  + "and integration count. "
                                  + "Includes a 'selection' field with structured metadata about the active list/table. "
                                  + "captionVisible indicates if a caption overlay is on screen. "
-                                 + "keystrokesVisible indicates if the keystroke overlay is on; toggle with Ctrl+K.",
+                                 + "keystrokesVisible indicates if the keystroke overlay is on; toggle with Ctrl+K. "
+                                 + "detailFocused (boolean, present on tabs with master/detail panels) indicates "
+                                 + "which panel has focus: true=detail panel, false=table panel. "
+                                 + "Press Tab to toggle focus. Up/Down and PgUp/PgDn operate on the focused panel.",
                 Map.of())));
         tools.add(toToolDef(toolDef(
                 "tui_show_caption",
@@ -481,10 +485,10 @@ class TuiToolRegistry {
                 "Sets the value of a text input field on a TUI tab directly, without simulating keystrokes. "
                                  + "The text appears in the TUI input widget so the user can see it. "
                                  + "Supported fields by tab: SQL Query (field='sql'), "
-                                 + "HTTP probe (field='path' or 'body'), "
+                                 + "HTTP probe (field='path', 'body', 'method', 'content-type', or 'accept'), "
                                  + "Spans (field='filter'), Classpath (field='filter').",
                 Map.of("field", propDef("string",
-                        "Field name to set: 'sql', 'path', 'body', or 'filter'"),
+                        "Field name to set: 'sql', 'path', 'body', 'method', 'content-type', 'accept', or 'filter'"),
                         "value", propDef("string",
                                 "The text value to set in the input field"),
                         "tab", propDef("string",
@@ -1618,6 +1622,10 @@ class TuiToolRegistry {
             items.addAll(ctx.items());
             sel.put("items", items);
             result.put("selection", sel);
+        }
+        Boolean detailFocused = facade.isDetailFocused();
+        if (detailFocused != null) {
+            result.put("detailFocused", detailFocused);
         }
     }
 

@@ -316,22 +316,123 @@ public interface AwsBedrockAgentRuntimeComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The unique identifier of the agent alias to invoke, used by the
+         * invokeAgent operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: agent
+         * 
+         * @param agentAliasId the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentRuntimeComponentBuilder agentAliasId(java.lang.String agentAliasId) {
+            doSetProperty("agentAliasId", agentAliasId);
+            return this;
+        }
+    
+        /**
+         * The unique identifier of the agent to invoke, used by the invokeAgent
+         * operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: agent
+         * 
+         * @param agentId the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentRuntimeComponentBuilder agentId(java.lang.String agentId) {
+            doSetProperty("agentId", agentId);
+            return this;
+        }
+    
         
         /**
-         * Enables tracing for the invokeFlow operation. When enabled, the
-         * producer collects FlowTraceEvent entries and publishes them in the
-         * CamelAwsBedrockAgentRuntimeFlowTraces header.
+         * Enables tracing for the invokeFlow and agent operations. When
+         * enabled, the producer collects the trace events and publishes them in
+         * the CamelAwsBedrockAgentRuntimeFlowTraces or
+         * CamelAwsBedrockAgentRuntimeAgentTraces header.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: flow
+         * Group: agent
          * 
          * @param enableTrace the value to set
          * @return the dsl builder
          */
         default AwsBedrockAgentRuntimeComponentBuilder enableTrace(boolean enableTrace) {
             doSetProperty("enableTrace", enableTrace);
+            return this;
+        }
+    
+        /**
+         * The foundation model used by the invokeInlineAgent operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: agent
+         * 
+         * @param foundationModel the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentRuntimeComponentBuilder foundationModel(java.lang.String foundationModel) {
+            doSetProperty("foundationModel", foundationModel);
+            return this;
+        }
+    
+        /**
+         * The instruction given to the agent defined by the invokeInlineAgent
+         * operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: agent
+         * 
+         * @param instruction the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentRuntimeComponentBuilder instruction(java.lang.String instruction) {
+            doSetProperty("instruction", instruction);
+            return this;
+        }
+    
+        /**
+         * The unique identifier of the agent session. Reuse the same value
+         * across invocations to continue the same conversation. When not set, a
+         * random session id is generated for each invocation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: agent
+         * 
+         * @param sessionId the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentRuntimeComponentBuilder sessionId(java.lang.String sessionId) {
+            doSetProperty("sessionId", sessionId);
+            return this;
+        }
+    
+        
+        /**
+         * The streaming output mode (complete or chunks) used by the agent
+         * operations. In complete mode the response chunks are accumulated and
+         * the body is the full text. In chunks mode the body is the list of
+         * chunks.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: complete
+         * Group: agent
+         * 
+         * @param streamOutputMode the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentRuntimeComponentBuilder streamOutputMode(java.lang.String streamOutputMode) {
+            doSetProperty("streamOutputMode", streamOutputMode);
             return this;
         }
     
@@ -576,7 +677,13 @@ public interface AwsBedrockAgentRuntimeComponentBuilderFactory {
             case "autowiredEnabled": ((BedrockAgentRuntimeComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "bedrockAgentRuntimeAsyncClient": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setBedrockAgentRuntimeAsyncClient((software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient) value); return true;
             case "bedrockAgentRuntimeClient": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setBedrockAgentRuntimeClient((software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient) value); return true;
+            case "agentAliasId": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setAgentAliasId((java.lang.String) value); return true;
+            case "agentId": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setAgentId((java.lang.String) value); return true;
             case "enableTrace": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setEnableTrace((boolean) value); return true;
+            case "foundationModel": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setFoundationModel((java.lang.String) value); return true;
+            case "instruction": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setInstruction((java.lang.String) value); return true;
+            case "sessionId": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setSessionId((java.lang.String) value); return true;
+            case "streamOutputMode": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setStreamOutputMode((java.lang.String) value); return true;
             case "flowAliasIdentifier": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setFlowAliasIdentifier((java.lang.String) value); return true;
             case "flowIdentifier": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setFlowIdentifier((java.lang.String) value); return true;
             case "healthCheckConsumerEnabled": ((BedrockAgentRuntimeComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;

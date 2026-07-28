@@ -36,8 +36,6 @@ public class XsltComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltComponent.class);
 
-    private static final String XPATH_TOTAL_OP_LIMIT = "jdk.xml.xpathTotalOpLimit";
-
     @Metadata(label = "advanced")
     private URIResolver uriResolver;
     @Metadata(label = "advanced")
@@ -136,27 +134,10 @@ public class XsltComponent extends DefaultComponent {
     /**
      * Limits the total number of XPath operators in an XSL Stylesheet. The default (from JDK) is 10000.
      *
-     * Configuring this corresponds to setting JVM system property: jdk.xml.xpathTotalOpLimit
+     * The limit is set per TransformerFactory instance used by each endpoint, not as a JVM-global system property.
      */
     public void setXpathTotalOpLimit(int xpathTotalOpLimit) {
         this.xpathTotalOpLimit = xpathTotalOpLimit;
-    }
-
-    @Override
-    protected void doInit() throws Exception {
-        super.doInit();
-        if (xpathTotalOpLimit > 0) {
-            LOG.info("XsltComponent is setting JVM system property: jdk.xml.xpathTotalOpLimit=" + xpathTotalOpLimit);
-            System.setProperty(XPATH_TOTAL_OP_LIMIT, "" + xpathTotalOpLimit);
-        }
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        if (xpathTotalOpLimit > 0) {
-            System.clearProperty(XPATH_TOTAL_OP_LIMIT);
-        }
     }
 
     @Override

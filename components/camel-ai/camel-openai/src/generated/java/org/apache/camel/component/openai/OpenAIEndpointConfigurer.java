@@ -47,6 +47,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "autoToolExecution": target.getConfiguration().setAutoToolExecution(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "builtintools":
+        case "builtinTools": target.getConfiguration().setBuiltinTools(property(camelContext, java.lang.String.class, value)); return true;
         case "conversationhistoryproperty":
         case "conversationHistoryProperty": target.getConfiguration().setConversationHistoryProperty(property(camelContext, java.lang.String.class, value)); return true;
         case "conversationmemory":
@@ -58,6 +60,10 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "embeddingModel": target.getConfiguration().setEmbeddingModel(property(camelContext, java.lang.String.class, value)); return true;
         case "encodingformat":
         case "encodingFormat": target.getConfiguration().setEncodingFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "filesearchvectorstoreids":
+        case "fileSearchVectorStoreIds": target.getConfiguration().setFileSearchVectorStoreIds(property(camelContext, java.lang.String.class, value)); return true;
+        case "hostedmcptools":
+        case "hostedMcpTools": target.getConfiguration().setHostedMcpTools(property(camelContext, java.lang.String.class, value)); return true;
         case "jsonschema":
         case "jsonSchema": target.getConfiguration().setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -87,6 +93,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "outputclass":
         case "outputClass": target.getConfiguration().setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "previousresponseid":
+        case "previousResponseId": target.getConfiguration().setPreviousResponseId(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "speechinstructions":
@@ -166,6 +174,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "autoToolExecution": return boolean.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
+        case "builtintools":
+        case "builtinTools": return java.lang.String.class;
         case "conversationhistoryproperty":
         case "conversationHistoryProperty": return java.lang.String.class;
         case "conversationmemory":
@@ -177,6 +187,10 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "embeddingModel": return java.lang.String.class;
         case "encodingformat":
         case "encodingFormat": return java.lang.String.class;
+        case "filesearchvectorstoreids":
+        case "fileSearchVectorStoreIds": return java.lang.String.class;
+        case "hostedmcptools":
+        case "hostedMcpTools": return java.lang.String.class;
         case "jsonschema":
         case "jsonSchema": return java.lang.String.class;
         case "lazystartproducer":
@@ -206,6 +220,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": return java.lang.String.class;
         case "outputclass":
         case "outputClass": return java.lang.String.class;
+        case "previousresponseid":
+        case "previousResponseId": return java.lang.String.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
         case "speechinstructions":
@@ -286,6 +302,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "autoToolExecution": return target.getConfiguration().isAutoToolExecution();
         case "baseurl":
         case "baseUrl": return target.getConfiguration().getBaseUrl();
+        case "builtintools":
+        case "builtinTools": return target.getConfiguration().getBuiltinTools();
         case "conversationhistoryproperty":
         case "conversationHistoryProperty": return target.getConfiguration().getConversationHistoryProperty();
         case "conversationmemory":
@@ -297,6 +315,10 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "embeddingModel": return target.getConfiguration().getEmbeddingModel();
         case "encodingformat":
         case "encodingFormat": return target.getConfiguration().getEncodingFormat();
+        case "filesearchvectorstoreids":
+        case "fileSearchVectorStoreIds": return target.getConfiguration().getFileSearchVectorStoreIds();
+        case "hostedmcptools":
+        case "hostedMcpTools": return target.getConfiguration().getHostedMcpTools();
         case "jsonschema":
         case "jsonSchema": return target.getConfiguration().getJsonSchema();
         case "lazystartproducer":
@@ -326,6 +348,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "outputclass":
         case "outputClass": return target.getConfiguration().getOutputClass();
+        case "previousresponseid":
+        case "previousResponseId": return target.getConfiguration().getPreviousResponseId();
         case "requesttimeout":
         case "requestTimeout": return target.getConfiguration().getRequestTimeout();
         case "speechinstructions":

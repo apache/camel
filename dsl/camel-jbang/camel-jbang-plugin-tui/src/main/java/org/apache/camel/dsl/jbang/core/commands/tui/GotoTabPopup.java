@@ -46,14 +46,24 @@ class GotoTabPopup {
     private final ListState listState = new ListState();
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private List<TabRegistry.TabEntry> allEntries;
+    private List<TabRegistry.TabEntry> activeEntries;
     private List<TabRegistry.TabEntry> filteredEntries;
     private Rect popupRect;
     private Runnable callback;
     private TabRegistry.TabEntry pendingEntry;
+    private java.util.function.Supplier<IntegrationInfo> integrationSupplier;
+    private java.util.function.Supplier<List<TabRegistry.MoreTab>> moreTabsSupplier;
 
     void setTabEntries(List<TabRegistry.TabEntry> entries, Runnable callback) {
         this.allEntries = entries;
         this.callback = callback;
+    }
+
+    void setActiveTabFilter(
+            java.util.function.Supplier<IntegrationInfo> integrationSupplier,
+            java.util.function.Supplier<List<TabRegistry.MoreTab>> moreTabsSupplier) {
+        this.integrationSupplier = integrationSupplier;
+        this.moreTabsSupplier = moreTabsSupplier;
     }
 
     boolean isVisible() {
@@ -92,13 +102,13 @@ class GotoTabPopup {
             return true;
         }
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 10; i++) {
                 listState.selectPrevious();
             }
             return true;
         }
         if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 10; i++) {
                 listState.selectNext(size);
             }
             return true;
@@ -247,7 +257,7 @@ class GotoTabPopup {
             renderState.select(sel + 2);
         }
 
-        int total = allEntries != null ? allEntries.size() : 0;
+        int total = activeEntries != null ? activeEntries.size() : 0;
         int shown = filteredEntries.size();
         String title = shown == total
                 ? " Go to Tab (" + total + ") "
@@ -289,12 +299,14 @@ class GotoTabPopup {
             filteredEntries = List.of();
             return;
         }
+        activeEntries = filterActiveEntries(allEntries);
+        List<TabRegistry.TabEntry> active = activeEntries;
         if (!filter.hasFilter()) {
-            filteredEntries = new ArrayList<>(allEntries);
+            filteredEntries = new ArrayList<>(active);
         } else {
             filteredEntries = new ArrayList<>();
             String f = filter.filter();
-            for (TabRegistry.TabEntry entry : allEntries) {
+            for (TabRegistry.TabEntry entry : active) {
                 boolean nameMatch;
                 if (f.length() <= 2) {
                     nameMatch = entry.name().toLowerCase().contains(f);
@@ -309,6 +321,25 @@ class GotoTabPopup {
             }
         }
         listState.select(filteredEntries.isEmpty() ? null : 0);
+    }
+
+    private List<TabRegistry.TabEntry> filterActiveEntries(List<TabRegistry.TabEntry> entries) {
+        if (integrationSupplier == null || moreTabsSupplier == null) {
+            return entries;
+        }
+        IntegrationInfo info = integrationSupplier.get();
+        List<TabRegistry.MoreTab> moreTabs = moreTabsSupplier.get();
+        List<TabRegistry.TabEntry> active = new ArrayList<>();
+        for (TabRegistry.TabEntry entry : entries) {
+            if (entry.moreIndex() >= 0 && entry.moreIndex() < moreTabs.size()) {
+                TabRegistry.MoreTab mt = moreTabs.get(entry.moreIndex());
+                if (!TabRegistry.isMoreTabActive(mt, info)) {
+                    continue;
+                }
+            }
+            active.add(entry);
+        }
+        return active;
     }
 
     private void navigateToEntry(TabRegistry.TabEntry entry) {

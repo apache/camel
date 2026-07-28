@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntConsumer;
@@ -58,9 +59,24 @@ import org.apache.camel.util.json.Jsoner;
  */
 class SourceViewer {
 
+    record DocEntry(String text, boolean deprecated) {
+        static DocEntry of(String text) {
+            return new DocEntry(text, false);
+        }
+
+        static DocEntry deprecated(String text) {
+            return new DocEntry(text, true);
+        }
+    }
+
     @FunctionalInterface
     interface QuickDocProvider {
-        Map<Integer, List<String>> provideAll(List<JsonObject> codeData);
+        Map<Integer, List<DocEntry>> provideAll(List<JsonObject> codeData);
+    }
+
+    @FunctionalInterface
+    interface DeprecatedLineScanner {
+        Set<Integer> scan(List<JsonObject> codeData);
     }
 
     private boolean visible;
@@ -92,7 +108,9 @@ class SourceViewer {
     private int markdownScroll;
     private QuickDocProvider quickDocProvider;
     private boolean quickDocEnabled;
-    private Map<Integer, List<String>> quickDocEntries = Collections.emptyMap();
+    private Map<Integer, List<DocEntry>> quickDocEntries = Collections.emptyMap();
+    private DeprecatedLineScanner deprecatedLineScanner;
+    private Set<Integer> deprecatedLines = Collections.emptySet();
     private Style titleStyle;
     private Style borderStyle;
     private boolean focused = true;
@@ -123,6 +141,7 @@ class SourceViewer {
         onLineSelected = null;
         quickDocEnabled = false;
         quickDocEntries = Collections.emptyMap();
+        deprecatedLines = Collections.emptySet();
     }
 
     void reset() {
@@ -150,6 +169,8 @@ class SourceViewer {
         quickDocProvider = null;
         quickDocEnabled = false;
         quickDocEntries = Collections.emptyMap();
+        deprecatedLineScanner = null;
+        deprecatedLines = Collections.emptySet();
     }
 
     void setOnLineSelected(IntConsumer callback) {
@@ -181,6 +202,10 @@ class SourceViewer {
 
     void setQuickDocProvider(QuickDocProvider provider) {
         this.quickDocProvider = provider;
+    }
+
+    void setDeprecatedLineScanner(DeprecatedLineScanner scanner) {
+        this.deprecatedLineScanner = scanner;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -420,7 +445,7 @@ class SourceViewer {
             for (int i = lines.size() - 1; i >= 0; i--) {
                 visualFromEnd += wrapRowCount(lines.get(i), contentWidth);
                 if (quickDocEnabled) {
-                    List<String> docs = quickDocEntries.get(i);
+                    List<DocEntry> docs = quickDocEntries.get(i);
                     if (docs != null) {
                         visualFromEnd += docs.size();
                     }
@@ -451,11 +476,11 @@ class SourceViewer {
         for (int i = scrollY; i < lines.size() && visible.size() < visibleLines; i++) {
             String raw = lines.get(i);
             boolean isSelected = (i == selectedLine);
-            Line line = highlightSourceLine(raw, hSkip, isSelected, inner.width());
+            Line line = highlightSourceLine(raw, i, hSkip, isSelected, inner.width());
             line = search.applyHighlights(line, i, currentMatchLine);
             visible.add(line);
 
-            List<String> docLines = quickDocEnabled ? quickDocEntries.get(i) : null;
+            List<DocEntry> docLines = quickDocEnabled ? quickDocEntries.get(i) : null;
             if (docLines != null) {
                 String code = i < codeData.size() && codeData.get(i).get("code") != null
                         ? codeData.get(i).get("code").toString()
@@ -464,8 +489,8 @@ class SourceViewer {
                 while (si < code.length() && code.charAt(si) == ' ') {
                     si++;
                 }
-                for (String docText : docLines) {
-                    for (Line docLine : renderQuickDocLines(docText, si, gutterWidth, inner.width())) {
+                for (DocEntry docEntry : docLines) {
+                    for (Line docLine : renderQuickDocLines(docEntry, si, gutterWidth, inner.width())) {
                         if (visible.size() >= visibleLines) {
                             break;
                         }
@@ -576,6 +601,7 @@ class SourceViewer {
                 rawMarkdownContent = null;
                 markdownMode = false;
             }
+            scanDeprecatedLines();
         } catch (java.io.IOException e) {
             title = fileName;
             lines = List.of("(Failed to read file: " + e.getMessage() + ")");
@@ -966,7 +992,7 @@ class SourceViewer {
         };
     }
 
-    private Line highlightSourceLine(String raw, int hSkip, boolean isSelected, int viewportWidth) {
+    private Line highlightSourceLine(String raw, int lineIndex, int hSkip, boolean isSelected, int viewportWidth) {
         int prefixEnd = 0;
         while (prefixEnd < raw.length() && (raw.charAt(prefixEnd) == ' ' || Character.isDigit(raw.charAt(prefixEnd)))) {
             prefixEnd++;
@@ -976,6 +1002,7 @@ class SourceViewer {
         String code = raw.substring(prefixEnd);
 
         Line highlighted = SyntaxHighlighter.highlightLine(code, language);
+        boolean isDeprecated = deprecatedLines.contains(lineIndex);
 
         List<Span> spans = new ArrayList<>();
         Style selBg = focused ? Theme.selectionBg() : Theme.selectionBg().dim();
@@ -988,7 +1015,9 @@ class SourceViewer {
                 spans.add(Span.styled(s.content(), s.style().patch(selBg)));
             }
         } else {
-            spans.add(Span.raw("   "));
+            spans.add(isDeprecated
+                    ? Span.styled(" ⚠ ", Theme.warning())
+                    : Span.raw("   "));
             if (!prefix.isEmpty()) {
                 spans.add(Span.styled(prefix, Style.EMPTY.dim()));
             }
@@ -1093,7 +1122,8 @@ class SourceViewer {
         return 0;
     }
 
-    private List<Line> renderQuickDocLines(String text, int sourceIndent, int gutterWidth, int viewportWidth) {
+    private List<Line> renderQuickDocLines(DocEntry entry, int sourceIndent, int gutterWidth, int viewportWidth) {
+        String text = entry.text();
         String prefix = " ".repeat(gutterWidth + 5 + sourceIndent);
         String marker = "ℹ ";
         Style docStyle = Style.EMPTY.dim().italic();
@@ -1148,7 +1178,7 @@ class SourceViewer {
         for (int i = fromLine; i < toLine && i < lines.size(); i++) {
             count += wrapRowCount(lines.get(i), contentWidth);
             if (quickDocEnabled) {
-                List<String> docs = quickDocEntries.get(i);
+                List<DocEntry> docs = quickDocEntries.get(i);
                 if (docs != null) {
                     count += docs.size();
                 }
@@ -1162,6 +1192,15 @@ class SourceViewer {
             return 1;
         }
         return (line.length() + contentWidth - 1) / contentWidth;
+    }
+
+    private void scanDeprecatedLines() {
+        if (deprecatedLineScanner != null && !codeData.isEmpty()) {
+            Set<Integer> result = deprecatedLineScanner.scan(codeData);
+            deprecatedLines = result != null ? result : Collections.emptySet();
+        } else {
+            deprecatedLines = Collections.emptySet();
+        }
     }
 
     private static String objToString(Object o) {

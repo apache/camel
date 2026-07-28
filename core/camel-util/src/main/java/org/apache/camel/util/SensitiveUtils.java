@@ -21,8 +21,33 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class SensitiveUtils {
+
+    /**
+     * Matches URI userinfo credentials ({@code scheme://user:password@host} or {@code scheme://:password@host}) and
+     * captures the password as group 2. The scheme may contain {@code +} / {@code .} / {@code -} (e.g.
+     * {@code mongodb+srv}). Does not match user-only userinfo without a password ({@code scheme://user@host}).
+     * <p>
+     * Stricter than {@link URISupport}'s {@code USERINFO_PASSWORD} (used in {@link URISupport#sanitizeUri}): requires a
+     * scheme and a colon before the password. Used for free-text log masking. The user/password prefix uses a
+     * non-greedy match so passwords may contain {@code :} (aligned with {@link URISupport#sanitizeUri}).
+     * <p>
+     * Passwords must not contain a raw {@code @} (use percent-encoding such as {@code %40}); capture stops at the first
+     * {@code @} that ends userinfo.
+     */
+    private static final Pattern URI_USERINFO_PASSWORD_IN_TEXT
+            = Pattern.compile("([a-zA-Z][a-zA-Z0-9+.-]*://[^/@\\s\"']*?:)([^@\\s\"']+)(@)");
+
+    /**
+     * Matches PEM private-key blocks ({@code -----BEGIN ... PRIVATE KEY-----} … {@code -----END ... PRIVATE KEY-----})
+     * and captures the key body as group 2. Public keys and certificates are not matched.
+     */
+    private static final Pattern PEM_PRIVATE_KEY = Pattern.compile(
+            "(-----BEGIN [^-]*PRIVATE KEY-----\\s*)(.*?)(\\s*-----END [^-]*PRIVATE KEY-----)",
+            Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
     private static final Set<String> SENSITIVE_KEYS = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList(
@@ -254,6 +279,63 @@ public final class SensitiveUtils {
         text = text.toLowerCase(Locale.ENGLISH);
         text = text.replace("-", "");
         return SENSITIVE_KEYS.contains(text);
+    }
+
+    /**
+     * Masks passwords embedded in URI userinfo ({@code scheme://user:password@host}) within free text. Complements
+     * name-based secret detection: the password has no {@code password=} key, so key/value maskers never see it.
+     * <p>
+     * Query-parameter forms such as {@code ?password=secret} are not handled here; use a key/value masker or
+     * {@link URISupport#sanitizeUri(String)} for those.
+     *
+     * @param  source the text that may contain connection-string style URIs
+     * @param  mask   the replacement string for the password (for example {@code xxxxx})
+     * @return        the source with userinfo passwords replaced, or the original source when null/empty or when mask
+     *                is null
+     */
+    public static String maskUserInfoCredentials(String source, String mask) {
+        if (source == null || source.isEmpty() || mask == null) {
+            return source;
+        }
+        if (!source.contains("://")) {
+            return source;
+        }
+        return URI_USERINFO_PASSWORD_IN_TEXT.matcher(source)
+                .replaceAll("$1" + Matcher.quoteReplacement(mask) + "$3");
+    }
+
+    /**
+     * Masks the body of PEM private-key blocks within free text, keeping the BEGIN/END markers. Public keys and
+     * certificates ({@code BEGIN PUBLIC KEY}, {@code BEGIN CERTIFICATE}) are left unchanged.
+     *
+     * @param  source the text that may contain PEM private-key material
+     * @param  mask   the replacement string for the key body (for example {@code xxxxx})
+     * @return        the source with private-key bodies replaced, or the original source when null/empty or when mask
+     *                is null
+     */
+    public static String maskPemPrivateKeyBlocks(String source, String mask) {
+        if (source == null || source.isEmpty() || mask == null) {
+            return source;
+        }
+        if (!StringHelper.containsIgnoreCase(source, "-----BEGIN")) {
+            return source;
+        }
+        return PEM_PRIVATE_KEY.matcher(source).replaceAll("$1" + Matcher.quoteReplacement(mask) + "$3");
+    }
+
+    /**
+     * Applies value-shape secret masking (URI userinfo passwords and PEM private-key bodies) that cannot be detected by
+     * sensitive key names alone.
+     *
+     * @param  source the text to mask
+     * @param  mask   the replacement string
+     * @return        the masked text, or the original source when null/empty or when mask is null
+     * @see           #maskUserInfoCredentials(String, String)
+     * @see           #maskPemPrivateKeyBlocks(String, String)
+     */
+    public static String maskSensitiveValueShapes(String source, String mask) {
+        String answer = maskUserInfoCredentials(source, mask);
+        return maskPemPrivateKeyBlocks(answer, mask);
     }
 
 }

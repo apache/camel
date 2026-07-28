@@ -43,11 +43,6 @@ public class SingleNodeKafkaResumeStrategyTest {
 
         // stop() should not throw IllegalMonitorStateException
         assertDoesNotThrow(strategy::stop);
-
-        // Release the lock from the holder thread
-        Thread releaser = new Thread(lock::unlock);
-        releaser.start();
-        releaser.join();
     }
 
     @Test

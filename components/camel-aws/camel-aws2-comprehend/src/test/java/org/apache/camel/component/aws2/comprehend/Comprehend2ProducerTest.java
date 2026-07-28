@@ -26,6 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import software.amazon.awssdk.services.comprehend.model.DetectDominantLanguageRequest;
 import software.amazon.awssdk.services.comprehend.model.DetectSentimentRequest;
 import software.amazon.awssdk.services.comprehend.model.DetectSentimentResponse;
@@ -35,6 +37,7 @@ import software.amazon.awssdk.services.comprehend.model.KeyPhrase;
 import software.amazon.awssdk.services.comprehend.model.PiiEntity;
 import software.amazon.awssdk.services.comprehend.model.SyntaxToken;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -222,6 +225,24 @@ public class Comprehend2ProducerTest extends CamelTestSupport {
         assertFalse(results.isEmpty());
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "direct:detectDominantLanguagePojo,detectDominantLanguage operation requires DetectDominantLanguageRequest in POJO mode",
+            "direct:detectEntitiesPojo,detectEntities operation requires DetectEntitiesRequest in POJO mode",
+            "direct:detectKeyPhrasesPojo,detectKeyPhrases operation requires DetectKeyPhrasesRequest in POJO mode",
+            "direct:detectSentimentPojo,detectSentiment operation requires DetectSentimentRequest in POJO mode",
+            "direct:detectSyntaxPojo,detectSyntax operation requires DetectSyntaxRequest in POJO mode",
+            "direct:detectPiiEntitiesPojo,detectPiiEntities operation requires DetectPiiEntitiesRequest in POJO mode",
+            "direct:detectToxicContentPojo,detectToxicContent operation requires DetectToxicContentRequest in POJO mode",
+            "direct:classifyDocumentPojo,classifyDocument operation requires ClassifyDocumentRequest in POJO mode",
+            "direct:containsPiiEntitiesPojo,containsPiiEntities operation requires ContainsPiiEntitiesRequest in POJO mode",
+    })
+    void pojoRequestWithWrongBodyTypeThrows(String route, String expectedMessage) {
+        assertThatThrownBy(() -> template.requestBody(route, "not the expected request type"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(expectedMessage);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -254,6 +275,20 @@ public class Comprehend2ProducerTest extends CamelTestSupport {
                 from("direct:detectToxicContent")
                         .to("aws2-comprehend://test?comprehendClient=#amazonComprehendClient&operation=detectToxicContent&languageCode=en")
                         .to("mock:result");
+                from("direct:detectEntitiesPojo")
+                        .to("aws2-comprehend://test?comprehendClient=#amazonComprehendClient&operation=detectEntities&pojoRequest=true");
+                from("direct:detectKeyPhrasesPojo")
+                        .to("aws2-comprehend://test?comprehendClient=#amazonComprehendClient&operation=detectKeyPhrases&pojoRequest=true");
+                from("direct:detectSyntaxPojo")
+                        .to("aws2-comprehend://test?comprehendClient=#amazonComprehendClient&operation=detectSyntax&pojoRequest=true");
+                from("direct:detectPiiEntitiesPojo")
+                        .to("aws2-comprehend://test?comprehendClient=#amazonComprehendClient&operation=detectPiiEntities&pojoRequest=true");
+                from("direct:detectToxicContentPojo")
+                        .to("aws2-comprehend://test?comprehendClient=#amazonComprehendClient&operation=detectToxicContent&pojoRequest=true");
+                from("direct:classifyDocumentPojo")
+                        .to("aws2-comprehend://test?comprehendClient=#amazonComprehendClient&operation=classifyDocument&pojoRequest=true");
+                from("direct:containsPiiEntitiesPojo")
+                        .to("aws2-comprehend://test?comprehendClient=#amazonComprehendClient&operation=containsPiiEntities&pojoRequest=true");
             }
         };
     }

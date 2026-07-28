@@ -22,6 +22,7 @@ class ConsumerInfo {
     String state;
     String className;
     boolean scheduled;
+    boolean remote;
     int inflight;
     Boolean polling;
     Long totalCounter;

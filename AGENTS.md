@@ -136,11 +136,13 @@ When merging a PR, an agent MUST perform the following steps **in order**:
 
 - Every PR must include tests for new functionality or bug fixes.
 - Every PR must include documentation updates where applicable.
-  Any user-visible change must be documented in the upgrade guide
-  (`docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_XX.adoc`) and in the relevant
-  command or component documentation page. This includes: changed defaults, new auto-detection
-  behavior, removed or renamed options, changed header names or values, API/SPI signature changes,
-  removed or deprecated components, migrated libraries, and renamed documentation pages.
+  New features must be documented in the relevant command or component documentation page.
+  Changes that affect existing users upgrading must also be documented in the upgrade guide
+  (`docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_XX.adoc`). This includes:
+  changed defaults, new auto-detection behavior, removed or renamed options, changed header
+  names or values, API/SPI signature changes, removed or deprecated components, migrated
+  libraries, and renamed documentation pages. The upgrade guide is for migration only — do
+  NOT add new features to it.
   For backported changes, the upgrade guide entry must be added on the `main` branch (not on the
   maintenance branch where the fix is backported).
 - All code must pass formatting checks (`mvn formatter:format impsort:sort`) before pushing.

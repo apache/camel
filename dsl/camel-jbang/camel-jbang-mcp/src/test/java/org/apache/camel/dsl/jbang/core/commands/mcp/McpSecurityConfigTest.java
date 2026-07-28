@@ -99,21 +99,23 @@ class McpSecurityConfigTest {
     // ---- Redaction patterns ----
 
     @Test
-    void defaultRedactionPatternsIncludeBuiltins() {
+    void redactionPatternsAreEmptyWithoutCustomPatterns() {
         McpSecurityConfig config = createConfig(true, "admin", false, true, true, null);
 
+        // Built-in secret detection is handled by McpSecretRedactor (DefaultMaskingFormatter + SensitiveUtils),
+        // so getRedactionPatterns() returns only the operator-supplied extra patterns.
         List<Pattern> patterns = config.getRedactionPatterns();
 
-        assertThat(patterns).hasSizeGreaterThanOrEqualTo(McpSecretRedactor.DEFAULT_PATTERNS.size());
+        assertThat(patterns).isEmpty();
     }
 
     @Test
-    void customRedactionPatternsAppended() {
+    void customRedactionPatternsAreReturned() {
         McpSecurityConfig config = createConfig(true, "admin", false, true, true, "SECRET_\\d+,TOKEN_[A-Z]+");
 
         List<Pattern> patterns = config.getRedactionPatterns();
 
-        assertThat(patterns.size()).isEqualTo(McpSecretRedactor.DEFAULT_PATTERNS.size() + 2);
+        assertThat(patterns).hasSize(2);
     }
 
     // ---- Helper ----

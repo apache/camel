@@ -38,7 +38,7 @@ public class Delayer extends DelayProcessorSupport implements Traceable, IdAware
     private String routeId;
     private String stepId;
     private String id;
-    private Expression delay;
+    private volatile Expression delay;
     private long delayValue;
 
     public Delayer(CamelContext camelContext, Processor processor, Expression delay,

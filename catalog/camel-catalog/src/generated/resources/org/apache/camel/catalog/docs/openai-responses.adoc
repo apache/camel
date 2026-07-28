@@ -1,0 +1,71 @@
+= OpenAI - Responses API Operation
+:tabs-sync-option:
+
+xref:ROOT:openai-component.adoc[Back to OpenAI Component]
+
+The `responses` operation calls the OpenAI Responses API (non-streaming). It supports the same text and image
+input ergonomics as `chat-completion`, maps `systemMessage` to API `instructions`, and exposes
+`CamelOpenAIResponseId` plus token usage headers. Use `previousResponseId` / `CamelOpenAIPreviousResponseId` for
+server-side conversation state.
+
+Hosted tools: set `builtinTools` to a comma-separated list (`web_search`, `file_search`, `code_interpreter`).
+`file_search` requires `fileSearchVectorStoreIds`. Pass hosted MCP tool definitions as JSON via `hostedMcpTools`.
+
+When `storeFullResponse=true`, the SDK `Response` object is stored on exchange property `CamelOpenAIResponsesResponse`.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:ask")
+    .to("openai:responses?model=gpt-4o&systemMessage=You are a support assistant")
+    .log("Answer: ${body} id: ${header.CamelOpenAIResponseId}");
+
+from("direct:continue")
+    .setHeader("CamelOpenAIPreviousResponseId", variable("lastId"))
+    .to("openai:responses?model=gpt-4o")
+    .setVariable("lastId", header("CamelOpenAIResponseId"));
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:ask
+      steps:
+        - to:
+            uri: openai:responses
+            parameters:
+              model: gpt-4o
+              systemMessage: You are a support assistant
+        - log:
+            message: "Answer: ${body} id: ${header.CamelOpenAIResponseId}"
+
+- route:
+    from:
+      uri: direct:continue
+      steps:
+        - setHeader:
+            name: CamelOpenAIPreviousResponseId
+            expression:
+              simple:
+                expression: "${variable.lastId}"
+        - to:
+            uri: openai:responses
+            parameters:
+              model: gpt-4o
+        - setVariable:
+            name: lastId
+            expression:
+              simple:
+                expression: "${header.CamelOpenAIResponseId}"
+----
+====
+
+Streaming is not supported on this operation; use `chat-completion` for streaming.
+
+Function tools wired to Camel routes are not yet supported on this operation.

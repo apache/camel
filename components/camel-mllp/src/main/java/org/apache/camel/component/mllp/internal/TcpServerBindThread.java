@@ -22,6 +22,7 @@ import java.net.ServerSocket;
 import java.net.SocketException;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
+import java.util.concurrent.ScheduledExecutorService;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -100,19 +101,27 @@ public class TcpServerBindThread extends Thread {
     }
 
     private void doAccept(ServerSocket serverSocket, InetSocketAddress socketAddress) {
-        BlockingTask task = Tasks.foregroundTask()
-                .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofMillis(consumer.getConfiguration().getBindTimeout()))
-                        .withInterval(Duration.ofMillis(consumer.getConfiguration().getBindRetryInterval()))
-                        .build())
-                .withName("mllp-tcp-server-accept")
-                .build();
+        ScheduledExecutorService ses = consumer.getEndpoint().getCamelContext()
+                .getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(consumer, "mllp-tcp-server-bind-task");
+        try {
+            BlockingTask task = Tasks.backgroundTask()
+                    .withBudget(Budgets.iterationTimeBudget()
+                            .withMaxDuration(Duration.ofMillis(consumer.getConfiguration().getBindTimeout()))
+                            .withInterval(Duration.ofMillis(consumer.getConfiguration().getBindRetryInterval()))
+                            .build())
+                    .withScheduledExecutor(ses)
+                    .withName("mllp-tcp-server-accept")
+                    .build();
 
-        if (task.run(consumer.getEndpoint().getCamelContext(), () -> doBind(serverSocket, socketAddress))) {
-            consumer.startAcceptThread(serverSocket);
-        } else {
-            log.error("Failed to bind to address {} within timeout {}", socketAddress,
-                    consumer.getConfiguration().getBindTimeout());
+            if (task.run(consumer.getEndpoint().getCamelContext(), () -> doBind(serverSocket, socketAddress))) {
+                consumer.startAcceptThread(serverSocket);
+            } else {
+                log.error("Failed to bind to address {} within timeout {}", socketAddress,
+                        consumer.getConfiguration().getBindTimeout());
+            }
+        } finally {
+            consumer.getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(ses);
         }
     }
 

@@ -19,6 +19,7 @@ package org.apache.camel.support.processor;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
@@ -33,6 +34,12 @@ import org.slf4j.LoggerFactory;
  * <p>
  * By default all the known secret keys from {@link SensitiveUtils#getSensitiveKeys()} are used. Custom keywords can be
  * added with the {@link #addKeyword(String)} method.
+ * <p>
+ * In addition to name-based masking, this formatter also masks URI userinfo passwords
+ * ({@code scheme://user:password@host}) and PEM private-key blocks via
+ * {@link SensitiveUtils#maskSensitiveValueShapes(String, String)}. Value-shape masking runs even when the keyword set
+ * is empty (for example a custom formatter constructed with no sensitive key names), so embedded credentials in
+ * connection strings are still redacted.
  */
 public class DefaultMaskingFormatter implements MaskingFormatter {
 
@@ -113,28 +120,33 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
 
     @Override
     public String format(String source) {
-        if (keywords == null || keywords.isEmpty()) {
+        if (source == null || source.isEmpty()) {
             return source;
         }
 
-        // xml,json or key=value pairs is the formats supported
-        boolean xml = maskXmlElement && source.startsWith("<");
-        boolean json = maskJson && !xml && (source.startsWith("{") || source.startsWith("["));
-
         String answer = source;
-        if (xml) {
-            answer = xmlElementMaskPattern.matcher(answer).replaceAll("$1" + maskString + "$3");
-            if (maskKeyValue) {
-                // used for the attributes in the XML tags
-                answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);
+        if (keywords != null && !keywords.isEmpty()) {
+            String replacement = Matcher.quoteReplacement(maskString);
+            // xml,json or key=value pairs is the formats supported
+            boolean xml = maskXmlElement && source.startsWith("<");
+            boolean json = maskJson && !xml && (source.startsWith("{") || source.startsWith("["));
+
+            if (xml) {
+                answer = xmlElementMaskPattern.matcher(answer).replaceAll("$1" + replacement + "$3");
+                if (maskKeyValue) {
+                    // used for the attributes in the XML tags
+                    answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + replacement);
+                }
+            } else if (json) {
+                answer = jsonMaskPattern.matcher(answer).replaceAll("\"$1\"$2:$3\"" + replacement + "\"");
+            } else if (maskKeyValue) {
+                // key=value pairs
+                answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + replacement);
             }
-        } else if (json) {
-            answer = jsonMaskPattern.matcher(answer).replaceAll("\"$1\"$2:$3\"" + maskString + "\"");
-        } else if (maskKeyValue) {
-            // key=value paris
-            answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);
         }
 
+        // Value-shape secrets (URI userinfo passwords, PEM private keys) are not name-based
+        answer = SensitiveUtils.maskSensitiveValueShapes(answer, maskString);
         return answer;
     }
 

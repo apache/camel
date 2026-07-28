@@ -502,6 +502,10 @@ The know set of keywords to mask is gathered from all the different component op
 The list is generated into the source code in `org.apache.camel.util.SensitiveUtils`.
 At this time of writing, there are more than 65 different keywords.
 
+In addition to name-based masking, `DefaultMaskingFormatter` also masks two value shapes that have no
+sensitive key name: URI userinfo passwords (`scheme://user:password@host`) and PEM private-key blocks
+(`-----BEGIN … PRIVATE KEY-----`). Certificates and public keys are left unchanged.
+
 Custom keywords can be added as shown:
 
 ._Java-only: registering a custom masking formatter with additional keywords_

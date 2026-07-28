@@ -33,6 +33,7 @@ import dev.tamboui.markdown.MarkdownView;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.CharWidth;
+import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
@@ -41,6 +42,7 @@ import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -80,6 +82,7 @@ class EndpointsTab extends AbstractTableTab {
     private int chartMode = CHART_ALL;
     private int panelMode = PANEL_CHART;
     private int detailScroll;
+    private boolean detailFocused;
     private Rect lastDetailArea;
     private int chartPanelHeight = 16;
     private final DragSplit vSplit = new DragSplit();
@@ -115,6 +118,10 @@ class EndpointsTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.TAB) && panelMode == PANEL_DETAIL) {
+            detailFocused = !detailFocused;
+            return true;
+        }
         if (ke.isCharIgnoreCase('f')) {
             filter = (filter + 1) % 3;
             return true;
@@ -126,9 +133,10 @@ class EndpointsTab extends AbstractTableTab {
         if (ke.isCharIgnoreCase('d')) {
             panelMode = panelMode == PANEL_CHART ? PANEL_DETAIL : PANEL_CHART;
             detailScroll = 0;
+            detailFocused = false;
             return true;
         }
-        if (panelMode == PANEL_DETAIL) {
+        if (panelMode == PANEL_DETAIL && detailFocused) {
             if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
                 detailScroll = Math.max(0, detailScroll - 10);
                 return true;
@@ -183,22 +191,30 @@ class EndpointsTab extends AbstractTableTab {
 
     @Override
     public void navigateUp() {
-        tableState.selectPrevious();
-        detailScroll = 0;
+        if (detailFocused) {
+            detailScroll = Math.max(0, detailScroll - 1);
+        } else {
+            tableState.selectPrevious();
+            detailScroll = 0;
+        }
     }
 
     @Override
     public void navigateDown() {
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info != null) {
-            List<EndpointInfo> filtered = new ArrayList<>(info.endpoints);
-            if (filter == 1) {
-                filtered.removeIf(ep -> !ep.remote);
-            } else if (filter == 2) {
-                filtered.removeIf(ep -> !ep.remote && !ep.stub);
+        if (detailFocused) {
+            detailScroll++;
+        } else {
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            if (info != null) {
+                List<EndpointInfo> filtered = new ArrayList<>(info.endpoints);
+                if (filter == 1) {
+                    filtered.removeIf(ep -> !ep.remote);
+                } else if (filter == 2) {
+                    filtered.removeIf(ep -> !ep.remote && !ep.stub);
+                }
+                tableState.selectNext(filtered.size());
+                detailScroll = 0;
             }
-            tableState.selectNext(filtered.size());
-            detailScroll = 0;
         }
     }
 
@@ -275,16 +291,22 @@ class EndpointsTab extends AbstractTableTab {
         widths.add(Constraint.length(8));
         widths.add(Constraint.fill());
 
+        boolean showDetailFocus = panelMode == PANEL_DETAIL;
+        Style tableBorderStyle = showDetailFocus && detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableTitleStyle = showDetailFocus && detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
+        String tableTitle = " Endpoints"
+                            + (filter == 1 ? " filter:remote" : filter == 2 ? " filter:remote+stub" : "")
+                            + " ";
+
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(headerCells))
                 .widths(widths.toArray(Constraint[]::new))
-                .highlightStyle(Theme.selectionBg())
+                .highlightStyle(showDetailFocus && detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Endpoints"
-                               + (filter == 1 ? " filter:remote" : filter == 2 ? " filter:remote+stub" : "")
-                               + " ")
+                        .borderStyle(tableBorderStyle)
+                        .title(Title.from(Line.from(Span.styled(tableTitle, tableTitleStyle))))
                         .build())
                 .build();
 
@@ -376,7 +398,8 @@ class EndpointsTab extends AbstractTableTab {
         hint(spans, "a", "chart " + chartLabel);
         hint(spans, "d", "detail " + (panelMode == PANEL_DETAIL ? "[on]" : "[off]"));
         if (panelMode == PANEL_DETAIL) {
-            hintLast(spans, "PgUp/Dn", "scroll");
+            hint(spans, "Tab", detailFocused ? "table" : "detail");
+            hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
         }
     }
 
@@ -510,13 +533,17 @@ class EndpointsTab extends AbstractTableTab {
     }
 
     private void renderDetail(Frame frame, Rect area, List<EndpointInfo> sortedEndpoints, IntegrationInfo info) {
+        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
+
         Integer sel = tableState.selected();
         if (sel == null || sel < 0 || sel >= sortedEndpoints.size()) {
             frame.renderWidget(
                     MarkdownView.builder()
                             .source("*Select an endpoint*")
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" Endpoint Detail ").build())
+                                    .borderStyle(detailBorderStyle)
+                                    .title(Title.from(Line.from(Span.styled(" Endpoint Detail ", detailTitleStyle)))).build())
                             .styles(Theme.markdownStyles())
                             .build(),
                     area);
@@ -531,7 +558,8 @@ class EndpointsTab extends AbstractTableTab {
                     MarkdownView.builder()
                             .source("*No endpoint URI*")
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" Endpoint Detail ").build())
+                                    .borderStyle(detailBorderStyle)
+                                    .title(Title.from(Line.from(Span.styled(" Endpoint Detail ", detailTitleStyle)))).build())
                             .styles(Theme.markdownStyles())
                             .build(),
                     area);
@@ -631,7 +659,8 @@ class EndpointsTab extends AbstractTableTab {
                         .source(md.toString())
                         .scroll(detailScroll)
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                .title(title).build())
+                                .borderStyle(detailBorderStyle)
+                                .title(Title.from(Line.from(Span.styled(title, detailTitleStyle)))).build())
                         .styles(Theme.markdownStyles())
                         .build(),
                 area);
@@ -679,6 +708,14 @@ class EndpointsTab extends AbstractTableTab {
         List<String> items = sorted.stream().map(ep -> ep.uri != null ? ep.uri : "").toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Endpoints");
+    }
+
+    @Override
+    public Boolean isDetailFocused() {
+        if (panelMode != PANEL_DETAIL) {
+            return null;
+        }
+        return detailFocused;
     }
 
     @Override

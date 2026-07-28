@@ -323,6 +323,12 @@ The per-call token usage headers `CamelOpenAIPromptTokens`, `CamelOpenAICompleti
 The OpenAI SDK returns `long` values, so routes that read these headers with `Integer.class` should
 switch to `Long.class`.
 
+Component metadata for exchange property `CamelOpenAIResponse` (`storeFullResponse=true` on
+`chat-completion`) now declares `javaType = com.openai.models.chat.completions.ChatCompletion`
+(previously `com.openai.models.ChatCompletion`). The runtime type was already the nested SDK class;
+update imports and `exchange.getProperty(..., ChatCompletion.class)` references if your code still
+uses the old package name.
+
 The `conversationMemory` feature on the `chat-completion` operation has two behavior fixes:
 
 * User messages are now stored in the `CamelOpenAIConversationHistory` exchange property (configurable via
@@ -332,6 +338,15 @@ The `conversationMemory` feature on the `chat-completion` operation has two beha
 * When `systemMessage` is set together with `conversationMemory=true`, the conversation history is now
   correctly cleared via `exchange.removeProperty()`. Previously `removeHeader()` was used on a property that
   is stored as an exchange property, so the documented reset had no effect and stale history was kept.
+
+A new `responses` operation calls the OpenAI Responses API (non-streaming). Use `openai:responses` with the same
+ergonomics as chat completion for text/image input, `systemMessage` (sent as `instructions`), `model`, `temperature`,
+`maxTokens` (mapped to `maxOutputTokens`), structured output (`outputClass` / `jsonSchema`), and response headers
+including `CamelOpenAIResponseId`. Server-side multi-turn state uses `previousResponseId` / `CamelOpenAIPreviousResponseId`.
+Hosted tools: `builtinTools` (`web_search`, `file_search`, `code_interpreter`; `file_search` requires
+`fileSearchVectorStoreIds`) and optional `hostedMcpTools` JSON for Tool.Mcp pass-through. Streaming is not supported
+on this operation. The full SDK response is stored in exchange property `CamelOpenAIResponsesResponse` when
+`storeFullResponse=true`.
 
 === camel-management - Throughput MBean attribute uses EWMA smoothing
 
@@ -440,10 +455,6 @@ Add the `camel-ai-tool` dependency to your project:
 ----
 
 The `camel-spring-ai-tools` dependency is no longer required by `camel-spring-ai-chat`.
-
-=== camel-fory with JDK 25+ - Breaking change
-
-Due to new requirements from Apache Fory, when using Apache Fory Dataformat, the JVM parameter `--add-opens java.base/java.lang.invoke=ALL-UNNAMED` must be provided.
 
 === camel-pqc - potential breaking change
 
@@ -819,6 +830,24 @@ without being secrets — `adjustAuthorization`, `jwtAuthorizationType`, `proxyA
 have their values shown as `xxxxxx` in sanitized URIs. This is a cosmetic change to sanitized output only and
 does not affect the actual endpoint configuration.
 
+=== camel-support - DefaultMaskingFormatter masks URI userinfo and PEM private keys
+
+`DefaultMaskingFormatter` (used when `logMask=true`, and by tooling that reuses the same formatter) previously
+masked secrets only when a known sensitive *key name* appeared in key/value, XML or JSON text. Two credential
+shapes that have no such key are now also masked:
+
+* URI userinfo passwords such as `mongodb://user:pass@host/db` or `amqp://admin:secret@broker/vhost`
+  (the `:pass` / `:secret` portion is replaced; the username and host remain).
+* PEM private-key blocks (`-----BEGIN … PRIVATE KEY-----` … `-----END … PRIVATE KEY-----`); the key body is
+  replaced while the BEGIN/END markers are kept. Certificates and public keys are not masked.
+
+Helpers for these value shapes live on `org.apache.camel.util.SensitiveUtils`
+(`maskUserInfoCredentials`, `maskPemPrivateKeyBlocks`, `maskSensitiveValueShapes`). This is a cosmetic change
+to masked/logged output only and does not affect endpoint configuration.
+
+If you use `DefaultMaskingFormatter` with an empty keyword set, `format()` previously returned the source unchanged;
+it now still applies URI userinfo and PEM private-key masking on the text.
+
 === camel-a2a - push notification webhooks pinned to the validated address
 
 Push notifications are now delivered with Apache HttpClient 5 instead of `java.net.http.HttpClient`, so the request
@@ -851,6 +880,22 @@ that naturally differ, such as `CamelKafkaOffset`, are not set on the batch exch
 
 This is additive — these headers were previously absent from the batch exchange, so nothing that worked before
 changes. The headers on the individual record exchanges in the body are unchanged.
+
+=== camel-kafka - Unified reconnection task
+
+The Kafka consumer's internal reconnection logic has been simplified. Previously, creating a
+`KafkaConsumer` (kafka-client) and subscribing to topics were handled by two separate foreground
+tasks with independent backoff settings. These have been merged into a single background
+reconnection task that is visible via Camel management, including the TUI, CLI, Hawtio, and other tooling.
+
+As a result, the `subscribeConsumerBackoffMaxAttempts` and `subscribeConsumerBackoffInterval`
+component options are now deprecated and no longer used. The unified reconnection task uses the
+`createConsumerBackoffMaxAttempts` and `createConsumerBackoffInterval` options to control retry
+behavior for both consumer creation and topic subscription.
+
+If you previously configured `subscribeConsumerBackoffMaxAttempts` or
+`subscribeConsumerBackoffInterval`, migrate those settings to use
+`createConsumerBackoffMaxAttempts` and `createConsumerBackoffInterval` instead.
 
 === camel-core - Multicast UseOriginalAggregationStrategy fix
 
@@ -1069,6 +1114,29 @@ camel.resilience4j.waitDurationInOpenState = 60s
 camel.resilience4j.waitDurationInOpenState = 60000
 ----
 
+*Programmatic configuration (camel-main):*
+
+The same change applies to the Java API in `org.apache.camel.main.Resilience4jConfigurationProperties`.
+The getters, setters and fluent builders for `waitDurationInOpenState`, `slowCallDurationThreshold`,
+`timeoutDuration` and `bulkheadMaxWaitDuration` now use `String` instead of `Integer`, so code that
+configures the circuit breaker through `MainConfigurationProperties` must be updated:
+
+[source,java]
+----
+// Before:
+main.configure().resilience4j().withTimeoutDuration(1000);
+
+// After (milliseconds):
+main.configure().resilience4j().withTimeoutDuration("1000");
+
+// Or using a duration string (preferred):
+main.configure().resilience4j().withTimeoutDuration("1s");
+----
+
+`timeoutDuration` and `bulkheadMaxWaitDuration` were already expressed in milliseconds, so for those
+two this is only a type change (quote the value) with no unit conversion; `waitDurationInOpenState`
+and `slowCallDurationThreshold` additionally change from seconds to milliseconds as described above.
+
 === camel-resilience4j - Vavr dependency removed
 
 The `io.vavr:vavr` and `io.vavr:vavr-match` runtime dependencies have been removed from
@@ -1241,3 +1309,49 @@ Update any catch blocks or method `throws` declarations accordingly.
 } catch (MinioException e) { ... }
 ----
 
+=== camel-aws2 - producers now fail fast on a wrong POJO request type
+
+When an AWS2 producer is configured with `pojoRequest=true`, it expects the
+Exchange body to be the AWS SDK request object for the selected operation
+(for example an `AssumeRoleRequest` for the `assumeRole` operation of
+`camel-aws2-sts`). Previously, if the body was some other type, the operation
+silently did nothing: no AWS call was made, no response was set, and the
+original body was returned with no error.
+
+These producers now throw an `IllegalArgumentException` naming the required
+request type, consistent with the behaviour already shipped for
+`camel-aws-bedrock` in 4.21 (CAMEL-23462). This roll-out across the remaining
+AWS2 producers is tracked by CAMEL-24261.
+
+If you relied on the previous silent no-op, ensure the body is the correct
+request type when `pojoRequest=true`, or drive the operation through headers
+with `pojoRequest=false`.
+
+=== camel-google-storage - downloads are confined to the configured directory
+
+When the consumer is configured with `downloadFileName` pointing at a directory, the
+remote object name is appended to that directory to build the local file to write.
+The resolved path is now verified to stay within the configured directory, and an
+`IllegalArgumentException` is thrown if it does not.
+
+Object names are still allowed to contain `/` and are mapped to sub-directories of the
+download directory as before, so nested object names keep working unchanged. Only names
+that resolve outside the configured directory are rejected.
+
+If `downloadFileName` is configured with an expression (i.e. it contains `$`), the local
+path is built by that expression as before and is not subject to this check.
+
+=== camel-main - JWT authentication requires an issuer or an audience
+
+The embedded HTTP server and the management server build their JWT authenticator from the
+configured keystore. When neither `jwtIssuer` nor `jwtAudience` was set, no `JWTOptions` was
+applied, so tokens were only checked for signature and expiry and the `iss` and `aud` claims
+were not validated.
+
+The server now fails to start when a JWT keystore is configured but neither `camel.server.jwtIssuer`
+nor `camel.server.jwtAudience` is set (and likewise for `camel.management.*`). Configure the issuer
+and/or the audience that tokens are expected to carry.
+
+If a deployment genuinely wants signature and expiry validation only, set
+`camel.server.jwtAllowMissingIssuerAndAudience=true` (or `camel.management.jwtAllowMissingIssuerAndAudience=true`)
+to keep the previous behaviour.

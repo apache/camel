@@ -313,7 +313,7 @@ class McpFacade {
     }
 
     List<TabRegistry.TabEntry> getTabEntries() {
-        return tabRegistry.allTabEntries();
+        return tabRegistry.allTabEntries(ctx != null ? ctx.findSelectedIntegration() : null);
     }
 
     List<String> getActionLabels() {
@@ -327,6 +327,11 @@ class McpFacade {
         }
         MonitorTab tab = bridge.activeTab();
         return tab != null ? tab.getSelectionContext() : null;
+    }
+
+    Boolean isDetailFocused() {
+        MonitorTab tab = bridge.activeTab();
+        return tab != null ? tab.isDetailFocused() : null;
     }
 
     List<String> getIntegrationNames() {

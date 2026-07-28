@@ -19,6 +19,7 @@ package org.apache.camel.component.zookeeper;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -53,6 +54,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     private ZooKeeperConfiguration configuration;
     private LinkedBlockingQueue<ZooKeeperOperation> operations = new LinkedBlockingQueue<>();
     private ExecutorService executor;
+    private ScheduledExecutorService taskExecutor;
     private volatile boolean shuttingDown;
 
     public ZooKeeperConsumer(ZooKeeperEndpoint endpoint, Processor processor) {
@@ -72,6 +74,8 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         initializeConsumer();
         executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
                 "Camel-Zookeeper OperationsExecutor", 1);
+        taskExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, "ZooKeeperReconnectTask");
 
         OperationsExecutor opsService = new OperationsExecutor();
         executor.submit(opsService);
@@ -83,6 +87,10 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         shuttingDown = true;
         if (LOG.isTraceEnabled()) {
             LOG.trace(String.format("Shutting down zookeeper consumer of '%s'", configuration.getPath()));
+        }
+        if (taskExecutor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
+            taskExecutor = null;
         }
         getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(executor);
         zkm.shutdown();
@@ -179,12 +187,14 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                 if (isRunAllowed()) {
                     // Use Camel's task API for reconnection backoff delay instead of Thread.sleep()
                     // We use initialDelay for the actual delay, and maxIterations(1) to run once
-                    Tasks.foregroundTask()
-                            .withBudget(Budgets.iterationBudget()
+                    Tasks.backgroundTask()
+                            .withBudget(Budgets.iterationTimeBudget()
                                     .withMaxIterations(1)
                                     .withInitialDelay(Duration.ofMillis(configuration.getBackoff()))
-                                    .withInterval(Duration.ZERO)
+                                    .withInterval(Duration.ofMillis(1))
+                                    .withUnlimitedDuration()
                                     .build())
+                            .withScheduledExecutor(taskExecutor)
                             .withName("ZooKeeperReconnectBackoff")
                             .build()
                             .run(getEndpoint().getCamelContext(), () -> true);

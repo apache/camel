@@ -35,6 +35,7 @@ import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -57,6 +58,7 @@ class ThreadsTab extends AbstractTableTab {
     private int threadCount;
     private int peakThreadCount;
     private int traceScroll;
+    private boolean detailFocused;
     private String lastPid;
     private long lastRefreshTime;
 
@@ -95,13 +97,19 @@ class ThreadsTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            traceScroll = Math.max(0, traceScroll - 10);
+        if (ke.isKey(KeyCode.TAB)) {
+            detailFocused = !detailFocused;
             return true;
         }
-        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            traceScroll += 10;
-            return true;
+        if (detailFocused) {
+            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                traceScroll = Math.max(0, traceScroll - 10);
+                return true;
+            }
+            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                traceScroll += 10;
+                return true;
+            }
         }
         if (ke.isCharIgnoreCase('f')) {
             filter = (filter + 1) % FILTER_LABELS.length;
@@ -121,14 +129,22 @@ class ThreadsTab extends AbstractTableTab {
 
     @Override
     public void navigateUp() {
-        super.navigateUp();
-        traceScroll = 0;
+        if (detailFocused) {
+            traceScroll = Math.max(0, traceScroll - 1);
+        } else {
+            super.navigateUp();
+            traceScroll = 0;
+        }
     }
 
     @Override
     public void navigateDown() {
-        super.navigateDown();
-        traceScroll = 0;
+        if (detailFocused) {
+            traceScroll++;
+        } else {
+            super.navigateDown();
+            traceScroll = 0;
+        }
     }
 
     @Override
@@ -184,6 +200,9 @@ class ThreadsTab extends AbstractTableTab {
         String title = String.format(" Threads [%d/%d] peak:%d filter:%s ",
                 visible.size(), threadCount, peakThreadCount, FILTER_LABELS[filter]);
 
+        Style tableBorderStyle = detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableTitleStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
+
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
@@ -198,9 +217,11 @@ class ThreadsTab extends AbstractTableTab {
                         Constraint.length(16),
                         Constraint.length(14),
                         Constraint.length(15))
-                .highlightStyle(Theme.selectionBg())
+                .highlightStyle(detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .borderStyle(tableBorderStyle)
+                        .title(Title.from(Line.from(Span.styled(title, tableTitleStyle)))).build())
                 .build();
 
         lastTableArea = area;
@@ -209,12 +230,17 @@ class ThreadsTab extends AbstractTableTab {
     }
 
     private void renderTrace(Frame frame, Rect area, List<ThreadData> visible) {
+        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
+
         Integer sel = tableState.selected();
         if (sel == null || sel < 0 || sel >= visible.size()) {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Select a thread", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Stack Trace ")
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(detailBorderStyle)
+                                    .title(Title.from(Line.from(Span.styled(" Stack Trace ", detailTitleStyle))))
                                     .build())
                             .build(),
                     area);
@@ -229,7 +255,9 @@ class ThreadsTab extends AbstractTableTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" No stack trace available", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(detailBorderStyle)
+                                    .title(Title.from(Line.from(Span.styled(title, detailTitleStyle)))).build())
                             .build(),
                     area);
             return;
@@ -256,7 +284,9 @@ class ThreadsTab extends AbstractTableTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .borderStyle(detailBorderStyle)
+                                .title(Title.from(Line.from(Span.styled(title, detailTitleStyle)))).build())
                         .build(),
                 area);
     }
@@ -266,6 +296,7 @@ class ThreadsTab extends AbstractTableTab {
         hint(spans, "Esc", "back");
         hint(spans, "s", "sort");
         hint(spans, "f", "filter [" + FILTER_LABELS[filter] + "]");
+        hint(spans, "Tab", detailFocused ? "table" : "trace");
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hintLast(spans, "PgUp/Dn", "scroll");
     }
@@ -279,6 +310,11 @@ class ThreadsTab extends AbstractTableTab {
         List<String> items = visible.stream().map(t -> t.name != null ? t.name : "").toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Threads");
+    }
+
+    @Override
+    public Boolean isDetailFocused() {
+        return detailFocused;
     }
 
     private List<ThreadData> sortedThreads() {

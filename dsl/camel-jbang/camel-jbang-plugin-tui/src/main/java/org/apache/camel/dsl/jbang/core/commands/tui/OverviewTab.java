@@ -31,6 +31,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -163,7 +164,7 @@ class OverviewTab extends AbstractTab {
             topMode = !topMode;
             return true;
         }
-        if (ke.isChar('i') && !ctx.infraData.get().isEmpty()) {
+        if (ke.isKey(KeyCode.TAB) && !ctx.infraData.get().isEmpty()) {
             infraFocused = !infraFocused;
             if (infraFocused && infraTableState.selected() == null) {
                 infraTableState.select(0);
@@ -572,13 +573,17 @@ class OverviewTab extends AbstractTab {
             };
         }
 
+        String integrationTitle = infraCount > 0 ? " Integrations " : " Overview ";
+        Style intBorderStyle = infraFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style intTitleStyle = infraFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
         Table.Builder tableBuilder = Table.builder()
                 .rows(rows)
                 .header(header)
                 .widths(widths)
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(infraCount > 0 ? " Integrations " : " Overview ").build());
+                        .borderStyle(intBorderStyle)
+                        .title(Title.from(Line.from(Span.styled(integrationTitle, intTitleStyle)))).build());
         if (!infraFocused) {
             tableBuilder.highlightStyle(Theme.selectionBg());
         }
@@ -948,21 +953,25 @@ class OverviewTab extends AbstractTab {
                         Cell.from(Span.styled(info.pid, dimStyle)),
                         Cell.from(Span.styled(vanishAlias, dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error().dim())),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle))).style(rowBg));
             } else {
                 String statusText = info.alive ? "Running" : "Stopped";
                 String infraAlias = TuiIcons.INFRA + "  " + info.alias;
                 String version = info.serviceVersion != null ? info.serviceVersion : "";
                 String port = extractInfraPort(info);
+                String uiUrl = extractInfraUiUrl(info);
                 String desc = info.description != null ? info.description : "";
                 infraRows.add(Row.from(
                         Cell.from(info.pid),
                         Cell.from(Span.styled(infraAlias, Theme.notice())),
                         Cell.from(version),
-                        rightCell(port, 7),
                         Cell.from(Span.styled(statusText, statusStyle)),
+                        rightCell(port, 7),
+                        Cell.from(Span.styled(uiUrl,
+                                uiUrl.isEmpty() ? Style.EMPTY : Theme.info().hyperlink(uiUrl))),
                         Cell.from(desc)).style(rowBg));
             }
         }
@@ -971,8 +980,9 @@ class OverviewTab extends AbstractTab {
                 Cell.from(Span.styled("PID", Style.EMPTY.bold())),
                 Cell.from(Span.styled(infraSortLabel("SERVICE", "service"), infraSortStyle("service"))),
                 Cell.from(Span.styled(infraSortLabel("VERSION", "version"), infraSortStyle("version"))),
-                rightCell(infraSortLabel("PORT", "port"), 7, infraSortStyle("port")),
                 Cell.from(Span.styled(infraSortLabel("STATUS", "status"), infraSortStyle("status"))),
+                rightCell(infraSortLabel("PORT", "port"), 7, infraSortStyle("port")),
+                Cell.from(Span.styled("UI", Style.EMPTY.bold())),
                 Cell.from(Span.styled("DESCRIPTION", Style.EMPTY.bold())));
 
         Table.Builder infraBuilder = Table.builder()
@@ -982,12 +992,17 @@ class OverviewTab extends AbstractTab {
                         Constraint.length(8),
                         Constraint.fill(),
                         Constraint.length(16),
-                        Constraint.length(7),
                         Constraint.length(10),
+                        Constraint.length(7),
+                        Constraint.length(26),
                         Constraint.fill())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Dev/Infra Services ").build());
+                        .borderStyle(infraFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted())
+                        .title(Title.from(Line.from(
+                                Span.styled(" Dev/Infra Services ",
+                                        infraFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent())))))
+                        .build());
         if (infraFocused) {
             infraBuilder.highlightStyle(Theme.selectionBg());
         }
@@ -1007,6 +1022,14 @@ class OverviewTab extends AbstractTab {
         return "";
     }
 
+    private static String extractInfraUiUrl(InfraInfo info) {
+        Object url = info.properties.get("uiUrl");
+        if (url != null) {
+            return String.valueOf(url);
+        }
+        return "";
+    }
+
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "q", "quit");
@@ -1015,7 +1038,7 @@ class OverviewTab extends AbstractTab {
         }
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (!ctx.infraData.get().isEmpty()) {
-            hint(spans, "i", infraFocused ? "integrations" : "infra");
+            hint(spans, "Tab", infraFocused ? "integrations" : "infra");
         }
         if (infraFocused) {
             hint(spans, "d", "details");

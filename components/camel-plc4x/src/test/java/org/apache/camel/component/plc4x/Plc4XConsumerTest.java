@@ -84,6 +84,7 @@ class Plc4XConsumerTest {
     @Test
     void doStop() throws Exception {
         consumer.doStop();
+        assertFalse(consumer.isStarted(), "Consumer should not be started after doStop");
     }
 
 }

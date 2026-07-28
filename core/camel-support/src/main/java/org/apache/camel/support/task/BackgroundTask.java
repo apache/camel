@@ -81,6 +81,8 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
     private Duration elapsed = Duration.ZERO;
     private final AtomicBoolean running = new AtomicBoolean();
     private final AtomicBoolean completed = new AtomicBoolean();
+    private volatile boolean registeredByRun;
+    private volatile boolean attempting;
 
     BackgroundTask(TimeBudget budget, ScheduledExecutorService service, String name) {
         super(name);
@@ -97,13 +99,15 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
         TaskManagerRegistry registry = null;
         if (camelContext != null) {
             registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
-            registry.addTask(this);
+            if (!registeredByRun) {
+                registry.addTask(this);
+            }
         }
         if (!budget.next()) {
             LOG.warn("The task {} does not have more budget to continue running", getName());
             status = Status.Exhausted;
             completed.set(false);
-            if (registry != null) {
+            if (!registeredByRun && registry != null) {
                 registry.removeTask(this);
             }
             latch.countDown();
@@ -118,7 +122,7 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
             if (doRun(supplier)) {
                 status = Status.Completed;
                 completed.set(true);
-                if (registry != null) {
+                if (!registeredByRun && registry != null) {
                     registry.removeTask(this);
                 }
                 latch.countDown();
@@ -129,7 +133,8 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
             cause = e;
             throw e;
         }
-        nextAttemptTime = lastAttemptTime + budget.interval();
+        // scheduleWithFixedDelay waits interval after this run finishes, so compute from now
+        nextAttemptTime = System.currentTimeMillis() + budget.interval();
     }
 
     /**
@@ -149,21 +154,32 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
     @Override
     public boolean run(CamelContext camelContext, BooleanSupplier supplier) {
         running.set(true);
+        registeredByRun = true;
+        if (camelContext != null) {
+            PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension()).addTask(this);
+        }
         Future<?> task = service.scheduleWithFixedDelay(() -> runTaskWrapper(camelContext, supplier), budget.initialDelay(),
                 budget.interval(), TimeUnit.MILLISECONDS);
         waitForTaskCompletion(camelContext, task);
         return completed.get();
     }
 
+    @Override
+    public boolean isAttempting() {
+        return attempting;
+    }
+
     protected boolean doRun(BooleanSupplier supplier) {
         try {
-            cause = null;
+            attempting = true;
             return supplier.getAsBoolean();
         } catch (TaskRunFailureException e) {
             LOG.debug("Task {} failed at {} iterations and will attempt again on next interval: {}",
                     getName(), budget.iteration(), e.getMessage());
             cause = e;
             return false;
+        } finally {
+            attempting = false;
         }
     }
 

@@ -29,7 +29,7 @@ import org.apache.camel.support.service.ServiceHelper;
 public class WrapProcessor extends DelegateAsyncProcessor implements WrapAwareProcessor {
 
     private final Processor wrapped;
-    private boolean disabled;
+    private volatile boolean disabled;
 
     public WrapProcessor(Processor processor, Processor wrapped) {
         super(processor);

@@ -44,13 +44,14 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppProducer</code>
  */
-public class SmppProducerTest {
+class SmppProducerTest {
 
     private SmppProducer producer;
     private SmppConfiguration configuration;
@@ -100,12 +101,14 @@ public class SmppProducerTest {
     }
 
     @Test
-    public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
+    void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
         when(endpoint.getConnectionString())
                 .thenReturn("smpp://smppclient@localhost:2775");
         when(endpoint.isSingleton()).thenReturn(true);
 
         producer.doStop();
+
+        verify(session, never()).unbindAndClose();
     }
 
     @Test

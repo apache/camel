@@ -71,7 +71,7 @@ public class RequestContext {
             StringBuilder textBuilder = new StringBuilder();
             for (JsonNode part : contentNode) {
                 String type = part.path("type").asText();
-                if ("text".equals(type)) {
+                if ("text".equals(type) || "input_text".equals(type)) {
                     if (textBuilder.length() > 0) {
                         textBuilder.append(" ");
                     }
@@ -81,6 +81,31 @@ public class RequestContext {
             return textBuilder.length() > 0 ? textBuilder.toString() : null;
         }
 
+        return null;
+    }
+
+    public String getResponsesInputText() {
+        JsonNode input = rootNode.get("input");
+        if (input == null || input.isNull()) {
+            return getLastUserMessage();
+        }
+        if (input.isTextual()) {
+            return input.asText();
+        }
+        if (input.isArray()) {
+            for (int i = input.size() - 1; i >= 0; i--) {
+                JsonNode item = input.get(i);
+                if (item.has("content")) {
+                    String text = extractContentText(item.get("content"));
+                    if (text != null) {
+                        return text;
+                    }
+                }
+                if (item.has("text")) {
+                    return item.get("text").asText();
+                }
+            }
+        }
         return null;
     }
 
