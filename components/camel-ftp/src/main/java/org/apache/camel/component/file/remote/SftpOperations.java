@@ -35,6 +35,7 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
@@ -132,19 +133,28 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 return true;
             }
 
-            BlockingTask task = Tasks.foregroundTask()
-                    .withBudget(Budgets.iterationBudget()
-                            .withMaxIterations(Budgets.atLeastOnce(endpoint.getMaximumReconnectAttempts()))
-                            .withInterval(Duration.ofMillis(endpoint.getReconnectDelay()))
-                            .build())
-                    .build();
+            ScheduledExecutorService ses = endpoint.getCamelContext().getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "SftpReconnect");
+            try {
+                BlockingTask task = Tasks.backgroundTask()
+                        .withBudget(Budgets.iterationTimeBudget()
+                                .withMaxIterations(Budgets.atLeastOnce(endpoint.getMaximumReconnectAttempts()))
+                                .withUnlimitedDuration()
+                                .withInterval(Duration.ofMillis(endpoint.getReconnectDelay()))
+                                .build())
+                        .withScheduledExecutor(ses)
+                        .withName("SftpReconnect")
+                        .build();
 
-            TaskPayload payload = new TaskPayload(configuration);
+                TaskPayload payload = new TaskPayload(configuration);
 
-            if (!task.run(endpoint.getCamelContext(), this::tryConnect, payload)) {
-                throw new GenericFileOperationFailedException(
-                        "Cannot connect to " + configuration.remoteServerInformation(),
-                        payload.exception);
+                if (!task.run(endpoint.getCamelContext(), this::tryConnect, payload)) {
+                    throw new GenericFileOperationFailedException(
+                            "Cannot connect to " + configuration.remoteServerInformation(),
+                            payload.exception);
+                }
+            } finally {
+                endpoint.getCamelContext().getExecutorServiceManager().shutdown(ses);
             }
 
             configureBulkRequests();
