@@ -390,6 +390,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionHeapDumpTask(root);
             } else if ("jfr-memory-leak".equals(action)) {
                 doActionJfrMemoryLeakTask(root);
+            } else if ("jfr".equals(action)) {
+                doActionJfrTask(root);
             } else if ("cli-debug".equals(action)) {
                 doActionCliDebug(root);
             } else if ("spring-boot-configuration".equals(action)) {
@@ -984,6 +986,31 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             String minSize = root.getString("minSize");
             if (minSize != null) {
                 params.put("minSize", minSize);
+            }
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionJfrTask(JsonObject root) throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("jfr");
+        if (dc != null) {
+            Map<String, Object> params = new HashMap<>();
+            String command = root.getString("command");
+            if (command != null) {
+                params.put("command", command);
+            }
+            String event = root.getString("event");
+            if (event != null) {
+                params.put("event", event);
+            }
+            String disable = root.getString("disable");
+            if (disable != null) {
+                params.put("disable", disable);
             }
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             LOG.trace("Updating output file: {}", outputFile);
