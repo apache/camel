@@ -81,8 +81,8 @@ class TabRegistryTest {
     }
 
     @Test
-    void moreTabsHasTwentySevenEntries() {
-        assertEquals(29, registry.moreTabs().size());
+    void moreTabsHasCorrectNumberOfEntries() {
+        assertEquals(31, registry.moreTabs().size());
     }
 
     @Test
@@ -109,7 +109,7 @@ class TabRegistryTest {
         List<Character> shortcuts = registry.moreTabs().stream().map(TabRegistry.MoreTab::shortcut).toList();
         assertEquals(
                 List.of('B', 'C', 'H', 'I', 'P', 'R', 'C', 'H', 'M', 'N', 'E', 'T', 'O', 'J', 'K', 'Q', 'Q', 'C', 'M', 'M',
-                        'M', 'P', 'S', 'T', 'B', 'C', 'C', 'V', 'M'),
+                        'M', 'P', 'S', 'T', 'B', 'C', 'C', 'V', 'M', 'Y', 'Z'),
                 shortcuts, "More tab shortcut letters must match the historical sequence");
     }
 
