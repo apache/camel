@@ -40,6 +40,9 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
         String path = resolveAuthenticationPath(properties.getAuthenticationPath(), properties.getPath());
         String realm = properties.getAuthenticationRealm() != null ? properties.getAuthenticationRealm() : null;
 
+        assertIssuerOrAudienceConfigured(properties.getJwtAudience(), properties.getJwtIssuer(),
+                properties.isJwtAllowMissingIssuerAndAudience(), "camel.server");
+
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
         entry.setPath(path);
         entry.setAuthenticationHandlerFactory(new AuthenticationHandlerFactory() {
@@ -77,6 +80,9 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
         String path = resolveAuthenticationPath(properties.getAuthenticationPath(), properties.getPath());
         String realm = properties.getAuthenticationRealm() != null ? properties.getAuthenticationRealm() : null;
 
+        assertIssuerOrAudienceConfigured(properties.getJwtAudience(), properties.getJwtIssuer(),
+                properties.isJwtAllowMissingIssuerAndAudience(), "camel.management");
+
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
         entry.setPath(path);
         entry.setAuthenticationHandlerFactory(new AuthenticationHandlerFactory() {
@@ -104,6 +110,24 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
 
         authenticationConfig.getEntries().add(entry);
         authenticationConfig.setEnabled(true);
+    }
+
+    /**
+     * A JWT authenticator built without an issuer or an audience only verifies the token signature and the exp/nbf
+     * claims, which is weaker than the configuration suggests. Fail closed unless that was asked for explicitly.
+     */
+    private static void assertIssuerOrAudienceConfigured(
+            String audience, String issuer, boolean allowMissing, String configPrefix) {
+        if (allowMissing) {
+            return;
+        }
+        if (ObjectHelper.isEmpty(audience) && ObjectHelper.isEmpty(issuer)) {
+            throw new IllegalArgumentException(
+                    "JWT authentication requires " + configPrefix + ".jwtIssuer or " + configPrefix
+                                               + ".jwtAudience to be configured, otherwise tokens are only checked for"
+                                               + " signature and expiry. Set " + configPrefix
+                                               + ".jwtAllowMissingIssuerAndAudience=true to opt out.");
+        }
     }
 
     private static JWTOptions buildJwtOptions(String audience, String issuer) {
