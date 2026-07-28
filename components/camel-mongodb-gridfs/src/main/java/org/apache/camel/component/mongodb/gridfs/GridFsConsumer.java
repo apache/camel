@@ -116,7 +116,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
 
         BlockingTask task = Tasks.backgroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxIterations(Integer.MAX_VALUE)
+                        // maxIterations defaults to Integer.MAX_VALUE (effectively unlimited)
                         .withInterval(Duration.ofMillis(endpoint.getDelay()))
                         .withInitialDelay(Duration.ofMillis(endpoint.getInitialDelay()))
                         .withUnlimitedDuration()
