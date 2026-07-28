@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 
 import jakarta.annotation.Priority;
 import jakarta.inject.Inject;
@@ -84,11 +86,20 @@ public class McpSecurityInterceptor {
         try {
             Object result = ctx.proceed();
 
-            // Secret redaction on string results
-            if (config.isRedactionEnabled() && result instanceof String s) {
-                if (redactor.containsSecret(s)) {
-                    result = redactor.redact(s);
-                    wasRedacted = true;
+            // Secret redaction. Free-text (String) results go through the regex redactor; structured results
+            // (Map/List, such as the JsonObject returned by the runtime tools) are scrubbed by key name in place,
+            // which is what catches JSON-quoted values the value regex cannot match.
+            if (config.isRedactionEnabled() && result != null) {
+                if (result instanceof String s) {
+                    // redact() is the single source of truth: if it changes the string, a secret was masked.
+                    // Calling containsSecret() first would run the full masking pipeline a second time.
+                    String redacted = redactor.redact(s);
+                    if (!redacted.equals(s)) {
+                        result = redacted;
+                        wasRedacted = true;
+                    }
+                } else if (result instanceof Map<?, ?> || result instanceof List<?>) {
+                    wasRedacted = redactor.redactStructured(result);
                 }
             }
 
