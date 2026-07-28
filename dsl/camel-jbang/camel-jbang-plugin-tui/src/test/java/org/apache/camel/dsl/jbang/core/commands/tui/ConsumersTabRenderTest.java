@@ -59,11 +59,12 @@ class ConsumersTabRenderTest {
         addConsumer("route1", "timer://hello", "Started", "org.apache.camel.component.timer.TimerConsumer");
 
         ConsumersTab tab = new ConsumersTab(ctx);
-        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
+        String rendered = TuiTestHelper.renderToString(tab, 160, 20);
 
         assertTrue(rendered.contains("ROUTE"), "Should show ROUTE header");
         assertTrue(rendered.contains("STATUS"), "Should show STATUS header");
         assertTrue(rendered.contains("TYPE"), "Should show TYPE header");
+        assertTrue(rendered.contains("REMOTE"), "Should show REMOTE header");
         assertTrue(rendered.contains("URI"), "Should show URI header");
     }
 
