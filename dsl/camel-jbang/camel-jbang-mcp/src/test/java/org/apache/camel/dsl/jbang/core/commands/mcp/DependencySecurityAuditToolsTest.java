@@ -98,6 +98,8 @@ class DependencySecurityAuditToolsTest {
 
     @Test
     void shouldIncludeReachabilityWhenRoutesProvided() {
+        // The route uses the http component and the POM declares vulnerable camel-http at 4.10.0, so the audit
+        // must flag camel-http as reachable.
         String routes = "from: \"http:example.com\"\nsteps:\n  - to: \"log:out\"";
         DependencySecurityAuditTools.AuditResult result
                 = tools.camel_dependency_security_audit(SIMPLE_POM, routes, null, null, null, null);
@@ -105,7 +107,27 @@ class DependencySecurityAuditToolsTest {
         assertThat(result).isNotNull();
         assertThat(result.summary()).isNotNull();
         assertThat(result.summary().totalDependencies()).isGreaterThan(0);
-        assertThat(result.summary().reachableVulnerableArtifacts()).isGreaterThanOrEqualTo(0);
+        assertThat(result.summary().reachableVulnerableArtifacts()).isGreaterThan(0);
+        assertThat(result.vulnerableArtifacts())
+                .anySatisfy(a -> {
+                    assertThat(a.artifactId()).isEqualTo("camel-http");
+                    assertThat(a.reachable()).isTrue();
+                });
+    }
+
+    @Test
+    void shouldNotFlagReachabilityWhenRoutesUseOtherComponents() {
+        // camel-http is declared and vulnerable, but no route uses it, so it must NOT be reported as reachable.
+        String routes = "from: \"timer:tick\"\nsteps:\n  - to: \"log:out\"";
+        DependencySecurityAuditTools.AuditResult result
+                = tools.camel_dependency_security_audit(SIMPLE_POM, routes, null, null, null, null);
+
+        assertThat(result).isNotNull();
+        assertThat(result.summary().reachableVulnerableArtifacts()).isZero();
+        assertThat(result.vulnerableArtifacts())
+                .filteredOn(a -> a.artifactId().equals("camel-http"))
+                .singleElement()
+                .satisfies(a -> assertThat(a.reachable()).isFalse());
     }
 
     @Test

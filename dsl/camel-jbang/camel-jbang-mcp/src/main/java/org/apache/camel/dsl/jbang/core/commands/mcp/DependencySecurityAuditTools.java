@@ -77,7 +77,7 @@ public class DependencySecurityAuditTools {
             List<SecurityAdvisoryModel> allAdvisories = advisoryService.advisories();
 
             List<String> usedSchemes = routes != null && !routes.isBlank()
-                    ? extractUsedSchemes(routes) : List.of();
+                    ? extractUsedSchemes(routes, catalog) : List.of();
 
             Map<String, ArtifactAudit> auditByArtifact = new LinkedHashMap<>();
 
@@ -159,17 +159,26 @@ public class DependencySecurityAuditTools {
         }
     }
 
-    private List<String> extractUsedSchemes(String routes) {
+    /**
+     * Detect which components a route uses by walking the known catalog component names, the same way
+     * {@link DependencyCheckTools} and {@code HardenTools} do. Tokenizing the route text instead would treat the DSL's
+     * own structural keywords ({@code from:}, {@code to:}, {@code steps:}, {@code uri:}) as component schemes.
+     */
+    private List<String> extractUsedSchemes(String routes, CamelCatalog catalog) {
         List<String> schemes = new ArrayList<>();
         String lower = routes.toLowerCase();
-        for (String token : lower.split("[^a-z0-9-]+")) {
-            if (token.length() > 2 && lower.contains(token + ":")) {
-                if (!schemes.contains(token)) {
-                    schemes.add(token);
-                }
+        for (String comp : catalog.findComponentNames()) {
+            if (containsComponent(lower, comp) && !schemes.contains(comp)) {
+                schemes.add(comp);
             }
         }
         return schemes;
+    }
+
+    private boolean containsComponent(String content, String comp) {
+        return content.contains(comp + ":")
+                || content.contains("\"" + comp + "\"")
+                || content.contains("'" + comp + "'");
     }
 
     private boolean isReachable(String artifactId, List<String> usedSchemes, CamelCatalog catalog) {
