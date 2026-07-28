@@ -723,6 +723,7 @@ class ActionsPopup {
                         showActionsMenu = false;
                     } else if (action == Action.STOP_ALL) {
                         showActionsMenu = false;
+                        stopAllPopup.setConfirmActions(ctx != null && ctx.confirmActions);
                         stopAllPopup.open();
                         checkStopAllNotification();
                     } else if (action == Action.CAPTION) {

@@ -47,6 +47,7 @@ class StopAllPopup {
     private final Set<String> stoppingPids;
 
     private boolean visible;
+    private boolean confirmActions;
     private boolean checkIntegrations = true;
     private boolean checkInfra = true;
     private int selectedRow;
@@ -65,6 +66,10 @@ class StopAllPopup {
 
     boolean isVisible() {
         return visible;
+    }
+
+    void setConfirmActions(boolean confirmActions) {
+        this.confirmActions = confirmActions;
     }
 
     boolean hasBothGroups() {
@@ -86,19 +91,21 @@ class StopAllPopup {
             return;
         }
 
-        if (integrationCount > 0 && infraCount == 0) {
-            stopIntegrations();
-            burstCallback.run();
-            return;
-        }
-        if (infraCount > 0 && integrationCount == 0) {
-            stopInfraServices();
-            burstCallback.run();
-            return;
+        if (!confirmActions) {
+            if (integrationCount > 0 && infraCount == 0) {
+                stopIntegrations();
+                burstCallback.run();
+                return;
+            }
+            if (infraCount > 0 && integrationCount == 0) {
+                stopInfraServices();
+                burstCallback.run();
+                return;
+            }
         }
 
-        checkIntegrations = true;
-        checkInfra = true;
+        checkIntegrations = integrationCount > 0;
+        checkInfra = infraCount > 0;
         selectedRow = 0;
         visible = true;
     }
@@ -117,15 +124,22 @@ class StopAllPopup {
         if (!visible) {
             return false;
         }
+        boolean bothGroups = integrationCount > 0 && infraCount > 0;
         if (ke.isCancel()) {
             visible = false;
         } else if (ke.isUp()) {
             selectedRow = 0;
         } else if (ke.isDown()) {
-            selectedRow = 1;
+            if (bothGroups) {
+                selectedRow = 1;
+            }
         } else if (ke.isChar(' ')) {
             if (selectedRow == 0) {
-                checkIntegrations = !checkIntegrations;
+                if (integrationCount > 0) {
+                    checkIntegrations = !checkIntegrations;
+                } else {
+                    checkInfra = !checkInfra;
+                }
             } else {
                 checkInfra = !checkInfra;
             }
@@ -137,25 +151,37 @@ class StopAllPopup {
     }
 
     void render(Frame frame, Rect area) {
+        boolean bothGroups = integrationCount > 0 && infraCount > 0;
         int popupW = Math.min(48, area.width() - 4);
-        int popupH = 6;
+        int popupH = bothGroups ? 6 : 5;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
-        String intLabel = (checkIntegrations ? "[x]" : "[ ]") + " All integrations (" + integrationCount + " running)";
-        String infraLabel = (checkInfra ? "[x]" : "[ ]") + " All infra services (" + infraCount + " running)";
-
         Style normalStyle = Style.EMPTY;
         Style selectedStyle = Style.EMPTY.bold().reversed();
 
-        Line intLine = Line.from(Span.styled("  " + intLabel, selectedRow == 0 ? selectedStyle : normalStyle));
-        Line infraLine = Line.from(Span.styled("  " + infraLabel, selectedRow == 1 ? selectedStyle : normalStyle));
+        Text text;
+        if (bothGroups) {
+            String intLabel = (checkIntegrations ? "[x]" : "[ ]") + " All integrations (" + integrationCount + " running)";
+            String infraLabel = (checkInfra ? "[x]" : "[ ]") + " All infra services (" + infraCount + " running)";
+            Line intLine = Line.from(Span.styled("  " + intLabel, selectedRow == 0 ? selectedStyle : normalStyle));
+            Line infraLine = Line.from(Span.styled("  " + infraLabel, selectedRow == 1 ? selectedStyle : normalStyle));
+            text = Text.from(Line.from(""), intLine, infraLine);
+        } else {
+            String label;
+            if (integrationCount > 0) {
+                label = (checkIntegrations ? "[x]" : "[ ]") + " All integrations (" + integrationCount + " running)";
+            } else {
+                label = (checkInfra ? "[x]" : "[ ]") + " All infra services (" + infraCount + " running)";
+            }
+            text = Text.from(Line.from(""), Line.from(Span.styled("  " + label, selectedStyle)));
+        }
 
         Paragraph para = Paragraph.builder()
-                .text(Text.from(Line.from(""), intLine, infraLine))
+                .text(text)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" " + TuiIcons.STOP + " Stop All ")
