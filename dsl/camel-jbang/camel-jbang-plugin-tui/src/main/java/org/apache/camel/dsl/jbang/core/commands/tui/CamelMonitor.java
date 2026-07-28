@@ -491,6 +491,11 @@ public class CamelMonitor extends CamelCommand {
                     public void stopProcess(boolean forceKill) {
                         stopSelectedProcess(forceKill);
                     }
+
+                    @Override
+                    public void resetIntegrationTabState() {
+                        CamelMonitor.this.resetIntegrationTabState();
+                    }
                 });
         aiPanel.setMcpFacade(mcpFacade);
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);

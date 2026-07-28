@@ -79,6 +79,8 @@ class McpFacade {
         void restartProcess();
 
         void stopProcess(boolean forceKill);
+
+        void resetIntegrationTabState();
     }
 
     // Tab name constants
@@ -297,6 +299,7 @@ class McpFacade {
             if (nameOrPid.equals(info.pid)
                     || (info.name != null && info.name.equalsIgnoreCase(nameOrPid))) {
                 ctx.selectedPid = info.pid;
+                bridge.resetIntegrationTabState();
                 return info.name != null ? info.name : info.pid;
             }
         }

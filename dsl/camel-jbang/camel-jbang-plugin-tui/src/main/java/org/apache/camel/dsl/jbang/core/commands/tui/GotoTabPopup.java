@@ -174,8 +174,8 @@ class GotoTabPopup {
         if (filteredEntries == null) {
             return;
         }
-        int nameColWidth = 18;
-        int popupW = Math.min(100, area.width() - 4);
+        int nameColWidth = 22;
+        int popupW = Math.min(110, area.width() - 4);
         int descColWidth = popupW - nameColWidth - 8;
         int contentH = filteredEntries.size() + 2;
         int maxH = area.height() - 4;

@@ -373,7 +373,7 @@ class SourceTab extends AbstractTab {
         if (dir == null || !Files.isDirectory(dir)) {
             return;
         }
-        if (rootDir == null) {
+        if (rootDir == null || !rootDir.equals(dir)) {
             rootDir = dir;
             currentDir = dir;
         }

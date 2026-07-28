@@ -1355,7 +1355,7 @@ class OverviewTab extends AbstractTab {
                 When running an example that requires infra services, they are started
                 automatically before the example launches.
 
-                Press `i` to toggle focus between the integrations and infra panels.
+                Press `Tab` to toggle focus between the integrations and infra panels.
                 Each panel remembers its own selection. Press `d` while the infra panel
                 is focused to toggle a details panel showing the service's connection
                 properties (host, port, etc.).
@@ -1367,7 +1367,7 @@ class OverviewTab extends AbstractTab {
                 ## Keys
 
                 - `Up/Down` — select within the focused panel
-                - `i` — toggle focus between integrations and infra panels
+                - `Tab` — switch between integrations and infra panels (when infra services are running)
                 - `d` — toggle infra service details panel (when infra panel is focused)
                 - `Enter` — view routes for selected integration
                 - `s` — cycle sort column (for the focused panel)
@@ -1426,9 +1426,9 @@ class OverviewTab extends AbstractTab {
         for (String row : TuiHelper.SMALL_CAMEL) {
             lines.add(Line.from(Span.styled("     " + row, Style.EMPTY.fg(Theme.accent()).bold())));
         }
-        lines.add(Line.from(Span.styled("     No Active Camel Integrations Found", Theme.title())));
+        lines.add(Line.from(Span.styled("     No Running Integrations Found", Theme.title())));
         lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.TIP) + "How to monitor integrations:", Style.EMPTY.bold())));
+        lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.TIP) + "How to get started:", Style.EMPTY.bold())));
         lines.add(Line.from(Span.raw("     Run a route or integration in another terminal window:")));
         lines.add(Line.from(Span.styled("     > camel run my-route.yaml", Theme.success())));
         lines.add(Line.from(Span.raw("")));
@@ -1437,7 +1437,15 @@ class OverviewTab extends AbstractTab {
                 Span.raw("     Press "),
                 Span.styled(" F2 ", Theme.hintKey()),
                 Span.raw(" to open Actions and select "),
-                Span.styled("Run Example", Style.EMPTY.bold()),
+                Span.styled("Run an Example", Style.EMPTY.bold()),
+                Span.raw("."))));
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.FOLDER) + "Or run an existing project:", Style.EMPTY.bold())));
+        lines.add(Line.from(List.of(
+                Span.raw("     Press "),
+                Span.styled(" F2 ", Theme.hintKey()),
+                Span.raw(" to open Actions and select "),
+                Span.styled("Run from Folder", Style.EMPTY.bold()),
                 Span.raw("."))));
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.COMPUTER) + "Or use the embedded JLine shell panel:",
@@ -1462,7 +1470,7 @@ class OverviewTab extends AbstractTab {
                         .block(Block.builder()
                                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                 .title(Title.from(Line.from(
-                                        Span.styled(" Camel JBang TUI ", Theme.title()))))
+                                        Span.styled(" Camel TUI ", Theme.title()))))
                                 .build())
                         .build(),
                 area);

@@ -1,0 +1,54 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Camel TUI Everforest Light theme. Soft green-tinted light palette inspired by natural forests. */
+
+$brand: #8DA101;
+$everforest-bg: #FDF6E3;
+$everforest-fg: #5C6A72;
+
+#accent         { color: $brand; }
+#accent-bg      { color: white; background: $brand; text-style: bold; }
+#hint-key       { color: white; background: $brand; text-style: bold; }
+#border         { color: #D5C4A1; }
+#border-focused { color: $brand; }
+#title          { color: $brand; text-style: bold; }
+#success        { color: #8DA101; }
+#warning        { color: #DFA000; }
+#error          { color: #F85552; }
+#muted          { color: #939F91; }
+#selection      { color: white; background: #93B259; text-style: bold; }
+#info           { color: #3A94C5; }
+#notice         { color: #DF69BA; }
+#row-alt        { background: #F4EBD0; }
+#base-bg        { background: $everforest-bg; }
+#base-fg        { color: $everforest-fg; }
+
+/* Content tokens — labels, change indicators, search highlight */
+#label          { color: #DFA000; }
+#change         { color: #DFA000; }
+#search-match   { color: $everforest-fg; background: #DFA000; }
+#mnemonic       { color: #DFA000; text-style: bold underline; }
+
+/* Diagram tokens */
+#diagram-border  { color: #939F91; }
+#diagram-id      { color: $everforest-fg; }
+#diagram-from    { color: #8DA101; }
+#diagram-to      { color: #3A94C5; }
+#diagram-choice  { color: #DFA000; }
+#diagram-action  { color: #E66868; }
+#diagram-eip     { color: #DF69BA; }
+#diagram-default { color: #939F91; }

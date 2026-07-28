@@ -19,12 +19,18 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import dev.tamboui.style.Color;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class SyntaxHighlighterTest {
+
+    @BeforeAll
+    static void initTheme() {
+        Theme.resetForTesting();
+    }
 
     @Test
     void detectsPropertiesLanguage() {
