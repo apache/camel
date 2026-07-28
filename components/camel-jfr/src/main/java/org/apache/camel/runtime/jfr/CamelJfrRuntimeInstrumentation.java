@@ -30,6 +30,10 @@ public class CamelJfrRuntimeInstrumentation extends LifecycleStrategySupport {
 
     private boolean registered;
 
+    public boolean isRegistered() {
+        return registered;
+    }
+
     @Override
     public void onContextInitializing(CamelContext context) {
         if (registered) {
