@@ -882,7 +882,7 @@ class HttpTab extends AbstractTableTab {
         String fullUrl = (probeBaseUrl != null ? probeBaseUrl : "") + probePathState.text();
         Rect urlArea = new Rect(innerX + labelW, row, fieldW, 1);
         frame.renderWidget(Paragraph.from(Line.from(
-                Span.styled(fullUrl, Style.EMPTY.dim()))), urlArea);
+                Span.styled(fullUrl, Theme.info().dim().hyperlink(fullUrl)))), urlArea);
 
         // Path input
         row++;
@@ -1292,7 +1292,11 @@ class HttpTab extends AbstractTableTab {
         Title detailTitle = Title.from(Line.from(titleSpans));
 
         List<Line> lines = new ArrayList<>();
-        addDetailLine(lines, "URL", ep.url);
+        if (ep.url != null && !ep.url.isEmpty()) {
+            lines.add(Line.from(
+                    Span.styled(String.format("  %-10s ", "URL:"), Theme.muted()),
+                    Span.styled(ep.url, Theme.info().hyperlink(ep.url))));
+        }
         addDetailLine(lines, "Consumes", ep.consumes);
         addDetailLine(lines, "Produces", ep.produces);
         String sourceStr;
