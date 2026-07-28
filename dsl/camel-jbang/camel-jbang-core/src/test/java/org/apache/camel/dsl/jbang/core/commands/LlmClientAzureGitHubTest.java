@@ -48,6 +48,13 @@ class LlmClientAzureGitHubTest {
     }
 
     @Test
+    void resolveAzureDeploymentNameForChatUrlPrefersModelThenEnvThenFallback() {
+        assertThat(LlmClient.resolveAzureDeploymentNameForChatUrl("my-deploy", "from-env")).isEqualTo("my-deploy");
+        assertThat(LlmClient.resolveAzureDeploymentNameForChatUrl(null, "from-env")).isEqualTo("from-env");
+        assertThat(LlmClient.resolveAzureDeploymentNameForChatUrl(null, null)).isEqualTo("gpt-4o");
+    }
+
+    @Test
     void normalizeOpenAiUrlBuildsAzureDeploymentChatPathWithApiVersion() {
         LlmClient client = LlmClient.create()
                 .withApiType(LlmClient.ApiType.openai)

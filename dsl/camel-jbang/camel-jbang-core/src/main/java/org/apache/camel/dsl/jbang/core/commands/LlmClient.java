@@ -54,6 +54,8 @@ public class LlmClient {
     private static final String DEFAULT_OLLAMA_MODEL = "llama3.2";
     private static final String DEFAULT_GITHUB_MODELS_URL = "https://models.github.ai/inference";
     private static final String DEFAULT_AZURE_API_VERSION = "2024-10-21";
+    /** Last-resort Azure deployment segment when URL normalization runs before model detection completes. */
+    private static final String DEFAULT_AZURE_DEPLOYMENT_FALLBACK = "gpt-4o";
     private static final int CONNECT_TIMEOUT_SECONDS = 10;
     private static final int HEALTH_CHECK_TIMEOUT_SECONDS = 5;
 
@@ -1444,7 +1446,7 @@ public class LlmClient {
         return true;
     }
 
-    static boolean isGitHubModelsAutoDetectEnabled() {
+    public static boolean isGitHubModelsAutoDetectEnabled() {
         return isGitHubModelsOptInFlag(System.getenv("GITHUB_MODELS"));
     }
 
@@ -1647,12 +1649,30 @@ public class LlmClient {
         return url + (url.contains("?") ? "&" : "?") + "api-version=" + resolveAzureApiVersion();
     }
 
+    /**
+     * Deployment name embedded in Azure chat URLs. Prefer the configured model (usually set by
+     * {@link #resolveAzureOpenAiModel()}), then {@code AZURE_OPENAI_DEPLOYMENT_NAME}, then a generic fallback.
+     */
+    String resolveAzureDeploymentNameForChatUrl() {
+        return resolveAzureDeploymentNameForChatUrl(model, System.getenv("AZURE_OPENAI_DEPLOYMENT_NAME"));
+    }
+
+    static String resolveAzureDeploymentNameForChatUrl(String configuredModel, String deploymentFromEnv) {
+        if (configuredModel != null && !configuredModel.isBlank()) {
+            return configuredModel;
+        }
+        if (deploymentFromEnv != null && !deploymentFromEnv.isBlank()) {
+            return deploymentFromEnv;
+        }
+        return DEFAULT_AZURE_DEPLOYMENT_FALLBACK;
+    }
+
     String normalizeAzureOpenAiChatUrl(String endpoint) {
         String u = stripTrailingSlash(endpoint);
         if (u.contains("/openai/deployments/") && u.contains("/chat/completions")) {
             return appendAzureApiVersionQuery(u);
         }
-        String deployment = (model != null && !model.isBlank()) ? model : "gpt-4o";
+        String deployment = resolveAzureDeploymentNameForChatUrl();
         String base = azureResourceBase(u);
         return appendAzureApiVersionQuery(
                 base + "/openai/deployments/" + deployment + "/chat/completions");
