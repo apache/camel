@@ -953,21 +953,25 @@ class OverviewTab extends AbstractTab {
                         Cell.from(Span.styled(info.pid, dimStyle)),
                         Cell.from(Span.styled(vanishAlias, dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error().dim())),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle))).style(rowBg));
             } else {
                 String statusText = info.alive ? "Running" : "Stopped";
                 String infraAlias = TuiIcons.INFRA + "  " + info.alias;
                 String version = info.serviceVersion != null ? info.serviceVersion : "";
                 String port = extractInfraPort(info);
+                String uiUrl = extractInfraUiUrl(info);
                 String desc = info.description != null ? info.description : "";
                 infraRows.add(Row.from(
                         Cell.from(info.pid),
                         Cell.from(Span.styled(infraAlias, Theme.notice())),
                         Cell.from(version),
-                        rightCell(port, 7),
                         Cell.from(Span.styled(statusText, statusStyle)),
+                        rightCell(port, 7),
+                        Cell.from(Span.styled(uiUrl,
+                                uiUrl.isEmpty() ? Style.EMPTY : Theme.info().hyperlink(uiUrl))),
                         Cell.from(desc)).style(rowBg));
             }
         }
@@ -976,8 +980,9 @@ class OverviewTab extends AbstractTab {
                 Cell.from(Span.styled("PID", Style.EMPTY.bold())),
                 Cell.from(Span.styled(infraSortLabel("SERVICE", "service"), infraSortStyle("service"))),
                 Cell.from(Span.styled(infraSortLabel("VERSION", "version"), infraSortStyle("version"))),
-                rightCell(infraSortLabel("PORT", "port"), 7, infraSortStyle("port")),
                 Cell.from(Span.styled(infraSortLabel("STATUS", "status"), infraSortStyle("status"))),
+                rightCell(infraSortLabel("PORT", "port"), 7, infraSortStyle("port")),
+                Cell.from(Span.styled("UI", Style.EMPTY.bold())),
                 Cell.from(Span.styled("DESCRIPTION", Style.EMPTY.bold())));
 
         Table.Builder infraBuilder = Table.builder()
@@ -987,8 +992,9 @@ class OverviewTab extends AbstractTab {
                         Constraint.length(8),
                         Constraint.fill(),
                         Constraint.length(16),
-                        Constraint.length(7),
                         Constraint.length(10),
+                        Constraint.length(7),
+                        Constraint.length(26),
                         Constraint.fill())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -1012,6 +1018,14 @@ class OverviewTab extends AbstractTab {
         Object port = info.properties.get("port");
         if (port != null) {
             return String.valueOf(port);
+        }
+        return "";
+    }
+
+    private static String extractInfraUiUrl(InfraInfo info) {
+        Object url = info.properties.get("uiUrl");
+        if (url != null) {
+            return String.valueOf(url);
         }
         return "";
     }

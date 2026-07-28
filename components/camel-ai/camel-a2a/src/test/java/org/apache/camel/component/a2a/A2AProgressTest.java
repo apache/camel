@@ -61,6 +61,9 @@ class A2AProgressTest {
     void emitWithoutTaskIdDoesNotThrow() {
         Exchange exchange = new DefaultExchange(context);
         A2AProgress.emit(exchange, "safe message");
+        // emit is a safe no-op when there is no task context
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage()).isNotNull();
     }
 
     @Test
@@ -68,18 +71,27 @@ class A2AProgressTest {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(A2AConstants.TASK_ID, "t1");
         A2AProgress.emit(exchange, "safe message");
+        // emit is a safe no-op when no task store is available
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage().getHeader(A2AConstants.TASK_ID)).isEqualTo("t1");
     }
 
     @Test
     void emitWithExplicitStateDoesNotThrow() {
         Exchange exchange = new DefaultExchange(context);
         A2AProgress.emit(exchange, TaskState.INPUT_REQUIRED, "need info");
+        // emit with explicit state is a safe no-op when there is no task context
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage()).isNotNull();
     }
 
     @Test
     void emitArtifactWithoutStoreDoesNotThrow() {
         Exchange exchange = new DefaultExchange(context);
         A2AProgress.emitArtifact(exchange, Artifact.builder().name("test").build(), false, true);
+        // emitArtifact is a safe no-op when there is no task context
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage()).isNotNull();
     }
 
     @Test
@@ -90,6 +102,9 @@ class A2AProgressTest {
                 .parts(List.of(new TextPart("hello")))
                 .build();
         A2AProgress.emitMessage(exchange, msg);
+        // emitMessage is a safe no-op when there is no task context
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage()).isNotNull();
     }
 
     @Test

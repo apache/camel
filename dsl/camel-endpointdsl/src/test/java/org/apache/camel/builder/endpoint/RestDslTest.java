@@ -23,7 +23,10 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class RestDslTest extends BaseEndpointDslTest {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class RestDslTest extends BaseEndpointDslTest {
 
     @RegisterExtension
     AvailablePortFinder.Port port = AvailablePortFinder.find();
@@ -44,7 +47,7 @@ public class RestDslTest extends BaseEndpointDslTest {
     }
 
     @Test
-    public void testRestDsl() throws Exception {
+    void testRestDsl() throws Exception {
         context.start();
 
         context.addRoutes(new EndpointRouteBuilder() {
@@ -57,6 +60,9 @@ public class RestDslTest extends BaseEndpointDslTest {
                         .setBody(constant("scott"));
             }
         });
+
+        assertFalse(context.getRoutes().isEmpty(), "Routes should have been added via REST DSL");
+        assertTrue(context.getStatus().isStarted(), "Context should be started");
 
         context.stop();
     }

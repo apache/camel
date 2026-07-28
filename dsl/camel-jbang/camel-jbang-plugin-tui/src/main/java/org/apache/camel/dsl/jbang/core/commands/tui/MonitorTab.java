@@ -89,4 +89,8 @@ interface MonitorTab {
     default boolean isOverlayActive() {
         return false;
     }
+
+    default Boolean isDetailFocused() {
+        return null;
+    }
 }

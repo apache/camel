@@ -35,6 +35,7 @@ import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
@@ -55,6 +56,7 @@ class BeansTab extends AbstractTableTab {
     private String filterTerm;
     private List<BeanData> allBeans = Collections.emptyList();
     private int detailScroll;
+    private boolean detailFocused;
     private String lastPid;
 
     BeansTab(MonitorContext ctx) {
@@ -132,13 +134,19 @@ class BeansTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            detailScroll = Math.max(0, detailScroll - 10);
+        if (ke.isKey(KeyCode.TAB)) {
+            detailFocused = !detailFocused;
             return true;
         }
-        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            detailScroll += 10;
-            return true;
+        if (detailFocused) {
+            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                detailScroll = Math.max(0, detailScroll - 10);
+                return true;
+            }
+            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                detailScroll += 10;
+                return true;
+            }
         }
         if (ke.isCharIgnoreCase('f')) {
             filterIndex = (filterIndex + 1) % filterModes().length;
@@ -149,15 +157,23 @@ class BeansTab extends AbstractTableTab {
 
     @Override
     public void navigateUp() {
-        tableState.selectPrevious();
-        detailScroll = 0;
+        if (detailFocused) {
+            detailScroll = Math.max(0, detailScroll - 1);
+        } else {
+            tableState.selectPrevious();
+            detailScroll = 0;
+        }
     }
 
     @Override
     public void navigateDown() {
-        List<BeanData> visible = sortedBeans();
-        tableState.selectNext(visible.size());
-        detailScroll = 0;
+        if (detailFocused) {
+            detailScroll++;
+        } else {
+            List<BeanData> visible = sortedBeans();
+            tableState.selectNext(visible.size());
+            detailScroll = 0;
+        }
     }
 
     @Override
@@ -211,6 +227,9 @@ class BeansTab extends AbstractTableTab {
                 ? String.format(" Beans [%d] scope:%s filter:\"%s\" ", visible.size(), mode, filterTerm)
                 : String.format(" Beans [%d] scope:%s ", visible.size(), mode);
 
+        Style tableBorderStyle = detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableTitleStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
+
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
@@ -219,9 +238,11 @@ class BeansTab extends AbstractTableTab {
                 .widths(
                         Constraint.percentage(55),
                         Constraint.fill())
-                .highlightStyle(Theme.selectionBg())
+                .highlightStyle(detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .borderStyle(tableBorderStyle)
+                        .title(Title.from(Line.from(Span.styled(title, tableTitleStyle)))).build())
                 .build();
 
         lastTableArea = area;
@@ -230,13 +251,17 @@ class BeansTab extends AbstractTableTab {
     }
 
     private void renderDetail(Frame frame, Rect area, List<BeanData> visible) {
+        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
+
         Integer sel = tableState.selected();
         if (sel == null || sel < 0 || sel >= visible.size()) {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Select a bean", Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" Bean Detail ").build())
+                                    .borderStyle(detailBorderStyle)
+                                    .title(Title.from(Line.from(Span.styled(" Bean Detail ", detailTitleStyle)))).build())
                             .build(),
                     area);
             return;
@@ -296,7 +321,9 @@ class BeansTab extends AbstractTableTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(visibleContent))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .borderStyle(detailBorderStyle)
+                                .title(Title.from(Line.from(Span.styled(title, detailTitleStyle)))).build())
                         .build(),
                 area);
     }
@@ -318,6 +345,7 @@ class BeansTab extends AbstractTableTab {
         } else {
             hint(spans, "/", "filter");
         }
+        hint(spans, "Tab", detailFocused ? "table" : "detail");
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hintLast(spans, "PgUp/Dn", "scroll");
     }
@@ -331,6 +359,11 @@ class BeansTab extends AbstractTableTab {
         List<String> items = visible.stream().map(b -> b.name != null ? b.name : "").toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Beans");
+    }
+
+    @Override
+    public Boolean isDetailFocused() {
+        return detailFocused;
     }
 
     private String[] filterModes() {
@@ -556,8 +589,9 @@ class BeansTab extends AbstractTableTab {
 
                 ## Keys
 
-                - `Up/Down` — select bean
-                - `PgUp/PgDn` — scroll detail panel
+                - `Tab` — switch focus between table and detail panel
+                - `Up/Down` — navigate in focused panel
+                - `PgUp/PgDn` — page in focused panel
                 - `s` — cycle sort column
                 - `S` — reverse sort order
                 - `f` — cycle filter

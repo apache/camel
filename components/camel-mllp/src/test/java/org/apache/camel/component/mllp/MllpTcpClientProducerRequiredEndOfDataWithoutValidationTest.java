@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.mllp;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-public class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest
+class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest
         extends TcpClientProducerEndOfDataAndValidationTestSupport {
 
     @Override
@@ -41,6 +42,7 @@ public class MllpTcpClientProducerRequiredEndOfDataWithoutValidationTest
         assertDoesNotThrow(() -> runSendSingleMessageWithoutEndOfData());
     }
 
+    @Disabled("Test scenario sets expectedTimeoutCount but has no runner implementation for this configuration")
     @Override
     @Test
     public void testSendMultipleMessagesWithoutEndOfDataByte() {

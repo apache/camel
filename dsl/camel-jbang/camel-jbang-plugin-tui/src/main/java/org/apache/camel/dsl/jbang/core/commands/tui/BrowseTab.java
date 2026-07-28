@@ -41,6 +41,7 @@ import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
@@ -74,6 +75,7 @@ class BrowseTab extends AbstractTab {
     private int sortIndex;
     private boolean sortReversed;
     private int view = VIEW_ENDPOINTS;
+    private boolean detailFocused = true;
     private int detailScroll;
     private boolean prettyPrint;
 
@@ -112,20 +114,28 @@ class BrowseTab extends AbstractTab {
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         if (view == VIEW_DETAIL) {
-            if (ke.isUp()) {
-                detailScroll = Math.max(0, detailScroll - 1);
-                return true;
-            }
-            if (ke.isDown()) {
-                detailScroll++;
+            if (ke.isKey(KeyCode.TAB)) {
+                detailFocused = !detailFocused;
                 return true;
             }
             if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                detailScroll = Math.max(0, detailScroll - 20);
+                if (detailFocused) {
+                    detailScroll = Math.max(0, detailScroll - 20);
+                } else {
+                    for (int i = 0; i < 20 && messageTableState.selected() != null && messageTableState.selected() > 0; i++) {
+                        messageTableState.selectPrevious();
+                    }
+                }
                 return true;
             }
             if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                detailScroll += 20;
+                if (detailFocused) {
+                    detailScroll += 20;
+                } else {
+                    for (int i = 0; i < 20; i++) {
+                        messageTableState.selectNext(messages.size());
+                    }
+                }
                 return true;
             }
             if (ke.isChar('p')) {
@@ -138,6 +148,7 @@ class BrowseTab extends AbstractTab {
         if (view == VIEW_MESSAGES) {
             if (ke.isConfirm()) {
                 view = VIEW_DETAIL;
+                detailFocused = true;
                 detailScroll = 0;
                 return true;
             }
@@ -236,7 +247,14 @@ class BrowseTab extends AbstractTab {
 
     @Override
     public void navigateUp() {
-        if (view == VIEW_ENDPOINTS) {
+        if (view == VIEW_DETAIL) {
+            if (detailFocused) {
+                detailScroll = Math.max(0, detailScroll - 1);
+            } else {
+                messageTableState.selectPrevious();
+                detailScroll = 0;
+            }
+        } else if (view == VIEW_ENDPOINTS) {
             endpointTableState.selectPrevious();
         } else if (view == VIEW_MESSAGES) {
             messageTableState.selectPrevious();
@@ -245,7 +263,14 @@ class BrowseTab extends AbstractTab {
 
     @Override
     public void navigateDown() {
-        if (view == VIEW_ENDPOINTS) {
+        if (view == VIEW_DETAIL) {
+            if (detailFocused) {
+                detailScroll++;
+            } else {
+                messageTableState.selectNext(messages.size());
+                detailScroll = 0;
+            }
+        } else if (view == VIEW_ENDPOINTS) {
             List<EndpointData> sorted = sortedEndpoints();
             endpointTableState.selectNext(sorted.size());
         } else if (view == VIEW_MESSAGES) {
@@ -324,12 +349,17 @@ class BrowseTab extends AbstractTab {
     }
 
     private void renderMessages(Frame frame, Rect area) {
+        renderMessages(frame, area, Style.EMPTY, Theme.selectionBg());
+    }
+
+    private void renderMessages(Frame frame, Rect area, Style borderStyle, Style highlightStyle) {
         if (loading.get() && messages.isEmpty()) {
             String title = " " + (selectedEndpoint != null ? selectedEndpoint.uri : "Messages") + " ";
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Loading messages...", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(borderStyle).title(title).build())
                             .build(),
                     area);
             return;
@@ -368,9 +398,10 @@ class BrowseTab extends AbstractTab {
                         Constraint.length(40),
                         Constraint.length(10),
                         Constraint.fill())
-                .highlightStyle(Theme.selectionBg())
+                .highlightStyle(highlightStyle)
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .borderStyle(borderStyle).title(title).build())
                 .build();
 
         lastMessageTableArea = area;
@@ -380,12 +411,19 @@ class BrowseTab extends AbstractTab {
     }
 
     private void renderDetail(Frame frame, Rect area) {
+        Style tableBorderStyle = detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableHighlight = detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg();
+        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
+
         Integer sel = messageTableState.selected();
         if (sel == null || sel < 0 || sel >= messages.size()) {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Select a message", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Message ")
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(detailBorderStyle)
+                                    .title(Title.from(Line.from(Span.styled(" Message ", detailTitleStyle))))
                                     .build())
                             .build(),
                     area);
@@ -394,11 +432,11 @@ class BrowseTab extends AbstractTab {
 
         MessageData msg = messages.get(sel);
 
-        // Split: message list (40%) + detail (fill)
+        // Split: message list (35%) + detail (fill)
         List<Rect> chunks = Layout.vertical()
                 .constraints(Constraint.percentage(35), Constraint.fill())
                 .split(area);
-        renderMessages(frame, chunks.get(0));
+        renderMessages(frame, chunks.get(0), tableBorderStyle, tableHighlight);
 
         String title = " Message " + msg.position + " [" + (msg.exchangeId != null ? msg.exchangeId : "") + "] ";
 
@@ -457,7 +495,9 @@ class BrowseTab extends AbstractTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(visible))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .borderStyle(detailBorderStyle)
+                                .title(Title.from(Line.from(Span.styled(title, detailTitleStyle)))).build())
                         .build(),
                 chunks.get(1));
     }
@@ -466,8 +506,9 @@ class BrowseTab extends AbstractTab {
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
         if (view == VIEW_DETAIL) {
-            hint(spans, "p", "pretty" + (prettyPrint ? " [on]" : ""));
-            hintLast(spans, TuiIcons.HINT_SCROLL, "scroll");
+            hint(spans, "Tab", detailFocused ? "messages" : "detail");
+            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
+            hintLast(spans, "p", "pretty" + (prettyPrint ? " [on]" : ""));
         } else if (view == VIEW_MESSAGES) {
             hint(spans, "r", "refresh");
             hintLast(spans, "Enter", "detail");
@@ -496,6 +537,14 @@ class BrowseTab extends AbstractTab {
         List<String> items = sorted.stream().map(e -> e.uri != null ? e.uri : "").toList();
         Integer sel = endpointTableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Browse");
+    }
+
+    @Override
+    public Boolean isDetailFocused() {
+        if (view != VIEW_DETAIL) {
+            return null;
+        }
+        return detailFocused;
     }
 
     private List<EndpointData> sortedEndpoints() {
@@ -634,22 +683,30 @@ class BrowseTab extends AbstractTab {
                 }
                 md.exchangePattern = message.getString("exchangePattern");
 
-                // Timestamp from headers
-                JsonObject headers = message.getMap("headers");
-                if (headers != null) {
+                // headers are a JsonArray of {key, value, type} objects
+                JsonArray headerArr = message.getCollection("headers");
+                if (headerArr != null) {
                     md.headers = new LinkedHashMap<>();
-                    for (String key : headers.keySet()) {
-                        Object val = headers.get(key);
-                        md.headers.put(key, val != null ? val.toString() : "null");
-                    }
-                    Object tsObj = headers.get("CamelMessageTimestamp");
-                    if (tsObj instanceof Number) {
-                        md.timestamp = ((Number) tsObj).longValue();
+                    for (Object item : headerArr) {
+                        if (item instanceof JsonObject entry) {
+                            String key = entry.getString("key");
+                            Object val = entry.get("value");
+                            if (key != null) {
+                                md.headers.put(key, val != null ? val.toString() : "null");
+                            }
+                            if ("CamelMessageTimestamp".equals(key) && val instanceof Number n) {
+                                md.timestamp = n.longValue();
+                            }
+                        }
                     }
                 }
 
-                Object bodyObj = message.get("body");
-                md.body = bodyObj != null ? bodyObj.toString() : null;
+                // body is a JsonObject with {type, value}
+                JsonObject bodyObj = message.getMap("body");
+                if (bodyObj != null) {
+                    Object val = bodyObj.get("value");
+                    md.body = val != null ? val.toString() : null;
+                }
 
                 result.add(md);
             }
@@ -729,8 +786,11 @@ class BrowseTab extends AbstractTab {
                 ## Keys
 
                 - `Up/Down` — navigate endpoints and messages
-                - `Enter` — browse selected endpoint
-                - `Esc` — back to endpoint list
+                - `PgUp/PgDn` — page through list or detail
+                - `Tab` — switch focus between messages and detail (in detail view)
+                - `Enter` — browse selected endpoint / view message detail
+                - `p` — toggle pretty-print for message body
+                - `Esc` — back to previous view
                 """;
     }
 

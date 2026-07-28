@@ -456,10 +456,6 @@ Add the `camel-ai-tool` dependency to your project:
 
 The `camel-spring-ai-tools` dependency is no longer required by `camel-spring-ai-chat`.
 
-=== camel-fory with JDK 25+ - Breaking change
-
-Due to new requirements from Apache Fory, when using Apache Fory Dataformat, the JVM parameter `--add-opens java.base/java.lang.invoke=ALL-UNNAMED` must be provided.
-
 === camel-pqc - potential breaking change
 
 The `pqc` data format now encrypts the message payload with *authenticated encryption (AEAD)* instead of the
@@ -1330,6 +1326,20 @@ AWS2 producers is tracked by CAMEL-24261.
 If you relied on the previous silent no-op, ensure the body is the correct
 request type when `pojoRequest=true`, or drive the operation through headers
 with `pojoRequest=false`.
+
+=== camel-google-storage - downloads are confined to the configured directory
+
+When the consumer is configured with `downloadFileName` pointing at a directory, the
+remote object name is appended to that directory to build the local file to write.
+The resolved path is now verified to stay within the configured directory, and an
+`IllegalArgumentException` is thrown if it does not.
+
+Object names are still allowed to contain `/` and are mapped to sub-directories of the
+download directory as before, so nested object names keep working unchanged. Only names
+that resolve outside the configured directory are rejected.
+
+If `downloadFileName` is configured with an expression (i.e. it contains `$`), the local
+path is built by that expression as before and is not subject to this check.
 
 === camel-main - JWT authentication requires an issuer or an audience
 

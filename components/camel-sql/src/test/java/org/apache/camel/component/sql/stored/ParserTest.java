@@ -37,9 +37,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ParserTest extends CamelTestSupport {
+class ParserTest extends CamelTestSupport {
 
     TemplateParser parser;
 
@@ -246,12 +247,27 @@ public class ParserTest extends CamelTestSupport {
     }
 
     @Test
-    public void examplesSyntaxTest() {
-        parser.parseTemplate("SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers.num2},OUT INTEGER resultofsub)");
-        parser.parseTemplate("MYFUNC('param1' java.sql.Types.INTEGER(10) ${header.srcValue})");
-        parser.parseTemplate("MYFUNC('param1' 100 'mytypename' ${header.srcValue})");
-        parser.parseTemplate("MYFUNC(OUT java.sql.Types.DECIMAL(10) outheader1)");
-        parser.parseTemplate("MYFUNC(OUT java.sql.Types.NUMERIC(10) 'mytype' outheader1)");
+    void examplesSyntaxTest() {
+        Template t1 = parser
+                .parseTemplate("SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers.num2},OUT INTEGER resultofsub)");
+        assertNotNull(t1);
+        assertEquals("SUBNUMBERS", t1.getProcedureName());
+
+        Template t2 = parser.parseTemplate("MYFUNC('param1' java.sql.Types.INTEGER(10) ${header.srcValue})");
+        assertNotNull(t2);
+        assertEquals("MYFUNC", t2.getProcedureName());
+
+        Template t3 = parser.parseTemplate("MYFUNC('param1' 100 'mytypename' ${header.srcValue})");
+        assertNotNull(t3);
+        assertEquals("MYFUNC", t3.getProcedureName());
+
+        Template t4 = parser.parseTemplate("MYFUNC(OUT java.sql.Types.DECIMAL(10) outheader1)");
+        assertNotNull(t4);
+        assertEquals("MYFUNC", t4.getProcedureName());
+
+        Template t5 = parser.parseTemplate("MYFUNC(OUT java.sql.Types.NUMERIC(10) 'mytype' outheader1)");
+        assertNotNull(t5);
+        assertEquals("MYFUNC", t5.getProcedureName());
     }
 
 }

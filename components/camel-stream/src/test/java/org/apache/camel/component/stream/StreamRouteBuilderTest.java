@@ -16,20 +16,34 @@
  */
 package org.apache.camel.component.stream;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class StreamRouteBuilderTest extends CamelTestSupport {
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+class StreamRouteBuilderTest extends CamelTestSupport {
 
     @Test
-    public void testStringContent() {
-        template.sendBody("direct:start", "this is text\n");
+    void testStringContent() {
+        String body = "this is text\n";
+        Exchange result = template.send("direct:start", exchange -> exchange.getIn().setBody(body));
+        assertNotNull(result);
+        assertFalse(result.isFailed(), "Sending string content should not cause an exchange failure");
+        assertEquals(body, result.getIn().getBody(String.class), "Body content should be preserved after sending");
     }
 
     @Test
-    public void testBinaryContent() {
-        template.sendBody("direct:start", "This is bytes\n".getBytes());
+    void testBinaryContent() {
+        byte[] body = "This is bytes\n".getBytes();
+        Exchange result = template.send("direct:start", exchange -> exchange.getIn().setBody(body));
+        assertNotNull(result);
+        assertFalse(result.isFailed(), "Sending binary content should not cause an exchange failure");
+        assertArrayEquals(body, result.getIn().getBody(byte[].class), "Binary body content should be preserved after sending");
     }
 
     @Override
