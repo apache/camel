@@ -52,6 +52,9 @@ final class AiProviderSelector {
         if (!"openai".equals(defaultProvider)) {
             choices.add(new AiProviderSwitchPopup.ProviderChoice("openai", "", "", false));
         }
+        if (!"gemini".equals(defaultProvider)) {
+            choices.add(new AiProviderSwitchPopup.ProviderChoice("gemini", "", "", false));
+        }
         if (!"ollama".equals(defaultProvider)) {
             choices.add(new AiProviderSwitchPopup.ProviderChoice("ollama", "", "", false));
         }

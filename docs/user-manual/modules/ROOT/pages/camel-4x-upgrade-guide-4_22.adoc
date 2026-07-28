@@ -56,6 +56,10 @@ instead of hardcoded `3.33.1.1` (https://github.com/apache/camel/commit/d1f4713e
 The Camel CLI and TUI AI prompt (`camel ask`, TUI F8 panel) now auto-detect **Azure OpenAI**
 when `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT` are set (optional `AZURE_OPENAI_DEPLOYMENT_NAME`
 and `AZURE_OPENAI_API_VERSION`). Azure requests use the `api-key` header instead of `Authorization: Bearer`.
+
+The Camel CLI and TUI AI prompt now support native **Google Gemini** when `GEMINI_API_KEY` is set
+(auto-detected before OpenAI). With `--api-type=gemini`, `GOOGLE_API_KEY` is also accepted. Gemini uses
+the `generativelanguage.googleapis.com` API with function-calling support.
 See xref:camel-jbang-ai.adoc[Camel CLI - AI Tools] for the full detection order.
 
 The `camel cmd route-diagram` and `camel cmd route-topology` now accept one or more Camel route source files

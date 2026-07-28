@@ -58,7 +58,7 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("auto", "anthropic", "openai", "ollama", "watsonx"),
+        assertEquals(List.of("auto", "anthropic", "openai", "gemini", "ollama", "watsonx"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList(),
                 "all known providers must be offered, even without a detected API key, so they remain selectable");
         assertTrue(choices.get(0).persistedDefault());
@@ -73,7 +73,7 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("anthropic", "openai", "ollama", "watsonx"),
+        assertEquals(List.of("anthropic", "openai", "gemini", "ollama", "watsonx"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList(),
                 "anthropic must not be listed twice when it's already the default");
     }
@@ -87,7 +87,7 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("ollama", "anthropic", "openai", "watsonx"),
+        assertEquals(List.of("ollama", "anthropic", "openai", "gemini", "watsonx"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList());
     }
 
@@ -100,7 +100,7 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("watsonx", "anthropic", "openai", "ollama"),
+        assertEquals(List.of("watsonx", "anthropic", "openai", "gemini", "ollama"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList());
     }
 
@@ -127,6 +127,16 @@ class AiProviderSelectorTest {
     }
 
     @Test
+    void applyChoiceAcceptsGeminiProvider() {
+        LlmClient client = LlmClient.create();
+
+        selector.applyChoice(client, "gemini", "gemini-2.0-flash", "");
+
+        assertEquals(LlmClient.ApiType.gemini, client.apiType());
+        assertEquals("gemini-2.0-flash", client.model());
+    }
+
+    @Test
     void applyChoiceRejectsUnknownProviderWithActionableMessage() {
         LlmClient client = LlmClient.create();
 
@@ -134,6 +144,7 @@ class AiProviderSelectorTest {
                 () -> selector.applyChoice(client, "bogus", null, null));
 
         assertTrue(ex.getMessage().contains("bogus"));
+        assertTrue(ex.getMessage().contains("gemini"));
         assertTrue(ex.getMessage().contains("ollama"));
         assertTrue(ex.getMessage().contains("openai"));
         assertTrue(ex.getMessage().contains("anthropic"));
