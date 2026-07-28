@@ -456,10 +456,6 @@ Add the `camel-ai-tool` dependency to your project:
 
 The `camel-spring-ai-tools` dependency is no longer required by `camel-spring-ai-chat`.
 
-=== camel-fory with JDK 25+ - Breaking change
-
-Due to new requirements from Apache Fory, when using Apache Fory Dataformat, the JVM parameter `--add-opens java.base/java.lang.invoke=ALL-UNNAMED` must be provided.
-
 === camel-pqc - potential breaking change
 
 The `pqc` data format now encrypts the message payload with *authenticated encryption (AEAD)* instead of the
