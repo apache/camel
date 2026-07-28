@@ -148,6 +148,9 @@ public class Polly2Producer extends DefaultProducer {
                     message.setHeader(Polly2Constants.CONTENT_TYPE, result.response().contentType());
                 }
                 message.setHeader(Polly2Constants.REQUEST_CHARACTERS, result.response().requestCharacters());
+            } else {
+                throw new IllegalArgumentException(
+                        "synthesizeSpeech operation requires SynthesizeSpeechRequest in POJO mode");
             }
         } else {
             SynthesizeSpeechRequest.Builder request = SynthesizeSpeechRequest.builder();
@@ -248,6 +251,9 @@ public class Polly2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.voices());
+            } else {
+                throw new IllegalArgumentException(
+                        "describeVoices operation requires DescribeVoicesRequest in POJO mode");
             }
         } else {
             DescribeVoicesRequest.Builder request = DescribeVoicesRequest.builder();
@@ -295,6 +301,9 @@ public class Polly2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.lexicons());
+            } else {
+                throw new IllegalArgumentException(
+                        "listLexicons operation requires ListLexiconsRequest in POJO mode");
             }
         } else {
             ListLexiconsRequest request = ListLexiconsRequest.builder().build();
@@ -323,6 +332,9 @@ public class Polly2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.lexicon());
+            } else {
+                throw new IllegalArgumentException(
+                        "getLexicon operation requires GetLexiconRequest in POJO mode");
             }
         } else {
             String lexiconName = getConfiguration().getLexiconName();
@@ -358,6 +370,9 @@ public class Polly2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "putLexicon operation requires PutLexiconRequest in POJO mode");
             }
         } else {
             String lexiconName = getConfiguration().getLexiconName();
@@ -406,6 +421,9 @@ public class Polly2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteLexicon operation requires DeleteLexiconRequest in POJO mode");
             }
         } else {
             String lexiconName = getConfiguration().getLexiconName();
@@ -443,6 +461,9 @@ public class Polly2Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.synthesisTask());
                 message.setHeader(Polly2Constants.TASK_ID, result.synthesisTask().taskId());
+            } else {
+                throw new IllegalArgumentException(
+                        "startSpeechSynthesisTask operation requires StartSpeechSynthesisTaskRequest in POJO mode");
             }
         } else {
             StartSpeechSynthesisTaskRequest.Builder request = StartSpeechSynthesisTaskRequest.builder();
@@ -570,6 +591,9 @@ public class Polly2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.synthesisTask());
+            } else {
+                throw new IllegalArgumentException(
+                        "getSpeechSynthesisTask operation requires GetSpeechSynthesisTaskRequest in POJO mode");
             }
         } else {
             String taskId = getConfiguration().getTaskId();
@@ -609,6 +633,9 @@ public class Polly2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.synthesisTasks());
+            } else {
+                throw new IllegalArgumentException(
+                        "listSpeechSynthesisTasks operation requires ListSpeechSynthesisTasksRequest in POJO mode");
             }
         } else {
             ListSpeechSynthesisTasksRequest request = ListSpeechSynthesisTasksRequest.builder().build();

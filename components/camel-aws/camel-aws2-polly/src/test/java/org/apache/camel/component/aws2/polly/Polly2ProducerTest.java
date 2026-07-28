@@ -27,6 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import software.amazon.awssdk.services.polly.model.Lexicon;
 import software.amazon.awssdk.services.polly.model.LexiconDescription;
 import software.amazon.awssdk.services.polly.model.OutputFormat;
@@ -35,6 +37,7 @@ import software.amazon.awssdk.services.polly.model.SynthesizeSpeechRequest;
 import software.amazon.awssdk.services.polly.model.Voice;
 import software.amazon.awssdk.services.polly.model.VoiceId;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -228,6 +231,24 @@ public class Polly2ProducerTest extends CamelTestSupport {
         assertEquals(1, tasks.size());
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "direct:synthesizeSpeechPojo,synthesizeSpeech operation requires SynthesizeSpeechRequest in POJO mode",
+            "direct:describeVoicesPojo,describeVoices operation requires DescribeVoicesRequest in POJO mode",
+            "direct:listLexiconsPojo,listLexicons operation requires ListLexiconsRequest in POJO mode",
+            "direct:getLexiconPojo,getLexicon operation requires GetLexiconRequest in POJO mode",
+            "direct:putLexiconPojo,putLexicon operation requires PutLexiconRequest in POJO mode",
+            "direct:deleteLexiconPojo,deleteLexicon operation requires DeleteLexiconRequest in POJO mode",
+            "direct:startSpeechSynthesisTaskPojo,startSpeechSynthesisTask operation requires StartSpeechSynthesisTaskRequest in POJO mode",
+            "direct:getSpeechSynthesisTaskPojo,getSpeechSynthesisTask operation requires GetSpeechSynthesisTaskRequest in POJO mode",
+            "direct:listSpeechSynthesisTasksPojo,listSpeechSynthesisTasks operation requires ListSpeechSynthesisTasksRequest in POJO mode",
+    })
+    void pojoRequestWithWrongBodyTypeThrows(String route, String expectedMessage) {
+        assertThatThrownBy(() -> template.requestBody(route, "not the expected request type"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(expectedMessage);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -276,6 +297,22 @@ public class Polly2ProducerTest extends CamelTestSupport {
                 from("direct:listSpeechSynthesisTasks")
                         .to("aws2-polly://test?pollyClient=#amazonPollyClient&operation=listSpeechSynthesisTasks")
                         .to("mock:result");
+                from("direct:describeVoicesPojo")
+                        .to("aws2-polly://test?pollyClient=#amazonPollyClient&operation=describeVoices&pojoRequest=true");
+                from("direct:listLexiconsPojo")
+                        .to("aws2-polly://test?pollyClient=#amazonPollyClient&operation=listLexicons&pojoRequest=true");
+                from("direct:getLexiconPojo")
+                        .to("aws2-polly://test?pollyClient=#amazonPollyClient&operation=getLexicon&pojoRequest=true");
+                from("direct:putLexiconPojo")
+                        .to("aws2-polly://test?pollyClient=#amazonPollyClient&operation=putLexicon&pojoRequest=true");
+                from("direct:deleteLexiconPojo")
+                        .to("aws2-polly://test?pollyClient=#amazonPollyClient&operation=deleteLexicon&pojoRequest=true");
+                from("direct:startSpeechSynthesisTaskPojo")
+                        .to("aws2-polly://test?pollyClient=#amazonPollyClient&operation=startSpeechSynthesisTask&pojoRequest=true");
+                from("direct:getSpeechSynthesisTaskPojo")
+                        .to("aws2-polly://test?pollyClient=#amazonPollyClient&operation=getSpeechSynthesisTask&pojoRequest=true");
+                from("direct:listSpeechSynthesisTasksPojo")
+                        .to("aws2-polly://test?pollyClient=#amazonPollyClient&operation=listSpeechSynthesisTasks&pojoRequest=true");
             }
         };
     }
