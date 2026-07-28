@@ -16,45 +16,65 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-/**
- *
- */
-public class XsltFromFileExceptionTest extends ContextTestSupport {
+import static org.awaitility.Awaitility.await;
 
-    @Test
-    public void testXsltFromFileExceptionOk() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:error").expectedMessageCount(0);
+class XsltFromFileExceptionTest extends ContextTestSupport {
 
-        template.sendBodyAndHeader(fileUri(), "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
-
-        oneExchangeDone.matchesWaitTime();
-
-        assertMockEndpointsSatisfied();
-
-        assertFileNotExists(testFile("hello.xml"));
-        assertFileExists(testFile("ok/hello.xml"));
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
     @Test
-    public void testXsltFromFileExceptionFail() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(0);
-        getMockEndpoint("mock:error").expectedMessageCount(1);
+    void testXsltFromFileExceptionOk() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:error").expectedMessageCount(0);
 
-        // the last tag is not ended properly
-        template.sendBodyAndHeader(fileUri(), "<hello>world!</hello", Exchange.FILE_NAME, "hello2.xml");
+        // Write file BEFORE starting the route so the file consumer
+        // picks it up on its very first poll — eliminates the race between
+        // file write and consumer poll scheduling under CI load
+        Files.writeString(testFile("hello.xml"), "<hello>world!</hello>");
 
-        oneExchangeDone.matchesWaitTime();
+        context.addRoutes(createRouteBuilder());
+        context.start();
 
         assertMockEndpointsSatisfied();
 
-        assertFileNotExists(testFile("hello2.xml"));
-        assertFileExists(testFile("error/hello2.xml"));
+        // File move happens asynchronously after route processing completes
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    assertFileNotExists(testFile("hello.xml"));
+                    assertFileExists(testFile("ok/hello.xml"));
+                });
+    }
+
+    @Test
+    void testXsltFromFileExceptionFail() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+        getMockEndpoint("mock:error").expectedMessageCount(1);
+
+        // Write malformed XML (the last tag is not ended properly) BEFORE
+        // starting the route so the file consumer picks it up on first poll
+        Files.writeString(testFile("hello2.xml"), "<hello>world!</hello");
+
+        context.addRoutes(createRouteBuilder());
+        context.start();
+
+        assertMockEndpointsSatisfied();
+
+        // File move happens asynchronously after route processing completes
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    assertFileNotExists(testFile("hello2.xml"));
+                    assertFileExists(testFile("error/hello2.xml"));
+                });
     }
 
     @Override
