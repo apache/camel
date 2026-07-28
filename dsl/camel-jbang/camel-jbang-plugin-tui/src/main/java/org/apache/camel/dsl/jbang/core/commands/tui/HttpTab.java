@@ -1220,7 +1220,8 @@ class HttpTab extends AbstractTableTab {
             String hitsStr = ep.hits > 0 ? String.valueOf(ep.hits) : "";
             rows.add(Row.from(
                     Cell.from(Span.styled(method, methodStyle(method))),
-                    Cell.from(path),
+                    Cell.from(Span.styled(path,
+                            ep.url != null ? Theme.info().hyperlink(ep.url) : Style.EMPTY)),
                     rightCell(hitsStr, 8),
                     Cell.from(consumes),
                     Cell.from(produces),
