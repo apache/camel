@@ -64,10 +64,7 @@ class SftpDisconnectThreadLeakIT extends SftpServerTestSupport {
             assertEquals("Hello World " + i, Files.readString(file));
         }
 
-        // After all transfers with disconnect=true, there should be no SshClient threads remaining.
-        // Before the fix, each transfer would leave behind ~5 daemon threads (nio2, timer, resume),
-        // resulting in ~25 leaked threads after 5 transfers.
-        // Use Awaitility to wait for thread cleanup rather than Thread.sleep().
+        // After all transfers with disconnect=true, no SshClient threads should remain.
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
             Set<String> threadsAfter = getSshClientThreadNames();
             Set<String> leakedThreads = threadsAfter.stream()
