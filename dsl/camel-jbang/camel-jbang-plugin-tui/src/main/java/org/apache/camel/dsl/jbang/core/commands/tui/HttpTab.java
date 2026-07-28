@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -26,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -44,6 +48,8 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.input.TextArea;
+import dev.tamboui.widgets.input.TextAreaState;
 import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
@@ -61,15 +67,27 @@ class HttpTab extends AbstractTableTab {
     private static final int MOUSE_SCROLL_LINES = 3;
     private static final Set<String> OPENAPI_HTTP_VERBS
             = Set.of("get", "post", "put", "delete", "patch", "options", "head", "trace");
+    private static final Pattern PATH_PARAM_PATTERN = Pattern.compile("\\{([^}]+)}");
 
     // Probe field constants
     private static final int PROBE_METHOD = 0;
     private static final int PROBE_PATH = 1;
-    private static final int PROBE_HEADERS = 2;
-    private static final int PROBE_BODY = 3;
-    private static final int PROBE_HISTORY = 4;
+    private static final int PROBE_PATH_PARAMS = 2;
+    private static final int PROBE_QUERY_PARAMS = 3;
+    private static final int PROBE_CONTENT_TYPE = 4;
+    private static final int PROBE_ACCEPT = 5;
+    private static final int PROBE_HEADERS = 6;
+    private static final int PROBE_BODY = 7;
+    private static final int PROBE_HISTORY = 8;
 
     private static final String[] PROBE_METHODS = { "GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS" };
+    private static final String[] CONTENT_TYPES = {
+            "", "application/json", "application/xml", "text/plain",
+            "text/xml", "application/x-www-form-urlencoded", "multipart/form-data"
+    };
+    private static final String[] ACCEPT_TYPES = {
+            "", "application/json", "application/xml", "text/plain", "*/*"
+    };
     private static final int MAX_PROBE_HISTORY = 20;
 
     private final AtomicBoolean specLoading = new AtomicBoolean(false);
@@ -89,16 +107,24 @@ class HttpTab extends AbstractTableTab {
     private int probeField = PROBE_PATH;
     private int probeMethodIndex;
     private final TextInputState probePathState = new TextInputState("");
-    private final TextInputState probeBodyState = new TextInputState("");
+    private final TextAreaState probeBodyState = new TextAreaState("");
     private List<FormHelper.HeaderEntry> probeHeaders;
     private int probeSelectedHeader;
     private boolean probeEditingHeaderKey;
+    private List<PathParam> probePathParams;
+    private int probeSelectedPathParam;
+    private List<FormHelper.HeaderEntry> probeQueryParams;
+    private int probeSelectedQueryParam;
+    private boolean probeEditingQueryKey;
+    private int probeContentTypeIndex;
+    private int probeAcceptIndex;
     private final AtomicBoolean probeSending = new AtomicBoolean(false);
     private String probeResponseStatus;
     private long probeResponseElapsed;
     private List<String> probeResponseLines;
     private boolean probeResponseError;
     private int probeResponseScroll;
+    private boolean probeViewRequest;
     private final List<ProbeHistoryEntry> probeHistory = new ArrayList<>();
     private int probeHistoryIndex;
     private boolean probePrettyPrint;
@@ -225,9 +251,7 @@ class HttpTab extends AbstractTableTab {
     @Override
     public void navigateUp() {
         if (probeMode) {
-            if (probeField == PROBE_HISTORY && !probeHistory.isEmpty()) {
-                probeHistoryIndex = Math.max(0, probeHistoryIndex - 1);
-            }
+            // Arrow up is handled by handleProbeKeyEvent for all fields
             return;
         }
         tableState.selectPrevious();
@@ -236,9 +260,7 @@ class HttpTab extends AbstractTableTab {
     @Override
     public void navigateDown() {
         if (probeMode) {
-            if (probeField == PROBE_HISTORY && !probeHistory.isEmpty()) {
-                probeHistoryIndex = Math.min(probeHistory.size() - 1, probeHistoryIndex + 1);
-            }
+            // Arrow down is handled by handleProbeKeyEvent for all fields
             return;
         }
         List<HttpEndpointInfo> visible = sortedVisibleEndpoints(ctx.findSelectedIntegration());
@@ -283,8 +305,9 @@ class HttpTab extends AbstractTableTab {
         if (probeMode) {
             hint(spans, "Esc", "back");
             hint(spans, "Tab", "fields");
-            hint(spans, "Enter", "send");
-            hint(spans, "+", "header");
+            hint(spans, "F5", "send");
+            hint(spans, "F4", probeViewRequest ? "response" : "request");
+            hint(spans, "+", "param/header");
             hint(spans, "p", "pretty" + (probePrettyPrint ? " [on]" : ""));
             if (!probeHistory.isEmpty()) {
                 hintLast(spans, TuiIcons.HINT_SCROLL, "history");
@@ -314,7 +337,14 @@ class HttpTab extends AbstractTableTab {
         if (!probeMode || probeSending.get()) {
             return;
         }
-        FormHelper.handlePaste(text, probeActiveTextInput());
+        if (probeField == PROBE_BODY) {
+            probeBodyState.insert(text);
+        } else {
+            TextInputState target = probeActiveTextInput();
+            if (target != null) {
+                FormHelper.handlePaste(text, target);
+            }
+        }
     }
 
     // ---- Probe mode ----
@@ -353,16 +383,23 @@ class HttpTab extends AbstractTableTab {
             probePathState.insert(path.charAt(i));
         }
 
-        // Pre-fill headers from endpoint metadata
+        // Scan for {xxx} placeholders in path
+        probePathParams = scanPathParams(path);
+        probeSelectedPathParam = 0;
+
+        // Pre-fill Content-Type and Accept from endpoint metadata
+        probeContentTypeIndex = findPresetIndex(CONTENT_TYPES, ep.consumes);
+        probeAcceptIndex = findPresetIndex(ACCEPT_TYPES, ep.produces);
+
+        // Clear manual headers (Content-Type/Accept are handled by cyclers)
         probeHeaders = null;
-        if (ep.consumes != null && !ep.consumes.isEmpty()) {
-            addProbeHeader("Content-Type", ep.consumes);
-        }
-        if (ep.produces != null && !ep.produces.isEmpty()) {
-            addProbeHeader("Accept", ep.produces);
-        }
         probeSelectedHeader = 0;
         probeEditingHeaderKey = true;
+
+        // Clear query params
+        probeQueryParams = null;
+        probeSelectedQueryParam = 0;
+        probeEditingQueryKey = true;
 
         // Clear body and response
         probeBodyState.clear();
@@ -395,11 +432,28 @@ class HttpTab extends AbstractTableTab {
         if (probeSending.get()) {
             return true;
         }
+
+        // F5 to send request
+        if (ke.code() == KeyCode.F5) {
+            doProbeRequest();
+            probeViewRequest = false;
+            return true;
+        }
+
+        // F4 to toggle request/response view
+        if (ke.code() == KeyCode.F4) {
+            probeViewRequest = !probeViewRequest;
+            return true;
+        }
+
+        // Enter: newline in body, replay in history, advance field otherwise
         if (ke.isConfirm()) {
-            if (probeField == PROBE_HISTORY && !probeHistory.isEmpty()) {
+            if (probeField == PROBE_BODY) {
+                probeBodyState.insert('\n');
+            } else if (probeField == PROBE_HISTORY && !probeHistory.isEmpty()) {
                 replayHistoryEntry(probeHistory.get(probeHistoryIndex));
             } else {
-                doProbeRequest();
+                advanceProbeField();
             }
             return true;
         }
@@ -416,7 +470,8 @@ class HttpTab extends AbstractTableTab {
 
         // Toggle pretty print for response body
         if (ke.isChar('p') && probeField != PROBE_PATH && probeField != PROBE_BODY
-                && probeField != PROBE_HEADERS) {
+                && probeField != PROBE_HEADERS && probeField != PROBE_PATH_PARAMS
+                && probeField != PROBE_QUERY_PARAMS) {
             probePrettyPrint = !probePrettyPrint;
             if (probeResponseLines != null) {
                 reformatResponseBody();
@@ -426,98 +481,294 @@ class HttpTab extends AbstractTableTab {
 
         // Field-specific handling
         if (probeField == PROBE_METHOD) {
-            if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
-                probeField = PROBE_PATH;
-                return true;
-            }
-            if (ke.isUp()) {
-                if (!probeHistory.isEmpty()) {
-                    probeField = PROBE_HISTORY;
-                } else {
-                    probeField = PROBE_BODY;
-                }
-                return true;
-            }
-            if (ke.isLeft()) {
-                probeMethodIndex = (probeMethodIndex - 1 + PROBE_METHODS.length) % PROBE_METHODS.length;
-                return true;
-            }
-            if (ke.isRight()) {
-                probeMethodIndex = (probeMethodIndex + 1) % PROBE_METHODS.length;
-                return true;
-            }
-            return true;
+            return handleProbeMethodKeyEvent(ke);
         }
         if (probeField == PROBE_PATH) {
-            if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
-                if (hasProbeHeaders()) {
-                    probeField = PROBE_HEADERS;
-                    probeSelectedHeader = 0;
-                    probeEditingHeaderKey = true;
-                } else {
-                    probeField = PROBE_BODY;
-                }
-                return true;
-            }
-            if (ke.isUp()) {
-                probeField = PROBE_METHOD;
-                return true;
-            }
-            if (ke.isChar('+')) {
-                addProbeHeaderEmpty();
-                return true;
-            }
-            FormHelper.handleTextInput(ke, probePathState);
-            return true;
+            return handleProbePathKeyEvent(ke);
+        }
+        if (probeField == PROBE_PATH_PARAMS) {
+            return handleProbePathParamKeyEvent(ke);
+        }
+        if (probeField == PROBE_QUERY_PARAMS) {
+            return handleProbeQueryParamKeyEvent(ke);
+        }
+        if (probeField == PROBE_CONTENT_TYPE) {
+            return handleProbeCyclerKeyEvent(ke, CONTENT_TYPES, PROBE_CONTENT_TYPE);
+        }
+        if (probeField == PROBE_ACCEPT) {
+            return handleProbeCyclerKeyEvent(ke, ACCEPT_TYPES, PROBE_ACCEPT);
         }
         if (probeField == PROBE_HEADERS) {
             return handleProbeHeaderKeyEvent(ke);
         }
         if (probeField == PROBE_BODY) {
-            if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
-                if (!probeHistory.isEmpty()) {
-                    probeField = PROBE_HISTORY;
-                } else {
-                    probeField = PROBE_METHOD;
-                }
-                return true;
-            }
-            if (ke.isUp()) {
-                if (hasProbeHeaders()) {
-                    probeField = PROBE_HEADERS;
-                    probeSelectedHeader = probeHeaders.size() - 1;
-                    probeEditingHeaderKey = false;
-                } else {
-                    probeField = PROBE_PATH;
-                }
-                return true;
-            }
-            if (ke.isChar('+')) {
-                addProbeHeaderEmpty();
-                return true;
-            }
-            FormHelper.handleTextInput(ke, probeBodyState);
-            return true;
+            return handleProbeBodyKeyEvent(ke);
         }
         if (probeField == PROBE_HISTORY) {
-            if (ke.isKey(KeyCode.TAB)) {
-                probeField = PROBE_METHOD;
-                return true;
+            return handleProbeHistoryKeyEvent(ke);
+        }
+        return true;
+    }
+
+    private boolean handleProbeMethodKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
+            probeField = PROBE_PATH;
+            return true;
+        }
+        if (ke.isUp()) {
+            goToLastProbeField();
+            return true;
+        }
+        if (ke.isLeft()) {
+            probeMethodIndex = (probeMethodIndex - 1 + PROBE_METHODS.length) % PROBE_METHODS.length;
+            return true;
+        }
+        if (ke.isRight()) {
+            probeMethodIndex = (probeMethodIndex + 1) % PROBE_METHODS.length;
+            return true;
+        }
+        if (ke.isChar('+')) {
+            addProbeQueryParamEmpty();
+            return true;
+        }
+        return true;
+    }
+
+    private boolean handleProbePathKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
+            goToNextProbeFieldFrom(PROBE_PATH);
+            return true;
+        }
+        if (ke.isUp()) {
+            probeField = PROBE_METHOD;
+            return true;
+        }
+        if (ke.isChar('+')) {
+            addProbeQueryParamEmpty();
+            return true;
+        }
+        FormHelper.handleTextInput(ke, probePathState);
+        rescanPathParams();
+        return true;
+    }
+
+    private boolean handleProbePathParamKeyEvent(KeyEvent ke) {
+        if (probePathParams == null || probePathParams.isEmpty()) {
+            goToNextProbeFieldFrom(PROBE_PATH_PARAMS);
+            return true;
+        }
+        PathParam current = probePathParams.get(probeSelectedPathParam);
+
+        if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
+            if (probeSelectedPathParam < probePathParams.size() - 1) {
+                probeSelectedPathParam++;
+            } else {
+                goToNextProbeFieldFrom(PROBE_PATH_PARAMS);
             }
-            if (ke.isUp()) {
-                if (probeHistoryIndex > 0) {
-                    probeHistoryIndex--;
+            return true;
+        }
+        if (ke.isUp()) {
+            if (probeSelectedPathParam > 0) {
+                probeSelectedPathParam--;
+            } else {
+                probeField = PROBE_PATH;
+            }
+            return true;
+        }
+        FormHelper.handleTextInput(ke, current.input);
+        return true;
+    }
+
+    private boolean handleProbeQueryParamKeyEvent(KeyEvent ke) {
+        if (probeQueryParams == null || probeQueryParams.isEmpty()) {
+            goToNextProbeFieldFrom(PROBE_QUERY_PARAMS);
+            return true;
+        }
+        FormHelper.HeaderEntry current = probeQueryParams.get(probeSelectedQueryParam);
+        TextInputState activeInput = probeEditingQueryKey ? current.keyInput() : current.valueInput();
+
+        if (ke.isChar('+')) {
+            addProbeQueryParamEmpty();
+            return true;
+        }
+        if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
+            if (probeEditingQueryKey) {
+                probeEditingQueryKey = false;
+            } else if (probeSelectedQueryParam < probeQueryParams.size() - 1) {
+                probeSelectedQueryParam++;
+                probeEditingQueryKey = true;
+            } else {
+                probeField = PROBE_CONTENT_TYPE;
+            }
+            return true;
+        }
+        if (ke.isUp()) {
+            if (probeEditingQueryKey) {
+                if (probeSelectedQueryParam > 0) {
+                    probeSelectedQueryParam--;
+                    probeEditingQueryKey = false;
                 } else {
-                    probeField = PROBE_BODY;
+                    goToPrevProbeFieldFrom(PROBE_QUERY_PARAMS);
+                }
+            } else {
+                probeEditingQueryKey = true;
+            }
+            return true;
+        }
+        if (ke.isDeleteBackward()) {
+            if (probeEditingQueryKey && current.keyInput().text().isEmpty()) {
+                probeQueryParams.remove(probeSelectedQueryParam);
+                if (probeQueryParams.isEmpty()) {
+                    probeQueryParams = null;
+                    goToPrevProbeFieldFrom(PROBE_QUERY_PARAMS);
+                } else if (probeSelectedQueryParam >= probeQueryParams.size()) {
+                    probeSelectedQueryParam = probeQueryParams.size() - 1;
                 }
                 return true;
             }
-            if (ke.isDown()) {
-                if (probeHistoryIndex < probeHistory.size() - 1) {
-                    probeHistoryIndex++;
-                }
-                return true;
+            activeInput.deleteBackward();
+            return true;
+        }
+        if (ke.isDeleteForward()) {
+            activeInput.deleteForward();
+            return true;
+        }
+        if (ke.isLeft()) {
+            if (!probeEditingQueryKey && activeInput.cursorPosition() == 0) {
+                probeEditingQueryKey = true;
+            } else {
+                activeInput.moveCursorLeft();
             }
+            return true;
+        }
+        if (ke.isRight()) {
+            if (probeEditingQueryKey && activeInput.cursorPosition() == activeInput.text().length()) {
+                probeEditingQueryKey = false;
+            } else {
+                activeInput.moveCursorRight();
+            }
+            return true;
+        }
+        if (ke.isHome()) {
+            activeInput.moveCursorToStart();
+            return true;
+        }
+        if (ke.isEnd()) {
+            activeInput.moveCursorToEnd();
+            return true;
+        }
+        if (ke.code() == KeyCode.CHAR) {
+            activeInput.insert(ke.string().charAt(0));
+            return true;
+        }
+        return true;
+    }
+
+    private boolean handleProbeCyclerKeyEvent(KeyEvent ke, String[] options, int field) {
+        if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
+            goToNextProbeFieldFrom(field);
+            return true;
+        }
+        if (ke.isUp()) {
+            goToPrevProbeFieldFrom(field);
+            return true;
+        }
+        if (ke.isLeft()) {
+            if (field == PROBE_CONTENT_TYPE) {
+                probeContentTypeIndex = (probeContentTypeIndex - 1 + options.length) % options.length;
+            } else {
+                probeAcceptIndex = (probeAcceptIndex - 1 + options.length) % options.length;
+            }
+            return true;
+        }
+        if (ke.isRight() || ke.isChar(' ')) {
+            if (field == PROBE_CONTENT_TYPE) {
+                probeContentTypeIndex = (probeContentTypeIndex + 1) % options.length;
+            } else {
+                probeAcceptIndex = (probeAcceptIndex + 1) % options.length;
+            }
+            return true;
+        }
+        if (ke.isChar('+')) {
+            addProbeHeaderEmpty();
+            return true;
+        }
+        return true;
+    }
+
+    private boolean handleProbeBodyKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.TAB)) {
+            goToNextProbeFieldFrom(PROBE_BODY);
+            return true;
+        }
+        if (ke.isUp()) {
+            if (probeBodyState.cursorRow() == 0) {
+                goToPrevProbeFieldFrom(PROBE_BODY);
+            } else {
+                probeBodyState.moveCursorUp();
+            }
+            return true;
+        }
+        if (ke.isDown()) {
+            if (probeBodyState.cursorRow() >= probeBodyState.lineCount() - 1) {
+                goToNextProbeFieldFrom(PROBE_BODY);
+            } else {
+                probeBodyState.moveCursorDown();
+            }
+            return true;
+        }
+        if (ke.isLeft()) {
+            probeBodyState.moveCursorLeft();
+            return true;
+        }
+        if (ke.isRight()) {
+            probeBodyState.moveCursorRight();
+            return true;
+        }
+        if (ke.isHome()) {
+            probeBodyState.moveCursorToLineStart();
+            return true;
+        }
+        if (ke.isEnd()) {
+            probeBodyState.moveCursorToLineEnd();
+            return true;
+        }
+        if (ke.isDeleteBackward()) {
+            probeBodyState.deleteBackward();
+            return true;
+        }
+        if (ke.isDeleteForward()) {
+            probeBodyState.deleteForward();
+            return true;
+        }
+        if (ke.code() == KeyCode.CHAR) {
+            probeBodyState.insert(ke.character());
+            return true;
+        }
+        return true;
+    }
+
+    private boolean handleProbeHistoryKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.TAB)) {
+            probeField = PROBE_METHOD;
+            return true;
+        }
+        if (ke.isUp()) {
+            if (probeHistoryIndex > 0) {
+                probeHistoryIndex--;
+            } else {
+                probeField = PROBE_BODY;
+            }
+            return true;
+        }
+        if (ke.isDown()) {
+            if (probeHistoryIndex < probeHistory.size() - 1) {
+                probeHistoryIndex++;
+            }
+            return true;
+        }
+        if (ke.isChar('+')) {
+            addProbeQueryParamEmpty();
             return true;
         }
         return true;
@@ -548,7 +799,7 @@ class HttpTab extends AbstractTableTab {
                     probeSelectedHeader--;
                     probeEditingHeaderKey = false;
                 } else {
-                    probeField = PROBE_PATH;
+                    probeField = PROBE_ACCEPT;
                 }
             } else {
                 probeEditingHeaderKey = true;
@@ -560,7 +811,7 @@ class HttpTab extends AbstractTableTab {
                 probeHeaders.remove(probeSelectedHeader);
                 if (probeHeaders.isEmpty()) {
                     probeHeaders = null;
-                    probeField = PROBE_PATH;
+                    probeField = PROBE_ACCEPT;
                 } else if (probeSelectedHeader >= probeHeaders.size()) {
                     probeSelectedHeader = probeHeaders.size() - 1;
                 }
@@ -618,12 +869,24 @@ class HttpTab extends AbstractTableTab {
         return probeHeaders != null && !probeHeaders.isEmpty();
     }
 
+    private boolean hasPathParams() {
+        return probePathParams != null && !probePathParams.isEmpty();
+    }
+
+    private boolean hasQueryParams() {
+        return probeQueryParams != null && !probeQueryParams.isEmpty();
+    }
+
     private TextInputState probeActiveTextInput() {
         if (probeField == PROBE_PATH) {
             return probePathState;
         }
-        if (probeField == PROBE_BODY) {
-            return probeBodyState;
+        if (probeField == PROBE_PATH_PARAMS && hasPathParams()) {
+            return probePathParams.get(probeSelectedPathParam).input;
+        }
+        if (probeField == PROBE_QUERY_PARAMS && hasQueryParams()) {
+            FormHelper.HeaderEntry qp = probeQueryParams.get(probeSelectedQueryParam);
+            return probeEditingQueryKey ? qp.keyInput() : qp.valueInput();
         }
         if (probeField == PROBE_HEADERS && hasProbeHeaders()) {
             FormHelper.HeaderEntry he = probeHeaders.get(probeSelectedHeader);
@@ -632,32 +895,267 @@ class HttpTab extends AbstractTableTab {
         return null;
     }
 
+    private void advanceProbeField() {
+        goToNextProbeFieldFrom(probeField);
+    }
+
+    private void goToNextProbeFieldFrom(int from) {
+        switch (from) {
+            case PROBE_METHOD:
+                probeField = PROBE_PATH;
+                break;
+            case PROBE_PATH:
+                if (hasPathParams()) {
+                    probeField = PROBE_PATH_PARAMS;
+                    probeSelectedPathParam = 0;
+                } else if (hasQueryParams()) {
+                    probeField = PROBE_QUERY_PARAMS;
+                    probeSelectedQueryParam = 0;
+                    probeEditingQueryKey = true;
+                } else {
+                    probeField = PROBE_CONTENT_TYPE;
+                }
+                break;
+            case PROBE_PATH_PARAMS:
+                if (hasQueryParams()) {
+                    probeField = PROBE_QUERY_PARAMS;
+                    probeSelectedQueryParam = 0;
+                    probeEditingQueryKey = true;
+                } else {
+                    probeField = PROBE_CONTENT_TYPE;
+                }
+                break;
+            case PROBE_QUERY_PARAMS:
+                probeField = PROBE_CONTENT_TYPE;
+                break;
+            case PROBE_CONTENT_TYPE:
+                probeField = PROBE_ACCEPT;
+                break;
+            case PROBE_ACCEPT:
+                if (hasProbeHeaders()) {
+                    probeField = PROBE_HEADERS;
+                    probeSelectedHeader = 0;
+                    probeEditingHeaderKey = true;
+                } else {
+                    probeField = PROBE_BODY;
+                }
+                break;
+            case PROBE_HEADERS:
+                probeField = PROBE_BODY;
+                break;
+            case PROBE_BODY:
+                if (!probeHistory.isEmpty()) {
+                    probeField = PROBE_HISTORY;
+                    probeHistoryIndex = 0;
+                } else {
+                    probeField = PROBE_METHOD;
+                }
+                break;
+            case PROBE_HISTORY:
+                probeField = PROBE_METHOD;
+                break;
+            default:
+                probeField = PROBE_METHOD;
+        }
+    }
+
+    private void goToPrevProbeFieldFrom(int from) {
+        switch (from) {
+            case PROBE_PATH:
+                probeField = PROBE_METHOD;
+                break;
+            case PROBE_PATH_PARAMS:
+                probeField = PROBE_PATH;
+                break;
+            case PROBE_QUERY_PARAMS:
+                if (hasPathParams()) {
+                    probeField = PROBE_PATH_PARAMS;
+                    probeSelectedPathParam = probePathParams.size() - 1;
+                } else {
+                    probeField = PROBE_PATH;
+                }
+                break;
+            case PROBE_CONTENT_TYPE:
+                if (hasQueryParams()) {
+                    probeField = PROBE_QUERY_PARAMS;
+                    probeSelectedQueryParam = probeQueryParams.size() - 1;
+                    probeEditingQueryKey = false;
+                } else if (hasPathParams()) {
+                    probeField = PROBE_PATH_PARAMS;
+                    probeSelectedPathParam = probePathParams.size() - 1;
+                } else {
+                    probeField = PROBE_PATH;
+                }
+                break;
+            case PROBE_ACCEPT:
+                probeField = PROBE_CONTENT_TYPE;
+                break;
+            case PROBE_HEADERS:
+                probeField = PROBE_ACCEPT;
+                break;
+            case PROBE_BODY:
+                if (hasProbeHeaders()) {
+                    probeField = PROBE_HEADERS;
+                    probeSelectedHeader = probeHeaders.size() - 1;
+                    probeEditingHeaderKey = false;
+                } else {
+                    probeField = PROBE_ACCEPT;
+                }
+                break;
+            case PROBE_HISTORY:
+                probeField = PROBE_BODY;
+                break;
+            default:
+                probeField = PROBE_METHOD;
+        }
+    }
+
+    private void goToLastProbeField() {
+        if (!probeHistory.isEmpty()) {
+            probeField = PROBE_HISTORY;
+            probeHistoryIndex = 0;
+        } else {
+            probeField = PROBE_BODY;
+        }
+    }
+
+    private List<PathParam> scanPathParams(String path) {
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
+        Matcher m = PATH_PARAM_PATTERN.matcher(path);
+        List<PathParam> params = null;
+        while (m.find()) {
+            if (params == null) {
+                params = new ArrayList<>();
+            }
+            params.add(new PathParam(m.group(1), new TextInputState("")));
+        }
+        return params;
+    }
+
+    private void rescanPathParams() {
+        String path = probePathState.text();
+        List<PathParam> newParams = scanPathParams(path);
+        if (newParams == null) {
+            probePathParams = null;
+            return;
+        }
+        // Preserve existing values for matching param names
+        if (probePathParams != null) {
+            for (PathParam np : newParams) {
+                for (PathParam op : probePathParams) {
+                    if (np.name.equals(op.name) && !op.input.text().isEmpty()) {
+                        np.input.setText(op.input.text());
+                        break;
+                    }
+                }
+            }
+        }
+        probePathParams = newParams;
+    }
+
+    private void addProbeQueryParamEmpty() {
+        if (probeQueryParams == null) {
+            probeQueryParams = new ArrayList<>();
+        }
+        probeQueryParams.add(new FormHelper.HeaderEntry(new TextInputState(""), new TextInputState("")));
+        probeField = PROBE_QUERY_PARAMS;
+        probeSelectedQueryParam = probeQueryParams.size() - 1;
+        probeEditingQueryKey = true;
+    }
+
+    private static int findPresetIndex(String[] presets, String value) {
+        if (value == null || value.isEmpty()) {
+            return 0;
+        }
+        for (int i = 1; i < presets.length; i++) {
+            if (presets[i].equalsIgnoreCase(value) || value.contains(presets[i])) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
     private void replayHistoryEntry(ProbeHistoryEntry entry) {
-        // Fill fields from history
+        // Method
         for (int i = 0; i < PROBE_METHODS.length; i++) {
             if (PROBE_METHODS[i].equals(entry.method)) {
                 probeMethodIndex = i;
                 break;
             }
         }
-        probePathState.clear();
-        for (int i = 0; i < entry.path.length(); i++) {
-            probePathState.insert(entry.path.charAt(i));
+        // Path
+        probePathState.setText(entry.path);
+        // Path params: scan template then extract values from resolved path
+        rescanPathParams();
+        if (probePathParams != null && entry.resolvedPath != null) {
+            extractPathParamValues(entry.path, entry.resolvedPath);
         }
-        probeBodyState.clear();
-        if (entry.body != null) {
-            for (int i = 0; i < entry.body.length(); i++) {
-                probeBodyState.insert(entry.body.charAt(i));
+        // Query params
+        probeQueryParams = null;
+        if (entry.queryParams != null) {
+            probeQueryParams = new ArrayList<>();
+            for (FormHelper.HeaderEntry qp : entry.queryParams) {
+                probeQueryParams.add(new FormHelper.HeaderEntry(
+                        new TextInputState(qp.keyInput().text()),
+                        new TextInputState(qp.valueInput().text())));
             }
         }
+        probeSelectedQueryParam = 0;
+        probeEditingQueryKey = true;
+        // Content-Type and Accept
+        probeContentTypeIndex = entry.contentTypeIndex;
+        probeAcceptIndex = entry.acceptIndex;
+        // Headers
         probeHeaders = null;
+        probeSelectedHeader = 0;
+        probeEditingHeaderKey = true;
         if (entry.headers != null) {
             for (FormHelper.HeaderEntry he : entry.headers) {
                 addProbeHeader(he.keyInput().text(), he.valueInput().text());
             }
         }
-        probeField = PROBE_BODY;
-        doProbeRequest();
+        // Body
+        probeBodyState.setText(entry.body != null ? entry.body : "");
+        // Focus on method so user can review before sending
+        probeField = PROBE_METHOD;
+        probeViewRequest = true;
+    }
+
+    private void extractPathParamValues(String templatePath, String resolvedPath) {
+        if (probePathParams == null || probePathParams.isEmpty()) {
+            return;
+        }
+        // Build a regex from the template, capturing each {xxx} group
+        StringBuilder regex = new StringBuilder();
+        Matcher m = PATH_PARAM_PATTERN.matcher(templatePath);
+        int last = 0;
+        List<String> paramOrder = new ArrayList<>();
+        while (m.find()) {
+            regex.append(Pattern.quote(templatePath.substring(last, m.start())));
+            regex.append("([^/]*)");
+            paramOrder.add(m.group(1));
+            last = m.end();
+        }
+        regex.append(Pattern.quote(templatePath.substring(last)));
+        try {
+            Matcher rm = Pattern.compile(regex.toString()).matcher(resolvedPath);
+            if (rm.matches()) {
+                for (int i = 0; i < paramOrder.size() && i < rm.groupCount(); i++) {
+                    String name = paramOrder.get(i);
+                    String value = rm.group(i + 1);
+                    for (PathParam pp : probePathParams) {
+                        if (pp.name.equals(name)) {
+                            pp.input.setText(value);
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore regex errors
+        }
     }
 
     private void doProbeRequest() {
@@ -676,10 +1174,39 @@ class HttpTab extends AbstractTableTab {
 
         String method = PROBE_METHODS[probeMethodIndex];
         String path = probePathState.text();
+
+        // Replace {xxx} placeholders with param values
+        if (hasPathParams()) {
+            for (PathParam pp : probePathParams) {
+                String val = pp.input.text();
+                if (!val.isEmpty()) {
+                    path = path.replace("{" + pp.name + "}", val);
+                }
+            }
+        }
+
+        // Append query params
+        if (hasQueryParams()) {
+            StringBuilder sb = new StringBuilder(path);
+            char sep = path.contains("?") ? '&' : '?';
+            for (FormHelper.HeaderEntry qp : probeQueryParams) {
+                String k = qp.keyInput().text().trim();
+                String v = qp.valueInput().text();
+                if (!k.isEmpty()) {
+                    sb.append(sep)
+                            .append(URLEncoder.encode(k, StandardCharsets.UTF_8))
+                            .append('=')
+                            .append(URLEncoder.encode(v, StandardCharsets.UTF_8));
+                    sep = '&';
+                }
+            }
+            path = sb.toString();
+        }
+
         String body = probeBodyState.text();
-        if (body != null && body.startsWith("file:")) {
+        if (body != null && body.trim().startsWith("file:")) {
             try {
-                body = Files.readString(Path.of(body.substring(5)));
+                body = Files.readString(Path.of(body.trim().substring(5)));
             } catch (IOException e) {
                 probeResponseStatus = "Error reading file: " + e.getMessage();
                 probeResponseError = true;
@@ -690,32 +1217,66 @@ class HttpTab extends AbstractTableTab {
         String sendBody = body;
         String baseUrl = probeBaseUrl;
 
-        // Snapshot headers
-        List<FormHelper.HeaderEntry> headerSnapshot = null;
+        // Build headers: Content-Type + Accept presets, then manual headers
+        List<FormHelper.HeaderEntry> allHeaders = new ArrayList<>();
+        if (probeContentTypeIndex > 0) {
+            allHeaders.add(new FormHelper.HeaderEntry(
+                    new TextInputState("Content-Type"),
+                    new TextInputState(CONTENT_TYPES[probeContentTypeIndex])));
+        }
+        if (probeAcceptIndex > 0) {
+            allHeaders.add(new FormHelper.HeaderEntry(
+                    new TextInputState("Accept"),
+                    new TextInputState(ACCEPT_TYPES[probeAcceptIndex])));
+        }
         if (hasProbeHeaders()) {
-            headerSnapshot = new ArrayList<>();
             for (FormHelper.HeaderEntry he : probeHeaders) {
-                headerSnapshot.add(new FormHelper.HeaderEntry(
+                allHeaders.add(new FormHelper.HeaderEntry(
                         new TextInputState(he.keyInput().text()),
                         new TextInputState(he.valueInput().text())));
             }
         }
-        List<FormHelper.HeaderEntry> hdrs = headerSnapshot;
+        List<FormHelper.HeaderEntry> hdrs = allHeaders.isEmpty() ? null : allHeaders;
+
+        // Snapshot manual headers, query params, and indices for history
+        List<FormHelper.HeaderEntry> manualHeaderSnapshot = snapshotEntries(probeHeaders);
+        List<FormHelper.HeaderEntry> qpSnapshot = snapshotEntries(probeQueryParams);
+        int ctIdx = probeContentTypeIndex;
+        int accIdx = probeAcceptIndex;
+        String originalPath = probePathState.text();
+        String resolvedPath = path;
 
         ctx.backgroundExecutor.execute(() -> {
             try {
-                doProbeRequestInBackground(baseUrl, method, path, sendBody, hdrs);
+                doProbeRequestInBackground(baseUrl, method, resolvedPath, originalPath, sendBody,
+                        hdrs, manualHeaderSnapshot, qpSnapshot, ctIdx, accIdx);
             } finally {
                 probeSending.set(false);
             }
         });
     }
 
-    private void doProbeRequestInBackground(
-            String baseUrl, String method, String path, String body, List<FormHelper.HeaderEntry> hdrs) {
+    private static List<FormHelper.HeaderEntry> snapshotEntries(List<FormHelper.HeaderEntry> entries) {
+        if (entries == null || entries.isEmpty()) {
+            return null;
+        }
+        List<FormHelper.HeaderEntry> snap = new ArrayList<>();
+        for (FormHelper.HeaderEntry he : entries) {
+            snap.add(new FormHelper.HeaderEntry(
+                    new TextInputState(he.keyInput().text()),
+                    new TextInputState(he.valueInput().text())));
+        }
+        return snap;
+    }
 
-        String url = baseUrl + path;
-        HttpHelper.HttpResult result = HttpHelper.sendRequest(url, method, body, hdrs);
+    private void doProbeRequestInBackground(
+            String baseUrl, String method, String resolvedPath, String originalPath,
+            String body, List<FormHelper.HeaderEntry> allHeaders,
+            List<FormHelper.HeaderEntry> manualHeaders,
+            List<FormHelper.HeaderEntry> queryParams, int contentTypeIdx, int acceptIdx) {
+
+        String url = baseUrl + resolvedPath;
+        HttpHelper.HttpResult result = HttpHelper.sendRequest(url, method, body, allHeaders);
 
         String statusText;
         boolean error;
@@ -735,13 +1296,9 @@ class HttpTab extends AbstractTableTab {
             headerLines = result.headerLines();
         }
 
-        // Build history entry
-        List<FormHelper.HeaderEntry> histHeaders = null;
-        if (hdrs != null && !hdrs.isEmpty()) {
-            histHeaders = new ArrayList<>(hdrs);
-        }
         ProbeHistoryEntry histEntry = new ProbeHistoryEntry(
-                method, path, histHeaders, body,
+                method, originalPath, resolvedPath, manualHeaders, body,
+                queryParams, contentTypeIdx, acceptIdx,
                 httpStatus, result.elapsed(), statusText, error);
 
         // Apply results on render thread
@@ -824,18 +1381,20 @@ class HttpTab extends AbstractTableTab {
     private void renderProbe(Frame frame, Rect area) {
         frame.renderWidget(Clear.INSTANCE, area);
 
-        int padX = 2;
-        int padY = 1;
-        Rect inner = new Rect(
-                area.left() + padX, area.top() + padY,
-                area.width() - padX * 2, area.height() - padY * 2);
+        Rect inner = area;
 
+        int pathParamCount = hasPathParams() ? probePathParams.size() : 0;
+        int queryParamCount = hasQueryParams() ? probeQueryParams.size() : 0;
         int headerCount = hasProbeHeaders() ? probeHeaders.size() : 0;
-        int requestHeight = 7 + headerCount + (headerCount > 0 ? 1 : 0);
-        int historyHeight = Math.min(4 + 2, probeHistory.size() + 2);
-        if (historyHeight < 3) {
-            historyHeight = 3;
-        }
+        int bodyHeight = 6;
+        int requestHeight = 3 // method + URL + path
+                            + pathParamCount
+                            + queryParamCount + (queryParamCount > 0 ? 1 : 0)
+                            + 2 // content-type + accept
+                            + headerCount + (headerCount > 0 ? 1 : 0)
+                            + bodyHeight
+                            + 3; // borders and padding
+        int historyHeight = probeHistory.isEmpty() ? 3 : Math.min(4, probeHistory.size()) + 2;
 
         List<Rect> chunks = Layout.vertical()
                 .constraints(
@@ -856,7 +1415,10 @@ class HttpTab extends AbstractTableTab {
                 Span.styled(method, methodStyle(method).bold()),
                 Span.raw(" " + probePathState.text() + " ")));
 
-        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build();
+        boolean requestFocused = probeField != PROBE_HISTORY;
+        Style borderStyle = requestFocused ? Style.EMPTY.fg(Theme.accent()) : Style.EMPTY;
+        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .borderStyle(borderStyle).title(title).build();
         frame.renderWidget(block, area);
 
         int innerX = area.left() + 2;
@@ -879,7 +1441,7 @@ class HttpTab extends AbstractTableTab {
         // Full URL (read-only)
         row++;
         FormHelper.renderLabel(frame, innerX, row, labelW, "URL:", false);
-        String fullUrl = (probeBaseUrl != null ? probeBaseUrl : "") + probePathState.text();
+        String fullUrl = buildFullUrl();
         Rect urlArea = new Rect(innerX + labelW, row, fieldW, 1);
         frame.renderWidget(Paragraph.from(Line.from(
                 Span.styled(fullUrl, Theme.info().dim().hyperlink(fullUrl)))), urlArea);
@@ -899,98 +1461,218 @@ class HttpTab extends AbstractTableTab {
                     pathArea);
         }
 
-        // Headers
-        if (hasProbeHeaders()) {
-            int keyW = Math.min(20, fieldW / 3);
-            int valW = fieldW - keyW - 3;
-            for (int i = 0; i < probeHeaders.size(); i++) {
+        // Path parameters ({xxx} placeholders)
+        if (hasPathParams()) {
+            for (int i = 0; i < probePathParams.size(); i++) {
                 row++;
-                boolean isSelected = probeField == PROBE_HEADERS && probeSelectedHeader == i;
-                String label = i == 0 ? "Headers:" : "";
+                PathParam pp = probePathParams.get(i);
+                boolean isSelected = probeField == PROBE_PATH_PARAMS && probeSelectedPathParam == i;
+                String label = i == 0 ? "Params:" : "";
                 FormHelper.renderLabel(frame, innerX, row, labelW, label,
-                        isSelected || (i == 0 && probeField == PROBE_HEADERS));
+                        isSelected || (i == 0 && probeField == PROBE_PATH_PARAMS));
 
-                FormHelper.HeaderEntry he = probeHeaders.get(i);
                 int fieldX = innerX + labelW;
-
-                Rect keyArea = new Rect(fieldX, row, keyW, 1);
-                if (isSelected && probeEditingHeaderKey && !probeSending.get()) {
-                    TextInput keyInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
-                    frame.renderStatefulWidget(keyInput, keyArea, he.keyInput());
-                } else {
-                    String keyText = he.keyInput().text();
-                    Style keyStyle = keyText.isEmpty() ? Style.EMPTY.dim()
-                            : isSelected ? Style.EMPTY.bold() : Style.EMPTY;
-                    frame.renderWidget(Paragraph.from(Line.from(
-                            Span.styled(keyText.isEmpty() ? "<key>" : keyText, keyStyle))), keyArea);
-                }
-
-                Rect sepArea = new Rect(fieldX + keyW, row, 3, 1);
+                // Show param name as prefix
+                String paramLabel = "{" + pp.name + "}: ";
+                int paramLabelW = Math.min(paramLabel.length(), 15);
+                Rect paramLabelArea = new Rect(fieldX, row, paramLabelW, 1);
                 frame.renderWidget(Paragraph.from(Line.from(
-                        Span.styled(" : ", Style.EMPTY.dim()))), sepArea);
+                        Span.styled(paramLabel, isSelected ? Theme.label().bold() : Theme.label()))),
+                        paramLabelArea);
 
-                Rect valArea = new Rect(fieldX + keyW + 3, row, valW, 1);
-                if (isSelected && !probeEditingHeaderKey && !probeSending.get()) {
-                    TextInput valInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
-                    frame.renderStatefulWidget(valInput, valArea, he.valueInput());
+                Rect paramInputArea = new Rect(fieldX + paramLabelW, row, fieldW - paramLabelW, 1);
+                if (isSelected && !probeSending.get()) {
+                    TextInput textInput = TextInput.builder()
+                            .cursorStyle(Style.EMPTY.reversed())
+                            .placeholder("value for {" + pp.name + "}")
+                            .build();
+                    frame.renderStatefulWidget(textInput, paramInputArea, pp.input);
                 } else {
-                    String valText = he.valueInput().text();
-                    Style valStyle = valText.isEmpty() ? Style.EMPTY.dim()
-                            : isSelected ? Style.EMPTY.bold() : Style.EMPTY;
+                    String val = pp.input.text();
                     frame.renderWidget(Paragraph.from(Line.from(
-                            Span.styled(valText.isEmpty() ? "<value>" : valText, valStyle))), valArea);
+                            Span.styled(val.isEmpty() ? "—" : val,
+                                    val.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY))),
+                            paramInputArea);
                 }
             }
         }
 
-        // Body input
+        // Query parameters
+        if (hasQueryParams()) {
+            row = renderKeyValueSection(frame, row, innerX, labelW, fieldW, "Query:",
+                    probeQueryParams, PROBE_QUERY_PARAMS, probeSelectedQueryParam, probeEditingQueryKey);
+        }
+
+        // Content-Type cycler
         row++;
+        renderCycler(frame, innerX, row, labelW, fieldW, "Content:",
+                CONTENT_TYPES, probeContentTypeIndex, probeField == PROBE_CONTENT_TYPE);
+
+        // Accept cycler
+        row++;
+        renderCycler(frame, innerX, row, labelW, fieldW, "Accept:",
+                ACCEPT_TYPES, probeAcceptIndex, probeField == PROBE_ACCEPT);
+
+        // Headers
+        if (hasProbeHeaders()) {
+            row = renderKeyValueSection(frame, row, innerX, labelW, fieldW, "Headers:",
+                    probeHeaders, PROBE_HEADERS, probeSelectedHeader, probeEditingHeaderKey);
+        }
+
+        // Body input (multi-line TextArea)
+        row++;
+        int bodyHeight = 6;
         FormHelper.renderLabel(frame, innerX, row, labelW, "Body:", probeField == PROBE_BODY);
-        Rect bodyArea = new Rect(innerX + labelW, row, fieldW, 1);
+        Rect bodyArea = new Rect(innerX + labelW, row, fieldW, bodyHeight);
+        Style bodyBorderStyle = probeField == PROBE_BODY ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Block bodyBlock = Block.builder()
+                .borders(Borders.ALL)
+                .borderType(BorderType.ROUNDED)
+                .borderStyle(bodyBorderStyle)
+                .build();
+        Rect bodyInner = bodyBlock.inner(bodyArea);
+        frame.renderWidget(bodyBlock, bodyArea);
+        TextArea textArea = TextArea.builder()
+                .cursorStyle(Style.EMPTY.reversed())
+                .placeholder("body text, JSON, XML, or file:payload.json")
+                .build();
         if (probeField == PROBE_BODY && !probeSending.get()) {
-            TextInput textInput = TextInput.builder()
-                    .cursorStyle(Style.EMPTY.reversed())
-                    .placeholder("body text or file:payload.json")
-                    .build();
-            frame.renderStatefulWidget(textInput, bodyArea, probeBodyState);
+            textArea.renderWithCursor(bodyInner, frame.buffer(), probeBodyState, frame);
         } else {
-            String bodyText = probeBodyState.text();
-            frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled(bodyText.isEmpty() ? "—" : bodyText,
-                            bodyText.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY))),
-                    bodyArea);
+            textArea.render(bodyInner, frame.buffer(), probeBodyState);
         }
     }
 
-    private void renderProbeResponse(Frame frame, Rect area) {
-        String titleStr;
-        Style titleStyle = Style.EMPTY.bold();
-        if (probeResponseStatus == null) {
-            titleStr = " Response ";
-        } else if (probeResponseError) {
-            titleStr = " Response " + probeResponseStatus + " ";
-            titleStyle = Theme.error().bold();
-        } else if ("Sending...".equals(probeResponseStatus)) {
-            titleStr = " Sending... ";
-            titleStyle = Theme.warning().bold();
-        } else {
-            titleStr = " Response " + probeResponseStatus;
-            if (probeResponseElapsed > 0) {
-                titleStr += " (" + probeResponseElapsed + "ms)";
+    private String buildFullUrl() {
+        String base = probeBaseUrl != null ? probeBaseUrl : "";
+        String path = probePathState.text();
+        if (hasPathParams()) {
+            for (PathParam pp : probePathParams) {
+                String val = pp.input.text();
+                if (!val.isEmpty()) {
+                    path = path.replace("{" + pp.name + "}", val);
+                }
             }
-            titleStr += " ";
-            titleStyle = statusStyle(probeResponseStatus);
+        }
+        return base + path;
+    }
+
+    private void renderCycler(
+            Frame frame, int x, int row, int labelW, int fieldW,
+            String label, String[] options, int activeIndex, boolean selected) {
+
+        FormHelper.renderLabel(frame, x, row, labelW, label, selected);
+        Rect fieldArea = new Rect(x + labelW, row, fieldW, 1);
+        String display = activeIndex == 0 ? "(none)" : options[activeIndex];
+        String leftArr = selected ? TuiIcons.ARROW_LEFT + " " : "  ";
+        String rightArr = selected ? " " + TuiIcons.ARROW_RIGHT : "";
+        Style style = activeIndex == 0 ? Style.EMPTY.dim() : Style.EMPTY;
+        frame.renderWidget(Paragraph.from(Line.from(
+                Span.styled(leftArr, style),
+                Span.styled(display, selected ? style.bold() : style),
+                Span.styled(rightArr, style))), fieldArea);
+    }
+
+    private int renderKeyValueSection(
+            Frame frame, int startRow, int innerX, int labelW, int fieldW,
+            String sectionLabel, List<FormHelper.HeaderEntry> entries,
+            int fieldId, int selectedIdx, boolean editingKey) {
+
+        int keyW = Math.min(20, fieldW / 3);
+        int valW = fieldW - keyW - 3;
+        int row = startRow;
+        for (int i = 0; i < entries.size(); i++) {
+            row++;
+            boolean isSelected = probeField == fieldId && selectedIdx == i;
+            String label = i == 0 ? sectionLabel : "";
+            FormHelper.renderLabel(frame, innerX, row, labelW, label,
+                    isSelected || (i == 0 && probeField == fieldId));
+
+            FormHelper.HeaderEntry he = entries.get(i);
+            int fieldX = innerX + labelW;
+
+            Rect keyArea = new Rect(fieldX, row, keyW, 1);
+            if (isSelected && editingKey && !probeSending.get()) {
+                TextInput keyInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
+                frame.renderStatefulWidget(keyInput, keyArea, he.keyInput());
+            } else {
+                String keyText = he.keyInput().text();
+                Style keyStyle = keyText.isEmpty() ? Style.EMPTY.dim()
+                        : isSelected ? Style.EMPTY.bold() : Style.EMPTY;
+                frame.renderWidget(Paragraph.from(Line.from(
+                        Span.styled(keyText.isEmpty() ? "<key>" : keyText, keyStyle))), keyArea);
+            }
+
+            Rect sepArea = new Rect(fieldX + keyW, row, 3, 1);
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled(" : ", Style.EMPTY.dim()))), sepArea);
+
+            Rect valArea = new Rect(fieldX + keyW + 3, row, valW, 1);
+            if (isSelected && !editingKey && !probeSending.get()) {
+                TextInput valInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
+                frame.renderStatefulWidget(valInput, valArea, he.valueInput());
+            } else {
+                String valText = he.valueInput().text();
+                Style valStyle = valText.isEmpty() ? Style.EMPTY.dim()
+                        : isSelected ? Style.EMPTY.bold() : Style.EMPTY;
+                frame.renderWidget(Paragraph.from(Line.from(
+                        Span.styled(valText.isEmpty() ? "<value>" : valText, valStyle))), valArea);
+            }
+        }
+        return row;
+    }
+
+    private void renderProbeResponse(Frame frame, Rect area) {
+        boolean hasResponse = probeResponseStatus != null;
+
+        // Build tab header title
+        Title title;
+        if (!hasResponse) {
+            title = Title.from(Line.from(Span.styled(" Request ", Style.EMPTY.bold())));
+        } else {
+            Style reqStyle = probeViewRequest ? Style.EMPTY.bold() : Style.EMPTY.dim();
+            Style resStyle = probeViewRequest ? Style.EMPTY.dim() : Style.EMPTY.bold();
+
+            String statusSuffix = "";
+            Style statusColor = Style.EMPTY;
+            if (probeResponseError) {
+                statusSuffix = " " + probeResponseStatus;
+                statusColor = Theme.error();
+            } else if ("Sending...".equals(probeResponseStatus)) {
+                statusSuffix = " Sending...";
+                statusColor = Theme.warning();
+            } else {
+                statusSuffix = " " + probeResponseStatus;
+                if (probeResponseElapsed > 0) {
+                    statusSuffix += " (" + probeResponseElapsed + "ms)";
+                }
+                statusColor = statusStyle(probeResponseStatus);
+            }
+
+            title = Title.from(Line.from(
+                    Span.styled(" Request ", reqStyle),
+                    Span.styled("|", Style.EMPTY.dim()),
+                    Span.styled(" Response", resStyle),
+                    Span.styled(statusSuffix + " ", statusColor.bold())));
         }
 
-        Title title = Title.from(Line.from(Span.styled(titleStr, titleStyle)));
-
-        if (probeResponseLines == null || probeResponseLines.isEmpty()) {
-            String placeholder = probeResponseStatus == null
-                    ? " Press Enter to send request"
-                    : " No response content";
+        // Show request preview (before first send, or when request tab is active)
+        if (!hasResponse || probeViewRequest) {
+            List<Line> preview = buildRequestPreview();
             frame.renderWidget(
                     Paragraph.builder()
-                            .text(Text.from(Line.from(Span.styled(placeholder, Style.EMPTY.dim()))))
+                            .text(Text.from(preview))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        // Show response
+        if (probeResponseLines == null || probeResponseLines.isEmpty()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(Span.styled(" No response content", Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                             .build(),
                     area);
@@ -1001,10 +1683,11 @@ class HttpTab extends AbstractTableTab {
         if (visibleLines < 1) {
             visibleLines = 1;
         }
-        int maxScroll = Math.max(0, probeResponseLines.size() - visibleLines);
+        int totalLines = probeResponseLines.size();
+        int maxScroll = Math.max(0, totalLines - visibleLines);
         probeResponseScroll = Math.min(probeResponseScroll, maxScroll);
 
-        int end = Math.min(probeResponseScroll + visibleLines, probeResponseLines.size());
+        int end = Math.min(probeResponseScroll + visibleLines, totalLines);
         List<Line> lines = new ArrayList<>();
         for (int i = probeResponseScroll; i < end; i++) {
             String line = probeResponseLines.get(i);
@@ -1012,7 +1695,6 @@ class HttpTab extends AbstractTableTab {
                 lines.add(Line.from(Span.raw("")));
             } else if (line.contains(": ") && !line.startsWith(" ") && !line.startsWith("{")
                     && !line.startsWith("[") && !line.startsWith("\"")) {
-                // Header line
                 int colon = line.indexOf(": ");
                 lines.add(Line.from(
                         Span.styled(line.substring(0, colon + 1), Theme.label()),
@@ -1022,23 +1704,98 @@ class HttpTab extends AbstractTableTab {
             }
         }
 
+        Block.Builder blockBuilder = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title);
+        if (totalLines > visibleLines) {
+            int pct = (int) ((probeResponseScroll + visibleLines) * 100L / totalLines);
+            String scrollInfo = " " + pct + "% (" + totalLines + " lines) ";
+            blockBuilder.titleBottom(Title.from(Line.from(Span.styled(scrollInfo, Style.EMPTY.dim()))));
+        }
+
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                        .block(blockBuilder.build())
                         .build(),
                 area);
     }
 
+    private List<Line> buildRequestPreview() {
+        List<Line> lines = new ArrayList<>();
+        String method = PROBE_METHODS[probeMethodIndex];
+        String fullUrl = buildFullUrl();
+
+        // Add query params to the preview URL
+        if (hasQueryParams()) {
+            StringBuilder sb = new StringBuilder(fullUrl);
+            char sep = fullUrl.contains("?") ? '&' : '?';
+            for (FormHelper.HeaderEntry qp : probeQueryParams) {
+                String k = qp.keyInput().text().trim();
+                String v = qp.valueInput().text();
+                if (!k.isEmpty()) {
+                    sb.append(sep).append(k).append('=').append(v);
+                    sep = '&';
+                }
+            }
+            fullUrl = sb.toString();
+        }
+
+        lines.add(Line.from(
+                Span.styled(" " + method, methodStyle(method).bold()),
+                Span.raw(" " + fullUrl)));
+        lines.add(Line.from(Span.raw("")));
+
+        // Headers
+        String ct = CONTENT_TYPES[probeContentTypeIndex];
+        if (!ct.isEmpty()) {
+            lines.add(Line.from(
+                    Span.styled(" Content-Type: ", Theme.label()),
+                    Span.raw(ct)));
+        }
+        String acc = ACCEPT_TYPES[probeAcceptIndex];
+        if (!acc.isEmpty()) {
+            lines.add(Line.from(
+                    Span.styled(" Accept: ", Theme.label()),
+                    Span.raw(acc)));
+        }
+        if (hasProbeHeaders()) {
+            for (FormHelper.HeaderEntry h : probeHeaders) {
+                String k = h.keyInput().text().trim();
+                String v = h.valueInput().text();
+                if (!k.isEmpty()) {
+                    lines.add(Line.from(
+                            Span.styled(" " + k + ": ", Theme.label()),
+                            Span.raw(v)));
+                }
+            }
+        }
+
+        // Body
+        String body = probeBodyState.text();
+        if (body != null && !body.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            for (String bl : body.split("\n", -1)) {
+                lines.add(Line.from(Span.raw(" " + bl)));
+            }
+        }
+
+        if (lines.size() <= 1) {
+            lines.add(Line.from(Span.styled(" Press F5 to send", Style.EMPTY.dim())));
+        }
+        return lines;
+    }
+
     private void renderProbeHistory(Frame frame, Rect area) {
         String title = " History [" + probeHistory.size() + "] ";
+        boolean historyFocused = probeField == PROBE_HISTORY;
+        Style histBorderStyle = historyFocused ? Style.EMPTY.fg(Theme.accent()) : Style.EMPTY;
 
         if (probeHistory.isEmpty()) {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(
                                     Span.styled(" No requests yet", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(histBorderStyle).title(title).build())
                             .build(),
                     area);
             return;
@@ -1059,7 +1816,7 @@ class HttpTab extends AbstractTableTab {
         List<Line> lines = new ArrayList<>();
         for (int i = start; i < end; i++) {
             ProbeHistoryEntry entry = probeHistory.get(i);
-            boolean selected = probeField == PROBE_HISTORY && i == probeHistoryIndex;
+            boolean selected = historyFocused && i == probeHistoryIndex;
             String pointer = selected ? TuiIcons.POINTER + " " : "  ";
             String methodStr = String.format("%-8s", entry.method);
             String statusStr = entry.error ? "ERR" : entry.statusText;
@@ -1072,7 +1829,7 @@ class HttpTab extends AbstractTableTab {
             lines.add(Line.from(
                     Span.styled(pointer, lineStyle),
                     Span.styled(methodStr, methodStyle(entry.method)),
-                    Span.styled(entry.path + "  ", lineStyle),
+                    Span.styled(entry.resolvedPath + "  ", lineStyle),
                     Span.styled(statusStr, selected ? statusStyle(statusStr) : statusStyle(statusStr).dim()),
                     Span.styled("  " + elapsedStr, Style.EMPTY.dim()),
                     Span.styled(bodySnippet, Style.EMPTY.dim())));
@@ -1081,7 +1838,8 @@ class HttpTab extends AbstractTableTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .borderStyle(histBorderStyle).title(title).build())
                         .build(),
                 area);
     }
@@ -1521,16 +2279,21 @@ class HttpTab extends AbstractTableTab {
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "HTTP");
     }
 
+    record PathParam(String name, TextInputState input) {
+    }
+
     record ProbeHistoryEntry(
-            String method, String path,
+            String method, String path, String resolvedPath,
             List<FormHelper.HeaderEntry> headers, String body,
+            List<FormHelper.HeaderEntry> queryParams,
+            int contentTypeIndex, int acceptIndex,
             int statusCode, long elapsed,
             String statusText, boolean error) {
     }
 
     @Override
     public String description() {
-        return "HTTP endpoint probe — send requests and inspect responses";
+        return "HTTP endpoint probe — lightweight Postman for testing REST/HTTP endpoints";
     }
 
     @Override
@@ -1539,66 +2302,61 @@ class HttpTab extends AbstractTableTab {
                 # HTTP
 
                 The HTTP tab shows all HTTP endpoints exposed by this integration and
-                lets you send test requests interactively. This includes REST API
-                endpoints, management endpoints (health, metrics), and any other
-                HTTP routes.
+                lets you send test requests interactively — a lightweight Postman built
+                into the terminal. This includes REST API endpoints, management endpoints
+                (health, metrics), and any other HTTP routes.
 
                 ## Endpoint List
 
-                - **METHOD** — HTTP method: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`, etc. Some endpoints support multiple methods
-                - **PATH** — URL path for this endpoint (e.g., `/api/users`, `/observe/health`)
-                - **TOTAL** — Number of HTTP requests received by this endpoint since startup
-                - **CONSUMES** — Content-Type this endpoint accepts (e.g., `application/json`, `text/xml`). Empty means any content type
-                - **PRODUCES** — Content-Type this endpoint returns in responses
-                - **SOURCE** — How the endpoint was registered (see below)
-                - **STATE** — Endpoint state: `Started` (accepting requests) or `Stopped`
-
-                ## Example Screen
-
-                ```
-                 METHOD  PATH                  TOTAL  CONSUMES          PRODUCES          SOURCE        STATE
-                 GET     /api/users            142    application/json  application/json  REST(code)    Started
-                 POST    /api/users            38     application/json  application/json  REST(code)    Started
-                 GET     /observe/health       97                                         Management          Started
-                 GET     /observe/metrics      52                       text/plain        Management          Started
-                 GET     /q/openapi            15                       application/json  REST(contract) Started
-                ```
-
-                ## SOURCE Types
-
-                The SOURCE column tells you how each endpoint was created:
-
-                - **REST(code)** — Defined in Camel REST DSL code. The developer wrote `rest("/api").get("/users").to("direct:getUsers")` in the route definition
-                - **REST(contract)** — Generated from an OpenAPI/Swagger specification file (contract-first approach). The API structure comes from a `.json` or `.yaml` spec file
-                - **HTTP** — Registered directly via the `platform-http` component using `from("platform-http:/path")`
-                - **Management** — Management endpoint added automatically by Camel for observability: health checks, metrics, OpenAPI specs, developer console
+                - **METHOD** — HTTP method: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`, etc.
+                - **PATH** — URL path for this endpoint
+                - **TOTAL** — Number of HTTP requests received since startup
+                - **CONSUMES** — Content-Type this endpoint accepts
+                - **PRODUCES** — Content-Type this endpoint returns
+                - **SOURCE** — How the endpoint was registered: REST(code), REST(contract), HTTP, Management
+                - **STATE** — Endpoint state: `Started` or `Stopped`
 
                 ## HTTP Probe
 
                 Press `Enter` on an endpoint to open the interactive HTTP probe.
-                This is a built-in HTTP client that lets you send test requests and
-                inspect responses without leaving the TUI.
 
-                The probe screen has these sections:
+                The probe has these sections:
 
-                - **Method**: Use `Left/Right` arrows to cycle through HTTP methods (GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS)
-                - **Path**: Editable URL path — modify it to test different routes or add query parameters
-                - **Headers**: Custom request headers. Press `+` to add a new header, then edit the key and value fields
-                - **Body**: Request body text. For file-based bodies, type `file:data.json` to load content from a file on disk
-                - **Response**: Shows the HTTP status code, response headers, and response body after sending
-                - **History**: Recent requests you have sent, with the ability to replay any previous request
+                - **Method**: `Left/Right` arrows to cycle through HTTP methods
+                - **URL**: Read-only full URL (with resolved placeholders). Clickable as hyperlink
+                - **Path**: Editable URL path template (e.g., `/api/users/{id}`)
+                - **Path Params**: Auto-detected from `{xxx}` placeholders in the path. Fill in values and they get substituted in the URL
+                - **Query Params**: Key-value pairs appended to the URL as `?key=value`. Press `+` to add
+                - **Content-Type**: Cycle through common content types with `Left/Right` arrows
+                - **Accept**: Cycle through common accept types with `Left/Right` arrows
+                - **Headers**: Custom request headers. Press `+` to add
+                - **Body**: Multi-line request body (Enter for newline). Supports `file:payload.json` to load from disk
+                - **Response**: HTTP status code, elapsed time, response headers, and body
+                - **History**: Recent requests with replay support
 
-                Press `Enter` to send the request. Press `p` to toggle pretty-print
-                for JSON responses — this formats the response body with indentation
-                for easier reading.
+                Press `F5` to send the request. Press `p` to toggle pretty-print for JSON responses.
 
                 ## Keys
 
+                ### Endpoint List
                 - `Up/Down` — select endpoint
                 - `Enter` — open HTTP probe for selected endpoint
                 - `s` — cycle sort column
                 - `S` — reverse sort order
-                - `Esc` — close probe view
+                - `f` — cycle filter (all / rest / http)
+                - `m` — toggle management endpoints
+                - `c` — view OpenAPI spec (when available)
+
+                ### HTTP Probe
+                - `F5` — send request
+                - `Tab/Down` — next field
+                - `Up` — previous field
+                - `Enter` — newline in body, advance in other fields
+                - `Left/Right` — cycle method, content-type, accept; cursor in text fields
+                - `+` — add query param or header
+                - `p` — toggle pretty-print
+                - `PgUp/PgDn` — scroll response
+                - `Esc` — close probe
                 """;
     }
 
@@ -1610,10 +2368,29 @@ class HttpTab extends AbstractTableTab {
         String v = value != null ? value : "";
         if ("path".equals(field)) {
             probePathState.setText(v);
+            rescanPathParams();
             return true;
         }
         if ("body".equals(field)) {
             probeBodyState.setText(v);
+            return true;
+        }
+        if ("method".equals(field)) {
+            String upper = v.toUpperCase(Locale.ENGLISH);
+            for (int i = 0; i < PROBE_METHODS.length; i++) {
+                if (PROBE_METHODS[i].equals(upper)) {
+                    probeMethodIndex = i;
+                    return true;
+                }
+            }
+            return false;
+        }
+        if ("content-type".equals(field)) {
+            probeContentTypeIndex = findPresetIndex(CONTENT_TYPES, v);
+            return true;
+        }
+        if ("accept".equals(field)) {
+            probeAcceptIndex = findPresetIndex(ACCEPT_TYPES, v);
             return true;
         }
         return false;
@@ -1627,6 +2404,77 @@ class HttpTab extends AbstractTableTab {
         }
         JsonObject result = new JsonObject();
         result.put("tab", "HTTP");
+
+        if (probeMode) {
+            result.put("probeMode", true);
+            result.put("method", PROBE_METHODS[probeMethodIndex]);
+            result.put("path", probePathState.text());
+            String ct = CONTENT_TYPES[probeContentTypeIndex];
+            if (!ct.isEmpty()) {
+                result.put("contentType", ct);
+            }
+            String acc = ACCEPT_TYPES[probeAcceptIndex];
+            if (!acc.isEmpty()) {
+                result.put("accept", acc);
+            }
+            if (hasPathParams()) {
+                JsonObject pp = new JsonObject();
+                for (PathParam p : probePathParams) {
+                    pp.put(p.name, p.input.text());
+                }
+                result.put("pathParams", pp);
+            }
+            if (hasQueryParams()) {
+                JsonArray qp = new JsonArray();
+                for (FormHelper.HeaderEntry e : probeQueryParams) {
+                    JsonObject entry = new JsonObject();
+                    entry.put("key", e.keyInput().text());
+                    entry.put("value", e.valueInput().text());
+                    qp.add(entry);
+                }
+                result.put("queryParams", qp);
+            }
+            if (hasProbeHeaders()) {
+                JsonArray hd = new JsonArray();
+                for (FormHelper.HeaderEntry e : probeHeaders) {
+                    JsonObject entry = new JsonObject();
+                    entry.put("key", e.keyInput().text());
+                    entry.put("value", e.valueInput().text());
+                    hd.add(entry);
+                }
+                result.put("headers", hd);
+            }
+            String body = probeBodyState.text();
+            if (body != null && !body.isEmpty()) {
+                result.put("body", body);
+            }
+            if (probeResponseStatus != null) {
+                result.put("responseStatus", probeResponseStatus);
+            }
+            if (probeResponseElapsed > 0) {
+                result.put("responseElapsed", probeResponseElapsed);
+            }
+            if (probeResponseRawBody != null && !probeResponseRawBody.isEmpty()) {
+                result.put("responseBody", probeResponseRawBody);
+            }
+            if (!probeHistory.isEmpty()) {
+                JsonArray hist = new JsonArray();
+                for (ProbeHistoryEntry he : probeHistory) {
+                    JsonObject entry = new JsonObject();
+                    entry.put("method", he.method);
+                    entry.put("path", he.path);
+                    entry.put("statusCode", he.statusCode);
+                    entry.put("elapsed", he.elapsed);
+                    if (he.error) {
+                        entry.put("error", true);
+                    }
+                    hist.add(entry);
+                }
+                result.put("history", hist);
+            }
+            return result;
+        }
+
         JsonArray rows = new JsonArray();
         for (HttpEndpointInfo hi : info.httpEndpoints) {
             JsonObject row = new JsonObject();
