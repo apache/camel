@@ -49,6 +49,16 @@ class LlmClientGeminiTest {
     }
 
     @Test
+    void normalizeGeminiBaseUrlStripsGenerateContentSuffix() {
+        assertThat(LlmClient.normalizeGeminiBaseUrl(
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"))
+                .isEqualTo("https://generativelanguage.googleapis.com/v1beta");
+        assertThat(LlmClient.normalizeGeminiBaseUrl(
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash%3AgenerateContent"))
+                .isEqualTo("https://generativelanguage.googleapis.com/v1beta");
+    }
+
+    @Test
     void extractGeminiModelIdsKeepsGenerateContentModelsOnly() throws Exception {
         String json = """
                 {
@@ -63,7 +73,7 @@ class LlmClientGeminiTest {
     }
 
     @Test
-    void geminiGenerateContentUrlAppendsApiKeyQueryParameter() {
+    void geminiGenerateContentUrlUsesColonActionSegment() {
         LlmClient client = LlmClient.create()
                 .withApiType(LlmClient.ApiType.gemini)
                 .withUrl("https://generativelanguage.googleapis.com/v1beta")
@@ -72,34 +82,52 @@ class LlmClientGeminiTest {
 
         assertThat(client.geminiGenerateContentUrl("gemini-key"))
                 .isEqualTo(
-                        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash%3AgenerateContent?key=gemini-key");
+                        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent");
     }
 
     @Test
-    void listsGeminiModelsWithKeyQueryParameter() throws IOException {
-        AtomicReference<String> query = new AtomicReference<>();
-        String baseUrl = startGeminiModelsServer(query);
+    void listsGeminiModelsWithApiKeyHeader() throws IOException {
+        AtomicReference<String> apiKeyHeader = new AtomicReference<>();
+        String baseUrl = startGeminiModelsServer(apiKeyHeader);
         LlmClient client = LlmClient.create()
                 .withApiType(LlmClient.ApiType.gemini)
                 .withUrl(baseUrl)
                 .withApiKey("gemini-key");
 
         assertThat(client.listModels()).containsExactly("gemini-2.0-flash", "gemini-1.5-flash");
-        assertThat(query.get()).contains("key=gemini-key");
+        assertThat(apiKeyHeader.get()).isEqualTo("gemini-key");
     }
 
     @Test
-    void parseGeminiChatResponseExtractsFunctionCall() throws Exception {
+    void parseGeminiChatResponseExtractsFunctionCallIdArgsAndThoughtSignature() throws Exception {
         String json
                 = """
-                        {"candidates":[{"content":{"parts":[{"functionCall":{"name":"list_routes","args":{"q":"x"}}}]},"finishReason":"STOP"}],"usageMetadata":{"promptTokenCount":1,"candidatesTokenCount":2,"totalTokenCount":3}}
+                        {"candidates":[{"content":{"parts":[{"functionCall":{"id":"call-42","name":"list_routes","args":{"q":"x"},"thoughtSignature":"sig-abc"}}]},"finishReason":"STOP"}],"usageMetadata":{"promptTokenCount":1,"candidatesTokenCount":2,"totalTokenCount":3}}
                         """;
         LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.gemini);
         LlmClient.ChatResponse response = client.parseGeminiChatResponse((JsonObject) Jsoner.deserialize(json));
 
         assertThat(response.toolCalls()).hasSize(1);
-        assertThat(response.toolCalls().get(0).name()).isEqualTo("list_routes");
+        LlmClient.ToolCall call = response.toolCalls().get(0);
+        assertThat(call.id()).isEqualTo("call-42");
+        assertThat(call.name()).isEqualTo("list_routes");
+        assertThat(call.arguments().getString("q")).isEqualTo("x");
+        assertThat(call.thoughtSignature()).isEqualTo("sig-abc");
         assertThat(response.stopReason()).isEqualTo("tool_calls");
+    }
+
+    @Test
+    void buildGeminiGenerateRequestPreservesThoughtSignatureOnModelTurn() {
+        JsonObject args = new JsonObject();
+        args.put("q", "x");
+        LlmClient.ToolCall call = new LlmClient.ToolCall("call-42", "list_routes", args, "sig-abc");
+        LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.gemini);
+        JsonObject request = client.buildGeminiGenerateRequestForTest(
+                "system",
+                List.of(LlmClient.Message.assistantWithToolCalls(null, List.of(call))),
+                null);
+
+        assertThat(request.toJson()).contains("thoughtSignature").contains("sig-abc").contains("call-42");
     }
 
     @Test
@@ -126,10 +154,20 @@ class LlmClientGeminiTest {
         assertThat(request.toJson()).contains("functionDeclarations").contains("list_routes");
     }
 
-    private String startGeminiModelsServer(AtomicReference<String> capturedQuery) throws IOException {
+    @Test
+    void detectEndpointAcceptsConfiguredGeminiApiKeyWithoutEnv() {
+        LlmClient client = LlmClient.create()
+                .withApiType(LlmClient.ApiType.gemini)
+                .withApiKey("configured-key");
+
+        assertThat(client.detectEndpoint()).isTrue();
+        assertThat(client.apiType()).isEqualTo(LlmClient.ApiType.gemini);
+    }
+
+    private String startGeminiModelsServer(AtomicReference<String> capturedApiKeyHeader) throws IOException {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         server.createContext("/v1beta/models", exchange -> {
-            capturedQuery.set(exchange.getRequestURI().getQuery());
+            capturedApiKeyHeader.set(exchange.getRequestHeaders().getFirst("x-goog-api-key"));
             byte[] bytes = """
                     {"models":[
                       {"name":"models/gemini-2.0-flash","supportedGenerationMethods":["generateContent"]},

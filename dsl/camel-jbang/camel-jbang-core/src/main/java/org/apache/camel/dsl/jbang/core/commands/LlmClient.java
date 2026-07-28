@@ -87,7 +87,11 @@ public class LlmClient {
     public record ToolDef(String name, String description, JsonObject parameters) {
     }
 
-    public record ToolCall(String id, String name, JsonObject arguments) {
+    public record ToolCall(String id, String name, JsonObject arguments, String thoughtSignature) {
+
+        public ToolCall(String id, String name, JsonObject arguments) {
+            this(id, name, arguments, null);
+        }
     }
 
     public record ToolResult(String toolCallId, String content) {
@@ -249,7 +253,7 @@ public class LlmClient {
             found = switch (apiType) {
                 case anthropic -> tryAnthropicOrVertex();
                 case openai -> tryAzureOpenAi() || tryOpenAi();
-                case gemini -> tryGemini();
+                case gemini -> tryGemini(true);
                 case ollama -> tryInfraOllama() || tryDefaultOllama();
                 case watsonx -> tryWatsonx();
             };
@@ -258,7 +262,7 @@ public class LlmClient {
             found = tryAnthropicApiKey()
                     || tryVertexAi()
                     || tryAzureOpenAi()
-                    || tryGemini()
+                    || tryGemini(false)
                     || tryOpenAi()
                     || tryWatsonx()
                     || tryInfraOllama()
@@ -445,7 +449,7 @@ public class LlmClient {
             return List.of();
         }
         String base = normalizeGeminiBaseUrl(url);
-        JsonObject response = sendGetRequest(appendGeminiApiKey(base + "/models", key), Map.of());
+        JsonObject response = sendGetRequest(base + "/models", buildGeminiHeaders(key));
         return extractGeminiModelIds(response);
     }
 
@@ -658,6 +662,12 @@ public class LlmClient {
                     JsonObject functionCall = new JsonObject();
                     functionCall.put("name", tc.name());
                     functionCall.put("args", tc.arguments());
+                    if (tc.id() != null && !tc.id().isBlank() && !tc.id().equals(tc.name())) {
+                        functionCall.put("id", tc.id());
+                    }
+                    if (tc.thoughtSignature() != null && !tc.thoughtSignature().isBlank()) {
+                        functionCall.put("thoughtSignature", tc.thoughtSignature());
+                    }
                     JsonObject part = new JsonObject();
                     part.put("functionCall", functionCall);
                     parts.add(part);
@@ -747,8 +757,13 @@ public class LlmClient {
             JsonObject functionCall = (JsonObject) part.get("functionCall");
             if (functionCall != null) {
                 String name = functionCall.getString("name");
+                String callId = functionCall.getString("id");
+                if (callId == null || callId.isBlank()) {
+                    callId = name;
+                }
                 JsonObject args = functionCall.get("args") instanceof JsonObject jo ? jo : new JsonObject();
-                toolCalls.add(new ToolCall(name, name, args));
+                String thoughtSignature = functionCall.getString("thoughtSignature");
+                toolCalls.add(new ToolCall(callId, name, args, thoughtSignature));
             }
         }
         String stopReason = !toolCalls.isEmpty() ? "tool_calls" : finishReason;
@@ -797,13 +812,13 @@ public class LlmClient {
     }
 
     private JsonObject sendGeminiRequest(String requestUrl, JsonObject body) {
-        return sendRequestWithHeaders(requestUrl, body, Map.of("Content-Type", "application/json"));
+        return sendRequestWithHeaders(requestUrl, body, buildGeminiHeaders(resolveGeminiApiKey()));
     }
 
     String geminiGenerateContentUrl(String key) {
         String base = normalizeGeminiBaseUrl(url);
         String modelId = normalizeGeminiModelId(model);
-        return appendGeminiApiKey(base + "/models/" + modelId + "%3AgenerateContent", key);
+        return base + "/models/" + modelId + ":generateContent";
     }
 
     static String normalizeGeminiModelId(String modelId) {
@@ -821,13 +836,22 @@ public class LlmClient {
             return DEFAULT_GEMINI_URL;
         }
         String u = endpoint.endsWith("/") ? endpoint.substring(0, endpoint.length() - 1) : endpoint;
-        if (u.endsWith(":generateContent")) {
+        if (u.endsWith(":generateContent") || u.endsWith("%3AgenerateContent")) {
             int modelsIdx = u.indexOf("/models/");
             if (modelsIdx > 0) {
                 return u.substring(0, modelsIdx);
             }
         }
         return u;
+    }
+
+    static Map<String, String> buildGeminiHeaders(String key) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        if (key != null && !key.isBlank()) {
+            headers.put("x-goog-api-key", key);
+        }
+        return headers;
     }
 
     static String appendGeminiApiKey(String requestUrl, String key) {
@@ -858,6 +882,11 @@ public class LlmClient {
                 .filter(k -> k != null && !k.isBlank())
                 .findFirst()
                 .orElse(null);
+    }
+
+    static String resolveGeminiApiKeyFromEnvForAutoDetect() {
+        String key = System.getenv("GEMINI_API_KEY");
+        return key != null && !key.isBlank() ? key : null;
     }
 
     // ---- Anthropic generate ----
@@ -1674,6 +1703,13 @@ public class LlmClient {
             return isEndpointReachable(url);
         }
         for (Map.Entry<String, ApiType> check : EXPLICIT_URL_HEALTH_CHECK_SUFFIXES) {
+            if (check.getValue() == ApiType.gemini && isGeminiEndpoint(url)) {
+                if (isEndpointReachable(url)) {
+                    apiType = ApiType.gemini;
+                    return true;
+                }
+                continue;
+            }
             if (tryHealthCheck(url + check.getKey())) {
                 apiType = check.getValue();
                 return true;
@@ -1775,8 +1811,11 @@ public class LlmClient {
         return true;
     }
 
-    private boolean tryGemini() {
-        String key = resolveGeminiApiKeyFromEnv();
+    private boolean tryGemini(boolean includeGoogleApiKeyEnv) {
+        String key = apiKey;
+        if (key == null || key.isBlank()) {
+            key = includeGoogleApiKeyEnv ? resolveGeminiApiKeyFromEnv() : resolveGeminiApiKeyFromEnvForAutoDetect();
+        }
         if (key == null || key.isBlank()) {
             return false;
         }
@@ -1924,7 +1963,7 @@ public class LlmClient {
                 return false;
             }
             String base = normalizeGeminiBaseUrl(endpoint);
-            return tryHealthCheck(appendGeminiApiKey(base + "/models", key));
+            return tryHealthCheck(base + "/models", buildGeminiHeaders(key));
         }
         return tryHealthCheck(endpoint + "/api/tags", Map.of(), false)
                 || tryHealthCheck(endpoint + "/v1/models", Map.of(), false)

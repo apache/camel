@@ -26,8 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -132,22 +133,21 @@ class AiProviderSelectorTest {
 
         selector.applyChoice(client, "gemini", "gemini-2.0-flash", "");
 
-        assertEquals(LlmClient.ApiType.gemini, client.apiType());
-        assertEquals("gemini-2.0-flash", client.model());
+        assertThat(client.apiType()).isEqualTo(LlmClient.ApiType.gemini);
+        assertThat(client.model()).isEqualTo("gemini-2.0-flash");
     }
 
     @Test
     void applyChoiceRejectsUnknownProviderWithActionableMessage() {
         LlmClient client = LlmClient.create();
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> selector.applyChoice(client, "bogus", null, null));
-
-        assertTrue(ex.getMessage().contains("bogus"));
-        assertTrue(ex.getMessage().contains("gemini"));
-        assertTrue(ex.getMessage().contains("ollama"));
-        assertTrue(ex.getMessage().contains("openai"));
-        assertTrue(ex.getMessage().contains("anthropic"));
-        assertTrue(ex.getMessage().contains("watsonx"));
+        assertThatThrownBy(() -> selector.applyChoice(client, "bogus", null, null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("bogus")
+                .hasMessageContaining("gemini")
+                .hasMessageContaining("ollama")
+                .hasMessageContaining("openai")
+                .hasMessageContaining("anthropic")
+                .hasMessageContaining("watsonx");
     }
 }
