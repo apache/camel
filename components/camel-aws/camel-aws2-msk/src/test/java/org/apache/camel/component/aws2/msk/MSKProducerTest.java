@@ -149,6 +149,34 @@ public class MSKProducerTest extends CamelTestSupport {
         assertEquals(ClusterState.ACTIVE.name(), resultGet.clusterInfo().state().toString());
     }
 
+    @Test
+    void listClustersWithPojoRequestAndWrongBodyTypeThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:listClustersPojo", "not a ListClustersRequest"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("listClusters operation requires ListClustersRequest in POJO mode");
+    }
+
+    @Test
+    void createClusterWithPojoRequestAndWrongBodyTypeThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:createClusterPojo", "not a CreateClusterRequest"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("createCluster operation requires CreateClusterRequest in POJO mode");
+    }
+
+    @Test
+    void deleteClusterWithPojoRequestAndWrongBodyTypeThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:deleteClusterPojo", "not a DeleteClusterRequest"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("deleteCluster operation requires DeleteClusterRequest in POJO mode");
+    }
+
+    @Test
+    void describeClusterWithPojoRequestAndWrongBodyTypeThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:describeClusterPojo", "not a DescribeClusterRequest"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("describeCluster operation requires DescribeClusterRequest in POJO mode");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -165,6 +193,12 @@ public class MSKProducerTest extends CamelTestSupport {
                         .to("mock:result");
                 from("direct:describeCluster").to("aws2-msk://test?mskClient=#amazonMskClient&operation=describeCluster")
                         .to("mock:result");
+                from("direct:createClusterPojo")
+                        .to("aws2-msk://test?mskClient=#amazonMskClient&operation=createCluster&pojoRequest=true");
+                from("direct:deleteClusterPojo")
+                        .to("aws2-msk://test?mskClient=#amazonMskClient&operation=deleteCluster&pojoRequest=true");
+                from("direct:describeClusterPojo")
+                        .to("aws2-msk://test?mskClient=#amazonMskClient&operation=describeCluster&pojoRequest=true");
             }
         };
     }

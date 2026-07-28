@@ -115,6 +115,9 @@ public class MSK2Producer extends DefaultProducer {
                 message.setBody(result);
                 message.setHeader(MSK2Constants.NEXT_TOKEN, result.nextToken());
                 message.setHeader(MSK2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextToken()));
+            } else {
+                throw new IllegalArgumentException(
+                        "listClusters operation requires ListClustersRequest in POJO mode");
             }
         } else {
             ListClustersRequest.Builder builder = ListClustersRequest.builder();
@@ -157,6 +160,9 @@ public class MSK2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
+            } else {
+                throw new IllegalArgumentException(
+                        "createCluster operation requires CreateClusterRequest in POJO mode");
             }
         } else {
             CreateClusterRequest.Builder builder = CreateClusterRequest.builder();
@@ -212,6 +218,9 @@ public class MSK2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteCluster operation requires DeleteClusterRequest in POJO mode");
             }
         } else {
             DeleteClusterRequest.Builder builder = DeleteClusterRequest.builder();
@@ -246,6 +255,9 @@ public class MSK2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeCluster operation requires DescribeClusterRequest in POJO mode");
             }
         } else {
             DescribeClusterRequest.Builder builder = DescribeClusterRequest.builder();
