@@ -26,6 +26,7 @@ import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.main.Main;
 import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -41,6 +42,21 @@ class JWTIssuerAudienceRequiredMainHttpServerTest {
 
     @RegisterExtension
     static AvailablePortFinder.Port port = AvailablePortFinder.find();
+
+    private static final Vertx VERTX = Vertx.vertx();
+
+    @AfterAll
+    static void closeVertx() {
+        VERTX.close();
+    }
+
+    private static JWTAuth testKeystoreJwtAuth() {
+        return JWTAuth.create(VERTX, new JWTAuthOptions(
+                new JsonObject().put("keyStore", new JsonObject()
+                        .put("type", "jks")
+                        .put("path", "test-camel-main-auth-jwt.jks")
+                        .put("password", "changeme"))));
+    }
 
     @Test
     void serverFailsToStartWithoutIssuerOrAudience() {
@@ -65,13 +81,7 @@ class JWTIssuerAudienceRequiredMainHttpServerTest {
         try {
             main.start();
 
-            JWTAuth jwtAuth = JWTAuth.create(Vertx.vertx(), new JWTAuthOptions(
-                    new JsonObject().put("keyStore", new JsonObject()
-                            .put("type", "jks")
-                            .put("path", "test-camel-main-auth-jwt.jks")
-                            .put("password", "changeme"))));
-
-            String token = jwtAuth.generateToken(new JsonObject().put("admin", "camel"), new JWTOptions());
+            String token = testKeystoreJwtAuth().generateToken(new JsonObject().put("admin", "camel"), new JWTOptions());
 
             given()
                     .header("Authorization", "Bearer " + token)
@@ -91,14 +101,8 @@ class JWTIssuerAudienceRequiredMainHttpServerTest {
         try {
             main.start();
 
-            JWTAuth jwtAuth = JWTAuth.create(Vertx.vertx(), new JWTAuthOptions(
-                    new JsonObject().put("keyStore", new JsonObject()
-                            .put("type", "jks")
-                            .put("path", "test-camel-main-auth-jwt.jks")
-                            .put("password", "changeme"))));
-
             // signed by a trusted key, but minted for a different issuer and audience
-            String foreignToken = jwtAuth.generateToken(
+            String foreignToken = testKeystoreJwtAuth().generateToken(
                     new JsonObject().put("admin", "camel"),
                     new JWTOptions()
                             .setIssuer("https://another.example")

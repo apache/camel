@@ -68,7 +68,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private String jwtIssuer;
     @Metadata(label = "security")
     private String jwtAudience;
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false", security = "insecure:dev")
     private boolean jwtAllowMissingIssuerAndAudience;
 
     public HttpServerConfigurationProperties(MainConfigurationProperties parent) {

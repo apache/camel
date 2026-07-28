@@ -77,7 +77,7 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private String jwtIssuer;
     @Metadata(label = "security")
     private String jwtAudience;
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false", security = "insecure:dev")
     private boolean jwtAllowMissingIssuerAndAudience;
 
     public HttpManagementServerConfigurationProperties(MainConfigurationProperties parent) {
