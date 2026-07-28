@@ -114,4 +114,5 @@ class IntegrationInfo {
     Set<String> devConsoles = Set.of();
     boolean hasBrowseableEndpoints;
     int transformerCount;
+    final List<VaultSecretInfo> vaultSecrets = new ArrayList<>();
 }
