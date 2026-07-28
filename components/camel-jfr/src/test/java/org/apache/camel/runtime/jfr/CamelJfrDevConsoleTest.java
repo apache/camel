@@ -18,6 +18,9 @@ package org.apache.camel.runtime.jfr;
 
 import java.util.Map;
 
+import jdk.jfr.Event;
+import jdk.jfr.EventType;
+import jdk.jfr.Recording;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.console.DevConsole;
@@ -25,6 +28,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,6 +83,93 @@ class CamelJfrDevConsoleTest extends CamelTestSupport {
             String text = (String) console.call(DevConsole.MediaType.TEXT, Map.of("command", "status"));
 
             assertThat(text).contains("registered: false");
+        }
+    }
+
+    @Test
+    void enableAndDisableToggleSingleEventOnLiveRecording() {
+        CamelJfrDevConsole console = resolveConsole(context);
+        try (Recording recording = new Recording()) {
+            for (Class<?> c : CamelJfrRuntimeInstrumentation.RUNTIME_EVENTS) {
+                recording.enable(c.getName());
+            }
+            recording.start();
+            assertThat(EventType.getEventType(CamelRouteEvent.class).isEnabled()).isTrue();
+
+            String disabled = (String) console.call(DevConsole.MediaType.TEXT,
+                    Map.of("command", "disable", "event", "route"));
+            assertThat(disabled).contains("disabled route on 1 recording(s)");
+            assertThat(EventType.getEventType(CamelRouteEvent.class).isEnabled()).isFalse();
+            assertThat(EventType.getEventType(CamelProcessorEvent.class).isEnabled()).isTrue();
+
+            String enabled = (String) console.call(DevConsole.MediaType.TEXT,
+                    Map.of("command", "enable", "event", "route"));
+            assertThat(enabled).contains("enabled route on 1 recording(s)");
+            assertThat(EventType.getEventType(CamelRouteEvent.class).isEnabled()).isTrue();
+        }
+    }
+
+    @Test
+    void enableAndDisableToggleAllEventsOnLiveRecording() {
+        CamelJfrDevConsole console = resolveConsole(context);
+        try (Recording recording = new Recording()) {
+            for (Class<?> c : CamelJfrRuntimeInstrumentation.RUNTIME_EVENTS) {
+                recording.enable(c.getName());
+            }
+            recording.start();
+
+            String disabled = (String) console.call(DevConsole.MediaType.TEXT, Map.of("command", "disable"));
+            assertThat(disabled).contains("disabled all on 1 recording(s)");
+            for (Class<?> c : CamelJfrRuntimeInstrumentation.RUNTIME_EVENTS) {
+                assertThat(EventType.getEventType(c.asSubclass(Event.class)).isEnabled()).isFalse();
+            }
+
+            String enabled = (String) console.call(DevConsole.MediaType.TEXT, Map.of("command", "enable"));
+            assertThat(enabled).contains("enabled all on 1 recording(s)");
+            for (Class<?> c : CamelJfrRuntimeInstrumentation.RUNTIME_EVENTS) {
+                assertThat(EventType.getEventType(c.asSubclass(Event.class)).isEnabled()).isTrue();
+            }
+        }
+    }
+
+    @Test
+    void toggleReturnsErrorForUnknownEvent() {
+        CamelJfrDevConsole console = resolveConsole(context);
+        try (Recording recording = new Recording()) {
+            recording.start();
+
+            String result = (String) console.call(DevConsole.MediaType.TEXT,
+                    Map.of("command", "disable", "event", "bogus"));
+
+            assertThat(result)
+                    .contains("unknown event: bogus")
+                    .contains("route, processor, exchange, send, failed, redelivery, all");
+        }
+    }
+
+    @Test
+    void toggleReportsNoActiveRecordingWhenNoneRunning() {
+        CamelJfrDevConsole console = resolveConsole(context);
+
+        String result = (String) console.call(DevConsole.MediaType.TEXT, Map.of("command", "enable"));
+
+        assertThat(result).contains("no active recording");
+    }
+
+    @Test
+    void jsonStatusAndToggleReflectLiveState() {
+        CamelJfrDevConsole console = resolveConsole(context);
+        try (Recording recording = new Recording()) {
+            recording.enable(CamelRouteEvent.class.getName());
+            recording.start();
+
+            JsonObject status = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("command", "status"));
+            assertThat(status.getBoolean("registered")).isTrue();
+
+            JsonObject toggle = (JsonObject) console.call(DevConsole.MediaType.JSON,
+                    Map.of("command", "disable", "event", "route"));
+            assertThat(toggle.getString("result")).contains("disabled route on 1 recording(s)");
+            assertThat(EventType.getEventType(CamelRouteEvent.class).isEnabled()).isFalse();
         }
     }
 }
