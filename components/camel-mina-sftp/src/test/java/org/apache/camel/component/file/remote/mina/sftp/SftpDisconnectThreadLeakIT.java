@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.file.remote.mina.sftp;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -52,16 +53,15 @@ class SftpDisconnectThreadLeakIT extends SftpServerTestSupport {
                                        + service.getKnownHostsFile(),
                     "Hello World " + i, Exchange.FILE_NAME, "hello" + i + ".txt");
 
-            File file = ftpFile("hello" + i + ".txt").toFile();
-            assertTrue(file.exists(), "File should exist: " + file);
+            Path file = ftpFile("hello" + i + ".txt");
+            assertTrue(Files.exists(file), "File should exist: " + file);
         }
 
         // Verify files were written correctly
         for (int i = 0; i < transfers; i++) {
-            File file = ftpFile("hello" + i + ".txt").toFile();
-            assertTrue(file.exists(), "File should exist: " + file);
-            assertEquals("Hello World " + i,
-                    context.getTypeConverter().convertTo(String.class, file));
+            Path file = ftpFile("hello" + i + ".txt");
+            assertTrue(Files.exists(file), "File should exist: " + file);
+            assertEquals("Hello World " + i, Files.readString(file));
         }
 
         // After all transfers with disconnect=true, there should be no SshClient threads remaining.
