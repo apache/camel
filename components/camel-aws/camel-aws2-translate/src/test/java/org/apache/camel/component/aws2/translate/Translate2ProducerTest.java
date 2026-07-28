@@ -26,6 +26,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Translate2ProducerTest extends CamelTestSupport {
@@ -74,6 +75,13 @@ public class Translate2ProducerTest extends CamelTestSupport {
         String resultGet = exchange.getIn().getBody(String.class);
         assertEquals("Hello", resultGet);
 
+    }
+
+    @Test
+    void translateTextWithPojoRequestAndWrongBodyTypeThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:translatePojoText", "not a TranslateTextRequest"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("translateText operation requires TranslateTextRequest in POJO mode");
     }
 
     @Test
