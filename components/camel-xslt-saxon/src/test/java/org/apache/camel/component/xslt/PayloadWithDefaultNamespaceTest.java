@@ -20,7 +20,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
     private static final String PAYLOAD
             = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Message xmlns=\"http://www.camel.apache.org/envelope\"><Version>2.0</Version></Message>";
 
@@ -35,7 +38,10 @@ public class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
     }
 
     @Test
-    public void testTransformWithDefaultNamespace() {
-        template.sendBody("direct:start", PAYLOAD);
+    void testTransformWithDefaultNamespace() {
+        String result = template.requestBody("direct:start", PAYLOAD, String.class);
+        assertNotNull(result, "XSLT transformation with default namespace should produce output");
+        assertTrue(result.contains("transformed"), "Output should contain the 'transformed' root element from the XSLT");
+        assertTrue(result.contains("cheese"), "Output should contain the 'cheese' element from the XSLT");
     }
 }

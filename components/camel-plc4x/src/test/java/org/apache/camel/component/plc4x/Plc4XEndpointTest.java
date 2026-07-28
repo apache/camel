@@ -28,7 +28,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Mockito.*;
 
-public class Plc4XEndpointTest {
+class Plc4XEndpointTest {
 
     Plc4XEndpoint sut;
 
@@ -56,11 +56,12 @@ public class Plc4XEndpointTest {
     }
 
     @Test
-    public void doStopBadConnection() throws Exception {
+    void doStopDisconnectedConnection() throws Exception {
         PlcConnection plcConnectionMock = mock(PlcConnection.class);
         sut.connection = plcConnectionMock;
-        doThrow(new RuntimeException("oh noes")).when(plcConnectionMock).close();
+        // isConnected() returns false by default on the mock, so doStop() should skip close()
         sut.doStop();
+        verify(plcConnectionMock, never()).close();
     }
 
 }

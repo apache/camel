@@ -283,7 +283,7 @@ class PushNotificationDispatcherTest {
     }
 
     @Test
-    void dispatchSkipsWhenNoConfigs() {
+    void dispatchSkipsWhenNoConfigs() throws Exception {
         dispatcher = new PushNotificationDispatcher(
                 startedClient(), store, 0, 1000, executor, true);
 
@@ -292,6 +292,9 @@ class PushNotificationDispatcherTest {
                 .status(new TaskStatus(TaskState.COMPLETED))
                 .build();
         dispatcher.dispatch("task-1", StreamResponse.ofStatusUpdate(event));
+
+        // No push configs registered, so no work should have been dispatched
+        assertThat(pendingWork(dispatcher)).isEqualTo(0);
     }
 
     @Test
