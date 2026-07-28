@@ -587,7 +587,7 @@ public class LlmClient {
 
     private String generateGemini(String systemPrompt, String userPrompt) {
         JsonObject request = buildGeminiGenerateRequest(systemPrompt, userPrompt, null);
-        String apiUrl = geminiGenerateContentUrl(resolveGeminiApiKey());
+        String apiUrl = geminiGenerateContentUrl();
         JsonObject response = sendGeminiRequest(apiUrl, request);
         return extractGeminiTextFromResponse(response);
     }
@@ -595,7 +595,7 @@ public class LlmClient {
     private ChatResponse chatGeminiFormat(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
         JsonObject request = buildGeminiGenerateRequest(systemPrompt, null, tools);
         request.put("contents", buildGeminiContents(messages));
-        String apiUrl = geminiGenerateContentUrl(resolveGeminiApiKey());
+        String apiUrl = geminiGenerateContentUrl();
         JsonObject response = sendGeminiRequest(apiUrl, request);
         return parseGeminiChatResponse(response);
     }
@@ -815,7 +815,7 @@ public class LlmClient {
         return sendRequestWithHeaders(requestUrl, body, buildGeminiHeaders(resolveGeminiApiKey()));
     }
 
-    String geminiGenerateContentUrl(String key) {
+    String geminiGenerateContentUrl() {
         String base = normalizeGeminiBaseUrl(url);
         String modelId = normalizeGeminiModelId(model);
         return base + "/models/" + modelId + ":generateContent";
@@ -852,13 +852,6 @@ public class LlmClient {
             headers.put("x-goog-api-key", key);
         }
         return headers;
-    }
-
-    static String appendGeminiApiKey(String requestUrl, String key) {
-        if (key == null || key.isBlank()) {
-            return requestUrl;
-        }
-        return requestUrl + (requestUrl.contains("?") ? "&" : "?") + "key=" + key;
     }
 
     static boolean isGeminiEndpoint(String endpoint) {

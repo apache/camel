@@ -80,7 +80,7 @@ class LlmClientGeminiTest {
                 .withModel("gemini-2.0-flash")
                 .withApiKey("gemini-key");
 
-        assertThat(client.geminiGenerateContentUrl("gemini-key"))
+        assertThat(client.geminiGenerateContentUrl())
                 .isEqualTo(
                         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent");
     }
