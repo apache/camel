@@ -573,6 +573,14 @@ public class KameletMain extends MainCommandLineSupport {
             configure().httpManagementServer().withInfoEnabled(true);
             configure().httpManagementServer().withJolokiaEnabled(true);
         }
+        boolean openapiUi = "true".equals(getInitialProperties().get(getInstanceType() + ".openapiUi"));
+        if (openapiUi) {
+            configure().httpManagementServer().withEnabled(true);
+            configure().httpManagementServer().withOpenapiUiEnabled(true);
+            configure().httpServer().withEnabled(true);
+            configure().rest().withComponent("platform-http");
+            configure().rest().withApiContextPath("/q/openapi.json");
+        }
         boolean tracing = "true".equals(getInitialProperties().get(getInstanceType() + ".backlogTracing"));
         if (tracing) {
             configure().tracerConfig().withEnabled(true);

@@ -845,6 +845,7 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, HEALTH, serverOptions.health ? "true" : "false");
         writeSetting(main, profileProperties, METRICS, serverOptions.metrics ? "true" : "false");
         writeSetting(main, profileProperties, CONSOLE, serverOptions.console ? "true" : "false");
+        writeSetting(main, profileProperties, OPENAPI_UI, serverOptions.openapiUi ? "true" : "false");
         writeSetting(main, profileProperties, VERBOSE, verbose ? "true" : "false");
         // the runtime version of Camel is what is loaded via the catalog
         writeSetting(main, profileProperties, CAMEL_VERSION, new DefaultCamelCatalog().getCatalogVersion());
@@ -1249,6 +1250,17 @@ public class Run extends CamelCommand {
         if (serverOptions.observe) {
             dependencies.add("camel:observability-services");
             main.addOverrideProperty("camel.metrics.logMetricsOnShutdown", "false");
+        }
+        if (serverOptions.openapiUi) {
+            if (serverOptions.port == -1) {
+                serverOptions.port = 8080;
+            }
+            dependencies.add("camel:platform-http-main");
+            dependencies.add("camel:openapi-java");
+            main.addOverrideProperty("camel.rest.apiContextPath", "/q/openapi.json");
+            main.addOverrideProperty("camel.management.openapiUiEnabled", "true");
+            writeSetting(main, profileProperties, "camel.rest.apiContextPath", "/q/openapi.json");
+            writeSetting(main, profileProperties, "camel.management.openapiUiEnabled", "true");
         }
         if (debugOptions.openTelemetryAgent) {
             dependencies.add("camel:opentelemetry2");
@@ -3080,6 +3092,10 @@ public class Run extends CamelCommand {
         @Option(names = { "--console" }, defaultValue = "false",
                 description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
         boolean console;
+
+        @Option(names = { "--openapi-ui" }, defaultValue = "false",
+                description = "Swagger UI for REST OpenAPI at /q/openapi (OpenAPI document at /q/openapi.json; port 8080 by default)")
+        boolean openapiUi;
 
         @Deprecated
         @Option(names = { "--health" }, defaultValue = "false",

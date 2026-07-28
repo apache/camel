@@ -105,6 +105,8 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
         server.setUploadSourceDir(configuration.getUploadSourceDir());
         server.setDownloadEnabled(configuration.isDownloadEnabled());
         server.setSendEnabled(configuration.isSendEnabled());
+        server.setOpenapiUiEnabled(configuration.isOpenapiUiEnabled());
+        server.setOpenapiUiSpecPath(configuration.getOpenapiUiSpecPath());
 
         if (configuration.isAuthenticationEnabled()) {
             configureAuthentication(server, configuration);
