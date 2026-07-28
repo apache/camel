@@ -210,6 +210,48 @@ public class MQProducerTest extends CamelTestSupport {
         assertEquals("1", resultGet.brokerId());
     }
 
+    @Test
+    void listBrokersWithPojoRequestAndWrongBodyTypeThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:listBrokersPojo", "not a ListBrokersRequest"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("listBrokers operation requires ListBrokersRequest in POJO mode");
+    }
+
+    @Test
+    void createBrokerWithPojoRequestAndWrongBodyTypeThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:createBrokerPojo", "not a CreateBrokerRequest"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("createBroker operation requires CreateBrokerRequest in POJO mode");
+    }
+
+    @Test
+    void deleteBrokerWithPojoRequestAndWrongBodyTypeThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:deleteBrokerPojo", "not a DeleteBrokerRequest"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("deleteBroker operation requires DeleteBrokerRequest in POJO mode");
+    }
+
+    @Test
+    void rebootBrokerWithPojoRequestAndWrongBodyTypeThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:rebootBrokerPojo", "not a RebootBrokerRequest"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("rebootBroker operation requires RebootBrokerRequest in POJO mode");
+    }
+
+    @Test
+    void updateBrokerWithPojoRequestAndWrongBodyTypeThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:updateBrokerPojo", "not an UpdateBrokerRequest"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("updateBroker operation requires UpdateBrokerRequest in POJO mode");
+    }
+
+    @Test
+    void describeBrokerWithPojoRequestAndWrongBodyTypeThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:describeBrokerPojo", "not a DescribeBrokerRequest"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage("describeBroker operation requires DescribeBrokerRequest in POJO mode");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -230,6 +272,16 @@ public class MQProducerTest extends CamelTestSupport {
                         .to("mock:result");
                 from("direct:describeBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=describeBroker")
                         .to("mock:result");
+                from("direct:createBrokerPojo")
+                        .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=createBroker&pojoRequest=true");
+                from("direct:deleteBrokerPojo")
+                        .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=deleteBroker&pojoRequest=true");
+                from("direct:rebootBrokerPojo")
+                        .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=rebootBroker&pojoRequest=true");
+                from("direct:updateBrokerPojo")
+                        .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=updateBroker&pojoRequest=true");
+                from("direct:describeBrokerPojo")
+                        .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=describeBroker&pojoRequest=true");
             }
         };
     }
