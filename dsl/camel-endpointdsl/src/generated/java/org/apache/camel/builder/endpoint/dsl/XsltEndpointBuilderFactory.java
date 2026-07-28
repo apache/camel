@@ -548,6 +548,40 @@ public interface XsltEndpointBuilderFactory {
             return this;
         }
         /**
+         * Limits the total number of XPath operators in an XSL Stylesheet. The
+         * default (from JDK) is 10000. The limit is set per TransformerFactory
+         * instance used by this endpoint.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         * 
+         * @param xpathTotalOpLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedXsltEndpointBuilder xpathTotalOpLimit(int xpathTotalOpLimit) {
+            doSetProperty("xpathTotalOpLimit", xpathTotalOpLimit);
+            return this;
+        }
+        /**
+         * Limits the total number of XPath operators in an XSL Stylesheet. The
+         * default (from JDK) is 10000. The limit is set per TransformerFactory
+         * instance used by this endpoint.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         * 
+         * @param xpathTotalOpLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedXsltEndpointBuilder xpathTotalOpLimit(String xpathTotalOpLimit) {
+            doSetProperty("xpathTotalOpLimit", xpathTotalOpLimit);
+            return this;
+        }
+        /**
          * A consumer to messages generated during XSLT transformations.
          * 
          * The option is a:
