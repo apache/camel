@@ -141,6 +141,30 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
         return (enable ? "enabled " : "disabled ") + event + " on " + recordings.size() + " recording(s)";
     }
 
+    private String doJfc(Map<String, Object> options) {
+        Object disableOption = options.get("disable");
+        List<String> disabled = disableOption != null
+                ? List.of(disableOption.toString().split(","))
+                : List.of();
+
+        StringBuilder xml = new StringBuilder();
+        xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        xml.append("<configuration version=\"2.0\">\n");
+        for (Map.Entry<String, Class<?>> entry : EVENT_BY_SHORT_NAME.entrySet()) {
+            EventType type = EventType.getEventType(entry.getValue().asSubclass(Event.class));
+            String eventName = type != null ? type.getName() : "org.apache.camel." + entry.getKey();
+            boolean enabled = !disabled.contains(entry.getKey());
+            xml.append("<event name=\"").append(eventName).append("\">\n")
+                    .append("    <setting name=\"enabled\">").append(enabled).append("</setting>\n")
+                    .append("</event>\n");
+        }
+        xml.append("</configuration>\n");
+
+        return xml + "\nSave the above to a file, e.g. camel-runtime-events.jfc, then run:\n"
+               + "jcmd " + ProcessHandle.current().pid() + " JFR.start settings=default,camel-runtime-events.jfc"
+               + "\n(replace 'default' with whatever base profile your recording already uses)";
+    }
+
     @Override
     protected String doCallText(Map<String, Object> options) {
         String command = optionString(options, "command");
@@ -151,7 +175,8 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
             case "status" -> doStatus();
             case "enable" -> doToggle(options, true);
             case "disable" -> doToggle(options, false);
-            default -> "unknown command: " + command + ". Valid values: status, enable, disable";
+            case "jfc" -> doJfc(options);
+            default -> "unknown command: " + command + ". Valid values: status, enable, disable, jfc";
         };
     }
 
@@ -178,6 +203,8 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
             root.put("events", events);
         } else if ("enable".equals(command) || "disable".equals(command)) {
             root.put("result", doToggle(options, "enable".equals(command)));
+        } else if ("jfc".equals(command)) {
+            root.put("jfc", doJfc(options));
         } else {
             root.put("error", "unknown command: " + command);
         }

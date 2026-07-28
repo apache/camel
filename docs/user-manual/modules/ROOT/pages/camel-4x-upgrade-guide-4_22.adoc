@@ -1432,4 +1432,6 @@ redeliveries. The events are cheap when no recording is active.
 
 To restore the previous behavior (startup instrumentation only), set
 `runtimeEnabled` to `false` on the `FlightRecorderStartupStepRecorder`
-instance, for example via a `CamelContextCustomizer`.
+instance, for example via a `CamelContextCustomizer`.A new `jfr` dev console (`status`/`enable`/`disable`/`jfc` commands) allows inspecting and
+live-toggling the six runtime events on an already-running recording, without restarting
+the JVM.

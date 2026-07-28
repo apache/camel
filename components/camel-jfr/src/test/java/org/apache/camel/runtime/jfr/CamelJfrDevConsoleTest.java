@@ -172,4 +172,31 @@ class CamelJfrDevConsoleTest extends CamelTestSupport {
             assertThat(EventType.getEventType(CamelRouteEvent.class).isEnabled()).isFalse();
         }
     }
+
+    @Test
+    void jfcGeneratesOverlayWithAllEventsEnabledByDefault() {
+        CamelJfrDevConsole console = resolveConsole(context);
+
+        String text = (String) console.call(DevConsole.MediaType.TEXT, Map.of("command", "jfc"));
+
+        assertThat(text)
+                .contains("<event name=\"org.apache.camel.route\">")
+                .contains("<setting name=\"enabled\">true</setting>")
+                .contains("settings=default");
+    }
+
+    @Test
+    void jfcHonorsDisableOptionForListedEvents() {
+        CamelJfrDevConsole console = resolveConsole(context);
+
+        String text = (String) console.call(DevConsole.MediaType.TEXT,
+                Map.of("command", "jfc", "disable", "route,failed"));
+
+        assertThat(text)
+                .contains("<event name=\"org.apache.camel.route\">\n    <setting name=\"enabled\">false</setting>")
+                .contains(
+                        "<event name=\"org.apache.camel.exchange.failed\">\n    <setting name=\"enabled\">false</setting>")
+                .contains(
+                        "<event name=\"org.apache.camel.processor\">\n    <setting name=\"enabled\">true</setting>");
+    }
 }
