@@ -26,7 +26,10 @@ import jdk.jfr.FlightRecorder;
 import jdk.jfr.FlightRecorderListener;
 import jdk.jfr.Recording;
 import jdk.jfr.RecordingState;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.StartupStep;
+import org.apache.camel.runtime.jfr.CamelJfrRuntimeInstrumentation;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.startup.DefaultStartupStepRecorder;
@@ -37,16 +40,36 @@ import org.slf4j.LoggerFactory;
  * To capture startup steps to be emitted to Java Flight Recorder.
  */
 @JdkService(StartupStepRecorder.FACTORY)
-public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorder {
+public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorder implements CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlightRecorderStartupStepRecorder.class);
 
+    private CamelContext camelContext;
+    private boolean runtimeEnabled = true;
     private Recording rec;
     private FlightRecorderListener frl;
 
     public FlightRecorderStartupStepRecorder() {
         // should default be enabled if discovered from classpath
         setEnabled(true);
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    public boolean isRuntimeEnabled() {
+        return runtimeEnabled;
+    }
+
+    public void setRuntimeEnabled(boolean runtimeEnabled) {
+        this.runtimeEnabled = runtimeEnabled;
     }
 
     @Override
@@ -93,6 +116,10 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
                 LOG.info("Starting Java flight recorder with profile: {}", getRecordingProfile());
             }
             rec.start();
+        }
+
+        if (runtimeEnabled && camelContext != null) {
+            camelContext.addLifecycleStrategy(new CamelJfrRuntimeInstrumentation());
         }
     }
 
