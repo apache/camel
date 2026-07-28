@@ -147,6 +147,9 @@ public class Comprehend2Producer extends DefaultProducer {
                     message.setHeader(Comprehend2Constants.DETECTED_LANGUAGE, topLanguage.languageCode());
                     message.setHeader(Comprehend2Constants.DETECTED_LANGUAGE_SCORE, topLanguage.score());
                 }
+            } else {
+                throw new IllegalArgumentException(
+                        "detectDominantLanguage operation requires DetectDominantLanguageRequest in POJO mode");
             }
         } else {
             DetectDominantLanguageRequest.Builder request = DetectDominantLanguageRequest.builder();
@@ -181,6 +184,9 @@ public class Comprehend2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.entities());
+            } else {
+                throw new IllegalArgumentException(
+                        "detectEntities operation requires DetectEntitiesRequest in POJO mode");
             }
         } else {
             DetectEntitiesRequest.Builder request = DetectEntitiesRequest.builder();
@@ -211,6 +217,9 @@ public class Comprehend2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.keyPhrases());
+            } else {
+                throw new IllegalArgumentException(
+                        "detectKeyPhrases operation requires DetectKeyPhrasesRequest in POJO mode");
             }
         } else {
             DetectKeyPhrasesRequest.Builder request = DetectKeyPhrasesRequest.builder();
@@ -243,6 +252,9 @@ public class Comprehend2Producer extends DefaultProducer {
                 message.setBody(result);
                 message.setHeader(Comprehend2Constants.DETECTED_SENTIMENT, result.sentimentAsString());
                 message.setHeader(Comprehend2Constants.DETECTED_SENTIMENT_SCORE, result.sentimentScore());
+            } else {
+                throw new IllegalArgumentException(
+                        "detectSentiment operation requires DetectSentimentRequest in POJO mode");
             }
         } else {
             DetectSentimentRequest.Builder request = DetectSentimentRequest.builder();
@@ -275,6 +287,9 @@ public class Comprehend2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.syntaxTokens());
+            } else {
+                throw new IllegalArgumentException(
+                        "detectSyntax operation requires DetectSyntaxRequest in POJO mode");
             }
         } else {
             DetectSyntaxRequest.Builder request = DetectSyntaxRequest.builder();
@@ -305,6 +320,9 @@ public class Comprehend2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.entities());
+            } else {
+                throw new IllegalArgumentException(
+                        "detectPiiEntities operation requires DetectPiiEntitiesRequest in POJO mode");
             }
         } else {
             DetectPiiEntitiesRequest.Builder request = DetectPiiEntitiesRequest.builder();
@@ -335,6 +353,9 @@ public class Comprehend2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.resultList());
+            } else {
+                throw new IllegalArgumentException(
+                        "detectToxicContent operation requires DetectToxicContentRequest in POJO mode");
             }
         } else {
             DetectToxicContentRequest.Builder request = DetectToxicContentRequest.builder();
@@ -366,6 +387,9 @@ public class Comprehend2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "classifyDocument operation requires ClassifyDocumentRequest in POJO mode");
             }
         } else {
             ClassifyDocumentRequest.Builder request = ClassifyDocumentRequest.builder();
@@ -400,6 +424,9 @@ public class Comprehend2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.labels());
+            } else {
+                throw new IllegalArgumentException(
+                        "containsPiiEntities operation requires ContainsPiiEntitiesRequest in POJO mode");
             }
         } else {
             ContainsPiiEntitiesRequest.Builder request = ContainsPiiEntitiesRequest.builder();
