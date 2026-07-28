@@ -1330,3 +1330,18 @@ AWS2 producers is tracked by CAMEL-24261.
 If you relied on the previous silent no-op, ensure the body is the correct
 request type when `pojoRequest=true`, or drive the operation through headers
 with `pojoRequest=false`.
+
+=== camel-main - JWT authentication requires an issuer or an audience
+
+The embedded HTTP server and the management server build their JWT authenticator from the
+configured keystore. When neither `jwtIssuer` nor `jwtAudience` was set, no `JWTOptions` was
+applied, so tokens were only checked for signature and expiry and the `iss` and `aud` claims
+were not validated.
+
+The server now fails to start when a JWT keystore is configured but neither `camel.server.jwtIssuer`
+nor `camel.server.jwtAudience` is set (and likewise for `camel.management.*`). Configure the issuer
+and/or the audience that tokens are expected to carry.
+
+If a deployment genuinely wants signature and expiry validation only, set
+`camel.server.jwtAllowMissingIssuerAndAudience=true` (or `camel.management.jwtAllowMissingIssuerAndAudience=true`)
+to keep the previous behaviour.

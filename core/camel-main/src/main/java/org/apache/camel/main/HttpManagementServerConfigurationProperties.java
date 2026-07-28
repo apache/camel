@@ -77,6 +77,8 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private String jwtIssuer;
     @Metadata(label = "security")
     private String jwtAudience;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean jwtAllowMissingIssuerAndAudience;
 
     public HttpManagementServerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -389,6 +391,20 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
         this.jwtAudience = jwtAudience;
     }
 
+    public boolean isJwtAllowMissingIssuerAndAudience() {
+        return jwtAllowMissingIssuerAndAudience;
+    }
+
+    /**
+     * Whether JWT authentication is allowed to run without an expected issuer or audience. By default the management
+     * server fails to start when a JWT keystore is configured but neither jwtIssuer nor jwtAudience is set, because the
+     * tokens would only be checked for signature and expiry. Enable this to accept that and validate signature and
+     * expiry only.
+     */
+    public void setJwtAllowMissingIssuerAndAudience(boolean jwtAllowMissingIssuerAndAudience) {
+        this.jwtAllowMissingIssuerAndAudience = jwtAllowMissingIssuerAndAudience;
+    }
+
     /**
      * Whether embedded HTTP management server is enabled. By default, the server is not enabled.
      */
@@ -583,6 +599,18 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
      */
     public HttpManagementServerConfigurationProperties withJwtAudience(String jwtAudience) {
         this.jwtAudience = jwtAudience;
+        return this;
+    }
+
+    /**
+     * Whether JWT authentication is allowed to run without an expected issuer or audience. By default the management
+     * server fails to start when a JWT keystore is configured but neither jwtIssuer nor jwtAudience is set, because the
+     * tokens would only be checked for signature and expiry. Enable this to accept that and validate signature and
+     * expiry only.
+     */
+    public HttpManagementServerConfigurationProperties withJwtAllowMissingIssuerAndAudience(
+            boolean jwtAllowMissingIssuerAndAudience) {
+        this.jwtAllowMissingIssuerAndAudience = jwtAllowMissingIssuerAndAudience;
         return this;
     }
 
