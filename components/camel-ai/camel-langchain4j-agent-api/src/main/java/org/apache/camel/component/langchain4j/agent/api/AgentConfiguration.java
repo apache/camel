@@ -20,6 +20,7 @@ package org.apache.camel.component.langchain4j.agent.api;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -79,6 +80,8 @@ public class AgentConfiguration {
     private ToolExecutionErrorHandler toolExecutionErrorHandler;
     private ToolArgumentsErrorHandler toolArgumentsErrorHandler;
     private Boolean compensateOnToolErrors;
+    private Boolean executeToolsConcurrently;
+    private Executor executeToolsExecutor;
     private Consumer<AiServices<?>> aiServicesCustomizer;
 
     /**
@@ -460,6 +463,51 @@ public class AgentConfiguration {
      */
     public AgentConfiguration withCompensateOnToolErrors(Boolean compensateOnToolErrors) {
         this.compensateOnToolErrors = compensateOnToolErrors;
+        return this;
+    }
+
+    /**
+     * Gets whether concurrent tool execution is enabled for this agent.
+     *
+     * @return {@code true} if enabled, {@code false} if explicitly disabled, or {@code null} if not configured
+     */
+    public Boolean getExecuteToolsConcurrently() {
+        return executeToolsConcurrently;
+    }
+
+    /**
+     * Gets the executor used for concurrent tool execution, if configured.
+     *
+     * @return the executor, or {@code null} if not configured
+     */
+    public Executor getExecuteToolsExecutor() {
+        return executeToolsExecutor;
+    }
+
+    /**
+     * Enables parallel execution of all tool calls within a single LLM round trip via LangChain4j's
+     * {@code executeToolsConcurrently()} mode. Requires Camel route tools to run on isolated exchange copies (see
+     * {@code LangChain4jAgentProducer}).
+     * <p>
+     * When no explicit executor is supplied, the langchain4j-agent component resolves a managed thread pool from the
+     * Camel {@code ExecutorServiceManager} at startup.
+     *
+     * @return this configuration instance for method chaining
+     */
+    public AgentConfiguration withExecuteToolsConcurrently() {
+        this.executeToolsConcurrently = true;
+        return this;
+    }
+
+    /**
+     * Enables parallel tool execution using the given executor.
+     *
+     * @param  executeToolsExecutor the executor for concurrent tool invocations
+     * @return                      this configuration instance for method chaining
+     */
+    public AgentConfiguration withExecuteToolsConcurrently(Executor executeToolsExecutor) {
+        this.executeToolsConcurrently = true;
+        this.executeToolsExecutor = executeToolsExecutor;
         return this;
     }
 

@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
@@ -61,6 +62,7 @@ import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
 import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.component.langchain4j.agent.api.CompositeToolProvider;
 import org.apache.camel.component.langchain4j.agent.api.Headers;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
@@ -76,6 +78,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
     private AgentFactory agentFactory;
     private Agent agent;
     private List<McpClient> materializedMcpClients;
+    private ExecutorService managedToolExecutionExecutor;
 
     public LangChain4jAgentProducer(LangChain4jAgentEndpoint endpoint) {
         super(endpoint);
@@ -115,6 +118,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             agent = endpoint.getConfiguration().getAgent();
         } else if (endpoint.getConfiguration().getAgentConfiguration() != null) {
             AgentConfiguration agentConfiguration = endpoint.getConfiguration().getAgentConfiguration();
+            resolveExecuteToolsConcurrentlyExecutor(agentConfiguration);
             agent = agentConfiguration.getChatMemoryProvider() != null
                     ? new AgentWithMemory(agentConfiguration)
                     : new AgentWithoutMemory(agentConfiguration);
@@ -162,6 +166,24 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         if (result.toolExecutions() != null && !result.toolExecutions().isEmpty()) {
             message.setHeader(Headers.TOOL_EXECUTIONS, result.toolExecutions());
         }
+    }
+
+    /**
+     * When concurrent tool execution is enabled without an explicit executor, register a Camel-managed thread pool so
+     * tool parallelism uses the framework lifecycle and naming conventions.
+     */
+    private void resolveExecuteToolsConcurrentlyExecutor(AgentConfiguration agentConfiguration) {
+        if (!Boolean.TRUE.equals(agentConfiguration.getExecuteToolsConcurrently())) {
+            return;
+        }
+        if (agentConfiguration.getExecuteToolsExecutor() != null) {
+            return;
+        }
+        ThreadPoolProfile profile = endpoint.getCamelContext().getExecutorServiceManager().getDefaultThreadPoolProfile();
+        managedToolExecutionExecutor = endpoint.getCamelContext().getExecutorServiceManager()
+                .newThreadPool(this, "LangChain4jAgentToolExecution", profile);
+        agentConfiguration.withExecuteToolsConcurrently(managedToolExecutionExecutor);
+        LOG.debug("Registered Camel-managed executor for concurrent LangChain4j tool execution");
     }
 
     /**
@@ -579,6 +601,10 @@ public class LangChain4jAgentProducer extends DefaultProducer {
                 }
             }
             materializedMcpClients = null;
+        }
+        if (managedToolExecutionExecutor != null) {
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(managedToolExecutionExecutor);
+            managedToolExecutionExecutor = null;
         }
         super.doStop();
     }

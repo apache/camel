@@ -18,6 +18,7 @@ package org.apache.camel.component.langchain4j.agent.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.function.BiPredicate;
 
 import dev.langchain4j.agent.tool.ToolSpecification;
@@ -183,6 +184,14 @@ public abstract class AbstractAgent<S> implements Agent {
         }
         if (configuration.getCompensateOnToolErrors() != null) {
             builder.compensateOnToolErrors(configuration.getCompensateOnToolErrors());
+        }
+        if (Boolean.TRUE.equals(configuration.getExecuteToolsConcurrently())) {
+            Executor executor = configuration.getExecuteToolsExecutor();
+            if (executor != null) {
+                builder.executeToolsConcurrently(executor);
+            } else {
+                builder.executeToolsConcurrently();
+            }
         }
 
         // Custom AiServices builder customizer (escape hatch for any builder option not directly exposed)

@@ -18,6 +18,8 @@ package org.apache.camel.component.langchain4j.agent.api;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -329,6 +331,24 @@ public class AgentConfigurationTest {
 
         assertSame(config, result);
         assertNotNull(config.getAiServicesCustomizer());
+    }
+
+    @Test
+    public void testExecuteToolsConcurrently() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertNull(config.getExecuteToolsConcurrently());
+        assertNull(config.getExecuteToolsExecutor());
+
+        AgentConfiguration enabled = config.withExecuteToolsConcurrently();
+        assertSame(config, enabled);
+        assertTrue(config.getExecuteToolsConcurrently());
+        assertNull(config.getExecuteToolsExecutor());
+
+        Executor executor = Executors.newSingleThreadExecutor();
+        AgentConfiguration withExecutor = config.withExecuteToolsConcurrently(executor);
+        assertSame(config, withExecutor);
+        assertTrue(config.getExecuteToolsConcurrently());
+        assertSame(executor, config.getExecuteToolsExecutor());
     }
 
     @Test
