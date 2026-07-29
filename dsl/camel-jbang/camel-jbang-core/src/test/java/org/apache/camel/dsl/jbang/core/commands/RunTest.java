@@ -124,7 +124,8 @@ class RunTest extends CamelCommandBaseTestSupport {
 
         assertThat(command.jfrEnabled()).isTrue();
         assertThat(command.buildJfrJvmArgs())
-                .isEqualTo("-XX:StartFlightRecording=filename=CamelJBang.jfr");
+                .isEqualTo("-XX:StartFlightRecording=filename=CamelJBang.jfr "
+                           + "-Dcamel.main.startupRecorderRuntimeEnabled=true");
     }
 
     @Test
@@ -134,18 +135,20 @@ class RunTest extends CamelCommandBaseTestSupport {
 
         assertThat(command.jfrEnabled()).isTrue();
         assertThat(command.buildJfrJvmArgs())
-                .isEqualTo("-XX:StartFlightRecording=filename=CamelJBang.jfr,settings=profile");
+                .isEqualTo("-XX:StartFlightRecording=filename=CamelJBang.jfr,settings=profile "
+                           + "-Dcamel.main.startupRecorderRuntimeEnabled=true");
     }
 
     @Test
-    void explicitStartFlightRecordingInJvmArgsWinsOverJfrFlag() throws Exception {
-        // two recordings would otherwise compete for the same file, so --jfr must stand down
+    void explicitStartFlightRecordingInJvmArgsKeepsRuntimeRecorderEnabled() throws Exception {
+        // the explicit recording wins, but --jfr must still enable Camel runtime events in forked projects
         Run command = new Run(new CamelJBangMain());
         CommandLine.populateCommand(command, "--jfr",
                 "--jvm-args=-XX:StartFlightRecording=filename=mine.jfr", "route.yaml");
 
         assertThat(command.jfrEnabled()).isTrue();
-        assertThat(command.buildJfrJvmArgs()).isNull();
+        assertThat(command.buildJfrJvmArgs())
+                .isEqualTo("-Dcamel.main.startupRecorderRuntimeEnabled=true");
     }
 
     @Test

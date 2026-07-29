@@ -1363,22 +1363,27 @@ public class Run extends CamelCommand {
     }
 
     /**
-     * Builds the {@code -XX:StartFlightRecording} JVM argument for runtimes that fork a subprocess (Quarkus, Spring
-     * Boot), or {@code null} when JFR was not requested.
+     * Builds the JFR JVM arguments for runtimes that fork a subprocess (Quarkus, Spring Boot), or {@code null} when JFR
+     * was not requested.
      */
     String buildJfrJvmArgs() {
         if (!jfrEnabled()) {
             return null;
         }
+        StringBuilder arg = new StringBuilder();
         if (jvmArgs != null && jvmArgs.contains("-XX:StartFlightRecording")) {
             // the explicit JVM argument wins, as two recordings would otherwise compete for the same file
             printer().printErr("WARN: Ignoring --jfr because --jvm-args already starts a flight recording");
-            return null;
+        } else {
+            arg.append("-XX:StartFlightRecording=filename=").append(jfrFileName());
+            if (debugOptions.jfrProfile != null) {
+                arg.append(",settings=").append(debugOptions.jfrProfile);
+            }
         }
-        StringBuilder arg = new StringBuilder("-XX:StartFlightRecording=filename=").append(jfrFileName());
-        if (debugOptions.jfrProfile != null) {
-            arg.append(",settings=").append(debugOptions.jfrProfile);
+        if (!arg.isEmpty()) {
+            arg.append(" ");
         }
+        arg.append("-Dcamel.main.startupRecorderRuntimeEnabled=true");
         return arg.toString();
     }
 
