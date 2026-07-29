@@ -9,7 +9,7 @@
 
 *Since Camel {since}*
 
-Camel supports https://datasonnet.com/[DataSonnet] transformations to allow an
+Camel supports https://github.com/datasonnet/datasonnet-mapper[DataSonnet] transformations to allow an
 xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] to be
 used in the xref:manual::dsl.adoc[DSL].
 
