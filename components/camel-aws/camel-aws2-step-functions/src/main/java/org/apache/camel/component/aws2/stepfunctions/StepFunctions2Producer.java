@@ -111,6 +111,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "createStateMachine operation requires CreateStateMachineRequest in POJO mode");
             }
         } else {
             CreateStateMachineRequest.Builder builder = CreateStateMachineRequest.builder();
@@ -164,6 +167,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteStateMachine operation requires DeleteStateMachineRequest in POJO mode");
             }
         } else {
             DeleteStateMachineRequest.Builder builder = DeleteStateMachineRequest.builder();
@@ -198,6 +204,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "updateStateMachine operation requires UpdateStateMachineRequest in POJO mode");
             }
         } else {
             UpdateStateMachineRequest.Builder builder = UpdateStateMachineRequest.builder();
@@ -241,6 +250,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeStateMachine operation requires DescribeStateMachineRequest in POJO mode");
             }
         } else {
             DescribeStateMachineRequest.Builder builder = DescribeStateMachineRequest.builder();
@@ -274,6 +286,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listStateMachines operation requires ListStateMachinesRequest in POJO mode");
             }
         } else {
             ListStateMachinesRequest.Builder builder = ListStateMachinesRequest.builder();
@@ -307,6 +322,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "createActivity operation requires CreateActivityRequest in POJO mode");
             }
         } else {
             CreateActivityRequest.Builder builder = CreateActivityRequest.builder();
@@ -340,6 +358,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteActivity operation requires DeleteActivityRequest in POJO mode");
             }
         } else {
             DeleteActivityRequest.Builder builder = DeleteActivityRequest.builder();
@@ -373,6 +394,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeActivity operation requires DescribeActivityRequest in POJO mode");
             }
         } else {
             DescribeActivityRequest.Builder builder = DescribeActivityRequest.builder();
@@ -406,6 +430,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "getActivityTask operation requires GetActivityTaskRequest in POJO mode");
             }
         } else {
             GetActivityTaskRequest.Builder builder = GetActivityTaskRequest.builder();
@@ -439,6 +466,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listActivities operation requires ListActivitiesRequest in POJO mode");
             }
         } else {
             ListActivitiesRequest.Builder builder = ListActivitiesRequest.builder();
@@ -472,6 +502,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "startExecution operation requires StartExecutionRequest in POJO mode");
             }
         } else {
             StartExecutionRequest.Builder builder = StartExecutionRequest.builder();
@@ -518,6 +551,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "startSyncExecution operation requires StartSyncExecutionRequest in POJO mode");
             }
         } else {
             StartSyncExecutionRequest.Builder builder = StartSyncExecutionRequest.builder();
@@ -564,6 +600,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "stopExecution operation requires StopExecutionRequest in POJO mode");
             }
         } else {
             StopExecutionRequest.Builder builder = StopExecutionRequest.builder();
@@ -597,6 +636,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeExecution operation requires DescribeExecutionRequest in POJO mode");
             }
         } else {
             DescribeExecutionRequest.Builder builder = DescribeExecutionRequest.builder();
@@ -630,6 +672,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listExecutions operation requires ListExecutionsRequest in POJO mode");
             }
         } else {
             ListExecutionsRequest.Builder builder = ListExecutionsRequest.builder();
@@ -667,6 +712,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "getExecutionHistory operation requires GetExecutionHistoryRequest in POJO mode");
             }
         } else {
             GetExecutionHistoryRequest.Builder builder = GetExecutionHistoryRequest.builder();
