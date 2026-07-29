@@ -27,6 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import software.amazon.awssdk.services.redshiftdata.model.BatchExecuteStatementResponse;
 import software.amazon.awssdk.services.redshiftdata.model.CancelStatementResponse;
 import software.amazon.awssdk.services.redshiftdata.model.DescribeStatementResponse;
@@ -38,6 +40,7 @@ import software.amazon.awssdk.services.redshiftdata.model.ListSchemasResponse;
 import software.amazon.awssdk.services.redshiftdata.model.ListStatementsResponse;
 import software.amazon.awssdk.services.redshiftdata.model.ListTablesResponse;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RedshiftData2ProducerTest extends CamelTestSupport {
@@ -222,6 +225,25 @@ public class RedshiftData2ProducerTest extends CamelTestSupport {
         assertEquals(10, resultGet.totalNumRows());
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "direct:listDatabasesPojo,listDatabases operation requires ListDatabasesRequest in POJO mode",
+            "direct:listSchemasPojo,listSchemas operation requires ListSchemasRequest in POJO mode",
+            "direct:listStatementsPojo,listStatements operation requires ListStatementsRequest in POJO mode",
+            "direct:listTablesPojo,listTables operation requires ListTablesRequest in POJO mode",
+            "direct:describeTablePojo,describeTable operation requires DescribeTableRequest in POJO mode",
+            "direct:executeStatementPojo,executeStatement operation requires ExecuteStatementRequest in POJO mode",
+            "direct:batchExecuteStatementPojo,batchExecuteStatement operation requires BatchExecuteStatementRequest in POJO mode",
+            "direct:cancelStatementPojo,cancelStatement operation requires CancelStatementRequest in POJO mode",
+            "direct:describeStatementPojo,describeStatement operation requires DescribeStatementRequest in POJO mode",
+            "direct:getStatementResultPojo,getStatementResult operation requires GetStatementResultRequest in POJO mode",
+    })
+    void pojoRequestWithWrongBodyTypeThrows(String route, String expectedMessage) {
+        assertThatThrownBy(() -> template.requestBody(route, "not the expected request type"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(expectedMessage);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -260,6 +282,24 @@ public class RedshiftData2ProducerTest extends CamelTestSupport {
                 from("direct:getStatementResult")
                         .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=getStatementResult")
                         .to("mock:result");
+                from("direct:listSchemasPojo")
+                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listSchemas&pojoRequest=true");
+                from("direct:listStatementsPojo")
+                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listStatements&pojoRequest=true");
+                from("direct:listTablesPojo")
+                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listTables&pojoRequest=true");
+                from("direct:describeTablePojo")
+                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=describeTable&pojoRequest=true");
+                from("direct:executeStatementPojo")
+                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=executeStatement&pojoRequest=true");
+                from("direct:batchExecuteStatementPojo")
+                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=batchExecuteStatement&pojoRequest=true");
+                from("direct:cancelStatementPojo")
+                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=cancelStatement&pojoRequest=true");
+                from("direct:describeStatementPojo")
+                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=describeStatement&pojoRequest=true");
+                from("direct:getStatementResultPojo")
+                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=getStatementResult&pojoRequest=true");
             }
         };
     }

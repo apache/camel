@@ -102,6 +102,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listDatabases operation requires ListDatabasesRequest in POJO mode");
             }
         } else {
             ListDatabasesRequest.Builder builder = ListDatabasesRequest.builder();
@@ -156,6 +159,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listSchemas operation requires ListSchemasRequest in POJO mode");
             }
         } else {
             ListSchemasRequest.Builder builder = ListSchemasRequest.builder();
@@ -217,6 +223,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listStatements operation requires ListStatementsRequest in POJO mode");
             }
         } else {
             ListStatementsRequest.Builder builder = ListStatementsRequest.builder();
@@ -263,6 +272,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listTables operation requires ListTablesRequest in POJO mode");
             }
         } else {
             ListTablesRequest.Builder builder = ListTablesRequest.builder();
@@ -328,6 +340,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeTable operation requires DescribeTableRequest in POJO mode");
             }
         } else {
             DescribeTableRequest.Builder builder = DescribeTableRequest.builder();
@@ -394,6 +409,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "executeStatement operation requires ExecuteStatementRequest in POJO mode");
             }
         } else {
             ExecuteStatementRequest.Builder builder = ExecuteStatementRequest.builder();
@@ -465,6 +483,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "batchExecuteStatement operation requires BatchExecuteStatementRequest in POJO mode");
             }
         } else {
             BatchExecuteStatementRequest.Builder builder = BatchExecuteStatementRequest.builder();
@@ -530,6 +551,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "cancelStatement operation requires CancelStatementRequest in POJO mode");
             }
         } else {
             CancelStatementRequest.Builder builder = CancelStatementRequest.builder();
@@ -563,6 +587,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeStatement operation requires DescribeStatementRequest in POJO mode");
             }
         } else {
             DescribeStatementRequest.Builder builder = DescribeStatementRequest.builder();
@@ -596,6 +623,9 @@ public class RedshiftData2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "getStatementResult operation requires GetStatementResultRequest in POJO mode");
             }
         } else {
             GetStatementResultRequest.Builder builder = GetStatementResultRequest.builder();
