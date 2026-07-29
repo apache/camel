@@ -512,6 +512,34 @@ public class AgentConfiguration {
     }
 
     /**
+     * Creates a shallow copy of this configuration. Used by the langchain4j-agent producer to attach a managed tool
+     * executor without mutating registry-held configuration beans.
+     *
+     * @return a new configuration instance with the same settings
+     * @since  4.22
+     */
+    public AgentConfiguration duplicate() {
+        AgentConfiguration copy = new AgentConfiguration();
+        copy.chatModel = chatModel;
+        copy.chatMemoryProvider = chatMemoryProvider;
+        copy.retrievalAugmentor = retrievalAugmentor;
+        copy.inputGuardrailClasses = inputGuardrailClasses;
+        copy.outputGuardrailClasses = outputGuardrailClasses;
+        copy.customTools = customTools;
+        copy.mcpClients = mcpClients;
+        copy.mcpToolProviderFilter = mcpToolProviderFilter;
+        copy.maxToolCallingRoundTrips = maxToolCallingRoundTrips;
+        copy.hallucinatedToolNameStrategy = hallucinatedToolNameStrategy;
+        copy.toolExecutionErrorHandler = toolExecutionErrorHandler;
+        copy.toolArgumentsErrorHandler = toolArgumentsErrorHandler;
+        copy.compensateOnToolErrors = compensateOnToolErrors;
+        copy.executeToolsConcurrently = executeToolsConcurrently;
+        copy.executeToolsExecutor = executeToolsExecutor;
+        copy.aiServicesCustomizer = aiServicesCustomizer;
+        return copy;
+    }
+
+    /**
      * Gets the custom AiServices builder customizer.
      *
      * @return the customizer, or {@code null} if not configured

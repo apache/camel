@@ -18,8 +18,6 @@ package org.apache.camel.component.langchain4j.agent;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -45,6 +43,7 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
 
     private static final String TAG = "concurrent-tools";
 
+    private final TwoToolRoundTripChatModel chatModel = new TwoToolRoundTripChatModel();
     private final AtomicInteger chatRound = new AtomicInteger();
     private CountDownLatch bothToolsEntered = new CountDownLatch(2);
     private final AtomicInteger inFlight = new AtomicInteger();
@@ -77,15 +76,10 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
 
     @Override
     protected void bindToRegistry(org.apache.camel.spi.Registry registry) {
-        ExecutorService toolPool = Executors.newFixedThreadPool(4);
-        registry.bind("toolPool", toolPool);
-
-        ChatModel chatModel = new TwoToolRoundTripChatModel();
-        AgentConfiguration agentConfig = new AgentConfiguration()
+        registry.bind("agentConfig", new AgentConfiguration()
                 .withChatModel(chatModel)
-                .withExecuteToolsConcurrently(toolPool)
-                .withMaxToolCallingRoundTrips(5);
-        registry.bind("agentConfig", agentConfig);
+                .withExecuteToolsConcurrently()
+                .withMaxToolCallingRoundTrips(5));
     }
 
     @Test
@@ -104,14 +98,14 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
     @Test
     void producerResolvesCamelManagedExecutorWhenNoneConfigured() throws Exception {
         try (DefaultCamelContext ctx = new DefaultCamelContext()) {
-            ChatModel chatModel = new ChatModel() {
+            ChatModel noopModel = new ChatModel() {
                 @Override
                 public ChatResponse doChat(ChatRequest request) {
                     return ChatResponse.builder().aiMessage(AiMessage.from("ok")).build();
                 }
             };
             AgentConfiguration config = new AgentConfiguration()
-                    .withChatModel(chatModel)
+                    .withChatModel(noopModel)
                     .withExecuteToolsConcurrently();
             ctx.getRegistry().bind("cfg", config);
 
@@ -125,9 +119,23 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
             ctx.start();
 
             assertThat(config.getExecuteToolsExecutor())
-                    .as("producer should register a Camel-managed executor")
-                    .isNotNull();
+                    .as("registry AgentConfiguration must not be mutated with a managed executor")
+                    .isNull();
         }
+    }
+
+    @Test
+    void managedExecutorWorksAfterContextStopAndRestart() throws Exception {
+        context.stop();
+        context.getRegistry().bind("agentConfig", new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withExecuteToolsConcurrently()
+                .withMaxToolCallingRoundTrips(5));
+        context.start();
+
+        String response = template.requestBody("direct:agent", new AiAgentBody<>("run tools"), String.class);
+
+        assertThat(response).isEqualTo("done");
     }
 
     private void recordConcurrentEntry(String label, org.apache.camel.Exchange exchange) throws InterruptedException {

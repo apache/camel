@@ -334,6 +334,21 @@ public class AgentConfigurationTest {
     }
 
     @Test
+    public void testDuplicateCopiesExecuteToolsConcurrentlySettings() {
+        Executor executor = Executors.newSingleThreadExecutor();
+        AgentConfiguration original = new AgentConfiguration()
+                .withExecuteToolsConcurrently(executor)
+                .withMaxToolCallingRoundTrips(3);
+
+        AgentConfiguration copy = original.duplicate();
+
+        assertTrue(copy.getExecuteToolsConcurrently());
+        assertSame(executor, copy.getExecuteToolsExecutor());
+        assertEquals(3, copy.getMaxToolCallingRoundTrips());
+        assertSame(original.getMaxToolCallingRoundTrips(), copy.getMaxToolCallingRoundTrips());
+    }
+
+    @Test
     public void testExecuteToolsConcurrently() {
         AgentConfiguration config = new AgentConfiguration();
         assertNull(config.getExecuteToolsConcurrently());

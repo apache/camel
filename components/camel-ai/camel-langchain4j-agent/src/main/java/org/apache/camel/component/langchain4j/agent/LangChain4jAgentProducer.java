@@ -117,7 +117,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         if (endpoint.getConfiguration().getAgent() != null) {
             agent = endpoint.getConfiguration().getAgent();
         } else if (endpoint.getConfiguration().getAgentConfiguration() != null) {
-            AgentConfiguration agentConfiguration = endpoint.getConfiguration().getAgentConfiguration();
+            AgentConfiguration agentConfiguration = endpoint.getConfiguration().getAgentConfiguration().duplicate();
             resolveExecuteToolsConcurrentlyExecutor(agentConfiguration);
             agent = agentConfiguration.getChatMemoryProvider() != null
                     ? new AgentWithMemory(agentConfiguration)
