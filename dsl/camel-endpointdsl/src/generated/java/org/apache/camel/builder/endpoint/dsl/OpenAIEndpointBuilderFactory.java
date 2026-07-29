@@ -495,6 +495,48 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Strategy for handling tool names hallucinated by the model (tool not
+         * found in any MCP server). 'failExchange' (default) throws an
+         * IllegalStateException, failing the exchange immediately.
+         * 'repromptModel' sends a corrective tool result listing the available
+         * tools so the model can self-correct and retry. The maxToolIterations
+         * option bounds retries.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openai.HallucinatedToolNameStrategy</code> type.
+         * 
+         * Default: failExchange
+         * Group: producer
+         * 
+         * @param hallucinatedToolNameStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder hallucinatedToolNameStrategy(org.apache.camel.component.openai.HallucinatedToolNameStrategy hallucinatedToolNameStrategy) {
+            doSetProperty("hallucinatedToolNameStrategy", hallucinatedToolNameStrategy);
+            return this;
+        }
+        /**
+         * Strategy for handling tool names hallucinated by the model (tool not
+         * found in any MCP server). 'failExchange' (default) throws an
+         * IllegalStateException, failing the exchange immediately.
+         * 'repromptModel' sends a corrective tool result listing the available
+         * tools so the model can self-correct and retry. The maxToolIterations
+         * option bounds retries.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openai.HallucinatedToolNameStrategy</code> type.
+         * 
+         * Default: failExchange
+         * Group: producer
+         * 
+         * @param hallucinatedToolNameStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder hallucinatedToolNameStrategy(String hallucinatedToolNameStrategy) {
+            doSetProperty("hallucinatedToolNameStrategy", hallucinatedToolNameStrategy);
+            return this;
+        }
+        /**
          * JSON array of hosted MCP tool definitions (OpenAI Tool.Mcp) passed
          * through to the Responses API.
          * 
@@ -1184,6 +1226,48 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder temperature(String temperature) {
             doSetProperty("temperature", temperature);
+            return this;
+        }
+        /**
+         * Strategy for handling exceptions thrown during MCP tool execution.
+         * 'repromptModel' (default) catches the error and sends it back to the
+         * model as a tool result so the model can attempt to recover.
+         * 'failExchange' propagates the exception to the Camel exchange so that
+         * standard Camel error handling (onException, dead-letter channel) can
+         * process it.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openai.ToolExecutionErrorStrategy</code> type.
+         * 
+         * Default: repromptModel
+         * Group: producer
+         * 
+         * @param toolExecutionErrorStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder toolExecutionErrorStrategy(org.apache.camel.component.openai.ToolExecutionErrorStrategy toolExecutionErrorStrategy) {
+            doSetProperty("toolExecutionErrorStrategy", toolExecutionErrorStrategy);
+            return this;
+        }
+        /**
+         * Strategy for handling exceptions thrown during MCP tool execution.
+         * 'repromptModel' (default) catches the error and sends it back to the
+         * model as a tool result so the model can attempt to recover.
+         * 'failExchange' propagates the exception to the Camel exchange so that
+         * standard Camel error handling (onException, dead-letter channel) can
+         * process it.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openai.ToolExecutionErrorStrategy</code> type.
+         * 
+         * Default: repromptModel
+         * Group: producer
+         * 
+         * @param toolExecutionErrorStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder toolExecutionErrorStrategy(String toolExecutionErrorStrategy) {
+            doSetProperty("toolExecutionErrorStrategy", toolExecutionErrorStrategy);
             return this;
         }
         /**
