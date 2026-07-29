@@ -160,6 +160,9 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Creating and running instances requests performing");
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "createAndRunInstances operation requires RunInstancesRequest in POJO mode");
             }
         } else {
             RunInstancesRequest.Builder builder = RunInstancesRequest.builder();
@@ -251,6 +254,9 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Starting instances with Ids [{}] ", startInstancesRequest.instanceIds());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "startInstances operation requires StartInstancesRequest in POJO mode");
             }
         } else {
             StartInstancesRequest.Builder builder = StartInstancesRequest.builder();
@@ -293,6 +299,9 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Stopping instances with Ids [{}] ", stopInstancesRequest.instanceIds());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "stopInstances operation requires StopInstancesRequest in POJO mode");
             }
         } else {
             StopInstancesRequest.Builder builder = StopInstancesRequest.builder();
@@ -335,6 +344,9 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Terminating instances with Ids [{}] ", terminateInstancesRequest.instanceIds());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "terminateInstances operation requires TerminateInstancesRequest in POJO mode");
             }
         } else {
             TerminateInstancesRequest.Builder builder = TerminateInstancesRequest.builder();
@@ -434,6 +446,9 @@ public class AWS2EC2Producer extends DefaultProducer {
                     LOG.trace("Reboot Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
+            } else {
+                throw new IllegalArgumentException(
+                        "rebootInstances operation requires RebootInstancesRequest in POJO mode");
             }
         } else {
             RebootInstancesRequest.Builder builder = RebootInstancesRequest.builder();
@@ -472,6 +487,9 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Start Monitoring instances with Ids [{}] ", monitorInstancesRequest.instanceIds());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "monitorInstances operation requires MonitorInstancesRequest in POJO mode");
             }
         } else {
             MonitorInstancesRequest.Builder builder = MonitorInstancesRequest.builder();
@@ -514,6 +532,9 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Stop Monitoring instances with Ids [{}] ", unmonitorInstancesRequest.instanceIds());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "unmonitorInstances operation requires UnmonitorInstancesRequest in POJO mode");
             }
         } else {
             UnmonitorInstancesRequest.Builder builder = UnmonitorInstancesRequest.builder();
@@ -556,6 +577,9 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Created tags [{}] ", createTagsRequest.tags());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "createTags operation requires CreateTagsRequest in POJO mode");
             }
         } else {
             Collection<Tag> tags;
@@ -605,6 +629,9 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Delete tags [{}]  ", deleteTagsRequest.tags());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteTags operation requires DeleteTagsRequest in POJO mode");
             }
         } else {
             Collection<Tag> tags;
