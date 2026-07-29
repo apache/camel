@@ -26,8 +26,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import software.amazon.awssdk.services.sfn.model.*;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -339,6 +342,31 @@ public class StepFunctions2ProducerTest extends CamelTestSupport {
         assertEquals(1L, resultGet.events().get(0).id());
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "direct:createStateMachinePojo,createStateMachine operation requires CreateStateMachineRequest in POJO mode",
+            "direct:deleteStateMachinePojo,deleteStateMachine operation requires DeleteStateMachineRequest in POJO mode",
+            "direct:updateStateMachinePojo,updateStateMachine operation requires UpdateStateMachineRequest in POJO mode",
+            "direct:describeStateMachinePojo,describeStateMachine operation requires DescribeStateMachineRequest in POJO mode",
+            "direct:listStateMachinesPojo,listStateMachines operation requires ListStateMachinesRequest in POJO mode",
+            "direct:createPojoActivity,createActivity operation requires CreateActivityRequest in POJO mode",
+            "direct:deleteActivityPojo,deleteActivity operation requires DeleteActivityRequest in POJO mode",
+            "direct:describeActivityPojo,describeActivity operation requires DescribeActivityRequest in POJO mode",
+            "direct:getActivityTaskPojo,getActivityTask operation requires GetActivityTaskRequest in POJO mode",
+            "direct:listActivitiesPojo,listActivities operation requires ListActivitiesRequest in POJO mode",
+            "direct:startExecutionPojo,startExecution operation requires StartExecutionRequest in POJO mode",
+            "direct:startSyncExecutionPojo,startSyncExecution operation requires StartSyncExecutionRequest in POJO mode",
+            "direct:stopExecutionPojo,stopExecution operation requires StopExecutionRequest in POJO mode",
+            "direct:describeExecutionPojo,describeExecution operation requires DescribeExecutionRequest in POJO mode",
+            "direct:listExecutionsPojo,listExecutions operation requires ListExecutionsRequest in POJO mode",
+            "direct:getExecutionHistoryPojo,getExecutionHistory operation requires GetExecutionHistoryRequest in POJO mode",
+    })
+    void pojoRequestWithWrongBodyTypeThrows(String route, String expectedMessage) {
+        assertThatThrownBy(() -> template.requestBody(route, "not the expected request type"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(expectedMessage);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -394,6 +422,36 @@ public class StepFunctions2ProducerTest extends CamelTestSupport {
                 from("direct:describeStateMachine")
                         .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=describeStateMachine")
                         .to("mock:result");
+                from("direct:createStateMachinePojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=createStateMachine&pojoRequest=true");
+                from("direct:deleteStateMachinePojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=deleteStateMachine&pojoRequest=true");
+                from("direct:updateStateMachinePojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=updateStateMachine&pojoRequest=true");
+                from("direct:describeStateMachinePojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=describeStateMachine&pojoRequest=true");
+                from("direct:listStateMachinesPojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=listStateMachines&pojoRequest=true");
+                from("direct:deleteActivityPojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=deleteActivity&pojoRequest=true");
+                from("direct:describeActivityPojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=describeActivity&pojoRequest=true");
+                from("direct:getActivityTaskPojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=getActivityTask&pojoRequest=true");
+                from("direct:listActivitiesPojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=listActivities&pojoRequest=true");
+                from("direct:startExecutionPojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=startExecution&pojoRequest=true");
+                from("direct:startSyncExecutionPojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=startSyncExecution&pojoRequest=true");
+                from("direct:stopExecutionPojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=stopExecution&pojoRequest=true");
+                from("direct:describeExecutionPojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=describeExecution&pojoRequest=true");
+                from("direct:listExecutionsPojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=listExecutions&pojoRequest=true");
+                from("direct:getExecutionHistoryPojo")
+                        .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=getExecutionHistory&pojoRequest=true");
             }
         };
     }
