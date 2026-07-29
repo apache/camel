@@ -540,7 +540,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                 if (uploads.size() == 1) {
                     message.setHeader(Exchange.FILE_PATH, localFile.getAbsolutePath());
                     message.setHeader(Exchange.FILE_LENGTH, upload.size());
-                    message.setHeader(Exchange.FILE_NAME, upload.fileName());
+                    // FILE_NAME is a Camel control header consumed by file/ftp producers; the raw
+                    // client-supplied multipart filename may contain path segments, so reduce it to a
+                    // leaf name (CAMEL-24293)
+                    message.setHeader(Exchange.FILE_NAME, FileUtil.stripPath(upload.fileName()));
                     String ct = MimeTypeHelper.probeMimeType(upload.fileName());
                     if (ct == null) {
                         ct = upload.contentType();

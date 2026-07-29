@@ -30,6 +30,7 @@ import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -116,7 +117,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
             try {
                 ZipArchiveEntry entry = zis.getNextEntry();
                 if (entry != null) {
-                    exchange.getMessage().setHeader(FILE_NAME, entry.getName());
+                    exchange.getMessage().setHeader(FILE_NAME, FileUtil.stripPath(entry.getName()));
                     IOHelper.copy(zis, osb, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
                 } else {
                     throw new IllegalStateException("Unable to unzip the file, it may be corrupted.");
