@@ -23,6 +23,12 @@ import jdk.jfr.Label;
 import jdk.jfr.Name;
 import jdk.jfr.StackTrace;
 
+/**
+ * Emitted when an exchange fails. The exception message is truncated, so an oversized message cannot bloat the
+ * recording.
+ *
+ * @since 4.22
+ */
 @Name("org.apache.camel.exchange.failed")
 @Category({ "Camel Application", "Runtime" })
 @Label("Camel Exchange Failed")

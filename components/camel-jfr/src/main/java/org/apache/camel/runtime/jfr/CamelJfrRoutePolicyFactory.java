@@ -21,12 +21,16 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 
+/**
+ * Creates a {@link CamelJfrRoutePolicy} for every route.
+ *
+ * @since 4.22
+ */
 public class CamelJfrRoutePolicyFactory implements RoutePolicyFactory {
-
-    private final CamelJfrRoutePolicy policy = new CamelJfrRoutePolicy();
 
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
-        return policy;
+        // a new policy per route, as the SPI contract allows an implementation to keep per route state
+        return new CamelJfrRoutePolicy();
     }
 }

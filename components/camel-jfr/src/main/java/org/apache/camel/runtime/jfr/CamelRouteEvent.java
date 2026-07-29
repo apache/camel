@@ -23,6 +23,11 @@ import jdk.jfr.Label;
 import jdk.jfr.Name;
 import jdk.jfr.StackTrace;
 
+/**
+ * Spans the time an exchange spends within a single route.
+ *
+ * @since 4.22
+ */
 @Name("org.apache.camel.route")
 @Category({ "Camel Application", "Runtime" })
 @Label("Camel Route")

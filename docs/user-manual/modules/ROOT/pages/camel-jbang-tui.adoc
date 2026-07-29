@@ -126,13 +126,13 @@ The *More* menu (key *0*) opens a popup with tabs organized into groups:
 * *Routing* -- Browse Endpoints, Consumers, HTTP, Inflight, Producers, Route Controller
 * *Observability* -- Circuit Breaker, Health, Metrics, Network Services, Exchange Events, Recovery Tasks, OpenTelemetry Spans
 * *Data* -- JDBC DataSource, Kafka, SQL Query, SQL Trace
-* *JVM* -- Classpath, Heap Memory Histogram, Memory Usage, Memory Leak, Process, Startup, Threads
+* *JVM* -- Classpath, Heap Memory Histogram, JFR, Memory Usage, Memory Leak, Process, Startup, Threads
 * *Project* -- Beans, Catalog, Configuration, CVE Audit, Maven Dependencies, Type Converters, Data Type Transformers
 
 Tabs appear dynamically based on what the integration uses. For example, the Kafka tab appears
 when a Kafka component is in use, SQL tabs when a DataSource is present, Circuit Breaker when
-resilience4j is in use, and Spans when OpenTelemetry is enabled. The TUI adapts to show only
-what's relevant to your integration.
+resilience4j is in use, Spans when OpenTelemetry is enabled, and JFR when `camel-jfr` is on the
+classpath. The TUI adapts to show only what's relevant to your integration.
 
 Tab badges show live counts -- the Errors tab shows a red badge when errors exist
 and Routes shows the route count.

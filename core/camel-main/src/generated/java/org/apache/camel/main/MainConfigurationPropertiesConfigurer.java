@@ -123,6 +123,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("StartupRecorderMaxDepth", int.class);
         map.put("StartupRecorderProfile", java.lang.String.class);
         map.put("StartupRecorderRecording", boolean.class);
+        map.put("StartupRecorderRuntimeEnabled", boolean.class);
         map.put("StartupSummaryLevel", org.apache.camel.StartupSummaryLevel.class);
         map.put("StreamCachingAllowClasses", java.lang.String.class);
         map.put("StreamCachingAnySpoolRules", boolean.class);
@@ -355,6 +356,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "startupRecorderProfile": target.setStartupRecorderProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "startuprecorderrecording":
         case "startupRecorderRecording": target.setStartupRecorderRecording(property(camelContext, boolean.class, value)); return true;
+        case "startuprecorderruntimeenabled":
+        case "startupRecorderRuntimeEnabled": target.setStartupRecorderRuntimeEnabled(property(camelContext, boolean.class, value)); return true;
         case "startupsummarylevel":
         case "startupSummaryLevel": target.setStartupSummaryLevel(property(camelContext, org.apache.camel.StartupSummaryLevel.class, value)); return true;
         case "streamcachingallowclasses":
@@ -619,6 +622,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "startupRecorderProfile": return java.lang.String.class;
         case "startuprecorderrecording":
         case "startupRecorderRecording": return boolean.class;
+        case "startuprecorderruntimeenabled":
+        case "startupRecorderRuntimeEnabled": return boolean.class;
         case "startupsummarylevel":
         case "startupSummaryLevel": return org.apache.camel.StartupSummaryLevel.class;
         case "streamcachingallowclasses":
@@ -879,6 +884,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "startupRecorderProfile": return target.getStartupRecorderProfile();
         case "startuprecorderrecording":
         case "startupRecorderRecording": return target.isStartupRecorderRecording();
+        case "startuprecorderruntimeenabled":
+        case "startupRecorderRuntimeEnabled": return target.isStartupRecorderRuntimeEnabled();
         case "startupsummarylevel":
         case "startupSummaryLevel": return target.getStartupSummaryLevel();
         case "streamcachingallowclasses":

@@ -16,34 +16,48 @@
  */
 package org.apache.camel.runtime.jfr;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import jdk.jfr.Event;
-import jdk.jfr.EventType;
 import jdk.jfr.FlightRecorder;
 import jdk.jfr.Recording;
+import jdk.jfr.RecordingState;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
+/**
+ * Reports whether the camel-jfr runtime instrumentation is installed, and allows its events to be turned on and off
+ * while the application is running.
+ *
+ * @since 4.22
+ */
 @DevConsole(name = "jfr", displayName = "JFR Runtime Instrumentation",
             description = "Status and live control of camel-jfr runtime instrumentation")
 public class CamelJfrDevConsole extends AbstractDevConsole {
 
-    static final Map<String, Class<?>> EVENT_BY_SHORT_NAME = new LinkedHashMap<>();
-    static {
-        EVENT_BY_SHORT_NAME.put("route", CamelRouteEvent.class);
-        EVENT_BY_SHORT_NAME.put("processor", CamelProcessorEvent.class);
-        EVENT_BY_SHORT_NAME.put("exchange", CamelExchangeEvent.class);
-        EVENT_BY_SHORT_NAME.put("send", CamelExchangeSendEvent.class);
-        EVENT_BY_SHORT_NAME.put("failed", CamelExchangeFailedEvent.class);
-        EVENT_BY_SHORT_NAME.put("redelivery", CamelRedeliveryEvent.class);
-    }
+    @Metadata(label = "query", description = "Command to perform", javaType = "java.lang.String",
+              defaultValue = "status", enums = "status,enable,disable,jfc")
+    public static final String COMMAND = "command";
+
+    @Metadata(label = "query", description = "The runtime event to enable or disable, or all for every event",
+              javaType = "java.lang.String", defaultValue = "all",
+              enums = "all,route,processor,exchange,send,failed,redelivery")
+    public static final String EVENT = "event";
+
+    @Metadata(label = "query",
+              description = "Comma separated list of events to disable in the generated jfc settings overlay",
+              javaType = "java.lang.String")
+    public static final String DISABLE = "disable";
+
+    private static final String ALL = "all";
 
     public CamelJfrDevConsole() {
         super("camel", "jfr", "JFR Runtime Instrumentation",
@@ -63,31 +77,24 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
         return false;
     }
 
-    private String eventShortName(Class<?> eventClass) {
-        for (Map.Entry<String, Class<?>> entry : EVENT_BY_SHORT_NAME.entrySet()) {
-            if (entry.getValue().equals(eventClass)) {
-                return entry.getKey();
+    /**
+     * Only a running recording can have its events toggled, so a stopped or closed one is not reported as changed.
+     */
+    private static List<Recording> runningRecordings() {
+        List<Recording> answer = new ArrayList<>();
+        for (Recording recording : FlightRecorder.getFlightRecorder().getRecordings()) {
+            if (recording.getState() == RecordingState.RUNNING) {
+                answer.add(recording);
             }
         }
-        return eventClass.getSimpleName();
-    }
-
-    private Map<String, Boolean> eventEnabledStates() {
-        Map<String, Boolean> states = new LinkedHashMap<>();
-        for (Class<?> eventClass : CamelJfrRuntimeInstrumentation.RUNTIME_EVENTS) {
-            EventType type = EventType.getEventType(eventClass.asSubclass(Event.class));
-            states.put(eventShortName(eventClass), type != null && type.isEnabled());
-        }
-        return states;
+        return answer;
     }
 
     private String doStatus() {
-        boolean registered = isInstrumentationRegistered();
         List<Recording> recordings = FlightRecorder.getFlightRecorder().getRecordings();
-        Map<String, Boolean> eventStates = eventEnabledStates();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("registered: ").append(registered).append('\n');
+        sb.append("registered: ").append(isInstrumentationRegistered()).append('\n');
         if (recordings.isEmpty()) {
             sb.append("recordings: none active\n");
         } else {
@@ -99,63 +106,90 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
                         .append(")\n");
             }
         }
-        eventStates.forEach((name, enabled) -> sb.append("event ").append(name).append(": ")
-                .append(enabled ? "enabled" : "disabled").append('\n'));
+        for (CamelJfrEvents event : CamelJfrEvents.values()) {
+            sb.append("event ").append(event.getShortName()).append(": ")
+                    .append(event.isEnabled() ? "enabled" : "disabled").append('\n');
+        }
         return sb.toString();
     }
 
-    private String doToggle(Map<String, Object> options, boolean enable) {
-        String event = optionString(options, "event");
-        if (event == null) {
-            event = "all";
+    /**
+     * Resolves the {@code event} option to the events it addresses.
+     *
+     * @throws IllegalArgumentException if the option names an unknown event
+     */
+    private static Set<CamelJfrEvents> resolveEvents(String event) {
+        if (event == null || ALL.equals(event)) {
+            return EnumSet.allOf(CamelJfrEvents.class);
+        }
+        CamelJfrEvents answer = CamelJfrEvents.byShortName(event);
+        if (answer == null) {
+            throw new IllegalArgumentException(
+                    "unknown event: " + event + ". Valid values: " + CamelJfrEvents.shortNames() + ", " + ALL);
+        }
+        return EnumSet.of(answer);
+    }
+
+    /**
+     * The outcome of a toggle, so callers can tell "nothing was changed" from "the events were changed" without having
+     * to parse the message.
+     */
+    private record ToggleResult(boolean success, String message) {
+    }
+
+    private ToggleResult doToggle(Map<String, Object> options, boolean enable) {
+        String event = optionString(options, EVENT);
+        Set<CamelJfrEvents> targets;
+        try {
+            targets = resolveEvents(event);
+        } catch (IllegalArgumentException e) {
+            return new ToggleResult(false, e.getMessage());
         }
 
-        List<Recording> recordings = FlightRecorder.getFlightRecorder().getRecordings();
+        List<Recording> recordings = runningRecordings();
         if (recordings.isEmpty()) {
-            return "no active recording: nothing to toggle live. Start one via --jfr, "
-                   + "'jcmd <pid> JFR.start', or JMX first.";
-        }
-
-        List<Class<?>> targets;
-        if ("all".equals(event)) {
-            targets = List.of(CamelJfrRuntimeInstrumentation.RUNTIME_EVENTS);
-        } else {
-            Class<?> target = EVENT_BY_SHORT_NAME.get(event);
-            if (target == null) {
-                return "unknown event: " + event + ". Valid values: "
-                       + String.join(", ", EVENT_BY_SHORT_NAME.keySet()) + ", all";
-            }
-            targets = List.of(target);
+            return new ToggleResult(
+                    false,
+                    "no running recording: nothing to toggle live. Start one via --jfr, "
+                           + "'jcmd <pid> JFR.start', or JMX first.");
         }
 
         for (Recording recording : recordings) {
-            for (Class<?> target : targets) {
-                Class<? extends Event> eventClass = target.asSubclass(Event.class);
+            for (CamelJfrEvents target : targets) {
                 if (enable) {
-                    recording.enable(eventClass);
+                    recording.enable(target.getEventClass());
                 } else {
-                    recording.disable(eventClass);
+                    recording.disable(target.getEventClass());
                 }
             }
         }
-        return (enable ? "enabled " : "disabled ") + event + " on " + recordings.size() + " recording(s)";
+        return new ToggleResult(
+                true,
+                (enable ? "enabled " : "disabled ") + (event != null ? event : ALL)
+                      + " on " + recordings.size() + " recording(s)");
     }
 
+    /**
+     * Generates a {@code .jfc} settings overlay, so the events can be turned on for a recording started outside of
+     * Camel.
+     *
+     * @throws IllegalArgumentException if the disable option names an unknown event
+     */
     private String doJfc(Map<String, Object> options) {
-        Object disableOption = options.get("disable");
-        List<String> disabled = disableOption != null
-                ? List.of(disableOption.toString().split(","))
-                : List.of();
+        String disable = optionString(options, DISABLE);
+        Set<CamelJfrEvents> disabled = EnumSet.noneOf(CamelJfrEvents.class);
+        if (disable != null) {
+            for (String name : disable.split(",")) {
+                disabled.addAll(resolveEvents(name.trim()));
+            }
+        }
 
         StringBuilder xml = new StringBuilder();
         xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         xml.append("<configuration version=\"2.0\">\n");
-        for (Map.Entry<String, Class<?>> entry : EVENT_BY_SHORT_NAME.entrySet()) {
-            EventType type = EventType.getEventType(entry.getValue().asSubclass(Event.class));
-            String eventName = type != null ? type.getName() : "org.apache.camel." + entry.getKey();
-            boolean enabled = !disabled.contains(entry.getKey());
-            xml.append("<event name=\"").append(eventName).append("\">\n")
-                    .append("    <setting name=\"enabled\">").append(enabled).append("</setting>\n")
+        for (CamelJfrEvents event : CamelJfrEvents.values()) {
+            xml.append("<event name=\"").append(event.getEventName()).append("\">\n")
+                    .append("    <setting name=\"enabled\">").append(!disabled.contains(event)).append("</setting>\n")
                     .append("</event>\n");
         }
         xml.append("</configuration>\n");
@@ -167,47 +201,63 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        String command = optionString(options, "command");
-        if (command == null) {
-            command = "status";
-        }
-        return switch (command) {
+        String command = optionString(options, COMMAND);
+        return switch (command != null ? command : "status") {
             case "status" -> doStatus();
-            case "enable" -> doToggle(options, true);
-            case "disable" -> doToggle(options, false);
-            case "jfc" -> doJfc(options);
-            default -> "unknown command: " + command + ". Valid values: status, enable, disable, jfc";
+            case "enable" -> doToggle(options, true).message();
+            case "disable" -> doToggle(options, false).message();
+            case "jfc" -> {
+                try {
+                    yield doJfc(options);
+                } catch (IllegalArgumentException e) {
+                    yield e.getMessage();
+                }
+            }
+            default -> unknownCommand(command);
         };
     }
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        String command = optionString(options, "command");
-        if (command == null) {
-            command = "status";
-        }
+        String command = optionString(options, COMMAND);
         JsonObject root = new JsonObject();
-        if ("status".equals(command)) {
-            root.put("registered", isInstrumentationRegistered());
-            JsonArray recordingsJson = new JsonArray();
-            for (Recording recording : FlightRecorder.getFlightRecorder().getRecordings()) {
-                JsonObject rec = new JsonObject();
-                rec.put("name", recording.getName());
-                rec.put("state", recording.getState().toString());
-                rec.put("destination", recording.getDestination() != null ? recording.getDestination().toString() : null);
-                recordingsJson.add(rec);
+        switch (command != null ? command : "status") {
+            case "status" -> {
+                root.put("registered", isInstrumentationRegistered());
+                JsonArray recordingsJson = new JsonArray();
+                for (Recording recording : FlightRecorder.getFlightRecorder().getRecordings()) {
+                    JsonObject rec = new JsonObject();
+                    rec.put("name", recording.getName());
+                    rec.put("state", recording.getState().toString());
+                    rec.put("destination",
+                            recording.getDestination() != null ? recording.getDestination().toString() : null);
+                    recordingsJson.add(rec);
+                }
+                root.put("recordings", recordingsJson);
+                JsonObject events = new JsonObject();
+                for (CamelJfrEvents event : CamelJfrEvents.values()) {
+                    events.put(event.getShortName(), event.isEnabled());
+                }
+                root.put("events", events);
             }
-            root.put("recordings", recordingsJson);
-            JsonObject events = new JsonObject();
-            eventEnabledStates().forEach(events::put);
-            root.put("events", events);
-        } else if ("enable".equals(command) || "disable".equals(command)) {
-            root.put("result", doToggle(options, "enable".equals(command)));
-        } else if ("jfc".equals(command)) {
-            root.put("jfc", doJfc(options));
-        } else {
-            root.put("error", "unknown command: " + command);
+            case "enable", "disable" -> {
+                ToggleResult result = doToggle(options, "enable".equals(command));
+                root.put("success", result.success());
+                root.put("result", result.message());
+            }
+            case "jfc" -> {
+                try {
+                    root.put("jfc", doJfc(options));
+                } catch (IllegalArgumentException e) {
+                    root.put("error", e.getMessage());
+                }
+            }
+            default -> root.put("error", unknownCommand(command));
         }
         return root;
+    }
+
+    private static String unknownCommand(String command) {
+        return "unknown command: " + command + ". Valid values: status, enable, disable, jfc";
     }
 }

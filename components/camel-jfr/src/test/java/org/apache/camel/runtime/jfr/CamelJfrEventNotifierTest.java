@@ -17,6 +17,7 @@
 package org.apache.camel.runtime.jfr;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import jdk.jfr.consumer.RecordedEvent;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,14 +29,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CamelJfrEventNotifierTest extends JfrRecordingTestSupport {
 
-    private static final Class<?>[] EVENTS = {
-            CamelExchangeEvent.class, CamelExchangeSendEvent.class,
-            CamelExchangeFailedEvent.class, CamelRedeliveryEvent.class
-    };
-
     @Test
     void exchangeAndSendEventsAreEmitted() throws Exception {
-        List<RecordedEvent> events = recordAndRun(EVENTS, () -> {
+        List<RecordedEvent> events = recordAndRun(() -> {
             try (DefaultCamelContext context = new DefaultCamelContext()) {
                 CamelJfrEventNotifier notifier = new CamelJfrEventNotifier();
                 notifier.setCamelContext(context);
@@ -54,15 +50,14 @@ class CamelJfrEventNotifierTest extends JfrRecordingTestSupport {
             }
         });
 
-        assertThat(events).anySatisfy(e -> assertThat(e.getEventType().getName()).isEqualTo("org.apache.camel.exchange"));
-        assertThat(events)
-                .filteredOn(e -> "org.apache.camel.exchange.send".equals(e.getEventType().getName()))
+        assertThat(eventsOfType(events, CamelJfrEvents.EXCHANGE)).isNotEmpty();
+        assertThat(eventsOfType(events, CamelJfrEvents.SEND))
                 .anySatisfy(e -> assertThat(e.getString("endpointUri")).contains("mock://out"));
     }
 
     @Test
     void endpointUriIsSanitized() throws Exception {
-        List<RecordedEvent> events = recordAndRun(new Class<?>[] { CamelExchangeSendEvent.class }, () -> {
+        List<RecordedEvent> events = recordAndRun(() -> {
             try (DefaultCamelContext context = new DefaultCamelContext()) {
                 CamelJfrEventNotifier notifier = new CamelJfrEventNotifier();
                 notifier.setCamelContext(context);
@@ -81,9 +76,111 @@ class CamelJfrEventNotifierTest extends JfrRecordingTestSupport {
             }
         });
 
-        assertThat(events)
-                .filteredOn(e -> "org.apache.camel.exchange.send".equals(e.getEventType().getName()))
+        assertThat(eventsOfType(events, CamelJfrEvents.SEND))
                 .isNotEmpty()
                 .allSatisfy(e -> assertThat(e.getString("endpointUri")).doesNotContain("secret"));
+    }
+
+    @Test
+    void parallelMulticastPairsEachSendWithItsOwnEndpoint() throws Exception {
+        // a parallel multicast copies the exchange, and a copy shares the property *values* with its parent.
+        // A mutable stack stored in a property would therefore be shared across branches, and the send events
+        // would pair up with the wrong endpoint (or pop an empty stack and be dropped entirely).
+        List<RecordedEvent> events = recordAndRun(() -> {
+            try (DefaultCamelContext context = new DefaultCamelContext()) {
+                CamelJfrEventNotifier notifier = new CamelJfrEventNotifier();
+                notifier.setCamelContext(context);
+                context.getManagementStrategy().addEventNotifier(notifier);
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("direct:start").routeId("main")
+                                .multicast().parallelProcessing()
+                                .to("mock:one", "mock:two", "mock:three")
+                                .end();
+                    }
+                });
+                context.start();
+                for (String name : List.of("mock:one", "mock:two", "mock:three")) {
+                    context.getEndpoint(name, MockEndpoint.class).expectedMessageCount(1);
+                }
+                context.createProducerTemplate().sendBody("direct:start", "hi");
+                MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+            }
+        });
+
+        assertThat(eventsOfType(events, CamelJfrEvents.SEND))
+                .extracting(e -> e.getString("endpointUri"))
+                .contains("mock://one", "mock://two", "mock://three");
+    }
+
+    @Test
+    void redeliveryEventsCarryTheAttemptCount() throws Exception {
+        List<RecordedEvent> events = recordAndRun(() -> {
+            try (DefaultCamelContext context = new DefaultCamelContext()) {
+                CamelJfrEventNotifier notifier = new CamelJfrEventNotifier();
+                notifier.setCamelContext(context);
+                context.getManagementStrategy().addEventNotifier(notifier);
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        errorHandler(defaultErrorHandler().maximumRedeliveries(2).redeliveryDelay(0));
+                        from("direct:start").routeId("main")
+                                .process(e -> {
+                                    throw new IllegalStateException("boom");
+                                });
+                    }
+                });
+                context.start();
+                try {
+                    context.createProducerTemplate().sendBody("direct:start", "hi");
+                } catch (Exception expected) {
+                    // the exchange is meant to fail after exhausting its redeliveries
+                }
+            }
+        });
+
+        assertThat(eventsOfType(events, CamelJfrEvents.REDELIVERY))
+                .isNotEmpty()
+                .allSatisfy(e -> {
+                    assertThat(e.getInt("attempt")).isPositive();
+                    assertThat(e.getInt("maxAttempts")).isEqualTo(2);
+                });
+        assertThat(eventsOfType(events, CamelJfrEvents.FAILED))
+                .isNotEmpty()
+                .allSatisfy(e -> assertThat(e.getString("exceptionType")).isEqualTo(IllegalStateException.class.getName()));
+    }
+
+    @Test
+    void oversizedExceptionMessageIsTruncated() throws Exception {
+        // an exception message is attacker-influenced in many routes, so an unbounded copy of it would let a single
+        // failing exchange blow up the recording
+        String longMessage = "x".repeat(1000);
+        List<RecordedEvent> events = recordAndRun(() -> {
+            try (DefaultCamelContext context = new DefaultCamelContext()) {
+                CamelJfrEventNotifier notifier = new CamelJfrEventNotifier();
+                notifier.setCamelContext(context);
+                context.getManagementStrategy().addEventNotifier(notifier);
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("direct:start").routeId("main")
+                                .process(e -> {
+                                    throw new IllegalStateException(longMessage);
+                                });
+                    }
+                });
+                context.start();
+                try {
+                    context.createProducerTemplate().sendBody("direct:start", "hi");
+                } catch (Exception expected) {
+                    // the exchange is meant to fail
+                }
+            }
+        });
+
+        assertThat(eventsOfType(events, CamelJfrEvents.FAILED))
+                .isNotEmpty()
+                .allSatisfy(e -> assertThat(e.getString("exceptionMessage")).isEqualTo("x".repeat(256)));
     }
 }

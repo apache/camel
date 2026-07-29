@@ -16,48 +16,43 @@
  */
 package org.apache.camel.runtime.jfr;
 
-import jdk.jfr.Event;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import jdk.jfr.FlightRecorder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.LifecycleStrategySupport;
 
+/**
+ * Installs the camel-jfr runtime instrumentation (event notifier, route policy and processor interceptor) into a
+ * {@link CamelContext}.
+ * <p>
+ * The events are registered with the flight recorder but never unregistered, as {@code FlightRecorder} is JVM global
+ * and another {@link CamelContext} in the same JVM may still be using them. Registering by itself emits nothing: the
+ * events are only captured while a recording that enables them is running.
+ *
+ * @since 4.22
+ */
 public class CamelJfrRuntimeInstrumentation extends LifecycleStrategySupport {
 
-    static final Class<?>[] RUNTIME_EVENTS = {
-            CamelRouteEvent.class, CamelProcessorEvent.class, CamelExchangeEvent.class,
-            CamelExchangeSendEvent.class, CamelExchangeFailedEvent.class, CamelRedeliveryEvent.class
-    };
-
-    private boolean registered;
+    private final AtomicBoolean registered = new AtomicBoolean();
 
     public boolean isRegistered() {
-        return registered;
+        return registered.get();
     }
 
     @Override
     public void onContextInitializing(CamelContext context) {
-        if (registered) {
+        // a stopped context can be initialized again, but the hooks below must only be added once
+        if (!registered.compareAndSet(false, true)) {
             return;
         }
-        for (Class<?> c : RUNTIME_EVENTS) {
-            FlightRecorder.register(c.asSubclass(Event.class));
+        for (CamelJfrEvents event : CamelJfrEvents.values()) {
+            FlightRecorder.register(event.getEventClass());
         }
         CamelJfrEventNotifier notifier = new CamelJfrEventNotifier();
         notifier.setCamelContext(context);
         context.getManagementStrategy().addEventNotifier(notifier);
         context.addRoutePolicyFactory(new CamelJfrRoutePolicyFactory());
         context.getCamelContextExtension().addInterceptStrategy(new CamelJfrInterceptStrategy());
-        registered = true;
-    }
-
-    @Override
-    public void onContextStopped(CamelContext context) {
-        if (!registered) {
-            return;
-        }
-        for (Class<?> c : RUNTIME_EVENTS) {
-            FlightRecorder.unregister(c.asSubclass(Event.class));
-        }
-        registered = false;
     }
 }

@@ -23,6 +23,11 @@ import jdk.jfr.Label;
 import jdk.jfr.Name;
 import jdk.jfr.StackTrace;
 
+/**
+ * Spans an exchange from creation until it is completed or failed.
+ *
+ * @since 4.22
+ */
 @Name("org.apache.camel.exchange")
 @Category({ "Camel Application", "Runtime" })
 @Label("Camel Exchange")

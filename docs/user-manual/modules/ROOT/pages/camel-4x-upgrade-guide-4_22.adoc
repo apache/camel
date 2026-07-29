@@ -169,10 +169,14 @@ They now start a real recording:
   `-XX:StartFlightRecording=filename=<name>.jfr[,settings=<jfr-profile>]` JVM argument is passed
   to the forked process.
 
-In both cases, `camel:jfr` (`camel-jfr`) is now automatically added as a dependency so the
-runtime instrumentation events (route, processor, exchange, send, failed, redelivery) are
-captured, not just JVM-level events. If you were passing `--jfr` expecting no effect, this now
-writes a `.jfr` file and adds `camel-jfr` to the classpath.
+In both cases the JFR support for the runtime is now added automatically (`camel-jfr`,
+`camel-quarkus-jfr` or `camel-jfr-starter`), and `camel.main.startup-recorder-runtime-enabled`
+is set to `true`, so the Camel runtime events (route, processor, exchange, send, failed,
+redelivery) are captured, not just JVM-level events. If you were passing `--jfr` expecting no
+effect, this now writes a `.jfr` file and adds a JFR dependency to the classpath.
+
+If `--jvm-args` already contains `-XX:StartFlightRecording`, `--jfr` stands down with a
+warning rather than starting a second, competing recording.
 
 ==== Website installers for the Camel CLI
 
@@ -1443,14 +1447,14 @@ from `CamelTarFileEntryName` for tar and from `zipFileName` for zip instead of `
 
 === camel-jfr
 
-Placing `camel-jfr` on the classpath now also installs *runtime instrumentation*
-in addition to the existing startup instrumentation. This registers a
-`RoutePolicyFactory`, an `InterceptStrategy` and an `EventNotifier` that emit JFR
-events for exchanges, routes, processors, endpoint sends, failures and
-redeliveries. The events are cheap when no recording is active.
+`camel-jfr` can now also emit JFR events during message routing, in addition to the
+existing startup instrumentation. This is *opt-in and disabled by default*, so having
+`camel-jfr` on the classpath keeps behaving exactly as it did in 4.21.
 
-To restore the previous behavior (startup instrumentation only), set
-`runtimeEnabled` to `false` on the `FlightRecorderStartupStepRecorder`
-instance, for example via a `CamelContextCustomizer`.A new `jfr` dev console (`status`/`enable`/`disable`/`jfc` commands) allows inspecting and
-live-toggling the six runtime events on an already-running recording, without restarting
-the JVM.
+Enable it with `camel.main.startup-recorder-runtime-enabled=true`, or programmatically
+with `setRuntimeEnabled(true)` on the `FlightRecorderStartupStepRecorder`. The option is
+read once while the `CamelContext` initializes and cannot be changed afterwards.
+
+`org.apache.camel.spi.StartupStepRecorder` gained the default methods
+`isRuntimeEnabled()` and `setRuntimeEnabled(boolean)`. Both have no-op defaults, so
+existing implementations continue to compile and behave as before.

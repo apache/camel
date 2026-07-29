@@ -16,9 +16,6 @@
  */
 package org.apache.camel.runtime.jfr;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
@@ -30,6 +27,12 @@ import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.URISupport;
 
+/**
+ * Turns Camel exchange events into JFR events: one {@link CamelExchangeEvent} spanning the whole exchange, one
+ * {@link CamelExchangeSendEvent} per send to an endpoint, and instant events on failure and redelivery.
+ *
+ * @since 4.22
+ */
 public class CamelJfrEventNotifier extends EventNotifierSupport {
 
     static final String PROP_EXCHANGE_EVENT = "CamelJfrExchangeEvent";
@@ -85,7 +88,6 @@ public class CamelJfrEventNotifier extends EventNotifierSupport {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void onSending(ExchangeSendingEvent event) {
         CamelExchangeSendEvent jfr = new CamelExchangeSendEvent();
         if (jfr.isEnabled()) {
@@ -93,20 +95,13 @@ public class CamelJfrEventNotifier extends EventNotifierSupport {
             jfr.exchangeId = exchange.getExchangeId();
             jfr.endpointUri = URISupport.sanitizeUri(event.getEndpoint().getEndpointUri());
             jfr.begin();
-            Deque<CamelExchangeSendEvent> stack = exchange.getProperty(PROP_SEND_STACK, Deque.class);
-            if (stack == null) {
-                stack = new ArrayDeque<>();
-                exchange.setProperty(PROP_SEND_STACK, stack);
-            }
-            stack.push(jfr);
+            JfrEventStack.push(exchange, PROP_SEND_STACK, jfr);
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void onSent(Exchange exchange) {
-        Deque<CamelExchangeSendEvent> stack = exchange.getProperty(PROP_SEND_STACK, Deque.class);
-        if (stack != null && !stack.isEmpty()) {
-            CamelExchangeSendEvent jfr = stack.pop();
+        CamelExchangeSendEvent jfr = JfrEventStack.pop(exchange, PROP_SEND_STACK, CamelExchangeSendEvent.class);
+        if (jfr != null) {
             jfr.failed = exchange.isFailed();
             jfr.end();
             jfr.commit();
@@ -135,8 +130,8 @@ public class CamelJfrEventNotifier extends EventNotifierSupport {
             jfr.exchangeId = exchange.getExchangeId();
             jfr.routeId = exchange.getFromRouteId();
             jfr.attempt = event.getAttempt();
-            Integer max = exchange.getProperty(Exchange.REDELIVERY_MAX_COUNTER, Integer.class);
-            jfr.maxAttempts = max != null ? max : 0;
+            // the CamelRedeliveryMaxCounter header can be removed by the route, so read the authoritative value
+            jfr.maxAttempts = exchange.getExchangeExtension().getRedeliveryMaxCounter();
             jfr.commit();
         }
     }

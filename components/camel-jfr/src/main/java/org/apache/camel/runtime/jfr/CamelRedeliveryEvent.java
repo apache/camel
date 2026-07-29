@@ -23,6 +23,11 @@ import jdk.jfr.Label;
 import jdk.jfr.Name;
 import jdk.jfr.StackTrace;
 
+/**
+ * Emitted on each redelivery attempt of an exchange.
+ *
+ * @since 4.22
+ */
 @Name("org.apache.camel.redelivery")
 @Category({ "Camel Application", "Runtime" })
 @Label("Camel Redelivery")

@@ -10,6 +10,67 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-jfr",
     "version": "4.22.0-SNAPSHOT"
+  },
+  "options": {
+    "command": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Command",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "status",
+        "enable",
+        "disable",
+        "jfc"
+      ],
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": "status",
+      "description": "Command to perform"
+    },
+    "disable": {
+      "index": 1,
+      "kind": "option",
+      "displayName": "Disable",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Comma separated list of events to disable in the generated jfc settings overlay"
+    },
+    "event": {
+      "index": 2,
+      "kind": "option",
+      "displayName": "Event",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "enum": [
+        "all",
+        "route",
+        "processor",
+        "exchange",
+        "send",
+        "failed",
+        "redelivery"
+      ],
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": "all",
+      "description": "The runtime event to enable or disable, or all for every event"
+    }
   }
 }
 

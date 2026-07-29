@@ -16,8 +16,10 @@
  */
 package org.apache.camel.runtime.jfr;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jdk.jfr.consumer.RecordedEvent;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,24 +31,38 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CamelJfrBootstrapTest extends JfrRecordingTestSupport {
 
-    private static final Class<?>[] ALL = {
-            CamelRouteEvent.class, CamelProcessorEvent.class, CamelExchangeEvent.class,
-            CamelExchangeSendEvent.class, CamelExchangeFailedEvent.class, CamelRedeliveryEvent.class
-    };
-
-    private static final Set<String> RUNTIME_NAMES = Set.of(
-            "org.apache.camel.route", "org.apache.camel.processor", "org.apache.camel.exchange",
-            "org.apache.camel.exchange.send", "org.apache.camel.exchange.failed", "org.apache.camel.redelivery");
+    private static final Set<String> RUNTIME_NAMES = Arrays.stream(CamelJfrEvents.values())
+            .map(CamelJfrEvents::getEventName)
+            .collect(Collectors.toUnmodifiableSet());
 
     @Test
-    void autoOnEmitsRuntimeEvents() throws Exception {
-        List<RecordedEvent> events = recordAndRun(ALL, () -> runRoute(true));
+    void runtimeEnabledRecorderEmitsRuntimeEvents() throws Exception {
+        List<RecordedEvent> events = recordAndRun(() -> runRoute(true));
         assertThat(events).extracting(e -> e.getEventType().getName()).anyMatch(RUNTIME_NAMES::contains);
     }
 
     @Test
+    void runtimeInstrumentationIsOffByDefault() throws Exception {
+        // the recorder is on the classpath by default, so leaving runtimeEnabled alone must keep the
+        // 4.21 behaviour of recording startup steps only
+        List<RecordedEvent> events = recordAndRun(() -> {
+            try (DefaultCamelContext context = new DefaultCamelContext(false)) {
+                FlightRecorderStartupStepRecorder recorder = new FlightRecorderStartupStepRecorder();
+                assertThat(recorder.isRuntimeEnabled()).isFalse();
+                recorder.setCamelContext(context);
+                context.getCamelContextExtension().setStartupStepRecorder(recorder);
+                context.build();
+                context.addRoutes(routes());
+                context.start();
+                context.createProducerTemplate().sendBody("direct:start", "hi");
+            }
+        });
+        assertThat(events).extracting(e -> e.getEventType().getName()).noneMatch(RUNTIME_NAMES::contains);
+    }
+
+    @Test
     void optOutEmitsNoRuntimeEvents() throws Exception {
-        List<RecordedEvent> events = recordAndRun(ALL, () -> runRoute(false));
+        List<RecordedEvent> events = recordAndRun(() -> runRoute(false));
         assertThat(events).extracting(e -> e.getEventType().getName()).noneMatch(RUNTIME_NAMES::contains);
     }
 
@@ -61,14 +77,18 @@ class CamelJfrBootstrapTest extends JfrRecordingTestSupport {
             recorder.setCamelContext(context);
             context.getCamelContextExtension().setStartupStepRecorder(recorder);
             context.build();
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start").routeId("main").to("mock:out");
-                }
-            });
+            context.addRoutes(routes());
             context.start();
             context.createProducerTemplate().sendBody("direct:start", "hi");
         }
+    }
+
+    private static RouteBuilder routes() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").routeId("main").to("mock:out");
+            }
+        };
     }
 }

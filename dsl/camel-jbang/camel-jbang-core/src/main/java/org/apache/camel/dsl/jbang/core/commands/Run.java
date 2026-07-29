@@ -929,9 +929,13 @@ public class Run extends CamelCommand {
             writeSetting(main, profileProperties, "camel.management.port",
                     () -> String.valueOf(serverOptions.managementPort));
         }
-        writeSetting(main, profileProperties, JFR, debugOptions.jfr || debugOptions.jfrProfile != null ? "jfr" : null);
+        writeSetting(main, profileProperties, JFR, jfrEnabled() ? "jfr" : null);
         writeSetting(main, profileProperties, JFR_PROFILE,
                 debugOptions.jfrProfile != null ? debugOptions.jfrProfile : null);
+        if (jfrEnabled()) {
+            // camel-jfr is always on the classpath, but its runtime instrumentation is opt-in
+            writeSetting(main, profileProperties, "camel.main.startupRecorderRuntimeEnabled", "true");
+        }
 
         writeSetting(main, profileProperties, KAMELETS_VERSION, kameletsVersion);
 
@@ -1366,6 +1370,11 @@ public class Run extends CamelCommand {
         if (!jfrEnabled()) {
             return null;
         }
+        if (jvmArgs != null && jvmArgs.contains("-XX:StartFlightRecording")) {
+            // the explicit JVM argument wins, as two recordings would otherwise compete for the same file
+            printer().printErr("WARN: Ignoring --jfr because --jvm-args already starts a flight recording");
+            return null;
+        }
         StringBuilder arg = new StringBuilder("-XX:StartFlightRecording=filename=").append(jfrFileName());
         if (debugOptions.jfrProfile != null) {
             arg.append(",settings=").append(debugOptions.jfrProfile);
@@ -1659,11 +1668,11 @@ public class Run extends CamelCommand {
         }
         if (jfrEnabled()) {
             boolean hasJfr = model.getDependencies().stream()
-                    .anyMatch(d -> "camel-jfr".equals(d.getArtifactId()));
+                    .anyMatch(d -> "camel-quarkus-jfr".equals(d.getArtifactId()));
             if (!hasJfr) {
                 Dependency d = new Dependency();
-                d.setGroupId("org.apache.camel");
-                d.setArtifactId("camel-jfr");
+                d.setGroupId("org.apache.camel.quarkus");
+                d.setArtifactId("camel-quarkus-jfr");
                 model.getDependencies().add(d);
             }
         }
@@ -1905,11 +1914,11 @@ public class Run extends CamelCommand {
         }
         if (jfrEnabled()) {
             boolean hasJfr = model.getDependencies().stream()
-                    .anyMatch(d -> "camel-jfr".equals(d.getArtifactId()));
+                    .anyMatch(d -> "camel-jfr-starter".equals(d.getArtifactId()));
             if (!hasJfr) {
                 Dependency d = new Dependency();
-                d.setGroupId("org.apache.camel");
-                d.setArtifactId("camel-jfr");
+                d.setGroupId("org.apache.camel.springboot");
+                d.setArtifactId("camel-jfr-starter");
                 model.getDependencies().add(d);
             }
         }
@@ -2459,28 +2468,45 @@ public class Run extends CamelCommand {
      * Starts a JDK Flight Recorder recording for the in-process run (this JVM never forks, so the
      * {@code -XX:StartFlightRecording} JVM flag used for the Quarkus/Spring Boot runtimes cannot apply here).
      */
-    private Recording startJfrRecording() {
+    Recording startJfrRecording() {
         if (!jfrEnabled()) {
             return null;
         }
+        String profile = debugOptions.jfrProfile != null ? debugOptions.jfrProfile : "default";
+        Configuration config;
         try {
-            Configuration config = Configuration.getConfiguration(
-                    debugOptions.jfrProfile != null ? debugOptions.jfrProfile : "default");
+            config = Configuration.getConfiguration(profile);
+        } catch (IOException | ParseException e) {
+            // an unknown profile is a user error, so fail fast instead of silently running without a recording
+            String known = Configuration.getConfigurations().stream()
+                    .map(Configuration::getName)
+                    .collect(Collectors.joining(", "));
+            throw new IllegalArgumentException(
+                    "Unknown Java Flight Recorder profile: " + profile + ". Supported profiles: " + known, e);
+        }
+        try {
             Recording recording = new Recording(config);
             recording.setDestination(Paths.get(jfrFileName()));
+            // also dump if the JVM exits without us getting a chance to stop the recording
+            recording.setDumpOnExit(true);
             recording.start();
             printer().println("Java Flight Recorder recording to " + jfrFileName());
             return recording;
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             printer().printErr("WARN: Failed to start Java Flight Recorder: " + e.getMessage());
             return null;
         }
     }
 
     private void stopJfrRecording(Recording recording) {
-        if (recording != null) {
+        if (recording == null) {
+            return;
+        }
+        try {
             recording.stop();
             recording.close();
+        } catch (Exception e) {
+            printer().printErr("WARN: Failed to stop Java Flight Recorder: " + e.getMessage());
         }
     }
 
@@ -2992,8 +3018,8 @@ public class Run extends CamelCommand {
     static class DebugOptions {
         @Option(names = { "--jfr" }, defaultValue = "false",
                 description = "Enables Java Flight Recorder, saving a recording to <name>.jfr on exit. "
-                              + "Automatically adds camel-jfr so runtime instrumentation events "
-                              + "(route, processor, exchange, etc.) are captured.")
+                              + "Automatically adds JFR support for the runtime and turns on the Camel runtime "
+                              + "instrumentation events (route, processor, exchange, etc.).")
         boolean jfr;
 
         @Option(names = { "--jfr-profile" },

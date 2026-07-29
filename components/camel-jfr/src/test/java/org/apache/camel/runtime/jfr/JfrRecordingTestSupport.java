@@ -33,14 +33,18 @@ abstract class JfrRecordingTestSupport {
         void run() throws Exception;
     }
 
-    protected List<RecordedEvent> recordAndRun(Class<?>[] eventClasses, ThrowingRunnable action) throws Exception {
-        for (Class<?> c : eventClasses) {
-            FlightRecorder.register(c.asSubclass(jdk.jfr.Event.class));
+    /**
+     * Runs the action with a recording capturing every camel-jfr runtime event, and returns what was recorded.
+     */
+    protected List<RecordedEvent> recordAndRun(ThrowingRunnable action) throws Exception {
+        for (CamelJfrEvents event : CamelJfrEvents.values()) {
+            FlightRecorder.register(event.getEventClass());
         }
         Path file = Files.createTempFile("camel-runtime-test", ".jfr");
         try (Recording recording = new Recording()) {
-            for (Class<?> c : eventClasses) {
-                recording.enable(c.getName());
+            for (CamelJfrEvents event : CamelJfrEvents.values()) {
+                // must enable by class: every event is renamed by @Name, so the Java class name matches nothing
+                recording.enable(event.getEventClass());
             }
             recording.start();
             action.run();
@@ -55,10 +59,14 @@ abstract class JfrRecordingTestSupport {
             }
             return events;
         } finally {
-            for (Class<?> c : eventClasses) {
-                FlightRecorder.unregister(c.asSubclass(jdk.jfr.Event.class));
-            }
             Files.deleteIfExists(file);
         }
+    }
+
+    /**
+     * @return the recorded events of the given camel-jfr event type
+     */
+    protected static List<RecordedEvent> eventsOfType(List<RecordedEvent> events, CamelJfrEvents type) {
+        return events.stream().filter(e -> type.getEventName().equals(e.getEventType().getName())).toList();
     }
 }

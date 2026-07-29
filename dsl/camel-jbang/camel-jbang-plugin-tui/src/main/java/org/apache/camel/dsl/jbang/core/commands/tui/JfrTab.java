@@ -148,6 +148,11 @@ class JfrTab extends AbstractTab {
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(Span.styled("  " + message, LABEL)));
         }
+        // an error raised after the status was loaded, so it is shown inline rather than replacing the whole pane
+        if (errorMessage != null) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled("  " + errorMessage, Theme.error())));
+        }
 
         frame.renderWidget(
                 Paragraph.builder()
@@ -210,17 +215,31 @@ class JfrTab extends AbstractTab {
 
                 JsonObject jo = ctx.executeAction(pid, root, 5000);
                 String result = jo != null ? jo.getString("result") : null;
-                applyMessage(result != null ? result : "no response from integration");
-                refreshStatus();
+                if (result == null) {
+                    applyError(errorOf(jo, "No response from integration"));
+                    return;
+                }
+                if (Boolean.TRUE.equals(jo.getBoolean("success"))) {
+                    applyMessage(result);
+                } else {
+                    applyError(result);
+                }
             } catch (Exception e) {
                 applyError("Error: " + e.getMessage());
+                return;
+            } finally {
                 loading.set(false);
             }
+            // only refresh once the loading flag is released, as refreshStatus takes it again
+            refreshStatus();
         });
     }
 
     private void generateJfc() {
         if (ctx.selectedPid == null) {
+            return;
+        }
+        if (!loading.compareAndSet(false, true)) {
             return;
         }
 
@@ -233,14 +252,18 @@ class JfrTab extends AbstractTab {
 
                 JsonObject jo = ctx.executeAction(pid, root, 5000);
                 String jfc = jo != null ? jo.getString("jfc") : null;
-                if (jfc != null && ctx.openMarkdownCallback != null && ctx.runner != null) {
+                if (jfc == null) {
+                    applyError(errorOf(jo, "No response from integration"));
+                } else if (ctx.openMarkdownCallback != null && ctx.runner != null) {
                     ctx.runner.runOnRenderThread(
                             () -> ctx.openMarkdownCallback.accept("JFR .jfc overlay", "```\n" + jfc + "\n```"));
                 } else {
-                    applyMessage(jfc != null ? jfc : "no response from integration");
+                    applyMessage(jfc);
                 }
             } catch (Exception e) {
                 applyError("Error: " + e.getMessage());
+            } finally {
+                loading.set(false);
             }
         });
     }
@@ -255,19 +278,24 @@ class JfrTab extends AbstractTab {
                 dataLoaded = true;
                 return;
             }
+            String error = jo.getString("error");
+            if (error != null) {
+                errorMessage = error;
+                dataLoaded = true;
+                return;
+            }
             registered = Boolean.TRUE.equals(jo.getBoolean("registered"));
             List<String> recs = new ArrayList<>();
-            JsonArray recordingsArr = (JsonArray) jo.get("recordings");
-            if (recordingsArr != null) {
+            if (jo.get("recordings") instanceof JsonArray recordingsArr) {
                 for (Object o : recordingsArr) {
-                    JsonObject rec = (JsonObject) o;
-                    recs.add(rec.getString("name") + " (state=" + rec.getString("state") + ")");
+                    if (o instanceof JsonObject rec) {
+                        recs.add(rec.getString("name") + " (state=" + rec.getString("state") + ")");
+                    }
                 }
             }
             recordings = recs;
             Map<String, Boolean> evts = new LinkedHashMap<>();
-            JsonObject eventsObj = (JsonObject) jo.get("events");
-            if (eventsObj != null) {
+            if (jo.get("events") instanceof JsonObject eventsObj) {
                 eventsObj.forEach((k, v) -> evts.put(k, Boolean.TRUE.equals(v)));
             }
             events = evts;
@@ -276,18 +304,33 @@ class JfrTab extends AbstractTab {
         });
     }
 
+    /**
+     * The integration reports why it could not answer in an {@code error} field, which is more useful than the generic
+     * fallback.
+     */
+    private static String errorOf(JsonObject jo, String fallback) {
+        String error = jo != null ? jo.getString("error") : null;
+        return error != null ? error : fallback;
+    }
+
     private void applyMessage(String msg) {
         if (ctx.runner == null) {
             return;
         }
-        ctx.runner.runOnRenderThread(() -> message = msg);
+        ctx.runner.runOnRenderThread(() -> {
+            message = msg;
+            errorMessage = null;
+        });
     }
 
     private void applyError(String error) {
         if (ctx.runner == null) {
             return;
         }
-        ctx.runner.runOnRenderThread(() -> message = error);
+        ctx.runner.runOnRenderThread(() -> {
+            message = null;
+            errorMessage = error;
+        });
     }
 
     @Override

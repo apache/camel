@@ -45,7 +45,8 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
     private static final Logger LOG = LoggerFactory.getLogger(FlightRecorderStartupStepRecorder.class);
 
     private CamelContext camelContext;
-    private boolean runtimeEnabled = true;
+    private boolean runtimeEnabled;
+    private CamelJfrRuntimeInstrumentation instrumentation;
     private Recording rec;
     private FlightRecorderListener frl;
 
@@ -64,10 +65,12 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
         this.camelContext = camelContext;
     }
 
+    @Override
     public boolean isRuntimeEnabled() {
         return runtimeEnabled;
     }
 
+    @Override
     public void setRuntimeEnabled(boolean runtimeEnabled) {
         this.runtimeEnabled = runtimeEnabled;
     }
@@ -118,8 +121,10 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
             rec.start();
         }
 
-        if (runtimeEnabled && camelContext != null) {
-            camelContext.addLifecycleStrategy(new CamelJfrRuntimeInstrumentation());
+        // only install once, as the recorder is started again when the context is restarted
+        if (runtimeEnabled && camelContext != null && instrumentation == null) {
+            instrumentation = new CamelJfrRuntimeInstrumentation();
+            camelContext.addLifecycleStrategy(instrumentation);
         }
     }
 

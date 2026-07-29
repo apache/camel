@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class RunTest extends CamelCommandBaseTestSupport {
 
@@ -123,7 +124,7 @@ class RunTest extends CamelCommandBaseTestSupport {
 
         assertThat(command.jfrEnabled()).isTrue();
         assertThat(command.buildJfrJvmArgs())
-                .isEqualTo("-XX:StartFlightRecording=filename=" + command.jfrFileName());
+                .isEqualTo("-XX:StartFlightRecording=filename=CamelJBang.jfr");
     }
 
     @Test
@@ -133,7 +134,38 @@ class RunTest extends CamelCommandBaseTestSupport {
 
         assertThat(command.jfrEnabled()).isTrue();
         assertThat(command.buildJfrJvmArgs())
-                .isEqualTo("-XX:StartFlightRecording=filename=" + command.jfrFileName() + ",settings=profile");
+                .isEqualTo("-XX:StartFlightRecording=filename=CamelJBang.jfr,settings=profile");
+    }
+
+    @Test
+    void explicitStartFlightRecordingInJvmArgsWinsOverJfrFlag() throws Exception {
+        // two recordings would otherwise compete for the same file, so --jfr must stand down
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--jfr",
+                "--jvm-args=-XX:StartFlightRecording=filename=mine.jfr", "route.yaml");
+
+        assertThat(command.jfrEnabled()).isTrue();
+        assertThat(command.buildJfrJvmArgs()).isNull();
+    }
+
+    @Test
+    void unknownJfrProfileFailsFastWithTheSupportedProfiles() throws Exception {
+        // running without a recording after the user asked for one would look like JFR simply produced nothing
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--jfr-profile=does-not-exist", "route.yaml");
+
+        assertThatThrownBy(command::startJfrRecording)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("does-not-exist")
+                .hasMessageContaining("default");
+    }
+
+    @Test
+    void jfrRecordingIsNotStartedWhenJfrIsOff() throws Exception {
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "route.yaml");
+
+        assertThat(command.startJfrRecording()).isNull();
     }
 
     @Test

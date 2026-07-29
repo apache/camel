@@ -16,40 +16,34 @@
  */
 package org.apache.camel.runtime.jfr;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.support.RoutePolicySupport;
 
+/**
+ * Emits a {@link CamelRouteEvent} spanning the time an exchange spends in a route.
+ *
+ * @since 4.22
+ */
 public class CamelJfrRoutePolicy extends RoutePolicySupport {
 
     static final String PROP_ROUTE_STACK = "CamelJfrRouteStack";
 
     @Override
-    @SuppressWarnings("unchecked")
     public void onExchangeBegin(Route route, Exchange exchange) {
         CamelRouteEvent event = new CamelRouteEvent();
         if (event.isEnabled()) {
             event.routeId = route.getRouteId();
             event.exchangeId = exchange.getExchangeId();
             event.begin();
-            Deque<CamelRouteEvent> stack = exchange.getProperty(PROP_ROUTE_STACK, Deque.class);
-            if (stack == null) {
-                stack = new ArrayDeque<>();
-                exchange.setProperty(PROP_ROUTE_STACK, stack);
-            }
-            stack.push(event);
+            JfrEventStack.push(exchange, PROP_ROUTE_STACK, event);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void onExchangeDone(Route route, Exchange exchange) {
-        Deque<CamelRouteEvent> stack = exchange.getProperty(PROP_ROUTE_STACK, Deque.class);
-        if (stack != null && !stack.isEmpty()) {
-            CamelRouteEvent event = stack.pop();
+        CamelRouteEvent event = JfrEventStack.pop(exchange, PROP_ROUTE_STACK, CamelRouteEvent.class);
+        if (event != null) {
             event.failed = exchange.isFailed();
             event.end();
             event.commit();

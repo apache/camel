@@ -23,6 +23,11 @@ import jdk.jfr.Label;
 import jdk.jfr.Name;
 import jdk.jfr.StackTrace;
 
+/**
+ * Spans the execution of a single processor, such as an EIP or a bean call.
+ *
+ * @since 4.22
+ */
 @Name("org.apache.camel.processor")
 @Category({ "Camel Application", "Runtime" })
 @Label("Camel Processor")

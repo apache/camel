@@ -16,6 +16,7 @@
  */
 package org.apache.camel.runtime.jfr;
 
+import jdk.jfr.EventType;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -24,6 +25,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
+/**
+ * Wraps every processor to emit a {@link CamelProcessorEvent} spanning its execution.
+ *
+ * @since 4.22
+ */
 public class CamelJfrInterceptStrategy implements InterceptStrategy {
 
     @Override
@@ -33,6 +39,7 @@ public class CamelJfrInterceptStrategy implements InterceptStrategy {
     }
 
     private static final class JfrProcessor extends DelegateAsyncProcessor {
+        private final EventType eventType = EventType.getEventType(CamelProcessorEvent.class);
         private final String processorId;
         private final String processorType;
 
@@ -44,22 +51,22 @@ public class CamelJfrInterceptStrategy implements InterceptStrategy {
 
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
-            CamelProcessorEvent event = new CamelProcessorEvent();
-            final boolean enabled = event.isEnabled();
-            if (enabled) {
-                event.exchangeId = exchange.getExchangeId();
-                event.routeId = exchange.getFromRouteId();
-                event.processorId = processorId;
-                event.processorType = processorType;
-                event.begin();
+            // this runs for every processor of every message, so when no recording captures the event we must not
+            // allocate anything: the event escapes into the callback below, so escape analysis cannot elide it
+            if (!eventType.isEnabled()) {
+                return processor.process(exchange, callback);
             }
+            CamelProcessorEvent event = new CamelProcessorEvent();
+            event.exchangeId = exchange.getExchangeId();
+            event.routeId = exchange.getFromRouteId();
+            event.processorId = processorId;
+            event.processorType = processorType;
+            event.begin();
             return processor.process(exchange, doneSync -> {
                 try {
-                    if (enabled) {
-                        event.failed = exchange.isFailed();
-                        event.end();
-                        event.commit();
-                    }
+                    event.failed = exchange.isFailed();
+                    event.end();
+                    event.commit();
                 } finally {
                     callback.done(doneSync);
                 }

@@ -27,7 +27,7 @@ class CamelRuntimeEventsTest extends JfrRecordingTestSupport {
 
     @Test
     void routeEventIsRecordedWithFields() throws Exception {
-        List<RecordedEvent> events = recordAndRun(new Class<?>[] { CamelRouteEvent.class }, () -> {
+        List<RecordedEvent> events = recordAndRun(() -> {
             CamelRouteEvent event = new CamelRouteEvent();
             event.routeId = "route1";
             event.exchangeId = "ex1";
@@ -36,8 +36,7 @@ class CamelRuntimeEventsTest extends JfrRecordingTestSupport {
             event.commit();
         });
 
-        assertThat(events)
-                .filteredOn(e -> "org.apache.camel.route".equals(e.getEventType().getName()))
+        assertThat(eventsOfType(events, CamelJfrEvents.ROUTE))
                 .hasSize(1)
                 .first()
                 .satisfies(e -> {
@@ -45,5 +44,20 @@ class CamelRuntimeEventsTest extends JfrRecordingTestSupport {
                     assertThat(e.getString("exchangeId")).isEqualTo("ex1");
                     assertThat(e.getBoolean("failed")).isFalse();
                 });
+    }
+
+    @Test
+    void everyEventDeclaresTheNameTheConsoleAndJfcFilesUse() {
+        // @Name renames every event, so the JFR name is not derived from the Java class name. A .jfc overlay or a
+        // jcmd command that used the class name would silently match nothing.
+        assertThat(CamelJfrEvents.values())
+                .extracting(CamelJfrEvents::getEventName)
+                .containsExactly(
+                        "org.apache.camel.route",
+                        "org.apache.camel.processor",
+                        "org.apache.camel.exchange",
+                        "org.apache.camel.exchange.send",
+                        "org.apache.camel.exchange.failed",
+                        "org.apache.camel.redelivery");
     }
 }

@@ -23,6 +23,12 @@ import jdk.jfr.Label;
 import jdk.jfr.Name;
 import jdk.jfr.StackTrace;
 
+/**
+ * Spans the time taken to send an exchange to an endpoint. The endpoint URI is sanitized, so credentials in the URI are
+ * not recorded.
+ *
+ * @since 4.22
+ */
 @Name("org.apache.camel.exchange.send")
 @Category({ "Camel Application", "Runtime" })
 @Label("Camel Exchange Send")

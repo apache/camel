@@ -1016,7 +1016,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
-            IOHelper.writeText("{}", outputFile);
+            // tell the caller why there is nothing to report, as an empty result is indistinguishable from an error
+            JsonObject json = new JsonObject();
+            json.put("error", "JFR runtime instrumentation is not available (camel-jfr is not on the classpath)");
+            IOHelper.writeText(json.toJson(), outputFile);
         }
     }
 

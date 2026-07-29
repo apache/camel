@@ -17,9 +17,11 @@
 package org.apache.camel.runtime.jfr;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import jdk.jfr.consumer.RecordedEvent;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +31,7 @@ class CamelJfrRoutePolicyTest extends JfrRecordingTestSupport {
 
     @Test
     void nestedRoutesEmitTwoRouteEvents() throws Exception {
-        List<RecordedEvent> events = recordAndRun(new Class<?>[] { CamelRouteEvent.class }, () -> {
+        List<RecordedEvent> events = recordAndRun(() -> {
             try (DefaultCamelContext context = new DefaultCamelContext()) {
                 context.addRoutePolicyFactory(new CamelJfrRoutePolicyFactory());
                 context.addRoutes(new RouteBuilder() {
@@ -44,9 +46,42 @@ class CamelJfrRoutePolicyTest extends JfrRecordingTestSupport {
             }
         });
 
-        assertThat(events)
-                .filteredOn(e -> "org.apache.camel.route".equals(e.getEventType().getName()))
+        assertThat(eventsOfType(events, CamelJfrEvents.ROUTE))
                 .extracting(e -> e.getString("routeId"))
                 .contains("a", "b");
+    }
+
+    @Test
+    void parallelMulticastKeepsOneRouteEventPerBranch() throws Exception {
+        // each branch of a parallel multicast runs on its own exchange copy, and a copy shares the property *values*
+        // with its parent. A mutable stack in a property would be shared across branches, so the nested route events
+        // would be popped by the wrong branch and either mis-attributed or lost.
+        List<RecordedEvent> events = recordAndRun(() -> {
+            try (DefaultCamelContext context = new DefaultCamelContext()) {
+                context.addRoutePolicyFactory(new CamelJfrRoutePolicyFactory());
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("direct:a").routeId("a")
+                                .multicast().parallelProcessing()
+                                .to("direct:b", "direct:c")
+                                .end();
+                        from("direct:b").routeId("b").to("mock:b");
+                        from("direct:c").routeId("c").to("mock:c");
+                    }
+                });
+                context.start();
+                MockEndpoint b = context.getEndpoint("mock:b", MockEndpoint.class);
+                MockEndpoint c = context.getEndpoint("mock:c", MockEndpoint.class);
+                b.expectedMessageCount(1);
+                c.expectedMessageCount(1);
+                context.createProducerTemplate().sendBody("direct:a", "hi");
+                MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+            }
+        });
+
+        assertThat(eventsOfType(events, CamelJfrEvents.ROUTE))
+                .extracting(e -> e.getString("routeId"))
+                .containsExactlyInAnyOrder("a", "b", "c");
     }
 }

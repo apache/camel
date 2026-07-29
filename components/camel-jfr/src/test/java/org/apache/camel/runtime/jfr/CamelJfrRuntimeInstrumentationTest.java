@@ -35,16 +35,73 @@ class CamelJfrRuntimeInstrumentationTest {
     }
 
     @Test
-    void isRegisteredReflectsLifecycleState() {
+    void hooksAreInstalledOnContextInitializing() {
         CamelJfrRuntimeInstrumentation instrumentation = new CamelJfrRuntimeInstrumentation();
         assertThat(instrumentation.isRegistered()).isFalse();
 
         context = new DefaultCamelContext();
         context.addLifecycleStrategy(instrumentation);
         context.start();
+
+        assertThat(instrumentation.isRegistered()).isTrue();
+        assertThat(context.getManagementStrategy().getEventNotifiers())
+                .hasAtLeastOneElementOfType(CamelJfrEventNotifier.class);
+        assertThat(context.getRoutePolicyFactories()).hasAtLeastOneElementOfType(CamelJfrRoutePolicyFactory.class);
+        assertThat(context.getCamelContextExtension().getInterceptStrategies())
+                .hasAtLeastOneElementOfType(CamelJfrInterceptStrategy.class);
+    }
+
+    @Test
+    void registrationSurvivesAStopBecauseFlightRecorderIsJvmGlobal() {
+        // FlightRecorder.register/unregister is JVM wide, so unregistering on stop would blind every other
+        // CamelContext in the same JVM. Stopping one context must therefore leave the event types registered.
+        CamelJfrRuntimeInstrumentation instrumentation = new CamelJfrRuntimeInstrumentation();
+        context = new DefaultCamelContext();
+        context.addLifecycleStrategy(instrumentation);
+        context.start();
         assertThat(instrumentation.isRegistered()).isTrue();
 
         context.stop();
-        assertThat(instrumentation.isRegistered()).isFalse();
+
+        assertThat(instrumentation.isRegistered()).isTrue();
+    }
+
+    @Test
+    void restartDoesNotInstallTheHooksTwice() {
+        // a stopped context can be initialized again, and every duplicate notifier/policy/interceptor would emit
+        // a duplicate JFR event for the same message
+        CamelJfrRuntimeInstrumentation instrumentation = new CamelJfrRuntimeInstrumentation();
+        context = new DefaultCamelContext();
+        context.addLifecycleStrategy(instrumentation);
+        context.start();
+
+        long notifiers = countJfrNotifiers();
+        long policyFactories = countJfrRoutePolicyFactories();
+        long interceptors = countJfrInterceptStrategies();
+        assertThat(notifiers).isOne();
+        assertThat(policyFactories).isOne();
+        assertThat(interceptors).isOne();
+
+        context.stop();
+        context.start();
+
+        assertThat(countJfrNotifiers()).isEqualTo(notifiers);
+        assertThat(countJfrRoutePolicyFactories()).isEqualTo(policyFactories);
+        assertThat(countJfrInterceptStrategies()).isEqualTo(interceptors);
+    }
+
+    private long countJfrNotifiers() {
+        return context.getManagementStrategy().getEventNotifiers().stream()
+                .filter(CamelJfrEventNotifier.class::isInstance).count();
+    }
+
+    private long countJfrRoutePolicyFactories() {
+        return context.getRoutePolicyFactories().stream()
+                .filter(CamelJfrRoutePolicyFactory.class::isInstance).count();
+    }
+
+    private long countJfrInterceptStrategies() {
+        return context.getCamelContextExtension().getInterceptStrategies().stream()
+                .filter(CamelJfrInterceptStrategy.class::isInstance).count();
     }
 }

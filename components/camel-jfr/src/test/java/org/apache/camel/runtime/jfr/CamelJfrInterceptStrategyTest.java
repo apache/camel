@@ -29,7 +29,7 @@ class CamelJfrInterceptStrategyTest extends JfrRecordingTestSupport {
 
     @Test
     void processorEventsAreEmitted() throws Exception {
-        List<RecordedEvent> events = recordAndRun(new Class<?>[] { CamelProcessorEvent.class }, () -> {
+        List<RecordedEvent> events = recordAndRun(() -> {
             try (DefaultCamelContext context = new DefaultCamelContext()) {
                 context.getCamelContextExtension().addInterceptStrategy(new CamelJfrInterceptStrategy());
                 context.addRoutes(new RouteBuilder() {
@@ -43,8 +43,7 @@ class CamelJfrInterceptStrategyTest extends JfrRecordingTestSupport {
             }
         });
 
-        assertThat(events)
-                .filteredOn(e -> "org.apache.camel.processor".equals(e.getEventType().getName()))
+        assertThat(eventsOfType(events, CamelJfrEvents.PROCESSOR))
                 .isNotEmpty()
                 .allSatisfy(e -> assertThat(e.getString("processorType")).isNotBlank());
     }

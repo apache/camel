@@ -162,6 +162,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String startupRecorder;
     private int startupRecorderMaxDepth = -1;
     private boolean startupRecorderRecording;
+    private boolean startupRecorderRuntimeEnabled;
     private String startupRecorderProfile = "default";
     private long startupRecorderDuration;
     private String startupRecorderDir;
@@ -1721,6 +1722,21 @@ public abstract class DefaultConfigurationProperties<T> {
         this.startupRecorderRecording = startupRecorderRecording;
     }
 
+    public boolean isStartupRecorderRuntimeEnabled() {
+        return startupRecorderRuntimeEnabled;
+    }
+
+    /**
+     * To also instrument the running Camel application, and not only its startup, by emitting Java Flight Recorder
+     * events for every exchange, route and processor.
+     *
+     * This requires that camel-jfr is on the classpath, and to enable this option. The runtime events are only captured
+     * while a recording is active. As they are emitted per message they add overhead, so this is turned off by default.
+     */
+    public void setStartupRecorderRuntimeEnabled(boolean startupRecorderRuntimeEnabled) {
+        this.startupRecorderRuntimeEnabled = startupRecorderRuntimeEnabled;
+    }
+
     public String getStartupRecorderProfile() {
         return startupRecorderProfile;
     }
@@ -2925,6 +2941,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withStartupRecorderRecording(boolean startupRecorderRecording) {
         this.startupRecorderRecording = startupRecorderRecording;
+        return (T) this;
+    }
+
+    /**
+     * To also instrument the running Camel application, and not only its startup, by emitting Java Flight Recorder
+     * events for every exchange, route and processor.
+     *
+     * This requires that camel-jfr is on the classpath, and to enable this option. The runtime events are only captured
+     * while a recording is active. As they are emitted per message they add overhead, so this is turned off by default.
+     */
+    public T withStartupRecorderRuntimeEnabled(boolean startupRecorderRuntimeEnabled) {
+        this.startupRecorderRuntimeEnabled = startupRecorderRuntimeEnabled;
         return (T) this;
     }
 
