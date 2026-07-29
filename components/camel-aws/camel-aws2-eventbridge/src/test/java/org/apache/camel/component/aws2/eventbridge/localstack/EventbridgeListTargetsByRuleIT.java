@@ -44,19 +44,19 @@ public class EventbridgeListTargetsByRuleIT extends Aws2EventbridgeBase {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:evs", new Processor() {
+        template.send("direct:evs-EventbridgeListTargetsByRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeListTargetsByRuleIT");
             }
         });
 
-        template.send("direct:evs-targets", new Processor() {
+        template.send("direct:evs-targets-EventbridgeListTargetsByRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeListTargetsByRuleIT");
                 Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
                         .build();
                 List<Target> targets = new ArrayList<Target>();
@@ -65,11 +65,11 @@ public class EventbridgeListTargetsByRuleIT extends Aws2EventbridgeBase {
             }
         });
 
-        template.send("direct:evs-list-targets", new Processor() {
+        template.send("direct:evs-list-targets-EventbridgeListTargetsByRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeListTargetsByRuleIT");
             }
         });
         MockEndpoint.assertIsSatisfied(context);
@@ -88,9 +88,9 @@ public class EventbridgeListTargetsByRuleIT extends Aws2EventbridgeBase {
                         = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
                 String target = "aws2-eventbridge://default?operation=putTargets";
                 String listTargets = "aws2-eventbridge://default?operation=listTargetsByRule";
-                from("direct:evs").to(awsEndpoint);
-                from("direct:evs-targets").to(target);
-                from("direct:evs-list-targets").to(listTargets).to("mock:result");
+                from("direct:evs-EventbridgeListTargetsByRuleIT").to(awsEndpoint);
+                from("direct:evs-targets-EventbridgeListTargetsByRuleIT").to(target);
+                from("direct:evs-list-targets-EventbridgeListTargetsByRuleIT").to(listTargets).to("mock:result");
             }
         };
     }

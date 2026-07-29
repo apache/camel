@@ -27,10 +27,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Isolated
 public class EventbridgeRemoveTargetsIT extends Aws2EventbridgeBase {
 
     @EndpointInject
@@ -43,20 +45,21 @@ public class EventbridgeRemoveTargetsIT extends Aws2EventbridgeBase {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:evs", new Processor() {
+        template.send("direct:evs-EventbridgeRemoveTargetsIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeRemoveTargetsIT");
             }
         });
 
-        template.send("direct:evs-targets", new Processor() {
+        template.send("direct:evs-targets-EventbridgeRemoveTargetsIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
-                Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeRemoveTargetsIT");
+                Target target = Target.builder().id("sqs-queue-EventbridgeRemoveTargetsIT")
+                        .arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
                         .build();
                 List<Target> targets = new ArrayList<Target>();
                 targets.add(target);
@@ -64,13 +67,13 @@ public class EventbridgeRemoveTargetsIT extends Aws2EventbridgeBase {
             }
         });
 
-        template.send("direct:evs-remove-targets", new Processor() {
+        template.send("direct:evs-remove-targets-EventbridgeRemoveTargetsIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeRemoveTargetsIT");
                 List<String> targets = new ArrayList<String>();
-                targets.add("sqs-queue");
+                targets.add("sqs-queue-EventbridgeRemoveTargetsIT");
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS_IDS, targets);
             }
         });
@@ -87,9 +90,9 @@ public class EventbridgeRemoveTargetsIT extends Aws2EventbridgeBase {
                         = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
                 String target = "aws2-eventbridge://default?operation=putTargets";
                 String removeTargets = "aws2-eventbridge://default?operation=removeTargets";
-                from("direct:evs").to(awsEndpoint);
-                from("direct:evs-targets").to(target);
-                from("direct:evs-remove-targets").to(removeTargets).to("mock:result");
+                from("direct:evs-EventbridgeRemoveTargetsIT").to(awsEndpoint);
+                from("direct:evs-targets-EventbridgeRemoveTargetsIT").to(target);
+                from("direct:evs-remove-targets-EventbridgeRemoveTargetsIT").to(removeTargets).to("mock:result");
             }
         };
     }

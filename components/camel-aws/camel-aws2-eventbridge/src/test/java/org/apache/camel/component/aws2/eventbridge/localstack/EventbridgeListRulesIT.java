@@ -28,9 +28,10 @@ import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.eventbridge.model.ListRulesResponse;
+import software.amazon.awssdk.services.eventbridge.model.Rule;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class EventbridgeListRulesIT extends Aws2EventbridgeBase {
 
@@ -44,20 +45,29 @@ public class EventbridgeListRulesIT extends Aws2EventbridgeBase {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:evs", new Processor() {
+        template.send("direct:evs-EventbridgeListRulesIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeListRulesIT");
             }
         });
 
-        template.send("direct:evs-targets", new Processor() {
+        template.send("direct:evs-EventbridgeListRulesIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
-                Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "secondrule-EventbridgeListRulesIT");
+            }
+        });
+
+        template.send("direct:evs-targets-EventbridgeListRulesIT", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeListRulesIT");
+                Target target = Target.builder().id("sqs-queue-EventbridgeListRulesIT")
+                        .arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
                         .build();
                 List<Target> targets = new ArrayList<Target>();
                 targets.add(target);
@@ -65,7 +75,7 @@ public class EventbridgeListRulesIT extends Aws2EventbridgeBase {
             }
         });
 
-        Exchange ex = template.request("direct:evs-listRules", new Processor() {
+        Exchange ex = template.request("direct:evs-listRules-EventbridgeListRulesIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
@@ -73,9 +83,9 @@ public class EventbridgeListRulesIT extends Aws2EventbridgeBase {
         });
 
         ListRulesResponse resp = ex.getIn().getBody(ListRulesResponse.class);
-        assertEquals(true, resp.hasRules());
-        assertEquals(1, resp.rules().size());
-        assertEquals("firstrule", resp.rules().get(0).name());
+        assertThat(resp.rules().stream().map(Rule::name))
+                .contains("firstrule-EventbridgeListRulesIT")
+                .contains("secondrule-EventbridgeListRulesIT");
         MockEndpoint.assertIsSatisfied(context);
 
     }
@@ -90,9 +100,9 @@ public class EventbridgeListRulesIT extends Aws2EventbridgeBase {
                 String putTargets = "aws2-eventbridge://default?operation=putTargets";
                 String listRule = "aws2-eventbridge://default?operation=listRules";
 
-                from("direct:evs").to(putRule).log("${body}");
-                from("direct:evs-targets").to(putTargets).log("${body}");
-                from("direct:evs-listRules").to(listRule).log("${body}").to("mock:result");
+                from("direct:evs-EventbridgeListRulesIT").to(putRule).log("${body}");
+                from("direct:evs-targets-EventbridgeListRulesIT").to(putTargets).log("${body}");
+                from("direct:evs-listRules-EventbridgeListRulesIT").to(listRule).log("${body}").to("mock:result");
             }
         };
     }

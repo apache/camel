@@ -16,28 +16,18 @@
  */
 package org.apache.camel.component.aws2.eventbridge.localstack;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.aws2.eventbridge.EventbridgeComponent;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.aws.common.services.AWSService;
-import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
-import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
 
-public class EventbridgePutEventsIT extends CamelTestSupport {
-
-    @RegisterExtension
-    public static AWSService service = AWSServiceFactory.createEventBridgeService();
+public class EventbridgePutEventsIT extends Aws2EventbridgeBase {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -45,19 +35,11 @@ public class EventbridgePutEventsIT extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        EventbridgeComponent eventbridgeComponent = context.getComponent("aws2-eventbridge", EventbridgeComponent.class);
-        eventbridgeComponent.getConfiguration().setEventbridgeClient(AWSSDKClientUtils.newEventBridgeClient());
-        return context;
-    }
-
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:evs-events", new Processor() {
+        template.send("direct:evs-events-EventbridgePutEventsIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
@@ -82,7 +64,7 @@ public class EventbridgePutEventsIT extends CamelTestSupport {
             @Override
             public void configure() {
                 String event = "aws2-eventbridge://default?operation=putEvent";
-                from("direct:evs-events").to(event).log("${body}").to("mock:result");
+                from("direct:evs-events-EventbridgePutEventsIT").to(event).log("${body}").to("mock:result");
             }
         };
     }
