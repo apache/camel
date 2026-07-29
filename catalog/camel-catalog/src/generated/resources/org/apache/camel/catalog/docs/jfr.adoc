@@ -63,8 +63,68 @@ jcmd <pid> JFR.start name=camel duration=60s filename=camel.jfr
 Then open `camel.jfr` in Java Mission Control and look under
 *Event Browser -> Camel Application -> Runtime*.
 
+=== Toggling events on a running recording
+
+Once a recording is active, individual runtime-instrumentation events can be enabled
+or disabled **without restarting the JVM**, using standard JDK tooling — no Camel-specific
+API is required:
+
+* `jcmd <pid> JFR.configure` accepts a `.jfc` settings file. Toggle a single event with a
+  fragment like:
++
+[source,xml]
+----
+<event name="org.apache.camel.route">
+    <setting name="enabled">false</setting>
+</event>
+----
+* The JDK's own `jdk.management.jfr.FlightRecorderMXBean` (`setRecordingSettings`) is
+  auto-registered on every JVM and can be driven from any JMX client, including
+  `jconsole` or a custom MBean call.
+* Java Mission Control's Event Browser has a settings panel that toggles the same
+  underlying state interactively.
+
+All three mechanisms mutate an already-`RUNNING` recording live; the six
+`org.apache.camel.*` events documented above respond to each of them the same way any
+other JFR event does.
+
+=== The `jfr` dev console
+
+When `camel-jfr` is on the classpath, a `jfr` dev console is available with four commands
+(pass as the `command` option):
+
+[cols="1,3",options="header"]
+|===
+| Command | Description
+
+| `status`
+| Whether runtime instrumentation is registered, any active recording(s), and the current
+  enabled/disabled state of each of the six events.
+
+| `enable` / `disable`
+| Take an `event` option (`route`, `processor`, `exchange`, `send`, `failed`, `redelivery`,
+  or `all`). Live-toggles the event on every currently active recording. Reports plainly if
+  no recording is active rather than silently doing nothing.
+
+| `jfc`
+| Generates a partial `.jfc` overlay for the six events, honoring an optional
+  comma-separated `disable` option, and a ready-to-copy `jcmd JFR.start settings=...` line.
+|===
+
+Example via the developer console HTTP endpoint (if exposed) or the CLI connector:
+
+[source,shell]
+----
+camel dev-console jfr --command status
+----
+
 === Disabling runtime instrumentation
 
-Runtime instrumentation is on by default. Disable it by setting
-`runtimeEnabled` to `false` on the `FlightRecorderStartupStepRecorder`,
-for example via a `CamelContextCustomizer` or Camel Main configuration.
+`runtimeEnabled` on `FlightRecorderStartupStepRecorder` is a **boot-time**, all-or-nothing
+switch — it is read once when the context initializes and cannot be changed while the JVM
+is running. It defaults to `true`. To disable runtime instrumentation entirely before
+startup, set it to `false`, for example via a `CamelContextCustomizer` or Camel Main
+configuration.
+
+For live, per-event control of an already-running recording, see "Toggling events on a
+running recording" or "The `jfr` dev console" above.

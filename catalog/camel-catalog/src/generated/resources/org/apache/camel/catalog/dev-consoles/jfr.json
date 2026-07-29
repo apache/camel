@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "jfr",
+    "title": "JFR Runtime Instrumentation",
+    "description": "Status and live control of camel-jfr runtime instrumentation",
+    "deprecated": false,
+    "javaType": "org.apache.camel.runtime.jfr.CamelJfrDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jfr",
+    "version": "4.22.0-SNAPSHOT"
+  }
+}
+
