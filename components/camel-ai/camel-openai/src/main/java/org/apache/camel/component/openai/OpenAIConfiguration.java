@@ -172,7 +172,8 @@ public class OpenAIConfiguration implements Cloneable {
                             + "Define servers using prefix notation: mcpServer.<name>.transportType=stdio|sse|streamableHttp, (Note that sse is deprecated) "
                             + "mcpServer.<name>.command=<cmd> (stdio), mcpServer.<name>.args=<comma-separated> (stdio), "
                             + "mcpServer.<name>.url=<url> (sse/streamableHttp), "
-                            + "mcpServer.<name>.oauthProfile=<profile> (OAuth profile for HTTP auth, requires camel-oauth)")
+                            + "mcpServer.<name>.oauthProfile=<profile> (OAuth profile for HTTP auth, requires camel-oauth), "
+                            + "mcpServer.<name>.toolNames=<comma-separated> (optional include list to restrict which tools are registered from this server)")
     private Map<String, Object> mcpServer;
 
     @UriParam(defaultValue = "50")
