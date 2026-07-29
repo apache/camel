@@ -111,6 +111,14 @@ class SourceTab extends AbstractTab {
         return sourceViewer.isSearchInputActive();
     }
 
+    boolean isSourceViewerEditMode() {
+        return sourceViewer.isEditMode();
+    }
+
+    boolean isSourceViewerTextInputActive() {
+        return sourceViewer.isTextInputActive();
+    }
+
     void handlePaste(String text) {
         sourceViewer.handlePaste(text);
     }
@@ -205,7 +213,15 @@ class SourceTab extends AbstractTab {
     }
 
     @Override
+    public boolean isOverlayActive() {
+        return focusOnViewer && sourceViewer.isTextInputActive();
+    }
+
+    @Override
     public boolean handleEscape() {
+        if (sourceViewer.isEditMode()) {
+            return false; // SourceViewer handles Esc to cancel edit
+        }
         if (sourceViewer.isSearchInputActive()) {
             return false;
         }
@@ -294,6 +310,9 @@ class SourceTab extends AbstractTab {
 
                 ## Source Viewer (right panel)
                 - **Up/Down** — scroll through source code
+                - **e** — edit local file (plain text; only when file is writable)
+                - **Esc** — cancel edit (in edit mode) or close viewer
+                - **F5** — save file (in edit mode; Camel dev mode auto-reloads)
                 - **Space** — cycle format (YAML/Java/XML) for Camel routes
                 - **i** — toggle inline Camel documentation for Camel source files
                 - **/** — search in source
@@ -307,11 +326,6 @@ class SourceTab extends AbstractTab {
                 - The focused panel title is highlighted; the unfocused panel dims
                 - Drag the split border with the mouse to resize panels
                 """;
-    }
-
-    @Override
-    public boolean isOverlayActive() {
-        return focusOnViewer && sourceViewer.isSearchInputActive();
     }
 
     @Override

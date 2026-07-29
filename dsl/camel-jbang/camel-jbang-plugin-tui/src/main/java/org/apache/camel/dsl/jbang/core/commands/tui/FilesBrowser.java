@@ -61,7 +61,11 @@ class FilesBrowser {
     }
 
     boolean isSourceViewerPasteActive() {
-        return sourceViewer.isSearchInputActive();
+        return sourceViewer.isTextInputActive();
+    }
+
+    boolean isSourceViewerTextInputActive() {
+        return sourceViewer.isTextInputActive();
     }
 
     void handlePaste(String text) {

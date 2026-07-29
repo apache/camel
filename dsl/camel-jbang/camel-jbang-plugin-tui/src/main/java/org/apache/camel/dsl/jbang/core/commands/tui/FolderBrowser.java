@@ -184,11 +184,13 @@ class FolderBrowser {
 
     boolean handleKeyEvent(KeyEvent ke) {
         if (sourceViewer.isVisible()) {
+            if (sourceViewer.handleKeyEvent(ke)) {
+                return true;
+            }
             if (ke.isCancel()) {
                 sourceViewer.hide();
                 return true;
             }
-            sourceViewer.handleKeyEvent(ke);
             return true;
         }
         if (ke.isCancel()) {

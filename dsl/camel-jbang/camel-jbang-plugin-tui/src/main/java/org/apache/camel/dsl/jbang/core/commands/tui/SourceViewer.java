@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +47,8 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.input.TextArea;
+import dev.tamboui.widgets.input.TextAreaState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -55,7 +60,7 @@ import org.apache.camel.util.json.Jsoner;
 
 /**
  * Reusable source code viewer with syntax highlighting, scrolling, and line-number display. Can be used by any tab that
- * needs to show route source code.
+ * needs to show route source code. Supports a plain-text edit mode for local files (dev mode / local folder).
  */
 class SourceViewer {
 
@@ -115,6 +120,13 @@ class SourceViewer {
     private Style borderStyle;
     private boolean focused = true;
 
+    /** Local file path when content was loaded via {@link #loadFile(Path)} and is writable. */
+    private Path editableFile;
+    private boolean editMode;
+    private final TextAreaState editState = new TextAreaState();
+    private String saveMessage;
+    private boolean saveError;
+
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
             String sourceLocation, SyntaxHighlighter.Language language) {
@@ -137,14 +149,19 @@ class SourceViewer {
     }
 
     void hide() {
+        exitEditMode(false);
         visible = false;
         onLineSelected = null;
         quickDocEnabled = false;
         quickDocEntries = Collections.emptyMap();
         deprecatedLines = Collections.emptySet();
+        editableFile = null;
+        saveMessage = null;
+        saveError = false;
     }
 
     void reset() {
+        exitEditMode(false);
         visible = false;
         lines = Collections.emptyList();
         codeData = Collections.emptyList();
@@ -171,6 +188,25 @@ class SourceViewer {
         quickDocEntries = Collections.emptyMap();
         deprecatedLineScanner = null;
         deprecatedLines = Collections.emptySet();
+        editableFile = null;
+        saveMessage = null;
+        saveError = false;
+    }
+
+    boolean isEditMode() {
+        return editMode;
+    }
+
+    boolean isEditable() {
+        return editableFile != null && Files.isRegularFile(editableFile) && Files.isWritable(editableFile);
+    }
+
+    /**
+     * True when the viewer is consuming typed input (search box or plain-text edit mode). Used by the monitor to avoid
+     * treating digit/letter keys as global shortcuts.
+     */
+    boolean isTextInputActive() {
+        return editMode || search.isSearchInputActive();
     }
 
     void setOnLineSelected(IntConsumer callback) {
@@ -212,6 +248,9 @@ class SourceViewer {
         if (!visible) {
             return false;
         }
+        if (editMode) {
+            return handleEditKeyEvent(ke);
+        }
         if (search.isSearchInputActive()) {
             boolean handled = search.handleKeyEvent(ke);
             if (handled && !search.isSearchInputActive() && search.hasFindTerm()) {
@@ -226,11 +265,17 @@ class SourceViewer {
             }
             visible = false;
             onLineSelected = null;
+            editableFile = null;
             return true;
         }
         if (ke.isChar('c')) {
             visible = false;
             onLineSelected = null;
+            editableFile = null;
+            return true;
+        }
+        if (isEditable() && ke.isChar('e')) {
+            enterEditMode();
             return true;
         }
         if (isMarkdownFile && ke.isChar(' ')) {
@@ -326,9 +371,155 @@ class SourceViewer {
         return true;
     }
 
+    private boolean handleEditKeyEvent(KeyEvent ke) {
+        if (ke.isCancel()) {
+            exitEditMode(false);
+            return true;
+        }
+        if (ke.isKey(KeyCode.F5)) {
+            saveEdit();
+            return true;
+        }
+        if (ke.isConfirm()) {
+            editState.insert('\n');
+            return true;
+        }
+        if (ke.isUp()) {
+            editState.moveCursorUp();
+            return true;
+        }
+        if (ke.isDown()) {
+            editState.moveCursorDown();
+            return true;
+        }
+        if (ke.isLeft()) {
+            editState.moveCursorLeft();
+            return true;
+        }
+        if (ke.isRight()) {
+            editState.moveCursorRight();
+            return true;
+        }
+        if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
+            editState.moveCursorToLineStart();
+            return true;
+        }
+        if (ke.isEnd() || ke.isKey(KeyCode.END)) {
+            editState.moveCursorToLineEnd();
+            return true;
+        }
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            int page = Math.max(1, lastVisibleLines);
+            for (int i = 0; i < page; i++) {
+                editState.moveCursorUp();
+            }
+            return true;
+        }
+        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            int page = Math.max(1, lastVisibleLines);
+            for (int i = 0; i < page; i++) {
+                editState.moveCursorDown();
+            }
+            return true;
+        }
+        if (ke.isDeleteBackward()) {
+            editState.deleteBackward();
+            return true;
+        }
+        if (ke.isDeleteForward()) {
+            editState.deleteForward();
+            return true;
+        }
+        if (ke.code() == KeyCode.CHAR) {
+            editState.insert(ke.character());
+            return true;
+        }
+        return true;
+    }
+
+    void enterEditMode() {
+        if (!isEditable() || editMode) {
+            return;
+        }
+        editState.setText(buildEditableText());
+        // Position cursor on the currently selected source line
+        editState.moveCursorToStart();
+        int targetRow = Math.max(0, selectedLine);
+        for (int i = 0; i < targetRow && i < editState.lineCount() - 1; i++) {
+            editState.moveCursorDown();
+        }
+        markdownMode = false;
+        quickDocEnabled = false;
+        search.reset();
+        saveMessage = null;
+        saveError = false;
+        editMode = true;
+    }
+
+    private void exitEditMode(boolean reloadFromDisk) {
+        if (!editMode && !reloadFromDisk) {
+            editState.clear();
+            return;
+        }
+        editMode = false;
+        editState.clear();
+        if (reloadFromDisk && editableFile != null) {
+            Path path = editableFile;
+            loadFile(path);
+        }
+    }
+
+    private void saveEdit() {
+        if (!editMode || editableFile == null) {
+            return;
+        }
+        try {
+            Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
+            saveMessage = "Saved";
+            saveError = false;
+            Path path = editableFile;
+            editMode = false;
+            editState.clear();
+            loadFile(path);
+            // Preserve save feedback after reload
+            saveMessage = "Saved";
+            saveError = false;
+        } catch (IOException e) {
+            saveMessage = "Save failed: " + e.getMessage();
+            saveError = true;
+        }
+    }
+
+    private String buildEditableText() {
+        if (codeData.isEmpty()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < codeData.size(); i++) {
+            if (i > 0) {
+                sb.append('\n');
+            }
+            Object code = codeData.get(i).get("code");
+            sb.append(code != null ? code.toString() : "");
+        }
+        return sb.toString();
+    }
+
     boolean handleMouseEvent(MouseEvent me) {
         if (!visible) {
             return false;
+        }
+        if (editMode) {
+            if (me.kind() == MouseEventKind.SCROLL_UP) {
+                editState.scrollUp(3);
+                return true;
+            }
+            if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                int viewport = Math.max(1, lastVisibleLines);
+                editState.scrollDown(3, viewport);
+                return true;
+            }
+            return true;
         }
         if (markdownMode) {
             if (me.kind() == MouseEventKind.SCROLL_UP) {
@@ -366,10 +557,20 @@ class SourceViewer {
     }
 
     void handlePaste(String text) {
+        if (editMode) {
+            if (text != null && !text.isEmpty()) {
+                editState.insert(text);
+            }
+            return;
+        }
         search.handlePaste(text);
     }
 
     void render(Frame frame, Rect area) {
+        if (editMode) {
+            renderEditMode(frame, area);
+            return;
+        }
         if (markdownMode && rawMarkdownContent != null) {
             Block.Builder bb = Block.builder()
                     .borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -527,12 +728,53 @@ class SourceViewer {
         }
     }
 
+    private void renderEditMode(Frame frame, Rect area) {
+        Style ts = titleStyle != null ? titleStyle : Style.EMPTY;
+        List<Span> titleSpans = new ArrayList<>();
+        String info = title != null ? title : "";
+        titleSpans.add(Span.styled(" Edit [" + info + "] ", ts));
+        if (saveMessage != null) {
+            titleSpans.add(Span.styled(saveMessage + " ", saveError ? Theme.error() : Theme.success()));
+        }
+        Block.Builder blockBuilder = Block.builder()
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .title(Title.from(Line.from(titleSpans)));
+        if (borderStyle != null) {
+            blockBuilder.borderStyle(borderStyle);
+        }
+        Block block = blockBuilder.build();
+        Rect inner = block.inner(area);
+        lastInnerArea = inner;
+        lastVisibleLines = Math.max(1, inner.height());
+        frame.renderWidget(block, area);
+
+        editState.ensureCursorVisible(inner.width(), inner.height());
+        TextArea textArea = TextArea.builder()
+                .cursorStyle(Style.EMPTY.reversed())
+                .showLineNumbers(true)
+                .lineNumberStyle(Style.EMPTY.dim())
+                .build();
+        textArea.renderWithCursor(inner, frame.buffer(), editState, frame);
+    }
+
     void renderFooter(List<Span> spans) {
+        if (editMode) {
+            TuiHelper.hint(spans, "Esc", "cancel");
+            TuiHelper.hint(spans, "F5", "save");
+            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "move");
+            if (saveMessage != null) {
+                spans.add(Span.styled("  " + saveMessage, saveError ? Theme.error() : Theme.success()));
+            }
+            return;
+        }
         if (markdownMode) {
             TuiHelper.hint(spans, "Esc/c", "close");
             TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "scroll");
             TuiHelper.hint(spans, "Space", "format");
             TuiHelper.hint(spans, "PgUp/PgDn", "page");
+            if (isEditable()) {
+                TuiHelper.hint(spans, "e", "edit");
+            }
             return;
         }
         search.renderFooterHints(spans);
@@ -543,6 +785,9 @@ class SourceViewer {
             search.renderFindStatus(spans);
         } else {
             TuiHelper.hint(spans, "Esc/c", "close");
+        }
+        if (isEditable()) {
+            TuiHelper.hint(spans, "e", "edit");
         }
         if (quickDocProvider != null) {
             TuiHelper.hint(spans, "i", "quick doc" + (quickDocEnabled ? " [on]" : ""));
@@ -556,6 +801,9 @@ class SourceViewer {
         if (onLineSelected != null) {
             TuiHelper.hint(spans, "Enter", "select node");
         }
+        if (saveMessage != null) {
+            spans.add(Span.styled("  " + saveMessage, saveError ? Theme.error() : Theme.success()));
+        }
     }
 
     /**
@@ -567,10 +815,13 @@ class SourceViewer {
         originalFormat = null;
         currentCtx = null;
         currentPid = null;
+        editMode = false;
+        editState.clear();
+        // Keep existing saveMessage only when caller restores it after save+reload
         String fileName = filePath.getFileName().toString();
         boolean isMd = fileName.toLowerCase().endsWith(".md");
         try {
-            List<String> rawLines = java.nio.file.Files.readAllLines(filePath, java.nio.charset.StandardCharsets.UTF_8);
+            List<String> rawLines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
             int lineNumWidth = String.valueOf(rawLines.size()).length();
             List<String> result = new ArrayList<>();
             List<JsonObject> codeLines = new ArrayList<>();
@@ -601,8 +852,9 @@ class SourceViewer {
                 rawMarkdownContent = null;
                 markdownMode = false;
             }
+            editableFile = Files.isWritable(filePath) ? filePath : null;
             scanDeprecatedLines();
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             title = fileName;
             lines = List.of("(Failed to read file: " + e.getMessage() + ")");
             codeData = Collections.emptyList();
@@ -610,6 +862,7 @@ class SourceViewer {
             isMarkdownFile = false;
             markdownMode = false;
             rawMarkdownContent = null;
+            editableFile = null;
         }
     }
 
@@ -621,6 +874,13 @@ class SourceViewer {
     }
 
     void loadSource(MonitorContext ctx, String routeId, int targetLine, String sourceLocationHint) {
+        // Process-sourced views are never editable (may be remote / not a local file)
+        editableFile = null;
+        editMode = false;
+        editState.clear();
+        saveMessage = null;
+        saveError = false;
+
         if (ctx.selectedPid == null || ctx.runner == null) {
             return;
         }
@@ -832,7 +1092,12 @@ class SourceViewer {
             return Title.from(Line.from(spans));
         }
         if (currentRouteId == null) {
-            return Title.from(Line.from(List.of(Span.styled(" Source [" + info + "] ", ts))));
+            List<Span> spans = new ArrayList<>();
+            spans.add(Span.styled(" Source [" + info + "] ", ts));
+            if (saveMessage != null) {
+                spans.add(Span.styled(saveMessage + " ", saveError ? Theme.error() : Theme.success()));
+            }
+            return Title.from(Line.from(spans));
         }
 
         List<Span> spans = new ArrayList<>();
