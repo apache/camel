@@ -101,7 +101,7 @@ class LlmClientWatsonxTest {
         LlmClient client = LlmClient.create()
                 .withApiType(LlmClient.ApiType.watsonx)
                 .withUrl("https://us-south.ml.cloud.ibm.com")
-                .withModel("ibm/granite-3.1-8b-instruct")
+                .withModel("ibm/granite-4-1-8b-instruct")
                 .withApiKey("test-key");
 
         // The normalized URL should use the watsonx gateway path, not the standard /v1/chat/completions

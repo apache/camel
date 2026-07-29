@@ -54,7 +54,7 @@ public class LlmClient {
     private static final String DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
     private static final String DEFAULT_OLLAMA_MODEL = "llama3.2";
     private static final String DEFAULT_WATSONX_URL = "https://us-south.ml.cloud.ibm.com";
-    private static final String DEFAULT_WATSONX_MODEL = "ibm/granite-3.1-8b-instruct";
+    private static final String DEFAULT_WATSONX_MODEL = "ibm/granite-4-1-8b-instruct";
     private static final String DEFAULT_AZURE_API_VERSION = "2024-10-21";
     /** Last-resort Azure deployment segment when URL normalization runs before model detection completes. */
     private static final String DEFAULT_AZURE_DEPLOYMENT_FALLBACK = "gpt-4o";
