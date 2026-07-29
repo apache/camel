@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.text.Span;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 /**
  * Rendering tests for {@link JfrTab}. These tests render the tab into a virtual terminal buffer via
@@ -71,6 +73,18 @@ class JfrTabRenderTest {
     }
 
     @Test
+    void renderShowsStatusErrorFromIntegration() {
+        TestMonitorContext errorContext = new TestMonitorContext(dataWith(info), errorResponse());
+        errorContext.selectedPid = "1234";
+        JfrTab tab = new JfrTab(errorContext, Runnable::run);
+
+        tab.onTabSelected();
+
+        await().untilAsserted(() -> assertThat(TuiTestHelper.renderToString(tab, 120, 20))
+                .contains("JFR runtime instrumentation is not available"));
+    }
+
+    @Test
     void renderFooterHints() {
         JfrTab tab = new JfrTab(ctx);
         List<Span> footerSpans = new ArrayList<>();
@@ -84,5 +98,32 @@ class JfrTabRenderTest {
     void description() {
         JfrTab tab = new JfrTab(ctx);
         assertThat(tab.description()).isNotBlank();
+    }
+
+    private static AtomicReference<List<IntegrationInfo>> dataWith(IntegrationInfo info) {
+        return new AtomicReference<>(List.of(info));
+    }
+
+    private static JsonObject errorResponse() {
+        JsonObject response = new JsonObject();
+        response.put("error", "JFR runtime instrumentation is not available");
+        return response;
+    }
+
+    private static final class TestMonitorContext extends MonitorContext {
+
+        private final JsonObject response;
+
+        private TestMonitorContext(
+                                   AtomicReference<List<IntegrationInfo>> data,
+                                   JsonObject response) {
+            super(data, new AtomicReference<>(List.of()));
+            this.response = response;
+        }
+
+        @Override
+        JsonObject executeAction(String pid, JsonObject request, long timeoutMs) {
+            return response;
+        }
     }
 }

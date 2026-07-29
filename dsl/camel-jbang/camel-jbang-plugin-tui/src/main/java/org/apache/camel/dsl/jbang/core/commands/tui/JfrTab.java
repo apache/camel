@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
@@ -45,6 +46,7 @@ class JfrTab extends AbstractTab {
     private static final Style OK = Style.EMPTY.fg(Theme.baseFg()).bold();
 
     private final AtomicBoolean loading = new AtomicBoolean(false);
+    private final Consumer<Runnable> renderThreadExecutor;
 
     private boolean registered;
     private List<String> recordings = List.of();
@@ -54,7 +56,16 @@ class JfrTab extends AbstractTab {
     private boolean dataLoaded;
 
     JfrTab(MonitorContext ctx) {
+        this(ctx, action -> {
+            if (ctx.runner != null) {
+                ctx.runner.runOnRenderThread(action);
+            }
+        });
+    }
+
+    JfrTab(MonitorContext ctx, Consumer<Runnable> renderThreadExecutor) {
         super(ctx);
+        this.renderThreadExecutor = renderThreadExecutor;
     }
 
     @Override
@@ -269,10 +280,7 @@ class JfrTab extends AbstractTab {
     }
 
     private void applyStatus(JsonObject jo) {
-        if (ctx.runner == null) {
-            return;
-        }
-        ctx.runner.runOnRenderThread(() -> {
+        renderThreadExecutor.accept(() -> {
             if (jo == null) {
                 errorMessage = "No response from integration";
                 dataLoaded = true;
@@ -314,20 +322,14 @@ class JfrTab extends AbstractTab {
     }
 
     private void applyMessage(String msg) {
-        if (ctx.runner == null) {
-            return;
-        }
-        ctx.runner.runOnRenderThread(() -> {
+        renderThreadExecutor.accept(() -> {
             message = msg;
             errorMessage = null;
         });
     }
 
     private void applyError(String error) {
-        if (ctx.runner == null) {
-            return;
-        }
-        ctx.runner.runOnRenderThread(() -> {
+        renderThreadExecutor.accept(() -> {
             message = null;
             errorMessage = error;
         });
