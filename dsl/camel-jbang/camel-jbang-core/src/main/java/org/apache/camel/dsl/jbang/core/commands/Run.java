@@ -1373,7 +1373,9 @@ public class Run extends CamelCommand {
         StringBuilder arg = new StringBuilder();
         if (jvmArgs != null && jvmArgs.contains("-XX:StartFlightRecording")) {
             // the explicit JVM argument wins, as two recordings would otherwise compete for the same file
-            printer().printErr("WARN: Ignoring --jfr because --jvm-args already starts a flight recording");
+            printer().printErr(
+                    "WARN: --jvm-args already starts a flight recording, skipping -XX:StartFlightRecording from --jfr"
+                               + " (Camel runtime instrumentation is still enabled)");
         } else {
             arg.append("-XX:StartFlightRecording=filename=").append(jfrFileName());
             if (debugOptions.jfrProfile != null) {

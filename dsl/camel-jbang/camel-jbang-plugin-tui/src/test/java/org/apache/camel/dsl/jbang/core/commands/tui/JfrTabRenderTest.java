@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.text.Span;
@@ -80,7 +81,7 @@ class JfrTabRenderTest {
 
         tab.onTabSelected();
 
-        await().untilAsserted(() -> assertThat(TuiTestHelper.renderToString(tab, 120, 20))
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(TuiTestHelper.renderToString(tab, 120, 20))
                 .contains("JFR runtime instrumentation is not available"));
     }
 

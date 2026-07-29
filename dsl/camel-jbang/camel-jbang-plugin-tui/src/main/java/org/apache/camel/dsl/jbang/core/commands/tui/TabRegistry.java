@@ -234,7 +234,7 @@ class TabRegistry {
                 new MoreTab(TuiIcons.TAB_CLASSPATH, "Classpath", "&Classpath", classpathTab, "JVM"),
                 new MoreTab(TuiIcons.TAB_HEAP, "Heap Memory Histogram", "Heap &Memory Histogram", heapHistogramTab, "JVM"),
                 new MoreTab(
-                        TuiIcons.TAB_JFR, "JFR", "&JFR", jfrTab, "JVM",
+                        TuiIcons.TAB_JFR, "Java Flight Recorder (JFR)", "Java Fli&ght Recorder (JFR)", jfrTab, "JVM",
                         List.of("jfr")),
                 new MoreTab(TuiIcons.TAB_MEMORY, "Memory Usage", "&Memory Usage", memoryTab, "JVM"),
                 new MoreTab(TuiIcons.TAB_MEMORY_LEAK, "Memory Leak", "&Memory Leak", memoryLeakTab, "JVM"),
