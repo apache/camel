@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
@@ -29,6 +30,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -340,6 +343,58 @@ class SourceViewerEditTest {
         List<Span> spans = new ArrayList<>();
         viewer.renderFooter(spans);
         assertThat(spansToString(spans)).doesNotContain("Saved");
+    }
+
+    @Test
+    void savePreservesRawMarkdownViewAfterEdit() throws Exception {
+        Path md = tempDir.resolve("notes.md");
+        Files.writeString(md, "# Title\n", StandardCharsets.UTF_8);
+        viewer.loadFile(md);
+        assertThat(viewer.isMarkdownMode()).isTrue();
+        viewer.handleKeyEvent(KeyEvent.ofChar(' ', KeyModifiers.NONE));
+        assertThat(viewer.isMarkdownMode()).isFalse();
+
+        viewer.enterEditMode();
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.END, KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofChar('!', KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
+
+        assertThat(viewer.isEditMode()).isFalse();
+        assertThat(viewer.isMarkdownMode()).isFalse();
+        assertThat(Files.readString(md, StandardCharsets.UTF_8)).endsWith("!");
+    }
+
+    @Test
+    void sourceTabForwardsKeysToViewerWhileEditing() throws Exception {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "test-app";
+        info.directory = tempDir.toString();
+
+        AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(List.of(info));
+        MonitorContext ctx = new MonitorContext(data, new AtomicReference<>(List.of()));
+        ctx.selectedPid = "1234";
+
+        SourceTab tab = new SourceTab(ctx);
+        tab.onTabSelected();
+        assertThat(tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE))).isTrue();
+        assertThat(tab.handleKeyEvent(KeyEvent.ofChar('e', KeyModifiers.NONE))).isTrue();
+        assertThat(tab.isSourceViewerEditMode()).isTrue();
+
+        Rect area = new Rect(0, 0, 80, 24);
+        Buffer buffer = Buffer.empty(area);
+        Frame frame = Frame.forTesting(buffer);
+        tab.render(frame, area);
+
+        // Click file list so focusOnViewer is false while edit mode stays active
+        tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 1, 2), area);
+
+        assertThat(tab.handleKeyEvent(KeyEvent.ofChar('z', KeyModifiers.NONE))).isTrue();
+        assertThat(tab.isSourceViewerEditMode()).isTrue();
+        assertThat(tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE))).isTrue();
+
+        assertThat(tab.isSourceViewerEditMode()).isFalse();
+        assertThat(Files.readString(sourceFile, StandardCharsets.UTF_8)).contains("z");
     }
 
     private static String spansToString(List<Span> spans) {

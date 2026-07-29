@@ -154,6 +154,10 @@ class SourceTab extends AbstractTab {
             return true;
         }
 
+        if (sourceViewer.isEditMode() && sourceViewer.isVisible()) {
+            return sourceViewer.handleKeyEvent(ke);
+        }
+
         if (focusOnViewer && sourceViewer.isVisible()) {
             boolean wasVisible = sourceViewer.isVisible();
             if (sourceViewer.handleKeyEvent(ke)) {

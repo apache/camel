@@ -497,9 +497,14 @@ class SourceViewer {
             saveMessage = "Saved";
             saveError = false;
             Path path = editableFile;
+            boolean restoreMarkdownMode = markdownModeBeforeEdit;
             editMode = false;
             editState.clear();
+            markdownModeBeforeEdit = false;
             loadFile(path);
+            if (isMarkdownFile) {
+                markdownMode = restoreMarkdownMode;
+            }
             // Preserve save feedback after reload
             saveMessage = "Saved";
             saveError = false;
