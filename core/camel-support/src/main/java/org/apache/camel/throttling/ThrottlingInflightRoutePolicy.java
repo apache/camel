@@ -187,7 +187,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
      *
      * @param maxInflightExchanges the upper limit of concurrent inflight exchanges
      */
-    public void setMaxInflightExchanges(int maxInflightExchanges) {
+    public synchronized void setMaxInflightExchanges(int maxInflightExchanges) {
         this.maxInflightExchanges = maxInflightExchanges;
         // recalculate, must be at least at 1
         int resume = Math.max(resumePercentOfMax * maxInflightExchanges / 100, 1);
@@ -207,7 +207,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
      *
      * @param resumePercentOfMax the percentage must be between 0 and 100
      */
-    public void setResumePercentOfMax(int resumePercentOfMax) {
+    public synchronized void setResumePercentOfMax(int resumePercentOfMax) {
         if (resumePercentOfMax < 0 || resumePercentOfMax > 100) {
             throw new IllegalArgumentException("Must be a percentage between 0 and 100, was: " + resumePercentOfMax);
         }
