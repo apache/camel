@@ -419,11 +419,7 @@ public class LlmClient {
     }
 
     private List<String> listWatsonxModels() {
-        String resolvedKey = resolveApiKey();
-        Map<String, String> headers = new HashMap<>();
-        if (resolvedKey != null && !resolvedKey.isBlank()) {
-            headers.put("Authorization", "Bearer " + resolvedKey);
-        }
+        Map<String, String> headers = buildOpenAiAuthHeaders(resolveApiKey());
         JsonObject response = sendGetRequest(normalizeWatsonxModelsUrl(url), headers);
         return extractStringList(response, "data", "id");
     }
