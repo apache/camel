@@ -842,9 +842,8 @@ public interface OpenAIEndpointBuilderFactory {
          * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
          * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
          * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
-         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
-         * (optional include list to restrict which tools are registered from
-         * this server). This is a multi-value option with prefix: mcpServer.
+         * profile for HTTP auth, requires camel-oauth). This is a multi-value
+         * option with prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -868,9 +867,8 @@ public interface OpenAIEndpointBuilderFactory {
          * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
          * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
          * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
-         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
-         * (optional include list to restrict which tools are registered from
-         * this server). This is a multi-value option with prefix: mcpServer.
+         * profile for HTTP auth, requires camel-oauth). This is a multi-value
+         * option with prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

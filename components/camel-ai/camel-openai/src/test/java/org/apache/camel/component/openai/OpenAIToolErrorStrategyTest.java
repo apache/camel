@@ -56,7 +56,8 @@ class OpenAIToolErrorStrategyTest extends CamelTestSupport {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final AtomicInteger hallucinatedCallCounter = new AtomicInteger();
-    private final AtomicInteger failExchangeCallCounter = new AtomicInteger();
+    private final AtomicInteger toolErrorCallCounter = new AtomicInteger();
+    private final AtomicInteger repromptCallCounter = new AtomicInteger();
 
     @RegisterExtension
     public OpenAIMock openAIMock = new OpenAIMock().builder()
@@ -74,14 +75,28 @@ class OpenAIToolErrorStrategyTest extends CamelTestSupport {
                 }
             })
             .end()
-            // tool execution error with failExchange: first call returns a tool call that will throw
+            // tool execution error: first call returns a tool call that will throw
             .when("trigger tool error")
             .thenRespondWith((exchange, input) -> {
                 try {
-                    if (failExchangeCallCounter.getAndIncrement() == 0) {
+                    if (toolErrorCallCounter.getAndIncrement() == 0) {
                         return toolCallResponse("get_weather", "{\"city\": \"London\"}");
                     }
                     return simpleTextResponse("Should not reach here");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            })
+            .end()
+            // tool execution error with repromptModel: first call triggers error,
+            // second call (after error feedback) returns the final answer
+            .when("trigger tool error reprompt")
+            .thenRespondWith((exchange, input) -> {
+                try {
+                    if (repromptCallCounter.getAndIncrement() == 0) {
+                        return toolCallResponse("get_weather", "{\"city\": \"London\"}");
+                    }
+                    return simpleTextResponse("Recovered after tool error feedback");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -100,10 +115,15 @@ class OpenAIToolErrorStrategyTest extends CamelTestSupport {
                             + "&hallucinatedToolNameStrategy=repromptModel&baseUrl="
                             + openAIMock.getBaseUrl() + "/v1");
 
-                // Route with toolExecutionErrorStrategy=failExchange
+                // Route with default toolExecutionErrorStrategy (failExchange)
                 from("direct:error-fail-exchange")
+                        .to("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true&baseUrl="
+                            + openAIMock.getBaseUrl() + "/v1");
+
+                // Route with toolExecutionErrorStrategy=repromptModel
+                from("direct:error-reprompt")
                         .to("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
-                            + "&toolExecutionErrorStrategy=failExchange&baseUrl="
+                            + "&toolExecutionErrorStrategy=repromptModel&baseUrl="
                             + openAIMock.getBaseUrl() + "/v1");
             }
         };
@@ -169,13 +189,12 @@ class OpenAIToolErrorStrategyTest extends CamelTestSupport {
     }
 
     @Test
-    void toolExecutionErrorFailExchangePropagatesToExchange() {
+    void toolExecutionErrorDefaultFailExchangePropagatesToExchange() {
         McpSyncClient client = mock(McpSyncClient.class);
         when(client.callTool(any(McpSchema.CallToolRequest.class)))
                 .thenThrow(new RuntimeException("Connection refused to weather service"));
 
-        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
-                             + "&toolExecutionErrorStrategy=failExchange&baseUrl="
+        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true&baseUrl="
                              + openAIMock.getBaseUrl() + "/v1";
         OpenAIEndpoint endpoint = context.getEndpoint(endpointUri, OpenAIEndpoint.class);
         List<McpSchema.Tool> mcpTools = List.of(
@@ -188,11 +207,42 @@ class OpenAIToolErrorStrategyTest extends CamelTestSupport {
                 Map.of(),
                 Set.of()));
 
+        // The default toolExecutionErrorStrategy is failExchange, so this should propagate
         assertThatThrownBy(() -> template.requestBody("direct:error-fail-exchange", "trigger tool error"))
                 .isInstanceOf(CamelExecutionException.class)
                 .hasCauseInstanceOf(RuntimeException.class)
                 .cause()
                 .hasMessageContaining("Connection refused to weather service");
+    }
+
+    @Test
+    void toolExecutionErrorRepromptModelSendsErrorBackToModel() {
+        McpSyncClient client = mock(McpSyncClient.class);
+        when(client.callTool(any(McpSchema.CallToolRequest.class)))
+                .thenThrow(new RuntimeException("Connection refused to weather service"));
+
+        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                             + "&toolExecutionErrorStrategy=repromptModel&baseUrl="
+                             + openAIMock.getBaseUrl() + "/v1";
+        OpenAIEndpoint endpoint = context.getEndpoint(endpointUri, OpenAIEndpoint.class);
+        List<McpSchema.Tool> mcpTools = List.of(
+                McpSchema.Tool.builder("get_weather", Map.of("type", "object"))
+                        .description("Mock tool: get_weather")
+                        .build());
+        endpoint.setMcpToolState(new McpToolState(
+                McpToolConverter.convert(mcpTools),
+                Map.of("get_weather", client),
+                Map.of(),
+                Set.of()));
+
+        Exchange result = template.request("direct:error-reprompt",
+                e -> e.getIn().setBody("trigger tool error reprompt"));
+
+        assertThat(result.getException())
+                .as("With repromptModel, tool execution errors should not crash the exchange")
+                .isNull();
+        assertThat(result.getMessage().getBody(String.class))
+                .isEqualTo("Recovered after tool error feedback");
     }
 
     // ---------- helpers ----------

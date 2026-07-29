@@ -209,13 +209,15 @@ public class OpenAIConfiguration implements Cloneable {
                             + "and retry the call once.")
     private boolean mcpReconnect = true;
 
-    @UriParam(enums = "repromptModel,failExchange", defaultValue = "repromptModel")
+    @UriParam(enums = "failExchange,repromptModel", defaultValue = "failExchange")
     @Metadata(description = "Strategy for handling exceptions thrown during MCP tool execution. "
-                            + "'repromptModel' (default) catches the error and sends it back to the model as a tool result "
-                            + "so the model can attempt to recover. "
-                            + "'failExchange' propagates the exception to the Camel exchange so that standard Camel "
-                            + "error handling (onException, dead-letter channel) can process it.")
-    private ToolExecutionErrorStrategy toolExecutionErrorStrategy = ToolExecutionErrorStrategy.REPROMPT_MODEL;
+                            + "'failExchange' (default) propagates the exception to the Camel exchange so that standard Camel "
+                            + "error handling (onException, dead-letter channel) can process it. This is the safer default "
+                            + "because 'repromptModel' sends raw exception messages (which may contain connection strings, "
+                            + "hostnames, or internal paths) to a third-party LLM provider. "
+                            + "'repromptModel' catches the error and sends it back to the model as a tool result "
+                            + "so the model can attempt to recover.")
+    private ToolExecutionErrorStrategy toolExecutionErrorStrategy = ToolExecutionErrorStrategy.FAIL_EXCHANGE;
 
     @UriParam(enums = "failExchange,repromptModel", defaultValue = "failExchange")
     @Metadata(description = "Strategy for handling tool names hallucinated by the model (tool not found in any MCP server). "

@@ -84,7 +84,8 @@ public class OpenAIAgenticLoopMalformedToolArgumentsTest extends CamelTestSuppor
             @Override
             public void configure() {
                 from("direct:mcp-chat")
-                        .to("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true&baseUrl="
+                        .to("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                            + "&toolExecutionErrorStrategy=repromptModel&baseUrl="
                             + openAIMock.getBaseUrl() + "/v1");
             }
         };
@@ -99,7 +100,8 @@ public class OpenAIAgenticLoopMalformedToolArgumentsTest extends CamelTestSuppor
                 .build();
         when(client.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(toolResult);
 
-        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true&baseUrl="
+        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                             + "&toolExecutionErrorStrategy=repromptModel&baseUrl="
                              + openAIMock.getBaseUrl() + "/v1";
         OpenAIEndpoint endpoint = context.getEndpoint(endpointUri, OpenAIEndpoint.class);
         List<McpSchema.Tool> mcpTools = List.of(

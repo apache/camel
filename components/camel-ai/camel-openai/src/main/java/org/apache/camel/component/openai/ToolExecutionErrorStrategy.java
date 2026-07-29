@@ -22,14 +22,17 @@ package org.apache.camel.component.openai;
 public enum ToolExecutionErrorStrategy {
 
     /**
-     * Catch the exception, format it as a tool result error message, and send it back to the model so it can attempt to
-     * recover. This is the default behavior.
+     * Propagate the exception to the Camel exchange so that standard Camel error handling ({@code onException},
+     * dead-letter channel) can process it. This is the default behavior, and the safer choice because
+     * {@code REPROMPT_MODEL} sends raw exception messages (which may contain connection strings, hostnames, or internal
+     * paths) to a third-party LLM provider.
      */
-    REPROMPT_MODEL,
+    FAIL_EXCHANGE,
 
     /**
-     * Propagate the exception to the Camel exchange so that standard Camel error handling ({@code onException},
-     * dead-letter channel) can process it.
+     * Catch the exception, format it as a tool result error message, and send it back to the model so it can attempt to
+     * recover. Note that this sends raw {@code e.getMessage()} content to the LLM provider, which may include internal
+     * details.
      */
-    FAIL_EXCHANGE
+    REPROMPT_MODEL
 }
