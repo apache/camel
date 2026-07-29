@@ -84,7 +84,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     }
 
     private volatile ThrottlingLimits throttlingLimits
-            = new ThrottlingLimits(1000, Math.max(70 * 1000 / 100, 1));
+            = new ThrottlingLimits(maxInflightExchanges, Math.max(resumePercentOfMax * maxInflightExchanges / 100, 1));
 
     @Metadata(description = "Sets the logging level to report the throttling activity.",
               javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
