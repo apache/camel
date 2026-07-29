@@ -27,6 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import software.amazon.awssdk.services.ec2.model.DescribeInstanceStatusResponse;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.InstanceStateName;
@@ -40,6 +42,7 @@ import software.amazon.awssdk.services.ec2.model.StopInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.TerminateInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesResponse;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -256,6 +259,24 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertEquals(MonitoringState.DISABLED, resultGet.instanceMonitorings().get(0).monitoring().state());
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "direct:createAndRunPojo,createAndRunInstances operation requires RunInstancesRequest in POJO mode",
+            "direct:startPojo,startInstances operation requires StartInstancesRequest in POJO mode",
+            "direct:stopPojo,stopInstances operation requires StopInstancesRequest in POJO mode",
+            "direct:terminatePojo,terminateInstances operation requires TerminateInstancesRequest in POJO mode",
+            "direct:rebootPojo,rebootInstances operation requires RebootInstancesRequest in POJO mode",
+            "direct:monitorPojo,monitorInstances operation requires MonitorInstancesRequest in POJO mode",
+            "direct:unmonitorPojo,unmonitorInstances operation requires UnmonitorInstancesRequest in POJO mode",
+            "direct:createTagsPojo,createTags operation requires CreateTagsRequest in POJO mode",
+            "direct:deleteTagsPojo,deleteTags operation requires DeleteTagsRequest in POJO mode",
+    })
+    void pojoRequestWithWrongBodyTypeThrows(String route, String expectedMessage) {
+        assertThatThrownBy(() -> template.requestBody(route, "not the expected request type"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(expectedMessage);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -288,6 +309,22 @@ public class EC2ProducerTest extends CamelTestSupport {
                         .to("mock:result");
                 from("direct:deleteTags").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=deleteTags")
                         .to("mock:result");
+                from("direct:startPojo")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=startInstances&pojoRequest=true");
+                from("direct:stopPojo")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=stopInstances&pojoRequest=true");
+                from("direct:terminatePojo")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=terminateInstances&pojoRequest=true");
+                from("direct:rebootPojo")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=rebootInstances&pojoRequest=true");
+                from("direct:monitorPojo")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=monitorInstances&pojoRequest=true");
+                from("direct:unmonitorPojo")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=unmonitorInstances&pojoRequest=true");
+                from("direct:createTagsPojo")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=createTags&pojoRequest=true");
+                from("direct:deleteTagsPojo")
+                        .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=deleteTags&pojoRequest=true");
             }
         };
     }
