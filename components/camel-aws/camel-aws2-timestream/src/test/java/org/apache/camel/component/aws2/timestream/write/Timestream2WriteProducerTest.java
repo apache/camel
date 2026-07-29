@@ -26,8 +26,11 @@ import org.apache.camel.component.aws2.timestream.Timestream2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import software.amazon.awssdk.services.timestreamwrite.model.*;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -334,6 +337,31 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
         assertEquals(5, resultGet.recordsIngested().total());
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "direct:describeWriteEndpointsPojo,describeEndpoints operation requires DescribeEndpointsRequest in POJO mode",
+            "direct:createBatchLoadTaskPojo,createBatchLoadTask operation requires CreateBatchLoadTaskRequest in POJO mode",
+            "direct:describeBatchLoadTaskPojo,describeBatchLoadTask operation requires DescribeBatchLoadTaskRequest in POJO mode",
+            "direct:resumeBatchLoadTaskPojo,resumeBatchLoadTask operation requires ResumeBatchLoadTaskRequest in POJO mode",
+            "direct:listBatchLoadTasksPojo,listBatchLoadTasks operation requires ListBatchLoadTasksRequest in POJO mode",
+            "direct:createDatabasePojo,createDatabase operation requires CreateDatabaseRequest in POJO mode",
+            "direct:deleteDatabasePojo,deleteDatabase operation requires DeleteDatabaseRequest in POJO mode",
+            "direct:describeDatabasePojo,describeDatabase operation requires DescribeDatabaseRequest in POJO mode",
+            "direct:updateDatabasePojo,updateDatabase operation requires UpdateDatabaseRequest in POJO mode",
+            "direct:listDatabasesPojo,listDatabases operation requires ListDatabasesRequest in POJO mode",
+            "direct:createTablePojo,createTable operation requires CreateTableRequest in POJO mode",
+            "direct:deleteTablePojo,deleteTable operation requires DeleteTableRequest in POJO mode",
+            "direct:describeTablePojo,describeTable operation requires DescribeTableRequest in POJO mode",
+            "direct:updateTablePojo,updateTable operation requires UpdateTableRequest in POJO mode",
+            "direct:listTablesPojo,listTables operation requires ListTablesRequest in POJO mode",
+            "direct:writeRecordsPojo,writeRecords operation requires WriteRecordsRequest in POJO mode",
+    })
+    void pojoRequestWithWrongBodyTypeThrows(String route, String expectedMessage) {
+        assertThatThrownBy(() -> template.requestBody(route, "not the expected request type"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(expectedMessage);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -390,7 +418,36 @@ public class Timestream2WriteProducerTest extends CamelTestSupport {
                 from("direct:writeRecords")
                         .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=writeRecords")
                         .to("mock:result");
-
+                from("direct:createBatchLoadTaskPojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createBatchLoadTask&pojoRequest=true");
+                from("direct:describeBatchLoadTaskPojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeBatchLoadTask&pojoRequest=true");
+                from("direct:resumeBatchLoadTaskPojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=resumeBatchLoadTask&pojoRequest=true");
+                from("direct:listBatchLoadTasksPojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=listBatchLoadTasks&pojoRequest=true");
+                from("direct:createDatabasePojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createDatabase&pojoRequest=true");
+                from("direct:deleteDatabasePojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=deleteDatabase&pojoRequest=true");
+                from("direct:describeDatabasePojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeDatabase&pojoRequest=true");
+                from("direct:updateDatabasePojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=updateDatabase&pojoRequest=true");
+                from("direct:listDatabasesPojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=listDatabases&pojoRequest=true");
+                from("direct:createTablePojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createTable&pojoRequest=true");
+                from("direct:deleteTablePojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=deleteTable&pojoRequest=true");
+                from("direct:describeTablePojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=describeTable&pojoRequest=true");
+                from("direct:updateTablePojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=updateTable&pojoRequest=true");
+                from("direct:listTablesPojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=listTables&pojoRequest=true");
+                from("direct:writeRecordsPojo")
+                        .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=writeRecords&pojoRequest=true");
             }
         };
     }

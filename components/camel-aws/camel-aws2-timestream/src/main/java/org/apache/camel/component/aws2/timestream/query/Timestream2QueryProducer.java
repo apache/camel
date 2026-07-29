@@ -113,6 +113,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeEndpoints operation requires DescribeEndpointsRequest in POJO mode");
             }
         } else {
             DescribeEndpointsRequest.Builder builder = DescribeEndpointsRequest.builder();
@@ -143,6 +146,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "createScheduledQuery operation requires CreateScheduledQueryRequest in POJO mode");
             }
         } else {
             CreateScheduledQueryRequest.Builder builder = CreateScheduledQueryRequest.builder();
@@ -263,6 +269,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteScheduledQuery operation requires DeleteScheduledQueryRequest in POJO mode");
             }
         } else {
             DeleteScheduledQueryRequest.Builder builder = DeleteScheduledQueryRequest.builder();
@@ -299,6 +308,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "executeScheduledQuery operation requires ExecuteScheduledQueryRequest in POJO mode");
             }
         } else {
             ExecuteScheduledQueryRequest.Builder builder = ExecuteScheduledQueryRequest.builder();
@@ -345,6 +357,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "updateScheduledQuery operation requires UpdateScheduledQueryRequest in POJO mode");
             }
         } else {
             UpdateScheduledQueryRequest.Builder builder = UpdateScheduledQueryRequest.builder();
@@ -385,6 +400,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeScheduledQuery operation requires DescribeScheduledQueryRequest in POJO mode");
             }
         } else {
             DescribeScheduledQueryRequest.Builder builder = DescribeScheduledQueryRequest.builder();
@@ -415,6 +433,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listScheduledQueries operation requires ListScheduledQueriesRequest in POJO mode");
             }
         } else {
             ListScheduledQueriesRequest.Builder builder = ListScheduledQueriesRequest.builder();
@@ -449,6 +470,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "prepareQuery operation requires PrepareQueryRequest in POJO mode");
             }
         } else {
             PrepareQueryRequest.Builder builder = PrepareQueryRequest.builder();
@@ -488,6 +512,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "query operation requires QueryRequest in POJO mode");
             }
         } else {
             QueryRequest.Builder builder = QueryRequest.builder();
@@ -527,6 +554,9 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "cancelQuery operation requires CancelQueryRequest in POJO mode");
             }
         } else {
             CancelQueryRequest.Builder builder = CancelQueryRequest.builder();

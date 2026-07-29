@@ -119,6 +119,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeEndpoints operation requires DescribeEndpointsRequest in POJO mode");
             }
         } else {
             DescribeEndpointsRequest.Builder builder = DescribeEndpointsRequest.builder();
@@ -149,6 +152,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "createBatchLoadTask operation requires CreateBatchLoadTaskRequest in POJO mode");
             }
         } else {
             CreateBatchLoadTaskRequest.Builder builder = CreateBatchLoadTaskRequest.builder();
@@ -210,6 +216,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeBatchLoadTask operation requires DescribeBatchLoadTaskRequest in POJO mode");
             }
         } else {
             DescribeBatchLoadTaskRequest.Builder builder = DescribeBatchLoadTaskRequest.builder();
@@ -244,6 +253,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "resumeBatchLoadTask operation requires ResumeBatchLoadTaskRequest in POJO mode");
             }
         } else {
             ResumeBatchLoadTaskRequest.Builder builder = ResumeBatchLoadTaskRequest.builder();
@@ -278,6 +290,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listBatchLoadTasks operation requires ListBatchLoadTasksRequest in POJO mode");
             }
         } else {
             ListBatchLoadTasksRequest.Builder builder = ListBatchLoadTasksRequest.builder();
@@ -315,6 +330,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "createDatabase operation requires CreateDatabaseRequest in POJO mode");
             }
         } else {
             CreateDatabaseRequest.Builder builder = CreateDatabaseRequest.builder();
@@ -352,6 +370,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteDatabase operation requires DeleteDatabaseRequest in POJO mode");
             }
         } else {
             DeleteDatabaseRequest.Builder builder = DeleteDatabaseRequest.builder();
@@ -386,6 +407,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeDatabase operation requires DescribeDatabaseRequest in POJO mode");
             }
         } else {
             DescribeDatabaseRequest.Builder builder = DescribeDatabaseRequest.builder();
@@ -419,6 +443,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "updateDatabase operation requires UpdateDatabaseRequest in POJO mode");
             }
         } else {
             UpdateDatabaseRequest.Builder builder = UpdateDatabaseRequest.builder();
@@ -456,6 +483,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listDatabases operation requires ListDatabasesRequest in POJO mode");
             }
         } else {
             ListDatabasesRequest.Builder builder = ListDatabasesRequest.builder();
@@ -489,6 +519,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "createTable operation requires CreateTableRequest in POJO mode");
             }
         } else {
             CreateTableRequest.Builder builder = CreateTableRequest.builder();
@@ -540,6 +573,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteTable operation requires DeleteTableRequest in POJO mode");
             }
         } else {
             DeleteTableRequest.Builder builder = DeleteTableRequest.builder();
@@ -577,6 +613,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeTable operation requires DescribeTableRequest in POJO mode");
             }
         } else {
             DescribeTableRequest.Builder builder = DescribeTableRequest.builder();
@@ -614,6 +653,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "updateTable operation requires UpdateTableRequest in POJO mode");
             }
         } else {
             UpdateTableRequest.Builder builder = UpdateTableRequest.builder();
@@ -665,6 +707,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listTables operation requires ListTablesRequest in POJO mode");
             }
         } else {
             ListTablesRequest.Builder builder = ListTablesRequest.builder();
@@ -702,6 +747,9 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "writeRecords operation requires WriteRecordsRequest in POJO mode");
             }
         } else {
             WriteRecordsRequest.Builder builder = WriteRecordsRequest.builder();
