@@ -29,9 +29,11 @@ import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.eventbridge.model.ListRulesResponse;
+import software.amazon.awssdk.services.eventbridge.model.Rule;
 import software.amazon.awssdk.services.eventbridge.model.RuleState;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EventbridgeEnableRuleIT extends Aws2EventbridgeBase {
@@ -46,20 +48,21 @@ public class EventbridgeEnableRuleIT extends Aws2EventbridgeBase {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:evs", new Processor() {
+        template.send("direct:evs-EventbridgeEnableRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeEnableRuleIT");
             }
         });
 
-        template.send("direct:evs-targets", new Processor() {
+        template.send("direct:evs-targets-EventbridgeEnableRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
-                Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeEnableRuleIT");
+                Target target = Target.builder().id("sqs-queue-EventbridgeEnableRuleIT")
+                        .arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
                         .build();
                 List<Target> targets = new ArrayList<Target>();
                 targets.add(target);
@@ -67,23 +70,23 @@ public class EventbridgeEnableRuleIT extends Aws2EventbridgeBase {
             }
         });
 
-        template.send("direct:evs-disableRule", new Processor() {
+        template.send("direct:evs-disableRule-EventbridgeEnableRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeEnableRuleIT");
             }
         });
 
-        template.send("direct:evs-enableRule", new Processor() {
+        template.send("direct:evs-enableRule-EventbridgeEnableRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeEnableRuleIT");
             }
         });
 
-        Exchange ex = template.request("direct:evs-listRules", new Processor() {
+        Exchange ex = template.request("direct:evs-listRules-EventbridgeEnableRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
@@ -92,28 +95,30 @@ public class EventbridgeEnableRuleIT extends Aws2EventbridgeBase {
 
         ListRulesResponse resp = ex.getIn().getBody(ListRulesResponse.class);
         assertEquals(true, resp.hasRules());
-        assertEquals(1, resp.rules().size());
-        assertEquals("firstrule", resp.rules().get(0).name());
-        assertEquals(RuleState.ENABLED, resp.rules().get(0).state());
+        assertThat(resp.rules().stream().map(Rule::name))
+                .contains("firstrule-EventbridgeEnableRuleIT");
+        Rule enabledRule = resp.rules().stream().filter(rule -> "firstrule-EventbridgeEnableRuleIT".equals(rule.name()))
+                .findAny().get();
+        assertEquals(RuleState.ENABLED, enabledRule.state());
         MockEndpoint.assertIsSatisfied(context);
 
         // Clean up eventbridge
-        template.send("direct:evs-deleteTargets", new Processor() {
+        template.send("direct:evs-deleteTargets-EventbridgeEnableRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeEnableRuleIT");
                 Collection<String> targets = new ArrayList<>();
-                targets.add("sqs-queue");
+                targets.add("sqs-queue-EventbridgeEnableRuleIT");
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS_IDS, targets);
             }
         });
 
-        template.send("direct:evs-deleteRule", new Processor() {
+        template.send("direct:evs-deleteRule-EventbridgeEnableRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeEnableRuleIT");
             }
         });
     }
@@ -132,13 +137,13 @@ public class EventbridgeEnableRuleIT extends Aws2EventbridgeBase {
                 String enableRule = "aws2-eventbridge://default?operation=enableRule";
                 String deleteRule = "aws2-eventbridge://default?operation=deleteRule";
 
-                from("direct:evs").to(putRule);
-                from("direct:evs-targets").to(putTargets);
-                from("direct:evs-listRules").to(listRule);
-                from("direct:evs-disableRule").to(disableRule);
-                from("direct:evs-deleteRule").to(deleteRule);
-                from("direct:evs-deleteTargets").to(removeTargets);
-                from("direct:evs-enableRule").to(enableRule).log("${body}").to("mock:result");
+                from("direct:evs-EventbridgeEnableRuleIT").to(putRule);
+                from("direct:evs-targets-EventbridgeEnableRuleIT").to(putTargets);
+                from("direct:evs-listRules-EventbridgeEnableRuleIT").to(listRule);
+                from("direct:evs-disableRule-EventbridgeEnableRuleIT").to(disableRule);
+                from("direct:evs-deleteRule-EventbridgeEnableRuleIT").to(deleteRule);
+                from("direct:evs-deleteTargets-EventbridgeEnableRuleIT").to(removeTargets);
+                from("direct:evs-enableRule-EventbridgeEnableRuleIT").to(enableRule).log("${body}").to("mock:result");
             }
         };
     }

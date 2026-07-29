@@ -27,8 +27,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
+@Isolated
 public class EventbridgePutRuleIT extends Aws2EventbridgeBase {
 
     @EndpointInject
@@ -45,20 +47,21 @@ public class EventbridgePutRuleIT extends Aws2EventbridgeBase {
         result.expectedMessageCount(1);
         result1.expectedMessageCount(1);
 
-        template.send("direct:evs", new Processor() {
+        template.send("direct:evs-EventbridgePutRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgePutRuleIT");
             }
         });
 
-        template.send("direct:evs-targets", new Processor() {
+        template.send("direct:evs-targets-EventbridgePutRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
-                Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgePutRuleIT");
+                Target target = Target.builder().id("sqs-queue")
+                        .arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
                         .build();
                 List<Target> targets = new ArrayList<Target>();
                 targets.add(target);
@@ -68,15 +71,15 @@ public class EventbridgePutRuleIT extends Aws2EventbridgeBase {
         MockEndpoint.assertIsSatisfied(context);
 
         // cleanup rule
-        template.send("direct:evs-removeTargets", exchange -> {
-            exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+        template.send("direct:evs-removeTargets-EventbridgePutRuleIT", exchange -> {
+            exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgePutRuleIT");
             List<String> targets = new ArrayList<>();
             targets.add("sqs-queue");
             exchange.getIn().setHeader(EventbridgeConstants.TARGETS_IDS, targets);
         });
 
-        template.send("direct:evs-deleteRule",
-                exchange -> exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule"));
+        template.send("direct:evs-deleteRule-EventbridgePutRuleIT",
+                exchange -> exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgePutRuleIT"));
     }
 
     @Override
@@ -89,10 +92,10 @@ public class EventbridgePutRuleIT extends Aws2EventbridgeBase {
                 String target = "aws2-eventbridge://default?operation=putTargets";
                 String removeTarget = "aws2-eventbridge://default?operation=removeTargets";
                 String deleteRule = "aws2-eventbridge://default?operation=deleteRule";
-                from("direct:evs").to(awsEndpoint).log("${body}").to("mock:result");
-                from("direct:evs-targets").to(target).log("${body}").to("mock:result1");
-                from("direct:evs-removeTargets").to(removeTarget);
-                from("direct:evs-deleteRule").to(deleteRule);
+                from("direct:evs-EventbridgePutRuleIT").to(awsEndpoint).log("${body}").to("mock:result");
+                from("direct:evs-targets-EventbridgePutRuleIT").to(target).log("${body}").to("mock:result1");
+                from("direct:evs-removeTargets-EventbridgePutRuleIT").to(removeTarget);
+                from("direct:evs-deleteRule-EventbridgePutRuleIT").to(deleteRule);
             }
         };
     }

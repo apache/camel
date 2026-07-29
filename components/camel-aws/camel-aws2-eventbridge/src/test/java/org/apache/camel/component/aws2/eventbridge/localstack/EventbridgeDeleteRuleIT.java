@@ -44,19 +44,19 @@ public class EventbridgeDeleteRuleIT extends Aws2EventbridgeBase {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:evs", new Processor() {
+        template.send("direct:evs-EventbridgeDeleteRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeDeleteRuleIT");
             }
         });
 
-        template.send("direct:evs-targets", new Processor() {
+        template.send("direct:evs-targets-EventbridgeDeleteRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeDeleteRuleIT");
                 Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
                         .build();
                 List<Target> targets = new ArrayList<Target>();
@@ -66,22 +66,22 @@ public class EventbridgeDeleteRuleIT extends Aws2EventbridgeBase {
         });
 
         // https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_DeleteRule.html before deleting the route, all targets must be removed
-        template.send("direct:evs-removeTarget", new Processor() {
+        template.send("direct:evs-removeTarget-EventbridgeDeleteRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeDeleteRuleIT");
                 List<String> targets = new ArrayList<String>();
                 targets.add("sqs-queue");
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS_IDS, targets);
             }
         });
 
-        Exchange ex = template.send("direct:evs-deleteRule", new Processor() {
+        Exchange ex = template.send("direct:evs-deleteRule-EventbridgeDeleteRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeDeleteRuleIT");
             }
         });
 
@@ -100,10 +100,10 @@ public class EventbridgeDeleteRuleIT extends Aws2EventbridgeBase {
                 String target = "aws2-eventbridge://default?operation=putTargets";
                 String removeTarget = "aws2-eventbridge://default?operation=removeTargets";
                 String deleteRule = "aws2-eventbridge://default?operation=deleteRule";
-                from("direct:evs").to(awsEndpoint);
-                from("direct:evs-targets").to(target);
-                from("direct:evs-removeTarget").to(removeTarget);
-                from("direct:evs-deleteRule").to(deleteRule).to("mock:result");
+                from("direct:evs-EventbridgeDeleteRuleIT").to(awsEndpoint);
+                from("direct:evs-targets-EventbridgeDeleteRuleIT").to(target);
+                from("direct:evs-removeTarget-EventbridgeDeleteRuleIT").to(removeTarget);
+                from("direct:evs-deleteRule-EventbridgeDeleteRuleIT").to(deleteRule).to("mock:result");
             }
         };
     }

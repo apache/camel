@@ -45,20 +45,21 @@ public class EventbridgeDescribeRuleIT extends Aws2EventbridgeBase {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:evs", new Processor() {
+        template.send("direct:evs-EventbridgeDescribeRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeDescribeRuleIT");
             }
         });
 
-        template.send("direct:evs-targets", new Processor() {
+        template.send("direct:evs-targets-EventbridgeDescribeRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
-                Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeDescribeRuleIT");
+                Target target = Target.builder().id("sqs-queue-EventbridgeDescribeRuleIT")
+                        .arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
                         .build();
                 List<Target> targets = new ArrayList<Target>();
                 targets.add(target);
@@ -66,16 +67,17 @@ public class EventbridgeDescribeRuleIT extends Aws2EventbridgeBase {
             }
         });
 
-        template.send("direct:describe-rule", new Processor() {
+        template.send("direct:describe-rule-EventbridgeDescribeRuleIT", new Processor() {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule-EventbridgeDescribeRuleIT");
             }
         });
         MockEndpoint.assertIsSatisfied(context);
         assertNotNull(result.getExchanges().get(0).getMessage().getBody(DescribeRuleResponse.class).eventPattern());
-        assertEquals("firstrule", result.getExchanges().get(0).getMessage().getBody(DescribeRuleResponse.class).name());
+        assertEquals("firstrule-EventbridgeDescribeRuleIT",
+                result.getExchanges().get(0).getMessage().getBody(DescribeRuleResponse.class).name());
     }
 
     @Override
@@ -87,9 +89,9 @@ public class EventbridgeDescribeRuleIT extends Aws2EventbridgeBase {
                         = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
                 String target = "aws2-eventbridge://default?operation=putTargets";
                 String describeRule = "aws2-eventbridge://default?operation=describeRule";
-                from("direct:evs").to(awsEndpoint);
-                from("direct:evs-targets").to(target);
-                from("direct:describe-rule").to(describeRule).to("mock:result");
+                from("direct:evs-EventbridgeDescribeRuleIT").to(awsEndpoint);
+                from("direct:evs-targets-EventbridgeDescribeRuleIT").to(target);
+                from("direct:describe-rule-EventbridgeDescribeRuleIT").to(describeRule).to("mock:result");
             }
         };
     }
