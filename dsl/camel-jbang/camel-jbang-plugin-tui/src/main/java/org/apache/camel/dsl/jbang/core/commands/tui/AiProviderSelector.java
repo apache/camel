@@ -55,6 +55,9 @@ final class AiProviderSelector {
         if (!"ollama".equals(defaultProvider)) {
             choices.add(new AiProviderSwitchPopup.ProviderChoice("ollama", "", "", false));
         }
+        if (!"watsonx".equals(defaultProvider)) {
+            choices.add(new AiProviderSwitchPopup.ProviderChoice("watsonx", "", "", false));
+        }
         return choices;
     }
 

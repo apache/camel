@@ -19,8 +19,8 @@ camel ask [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
-| `--api-key` | API key. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, or LLM_API_KEY env vars |  | String
-| `--api-type` | API type: 'ollama', 'openai', or 'anthropic' |  | ApiType
+| `--api-key` | API key. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or LLM_API_KEY env vars |  | String
+| `--api-type` | API type: 'ollama', 'openai', 'anthropic', or 'watsonx' |  | ApiType
 | `--max-iterations` | Maximum number of tool-calling rounds | 10 | int
 | `--model` | Model to use | DEFAULT_MODEL | String
 | `--name` | Name or PID of the Camel process. Auto-detected when exactly one process is running |  | String

@@ -58,7 +58,7 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("auto", "anthropic", "openai", "ollama"),
+        assertEquals(List.of("auto", "anthropic", "openai", "ollama", "watsonx"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList(),
                 "all known providers must be offered, even without a detected API key, so they remain selectable");
         assertTrue(choices.get(0).persistedDefault());
@@ -73,7 +73,7 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("anthropic", "openai", "ollama"),
+        assertEquals(List.of("anthropic", "openai", "ollama", "watsonx"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList(),
                 "anthropic must not be listed twice when it's already the default");
     }
@@ -87,7 +87,20 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("ollama", "anthropic", "openai"),
+        assertEquals(List.of("ollama", "anthropic", "openai", "watsonx"),
+                choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList());
+    }
+
+    @Test
+    void watsonxDefaultIsNotDuplicated(@TempDir Path tempDir) {
+        useHome(tempDir);
+        TuiSettings settings = TuiSettings.load();
+        settings.setAiProvider("watsonx");
+        settings.save();
+
+        List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
+
+        assertEquals(List.of("watsonx", "anthropic", "openai", "ollama"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList());
     }
 
@@ -124,5 +137,6 @@ class AiProviderSelectorTest {
         assertTrue(ex.getMessage().contains("ollama"));
         assertTrue(ex.getMessage().contains("openai"));
         assertTrue(ex.getMessage().contains("anthropic"));
+        assertTrue(ex.getMessage().contains("watsonx"));
     }
 }

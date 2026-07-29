@@ -93,11 +93,11 @@ public class Explain extends CamelCommand {
     String url;
 
     @Option(names = { "--api-type" },
-            description = "API type: 'ollama', 'openai' (OpenAI-compatible), or 'anthropic' (Anthropic/Vertex AI)")
+            description = "API type: 'ollama', 'openai' (OpenAI-compatible), 'anthropic' (Anthropic/Vertex AI), or 'watsonx' (IBM watsonx.ai)")
     LlmClient.ApiType apiType;
 
     @Option(names = { "--api-key" },
-            description = "API key for authentication. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, or LLM_API_KEY env vars")
+            description = "API key for authentication. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or LLM_API_KEY env vars")
     String apiKey;
 
     @Option(names = { "--model" },
@@ -199,6 +199,7 @@ public class Explain extends CamelCommand {
         printer().printErr("  2. camel explain my-route.yaml --url=http://localhost:11434");
         printer().printErr("  3. camel explain my-route.yaml --url=https://api.openai.com --api-type=openai --api-key=sk-...");
         printer().printErr("  4. camel explain my-route.yaml --api-type=anthropic  (uses ANTHROPIC_API_KEY or Vertex AI)");
+        printer().printErr("  5. camel explain my-route.yaml --api-type=watsonx    (uses WATSONX_APIKEY)");
     }
 
     private int explainRoute(String file, LlmClient client) throws Exception {

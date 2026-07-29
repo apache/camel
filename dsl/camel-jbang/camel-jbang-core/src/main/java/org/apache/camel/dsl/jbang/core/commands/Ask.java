@@ -61,11 +61,11 @@ public class Ask extends CamelCommand {
     String url;
 
     @Option(names = { "--api-type" },
-            description = "API type: 'ollama', 'openai', or 'anthropic'")
+            description = "API type: 'ollama', 'openai', 'anthropic', or 'watsonx'")
     LlmClient.ApiType apiType;
 
     @Option(names = { "--api-key" },
-            description = "API key. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, or LLM_API_KEY env vars")
+            description = "API key. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or LLM_API_KEY env vars")
     String apiKey;
 
     @Option(names = { "--model" },
