@@ -68,9 +68,10 @@ class ThemeModeTest {
     @Test
     void idsListsAllCanonicalValuesInDeclarationOrder() {
         assertEquals(List.of(
-                "dark", "light", "dracula", "nord", "solarized-dark", "solarized-light",
-                "gruvbox-dark", "catppuccin-mocha", "catppuccin-latte", "tokyo-night",
-                "rose-pine", "kanagawa", "everforest", "monochrome", "crt"), ThemeMode.ids());
+                "dark", "light", "dracula", "nord", "nord-light", "solarized-dark", "solarized-light",
+                "gruvbox-dark", "gruvbox-light", "catppuccin-mocha", "catppuccin-frappe", "catppuccin-latte",
+                "tokyo-night", "rose-pine", "rose-pine-moon", "kanagawa", "everforest", "everforest-light",
+                "monochrome", "crt"), ThemeMode.ids());
     }
 
     @Test

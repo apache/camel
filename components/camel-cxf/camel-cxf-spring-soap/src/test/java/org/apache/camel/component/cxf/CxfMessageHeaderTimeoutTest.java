@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
 
@@ -66,8 +66,17 @@ public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
         Exchange reply = sendJaxWsMessage(endpointUri);
         Exception e = reply.getException();
         assertNotNull(e, "We should get the exception cause here");
-        assertTrue(e instanceof HttpTimeoutException,
-                String.format("Expected HttpTimeoutException, but got %s", e.getClass().getName()));
+        // CXF may either propagate HttpTimeoutException directly or wrap an HttpConnectTimeoutException in a
+        // Fault ("Could not send Message.") depending on where in the interceptor
+        // chain the timeout is caught. Both cases indicate the timeout was applied
+        // correctly, so check the entire cause chain.
+        assertThat(e).satisfiesAnyOf(
+                ex -> assertThat(ex).isInstanceOf(HttpTimeoutException.class),
+                //TODO: when AssertJ 4 is released, to replace with throwableChains() for more precise and robust check
+                ex -> assertThat(ex).hasStackTraceContaining(
+                        "Caused by: java.net.http.HttpConnectTimeoutException: HTTP connect timed out"),
+                ex -> assertThat(ex).hasStackTraceContaining(
+                        "Caused by: java.net.http.HttpTimeoutException: request timed out"));
     }
 
     protected Exchange sendJaxWsMessage(String endpointUri) throws InterruptedException {

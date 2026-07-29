@@ -16,14 +16,24 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -44,6 +54,7 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
+import org.apache.camel.dsl.jbang.core.common.XmlHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -387,27 +398,29 @@ class CveAuditTab extends AbstractTableTab {
 
         ctx.backgroundExecutor.execute(() -> {
             try {
-                DependencyLoader.LoadResult loadResult = DependencyLoader.loadDependencies(info);
-                if (loadResult.error() != null && loadResult.entries().isEmpty()) {
-                    applyResult(Collections.emptyList(), Collections.emptyList(), loadResult.error());
-                    return;
-                }
-
-                List<DependencyLoader.DepEntry> directDeps = loadResult.entries();
-                List<DependencyLoader.DepEntry> transitiveDeps = DependencyLoader.resolveTransitives(directDeps);
-
-                List<DependencyLoader.DepEntry> allDeps = new ArrayList<>(directDeps);
-                for (DependencyLoader.DepEntry t : transitiveDeps) {
-                    allDeps.add(t);
+                // use actual JVM classpath as primary source (correct versions)
+                List<DependencyLoader.DepEntry> allDeps = fetchClasspathDeps();
+                if (allDeps.isEmpty()) {
+                    // fallback to pom.xml/run.properties + Maven transitive resolution
+                    DependencyLoader.LoadResult loadResult = DependencyLoader.loadDependencies(info);
+                    if (loadResult.error() != null && loadResult.entries().isEmpty()) {
+                        applyResult(Collections.emptyList(), Collections.emptyList(), loadResult.error());
+                        return;
+                    }
+                    List<DependencyLoader.DepEntry> directDeps = loadResult.entries();
+                    List<DependencyLoader.DepEntry> transitiveDeps = DependencyLoader.resolveTransitives(directDeps);
+                    allDeps = new ArrayList<>(directDeps);
+                    for (DependencyLoader.DepEntry t : transitiveDeps) {
+                        allDeps.add(t);
+                    }
                 }
 
                 Map<String, List<OsvClient.Vulnerability>> vulnMap = osvClient.queryBatch(allDeps);
 
+                // only resolve "via" parent mapping if vulnerabilities were found
                 Map<String, String> gavToParent = new HashMap<>();
-                for (DependencyLoader.DepEntry dep : allDeps) {
-                    if (dep.transitive() && dep.parent() != null) {
-                        gavToParent.put(dep.display(), DependencyLoader.shortArtifact(dep.parent()));
-                    }
+                if (!vulnMap.isEmpty()) {
+                    gavToParent = resolveViaParents(info, vulnMap);
                 }
 
                 List<VulnGroup> groups = buildVulnGroups(vulnMap, gavToParent);
@@ -422,6 +435,135 @@ class CveAuditTab extends AbstractTableTab {
                 loading.set(false);
             }
         });
+    }
+
+    private Map<String, String> resolveViaParents(
+            IntegrationInfo info, Map<String, List<OsvClient.Vulnerability>> vulnMap) {
+        Map<String, String> result = new HashMap<>();
+        try {
+            // collect vulnerable groupId:artifactId keys
+            Set<String> vulnKeys = new HashSet<>();
+            for (String gav : vulnMap.keySet()) {
+                int last = gav.lastIndexOf(':');
+                if (last > 0) {
+                    vulnKeys.add(gav.substring(0, last));
+                }
+            }
+            if (vulnKeys.isEmpty()) {
+                return result;
+            }
+
+            // get direct deps and build classpath JAR path map
+            DependencyLoader.LoadResult loadResult = DependencyLoader.loadDependencies(info);
+            if (loadResult.entries().isEmpty()) {
+                return result;
+            }
+            Set<String> directKeys = new HashSet<>();
+            for (DependencyLoader.DepEntry d : loadResult.entries()) {
+                directKeys.add(d.groupId() + ":" + d.artifactId());
+            }
+            vulnKeys.removeAll(directKeys);
+            if (vulnKeys.isEmpty()) {
+                return result;
+            }
+
+            // build map of groupId:artifactId -> JAR path from classpath
+            Map<String, Path> classpathJars = new HashMap<>();
+            String pid = ctx.selectedPid;
+            if (pid != null) {
+                JsonObject action = new JsonObject();
+                action.put("action", "jvm");
+                JsonObject response = ctx.executeAction(pid, action, 5000);
+                if (response != null) {
+                    Object cp = response.get("classpath");
+                    if (cp instanceof JsonArray arr) {
+                        for (Object item : arr) {
+                            ClasspathTab.JarEntry entry = ClasspathTab.parseJarEntry(String.valueOf(item));
+                            if (entry.groupId() != null) {
+                                String key = entry.groupId() + ":" + entry.artifactId();
+                                if (directKeys.contains(key)) {
+                                    classpathJars.put(key, Path.of(entry.fullPath()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // read each direct dep's JAR embedded POM to find which pulls in the vulnerable dep
+            for (Map.Entry<String, Path> e : classpathJars.entrySet()) {
+                Set<String> declaredDeps = readDeclaredDepsFromJar(e.getValue());
+                for (String vulnKey : vulnKeys) {
+                    if (declaredDeps.contains(vulnKey) && !result.containsKey(vulnKey)) {
+                        result.put(vulnKey, DependencyLoader.shortArtifact(e.getKey()));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // best effort
+        }
+        return result;
+    }
+
+    private static Set<String> readDeclaredDepsFromJar(Path jarPath) {
+        Set<String> deps = new HashSet<>();
+        try (java.util.jar.JarFile jar = new java.util.jar.JarFile(jarPath.toFile())) {
+            jar.stream()
+                    .filter(entry -> entry.getName().startsWith("META-INF/maven/")
+                            && entry.getName().endsWith("/pom.xml"))
+                    .findFirst()
+                    .ifPresent(entry -> {
+                        try (InputStream is = jar.getInputStream(entry)) {
+                            DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
+                            Document dom = dbf.newDocumentBuilder().parse(is);
+                            NodeList nl = dom.getElementsByTagName("dependency");
+                            for (int i = 0; i < nl.getLength(); i++) {
+                                Element dep = (Element) nl.item(i);
+                                String g = DependencyLoader.textContent(dep, "groupId");
+                                String a = DependencyLoader.textContent(dep, "artifactId");
+                                if (g != null && a != null) {
+                                    deps.add(g + ":" + a);
+                                }
+                            }
+                        } catch (Exception ex) {
+                            // skip
+                        }
+                    });
+        } catch (Exception e) {
+            // skip
+        }
+        return deps;
+    }
+
+    private List<DependencyLoader.DepEntry> fetchClasspathDeps() {
+        try {
+            String pid = ctx.selectedPid;
+            if (pid == null) {
+                return Collections.emptyList();
+            }
+            JsonObject action = new JsonObject();
+            action.put("action", "jvm");
+            JsonObject response = ctx.executeAction(pid, action, 5000);
+            if (response == null) {
+                return Collections.emptyList();
+            }
+            Object cp = response.get("classpath");
+            if (!(cp instanceof JsonArray arr) || arr.isEmpty()) {
+                return Collections.emptyList();
+            }
+            List<DependencyLoader.DepEntry> deps = new ArrayList<>();
+            for (Object item : arr) {
+                ClasspathTab.JarEntry entry = ClasspathTab.parseJarEntry(String.valueOf(item));
+                if (entry.groupId() != null && entry.version() != null
+                        && !DependencyLoader.skipArtifact(entry.groupId(), entry.artifactId())) {
+                    deps.add(new DependencyLoader.DepEntry(entry.groupId(), entry.artifactId(), entry.version()));
+                }
+            }
+            deps.sort(Comparator.comparing(DependencyLoader.DepEntry::display, String.CASE_INSENSITIVE_ORDER));
+            return deps;
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
     private void applyResult(List<DependencyLoader.DepEntry> deps, List<VulnGroup> groups, String error) {
@@ -483,6 +625,13 @@ class CveAuditTab extends AbstractTableTab {
                 if (!group.affectedGavs.contains(gav)) {
                     group.affectedGavs.add(gav);
                     String parent = gavToParent.get(gav);
+                    if (parent == null) {
+                        // try lookup by groupId:artifactId without version
+                        int last = gav.lastIndexOf(':');
+                        if (last > 0) {
+                            parent = gavToParent.get(gav.substring(0, last));
+                        }
+                    }
                     if (parent != null) {
                         group.gavParents.put(gav, parent);
                     }

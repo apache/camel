@@ -30,6 +30,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("FileUploadDirectory", java.lang.String.class);
         map.put("FileUploadEnabled", boolean.class);
         map.put("Host", java.lang.String.class);
+        map.put("JwtAllowMissingIssuerAndAudience", boolean.class);
         map.put("JwtAudience", java.lang.String.class);
         map.put("JwtIssuer", java.lang.String.class);
         map.put("JwtKeystorePassword", java.lang.String.class);
@@ -63,6 +64,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "fileuploadenabled":
         case "fileUploadEnabled": target.setFileUploadEnabled(property(camelContext, boolean.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtallowmissingissuerandaudience":
+        case "jwtAllowMissingIssuerAndAudience": target.setJwtAllowMissingIssuerAndAudience(property(camelContext, boolean.class, value)); return true;
         case "jwtaudience":
         case "jwtAudience": target.setJwtAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtissuer":
@@ -111,6 +114,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "fileuploadenabled":
         case "fileUploadEnabled": return boolean.class;
         case "host": return java.lang.String.class;
+        case "jwtallowmissingissuerandaudience":
+        case "jwtAllowMissingIssuerAndAudience": return boolean.class;
         case "jwtaudience":
         case "jwtAudience": return java.lang.String.class;
         case "jwtissuer":
@@ -155,6 +160,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "fileuploadenabled":
         case "fileUploadEnabled": return target.isFileUploadEnabled();
         case "host": return target.getHost();
+        case "jwtallowmissingissuerandaudience":
+        case "jwtAllowMissingIssuerAndAudience": return target.isJwtAllowMissingIssuerAndAudience();
         case "jwtaudience":
         case "jwtAudience": return target.getJwtAudience();
         case "jwtissuer":

@@ -281,8 +281,8 @@ public interface XsltSaxonComponentBuilderFactory {
         
         /**
          * Limits the total number of XPath operators in an XSL Stylesheet. The
-         * default (from JDK) is 10000. Configuring this corresponds to setting
-         * JVM system property: jdk.xml.xpathTotalOpLimit.
+         * default (from JDK) is 10000. The limit is set per TransformerFactory
+         * instance used by each endpoint, not as a JVM-global system property.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 

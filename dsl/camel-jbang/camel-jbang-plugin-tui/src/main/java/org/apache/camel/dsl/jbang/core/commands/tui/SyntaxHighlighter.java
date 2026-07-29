@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,7 +66,7 @@ class SyntaxHighlighter {
     private static final Pattern XML_ATTR_NAME = Pattern.compile("\\s([\\w:.-]+)=");
     private static final Pattern XML_ENTITY = Pattern.compile("&[^;]+;");
 
-    // Monokai color palette
+    // Monokai color palette (dark themes)
     static final Color MONOKAI_COMMENT = Color.rgb(117, 113, 94);
     static final Color MONOKAI_STRING = Color.rgb(230, 219, 116);
     static final Color MONOKAI_KEYWORD = Color.rgb(249, 38, 114);
@@ -74,35 +75,134 @@ class SyntaxHighlighter {
     static final Color MONOKAI_CONSTANT = Color.rgb(174, 129, 255);
     static final Color MONOKAI_TEXT = Color.rgb(248, 248, 242);
 
+    // Light color palette (readable on light backgrounds)
+    private static final Color LIGHT_COMMENT = Color.rgb(106, 115, 125);
+    private static final Color LIGHT_STRING = Color.rgb(3, 47, 98);
+    private static final Color LIGHT_KEYWORD = Color.rgb(215, 58, 73);
+    private static final Color LIGHT_FUNCTION = Color.rgb(0, 92, 197);
+    private static final Color LIGHT_TYPE = Color.rgb(0, 92, 197);
+    private static final Color LIGHT_CONSTANT = Color.rgb(111, 66, 193);
+    private static final Color LIGHT_TEXT = Color.rgb(36, 41, 46);
+
+    private static Color comment() {
+        return Theme.isDark() ? MONOKAI_COMMENT : LIGHT_COMMENT;
+    }
+
+    private static Color string() {
+        return Theme.isDark() ? MONOKAI_STRING : LIGHT_STRING;
+    }
+
+    private static Color keyword() {
+        return Theme.isDark() ? MONOKAI_KEYWORD : LIGHT_KEYWORD;
+    }
+
+    private static Color function() {
+        return Theme.isDark() ? MONOKAI_FUNCTION : LIGHT_FUNCTION;
+    }
+
+    private static Color type() {
+        return Theme.isDark() ? MONOKAI_TYPE : LIGHT_TYPE;
+    }
+
+    private static Color constant() {
+        return Theme.isDark() ? MONOKAI_CONSTANT : LIGHT_CONSTANT;
+    }
+
+    private static Color text() {
+        return Theme.isDark() ? MONOKAI_TEXT : LIGHT_TEXT;
+    }
+
     // Java styles
-    private static final Style JAVA_COMMENT_STYLE = Style.EMPTY.fg(MONOKAI_COMMENT);
-    private static final Style JAVA_STRING_STYLE = Style.EMPTY.fg(MONOKAI_STRING);
-    private static final Style JAVA_ANNOTATION_STYLE = Style.EMPTY.fg(MONOKAI_FUNCTION);
-    private static final Style JAVA_MODIFIER_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
-    private static final Style JAVA_KEYWORD_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
-    private static final Style JAVA_TYPE_STYLE = Style.EMPTY.fg(MONOKAI_TYPE);
-    private static final Style JAVA_BOOLEAN_STYLE = Style.EMPTY.fg(MONOKAI_CONSTANT);
-    private static final Style JAVA_NUMBER_STYLE = Style.EMPTY.fg(MONOKAI_CONSTANT);
+    private static Style javaComment() {
+        return Style.EMPTY.fg(comment());
+    }
+
+    private static Style javaString() {
+        return Style.EMPTY.fg(string());
+    }
+
+    private static Style javaAnnotation() {
+        return Style.EMPTY.fg(function());
+    }
+
+    private static Style javaModifier() {
+        return Style.EMPTY.fg(keyword());
+    }
+
+    private static Style javaKeyword() {
+        return Style.EMPTY.fg(keyword());
+    }
+
+    private static Style javaType() {
+        return Style.EMPTY.fg(type());
+    }
+
+    private static Style javaBoolean() {
+        return Style.EMPTY.fg(constant());
+    }
+
+    private static Style javaNumber() {
+        return Style.EMPTY.fg(constant());
+    }
 
     // YAML styles
-    private static final Style YAML_COMMENT_STYLE = Style.EMPTY.fg(MONOKAI_COMMENT);
-    private static final Style YAML_KEY_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
-    private static final Style YAML_VALUE_STYLE = Style.EMPTY.fg(MONOKAI_STRING);
-    private static final Style YAML_SPECIAL_STYLE = Style.EMPTY.fg(MONOKAI_CONSTANT);
-    private static final Style YAML_SEPARATOR_STYLE = Style.EMPTY.fg(MONOKAI_TEXT).bold();
+    private static Style yamlComment() {
+        return Style.EMPTY.fg(comment());
+    }
+
+    private static Style yamlKey() {
+        return Style.EMPTY.fg(keyword());
+    }
+
+    private static Style yamlValue() {
+        return Style.EMPTY.fg(string());
+    }
+
+    private static Style yamlSpecial() {
+        return Style.EMPTY.fg(constant());
+    }
+
+    private static Style yamlSeparator() {
+        return Style.EMPTY.fg(text()).bold();
+    }
 
     // XML styles
-    private static final Style XML_COMMENT_STYLE = Style.EMPTY.fg(MONOKAI_COMMENT);
-    private static final Style XML_TAG_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
-    private static final Style XML_ATTR_NAME_STYLE = Style.EMPTY.fg(MONOKAI_FUNCTION);
-    private static final Style XML_ATTR_VALUE_STYLE = Style.EMPTY.fg(MONOKAI_STRING);
-    private static final Style XML_ENTITY_STYLE = Style.EMPTY.fg(MONOKAI_CONSTANT);
+    private static Style xmlComment() {
+        return Style.EMPTY.fg(comment());
+    }
+
+    private static Style xmlTag() {
+        return Style.EMPTY.fg(keyword());
+    }
+
+    private static Style xmlAttrName() {
+        return Style.EMPTY.fg(function());
+    }
+
+    private static Style xmlAttrValue() {
+        return Style.EMPTY.fg(string());
+    }
+
+    private static Style xmlEntity() {
+        return Style.EMPTY.fg(constant());
+    }
 
     // Properties styles
-    private static final Style PROPERTIES_COMMENT_STYLE = Style.EMPTY.fg(MONOKAI_COMMENT);
-    private static final Style PROPERTIES_KEY_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
-    private static final Style PROPERTIES_SEPARATOR_STYLE = Style.EMPTY.fg(MONOKAI_TEXT).bold();
-    private static final Style PROPERTIES_VALUE_STYLE = Style.EMPTY.fg(MONOKAI_STRING);
+    private static Style propsComment() {
+        return Style.EMPTY.fg(comment());
+    }
+
+    private static Style propsKey() {
+        return Style.EMPTY.fg(keyword());
+    }
+
+    private static Style propsSeparator() {
+        return Style.EMPTY.fg(text()).bold();
+    }
+
+    private static Style propsValue() {
+        return Style.EMPTY.fg(string());
+    }
 
     private SyntaxHighlighter() {
     }
@@ -153,14 +253,14 @@ class SyntaxHighlighter {
         Style[] charStyles = new Style[len];
 
         // Priority order: comments > strings > annotations > keywords > numbers
-        applyPattern(charStyles, text, JAVA_LINE_COMMENT, JAVA_COMMENT_STYLE);
-        applyPattern(charStyles, text, JAVA_STRING, JAVA_STRING_STYLE);
-        applyPattern(charStyles, text, JAVA_ANNOTATION, JAVA_ANNOTATION_STYLE);
-        applyPattern(charStyles, text, JAVA_MODIFIER, JAVA_MODIFIER_STYLE);
-        applyPattern(charStyles, text, JAVA_KEYWORD, JAVA_KEYWORD_STYLE);
-        applyPattern(charStyles, text, JAVA_TYPE, JAVA_TYPE_STYLE);
-        applyPattern(charStyles, text, JAVA_BOOLEAN_NULL, JAVA_BOOLEAN_STYLE);
-        applyPattern(charStyles, text, JAVA_NUMBER, JAVA_NUMBER_STYLE);
+        applyPattern(charStyles, text, JAVA_LINE_COMMENT, javaComment());
+        applyPattern(charStyles, text, JAVA_STRING, javaString());
+        applyPattern(charStyles, text, JAVA_ANNOTATION, javaAnnotation());
+        applyPattern(charStyles, text, JAVA_MODIFIER, javaModifier());
+        applyPattern(charStyles, text, JAVA_KEYWORD, javaKeyword());
+        applyPattern(charStyles, text, JAVA_TYPE, javaType());
+        applyPattern(charStyles, text, JAVA_BOOLEAN_NULL, javaBoolean());
+        applyPattern(charStyles, text, JAVA_NUMBER, javaNumber());
 
         return buildLine(text, charStyles);
     }
@@ -170,38 +270,41 @@ class SyntaxHighlighter {
         Style[] charStyles = new Style[len];
 
         // Comments have highest priority
-        applyPattern(charStyles, text, YAML_COMMENT, YAML_COMMENT_STYLE);
+        applyPattern(charStyles, text, YAML_COMMENT, yamlComment());
 
         // Key portion (before colon)
+        Style ykStyle = yamlKey();
+        Style ysSep = yamlSeparator();
         Matcher keyMatcher = YAML_KEY.matcher(text);
         if (keyMatcher.find()) {
             int keyStart = keyMatcher.start(2);
             int keyEnd = keyMatcher.end(2);
             for (int i = keyStart; i < keyEnd && i < len; i++) {
                 if (charStyles[i] == null) {
-                    charStyles[i] = YAML_KEY_STYLE;
+                    charStyles[i] = ykStyle;
                 }
             }
             // Colon separator
             int colonIdx = text.indexOf(':', keyEnd);
             if (colonIdx >= 0 && colonIdx < len && charStyles[colonIdx] == null) {
-                charStyles[colonIdx] = YAML_SEPARATOR_STYLE;
+                charStyles[colonIdx] = ysSep;
             }
         }
 
         // String values
-        applyPattern(charStyles, text, YAML_STRING_VALUE, YAML_VALUE_STYLE);
+        applyPattern(charStyles, text, YAML_STRING_VALUE, yamlValue());
 
         // Special values (boolean, null, numbers) after colon
-        applyPatternGroup(charStyles, text, YAML_BOOLEAN_NULL, 1, YAML_SPECIAL_STYLE);
-        applyPatternGroup(charStyles, text, YAML_NUMBER, 1, YAML_SPECIAL_STYLE);
+        Style ysSpecial = yamlSpecial();
+        applyPatternGroup(charStyles, text, YAML_BOOLEAN_NULL, 1, ysSpecial);
+        applyPatternGroup(charStyles, text, YAML_NUMBER, 1, ysSpecial);
 
         // List markers
         Matcher listMarker = Pattern.compile("^(\\s*)(-)(\\s)").matcher(text);
         if (listMarker.find()) {
             int dashIdx = listMarker.start(2);
             if (dashIdx < len && charStyles[dashIdx] == null) {
-                charStyles[dashIdx] = YAML_SEPARATOR_STYLE;
+                charStyles[dashIdx] = ysSep;
             }
         }
 
@@ -222,7 +325,7 @@ class SyntaxHighlighter {
                 }
                 if (!hasSpecial) {
                     for (int i = valueStart; i < len; i++) {
-                        charStyles[i] = YAML_VALUE_STYLE;
+                        charStyles[i] = yamlValue();
                     }
                 }
             }
@@ -236,29 +339,31 @@ class SyntaxHighlighter {
         Style[] charStyles = new Style[len];
 
         // Comments highest priority
-        applyPattern(charStyles, text, XML_COMMENT, XML_COMMENT_STYLE);
+        applyPattern(charStyles, text, XML_COMMENT, xmlComment());
 
         // Attribute values (before tag names so tags don't override)
-        applyPattern(charStyles, text, XML_ATTR_VALUE, XML_ATTR_VALUE_STYLE);
+        applyPattern(charStyles, text, XML_ATTR_VALUE, xmlAttrValue());
 
         // Attribute names
+        Style xan = xmlAttrName();
         Matcher attrMatcher = XML_ATTR_NAME.matcher(text);
         while (attrMatcher.find()) {
             int start = attrMatcher.start(1);
             int end = attrMatcher.end(1);
             for (int i = start; i < end; i++) {
                 if (charStyles[i] == null) {
-                    charStyles[i] = XML_ATTR_NAME_STYLE;
+                    charStyles[i] = xan;
                 }
             }
         }
 
         // Tag names
-        applyPattern(charStyles, text, XML_OPEN_TAG, XML_TAG_STYLE);
-        applyPattern(charStyles, text, XML_CLOSE_BRACKET, XML_TAG_STYLE);
+        Style xt = xmlTag();
+        applyPattern(charStyles, text, XML_OPEN_TAG, xt);
+        applyPattern(charStyles, text, XML_CLOSE_BRACKET, xt);
 
         // Entity references
-        applyPattern(charStyles, text, XML_ENTITY, XML_ENTITY_STYLE);
+        applyPattern(charStyles, text, XML_ENTITY, xmlEntity());
 
         return buildLine(text, charStyles);
     }
@@ -282,7 +387,7 @@ class SyntaxHighlighter {
         char first = text.charAt(start);
         if (first == '#' || first == '!') {
             for (int i = start; i < len; i++) {
-                charStyles[i] = PROPERTIES_COMMENT_STYLE;
+                charStyles[i] = propsComment();
             }
             return buildLine(text, charStyles);
         }
@@ -304,14 +409,14 @@ class SyntaxHighlighter {
         // key with no separator and no value (e.g. a lone "enabled")
         if (keyEnd < 0) {
             for (int i = start; i < len; i++) {
-                charStyles[i] = PROPERTIES_KEY_STYLE;
+                charStyles[i] = propsKey();
             }
             return buildLine(text, charStyles);
         }
 
         // key
         for (int i = start; i < keyEnd; i++) {
-            charStyles[i] = PROPERTIES_KEY_STYLE;
+            charStyles[i] = propsKey();
         }
 
         // an explicit '=' or ':' separator may follow optional whitespace
@@ -320,7 +425,7 @@ class SyntaxHighlighter {
             i++;
         }
         if (i < len && (text.charAt(i) == '=' || text.charAt(i) == ':')) {
-            charStyles[i] = PROPERTIES_SEPARATOR_STYLE;
+            charStyles[i] = propsSeparator();
             i++;
         }
 
@@ -329,7 +434,7 @@ class SyntaxHighlighter {
             i++;
         }
         for (; i < len; i++) {
-            charStyles[i] = PROPERTIES_VALUE_STYLE;
+            charStyles[i] = propsValue();
         }
 
         return buildLine(text, charStyles);
@@ -365,7 +470,7 @@ class SyntaxHighlighter {
         while (i < len) {
             Style current = charStyles[i];
             int start = i;
-            while (i < len && charStyles[i] == current) {
+            while (i < len && Objects.equals(charStyles[i], current)) {
                 i++;
             }
             String segment = text.substring(start, i);

@@ -43,6 +43,7 @@ final class TuiSettings {
     static final String PROP_PROXY_PORT = "camel.tui.proxyPort";
     static final String PROP_SHELL_HISTORY = "camel.tui.shell.history";
     static final String PROP_AI_PROMPT_HISTORY = "camel.tui.ai.promptHistory";
+    static final String PROP_CONFIRM_ACTIONS = "camel.tui.confirmActions";
 
     private String themeId;
     private String startTab;
@@ -57,6 +58,7 @@ final class TuiSettings {
     private String aiUrl;
     private String shellHistory;
     private String aiPromptHistory;
+    private String confirmActions;
 
     String getThemeId() {
         return themeId;
@@ -170,6 +172,18 @@ final class TuiSettings {
         return TuiHistoryLimits.resolveLimit(aiPromptHistory);
     }
 
+    String getConfirmActions() {
+        return confirmActions;
+    }
+
+    void setConfirmActions(String confirmActions) {
+        this.confirmActions = confirmActions;
+    }
+
+    boolean isConfirmActions() {
+        return !"false".equals(confirmActions);
+    }
+
     /**
      * Loads the current settings, resolving each key with per-key local/global precedence via {@link TuiUserConfig}.
      * Unset keys yield {@code null} fields; a read failure yields an object with {@code null} fields rather than
@@ -191,6 +205,7 @@ final class TuiSettings {
             settings.aiUrl = trimToNull(TuiUserConfig.read(PROP_AI_URL));
             settings.shellHistory = trimToNull(TuiUserConfig.read(PROP_SHELL_HISTORY));
             settings.aiPromptHistory = trimToNull(TuiUserConfig.read(PROP_AI_PROMPT_HISTORY));
+            settings.confirmActions = trimToNull(TuiUserConfig.read(PROP_CONFIRM_ACTIONS));
         } catch (RuntimeException e) {
             // best-effort: return an object with null fields on read failure
         }
@@ -217,6 +232,7 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_AI_URL, aiUrl);
             TuiUserConfig.write(PROP_SHELL_HISTORY, shellHistory);
             TuiUserConfig.write(PROP_AI_PROMPT_HISTORY, aiPromptHistory);
+            TuiUserConfig.write(PROP_CONFIRM_ACTIONS, confirmActions);
         } catch (RuntimeException e) {
             // best-effort: a save failure must not disrupt the TUI
         }

@@ -72,6 +72,8 @@ class OverviewTab extends AbstractTab {
         void openDoc(IntegrationInfo info);
 
         void openFilesPopup();
+
+        void showConfirm(String title, String message, Runnable onConfirm);
     }
 
     private static final long VANISH_DURATION_MS = 6000;
@@ -196,12 +198,25 @@ class OverviewTab extends AbstractTab {
                 IntegrationInfo selInfo = ctx.findSelectedIntegration();
                 if (selInfo != null) {
                     String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
-                    actions.sendRouteCommand(ctx.selectedPid, "*", cmd);
+                    if (ctx.confirmActions) {
+                        String label = selInfo.routeStarted > 0 ? "Stop" : "Start";
+                        actions.showConfirm("Confirm " + label + " Routes",
+                                " " + label + " all routes for " + ctx.selectedName() + "? ",
+                                () -> actions.sendRouteCommand(ctx.selectedPid, "*", cmd));
+                    } else {
+                        actions.sendRouteCommand(ctx.selectedPid, "*", cmd);
+                    }
                 }
                 return true;
             }
             if (ke.isChar('x') && ctx.selectedPid != null) {
-                actions.stopSelectedProcess(false);
+                if (ctx.confirmActions) {
+                    actions.showConfirm("Confirm Stop",
+                            " Stop " + ctx.selectedName() + " (PID: " + ctx.selectedPid + ")? ",
+                            () -> actions.stopSelectedProcess(false));
+                } else {
+                    actions.stopSelectedProcess(false);
+                }
                 return true;
             }
             if (ke.isChar('X') && ctx.selectedPid != null) {
@@ -209,7 +224,13 @@ class OverviewTab extends AbstractTab {
                 return true;
             }
             if (ke.isChar('r') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
-                actions.restartSelectedProcess();
+                if (ctx.confirmActions) {
+                    actions.showConfirm("Confirm Restart",
+                            " Restart " + ctx.selectedName() + " (PID: " + ctx.selectedPid + ")? ",
+                            () -> actions.restartSelectedProcess());
+                } else {
+                    actions.restartSelectedProcess();
+                }
                 return true;
             }
             if (ke.isChar('f') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
@@ -539,7 +560,7 @@ class OverviewTab extends AbstractTab {
                             rightCell(throughputDisplay != null ? throughputDisplay : "", 8),
                             Cell.from(totalCell),
                             Cell.from(failCell),
-                            rightCell(timingCol, 14),
+                            rightCell(timingCol, 20),
                             Cell.from(buildPercentileBarLine(info.p50Time, info.p95Time, info.p99Time, 10))).style(rowBg));
                 }
             }
@@ -555,7 +576,7 @@ class OverviewTab extends AbstractTab {
                     rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
                     centerCell(sortLabel("TOTAL", "total"), 14, sortStyle("total")),
                     centerCell(sortLabel("FAIL", "fail"), 14, sortStyle("fail")),
-                    rightCell(timingHeader, 14, Style.EMPTY.bold()),
+                    rightCell(timingHeader, 20, Style.EMPTY.bold()),
                     Cell.from(""));
 
             widths = new Constraint[] {
@@ -568,8 +589,8 @@ class OverviewTab extends AbstractTab {
                     Constraint.length(8),
                     Constraint.length(14),
                     Constraint.length(14),
-                    Constraint.length(14),
-                    Constraint.fill()
+                    Constraint.min(20),
+                    Constraint.length(0)
             };
         }
 
@@ -953,21 +974,25 @@ class OverviewTab extends AbstractTab {
                         Cell.from(Span.styled(info.pid, dimStyle)),
                         Cell.from(Span.styled(vanishAlias, dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error().dim())),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle))).style(rowBg));
             } else {
                 String statusText = info.alive ? "Running" : "Stopped";
                 String infraAlias = TuiIcons.INFRA + "  " + info.alias;
                 String version = info.serviceVersion != null ? info.serviceVersion : "";
                 String port = extractInfraPort(info);
+                String uiUrl = extractInfraUiUrl(info);
                 String desc = info.description != null ? info.description : "";
                 infraRows.add(Row.from(
                         Cell.from(info.pid),
                         Cell.from(Span.styled(infraAlias, Theme.notice())),
                         Cell.from(version),
-                        rightCell(port, 7),
                         Cell.from(Span.styled(statusText, statusStyle)),
+                        rightCell(port, 7),
+                        Cell.from(Span.styled(uiUrl,
+                                uiUrl.isEmpty() ? Style.EMPTY : Theme.info().hyperlink(uiUrl))),
                         Cell.from(desc)).style(rowBg));
             }
         }
@@ -976,8 +1001,9 @@ class OverviewTab extends AbstractTab {
                 Cell.from(Span.styled("PID", Style.EMPTY.bold())),
                 Cell.from(Span.styled(infraSortLabel("SERVICE", "service"), infraSortStyle("service"))),
                 Cell.from(Span.styled(infraSortLabel("VERSION", "version"), infraSortStyle("version"))),
-                rightCell(infraSortLabel("PORT", "port"), 7, infraSortStyle("port")),
                 Cell.from(Span.styled(infraSortLabel("STATUS", "status"), infraSortStyle("status"))),
+                rightCell(infraSortLabel("PORT", "port"), 7, infraSortStyle("port")),
+                Cell.from(Span.styled("UI", Style.EMPTY.bold())),
                 Cell.from(Span.styled("DESCRIPTION", Style.EMPTY.bold())));
 
         Table.Builder infraBuilder = Table.builder()
@@ -987,8 +1013,9 @@ class OverviewTab extends AbstractTab {
                         Constraint.length(8),
                         Constraint.fill(),
                         Constraint.length(16),
-                        Constraint.length(7),
                         Constraint.length(10),
+                        Constraint.length(7),
+                        Constraint.length(26),
                         Constraint.fill())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -1012,6 +1039,14 @@ class OverviewTab extends AbstractTab {
         Object port = info.properties.get("port");
         if (port != null) {
             return String.valueOf(port);
+        }
+        return "";
+    }
+
+    private static String extractInfraUiUrl(InfraInfo info) {
+        Object url = info.properties.get("uiUrl");
+        if (url != null) {
+            return String.valueOf(url);
         }
         return "";
     }
@@ -1341,7 +1376,7 @@ class OverviewTab extends AbstractTab {
                 When running an example that requires infra services, they are started
                 automatically before the example launches.
 
-                Press `i` to toggle focus between the integrations and infra panels.
+                Press `Tab` to toggle focus between the integrations and infra panels.
                 Each panel remembers its own selection. Press `d` while the infra panel
                 is focused to toggle a details panel showing the service's connection
                 properties (host, port, etc.).
@@ -1353,13 +1388,25 @@ class OverviewTab extends AbstractTab {
                 ## Keys
 
                 - `Up/Down` — select within the focused panel
-                - `i` — toggle focus between integrations and infra panels
+                - `Tab` — switch between integrations and infra panels (when infra services are running)
                 - `d` — toggle infra service details panel (when infra panel is focused)
                 - `Enter` — view routes for selected integration
                 - `s` — cycle sort column (for the focused panel)
                 - `S` — reverse sort order
                 - `F2` — actions menu (includes theme toggle, go to tab, etc.)
                 - `F3` — switch integration
+
+                ## Process Control
+
+                - `p` — stop or start all routes for the selected integration
+                - `x` — stop the selected integration (graceful shutdown)
+                - `X` — kill the selected integration (force terminate, always confirms)
+                - `r` — restart the selected integration
+                - `q` — quit the TUI
+
+                By default, these actions show a confirmation dialog before executing.
+                You can turn this off in Settings (`F2` → `Settings...` → `Confirm`).
+                Kill (`X`) always confirms regardless of this setting.
                 """;
     }
 
@@ -1412,9 +1459,9 @@ class OverviewTab extends AbstractTab {
         for (String row : TuiHelper.SMALL_CAMEL) {
             lines.add(Line.from(Span.styled("     " + row, Style.EMPTY.fg(Theme.accent()).bold())));
         }
-        lines.add(Line.from(Span.styled("     No Active Camel Integrations Found", Theme.title())));
+        lines.add(Line.from(Span.styled("     No Running Integrations Found", Theme.title())));
         lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.TIP) + "How to monitor integrations:", Style.EMPTY.bold())));
+        lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.TIP) + "How to get started:", Style.EMPTY.bold())));
         lines.add(Line.from(Span.raw("     Run a route or integration in another terminal window:")));
         lines.add(Line.from(Span.styled("     > camel run my-route.yaml", Theme.success())));
         lines.add(Line.from(Span.raw("")));
@@ -1423,7 +1470,15 @@ class OverviewTab extends AbstractTab {
                 Span.raw("     Press "),
                 Span.styled(" F2 ", Theme.hintKey()),
                 Span.raw(" to open Actions and select "),
-                Span.styled("Run Example", Style.EMPTY.bold()),
+                Span.styled("Run an Example", Style.EMPTY.bold()),
+                Span.raw("."))));
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.FOLDER) + "Or run an existing project:", Style.EMPTY.bold())));
+        lines.add(Line.from(List.of(
+                Span.raw("     Press "),
+                Span.styled(" F2 ", Theme.hintKey()),
+                Span.raw(" to open Actions and select "),
+                Span.styled("Run from Folder", Style.EMPTY.bold()),
                 Span.raw("."))));
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.COMPUTER) + "Or use the embedded JLine shell panel:",
@@ -1448,7 +1503,7 @@ class OverviewTab extends AbstractTab {
                         .block(Block.builder()
                                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                 .title(Title.from(Line.from(
-                                        Span.styled(" Camel JBang TUI ", Theme.title()))))
+                                        Span.styled(" Camel TUI ", Theme.title()))))
                                 .build())
                         .build(),
                 area);

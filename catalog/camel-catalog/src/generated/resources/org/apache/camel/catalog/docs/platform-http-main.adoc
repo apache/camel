@@ -46,8 +46,14 @@ You configure these features in the `application.properties` file using the `cam
 
 The embedded HTTP server can validate JWT bearer tokens on incoming requests.
 Token signatures are verified against a keystore, and the `exp` and `nbf` claims
-are checked by default. Set `jwtIssuer` and/or `jwtAudience` to also validate
-the `iss` and `aud` claims.
+are checked.
+
+`jwtIssuer` and/or `jwtAudience` must be set so that the `iss` and `aud` claims are
+validated as well. Without them a token is accepted on the strength of its signature
+and expiry alone, which means any unexpired token signed by a key the keystore trusts
+is accepted no matter which issuer minted it or which audience it was intended for.
+The server therefore fails to start when a JWT keystore is configured but neither
+value is set.
 
 [source,properties]
 ----
@@ -65,6 +71,13 @@ camel.server.jwtAudience=api,internal-api
 
 `jwtAudience` accepts a comma-separated list of values. A token is accepted if
 its `aud` claim contains any of the configured values.
+
+If a deployment genuinely wants signature and expiry validation only, set
+`camel.server.jwtAllowMissingIssuerAndAudience=true` to allow the server to start
+without an issuer or an audience.
+
+The same options are available on the management server as `camel.management.jwtIssuer`,
+`camel.management.jwtAudience` and `camel.management.jwtAllowMissingIssuerAndAudience`.
 
 == See More
 

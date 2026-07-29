@@ -51,6 +51,7 @@ class MonitorContext {
     int logPinPercent;
     boolean logPinVisible;
     boolean ratePerMinute;
+    boolean confirmActions;
     BiConsumer<String, Boolean> notificationCallback;
     BiConsumer<String, String> openMarkdownCallback;
     OpenOptionsCallback openOptionsCallback;

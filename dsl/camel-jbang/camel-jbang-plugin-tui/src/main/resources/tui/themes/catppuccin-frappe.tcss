@@ -1,0 +1,54 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Camel TUI Catppuccin Frappé theme. Soft pastel palette on a warm gray base. */
+
+$brand: #CA9EE6;
+$frappe-bg: #303446;
+$frappe-fg: #C6D0F5;
+
+#accent         { color: $brand; }
+#accent-bg      { color: white; background: $brand; text-style: bold; }
+#hint-key       { color: black; background: $brand; text-style: bold; }
+#border         { color: #51576D; }
+#border-focused { color: $brand; }
+#title          { color: $brand; text-style: bold; }
+#success        { color: #A6D189; }
+#warning        { color: #E5C890; }
+#error          { color: #E78284; }
+#muted          { color: #737994; }
+#selection      { color: white; background: #51576D; text-style: bold; }
+#info           { color: #8CAAEE; }
+#notice         { color: #CA9EE6; }
+#row-alt        { background: #383A4E; }
+#base-bg        { background: $frappe-bg; }
+#base-fg        { color: $frappe-fg; }
+
+/* Content tokens — labels, change indicators, search highlight */
+#label          { color: #E5C890; }
+#change         { color: #E5C890; }
+#search-match   { color: black; background: #E5C890; }
+#mnemonic       { color: #E5C890; text-style: bold underline; }
+
+/* Diagram tokens */
+#diagram-border  { color: #737994; }
+#diagram-id      { color: $frappe-fg; }
+#diagram-from    { color: #A6D189; }
+#diagram-to      { color: #81C8BE; }
+#diagram-choice  { color: #E5C890; }
+#diagram-action  { color: #CA9EE6; }
+#diagram-eip     { color: #BABBF1; }
+#diagram-default { color: #737994; }

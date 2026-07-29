@@ -24,7 +24,7 @@ public class XsltSaxonEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(22);
+        Set<String> props = new HashSet<>(23);
         props.add("allowStAX");
         props.add("allowTemplateFromHeader");
         props.add("contentCache");
@@ -46,6 +46,7 @@ public class XsltSaxonEndpointUriFactory extends org.apache.camel.support.compon
         props.add("transformerFactoryConfigurationStrategy");
         props.add("uriResolver");
         props.add("useJsonBody");
+        props.add("xpathTotalOpLimit");
         props.add("xsltMessageLogger");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

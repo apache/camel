@@ -21,6 +21,11 @@ The MCP Server has also been promoted to _Stable_.
 The Camel JBang CLI now automatic resolves quarkus version to use,
 instead of hardcoded `3.33.1.1` (https://github.com/apache/camel/commit/d1f4713ebdf787ab04a31c50a6f07e3ca66f0c2b).
 
+The Camel CLI and TUI AI prompt (`camel ask`, TUI F8 panel) now auto-detect **Azure OpenAI**
+when `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT` are set (optional `AZURE_OPENAI_DEPLOYMENT_NAME`
+and `AZURE_OPENAI_API_VERSION`). Azure requests use the `api-key` header instead of `Authorization: Bearer`.
+See xref:camel-jbang-ai.adoc[Camel CLI - AI Tools] for the full detection order.
+
 The `camel cmd route-diagram` and `camel cmd route-topology` now accept one or more Camel route source files
 (instead of only the name/pid of a running integration), so diagrams and inter-route topology can be
 generated at design/source time without starting the application first, for example:
@@ -1326,3 +1331,32 @@ AWS2 producers is tracked by CAMEL-24261.
 If you relied on the previous silent no-op, ensure the body is the correct
 request type when `pojoRequest=true`, or drive the operation through headers
 with `pojoRequest=false`.
+
+=== camel-google-storage - downloads are confined to the configured directory
+
+When the consumer is configured with `downloadFileName` pointing at a directory, the
+remote object name is appended to that directory to build the local file to write.
+The resolved path is now verified to stay within the configured directory, and an
+`IllegalArgumentException` is thrown if it does not.
+
+Object names are still allowed to contain `/` and are mapped to sub-directories of the
+download directory as before, so nested object names keep working unchanged. Only names
+that resolve outside the configured directory are rejected.
+
+If `downloadFileName` is configured with an expression (i.e. it contains `$`), the local
+path is built by that expression as before and is not subject to this check.
+
+=== camel-main - JWT authentication requires an issuer or an audience
+
+The embedded HTTP server and the management server build their JWT authenticator from the
+configured keystore. When neither `jwtIssuer` nor `jwtAudience` was set, no `JWTOptions` was
+applied, so tokens were only checked for signature and expiry and the `iss` and `aud` claims
+were not validated.
+
+The server now fails to start when a JWT keystore is configured but neither `camel.server.jwtIssuer`
+nor `camel.server.jwtAudience` is set (and likewise for `camel.management.*`). Configure the issuer
+and/or the audience that tokens are expected to carry.
+
+If a deployment genuinely wants signature and expiry validation only, set
+`camel.server.jwtAllowMissingIssuerAndAudience=true` (or `camel.management.jwtAllowMissingIssuerAndAudience=true`)
+to keep the previous behaviour.

@@ -485,10 +485,10 @@ class TuiToolRegistry {
                 "Sets the value of a text input field on a TUI tab directly, without simulating keystrokes. "
                                  + "The text appears in the TUI input widget so the user can see it. "
                                  + "Supported fields by tab: SQL Query (field='sql'), "
-                                 + "HTTP probe (field='path' or 'body'), "
+                                 + "HTTP probe (field='path', 'body', 'method', 'content-type', or 'accept'), "
                                  + "Spans (field='filter'), Classpath (field='filter').",
                 Map.of("field", propDef("string",
-                        "Field name to set: 'sql', 'path', 'body', or 'filter'"),
+                        "Field name to set: 'sql', 'path', 'body', 'method', 'content-type', 'accept', or 'filter'"),
                         "value", propDef("string",
                                 "The text value to set in the input field"),
                         "tab", propDef("string",

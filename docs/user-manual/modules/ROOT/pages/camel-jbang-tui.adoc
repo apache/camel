@@ -344,6 +344,61 @@ correlating Camel processing with external service calls (HTTP, database, messag
 The Process tab (under More, shortcut *p*) shows JVM process details for the selected
 integration: Java version, PID, uptime, command-line arguments, and system properties.
 
+== HTTP Probe
+
+The HTTP tab (under More > Routing > HTTP) lists all HTTP/REST endpoints in your integration.
+Press *Enter* on any endpoint to open the built-in HTTP probe -- a lightweight Postman for
+testing your REST services directly from the terminal.
+
+=== Probe Layout
+
+The probe screen is split into a request panel (left) and response panel (right):
+
+*Request panel* -- top to bottom:
+
+* *Method* -- HTTP verb cycler (`GET`, `POST`, `PUT`, `DELETE`, `PATCH`, `HEAD`, `OPTIONS`).
+  Use *Left* / *Right* arrows to cycle.
+* *Path* -- editable path field, pre-filled from the endpoint. Supports `\{xxx\}` placeholders.
+* *Path Parameters* -- if the path contains `\{id\}`, `\{name\}`, etc., a fill-in field appears
+  for each placeholder. Values are substituted into the URL when sending.
+* *Query Parameters* -- key-value pairs appended to the URL as `?key=value&key2=value2`.
+  Press *+* to add a parameter.
+* *Content-Type* -- cycler with common MIME types (`application/json`, `application/xml`,
+  `text/plain`, etc.). Pre-filled from endpoint metadata when available.
+* *Accept* -- cycler for the Accept header. Pre-filled from endpoint metadata.
+* *Headers* -- custom request headers as key-value pairs. Press *+* to add a header.
+* *Body* -- multi-line text area (6 rows) for request body. Supports JSON, XML, plain text,
+  or `file:payload.json` to load from a file. Press *Enter* to insert newlines.
+* *History* -- previously sent requests with status codes and elapsed times. Press *Enter*
+  to replay a request, restoring all fields.
+
+*Response panel* -- shows the response body with status code, elapsed time, and response headers.
+Press *p* to toggle pretty-printing for JSON and XML responses.
+
+The resolved URL is shown at the top of the request panel as a clickable hyperlink that you
+can copy for use with `curl` or other tools.
+
+=== Sending Requests
+
+Press *F5* to send the request (same pattern as the SQL tab). The response appears in the
+right panel. While sending, the status shows a spinner.
+
+=== Keyboard Shortcuts (Probe)
+
+[cols="2,5",options="header"]
+|===
+| Key | Action
+
+| F5 | Send request
+| Enter | Insert newline (body) or advance to next field
+| Tab / Shift+Tab | Next / previous field
+| Left / Right | Cycle method, Content-Type, or Accept values
+| + | Add query parameter or header
+| Backspace | Remove empty query parameter or header
+| p | Toggle pretty-print response
+| Esc | Exit probe mode
+|===
+
 == Actions Menu (F2)
 
 Press *F2* to open the actions menu with quick access to common operations:
@@ -420,6 +475,9 @@ Open the *F2* actions menu and choose *Settings...* to change TUI preferences in
   chosen. Defaults to *Overview*.
 * *Select Tab* -- the tab to switch to when selecting an integration from the Overview tab.
   Defaults to *Log*.
+* *Confirm* -- whether destructive actions (quit, stop, restart, stop/start routes) show a
+  confirmation dialog before executing. Defaults to *on*. Kill (*X*) always confirms regardless
+  of this setting.
 * *Default Folder* -- the folder pre-filled in *Run from Folder*. The most recently used folder
   still takes precedence; this default is used only when there is no remembered folder.
 
@@ -427,8 +485,8 @@ Use *↑*/*↓* to move between rows, *Space* (or *←*/*→*) to cycle the them
 edit the default folder, *Enter* to save, and *Esc* to cancel.
 
 Settings are stored under `camel.tui.*` keys (`camel.tui.theme`, `camel.tui.startTab`,
-`camel.tui.selectTab`, `camel.tui.defaultFolder`, `camel.tui.shell.history`,
-`camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
+`camel.tui.selectTab`, `camel.tui.confirmActions`, `camel.tui.defaultFolder`,
+`camel.tui.shell.history`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
 written back to the file where it currently lives: a key present in the local
 `./camel-cli.properties` is treated as a project-level override and stays local, while every
 other key defaults to the global `~/.camel-cli.properties`. This means a project can

@@ -137,7 +137,8 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(5, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(6, popup.selectedRow());
         popup.handleKeyEvent(KeyEvent.ofChar('/'));
         popup.handleKeyEvent(KeyEvent.ofChar('a'));
         assertEquals("/a", popup.folderText());
@@ -155,7 +156,8 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(5, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(6, popup.selectedRow());
         popup.handleKeyEvent(KeyEvent.ofChar(0x01));
         popup.handleKeyEvent(KeyEvent.ofChar(0x00));
         popup.handleKeyEvent(KeyEvent.ofChar('x'));
@@ -179,7 +181,8 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(9, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(10, popup.selectedRow());
         assertEquals("auto", popup.selectedAiProvider());
         popup.handleKeyEvent(KeyEvent.ofChar(' '));
         assertEquals("ollama", popup.selectedAiProvider());
@@ -211,21 +214,21 @@ class SettingsPopupTest {
         popup.setTabEntries(tabs());
         popup.open();
 
-        // navigate to Shell History (row 8)
-        for (int i = 0; i < 8; i++) {
+        // navigate to Shell History (row 9)
+        for (int i = 0; i < 9; i++) {
             popup.handleKeyEvent(key(KeyCode.DOWN));
         }
-        assertEquals(8, popup.selectedRow());
+        assertEquals(9, popup.selectedRow());
         for (char c : "50".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));
         }
         assertEquals("50", popup.shellHistoryText());
 
-        // navigate to AI Prompt History (row 12)
+        // navigate to AI Prompt History (row 13)
         for (int i = 0; i < 4; i++) {
             popup.handleKeyEvent(key(KeyCode.DOWN));
         }
-        assertEquals(12, popup.selectedRow());
+        assertEquals(13, popup.selectedRow());
         for (char c : "200".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));
         }
@@ -258,6 +261,7 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN)); // select tab
         popup.handleKeyEvent(key(KeyCode.DOWN)); // log pin
         popup.handleKeyEvent(key(KeyCode.DOWN)); // rate per
+        popup.handleKeyEvent(key(KeyCode.DOWN)); // confirm actions
         popup.handleKeyEvent(key(KeyCode.DOWN)); // folder
         for (char c : "/tmp/p".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));

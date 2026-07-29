@@ -290,7 +290,8 @@ class AiPanel {
             }
             client = created;
             if (!client.detectEndpoint()) {
-                initError = "No LLM service reachable. Set ANTHROPIC_API_KEY, OPENAI_API_KEY, or start Ollama.";
+                initError
+                        = "No LLM service reachable. Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, OPENAI_API_KEY, or start Ollama.";
                 client = null;
                 return;
             }

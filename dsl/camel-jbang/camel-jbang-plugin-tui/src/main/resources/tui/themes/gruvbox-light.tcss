@@ -1,0 +1,54 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Camel TUI Gruvbox Light theme. Retro groove palette on a warm light base. */
+
+$brand: #AF3A03;
+$gruvbox-bg: #FBF1C7;
+$gruvbox-fg: #3C3836;
+
+#accent         { color: $brand; }
+#accent-bg      { color: white; background: $brand; text-style: bold; }
+#hint-key       { color: white; background: $brand; text-style: bold; }
+#border         { color: #BDAE93; }
+#border-focused { color: $brand; }
+#title          { color: $brand; text-style: bold; }
+#success        { color: #79740E; }
+#warning        { color: #B57614; }
+#error          { color: #9D0006; }
+#muted          { color: #928374; }
+#selection      { color: white; background: #AF3A03; text-style: bold; }
+#info           { color: #076678; }
+#notice         { color: #8F3F71; }
+#row-alt        { background: #EBDBB2; }
+#base-bg        { background: $gruvbox-bg; }
+#base-fg        { color: $gruvbox-fg; }
+
+/* Content tokens — labels, change indicators, search highlight */
+#label          { color: #B57614; }
+#change         { color: #B57614; }
+#search-match   { color: #3C3836; background: #B57614; }
+#mnemonic       { color: #B57614; text-style: bold underline; }
+
+/* Diagram tokens */
+#diagram-border  { color: #928374; }
+#diagram-id      { color: $gruvbox-fg; }
+#diagram-from    { color: #79740E; }
+#diagram-to      { color: #076678; }
+#diagram-choice  { color: #B57614; }
+#diagram-action  { color: #8F3F71; }
+#diagram-eip     { color: #427B58; }
+#diagram-default { color: #928374; }

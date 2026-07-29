@@ -86,6 +86,12 @@ class PopupManager {
     // Kill confirm
     private boolean showKillConfirm;
 
+    // Generic confirm dialog
+    private boolean showConfirm;
+    private String confirmTitle;
+    private String confirmMessage;
+    private Runnable confirmCallback;
+
     // Last rendered popup rects for mouse hit-testing
     private Rect lastMorePopupRect;
     private Rect lastSwitchPopupRect;
@@ -156,7 +162,7 @@ class PopupManager {
     // ---- State queries ----
 
     boolean isAnyPopupVisible() {
-        return showSwitchPopup || showMorePopup || showKillConfirm || filesBrowser.isVisible();
+        return showSwitchPopup || showMorePopup || showKillConfirm || showConfirm || filesBrowser.isVisible();
     }
 
     boolean isSwitchPopupVisible() {
@@ -169,6 +175,10 @@ class PopupManager {
 
     boolean isKillConfirmVisible() {
         return showKillConfirm;
+    }
+
+    boolean isConfirmVisible() {
+        return showConfirm;
     }
 
     int getLastMoreSelection() {
@@ -212,6 +222,8 @@ class PopupManager {
         showMorePopup = false;
         showSwitchPopup = false;
         showKillConfirm = false;
+        showConfirm = false;
+        confirmCallback = null;
         filesBrowser.reset();
     }
 
@@ -221,6 +233,13 @@ class PopupManager {
 
     void showKillConfirm() {
         showKillConfirm = true;
+    }
+
+    void showConfirm(String title, String message, Runnable onConfirm) {
+        this.confirmTitle = title;
+        this.confirmMessage = message;
+        this.confirmCallback = onConfirm;
+        this.showConfirm = true;
     }
 
     void selectMorePopupEntry(int moreIndex) {
@@ -243,6 +262,9 @@ class PopupManager {
         }
         if (showKillConfirm) {
             return handleKillConfirmKeys(ke);
+        }
+        if (showConfirm) {
+            return handleConfirmKeys(ke);
         }
         return false;
     }
@@ -394,6 +416,21 @@ class PopupManager {
             callbacks.stopSelectedProcess(true);
         } else {
             showKillConfirm = false;
+        }
+        return true;
+    }
+
+    private boolean handleConfirmKeys(KeyEvent ke) {
+        if (ke.isConfirm()) {
+            showConfirm = false;
+            Runnable cb = confirmCallback;
+            confirmCallback = null;
+            if (cb != null) {
+                cb.run();
+            }
+        } else {
+            showConfirm = false;
+            confirmCallback = null;
         }
         return true;
     }
@@ -663,7 +700,7 @@ class PopupManager {
         int popupW = Math.max(34, msg.length() + 4);
         int popupH = 6;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 3);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
@@ -679,6 +716,39 @@ class PopupManager {
                         .text(Text.from(
                                 Line.from(Span.raw("")),
                                 Line.from(Span.styled(msg, Theme.error().bold())),
+                                Line.from(Span.raw("")),
+                                Line.from(
+                                        Span.raw("  "),
+                                        Span.styled("Enter", Style.EMPTY.bold()),
+                                        Span.raw(" confirm  "),
+                                        Span.styled("Esc", Style.EMPTY.bold()),
+                                        Span.raw(" cancel"))))
+                        .build(),
+                inner);
+    }
+
+    void renderConfirm(Frame frame, Rect area) {
+        String msg = confirmMessage != null ? confirmMessage : "";
+        String title = confirmTitle != null ? " " + confirmTitle + " " : " Confirm ";
+        int popupW = Math.max(34, Math.max(msg.length() + 4, title.length() + 4));
+        int popupH = 6;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 3);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .borderStyle(Theme.warning())
+                .title(title)
+                .build();
+        frame.renderWidget(block, popup);
+        Rect inner = block.inner(popup);
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(
+                                Line.from(Span.raw("")),
+                                Line.from(Span.styled(msg, Theme.warning().bold())),
                                 Line.from(Span.raw("")),
                                 Line.from(
                                         Span.raw("  "),
