@@ -842,8 +842,9 @@ public interface OpenAIEndpointBuilderFactory {
          * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
          * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
          * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
-         * profile for HTTP auth, requires camel-oauth). This is a multi-value
-         * option with prefix: mcpServer.
+         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
+         * (optional include list to restrict which tools are registered from
+         * this server). This is a multi-value option with prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -867,8 +868,9 @@ public interface OpenAIEndpointBuilderFactory {
          * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
          * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
          * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
-         * profile for HTTP auth, requires camel-oauth). This is a multi-value
-         * option with prefix: mcpServer.
+         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
+         * (optional include list to restrict which tools are registered from
+         * this server). This is a multi-value option with prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1228,16 +1230,19 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * Strategy for handling exceptions thrown during MCP tool execution.
-         * 'repromptModel' (default) catches the error and sends it back to the
-         * model as a tool result so the model can attempt to recover.
-         * 'failExchange' propagates the exception to the Camel exchange so that
-         * standard Camel error handling (onException, dead-letter channel) can
-         * process it.
+         * 'failExchange' (default) propagates the exception to the Camel
+         * exchange so that standard Camel error handling (onException,
+         * dead-letter channel) can process it. This is the safer default
+         * because 'repromptModel' sends raw exception messages (which may
+         * contain connection strings, hostnames, or internal paths) to a
+         * third-party LLM provider. 'repromptModel' catches the error and sends
+         * it back to the model as a tool result so the model can attempt to
+         * recover.
          * 
          * The option is a:
          * <code>org.apache.camel.component.openai.ToolExecutionErrorStrategy</code> type.
          * 
-         * Default: repromptModel
+         * Default: failExchange
          * Group: producer
          * 
          * @param toolExecutionErrorStrategy the value to set
@@ -1249,16 +1254,19 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * Strategy for handling exceptions thrown during MCP tool execution.
-         * 'repromptModel' (default) catches the error and sends it back to the
-         * model as a tool result so the model can attempt to recover.
-         * 'failExchange' propagates the exception to the Camel exchange so that
-         * standard Camel error handling (onException, dead-letter channel) can
-         * process it.
+         * 'failExchange' (default) propagates the exception to the Camel
+         * exchange so that standard Camel error handling (onException,
+         * dead-letter channel) can process it. This is the safer default
+         * because 'repromptModel' sends raw exception messages (which may
+         * contain connection strings, hostnames, or internal paths) to a
+         * third-party LLM provider. 'repromptModel' catches the error and sends
+         * it back to the model as a tool result so the model can attempt to
+         * recover.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.openai.ToolExecutionErrorStrategy</code> type.
          * 
-         * Default: repromptModel
+         * Default: failExchange
          * Group: producer
          * 
          * @param toolExecutionErrorStrategy the value to set
