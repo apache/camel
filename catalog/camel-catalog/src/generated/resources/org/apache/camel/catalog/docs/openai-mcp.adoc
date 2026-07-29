@@ -177,6 +177,64 @@ YAML::
 ----
 ====
 
+==== Tool Filtering
+
+By default, all tools from every configured MCP server are registered and advertised to the model.
+Use the per-server `toolNames` property to restrict which tools are included. This is useful to
+reduce prompt size and cost, keep destructive tools away from the model, or avoid duplicate tool
+names across servers.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&mcpServer.fs.transportType=stdio"
+        + "&mcpServer.fs.command=npx"
+        + "&mcpServer.fs.args=-y,@modelcontextprotocol/server-filesystem,/tmp"
+        + "&mcpServer.fs.toolNames=read_file,list_directory");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;mcpServer.fs.transportType=stdio&amp;mcpServer.fs.command=npx&amp;mcpServer.fs.args=-y,@modelcontextprotocol/server-filesystem,/tmp&amp;mcpServer.fs.toolNames=read_file,list_directory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              mcpServer.fs.transportType: stdio
+              mcpServer.fs.command: npx
+              mcpServer.fs.args: "-y,@modelcontextprotocol/server-filesystem,/tmp"
+              mcpServer.fs.toolNames: read_file,list_directory
+----
+====
+
+When `toolNames` is set, only tools whose names appear in the comma-separated list are registered.
+Tools not in the list are silently excluded. If a name in the list does not match any tool provided
+by the server, a warning is logged. When `toolNames` is not set or is empty, all tools from the
+server are registered (the default behavior).
+
+The filter is also applied consistently on MCP server reconnection (`mcpReconnect=true`), so the
+tool set remains stable across connection recovery.
+
 === Agentic Loop Behavior
 
 When the model responds with tool calls, the component automatically:
