@@ -36,6 +36,8 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         map.put("InfoPath", java.lang.String.class);
         map.put("JolokiaEnabled", boolean.class);
         map.put("JolokiaPath", java.lang.String.class);
+        map.put("JwtAudience", java.lang.String.class);
+        map.put("JwtIssuer", java.lang.String.class);
         map.put("JwtKeystorePassword", java.lang.String.class);
         map.put("JwtKeystorePath", java.lang.String.class);
         map.put("JwtKeystoreType", java.lang.String.class);
@@ -79,6 +81,10 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "jolokiaEnabled": target.setJolokiaEnabled(property(camelContext, boolean.class, value)); return true;
         case "jolokiapath":
         case "jolokiaPath": target.setJolokiaPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtaudience":
+        case "jwtAudience": target.setJwtAudience(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtissuer":
+        case "jwtIssuer": target.setJwtIssuer(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtkeystorepassword":
         case "jwtKeystorePassword": target.setJwtKeystorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtkeystorepath":
@@ -135,6 +141,10 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "jolokiaEnabled": return boolean.class;
         case "jolokiapath":
         case "jolokiaPath": return java.lang.String.class;
+        case "jwtaudience":
+        case "jwtAudience": return java.lang.String.class;
+        case "jwtissuer":
+        case "jwtIssuer": return java.lang.String.class;
         case "jwtkeystorepassword":
         case "jwtKeystorePassword": return java.lang.String.class;
         case "jwtkeystorepath":
@@ -187,6 +197,10 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "jolokiaEnabled": return target.isJolokiaEnabled();
         case "jolokiapath":
         case "jolokiaPath": return target.getJolokiaPath();
+        case "jwtaudience":
+        case "jwtAudience": return target.getJwtAudience();
+        case "jwtissuer":
+        case "jwtIssuer": return target.getJwtIssuer();
         case "jwtkeystorepassword":
         case "jwtKeystorePassword": return target.getJwtKeystorePassword();
         case "jwtkeystorepath":
