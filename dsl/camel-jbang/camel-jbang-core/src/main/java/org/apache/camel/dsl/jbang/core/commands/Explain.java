@@ -89,7 +89,7 @@ public class Explain extends CamelCommand {
     List<String> files;
 
     @Option(names = { "--url" },
-            description = "LLM API endpoint URL. Auto-detected from 'camel infra' for Ollama if not specified.")
+            description = "LLM API endpoint URL. Auto-detected from 'camel infra' for Ollama if not specified. Also reads AZURE_OPENAI_ENDPOINT or WATSONX_URL env vars")
     String url;
 
     @Option(names = { "--api-type" },
@@ -199,7 +199,7 @@ public class Explain extends CamelCommand {
         printer().printErr("  2. camel explain my-route.yaml --url=http://localhost:11434");
         printer().printErr("  3. camel explain my-route.yaml --url=https://api.openai.com --api-type=openai --api-key=sk-...");
         printer().printErr("  4. camel explain my-route.yaml --api-type=anthropic  (uses ANTHROPIC_API_KEY or Vertex AI)");
-        printer().printErr("  5. camel explain my-route.yaml --api-type=watsonx    (uses WATSONX_APIKEY)");
+        printer().printErr("  5. camel explain my-route.yaml --api-type=watsonx    (uses WATSONX_APIKEY and WATSONX_URL)");
     }
 
     private int explainRoute(String file, LlmClient client) throws Exception {

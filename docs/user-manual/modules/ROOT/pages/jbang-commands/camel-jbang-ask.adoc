@@ -27,7 +27,7 @@ camel ask [options]
 | `--show-stats` | Show token usage and elapsed time after response |  | boolean
 | `--show-tools` | Show tool calls and results as they happen |  | boolean
 | `--timeout` | Timeout in seconds for LLM response | 120 | int
-| `--url` | LLM API endpoint URL. Auto-detected if not specified. |  | String
+| `--url` | LLM API endpoint URL. Auto-detected if not specified. Also reads AZURE_OPENAI_ENDPOINT or WATSONX_URL env vars |  | String
 | `--verbose` | Print debug information: HTTP requests, responses, and parsed results |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===

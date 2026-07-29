@@ -57,7 +57,7 @@ public class Ask extends CamelCommand {
     List<String> question;
 
     @Option(names = { "--url" },
-            description = "LLM API endpoint URL. Auto-detected if not specified.")
+            description = "LLM API endpoint URL. Auto-detected if not specified. Also reads AZURE_OPENAI_ENDPOINT or WATSONX_URL env vars")
     String url;
 
     @Option(names = { "--api-type" },
