@@ -209,6 +209,21 @@ public class OpenAIConfiguration implements Cloneable {
                             + "and retry the call once.")
     private boolean mcpReconnect = true;
 
+    @UriParam(enums = "repromptModel,failExchange", defaultValue = "repromptModel")
+    @Metadata(description = "Strategy for handling exceptions thrown during MCP tool execution. "
+                            + "'repromptModel' (default) catches the error and sends it back to the model as a tool result "
+                            + "so the model can attempt to recover. "
+                            + "'failExchange' propagates the exception to the Camel exchange so that standard Camel "
+                            + "error handling (onException, dead-letter channel) can process it.")
+    private ToolExecutionErrorStrategy toolExecutionErrorStrategy = ToolExecutionErrorStrategy.REPROMPT_MODEL;
+
+    @UriParam(enums = "failExchange,repromptModel", defaultValue = "failExchange")
+    @Metadata(description = "Strategy for handling tool names hallucinated by the model (tool not found in any MCP server). "
+                            + "'failExchange' (default) throws an IllegalStateException, failing the exchange immediately. "
+                            + "'repromptModel' sends a corrective tool result listing the available tools so the model "
+                            + "can self-correct and retry. The maxToolIterations option bounds retries.")
+    private HallucinatedToolNameStrategy hallucinatedToolNameStrategy = HallucinatedToolNameStrategy.FAIL_EXCHANGE;
+
     // ========== EMBEDDINGS CONFIGURATION ==========
 
     @UriParam
@@ -719,6 +734,22 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setMcpReconnect(boolean mcpReconnect) {
         this.mcpReconnect = mcpReconnect;
+    }
+
+    public ToolExecutionErrorStrategy getToolExecutionErrorStrategy() {
+        return toolExecutionErrorStrategy;
+    }
+
+    public void setToolExecutionErrorStrategy(ToolExecutionErrorStrategy toolExecutionErrorStrategy) {
+        this.toolExecutionErrorStrategy = toolExecutionErrorStrategy;
+    }
+
+    public HallucinatedToolNameStrategy getHallucinatedToolNameStrategy() {
+        return hallucinatedToolNameStrategy;
+    }
+
+    public void setHallucinatedToolNameStrategy(HallucinatedToolNameStrategy hallucinatedToolNameStrategy) {
+        this.hallucinatedToolNameStrategy = hallucinatedToolNameStrategy;
     }
 
     public SSLContextParameters getSslContextParameters() {

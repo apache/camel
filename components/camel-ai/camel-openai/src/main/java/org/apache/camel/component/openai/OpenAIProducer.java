@@ -545,8 +545,18 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 McpToolState mcpToolState = getEndpoint().getMcpToolState();
                 McpSyncClient mcpClient = mcpToolState.toolClientMap().get(toolName);
                 if (mcpClient == null) {
-                    throw new IllegalStateException(
-                            "Tool '" + toolName + "' not found in any configured MCP server");
+                    if (config.getHallucinatedToolNameStrategy() == HallucinatedToolNameStrategy.FAIL_EXCHANGE) {
+                        throw new IllegalStateException(
+                                "Tool '" + toolName + "' not found in any configured MCP server");
+                    }
+                    // repromptModel: send a corrective tool result listing available tools
+                    String available = String.join(", ", mcpToolState.toolClientMap().keySet());
+                    String errorMsg = "Error: tool '" + toolName
+                                      + "' does not exist. Available tools: " + available;
+                    LOG.warn("Hallucinated tool name '{}', sending corrective result to model", toolName);
+                    batchResults.add(new ToolResultEntry(toolCallId, errorMsg));
+                    allReturnDirect = false;
+                    continue;
                 }
 
                 LOG.debug("Executing MCP tool '{}' with args: {}", toolName, argsJson);
@@ -567,10 +577,16 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                         }
                     }
                 } catch (JsonProcessingException e) {
+                    if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                        throw e;
+                    }
                     LOG.warn("Invalid tool arguments for '{}': {}", toolName, argsJson, e);
                     resultContent = "Error: invalid tool arguments: " + e.getMessage();
                     allReturnDirect = false;
                 } catch (Exception e) {
+                    if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                        throw e;
+                    }
                     LOG.warn("MCP tool '{}' execution failed: {}", toolName, e.getMessage(), e);
                     resultContent = "Error: Tool execution failed: " + e.getMessage();
                     allReturnDirect = false;

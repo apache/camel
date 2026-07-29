@@ -580,15 +580,30 @@ YAML::
 
 === Error Handling in the Agentic Loop
 
+Two endpoint options control what happens when a tool call fails:
+
+* **`toolExecutionErrorStrategy`** (default `repromptModel`): controls what happens when a tool
+  execution throws an exception (including malformed tool arguments).
+  - `repromptModel` -- catches the error, logs a WARN, and sends it back to the model as a tool
+    result so the model can attempt recovery.
+  - `failExchange` -- propagates the exception to the Camel exchange so that standard Camel error
+    handling (`onException`, dead-letter channel) can process it.
+* **`hallucinatedToolNameStrategy`** (default `failExchange`): controls what happens when the
+  model requests a tool that does not exist in any configured MCP server.
+  - `failExchange` -- throws an `IllegalStateException`, failing the exchange immediately.
+  - `repromptModel` -- sends a corrective tool result listing the available tools so the model
+    can self-correct and retry with a valid tool name. The `maxToolIterations` option bounds
+    the number of retries.
+
 [cols="1,3"]
 |===
 | Scenario | Behavior
 
 | MCP client initialization failure | Route fails to start (`RuntimeException` during `doStart()`)
-| Tool execution throws an exception | Error is caught, logged as WARN, and sent as tool result text to the model
-| MCP transport error (`mcpReconnect=true`) | Automatic reconnection and retry (once). If retry fails, error is sent to the model
+| Tool execution throws an exception | Governed by `toolExecutionErrorStrategy`: `repromptModel` (default) catches the error, logs it as WARN, and sends it as tool result text to the model; `failExchange` propagates the exception to the exchange
+| MCP transport error (`mcpReconnect=true`) | Automatic reconnection and retry (once). If retry fails, behavior follows `toolExecutionErrorStrategy`
 | MCP `CallToolResult.isError()` is true | Error content is sent as tool result text to the model
-| Tool name not found in any server | `IllegalStateException` is thrown
+| Tool name not found in any server | Governed by `hallucinatedToolNameStrategy`: `failExchange` (default) throws `IllegalStateException`; `repromptModel` sends a corrective tool result listing available tools
 | Max iterations exceeded | `IllegalStateException` is thrown with the tool call log
 | Streaming + MCP tools with autoToolExecution | Falls back to non-streaming (logged as INFO)
 |===

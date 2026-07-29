@@ -62,6 +62,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "encodingFormat": target.getConfiguration().setEncodingFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "filesearchvectorstoreids":
         case "fileSearchVectorStoreIds": target.getConfiguration().setFileSearchVectorStoreIds(property(camelContext, java.lang.String.class, value)); return true;
+        case "hallucinatedtoolnamestrategy":
+        case "hallucinatedToolNameStrategy": target.getConfiguration().setHallucinatedToolNameStrategy(property(camelContext, org.apache.camel.component.openai.HallucinatedToolNameStrategy.class, value)); return true;
         case "hostedmcptools":
         case "hostedMcpTools": target.getConfiguration().setHostedMcpTools(property(camelContext, java.lang.String.class, value)); return true;
         case "jsonschema":
@@ -139,6 +141,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "systemmessage":
         case "systemMessage": target.getConfiguration().setSystemMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "toolexecutionerrorstrategy":
+        case "toolExecutionErrorStrategy": target.getConfiguration().setToolExecutionErrorStrategy(property(camelContext, org.apache.camel.component.openai.ToolExecutionErrorStrategy.class, value)); return true;
         case "topp":
         case "topP": target.getConfiguration().setTopP(property(camelContext, java.lang.Double.class, value)); return true;
         case "usermessage":
@@ -189,6 +193,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "encodingFormat": return java.lang.String.class;
         case "filesearchvectorstoreids":
         case "fileSearchVectorStoreIds": return java.lang.String.class;
+        case "hallucinatedtoolnamestrategy":
+        case "hallucinatedToolNameStrategy": return org.apache.camel.component.openai.HallucinatedToolNameStrategy.class;
         case "hostedmcptools":
         case "hostedMcpTools": return java.lang.String.class;
         case "jsonschema":
@@ -266,6 +272,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "systemmessage":
         case "systemMessage": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
+        case "toolexecutionerrorstrategy":
+        case "toolExecutionErrorStrategy": return org.apache.camel.component.openai.ToolExecutionErrorStrategy.class;
         case "topp":
         case "topP": return java.lang.Double.class;
         case "usermessage":
@@ -317,6 +325,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "encodingFormat": return target.getConfiguration().getEncodingFormat();
         case "filesearchvectorstoreids":
         case "fileSearchVectorStoreIds": return target.getConfiguration().getFileSearchVectorStoreIds();
+        case "hallucinatedtoolnamestrategy":
+        case "hallucinatedToolNameStrategy": return target.getConfiguration().getHallucinatedToolNameStrategy();
         case "hostedmcptools":
         case "hostedMcpTools": return target.getConfiguration().getHostedMcpTools();
         case "jsonschema":
@@ -394,6 +404,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "systemmessage":
         case "systemMessage": return target.getConfiguration().getSystemMessage();
         case "temperature": return target.getConfiguration().getTemperature();
+        case "toolexecutionerrorstrategy":
+        case "toolExecutionErrorStrategy": return target.getConfiguration().getToolExecutionErrorStrategy();
         case "topp":
         case "topP": return target.getConfiguration().getTopP();
         case "usermessage":
