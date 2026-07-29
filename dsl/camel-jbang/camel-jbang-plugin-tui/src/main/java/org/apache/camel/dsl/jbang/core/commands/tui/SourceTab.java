@@ -144,6 +144,10 @@ class SourceTab extends AbstractTab {
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         if (ke.isKey(dev.tamboui.tui.event.KeyCode.TAB)) {
+            // Do not steal focus or insert focus-toggle while editing
+            if (sourceViewer.isEditMode()) {
+                return true;
+            }
             if (sourceViewer.isVisible()) {
                 focusOnViewer = !focusOnViewer;
             }
@@ -219,11 +223,13 @@ class SourceTab extends AbstractTab {
 
     @Override
     public boolean handleEscape() {
-        if (sourceViewer.isEditMode()) {
-            return false; // SourceViewer handles Esc to cancel edit
+        // Esc is routed here from CamelMonitor before tab key handling — cancel overlays locally
+        if (sourceViewer.cancelEdit()) {
+            return true;
         }
         if (sourceViewer.isSearchInputActive()) {
-            return false;
+            sourceViewer.handleKeyEvent(KeyEvent.ofKey(dev.tamboui.tui.event.KeyCode.ESCAPE));
+            return true;
         }
         if (focusOnViewer) {
             focusOnViewer = false;
@@ -481,6 +487,9 @@ class SourceTab extends AbstractTab {
     }
 
     private void openSelectedEntry() {
+        if (sourceViewer.isEditMode()) {
+            return;
+        }
         Integer sel = listState.selected();
         if (sel != null && sel < entries.size()) {
             FilesBrowser.FileEntry entry = entries.get(sel);

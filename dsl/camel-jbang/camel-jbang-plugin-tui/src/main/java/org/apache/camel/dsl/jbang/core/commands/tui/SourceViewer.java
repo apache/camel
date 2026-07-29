@@ -126,6 +126,8 @@ class SourceViewer {
     private final TextAreaState editState = new TextAreaState();
     private String saveMessage;
     private boolean saveError;
+    /** Markdown render mode prior to entering edit; restored on cancel. */
+    private boolean markdownModeBeforeEdit;
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
@@ -193,6 +195,10 @@ class SourceViewer {
         saveError = false;
     }
 
+    boolean isMarkdownMode() {
+        return markdownMode;
+    }
+
     boolean isEditMode() {
         return editMode;
     }
@@ -207,6 +213,17 @@ class SourceViewer {
      */
     boolean isTextInputActive() {
         return editMode || search.isSearchInputActive();
+    }
+
+    /**
+     * Cancel edit mode without saving. Returns {@code true} if edit mode was active.
+     */
+    boolean cancelEdit() {
+        if (!editMode) {
+            return false;
+        }
+        exitEditMode(false);
+        return true;
     }
 
     void setOnLineSelected(IntConsumer callback) {
@@ -448,6 +465,7 @@ class SourceViewer {
         for (int i = 0; i < targetRow && i < editState.lineCount() - 1; i++) {
             editState.moveCursorDown();
         }
+        markdownModeBeforeEdit = markdownMode;
         markdownMode = false;
         quickDocEnabled = false;
         search.reset();
@@ -457,12 +475,13 @@ class SourceViewer {
     }
 
     private void exitEditMode(boolean reloadFromDisk) {
-        if (!editMode && !reloadFromDisk) {
-            editState.clear();
-            return;
-        }
+        boolean wasEditing = editMode;
         editMode = false;
         editState.clear();
+        if (wasEditing && isMarkdownFile) {
+            markdownMode = markdownModeBeforeEdit;
+        }
+        markdownModeBeforeEdit = false;
         if (reloadFromDisk && editableFile != null) {
             Path path = editableFile;
             loadFile(path);
@@ -817,7 +836,9 @@ class SourceViewer {
         currentPid = null;
         editMode = false;
         editState.clear();
-        // Keep existing saveMessage only when caller restores it after save+reload
+        markdownModeBeforeEdit = false;
+        saveMessage = null;
+        saveError = false;
         String fileName = filePath.getFileName().toString();
         boolean isMd = fileName.toLowerCase().endsWith(".md");
         try {
