@@ -95,8 +95,26 @@ public class QuarkusPlatformMixin extends QuarkusExtensionRegistryMixin implemen
         QuarkusPlatformMixin result = new QuarkusPlatformMixin();
         result.quarkusGroupId = props.getProperty(QUARKUS_GROUP_ID, fallback.quarkusGroupId());
         result.quarkusVersion = props.getProperty(QUARKUS_VERSION, fallback.quarkusVersion());
+        // Prefer the canonical camel.jbang.quarkusExtensionRegistryBaseUri property; also honour the legacy
+        // camel.jbang.quarkus.platform.url property (stripping its "/client/platforms" suffix if present)
+        // so that users who set it in application.properties are not silently ignored.
+        String registryBaseUri = props.getProperty(QUARKUS_EXTENSION_REGISTRY_BASE_URI);
+        if (registryBaseUri == null) {
+            String platformUrl = props.getProperty(QuarkusHelper.QUARKUS_PLATFORM_URL_PROPERTY);
+            if (platformUrl != null) {
+                final String suffix = "/client/platforms";
+                if (platformUrl.endsWith(suffix)) {
+                    platformUrl = platformUrl.substring(0, platformUrl.length() - suffix.length());
+                }
+                registryBaseUri = platformUrl;
+            }
+        }
+        // strip trailing slash, consistent with QuarkusExtensionRegistryMixin.quarkusExtensionRegistryBaseUri()
+        if (registryBaseUri != null && registryBaseUri.endsWith("/")) {
+            registryBaseUri = registryBaseUri.substring(0, registryBaseUri.length() - 1);
+        }
         result.quarkusExtensionRegistryBaseUri
-                = props.getProperty(QUARKUS_EXTENSION_REGISTRY_BASE_URI, fallback.quarkusExtensionRegistryBaseUri());
+                = registryBaseUri != null ? registryBaseUri : fallback.quarkusExtensionRegistryBaseUri();
         return result;
     }
 
