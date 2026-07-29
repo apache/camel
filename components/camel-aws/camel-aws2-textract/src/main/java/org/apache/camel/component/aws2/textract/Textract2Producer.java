@@ -123,6 +123,9 @@ public class Textract2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "detectDocumentText operation requires DetectDocumentTextRequest in POJO mode");
             }
         } else {
             DetectDocumentTextRequest.Builder request = DetectDocumentTextRequest.builder();
@@ -154,6 +157,9 @@ public class Textract2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "analyzeDocument operation requires AnalyzeDocumentRequest in POJO mode");
             }
         } else {
             AnalyzeDocumentRequest.Builder request = AnalyzeDocumentRequest.builder();
@@ -194,6 +200,9 @@ public class Textract2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "analyzeExpense operation requires AnalyzeExpenseRequest in POJO mode");
             }
         } else {
             AnalyzeExpenseRequest.Builder request = AnalyzeExpenseRequest.builder();
@@ -226,6 +235,9 @@ public class Textract2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "startDocumentTextDetection operation requires StartDocumentTextDetectionRequest in POJO mode");
             }
         } else {
             StartDocumentTextDetectionRequest.Builder request = StartDocumentTextDetectionRequest.builder();
@@ -258,6 +270,9 @@ public class Textract2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "startDocumentAnalysis operation requires StartDocumentAnalysisRequest in POJO mode");
             }
         } else {
             StartDocumentAnalysisRequest.Builder request = StartDocumentAnalysisRequest.builder();
@@ -297,6 +312,9 @@ public class Textract2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "startExpenseAnalysis operation requires StartExpenseAnalysisRequest in POJO mode");
             }
         } else {
             StartExpenseAnalysisRequest.Builder request = StartExpenseAnalysisRequest.builder();
@@ -329,6 +347,9 @@ public class Textract2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "getDocumentTextDetection operation requires GetDocumentTextDetectionRequest in POJO mode");
             }
         } else {
             GetDocumentTextDetectionRequest.Builder request = GetDocumentTextDetectionRequest.builder();
@@ -377,6 +398,9 @@ public class Textract2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "getDocumentAnalysis operation requires GetDocumentAnalysisRequest in POJO mode");
             }
         } else {
             GetDocumentAnalysisRequest.Builder request = GetDocumentAnalysisRequest.builder();
@@ -425,6 +449,9 @@ public class Textract2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "getExpenseAnalysis operation requires GetExpenseAnalysisRequest in POJO mode");
             }
         } else {
             GetExpenseAnalysisRequest.Builder request = GetExpenseAnalysisRequest.builder();

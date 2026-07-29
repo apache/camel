@@ -24,11 +24,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.textract.model.DetectDocumentTextRequest;
 import software.amazon.awssdk.services.textract.model.DetectDocumentTextResponse;
 import software.amazon.awssdk.services.textract.model.Document;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -112,6 +115,24 @@ public class Textract2ProducerTest extends CamelTestSupport {
 
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "direct:detectDocumentTextPojo,detectDocumentText operation requires DetectDocumentTextRequest in POJO mode",
+            "direct:analyzeDocumentPojo,analyzeDocument operation requires AnalyzeDocumentRequest in POJO mode",
+            "direct:analyzeExpensePojo,analyzeExpense operation requires AnalyzeExpenseRequest in POJO mode",
+            "direct:startDocumentTextDetectionPojo,startDocumentTextDetection operation requires StartDocumentTextDetectionRequest in POJO mode",
+            "direct:startDocumentAnalysisPojo,startDocumentAnalysis operation requires StartDocumentAnalysisRequest in POJO mode",
+            "direct:startExpenseAnalysisPojo,startExpenseAnalysis operation requires StartExpenseAnalysisRequest in POJO mode",
+            "direct:getDocumentTextDetectionPojo,getDocumentTextDetection operation requires GetDocumentTextDetectionRequest in POJO mode",
+            "direct:getDocumentAnalysisPojo,getDocumentAnalysis operation requires GetDocumentAnalysisRequest in POJO mode",
+            "direct:getExpenseAnalysisPojo,getExpenseAnalysis operation requires GetExpenseAnalysisRequest in POJO mode",
+    })
+    void pojoRequestWithWrongBodyTypeThrows(String route, String expectedMessage) {
+        assertThatThrownBy(() -> template.requestBody(route, "not the expected request type"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(expectedMessage);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -126,6 +147,22 @@ public class Textract2ProducerTest extends CamelTestSupport {
                 from("direct:detectDocumentTextOptions").to(
                         "aws2-textract://test?textractClient=#amazonTextractClient&operation=detectDocumentText&s3Bucket=testbucket&s3Object=testobject.pdf")
                         .to("mock:result");
+                from("direct:analyzeDocumentPojo")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=analyzeDocument&pojoRequest=true");
+                from("direct:analyzeExpensePojo")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=analyzeExpense&pojoRequest=true");
+                from("direct:startDocumentTextDetectionPojo")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=startDocumentTextDetection&pojoRequest=true");
+                from("direct:startDocumentAnalysisPojo")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=startDocumentAnalysis&pojoRequest=true");
+                from("direct:startExpenseAnalysisPojo")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=startExpenseAnalysis&pojoRequest=true");
+                from("direct:getDocumentTextDetectionPojo")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=getDocumentTextDetection&pojoRequest=true");
+                from("direct:getDocumentAnalysisPojo")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=getDocumentAnalysis&pojoRequest=true");
+                from("direct:getExpenseAnalysisPojo")
+                        .to("aws2-textract://test?textractClient=#amazonTextractClient&operation=getExpenseAnalysis&pojoRequest=true");
             }
         };
     }
