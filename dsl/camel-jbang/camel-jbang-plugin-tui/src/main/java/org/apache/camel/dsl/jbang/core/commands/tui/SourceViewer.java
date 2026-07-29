@@ -494,8 +494,6 @@ class SourceViewer {
         }
         try {
             Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
-            saveMessage = "Saved";
-            saveError = false;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
             editMode = false;

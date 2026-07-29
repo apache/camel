@@ -107,10 +107,6 @@ class SourceTab extends AbstractTab {
         super(ctx);
     }
 
-    boolean isSourceViewerSearchActive() {
-        return sourceViewer.isSearchInputActive();
-    }
-
     boolean isSourceViewerEditMode() {
         return sourceViewer.isEditMode();
     }

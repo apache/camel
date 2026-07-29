@@ -60,10 +60,6 @@ class FilesBrowser {
         return visible;
     }
 
-    boolean isSourceViewerPasteActive() {
-        return sourceViewer.isTextInputActive();
-    }
-
     boolean isSourceViewerTextInputActive() {
         return sourceViewer.isTextInputActive();
     }

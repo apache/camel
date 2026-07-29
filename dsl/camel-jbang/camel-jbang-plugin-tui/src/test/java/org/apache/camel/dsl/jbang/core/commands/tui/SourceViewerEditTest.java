@@ -162,8 +162,8 @@ class SourceViewerEditTest {
     @Test
     void remoteLoadSourceIsNotEditable() {
         MonitorContext ctx = new MonitorContext(
-                new java.util.concurrent.atomic.AtomicReference<>(java.util.List.of()),
-                new java.util.concurrent.atomic.AtomicReference<>(java.util.List.of()));
+                new AtomicReference<>(List.of()),
+                new AtomicReference<>(List.of()));
         viewer.loadSource(ctx, "myRoute", 0);
 
         assertThat(viewer.isVisible()).isFalse();
@@ -178,8 +178,8 @@ class SourceViewerEditTest {
         assertThat(viewer.isEditable()).isTrue();
 
         MonitorContext ctx = new MonitorContext(
-                new java.util.concurrent.atomic.AtomicReference<>(java.util.List.of()),
-                new java.util.concurrent.atomic.AtomicReference<>(java.util.List.of()));
+                new AtomicReference<>(List.of()),
+                new AtomicReference<>(List.of()));
         viewer.loadSource(ctx, "myRoute", 0);
 
         assertThat(viewer.isEditable()).isFalse();
@@ -299,8 +299,8 @@ class SourceViewerEditTest {
     void sourceTabHandleEscapeCancelsEditAndKeepsViewer() throws Exception {
         // SourceTab.handleEscape must cancel edit (CamelMonitor routes Esc there first)
         MonitorContext ctx = new MonitorContext(
-                new java.util.concurrent.atomic.AtomicReference<>(java.util.List.of()),
-                new java.util.concurrent.atomic.AtomicReference<>(java.util.List.of()));
+                new AtomicReference<>(List.of()),
+                new AtomicReference<>(List.of()));
         SourceTab tab = new SourceTab(ctx);
 
         // Use SourceViewer directly to validate the cancelEdit contract SourceTab depends on
@@ -315,8 +315,8 @@ class SourceViewerEditTest {
     @Test
     void sourceTabIgnoresTabKeyWhileEditing() throws Exception {
         MonitorContext ctx = new MonitorContext(
-                new java.util.concurrent.atomic.AtomicReference<>(java.util.List.of()),
-                new java.util.concurrent.atomic.AtomicReference<>(java.util.List.of()));
+                new AtomicReference<>(List.of()),
+                new AtomicReference<>(List.of()));
         SourceTab tab = new SourceTab(ctx);
         // Without a selected integration SourceTab won't open files; still verify Tab is swallowed
         // when the viewer reports edit mode by exercising SourceViewer Tab handling path:
