@@ -196,7 +196,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             LOG.debug("MCP server '{}' initialized, listing tools", serverName);
 
             McpSchema.ListToolsResult toolsResult = mcpClient.listTools();
-            List<McpSchema.Tool> serverTools = toolsResult.tools();
+            List<McpSchema.Tool> serverTools = filterTools(toolsResult.tools(), serverName, props);
 
             for (McpSchema.Tool tool : serverTools) {
                 if (toolClientMap.putIfAbsent(tool.name(), mcpClient) != null) {
@@ -363,7 +363,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         try {
             McpSyncClient newClient = createMcpClient(serverName, props);
 
-            List<McpSchema.Tool> tools = newClient.listTools().tools();
+            List<McpSchema.Tool> tools = filterTools(newClient.listTools().tools(), serverName, props);
 
             globalMcpLock.lock();
             try {
@@ -410,6 +410,45 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             LOG.error("Failed to reconnect MCP server '{}': {}", serverName, e.getMessage(), e);
             return null;
         }
+    }
+
+    /**
+     * Filters the tools listed from an MCP server according to the per-server {@code toolNames} include list. When no
+     * {@code toolNames} property is configured, all tools are returned unchanged.
+     *
+     * @param  allTools   the full list of tools from the server
+     * @param  serverName the logical server name (for logging)
+     * @param  props      the per-server configuration properties
+     * @return            the filtered tool list (or the original list if no filter is configured)
+     */
+    private List<McpSchema.Tool> filterTools(List<McpSchema.Tool> allTools, String serverName, Map<String, String> props) {
+        String toolNamesCsv = props.get("toolNames");
+        if (toolNamesCsv == null || toolNamesCsv.isBlank()) {
+            return allTools;
+        }
+
+        Set<String> allowed = new HashSet<>();
+        for (String name : toolNamesCsv.split(",")) {
+            String trimmed = name.trim();
+            if (!trimmed.isEmpty()) {
+                allowed.add(trimmed);
+            }
+        }
+
+        List<McpSchema.Tool> filtered = allTools.stream()
+                .filter(t -> allowed.contains(t.name()))
+                .toList();
+
+        Set<String> found = filtered.stream().map(McpSchema.Tool::name).collect(Collectors.toSet());
+        Set<String> missing = new HashSet<>(allowed);
+        missing.removeAll(found);
+        if (!missing.isEmpty()) {
+            LOG.warn("MCP server '{}' does not provide the following toolNames: {}", serverName, missing);
+        }
+
+        LOG.info("MCP server '{}': filtered {} tools to {} via toolNames include list",
+                serverName, allTools.size(), filtered.size());
+        return filtered;
     }
 
     private Set<String> toolsForServer(String serverName) {
