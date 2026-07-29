@@ -4726,7 +4726,6 @@ Configures the thread execution timeout. Default value is 1 second. Default valu
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="timeoutPoolSize" type="xs:string"/>
         <xs:attribute name="bulkheadEnabled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
