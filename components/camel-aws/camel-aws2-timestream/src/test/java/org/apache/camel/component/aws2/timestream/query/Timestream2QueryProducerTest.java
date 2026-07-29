@@ -29,8 +29,11 @@ import org.apache.camel.component.aws2.timestream.Timestream2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import software.amazon.awssdk.services.timestreamquery.model.*;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -253,6 +256,25 @@ public class Timestream2QueryProducerTest extends CamelTestSupport {
         assertEquals("Query Cancelled", resultGet.cancellationMessage());
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "direct:describeQueryEndpointsPojo,describeEndpoints operation requires DescribeEndpointsRequest in POJO mode",
+            "direct:createScheduledQueryPojo,createScheduledQuery operation requires CreateScheduledQueryRequest in POJO mode",
+            "direct:deleteScheduledQueryPojo,deleteScheduledQuery operation requires DeleteScheduledQueryRequest in POJO mode",
+            "direct:executeScheduledQueryPojo,executeScheduledQuery operation requires ExecuteScheduledQueryRequest in POJO mode",
+            "direct:updateScheduledQueryPojo,updateScheduledQuery operation requires UpdateScheduledQueryRequest in POJO mode",
+            "direct:describeScheduledQueryPojo,describeScheduledQuery operation requires DescribeScheduledQueryRequest in POJO mode",
+            "direct:listScheduledQueriesPojo,listScheduledQueries operation requires ListScheduledQueriesRequest in POJO mode",
+            "direct:prepareQueryPojo,prepareQuery operation requires PrepareQueryRequest in POJO mode",
+            "direct:queryPojo,query operation requires QueryRequest in POJO mode",
+            "direct:cancelQueryPojo,cancelQuery operation requires CancelQueryRequest in POJO mode",
+    })
+    void pojoRequestWithWrongBodyTypeThrows(String route, String expectedMessage) {
+        assertThatThrownBy(() -> template.requestBody(route, "not the expected request type"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(expectedMessage);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -291,7 +313,24 @@ public class Timestream2QueryProducerTest extends CamelTestSupport {
                 from("direct:cancelQuery")
                         .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=cancelQuery")
                         .to("mock:result");
-
+                from("direct:createScheduledQueryPojo")
+                        .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=createScheduledQuery&pojoRequest=true");
+                from("direct:deleteScheduledQueryPojo")
+                        .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=deleteScheduledQuery&pojoRequest=true");
+                from("direct:executeScheduledQueryPojo")
+                        .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=executeScheduledQuery&pojoRequest=true");
+                from("direct:updateScheduledQueryPojo")
+                        .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=updateScheduledQuery&pojoRequest=true");
+                from("direct:describeScheduledQueryPojo")
+                        .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=describeScheduledQuery&pojoRequest=true");
+                from("direct:listScheduledQueriesPojo")
+                        .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=listScheduledQueries&pojoRequest=true");
+                from("direct:prepareQueryPojo")
+                        .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=prepareQuery&pojoRequest=true");
+                from("direct:queryPojo")
+                        .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=query&pojoRequest=true");
+                from("direct:cancelQueryPojo")
+                        .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=cancelQuery&pojoRequest=true");
             }
         };
     }
