@@ -17,6 +17,7 @@
 package org.apache.camel.component.flink;
 
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
@@ -35,6 +36,7 @@ public class DataStreamFlinkProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataStreamFlinkProducer.class);
 
+    private final ReentrantLock lock = new ReentrantLock();
     private volatile boolean environmentConfigured = false;
 
     public DataStreamFlinkProducer(FlinkEndpoint endpoint) {
@@ -47,11 +49,14 @@ public class DataStreamFlinkProducer extends DefaultProducer {
 
         // Configure environment on first use when DataStream is available
         if (!environmentConfigured && ds != null) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (!environmentConfigured) {
                     configureStreamExecutionEnvironment(ds);
                     environmentConfigured = true;
                 }
+            } finally {
+                lock.unlock();
             }
         }
 

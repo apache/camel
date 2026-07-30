@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.eventbridge;
 
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -41,6 +42,7 @@ import software.amazon.awssdk.services.sqs.SqsClient;
              headersClass = EventbridgeConstants.class)
 public class EventbridgeEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
+    private final ReentrantLock lock = new ReentrantLock();
     private EventBridgeClient eventbridgeClient;
     private SqsClient sqsClient;
 
@@ -110,11 +112,16 @@ public class EventbridgeEndpoint extends ScheduledPollEndpoint implements Endpoi
      * Returns the SQS client used by the consumer, creating one if necessary. Uses the same credentials and region as
      * the EventBridge client.
      */
-    public synchronized SqsClient getSqsClient() {
-        if (sqsClient == null) {
-            sqsClient = AwsClientBuilderUtil.buildClient(configuration, SqsClient::builder);
+    public SqsClient getSqsClient() {
+        lock.lock();
+        try {
+            if (sqsClient == null) {
+                sqsClient = AwsClientBuilderUtil.buildClient(configuration, SqsClient::builder);
+            }
+            return sqsClient;
+        } finally {
+            lock.unlock();
         }
-        return sqsClient;
     }
 
     @Override

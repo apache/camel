@@ -19,6 +19,7 @@ package org.apache.camel.component.netty.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.netty.buffer.ByteBuf;
 import org.apache.camel.Exchange;
@@ -36,6 +37,7 @@ import org.apache.camel.util.IOHelper;
  */
 public final class NettyChannelBufferStreamCache extends InputStream implements StreamCache {
 
+    private final ReentrantLock lock = new ReentrantLock();
     private final ByteBuf buffer;
 
     public NettyChannelBufferStreamCache(ByteBuf buffer) {
@@ -76,8 +78,13 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
     }
 
     @Override
-    public synchronized void reset() {
-        buffer.resetReaderIndex();
+    public void reset() {
+        lock.lock();
+        try {
+            buffer.resetReaderIndex();
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override

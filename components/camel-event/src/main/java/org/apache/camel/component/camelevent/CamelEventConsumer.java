@@ -24,6 +24,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -48,6 +49,7 @@ public class CamelEventConsumer extends DefaultConsumer {
     private BlockingQueue<CamelEvent> eventQueue;
     private ScheduledExecutorService batchScheduler;
     private final List<CamelEvent> batchBuffer = new ArrayList<>();
+    private final ReentrantLock batchBufferLock = new ReentrantLock();
 
     public CamelEventConsumer(CamelEventEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -145,12 +147,15 @@ public class CamelEventConsumer extends DefaultConsumer {
      */
     private void addToBatch(CamelEvent event) {
         List<CamelEvent> toFlush = null;
-        synchronized (batchBuffer) {
+        batchBufferLock.lock();
+        try {
             batchBuffer.add(event);
             if (batchBuffer.size() >= getEndpoint().getBatchSize()) {
                 toFlush = new ArrayList<>(batchBuffer);
                 batchBuffer.clear();
             }
+        } finally {
+            batchBufferLock.unlock();
         }
         if (toFlush != null) {
             processBatch(toFlush);
@@ -162,11 +167,14 @@ public class CamelEventConsumer extends DefaultConsumer {
      */
     private void flushBatch() {
         List<CamelEvent> toFlush = null;
-        synchronized (batchBuffer) {
+        batchBufferLock.lock();
+        try {
             if (!batchBuffer.isEmpty()) {
                 toFlush = new ArrayList<>(batchBuffer);
                 batchBuffer.clear();
             }
+        } finally {
+            batchBufferLock.unlock();
         }
         if (toFlush != null) {
             processBatch(toFlush);

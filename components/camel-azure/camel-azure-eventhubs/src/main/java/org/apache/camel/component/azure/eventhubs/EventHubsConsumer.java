@@ -22,6 +22,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.azure.messaging.eventhubs.EventProcessorClient;
 import com.azure.messaging.eventhubs.models.ErrorContext;
@@ -48,6 +49,7 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
     // we use the EventProcessorClient as recommended by Azure docs to consume from all partitions
     private EventProcessorClient processorClient;
 
+    private final ReentrantLock lock = new ReentrantLock();
     private final AtomicInteger pendingExchanges = new AtomicInteger();
     private final Map<String, AtomicInteger> processedEventsByPartition = new ConcurrentHashMap<>();
     private final Map<String, ScheduledFuture<?>> scheduledTasksByPartition = new ConcurrentHashMap<>();
@@ -213,52 +215,58 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
      *
      * @param exchange the exchange
      */
-    private synchronized void processCommit(final Exchange exchange, final EventContext eventContext) {
-        final String partitionId = eventContext.getPartitionContext().getPartitionId();
-        final AtomicInteger processedEvents = processedEventsByPartition.computeIfAbsent(partitionId,
-                ignored -> new AtomicInteger());
-        EventHubsCheckpointUpdaterTask checkpointTask = checkpointTasksByPartition.get(partitionId);
-        ScheduledFuture<?> scheduledTask = scheduledTasksByPartition.get(partitionId);
-
-        if (checkpointTask == null || checkpointTask.isExpired()) {
-            checkpointTask = new EventHubsCheckpointUpdaterTask(eventContext, processedEvents);
-            // delegate the checkpoint update to a dedicated Thread
-            long timeout = getConfiguration().getCheckpointBatchTimeout();
-            checkpointTask.setScheduledTime(System.currentTimeMillis() + timeout);
-            scheduledTask = scheduledExecutorService.schedule(checkpointTask, timeout, TimeUnit.MILLISECONDS);
-            checkpointTasksByPartition.put(partitionId, checkpointTask);
-            scheduledTasksByPartition.put(partitionId, scheduledTask);
-        } else {
-            // updates the eventContext to use for the offset to be the most accurate
-            checkpointTask.setEventContext(eventContext);
-        }
-
+    private void processCommit(final Exchange exchange, final EventContext eventContext) {
+        lock.lock();
         try {
-            var cnt = processedEvents.incrementAndGet();
-            if (cnt == getConfiguration().getCheckpointBatchSize()) {
-                processedEvents.set(0);
-                exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_SIZE);
-                LOG.debug("eventhub consumer batch size of reached for partition {}", partitionId);
-                if (scheduledTask != null) {
-                    scheduledTask.cancel(false);
-                }
-                eventContext.updateCheckpointAsync()
-                        .subscribe(unused -> LOG.debug("Processed one event..."),
-                                error -> LOG.warn("Error when updating Checkpoint: {}", error.getMessage(), error),
-                                () -> {
-                                    LOG.debug("Checkpoint updated.");
-                                });
-            } else if (checkpointTask.isExpired()) {
-                exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_TIMEOUT);
-                LOG.debug("eventhub consumer batch timeout reached for partition {}", partitionId);
+            final String partitionId = eventContext.getPartitionContext().getPartitionId();
+            final AtomicInteger processedEvents = processedEventsByPartition.computeIfAbsent(partitionId,
+                    ignored -> new AtomicInteger());
+            EventHubsCheckpointUpdaterTask checkpointTask = checkpointTasksByPartition.get(partitionId);
+            ScheduledFuture<?> scheduledTask = scheduledTasksByPartition.get(partitionId);
+
+            if (checkpointTask == null || checkpointTask.isExpired()) {
+                checkpointTask = new EventHubsCheckpointUpdaterTask(eventContext, processedEvents);
+                // delegate the checkpoint update to a dedicated Thread
+                long timeout = getConfiguration().getCheckpointBatchTimeout();
+                checkpointTask.setScheduledTime(System.currentTimeMillis() + timeout);
+                scheduledTask = scheduledExecutorService.schedule(checkpointTask, timeout, TimeUnit.MILLISECONDS);
+                checkpointTasksByPartition.put(partitionId, checkpointTask);
+                scheduledTasksByPartition.put(partitionId, scheduledTask);
             } else {
-                LOG.debug("neither eventhub consumer batch size of {}/{} nor batch timeout reached yet for partition {}",
-                        cnt, getConfiguration().getCheckpointBatchSize(), partitionId);
+                // updates the eventContext to use for the offset to be the most accurate
+                checkpointTask.setEventContext(eventContext);
             }
-            // we assume that the scheduled task has done the update by its side
-        } catch (Exception ex) {
-            getExceptionHandler().handleException("Error occurred during updating the checkpoint. This exception is ignored.",
-                    exchange, ex);
+
+            try {
+                var cnt = processedEvents.incrementAndGet();
+                if (cnt == getConfiguration().getCheckpointBatchSize()) {
+                    processedEvents.set(0);
+                    exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_SIZE);
+                    LOG.debug("eventhub consumer batch size of reached for partition {}", partitionId);
+                    if (scheduledTask != null) {
+                        scheduledTask.cancel(false);
+                    }
+                    eventContext.updateCheckpointAsync()
+                            .subscribe(unused -> LOG.debug("Processed one event..."),
+                                    error -> LOG.warn("Error when updating Checkpoint: {}", error.getMessage(), error),
+                                    () -> {
+                                        LOG.debug("Checkpoint updated.");
+                                    });
+                } else if (checkpointTask.isExpired()) {
+                    exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_TIMEOUT);
+                    LOG.debug("eventhub consumer batch timeout reached for partition {}", partitionId);
+                } else {
+                    LOG.debug("neither eventhub consumer batch size of {}/{} nor batch timeout reached yet for partition {}",
+                            cnt, getConfiguration().getCheckpointBatchSize(), partitionId);
+                }
+                // we assume that the scheduled task has done the update by its side
+            } catch (Exception ex) {
+                getExceptionHandler().handleException(
+                        "Error occurred during updating the checkpoint. This exception is ignored.",
+                        exchange, ex);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

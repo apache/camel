@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.tarfile;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
@@ -26,6 +27,8 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
  * Keeps a handle on the original {@link InputStream} even after closing the buffered input stream.
  */
 public class TarElementInputStreamWrapper extends BufferedInputStream {
+
+    private final ReentrantLock lock = new ReentrantLock();
 
     public TarElementInputStreamWrapper(InputStream in, int size) {
         super(in, size);
@@ -47,17 +50,22 @@ public class TarElementInputStreamWrapper extends BufferedInputStream {
     }
 
     @Override
-    public synchronized int available() throws IOException {
-        if (in instanceof TarArchiveInputStream) {
-            TarArchiveInputStream tai = (TarArchiveInputStream) in;
-            if (tai.getCurrentEntry() != null) {
-                // avoid NPE in TarArchiveInputStream.available which
-                // only works if there is a current entry
-                return tai.available();
-            } else {
-                return 0;
+    public int available() throws IOException {
+        lock.lock();
+        try {
+            if (in instanceof TarArchiveInputStream) {
+                TarArchiveInputStream tai = (TarArchiveInputStream) in;
+                if (tai.getCurrentEntry() != null) {
+                    // avoid NPE in TarArchiveInputStream.available which
+                    // only works if there is a current entry
+                    return tai.available();
+                } else {
+                    return 0;
+                }
             }
+            return super.available();
+        } finally {
+            lock.unlock();
         }
-        return super.available();
     }
 }
