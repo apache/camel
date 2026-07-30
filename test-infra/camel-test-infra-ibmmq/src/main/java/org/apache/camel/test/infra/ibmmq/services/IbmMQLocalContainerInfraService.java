@@ -70,6 +70,11 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
                         .withEnv("LICENSE", "accept")
                         .withEnv("MQ_QMGR_NAME", IbmMQProperties.DEFAULT_QMGR_NAME)
                         .withEnv("MQ_APP_PASSWORD", IbmMQProperties.DEFAULT_APP_PASSWORD)
+                        // MQ 10.0 changed the default locale from C to C.utf8, which causes the
+                        // queue manager to use CCSID 1208 (UTF-8) instead of 819 (ISO 8859-1).
+                        // Force C locale to preserve CCSID 819 until the JMS reply-to mechanism
+                        // is confirmed to work correctly with CCSID 1208.
+                        .withEnv("LANG", "C")
                         .withLogConsumer(new Slf4jLogConsumer(LOG))
                         // AND the listener-port and log-message checks; a plain chained waitingFor() would replace,
                         // not combine, the strategies. WITH_INDIVIDUAL_TIMEOUTS_ONLY keeps each strategy's own timeout
