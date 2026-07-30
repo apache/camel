@@ -70,7 +70,9 @@ jobs:
         if: always()
         with:
           name: main-build-${{ matrix.java }}.log
-          path: build.log
+          path: |
+            build-regen.log
+            build-regen-catalog.log
       - name: Save Atlassian Maven Cache
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         if: always()
