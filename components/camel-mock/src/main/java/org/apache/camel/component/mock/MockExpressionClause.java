@@ -17,6 +17,7 @@
 package org.apache.camel.component.mock;
 
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -38,6 +39,7 @@ import org.apache.camel.support.ExpressionToPredicateAdapter;
  * are specialized for being used with the mock component and separated from camel-core.
  */
 public class MockExpressionClause<T> implements Expression, Predicate {
+    private final ReentrantLock lock = new ReentrantLock();
     private final MockExpressionClauseSupport<T> delegate;
 
     private volatile Expression expr;
@@ -429,7 +431,8 @@ public class MockExpressionClause<T> implements Expression, Predicate {
     @Override
     public void init(CamelContext context) {
         if (expr == null) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (expr == null) {
                     Expression newExpression = getExpressionValue();
                     if (newExpression == null) {
@@ -438,6 +441,8 @@ public class MockExpressionClause<T> implements Expression, Predicate {
                     newExpression.init(context);
                     expr = newExpression;
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }

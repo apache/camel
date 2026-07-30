@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ public class MiloClientCachingConnectionManager implements MiloClientConnectionM
 
     private static final Logger LOG = LoggerFactory.getLogger(MiloClientCachingConnectionManager.class);
 
+    private final ReentrantLock lock = new ReentrantLock();
     private final Map<String, ManagedConnection> cache = new HashMap<>();
 
     private static class ManagedConnection {
@@ -52,33 +54,43 @@ public class MiloClientCachingConnectionManager implements MiloClientConnectionM
     }
 
     @Override
-    public synchronized MiloClientConnection createConnection(
+    public MiloClientConnection createConnection(
             MiloClientConfiguration configuration,
             MonitorFilterConfiguration monitorFilterConfiguration) {
-        final String identifier = configuration.toCacheId();
-        final ManagedConnection managedConnection
-                = cache.computeIfAbsent(identifier, k -> managedConnection(configuration, monitorFilterConfiguration));
-        managedConnection.increment();
-        return managedConnection.connection;
+        lock.lock();
+        try {
+            final String identifier = configuration.toCacheId();
+            final ManagedConnection managedConnection
+                    = cache.computeIfAbsent(identifier, k -> managedConnection(configuration, monitorFilterConfiguration));
+            managedConnection.increment();
+            return managedConnection.connection;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
-    public synchronized void releaseConnection(MiloClientConnection connection) {
-        final Optional<Entry<String, ManagedConnection>> existingConnection = this.cache.entrySet().stream()
-                .filter(entry -> entry.getValue().connection.equals(connection)).findFirst();
-        existingConnection.ifPresent(entry -> {
-            entry.getValue().decrement();
-            if (entry.getValue().consumers <= 0) {
-                try {
-                    LOG.debug("Closing connection {}", entry.getKey());
-                    entry.getValue().connection.close();
-                } catch (Exception e) {
-                    LOG.debug("Error while closing connection with id {}. This exception is ignored.", entry.getKey());
-                } finally {
-                    cache.remove(entry.getKey());
+    public void releaseConnection(MiloClientConnection connection) {
+        lock.lock();
+        try {
+            final Optional<Entry<String, ManagedConnection>> existingConnection = this.cache.entrySet().stream()
+                    .filter(entry -> entry.getValue().connection.equals(connection)).findFirst();
+            existingConnection.ifPresent(entry -> {
+                entry.getValue().decrement();
+                if (entry.getValue().consumers <= 0) {
+                    try {
+                        LOG.debug("Closing connection {}", entry.getKey());
+                        entry.getValue().connection.close();
+                    } catch (Exception e) {
+                        LOG.debug("Error while closing connection with id {}. This exception is ignored.", entry.getKey());
+                    } finally {
+                        cache.remove(entry.getKey());
+                    }
                 }
-            }
-        });
+            });
+        } finally {
+            lock.unlock();
+        }
     }
 
     private ManagedConnection managedConnection(
