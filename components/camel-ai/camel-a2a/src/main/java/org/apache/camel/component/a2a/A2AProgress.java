@@ -58,6 +58,14 @@ public final class A2AProgress {
     }
 
     /**
+     * Removes the cached lock for the given store. Called during endpoint shutdown to prevent the static
+     * {@code STORE_LOCKS} map from leaking entries after a store is no longer in use.
+     */
+    static void removeStoreLock(A2ATaskStore store) {
+        STORE_LOCKS.remove(store);
+    }
+
+    /**
      * Emit a status update with {@link TaskState#WORKING} state.
      *
      * @param exchange the current exchange

@@ -273,6 +273,9 @@ public class A2AEndpoint extends DefaultEndpoint {
     }
 
     private void cleanupEndpointResources() {
+        if (taskStore != null) {
+            A2AProgress.removeStoreLock(taskStore);
+        }
         if (taskStoreOwned && taskStore != null) {
             try {
                 ServiceHelper.stopService(taskStore);
