@@ -128,6 +128,49 @@ class BackgroundTaskRegistryTest {
         assertThat(registry.getTasks()).isEmpty();
     }
 
+    @DisplayName("Test that run() returns and unregisters when the supplier throws (CAMEL-24286)")
+    @Test
+    @Timeout(15)
+    void testRunReturnsAndUnregistersWhenSupplierThrows() throws Exception {
+        AtomicBoolean runReturned = new AtomicBoolean(false);
+        AtomicBoolean completed = new AtomicBoolean(true);
+
+        // an unlimited-duration task: before CAMEL-24286 a thrown supplier exception left the latch
+        // un-counted, so run() blocked forever here and the task leaked in the registry
+        BackgroundTask task = Tasks.backgroundTask()
+                .withScheduledExecutor(Executors.newSingleThreadScheduledExecutor())
+                .withBudget(Budgets.iterationTimeBudget()
+                        .withInterval(Duration.ofMillis(100))
+                        .withInitialDelay(Duration.ZERO)
+                        .withUnlimitedDuration()
+                        .build())
+                .build();
+
+        // daemon so a regression (run() hanging forever) cannot keep the JVM alive
+        Thread runner = new Thread(() -> {
+            boolean result = task.run(camelContext, () -> {
+                throw new IllegalStateException("boom");
+            });
+            completed.set(result);
+            runReturned.set(true);
+        });
+        runner.setDaemon(true);
+        runner.start();
+
+        runner.join(TimeUnit.SECONDS.toMillis(10));
+
+        assertThat(runReturned.get())
+                .as("run() must return when the supplier throws, not block forever")
+                .isTrue();
+        assertThat(completed.get())
+                .as("run() should report the task as not completed after a thrown exception")
+                .isFalse();
+        await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(registry.getTasks())
+                        .as("the failed task must not leak in the registry")
+                        .isEmpty());
+    }
+
     @DisplayName("Test that task is removed from registry after supplier succeeds")
     @Test
     @Timeout(10)

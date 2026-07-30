@@ -130,7 +130,14 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
             }
         } catch (Exception e) {
             status = Status.Failed;
+            completed.set(false);
             cause = e;
+            // release the blocking run() caller and unregister; without this a task built with
+            // withUnlimitedDuration() would await() forever and stay in the registry (CAMEL-24286)
+            if (!registeredByRun && registry != null) {
+                registry.removeTask(this);
+            }
+            latch.countDown();
             throw e;
         }
         // scheduleWithFixedDelay waits interval after this run finishes, so compute from now
@@ -196,20 +203,20 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
                     LOG.debug("The task has finished the execution and it is ready to continue");
                 }
             }
-
-            TaskManagerRegistry registry = null;
-            if (camelContext != null) {
-                registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
-            }
-            if (registry != null) {
-                registry.removeTask(this);
-            }
-
-            task.cancel(true);
         } catch (InterruptedException e) {
             LOG.warn("Interrupted while waiting for the repeatable task to execute: {}", e.getMessage(), e);
             Thread.currentThread().interrupt();
         } finally {
+            // unregister and cancel even if the await was interrupted, otherwise the task leaks in
+            // the registry and the scheduled future keeps running (CAMEL-24286)
+            if (camelContext != null) {
+                TaskManagerRegistry registry
+                        = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
+                if (registry != null) {
+                    registry.removeTask(this);
+                }
+            }
+            task.cancel(true);
             elapsed = budget.elapsed();
             running.set(false);
         }
