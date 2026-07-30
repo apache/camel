@@ -31,7 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The ZIP entry name is attacker-influenced archive content, so when it is promoted to the CamelFileName control header
- * it must be reduced to a leaf name (no path segments). See CAMEL-24293.
+ * it must be reduced to a leaf name (no path segments) - for both the data format {@code unmarshal} and the
+ * iterator/splitter ({@link ZipSplitter}) modes. See CAMEL-24293.
  */
 class ZipFileNameStripPathTest extends CamelTestSupport {
 
@@ -56,12 +57,29 @@ class ZipFileNameStripPathTest extends CamelTestSupport {
         assertEquals("evil.txt", mock.getReceivedExchanges().get(0).getIn().getHeader(FILE_NAME, String.class));
     }
 
+    @Test
+    void iteratorEntryNameWithPathIsStrippedToLeaf() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:iterated");
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:iterate", zipWithEntry("subdir/evil.txt"));
+
+        mock.assertIsSatisfied();
+        // the splitter path reduces CamelFileName to the leaf name too ...
+        assertEquals("evil.txt",
+                mock.getReceivedExchanges().get(0).getIn().getHeader(FILE_NAME, String.class));
+        // ... while the full entry name stays available on the dedicated header
+        assertEquals("subdir/evil.txt",
+                mock.getReceivedExchanges().get(0).getIn().getHeader("zipFileName", String.class));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:start").unmarshal(new ZipFileDataFormat()).to("mock:result");
+                from("direct:iterate").split(new ZipSplitter()).streaming().to("mock:iterated");
             }
         };
     }
