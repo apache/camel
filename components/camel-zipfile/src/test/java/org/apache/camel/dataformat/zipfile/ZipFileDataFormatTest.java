@@ -318,7 +318,9 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 ZipFile zfile = new ZipFile(new File("src/test/resources/hello.odt"));
-                                ZipEntry entry = new ZipEntry((String) exchange.getIn().getHeader(Exchange.FILE_NAME));
+                                // CamelFileName is now the stripped basename (Zip Slip prevention); rebuild structure from the full entry name
+                                ZipEntry entry
+                                        = new ZipEntry((String) exchange.getIn().getHeader("zipFileName"));
                                 File file = new File("hello_out", entry.getName());
                                 if (entry.isDirectory()) {
                                     file.mkdirs();

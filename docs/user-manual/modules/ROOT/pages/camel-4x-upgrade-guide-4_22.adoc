@@ -1360,3 +1360,15 @@ and/or the audience that tokens are expected to carry.
 If a deployment genuinely wants signature and expiry validation only, set
 `camel.server.jwtAllowMissingIssuerAndAudience=true` (or `camel.management.jwtAllowMissingIssuerAndAudience=true`)
 to keep the previous behaviour.
+
+=== camel-tarfile / camel-zipfile - CamelFileName is stripped to the entry base name on unmarshal
+
+When unmarshalling a tar or zip archive, the `CamelFileName` header was previously set to the
+raw archive entry name, which for a crafted archive can contain path segments (e.g.
+`../../etc/passwd`). If a downstream route wrote the message to disk using that header, the
+entry name could escape the intended directory (Tar Slip / Zip Slip).
+
+`CamelFileName` is now set to the entry's base name only (path segments stripped) for both the
+data format and the iterator/splitter modes. The full, unmodified entry name remains available
+so routes that intentionally recreate the archive's directory structure keep working — read it
+from `CamelTarFileEntryName` for tar and from `zipFileName` for zip instead of `CamelFileName`.
