@@ -35,7 +35,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class AggregateRedisIT extends CamelTestSupport {
 
     @RegisterExtension
-    static RedisService service = RedisServiceFactory.createService();
+    static RedisService service = RedisServiceFactory.createSingletonService();
 
     @Test
     public void testABC() throws Exception {

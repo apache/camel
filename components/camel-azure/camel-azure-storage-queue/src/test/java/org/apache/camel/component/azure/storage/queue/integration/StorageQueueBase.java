@@ -43,7 +43,7 @@ public class StorageQueueBase extends CamelTestSupport {
     static {
         initCredentials();
 
-        service = AzureStorageQueueServiceFactory.createService();
+        service = AzureStorageQueueServiceFactory.createSingletonService();
     }
 
     /*

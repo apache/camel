@@ -37,11 +37,13 @@ public class RabbitMQBasicIT extends RabbitMQITSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         ConnectionProperties connectionProperties = service.connectionProperties();
-        foo = String.format("spring-rabbitmq:%s:%d/foo?username=%s&password=%s", connectionProperties.hostname(),
-                connectionProperties.port(), connectionProperties.username(), connectionProperties.password());
+        foo = String.format("spring-rabbitmq:%s:%d/%s?username=%s&password=%s", connectionProperties.hostname(),
+                connectionProperties.port(), uniqueName("foo"), connectionProperties.username(),
+                connectionProperties.password());
 
-        bar = String.format("spring-rabbitmq:%s:%d/bar?username=%s&password=%s", connectionProperties.hostname(),
-                connectionProperties.port(), connectionProperties.username(), connectionProperties.password());
+        bar = String.format("spring-rabbitmq:%s:%d/%s?username=%s&password=%s", connectionProperties.hostname(),
+                connectionProperties.port(), uniqueName("bar"), connectionProperties.username(),
+                connectionProperties.password());
 
         return new RouteBuilder() {
             @Override

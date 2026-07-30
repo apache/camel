@@ -17,8 +17,31 @@
 package org.apache.camel.test.infra.openldap.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class OpenldapServiceFactory {
+
+    private static class SingletonOpenldapService extends SingletonService<OpenldapService> implements OpenldapService {
+        public SingletonOpenldapService(OpenldapService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public Integer getPort() {
+            return getService().getPort();
+        }
+
+        @Override
+        public Integer getSslPort() {
+            return getService().getSslPort();
+        }
+
+        @Override
+        public String getHost() {
+            return getService().getHost();
+        }
+    }
+
     private OpenldapServiceFactory() {
 
     }
@@ -32,6 +55,21 @@ public final class OpenldapServiceFactory {
                 .addLocalMapping(OpenldapLocalContainerService::new)
                 .addRemoteMapping(OpenldapRemoteService::new)
                 .build();
+    }
+
+    public static OpenldapService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final OpenldapService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<OpenldapService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonOpenldapService(new OpenldapLocalContainerService(), "openldap"))
+                    .addRemoteMapping(OpenldapRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class OpenldapLocalContainerService extends OpenldapLocalContainerInfraService implements OpenldapService {

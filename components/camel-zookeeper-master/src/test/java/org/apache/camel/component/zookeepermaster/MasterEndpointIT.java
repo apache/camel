@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MasterEndpointIT {
 
     @RegisterExtension
-    static ZooKeeperService service = ZooKeeperServiceFactory.createService();
+    static ZooKeeperService service = ZooKeeperServiceFactory.createSingletonService();
 
     @Autowired
     protected CamelContext camelContext;

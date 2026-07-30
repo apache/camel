@@ -17,8 +17,21 @@
 package org.apache.camel.test.infra.mosquitto.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class MosquittoServiceFactory {
+
+    private static class SingletonMosquittoService extends SingletonService<MosquittoService> implements MosquittoService {
+        public SingletonMosquittoService(MosquittoService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public Integer getPort() {
+            return getService().getPort();
+        }
+    }
+
     private MosquittoServiceFactory() {
 
     }
@@ -34,4 +47,18 @@ public final class MosquittoServiceFactory {
                 .build();
     }
 
+    public static MosquittoService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final MosquittoService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<MosquittoService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonMosquittoService(new MosquittoLocalContainerService(), "mosquitto"))
+                    .addRemoteMapping(MosquittoRemoteService::new);
+            INSTANCE = instance.build();
+        }
+    }
 }

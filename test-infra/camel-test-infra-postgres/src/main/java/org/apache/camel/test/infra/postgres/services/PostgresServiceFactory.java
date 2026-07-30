@@ -17,8 +17,40 @@
 package org.apache.camel.test.infra.postgres.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class PostgresServiceFactory {
+
+    private static class SingletonPostgresService extends SingletonService<PostgresService> implements PostgresService {
+        public SingletonPostgresService(PostgresService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
+        public String userName() {
+            return getService().userName();
+        }
+
+        @Override
+        public String password() {
+            return getService().password();
+        }
+
+        @Override
+        public String getServiceAddress() {
+            return getService().getServiceAddress();
+        }
+    }
 
     private PostgresServiceFactory() {
     }
@@ -31,6 +63,21 @@ public final class PostgresServiceFactory {
         return builder().addLocalMapping(PostgresLocalContainerService::new)
                 .addRemoteMapping(PostgresRemoteService::new)
                 .build();
+    }
+
+    public static PostgresService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final PostgresService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<PostgresService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonPostgresService(new PostgresLocalContainerService(), "postgres"))
+                    .addRemoteMapping(PostgresRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class PostgresRemoteService extends PostgresRemoteInfraService implements PostgresService {

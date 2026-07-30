@@ -17,8 +17,31 @@
 package org.apache.camel.test.infra.xmpp.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class XmppServiceFactory {
+
+    private static class SingletonXmppService extends SingletonService<XmppService> implements XmppService {
+        public SingletonXmppService(XmppService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
+        public String getUrl() {
+            return getService().getUrl();
+        }
+    }
+
     private XmppServiceFactory() {
 
     }
@@ -32,6 +55,21 @@ public final class XmppServiceFactory {
                 .addLocalMapping(XmppLocalContainerService::new)
                 .addRemoteMapping(XmppRemoteService::new)
                 .build();
+    }
+
+    public static XmppService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final XmppService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<XmppService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonXmppService(new XmppLocalContainerService(), "xmpp"))
+                    .addRemoteMapping(XmppRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class XmppLocalContainerService extends XmppLocalContainerInfraService implements XmppService {
