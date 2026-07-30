@@ -31,6 +31,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -145,7 +146,9 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                 Message answer = new DefaultMessage(exchange.getContext());
                 answer.getHeaders().putAll(exchange.getIn().getHeaders());
                 answer.setHeader("zipFileName", zipFileName);
-                answer.setHeader(Exchange.FILE_NAME, zipFileName);
+                // CAMEL-24293: the entry name is attacker-influenced archive content, so reduce the
+                // CamelFileName control header to the leaf name (Zip Slip). The full path stays on zipFileName.
+                answer.setHeader(Exchange.FILE_NAME, FileUtil.stripPath(zipFileName));
                 if (currentEntry.isDirectory()) {
                     if (allowEmptyDirectory) {
                         answer.setBody(new ByteArrayInputStream(new byte[0]));

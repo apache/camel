@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -132,7 +133,10 @@ public class TarIterator implements Iterator<Message>, Closeable {
                 Message answer = new DefaultMessage(exchange.getContext());
                 answer.getHeaders().putAll(exchange.getIn().getHeaders());
                 answer.setHeader(TARFILE_ENTRY_NAME_HEADER, current.getName());
-                answer.setHeader(Exchange.FILE_NAME, current.getName());
+                // CAMEL-24293: the entry name is attacker-influenced archive content, so reduce the
+                // CamelFileName control header to the leaf name (Tar Slip). The full path stays on
+                // CamelTarFileEntryName.
+                answer.setHeader(Exchange.FILE_NAME, FileUtil.stripPath(current.getName()));
                 if (current.getSize() > 0) {
                     if (maxDecompressedSize > 0) {
                         answer.setBody(BoundedInputStream.builder()

@@ -364,7 +364,9 @@ class TarFileDataFormatTest extends CamelTestSupport {
                                 InputStream is = new FileInputStream("src/test/resources/data/hello.tar");
 
                                 TarArchiveEntry entry
-                                        = new TarArchiveEntry((String) exchange.getIn().getHeader(Exchange.FILE_NAME));
+                                        // CamelFileName is now the stripped basename (Tar Slip prevention); rebuild structure from the full entry name
+                                        = new TarArchiveEntry(
+                                                (String) exchange.getIn().getHeader(TarIterator.TARFILE_ENTRY_NAME_HEADER));
                                 File outputFile = new File("hello_out", entry.getName());
                                 if (entry.isDirectory()) {
                                     outputFile.mkdirs();
