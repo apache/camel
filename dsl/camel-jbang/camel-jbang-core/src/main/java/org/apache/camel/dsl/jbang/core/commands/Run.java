@@ -1260,11 +1260,6 @@ public class Run extends CamelCommand {
             main.addOverrideProperty("camel.management.openapiUiEnabled", "true");
             main.addOverrideProperty("camel.server.enabled", "true");
             main.addOverrideProperty("camel.management.enabled", "true");
-            writeSetting(main, profileProperties, "camel.rest.apiContextPath", "/q/openapi.json");
-            writeSetting(main, profileProperties, "camel.rest.component", "platform-http");
-            writeSetting(main, profileProperties, "camel.management.openapiUiEnabled", "true");
-            writeSetting(main, profileProperties, "camel.server.enabled", "true");
-            writeSetting(main, profileProperties, "camel.management.enabled", "true");
         }
         if (debugOptions.openTelemetryAgent) {
             dependencies.add("camel:opentelemetry2");

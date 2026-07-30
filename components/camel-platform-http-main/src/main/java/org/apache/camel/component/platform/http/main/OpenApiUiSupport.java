@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.platform.http.main;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.handler.StaticHandler;
@@ -30,11 +34,7 @@ final class OpenApiUiSupport {
 
     static final String OPENAPI_UI_PATH = "/q/openapi";
     static final String DEFAULT_SPEC_PATH = "/q/openapi.json";
-
-    /**
-     * Version of the bundled org.webjars:swagger-ui artifact (must match pom.xml).
-     */
-    private static final String SWAGGER_UI_WEBJAR_VERSION = "5.21.0";
+    private static final String SWAGGER_UI_WEBJAR_VERSION = resolveSwaggerUiWebjarVersion();
 
     private OpenApiUiSupport() {
     }
@@ -72,6 +72,7 @@ final class OpenApiUiSupport {
 
     private static String buildIndexHtml(String specPath) {
         String prefix = OPENAPI_UI_PATH + "/webjars";
+        String escapedSpecPath = escapeForJavaScriptString(specPath);
         return """
                 <!DOCTYPE html>
                 <html lang="en">
@@ -97,7 +98,7 @@ final class OpenApiUiSupport {
                 </script>
                 </body>
                 </html>
-                """.formatted(prefix, prefix, prefix, specPath);
+                """.formatted(prefix, prefix, prefix, escapedSpecPath);
     }
 
     static String normalizeSpecPath(String specPath) {
@@ -109,5 +110,35 @@ final class OpenApiUiSupport {
             spec = "/" + spec;
         }
         return spec;
+    }
+
+    static String escapeForJavaScriptString(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("'", "\\'")
+                .replace("<", "\\u003c")
+                .replace(">", "\\u003e")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r");
+    }
+
+    static String resolveSwaggerUiWebjarVersion() {
+        try (InputStream is = OpenApiUiSupport.class.getResourceAsStream(
+                "/META-INF/maven/org.webjars/swagger-ui/pom.properties")) {
+            if (is != null) {
+                Properties properties = new Properties();
+                properties.load(is);
+                String version = properties.getProperty("version");
+                if (version != null && !version.isBlank()) {
+                    return version;
+                }
+            }
+        } catch (IOException e) {
+            // fall through
+        }
+        throw new IllegalStateException("Unable to resolve swagger-ui webjar version from classpath");
     }
 }

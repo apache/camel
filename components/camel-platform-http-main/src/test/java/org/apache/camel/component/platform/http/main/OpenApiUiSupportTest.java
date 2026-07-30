@@ -38,4 +38,16 @@ class OpenApiUiSupportTest {
         String url = "http://localhost:9090/q/openapi.json";
         assertThat(OpenApiUiSupport.normalizeSpecPath(url)).isEqualTo(url);
     }
+
+    @Test
+    void escapeForJavaScriptStringEscapesQuotesAndScriptDelimiters() {
+        assertThat(OpenApiUiSupport.escapeForJavaScriptString("/q/openapi.json")).isEqualTo("/q/openapi.json");
+        assertThat(OpenApiUiSupport.escapeForJavaScriptString("http://host/path\"</script>"))
+                .isEqualTo("http://host/path\\\"\\u003c/script\\u003e");
+    }
+
+    @Test
+    void resolveSwaggerUiWebjarVersionMatchesClasspathArtifact() {
+        assertThat(OpenApiUiSupport.resolveSwaggerUiWebjarVersion()).matches("\\d+\\.\\d+\\.\\d+");
+    }
 }

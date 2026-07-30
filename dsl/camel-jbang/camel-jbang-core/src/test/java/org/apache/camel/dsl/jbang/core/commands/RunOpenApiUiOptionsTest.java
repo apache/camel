@@ -44,4 +44,15 @@ class RunOpenApiUiOptionsTest {
         assertThat(run.serverOptions.port).isEqualTo(9090);
         assertThat(run.serverOptions.managementPort).isEqualTo(9090);
     }
+
+    @Test
+    void shouldPreserveExplicitManagementPortForOpenApiUi() {
+        Run run = new Run(new CamelJBangMain());
+        new CommandLine(run).parseArgs("--openapi-ui", "--port=9090", "--management-port=9999", "hello.java");
+
+        run.prepareOpenApiUiServerOptions();
+
+        assertThat(run.serverOptions.port).isEqualTo(9090);
+        assertThat(run.serverOptions.managementPort).isEqualTo(9999);
+    }
 }
