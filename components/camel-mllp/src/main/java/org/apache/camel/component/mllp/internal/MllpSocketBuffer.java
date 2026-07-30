@@ -24,6 +24,7 @@ import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.component.mllp.MllpComponent;
 import org.apache.camel.component.mllp.MllpEndpoint;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
 public class MllpSocketBuffer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MllpSocketBuffer.class);
+    private final ReentrantLock lock = new ReentrantLock();
     final MllpEndpoint endpoint;
 
     byte[] buffer;
@@ -72,13 +74,18 @@ public class MllpSocketBuffer {
         return size() <= 0;
     }
 
-    public synchronized void write(int b) {
-        ensureCapacity(1);
-        buffer[availableByteCount] = (byte) b;
+    public void write(int b) {
+        lock.lock();
+        try {
+            ensureCapacity(1);
+            buffer[availableByteCount] = (byte) b;
 
-        updateIndexes(b, 0);
+            updateIndexes(b, 0);
 
-        availableByteCount += 1;
+            availableByteCount += 1;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void write(byte[] b) {
@@ -87,222 +94,294 @@ public class MllpSocketBuffer {
         }
     }
 
-    public synchronized void write(byte[] sourceBytes, int offset, int writeCount) {
-        if (sourceBytes != null && sourceBytes.length > 0) {
-            if (offset < 0) {
-                throw new IndexOutOfBoundsException(
-                        String.format("write(byte[%d], offset[%d], writeCount[%d]) - offset is less than zero",
-                                sourceBytes.length, offset, writeCount));
-            }
-            if (offset > sourceBytes.length) {
-                throw new IndexOutOfBoundsException(
-                        String.format("write(byte[%d], offset[%d], writeCount[%d]) - offset is greater than write count",
-                                sourceBytes.length, offset, writeCount));
-            }
+    public void write(byte[] sourceBytes, int offset, int writeCount) {
+        lock.lock();
+        try {
+            if (sourceBytes != null && sourceBytes.length > 0) {
+                if (offset < 0) {
+                    throw new IndexOutOfBoundsException(
+                            String.format("write(byte[%d], offset[%d], writeCount[%d]) - offset is less than zero",
+                                    sourceBytes.length, offset, writeCount));
+                }
+                if (offset > sourceBytes.length) {
+                    throw new IndexOutOfBoundsException(
+                            String.format("write(byte[%d], offset[%d], writeCount[%d]) - offset is greater than write count",
+                                    sourceBytes.length, offset, writeCount));
+                }
 
-            if (writeCount < 0) {
-                throw new IndexOutOfBoundsException(
-                        String.format("write(byte[%d], offset[%d], writeCount[%d]) - write count is less than zero",
-                                sourceBytes.length, offset, writeCount));
-            }
-            if (writeCount > sourceBytes.length) {
-                throw new IndexOutOfBoundsException(
-                        String.format(
-                                "write(byte[%d], offset[%d], writeCount[%d]) - write count is greater than length of the source byte[]",
-                                sourceBytes.length, offset, writeCount));
-            }
-            if ((offset + writeCount) - sourceBytes.length > 0) {
-                throw new IndexOutOfBoundsException(
-                        String.format(
-                                "write(byte[%d], offset[%d], writeCount[%d]) - offset plus write count <%d> is greater than length of the source byte[]",
-                                sourceBytes.length, offset, writeCount, offset + writeCount));
-            }
+                if (writeCount < 0) {
+                    throw new IndexOutOfBoundsException(
+                            String.format("write(byte[%d], offset[%d], writeCount[%d]) - write count is less than zero",
+                                    sourceBytes.length, offset, writeCount));
+                }
+                if (writeCount > sourceBytes.length) {
+                    throw new IndexOutOfBoundsException(
+                            String.format(
+                                    "write(byte[%d], offset[%d], writeCount[%d]) - write count is greater than length of the source byte[]",
+                                    sourceBytes.length, offset, writeCount));
+                }
+                if ((offset + writeCount) - sourceBytes.length > 0) {
+                    throw new IndexOutOfBoundsException(
+                            String.format(
+                                    "write(byte[%d], offset[%d], writeCount[%d]) - offset plus write count <%d> is greater than length of the source byte[]",
+                                    sourceBytes.length, offset, writeCount, offset + writeCount));
+                }
 
-            ensureCapacity(writeCount);
-            System.arraycopy(sourceBytes, offset, buffer, availableByteCount, writeCount);
+                ensureCapacity(writeCount);
+                System.arraycopy(sourceBytes, offset, buffer, availableByteCount, writeCount);
 
-            for (int i = offset; i < writeCount && (startOfBlockIndex < 0 || endOfBlockIndex < 0); ++i) {
-                updateIndexes(sourceBytes[i], i);
+                for (int i = offset; i < writeCount && (startOfBlockIndex < 0 || endOfBlockIndex < 0); ++i) {
+                    updateIndexes(sourceBytes[i], i);
+                }
+
+                availableByteCount += writeCount;
             }
-
-            availableByteCount += writeCount;
+        } finally {
+            lock.unlock();
         }
     }
 
-    public synchronized void openMllpEnvelope() {
-        reset();
-        write(MllpProtocolConstants.START_OF_BLOCK);
-    }
-
-    public synchronized void closeMllpEnvelope() {
-        write(MllpProtocolConstants.PAYLOAD_TERMINATOR);
-    }
-
-    public synchronized void setEnvelopedMessage(byte[] hl7Payload) {
-        setEnvelopedMessage(hl7Payload, 0, hl7Payload != null ? hl7Payload.length : 0);
-    }
-
-    public synchronized void setEnvelopedMessage(byte[] hl7Payload, int offset, int length) {
-        reset();
-
-        if (hl7Payload != null && hl7Payload.length > 0) {
-            if (hl7Payload[0] != MllpProtocolConstants.START_OF_BLOCK) {
-                openMllpEnvelope();
-            }
-
-            write(hl7Payload, offset, length);
-
-            if (!hasCompleteEnvelope()) {
-                closeMllpEnvelope();
-            }
-        } else {
-            openMllpEnvelope();
-            closeMllpEnvelope();
+    public void openMllpEnvelope() {
+        lock.lock();
+        try {
+            reset();
+            write(MllpProtocolConstants.START_OF_BLOCK);
+        } finally {
+            lock.unlock();
         }
     }
 
-    public synchronized void reset() {
-        if (availableByteCount > 0) {
-            // TODO: May be able to get rid of this
-            Arrays.fill(buffer, (byte) 0);
+    public void closeMllpEnvelope() {
+        lock.lock();
+        try {
+            write(MllpProtocolConstants.PAYLOAD_TERMINATOR);
+        } finally {
+            lock.unlock();
         }
-
-        availableByteCount = 0;
-
-        startOfBlockIndex = -1;
-        endOfBlockIndex = -1;
     }
 
-    public synchronized void readFrom(Socket socket) throws MllpSocketException, SocketTimeoutException {
-        readFrom(socket, endpoint.getConfiguration().getReceiveTimeout(), endpoint.getConfiguration().getReadTimeout());
+    public void setEnvelopedMessage(byte[] hl7Payload) {
+        lock.lock();
+        try {
+            setEnvelopedMessage(hl7Payload, 0, hl7Payload != null ? hl7Payload.length : 0);
+        } finally {
+            lock.unlock();
+        }
     }
 
-    public synchronized void readFrom(Socket socket, int receiveTimeout, int readTimeout)
-            throws MllpSocketException, SocketTimeoutException {
-        if (socket != null && socket.isConnected() && !socket.isClosed()) {
-            LOG.trace("readFrom({}, {}, {}) - entering", socket, receiveTimeout, readTimeout);
-            ensureCapacity(minBufferSize);
+    public void setEnvelopedMessage(byte[] hl7Payload, int offset, int length) {
+        lock.lock();
+        try {
+            reset();
 
-            try {
-                InputStream socketInputStream = socket.getInputStream();
+            if (hl7Payload != null && hl7Payload.length > 0) {
+                if (hl7Payload[0] != MllpProtocolConstants.START_OF_BLOCK) {
+                    openMllpEnvelope();
+                }
 
-                socket.setSoTimeout(receiveTimeout);
+                write(hl7Payload, offset, length);
 
-                readSocketInputStream(socketInputStream, socket);
                 if (!hasCompleteEnvelope()) {
-                    socket.setSoTimeout(readTimeout);
-
-                    while (!hasCompleteEnvelope()) {
-                        ensureCapacity(Math.max(minBufferSize, socketInputStream.available()));
-                        readSocketInputStream(socketInputStream, socket);
-                    }
-                }
-
-            } catch (SocketTimeoutException timeoutEx) {
-                throw timeoutEx;
-            } catch (IOException ioEx) {
-                final String exceptionMessage
-                        = String.format("readFrom(%s, %d, %d) - IOException encountered", socket, receiveTimeout, readTimeout);
-                resetSocket(socket, exceptionMessage);
-                throw new MllpSocketException(exceptionMessage, ioEx);
-            } finally {
-                if (size() > 0 && !hasCompleteEnvelope()) {
-                    if (!hasEndOfData() && hasEndOfBlock() && endOfBlockIndex < size() - 1) {
-                        LOG.warn("readFrom({}, {}, {}) - exiting with partial payload {}", socket, receiveTimeout, readTimeout,
-                                hl7Util.convertToPrintFriendlyString(buffer, 0, size() - 1));
-                    }
-                }
-            }
-
-        } else {
-            LOG.warn("readFrom({}, {}, {}) - no data read because Socket is invalid", socket, receiveTimeout, readTimeout);
-        }
-
-        LOG.trace("readFrom({}, {}, {}) - exiting", socket, receiveTimeout, readTimeout);
-    }
-
-    public synchronized void writeTo(Socket socket) throws MllpSocketException {
-        if (socket != null && socket.isConnected() && !socket.isClosed()) {
-            LOG.trace("writeTo({}) - entering", socket);
-            if (!isEmpty()) {
-                try {
-                    OutputStream socketOutputStream = socket.getOutputStream();
-                    if (hasStartOfBlock()) {
-                        if (hasEndOfData()) {
-                            socketOutputStream.write(buffer, startOfBlockIndex, endOfBlockIndex - startOfBlockIndex + 2);
-                        } else if (hasEndOfBlock()) {
-                            socketOutputStream.write(buffer, startOfBlockIndex, endOfBlockIndex - startOfBlockIndex + 1);
-                            socketOutputStream.write(MllpProtocolConstants.END_OF_DATA);
-                        } else {
-                            socketOutputStream.write(buffer, startOfBlockIndex, availableByteCount - startOfBlockIndex);
-                            socketOutputStream.write(MllpProtocolConstants.PAYLOAD_TERMINATOR);
-                        }
-                    } else {
-                        socketOutputStream.write(MllpProtocolConstants.START_OF_BLOCK);
-                        socketOutputStream.write(buffer, 0, availableByteCount);
-                        socketOutputStream.write(MllpProtocolConstants.PAYLOAD_TERMINATOR);
-                    }
-                    socketOutputStream.flush();
-                } catch (IOException ioEx) {
-                    final String exceptionMessage = String.format("writeTo(%s) - IOException encountered", socket);
-                    resetSocket(socket, exceptionMessage);
-                    throw new MllpSocketException(exceptionMessage, ioEx);
+                    closeMllpEnvelope();
                 }
             } else {
-                LOG.warn("writeTo({}) - no data written because buffer is empty", socket);
+                openMllpEnvelope();
+                closeMllpEnvelope();
             }
-        } else {
-            LOG.warn("writeTo({}) - no data written because Socket is invalid", socket);
+        } finally {
+            lock.unlock();
         }
-
-        LOG.trace("writeTo({}) - exiting", socket);
     }
 
-    public synchronized byte[] toByteArray() {
-        if (availableByteCount > 0) {
-            return Arrays.copyOf(buffer, availableByteCount);
-        }
+    public void reset() {
+        lock.lock();
+        try {
+            if (availableByteCount > 0) {
+                // TODO: May be able to get rid of this
+                Arrays.fill(buffer, (byte) 0);
+            }
 
-        return null;
+            availableByteCount = 0;
+
+            startOfBlockIndex = -1;
+            endOfBlockIndex = -1;
+        } finally {
+            lock.unlock();
+        }
     }
 
-    public synchronized byte[] toByteArrayAndReset() {
-        byte[] answer = toByteArray();
+    public void readFrom(Socket socket) throws MllpSocketException, SocketTimeoutException {
+        lock.lock();
+        try {
+            readFrom(socket, endpoint.getConfiguration().getReceiveTimeout(), endpoint.getConfiguration().getReadTimeout());
+        } finally {
+            lock.unlock();
+        }
+    }
 
-        reset();
+    public void readFrom(Socket socket, int receiveTimeout, int readTimeout)
+            throws MllpSocketException, SocketTimeoutException {
+        lock.lock();
+        try {
+            if (socket != null && socket.isConnected() && !socket.isClosed()) {
+                LOG.trace("readFrom({}, {}, {}) - entering", socket, receiveTimeout, readTimeout);
+                ensureCapacity(minBufferSize);
 
-        return answer;
+                try {
+                    InputStream socketInputStream = socket.getInputStream();
+
+                    socket.setSoTimeout(receiveTimeout);
+
+                    readSocketInputStream(socketInputStream, socket);
+                    if (!hasCompleteEnvelope()) {
+                        socket.setSoTimeout(readTimeout);
+
+                        while (!hasCompleteEnvelope()) {
+                            ensureCapacity(Math.max(minBufferSize, socketInputStream.available()));
+                            readSocketInputStream(socketInputStream, socket);
+                        }
+                    }
+
+                } catch (SocketTimeoutException timeoutEx) {
+                    throw timeoutEx;
+                } catch (IOException ioEx) {
+                    final String exceptionMessage
+                            = String.format("readFrom(%s, %d, %d) - IOException encountered", socket, receiveTimeout,
+                                    readTimeout);
+                    resetSocket(socket, exceptionMessage);
+                    throw new MllpSocketException(exceptionMessage, ioEx);
+                } finally {
+                    if (size() > 0 && !hasCompleteEnvelope()) {
+                        if (!hasEndOfData() && hasEndOfBlock() && endOfBlockIndex < size() - 1) {
+                            LOG.warn("readFrom({}, {}, {}) - exiting with partial payload {}", socket, receiveTimeout,
+                                    readTimeout,
+                                    hl7Util.convertToPrintFriendlyString(buffer, 0, size() - 1));
+                        }
+                    }
+                }
+
+            } else {
+                LOG.warn("readFrom({}, {}, {}) - no data read because Socket is invalid", socket, receiveTimeout, readTimeout);
+            }
+
+            LOG.trace("readFrom({}, {}, {}) - exiting", socket, receiveTimeout, readTimeout);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void writeTo(Socket socket) throws MllpSocketException {
+        lock.lock();
+        try {
+            if (socket != null && socket.isConnected() && !socket.isClosed()) {
+                LOG.trace("writeTo({}) - entering", socket);
+                if (!isEmpty()) {
+                    try {
+                        OutputStream socketOutputStream = socket.getOutputStream();
+                        if (hasStartOfBlock()) {
+                            if (hasEndOfData()) {
+                                socketOutputStream.write(buffer, startOfBlockIndex, endOfBlockIndex - startOfBlockIndex + 2);
+                            } else if (hasEndOfBlock()) {
+                                socketOutputStream.write(buffer, startOfBlockIndex, endOfBlockIndex - startOfBlockIndex + 1);
+                                socketOutputStream.write(MllpProtocolConstants.END_OF_DATA);
+                            } else {
+                                socketOutputStream.write(buffer, startOfBlockIndex, availableByteCount - startOfBlockIndex);
+                                socketOutputStream.write(MllpProtocolConstants.PAYLOAD_TERMINATOR);
+                            }
+                        } else {
+                            socketOutputStream.write(MllpProtocolConstants.START_OF_BLOCK);
+                            socketOutputStream.write(buffer, 0, availableByteCount);
+                            socketOutputStream.write(MllpProtocolConstants.PAYLOAD_TERMINATOR);
+                        }
+                        socketOutputStream.flush();
+                    } catch (IOException ioEx) {
+                        final String exceptionMessage = String.format("writeTo(%s) - IOException encountered", socket);
+                        resetSocket(socket, exceptionMessage);
+                        throw new MllpSocketException(exceptionMessage, ioEx);
+                    }
+                } else {
+                    LOG.warn("writeTo({}) - no data written because buffer is empty", socket);
+                }
+            } else {
+                LOG.warn("writeTo({}) - no data written because Socket is invalid", socket);
+            }
+
+            LOG.trace("writeTo({}) - exiting", socket);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public byte[] toByteArray() {
+        lock.lock();
+        try {
+            if (availableByteCount > 0) {
+                return Arrays.copyOf(buffer, availableByteCount);
+            }
+
+            return null;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public byte[] toByteArrayAndReset() {
+        lock.lock();
+        try {
+            byte[] answer = toByteArray();
+
+            reset();
+
+            return answer;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
-    public synchronized String toString() {
-        if (charset != null) {
-            return toString(charset);
-        } else {
-            return toString(endpoint.getComponent().getDefaultCharset());
-        }
-    }
-
-    public synchronized String toString(Charset charset) {
-        if (availableByteCount > 0) {
-            return new String(buffer, 0, availableByteCount, charset);
-        }
-
-        return "";
-    }
-
-    public synchronized String toString(String charsetName) {
-        if (availableByteCount > 0) {
-            try {
-                if (Charset.isSupported(charsetName)) {
-                    return toString(Charset.forName(charsetName));
-                }
-            } catch (Exception charsetEx) {
-                // ignore
+    public String toString() {
+        lock.lock();
+        try {
+            if (charset != null) {
+                return toString(charset);
+            } else {
+                return toString(endpoint.getComponent().getDefaultCharset());
             }
+        } finally {
+            lock.unlock();
         }
+    }
 
-        return "";
+    public String toString(Charset charset) {
+        lock.lock();
+        try {
+            if (availableByteCount > 0) {
+                return new String(buffer, 0, availableByteCount, charset);
+            }
+
+            return "";
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public String toString(String charsetName) {
+        lock.lock();
+        try {
+            if (availableByteCount > 0) {
+                try {
+                    if (Charset.isSupported(charsetName)) {
+                        return toString(Charset.forName(charsetName));
+                    }
+                } catch (Exception charsetEx) {
+                    // ignore
+                }
+            }
+
+            return "";
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -311,12 +390,17 @@ public class MllpSocketBuffer {
      *
      * @return print-friendly String
      */
-    public synchronized String toPrintFriendlyString() {
-        if (availableByteCount > 0) {
-            return hl7Util.convertToPrintFriendlyString(buffer, 0, availableByteCount);
-        }
+    public String toPrintFriendlyString() {
+        lock.lock();
+        try {
+            if (availableByteCount > 0) {
+                return hl7Util.convertToPrintFriendlyString(buffer, 0, availableByteCount);
+            }
 
-        return "";
+            return "";
+        } finally {
+            lock.unlock();
+        }
     }
 
     public String toPrintFriendlyStringAndReset() {
@@ -327,40 +411,55 @@ public class MllpSocketBuffer {
         return answer;
     }
 
-    public synchronized String toHl7String() {
-        return this.toHl7String(charset);
+    public String toHl7String() {
+        lock.lock();
+        try {
+            return this.toHl7String(charset);
+        } finally {
+            lock.unlock();
+        }
     }
 
-    public synchronized String toHl7String(String charsetName) {
-        if (charsetName != null && !charsetName.isEmpty()) {
-            try {
-                if (Charset.isSupported(charsetName)) {
-                    return toHl7String(Charset.forName(charsetName));
+    public String toHl7String(String charsetName) {
+        lock.lock();
+        try {
+            if (charsetName != null && !charsetName.isEmpty()) {
+                try {
+                    if (Charset.isSupported(charsetName)) {
+                        return toHl7String(Charset.forName(charsetName));
+                    }
+                } catch (Exception charsetEx) {
+                    // ignore
                 }
-            } catch (Exception charsetEx) {
-                // ignore
             }
-        }
 
-        if (Charset.isSupported(endpoint.getComponent().getDefaultCharset())) {
-            return toHl7String(endpoint.getComponent().getDefaultCharset());
-        }
+            if (Charset.isSupported(endpoint.getComponent().getDefaultCharset())) {
+                return toHl7String(endpoint.getComponent().getDefaultCharset());
+            }
 
-        return "";
+            return "";
+        } finally {
+            lock.unlock();
+        }
     }
 
-    public synchronized String toHl7String(Charset charset) {
-        if (hasCompleteEnvelope()) {
-            int offset = hasStartOfBlock() ? startOfBlockIndex + 1 : 1;
-            int length = hasEndOfBlock() ? endOfBlockIndex - offset : availableByteCount - startOfBlockIndex - 1;
-            if (length > 0) {
-                return new String(buffer, offset, length, charset);
-            } else {
-                return "";
+    public String toHl7String(Charset charset) {
+        lock.lock();
+        try {
+            if (hasCompleteEnvelope()) {
+                int offset = hasStartOfBlock() ? startOfBlockIndex + 1 : 1;
+                int length = hasEndOfBlock() ? endOfBlockIndex - offset : availableByteCount - startOfBlockIndex - 1;
+                if (length > 0) {
+                    return new String(buffer, offset, length, charset);
+                } else {
+                    return "";
+                }
             }
-        }
 
-        return null;
+            return null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -369,138 +468,213 @@ public class MllpSocketBuffer {
      *
      * @return print-friendly String
      */
-    public synchronized String toPrintFriendlyHl7String() {
-        if (hasCompleteEnvelope()) {
-            int startPosition = hasStartOfBlock() ? startOfBlockIndex + 1 : 1;
-            int endPosition = hasEndOfBlock() ? endOfBlockIndex : availableByteCount - 1;
-            return hl7Util.convertToPrintFriendlyString(buffer, startPosition, endPosition);
-        }
-
-        return "";
-    }
-
-    public synchronized byte[] toMllpPayload() {
-        byte[] mllpPayload = null;
-
-        if (hasCompleteEnvelope()) {
-            int offset = hasStartOfBlock() ? startOfBlockIndex + 1 : 1;
-            int length = hasEndOfBlock() ? endOfBlockIndex - offset : availableByteCount - startOfBlockIndex - 1;
-
-            if (length > 0) {
-                mllpPayload = new byte[length];
-                System.arraycopy(buffer, offset, mllpPayload, 0, length);
-            } else {
-                mllpPayload = new byte[0];
+    public String toPrintFriendlyHl7String() {
+        lock.lock();
+        try {
+            if (hasCompleteEnvelope()) {
+                int startPosition = hasStartOfBlock() ? startOfBlockIndex + 1 : 1;
+                int endPosition = hasEndOfBlock() ? endOfBlockIndex : availableByteCount - 1;
+                return hl7Util.convertToPrintFriendlyString(buffer, startPosition, endPosition);
             }
+
+            return "";
+        } finally {
+            lock.unlock();
         }
-
-        return mllpPayload;
     }
 
-    public synchronized int getStartOfBlockIndex() {
-        return startOfBlockIndex;
-    }
+    public byte[] toMllpPayload() {
+        lock.lock();
+        try {
+            byte[] mllpPayload = null;
 
-    public synchronized int getEndOfBlockIndex() {
-        return endOfBlockIndex;
-    }
+            if (hasCompleteEnvelope()) {
+                int offset = hasStartOfBlock() ? startOfBlockIndex + 1 : 1;
+                int length = hasEndOfBlock() ? endOfBlockIndex - offset : availableByteCount - startOfBlockIndex - 1;
 
-    public synchronized boolean hasCompleteEnvelope() {
-        if (hasStartOfBlock()) {
-            if (isEndOfDataRequired()) {
-                return hasEndOfData();
-            } else {
-                return hasEndOfBlock();
-            }
-        }
-
-        return false;
-    }
-
-    public synchronized boolean hasStartOfBlock() {
-        return startOfBlockIndex >= 0;
-    }
-
-    public synchronized boolean hasEndOfBlock() {
-        return endOfBlockIndex >= 0;
-    }
-
-    public synchronized boolean hasEndOfData() {
-        if (hasEndOfBlock()) {
-            int potentialEndOfDataIndex = endOfBlockIndex + 1;
-            if (potentialEndOfDataIndex < availableByteCount
-                    && buffer[potentialEndOfDataIndex] == MllpProtocolConstants.END_OF_DATA) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public synchronized boolean hasOutOfBandData() {
-        return hasLeadingOutOfBandData() || hasTrailingOutOfBandData();
-    }
-
-    public synchronized boolean hasLeadingOutOfBandData() {
-        if (size() > 0) {
-            if (!hasStartOfBlock() || startOfBlockIndex > 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public synchronized boolean hasTrailingOutOfBandData() {
-        if (size() > 0) {
-            if (hasEndOfData()) {
-                if (endOfBlockIndex + 1 < size() - 1) {
-                    return true;
-                }
-            } else if (!isEndOfDataRequired()) {
-                if (hasEndOfBlock() && endOfBlockIndex < size() - 1) {
-                    return true;
+                if (length > 0) {
+                    mllpPayload = new byte[length];
+                    System.arraycopy(buffer, offset, mllpPayload, 0, length);
+                } else {
+                    mllpPayload = new byte[0];
                 }
             }
-        }
 
-        return false;
+            return mllpPayload;
+        } finally {
+            lock.unlock();
+        }
     }
 
-    public synchronized byte[] getLeadingOutOfBandData() {
-        byte[] outOfBandData = null;
-
-        if (hasLeadingOutOfBandData()) {
-            outOfBandData = new byte[startOfBlockIndex == -1 ? availableByteCount : startOfBlockIndex];
-            System.arraycopy(buffer, 0, outOfBandData, 0, outOfBandData.length);
+    public int getStartOfBlockIndex() {
+        lock.lock();
+        try {
+            return startOfBlockIndex;
+        } finally {
+            lock.unlock();
         }
-
-        return outOfBandData;
     }
 
-    public synchronized byte[] getTrailingOutOfBandData() {
-        byte[] outOfBandData = null;
-
-        if (hasTrailingOutOfBandData()) {
-            int offset = hasEndOfData() ? endOfBlockIndex + 2 : endOfBlockIndex + 1;
-            int length = size() - offset;
-            outOfBandData = new byte[length];
-            System.arraycopy(buffer, offset, outOfBandData, 0, length);
+    public int getEndOfBlockIndex() {
+        lock.lock();
+        try {
+            return endOfBlockIndex;
+        } finally {
+            lock.unlock();
         }
-
-        return outOfBandData;
     }
 
-    public synchronized int size() {
-        return availableByteCount;
+    public boolean hasCompleteEnvelope() {
+        lock.lock();
+        try {
+            if (hasStartOfBlock()) {
+                if (isEndOfDataRequired()) {
+                    return hasEndOfData();
+                } else {
+                    return hasEndOfBlock();
+                }
+            }
+
+            return false;
+        } finally {
+            lock.unlock();
+        }
     }
 
-    public synchronized int capacity() {
-        if (buffer != null) {
-            return buffer.length - availableByteCount;
+    public boolean hasStartOfBlock() {
+        lock.lock();
+        try {
+            return startOfBlockIndex >= 0;
+        } finally {
+            lock.unlock();
         }
+    }
 
-        return -1;
+    public boolean hasEndOfBlock() {
+        lock.lock();
+        try {
+            return endOfBlockIndex >= 0;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public boolean hasEndOfData() {
+        lock.lock();
+        try {
+            if (hasEndOfBlock()) {
+                int potentialEndOfDataIndex = endOfBlockIndex + 1;
+                if (potentialEndOfDataIndex < availableByteCount
+                        && buffer[potentialEndOfDataIndex] == MllpProtocolConstants.END_OF_DATA) {
+                    return true;
+                }
+            }
+
+            return false;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public boolean hasOutOfBandData() {
+        lock.lock();
+        try {
+            return hasLeadingOutOfBandData() || hasTrailingOutOfBandData();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public boolean hasLeadingOutOfBandData() {
+        lock.lock();
+        try {
+            if (size() > 0) {
+                if (!hasStartOfBlock() || startOfBlockIndex > 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public boolean hasTrailingOutOfBandData() {
+        lock.lock();
+        try {
+            if (size() > 0) {
+                if (hasEndOfData()) {
+                    if (endOfBlockIndex + 1 < size() - 1) {
+                        return true;
+                    }
+                } else if (!isEndOfDataRequired()) {
+                    if (hasEndOfBlock() && endOfBlockIndex < size() - 1) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public byte[] getLeadingOutOfBandData() {
+        lock.lock();
+        try {
+            byte[] outOfBandData = null;
+
+            if (hasLeadingOutOfBandData()) {
+                outOfBandData = new byte[startOfBlockIndex == -1 ? availableByteCount : startOfBlockIndex];
+                System.arraycopy(buffer, 0, outOfBandData, 0, outOfBandData.length);
+            }
+
+            return outOfBandData;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public byte[] getTrailingOutOfBandData() {
+        lock.lock();
+        try {
+            byte[] outOfBandData = null;
+
+            if (hasTrailingOutOfBandData()) {
+                int offset = hasEndOfData() ? endOfBlockIndex + 2 : endOfBlockIndex + 1;
+                int length = size() - offset;
+                outOfBandData = new byte[length];
+                System.arraycopy(buffer, offset, outOfBandData, 0, length);
+            }
+
+            return outOfBandData;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public int size() {
+        lock.lock();
+        try {
+            return availableByteCount;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public int capacity() {
+        lock.lock();
+        try {
+            if (buffer != null) {
+                return buffer.length - availableByteCount;
+            }
+
+            return -1;
+        } finally {
+            lock.unlock();
+        }
     }
 
     void ensureCapacity(int requiredAvailableCapacity) {
