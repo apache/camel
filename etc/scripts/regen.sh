@@ -22,23 +22,23 @@ set -e
 cd `dirname "$0"`/../..
 
 # Force clean
-git clean -fdx
+git clean -fd
 rm -Rf **/src/generated/
 
 # Regenerate everything
-if ./mvnw --batch-mode -Pregen -DskipTests ${MAVEN_EXTRA_ARGS} install >> build.log 2>&1; then
+if ./mvnw -T1C --batch-mode -Pregen -DskipTests ${MAVEN_EXTRA_ARGS} install > build-regen.log 2>&1; then
   echo "✅ mvn -Pregen succeeded."
 else
-  echo "❌ mvn -Pregen failed. Last 50 lines of build.log:"
-  tail -n 50 build.log
+  echo "❌ mvn -Pregen failed. Last 50 lines of build-regen.log:"
+  tail -n 50 build-regen.log
   exit 1
 fi
 
 # One additional pass to get the info for the 'others' jars
-if ./mvnw --batch-mode ${MAVEN_EXTRA_ARGS} install -f catalog/camel-catalog >> build.log 2>&1; then
+if ./mvnw --batch-mode ${MAVEN_EXTRA_ARGS} install -f catalog/camel-catalog > build-regen-catalog.log 2>&1; then
   echo "✅ mvn install for camel-catalog succeeded."
 else
-  echo "❌ mvn install for camel-catalog failed. Last 50 lines of build.log:"
-  tail -n 50 build.log
+  echo "❌ mvn install for camel-catalog failed. Last 50 lines of build-regen-catalog.log:"
+  tail -n 50 build-regen-catalog.log
   exit 1
 fi
