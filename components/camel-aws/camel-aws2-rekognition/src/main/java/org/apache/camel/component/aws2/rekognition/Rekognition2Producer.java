@@ -188,6 +188,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "associateFaces operation requires AssociateFacesRequest in POJO mode");
             }
         } else {
             AssociateFacesRequest.Builder builder = AssociateFacesRequest.builder();
@@ -237,6 +240,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "compareFaces operation requires CompareFacesRequest in POJO mode");
             }
         } else {
             CompareFacesRequest.Builder builder = CompareFacesRequest.builder();
@@ -281,6 +287,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "createCollection operation requires CreateCollectionRequest in POJO mode");
             }
         } else {
             CreateCollectionRequest.Builder builder = CreateCollectionRequest.builder();
@@ -313,6 +322,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "createUser operation requires CreateUserRequest in POJO mode");
             }
         } else {
             CreateUserRequest.Builder builder = CreateUserRequest.builder();
@@ -354,6 +366,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteCollection operation requires DeleteCollectionRequest in POJO mode");
             }
         } else {
             DeleteCollectionRequest.Builder builder = DeleteCollectionRequest.builder();
@@ -386,6 +401,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteFaces operation requires DeleteFacesRequest in POJO mode");
             }
         } else {
             DeleteFacesRequest.Builder builder = DeleteFacesRequest.builder();
@@ -422,6 +440,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteUser operation requires DeleteUserRequest in POJO mode");
             }
         } else {
             DeleteUserRequest.Builder builder = DeleteUserRequest.builder();
@@ -463,6 +484,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeCollection operation requires DescribeCollectionRequest in POJO mode");
             }
         } else {
             DescribeCollectionRequest.Builder builder = DescribeCollectionRequest.builder();
@@ -495,6 +519,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "detectFaces operation requires DetectFacesRequest in POJO mode");
             }
         } else {
             DetectFacesRequest.Builder builder = DetectFacesRequest.builder();
@@ -531,6 +558,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "detectLabels operation requires DetectLabelsRequest in POJO mode");
             }
         } else {
             DetectLabelsRequest.Builder builder = DetectLabelsRequest.builder();
@@ -581,6 +611,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "detectModerationLabels operation requires DetectModerationLabelsRequest in POJO mode");
             }
         } else {
             DetectModerationLabelsRequest.Builder builder = DetectModerationLabelsRequest.builder();
@@ -628,6 +661,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "detectProtectiveEquipment operation requires DetectProtectiveEquipmentRequest in POJO mode");
             }
         } else {
             DetectProtectiveEquipmentRequest.Builder builder = DetectProtectiveEquipmentRequest.builder();
@@ -667,6 +703,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "detectText operation requires DetectTextRequest in POJO mode");
             }
         } else {
             DetectTextRequest.Builder builder = DetectTextRequest.builder();
@@ -704,6 +743,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "disassociateFaces operation requires DisassociateFacesRequest in POJO mode");
             }
         } else {
             DisassociateFacesRequest.Builder builder = DisassociateFacesRequest.builder();
@@ -749,6 +791,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "getCelebrityInfo operation requires GetCelebrityInfoRequest in POJO mode");
             }
         } else {
             GetCelebrityInfoRequest.Builder builder = GetCelebrityInfoRequest.builder();
@@ -781,6 +826,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "getMediaAnalysisJob operation requires GetMediaAnalysisJobRequest in POJO mode");
             }
         } else {
             GetMediaAnalysisJobRequest.Builder builder = GetMediaAnalysisJobRequest.builder();
@@ -813,6 +861,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "indexFaces operation requires IndexFacesRequest in POJO mode");
             }
         } else {
             IndexFacesRequest.Builder builder = IndexFacesRequest.builder();
@@ -866,6 +917,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listCollections operation requires ListCollectionsRequest in POJO mode");
             }
         } else {
             ListCollectionsRequest.Builder builder = ListCollectionsRequest.builder();
@@ -902,6 +956,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listMediaAnalysisJobs operation requires ListMediaAnalysisJobsRequest in POJO mode");
             }
         } else {
             ListMediaAnalysisJobsRequest.Builder builder = ListMediaAnalysisJobsRequest.builder();
@@ -938,6 +995,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listFaces operation requires ListFacesRequest in POJO mode");
             }
         } else {
             ListFacesRequest.Builder builder = ListFacesRequest.builder();
@@ -986,6 +1046,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "listUsers operation requires ListUsersRequest in POJO mode");
             }
         } else {
             ListUsersRequest.Builder builder = ListUsersRequest.builder();
@@ -1026,6 +1089,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "recognizeCelebrities operation requires RecognizeCelebritiesRequest in POJO mode");
             }
         } else {
             RecognizeCelebritiesRequest.Builder builder = RecognizeCelebritiesRequest.builder();
@@ -1058,6 +1124,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "searchFaces operation requires SearchFacesRequest in POJO mode");
             }
         } else {
             SearchFacesRequest.Builder builder = SearchFacesRequest.builder();
@@ -1102,6 +1171,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "searchFacesByImage operation requires SearchFacesByImageRequest in POJO mode");
             }
         } else {
             SearchFacesByImageRequest.Builder builder = SearchFacesByImageRequest.builder();
@@ -1150,6 +1222,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "searchUsers operation requires SearchUsersRequest in POJO mode");
             }
         } else {
             SearchUsersRequest.Builder builder = SearchUsersRequest.builder();
@@ -1198,6 +1273,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "searchUsersByImage operation requires SearchUsersByImageRequest in POJO mode");
             }
         } else {
             SearchUsersByImageRequest.Builder builder = SearchUsersByImageRequest.builder();
@@ -1246,6 +1324,9 @@ public class Rekognition2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "startMediaAnalysisJob operation requires StartMediaAnalysisJobRequest in POJO mode");
             }
         } else {
             StartMediaAnalysisJobRequest.Builder builder = StartMediaAnalysisJobRequest.builder();

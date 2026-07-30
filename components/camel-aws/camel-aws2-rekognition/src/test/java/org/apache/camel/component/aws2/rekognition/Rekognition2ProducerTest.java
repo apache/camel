@@ -24,8 +24,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import software.amazon.awssdk.services.rekognition.model.*;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -496,6 +499,42 @@ public class Rekognition2ProducerTest extends CamelTestSupport {
         assertEquals("new-job-id", result.jobId());
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "direct:associateFacesPojo,associateFaces operation requires AssociateFacesRequest in POJO mode",
+            "direct:compareFacesPojo,compareFaces operation requires CompareFacesRequest in POJO mode",
+            "direct:createCollectionPojo,createCollection operation requires CreateCollectionRequest in POJO mode",
+            "direct:createUserPojo,createUser operation requires CreateUserRequest in POJO mode",
+            "direct:deleteCollectionPojo,deleteCollection operation requires DeleteCollectionRequest in POJO mode",
+            "direct:deleteFacesPojo,deleteFaces operation requires DeleteFacesRequest in POJO mode",
+            "direct:deleteUserPojo,deleteUser operation requires DeleteUserRequest in POJO mode",
+            "direct:describeCollectionPojo,describeCollection operation requires DescribeCollectionRequest in POJO mode",
+            "direct:detectFacesPojo,detectFaces operation requires DetectFacesRequest in POJO mode",
+            "direct:detectLabelsPojo,detectLabels operation requires DetectLabelsRequest in POJO mode",
+            "direct:detectModerationLabelsPojo,detectModerationLabels operation requires DetectModerationLabelsRequest in POJO mode",
+            "direct:detectProtectiveEquipmentPojo,detectProtectiveEquipment operation requires DetectProtectiveEquipmentRequest in POJO mode",
+            "direct:detectTextPojo,detectText operation requires DetectTextRequest in POJO mode",
+            "direct:disassociateFacesPojo,disassociateFaces operation requires DisassociateFacesRequest in POJO mode",
+            "direct:getCelebrityInfoPojo,getCelebrityInfo operation requires GetCelebrityInfoRequest in POJO mode",
+            "direct:getMediaAnalysisJobPojo,getMediaAnalysisJob operation requires GetMediaAnalysisJobRequest in POJO mode",
+            "direct:indexFacesPojo,indexFaces operation requires IndexFacesRequest in POJO mode",
+            "direct:listCollectionsPojo,listCollections operation requires ListCollectionsRequest in POJO mode",
+            "direct:listMediaAnalysisJobsPojo,listMediaAnalysisJobs operation requires ListMediaAnalysisJobsRequest in POJO mode",
+            "direct:listFacesPojo,listFaces operation requires ListFacesRequest in POJO mode",
+            "direct:listUsersPojo,listUsers operation requires ListUsersRequest in POJO mode",
+            "direct:recognizeCelebritiesPojo,recognizeCelebrities operation requires RecognizeCelebritiesRequest in POJO mode",
+            "direct:searchFacesPojo,searchFaces operation requires SearchFacesRequest in POJO mode",
+            "direct:searchFacesByImagePojo,searchFacesByImage operation requires SearchFacesByImageRequest in POJO mode",
+            "direct:searchUsersPojo,searchUsers operation requires SearchUsersRequest in POJO mode",
+            "direct:searchUsersByImagePojo,searchUsersByImage operation requires SearchUsersByImageRequest in POJO mode",
+            "direct:startMediaAnalysisJobPojo,startMediaAnalysisJob operation requires StartMediaAnalysisJobRequest in POJO mode",
+    })
+    void pojoRequestWithWrongBodyTypeThrows(String route, String expectedMessage) {
+        assertThatThrownBy(() -> template.requestBody(route, "not the expected request type"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(expectedMessage);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -582,6 +621,60 @@ public class Rekognition2ProducerTest extends CamelTestSupport {
                 from("direct:startMediaAnalysisJob")
                         .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=startMediaAnalysisJob")
                         .to("mock:result");
+                from("direct:associateFacesPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=associateFaces&pojoRequest=true");
+                from("direct:compareFacesPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=compareFaces&pojoRequest=true");
+                from("direct:createCollectionPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=createCollection&pojoRequest=true");
+                from("direct:createUserPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=createUser&pojoRequest=true");
+                from("direct:deleteCollectionPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=deleteCollection&pojoRequest=true");
+                from("direct:deleteFacesPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=deleteFaces&pojoRequest=true");
+                from("direct:deleteUserPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=deleteUser&pojoRequest=true");
+                from("direct:describeCollectionPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=describeCollection&pojoRequest=true");
+                from("direct:detectFacesPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=detectFaces&pojoRequest=true");
+                from("direct:detectLabelsPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=detectLabels&pojoRequest=true");
+                from("direct:detectModerationLabelsPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=detectModerationLabels&pojoRequest=true");
+                from("direct:detectProtectiveEquipmentPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=detectProtectiveEquipment&pojoRequest=true");
+                from("direct:detectTextPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=detectText&pojoRequest=true");
+                from("direct:disassociateFacesPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=disassociateFaces&pojoRequest=true");
+                from("direct:getCelebrityInfoPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=getCelebrityInfo&pojoRequest=true");
+                from("direct:getMediaAnalysisJobPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=getMediaAnalysisJob&pojoRequest=true");
+                from("direct:indexFacesPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=indexFaces&pojoRequest=true");
+                from("direct:listCollectionsPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=listCollections&pojoRequest=true");
+                from("direct:listMediaAnalysisJobsPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=listMediaAnalysisJobs&pojoRequest=true");
+                from("direct:listFacesPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=listFaces&pojoRequest=true");
+                from("direct:listUsersPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=listUsers&pojoRequest=true");
+                from("direct:recognizeCelebritiesPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=recognizeCelebrities&pojoRequest=true");
+                from("direct:searchFacesPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=searchFaces&pojoRequest=true");
+                from("direct:searchFacesByImagePojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=searchFacesByImage&pojoRequest=true");
+                from("direct:searchUsersPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=searchUsers&pojoRequest=true");
+                from("direct:searchUsersByImagePojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=searchUsersByImage&pojoRequest=true");
+                from("direct:startMediaAnalysisJobPojo")
+                        .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=startMediaAnalysisJob&pojoRequest=true");
             }
         };
     }
