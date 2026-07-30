@@ -23,6 +23,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 public class HibernateValidationProviderResolverTest extends CamelTestSupport {
@@ -58,7 +59,7 @@ public class HibernateValidationProviderResolverTest extends CamelTestSupport {
         CarWithAnnotations carWithNullFields = new CarWithAnnotations(null, null);
 
         // When
-        sendBody("direct:test", carWithNullFields);
+        TestSupport.sendBody(template, "direct:test", carWithNullFields);
 
         // Then
         MockEndpoint.assertIsSatisfied(context);

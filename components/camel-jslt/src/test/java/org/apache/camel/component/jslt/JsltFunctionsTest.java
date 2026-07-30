@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -53,7 +54,8 @@ public class JsltFunctionsTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived("1024.0");
 
-        sendBody("direct://start", "{}", Collections.singletonMap(JsltConstants.HEADER_JSLT_STRING, "power(2, 10)"));
+        TestSupport.sendBody(template, "direct://start", "{}",
+                Collections.singletonMap(JsltConstants.HEADER_JSLT_STRING, "power(2, 10)"));
 
         MockEndpoint.assertIsSatisfied(context);
     }

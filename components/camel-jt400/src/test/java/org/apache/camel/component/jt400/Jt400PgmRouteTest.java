@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,7 +70,7 @@ public class Jt400PgmRouteTest extends CamelTestSupport {
                 }
             };
             endpoint.expects(runnable);
-            sendBody("direct:a", new String[] { "1234", "", "" });
+            TestSupport.sendBody(template, "direct:a", new String[] { "1234", "", "" });
             endpoint.assertIsSatisfied();
         }
     }

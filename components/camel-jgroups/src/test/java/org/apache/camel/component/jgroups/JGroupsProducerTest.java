@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.Receiver;
@@ -75,7 +76,7 @@ public class JGroupsProducerTest extends CamelTestSupport {
     @Test
     public void shouldReceiveMulticastedBody() throws Exception {
         // When
-        sendBody("direct:start", MESSAGE);
+        TestSupport.sendBody(template, "direct:start", MESSAGE);
 
         // Then
         waitForMulticastChannel(5);
@@ -85,7 +86,7 @@ public class JGroupsProducerTest extends CamelTestSupport {
     @Test
     public void shouldNotSendNullMessage() throws Exception {
         // When
-        sendBody("direct:start", null);
+        TestSupport.sendBody(template, "direct:start", null);
 
         // Then
         waitForMulticastChannel(2);

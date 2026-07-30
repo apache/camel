@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.cache.Cache;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -37,7 +38,7 @@ public class JCacheProducerClearTest extends JCacheComponentTestSupport {
 
         headers.clear();
         headers.put(JCacheConstants.ACTION, "CLEAR");
-        sendBody("direct:clear", null, headers);
+        TestSupport.sendBody(template, "direct:clear", null, headers);
 
         assertFalse(cache.iterator().hasNext());
     }

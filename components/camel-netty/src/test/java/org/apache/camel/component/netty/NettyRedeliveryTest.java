@@ -36,6 +36,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -117,7 +118,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
 
         exception.setExpectedMessageCount(1);
 
-        sendBody("direct:start", LARGE_BUFFER_BODY);
+        TestSupport.sendBody(template, "direct:start", LARGE_BUFFER_BODY);
 
         exception.assertIsSatisfied();
 

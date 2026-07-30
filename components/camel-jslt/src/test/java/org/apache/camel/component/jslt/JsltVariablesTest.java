@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +48,7 @@ public class JsltVariablesTest extends CamelTestSupport {
         headers.put("type", "Controller");
         //add an infinite recursion value, cannot be serialized with Jackson
         headers.put("infinite", createInfiniteRecursionObject());
-        sendBody("direct://start",
+        TestSupport.sendBody(template, "direct://start",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/withVariables/input.json"),
                 headers);

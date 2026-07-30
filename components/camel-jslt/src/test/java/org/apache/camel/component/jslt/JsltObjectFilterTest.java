@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +52,7 @@ public class JsltObjectFilterTest extends CamelTestSupport {
                         .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
-        sendBody("direct://start",
+        TestSupport.sendBody(template, "direct://start",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/objectFilter/input.json"));
 

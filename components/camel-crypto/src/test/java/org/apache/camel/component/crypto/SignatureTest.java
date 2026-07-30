@@ -38,6 +38,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
@@ -195,7 +196,7 @@ public class SignatureTest extends CamelTestSupport {
     @Test
     void testBasicSignatureRoute() throws Exception {
         setupMock();
-        sendBody("direct:keypair", payload);
+        TestSupport.sendBody(template, "direct:keypair", payload);
         MockEndpoint.assertIsSatisfied(context);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -207,35 +208,35 @@ public class SignatureTest extends CamelTestSupport {
     @Test
     void testSetAlgorithmInRouteDefinition() throws Exception {
         setupMock();
-        sendBody("direct:algorithm", payload);
+        TestSupport.sendBody(template, "direct:algorithm", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testRSASHA1() throws Exception {
         setupMock();
-        sendBody("direct:rsa-sha1", payload);
+        TestSupport.sendBody(template, "direct:rsa-sha1", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testRSASHA256() throws Exception {
         setupMock();
-        sendBody("direct:rsa-sha256", payload);
+        TestSupport.sendBody(template, "direct:rsa-sha256", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetBufferInRouteDefinition() throws Exception {
         setupMock();
-        sendBody("direct:buffersize", payload);
+        TestSupport.sendBody(template, "direct:buffersize", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetRandomInRouteDefinition() throws Exception {
         setupMock();
-        sendBody("direct:random", payload);
+        TestSupport.sendBody(template, "direct:random", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -243,28 +244,28 @@ public class SignatureTest extends CamelTestSupport {
     @Test
     void testSetProviderInRouteDefinition() throws Exception {
         setupMock();
-        sendBody("direct:provider", payload);
+        TestSupport.sendBody(template, "direct:provider", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetCertificateInRouteDefinition() throws Exception {
         setupMock();
-        sendBody("direct:certificate", payload);
+        TestSupport.sendBody(template, "direct:certificate", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetKeystoreInRouteDefinition() throws Exception {
         setupMock();
-        sendBody("direct:keystore", payload);
+        TestSupport.sendBody(template, "direct:keystore", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetKeystoreParametersInRouteDefinition() throws Exception {
         setupMock();
-        sendBody("direct:keystoreParameters", payload);
+        TestSupport.sendBody(template, "direct:keystoreParameters", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 

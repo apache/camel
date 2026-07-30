@@ -19,6 +19,7 @@ package org.apache.camel.component.jt400;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -41,7 +42,7 @@ public class Jt400MultipleConsumersRouteTest extends CamelTestSupport {
         if (SYSTEM != null) {
             MockEndpoint endpoint = getMockEndpoint("mock:a");
             endpoint.expectedBodiesReceived("Test message");
-            sendBody("direct:a", "Test message");
+            TestSupport.sendBody(template, "direct:a", "Test message");
             endpoint.assertIsSatisfied();
         }
     }

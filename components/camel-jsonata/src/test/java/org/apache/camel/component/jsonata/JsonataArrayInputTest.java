@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +42,7 @@ class JsonataArrayInputTest extends CamelTestSupport {
                         .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
-        sendBody("direct://start-string",
+        TestSupport.sendBody(template, "direct://start-string",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jsonata/arrayinput/input.json"));
 
@@ -63,7 +64,7 @@ class JsonataArrayInputTest extends CamelTestSupport {
                         .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
-        sendBody("direct://start-jackson", body);
+        TestSupport.sendBody(template, "direct://start-jackson", body);
 
         MockEndpoint.assertIsSatisfied(context);
     }

@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +63,7 @@ public class InfluxDbProducerBatchTest extends AbstractInfluxDbTest {
         successEndpoint.expectedMessageCount(1);
 
         BatchPoints batchPoints = createBatchPoints();
-        sendBody("direct:test", batchPoints);
+        TestSupport.sendBody(template, "direct:test", batchPoints);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();

@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +42,7 @@ public class JsltBasicTest extends CamelTestSupport {
                         .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
-        sendBody("direct://start",
+        TestSupport.sendBody(template, "direct://start",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json"));
 
@@ -53,7 +54,7 @@ public class JsltBasicTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         //type integer is not allowed
-        sendBody("direct://start", 4);
+        TestSupport.sendBody(template, "direct://start", 4);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -68,7 +69,7 @@ public class JsltBasicTest extends CamelTestSupport {
                         .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
-        sendBody("direct://start",
+        TestSupport.sendBody(template, "direct://start",
                 IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json")));
 
@@ -88,7 +89,7 @@ public class JsltBasicTest extends CamelTestSupport {
         String text = IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
                 context, "org/apache/camel/component/jslt/demoPlayground/input.json"));
 
-        sendBody("direct://start", text.getBytes(StandardCharsets.UTF_8));
+        TestSupport.sendBody(template, "direct://start", text.getBytes(StandardCharsets.UTF_8));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -103,7 +104,7 @@ public class JsltBasicTest extends CamelTestSupport {
                         .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
-        sendBody("direct://startPrettyPrint",
+        TestSupport.sendBody(template, "direct://startPrettyPrint",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json"),
                 Collections.singletonMap(JsltConstants.HEADER_JSLT_RESOURCE_URI,

@@ -25,6 +25,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Type;
 import org.apache.kudu.client.KuduPredicate;
@@ -76,7 +77,7 @@ public class KuduScanTest extends AbstractKuduTest {
         errorEndpoint.expectedMessageCount(0);
         successEndpoint.expectedMessageCount(1);
 
-        sendBody("direct:scan", null);
+        TestSupport.sendBody(template, "direct:scan", null);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -120,7 +121,7 @@ public class KuduScanTest extends AbstractKuduTest {
         // without predicate
         Map<String, Object> headers = new HashMap<>();
         headers.put(KuduConstants.CAMEL_KUDU_SCAN_PREDICATE, null);
-        sendBody("direct:scan", null, headers);
+        TestSupport.sendBody(template, "direct:scan", null, headers);
         List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
                 .get(0).getIn().getBody(List.class);
         assertEquals(2, results.size(), "two records with id=1 and id=2 are expected to be returned");
@@ -129,7 +130,7 @@ public class KuduScanTest extends AbstractKuduTest {
         ColumnSchema schema = new ColumnSchema.ColumnSchemaBuilder("id", Type.INT32).build();
         KuduPredicate predicate = KuduPredicate.newComparisonPredicate(schema, KuduPredicate.ComparisonOp.EQUAL, 2);
         headers.put(KuduConstants.CAMEL_KUDU_SCAN_PREDICATE, predicate);
-        sendBody("direct:scan", null, headers);
+        TestSupport.sendBody(template, "direct:scan", null, headers);
         results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
                 .get(1).getIn().getBody(List.class);
         assertEquals(1, results.size(), "only one record with id=2 is expected to be returned");
@@ -146,7 +147,7 @@ public class KuduScanTest extends AbstractKuduTest {
         // without column names
         Map<String, Object> headers = new HashMap<>();
         headers.put(KuduConstants.CAMEL_KUDU_SCAN_COLUMN_NAMES, null);
-        sendBody("direct:scan", null, headers);
+        TestSupport.sendBody(template, "direct:scan", null, headers);
         List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
                 .get(0).getIn().getBody(List.class);
         assertEquals(5, results.get(0).size(), "returned rows are expected to have 5 columns");
@@ -154,7 +155,7 @@ public class KuduScanTest extends AbstractKuduTest {
         // with column names
         List<String> columnNames = Arrays.asList("id", "name");
         headers.put(KuduConstants.CAMEL_KUDU_SCAN_COLUMN_NAMES, columnNames);
-        sendBody("direct:scan", null, headers);
+        TestSupport.sendBody(template, "direct:scan", null, headers);
         results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges().get(1).getIn().getBody(List.class);
         Map<String, Object> result = results.get(0);
         assertEquals(2, result.size(), "returned rows are expected to have only 2 columns");
@@ -174,14 +175,14 @@ public class KuduScanTest extends AbstractKuduTest {
         // without limit
         Map<String, Object> headers = new HashMap<>();
         headers.put(KuduConstants.CAMEL_KUDU_SCAN_LIMIT, null);
-        sendBody("direct:scan", null, headers);
+        TestSupport.sendBody(template, "direct:scan", null, headers);
         List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
                 .get(0).getIn().getBody(List.class);
         assertEquals(2, results.size(), "returned result is expected to have 2 rows");
 
         // with limit
         headers.put(KuduConstants.CAMEL_KUDU_SCAN_LIMIT, 1L);
-        sendBody("direct:scan", null, headers);
+        TestSupport.sendBody(template, "direct:scan", null, headers);
         results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges().get(1).getIn().getBody(List.class);
         assertEquals(1, results.size(), "returned result is expected to have only 1 row");
 
@@ -197,7 +198,7 @@ public class KuduScanTest extends AbstractKuduTest {
         errorEndpoint.expectedMessageCount(0);
         successEndpoint.expectedMessageCount(1);
 
-        sendBody("direct:scan2", null);
+        TestSupport.sendBody(template, "direct:scan2", null);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();

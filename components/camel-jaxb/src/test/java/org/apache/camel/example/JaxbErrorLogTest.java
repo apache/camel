@@ -24,6 +24,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 public class JaxbErrorLogTest extends CamelTestSupport {
@@ -35,7 +36,7 @@ public class JaxbErrorLogTest extends CamelTestSupport {
 
         // FailingBean will cause message at index 2 to throw exception
         for (int i = 0; i < 5; i++) {
-            sendBody("seda:test", new CannotMarshal(i));
+            TestSupport.sendBody(template, "seda:test", new CannotMarshal(i));
         }
 
         MockEndpoint.assertIsSatisfied(context);

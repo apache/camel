@@ -26,6 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Schema;
 import org.apache.kudu.Type;
@@ -136,7 +137,7 @@ public class KuduProducerTest extends AbstractKuduTest {
         row.put("lastname", "Smith");
         row.put("address", "4359  Plainfield Avenue");
 
-        sendBody("direct:insert", row);
+        TestSupport.sendBody(template, "direct:insert", row);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -155,7 +156,7 @@ public class KuduProducerTest extends AbstractKuduTest {
         row.put("_double", ThreadLocalRandom.current().nextDouble(9000, 9999));
         row.put("_float", ThreadLocalRandom.current().nextFloat() * (499 - 100) + 100);
 
-        sendBody("direct:data", row);
+        TestSupport.sendBody(template, "direct:data", row);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -175,12 +176,12 @@ public class KuduProducerTest extends AbstractKuduTest {
         row.put("name", "Samuel");
         row.put("lastname", "Smith");
         row.put("address", "4359  Plainfield Avenue");
-        sendBody("direct:insert", row);
+        TestSupport.sendBody(template, "direct:insert", row);
 
         // Then delete it
         row = new HashMap<>();
         row.put("id", 5);
-        sendBody("direct:delete", row);
+        TestSupport.sendBody(template, "direct:delete", row);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -213,13 +214,13 @@ public class KuduProducerTest extends AbstractKuduTest {
         row.put("name", "Samuel");
         row.put("lastname", "Smith");
         row.put("address", "4359  Plainfield Avenue");
-        sendBody("direct:insert", row);
+        TestSupport.sendBody(template, "direct:insert", row);
 
         // Then update it
         row = new HashMap<>();
         row.put("id", 5);
         row.put("name", "John");
-        sendBody("direct:update", row);
+        TestSupport.sendBody(template, "direct:update", row);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -254,12 +255,12 @@ public class KuduProducerTest extends AbstractKuduTest {
         row.put("name", "Samuel");
         row.put("lastname", "Smith");
         row.put("address", "4359 Plainfield Avenue");
-        sendBody("direct:insert", row);
+        TestSupport.sendBody(template, "direct:insert", row);
 
         // Then update by upsert
         row.put("id", 5);
         row.put("name", "John");
-        sendBody("direct:upsert", row);
+        TestSupport.sendBody(template, "direct:upsert", row);
 
         // And insert by upsert
         row = new HashMap<>();
@@ -268,7 +269,7 @@ public class KuduProducerTest extends AbstractKuduTest {
         row.put("name", "Mary");
         row.put("lastname", "Smith");
         row.put("address", "4359 Plainfield Avenue");
-        sendBody("direct:upsert", row);
+        TestSupport.sendBody(template, "direct:upsert", row);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
