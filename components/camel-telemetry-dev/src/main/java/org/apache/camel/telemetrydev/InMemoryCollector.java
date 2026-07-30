@@ -19,36 +19,49 @@ package org.apache.camel.telemetrydev;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 /*
  * Basic inmemory implementation for an home made spans collector.
  */
 public class InMemoryCollector {
 
+    private final ReentrantLock lock = new ReentrantLock();
+
     // traceid --> spanid --> Span
     private Map<String, Map<String, DevSpanAdapter>> traceDB = new HashMap<>();
 
-    public synchronized void push(String traceId, DevSpanAdapter span) {
-        Map<String, DevSpanAdapter> spans = traceDB.get(traceId);
-        if (spans == null) {
-            spans = new HashMap<>();
-            traceDB.put(traceId, spans);
+    public void push(String traceId, DevSpanAdapter span) {
+        lock.lock();
+        try {
+            Map<String, DevSpanAdapter> spans = traceDB.get(traceId);
+            if (spans == null) {
+                spans = new HashMap<>();
+                traceDB.put(traceId, spans);
+            }
+            spans.put(span.getTag("spanid"), span);
+        } finally {
+            lock.unlock();
         }
-        spans.put(span.getTag("spanid"), span);
     }
 
-    public synchronized DevTrace get(String traceId) {
-        Map<String, DevSpanAdapter> spans = traceDB.get(traceId);
-        if (spans == null) {
-            return null;
-        }
-        for (DevSpanAdapter span : spans.values()) {
-            if (!"true".equals(span.getTag("isDone"))) {
-                // Still an active trace, not all spans are closed
+    public DevTrace get(String traceId) {
+        lock.lock();
+        try {
+            Map<String, DevSpanAdapter> spans = traceDB.get(traceId);
+            if (spans == null) {
                 return null;
             }
+            for (DevSpanAdapter span : spans.values()) {
+                if (!"true".equals(span.getTag("isDone"))) {
+                    // Still an active trace, not all spans are closed
+                    return null;
+                }
+            }
+            traceDB.remove(traceId);
+            return new DevTrace(traceId, new ArrayList<>(spans.values()));
+        } finally {
+            lock.unlock();
         }
-        traceDB.remove(traceId);
-        return new DevTrace(traceId, new ArrayList<>(spans.values()));
     }
 }

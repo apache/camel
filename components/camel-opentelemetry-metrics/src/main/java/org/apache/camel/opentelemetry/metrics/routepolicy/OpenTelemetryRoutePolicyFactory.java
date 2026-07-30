@@ -17,6 +17,7 @@
 package org.apache.camel.opentelemetry.metrics.routepolicy;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.opentelemetry.api.metrics.Meter;
 import org.apache.camel.CamelContext;
@@ -34,6 +35,7 @@ import org.apache.camel.support.service.ServiceSupport;
 public class OpenTelemetryRoutePolicyFactory extends ServiceSupport
         implements RoutePolicyFactory, CamelContextAware, NonManagedService, StaticService {
 
+    private final ReentrantLock lock = new ReentrantLock();
     private CamelContext camelContext;
     private Meter meter;
     private RouteMetric contextMetric;
@@ -92,14 +94,19 @@ public class OpenTelemetryRoutePolicyFactory extends ServiceSupport
         this.longTaskTimeUnit = longTaskTimeUnit;
     }
 
-    public synchronized RouteMetric createOrGetContextMetric(OpenTelemetryRoutePolicy policy) {
-        if (contextMetric == null) {
-            contextMetric = new OpenTelemetryContextMetricsStatistics(
-                    meter, camelContext, policy.getNamingStrategy(), policy.getConfiguration(),
-                    policy.isRegisterKamelets(), policy.isRegisterTemplates(),
-                    policy.getTimeUnit(), policy.getLongTaskTimeUnit());
+    public RouteMetric createOrGetContextMetric(OpenTelemetryRoutePolicy policy) {
+        lock.lock();
+        try {
+            if (contextMetric == null) {
+                contextMetric = new OpenTelemetryContextMetricsStatistics(
+                        meter, camelContext, policy.getNamingStrategy(), policy.getConfiguration(),
+                        policy.isRegisterKamelets(), policy.isRegisterTemplates(),
+                        policy.getTimeUnit(), policy.getLongTaskTimeUnit());
+            }
+            return contextMetric;
+        } finally {
+            lock.unlock();
         }
-        return contextMetric;
     }
 
     @Override
