@@ -1983,6 +1983,10 @@ public class LlmClient {
         return tryHealthCheck(healthUrl, Map.of(), false);
     }
 
+    private boolean tryHealthCheck(String healthUrl, Map<String, String> headers) {
+        return tryHealthCheck(healthUrl, headers, false);
+    }
+
     private boolean tryHealthCheck(String healthUrl, Map<String, String> headers, boolean azureEndpoint) {
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder()
