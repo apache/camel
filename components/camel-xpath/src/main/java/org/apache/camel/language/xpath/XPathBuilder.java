@@ -70,6 +70,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.concurrent.ContextValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +106,7 @@ public class XPathBuilder extends ServiceSupport
     private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<>();
     private final Queue<XPathExpression> poolLogNamespaces = new ConcurrentLinkedQueue<>();
     private final String text;
-    private final ThreadLocal<Exchange> exchange = new ThreadLocal<>();
+    private final ContextValue<Exchange> exchange = ContextValue.newThreadLocal("XPathExchange");
     private final MessageVariableResolver variableResolver = new MessageVariableResolver(exchange);
     private final Map<String, String> namespaces = new ConcurrentHashMap<>();
     private boolean preCompile = true;

@@ -42,6 +42,7 @@ import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.io.AS2BHttpServerConnection;
 import org.apache.camel.component.as2.api.protocol.ResponseMDN;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.concurrent.ContextValue;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ConnectionClosedException;
 import org.apache.hc.core5.http.EntityDetails;
@@ -124,7 +125,8 @@ public class AS2ServerConnection {
      * Stores the request-specific AS2ConsumerConfiguration and path. Used for post-processing logic (like asynchronous
      * MDN) after the main HttpService handling is complete.
      */
-    private static final ThreadLocal<ThreadLocalConfigWrapper> CURRENT_CONSUMER_CONFIG = new ThreadLocal<>();
+    private static final ContextValue<ThreadLocalConfigWrapper> CURRENT_CONSUMER_CONFIG
+            = ContextValue.newThreadLocal("AS2ConsumerConfig");
 
     /**
      * Configuration data holding all necessary security material (signing keys/certs and decryption keys/certs) for a
