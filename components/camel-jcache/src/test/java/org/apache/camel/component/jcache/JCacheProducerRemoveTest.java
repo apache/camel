@@ -23,6 +23,7 @@ import javax.cache.Cache;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -43,7 +44,7 @@ public class JCacheProducerRemoveTest extends JCacheComponentTestSupport {
         headers.clear();
         headers.put(JCacheConstants.ACTION, "REMOVE");
         headers.put(JCacheConstants.KEY, key);
-        sendBody("direct:remove", null, headers);
+        TestSupport.sendBody(template, "direct:remove", null, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:remove");
         mock.expectedMinimumMessageCount(1);
@@ -68,7 +69,7 @@ public class JCacheProducerRemoveTest extends JCacheComponentTestSupport {
         headers.put(JCacheConstants.ACTION, "REMOVE");
         headers.put(JCacheConstants.KEY, key);
         headers.put(JCacheConstants.OLD_VALUE, val);
-        sendBody("direct:remove-if", null, headers);
+        TestSupport.sendBody(template, "direct:remove-if", null, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:remove-if");
         mock.expectedMinimumMessageCount(1);
@@ -93,7 +94,7 @@ public class JCacheProducerRemoveTest extends JCacheComponentTestSupport {
         headers.put(JCacheConstants.ACTION, "REMOVE");
         headers.put(JCacheConstants.KEY, key);
         headers.put(JCacheConstants.OLD_VALUE, "x");
-        sendBody("direct:remove-if-failure", null, headers);
+        TestSupport.sendBody(template, "direct:remove-if-failure", null, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:remove-if-failure");
         mock.expectedMinimumMessageCount(1);
@@ -114,7 +115,7 @@ public class JCacheProducerRemoveTest extends JCacheComponentTestSupport {
 
         headers.clear();
         headers.put(JCacheConstants.ACTION, "REMOVEALL");
-        sendBody("direct:remove-all", null, headers);
+        TestSupport.sendBody(template, "direct:remove-all", null, headers);
 
         for (Object key : values.keySet()) {
             assertFalse(cache.containsKey(key));
@@ -135,7 +136,7 @@ public class JCacheProducerRemoveTest extends JCacheComponentTestSupport {
         headers.clear();
         headers.put(JCacheConstants.ACTION, "REMOVEALL");
         headers.put(JCacheConstants.KEYS, values2.keySet());
-        sendBody("direct:remove-subset", null, headers);
+        TestSupport.sendBody(template, "direct:remove-subset", null, headers);
 
         for (Object key : values1.keySet()) {
             assertTrue(cache.containsKey(key));

@@ -17,6 +17,7 @@
 package org.apache.camel.component.spring.batch.support;
 
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +35,7 @@ public class CamelItemReaderTest extends CamelTestSupport {
     @Override
     protected void doPostSetup() throws Exception {
         camelItemReader = new CamelItemReader<>(consumer(), "seda:start");
-        sendBody("seda:start", message);
+        TestSupport.sendBody(template, "seda:start", message);
     }
 
     // Tests

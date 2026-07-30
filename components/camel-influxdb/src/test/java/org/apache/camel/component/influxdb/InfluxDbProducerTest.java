@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -61,7 +62,7 @@ public class InfluxDbProducerTest extends AbstractInfluxDbTest {
         successEndpoint.expectedMessageCount(1);
 
         Map<String, Object> pointMap = createMapPoint();
-        sendBody("direct:test", pointMap);
+        TestSupport.sendBody(template, "direct:test", pointMap);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -76,7 +77,7 @@ public class InfluxDbProducerTest extends AbstractInfluxDbTest {
 
         Map<String, Object> pointMap = createMapPoint();
         Map<String, Object> header = createHeader();
-        sendBody("direct:test", pointMap, header);
+        TestSupport.sendBody(template, "direct:test", pointMap, header);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -91,7 +92,7 @@ public class InfluxDbProducerTest extends AbstractInfluxDbTest {
 
         Map<String, Object> pointMap = new HashMap<>();
         pointMap.remove(InfluxDbConstants.MEASUREMENT_NAME);
-        sendBody("direct:test", pointMap);
+        TestSupport.sendBody(template, "direct:test", pointMap);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();

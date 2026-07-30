@@ -27,6 +27,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -105,7 +106,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     @Test
     public void shouldRunJob() throws Exception {
         // When
-        sendBody("direct:start", "Start the job, please.");
+        TestSupport.sendBody(template, "direct:start", "Start the job, please.");
 
         // Then
         verify(jobLauncher).run(eq(job), any(JobParameters.class));
@@ -118,7 +119,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         when(jobLauncher.run(eq(job), any(JobParameters.class))).thenReturn(jobExecution);
 
         // When
-        sendBody("direct:start", "Start the job, please.");
+        TestSupport.sendBody(template, "direct:start", "Start the job, please.");
 
         // Then
         mockEndpoint.expectedBodiesReceived(jobExecution);

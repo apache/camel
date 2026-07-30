@@ -19,6 +19,7 @@ package org.apache.camel.component.jsonpatch;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +29,7 @@ public class JsonPatchComponentTest extends CamelTestSupport {
     @Test
     public void testCamelJsonPatch() {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        sendBody("direct:foo", "{ \"a\": \"b\" }");
+        TestSupport.sendBody(template, "direct:foo", "{ \"a\": \"b\" }");
         assertEquals(1, mock.getReceivedExchanges().size());
         assertEquals("{\"c\":\"b\"}", mock.getReceivedExchanges().get(0).getIn().getBody(String.class));
     }
@@ -37,7 +38,7 @@ public class JsonPatchComponentTest extends CamelTestSupport {
     public void testSendToDeadLetterChannelIfPatchError() {
         MockEndpoint mock = getMockEndpoint("mock:errors");
         String source = "{ \"a\": \"b\" }";
-        sendBody("direct:patch_error", source);
+        TestSupport.sendBody(template, "direct:patch_error", source);
         assertEquals(1, mock.getReceivedExchanges().size());
         assertEquals(source, mock.getReceivedExchanges().get(0).getIn().getBody(String.class));
     }

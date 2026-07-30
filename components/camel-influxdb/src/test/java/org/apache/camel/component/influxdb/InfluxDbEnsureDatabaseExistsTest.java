@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
@@ -76,7 +77,7 @@ public class InfluxDbEnsureDatabaseExistsTest extends AbstractInfluxDbTest {
 
         Mockito.when(mockedDbConnection.query(Mockito.any(Query.class))).thenReturn(queryResult);
 
-        sendBody("direct:test", createPoint());
+        TestSupport.sendBody(template, "direct:test", createPoint());
 
         //if db exist, there will be only 1 call to show databases.
         Mockito.verify(mockedDbConnection, Mockito.times(2)).query(Mockito.any(Query.class));
@@ -94,7 +95,7 @@ public class InfluxDbEnsureDatabaseExistsTest extends AbstractInfluxDbTest {
         QueryResult queryResult = new QueryResult();
         queryResult.setResults(Collections.singletonList(new QueryResult.Result()));
 
-        sendBody("direct:test", createPoint());
+        TestSupport.sendBody(template, "direct:test", createPoint());
 
         //if db does not exist, there will be 2 queries (show databases and create database)
         Mockito.verify(mockedDbConnection, Mockito.times(2)).query(Mockito.any(Query.class));

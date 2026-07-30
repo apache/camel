@@ -23,6 +23,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 public class NettySingleCodecTest extends BaseNettyTest {
@@ -38,7 +39,7 @@ public class NettySingleCodecTest extends BaseNettyTest {
         String poem = new Poetry().getPoem();
         MockEndpoint mock = getMockEndpoint("mock:single-codec");
         mock.expectedBodiesReceived(poem);
-        sendBody("direct:single-codec", poem);
+        TestSupport.sendBody(template, "direct:single-codec", poem);
         mock.await(1, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
 

@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,7 +47,7 @@ public class JsonPathCharsetTest extends CamelTestSupport {
     public void testUTF16BEFile() throws Exception {
         getMockEndpoint("mock:authors").expectedMessageCount(1);
 
-        sendBody("direct:start", new File("src/test/resources/booksUTF16BE.json"));
+        TestSupport.sendBody(template, "direct:start", new File("src/test/resources/booksUTF16BE.json"));
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -57,7 +58,7 @@ public class JsonPathCharsetTest extends CamelTestSupport {
     public void testUTF16LEFile() throws Exception {
         getMockEndpoint("mock:authors").expectedMessageCount(1);
 
-        sendBody("direct:start", new File("src/test/resources/booksUTF16LE.json"));
+        TestSupport.sendBody(template, "direct:start", new File("src/test/resources/booksUTF16LE.json"));
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -70,7 +71,7 @@ public class JsonPathCharsetTest extends CamelTestSupport {
 
         InputStream input = JsonPathCharsetTest.class.getClassLoader().getResourceAsStream("booksUTF16BE.json");
         assertNotNull(input);
-        sendBody("direct:start", input);
+        TestSupport.sendBody(template, "direct:start", input);
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -83,7 +84,7 @@ public class JsonPathCharsetTest extends CamelTestSupport {
 
         URL url = new URL("file:src/test/resources/booksUTF16BE.json");
         assertNotNull(url);
-        sendBody("direct:start", url);
+        TestSupport.sendBody(template, "direct:start", url);
 
         check();
     }
@@ -94,7 +95,7 @@ public class JsonPathCharsetTest extends CamelTestSupport {
 
         URL url = new URL("file:src/test/resources/germanbooks-iso-8859-1.json");
         assertNotNull(url);
-        sendBody("direct:start", url,
+        TestSupport.sendBody(template, "direct:start", url,
                 Collections.<String, Object> singletonMap(JsonPathConstants.HEADER_JSON_ENCODING, "ISO-8859-1"));
 
         check("Joseph und seine Brüder", "Götzendämmerung");

@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +36,7 @@ public class JsltQueryTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived("\"2017-05-04T09:13:29+02:00\"");
 
-        sendBody("direct://start",
+        TestSupport.sendBody(template, "direct://start",
                 IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json")),
                 Collections.singletonMap(JsltConstants.HEADER_JSLT_STRING, ".published"));

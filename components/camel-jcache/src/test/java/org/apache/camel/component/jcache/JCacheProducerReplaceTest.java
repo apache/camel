@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,7 +47,7 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
         headers.clear();
         headers.put(JCacheConstants.ACTION, "REPLACE");
         headers.put(JCacheConstants.KEY, key);
-        sendBody("direct:replace", val1, headers);
+        TestSupport.sendBody(template, "direct:replace", val1, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:replace");
         mock.expectedMinimumMessageCount(1);
@@ -80,7 +81,7 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
         headers.put(JCacheConstants.ACTION, "REPLACE");
         headers.put(JCacheConstants.KEY, key);
         headers.put(JCacheConstants.OLD_VALUE, val);
-        sendBody("direct:replace", val1, headers);
+        TestSupport.sendBody(template, "direct:replace", val1, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:replace");
         mock.expectedMinimumMessageCount(1);
@@ -114,7 +115,7 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
         headers.put(JCacheConstants.ACTION, "REPLACE");
         headers.put(JCacheConstants.KEY, key);
         headers.put(JCacheConstants.OLD_VALUE, val1);
-        sendBody("direct:replace", val1, headers);
+        TestSupport.sendBody(template, "direct:replace", val1, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:replace");
         mock.expectedMinimumMessageCount(1);
@@ -146,7 +147,7 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
         headers.clear();
         headers.put(JCacheConstants.ACTION, "REPLACE");
         headers.put(JCacheConstants.KEY, key);
-        sendBody("direct:replace-fail", val, headers);
+        TestSupport.sendBody(template, "direct:replace-fail", val, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:replace-fail");
         mock.expectedMinimumMessageCount(1);

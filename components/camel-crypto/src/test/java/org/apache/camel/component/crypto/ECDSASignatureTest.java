@@ -30,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
@@ -91,7 +92,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
         assumeFalse(!canRun, "Test preconditions failed: canRun=" + canRun);
 
         setupMock();
-        sendBody("direct:ecdsa-sha1", payload);
+        TestSupport.sendBody(template, "direct:ecdsa-sha1", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 

@@ -32,6 +32,7 @@ import org.apache.camel.component.influxdb2.data.Points;
 import org.apache.camel.component.influxdb2.data.Record;
 import org.apache.camel.component.influxdb2.data.Records;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -79,7 +80,7 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
 
         Point point = Point.measurement("temperature");
 
-        sendBody("direct:test", point);
+        TestSupport.sendBody(template, "direct:test", point);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -102,7 +103,7 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
         });
 
         Map<String, Object> pointMap = createMapPoint();
-        sendBody("direct:test", pointMap);
+        TestSupport.sendBody(template, "direct:test", pointMap);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -125,7 +126,7 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
             }
         });
 
-        sendBody("direct:test", record);
+        TestSupport.sendBody(template, "direct:test", record);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -152,7 +153,7 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
 
         Measurement measurement = Measurement.fromObject(temperature);
 
-        sendBody("direct:test", measurement);
+        TestSupport.sendBody(template, "direct:test", measurement);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -177,7 +178,7 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
             }
         };
 
-        sendBody("direct:test", Points.create(points));
+        TestSupport.sendBody(template, "direct:test", Points.create(points));
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -197,7 +198,7 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
             }
         });
 
-        sendBody("direct:test", Records.create("temperature,location=north value=60.0"));
+        TestSupport.sendBody(template, "direct:test", Records.create("temperature,location=north value=60.0"));
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -224,7 +225,7 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
         Measurement measurement = Measurement.fromObject(temperature);
 
         Measurements.create(measurement);
-        sendBody("direct:test", Records.create("temperature,location=north value=60.0"));
+        TestSupport.sendBody(template, "direct:test", Records.create("temperature,location=north value=60.0"));
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
@@ -247,7 +248,7 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
 
         Map<String, Object> pointMap = createMapPoint();
         pointMap.remove(InfluxDb2Constants.MEASUREMENT);
-        sendBody("direct:test", pointMap);
+        TestSupport.sendBody(template, "direct:test", pointMap);
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();

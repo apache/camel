@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +45,7 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
         headers.clear();
         headers.put(JCacheConstants.ACTION, "PUT");
         headers.put(JCacheConstants.KEY, key);
-        sendBody("direct:put", val, headers);
+        TestSupport.sendBody(template, "direct:put", val, headers);
 
         assertTrue(cache.containsKey(key));
         assertEquals(val, cache.get(key));
@@ -60,7 +61,7 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
 
         headers.clear();
         headers.put(JCacheConstants.KEY, key);
-        sendBody("direct:put-with-default-action", val, headers);
+        TestSupport.sendBody(template, "direct:put-with-default-action", val, headers);
 
         assertTrue(cache.containsKey(key));
         assertEquals(val, cache.get(key));
@@ -77,7 +78,7 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
         headers.clear();
         headers.put(JCacheConstants.ACTION, "PUTIFABSENT");
         headers.put(JCacheConstants.KEY, key);
-        sendBody("direct:put-if-absent", val, headers);
+        TestSupport.sendBody(template, "direct:put-if-absent", val, headers);
 
         assertTrue(cache.containsKey(key));
         assertEquals(val, cache.get(key));
@@ -110,7 +111,7 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
         headers.clear();
         headers.put(JCacheConstants.ACTION, "PUTIFABSENT");
         headers.put(JCacheConstants.KEY, key);
-        sendBody("direct:put-if-absent", val, headers);
+        TestSupport.sendBody(template, "direct:put-if-absent", val, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:put-if-absent");
         mock.expectedMinimumMessageCount(1);
@@ -138,7 +139,7 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
         headers.put(JCacheConstants.ACTION, "PUTALL");
         headers.put(JCacheConstants.KEY, values);
 
-        sendBody("direct:put", values, headers);
+        TestSupport.sendBody(template, "direct:put", values, headers);
 
         for (Map.Entry<Object, Object> entry : values.entrySet()) {
             assertTrue(cache.containsKey(entry.getKey()));

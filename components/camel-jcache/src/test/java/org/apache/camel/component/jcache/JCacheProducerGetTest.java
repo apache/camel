@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -49,7 +50,7 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         headers.clear();
         headers.put(JCacheConstants.ACTION, "GET");
         headers.put(JCacheConstants.KEY, key);
-        sendBody("direct:get", null, headers);
+        TestSupport.sendBody(template, "direct:get", null, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:get");
         mock.expectedMinimumMessageCount(1);
@@ -78,7 +79,7 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         headers.clear();
         headers.put(JCacheConstants.ACTION, "GETANDREMOVE");
         headers.put(JCacheConstants.KEY, key);
-        sendBody("direct:get-and-remove", null, headers);
+        TestSupport.sendBody(template, "direct:get-and-remove", null, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:get-and-remove");
         mock.expectedMinimumMessageCount(1);
@@ -110,7 +111,7 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         headers.clear();
         headers.put(JCacheConstants.ACTION, "GETANDREPLACE");
         headers.put(JCacheConstants.KEY, key);
-        sendBody("direct:get-and-replace", val2, headers);
+        TestSupport.sendBody(template, "direct:get-and-replace", val2, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:get-and-replace");
         mock.expectedMinimumMessageCount(1);
@@ -140,7 +141,7 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         headers.clear();
         headers.put(JCacheConstants.ACTION, "GETANDPUT");
         headers.put(JCacheConstants.KEY, key);
-        sendBody("direct:get-and-put", val2, headers);
+        TestSupport.sendBody(template, "direct:get-and-put", val2, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:get-and-put");
         mock.expectedMinimumMessageCount(1);
@@ -173,7 +174,7 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         headers.put(JCacheConstants.ACTION, "GETALL");
         headers.put(JCacheConstants.KEYS, values.keySet());
 
-        sendBody("direct:get-all", values, headers);
+        TestSupport.sendBody(template, "direct:get-all", values, headers);
 
         MockEndpoint mock = getMockEndpoint("mock:get-all");
         mock.expectedMinimumMessageCount(1);

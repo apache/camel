@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -87,7 +88,7 @@ public class SpringBatchEndpointDynamicTest extends CamelTestSupport {
         errorEndpoint.expectedMessageCount(1);
 
         //dynamic job should fail as header is not present and the job is dynamic
-        sendBody("direct:dyanmic?block=false", "Start the job, please.");
+        TestSupport.sendBody(template, "direct:dyanmic?block=false", "Start the job, please.");
         mockEndpoint.assertIsSatisfied();
         mockEndpoint.assertIsSatisfied();
     }
@@ -100,7 +101,7 @@ public class SpringBatchEndpointDynamicTest extends CamelTestSupport {
 
         //dynamic job should fail as header is present but the job does not exist
         header(SpringBatchConstants.JOB_NAME).append("thisJobDoesNotExsistAtAll" + Date.from(Instant.now()));
-        sendBody("direct:dyanmic?block=false", "Start the job, please.");
+        TestSupport.sendBody(template, "direct:dyanmic?block=false", "Start the job, please.");
 
         mockEndpoint.assertIsSatisfied();
         mockEndpoint.assertIsSatisfied();
@@ -115,7 +116,7 @@ public class SpringBatchEndpointDynamicTest extends CamelTestSupport {
         final Map<String, Object> headers = new HashMap<>();
         headers.put(SpringBatchConstants.JOB_NAME, "dynamicMockjob");
 
-        sendBody("direct:dynamic?block=false", "Start the job, please.", headers);
+        TestSupport.sendBody(template, "direct:dynamic?block=false", "Start the job, please.", headers);
 
         mockEndpoint.assertIsSatisfied();
         errorEndpoint.assertIsSatisfied();
@@ -133,7 +134,7 @@ public class SpringBatchEndpointDynamicTest extends CamelTestSupport {
         headers.put(SpringBatchConstants.JOB_NAME, "dyanmicMockJobFromJobRegistry");
         headers.put("jobRegistry", "#jobRegistry");
 
-        sendBody("direct:dynamicWithJobRegistry", "Start the job, please.", headers);
+        TestSupport.sendBody(template, "direct:dynamicWithJobRegistry", "Start the job, please.", headers);
 
         mockEndpoint.assertIsSatisfied();
         errorEndpoint.assertIsSatisfied();

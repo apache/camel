@@ -27,6 +27,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 public class MultipleCodecsTest extends BaseNettyTest {
@@ -68,7 +69,7 @@ public class MultipleCodecsTest extends BaseNettyTest {
         String poem = new Poetry().getPoem();
         MockEndpoint mock = getMockEndpoint("mock:multiple-codec");
         mock.expectedBodiesReceived(poem);
-        sendBody("direct:multiple-codec", poem);
+        TestSupport.sendBody(template, "direct:multiple-codec", poem);
         mock.await(1, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
 
