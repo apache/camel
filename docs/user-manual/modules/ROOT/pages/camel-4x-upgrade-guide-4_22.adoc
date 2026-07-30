@@ -366,6 +366,23 @@ Component metadata for exchange property `CamelOpenAIResponse` (`storeFullRespon
 update imports and `exchange.getProperty(..., ChatCompletion.class)` references if your code still
 uses the old package name.
 
+==== Configurable tool error strategies in the agentic loop
+
+Two new endpoint options control how the agentic loop handles tool execution errors and hallucinated
+tool names:
+
+* `toolExecutionErrorStrategy` — default `failExchange` (propagates exceptions to the Camel exchange).
+  Set to `repromptModel` to catch exceptions and send them back to the model as tool results so it can
+  attempt recovery. Note that `repromptModel` sends raw exception messages to the LLM provider, which
+  may include internal details.
+* `hallucinatedToolNameStrategy` — default `failExchange` (throws `IllegalStateException`). Set to
+  `repromptModel` to send a corrective tool result listing available tools.
+
+Previously, tool execution errors were always sent back to the model and hallucinated tool names always
+threw an `IllegalStateException`. The new defaults change the tool execution error behavior: errors now
+propagate to the exchange by default. Routes that rely on the model recovering from tool errors must
+add `&toolExecutionErrorStrategy=repromptModel` to their endpoint URI.
+
 The `conversationMemory` feature on the `chat-completion` operation has two behavior fixes:
 
 * User messages are now stored in the `CamelOpenAIConversationHistory` exchange property (configurable via

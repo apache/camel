@@ -41,7 +41,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class OpenAIProducerMcpMockTest extends CamelTestSupport {
+class OpenAIProducerMcpMockTest extends CamelTestSupport {
 
     @RegisterExtension
     public OpenAIMock openAIMock = new OpenAIMock().builder()
@@ -91,6 +91,11 @@ public class OpenAIProducerMcpMockTest extends CamelTestSupport {
 
                 from("direct:mcp-chat-max1")
                         .to("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true&maxToolIterations=1&baseUrl="
+                            + openAIMock.getBaseUrl() + "/v1");
+
+                from("direct:mcp-chat-reprompt")
+                        .to("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                            + "&toolExecutionErrorStrategy=repromptModel&baseUrl="
                             + openAIMock.getBaseUrl() + "/v1");
             }
         };
@@ -201,7 +206,8 @@ public class OpenAIProducerMcpMockTest extends CamelTestSupport {
 
     @Test
     void toolExecutionErrorSentToModel() {
-        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true&baseUrl="
+        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                             + "&toolExecutionErrorStrategy=repromptModel&baseUrl="
                              + openAIMock.getBaseUrl() + "/v1";
 
         Map<String, McpSyncClient> toolClients = new HashMap<>();
@@ -209,7 +215,7 @@ public class OpenAIProducerMcpMockTest extends CamelTestSupport {
         injectMcpTools(endpointUri, toolClients);
 
         // The error is caught and sent back to the model; the mock responds with final text
-        Exchange result = template.request("direct:mcp-chat", e -> e.getIn().setBody("call one tool"));
+        Exchange result = template.request("direct:mcp-chat-reprompt", e -> e.getIn().setBody("call one tool"));
 
         // The model should still produce a final response (the mock handles this)
         assertNotNull(result.getMessage().getBody(String.class));
@@ -273,7 +279,8 @@ public class OpenAIProducerMcpMockTest extends CamelTestSupport {
 
     @Test
     void returnDirectWithErrorFallsBackToModel() {
-        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true&baseUrl="
+        String endpointUri = "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                             + "&toolExecutionErrorStrategy=repromptModel&baseUrl="
                              + openAIMock.getBaseUrl() + "/v1";
 
         Map<String, McpSyncClient> toolClients = new HashMap<>();
@@ -283,7 +290,7 @@ public class OpenAIProducerMcpMockTest extends CamelTestSupport {
         injectMcpTools(endpointUri, toolClients, returnDirect);
 
         // Error should override returnDirect — results go back to model
-        Exchange result = template.request("direct:mcp-chat", e -> e.getIn().setBody("call one tool"));
+        Exchange result = template.request("direct:mcp-chat-reprompt", e -> e.getIn().setBody("call one tool"));
 
         assertNotNull(result.getMessage().getBody(String.class));
         assertFalse(result.getMessage().getHeader(OpenAIConstants.MCP_RETURN_DIRECT, Boolean.class));
