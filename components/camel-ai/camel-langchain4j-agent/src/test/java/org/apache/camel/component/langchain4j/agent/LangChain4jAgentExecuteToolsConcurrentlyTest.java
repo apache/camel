@@ -26,10 +26,12 @@ import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,7 +77,7 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(org.apache.camel.spi.Registry registry) {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("agentConfig", new AgentConfiguration()
                 .withChatModel(chatModel)
                 .withExecuteToolsConcurrently()
@@ -138,7 +140,7 @@ class LangChain4jAgentExecuteToolsConcurrentlyTest extends CamelTestSupport {
         assertThat(response).isEqualTo("done");
     }
 
-    private void recordConcurrentEntry(String label, org.apache.camel.Exchange exchange) throws InterruptedException {
+    private void recordConcurrentEntry(String label, Exchange exchange) throws InterruptedException {
         int concurrent = inFlight.incrementAndGet();
         maxConcurrent.updateAndGet(current -> Math.max(current, concurrent));
         bothToolsEntered.countDown();

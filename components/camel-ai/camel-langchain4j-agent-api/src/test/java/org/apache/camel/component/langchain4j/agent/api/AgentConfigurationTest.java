@@ -19,6 +19,7 @@ package org.apache.camel.component.langchain4j.agent.api;
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -29,6 +30,7 @@ import dev.langchain4j.service.tool.ToolArgumentsErrorHandler;
 import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -334,36 +336,43 @@ public class AgentConfigurationTest {
     }
 
     @Test
-    public void testDuplicateCopiesExecuteToolsConcurrentlySettings() {
+    void testDuplicateCopiesExecuteToolsConcurrentlySettings() {
         Executor executor = Executors.newSingleThreadExecutor();
-        AgentConfiguration original = new AgentConfiguration()
-                .withExecuteToolsConcurrently(executor)
-                .withMaxToolCallingRoundTrips(3);
+        try {
+            AgentConfiguration original = new AgentConfiguration()
+                    .withExecuteToolsConcurrently(executor)
+                    .withMaxToolCallingRoundTrips(3);
 
-        AgentConfiguration copy = original.duplicate();
+            AgentConfiguration copy = original.duplicate();
 
-        assertTrue(copy.getExecuteToolsConcurrently());
-        assertSame(executor, copy.getExecuteToolsExecutor());
-        assertEquals(3, copy.getMaxToolCallingRoundTrips());
-        assertSame(original.getMaxToolCallingRoundTrips(), copy.getMaxToolCallingRoundTrips());
+            assertThat(copy.getExecuteToolsConcurrently()).isTrue();
+            assertThat(copy.getExecuteToolsExecutor()).isSameAs(executor);
+            assertThat(copy.getMaxToolCallingRoundTrips()).isEqualTo(3);
+        } finally {
+            ((ExecutorService) executor).shutdownNow();
+        }
     }
 
     @Test
-    public void testExecuteToolsConcurrently() {
+    void testExecuteToolsConcurrently() {
         AgentConfiguration config = new AgentConfiguration();
-        assertNull(config.getExecuteToolsConcurrently());
-        assertNull(config.getExecuteToolsExecutor());
+        assertThat(config.getExecuteToolsConcurrently()).isNull();
+        assertThat(config.getExecuteToolsExecutor()).isNull();
 
         AgentConfiguration enabled = config.withExecuteToolsConcurrently();
-        assertSame(config, enabled);
-        assertTrue(config.getExecuteToolsConcurrently());
-        assertNull(config.getExecuteToolsExecutor());
+        assertThat(enabled).isSameAs(config);
+        assertThat(config.getExecuteToolsConcurrently()).isTrue();
+        assertThat(config.getExecuteToolsExecutor()).isNull();
 
         Executor executor = Executors.newSingleThreadExecutor();
-        AgentConfiguration withExecutor = config.withExecuteToolsConcurrently(executor);
-        assertSame(config, withExecutor);
-        assertTrue(config.getExecuteToolsConcurrently());
-        assertSame(executor, config.getExecuteToolsExecutor());
+        try {
+            AgentConfiguration withExecutor = config.withExecuteToolsConcurrently(executor);
+            assertThat(withExecutor).isSameAs(config);
+            assertThat(config.getExecuteToolsConcurrently()).isTrue();
+            assertThat(config.getExecuteToolsExecutor()).isSameAs(executor);
+        } finally {
+            ((ExecutorService) executor).shutdownNow();
+        }
     }
 
     @Test
