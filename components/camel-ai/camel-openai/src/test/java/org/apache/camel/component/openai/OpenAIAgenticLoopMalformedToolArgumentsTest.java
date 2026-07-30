@@ -54,7 +54,7 @@ import static org.mockito.Mockito.when;
  * malformed arguments string crashes the whole exchange with a raw Jackson {@code JsonParseException} instead of giving
  * the model a chance to correct itself.
  */
-public class OpenAIAgenticLoopMalformedToolArgumentsTest extends CamelTestSupport {
+class OpenAIAgenticLoopMalformedToolArgumentsTest extends CamelTestSupport {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
