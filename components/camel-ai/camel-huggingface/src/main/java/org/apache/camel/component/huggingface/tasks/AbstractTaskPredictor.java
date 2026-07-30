@@ -27,6 +27,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.EnumSet;
+import java.util.concurrent.locks.ReentrantLock;
 
 import ai.djl.inference.Predictor;
 import ai.djl.modality.Input;
@@ -45,6 +46,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractTaskPredictor implements TaskPredictor {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractTaskPredictor.class);
+    private final ReentrantLock lock = new ReentrantLock();
     protected HuggingFaceEndpoint endpoint;
     protected HuggingFaceConfiguration config;
     protected ZooModel<Input, Output> model;
@@ -131,12 +133,15 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
     public void predict(Exchange exchange) throws Exception {
         Input input = prepareInput(exchange);
         if (config.isPooling()) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (predictor == null) {
                     predictor = model.newPredictor();
                 }
                 Output output = predictor.predict(input);
                 processOutput(exchange, output);
+            } finally {
+                lock.unlock();
             }
         } else {
             try (Predictor<Input, Output> djlPredictor = model.newPredictor()) {
