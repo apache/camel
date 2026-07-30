@@ -18,6 +18,8 @@ package org.apache.camel.component.a2a;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -30,6 +32,7 @@ import org.apache.camel.component.a2a.model.TaskState;
 import org.apache.camel.component.a2a.model.TaskStatus;
 import org.apache.camel.component.a2a.model.TextPart;
 import org.apache.camel.component.a2a.state.A2ATaskStore;
+import org.apache.camel.component.a2a.state.GuardedTaskStore;
 
 /**
  * Static utility for emitting A2A progress updates from any exchange. Resolves the task store via the exchange's
@@ -37,7 +40,29 @@ import org.apache.camel.component.a2a.state.A2ATaskStore;
  */
 public final class A2AProgress {
 
+    private static final ConcurrentHashMap<A2ATaskStore, ReentrantLock> STORE_LOCKS = new ConcurrentHashMap<>();
+
     private A2AProgress() {
+    }
+
+    /**
+     * Returns the lock associated with the given store. If the store is a {@link GuardedTaskStore}, its own lock is
+     * returned so that callers coordinate with the store's lifecycle operations. Otherwise, a per-store fallback lock
+     * is created and cached.
+     */
+    private static ReentrantLock lockFor(A2ATaskStore store) {
+        if (store instanceof GuardedTaskStore guarded) {
+            return guarded.getLock();
+        }
+        return STORE_LOCKS.computeIfAbsent(store, k -> new ReentrantLock());
+    }
+
+    /**
+     * Removes the cached lock for the given store. Called during endpoint shutdown to prevent the static
+     * {@code STORE_LOCKS} map from leaking entries after a store is no longer in use.
+     */
+    static void removeStoreLock(A2ATaskStore store) {
+        STORE_LOCKS.remove(store);
     }
 
     /**
@@ -92,7 +117,9 @@ public final class A2AProgress {
             return;
         }
 
-        synchronized (taskContext.store) {
+        ReentrantLock storeLock = lockFor(taskContext.store);
+        storeLock.lock();
+        try {
             Task task = taskContext.store.get(taskContext.taskId);
             if (task != null) {
                 List<Artifact> artifacts = task.artifacts() != null ? new ArrayList<>(task.artifacts()) : new ArrayList<>();
@@ -105,6 +132,8 @@ public final class A2AProgress {
                         .artifact(artifact).append(append).lastChunk(lastChunk).build();
                 taskContext.store.notifySubscribers(taskContext.taskId, StreamResponse.ofArtifactUpdate(event));
             }
+        } finally {
+            storeLock.unlock();
         }
     }
 
@@ -120,7 +149,9 @@ public final class A2AProgress {
             return;
         }
 
-        synchronized (taskContext.store) {
+        ReentrantLock storeLock = lockFor(taskContext.store);
+        storeLock.lock();
+        try {
             Task task = taskContext.store.get(taskContext.taskId);
             if (task != null) {
                 List<Message> history = task.history() != null ? new ArrayList<>(task.history()) : new ArrayList<>();
@@ -129,6 +160,8 @@ public final class A2AProgress {
                 taskContext.store.put(taskContext.taskId, updated);
                 taskContext.store.notifySubscribers(taskContext.taskId, StreamResponse.ofMessage(message));
             }
+        } finally {
+            storeLock.unlock();
         }
     }
 

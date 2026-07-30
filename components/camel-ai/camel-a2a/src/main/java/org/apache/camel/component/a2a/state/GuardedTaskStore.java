@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.component.a2a.model.StreamResponse;
 import org.apache.camel.component.a2a.model.Task;
@@ -49,7 +50,7 @@ public final class GuardedTaskStore implements A2ATaskStore {
 
     private final A2ATaskStore delegate;
     private final boolean allowLocalWebhookUrls;
-    private final Object lifecycleLock = new Object();
+    private final ReentrantLock lock = new ReentrantLock();
     private final ConcurrentHashMap<String, CopyOnWriteArrayList<A2ATaskSubscriber>> subscribers
             = new ConcurrentHashMap<>();
 
@@ -58,15 +59,29 @@ public final class GuardedTaskStore implements A2ATaskStore {
         this.allowLocalWebhookUrls = allowLocalWebhookUrls;
     }
 
+    /**
+     * Returns the lock used by this store for serializing lifecycle operations. External callers (such as
+     * {@code A2AProgress}) that need to perform atomic read-modify-write sequences on this store should acquire this
+     * lock to coordinate with the store's own write operations.
+     *
+     * @return the reentrant lock guarding lifecycle state transitions
+     */
+    public ReentrantLock getLock() {
+        return lock;
+    }
+
     @Override
     public void put(String taskId, Task task) {
-        synchronized (lifecycleLock) {
+        lock.lock();
+        try {
             Task existing = delegate.get(taskId);
             if (isTerminal(existing)) {
                 LOG.debug("Ignoring put for task {} - already in terminal state {}", taskId, existing.status().state());
                 return;
             }
             delegate.put(taskId, task);
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -179,7 +194,8 @@ public final class GuardedTaskStore implements A2ATaskStore {
     @Override
     public void updateStatusAndNotify(String taskId, TaskStatus status) {
         StreamResponse event;
-        synchronized (lifecycleLock) {
+        lock.lock();
+        try {
             Task task = delegate.get(taskId);
             if (task == null) {
                 return;
@@ -196,13 +212,16 @@ public final class GuardedTaskStore implements A2ATaskStore {
                     .contextId(task.contextId())
                     .status(status)
                     .build());
+        } finally {
+            lock.unlock();
         }
         notifySubscribers(taskId, event);
     }
 
     @Override
     public Task cancelIfNotTerminal(String taskId) {
-        synchronized (lifecycleLock) {
+        lock.lock();
+        try {
             Task task = delegate.get(taskId);
             if (task == null) {
                 return null;
@@ -214,6 +233,8 @@ public final class GuardedTaskStore implements A2ATaskStore {
             Task canceled = Task.builder(task).status(new TaskStatus(TaskState.CANCELED)).build();
             delegate.put(taskId, canceled);
             return canceled;
+        } finally {
+            lock.unlock();
         }
     }
 

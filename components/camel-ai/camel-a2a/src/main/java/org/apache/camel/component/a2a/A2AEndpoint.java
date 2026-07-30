@@ -274,6 +274,11 @@ public class A2AEndpoint extends DefaultEndpoint {
 
     private void cleanupEndpointResources() {
         if (taskStoreOwned && taskStore != null) {
+            // Clean up the cached lock before stopping the store. Only owned stores
+            // (InMemoryTaskStore) can appear in STORE_LOCKS — registry-discovered stores
+            // are wrapped in GuardedTaskStore, which provides its own lock via getLock()
+            // and never enters the static map.
+            A2AProgress.removeStoreLock(taskStore);
             try {
                 ServiceHelper.stopService(taskStore);
             } catch (Exception e) {
