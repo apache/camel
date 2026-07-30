@@ -18,6 +18,7 @@ package org.apache.camel.opentelemetry.metrics;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.LongHistogram;
@@ -30,7 +31,7 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEAD
 public class DistributionSummaryProducer extends AbstractOpenTelemetryProducer<LongHistogram> {
 
     private final Map<String, LongHistogram> distributionSummaries = new ConcurrentHashMap<>();
-    private final Object lock = new Object();
+    private final ReentrantLock lock = new ReentrantLock();
 
     public DistributionSummaryProducer(OpenTelemetryEndpoint endpoint) {
         super(endpoint);
@@ -40,7 +41,8 @@ public class DistributionSummaryProducer extends AbstractOpenTelemetryProducer<L
     protected LongHistogram getInstrument(String name, String description) {
         LongHistogram summary = distributionSummaries.get(name);
         if (summary == null) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 summary = distributionSummaries.get(name);
                 if (summary == null) {
                     Meter meter = getEndpoint().getMeter();
@@ -51,6 +53,8 @@ public class DistributionSummaryProducer extends AbstractOpenTelemetryProducer<L
                     summary = builder.build();
                     distributionSummaries.put(name, summary);
                 }
+            } finally {
+                lock.unlock();
             }
         }
         return summary;

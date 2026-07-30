@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.opentelemetry.sdk.common.CompletableResultCode;
 import io.opentelemetry.sdk.trace.data.SpanData;
@@ -39,6 +40,7 @@ final class DevSpanExporter implements SpanExporter {
 
     static final int DEFAULT_CAPACITY = 2000;
 
+    private final ReentrantLock lock = new ReentrantLock();
     private final int capacity;
     private volatile boolean stopped;
 
@@ -59,7 +61,8 @@ final class DevSpanExporter implements SpanExporter {
         if (stopped) {
             return CompletableResultCode.ofSuccess();
         }
-        synchronized (traces) {
+        lock.lock();
+        try {
             for (SpanData span : spanDataList) {
                 String traceId = span.getTraceId();
                 traces.computeIfAbsent(traceId, k -> new ArrayList<>()).add(span);
@@ -74,6 +77,8 @@ final class DevSpanExporter implements SpanExporter {
                     it.remove();
                 }
             }
+        } finally {
+            lock.unlock();
         }
         return CompletableResultCode.ofSuccess();
     }
@@ -90,18 +95,24 @@ final class DevSpanExporter implements SpanExporter {
     }
 
     List<SpanData> getFinishedSpans() {
-        synchronized (traces) {
+        lock.lock();
+        try {
             List<SpanData> result = new ArrayList<>(totalSpanCount);
             for (List<SpanData> traceSpans : traces.values()) {
                 result.addAll(traceSpans);
             }
             return result;
+        } finally {
+            lock.unlock();
         }
     }
 
     int getSpanCount() {
-        synchronized (traces) {
+        lock.lock();
+        try {
             return totalSpanCount;
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -110,9 +121,12 @@ final class DevSpanExporter implements SpanExporter {
     }
 
     void reset() {
-        synchronized (traces) {
+        lock.lock();
+        try {
             traces.clear();
             totalSpanCount = 0;
+        } finally {
+            lock.unlock();
         }
     }
 }

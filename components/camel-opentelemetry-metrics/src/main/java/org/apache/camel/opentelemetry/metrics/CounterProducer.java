@@ -18,6 +18,7 @@ package org.apache.camel.opentelemetry.metrics;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.LongUpDownCounter;
@@ -32,7 +33,7 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEAD
 public class CounterProducer extends AbstractOpenTelemetryProducer<LongUpDownCounter> {
 
     private final Map<String, LongUpDownCounter> counters = new ConcurrentHashMap<>();
-    private final Object lock = new Object();
+    private final ReentrantLock lock = new ReentrantLock();
 
     public CounterProducer(OpenTelemetryEndpoint endpoint) {
         super(endpoint);
@@ -42,7 +43,8 @@ public class CounterProducer extends AbstractOpenTelemetryProducer<LongUpDownCou
     protected LongUpDownCounter getInstrument(String name, String description) {
         LongUpDownCounter counter = counters.get(name);
         if (counter == null) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 counter = counters.get(name);
                 if (counter == null) {
                     Meter meter = getEndpoint().getMeter();
@@ -53,6 +55,8 @@ public class CounterProducer extends AbstractOpenTelemetryProducer<LongUpDownCou
                     counter = builder.build();
                     counters.put(name, counter);
                 }
+            } finally {
+                lock.unlock();
             }
         }
         return counter;
