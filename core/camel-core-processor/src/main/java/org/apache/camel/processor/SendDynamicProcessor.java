@@ -265,13 +265,10 @@ public class SendDynamicProcessor extends BaseProcessorSupport implements IdAwar
             uri = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
         }
 
-        // in case path has property placeholders then try to let property component resolve those
-        try {
-            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(exchange.getContext(), uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
-        }
-
+        // NOTE: property placeholders in the dynamic-uri template are resolved once at build time
+        // (see ToDynamicReifier#createExpression). The per-message evaluated recipient must not be
+        // re-resolved here: message content that happens to contain {{...}} must be treated as a
+        // literal endpoint uri, not expanded as a property placeholder (CAMEL-24282).
         return uri;
     }
 
@@ -300,18 +297,11 @@ public class SendDynamicProcessor extends BaseProcessorSupport implements IdAwar
             if (colon == -1 || colon == uri.length() - 1) {
                 throw new ResolveEndpointFailedException(uri, "Endpoint should include scheme:path");
             }
-            // optimize and normalize endpoint. Property placeholders in the computed uri string are still resolved
-            // here, but the uri was computed from the message, so its option values are bound as literal text: no
-            // #class: or #property: resolution on the option values; registry references (#bean:, #type:) are still
-            // resolved (CAMEL-27160).
-            try {
-                String resolved = EndpointHelper.resolveEndpointUriPropertyPlaceholders(ecc, uri);
-                return NormalizedUri.newNormalizedUri(resolved, false, true);
-            } catch (ResolveEndpointFailedException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new ResolveEndpointFailedException(uri, e);
-            }
+            // optimize and normalize endpoint without re-resolving property placeholders on the
+            // per-message evaluated recipient (see resolveUri and CAMEL-24282). The per-message recipient
+            // comes from the message, so its option values are bound as literal text as well: no property
+            // placeholders, #class: or #property: (#bean: and #type: still resolve) - CAMEL-27160
+            return NormalizedUri.newNormalizedUri(uri, false, true);
         }
         return null;
     }
