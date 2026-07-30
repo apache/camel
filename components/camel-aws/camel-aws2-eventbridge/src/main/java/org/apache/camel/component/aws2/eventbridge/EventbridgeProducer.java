@@ -155,6 +155,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 message.setHeader(EventbridgeConstants.RULE_ARN, result.ruleArn());
+            } else {
+                throw new IllegalArgumentException(
+                        "putRule operation requires PutRuleRequest in POJO mode");
             }
         } else {
             PutRuleRequest.Builder builder = PutRuleRequest.builder();
