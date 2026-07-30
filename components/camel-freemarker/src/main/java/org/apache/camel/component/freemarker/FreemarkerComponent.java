@@ -60,7 +60,7 @@ public class FreemarkerComponent extends DefaultComponent {
         if (cache) {
             config = getConfiguration();
             if (templateUpdateDelay > 0) {
-                config.setTemplateUpdateDelay(templateUpdateDelay);
+                config.setTemplateUpdateDelayMilliseconds(1000L * templateUpdateDelay);
             }
         } else {
             config = getNoCacheConfiguration();
