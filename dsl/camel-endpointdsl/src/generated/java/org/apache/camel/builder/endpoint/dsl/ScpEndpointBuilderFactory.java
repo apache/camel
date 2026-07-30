@@ -261,22 +261,6 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether to use strict host key checking. Possible values are:
-         * no, yes.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: no
-         * Group: producer
-         * 
-         * @param strictHostKeyChecking the value to set
-         * @return the dsl builder
-         */
-        default ScpEndpointBuilder strictHostKeyChecking(String strictHostKeyChecking) {
-            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
-            return this;
-        }
-        /**
          * Set a comma separated list of CA signature algorithms accepted for
          * host certificate verification. If not specified the default list from
          * JSch will be used (matches OpenSSH 8.2 defaults).
@@ -467,6 +451,24 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder privateKeyFilePassphrase(String privateKeyFilePassphrase) {
             doSetProperty("privateKeyFilePassphrase", privateKeyFilePassphrase);
+            return this;
+        }
+        /**
+         * Sets whether to use strict host key checking. Setting this to 'no'
+         * (the default) disables host key verification and makes the connection
+         * vulnerable to man-in-the-middle attacks. Use 'yes' in production
+         * environments.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: no
+         * Group: security
+         * 
+         * @param strictHostKeyChecking the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder strictHostKeyChecking(String strictHostKeyChecking) {
+            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
             return this;
         }
         /**
