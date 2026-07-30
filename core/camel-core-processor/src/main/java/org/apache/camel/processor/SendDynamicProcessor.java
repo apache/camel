@@ -42,6 +42,7 @@ import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.cache.EmptyProducerCache;
 import org.apache.camel.support.service.ServiceHelper;
@@ -278,13 +279,10 @@ public class SendDynamicProcessor extends BaseProcessorSupport
             uri = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
         }
 
-        // in case path has property placeholders then try to let property component resolve those
-        try {
-            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(exchange.getContext(), uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
-        }
-
+        // NOTE: property placeholders in the dynamic-uri template are resolved once at build time
+        // (see ToDynamicReifier#createExpression). The per-message evaluated recipient must not be
+        // re-resolved here: message content that happens to contain {{...}} must be treated as a
+        // literal endpoint uri, not expanded as a property placeholder (CAMEL-24282).
         return uri;
     }
 
@@ -313,8 +311,9 @@ public class SendDynamicProcessor extends BaseProcessorSupport
             if (colon == -1 || colon == uri.length() - 1) {
                 throw new ResolveEndpointFailedException(uri, "Endpoint should include scheme:path");
             }
-            // optimize and normalize endpoint
-            return ecc.getCamelContextExtension().normalizeUri(uri);
+            // optimize and normalize endpoint without re-resolving property placeholders on the
+            // per-message evaluated recipient (see resolveUri and CAMEL-24282)
+            return NormalizedUri.newNormalizedUri(uri, false);
         }
         return null;
     }
