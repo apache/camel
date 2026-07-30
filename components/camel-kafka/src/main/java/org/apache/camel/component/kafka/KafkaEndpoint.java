@@ -132,6 +132,9 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         if (kafkaClientFactory == null) {
             kafkaClientFactory = getComponent().getKafkaClientFactory();
         }
+        if (kafkaClientFactory == null) {
+            kafkaClientFactory = new DefaultKafkaClientFactory();
+        }
         if (kafkaManualCommitFactory == null) {
             kafkaManualCommitFactory = getComponent().getKafkaManualCommitFactory();
         }
