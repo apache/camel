@@ -25,7 +25,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
@@ -92,6 +95,9 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
     private final ReentrantLock globalMcpLock = new ReentrantLock();
     private Map<String, ReentrantLock> mcpClientLocks;
+
+    private final Set<String> manualReturnDirectAdded = ConcurrentHashMap.newKeySet();
+    private final Set<String> manualReturnDirectRemoved = ConcurrentHashMap.newKeySet();
 
     private volatile McpToolState mcpToolState = McpToolState.empty();
     private volatile boolean mcpStopped;
@@ -285,10 +291,19 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         LOG.debug("Creating MCP transport for server '{}' with type '{}'", serverName, transportType);
         McpClientTransport transport = createMcpTransport(serverName, transportType, props);
         Duration timeout = Duration.ofSeconds(configuration.getMcpTimeout());
-        McpSyncClient mcpClient = McpClient.sync(transport)
+        McpClient.SyncSpec spec = McpClient.sync(transport)
                 .requestTimeout(timeout)
-                .initializationTimeout(timeout)
-                .build();
+                .initializationTimeout(timeout);
+
+        // The callback needs the client, which does not exist until build(), so hand it a holder that is
+        // populated below. Notifications can only arrive once the transport is connected by initialize().
+        AtomicReference<McpSyncClient> clientHolder = new AtomicReference<>();
+        if (configuration.isMcpToolRefresh()) {
+            spec.toolsChangeConsumer(tools -> onToolsChanged(serverName, clientHolder.get(), tools));
+        }
+
+        McpSyncClient mcpClient = spec.build();
+        clientHolder.set(mcpClient);
         mcpClient.initialize();
         return mcpClient;
     }
@@ -365,42 +380,9 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
             List<McpSchema.Tool> tools = filterTools(newClient.listTools().tools(), serverName, props);
 
-            globalMcpLock.lock();
-            try {
-                if (mcpStopped) {
-                    newClient.closeGracefully();
-                    return null;
-                }
-                // Rebuild shared tool state, replacing this server's old tools with the freshly listed ones
-                Set<String> oldServerTools = toolsForServer(serverName);
-                List<ChatCompletionFunctionTool> newTools = new ArrayList<>(mcpToolState.tools());
-                Map<String, McpSyncClient> newClientMap = new HashMap<>(mcpToolState.toolClientMap());
-                Map<String, String> newToolToServer = new HashMap<>(mcpToolState.toolToServerName());
-                Set<String> newReturnDirect = new HashSet<>(mcpToolState.returnDirectTools());
-
-                newTools.removeIf(t -> oldServerTools.contains(t.function().name()));
-                newClientMap.keySet().removeIf(oldServerTools::contains);
-                newToolToServer.keySet().removeIf(oldServerTools::contains);
-                newReturnDirect.removeIf(oldServerTools::contains);
-
-                for (McpSchema.Tool tool : tools) {
-                    if (newClientMap.containsKey(tool.name())) {
-                        LOG.warn("Duplicate MCP tool name '{}' from server '{}', using first registered", tool.name(),
-                                serverName);
-                    } else {
-                        newTools.addAll(McpToolConverter.convert(List.of(tool)));
-                        newClientMap.put(tool.name(), newClient);
-                        newToolToServer.put(tool.name(), serverName);
-                        if (isReturnDirect(tool)) {
-                            newReturnDirect.add(tool.name());
-                        }
-                    }
-                }
-
-                // Publish immutable snapshots for lock-free readers
-                mcpToolState = new McpToolState(newTools, newClientMap, newToolToServer, newReturnDirect);
-            } finally {
-                globalMcpLock.unlock();
+            if (!republishServerTools(serverName, newClient, tools)) {
+                newClient.closeGracefully();
+                return null;
             }
 
             LOG.info("Reconnected MCP server '{}' with {} tools: {}", serverName, tools.size(),
@@ -410,6 +392,125 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             LOG.error("Failed to reconnect MCP server '{}': {}", serverName, e.getMessage(), e);
             return null;
         }
+    }
+
+    /**
+     * Rebuilds and publishes the shared tool state, replacing the tools currently registered for {@code serverName}
+     * with the given ones. Shared by the reconnect and the runtime tool refresh paths so that duplicate name handling,
+     * {@code returnDirect} detection and the manual {@code returnDirect} overrides stay identical between the two.
+     *
+     * @param  serverName the MCP server whose tools are being replaced
+     * @param  client     the client owning the given tools
+     * @param  tools      the tools to register, already filtered by the per-server {@code toolNames} include list
+     * @return            {@code false} when the endpoint is stopping and the state was left untouched
+     */
+    private boolean republishServerTools(String serverName, McpSyncClient client, List<McpSchema.Tool> tools) {
+        globalMcpLock.lock();
+        try {
+            if (mcpStopped) {
+                return false;
+            }
+
+            Set<String> oldServerTools = toolsForServer(serverName);
+            List<ChatCompletionFunctionTool> newTools = new ArrayList<>(mcpToolState.tools());
+            Map<String, McpSyncClient> newClientMap = new HashMap<>(mcpToolState.toolClientMap());
+            Map<String, String> newToolToServer = new HashMap<>(mcpToolState.toolToServerName());
+            Set<String> newReturnDirect = new HashSet<>(mcpToolState.returnDirectTools());
+
+            newTools.removeIf(t -> oldServerTools.contains(t.function().name()));
+            newClientMap.keySet().removeIf(oldServerTools::contains);
+            newToolToServer.keySet().removeIf(oldServerTools::contains);
+            newReturnDirect.removeIf(oldServerTools::contains);
+
+            for (McpSchema.Tool tool : tools) {
+                if (newClientMap.containsKey(tool.name())) {
+                    LOG.warn("Duplicate MCP tool name '{}' from server '{}', using first registered", tool.name(),
+                            serverName);
+                } else {
+                    newTools.addAll(McpToolConverter.convert(List.of(tool)));
+                    newClientMap.put(tool.name(), client);
+                    newToolToServer.put(tool.name(), serverName);
+                    if (isReturnDirect(tool)) {
+                        newReturnDirect.add(tool.name());
+                    }
+                }
+            }
+
+            // Publish immutable snapshots for lock-free readers
+            mcpToolState = new McpToolState(
+                    newTools, newClientMap, newToolToServer,
+                    applyManualReturnDirectOverrides(newReturnDirect, newClientMap.keySet()));
+            return true;
+        } finally {
+            globalMcpLock.unlock();
+        }
+    }
+
+    /**
+     * Handles a {@code tools/list_changed} notification from an MCP server. The SDK has already re-listed the tools and
+     * passes them here, but without the per-server {@code toolNames} filter, which is re-applied before publishing.
+     *
+     * @param serverName the server that reported the change
+     * @param client     the client that received the notification
+     * @param tools      the unfiltered tool list as re-listed by the SDK
+     */
+    void onToolsChanged(String serverName, McpSyncClient client, List<McpSchema.Tool> tools) {
+        if (!configuration.isMcpToolRefresh()) {
+            return;
+        }
+
+        if (client == null) {
+            // Notifications only flow after initialize(), which runs once the holder is populated
+            LOG.debug("Ignoring tools list change from MCP server '{}' received before the client was ready", serverName);
+            return;
+        }
+
+        Map<String, String> props = serverConfigs != null ? serverConfigs.get(serverName) : null;
+        if (props == null) {
+            LOG.warn("Cannot refresh tools: no configuration found for MCP server '{}'", serverName);
+            return;
+        }
+
+        globalMcpLock.lock();
+        try {
+            McpSyncClient current = currentClientForServer(serverName);
+            if (current != null && current != client) {
+                // A reconnect already replaced this client, so its view of the tools is stale
+                LOG.debug("Ignoring tools list change from a superseded client of MCP server '{}'", serverName);
+                return;
+            }
+
+            List<McpSchema.Tool> filtered = filterTools(tools, serverName, props);
+            if (republishServerTools(serverName, client, filtered)) {
+                LOG.info("Refreshed MCP server '{}' with {} tools: {}", serverName, filtered.size(),
+                        filtered.stream().map(McpSchema.Tool::name).toList());
+            }
+        } finally {
+            globalMcpLock.unlock();
+        }
+    }
+
+    private McpSyncClient currentClientForServer(String serverName) {
+        return toolsForServer(serverName).stream()
+                .map(toolName -> mcpToolState.toolClientMap().get(toolName))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Re-applies the {@code returnDirect} flags set programmatically through {@link #addReturnDirectTool(String)} and
+     * {@link #removeReturnDirectTool(String)}, so that a reconnect or a tool refresh does not discard them. Overrides
+     * for tools that no longer exist are not reinstated, so that a tool which vanished server-side leaves no stale
+     * entry behind.
+     *
+     * @param returnDirectTools the flags rebuilt from the tool annotations, modified in place
+     * @param knownTools        the names of the tools registered in the new state
+     */
+    private Set<String> applyManualReturnDirectOverrides(Set<String> returnDirectTools, Set<String> knownTools) {
+        manualReturnDirectAdded.stream().filter(knownTools::contains).forEach(returnDirectTools::add);
+        returnDirectTools.removeAll(manualReturnDirectRemoved);
+        return returnDirectTools;
     }
 
     /**
@@ -647,6 +748,11 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     public void addReturnDirectTool(String toolName) {
         globalMcpLock.lock();
         try {
+            // Remembered so a reconnect or a tool refresh, which rebuild the flags from the tool annotations,
+            // does not silently discard the override
+            manualReturnDirectAdded.add(toolName);
+            manualReturnDirectRemoved.remove(toolName);
+
             Set<String> newReturnDirect = new HashSet<>(mcpToolState.returnDirectTools());
             newReturnDirect.add(toolName);
             mcpToolState = new McpToolState(
@@ -660,6 +766,9 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     public void removeReturnDirectTool(String toolName) {
         globalMcpLock.lock();
         try {
+            manualReturnDirectRemoved.add(toolName);
+            manualReturnDirectAdded.remove(toolName);
+
             Set<String> newReturnDirect = new HashSet<>(mcpToolState.returnDirectTools());
             newReturnDirect.remove(toolName);
             mcpToolState = new McpToolState(

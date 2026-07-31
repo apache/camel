@@ -441,6 +441,20 @@ tool calls that were already dispatched complete before the exchange fails, wher
 abandons the remaining calls at the first failure. Routes whose tools have side effects and that rely on
 a failure preventing later tool calls in the same batch should keep the sequential default.
 
+==== MCP tool list is refreshed at runtime by default
+
+MCP servers announce tool additions, removals and changes with a `tools/list_changed` notification. That
+notification was previously ignored, so the tool list advertised to the model was fixed to whatever was
+listed when the endpoint started (and was only re-listed after a transport reconnect). The component now
+subscribes to it and refreshes the tool list, which is the behavior the MCP specification expects.
+
+Set the new `mcpToolRefresh` option to `false` to restore the previous behavior and pin the tool list to
+endpoint startup, for deployments that require a deterministic set of tools.
+
+Related fix: `returnDirect` flags set programmatically through `addReturnDirectTool` and
+`removeReturnDirectTool` on `OpenAIEndpoint` are now remembered and re-applied when the tool state is
+rebuilt. Previously a reconnect silently discarded them.
+
 === camel-management - Throughput MBean attribute uses EWMA smoothing
 
 The `Throughput` attribute on the `ManagedPerformanceCounter` JMX MBean now reports an EWMA
