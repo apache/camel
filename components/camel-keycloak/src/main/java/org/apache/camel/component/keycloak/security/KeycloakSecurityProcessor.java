@@ -443,6 +443,9 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
             KeycloakTokenIntrospector.IntrospectionResult introspectionResult, Exchange exchange)
             throws CamelAuthorizationException {
         List<String> expectedTokenTypes = policy.getExpectedTokenTypesAsList();
+        // Use the JWT "typ" claim (token category, e.g. Bearer/Refresh/ID), which Keycloak forwards on its
+        // introspection response — not the RFC 7662 "token_type" field, which is the OAuth token type ("Bearer")
+        // and does not distinguish access from refresh/ID tokens, i.e. it cannot express what this check validates.
         Object typeClaim = introspectionResult.getClaim("typ");
         String actualType = typeClaim instanceof String s ? s : null;
 
@@ -504,6 +507,16 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 // Validate audience from introspection result if configured
                 if (!policy.getExpectedAudienceAsList().isEmpty()) {
                     validateAudienceFromIntrospection(introspectionResult, exchange);
+                }
+
+                // Validate token type and authorized party too, otherwise these checks could be bypassed by
+                // configuring only permissions (which skips authenticateToken/validateRoles) with introspection.
+                if (!policy.getExpectedTokenTypesAsList().isEmpty()) {
+                    validateTokenTypeFromIntrospection(introspectionResult, exchange);
+                }
+
+                if (!ObjectHelper.isEmpty(policy.getExpectedAuthorizedParty())) {
+                    validateAuthorizedPartyFromIntrospection(introspectionResult, exchange);
                 }
 
                 userPermissions = KeycloakSecurityHelper.extractPermissionsFromIntrospection(introspectionResult);
