@@ -40,7 +40,8 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 /**
- * Shared LLM HTTP client supporting Ollama, OpenAI-compatible, and Anthropic (including Vertex AI) APIs.
+ * Shared LLM HTTP client supporting Ollama, OpenAI-compatible, Anthropic (including Vertex AI), and IBM watsonx.ai
+ * APIs.
  */
 public class LlmClient {
 
@@ -52,6 +53,8 @@ public class LlmClient {
     private static final String DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6";
     private static final String DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
     private static final String DEFAULT_OLLAMA_MODEL = "llama3.2";
+    private static final String DEFAULT_WATSONX_URL = "https://us-south.ml.cloud.ibm.com";
+    private static final String DEFAULT_WATSONX_MODEL = "ibm/granite-4-1-8b-instruct";
     private static final String DEFAULT_AZURE_API_VERSION = "2024-10-21";
     /** Last-resort Azure deployment segment when URL normalization runs before model detection completes. */
     private static final String DEFAULT_AZURE_DEPLOYMENT_FALLBACK = "gpt-4o";
@@ -67,7 +70,8 @@ public class LlmClient {
     public enum ApiType {
         ollama,
         openai,
-        anthropic
+        anthropic,
+        watsonx
     }
 
     enum OpenAiAuthMode {
@@ -243,13 +247,15 @@ public class LlmClient {
                 case anthropic -> tryAnthropicOrVertex();
                 case openai -> tryAzureOpenAi() || tryOpenAi();
                 case ollama -> tryInfraOllama() || tryDefaultOllama();
+                case watsonx -> tryWatsonx();
             };
         } else {
-            // auto-detect priority: anthropic → vertex → azure openai → openai → ollama
+            // auto-detect priority: anthropic → vertex → azure openai → openai → watsonx → ollama
             found = tryAnthropicApiKey()
                     || tryVertexAi()
                     || tryAzureOpenAi()
                     || tryOpenAi()
+                    || tryWatsonx()
                     || tryInfraOllama()
                     || tryDefaultOllama();
         }
@@ -291,6 +297,11 @@ public class LlmClient {
                     resolveOllamaModel();
                 }
             }
+            case watsonx -> {
+                if (model == null || model.isBlank() || isGenericPlaceholderModel(model)) {
+                    model = DEFAULT_WATSONX_MODEL;
+                }
+            }
         }
     }
 
@@ -305,6 +316,14 @@ public class LlmClient {
                 return key;
             }
             // Vertex AI uses gcloud token, not API key
+            return null;
+        }
+        if (apiType == ApiType.watsonx) {
+            String key = System.getenv("WATSONX_APIKEY");
+            if (key != null && !key.isBlank()) {
+                apiKey = key;
+                return key;
+            }
             return null;
         }
         if (apiType == ApiType.openai && openAiAuthMode == OpenAiAuthMode.api_key) {
@@ -333,7 +352,7 @@ public class LlmClient {
     String generate(String systemPrompt, String userPrompt) {
         return switch (apiType) {
             case ollama -> generateOllama(systemPrompt, userPrompt);
-            case openai -> generateOpenAi(systemPrompt, userPrompt);
+            case openai, watsonx -> generateOpenAi(systemPrompt, userPrompt);
             case anthropic -> generateAnthropic(systemPrompt, userPrompt);
         };
     }
@@ -343,7 +362,7 @@ public class LlmClient {
     public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
         return switch (apiType) {
             case ollama -> chatOllamaFormat(systemPrompt, messages, tools);
-            case openai -> chatOpenAiFormat(systemPrompt, messages, tools);
+            case openai, watsonx -> chatOpenAiFormat(systemPrompt, messages, tools);
             case anthropic -> chatAnthropicFormat(systemPrompt, messages, tools);
         };
     }
@@ -365,6 +384,7 @@ public class LlmClient {
             case ollama -> listOllamaModels();
             case openai -> listOpenAiModels();
             case anthropic -> isVertexAi() ? List.of() : listAnthropicModels();
+            case watsonx -> listWatsonxModels();
         };
     }
 
@@ -395,6 +415,12 @@ public class LlmClient {
     private List<String> listAnthropicModels() {
         String base = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
         JsonObject response = sendGetRequest(base + "/v1/models", buildAnthropicHeaders());
+        return extractStringList(response, "data", "id");
+    }
+
+    private List<String> listWatsonxModels() {
+        Map<String, String> headers = buildOpenAiAuthHeaders(resolveApiKey());
+        JsonObject response = sendGetRequest(normalizeWatsonxModelsUrl(url), headers);
         return extractStringList(response, "data", "id");
     }
 
@@ -1455,6 +1481,21 @@ public class LlmClient {
         return false;
     }
 
+    private boolean tryWatsonx() {
+        String key = System.getenv("WATSONX_APIKEY");
+        if (key == null || key.isBlank()) {
+            return false;
+        }
+        apiType = ApiType.watsonx;
+        apiKey = key;
+        String endpoint = System.getenv("WATSONX_URL");
+        url = (endpoint != null && !endpoint.isBlank()) ? stripTrailingSlash(endpoint) : DEFAULT_WATSONX_URL;
+        if (model == null || isGenericPlaceholderModel(model)) {
+            model = DEFAULT_WATSONX_MODEL;
+        }
+        return true;
+    }
+
     /**
      * Picks a default Ollama model when none was configured (for example after a provider switch). Rather than assume a
      * hardcoded model that may not be installed, this queries the installed models and prefers {@code llama3.2} when
@@ -1665,11 +1706,44 @@ public class LlmClient {
         if (isAzureOpenAiEndpoint(u)) {
             return normalizeAzureOpenAiChatUrl(u);
         }
+        if (apiType == ApiType.watsonx) {
+            return normalizeWatsonxChatUrl(u);
+        }
         if (!u.endsWith("/v1/chat/completions")) {
             u = u.endsWith("/v1") ? u : u + "/v1";
             u = u + "/chat/completions";
         }
         return u;
+    }
+
+    // ---- watsonx URL helpers ----
+
+    static final String WATSONX_GATEWAY_CHAT_PATH = "/ml/gateway/v1/chat/completions";
+    static final String WATSONX_GATEWAY_MODELS_PATH = "/ml/gateway/v1/models";
+
+    String normalizeWatsonxChatUrl(String endpoint) {
+        String u = stripTrailingSlash(endpoint);
+        if (u.endsWith(WATSONX_GATEWAY_CHAT_PATH)) {
+            return u;
+        }
+        // Strip any partial gateway path so we can rebuild from the base
+        int gatewayIdx = u.indexOf("/ml/gateway");
+        if (gatewayIdx > 0) {
+            u = u.substring(0, gatewayIdx);
+        }
+        return u + WATSONX_GATEWAY_CHAT_PATH;
+    }
+
+    String normalizeWatsonxModelsUrl(String endpoint) {
+        String u = stripTrailingSlash(endpoint);
+        if (u.endsWith(WATSONX_GATEWAY_MODELS_PATH)) {
+            return u;
+        }
+        int gatewayIdx = u.indexOf("/ml/gateway");
+        if (gatewayIdx > 0) {
+            u = u.substring(0, gatewayIdx);
+        }
+        return u + WATSONX_GATEWAY_MODELS_PATH;
     }
 
     // ---- Error handling ----
