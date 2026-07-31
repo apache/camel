@@ -467,8 +467,20 @@ public class JmsBinding {
             if (value != null) {
                 // must encode to safe JMS header name before setting property on jmsMessage
                 String key = jmsKeyFormatStrategy.encodeKey(headerName);
-                // set the property
-                JmsMessageHelper.setProperty(jmsMessage, key, value);
+                try {
+                    // set the property
+                    JmsMessageHelper.setProperty(jmsMessage, key, value);
+                } catch (JMSException e) {
+                    // Some JMS providers (e.g. IBM MQ) mark certain vendor-specific properties
+                    // as read-only/reserved (set by the provider, not the application). When Camel
+                    // copies headers from an incoming message to an outgoing reply or forwarded
+                    // message, these reserved properties cause an exception. We skip them gracefully
+                    // since they are provider-assigned metadata that should not be propagated.
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Could not set JMS property '{}' on outgoing message, skipping ({})",
+                                key, e.getMessage());
+                    }
+                }
             } else if (LOG.isDebugEnabled()) {
                 // okay the value is not a primitive or string so we cannot sent it over the wire
                 LOG.debug("Ignoring non primitive header: {} of class: {} with value: {}",
