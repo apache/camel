@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -79,6 +80,7 @@ public class KeyRotationScheduler extends ServiceSupport implements CamelContext
     private Function<KeyMetadata, String> keyIdStrategy = KeyRotationScheduler::defaultRotatedKeyId;
     private KeyRotationListener listener;
 
+    private final ReentrantLock lock = new ReentrantLock();
     private final AtomicLong checksPerformed = new AtomicLong();
     private final AtomicLong rotationsPerformed = new AtomicLong();
     private final AtomicLong rotationFailures = new AtomicLong();
@@ -110,41 +112,47 @@ public class KeyRotationScheduler extends ServiceSupport implements CamelContext
      *
      * @return the number of keys rotated during this pass
      */
-    public synchronized int checkAndRotate() {
-        checksPerformed.incrementAndGet();
-        lastCheckAt = Instant.now();
-
-        List<KeyMetadata> keys;
+    public int checkAndRotate() {
+        lock.lock();
         try {
-            keys = keyManager.listKeys();
-        } catch (Exception e) {
-            LOG.warn("Failed to list keys during rotation check", e);
-            notifyError(null, e);
-            return 0;
-        }
+            checksPerformed.incrementAndGet();
+            lastCheckAt = Instant.now();
 
-        int rotated = 0;
-        for (KeyMetadata metadata : keys) {
-            if (metadata == null || !keyFilter.test(metadata)) {
-                continue;
-            }
-            String keyId = metadata.getKeyId();
+            List<KeyMetadata> keys;
             try {
-                if (keyManager.needsRotation(keyId, maxKeyAge, maxKeyUsage)) {
-                    String newKeyId = keyIdStrategy.apply(metadata);
-                    LOG.info("Rotating PQC key '{}' -> '{}' (algorithm={})", keyId, newKeyId, metadata.getAlgorithm());
-                    KeyPair newKeyPair = keyManager.rotateKey(keyId, newKeyId, metadata.getAlgorithm());
-                    rotationsPerformed.incrementAndGet();
-                    rotated++;
-                    notifyRotated(keyId, newKeyId, metadata, newKeyPair);
-                }
+                keys = keyManager.listKeys();
             } catch (Exception e) {
-                rotationFailures.incrementAndGet();
-                LOG.warn("Failed to rotate PQC key '{}'", keyId, e);
-                notifyError(keyId, e);
+                LOG.warn("Failed to list keys during rotation check", e);
+                notifyError(null, e);
+                return 0;
             }
+
+            int rotated = 0;
+            for (KeyMetadata metadata : keys) {
+                if (metadata == null || !keyFilter.test(metadata)) {
+                    continue;
+                }
+                String keyId = metadata.getKeyId();
+                try {
+                    if (keyManager.needsRotation(keyId, maxKeyAge, maxKeyUsage)) {
+                        String newKeyId = keyIdStrategy.apply(metadata);
+                        LOG.info("Rotating PQC key '{}' -> '{}' (algorithm={})", keyId, newKeyId,
+                                metadata.getAlgorithm());
+                        KeyPair newKeyPair = keyManager.rotateKey(keyId, newKeyId, metadata.getAlgorithm());
+                        rotationsPerformed.incrementAndGet();
+                        rotated++;
+                        notifyRotated(keyId, newKeyId, metadata, newKeyPair);
+                    }
+                } catch (Exception e) {
+                    rotationFailures.incrementAndGet();
+                    LOG.warn("Failed to rotate PQC key '{}'", keyId, e);
+                    notifyError(keyId, e);
+                }
+            }
+            return rotated;
+        } finally {
+            lock.unlock();
         }
-        return rotated;
     }
 
     @Override

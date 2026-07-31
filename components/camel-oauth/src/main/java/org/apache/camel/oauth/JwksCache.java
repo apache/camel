@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.LongSupplier;
 
 import com.nimbusds.jose.jwk.JWKSet;
@@ -45,7 +46,7 @@ final class JwksCache {
     private final ConcurrentMap<String, CacheEntry> cache = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, Long> forcedRefreshAttempts = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, FailureRecord> normalRefreshFailures = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, Object> refreshLocks = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ReentrantLock> refreshLocks = new ConcurrentHashMap<>();
     private volatile LongSupplier currentTimeMillis = System::currentTimeMillis;
 
     private JwksCache() {
@@ -64,8 +65,9 @@ final class JwksCache {
     }
 
     JWKSet refreshJwkSet(String jwksEndpoint, int connectTimeoutMs, int readTimeoutMs) {
-        Object lock = refreshLocks.computeIfAbsent(jwksEndpoint, key -> new Object());
-        synchronized (lock) {
+        ReentrantLock lock = refreshLocks.computeIfAbsent(jwksEndpoint, key -> new ReentrantLock());
+        lock.lock();
+        try {
             CacheEntry existing = cache.get(jwksEndpoint);
             long now = now();
             if (existing != null && !canAttemptRefresh(jwksEndpoint, now)) {
@@ -78,12 +80,15 @@ final class JwksCache {
             normalRefreshFailures.remove(jwksEndpoint);
             cache.put(jwksEndpoint, refreshed);
             return refreshed.jwkSet;
+        } finally {
+            lock.unlock();
         }
     }
 
     private JWKSet fetchAndCache(String jwksEndpoint, long ttlSeconds, int connectTimeoutMs, int readTimeoutMs) {
-        Object lock = refreshLocks.computeIfAbsent(jwksEndpoint, key -> new Object());
-        synchronized (lock) {
+        ReentrantLock lock = refreshLocks.computeIfAbsent(jwksEndpoint, key -> new ReentrantLock());
+        lock.lock();
+        try {
             CacheEntry existing = cache.get(jwksEndpoint);
             long now = now();
             if (existing != null && !existing.isExpired(ttlSeconds, now)) {
@@ -113,6 +118,8 @@ final class JwksCache {
                 }
                 throw e;
             }
+        } finally {
+            lock.unlock();
         }
     }
 

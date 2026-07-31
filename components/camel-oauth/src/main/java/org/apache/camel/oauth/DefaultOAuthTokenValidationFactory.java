@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.LongSupplier;
 
 import com.google.gson.JsonArray;
@@ -58,7 +59,7 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
     private static final long MIN_DISCOVERY_RETRY_INTERVAL_MILLIS = 30_000L;
     private static final ConcurrentMap<String, DiscoveryCacheEntry> DISCOVERY_CACHE = new ConcurrentHashMap<>();
     private static final ConcurrentMap<String, FailureRecord> DISCOVERY_FAILURES = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<String, Object> DISCOVERY_LOCKS = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, ReentrantLock> DISCOVERY_LOCKS = new ConcurrentHashMap<>();
     private static volatile LongSupplier currentTimeMillis = System::currentTimeMillis;
 
     @Override
@@ -279,8 +280,9 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
             return cached.json;
         }
 
-        Object lock = DISCOVERY_LOCKS.computeIfAbsent(discoveryUrl, key -> new Object());
-        synchronized (lock) {
+        ReentrantLock lock = DISCOVERY_LOCKS.computeIfAbsent(discoveryUrl, key -> new ReentrantLock());
+        lock.lock();
+        try {
             now = now();
             cached = DISCOVERY_CACHE.get(discoveryUrl);
             if (cached != null && !cached.isExpired(config.getOidcDiscoveryCacheTtlSeconds(), now)) {
@@ -308,6 +310,8 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
                 DISCOVERY_FAILURES.put(discoveryUrl, new FailureRecord(now, e));
                 throw new OAuthException("Failed to discover OIDC endpoints from " + discoveryUrl, e);
             }
+        } finally {
+            lock.unlock();
         }
     }
 

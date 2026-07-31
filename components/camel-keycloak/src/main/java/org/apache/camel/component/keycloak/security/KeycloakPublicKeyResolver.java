@@ -27,6 +27,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -46,6 +47,7 @@ public class KeycloakPublicKeyResolver {
     private final String serverUrl;
     private final String realm;
     private final Map<String, PublicKey> keyCache = new ConcurrentHashMap<>();
+    private final ReentrantLock lock = new ReentrantLock();
     private volatile long lastRefreshTime = 0;
     private static final long CACHE_REFRESH_INTERVAL_MS = 300_000; // 5 minutes
 
@@ -106,24 +108,29 @@ public class KeycloakPublicKeyResolver {
     /**
      * Refreshes the public keys from the JWKS endpoint.
      */
-    public synchronized void refreshKeys() throws IOException {
-        String jwksUrl = String.format("%s/realms/%s/protocol/openid-connect/certs", serverUrl, realm);
-        LOG.debug("Fetching public keys from: {}", jwksUrl);
+    public void refreshKeys() throws IOException {
+        lock.lock();
+        try {
+            String jwksUrl = String.format("%s/realms/%s/protocol/openid-connect/certs", serverUrl, realm);
+            LOG.debug("Fetching public keys from: {}", jwksUrl);
 
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpGet request = new HttpGet(jwksUrl);
+            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+                HttpGet request = new HttpGet(jwksUrl);
 
-            String responseBody = httpClient.execute(request, response -> {
-                int statusCode = response.getCode();
-                if (statusCode != 200) {
-                    throw new IOException("Failed to fetch JWKS: HTTP " + statusCode);
-                }
-                return EntityUtils.toString(response.getEntity());
-            });
+                String responseBody = httpClient.execute(request, response -> {
+                    int statusCode = response.getCode();
+                    if (statusCode != 200) {
+                        throw new IOException("Failed to fetch JWKS: HTTP " + statusCode);
+                    }
+                    return EntityUtils.toString(response.getEntity());
+                });
 
-            parseJwks(responseBody);
-            lastRefreshTime = System.currentTimeMillis();
-            LOG.debug("Successfully loaded {} public keys from JWKS endpoint", keyCache.size());
+                parseJwks(responseBody);
+                lastRefreshTime = System.currentTimeMillis();
+                LOG.debug("Successfully loaded {} public keys from JWKS endpoint", keyCache.size());
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
