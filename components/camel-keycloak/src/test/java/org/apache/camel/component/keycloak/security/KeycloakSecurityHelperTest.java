@@ -225,6 +225,103 @@ public class KeycloakSecurityHelperTest {
     }
 
     @Test
+    void testParseAndVerifyAccessTokenAcceptsMatchingTokenType() throws Exception {
+        String expectedIssuer = "http://localhost:8080/realms/test";
+
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair keyPair = keyGen.generateKeyPair();
+
+        AccessToken token = new AccessToken();
+        token.issuer(expectedIssuer);
+        token.subject("user-123");
+        token.exp(System.currentTimeMillis() / 1000 + 3600);
+        token.type("Bearer");
+
+        String signed = new JWSBuilder()
+                .type("JWT")
+                .jsonContent(token)
+                .rsa256(keyPair.getPrivate());
+
+        AccessToken verified = KeycloakSecurityHelper.parseAndVerifyAccessToken(
+                signed, keyPair.getPublic(), expectedIssuer, null, List.of("Bearer"), null);
+        assertEquals("user-123", verified.getSubject());
+    }
+
+    @Test
+    void testParseAndVerifyAccessTokenRejectsWrongTokenType() throws Exception {
+        String expectedIssuer = "http://localhost:8080/realms/test";
+
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair keyPair = keyGen.generateKeyPair();
+
+        // An ID token presented where an access token (typ=Bearer) is expected.
+        AccessToken token = new AccessToken();
+        token.issuer(expectedIssuer);
+        token.subject("user-123");
+        token.exp(System.currentTimeMillis() / 1000 + 3600);
+        token.type("ID");
+
+        String signed = new JWSBuilder()
+                .type("JWT")
+                .jsonContent(token)
+                .rsa256(keyPair.getPrivate());
+
+        assertThrows(VerificationException.class,
+                () -> KeycloakSecurityHelper.parseAndVerifyAccessToken(
+                        signed, keyPair.getPublic(), expectedIssuer, null, List.of("Bearer"), null));
+    }
+
+    @Test
+    void testParseAndVerifyAccessTokenAcceptsMatchingAuthorizedParty() throws Exception {
+        String expectedIssuer = "http://localhost:8080/realms/test";
+
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair keyPair = keyGen.generateKeyPair();
+
+        AccessToken token = new AccessToken();
+        token.issuer(expectedIssuer);
+        token.subject("user-123");
+        token.exp(System.currentTimeMillis() / 1000 + 3600);
+        token.issuedFor("my-client");
+
+        String signed = new JWSBuilder()
+                .type("JWT")
+                .jsonContent(token)
+                .rsa256(keyPair.getPrivate());
+
+        AccessToken verified = KeycloakSecurityHelper.parseAndVerifyAccessToken(
+                signed, keyPair.getPublic(), expectedIssuer, null, null, "my-client");
+        assertEquals("user-123", verified.getSubject());
+    }
+
+    @Test
+    void testParseAndVerifyAccessTokenRejectsWrongAuthorizedParty() throws Exception {
+        String expectedIssuer = "http://localhost:8080/realms/test";
+
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair keyPair = keyGen.generateKeyPair();
+
+        AccessToken token = new AccessToken();
+        token.issuer(expectedIssuer);
+        token.subject("user-123");
+        token.exp(System.currentTimeMillis() / 1000 + 3600);
+        token.issuedFor("other-client");
+
+        String signed = new JWSBuilder()
+                .type("JWT")
+                .jsonContent(token)
+                .rsa256(keyPair.getPrivate());
+
+        assertThrows(VerificationException.class,
+                () -> KeycloakSecurityHelper.parseAndVerifyAccessToken(
+                        signed, keyPair.getPublic(), expectedIssuer, null, null, "my-client"));
+    }
+
+    @Test
     void testExtractKeyIdReturnsKidFromHeader() throws Exception {
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
         keyGen.initialize(2048);
