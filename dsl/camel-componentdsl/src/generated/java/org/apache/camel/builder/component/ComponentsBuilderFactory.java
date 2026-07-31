@@ -4651,19 +4651,6 @@ public interface ComponentsBuilderFactory {
         return SpringAiImageComponentBuilderFactory.springAiImage();
     }
     /**
-     * Spring AI Tools (camel-spring-ai-tools)
-     * Spring AI Tools and Function Calling Features
-     * 
-     * Category: ai
-     * Since: 4.17
-     * Maven coordinates: org.apache.camel:camel-spring-ai-tools
-     * 
-     * @return the dsl builder
-     */
-    static SpringAiToolsComponentBuilderFactory.SpringAiToolsComponentBuilder springAiTools() {
-        return SpringAiToolsComponentBuilderFactory.springAiTools();
-    }
-    /**
      * Spring AI Vector Store (camel-spring-ai-vector-store)
      * Spring AI Vector Store
      * 
