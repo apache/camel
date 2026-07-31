@@ -270,6 +270,20 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
             return "CamelLangChain4jEmbeddingsEmbedding";
         }
         /**
+         * List of embeddings from a batch embedAll operation.
+         * 
+         * The option is a: {@code
+         * java.util.List<dev.langchain4j.data.embedding.Embedding>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jEmbeddingsEmbeddings}.
+         */
+        public String langChain4jEmbeddingsEmbeddings() {
+            return "CamelLangChain4jEmbeddingsEmbeddings";
+        }
+        /**
          * A dense vector embedding of a text.
          * 
          * The option is a: {@code float[]} type.
