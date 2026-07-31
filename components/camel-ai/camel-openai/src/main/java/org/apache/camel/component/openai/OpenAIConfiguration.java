@@ -226,6 +226,22 @@ public class OpenAIConfiguration implements Cloneable {
                             + "can self-correct and retry. The maxToolIterations option bounds retries.")
     private HallucinatedToolNameStrategy hallucinatedToolNameStrategy = HallucinatedToolNameStrategy.FAIL_EXCHANGE;
 
+    @UriParam(defaultValue = "false")
+    @Metadata(description = "Execute the tool calls returned by the model in a single response concurrently instead of "
+                            + "sequentially. Tool calls in the same batch are independent by design, so this reduces the "
+                            + "latency of a batch to that of its slowest tool. Results are always fed back to the model in "
+                            + "the original tool call order. Note that with toolExecutionErrorStrategy=failExchange the "
+                            + "sibling tool calls already dispatched complete before the exchange fails.")
+    private boolean parallelToolExecution;
+
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "Timeout in milliseconds for a batch of parallel tool calls, so that one slow tool cannot "
+                            + "block the whole batch. The timeout applies to the batch as a whole, not per tool call. "
+                            + "A tool call that exceeds it is cancelled and handled according to toolExecutionErrorStrategy. "
+                            + "The default of 0 disables the batch timeout and relies on mcpTimeout, which already bounds "
+                            + "each individual MCP request. Only used when parallelToolExecution=true.")
+    private long parallelToolTimeout;
+
     // ========== EMBEDDINGS CONFIGURATION ==========
 
     @UriParam
@@ -752,6 +768,22 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setHallucinatedToolNameStrategy(HallucinatedToolNameStrategy hallucinatedToolNameStrategy) {
         this.hallucinatedToolNameStrategy = hallucinatedToolNameStrategy;
+    }
+
+    public boolean isParallelToolExecution() {
+        return parallelToolExecution;
+    }
+
+    public void setParallelToolExecution(boolean parallelToolExecution) {
+        this.parallelToolExecution = parallelToolExecution;
+    }
+
+    public long getParallelToolTimeout() {
+        return parallelToolTimeout;
+    }
+
+    public void setParallelToolTimeout(long parallelToolTimeout) {
+        this.parallelToolTimeout = parallelToolTimeout;
     }
 
     public SSLContextParameters getSslContextParameters() {
