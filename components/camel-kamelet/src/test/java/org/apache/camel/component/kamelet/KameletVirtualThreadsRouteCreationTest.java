@@ -33,8 +33,8 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 /**
  * CAMEL-24320: Kamelet route creation must not NPE when virtual threads are enabled on JDK 25+.
  * <p>
- * Virtual threads must be selected before the first {@code ContextValue} is created; the system property is set in
- * a static initializer so {@code ContextValueFactory} picks the ScopedValue backend when this class loads first in an
+ * Virtual threads must be selected before the first {@code ContextValue} is created; the system property is set in a
+ * static initializer so {@code ContextValueFactory} picks the ScopedValue backend when this class loads first in an
  * isolated fork. {@link org.apache.camel.util.concurrent.ScopedValueContextValueOrElseTest} is the primary unit guard.
  */
 @Isolated
