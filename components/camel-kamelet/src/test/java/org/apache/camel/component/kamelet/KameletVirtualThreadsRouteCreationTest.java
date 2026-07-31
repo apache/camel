@@ -22,50 +22,66 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 import org.apache.camel.util.concurrent.ThreadType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
-import org.junit.jupiter.api.parallel.Isolated;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * CAMEL-24320: Kamelet route creation must not NPE when virtual threads are enabled on JDK 25+.
  * <p>
- * Virtual threads must be selected before the first {@code ContextValue} is created; the system property is set in a
- * static initializer so {@code ContextValueFactory} picks the ScopedValue backend when this class loads first in an
- * isolated fork. {@link org.apache.camel.util.concurrent.ScopedValueContextValueOrElseTest} is the primary unit guard.
+ * {@link org.apache.camel.util.concurrent.ScopedValueContextValueOrElseTest} is the primary unit guard for the
+ * ScopedValue {@code orElse(null)} regression.
  */
-@Isolated
 @EnabledForJreRange(min = JRE.JAVA_25)
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 class KameletVirtualThreadsRouteCreationTest {
 
-    static {
-        System.setProperty("camel.threads.virtual.enabled", "true");
+    private static final String VIRTUAL_THREADS_PROPERTY = "camel.threads.virtual.enabled";
+
+    private String previousVirtualThreadsProperty;
+
+    @BeforeEach
+    void enableVirtualThreads() throws Exception {
+        previousVirtualThreadsProperty = System.getProperty(VIRTUAL_THREADS_PROPERTY);
+        System.setProperty(VIRTUAL_THREADS_PROPERTY, "true");
+        resetThreadTypeField();
     }
 
     @AfterEach
-    void resetThreadType() throws Exception {
-        Field field = ThreadType.class.getDeclaredField("current");
-        field.setAccessible(true);
-        field.set(null, null);
-        System.clearProperty("camel.threads.virtual.enabled");
+    void restoreVirtualThreadsProperty() throws Exception {
+        if (previousVirtualThreadsProperty == null) {
+            System.clearProperty(VIRTUAL_THREADS_PROPERTY);
+        } else {
+            System.setProperty(VIRTUAL_THREADS_PROPERTY, previousVirtualThreadsProperty);
+        }
+        resetThreadTypeField();
     }
 
     @Test
     void mainStartsKameletRouteWithVirtualThreadsEnabled() {
-        assertThatCode(() -> {
-            Main main = new Main();
-            main.configure().withVirtualThreadsEnabled(true).addRoutesBuilder(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("kamelet:vt-repro-source").routeId("vt-kamelet-repro").to("mock:vt-out");
-                }
-            });
-            main.start();
+        Main main = new Main();
+        main.configure().withVirtualThreadsEnabled(true).addRoutesBuilder(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("kamelet:vt-repro-source").routeId("vt-kamelet-repro").to("mock:vt-out");
+            }
+        });
+        main.start();
+        try {
             assertThat(main.getCamelContext().getRoute("vt-kamelet-repro")).isNotNull();
+        } finally {
             main.stop();
-        }).doesNotThrowAnyException();
+        }
+    }
+
+    private static void resetThreadTypeField() throws Exception {
+        Field field = ThreadType.class.getDeclaredField("current");
+        field.setAccessible(true);
+        field.set(null, null);
     }
 }
