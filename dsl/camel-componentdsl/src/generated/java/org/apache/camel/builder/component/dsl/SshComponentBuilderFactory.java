@@ -52,39 +52,6 @@ public interface SshComponentBuilderFactory {
     
         
         /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param failOnUnknownHost the value to set
-         * @return the dsl builder
-         */
-        default SshComponentBuilder failOnUnknownHost(boolean failOnUnknownHost) {
-            doSetProperty("failOnUnknownHost", failOnUnknownHost);
-            return this;
-        }
-    
-        /**
-         * Sets the resource path for a known_hosts file.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param knownHostsResource the value to set
-         * @return the dsl builder
-         */
-        default SshComponentBuilder knownHostsResource(java.lang.String knownHostsResource) {
-            doSetProperty("knownHostsResource", knownHostsResource);
-            return this;
-        }
-    
-        
-        /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
          * 
@@ -476,6 +443,25 @@ public interface SshComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Specifies whether a connection to an unknown SSH server host key
+         * should fail. When false, host keys that are not present in the
+         * known_hosts resource are accepted.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param failOnUnknownHost the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder failOnUnknownHost(boolean failOnUnknownHost) {
+            doSetProperty("failOnUnknownHost", failOnUnknownHost);
+            return this;
+        }
+    
         /**
          * Comma-separated list of allowed/supported key exchange algorithms in
          * their order of preference.
@@ -525,6 +511,23 @@ public interface SshComponentBuilderFactory {
          */
         default SshComponentBuilder keyType(java.lang.String keyType) {
             doSetProperty("keyType", keyType);
+            return this;
+        }
+    
+        /**
+         * Sets the resource path for a known_hosts file used to verify the SSH
+         * server host key. When not set, the client does not verify the server
+         * host key against a known_hosts file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param knownHostsResource the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder knownHostsResource(java.lang.String knownHostsResource) {
+            doSetProperty("knownHostsResource", knownHostsResource);
             return this;
         }
     
@@ -612,8 +615,6 @@ public interface SshComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "failOnUnknownHost": getOrCreateConfiguration((SshComponent) component).setFailOnUnknownHost((boolean) value); return true;
-            case "knownHostsResource": getOrCreateConfiguration((SshComponent) component).setKnownHostsResource((java.lang.String) value); return true;
             case "timeout": getOrCreateConfiguration((SshComponent) component).setTimeout((long) value); return true;
             case "bridgeErrorHandler": ((SshComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "pollCommand": getOrCreateConfiguration((SshComponent) component).setPollCommand((java.lang.String) value); return true;
@@ -636,9 +637,11 @@ public interface SshComponentBuilderFactory {
             case "certResource": getOrCreateConfiguration((SshComponent) component).setCertResource((java.lang.String) value); return true;
             case "certResourcePassword": getOrCreateConfiguration((SshComponent) component).setCertResourcePassword((java.lang.String) value); return true;
             case "ciphers": getOrCreateConfiguration((SshComponent) component).setCiphers((java.lang.String) value); return true;
+            case "failOnUnknownHost": getOrCreateConfiguration((SshComponent) component).setFailOnUnknownHost((boolean) value); return true;
             case "kex": getOrCreateConfiguration((SshComponent) component).setKex((java.lang.String) value); return true;
             case "keyPairProvider": getOrCreateConfiguration((SshComponent) component).setKeyPairProvider((org.apache.sshd.common.keyprovider.KeyPairProvider) value); return true;
             case "keyType": getOrCreateConfiguration((SshComponent) component).setKeyType((java.lang.String) value); return true;
+            case "knownHostsResource": getOrCreateConfiguration((SshComponent) component).setKnownHostsResource((java.lang.String) value); return true;
             case "macs": getOrCreateConfiguration((SshComponent) component).setMacs((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((SshComponent) component).setPassword((java.lang.String) value); return true;
             case "signatures": getOrCreateConfiguration((SshComponent) component).setSignatures((java.lang.String) value); return true;

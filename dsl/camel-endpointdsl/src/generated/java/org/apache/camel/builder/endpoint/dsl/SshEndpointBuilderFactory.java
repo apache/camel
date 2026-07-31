@@ -44,52 +44,6 @@ public interface SshEndpointBuilderFactory {
             return (AdvancedSshEndpointConsumerBuilder) this;
         }
         /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param failOnUnknownHost the value to set
-         * @return the dsl builder
-         */
-        default SshEndpointConsumerBuilder failOnUnknownHost(boolean failOnUnknownHost) {
-            doSetProperty("failOnUnknownHost", failOnUnknownHost);
-            return this;
-        }
-        /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param failOnUnknownHost the value to set
-         * @return the dsl builder
-         */
-        default SshEndpointConsumerBuilder failOnUnknownHost(String failOnUnknownHost) {
-            doSetProperty("failOnUnknownHost", failOnUnknownHost);
-            return this;
-        }
-        /**
-         * Sets the resource path for a known_hosts file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param knownHostsResource the value to set
-         * @return the dsl builder
-         */
-        default SshEndpointConsumerBuilder knownHostsResource(String knownHostsResource) {
-            doSetProperty("knownHostsResource", knownHostsResource);
-            return this;
-        }
-        /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
          * 
@@ -674,6 +628,40 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether a connection to an unknown SSH server host key
+         * should fail. When false, host keys that are not present in the
+         * known_hosts resource are accepted.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param failOnUnknownHost the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointConsumerBuilder failOnUnknownHost(boolean failOnUnknownHost) {
+            doSetProperty("failOnUnknownHost", failOnUnknownHost);
+            return this;
+        }
+        /**
+         * Specifies whether a connection to an unknown SSH server host key
+         * should fail. When false, host keys that are not present in the
+         * known_hosts resource are accepted.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param failOnUnknownHost the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointConsumerBuilder failOnUnknownHost(String failOnUnknownHost) {
+            doSetProperty("failOnUnknownHost", failOnUnknownHost);
+            return this;
+        }
+        /**
          * Comma-separated list of allowed/supported key exchange algorithms in
          * their order of preference.
          * 
@@ -736,6 +724,22 @@ public interface SshEndpointBuilderFactory {
          */
         default SshEndpointConsumerBuilder keyType(String keyType) {
             doSetProperty("keyType", keyType);
+            return this;
+        }
+        /**
+         * Sets the resource path for a known_hosts file used to verify the SSH
+         * server host key. When not set, the client does not verify the server
+         * host key against a known_hosts file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param knownHostsResource the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointConsumerBuilder knownHostsResource(String knownHostsResource) {
+            doSetProperty("knownHostsResource", knownHostsResource);
             return this;
         }
         /**
@@ -1262,52 +1266,6 @@ public interface SshEndpointBuilderFactory {
         }
 
         /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param failOnUnknownHost the value to set
-         * @return the dsl builder
-         */
-        default SshEndpointProducerBuilder failOnUnknownHost(boolean failOnUnknownHost) {
-            doSetProperty("failOnUnknownHost", failOnUnknownHost);
-            return this;
-        }
-        /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param failOnUnknownHost the value to set
-         * @return the dsl builder
-         */
-        default SshEndpointProducerBuilder failOnUnknownHost(String failOnUnknownHost) {
-            doSetProperty("failOnUnknownHost", failOnUnknownHost);
-            return this;
-        }
-        /**
-         * Sets the resource path for a known_hosts file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param knownHostsResource the value to set
-         * @return the dsl builder
-         */
-        default SshEndpointProducerBuilder knownHostsResource(String knownHostsResource) {
-            doSetProperty("knownHostsResource", knownHostsResource);
-            return this;
-        }
-        /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
          * 
@@ -1386,6 +1344,40 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether a connection to an unknown SSH server host key
+         * should fail. When false, host keys that are not present in the
+         * known_hosts resource are accepted.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param failOnUnknownHost the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointProducerBuilder failOnUnknownHost(boolean failOnUnknownHost) {
+            doSetProperty("failOnUnknownHost", failOnUnknownHost);
+            return this;
+        }
+        /**
+         * Specifies whether a connection to an unknown SSH server host key
+         * should fail. When false, host keys that are not present in the
+         * known_hosts resource are accepted.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param failOnUnknownHost the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointProducerBuilder failOnUnknownHost(String failOnUnknownHost) {
+            doSetProperty("failOnUnknownHost", failOnUnknownHost);
+            return this;
+        }
+        /**
          * Comma-separated list of allowed/supported key exchange algorithms in
          * their order of preference.
          * 
@@ -1448,6 +1440,22 @@ public interface SshEndpointBuilderFactory {
          */
         default SshEndpointProducerBuilder keyType(String keyType) {
             doSetProperty("keyType", keyType);
+            return this;
+        }
+        /**
+         * Sets the resource path for a known_hosts file used to verify the SSH
+         * server host key. When not set, the client does not verify the server
+         * host key against a known_hosts file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param knownHostsResource the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointProducerBuilder knownHostsResource(String knownHostsResource) {
+            doSetProperty("knownHostsResource", knownHostsResource);
             return this;
         }
         /**
@@ -1867,52 +1875,6 @@ public interface SshEndpointBuilderFactory {
         }
 
         /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param failOnUnknownHost the value to set
-         * @return the dsl builder
-         */
-        default SshEndpointBuilder failOnUnknownHost(boolean failOnUnknownHost) {
-            doSetProperty("failOnUnknownHost", failOnUnknownHost);
-            return this;
-        }
-        /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param failOnUnknownHost the value to set
-         * @return the dsl builder
-         */
-        default SshEndpointBuilder failOnUnknownHost(String failOnUnknownHost) {
-            doSetProperty("failOnUnknownHost", failOnUnknownHost);
-            return this;
-        }
-        /**
-         * Sets the resource path for a known_hosts file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param knownHostsResource the value to set
-         * @return the dsl builder
-         */
-        default SshEndpointBuilder knownHostsResource(String knownHostsResource) {
-            doSetProperty("knownHostsResource", knownHostsResource);
-            return this;
-        }
-        /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
          * 
@@ -1991,6 +1953,40 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether a connection to an unknown SSH server host key
+         * should fail. When false, host keys that are not present in the
+         * known_hosts resource are accepted.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param failOnUnknownHost the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointBuilder failOnUnknownHost(boolean failOnUnknownHost) {
+            doSetProperty("failOnUnknownHost", failOnUnknownHost);
+            return this;
+        }
+        /**
+         * Specifies whether a connection to an unknown SSH server host key
+         * should fail. When false, host keys that are not present in the
+         * known_hosts resource are accepted.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param failOnUnknownHost the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointBuilder failOnUnknownHost(String failOnUnknownHost) {
+            doSetProperty("failOnUnknownHost", failOnUnknownHost);
+            return this;
+        }
+        /**
          * Comma-separated list of allowed/supported key exchange algorithms in
          * their order of preference.
          * 
@@ -2053,6 +2049,22 @@ public interface SshEndpointBuilderFactory {
          */
         default SshEndpointBuilder keyType(String keyType) {
             doSetProperty("keyType", keyType);
+            return this;
+        }
+        /**
+         * Sets the resource path for a known_hosts file used to verify the SSH
+         * server host key. When not set, the client does not verify the server
+         * host key against a known_hosts file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param knownHostsResource the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointBuilder knownHostsResource(String knownHostsResource) {
+            doSetProperty("knownHostsResource", knownHostsResource);
             return this;
         }
         /**

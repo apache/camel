@@ -54,9 +54,13 @@ public class SshConfiguration implements Cloneable {
     private String certResourcePassword;
     @UriParam(defaultValue = "30000")
     private long timeout = 30000;
-    @UriParam()
+    @UriParam(label = "security", security = "insecure:ssl",
+              description = "Sets the resource path for a known_hosts file used to verify the SSH server host key."
+                            + " When not set, the client does not verify the server host key against a known_hosts file.")
     private String knownHostsResource;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security", defaultValue = "false", security = "insecure:ssl", insecureValue = "false",
+              description = "Specifies whether a connection to an unknown SSH server host key should fail. When false,"
+                            + " host keys that are not present in the known_hosts resource are accepted.")
     private boolean failOnUnknownHost;
     @UriParam(label = "advanced", defaultValue = Channel.CHANNEL_EXEC)
     private String channelType = Channel.CHANNEL_EXEC;
