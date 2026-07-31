@@ -36,9 +36,14 @@ These rules apply to ALL AI agents working on this codebase.
 - An agent MUST NEVER push commits to a branch it did not create.
 - If a contributor's PR needs changes, the agent may suggest changes via review comments,
   but must not push to their branch without explicit permission.
-- An agent should prefer to use his own fork to push branches instead of the main apache/camel repository. It avoids to fill the main repository with a long list of uncleaned branches.
+- An agent MUST use its own fork to push branches instead of the main apache/camel repository.
+  Pushing directly to the upstream repo fills it with stale branches that waste CI time and disk
+  space for all contributors. A `pr-cleanup-branches.yml` workflow deletes non-protected branches
+  when their PR is closed, but using a fork avoids the problem entirely.
 - An agent must provide a useful name for the git branch. It should contain the global topic and issue number if possible.
-- After a Pull Request is merged or rejected, the branch should be deleted.
+- After a Pull Request is merged or rejected, the branch MUST be deleted. The
+  `pr-cleanup-branches.yml` workflow handles this automatically for branches pushed directly to
+  `apache/camel`, but agents using forks must delete their remote branch manually.
 
 ### JIRA Ticket Ownership
 
