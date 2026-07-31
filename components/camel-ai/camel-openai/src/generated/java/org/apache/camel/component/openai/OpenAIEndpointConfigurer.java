@@ -95,6 +95,10 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "outputclass":
         case "outputClass": target.getConfiguration().setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "paralleltoolexecution":
+        case "parallelToolExecution": target.getConfiguration().setParallelToolExecution(property(camelContext, boolean.class, value)); return true;
+        case "paralleltooltimeout":
+        case "parallelToolTimeout": target.getConfiguration().setParallelToolTimeout(property(camelContext, long.class, value)); return true;
         case "previousresponseid":
         case "previousResponseId": target.getConfiguration().setPreviousResponseId(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
@@ -226,6 +230,10 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": return java.lang.String.class;
         case "outputclass":
         case "outputClass": return java.lang.String.class;
+        case "paralleltoolexecution":
+        case "parallelToolExecution": return boolean.class;
+        case "paralleltooltimeout":
+        case "parallelToolTimeout": return long.class;
         case "previousresponseid":
         case "previousResponseId": return java.lang.String.class;
         case "requesttimeout":
@@ -358,6 +366,10 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "outputclass":
         case "outputClass": return target.getConfiguration().getOutputClass();
+        case "paralleltoolexecution":
+        case "parallelToolExecution": return target.getConfiguration().isParallelToolExecution();
+        case "paralleltooltimeout":
+        case "parallelToolTimeout": return target.getConfiguration().getParallelToolTimeout();
         case "previousresponseid":
         case "previousResponseId": return target.getConfiguration().getPreviousResponseId();
         case "requesttimeout":

@@ -402,6 +402,18 @@ Hosted tools: `builtinTools` (`web_search`, `file_search`, `code_interpreter`; `
 on this operation. The full SDK response is stored in exchange property `CamelOpenAIResponsesResponse` when
 `storeFullResponse=true`.
 
+==== Optional parallel MCP tool execution
+
+The new `parallelToolExecution` option (default `false`) executes the tool calls the model requests in a
+single response concurrently rather than sequentially, and `parallelToolTimeout` (milliseconds, default `0`
+= disabled) bounds such a batch as a whole. Both apply to the agentic loop and to the `openai:tool-execution`
+operation. Existing routes are unaffected unless they opt in.
+
+When `parallelToolExecution=true` is combined with `toolExecutionErrorStrategy=failExchange`, the sibling
+tool calls that were already dispatched complete before the exchange fails, whereas sequential execution
+abandons the remaining calls at the first failure. Routes whose tools have side effects and that rely on
+a failure preventing later tool calls in the same batch should keep the sequential default.
+
 === camel-management - Throughput MBean attribute uses EWMA smoothing
 
 The `Throughput` attribute on the `ManagedPerformanceCounter` JMX MBean now reports an EWMA

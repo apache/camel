@@ -30,7 +30,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.core.JsonField;
 import com.openai.core.JsonValue;
@@ -52,8 +51,6 @@ import com.openai.models.chat.completions.ChatCompletionSystemMessageParam;
 import com.openai.models.chat.completions.ChatCompletionToolMessageParam;
 import com.openai.models.chat.completions.ChatCompletionUserMessageParam;
 import com.openai.models.completions.CompletionUsage;
-import io.modelcontextprotocol.client.McpSyncClient;
-import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -62,6 +59,7 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +75,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     private static final String PENDING_USER_MESSAGE = "CamelOpenAIPendingUserMessage";
 
     private Class<?> outputClassResolved;
+    private McpToolCallExecutor toolCallExecutor;
 
     public OpenAIProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -85,6 +84,9 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         OpenAIConfiguration config = getEndpoint().getConfiguration();
+
+        toolCallExecutor = new McpToolCallExecutor(getEndpoint());
+        ServiceHelper.startService(toolCallExecutor);
 
         if (ObjectHelper.isNotEmpty(config.getOutputClass())) {
             outputClassResolved = getEndpoint().getCamelContext().getClassResolver()
@@ -102,6 +104,12 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         }
 
         super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(toolCallExecutor);
+        super.doStop();
     }
 
     private String resolveResourceContent(String property) {
@@ -532,93 +540,35 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             paramsBuilder.addMessage(assistantParam);
             agenticMessages.add(assistantParam);
 
-            // Execute all tool calls in this batch
-            boolean allReturnDirect = true;
-            List<ToolResultEntry> batchResults = new ArrayList<>();
-
+            // Record the requested tools up front so the log keeps the model's ordering regardless of
+            // whether the batch is executed sequentially or in parallel
             for (ChatCompletionMessageToolCall toolCall : toolCalls) {
-                String toolName = toolCall.asFunction().function().name();
-                String argsJson = toolCall.asFunction().function().arguments();
-                String toolCallId = toolCall.asFunction().id();
-                toolCallsLog.add(toolName);
-
-                McpToolState mcpToolState = getEndpoint().getMcpToolState();
-                McpSyncClient mcpClient = mcpToolState.toolClientMap().get(toolName);
-                if (mcpClient == null) {
-                    if (config.getHallucinatedToolNameStrategy() == HallucinatedToolNameStrategy.FAIL_EXCHANGE) {
-                        throw new IllegalStateException(
-                                "Tool '" + toolName + "' not found in any configured MCP server");
-                    }
-                    // repromptModel: send a corrective tool result listing available tools
-                    String available = String.join(", ", mcpToolState.toolClientMap().keySet());
-                    String errorMsg = "Error: tool '" + toolName
-                                      + "' does not exist. Available tools: " + available;
-                    LOG.warn("Hallucinated tool name '{}', sending corrective result to model", toolName);
-                    batchResults.add(new ToolResultEntry(toolCallId, errorMsg));
-                    allReturnDirect = false;
-                    continue;
-                }
-
-                LOG.debug("Executing MCP tool '{}' with args: {}", toolName, argsJson);
-                String resultContent;
-
-                try {
-                    Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
-                    McpSchema.CallToolResult toolResult
-                            = getEndpoint().callTool(mcpClient, toolName, argsMap);
-
-                    if (Boolean.TRUE.equals(toolResult.isError())) {
-                        resultContent = "Error: " + extractTextContent(toolResult.content());
-                        allReturnDirect = false;
-                    } else {
-                        resultContent = extractTextContent(toolResult.content());
-                        if (!mcpToolState.returnDirectTools().contains(toolName)) {
-                            allReturnDirect = false;
-                        }
-                    }
-                } catch (JsonProcessingException e) {
-                    if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
-                        throw e;
-                    }
-                    LOG.warn("Invalid tool arguments for '{}': {}", toolName, argsJson, e);
-                    resultContent = "Error: invalid tool arguments: " + e.getMessage();
-                    allReturnDirect = false;
-                } catch (Exception e) {
-                    if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
-                        throw e;
-                    }
-                    LOG.warn("MCP tool '{}' execution failed: {}", toolName, e.getMessage(), e);
-                    resultContent = "Error: Tool execution failed: " + e.getMessage();
-                    allReturnDirect = false;
-                }
-
-                LOG.debug("Tool '{}' result: {}", toolName, resultContent);
-                batchResults.add(new ToolResultEntry(toolCallId, resultContent));
+                toolCallsLog.add(toolCall.asFunction().function().name());
             }
+
+            // Execute all tool calls in this batch
+            List<McpToolCallExecutor.ToolResult> batchResults = toolCallExecutor.execute(toolCalls);
+            boolean allReturnDirect = batchResults.stream().allMatch(McpToolCallExecutor.ToolResult::returnDirect);
 
             // returnDirect check: if ALL tools in this batch are returnDirect, short-circuit
             if (allReturnDirect && !batchResults.isEmpty()) {
                 LOG.debug("All tools in batch have returnDirect=true, short-circuiting agentic loop");
-                StringBuilder directResult = new StringBuilder();
-                for (ToolResultEntry entry : batchResults) {
-                    if (!directResult.isEmpty()) {
-                        directResult.append("\n");
-                    }
-                    directResult.append(entry.content());
-                }
+                String directResult = batchResults.stream()
+                        .map(McpToolCallExecutor.ToolResult::content)
+                        .collect(Collectors.joining("\n"));
 
-                exchange.getMessage().setBody(directResult.toString());
+                exchange.getMessage().setBody(directResult);
                 setResponseHeaders(exchange.getMessage(), response);
                 exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, iteration);
                 exchange.getMessage().setHeader(OpenAIConstants.MCP_TOOL_CALLS, toolCallsLog);
                 exchange.getMessage().setHeader(OpenAIConstants.MCP_RETURN_DIRECT, true);
-                updateConversationHistory(exchange, agenticMessages, directResult.toString());
+                updateConversationHistory(exchange, agenticMessages, directResult);
                 return;
             }
 
             // Normal path: feed tool results back to LLM
             LOG.debug("Feeding {} tool result(s) back to the model", batchResults.size());
-            for (ToolResultEntry entry : batchResults) {
+            for (McpToolCallExecutor.ToolResult entry : batchResults) {
                 ChatCompletionMessageParam toolMsg = ChatCompletionMessageParam.ofTool(
                         ChatCompletionToolMessageParam.builder()
                                 .toolCallId(entry.toolCallId())
@@ -649,20 +599,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 "Max agentic tokens (%d) exceeded at iteration %d. Cumulative usage: prompt=%d, completion=%d, total=%d"
                         .formatted(maxAgenticTokens, iteration, tokenTracker.getPromptTokens(),
                                 tokenTracker.getCompletionTokens(), tokenTracker.getTotalTokens()));
-    }
-
-    private String extractTextContent(List<McpSchema.Content> contents) {
-        if (contents == null || contents.isEmpty()) {
-            return "";
-        }
-        return contents.stream()
-                .filter(McpSchema.TextContent.class::isInstance)
-                .map(McpSchema.TextContent.class::cast)
-                .map(McpSchema.TextContent::text)
-                .collect(Collectors.joining());
-    }
-
-    private record ToolResultEntry(String toolCallId, String content) {
     }
 
     private void processStreaming(Exchange exchange, ChatCompletionCreateParams params) {
