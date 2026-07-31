@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.embeddingstore;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
@@ -109,26 +110,50 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
     }
 
     /**
-     * Adds an embedding to the store with optional text segment.
+     * Adds embeddings to the store with optional text segments and caller-supplied IDs.
      *
      * <p>
-     * Expects the following headers:
+     * Supports both single and batch operations:
+     * </p>
+     *
+     * <p>
+     * <b>Single operation</b> - when the {@code CamelLangChain4jEmbeddingsEmbedding} header contains a single
+     * {@link Embedding}:
      * </p>
      * <ul>
-     * <li>{@code CamelLangchain4jEmbeddingEmbedding} - The embedding vector (required)</li>
-     * <li>{@code CamelLangchain4jEmbeddingTextSegment} - Associated text segment (optional)</li>
+     * <li>With caller-supplied ID header ({@code CamelLangchain4jEmbeddingStoreEmbeddingId}): calls
+     * {@code add(id, embedding)}</li>
+     * <li>With text segment header: calls {@code add(embedding, textSegment)}</li>
+     * <li>Without text segment: calls {@code add(embedding)}</li>
      * </ul>
      *
      * <p>
-     * Returns the generated embedding ID in the message body.
+     * <b>Batch operation</b> - when the {@code CamelLangChain4jEmbeddingsEmbeddings} header contains a
+     * {@code List<Embedding>}:
      * </p>
+     * <ul>
+     * <li>With IDs header ({@code CamelLangchain4jEmbeddingStoreEmbeddingIds}) and text segments body: calls
+     * {@code addAll(ids, embeddings, textSegments)}</li>
+     * <li>With text segments body: calls {@code addAll(embeddings, textSegments)}</li>
+     * <li>Without text segments: calls {@code addAll(embeddings)}</li>
+     * </ul>
      *
      * @param  exchange  the Camel exchange containing the embedding data
      * @throws Exception if the add operation fails
      */
+    @SuppressWarnings("unchecked")
     private void add(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
+        EmbeddingStore<TextSegment> store = getEndpoint().getConfiguration().getEmbeddingStore();
 
+        // Check for batch embeddings header first
+        List<Embedding> embeddings = in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDINGS, List.class);
+        if (embeddings != null) {
+            addBatch(in, store, embeddings);
+            return;
+        }
+
+        // Single embedding path
         if (in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING) == null) {
             throw new NoSuchHeaderException(
                     "The embedding is a required header for ADD operations", exchange,
@@ -136,36 +161,94 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         }
 
         Embedding embedding = in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class);
+
+        // Check for caller-supplied ID
+        String callerId = in.getHeader(LangChain4jEmbeddingStoreHeaders.EMBEDDING_ID, String.class);
         String id;
 
-        if (in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT) != null) {
+        if (callerId != null) {
+            store.add(callerId, embedding);
+            id = callerId;
+        } else if (in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT) != null) {
             TextSegment text = in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class);
-            id = getEndpoint().getConfiguration().getEmbeddingStore().add(embedding, text);
+            id = store.add(embedding, text);
         } else {
-            id = getEndpoint().getConfiguration().getEmbeddingStore().add(embedding);
+            id = store.add(embedding);
         }
 
-        Message out = exchange.getMessage();
-        out.setBody(id);
+        in.setBody(id);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void addBatch(Message in, EmbeddingStore<TextSegment> store, List<Embedding> embeddings) {
+        List<String> callerIds = in.getHeader(LangChain4jEmbeddingStoreHeaders.EMBEDDING_IDS, List.class);
+        Object body = in.getBody();
+        List<TextSegment> textSegments = null;
+
+        if (body instanceof List && !((List<?>) body).isEmpty() && ((List<?>) body).get(0) instanceof TextSegment) {
+            textSegments = (List<TextSegment>) body;
+        }
+
+        List<String> ids;
+        if (callerIds != null && textSegments != null) {
+            store.addAll(callerIds, embeddings, textSegments);
+            ids = callerIds;
+        } else if (textSegments != null) {
+            ids = store.addAll(embeddings, textSegments);
+        } else {
+            ids = store.addAll(embeddings);
+        }
+
+        in.setBody(ids);
     }
 
     /**
-     * Removes an embedding from the store by its ID.
+     * Removes embeddings from the store. Supports multiple removal strategies:
      *
-     * <p>
-     * Expects the embedding ID as the message body (String).
-     * </p>
+     * <ul>
+     * <li><b>By filter</b>: when the {@code CamelLangchain4jEmbeddingStoreFilter} header is set, removes all embeddings
+     * matching the filter via {@code removeAll(Filter)}</li>
+     * <li><b>By ID list</b>: when the body is a {@code Collection<String>}, removes all specified embeddings via
+     * {@code removeAll(Collection)}</li>
+     * <li><b>By single ID</b>: when the body is a single {@code String}, removes that embedding via
+     * {@code remove(id)}</li>
+     * <li><b>Clear all</b>: when the body is null/empty and no filter is set, removes all embeddings from the store via
+     * {@code removeAll()}</li>
+     * </ul>
      *
-     * @param  exchange  the Camel exchange containing the embedding ID to remove
+     * @param  exchange  the Camel exchange containing removal parameters
      * @throws Exception if the remove operation fails
      */
+    @SuppressWarnings("unchecked")
     private void remove(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
+        EmbeddingStore<TextSegment> store = getEndpoint().getConfiguration().getEmbeddingStore();
+
+        // Check for filter-based removal first
+        Filter filter = in.getHeader(LangChain4jEmbeddingStoreHeaders.FILTER, Filter.class);
+        if (filter != null) {
+            store.removeAll(filter);
+            return;
+        }
+
+        Object body = in.getBody();
+
+        // Batch removal by collection of IDs
+        if (body instanceof Collection) {
+            Collection<String> ids = (Collection<String>) body;
+            store.removeAll(ids);
+            return;
+        }
+
+        // Single ID removal
         String id = in.getBody(String.class);
+        if (id != null && !id.isEmpty()) {
+            store.remove(id);
+            return;
+        }
 
-        getEndpoint().getConfiguration().getEmbeddingStore().remove(id);
-
-        Message out = exchange.getMessage();
+        // No filter, no IDs — clear the entire store
+        store.removeAll();
     }
 
     /**
