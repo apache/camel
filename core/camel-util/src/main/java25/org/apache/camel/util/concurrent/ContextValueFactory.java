@@ -138,7 +138,7 @@ class ContextValueFactory {
 
         @Override
         public T orElse(T defaultValue) {
-            return scopedValue.orElse(defaultValue);
+            return scopedValue.isBound() ? scopedValue.get() : defaultValue;
         }
 
         @Override
