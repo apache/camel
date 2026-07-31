@@ -920,6 +920,42 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Refresh the advertised tool list when an MCP server notifies that its
+         * tools changed. Set to false to keep the tool list fixed to what was
+         * listed when the endpoint started, for deployments that require a
+         * deterministic set of tools.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param mcpToolRefresh the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder mcpToolRefresh(boolean mcpToolRefresh) {
+            doSetProperty("mcpToolRefresh", mcpToolRefresh);
+            return this;
+        }
+        /**
+         * Refresh the advertised tool list when an MCP server notifies that its
+         * tools changed. Set to false to keep the tool list fixed to what was
+         * listed when the endpoint started, for deployments that require a
+         * deterministic set of tools.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param mcpToolRefresh the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder mcpToolRefresh(String mcpToolRefresh) {
+            doSetProperty("mcpToolRefresh", mcpToolRefresh);
+            return this;
+        }
+        /**
          * The model to use for chat completion.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -946,6 +982,90 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder outputClass(String outputClass) {
             doSetProperty("outputClass", outputClass);
+            return this;
+        }
+        /**
+         * Execute the tool calls returned by the model in a single response
+         * concurrently instead of sequentially. Tool calls in the same batch
+         * are independent by design, so this reduces the latency of a batch to
+         * that of its slowest tool. Results are always fed back to the model in
+         * the original tool call order. Note that with
+         * toolExecutionErrorStrategy=failExchange the sibling tool calls
+         * already dispatched complete before the exchange fails.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param parallelToolExecution the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder parallelToolExecution(boolean parallelToolExecution) {
+            doSetProperty("parallelToolExecution", parallelToolExecution);
+            return this;
+        }
+        /**
+         * Execute the tool calls returned by the model in a single response
+         * concurrently instead of sequentially. Tool calls in the same batch
+         * are independent by design, so this reduces the latency of a batch to
+         * that of its slowest tool. Results are always fed back to the model in
+         * the original tool call order. Note that with
+         * toolExecutionErrorStrategy=failExchange the sibling tool calls
+         * already dispatched complete before the exchange fails.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param parallelToolExecution the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder parallelToolExecution(String parallelToolExecution) {
+            doSetProperty("parallelToolExecution", parallelToolExecution);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for a batch of parallel tool calls, so that
+         * one slow tool cannot block the whole batch. The timeout applies to
+         * the batch as a whole, not per tool call. A tool call that exceeds it
+         * is cancelled and handled according to toolExecutionErrorStrategy. The
+         * default of 0 disables the batch timeout and relies on mcpTimeout,
+         * which already bounds each individual MCP request. Only used when
+         * parallelToolExecution=true.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param parallelToolTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder parallelToolTimeout(long parallelToolTimeout) {
+            doSetProperty("parallelToolTimeout", parallelToolTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for a batch of parallel tool calls, so that
+         * one slow tool cannot block the whole batch. The timeout applies to
+         * the batch as a whole, not per tool call. A tool call that exceeds it
+         * is cancelled and handled according to toolExecutionErrorStrategy. The
+         * default of 0 disables the batch timeout and relies on mcpTimeout,
+         * which already bounds each individual MCP request. Only used when
+         * parallelToolExecution=true.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param parallelToolTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder parallelToolTimeout(String parallelToolTimeout) {
+            doSetProperty("parallelToolTimeout", parallelToolTimeout);
             return this;
         }
         /**

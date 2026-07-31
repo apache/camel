@@ -209,6 +209,12 @@ public class OpenAIConfiguration implements Cloneable {
                             + "and retry the call once.")
     private boolean mcpReconnect = true;
 
+    @UriParam(defaultValue = "true")
+    @Metadata(description = "Refresh the advertised tool list when an MCP server notifies that its tools changed. "
+                            + "Set to false to keep the tool list fixed to what was listed when the endpoint started, "
+                            + "for deployments that require a deterministic set of tools.")
+    private boolean mcpToolRefresh = true;
+
     @UriParam(enums = "failExchange,repromptModel", defaultValue = "failExchange")
     @Metadata(description = "Strategy for handling exceptions thrown during MCP tool execution. "
                             + "'failExchange' (default) propagates the exception to the Camel exchange so that standard Camel "
@@ -752,6 +758,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setMcpReconnect(boolean mcpReconnect) {
         this.mcpReconnect = mcpReconnect;
+    }
+
+    public boolean isMcpToolRefresh() {
+        return mcpToolRefresh;
+    }
+
+    public void setMcpToolRefresh(boolean mcpToolRefresh) {
+        this.mcpToolRefresh = mcpToolRefresh;
     }
 
     public ToolExecutionErrorStrategy getToolExecutionErrorStrategy() {
