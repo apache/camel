@@ -49,6 +49,8 @@ class EventbridgeProducerPojoRequestTest {
 
         assertThatThrownBy(() -> producer.process(exchange))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("putRule operation requires PutRuleRequest in POJO mode");
+                .hasMessageContaining("Expected body of type")
+                .hasMessageContaining("PutRuleRequest")
+                .hasMessageContaining("java.lang.String");
     }
 }

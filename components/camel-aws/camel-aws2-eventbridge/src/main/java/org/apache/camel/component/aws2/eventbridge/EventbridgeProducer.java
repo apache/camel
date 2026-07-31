@@ -157,7 +157,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 message.setHeader(EventbridgeConstants.RULE_ARN, result.ruleArn());
             } else {
                 throw new IllegalArgumentException(
-                        "putRule operation requires PutRuleRequest in POJO mode");
+                        String.format("Expected body of type %s but was %s",
+                                PutRuleRequest.class.getName(),
+                                ObjectHelper.isNotEmpty(payload) ? payload.getClass().getName() : "null"));
             }
         } else {
             PutRuleRequest.Builder builder = PutRuleRequest.builder();
