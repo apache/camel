@@ -90,6 +90,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcpServer": target.getConfiguration().setMcpServer(property(camelContext, java.util.Map.class, value)); return true;
         case "mcptimeout":
         case "mcpTimeout": target.getConfiguration().setMcpTimeout(property(camelContext, int.class, value)); return true;
+        case "mcptoolrefresh":
+        case "mcpToolRefresh": target.getConfiguration().setMcpToolRefresh(property(camelContext, boolean.class, value)); return true;
         case "model": target.getConfiguration().setModel(property(camelContext, java.lang.String.class, value)); return true;
         case "oauthprofile":
         case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
@@ -225,6 +227,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcpServer": return java.util.Map.class;
         case "mcptimeout":
         case "mcpTimeout": return int.class;
+        case "mcptoolrefresh":
+        case "mcpToolRefresh": return boolean.class;
         case "model": return java.lang.String.class;
         case "oauthprofile":
         case "oauthProfile": return java.lang.String.class;
@@ -361,6 +365,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcpServer": return target.getConfiguration().getMcpServer();
         case "mcptimeout":
         case "mcpTimeout": return target.getConfiguration().getMcpTimeout();
+        case "mcptoolrefresh":
+        case "mcpToolRefresh": return target.getConfiguration().isMcpToolRefresh();
         case "model": return target.getConfiguration().getModel();
         case "oauthprofile":
         case "oauthProfile": return target.getConfiguration().getOauthProfile();

@@ -300,6 +300,75 @@ YAML::
 ----
 ====
 
+=== Parallel Tool Execution
+
+A model can request several tool calls in a single response. By default, the component executes them one after another,
+so the batch takes as long as the sum of its tool calls. Because tool calls emitted in the same assistant message are
+independent by design, `parallelToolExecution=true` dispatches them concurrently instead, reducing the batch to the
+duration of its slowest tool:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&parallelToolExecution=true"
+        + "&parallelToolTimeout=30000"
+        + "&mcpServer.api.transportType=streamableHttp"
+        + "&mcpServer.api.url=http://localhost:9090/mcp");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;parallelToolExecution=true&amp;parallelToolTimeout=30000&amp;mcpServer.api.transportType=streamableHttp&amp;mcpServer.api.url=http://localhost:9090/mcp"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              parallelToolExecution: true
+              parallelToolTimeout: 30000
+              mcpServer.api.transportType: streamableHttp
+              mcpServer.api.url: http://localhost:9090/mcp
+----
+====
+
+The option applies to both the agentic loop and the `openai:tool-execution` operation.
+
+Notes:
+
+* Results are always fed back to the model in the order the model requested the tools, as required by the OpenAI API,
+  regardless of the order in which the tool calls complete.
+* A batch containing a single tool call is executed inline, without a thread hand-off.
+* `parallelToolTimeout` (milliseconds, default `0` = disabled) bounds the batch as a whole, so that one slow tool cannot
+  block it. A tool call that exceeds it is cancelled and then handled according to `toolExecutionErrorStrategy`. Leaving
+  it disabled is reasonable, because `mcpTimeout` already bounds each individual MCP request.
+* With `toolExecutionErrorStrategy=failExchange`, the sibling tool calls that were already dispatched are allowed to
+  complete before the exchange fails. Sequential execution instead abandons the remaining calls at the first failure.
+* The thread pool comes from Camel's `ExecutorServiceManager` and follows the default thread pool profile, so it is
+  visible over JMX and shut down with the `CamelContext`. When virtual threads are enabled
+  (`camel.main.virtualThreadsEnabled=true`), the pool automatically becomes a thread-per-task virtual thread executor and
+  the profile's pool sizes no longer apply — concurrency is then bounded by the profile's `maxQueueSize` instead.
+* `stdio` MCP servers multiplex all calls over a single child process, so the achievable parallelism there depends on
+  the server implementation. HTTP-based transports (`streamableHttp`, `sse`) benefit the most.
+
 === Manual Tool Loop with `tool-execution` Operation
 
 When `autoToolExecution=false`, you can implement your own tool loop using the `openai:tool-execution` operation and Camel's `loopDoWhile` EIP. This gives you full control to add logging, filtering, retry logic, or custom routing between tool calls — without writing any Java code.
@@ -523,6 +592,68 @@ YAML::
               mcpProtocolVersions: "2024-11-05,2025-03-26,2025-06-18"
 ----
 ====
+
+=== Runtime Tool Refresh
+
+MCP servers may add, remove or change tools while they are running, and announce it with a `tools/list_changed`
+notification. When `mcpToolRefresh=true` (the default), the component subscribes to that notification and refreshes the
+tool list it advertises to the model, so a long-running route picks up server-side changes without being restarted.
+
+Set `mcpToolRefresh=false` to pin the tool list to whatever was listed when the endpoint started, for deployments that
+require a deterministic set of tools:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&mcpToolRefresh=false"
+        + "&mcpServer.api.transportType=streamableHttp"
+        + "&mcpServer.api.url=http://localhost:9090/mcp");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;mcpToolRefresh=false&amp;mcpServer.api.transportType=streamableHttp&amp;mcpServer.api.url=http://localhost:9090/mcp"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              mcpToolRefresh: false
+              mcpServer.api.transportType: streamableHttp
+              mcpServer.api.url: http://localhost:9090/mcp
+----
+====
+
+Notes:
+
+* A refresh replaces only the tools of the server that sent the notification. Tools from the other configured servers are
+  left untouched.
+* The per-server `toolNames` include list is re-applied on every refresh, so a server cannot widen its exposed tool set
+  by announcing new tools.
+* Duplicate tool names are resolved the same way as at startup: the server that registered the name first keeps it.
+* A tool call already in flight when a refresh lands runs to completion. If the model then calls a tool that the refresh
+  removed, it is handled as a hallucinated tool name according to `hallucinatedToolNameStrategy`.
+* `returnDirect` flags set programmatically with `addReturnDirectTool` / `removeReturnDirectTool` survive a refresh and a
+  reconnect.
 
 === MCP Connection Recovery
 
