@@ -163,6 +163,24 @@ public abstract class AbstractAgent<S> implements Agent {
             builder.outputGuardrailClasses((List) configuration.getOutputGuardrailClasses());
         }
 
+        // Input Guardrail instances (pre-instantiated, DI-friendly)
+        if (configuration.getInputGuardrails() != null && !configuration.getInputGuardrails().isEmpty()) {
+            builder.inputGuardrails(configuration.getInputGuardrails());
+        }
+
+        // Output Guardrail instances (pre-instantiated, DI-friendly)
+        if (configuration.getOutputGuardrails() != null && !configuration.getOutputGuardrails().isEmpty()) {
+            builder.outputGuardrails(configuration.getOutputGuardrails());
+        }
+
+        // Guardrail configuration (retry policies, etc.)
+        if (configuration.getInputGuardrailsConfig() != null) {
+            builder.inputGuardrailsConfig(configuration.getInputGuardrailsConfig());
+        }
+        if (configuration.getOutputGuardrailsConfig() != null) {
+            builder.outputGuardrailsConfig(configuration.getOutputGuardrailsConfig());
+        }
+
         // Response Format (structured output): set once at startup via setResponseFormat(), used here per request
         if (responseFormat != null) {
             builder.chatRequestTransformer(chatRequest -> chatRequest.toBuilder().responseFormat(responseFormat).build());
@@ -183,6 +201,14 @@ public abstract class AbstractAgent<S> implements Agent {
         }
         if (configuration.getCompensateOnToolErrors() != null) {
             builder.compensateOnToolErrors(configuration.getCompensateOnToolErrors());
+        }
+
+        // Tool execution hooks
+        if (configuration.getBeforeToolExecution() != null) {
+            builder.beforeToolExecution(configuration.getBeforeToolExecution());
+        }
+        if (configuration.getAfterToolExecution() != null) {
+            builder.afterToolExecution(configuration.getAfterToolExecution());
         }
 
         // Custom AiServices builder customizer (escape hatch for any builder option not directly exposed)

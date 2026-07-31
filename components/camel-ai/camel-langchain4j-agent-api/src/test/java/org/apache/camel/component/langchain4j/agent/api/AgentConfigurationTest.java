@@ -19,11 +19,22 @@ package org.apache.camel.component.langchain4j.agent.api;
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
+import dev.langchain4j.guardrail.InputGuardrail;
+import dev.langchain4j.guardrail.InputGuardrailRequest;
+import dev.langchain4j.guardrail.InputGuardrailResult;
+import dev.langchain4j.guardrail.OutputGuardrail;
+import dev.langchain4j.guardrail.OutputGuardrailRequest;
+import dev.langchain4j.guardrail.OutputGuardrailResult;
+import dev.langchain4j.guardrail.config.InputGuardrailsConfig;
+import dev.langchain4j.guardrail.config.OutputGuardrailsConfig;
+import dev.langchain4j.service.tool.BeforeToolExecution;
 import dev.langchain4j.service.tool.ToolArgumentsErrorHandler;
+import dev.langchain4j.service.tool.ToolExecution;
 import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
 import org.junit.jupiter.api.Test;
 
@@ -331,16 +342,133 @@ public class AgentConfigurationTest {
         assertNotNull(config.getAiServicesCustomizer());
     }
 
+    // Tests for guardrail instances
+
+    @Test
+    public void testInputGuardrails() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertNull(config.getInputGuardrails());
+
+        InputGuardrail guardrail = new InputGuardrail() {
+            @Override
+            public InputGuardrailResult validate(InputGuardrailRequest request) {
+                return InputGuardrailResult.success();
+            }
+        };
+        List<InputGuardrail> guardrails = List.of(guardrail);
+        AgentConfiguration result = config.withInputGuardrails(guardrails);
+
+        assertSame(config, result);
+        assertSame(guardrails, config.getInputGuardrails());
+        assertEquals(1, config.getInputGuardrails().size());
+    }
+
+    @Test
+    public void testOutputGuardrails() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertNull(config.getOutputGuardrails());
+
+        OutputGuardrail guardrail = new OutputGuardrail() {
+            @Override
+            public OutputGuardrailResult validate(OutputGuardrailRequest request) {
+                return OutputGuardrailResult.success();
+            }
+        };
+        List<OutputGuardrail> guardrails = List.of(guardrail);
+        AgentConfiguration result = config.withOutputGuardrails(guardrails);
+
+        assertSame(config, result);
+        assertSame(guardrails, config.getOutputGuardrails());
+        assertEquals(1, config.getOutputGuardrails().size());
+    }
+
+    @Test
+    public void testInputGuardrailsConfig() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertNull(config.getInputGuardrailsConfig());
+
+        InputGuardrailsConfig guardrailsConfig = InputGuardrailsConfig.builder().build();
+        AgentConfiguration result = config.withInputGuardrailsConfig(guardrailsConfig);
+
+        assertSame(config, result);
+        assertSame(guardrailsConfig, config.getInputGuardrailsConfig());
+    }
+
+    @Test
+    public void testOutputGuardrailsConfig() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertNull(config.getOutputGuardrailsConfig());
+
+        OutputGuardrailsConfig guardrailsConfig = OutputGuardrailsConfig.builder().build();
+        AgentConfiguration result = config.withOutputGuardrailsConfig(guardrailsConfig);
+
+        assertSame(config, result);
+        assertSame(guardrailsConfig, config.getOutputGuardrailsConfig());
+    }
+
+    // Tests for tool execution hooks
+
+    @Test
+    public void testBeforeToolExecution() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertNull(config.getBeforeToolExecution());
+
+        Consumer<BeforeToolExecution> hook = beforeExec -> {
+        };
+        AgentConfiguration result = config.withBeforeToolExecution(hook);
+
+        assertSame(config, result);
+        assertSame(hook, config.getBeforeToolExecution());
+    }
+
+    @Test
+    public void testAfterToolExecution() {
+        AgentConfiguration config = new AgentConfiguration();
+        assertNull(config.getAfterToolExecution());
+
+        Consumer<ToolExecution> hook = afterExec -> {
+        };
+        AgentConfiguration result = config.withAfterToolExecution(hook);
+
+        assertSame(config, result);
+        assertSame(hook, config.getAfterToolExecution());
+    }
+
     @Test
     public void testFluentChaining() {
         ToolExecutionErrorHandler execHandler = (error, context) -> null;
         ToolArgumentsErrorHandler argsHandler = (error, context) -> null;
+        Consumer<BeforeToolExecution> beforeHook = beforeExec -> {
+        };
+        Consumer<ToolExecution> afterHook = afterExec -> {
+        };
+        InputGuardrailsConfig inConfig = InputGuardrailsConfig.builder().build();
+        OutputGuardrailsConfig outConfig = OutputGuardrailsConfig.builder().build();
+
+        InputGuardrail inputGuardrail = new InputGuardrail() {
+            @Override
+            public InputGuardrailResult validate(InputGuardrailRequest request) {
+                return InputGuardrailResult.success();
+            }
+        };
+        OutputGuardrail outputGuardrail = new OutputGuardrail() {
+            @Override
+            public OutputGuardrailResult validate(OutputGuardrailRequest request) {
+                return OutputGuardrailResult.success();
+            }
+        };
 
         AgentConfiguration config = new AgentConfiguration()
                 .withMaxToolCallingRoundTrips(5)
                 .withToolExecutionErrorHandler(execHandler)
                 .withToolArgumentsErrorHandler(argsHandler)
                 .withCompensateOnToolErrors(true)
+                .withInputGuardrails(List.of(inputGuardrail))
+                .withOutputGuardrails(List.of(outputGuardrail))
+                .withInputGuardrailsConfig(inConfig)
+                .withOutputGuardrailsConfig(outConfig)
+                .withBeforeToolExecution(beforeHook)
+                .withAfterToolExecution(afterHook)
                 .withAiServicesCustomizer(builder -> {
                 });
 
@@ -348,6 +476,12 @@ public class AgentConfigurationTest {
         assertSame(execHandler, config.getToolExecutionErrorHandler());
         assertSame(argsHandler, config.getToolArgumentsErrorHandler());
         assertTrue(config.getCompensateOnToolErrors());
+        assertEquals(1, config.getInputGuardrails().size());
+        assertEquals(1, config.getOutputGuardrails().size());
+        assertSame(inConfig, config.getInputGuardrailsConfig());
+        assertSame(outConfig, config.getOutputGuardrailsConfig());
+        assertSame(beforeHook, config.getBeforeToolExecution());
+        assertSame(afterHook, config.getAfterToolExecution());
         assertNotNull(config.getAiServicesCustomizer());
     }
 }
