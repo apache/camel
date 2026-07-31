@@ -37,7 +37,7 @@ public class LangChain4jEmbeddingsHeaders {
 
     @Metadata(description = "List of embeddings from a batch embedAll operation",
               javaType = "java.util.List<dev.langchain4j.data.embedding.Embedding>")
-    public static final String EMBEDDINGS = "CamelLangChain4jEmbeddingsEmbeddings";
+    public static final String EMBEDDINGS = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDINGS;
 
     @Metadata(description = "A dense vector embedding of a text", javaType = "float[]")
     public static final String VECTOR = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR;

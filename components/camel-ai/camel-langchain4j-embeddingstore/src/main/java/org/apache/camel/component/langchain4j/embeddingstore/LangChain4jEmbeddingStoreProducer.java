@@ -193,6 +193,12 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         if (callerIds != null && textSegments != null) {
             store.addAll(callerIds, embeddings, textSegments);
             ids = callerIds;
+        } else if (callerIds != null) {
+            // No addAll(ids, embeddings) overload in langchain4j, so loop with add(id, embedding)
+            for (int i = 0; i < embeddings.size(); i++) {
+                store.add(callerIds.get(i), embeddings.get(i));
+            }
+            ids = callerIds;
         } else if (textSegments != null) {
             ids = store.addAll(embeddings, textSegments);
         } else {
@@ -212,8 +218,6 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
      * {@code removeAll(Collection)}</li>
      * <li><b>By single ID</b>: when the body is a single {@code String}, removes that embedding via
      * {@code remove(id)}</li>
-     * <li><b>Clear all</b>: when the body is null/empty and no filter is set, removes all embeddings from the store via
-     * {@code removeAll()}</li>
      * </ul>
      *
      * @param  exchange  the Camel exchange containing removal parameters
@@ -247,8 +251,9 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
             return;
         }
 
-        // No filter, no IDs — clear the entire store
-        store.removeAll();
+        throw new IllegalArgumentException(
+                "REMOVE action requires either: a String body (single ID), a Collection<String> body (batch IDs), "
+                                           + "or a CamelLangchain4jEmbeddingStoreFilter header (filter-based removal)");
     }
 
     /**

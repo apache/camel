@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.embeddings;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import dev.langchain4j.data.embedding.Embedding;
@@ -72,7 +73,7 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
     private void processBatch(Exchange exchange, EmbeddingModel model, Message message, List<Object> bodyList)
             throws Exception {
         // Convert each element to TextSegment using the type converter
-        List<TextSegment> segments = new java.util.ArrayList<>(bodyList.size());
+        List<TextSegment> segments = new ArrayList<>(bodyList.size());
         for (Object item : bodyList) {
             TextSegment segment = exchange.getContext().getTypeConverter().mandatoryConvertTo(TextSegment.class, item);
             segments.add(segment);

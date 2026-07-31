@@ -31,7 +31,7 @@ The LangChain4j Embedding Store component offers the following key features:
 The component supports three main operations controlled by the `CamelLangchain4jEmbeddingStoreAction` header:
 
 * **ADD** - Store embeddings with optional text segments and metadata. Supports single and batch operations, as well as caller-supplied IDs.
-* **REMOVE** - Delete embeddings by single ID, collection of IDs, metadata filter, or clear the entire store.
+* **REMOVE** - Delete embeddings by single ID, collection of IDs, or metadata filter.
 * **SEARCH** - Perform similarity search with configurable filters and scoring
 
 == URI format
@@ -264,16 +264,6 @@ Delete all embeddings matching a metadata filter using the `CamelLangchain4jEmbe
 ----
 from("direct:remove-by-filter")
     .setHeader("CamelLangchain4jEmbeddingStoreFilter", constant(metadataFilter))
-    .to("langchain4j-embeddingstore:myStore?action=REMOVE");
-----
-
-==== Clear All Embeddings
-
-Remove all embeddings from the store by sending a REMOVE with no body and no filter:
-
-[source,java]
-----
-from("direct:clear-store")
     .to("langchain4j-embeddingstore:myStore?action=REMOVE");
 ----
 

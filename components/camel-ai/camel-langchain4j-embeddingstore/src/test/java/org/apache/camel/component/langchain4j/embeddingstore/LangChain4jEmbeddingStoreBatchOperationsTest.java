@@ -140,6 +140,30 @@ class LangChain4jEmbeddingStoreBatchOperationsTest extends CamelTestSupport {
         assertThat(ids).containsExactly("id-1", "id-2");
     }
 
+    @Test
+    @DisplayName("ADD with EMBEDDINGS header and caller IDs but no text segments loops with add(id, embedding)")
+    void addBatchWithCallerIdsNoTextSegments() {
+        List<String> callerIds = Arrays.asList("id-a", "id-b");
+        List<Embedding> embeddings = Arrays.asList(
+                Embedding.from(new float[] { 0.5f, 0.6f }),
+                Embedding.from(new float[] { 0.7f, 0.8f }));
+
+        Exchange result = fluentTemplate.to("langchain4j-embeddingstore:test")
+                .withHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.ADD)
+                .withHeader(LangChain4jEmbeddingsHeaders.EMBEDDINGS, embeddings)
+                .withHeader(LangChain4jEmbeddingStoreHeaders.EMBEDDING_IDS, callerIds)
+                .request(Exchange.class);
+
+        assertThat(result.getException()).isNull();
+        // Should call add(id, embedding) for each pair, not addAll(embeddings)
+        assertThat(embeddingStore.getAddWithIdInvocations()).isEqualTo(2);
+        assertThat(embeddingStore.getAddAllInvocations()).isEqualTo(0);
+
+        @SuppressWarnings("unchecked")
+        List<String> ids = result.getMessage().getBody(List.class);
+        assertThat(ids).containsExactly("id-a", "id-b");
+    }
+
     // ---- REMOVE: batch by ID list ----
 
     @Test
@@ -181,21 +205,17 @@ class LangChain4jEmbeddingStoreBatchOperationsTest extends CamelTestSupport {
         assertThat(embeddingStore.getRemoveAllByFilterInvocations()).isEqualTo(1);
     }
 
-    // ---- REMOVE: clear all ----
+    // ---- REMOVE: null body and no filter throws ----
 
     @Test
-    @DisplayName("REMOVE with null body and no filter calls removeAll()")
-    void removeClearAll() {
-        // Pre-populate
-        embeddingStore.add(Embedding.from(new float[] { 0.1f }));
-        embeddingStore.resetCounters();
-
+    @DisplayName("REMOVE with null body and no filter throws IllegalArgumentException")
+    void removeWithNoBodyOrFilterThrows() {
         Exchange result = fluentTemplate.to("langchain4j-embeddingstore:test")
                 .withHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.REMOVE)
                 .request(Exchange.class);
 
-        assertThat(result.getException()).isNull();
-        assertThat(embeddingStore.getRemoveAllInvocations()).isEqualTo(1);
+        assertThat(result.getException()).isInstanceOf(IllegalArgumentException.class);
+        assertThat(result.getException().getMessage()).contains("REMOVE action requires");
     }
 
     // ---- REMOVE: single ID still works ----
