@@ -16,18 +16,22 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Test for the virtualThreadPerTask mode of SEDA consumer
  */
-public class ThreadPerTaskSedaConsumerTest extends ContextTestSupport {
+class ThreadPerTaskSedaConsumerTest extends ContextTestSupport {
 
     @Test
-    public void testVirtualThreadPerTask() throws Exception {
+    void testVirtualThreadPerTask() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);
 
@@ -39,7 +43,7 @@ public class ThreadPerTaskSedaConsumerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testVirtualThreadPerTaskWithConcurrencyLimit() throws Exception {
+    void testVirtualThreadPerTaskWithConcurrencyLimit() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:limited");
         mock.expectedMessageCount(5);
 
@@ -51,7 +55,7 @@ public class ThreadPerTaskSedaConsumerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testVirtualThreadPerTaskHighThroughput() throws Exception {
+    void testVirtualThreadPerTaskHighThroughput() throws Exception {
         int messageCount = 100;
         MockEndpoint mock = getMockEndpoint("mock:throughput");
         mock.expectedMessageCount(messageCount);
@@ -61,6 +65,32 @@ public class ThreadPerTaskSedaConsumerTest extends ContextTestSupport {
         }
 
         mock.assertIsSatisfied();
+    }
+
+    @Test
+    void testShutdownWithConcurrencyLimitCompletesQuickly() throws Exception {
+        // Send messages so the route is actively used
+        for (int i = 0; i < 5; i++) {
+            template.sendBody("seda:limited?virtualThreadPerTask=true&concurrentConsumers=2", "Message " + i);
+        }
+
+        MockEndpoint mock = getMockEndpoint("mock:limited");
+        mock.expectedMessageCount(5);
+        mock.assertIsSatisfied();
+
+        // Stop the context and verify it completes quickly.
+        // Before the fix, the CountDownLatch was initialized with concurrentConsumers
+        // count (2) but only 1 coordinator thread counts down, so prepareShutdown()
+        // would wait the full shutdown timeout before proceeding.
+        long start = System.nanoTime();
+        context.stop();
+        long elapsed = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - start);
+
+        // Shutdown should complete well within the default timeout (300s).
+        // Use a generous 30s bound to avoid flakiness, but this is still much less
+        // than the full shutdown strategy timeout that would be hit without the fix.
+        assertTrue(elapsed < 30, "Context stop took " + elapsed + "s, expected < 30s. "
+                                 + "The CountDownLatch count likely does not match the coordinator thread count.");
     }
 
     @Override

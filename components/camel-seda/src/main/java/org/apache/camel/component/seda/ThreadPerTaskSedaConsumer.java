@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -66,6 +67,18 @@ public class ThreadPerTaskSedaConsumer extends SedaConsumer {
         // The actual work is done by taskExecutor
         return getEndpoint().getCamelContext().getExecutorServiceManager()
                 .newSingleThreadExecutor(this, getEndpoint().getEndpointUri() + "-coordinator");
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // SedaConsumer.doStart() creates the latch with concurrentConsumers count,
+        // but ThreadPerTaskSedaConsumer uses a single coordinator thread that polls
+        // the queue and dispatches each exchange to the task executor.
+        // The concurrentConsumers value is used here as a concurrency limit for the
+        // task executor (via a Semaphore), not as the number of polling threads.
+        // Override the latch to match the actual coordinator thread count (1).
+        latch = new CountDownLatch(1);
     }
 
     @Override
