@@ -32,6 +32,7 @@ jobs:
       && github.event.pull_request.head.repo.full_name == github.event.repository.full_name
       && github.event.pull_request.head.ref != 'main'
       && !startsWith(github.event.pull_request.head.ref, 'camel-')
+      && !startsWith(github.event.pull_request.head.ref, 'regen_bot_')
     runs-on: ubuntu-latest
     steps:
       - name: Delete branch
