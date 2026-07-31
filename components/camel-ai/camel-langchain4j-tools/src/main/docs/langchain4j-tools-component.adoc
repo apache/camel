@@ -17,7 +17,7 @@
 
 [WARNING]
 ====
-This component is deprecated since Camel 4.22. Use xref:ai-tool-component.adoc[camel-ai-tool] to define tools and the https://docs.langchain4j.dev/tutorials/ai-services#tools-function-calling[LangChain4j AiServices tool-calling] (via `camel-langchain4j-agent`) to invoke them.
+This component is deprecated since Camel 4.22. Use xref:ai-tool-component.adoc[camel-ai-tool] to define tools and xref:langchain4j-agent-component.adoc[camel-langchain4j-agent] to invoke them.
 ====
 
 The LangChain4j Tools Component allows you to use function calling features from Large Language Models (LLMs) supported by https://github.com/langchain4j/langchain4j[LangChain4j].
