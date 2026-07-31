@@ -90,6 +90,36 @@ public final class KeycloakSecurityHelper {
     public static AccessToken parseAndVerifyAccessToken(
             String tokenString, PublicKey publicKey, String expectedIssuer, List<String> expectedAudiences)
             throws VerificationException {
+        return parseAndVerifyAccessToken(tokenString, publicKey, expectedIssuer, expectedAudiences, null, null);
+    }
+
+    /**
+     * Parses and fully verifies an access token including signature, issuer and, optionally, audience, token type
+     * ({@code typ}) and authorized party ({@code azp}) validation. This is the recommended method for secure token
+     * validation.
+     *
+     * @param  tokenString             the JWT token string
+     * @param  publicKey               the public key for signature verification
+     * @param  expectedIssuer          the expected issuer URL (e.g., "http://localhost:8080/realms/myrealm")
+     * @param  expectedAudiences       the expected audiences; when non-empty, the token's "aud" claim must contain
+     *                                 every one of them (matching Keycloak's own
+     *                                 {@link TokenVerifier#audience(String...)} check). Pass null or an empty list to
+     *                                 skip audience validation.
+     * @param  expectedTokenTypes      the accepted token types; when non-empty, the token's {@code typ} claim must be
+     *                                 one of them. Guards against token-type confusion (e.g. an ID or refresh token
+     *                                 presented where an access token is expected). Pass null or an empty list to skip
+     *                                 token-type validation.
+     * @param  expectedAuthorizedParty the expected authorized party; when non-empty, the token's {@code azp} claim must
+     *                                 equal it. Ensures the token was issued for the expected client. Pass null or an
+     *                                 empty string to skip authorized-party validation.
+     * @return                         the verified access token
+     * @throws VerificationException   if verification fails (invalid signature, wrong issuer, expired, missing/wrong
+     *                                 audience, wrong token type, wrong authorized party, etc.)
+     */
+    public static AccessToken parseAndVerifyAccessToken(
+            String tokenString, PublicKey publicKey, String expectedIssuer, List<String> expectedAudiences,
+            List<String> expectedTokenTypes, String expectedAuthorizedParty)
+            throws VerificationException {
         if (publicKey == null) {
             throw new VerificationException("Public key is required for secure token verification");
         }
@@ -118,6 +148,31 @@ public final class KeycloakSecurityHelper {
             LOG.error("SECURITY: Token issuer mismatch - expected '{}' but got '{}'", expectedIssuer, actualIssuer);
             throw new VerificationException(
                     String.format("Token issuer mismatch: expected '%s' but got '%s'", expectedIssuer, actualIssuer));
+        }
+
+        // Optional token type (typ) allow-list — guards against token-type confusion, e.g. an ID or refresh token
+        // being presented where an access token is expected.
+        if (expectedTokenTypes != null && !expectedTokenTypes.isEmpty()) {
+            String actualType = token.getType();
+            if (actualType == null || !expectedTokenTypes.contains(actualType)) {
+                LOG.error("SECURITY: Token type mismatch - expected one of {} but got '{}'",
+                        expectedTokenTypes, actualType);
+                throw new VerificationException(
+                        String.format("Token type mismatch: expected one of %s but got '%s'",
+                                expectedTokenTypes, actualType));
+            }
+        }
+
+        // Optional authorized party (azp) check — ensures the token was issued for the expected client.
+        if (expectedAuthorizedParty != null && !expectedAuthorizedParty.isEmpty()) {
+            String actualAzp = token.getIssuedFor();
+            if (!expectedAuthorizedParty.equals(actualAzp)) {
+                LOG.error("SECURITY: Token authorized party (azp) mismatch - expected '{}' but got '{}'",
+                        expectedAuthorizedParty, actualAzp);
+                throw new VerificationException(
+                        String.format("Token authorized party mismatch: expected '%s' but got '%s'",
+                                expectedAuthorizedParty, actualAzp));
+            }
         }
 
         LOG.debug("Token successfully verified for issuer: {}", expectedIssuer);

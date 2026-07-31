@@ -115,6 +115,14 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
             if (!policy.getExpectedAudienceAsList().isEmpty()) {
                 validateAudienceFromIntrospection(introspectionResult, exchange);
             }
+
+            if (!policy.getExpectedTokenTypesAsList().isEmpty()) {
+                validateTokenTypeFromIntrospection(introspectionResult, exchange);
+            }
+
+            if (!ObjectHelper.isEmpty(policy.getExpectedAuthorizedParty())) {
+                validateAuthorizedPartyFromIntrospection(introspectionResult, exchange);
+            }
         } else {
             parseAndVerifyToken(accessToken, exchange);
         }
@@ -284,6 +292,15 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                     validateAudienceFromIntrospection(introspectionResult, exchange);
                 }
 
+                // Validate token type / authorized party from introspection result if configured
+                if (!policy.getExpectedTokenTypesAsList().isEmpty()) {
+                    validateTokenTypeFromIntrospection(introspectionResult, exchange);
+                }
+
+                if (!ObjectHelper.isEmpty(policy.getExpectedAuthorizedParty())) {
+                    validateAuthorizedPartyFromIntrospection(introspectionResult, exchange);
+                }
+
                 userRoles = KeycloakSecurityHelper.extractRolesFromIntrospection(
                         introspectionResult, policy.getRealm(), policy.getClientId());
             } else {
@@ -340,7 +357,8 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
         if (publicKey != null) {
             try {
                 return KeycloakSecurityHelper.parseAndVerifyAccessToken(
-                        accessToken, publicKey, expectedIssuer, policy.getExpectedAudienceAsList());
+                        accessToken, publicKey, expectedIssuer, policy.getExpectedAudienceAsList(),
+                        policy.getExpectedTokenTypesAsList(), policy.getExpectedAuthorizedParty());
             } catch (VerificationException e) {
                 LOG.error("Token verification failed: {}", e.getMessage());
                 throw new CamelAuthorizationException("Token verification failed: " + e.getMessage(), exchange, e);
@@ -416,6 +434,57 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
         LOG.debug("Audience validation from introspection successful: {}", expectedAudiences);
     }
 
+    /**
+     * Validates the token type ({@code typ}) from an introspection result. When token-type validation is configured, a
+     * token whose {@code typ} is missing or not among the accepted values is rejected — guarding against token-type
+     * confusion (e.g. an ID or refresh token presented where an access token is expected).
+     */
+    private void validateTokenTypeFromIntrospection(
+            KeycloakTokenIntrospector.IntrospectionResult introspectionResult, Exchange exchange)
+            throws CamelAuthorizationException {
+        List<String> expectedTokenTypes = policy.getExpectedTokenTypesAsList();
+        // Use the JWT "typ" claim (token category, e.g. Bearer/Refresh/ID), which Keycloak forwards on its
+        // introspection response — not the RFC 7662 "token_type" field, which is the OAuth token type ("Bearer")
+        // and does not distinguish access from refresh/ID tokens, i.e. it cannot express what this check validates.
+        Object typeClaim = introspectionResult.getClaim("typ");
+        String actualType = typeClaim instanceof String s ? s : null;
+
+        if (actualType == null || !expectedTokenTypes.contains(actualType)) {
+            LOG.error("SECURITY: Token type mismatch from introspection - expected one of {} but got '{}'",
+                    expectedTokenTypes, actualType);
+            throw new CamelAuthorizationException(
+                    String.format("Token type mismatch: expected one of %s but got '%s'",
+                            expectedTokenTypes, actualType),
+                    exchange);
+        }
+
+        LOG.debug("Token type validation from introspection successful: {}", expectedTokenTypes);
+    }
+
+    /**
+     * Validates the authorized party ({@code azp}) from an introspection result. When authorized-party validation is
+     * configured, a token whose {@code azp} does not equal the expected value is rejected — ensuring the token was
+     * issued for the expected client.
+     */
+    private void validateAuthorizedPartyFromIntrospection(
+            KeycloakTokenIntrospector.IntrospectionResult introspectionResult, Exchange exchange)
+            throws CamelAuthorizationException {
+        String expectedAuthorizedParty = policy.getExpectedAuthorizedParty();
+        Object azpClaim = introspectionResult.getClaim("azp");
+        String actualAzp = azpClaim instanceof String s ? s : null;
+
+        if (!expectedAuthorizedParty.equals(actualAzp)) {
+            LOG.error("SECURITY: Token authorized party (azp) mismatch from introspection - expected '{}' but got '{}'",
+                    expectedAuthorizedParty, actualAzp);
+            throw new CamelAuthorizationException(
+                    String.format("Token authorized party mismatch: expected '%s' but got '%s'",
+                            expectedAuthorizedParty, actualAzp),
+                    exchange);
+        }
+
+        LOG.debug("Authorized party validation from introspection successful: {}", expectedAuthorizedParty);
+    }
+
     private void validatePermissions(String accessToken, Exchange exchange) throws Exception {
         try {
             Set<String> userPermissions;
@@ -438,6 +507,16 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 // Validate audience from introspection result if configured
                 if (!policy.getExpectedAudienceAsList().isEmpty()) {
                     validateAudienceFromIntrospection(introspectionResult, exchange);
+                }
+
+                // Validate token type and authorized party too, otherwise these checks could be bypassed by
+                // configuring only permissions (which skips authenticateToken/validateRoles) with introspection.
+                if (!policy.getExpectedTokenTypesAsList().isEmpty()) {
+                    validateTokenTypeFromIntrospection(introspectionResult, exchange);
+                }
+
+                if (!ObjectHelper.isEmpty(policy.getExpectedAuthorizedParty())) {
+                    validateAuthorizedPartyFromIntrospection(introspectionResult, exchange);
                 }
 
                 userPermissions = KeycloakSecurityHelper.extractPermissionsFromIntrospection(introspectionResult);
