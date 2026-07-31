@@ -345,7 +345,7 @@ public class AgentConfigurationTest {
     // Tests for guardrail instances
 
     @Test
-    public void testInputGuardrails() {
+    void testInputGuardrails() {
         AgentConfiguration config = new AgentConfiguration();
         assertNull(config.getInputGuardrails());
 
@@ -364,7 +364,7 @@ public class AgentConfigurationTest {
     }
 
     @Test
-    public void testOutputGuardrails() {
+    void testOutputGuardrails() {
         AgentConfiguration config = new AgentConfiguration();
         assertNull(config.getOutputGuardrails());
 
@@ -383,7 +383,7 @@ public class AgentConfigurationTest {
     }
 
     @Test
-    public void testInputGuardrailsConfig() {
+    void testInputGuardrailsConfig() {
         AgentConfiguration config = new AgentConfiguration();
         assertNull(config.getInputGuardrailsConfig());
 
@@ -395,7 +395,7 @@ public class AgentConfigurationTest {
     }
 
     @Test
-    public void testOutputGuardrailsConfig() {
+    void testOutputGuardrailsConfig() {
         AgentConfiguration config = new AgentConfiguration();
         assertNull(config.getOutputGuardrailsConfig());
 
@@ -409,7 +409,7 @@ public class AgentConfigurationTest {
     // Tests for tool execution hooks
 
     @Test
-    public void testBeforeToolExecution() {
+    void testBeforeToolExecution() {
         AgentConfiguration config = new AgentConfiguration();
         assertNull(config.getBeforeToolExecution());
 
@@ -422,7 +422,7 @@ public class AgentConfigurationTest {
     }
 
     @Test
-    public void testAfterToolExecution() {
+    void testAfterToolExecution() {
         AgentConfiguration config = new AgentConfiguration();
         assertNull(config.getAfterToolExecution());
 
@@ -435,7 +435,7 @@ public class AgentConfigurationTest {
     }
 
     @Test
-    public void testFluentChaining() {
+    void testFluentChaining() {
         ToolExecutionErrorHandler execHandler = (error, context) -> null;
         ToolArgumentsErrorHandler argsHandler = (error, context) -> null;
         Consumer<BeforeToolExecution> beforeHook = beforeExec -> {
