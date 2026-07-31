@@ -100,6 +100,9 @@ public class BedrockAgentProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 prepareIngestionJobResponse(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "startIngestionJob operation requires a StartIngestionJobRequest body when pojoRequest=true");
             }
         } else {
             String knowledgeBaseId;
@@ -145,6 +148,9 @@ public class BedrockAgentProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 prepareListIngestionJobsResponse(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "listIngestionJobs operation requires a ListIngestionJobsRequest body when pojoRequest=true");
             }
         } else {
             String knowledgeBaseId;
@@ -190,6 +196,9 @@ public class BedrockAgentProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 prepareGetIngestionJobResponse(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "getIngestionJob operation requires a GetIngestionJobRequest body when pojoRequest=true");
             }
         } else {
             String knowledgeBaseId;
