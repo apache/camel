@@ -4,7 +4,7 @@
     "name": "langchain4j-tools",
     "title": "LangChain4j Tools",
     "description": "LangChain4j Tools and Function Calling Features",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "4.8.0",
     "label": "ai",
     "javaType": "org.apache.camel.component.langchain4j.tools.LangChain4jToolsComponent",

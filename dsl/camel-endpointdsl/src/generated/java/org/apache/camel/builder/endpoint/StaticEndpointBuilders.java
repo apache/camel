@@ -10920,6 +10920,7 @@ public class StaticEndpointBuilders {
      * @param path toolId
      * @return the dsl builder
      */
+    @Deprecated
     public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsEndpointBuilder langchain4jTools(String path) {
         return langchain4jTools("langchain4j-tools", path);
     }
@@ -10941,6 +10942,7 @@ public class StaticEndpointBuilders {
      * @param path toolId
      * @return the dsl builder
      */
+    @Deprecated
     public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsEndpointBuilder langchain4jTools(String componentName, String path) {
         return LangChain4jToolsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

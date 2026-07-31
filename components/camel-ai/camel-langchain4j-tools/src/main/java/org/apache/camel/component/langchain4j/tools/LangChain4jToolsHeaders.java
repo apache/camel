@@ -18,6 +18,7 @@ package org.apache.camel.component.langchain4j.tools;
 
 import org.apache.camel.spi.Metadata;
 
+@Deprecated(since = "4.22.0")
 public class LangChain4jToolsHeaders {
 
     @Metadata(description = "The Finish Reason.", javaType = "dev.langchain4j.model.output.FinishReason")
