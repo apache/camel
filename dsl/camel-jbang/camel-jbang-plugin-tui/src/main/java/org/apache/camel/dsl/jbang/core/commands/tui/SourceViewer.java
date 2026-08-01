@@ -151,7 +151,7 @@ class SourceViewer {
     }
 
     void hide() {
-        exitEditMode(false);
+        exitEditMode();
         visible = false;
         onLineSelected = null;
         quickDocEnabled = false;
@@ -163,7 +163,7 @@ class SourceViewer {
     }
 
     void reset() {
-        exitEditMode(false);
+        exitEditMode();
         visible = false;
         lines = Collections.emptyList();
         codeData = Collections.emptyList();
@@ -222,7 +222,7 @@ class SourceViewer {
         if (!editMode) {
             return false;
         }
-        exitEditMode(false);
+        exitEditMode();
         return true;
     }
 
@@ -390,7 +390,7 @@ class SourceViewer {
 
     private boolean handleEditKeyEvent(KeyEvent ke) {
         if (ke.isCancel()) {
-            exitEditMode(false);
+            exitEditMode();
             return true;
         }
         if (ke.isKey(KeyCode.F5)) {
@@ -474,7 +474,7 @@ class SourceViewer {
         editMode = true;
     }
 
-    private void exitEditMode(boolean reloadFromDisk) {
+    private void exitEditMode() {
         boolean wasEditing = editMode;
         editMode = false;
         editState.clear();
@@ -482,10 +482,6 @@ class SourceViewer {
             markdownMode = markdownModeBeforeEdit;
         }
         markdownModeBeforeEdit = false;
-        if (reloadFromDisk && editableFile != null) {
-            Path path = editableFile;
-            loadFile(path);
-        }
     }
 
     private void saveEdit() {

@@ -42,6 +42,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -139,7 +140,7 @@ class SourceTab extends AbstractTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isKey(dev.tamboui.tui.event.KeyCode.TAB)) {
+        if (ke.isKey(KeyCode.TAB)) {
             // Do not steal focus or insert focus-toggle while editing
             if (sourceViewer.isEditMode()) {
                 return true;
@@ -228,7 +229,7 @@ class SourceTab extends AbstractTab {
             return true;
         }
         if (sourceViewer.isSearchInputActive()) {
-            sourceViewer.handleKeyEvent(KeyEvent.ofKey(dev.tamboui.tui.event.KeyCode.ESCAPE));
+            sourceViewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE));
             return true;
         }
         if (focusOnViewer) {
