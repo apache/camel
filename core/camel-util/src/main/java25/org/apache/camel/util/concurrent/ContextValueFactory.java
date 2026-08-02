@@ -31,25 +31,19 @@ class ContextValueFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextValueFactory.class);
 
-    // Use lazy holder pattern to avoid resolving ThreadType before configuration is loaded
-    private static final class ScopedValueHolder {
-        static final boolean USE_SCOPED_VALUES = shouldUseScopedValues();
+    private static volatile boolean scopedValueUsageLogged;
 
-        static {
-            if (useScopedValues()) {
+    private static boolean useScopedValues() {
+        boolean use = ThreadType.current() == ThreadType.VIRTUAL;
+        if (!scopedValueUsageLogged) {
+            scopedValueUsageLogged = true;
+            if (use) {
                 LOG.info("ContextValue will use ScopedValue for virtual thread optimization");
             } else {
                 LOG.debug("ContextValue will use ThreadLocal");
             }
         }
-
-        private static boolean shouldUseScopedValues() {
-            return ThreadType.current() == ThreadType.VIRTUAL;
-        }
-    }
-
-    private static boolean useScopedValues() {
-        return ScopedValueHolder.USE_SCOPED_VALUES;
+        return use;
     }
 
     /**

@@ -34,8 +34,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * CAMEL-24320: Kamelet route creation must not NPE when virtual threads are enabled on JDK 25+.
  * <p>
- * {@link org.apache.camel.util.concurrent.ScopedValueContextValueOrElseTest} is the primary unit guard for the
- * ScopedValue {@code orElse(null)} regression.
+ * Regression guard for {@link ContextValueFactory.ScopedValueContextValue#orElse(Object)} when the fallback is
+ * {@code null} (see CAMEL-24320). ScopedValue unit coverage lives in the integration path because MRJ classes are
+ * packaged under {@code META-INF/versions/25}.
  */
 @EnabledForJreRange(min = JRE.JAVA_25)
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
