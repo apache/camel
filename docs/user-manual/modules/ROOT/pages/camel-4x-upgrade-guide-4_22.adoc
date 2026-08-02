@@ -1226,6 +1226,26 @@ New JMX attributes have been added for live call monitoring:
 A new `transitionToCloseState` JMX operation resets the circuit breaker to CLOSED and clears
 the call counters.
 
+=== camel-jms - IBM MQ client upgraded to 10.0
+
+The IBM MQ client library (`com.ibm.mq:com.ibm.mq.jakarta.client`) has been upgraded from 9.4.x to 10.0.0.0,
+and the IBM MQ test container image from 9.4.x to 10.0.0.0.
+
+IBM MQ 10.0 marks the `JMS_IBM_MsgToken` vendor property as read-only. When Camel copies headers from an
+incoming JMS message to an outgoing reply or forwarded message, this reserved property previously caused a
+`MessageFormatException` that silently prevented the reply from being sent.
+
+=== camel-jms - vendor-specific JMS properties skipped when read-only
+
+When setting JMS properties on an outgoing message, Camel now catches `JMSException` for JMS vendor-specific
+properties (those with a `JMS_` prefix, per JMS spec section 3.5.1) and logs a `WARN` instead of propagating
+the exception. There is no standard JMS API to query which vendor properties are reserved, and the set can
+change between provider versions. Non-vendor properties still throw on failure as before.
+
+This change is necessary for IBM MQ 10.0 compatibility but applies to all JMS providers. If you relied on
+exceptions from vendor-specific property failures propagating through `JmsBinding.appendJmsProperty()`, be
+aware that they are now caught and logged at `WARN` level for `JMS_`-prefixed properties only.
+
 === camel-clickhouse (new component)
 
 A new `camel-clickhouse` producer component has been added. It integrates with

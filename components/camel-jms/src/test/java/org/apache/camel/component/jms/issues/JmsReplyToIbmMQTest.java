@@ -30,23 +30,23 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisabledOnOs(architectures = { "aarch64", "aarch_64" }, disabledReason = "IBM MQ has no Linux ARM64 native image")
-public class JmsReplyToIbmMQTest extends CamelTestSupport {
+class JmsReplyToIbmMQTest extends CamelTestSupport {
 
     @RegisterExtension
-    public static IbmMQService service = IbmMQServiceFactory.createService();
+    static IbmMQService service = IbmMQServiceFactory.createService();
 
     @Test
-    public void testCustomJMSReplyToInOut() {
+    void testCustomJMSReplyToInOut() {
         JmsTestHelper.waitForJmsConsumerRoutes(context, "request");
 
         template.sendBody("jms:queue:DEV.QUEUE.1", "What is your name?");
 
         String reply
                 = consumer.receiveBody("jms:queue:DEV.QUEUE.2", 20000, String.class);
-        assertEquals("My name is Camel", reply);
+        assertThat(reply).isEqualTo("My name is Camel");
     }
 
     @Override
