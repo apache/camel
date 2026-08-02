@@ -155,6 +155,11 @@ public class EventbridgeProducer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 message.setHeader(EventbridgeConstants.RULE_ARN, result.ruleArn());
+            } else {
+                throw new IllegalArgumentException(
+                        String.format("Expected body of type %s but was %s",
+                                PutRuleRequest.class.getName(),
+                                ObjectHelper.isNotEmpty(payload) ? payload.getClass().getName() : "null"));
             }
         } else {
             PutRuleRequest.Builder builder = PutRuleRequest.builder();

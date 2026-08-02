@@ -26,11 +26,13 @@ permissions:
 
 jobs:
   cleanup:
-    name: Delete automated branch
+    name: Delete PR branch
     if: >-
       github.repository == 'apache/camel'
       && github.event.pull_request.head.repo.full_name == github.event.repository.full_name
-      && startsWith(github.event.pull_request.head.ref, 'automated/upgrade')
+      && github.event.pull_request.head.ref != 'main'
+      && !startsWith(github.event.pull_request.head.ref, 'camel-')
+      && !startsWith(github.event.pull_request.head.ref, 'regen_bot_')
     runs-on: ubuntu-latest
     steps:
       - name: Delete branch

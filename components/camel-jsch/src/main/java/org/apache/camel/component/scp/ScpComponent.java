@@ -75,7 +75,9 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
     }
 
     protected void initJsch() {
-        JSch.setConfig("StrictHostKeyChecking", "yes");
+        // StrictHostKeyChecking is applied per session from ScpConfiguration in ScpOperations.createSession();
+        // a global JSch.setConfig("StrictHostKeyChecking", ...) here would always be overridden by that per-session
+        // value, so it is intentionally not set to avoid a misleading (and contradictory) global default.
         JSch.setLogger(new Logger() {
             @Override
             public boolean isEnabled(int level) {

@@ -62,10 +62,12 @@ public final class SecurityUtils {
         map.put("allowserializedheaders", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("devconsoleenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("downloadenabled", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("failonunknownhost", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("hostnameverification", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("httpshostnameverificationenabled", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("ignoresslverification", new SecurityOption(INSECURE_SSL, "true"));
         map.put("ignoresslwarnings", new SecurityOption(INSECURE_SSL, "true"));
+        map.put("knownhostsresource", new SecurityOption(INSECURE_SSL, ""));
         map.put("objectmessageenabled", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("sendenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("skiptlsverify", new SecurityOption(INSECURE_SSL, "true"));

@@ -116,6 +116,34 @@ beans:
 `expectedAudience` accepts a comma-separated list (e.g., `"my-client,my-other-client"`) when a token must carry
 several audiences at once. Disabled by default for backward compatibility.
 
+=== Token Type and Authorized Party Validation
+
+By default, the security policy does not check the token's `typ` (token type) or `azp` (authorized party) claim.
+Two optional settings tighten this:
+
+* `expectedTokenTypes` - a comma-separated allow-list of accepted `typ` values (e.g., `"Bearer"`). When set, a
+token whose `typ` is not one of the configured values is rejected. This guards against token-type confusion,
+for example an ID token or refresh token being presented where an access token is expected.
+* `expectedAuthorizedParty` - the expected `azp` value (e.g., `"my-client"`). When set, a token whose `azp` does
+not equal the configured value is rejected, ensuring the token was issued for the expected client.
+
+Both checks apply to local JWT verification and to token introspection, and both are disabled by default for
+backward compatibility.
+
+[source,java]
+----
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
+    "http://localhost:8080", "my-realm", "my-client", "client-secret");
+
+// Only accept access tokens (typ=Bearer) issued for "my-client"
+policy.setExpectedTokenTypes("Bearer");
+policy.setExpectedAuthorizedParty("my-client");
+
+from("direct:protected")
+    .policy(policy)
+    .to("mock:result");
+----
+
 === Role-based Authorization
 
 [tabs]

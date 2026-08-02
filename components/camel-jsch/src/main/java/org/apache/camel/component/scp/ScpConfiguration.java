@@ -56,7 +56,10 @@ public class ScpConfiguration extends RemoteFileConfiguration {
               description = "Set a comma separated list of CA signature algorithms accepted for host certificate verification."
                             + " If not specified the default list from JSch will be used (matches OpenSSH 8.2+ defaults).")
     private String caSignatureAlgorithms;
-    @UriParam(enums = "no,yes", defaultValue = "no")
+    @UriParam(label = "security", enums = "no,yes", defaultValue = "no", security = "insecure:ssl",
+              description = "Sets whether to use strict host key checking. Setting this to 'no' (the default) disables"
+                            + " host key verification and makes the connection vulnerable to man-in-the-middle attacks."
+                            + " Use 'yes' in production environments.")
     private String strictHostKeyChecking = "no";
     @UriParam(defaultValue = DEFAULT_MOD)
     private String chmod = DEFAULT_MOD;
