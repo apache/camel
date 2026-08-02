@@ -17,6 +17,8 @@
 package org.apache.camel.component.langchain4j.agent.api;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -31,13 +33,14 @@ import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AgentConfigurationTest {
+class AgentConfigurationTest {
 
     @Test
     public void testParseGuardrailClasses_WithValidClasses() {
@@ -333,6 +336,50 @@ public class AgentConfigurationTest {
 
         assertSame(config, result);
         assertNotNull(config.getAiServicesCustomizer());
+    }
+
+    @Test
+    void duplicateCopiesAllDeclaredInstanceFields() throws Exception {
+        Executor executor = Executors.newSingleThreadExecutor();
+        try {
+            Function<ToolExecutionRequest, ToolExecutionResultMessage> strategy
+                    = request -> ToolExecutionResultMessage.from(request, "unknown");
+            ToolExecutionErrorHandler execHandler = (error, context) -> null;
+            ToolArgumentsErrorHandler argsHandler = (error, context) -> null;
+
+            AgentConfiguration original = new AgentConfiguration()
+                    .withMaxToolCallingRoundTrips(11)
+                    .withHallucinatedToolNameStrategy(strategy)
+                    .withToolExecutionErrorHandler(execHandler)
+                    .withToolArgumentsErrorHandler(argsHandler)
+                    .withCompensateOnToolErrors(true)
+                    .withExecuteToolsConcurrently(executor)
+                    .withInputGuardrailClassesArray(new String[] { "java.lang.String" })
+                    .withAiServicesCustomizer(builder -> {
+                    });
+
+            AgentConfiguration copy = original.duplicate();
+
+            for (Field field : AgentConfiguration.class.getDeclaredFields()) {
+                int modifiers = field.getModifiers();
+                if (Modifier.isStatic(modifiers)) {
+                    continue;
+                }
+                field.setAccessible(true);
+                assertThat(field.get(copy))
+                        .as("duplicate() should copy field %s", field.getName())
+                        .isEqualTo(field.get(original));
+            }
+        } finally {
+            ((ExecutorService) executor).shutdownNow();
+        }
+    }
+
+    @Test
+    void withExecuteToolsConcurrentlyRejectsNullExecutor() {
+        assertThatThrownBy(() -> new AgentConfiguration().withExecuteToolsConcurrently((Executor) null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessageContaining("executeToolsExecutor");
     }
 
     @Test

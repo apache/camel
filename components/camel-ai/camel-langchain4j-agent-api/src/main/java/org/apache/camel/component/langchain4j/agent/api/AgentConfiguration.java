@@ -20,6 +20,7 @@ package org.apache.camel.component.langchain4j.agent.api;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -502,12 +503,14 @@ public class AgentConfiguration {
     /**
      * Enables parallel tool execution using the given executor.
      *
-     * @param  executeToolsExecutor the executor for concurrent tool invocations
+     * @param  executeToolsExecutor the executor for concurrent tool invocations (must not be {@code null}; use
+     *                              {@link #withExecuteToolsConcurrently()} for the managed executor)
      * @return                      this configuration instance for method chaining
+     * @throws NullPointerException if {@code executeToolsExecutor} is {@code null}
      */
     public AgentConfiguration withExecuteToolsConcurrently(Executor executeToolsExecutor) {
         this.executeToolsConcurrently = true;
-        this.executeToolsExecutor = executeToolsExecutor;
+        this.executeToolsExecutor = Objects.requireNonNull(executeToolsExecutor, "executeToolsExecutor");
         return this;
     }
 
