@@ -767,7 +767,7 @@ public class LlmClient {
             }
         }
         String stopReason = !toolCalls.isEmpty() ? "tool_calls" : finishReason;
-        String contentText = text.length() > 0 ? text.toString() : null;
+        String contentText = !text.isEmpty() ? text.toString() : null;
         return new ChatResponse(contentText, toolCalls, stopReason, false, usage);
     }
 
@@ -794,7 +794,7 @@ public class LlmClient {
                 sb.append(part.getString("text"));
             }
         }
-        return sb.length() > 0 ? sb.toString() : null;
+        return !sb.isEmpty() ? sb.toString() : null;
     }
 
     private TokenUsage extractGeminiUsage(JsonObject response) {
