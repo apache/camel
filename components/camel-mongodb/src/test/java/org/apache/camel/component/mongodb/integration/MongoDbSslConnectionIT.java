@@ -47,8 +47,8 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration test that validates TLS connectivity to MongoDB using Camel's SSLContextParameters.
@@ -114,23 +114,34 @@ public class MongoDbSslConnectionIT implements ConfigurableContext, Configurable
     }
 
     @Test
-    public void testInsertOverTls() {
+    void testInsertOverTls() {
         ProducerTemplate template = contextExtension.getProducerTemplate();
 
         Document doc = new Document("scientist", "Einstein").append("tls", true);
         Object result = template.requestBody("direct:insert", doc);
         assertNotNull(result, "Insert result should not be null");
 
-        assertEquals(1L, testCollection.countDocuments(),
-                "Test collection should contain 1 document after insert");
+        assertEquals(1L, testCollection.countDocuments());
     }
 
     @Test
-    public void testCountOverTls() {
+    void testInsertAndCountOverTls() {
+        ProducerTemplate template = contextExtension.getProducerTemplate();
+
+        Document doc = new Document("scientist", "Curie").append("tls", true);
+        template.requestBody("direct:insert", doc);
+
+        Object count = template.requestBody("direct:count", "irrelevantBody");
+        assertInstanceOf(Long.class, count);
+        assertEquals(1L, count);
+    }
+
+    @Test
+    void testCountOverTls() {
         ProducerTemplate template = contextExtension.getProducerTemplate();
 
         Object result = template.requestBody("direct:count", "irrelevantBody");
-        assertTrue(result instanceof Long, "Count result should be of type Long");
+        assertInstanceOf(Long.class, result);
     }
 
     @AfterEach

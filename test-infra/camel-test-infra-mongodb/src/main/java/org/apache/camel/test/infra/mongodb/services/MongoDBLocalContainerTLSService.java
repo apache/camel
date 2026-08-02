@@ -24,19 +24,23 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.mongodb.common.MongoDBProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.utility.MountableFile;
 
 /**
  * A TLS-enabled MongoDB container service using a standalone mongod with --tlsMode requireTLS. Uses pre-generated
- * self-signed certificates mounted from classpath resources.
+ * self-signed certificates copied from classpath resources (individual files, not a directory mount, for Testcontainers
+ * 2.x portability).
  */
 public class MongoDBLocalContainerTLSService implements MongoDBService, ContainerService<GenericContainer<?>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBLocalContainerTLSService.class);
     private static final int DEFAULT_MONGODB_PORT = 27017;
-    private static final String CERT_RESOURCE_PATH = "org/apache/camel/test/infra/mongodb/services/ssl";
+    static final String CERT_RESOURCE_PATH = "org/apache/camel/test/infra/mongodb/services/ssl";
+    static final String CONTAINER_SSL_DIR = "/etc/mongodb/ssl";
+    static final String SERVER_CERT_RESOURCE = CERT_RESOURCE_PATH + "/server.pem";
+    static final String CA_CERT_RESOURCE = CERT_RESOURCE_PATH + "/ca.pem";
 
     private final GenericContainer<?> container;
 
@@ -55,12 +59,17 @@ public class MongoDBLocalContainerTLSService implements MongoDBService, Containe
         boolean fixedPort = ContainerEnvironmentUtil.isFixedPort(this.getClass());
         ContainerEnvironmentUtil.configurePort(c, fixedPort, DEFAULT_MONGODB_PORT);
 
-        c.withClasspathResourceMapping(CERT_RESOURCE_PATH, "/etc/mongodb/ssl", BindMode.READ_ONLY)
+        c.withCopyFileToContainer(
+                MountableFile.forClasspathResource(SERVER_CERT_RESOURCE),
+                CONTAINER_SSL_DIR + "/server.pem")
+                .withCopyFileToContainer(
+                        MountableFile.forClasspathResource(CA_CERT_RESOURCE),
+                        CONTAINER_SSL_DIR + "/ca.pem")
                 .withCommand(
                         "mongod",
                         "--tlsMode", "requireTLS",
-                        "--tlsCertificateKeyFile", "/etc/mongodb/ssl/server.pem",
-                        "--tlsCAFile", "/etc/mongodb/ssl/ca.pem",
+                        "--tlsCertificateKeyFile", CONTAINER_SSL_DIR + "/server.pem",
+                        "--tlsCAFile", CONTAINER_SSL_DIR + "/ca.pem",
                         "--tlsAllowConnectionsWithoutCertificates",
                         "--bind_ip_all",
                         "--port", String.valueOf(DEFAULT_MONGODB_PORT))
