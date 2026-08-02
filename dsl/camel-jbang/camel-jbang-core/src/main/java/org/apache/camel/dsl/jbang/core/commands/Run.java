@@ -69,6 +69,7 @@ import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
 import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.main.util.SuggestSimilarHelper;
@@ -1255,11 +1256,7 @@ public class Run extends CamelCommand {
         if (serverOptions.openapiUi) {
             dependencies.add("camel:platform-http-main");
             dependencies.add("camel:openapi-java");
-            main.addOverrideProperty("camel.rest.apiContextPath", "/q/openapi.json");
-            main.addOverrideProperty("camel.rest.component", "platform-http");
-            main.addOverrideProperty("camel.management.openapiUiEnabled", "true");
-            main.addOverrideProperty("camel.server.enabled", "true");
-            main.addOverrideProperty("camel.management.enabled", "true");
+            applyOpenApiUiRuntimeOptions(main);
         }
         if (debugOptions.openTelemetryAgent) {
             dependencies.add("camel:opentelemetry2");
@@ -3125,6 +3122,17 @@ public class Run extends CamelCommand {
         if (serverOptions.managementPort == -1) {
             serverOptions.managementPort = serverOptions.port;
         }
+    }
+
+    void applyOpenApiUiRuntimeOptions(BaseMainSupport main) {
+        if (!serverOptions.openapiUi) {
+            return;
+        }
+        main.addOverrideProperty("camel.rest.apiContextPath", "/q/openapi.json");
+        main.addOverrideProperty("camel.rest.component", "platform-http");
+        main.addOverrideProperty("camel.management.openapiUiEnabled", "true");
+        main.addOverrideProperty("camel.server.enabled", "true");
+        main.addOverrideProperty("camel.management.enabled", "true");
     }
 
     static class FilesConsumer extends ParameterConsumer<Run> {

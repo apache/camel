@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import org.apache.camel.main.Main;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
@@ -54,5 +55,20 @@ class RunOpenApiUiOptionsTest {
 
         assertThat(run.serverOptions.port).isEqualTo(9090);
         assertThat(run.serverOptions.managementPort).isEqualTo(9999);
+    }
+
+    @Test
+    void shouldApplyOpenApiUiOverrideProperties() {
+        Run run = new Run(new CamelJBangMain());
+        new CommandLine(run).parseArgs("--openapi-ui", "hello.java");
+        Main main = new Main();
+
+        run.applyOpenApiUiRuntimeOptions(main);
+
+        assertThat(main.getOverrideProperties().getProperty("camel.rest.component")).isEqualTo("platform-http");
+        assertThat(main.getOverrideProperties().getProperty("camel.rest.apiContextPath")).isEqualTo("/q/openapi.json");
+        assertThat(main.getOverrideProperties().getProperty("camel.management.openapiUiEnabled")).isEqualTo("true");
+        assertThat(main.getOverrideProperties().getProperty("camel.server.enabled")).isEqualTo("true");
+        assertThat(main.getOverrideProperties().getProperty("camel.management.enabled")).isEqualTo("true");
     }
 }

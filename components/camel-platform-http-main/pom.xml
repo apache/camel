@@ -73,6 +73,7 @@
             <groupId>org.webjars</groupId>
             <artifactId>swagger-ui</artifactId>
             <version>${swagger-ui-version}</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- test dependencies -->
