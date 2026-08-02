@@ -16,9 +16,16 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.lang.reflect.Field;
+
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.concurrent.ThreadType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,6 +34,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * return null outside a binding scope (used by Kamelet endpoint init).
  */
 class CreateContextValueTest {
+
+    private static final String VIRTUAL_THREADS_PROPERTY = "camel.threads.virtual.enabled";
+
+    private String previousVirtualThreadsProperty;
 
     @Test
     void getCreateRouteReturnsNullOutsideScope() {
@@ -40,5 +51,41 @@ class CreateContextValueTest {
         ExtendedCamelContext extension = new DefaultCamelContext().getCamelContextExtension();
 
         assertThat(extension.getCreateProcessor()).isNull();
+    }
+
+    @EnabledForJreRange(min = JRE.JAVA_25)
+    @ResourceLock(Resources.SYSTEM_PROPERTIES)
+    @Test
+    void getCreateRouteDoesNotThrowWithVirtualThreadsEnabled() throws Exception {
+        enableVirtualThreads();
+        try {
+            ExtendedCamelContext extension = new DefaultCamelContext().getCamelContextExtension();
+
+            assertThat(extension.getCreateRoute()).isNull();
+            assertThat(extension.getCreateProcessor()).isNull();
+        } finally {
+            restoreVirtualThreadsProperty();
+        }
+    }
+
+    private void enableVirtualThreads() throws Exception {
+        previousVirtualThreadsProperty = System.getProperty(VIRTUAL_THREADS_PROPERTY);
+        System.setProperty(VIRTUAL_THREADS_PROPERTY, "true");
+        resetThreadTypeField();
+    }
+
+    private void restoreVirtualThreadsProperty() throws Exception {
+        if (previousVirtualThreadsProperty == null) {
+            System.clearProperty(VIRTUAL_THREADS_PROPERTY);
+        } else {
+            System.setProperty(VIRTUAL_THREADS_PROPERTY, previousVirtualThreadsProperty);
+        }
+        resetThreadTypeField();
+    }
+
+    private static void resetThreadTypeField() throws Exception {
+        Field field = ThreadType.class.getDeclaredField("current");
+        field.setAccessible(true);
+        field.set(null, null);
     }
 }
