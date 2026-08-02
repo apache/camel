@@ -40,8 +40,8 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 /**
- * Shared LLM HTTP client supporting Ollama, OpenAI-compatible, Anthropic (including Vertex AI), Google Gemini, and
- * IBM watsonx.ai APIs.
+ * Shared LLM HTTP client supporting Ollama, OpenAI-compatible, Anthropic (including Vertex AI), Google Gemini, and IBM
+ * watsonx.ai APIs.
  */
 public class LlmClient {
 
