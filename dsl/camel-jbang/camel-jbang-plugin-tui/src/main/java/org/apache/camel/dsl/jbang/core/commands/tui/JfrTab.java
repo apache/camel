@@ -279,18 +279,18 @@ class JfrTab extends AbstractTab {
         List<Line> lines = new ArrayList<>();
 
         List<Span> line1 = new ArrayList<>();
-        line1.add(Span.styled("runtime events: ", LABEL));
-        line1.add(Span.styled(registered ? "enabled" : "disabled", registered ? VALUE : Theme.error()));
+        line1.add(Span.styled("Runtime Events: ", LABEL));
+        line1.add(Span.styled(registered ? "Enabled" : "Disabled", registered ? VALUE : Theme.error()));
 
         if (!recordings.isEmpty()) {
-            line1.add(Span.styled("  recording: ", LABEL));
+            line1.add(Span.styled("  Recording: ", LABEL));
             line1.add(Span.styled(recordings.get(0), VALUE));
         } else {
-            line1.add(Span.styled("  no active recording", LABEL));
+            line1.add(Span.styled("  No Active Recording", LABEL));
         }
 
         if (snapshotLoaded) {
-            line1.add(Span.styled("  snapshot: ", LABEL));
+            line1.add(Span.styled("  Snapshot: ", LABEL));
             String ageLabel = "";
             if (snapshotTime > 0) {
                 long agoSec = (System.currentTimeMillis() - snapshotTime) / 1000;

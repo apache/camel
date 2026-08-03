@@ -70,7 +70,7 @@ class JfrTabRenderTest {
     void renderShowsRegisteredAndRecordingState() {
         JfrTab tab = new JfrTab(ctx);
         String rendered = TuiTestHelper.renderToString(tab, 120, 20);
-        assertThat(rendered).contains("runtime events").contains("no active recording");
+        assertThat(rendered).contains("Runtime Events").contains("No Active Recording");
     }
 
     @Test
