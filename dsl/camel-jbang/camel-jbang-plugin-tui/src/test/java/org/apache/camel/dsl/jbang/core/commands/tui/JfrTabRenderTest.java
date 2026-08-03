@@ -70,7 +70,7 @@ class JfrTabRenderTest {
     void renderShowsRegisteredAndRecordingState() {
         JfrTab tab = new JfrTab(ctx);
         String rendered = TuiTestHelper.renderToString(tab, 120, 20);
-        assertThat(rendered).contains("Runtime Events").contains("No Active Recording");
+        assertThat(rendered).contains("Loading...");
     }
 
     @Test
@@ -92,7 +92,7 @@ class JfrTabRenderTest {
         tab.renderFooter(footerSpans);
         String footer = footerSpans.stream().map(Span::content).reduce("", String::concat);
 
-        assertThat(footer).contains("Esc").contains("F5").contains("snapshot");
+        assertThat(footer).contains("Esc").contains("F5").contains("refresh");
     }
 
     @Test
@@ -272,7 +272,7 @@ class JfrTabRenderTest {
         JsonArray recordings = new JsonArray();
         JsonObject rec = new JsonObject();
         rec.put("name", "default");
-        rec.put("state", "RUNNING");
+        rec.put("state", "Running");
         recordings.add(rec);
         response.put("recordings", recordings);
         return response;

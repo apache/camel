@@ -38,6 +38,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -465,7 +466,7 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
                 for (Recording recording : FlightRecorder.getFlightRecorder().getRecordings()) {
                     JsonObject rec = new JsonObject();
                     rec.put("name", recording.getName());
-                    rec.put("state", recording.getState().toString());
+                    rec.put("state", StringHelper.capitalize(recording.getState().toString().toLowerCase(java.util.Locale.US)));
                     rec.put("destination",
                             recording.getDestination() != null ? recording.getDestination().toString() : null);
                     recordingsJson.add(rec);

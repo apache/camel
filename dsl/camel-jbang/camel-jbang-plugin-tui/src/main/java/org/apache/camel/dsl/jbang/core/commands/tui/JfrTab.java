@@ -96,9 +96,9 @@ class JfrTab extends AbstractTab {
     private int topPanelHeight = -1;
 
     // sort state per view
-    private static final String[] ROUTE_SORT_COLUMNS = { "route", "total", "failed", "mean", "max" };
-    private static final String[] PROCESSOR_SORT_COLUMNS = { "processor", "total", "failed", "mean", "max" };
-    private static final String[] ENDPOINT_SORT_COLUMNS = { "endpoint", "total", "failed", "mean", "max" };
+    private static final String[] ROUTE_SORT_COLUMNS = { "route", "total", "failed", "min", "mean", "max" };
+    private static final String[] PROCESSOR_SORT_COLUMNS = { "processor", "total", "failed", "min", "mean", "max" };
+    private static final String[] ENDPOINT_SORT_COLUMNS = { "endpoint", "total", "failed", "min", "mean", "max" };
     private String routeSort = "route";
     private int routeSortIndex;
     private boolean routeSortReversed;
@@ -273,14 +273,18 @@ class JfrTab extends AbstractTab {
         List<Line> lines = new ArrayList<>();
 
         List<Span> line1 = new ArrayList<>();
-        line1.add(Span.styled("Runtime Events: ", LABEL));
-        line1.add(Span.styled(registered ? "Enabled" : "Disabled", registered ? VALUE : Theme.error()));
-
-        if (!recordings.isEmpty()) {
-            line1.add(Span.styled("  Recording: ", LABEL));
-            line1.add(Span.styled(recordings.get(0), VALUE));
+        if (!statusLoaded) {
+            line1.add(Span.styled("Loading...", LABEL));
         } else {
-            line1.add(Span.styled("  No Active Recording", LABEL));
+            line1.add(Span.styled("Runtime Events: ", LABEL));
+            line1.add(Span.styled(registered ? "Enabled" : "Disabled", registered ? VALUE : Theme.error()));
+
+            if (!recordings.isEmpty()) {
+                line1.add(Span.styled("  Recording: ", LABEL));
+                line1.add(Span.styled(recordings.get(0), Theme.success()));
+            } else {
+                line1.add(Span.styled("  No Active Recording", LABEL));
+            }
         }
 
         if (snapshotLoaded) {
@@ -321,10 +325,12 @@ class JfrTab extends AbstractTab {
 
     private void renderDataTable(Frame frame, Rect area) {
         if (!snapshotLoaded) {
+            String msg = loading.get()
+                    ? "  Loading..."
+                    : "  Press F5 to refresh JFR snapshot data";
             frame.renderWidget(
                     Paragraph.builder()
-                            .text(Text.from(Line.from(Span.styled(
-                                    "  Press F5 to take a JFR snapshot and view runtime data", LABEL))))
+                            .text(Text.from(Line.from(Span.styled(msg, LABEL))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" " + activeView.label + " ").build())
                             .build(),
@@ -352,30 +358,42 @@ class JfrTab extends AbstractTab {
                 .constraints(Constraint.length(topPanelHeight), Constraint.fill())
                 .split(area);
 
+        long maxMean = data.stream().mapToLong(r -> (long) r.meanMs).max().orElse(1);
+        if (maxMean <= 0) {
+            maxMean = 1;
+        }
+
         List<Row> rows = new ArrayList<>();
         for (RouteStats r : data) {
-            String rate = r.total > 0 ? String.format(Locale.US, "%.1f%%", (r.failed * 100.0 / r.total)) : "0.0%";
+            Style nameStyle = r.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
+            String bar = buildBar((long) r.meanMs, maxMean, 20);
+            Style barStyle = topTimeStyle((long) r.meanMs);
+            if (barStyle == Style.EMPTY) {
+                barStyle = Style.EMPTY.fg(Theme.accent());
+            }
             rows.add(Row.from(
-                    Cell.from(Span.styled(r.routeId, Style.EMPTY.fg(Theme.baseFg()))),
+                    Cell.from(Span.styled(r.routeId, nameStyle)),
+                    Cell.from(Span.styled(bar, barStyle)),
                     rightCell(String.valueOf(r.total), 8),
                     rightCell(String.valueOf(r.failed), 8, r.failed > 0 ? Theme.error() : Style.EMPTY),
-                    rightCell(rate, 8),
-                    rightCell(formatMs(r.meanMs), 10),
-                    rightCell(formatMs(r.maxMs), 10)));
+                    rightCell(formatMs(r.minMs), 10),
+                    rightCell(formatMs(r.meanMs), 10, topTimeStyle((long) r.meanMs)),
+                    rightCell(formatMs(r.maxMs), 10, topTimeStyle((long) r.maxMs))));
         }
 
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
                         Cell.from(Span.styled(routeSortLabel("ROUTE", "route"), routeSortStyle("route"))),
+                        Cell.from(""),
                         rightCell(routeSortLabel("TOTAL", "total"), 8, routeSortStyle("total")),
                         rightCell(routeSortLabel("FAILED", "failed"), 8, routeSortStyle("failed")),
-                        rightCell("RATE", 8, Style.EMPTY.bold()),
+                        rightCell(routeSortLabel("MIN", "min"), 10, routeSortStyle("min")),
                         rightCell(routeSortLabel("MEAN", "mean"), 10, routeSortStyle("mean")),
                         rightCell(routeSortLabel("MAX", "max"), 10, routeSortStyle("max"))))
-                .widths(Constraint.fill(),
-                        Constraint.length(8), Constraint.length(8), Constraint.length(8),
-                        Constraint.length(10), Constraint.length(10))
+                .widths(Constraint.length(24), Constraint.fill(),
+                        Constraint.length(8), Constraint.length(8),
+                        Constraint.length(10), Constraint.length(10), Constraint.length(10))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -408,15 +426,28 @@ class JfrTab extends AbstractTab {
                 .toList();
         data = sortProcessors(data);
 
+        long maxMean = data.stream().mapToLong(p -> (long) p.meanMs).max().orElse(1);
+        if (maxMean <= 0) {
+            maxMean = 1;
+        }
+
         List<Row> rows = new ArrayList<>();
         for (ProcessorStats p : data) {
+            Style nameStyle = p.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
+            String bar = buildBar((long) p.meanMs, maxMean, 20);
+            Style barStyle = topTimeStyle((long) p.meanMs);
+            if (barStyle == Style.EMPTY) {
+                barStyle = Style.EMPTY.fg(Theme.accent());
+            }
             rows.add(Row.from(
-                    Cell.from(Span.styled(p.processorId, Style.EMPTY.fg(Theme.baseFg()))),
+                    Cell.from(Span.styled(p.processorId, nameStyle)),
                     Cell.from(Span.styled(p.processorType != null ? p.processorType : "", LABEL)),
+                    Cell.from(Span.styled(bar, barStyle)),
                     rightCell(String.valueOf(p.total), 8),
                     rightCell(String.valueOf(p.failed), 8, p.failed > 0 ? Theme.error() : Style.EMPTY),
-                    rightCell(formatMs(p.meanMs), 10),
-                    rightCell(formatMs(p.maxMs), 10)));
+                    rightCell(formatMs(p.minMs), 10),
+                    rightCell(formatMs(p.meanMs), 10, topTimeStyle((long) p.meanMs)),
+                    rightCell(formatMs(p.maxMs), 10, topTimeStyle((long) p.maxMs))));
         }
 
         Table table = Table.builder()
@@ -424,13 +455,15 @@ class JfrTab extends AbstractTab {
                 .header(Row.from(
                         Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
                         Cell.from(Span.styled("TYPE", Style.EMPTY.bold())),
+                        Cell.from(""),
                         rightCell("TOTAL", 8, Style.EMPTY.bold()),
                         rightCell("FAILED", 8, Style.EMPTY.bold()),
+                        rightCell("MIN", 10, Style.EMPTY.bold()),
                         rightCell("MEAN", 10, Style.EMPTY.bold()),
                         rightCell("MAX", 10, Style.EMPTY.bold())))
-                .widths(Constraint.fill(), Constraint.length(12),
+                .widths(Constraint.fill(), Constraint.length(12), Constraint.length(22),
                         Constraint.length(8), Constraint.length(8),
-                        Constraint.length(10), Constraint.length(10))
+                        Constraint.length(10), Constraint.length(10), Constraint.length(10))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -442,16 +475,30 @@ class JfrTab extends AbstractTab {
 
     private void renderProcessorsTable(Frame frame, Rect area) {
         List<ProcessorStats> data = sortProcessors(processorData);
+
+        long maxMean = data.stream().mapToLong(p -> (long) p.meanMs).max().orElse(1);
+        if (maxMean <= 0) {
+            maxMean = 1;
+        }
+
         List<Row> rows = new ArrayList<>();
         for (ProcessorStats p : data) {
+            Style nameStyle = p.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
+            String bar = buildBar((long) p.meanMs, maxMean, 20);
+            Style barStyle = topTimeStyle((long) p.meanMs);
+            if (barStyle == Style.EMPTY) {
+                barStyle = Style.EMPTY.fg(Theme.accent());
+            }
             rows.add(Row.from(
-                    Cell.from(Span.styled(p.processorId, Style.EMPTY.fg(Theme.baseFg()))),
+                    Cell.from(Span.styled(p.processorId, nameStyle)),
                     Cell.from(Span.styled(p.processorType != null ? p.processorType : "", LABEL)),
                     Cell.from(Span.styled(p.routeId, LABEL)),
+                    Cell.from(Span.styled(bar, barStyle)),
                     rightCell(String.valueOf(p.total), 8),
                     rightCell(String.valueOf(p.failed), 8, p.failed > 0 ? Theme.error() : Style.EMPTY),
-                    rightCell(formatMs(p.meanMs), 10),
-                    rightCell(formatMs(p.maxMs), 10)));
+                    rightCell(formatMs(p.minMs), 10),
+                    rightCell(formatMs(p.meanMs), 10, topTimeStyle((long) p.meanMs)),
+                    rightCell(formatMs(p.maxMs), 10, topTimeStyle((long) p.maxMs))));
         }
 
         Table table = Table.builder()
@@ -461,13 +508,16 @@ class JfrTab extends AbstractTab {
                                 processorSortStyle("processor"))),
                         Cell.from(Span.styled("TYPE", Style.EMPTY.bold())),
                         Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
+                        Cell.from(""),
                         rightCell(processorSortLabel("TOTAL", "total"), 8, processorSortStyle("total")),
                         rightCell(processorSortLabel("FAILED", "failed"), 8, processorSortStyle("failed")),
+                        rightCell(processorSortLabel("MIN", "min"), 10, processorSortStyle("min")),
                         rightCell(processorSortLabel("MEAN", "mean"), 10, processorSortStyle("mean")),
                         rightCell(processorSortLabel("MAX", "max"), 10, processorSortStyle("max"))))
                 .widths(Constraint.fill(), Constraint.length(12), Constraint.length(16),
+                        Constraint.length(22),
                         Constraint.length(8), Constraint.length(8),
-                        Constraint.length(10), Constraint.length(10))
+                        Constraint.length(10), Constraint.length(10), Constraint.length(10))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -480,15 +530,29 @@ class JfrTab extends AbstractTab {
 
     private void renderEndpointsTable(Frame frame, Rect area) {
         List<EndpointStats> data = sortedEndpoints();
+
+        long maxMean = data.stream().mapToLong(e -> (long) e.meanMs).max().orElse(1);
+        if (maxMean <= 0) {
+            maxMean = 1;
+        }
+
         List<Row> rows = new ArrayList<>();
         for (EndpointStats e : data) {
+            Style nameStyle = e.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
+            String bar = buildBar((long) e.meanMs, maxMean, 20);
+            Style barStyle = topTimeStyle((long) e.meanMs);
+            if (barStyle == Style.EMPTY) {
+                barStyle = Style.EMPTY.fg(Theme.accent());
+            }
             rows.add(Row
                     .from(
-                    Cell.from(Span.styled(e.endpointUri, Style.EMPTY.fg(Theme.baseFg()))),
+                    Cell.from(Span.styled(e.endpointUri, nameStyle)),
+                    Cell.from(Span.styled(bar, barStyle)),
                     rightCell(String.valueOf(e.total), 8),
                     rightCell(String.valueOf(e.failed), 8, e.failed > 0 ? Theme.error() : Style.EMPTY),
-                    rightCell(formatMs(e.meanMs), 10),
-                    rightCell(formatMs(e.maxMs), 10)));
+                    rightCell(formatMs(e.minMs), 10),
+                    rightCell(formatMs(e.meanMs), 10, topTimeStyle((long) e.meanMs)),
+                    rightCell(formatMs(e.maxMs), 10, topTimeStyle((long) e.maxMs))));
         }
 
         Table table = Table.builder()
@@ -496,13 +560,15 @@ class JfrTab extends AbstractTab {
                 .header(Row.from(
                         Cell.from(Span.styled(endpointSortLabel("ENDPOINT", "endpoint"),
                                 endpointSortStyle("endpoint"))),
+                        Cell.from(""),
                         rightCell(endpointSortLabel("TOTAL", "total"), 8, endpointSortStyle("total")),
                         rightCell(endpointSortLabel("FAILED", "failed"), 8, endpointSortStyle("failed")),
+                        rightCell(endpointSortLabel("MIN", "min"), 10, endpointSortStyle("min")),
                         rightCell(endpointSortLabel("MEAN", "mean"), 10, endpointSortStyle("mean")),
                         rightCell(endpointSortLabel("MAX", "max"), 10, endpointSortStyle("max"))))
-                .widths(Constraint.fill(),
+                .widths(Constraint.length(30), Constraint.fill(),
                         Constraint.length(8), Constraint.length(8),
-                        Constraint.length(10), Constraint.length(10))
+                        Constraint.length(10), Constraint.length(10), Constraint.length(10))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -604,7 +670,7 @@ class JfrTab extends AbstractTab {
         if (snapshotLoaded && hasSortColumns()) {
             hint(spans, "s", "sort");
         }
-        hintLast(spans, "F5", "snapshot");
+        hintLast(spans, "F5", "refresh");
     }
 
     // ---- sorting ----
@@ -681,6 +747,7 @@ class JfrTab extends AbstractTab {
         } else {
             Comparator<RouteStats> cmp = switch (routeSort) {
                 case "failed" -> Comparator.comparingLong(RouteStats::failed);
+                case "min" -> Comparator.comparingDouble(RouteStats::minMs);
                 case "mean" -> Comparator.comparingDouble(RouteStats::meanMs);
                 case "max" -> Comparator.comparingDouble(RouteStats::maxMs);
                 default -> Comparator.comparingLong(RouteStats::total);
@@ -703,6 +770,7 @@ class JfrTab extends AbstractTab {
             Comparator<ProcessorStats> cmp = switch (processorSort) {
                 case "total" -> Comparator.comparingLong(ProcessorStats::total);
                 case "failed" -> Comparator.comparingLong(ProcessorStats::failed);
+                case "min" -> Comparator.comparingDouble(ProcessorStats::minMs);
                 case "max" -> Comparator.comparingDouble(ProcessorStats::maxMs);
                 default -> Comparator.comparingDouble(ProcessorStats::meanMs);
             };
@@ -723,6 +791,7 @@ class JfrTab extends AbstractTab {
         } else {
             Comparator<EndpointStats> cmp = switch (endpointSort) {
                 case "failed" -> Comparator.comparingLong(EndpointStats::failed);
+                case "min" -> Comparator.comparingDouble(EndpointStats::minMs);
                 case "mean" -> Comparator.comparingDouble(EndpointStats::meanMs);
                 case "max" -> Comparator.comparingDouble(EndpointStats::maxMs);
                 default -> Comparator.comparingLong(EndpointStats::total);
@@ -744,6 +813,7 @@ class JfrTab extends AbstractTab {
 
         String pid = ctx.selectedPid;
         ctx.backgroundExecutor.execute(() -> {
+            boolean chained = false;
             try {
                 JsonObject root = new JsonObject();
                 root.put("action", "jfr");
@@ -754,14 +824,16 @@ class JfrTab extends AbstractTab {
 
                 if (jo != null && jo.get("recordings") instanceof JsonArray recs && !recs.isEmpty()
                         && !snapshotLoaded) {
-                    loading.set(false);
-                    takeSnapshot();
+                    chained = true;
+                    doTakeSnapshot();
                     return;
                 }
             } catch (Exception e) {
                 applyError("Error: " + e.getMessage());
             } finally {
-                loading.set(false);
+                if (!chained) {
+                    loading.set(false);
+                }
             }
         });
     }
@@ -773,7 +845,10 @@ class JfrTab extends AbstractTab {
         if (!loading.compareAndSet(false, true)) {
             return;
         }
+        doTakeSnapshot();
+    }
 
+    private void doTakeSnapshot() {
         String pid = ctx.selectedPid;
         ctx.backgroundExecutor.execute(() -> {
             try {
@@ -1025,7 +1100,6 @@ class JfrTab extends AbstractTab {
                     row.put("routeId", r.routeId());
                     row.put("total", r.total());
                     row.put("failed", r.failed());
-                    row.put("failRate", r.total() > 0 ? Math.round(r.failed() * 1000.0 / r.total()) / 10.0 : 0);
                     row.put("minMs", r.minMs());
                     row.put("meanMs", r.meanMs());
                     row.put("maxMs", r.maxMs());
@@ -1115,7 +1189,7 @@ class JfrTab extends AbstractTab {
 
                 ## Controls
 
-                - `F5` — take JFR snapshot
+                - `F5` — refresh (take new JFR snapshot)
                 - `Space` — cycle view
                 - `s` / `S` — cycle sort column / reverse sort direction
                 - `Esc` — back
