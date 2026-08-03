@@ -185,7 +185,7 @@ class OpenAIToolErrorStrategyTest extends CamelTestSupport {
                 .isInstanceOf(CamelExecutionException.class)
                 .hasCauseInstanceOf(IllegalStateException.class)
                 .cause()
-                .hasMessageContaining("not found in any configured MCP server");
+                .hasMessageContaining("not found in any configured tool source");
     }
 
     @Test
