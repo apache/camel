@@ -608,6 +608,34 @@ in your running integration. It runs two sequential recordings and compares obje
 classifying each class as growing, stable, shrinking, new, or gone. This is lightweight and safe
 for production use.
 
+=== JFR Runtime Profiling
+
+The JFR tab (under More > JVM) gives you a lightweight profiling view of your running integration
+using Java Flight Recorder. JFR is built into the JVM with very low overhead, making it suitable
+for near-production use cases where you need timing data without impacting throughput.
+
+Start your integration with JFR runtime instrumentation enabled:
+
+[source,bash]
+----
+camel run my-route.yaml --jfr
+----
+
+The JFR tab shows the recording status and event configuration. Press *F5* to take a snapshot
+of the active recording -- the TUI aggregates all Camel events and presents them in five views:
+
+* *Routes* (key *1*) -- per-route totals, failure counts, and min/mean/max duration
+* *Processors* (key *2*) -- per-processor statistics with type and owning route, sorted by slowest first
+* *Endpoints* (key *3*) -- per-endpoint send statistics with duration
+* *Failures* (key *4*) -- recent exchange failures with exception type and message
+* *Redeliveries* (key *5*) -- recent redelivery attempts with attempt and max counts
+
+Press *Enter* on a route to drill down into its processors filtered by that route.
+Press *s* to cycle sort columns, and *Esc* to go back.
+
+Each snapshot is a point-in-time read -- the recording keeps running, so you can press *F5*
+again at any time to see updated statistics as more messages flow through the system.
+
 === Catalog
 
 The Catalog tab (under More > Project) lets you browse the full Camel component catalog from within
