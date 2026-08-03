@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 import java.util.function.IntConsumer;
 
 import dev.tamboui.layout.Constraint;
@@ -124,10 +125,9 @@ class SourceViewer {
     private Path editableFile;
     private boolean editMode;
     private final TextAreaState editState = new TextAreaState();
-    private String saveMessage;
-    private boolean saveError;
     /** Markdown render mode prior to entering edit; restored on cancel. */
     private boolean markdownModeBeforeEdit;
+    private BiConsumer<String, Boolean> notificationCallback;
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
@@ -150,6 +150,10 @@ class SourceViewer {
         this.focused = focused;
     }
 
+    void setNotificationCallback(BiConsumer<String, Boolean> callback) {
+        this.notificationCallback = callback;
+    }
+
     void hide() {
         exitEditMode();
         visible = false;
@@ -158,8 +162,6 @@ class SourceViewer {
         quickDocEntries = Collections.emptyMap();
         deprecatedLines = Collections.emptySet();
         editableFile = null;
-        saveMessage = null;
-        saveError = false;
     }
 
     void reset() {
@@ -191,8 +193,6 @@ class SourceViewer {
         deprecatedLineScanner = null;
         deprecatedLines = Collections.emptySet();
         editableFile = null;
-        saveMessage = null;
-        saveError = false;
     }
 
     boolean isMarkdownMode() {
@@ -389,6 +389,10 @@ class SourceViewer {
             exitEditMode();
             return true;
         }
+        if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
+            saveContinueEdit();
+            return true;
+        }
         if (ke.isKey(KeyCode.F5)) {
             saveEdit();
             return true;
@@ -465,8 +469,6 @@ class SourceViewer {
         markdownMode = false;
         quickDocEnabled = false;
         search.reset();
-        saveMessage = null;
-        saveError = false;
         editMode = true;
     }
 
@@ -495,12 +497,27 @@ class SourceViewer {
             if (isMarkdownFile) {
                 markdownMode = restoreMarkdownMode;
             }
-            // Preserve save feedback after reload
-            saveMessage = "Saved";
-            saveError = false;
+            notifySave("Saved: " + editableFile.getFileName(), false);
         } catch (IOException e) {
-            saveMessage = "Save failed: " + e.getMessage();
-            saveError = true;
+            notifySave("Save failed: " + e.getMessage(), true);
+        }
+    }
+
+    private void saveContinueEdit() {
+        if (!editMode || editableFile == null) {
+            return;
+        }
+        try {
+            Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
+            notifySave("Saved: " + editableFile.getFileName(), false);
+        } catch (IOException e) {
+            notifySave("Save failed: " + e.getMessage(), true);
+        }
+    }
+
+    private void notifySave(String message, boolean error) {
+        if (notificationCallback != null) {
+            notificationCallback.accept(message, error);
         }
     }
 
@@ -747,9 +764,6 @@ class SourceViewer {
         List<Span> titleSpans = new ArrayList<>();
         String info = title != null ? title : "";
         titleSpans.add(Span.styled(" Edit [" + info + "] ", ts));
-        if (saveMessage != null) {
-            titleSpans.add(Span.styled(saveMessage + " ", saveError ? Theme.error() : Theme.success()));
-        }
         Block.Builder blockBuilder = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(Line.from(titleSpans)));
@@ -762,7 +776,6 @@ class SourceViewer {
         lastVisibleLines = Math.max(1, inner.height());
         frame.renderWidget(block, area);
 
-        editState.ensureCursorVisible(inner.width(), inner.height());
         TextArea textArea = TextArea.builder()
                 .cursorStyle(Style.EMPTY.reversed())
                 .showLineNumbers(true)
@@ -774,11 +787,9 @@ class SourceViewer {
     void renderFooter(List<Span> spans) {
         if (editMode) {
             TuiHelper.hint(spans, "Esc", "cancel");
-            TuiHelper.hint(spans, "F5", "save");
+            TuiHelper.hint(spans, "F5", "save & close");
+            TuiHelper.hint(spans, "Shift+F5", "save");
             TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "move");
-            if (saveMessage != null) {
-                spans.add(Span.styled("  " + saveMessage, saveError ? Theme.error() : Theme.success()));
-            }
             return;
         }
         if (markdownMode) {
@@ -815,9 +826,6 @@ class SourceViewer {
         if (onLineSelected != null) {
             TuiHelper.hint(spans, "Enter", "select node");
         }
-        if (saveMessage != null) {
-            spans.add(Span.styled("  " + saveMessage, saveError ? Theme.error() : Theme.success()));
-        }
     }
 
     /**
@@ -832,8 +840,6 @@ class SourceViewer {
         editMode = false;
         editState.clear();
         markdownModeBeforeEdit = false;
-        saveMessage = null;
-        saveError = false;
         String fileName = filePath.getFileName().toString();
         boolean isMd = fileName.toLowerCase().endsWith(".md");
         try {
@@ -894,8 +900,6 @@ class SourceViewer {
         editableFile = null;
         editMode = false;
         editState.clear();
-        saveMessage = null;
-        saveError = false;
 
         if (ctx.selectedPid == null || ctx.runner == null) {
             return;
@@ -1108,12 +1112,7 @@ class SourceViewer {
             return Title.from(Line.from(spans));
         }
         if (currentRouteId == null) {
-            List<Span> spans = new ArrayList<>();
-            spans.add(Span.styled(" Source [" + info + "] ", ts));
-            if (saveMessage != null) {
-                spans.add(Span.styled(saveMessage + " ", saveError ? Theme.error() : Theme.success()));
-            }
-            return Title.from(Line.from(spans));
+            return Title.from(Span.styled(" Source [" + info + "] ", ts));
         }
 
         List<Span> spans = new ArrayList<>();

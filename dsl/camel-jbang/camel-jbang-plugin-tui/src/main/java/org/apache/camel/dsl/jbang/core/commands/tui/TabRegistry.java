@@ -302,6 +302,9 @@ class TabRegistry {
             routesTab.preloadDiagram();
             diagramTab.preloadDiagram();
         }
+        if (tab == TAB_SOURCE) {
+            sourceTab.onTabSelected();
+        }
         if (tab == TAB_LOG) {
             callbacks.refreshLogData();
             logTab.onTabSelected();

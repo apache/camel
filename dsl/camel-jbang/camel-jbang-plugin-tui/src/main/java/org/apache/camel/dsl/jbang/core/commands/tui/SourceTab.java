@@ -106,6 +106,11 @@ class SourceTab extends AbstractTab {
 
     SourceTab(MonitorContext ctx) {
         super(ctx);
+        sourceViewer.setNotificationCallback((msg, error) -> {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept(msg, error);
+            }
+        });
     }
 
     boolean isSourceViewerEditMode() {
