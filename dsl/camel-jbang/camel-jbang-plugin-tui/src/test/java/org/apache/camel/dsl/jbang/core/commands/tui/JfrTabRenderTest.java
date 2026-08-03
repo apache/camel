@@ -22,6 +22,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,10 +33,6 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-/**
- * Rendering tests for {@link JfrTab}. These tests render the tab into a virtual terminal buffer via
- * {@link Frame#forTesting(Buffer)} and inspect the rendered cell content.
- */
 class JfrTabRenderTest {
 
     private MonitorContext ctx;
@@ -92,7 +92,74 @@ class JfrTabRenderTest {
         tab.renderFooter(footerSpans);
         String footer = footerSpans.stream().map(Span::content).reduce("", String::concat);
 
-        assertThat(footer).contains("Esc").contains("F5").contains("refresh");
+        assertThat(footer).contains("Esc").contains("F5").contains("snapshot");
+    }
+
+    @Test
+    void renderFooterShowsViewHint() {
+        JfrTab tab = new JfrTab(ctx);
+        List<Span> footerSpans = new ArrayList<>();
+        tab.renderFooter(footerSpans);
+        String footer = footerSpans.stream().map(Span::content).reduce("", String::concat);
+
+        assertThat(footer).contains("1-5").contains("view");
+    }
+
+    @Test
+    void renderSnapshotDataShowsRoutesTable() {
+        TestMonitorContext snapshotCtx = new TestMonitorContext(dataWith(info), statusResponse())
+                .withSnapshot(snapshotResponse());
+        snapshotCtx.selectedPid = "1234";
+        JfrTab tab = new JfrTab(snapshotCtx, Runnable::run);
+
+        tab.onTabSelected();
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            String rendered = TuiTestHelper.renderToString(tab, 140, 30);
+            assertThat(rendered).contains("Routes");
+        });
+    }
+
+    @Test
+    void renderSnapshotDataShowsViewTabs() {
+        TestMonitorContext snapshotCtx = new TestMonitorContext(dataWith(info), statusResponse())
+                .withSnapshot(snapshotResponse());
+        snapshotCtx.selectedPid = "1234";
+        JfrTab tab = new JfrTab(snapshotCtx, Runnable::run);
+
+        tab.onTabSelected();
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            String rendered = TuiTestHelper.renderToString(tab, 140, 30);
+            assertThat(rendered).contains("1 Routes").contains("2 Processors")
+                    .contains("3 Endpoints").contains("4 Failures").contains("5 Redeliveries");
+        });
+    }
+
+    @Test
+    void viewSwitchingChangesActiveView() {
+        TestMonitorContext snapshotCtx = new TestMonitorContext(dataWith(info), statusResponse())
+                .withSnapshot(snapshotResponse());
+        snapshotCtx.selectedPid = "1234";
+        JfrTab tab = new JfrTab(snapshotCtx, Runnable::run);
+
+        tab.onTabSelected();
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
+        tab.handleKeyEvent(KeyEvent.ofChar('3'));
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            String rendered = TuiTestHelper.renderToString(tab, 140, 30);
+            assertThat(rendered).contains("Endpoints");
+        });
+    }
+
+    @Test
+    void promptToSnapshotWhenNoData() {
+        JfrTab tab = new JfrTab(ctx);
+        String rendered = TuiTestHelper.renderToString(tab, 140, 30);
+        assertThat(rendered).contains("F5");
     }
 
     @Test
@@ -111,9 +178,84 @@ class JfrTabRenderTest {
         return response;
     }
 
+    private static JsonObject snapshotResponse() {
+        JsonObject response = new JsonObject();
+        response.put("snapshot", true);
+        response.put("eventCount", 150);
+
+        JsonArray routes = new JsonArray();
+        JsonObject route1 = new JsonObject();
+        route1.put("routeId", "order-in");
+        route1.put("total", 100L);
+        route1.put("failed", 5L);
+        route1.put("minMs", 1.2);
+        route1.put("meanMs", 8.5);
+        route1.put("maxMs", 250.3);
+        routes.add(route1);
+        JsonObject route2 = new JsonObject();
+        route2.put("routeId", "notify");
+        route2.put("total", 50L);
+        route2.put("failed", 0L);
+        route2.put("minMs", 2.0);
+        route2.put("meanMs", 5.0);
+        route2.put("maxMs", 45.0);
+        routes.add(route2);
+        response.put("routes", routes);
+
+        JsonArray processors = new JsonArray();
+        JsonObject proc1 = new JsonObject();
+        proc1.put("processorId", "to1");
+        proc1.put("processorType", "to");
+        proc1.put("routeId", "order-in");
+        proc1.put("total", 100L);
+        proc1.put("failed", 3L);
+        proc1.put("minMs", 0.5);
+        proc1.put("meanMs", 5.2);
+        proc1.put("maxMs", 200.1);
+        processors.add(proc1);
+        response.put("processors", processors);
+
+        JsonArray endpoints = new JsonArray();
+        JsonObject ep1 = new JsonObject();
+        ep1.put("endpointUri", "kafka://orders");
+        ep1.put("total", 100L);
+        ep1.put("failed", 3L);
+        ep1.put("minMs", 0.8);
+        ep1.put("meanMs", 4.1);
+        ep1.put("maxMs", 180.5);
+        endpoints.add(ep1);
+        response.put("endpoints", endpoints);
+
+        response.put("failures", new JsonArray());
+        response.put("redeliveries", new JsonArray());
+
+        return response;
+    }
+
+    private static JsonObject statusResponse() {
+        JsonObject response = new JsonObject();
+        response.put("registered", true);
+        JsonArray recordings = new JsonArray();
+        JsonObject rec = new JsonObject();
+        rec.put("name", "default");
+        rec.put("state", "RUNNING");
+        recordings.add(rec);
+        response.put("recordings", recordings);
+        JsonObject events = new JsonObject();
+        events.put("route", true);
+        events.put("processor", true);
+        events.put("exchange", true);
+        events.put("send", true);
+        events.put("failed", true);
+        events.put("redelivery", true);
+        response.put("events", events);
+        return response;
+    }
+
     private static final class TestMonitorContext extends MonitorContext {
 
         private final JsonObject response;
+        private JsonObject snapshotResp;
 
         private TestMonitorContext(
                                    AtomicReference<List<IntegrationInfo>> data,
@@ -122,8 +264,17 @@ class JfrTabRenderTest {
             this.response = response;
         }
 
+        TestMonitorContext withSnapshot(JsonObject snapshot) {
+            this.snapshotResp = snapshot;
+            return this;
+        }
+
         @Override
         JsonObject executeAction(String pid, JsonObject request, long timeoutMs) {
+            String command = request.getString("command");
+            if ("snapshot".equals(command) && snapshotResp != null) {
+                return snapshotResp;
+            }
             return response;
         }
     }

@@ -16,8 +16,14 @@
  */
 package org.apache.camel.runtime.jfr;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +31,8 @@ import java.util.Set;
 import jdk.jfr.FlightRecorder;
 import jdk.jfr.Recording;
 import jdk.jfr.RecordingState;
+import jdk.jfr.consumer.RecordedEvent;
+import jdk.jfr.consumer.RecordingFile;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Metadata;
@@ -44,7 +52,7 @@ import org.apache.camel.util.json.JsonObject;
 public class CamelJfrDevConsole extends AbstractDevConsole {
 
     @Metadata(label = "query", description = "Command to perform", javaType = "java.lang.String",
-              defaultValue = "status", enums = "status,enable,disable,jfc")
+              defaultValue = "status", enums = "status,enable,disable,jfc,snapshot")
     public static final String COMMAND = "command";
 
     @Metadata(label = "query", description = "The runtime event to enable or disable, or all for every event",
@@ -57,7 +65,17 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
               javaType = "java.lang.String")
     public static final String DISABLE = "disable";
 
+    @Metadata(label = "query", description = "Filter snapshot results to the given route id",
+              javaType = "java.lang.String")
+    public static final String ROUTE_ID = "routeId";
+
+    @Metadata(label = "query",
+              description = "Maximum number of failure and redelivery entries to return in a snapshot",
+              javaType = "int", defaultValue = "50")
+    public static final String LIMIT = "limit";
+
     private static final String ALL = "all";
+    private static final int DEFAULT_LIMIT = 50;
 
     public CamelJfrDevConsole() {
         super("camel", "jfr", "JFR Runtime Instrumentation",
@@ -199,6 +217,223 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
                + "\n(replace 'default' with whatever base profile your recording already uses)";
     }
 
+    // ---- snapshot ----
+
+    private static class DurationStats {
+        long count;
+        long failed;
+        long minNanos = Long.MAX_VALUE;
+        long maxNanos;
+        long totalNanos;
+
+        void record(long nanos, boolean isFailed) {
+            count++;
+            if (isFailed) {
+                failed++;
+            }
+            totalNanos += nanos;
+            if (nanos < minNanos) {
+                minNanos = nanos;
+            }
+            if (nanos > maxNanos) {
+                maxNanos = nanos;
+            }
+        }
+
+        double minMs() {
+            return count == 0 ? 0 : minNanos / 1_000_000.0;
+        }
+
+        double meanMs() {
+            return count == 0 ? 0 : (totalNanos / (double) count) / 1_000_000.0;
+        }
+
+        double maxMs() {
+            return maxNanos / 1_000_000.0;
+        }
+
+        JsonObject toJson() {
+            JsonObject jo = new JsonObject();
+            jo.put("total", count);
+            jo.put("failed", failed);
+            jo.put("minMs", round3(minMs()));
+            jo.put("meanMs", round3(meanMs()));
+            jo.put("maxMs", round3(maxMs()));
+            return jo;
+        }
+    }
+
+    private static double round3(double value) {
+        return Math.round(value * 1000.0) / 1000.0;
+    }
+
+    private JsonObject doSnapshot(Map<String, Object> options) {
+        String routeIdFilter = optionString(options, ROUTE_ID);
+        int limit = DEFAULT_LIMIT;
+        String limitStr = optionString(options, LIMIT);
+        if (limitStr != null) {
+            try {
+                limit = Integer.parseInt(limitStr);
+            } catch (NumberFormatException e) {
+                // keep default
+            }
+        }
+
+        JsonObject result = new JsonObject();
+        result.put("snapshot", true);
+
+        Path tempFile = null;
+        try (Recording snapshot = FlightRecorder.getFlightRecorder().takeSnapshot()) {
+            if (snapshot.getSize() == 0) {
+                result.put("error", "no JFR data available: ensure a recording is active");
+                return result;
+            }
+            tempFile = Files.createTempFile("camel-jfr-snapshot-", ".jfr");
+            snapshot.dump(tempFile);
+
+            Map<String, DurationStats> routeStats = new LinkedHashMap<>();
+            Map<String, DurationStats> processorStats = new LinkedHashMap<>();
+            Map<String, String> processorTypes = new LinkedHashMap<>();
+            Map<String, String> processorRoutes = new LinkedHashMap<>();
+            Map<String, DurationStats> endpointStats = new LinkedHashMap<>();
+            List<JsonObject> failures = new ArrayList<>();
+            List<JsonObject> redeliveries = new ArrayList<>();
+            int eventCount = 0;
+
+            String routeEventName = CamelJfrEvents.ROUTE.getEventName();
+            String processorEventName = CamelJfrEvents.PROCESSOR.getEventName();
+            String sendEventName = CamelJfrEvents.SEND.getEventName();
+            String failedEventName = CamelJfrEvents.FAILED.getEventName();
+            String redeliveryEventName = CamelJfrEvents.REDELIVERY.getEventName();
+
+            try (RecordingFile rf = new RecordingFile(tempFile)) {
+                while (rf.hasMoreEvents()) {
+                    RecordedEvent event = rf.readEvent();
+                    String eventName = event.getEventType().getName();
+
+                    if (routeEventName.equals(eventName)) {
+                        String routeId = event.getString("routeId");
+                        if (routeIdFilter == null || routeIdFilter.equals(routeId)) {
+                            long nanos = durationNanos(event);
+                            boolean failed = event.getBoolean("failed");
+                            routeStats.computeIfAbsent(routeId, k -> new DurationStats()).record(nanos, failed);
+                            eventCount++;
+                        }
+                    } else if (processorEventName.equals(eventName)) {
+                        String routeId = event.getString("routeId");
+                        if (routeIdFilter == null || routeIdFilter.equals(routeId)) {
+                            String processorId = event.getString("processorId");
+                            long nanos = durationNanos(event);
+                            boolean failed = event.getBoolean("failed");
+                            processorStats.computeIfAbsent(processorId, k -> new DurationStats()).record(nanos, failed);
+                            processorTypes.putIfAbsent(processorId, event.getString("processorType"));
+                            processorRoutes.putIfAbsent(processorId, routeId);
+                            eventCount++;
+                        }
+                    } else if (sendEventName.equals(eventName)) {
+                        String endpointUri = event.getString("endpointUri");
+                        long nanos = durationNanos(event);
+                        boolean failed = event.getBoolean("failed");
+                        endpointStats.computeIfAbsent(endpointUri, k -> new DurationStats()).record(nanos, failed);
+                        eventCount++;
+                    } else if (failedEventName.equals(eventName)) {
+                        String routeId = event.getString("routeId");
+                        if (routeIdFilter == null || routeIdFilter.equals(routeId)) {
+                            JsonObject fo = new JsonObject();
+                            fo.put("timestamp", event.getStartTime().toString());
+                            fo.put("exchangeId", event.getString("exchangeId"));
+                            fo.put("routeId", routeId);
+                            fo.put("exceptionType", event.getString("exceptionType"));
+                            fo.put("exceptionMessage", event.getString("exceptionMessage"));
+                            failures.add(fo);
+                            eventCount++;
+                        }
+                    } else if (redeliveryEventName.equals(eventName)) {
+                        String routeId = event.getString("routeId");
+                        if (routeIdFilter == null || routeIdFilter.equals(routeId)) {
+                            JsonObject ro = new JsonObject();
+                            ro.put("timestamp", event.getStartTime().toString());
+                            ro.put("exchangeId", event.getString("exchangeId"));
+                            ro.put("routeId", routeId);
+                            ro.put("attempt", event.getInt("attempt"));
+                            ro.put("maxAttempts", event.getInt("maxAttempts"));
+                            redeliveries.add(ro);
+                            eventCount++;
+                        }
+                    }
+                }
+            }
+
+            result.put("eventCount", eventCount);
+
+            // routes — sorted by total descending
+            JsonArray routesJson = new JsonArray();
+            routeStats.entrySet().stream()
+                    .sorted(Comparator.<Map.Entry<String, DurationStats>> comparingLong(e -> e.getValue().count).reversed())
+                    .forEach(e -> {
+                        JsonObject jo = e.getValue().toJson();
+                        jo.put("routeId", e.getKey());
+                        routesJson.add(jo);
+                    });
+            result.put("routes", routesJson);
+
+            // processors — sorted by mean duration descending (slowest first)
+            JsonArray processorsJson = new JsonArray();
+            processorStats.entrySet().stream()
+                    .sorted(Comparator.<Map.Entry<String, DurationStats>> comparingDouble(
+                            e -> e.getValue().meanMs()).reversed())
+                    .forEach(e -> {
+                        JsonObject jo = e.getValue().toJson();
+                        jo.put("processorId", e.getKey());
+                        jo.put("processorType", processorTypes.get(e.getKey()));
+                        jo.put("routeId", processorRoutes.get(e.getKey()));
+                        processorsJson.add(jo);
+                    });
+            result.put("processors", processorsJson);
+
+            // endpoints — sorted by total descending
+            JsonArray endpointsJson = new JsonArray();
+            endpointStats.entrySet().stream()
+                    .sorted(Comparator.<Map.Entry<String, DurationStats>> comparingLong(
+                            e -> e.getValue().count).reversed())
+                    .forEach(e -> {
+                        JsonObject jo = e.getValue().toJson();
+                        jo.put("endpointUri", e.getKey());
+                        endpointsJson.add(jo);
+                    });
+            result.put("endpoints", endpointsJson);
+
+            // failures — newest first, capped at limit
+            failures.sort(Comparator.comparing((JsonObject o) -> o.getString("timestamp")).reversed());
+            JsonArray failuresJson = new JsonArray();
+            failures.stream().limit(limit).forEach(failuresJson::add);
+            result.put("failures", failuresJson);
+
+            // redeliveries — newest first, capped at limit
+            redeliveries.sort(Comparator.comparing((JsonObject o) -> o.getString("timestamp")).reversed());
+            JsonArray redeliveriesJson = new JsonArray();
+            redeliveries.stream().limit(limit).forEach(redeliveriesJson::add);
+            result.put("redeliveries", redeliveriesJson);
+
+        } catch (IOException e) {
+            result.put("error", "failed to read JFR snapshot: " + e.getMessage());
+        } finally {
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (IOException ignored) {
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static long durationNanos(RecordedEvent event) {
+        Duration d = event.getDuration();
+        return d != null ? d.toNanos() : 0;
+    }
+
     @Override
     protected String doCallText(Map<String, Object> options) {
         String command = optionString(options, COMMAND);
@@ -213,6 +448,7 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
                     yield e.getMessage();
                 }
             }
+            case "snapshot" -> doSnapshot(options).toJson();
             default -> unknownCommand(command);
         };
     }
@@ -252,12 +488,15 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
                     root.put("error", e.getMessage());
                 }
             }
+            case "snapshot" -> {
+                return doSnapshot(options);
+            }
             default -> root.put("error", unknownCommand(command));
         }
         return root;
     }
 
     private static String unknownCommand(String command) {
-        return "unknown command: " + command + ". Valid values: status, enable, disable, jfc";
+        return "unknown command: " + command + ". Valid values: status, enable, disable, jfc, snapshot";
     }
 }
