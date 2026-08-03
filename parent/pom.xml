@@ -105,11 +105,11 @@
         <citrus-version>5.0.0-M2</citrus-version>
         <classgraph-version>4.8.186</classgraph-version>
         <cloudant-version>0.10.20</cloudant-version>
-        <com-ibm-mq-jakarta-client-version>9.4.5.1</com-ibm-mq-jakarta-client-version>
+        <com-ibm-mq-jakarta-client-version>10.0.0.0</com-ibm-mq-jakarta-client-version>
         <cometd-java-client-version>9.0.1</cometd-java-client-version>
         <cometd-java-server-version>9.0.1</cometd-java-server-version>
         <commons-beanutils-version>1.11.0</commons-beanutils-version>
-        <commons-codec-version>1.22.0</commons-codec-version>
+        <commons-codec-version>1.22.1</commons-codec-version>
         <commons-collections-version>3.2.2</commons-collections-version>
         <commons-collections4-version>4.5.0</commons-collections4-version>
         <commons-compress-version>1.28.0</commons-compress-version>
@@ -122,7 +122,7 @@
         <commons-net-version>3.13.0</commons-net-version>
         <commons-pool2-version>2.13.1</commons-pool2-version>
         <commons-text-version>1.15.0</commons-text-version>
-        <commons-validator-version>1.10.1</commons-validator-version>
+        <commons-validator-version>1.11.0</commons-validator-version>
         <compress-lzf-version>1.2.0</compress-lzf-version>
         <consul-client-version>1.12.1</consul-client-version>
         <couchbase-client-version>3.12.2</couchbase-client-version>
@@ -137,7 +137,7 @@
         <dapr-workflow-version>1.18.1</dapr-workflow-version>
         <datasonnet-mapper-version>3.0.1.3</datasonnet-mapper-version>
         <debezium-version>3.6.0.Final</debezium-version>
-        <debezium-mysql-connector-version>9.7.0</debezium-mysql-connector-version>
+        <debezium-mysql-connector-version>26.7.0</debezium-mysql-connector-version>
         <dhis2-version>3.0.2</dhis2-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
         <directory-watcher-version>0.19.1</directory-watcher-version>
@@ -182,30 +182,30 @@
         <jaxb-xjc-version>4.0.9</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.9</jaxb-jxc-version>
         <gmavenplus-plugin-version>5.1.0</gmavenplus-plugin-version>
-        <google-auth-library-oauth2-http-version>1.49.0</google-auth-library-oauth2-http-version>
+        <google-auth-library-oauth2-http-version>1.50.0</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.9.0</google-api-client-version>
         <google-api-services-drive-version>v3-rev20251210-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20251207-2.0.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20251110-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20251201-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.39.0</google-oauth-client-version>
-        <google-cloud-bigquery-version>2.68.0</google-cloud-bigquery-version>
-        <google-cloud-core-version>2.72.0</google-cloud-core-version>
-        <google-cloud-firestore-version>3.44.0</google-cloud-firestore-version>
+        <google-cloud-bigquery-version>2.69.0</google-cloud-bigquery-version>
+        <google-cloud-core-version>2.73.0</google-cloud-core-version>
+        <google-cloud-firestore-version>3.45.0</google-cloud-firestore-version>
         <google-cloud-functions-version>2.82.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.2.0</google-cloud-http-client-version>
-        <google-cloud-pubsub-version>1.152.0</google-cloud-pubsub-version>
-        <google-cloud-secretmanager-version>2.94.0</google-cloud-secretmanager-version>
-        <google-cloud-storage-version>2.70.0</google-cloud-storage-version>
-        <google-cloud-aiplatform-version>3.95.0</google-cloud-aiplatform-version>
-        <google-cloud-vision-version>3.92.0</google-cloud-vision-version>
-        <google-cloud-speech-version>4.89.0</google-cloud-speech-version>
-        <google-cloud-texttospeech-version>2.95.0</google-cloud-texttospeech-version>
+        <google-cloud-pubsub-version>1.153.0</google-cloud-pubsub-version>
+        <google-cloud-secretmanager-version>2.95.0</google-cloud-secretmanager-version>
+        <google-cloud-storage-version>2.71.0</google-cloud-storage-version>
+        <google-cloud-aiplatform-version>3.96.0</google-cloud-aiplatform-version>
+        <google-cloud-vision-version>3.93.0</google-cloud-vision-version>
+        <google-cloud-speech-version>4.90.0</google-cloud-speech-version>
+        <google-cloud-texttospeech-version>2.96.0</google-cloud-texttospeech-version>
         <google-genai-version>1.63.0</google-genai-version>
         <graaljs-version>25.2.4</graaljs-version>
         <graphql-java-version>26.0</graphql-java-version>
         <greenmail-version>2.1.11</greenmail-version>
-        <groovy-version>5.0.7</groovy-version>
+        <groovy-version>5.0.8</groovy-version>
         <grpc-version>1.83.1</grpc-version>
         <grpc-java-jwt-version>4.6.0</grpc-java-jwt-version>
         <gson-version>2.14.0</gson-version>
@@ -504,6 +504,7 @@
         <swagger-java-parser-version>1.0.65</swagger-java-parser-version>
         <swagger-openapi3-java-parser-version>2.1.45</swagger-openapi3-java-parser-version>
         <swagger-request-validator-version>2.46.1</swagger-request-validator-version>
+        <swagger-ui-version>5.21.0</swagger-ui-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <tahu-version>1.0.21</tahu-version>
         <tamboui-version>0.4.0</tamboui-version>
@@ -2653,11 +2654,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-spring-ai-image</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-spring-ai-tools</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

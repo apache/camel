@@ -42,6 +42,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -107,8 +108,12 @@ class SourceTab extends AbstractTab {
         super(ctx);
     }
 
-    boolean isSourceViewerSearchActive() {
-        return sourceViewer.isSearchInputActive();
+    boolean isSourceViewerEditMode() {
+        return sourceViewer.isEditMode();
+    }
+
+    boolean isSourceViewerTextInputActive() {
+        return sourceViewer.isTextInputActive();
     }
 
     void handlePaste(String text) {
@@ -135,11 +140,19 @@ class SourceTab extends AbstractTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
-        if (ke.isKey(dev.tamboui.tui.event.KeyCode.TAB)) {
+        if (ke.isKey(KeyCode.TAB)) {
+            // Do not steal focus or insert focus-toggle while editing
+            if (sourceViewer.isEditMode()) {
+                return true;
+            }
             if (sourceViewer.isVisible()) {
                 focusOnViewer = !focusOnViewer;
             }
             return true;
+        }
+
+        if (sourceViewer.isEditMode() && sourceViewer.isVisible()) {
+            return sourceViewer.handleKeyEvent(ke);
         }
 
         if (focusOnViewer && sourceViewer.isVisible()) {
@@ -205,9 +218,19 @@ class SourceTab extends AbstractTab {
     }
 
     @Override
+    public boolean isOverlayActive() {
+        return focusOnViewer && sourceViewer.isTextInputActive();
+    }
+
+    @Override
     public boolean handleEscape() {
+        // Esc is routed here from CamelMonitor before tab key handling — cancel overlays locally
+        if (sourceViewer.cancelEdit()) {
+            return true;
+        }
         if (sourceViewer.isSearchInputActive()) {
-            return false;
+            sourceViewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE));
+            return true;
         }
         if (focusOnViewer) {
             focusOnViewer = false;
@@ -294,6 +317,9 @@ class SourceTab extends AbstractTab {
 
                 ## Source Viewer (right panel)
                 - **Up/Down** — scroll through source code
+                - **e** — edit local file (plain text; only when file is writable)
+                - **Esc** — cancel edit (in edit mode) or close viewer
+                - **F5** — save file (in edit mode; Camel dev mode auto-reloads)
                 - **Space** — cycle format (YAML/Java/XML) for Camel routes
                 - **i** — toggle inline Camel documentation for Camel source files
                 - **/** — search in source
@@ -307,11 +333,6 @@ class SourceTab extends AbstractTab {
                 - The focused panel title is highlighted; the unfocused panel dims
                 - Drag the split border with the mouse to resize panels
                 """;
-    }
-
-    @Override
-    public boolean isOverlayActive() {
-        return focusOnViewer && sourceViewer.isSearchInputActive();
     }
 
     @Override
@@ -467,6 +488,9 @@ class SourceTab extends AbstractTab {
     }
 
     private void openSelectedEntry() {
+        if (sourceViewer.isEditMode()) {
+            return;
+        }
         Integer sel = listState.selected();
         if (sel != null && sel < entries.size()) {
             FilesBrowser.FileEntry entry = entries.get(sel);

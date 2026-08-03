@@ -85,6 +85,7 @@ class ComponentPropertiesToolsTest {
                 = tools.camel_component_properties("timer", null, null, null);
 
         assertThat(result.componentProperties())
+                .isNotEmpty()
                 .allSatisfy(p -> {
                     assertThat(p.name()).isNotBlank();
                     assertThat(p.javaType()).isNotBlank();

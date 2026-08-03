@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 129 options, which are listed below.
+The camel.main supports 130 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -125,6 +125,7 @@ The camel.main supports 129 options, which are listed below.
 | *camel.main.startupRecorderMaxDepth* | To filter our sub steps at a maximum depth. Use -1 for no maximum. Use 0 for no sub steps. Use 1 for max 1 sub step, and so forth. The default is -1. | -1 | int
 | *camel.main.startupRecorderProfile* | To use a specific Java Flight Recorder profile configuration, such as default or profile. The default is default. | default | String
 | *camel.main.startupRecorderRecording* | To enable Java Flight Recorder to start a recording and automatic dump the recording to disk after startup is complete. This requires that camel-jfr is on the classpath, and to enable this option. | false | boolean
+| *camel.main.startupRecorderRuntimeEnabled* | To also instrument the running Camel application, and not only its startup, by emitting Java Flight Recorder events for every exchange, route and processor. This requires that camel-jfr is on the classpath, and to enable this option. The runtime events are only captured while a recording is active. As they are emitted per message they add overhead, so this is turned off by default. | false | boolean
 | *camel.main.startupSummaryLevel* | Controls the level of information logged during startup (and shutdown) of CamelContext. | Default | StartupSummaryLevel
 | *camel.main.streamCachingAllowClasses* | To filter stream caching of a given set of allowed/denied classes. By default, all classes that are java.io.InputStream is allowed. Multiple class names can be separated by comma. |  | String
 | *camel.main.streamCachingAnySpoolRules* | Sets whether if just any of the org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns true then shouldSpoolCache(long) returns true, to allow spooling to disk. If this option is false, then all the org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return true. The default value is false which means that all the rules must return true. | false | boolean
@@ -224,7 +225,7 @@ The camel.server supports 21 options, which are listed below.
 
 
 === Camel Embedded HTTP management Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.management supports 27 options, which are listed below.
+The camel.management supports 29 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -250,6 +251,8 @@ The camel.management supports 27 options, which are listed below.
 | *camel.management.jwtKeystorePath* | Path to the keystore file used for JWT tokens validation. |  | String
 | *camel.management.jwtKeystoreType* | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
 | *camel.management.metricsEnabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /observe/metrics | false | boolean
+| *camel.management.openapiUiEnabled* | Whether to enable Swagger UI for REST DSL OpenAPI documents. If enabled then you can browse the API at context-path: /q/openapi. The OpenAPI document is expected at openapiUiSpecPath (by default /q/openapi.json from REST DSL apiContextPath ). | false | boolean
+| *camel.management.openapiUiSpecPath* | Path or URL of the OpenAPI document loaded by Swagger UI at /q/openapi. | /q/openapi.json | String
 | *camel.management.path* | Context-path to use for embedded HTTP server | / | String
 | *camel.management.port* | Port to use for binding embedded HTTP management server. Use 0 to dynamic assign a free random port number. | 8080 | int
 | *camel.management.sendEnabled* | Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to Camel endpoint URIs via HTTP. | false | boolean

@@ -35,12 +35,13 @@ import net.thisptr.jackson.jq.path.Path;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
+import org.apache.camel.util.concurrent.ContextValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class JqFunctions {
 
-    public static final ThreadLocal<Exchange> EXCHANGE_LOCAL = new ThreadLocal<>();
+    public static final ContextValue<Exchange> EXCHANGE_LOCAL = ContextValue.newThreadLocal("JqExchange");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JqFunctions.class);
 

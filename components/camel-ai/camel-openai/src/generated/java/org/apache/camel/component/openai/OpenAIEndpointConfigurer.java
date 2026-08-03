@@ -90,11 +90,17 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcpServer": target.getConfiguration().setMcpServer(property(camelContext, java.util.Map.class, value)); return true;
         case "mcptimeout":
         case "mcpTimeout": target.getConfiguration().setMcpTimeout(property(camelContext, int.class, value)); return true;
+        case "mcptoolrefresh":
+        case "mcpToolRefresh": target.getConfiguration().setMcpToolRefresh(property(camelContext, boolean.class, value)); return true;
         case "model": target.getConfiguration().setModel(property(camelContext, java.lang.String.class, value)); return true;
         case "oauthprofile":
         case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "outputclass":
         case "outputClass": target.getConfiguration().setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "paralleltoolexecution":
+        case "parallelToolExecution": target.getConfiguration().setParallelToolExecution(property(camelContext, boolean.class, value)); return true;
+        case "paralleltooltimeout":
+        case "parallelToolTimeout": target.getConfiguration().setParallelToolTimeout(property(camelContext, long.class, value)); return true;
         case "previousresponseid":
         case "previousResponseId": target.getConfiguration().setPreviousResponseId(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
@@ -221,11 +227,17 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcpServer": return java.util.Map.class;
         case "mcptimeout":
         case "mcpTimeout": return int.class;
+        case "mcptoolrefresh":
+        case "mcpToolRefresh": return boolean.class;
         case "model": return java.lang.String.class;
         case "oauthprofile":
         case "oauthProfile": return java.lang.String.class;
         case "outputclass":
         case "outputClass": return java.lang.String.class;
+        case "paralleltoolexecution":
+        case "parallelToolExecution": return boolean.class;
+        case "paralleltooltimeout":
+        case "parallelToolTimeout": return long.class;
         case "previousresponseid":
         case "previousResponseId": return java.lang.String.class;
         case "requesttimeout":
@@ -353,11 +365,17 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcpServer": return target.getConfiguration().getMcpServer();
         case "mcptimeout":
         case "mcpTimeout": return target.getConfiguration().getMcpTimeout();
+        case "mcptoolrefresh":
+        case "mcpToolRefresh": return target.getConfiguration().isMcpToolRefresh();
         case "model": return target.getConfiguration().getModel();
         case "oauthprofile":
         case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "outputclass":
         case "outputClass": return target.getConfiguration().getOutputClass();
+        case "paralleltoolexecution":
+        case "parallelToolExecution": return target.getConfiguration().isParallelToolExecution();
+        case "paralleltooltimeout":
+        case "parallelToolTimeout": return target.getConfiguration().getParallelToolTimeout();
         case "previousresponseid":
         case "previousResponseId": return target.getConfiguration().getPreviousResponseId();
         case "requesttimeout":

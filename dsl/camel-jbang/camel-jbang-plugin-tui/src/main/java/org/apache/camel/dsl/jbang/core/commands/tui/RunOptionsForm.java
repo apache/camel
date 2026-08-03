@@ -57,7 +57,8 @@ class RunOptionsForm {
     private static final int ROW_TRACE = 10;
     private static final int ROW_STUB = 11;
     private static final int ROW_OTEL_AGENT = 12;
-    private static final int ROW_COUNT = 13;
+    private static final int ROW_JFR = 13;
+    private static final int ROW_COUNT = 14;
 
     private boolean visible;
     private int page;
@@ -96,6 +97,7 @@ class RunOptionsForm {
     private boolean stubMode;
     private boolean otelAgent;
     private int otelExportTarget; // 0=TUI, 1=Jaeger
+    private boolean jfrEnabled;
     private boolean webConsole;
 
     private String exampleTitle;
@@ -138,6 +140,7 @@ class RunOptionsForm {
         stubMode = false;
         otelAgent = false;
         otelExportTarget = 0;
+        jfrEnabled = false;
         webConsole = false;
         selectedRow = ROW_NAME;
         page = PAGE_OPTIONS;
@@ -271,6 +274,9 @@ class RunOptionsForm {
                 args.add("--open-telemetry-agent-export=jaeger");
             }
         }
+        if (jfrEnabled) {
+            args.add("--jfr");
+        }
         if (webConsole) {
             args.add("--console");
         }
@@ -298,7 +304,7 @@ class RunOptionsForm {
             return true;
         }
         if (ke.isDown()) {
-            if (selectedRow == ROW_OTEL_AGENT && hasProperties()) {
+            if (selectedRow == ROW_JFR && hasProperties()) {
                 page = PAGE_PROPERTIES;
                 selectedProperty = 0;
             } else {
@@ -307,7 +313,7 @@ class RunOptionsForm {
             return true;
         }
         if (ke.isFocusNext()) {
-            if (selectedRow == ROW_OTEL_AGENT && hasProperties()) {
+            if (selectedRow == ROW_JFR && hasProperties()) {
                 page = PAGE_PROPERTIES;
                 selectedProperty = 0;
             } else {
@@ -376,6 +382,7 @@ class RunOptionsForm {
                 case ROW_TRACE -> backlogTrace = !backlogTrace;
                 case ROW_STUB -> stubMode = !stubMode;
                 case ROW_OTEL_AGENT -> otelAgent = !otelAgent;
+                case ROW_JFR -> jfrEnabled = !jfrEnabled;
                 case ROW_CONSOLE -> webConsole = !webConsole;
             }
             return true;
@@ -408,7 +415,7 @@ class RunOptionsForm {
             editingKey = false;
             if (selectedProperty == 0) {
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_OTEL_AGENT;
+                selectedRow = ROW_JFR;
             } else {
                 selectedProperty--;
             }
@@ -438,7 +445,7 @@ class RunOptionsForm {
             } else if (selectedProperty == 0) {
                 editingKey = false;
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_OTEL_AGENT;
+                selectedRow = ROW_JFR;
             } else {
                 editingKey = false;
                 selectedProperty--;
@@ -454,7 +461,7 @@ class RunOptionsForm {
                     return true;
                 }
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_OTEL_AGENT;
+                selectedRow = ROW_JFR;
                 editingKey = false;
                 return true;
             }
@@ -469,7 +476,7 @@ class RunOptionsForm {
                     }
                     if (properties.isEmpty()) {
                         page = PAGE_OPTIONS;
-                        selectedRow = ROW_OTEL_AGENT;
+                        selectedRow = ROW_JFR;
                     }
                     return true;
                 }
@@ -497,7 +504,7 @@ class RunOptionsForm {
 
     private void renderOptionsPage(Frame frame, Rect area) {
         int popupW = Math.min(68, area.width() - 4);
-        int popupH = errorMessage != null ? 18 : 17;
+        int popupH = errorMessage != null ? 19 : 18;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -595,6 +602,10 @@ class RunOptionsForm {
                     Span.styled(" ", Style.EMPTY),
                     Span.styled(jaegerLabel, jaegerStyle))), exportArea);
         }
+        rowY++;
+
+        renderCheckbox(frame, innerX, rowY, innerW, "Java Flight Recorder (JFR)", jfrEnabled, selectedRow == ROW_JFR);
+
         if (errorMessage != null) {
             rowY++;
             Rect errorArea = new Rect(innerX, rowY, innerW, 1);
@@ -609,7 +620,7 @@ class RunOptionsForm {
         int popupH = Math.min(propCount + 2, Math.min(20, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         // use same y-offset as page 1 (based on page 1's fixed height) so both pages align
-        int page1H = 17;
+        int page1H = 18;
         int y = area.top() + Math.max(0, (area.height() - page1H) / 4);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 

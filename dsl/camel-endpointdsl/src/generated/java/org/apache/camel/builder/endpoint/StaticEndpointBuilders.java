@@ -10920,6 +10920,7 @@ public class StaticEndpointBuilders {
      * @param path toolId
      * @return the dsl builder
      */
+    @Deprecated
     public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsEndpointBuilder langchain4jTools(String path) {
         return langchain4jTools("langchain4j-tools", path);
     }
@@ -10941,6 +10942,7 @@ public class StaticEndpointBuilders {
      * @param path toolId
      * @return the dsl builder
      */
+    @Deprecated
     public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsEndpointBuilder langchain4jTools(String componentName, String path) {
         return LangChain4jToolsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -15516,46 +15518,6 @@ public class StaticEndpointBuilders {
      */
     public static SpringAiImageEndpointBuilderFactory.SpringAiImageEndpointBuilder springAiImage(String componentName, String path) {
         return SpringAiImageEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Spring AI Tools (camel-spring-ai-tools)
-     * Spring AI Tools and Function Calling Features
-     * 
-     * Category: ai
-     * Since: 4.17
-     * Maven coordinates: org.apache.camel:camel-spring-ai-tools
-     * 
-     * Syntax: <code>spring-ai-tools:toolId</code>
-     * 
-     * Path parameter: toolId (required)
-     * The tool id
-     * 
-     * @param path toolId
-     * @return the dsl builder
-     */
-    public static SpringAiToolsEndpointBuilderFactory.SpringAiToolsEndpointBuilder springAiTools(String path) {
-        return springAiTools("spring-ai-tools", path);
-    }
-    /**
-     * Spring AI Tools (camel-spring-ai-tools)
-     * Spring AI Tools and Function Calling Features
-     * 
-     * Category: ai
-     * Since: 4.17
-     * Maven coordinates: org.apache.camel:camel-spring-ai-tools
-     * 
-     * Syntax: <code>spring-ai-tools:toolId</code>
-     * 
-     * Path parameter: toolId (required)
-     * The tool id
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path toolId
-     * @return the dsl builder
-     */
-    public static SpringAiToolsEndpointBuilderFactory.SpringAiToolsEndpointBuilder springAiTools(String componentName, String path) {
-        return SpringAiToolsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Spring AI Vector Store (camel-spring-ai-vector-store)

@@ -467,8 +467,25 @@ public class JmsBinding {
             if (value != null) {
                 // must encode to safe JMS header name before setting property on jmsMessage
                 String key = jmsKeyFormatStrategy.encodeKey(headerName);
-                // set the property
-                JmsMessageHelper.setProperty(jmsMessage, key, value);
+                try {
+                    // set the property
+                    JmsMessageHelper.setProperty(jmsMessage, key, value);
+                } catch (JMSException e) {
+                    // JMS vendor-specific properties (JMS_<vendor>_xxx per JMS spec section 3.5.1)
+                    // may be read-only/reserved — set by the provider, not the application.
+                    // There is no standard JMS API to query which vendor properties are reserved,
+                    // and the set can change between provider versions (e.g. IBM MQ 10.0 made
+                    // JMS_IBM_MsgToken read-only). We skip them gracefully since they are
+                    // provider-assigned metadata that should not be propagated.
+                    // For non-vendor properties, we re-throw the exception as it likely indicates
+                    // a real problem (e.g. invalid value type, message not writable).
+                    if (key.startsWith("JMS_")) {
+                        LOG.warn("Could not set JMS vendor property '{}' on outgoing message, skipping: {}",
+                                key, e.getMessage());
+                    } else {
+                        throw e;
+                    }
+                }
             } else if (LOG.isDebugEnabled()) {
                 // okay the value is not a primitive or string so we cannot sent it over the wire
                 LOG.debug("Ignoring non primitive header: {} of class: {} with value: {}",

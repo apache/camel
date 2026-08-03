@@ -56,7 +56,19 @@ instead of hardcoded `3.33.1.1` (https://github.com/apache/camel/commit/d1f4713e
 The Camel CLI and TUI AI prompt (`camel ask`, TUI F8 panel) now auto-detect **Azure OpenAI**
 when `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT` are set (optional `AZURE_OPENAI_DEPLOYMENT_NAME`
 and `AZURE_OPENAI_API_VERSION`). Azure requests use the `api-key` header instead of `Authorization: Bearer`.
+
+The Camel CLI and TUI AI prompt now support native **Google Gemini** when `GEMINI_API_KEY` is set
+(auto-detected before OpenAI). With `--api-type=gemini`, `GOOGLE_API_KEY` is also accepted. Gemini uses
+the `generativelanguage.googleapis.com` API with function-calling support.
 See xref:camel-jbang-ai.adoc[Camel CLI - AI Tools] for the full detection order.
+
+`camel run`, `camel dev`, and `camel debug` accept `--openapi-ui` to expose Swagger UI for REST DSL OpenAPI
+at `/q/openapi` on the embedded HTTP server (OpenAPI JSON at `/q/openapi.json` by default). The feature is
+gated as developer-only (`insecure:dev`) via `camel.jbang.openapiUi` and `camel.management.openapiUiEnabled`.
+When `--port` is set without `--management-port`, the management server is co-bound to the same port so the UI
+and spec stay together. `--openapi-ui` also sets override properties for `camel.rest.component=platform-http`
+and `camel.rest.apiContextPath=/q/openapi.json`, which take precedence over values in `application.properties`
+or other property sources (same as other CLI `--` server flags that use override properties).
 
 The `camel cmd route-diagram` and `camel cmd route-topology` now accept one or more Camel route source files
 (instead of only the name/pid of a running integration), so diagrams and inter-route topology can be
@@ -154,6 +166,29 @@ The `--open-telemetry-agent-export` option has been extended with new values and
 
 The `camel.opentelemetry2.exportTarget` property in `OpenTelemetryTracer` now accepts any
 non-empty value to signal external export mode (previously only `"jaeger"` was recognized).
+
+==== `camel run --jfr` now actually enables Java Flight Recorder
+
+`--jfr` and `--jfr-profile` were previously accepted by `camel run` but had no effect on any
+runtime (`main`, `quarkus`, `springBoot`): the flags only wrote an internal
+`camel.jbang.jfr`/`camel.jbang.jfr-profile` property that nothing read.
+
+They now start a real recording:
+
+* For the default in-process runtime, a `jdk.jfr.Recording` is started before the routes start
+  and stopped/dumped to `<name>.jfr` on shutdown.
+* For `quarkus` and `springBoot` (including running against an existing Maven project), a
+  `-XX:StartFlightRecording=filename=<name>.jfr[,settings=<jfr-profile>]` JVM argument is passed
+  to the forked process.
+
+In both cases the JFR support for the runtime is now added automatically (`camel-jfr`,
+`camel-quarkus-jfr` or `camel-jfr-starter`), and `camel.main.startup-recorder-runtime-enabled`
+is set to `true`, so the Camel runtime events (route, processor, exchange, send, failed,
+redelivery) are captured, not just JVM-level events. If you were passing `--jfr` expecting no
+effect, this now writes a `.jfr` file and adds a JFR dependency to the classpath.
+
+If `--jvm-args` already contains `-XX:StartFlightRecording`, `--jfr` stands down with a
+warning rather than starting a second, competing recording.
 
 ==== Website installers for the Camel CLI
 
@@ -312,7 +347,41 @@ They were not wired into the component; the `chatModel` is autowired instead.
 If you used these helpers directly, configure your `ChatModel` with LangChain4j's own builders or Spring Boot starters
 and inject it into the component.
 
-=== camel-langchain4j-tools
+=== camel-langchain4j-tools (deprecated)
+
+The `camel-langchain4j-tools` component is deprecated. Use `camel-ai-tool` to define tools
+and `camel-langchain4j-agent` for tool-calling with LangChain4j models.
+
+Migrate your tool definition routes from `langchain4j-tools:` to `ai-tool:`:
+
+[source,java]
+----
+// Before
+from("langchain4j-tools:weather?tags=weather&description=Get weather&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22C\"}"));
+
+// After
+from("ai-tool:weather?tags=weather&description=Get weather&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22C\"}"));
+----
+
+Use `langchain4j-agent` with matching tags to invoke tools:
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=weather");
+----
+
+Add the `camel-ai-tool` dependency to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-tool</artifactId>
+</dependency>
+----
 
 ==== Tool-calling round trips now bounded by default
 
@@ -401,6 +470,32 @@ Hosted tools: `builtinTools` (`web_search`, `file_search`, `code_interpreter`; `
 `fileSearchVectorStoreIds`) and optional `hostedMcpTools` JSON for Tool.Mcp pass-through. Streaming is not supported
 on this operation. The full SDK response is stored in exchange property `CamelOpenAIResponsesResponse` when
 `storeFullResponse=true`.
+
+==== Optional parallel MCP tool execution
+
+The new `parallelToolExecution` option (default `false`) executes the tool calls the model requests in a
+single response concurrently rather than sequentially, and `parallelToolTimeout` (milliseconds, default `0`
+= disabled) bounds such a batch as a whole. Both apply to the agentic loop and to the `openai:tool-execution`
+operation. Existing routes are unaffected unless they opt in.
+
+When `parallelToolExecution=true` is combined with `toolExecutionErrorStrategy=failExchange`, the sibling
+tool calls that were already dispatched complete before the exchange fails, whereas sequential execution
+abandons the remaining calls at the first failure. Routes whose tools have side effects and that rely on
+a failure preventing later tool calls in the same batch should keep the sequential default.
+
+==== MCP tool list is refreshed at runtime by default
+
+MCP servers announce tool additions, removals and changes with a `tools/list_changed` notification. That
+notification was previously ignored, so the tool list advertised to the model was fixed to whatever was
+listed when the endpoint started (and was only re-listed after a transport reconnect). The component now
+subscribes to it and refreshes the tool list, which is the behavior the MCP specification expects.
+
+Set the new `mcpToolRefresh` option to `false` to restore the previous behavior and pin the tool list to
+endpoint startup, for deployments that require a deterministic set of tools.
+
+Related fix: `returnDirect` flags set programmatically through `addReturnDirectTool` and
+`removeReturnDirectTool` on `OpenAIEndpoint` are now remembered and re-applied when the tool state is
+rebuilt. Previously a reconnect silently discarded them.
 
 === camel-management - Throughput MBean attribute uses EWMA smoothing
 
@@ -508,7 +603,7 @@ Add the `camel-ai-tool` dependency to your project:
 </dependency>
 ----
 
-The `camel-spring-ai-tools` dependency is no longer required by `camel-spring-ai-chat`.
+The `camel-spring-ai-tools` component has been removed. Remove the `camel-spring-ai-tools` dependency from your project.
 
 === camel-pqc - potential breaking change
 
@@ -1226,6 +1321,26 @@ New JMX attributes have been added for live call monitoring:
 A new `transitionToCloseState` JMX operation resets the circuit breaker to CLOSED and clears
 the call counters.
 
+=== camel-jms - IBM MQ client upgraded to 10.0
+
+The IBM MQ client library (`com.ibm.mq:com.ibm.mq.jakarta.client`) has been upgraded from 9.4.x to 10.0.0.0,
+and the IBM MQ test container image from 9.4.x to 10.0.0.0.
+
+IBM MQ 10.0 marks the `JMS_IBM_MsgToken` vendor property as read-only. When Camel copies headers from an
+incoming JMS message to an outgoing reply or forwarded message, this reserved property previously caused a
+`MessageFormatException` that silently prevented the reply from being sent.
+
+=== camel-jms - vendor-specific JMS properties skipped when read-only
+
+When setting JMS properties on an outgoing message, Camel now catches `JMSException` for JMS vendor-specific
+properties (those with a `JMS_` prefix, per JMS spec section 3.5.1) and logs a `WARN` instead of propagating
+the exception. There is no standard JMS API to query which vendor properties are reserved, and the set can
+change between provider versions. Non-vendor properties still throw on failure as before.
+
+This change is necessary for IBM MQ 10.0 compatibility but applies to all JMS providers. If you relied on
+exceptions from vendor-specific property failures propagating through `JmsBinding.appendJmsProperty()`, be
+aware that they are now caught and logged at `WARN` level for `JMS_`-prefixed properties only.
+
 === camel-clickhouse (new component)
 
 A new `camel-clickhouse` producer component has been added. It integrates with
@@ -1430,3 +1545,27 @@ opt-in: a new `allowUrlBody` option (default `false`) gates it. With the default
 LDIF content is rejected with an `IllegalArgumentException` instead of being fetched, which avoids a
 content-sniffed URL fetch (SSRF) from untrusted body content. Routes that rely on passing a URL as the
 body must set `allowUrlBody=true` on the `ldif` endpoint.
+
+=== camel-snakeyaml - typeFilters are now also enforced by the SnakeYAML TagInspector
+
+When `typeFilters` (or `unmarshalType`) is configured, the allow-list is now also enforced by the
+SnakeYAML 2.x `TagInspector` layer, not only by the `getClassForName` constructor override. A YAML
+document that references a disallowed global tag is therefore rejected earlier, during composing, and
+surfaces as an `org.yaml.snakeyaml.composer.ComposerException` (`"Global tag is not allowed: ..."`)
+instead of the previous `ConstructorException` caused by an `IllegalArgumentException`. The set of
+accepted types is unchanged; only the exception raised for a rejected type differs. Routes that do not
+configure `typeFilters` are unaffected.
+
+=== camel-jfr
+
+`camel-jfr` can now also emit JFR events during message routing, in addition to the
+existing startup instrumentation. This is *opt-in and disabled by default*, so having
+`camel-jfr` on the classpath keeps behaving exactly as it did in 4.21.
+
+Enable it with `camel.main.startup-recorder-runtime-enabled=true`, or programmatically
+with `setRuntimeEnabled(true)` on the `FlightRecorderStartupStepRecorder`. The option is
+read once while the `CamelContext` initializes and cannot be changed afterwards.
+
+`org.apache.camel.spi.StartupStepRecorder` gained the default methods
+`isRuntimeEnabled()` and `setRuntimeEnabled(boolean)`. Both have no-op defaults, so
+existing implementations continue to compile and behave as before.

@@ -36,8 +36,8 @@ camel run [options]
 | `--health` _(deprecated)_ | Deprecated: use --observe instead. Health check at /q/health on local HTTP server (port 8080 by default) | false | boolean
 | `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
 | `--java-version,--java` | Java version (21, 25) | 21 | String
-| `--jfr` | Enables Java Flight Recorder saving recording to disk on exit | false | boolean
-| `--jfr-profile` | Java Flight Recorder profile to use (such as default or profile) |  | String
+| `--jfr` | Enables Java Flight Recorder, saving a recording to <name>.jfr on exit. Automatically adds JFR support for the runtime and turns on the Camel runtime instrumentation events (route, processor, exchange, etc.). | false | boolean
+| `--jfr-profile` | Java Flight Recorder settings profile to use (such as default or profile). Implies --jfr. |  | String
 | `--jvm-args` | Additional JVM arguments (e.g. -Xmx256m -Xms128m) |  | String
 | `--jvm-debug` | To enable JVM remote debugging on port 4004 by default. The supported values are true to enable the remote debugging, false to disable the remote debugging or a number to use a custom port |  | int
 | `--kamelets-version` | Apache Camel Kamelets version (auto-detected from classpath if not set) |  | String
@@ -64,6 +64,7 @@ camel run [options]
 | `--open-api` | Adds an OpenAPI spec from the given file (json or yaml file) |  | String
 | `--open-telemetry-agent` | Enable OpenTelemetry Java Agent for auto-instrumentation of third-party libraries (HTTP clients, JDBC, Kafka clients, gRPC, etc.). Traces are shown in the TUI Spans tab with Camel spans in cyan and 3rd-party agent spans in magenta. | false | boolean
 | `--open-telemetry-agent-export` | Where to export OpenTelemetry Agent telemetry: tui (embedded receiver in TUI), otlp (external OTLP collector for traces), or observability (full stack with traces and logs). With otlp, start a trace backend first (e.g. 'camel infra run jaeger'). With observability, start the stack via 'camel infra run observability'. The value 'jaeger' is deprecated and works as an alias for 'otlp'. | tui | String
+| `--openapi-ui` | Swagger UI for REST OpenAPI at /q/openapi (OpenAPI document at /q/openapi.json; port 8080 by default) | false | boolean
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI | false | boolean
 | `--port` | Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number) |  | int
 | `--profile` | Profile to run (dev, test, prod). | dev | String

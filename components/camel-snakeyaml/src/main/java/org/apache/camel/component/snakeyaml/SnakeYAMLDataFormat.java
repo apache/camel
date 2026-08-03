@@ -21,7 +21,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.lang.ref.WeakReference;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -50,7 +49,6 @@ import org.yaml.snakeyaml.resolver.Resolver;
 public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;
-    private final ThreadLocal<WeakReference<Yaml>> yamlCache;
     private BaseConstructor constructor;
     private Representer representer;
     private DumperOptions dumperOptions;
@@ -70,7 +68,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     }
 
     public SnakeYAMLDataFormat(Class<?> type) {
-        this.yamlCache = new ThreadLocal<>();
         this.unmarshalType = type;
     }
 
@@ -92,7 +89,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         try (OutputStreamWriter osw = new OutputStreamWriter(stream, ExchangeHelper.getCharsetName(exchange))) {
-            getYaml().dump(graph, osw);
+            createYaml().dump(graph, osw);
         }
     }
 
@@ -106,14 +103,14 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         Class<?> unmarshalObjectType = unmarshalType != null ? unmarshalType : Object.class;
 
         if (body instanceof String s) {
-            return getYaml().loadAs(s, unmarshalObjectType);
+            return createYaml().loadAs(s, unmarshalObjectType);
         } else if (body instanceof Reader r) {
-            return getYaml().loadAs(r, unmarshalObjectType);
+            return createYaml().loadAs(r, unmarshalObjectType);
         } else {
             // fallback to InputStream
             InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
             Reader r = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
-            return getYaml().loadAs(r, unmarshalObjectType);
+            return createYaml().loadAs(r, unmarshalObjectType);
         }
     }
 
@@ -139,31 +136,18 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        yamlCache.remove();
     }
 
-    private Yaml getYaml() {
-        Yaml yaml = null;
-        WeakReference<Yaml> ref = yamlCache.get();
-
-        if (ref != null) {
-            yaml = ref.get();
-        }
-
-        if (yaml == null) {
-            LoaderOptions options = new LoaderOptions();
-            options.setTagInspector(new TrustedTagInspector());
-            options.setAllowRecursiveKeys(allowRecursiveKeys);
-            options.setMaxAliasesForCollections(maxAliasesForCollections);
-            BaseConstructor c = constructor != null ? constructor : defaultConstructor(camelContext);
-            Representer r = representer != null ? representer : defaultRepresenter();
-            DumperOptions d = dumperOptions != null ? dumperOptions : defaultDumperOptions();
-            Resolver res = resolver != null ? resolver : defaultResolver();
-            yaml = new Yaml(c, r, d, options, res);
-            yamlCache.set(new WeakReference<>(yaml));
-        }
-
-        return yaml;
+    private Yaml createYaml() {
+        LoaderOptions options = new LoaderOptions();
+        options.setTagInspector(new TrustedTagInspector());
+        options.setAllowRecursiveKeys(allowRecursiveKeys);
+        options.setMaxAliasesForCollections(maxAliasesForCollections);
+        BaseConstructor c = constructor != null ? constructor : defaultConstructor(camelContext);
+        Representer r = representer != null ? representer : defaultRepresenter();
+        DumperOptions d = dumperOptions != null ? dumperOptions : defaultDumperOptions();
+        Resolver res = resolver != null ? resolver : defaultResolver();
+        return new Yaml(c, r, d, options, res);
     }
 
     public BaseConstructor getConstructor() {
@@ -348,7 +332,9 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     final class TrustedTagInspector implements TagInspector {
         @Override
         public boolean isGlobalTagAllowed(Tag tag) {
-            return true;
+            // consult the same typeFilters allow-list as getClassForName, so the SnakeYAML 2.x TagInspector
+            // layer actually enforces the configured filters instead of allowing every global tag (CAMEL-24294)
+            return allowTypeFilter(tag.getClassName());
         }
     }
 }

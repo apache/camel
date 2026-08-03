@@ -18,6 +18,7 @@ package org.apache.camel.component.langchain4j.tools.spec;
 
 import dev.langchain4j.model.chat.request.json.JsonSchemaElement;
 
+@Deprecated(since = "4.22.0")
 public class NamedJsonSchemaProperty {
 
     private final String name;

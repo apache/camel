@@ -290,8 +290,12 @@ class DoctorPopup {
             provider = "Vertex AI";
         } else if (envSet("AZURE_OPENAI_API_KEY") && envSet("AZURE_OPENAI_ENDPOINT")) {
             provider = "Azure OpenAI";
+        } else if (envSet("GEMINI_API_KEY")) {
+            provider = "Gemini";
         } else if (envSet("OPENAI_API_KEY")) {
             provider = "OpenAI";
+        } else if (envSet("WATSONX_APIKEY")) {
+            provider = "watsonx.ai";
         } else if (envSet("LLM_API_KEY")) {
             provider = "Custom (LLM_API_KEY)";
         }
@@ -308,7 +312,7 @@ class DoctorPopup {
                     Span.raw(String.format("%-30s", "No API key configured")),
                     Span.raw(" " + TuiIcons.WARN)));
             result.add(Line.from(Span.styled(
-                    "                    Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, or OPENAI_API_KEY",
+                    "                    Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GEMINI_API_KEY, OPENAI_API_KEY, or WATSONX_APIKEY",
                     Style.EMPTY.dim())));
         }
     }

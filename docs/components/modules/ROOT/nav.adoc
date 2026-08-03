@@ -27,7 +27,6 @@
 *** xref:spring-ai-chat-component.adoc[Spring AI Chat]
 *** xref:spring-ai-embeddings-component.adoc[Spring AI Embeddings]
 *** xref:spring-ai-image-component.adoc[Spring AI Image]
-*** xref:spring-ai-tools-component.adoc[Spring AI Tools]
 *** xref:spring-ai-vector-store-component.adoc[Spring AI Vector Store]
 *** xref:tensorflow-serving-component.adoc[TensorFlow Serving]
 *** xref:weaviate-component.adoc[weaviate]

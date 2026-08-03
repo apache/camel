@@ -21,6 +21,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 class RunTest extends CamelCommandBaseTestSupport {
 
     @Test
@@ -103,5 +106,104 @@ class RunTest extends CamelCommandBaseTestSupport {
         CommandLine.populateCommand(command, "--example");
 
         Assertions.assertNotNull(command.example);
+    }
+
+    @Test
+    void jfrDisabledByDefaultBuildsNoJvmArgs() throws Exception {
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "route.yaml");
+
+        assertThat(command.jfrEnabled()).isFalse();
+        assertThat(command.buildJfrJvmArgs()).isNull();
+    }
+
+    @Test
+    void jfrFlagBuildsStartFlightRecordingArg() throws Exception {
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--jfr", "route.yaml");
+
+        assertThat(command.jfrEnabled()).isTrue();
+        assertThat(command.buildJfrJvmArgs())
+                .isEqualTo("-XX:StartFlightRecording=filename=CamelJBang.jfr "
+                           + "-Dcamel.main.startupRecorderRuntimeEnabled=true");
+    }
+
+    @Test
+    void jfrProfileImpliesJfrAndIsAppendedAsSettings() throws Exception {
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--jfr-profile=profile", "route.yaml");
+
+        assertThat(command.jfrEnabled()).isTrue();
+        assertThat(command.buildJfrJvmArgs())
+                .isEqualTo("-XX:StartFlightRecording=filename=CamelJBang.jfr,settings=profile "
+                           + "-Dcamel.main.startupRecorderRuntimeEnabled=true");
+    }
+
+    @Test
+    void explicitStartFlightRecordingInJvmArgsKeepsRuntimeRecorderEnabled() throws Exception {
+        // the explicit recording wins, but --jfr must still enable Camel runtime events in forked projects
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--jfr",
+                "--jvm-args=-XX:StartFlightRecording=filename=mine.jfr", "route.yaml");
+
+        assertThat(command.jfrEnabled()).isTrue();
+        assertThat(command.buildJfrJvmArgs())
+                .isEqualTo("-Dcamel.main.startupRecorderRuntimeEnabled=true");
+    }
+
+    @Test
+    void unknownJfrProfileFailsFastWithTheSupportedProfiles() throws Exception {
+        // running without a recording after the user asked for one would look like JFR simply produced nothing
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--jfr-profile=does-not-exist", "route.yaml");
+
+        assertThatThrownBy(command::startJfrRecording)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("does-not-exist")
+                .hasMessageContaining("default");
+    }
+
+    @Test
+    void jfrRecordingIsNotStartedWhenJfrIsOff() throws Exception {
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "route.yaml");
+
+        assertThat(command.startJfrRecording()).isNull();
+    }
+
+    @Test
+    void jfrFileNameUsesAppName() throws Exception {
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--jfr", "--name=my-app", "route.yaml");
+
+        assertThat(command.jfrFileName()).isEqualTo("my-app.jfr");
+    }
+
+    @Test
+    void jfrFileNameFallsBackToCamelWhenNameIsNull() {
+        Run command = new Run(new CamelJBangMain());
+        command.name = null;
+
+        assertThat(command.jfrFileName()).isEqualTo("camel.jfr");
+    }
+
+    @Test
+    void mergeJvmArgsReturnsExistingWhenExtraIsNull() {
+        assertThat(Run.mergeJvmArgs("-Xmx256m", null)).isEqualTo("-Xmx256m");
+        assertThat(Run.mergeJvmArgs(null, null)).isNull();
+    }
+
+    @Test
+    void mergeJvmArgsReturnsExtraWhenExistingIsBlank() {
+        assertThat(Run.mergeJvmArgs(null, "-XX:StartFlightRecording=filename=camel.jfr"))
+                .isEqualTo("-XX:StartFlightRecording=filename=camel.jfr");
+        assertThat(Run.mergeJvmArgs("  ", "-XX:StartFlightRecording=filename=camel.jfr"))
+                .isEqualTo("-XX:StartFlightRecording=filename=camel.jfr");
+    }
+
+    @Test
+    void mergeJvmArgsConcatenatesBothWithSpace() {
+        assertThat(Run.mergeJvmArgs("-Xmx256m", "-XX:StartFlightRecording=filename=camel.jfr"))
+                .isEqualTo("-Xmx256m -XX:StartFlightRecording=filename=camel.jfr");
     }
 }

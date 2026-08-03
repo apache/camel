@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 
+@Deprecated(since = "4.22.0")
 public class LangChain4jToolsConsumer extends DefaultConsumer {
 
     public LangChain4jToolsConsumer(Endpoint endpoint, Processor processor) {
