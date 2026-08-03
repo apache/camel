@@ -192,6 +192,17 @@ public class CliLocalProcessService implements CliService {
     }
 
     @Override
+    public String executeNohup(String command) {
+        String pidOutput = executeGenericCommand("nohup " + getMainCommand() + " " + command + " & echo $!");
+        String pid = pidOutput.trim();
+        if (org.apache.camel.support.ObjectHelper.isNumber(pid)) {
+            backgroundPids.add(pid);
+            LOG.info("Tracking nohup background process with PID: {}", pid);
+        }
+        return pid;
+    }
+
+    @Override
     public String executeGenericCommand(String command) {
         return executeGenericCommand(command, false, false);
     }
