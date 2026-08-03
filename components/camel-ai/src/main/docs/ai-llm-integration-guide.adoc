@@ -1,5 +1,6 @@
 = LLM Integration Guide
 :doctitle: LLM Integration Guide
+:group: AI
 
 This guide helps you choose the right Camel AI component and apply common LLM integration patterns in production routes. It addresses practical gaps reported by users building document-processing and chat pipelines — structured extraction, streaming to browsers, dynamic prompts, and prompt management at scale.
 
@@ -80,7 +81,7 @@ For tasks like resume parsing, invoice extraction, or classification, **do not h
 
 The `jsonSchema` option (or `CamelOpenAIJsonSchema` header) tells the model to emit JSON conforming to your schema. The response body is a JSON **string** — use Camel's Jackson data format or `json-validator` if you need typed objects or strict validation.
 
-See xref:openai-component.adoc#Structured Output with JSON Schema[Structured Output with JSON Schema] for header-based and inline schema examples.
+See xref:openai-component.adoc#_structured_output_with_json_schema[Structured Output with JSON Schema] for header-based and inline schema examples.
 
 === Java classes (Java DSL only)
 
@@ -138,15 +139,14 @@ For provider-specific parameters not exposed as first-class options, use `additi
     uri: openai:chat-completion
     parameters:
       model: gpt-4o-mini
-      additionalBodyProperty.temperature: "0.1"
       additionalBodyProperty.seed: "42"
 ----
 
-NOTE: Prefer the dedicated `temperature` option when available — it is clearer and validated by the component. Use `additionalBodyProperty` for vendor-specific knobs (reasoning effort, provider routing, etc.).
+NOTE: Prefer first-class URI options when available — they are clearer and validated by the component. Use `additionalBodyProperty` for vendor-specific knobs without a dedicated option (for example `seed` for reproducible sampling).
 
 === LangChain4j Chat
 
-Configure temperature on the `ChatModel` bean (Spring Boot properties or programmatic builder). See xref:langchain4j-chat-component.adoc#Using a specific Chat Model[LangChain4j Chat — Using a specific Chat Model].
+Configure temperature on the `ChatModel` bean (Spring Boot properties or programmatic builder). See xref:langchain4j-chat-component.adoc#_using_a_specific_chat_model[LangChain4j Chat — Using a specific Chat Model].
 
 == Dynamic prompts per exchange
 
@@ -211,7 +211,7 @@ Load prompts from the classpath or file system and pass them as the body or via 
       - to: openai:chat-completion?jsonSchema=resource:classpath:schemas/resume.schema.json
 ----
 
-See xref:openai-component.adoc#Basic Chat Completion with String Input[OpenAI — file-based prompts].
+See xref:openai-component.adoc#_basic_chat_completion_with_string_input[OpenAI — file-based prompts].
 
 === Property placeholders
 
@@ -227,7 +227,7 @@ Reference with Camel property placeholders in URI options or `{{property.name}}`
 
 === LangChain4j template variables
 
-For LangChain4j Chat, use `CHAT_SINGLE_MESSAGE_WITH_PROMPT` with `{{variable}}` placeholders — see xref:langchain4j-chat-component.adoc#Send a prompt with variables[Send a prompt with variables].
+For LangChain4j Chat, use `CHAT_SINGLE_MESSAGE_WITH_PROMPT` with `{{variable}}` placeholders — see xref:langchain4j-chat-component.adoc#_send_a_prompt_with_variables[Send a prompt with variables].
 
 === Organization tips
 
@@ -272,7 +272,7 @@ from("platform-http:/chat/stream?httpMethodRestrict=POST")
     .setHeader("CamelOpenAIUserMessage", simple("${body}"))
     .to("openai:chat-completion?streaming=true")
     .setHeader(Exchange.CONTENT_TYPE, constant("text/event-stream"))
-    .split(body().isInstanceOf(Iterator.class)).streaming()
+    .split(body()).streaming()
         .process(exchange -> {
             ChatCompletionChunk chunk = exchange.getMessage().getBody(ChatCompletionChunk.class);
             String delta = chunk.choices().isEmpty()
@@ -295,7 +295,7 @@ Enable `useStreaming=true` on the platform-http endpoint when passing large stre
 | You need minimum latency token delivery and already have a reactive Web layer
 
 | You want one integration path for batch and interactive modes
-| You only proxy an upstream SSE stream verbatim (consider xref:a2a-producer.adoc#Raw Passthrough (RAW mode)[A2A RAW passthrough])
+| You only proxy an upstream SSE stream verbatim (consider xref:others:a2a-producer.adoc#_raw_passthrough_raw_mode[A2A RAW passthrough])
 
 | Moderate throughput chat UI backed by integration logic
 | High-concurrency fan-out where Camel adds little value between HTTP and the LLM SDK

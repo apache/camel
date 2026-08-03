@@ -464,7 +464,7 @@ When using image input, the userMessage is required. Supported image formats are
 
 When `streaming=true`, the component returns an `Iterator<ChatCompletionChunk>` in the message body. You can consume this iterator using Camel's streaming EIPs or process it directly.
 
-For Server-Sent Events to web clients (platform-http), structured extraction pipelines, and when to stream through Camel vs. a dedicated handler, see xref:ai-llm-integration-guide.adoc#Streaming responses[LLM Integration Guide — Streaming responses].
+For Server-Sent Events to web clients (platform-http), structured extraction pipelines, and when to stream through Camel vs. a dedicated handler, see xref:ai-llm-integration-guide.adoc#_streaming_responses[LLM Integration Guide — Streaming responses].
 
 .Usage example:
 [source,yaml]
@@ -502,7 +502,7 @@ For Server-Sent Events to web clients (platform-http), structured extraction pip
 
 === Structured Output with outputClass
 
-TIP: For extraction tasks (resumes, invoices, classification), prefer `jsonSchema` or `outputClass` instead of hand-written JSON parsing. Use low `temperature` (0.0–0.2). See xref:ai-llm-integration-guide.adoc#Structured output (recommended for extraction)[LLM Integration Guide — Structured output].
+TIP: For extraction tasks (resumes, invoices, classification), prefer `jsonSchema` or `outputClass` instead of hand-written JSON parsing. Use low `temperature` (0.0–0.2). See xref:ai-llm-integration-guide.adoc#_structured_output_recommended_for_extraction[LLM Integration Guide — Structured output].
 
 .When `outputClass` is set, the model is instructed to produce JSON matching the given class, but the component returns the raw String. Deserialize the body yourself (e.g., with Camel's Jackson) if you need a typed object.
 
