@@ -656,7 +656,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-infinispan",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "16.2",
+  "serviceVersion" : "16.3",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.weaviate.services.WeaviateInfraService",
