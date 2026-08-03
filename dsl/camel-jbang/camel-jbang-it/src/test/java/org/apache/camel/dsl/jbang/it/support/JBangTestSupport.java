@@ -148,7 +148,7 @@ public abstract class JBangTestSupport {
     }
 
     protected String execNohup(final String command) {
-        return containerService.executeGenericCommand("nohup " + getMainCommand() + " " + command + " &");
+        return containerService.executeNohup(command);
     }
 
     protected String mountPoint() {
