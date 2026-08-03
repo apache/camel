@@ -744,7 +744,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-docling",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "v1.26.0",
+  "serviceVersion" : "v1.29.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
