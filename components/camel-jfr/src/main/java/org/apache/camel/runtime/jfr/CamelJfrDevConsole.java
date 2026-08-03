@@ -281,6 +281,7 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
 
         JsonObject result = new JsonObject();
         result.put("snapshot", true);
+        result.put("snapshotTimestamp", System.currentTimeMillis());
 
         Path tempFile = null;
         try (Recording snapshot = FlightRecorder.getFlightRecorder().takeSnapshot()) {

@@ -86,6 +86,7 @@ class JfrTab extends AbstractTab {
     private List<FailureEntry> failureData = List.of();
     private List<RedeliveryEntry> redeliveryData = List.of();
     private int snapshotEventCount;
+    private long snapshotTime;
     private boolean snapshotLoaded;
 
     // view state
@@ -338,7 +339,16 @@ class JfrTab extends AbstractTab {
 
         if (snapshotLoaded) {
             line1.add(Span.styled("  snapshot: ", LABEL));
-            line1.add(Span.styled(snapshotEventCount + " events", VALUE));
+            String ageLabel = "";
+            if (snapshotTime > 0) {
+                long agoSec = (System.currentTimeMillis() - snapshotTime) / 1000;
+                if (agoSec >= 60) {
+                    ageLabel = " (" + (agoSec / 60) + "m ago)";
+                } else if (agoSec >= 5) {
+                    ageLabel = " (" + agoSec + "s ago)";
+                }
+            }
+            line1.add(Span.styled(snapshotEventCount + " events" + ageLabel, VALUE));
         }
         lines.add(Line.from(line1));
 
@@ -840,6 +850,8 @@ class JfrTab extends AbstractTab {
 
             errorMessage = null;
             message = null;
+            Long ts = jo.getLong("snapshotTimestamp");
+            snapshotTime = ts != null ? ts : System.currentTimeMillis();
             snapshotLoaded = true;
             tableState.select(0);
         });
