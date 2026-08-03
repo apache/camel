@@ -136,6 +136,7 @@ final class TuiIcons {
     static final String TAB_DATASOURCE = "💿";
     static final String TAB_HEAP = MEMORY;
     static final String TAB_INFLIGHT = RESET;
+    static final String TAB_JFR = "🔬";
     static final String TAB_KAFKA = "📨";
     static final String TAB_MAVEN_DEPENDENCIES = "📜";
     static final String TAB_MEMORY = MEMORY;

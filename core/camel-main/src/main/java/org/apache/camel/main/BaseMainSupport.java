@@ -710,6 +710,10 @@ public abstract class BaseMainSupport extends BaseService {
         if (ObjectHelper.isNotEmpty(value)) {
             mainConfigurationProperties.setStartupRecorderRecording("true".equalsIgnoreCase(value.toString()));
         }
+        value = prop.remove("camel.main.startupRecorderRuntimeEnabled");
+        if (ObjectHelper.isNotEmpty(value)) {
+            mainConfigurationProperties.setStartupRecorderRuntimeEnabled("true".equalsIgnoreCase(value.toString()));
+        }
         value = prop.remove("camel.main.startupRecorderProfile");
         if (ObjectHelper.isNotEmpty(value)) {
             mainConfigurationProperties.setStartupRecorderProfile(
@@ -745,6 +749,7 @@ public abstract class BaseMainSupport extends BaseService {
                 if (fr != null) {
                     LOG.debug("Discovered startup recorder: {} from classpath", fr);
                     fr.setRecording(mainConfigurationProperties.isStartupRecorderRecording());
+                    fr.setRuntimeEnabled(mainConfigurationProperties.isStartupRecorderRuntimeEnabled());
                     fr.setStartupRecorderDuration(mainConfigurationProperties.getStartupRecorderDuration());
                     fr.setRecordingProfile(mainConfigurationProperties.getStartupRecorderProfile());
                     fr.setMaxDepth(mainConfigurationProperties.getStartupRecorderMaxDepth());

@@ -110,6 +110,26 @@ public interface StartupStepRecorder extends StaticService {
     boolean isRecording();
 
     /**
+     * Whether to also instrument the running Camel application, and not only its startup. This is only in use if
+     * camel-jfr is being used, and it emits an event per exchange, route and processor, so it is off by default.
+     *
+     * @since 4.22
+     */
+    default void setRuntimeEnabled(boolean runtimeEnabled) {
+        // noop
+    }
+
+    /**
+     * Whether to also instrument the running Camel application, and not only its startup. This is only in use if
+     * camel-jfr is being used, and it emits an event per exchange, route and processor, so it is off by default.
+     *
+     * @since 4.22
+     */
+    default boolean isRuntimeEnabled() {
+        return false;
+    }
+
+    /**
      * Beings a new step.
      * <p>
      * Important must call {@link #endStep(StartupStep)} to end the step.

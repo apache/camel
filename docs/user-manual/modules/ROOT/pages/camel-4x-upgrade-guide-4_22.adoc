@@ -159,6 +159,29 @@ The `--open-telemetry-agent-export` option has been extended with new values and
 The `camel.opentelemetry2.exportTarget` property in `OpenTelemetryTracer` now accepts any
 non-empty value to signal external export mode (previously only `"jaeger"` was recognized).
 
+==== `camel run --jfr` now actually enables Java Flight Recorder
+
+`--jfr` and `--jfr-profile` were previously accepted by `camel run` but had no effect on any
+runtime (`main`, `quarkus`, `springBoot`): the flags only wrote an internal
+`camel.jbang.jfr`/`camel.jbang.jfr-profile` property that nothing read.
+
+They now start a real recording:
+
+* For the default in-process runtime, a `jdk.jfr.Recording` is started before the routes start
+  and stopped/dumped to `<name>.jfr` on shutdown.
+* For `quarkus` and `springBoot` (including running against an existing Maven project), a
+  `-XX:StartFlightRecording=filename=<name>.jfr[,settings=<jfr-profile>]` JVM argument is passed
+  to the forked process.
+
+In both cases the JFR support for the runtime is now added automatically (`camel-jfr`,
+`camel-quarkus-jfr` or `camel-jfr-starter`), and `camel.main.startup-recorder-runtime-enabled`
+is set to `true`, so the Camel runtime events (route, processor, exchange, send, failed,
+redelivery) are captured, not just JVM-level events. If you were passing `--jfr` expecting no
+effect, this now writes a `.jfr` file and adds a JFR dependency to the classpath.
+
+If `--jvm-args` already contains `-XX:StartFlightRecording`, `--jfr` stands down with a
+warning rather than starting a second, competing recording.
+
 ==== Website installers for the Camel CLI
 
 Two canonical installer scripts are now available for installing the
@@ -1445,3 +1468,17 @@ entry name could escape the intended directory (Tar Slip / Zip Slip).
 data format and the iterator/splitter modes. The full, unmodified entry name remains available
 so routes that intentionally recreate the archive's directory structure keep working — read it
 from `CamelTarFileEntryName` for tar and from `zipFileName` for zip instead of `CamelFileName`.
+
+=== camel-jfr
+
+`camel-jfr` can now also emit JFR events during message routing, in addition to the
+existing startup instrumentation. This is *opt-in and disabled by default*, so having
+`camel-jfr` on the classpath keeps behaving exactly as it did in 4.21.
+
+Enable it with `camel.main.startup-recorder-runtime-enabled=true`, or programmatically
+with `setRuntimeEnabled(true)` on the `FlightRecorderStartupStepRecorder`. The option is
+read once while the `CamelContext` initializes and cannot be changed afterwards.
+
+`org.apache.camel.spi.StartupStepRecorder` gained the default methods
+`isRuntimeEnabled()` and `setRuntimeEnabled(boolean)`. Both have no-op defaults, so
+existing implementations continue to compile and behave as before.
