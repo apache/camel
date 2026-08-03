@@ -109,6 +109,9 @@ public class AWSConfigProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "putConfigRule operation requires PutConfigRuleRequest in POJO mode");
             }
         } else {
             PutConfigRuleRequest.Builder builder = PutConfigRuleRequest.builder();
@@ -155,6 +158,9 @@ public class AWSConfigProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "removeConfigRule operation requires DeleteConfigRuleRequest in POJO mode");
             }
         } else {
             DeleteConfigRuleRequest.Builder builder = DeleteConfigRuleRequest.builder();
@@ -191,6 +197,9 @@ public class AWSConfigProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeRuleCompliance operation requires DescribeComplianceByConfigRuleRequest in POJO mode");
             }
         } else {
             DescribeComplianceByConfigRuleRequest.Builder builder = DescribeComplianceByConfigRuleRequest.builder();
@@ -225,6 +234,9 @@ public class AWSConfigProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "putConformancePack operation requires PutConformancePackRequest in POJO mode");
             }
         } else {
             PutConformancePackRequest.Builder builder = PutConformancePackRequest.builder();
@@ -276,6 +288,9 @@ public class AWSConfigProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "removeConformancePack operation requires DeleteConformancePackRequest in POJO mode");
             }
         } else {
             DeleteConformancePackRequest.Builder builder = DeleteConformancePackRequest.builder();
