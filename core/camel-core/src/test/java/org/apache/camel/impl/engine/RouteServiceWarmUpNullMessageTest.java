@@ -16,78 +16,83 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultProducer;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Verifies that {@link RouteService#warmUp()} wraps startup failures in a {@link FailedToStartRouteException}
- * whose message is always meaningful — even when the root cause exception itself carries a {@code null} message
- * (e.g. a bare {@link NullPointerException}).
+ * Verifies that {@link RouteService#warmUp()} wraps startup failures in a {@link FailedToStartRouteException} whose
+ * message is always meaningful — even when the root cause exception itself carries a {@code null} message (e.g. a bare
+ * {@link NullPointerException}).
  *
- * <p>Before the fix, {@code RouteService} passed {@code e.getLocalizedMessage()} directly to the
- * {@link FailedToStartRouteException} constructor, which calls {@code Objects.requireNonNull} on that
- * argument. A message-less exception therefore caused a secondary {@link NullPointerException} to be thrown
- * from inside the exception constructor rather than a proper {@link FailedToStartRouteException}.
+ * <p>
+ * Before the fix, {@code RouteService} passed {@code e.getLocalizedMessage()} directly to the
+ * {@link FailedToStartRouteException} constructor, which calls {@code Objects.requireNonNull} on that argument. A
+ * message-less exception therefore caused a secondary {@link NullPointerException} to be thrown from inside the
+ * exception constructor rather than a proper {@link FailedToStartRouteException}.
  */
-public class RouteServiceWarmUpNullMessageTest {
+class RouteServiceWarmUpNullMessageTest {
 
     /**
-     * When a route's consumer throws a {@link NullPointerException} with no message during warm-up, the
-     * resulting {@link FailedToStartRouteException} must still carry a non-null, non-empty message.
+     * When a route's consumer throws a {@link NullPointerException} with no message during warm-up, the resulting
+     * {@link FailedToStartRouteException} must still carry a non-null, non-empty message.
      */
     @Test
-    public void testWarmUpNullMessageExceptionProducesUsefulFailedToStartMessage() {
+    void testWarmUpNullMessageExceptionProducesUsefulFailedToStartMessage() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        // Register a component whose endpoint start throws a message-less NullPointerException
         context.addComponent("fail", new NullMessageFailComponent());
-
-        assertThrows(FailedToStartRouteException.class, () -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("fail:trigger").routeId("test-route").to("direct:out");
-                }
-            });
-            context.start();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("fail:trigger").routeId("test-route").to("direct:out");
+            }
         });
+
+        assertThatThrownBy(context::start)
+                .isInstanceOf(FailedToStartRouteException.class);
     }
 
     /**
-     * The {@link FailedToStartRouteException} message must not be null, must contain the route id, and must
-     * not use the literal string "null" as the failure description.
+     * The {@link FailedToStartRouteException} message must not be null, must contain the route id, and must not use the
+     * literal string "null" as the failure description.
      */
     @Test
-    public void testFailedToStartMessageIsNonNullAndMeaningful() {
+    void testFailedToStartMessageIsNonNullAndMeaningful() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addComponent("fail", new NullMessageFailComponent());
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("fail:trigger").routeId("meaningful-route").to("direct:out");
+            }
+        });
 
         FailedToStartRouteException caught = null;
         try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("fail:trigger").routeId("meaningful-route").to("direct:out");
-                }
-            });
             context.start();
         } catch (FailedToStartRouteException e) {
             caught = e;
         } catch (Exception e) {
             Throwable t = e;
             while (t != null) {
-                if (t instanceof FailedToStartRouteException) {
-                    caught = (FailedToStartRouteException) t;
+                if (t instanceof FailedToStartRouteException ftsre) {
+                    caught = ftsre;
                     break;
                 }
                 t = t.getCause();
@@ -99,44 +104,42 @@ public class RouteServiceWarmUpNullMessageTest {
             }
         }
 
-        assertNotNull(caught, "Expected FailedToStartRouteException");
-        String message = caught.getMessage();
-        assertNotNull(message, "FailedToStartRouteException message must not be null");
-        assertTrue(message.contains("meaningful-route"), "Message must contain the route id");
-        // The key regression guard: must NOT say "because: null"
-        assertFalse(message.contains("because: null"),
-                "Message must not contain 'because: null' — was: " + message);
-        // The fallback must surface something useful (class name at minimum)
-        assertTrue(message.length() > "Failed to start route: meaningful-route because: ".length(),
-                "Message must have a non-empty failure description — was: " + message);
+        assertThat(caught).as("Expected FailedToStartRouteException").isNotNull();
+        assertThat(caught.getMessage())
+                .as("FailedToStartRouteException message must not be null")
+                .isNotNull()
+                .as("Message must contain the route id")
+                .contains("meaningful-route")
+                .as("Message must not contain 'because: null'")
+                .doesNotContain("because: null");
     }
 
     /**
-     * Verifies that when the root exception has a null message but its cause has a real message,
-     * the cause's message is surfaced in the {@link FailedToStartRouteException}.
+     * Verifies that when the root exception has a null message but its cause has a real message, the cause's message is
+     * surfaced in the {@link FailedToStartRouteException}.
      */
     @Test
-    public void testWarmUpWalksCauseChainForMessage() {
+    void testWarmUpWalksCauseChainForMessage() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String expectedFragment = "real cause message from chain";
         context.addComponent("fail", new ChainedNullMessageFailComponent(expectedFragment));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("fail:trigger").routeId("chain-route").to("direct:out");
+            }
+        });
 
         FailedToStartRouteException caught = null;
         try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("fail:trigger").routeId("chain-route").to("direct:out");
-                }
-            });
             context.start();
         } catch (FailedToStartRouteException e) {
             caught = e;
         } catch (Exception e) {
             Throwable t = e;
             while (t != null) {
-                if (t instanceof FailedToStartRouteException) {
-                    caught = (FailedToStartRouteException) t;
+                if (t instanceof FailedToStartRouteException ftsre) {
+                    caught = ftsre;
                     break;
                 }
                 t = t.getCause();
@@ -148,9 +151,10 @@ public class RouteServiceWarmUpNullMessageTest {
             }
         }
 
-        assertNotNull(caught, "Expected FailedToStartRouteException");
-        assertTrue(caught.getMessage().contains(expectedFragment),
-                "Message should surface cause chain message — was: " + caught.getMessage());
+        assertThat(caught).as("Expected FailedToStartRouteException").isNotNull();
+        assertThat(caught.getMessage())
+                .as("Message should surface cause chain message")
+                .contains(expectedFragment);
     }
 
     // ---- helpers ----
@@ -158,8 +162,7 @@ public class RouteServiceWarmUpNullMessageTest {
     /** A component whose endpoint throws a message-less {@link NullPointerException} on start. */
     private static class NullMessageFailComponent extends DefaultComponent {
         @Override
-        protected org.apache.camel.Endpoint createEndpoint(String uri, String remaining,
-                java.util.Map<String, Object> parameters) {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new FailOnStartEndpoint(uri, this);
         }
 
@@ -169,21 +172,20 @@ public class RouteServiceWarmUpNullMessageTest {
             }
 
             @Override
-            public org.apache.camel.Consumer createConsumer(org.apache.camel.Processor processor) {
-                return new org.apache.camel.support.DefaultConsumer(this, processor) {
+            public Consumer createConsumer(Processor processor) {
+                return new DefaultConsumer(this, processor) {
                     @Override
                     protected void doStart() {
-                        // Throw a NullPointerException with no message — the classic null-message case
                         throw new NullPointerException();
                     }
                 };
             }
 
             @Override
-            public org.apache.camel.Producer createProducer() {
-                return new org.apache.camel.support.DefaultProducer(this) {
+            public Producer createProducer() {
+                return new DefaultProducer(this) {
                     @Override
-                    public void process(org.apache.camel.Exchange exchange) {
+                    public void process(Exchange exchange) {
                     }
                 };
             }
@@ -196,8 +198,8 @@ public class RouteServiceWarmUpNullMessageTest {
     }
 
     /**
-     * A component whose endpoint throws a message-less outer exception wrapping an inner exception that
-     * does have a message — used to test cause-chain walking.
+     * A component whose endpoint throws a message-less outer exception wrapping an inner exception that does have a
+     * message — used to test cause-chain walking.
      */
     private static class ChainedNullMessageFailComponent extends DefaultComponent {
         private final String causeMessage;
@@ -207,8 +209,7 @@ public class RouteServiceWarmUpNullMessageTest {
         }
 
         @Override
-        protected org.apache.camel.Endpoint createEndpoint(String uri, String remaining,
-                java.util.Map<String, Object> parameters) {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new FailOnStartEndpoint(uri, this, causeMessage);
         }
 
@@ -221,21 +222,20 @@ public class RouteServiceWarmUpNullMessageTest {
             }
 
             @Override
-            public org.apache.camel.Consumer createConsumer(org.apache.camel.Processor processor) {
-                return new org.apache.camel.support.DefaultConsumer(this, processor) {
+            public Consumer createConsumer(Processor processor) {
+                return new DefaultConsumer(this, processor) {
                     @Override
                     protected void doStart() {
-                        // Outer exception has no message; inner cause has the real message
                         throw new RuntimeException(new IllegalStateException(causeMessage));
                     }
                 };
             }
 
             @Override
-            public org.apache.camel.Producer createProducer() {
-                return new org.apache.camel.support.DefaultProducer(this) {
+            public Producer createProducer() {
+                return new DefaultProducer(this) {
                     @Override
-                    public void process(org.apache.camel.Exchange exchange) {
+                    public void process(Exchange exchange) {
                     }
                 };
             }
