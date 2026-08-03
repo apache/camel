@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -387,9 +388,9 @@ class JfrTab extends AbstractTab {
         List<Row> rows = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
             RouteStats r = data.get(i);
-            String rate = r.total > 0 ? String.format("%.1f%%", (r.failed * 100.0 / r.total)) : "0.0%";
+            String rate = r.total > 0 ? String.format(Locale.US, "%.1f%%", (r.failed * 100.0 / r.total)) : "0.0%";
             rows.add(Row.from(
-                    Cell.from(Span.styled(String.valueOf(i + 1), LABEL)),
+                    rightCell(String.valueOf(i + 1), 4, LABEL),
                     Cell.from(Span.styled(r.routeId, Style.EMPTY.fg(Theme.baseFg()))),
                     rightCell(String.valueOf(r.total), 8),
                     rightCell(String.valueOf(r.failed), 8, r.failed > 0 ? Theme.error() : Style.EMPTY),
@@ -399,10 +400,18 @@ class JfrTab extends AbstractTab {
                     rightCell(formatMs(r.maxMs), 10)));
         }
 
-        String[] cols = { "#", "ROUTE", "TOTAL", "FAILED", "RATE", "MIN", "MEAN", "MAX" };
+        Style hdr = Style.EMPTY.bold();
         Table table = Table.builder()
                 .rows(rows)
-                .header(headerRow(cols))
+                .header(Row.from(
+                        rightCell("#", 4, hdr),
+                        Cell.from(Span.styled("ROUTE", hdr)),
+                        rightCell("TOTAL", 8, hdr),
+                        rightCell("FAILED", 8, hdr),
+                        rightCell("RATE", 8, hdr),
+                        rightCell("MIN", 10, hdr),
+                        rightCell("MEAN", 10, hdr),
+                        rightCell("MAX", 10, hdr)))
                 .widths(Constraint.length(4), Constraint.fill(),
                         Constraint.length(8), Constraint.length(8), Constraint.length(8),
                         Constraint.length(10), Constraint.length(10), Constraint.length(10))
@@ -421,7 +430,7 @@ class JfrTab extends AbstractTab {
         for (int i = 0; i < data.size(); i++) {
             ProcessorStats p = data.get(i);
             rows.add(Row.from(
-                    Cell.from(Span.styled(String.valueOf(i + 1), LABEL)),
+                    rightCell(String.valueOf(i + 1), 4, LABEL),
                     Cell.from(Span.styled(p.processorId, Style.EMPTY.fg(Theme.baseFg()))),
                     Cell.from(Span.styled(p.processorType != null ? p.processorType : "", LABEL)),
                     Cell.from(Span.styled(p.routeId, LABEL)),
@@ -435,10 +444,19 @@ class JfrTab extends AbstractTab {
         String title = drillRouteId != null
                 ? " Processors [" + drillRouteId + "] (" + data.size() + ") "
                 : " Processors (" + data.size() + ") ";
-        String[] cols = { "#", "PROCESSOR", "TYPE", "ROUTE", "TOTAL", "FAILED", "MIN", "MEAN", "MAX" };
+        Style hdr = Style.EMPTY.bold();
         Table table = Table.builder()
                 .rows(rows)
-                .header(headerRow(cols))
+                .header(Row.from(
+                        rightCell("#", 4, hdr),
+                        Cell.from(Span.styled("PROCESSOR", hdr)),
+                        Cell.from(Span.styled("TYPE", hdr)),
+                        Cell.from(Span.styled("ROUTE", hdr)),
+                        rightCell("TOTAL", 8, hdr),
+                        rightCell("FAILED", 8, hdr),
+                        rightCell("MIN", 10, hdr),
+                        rightCell("MEAN", 10, hdr),
+                        rightCell("MAX", 10, hdr)))
                 .widths(Constraint.length(4), Constraint.fill(), Constraint.length(12), Constraint.length(16),
                         Constraint.length(8), Constraint.length(8),
                         Constraint.length(10), Constraint.length(10), Constraint.length(10))
@@ -458,7 +476,7 @@ class JfrTab extends AbstractTab {
             EndpointStats e = data.get(i);
             rows.add(Row
                     .from(
-                    Cell.from(Span.styled(String.valueOf(i + 1), LABEL)),
+                    rightCell(String.valueOf(i + 1), 4, LABEL),
                     Cell.from(Span.styled(e.endpointUri, Style.EMPTY.fg(Theme.baseFg()))),
                     rightCell(String.valueOf(e.total), 8),
                     rightCell(String.valueOf(e.failed), 8, e.failed > 0 ? Theme.error() : Style.EMPTY),
@@ -467,10 +485,17 @@ class JfrTab extends AbstractTab {
                     rightCell(formatMs(e.maxMs), 10)));
         }
 
-        String[] cols = { "#", "ENDPOINT", "TOTAL", "FAILED", "MIN", "MEAN", "MAX" };
+        Style hdr = Style.EMPTY.bold();
         Table table = Table.builder()
                 .rows(rows)
-                .header(headerRow(cols))
+                .header(Row.from(
+                        rightCell("#", 4, hdr),
+                        Cell.from(Span.styled("ENDPOINT", hdr)),
+                        rightCell("TOTAL", 8, hdr),
+                        rightCell("FAILED", 8, hdr),
+                        rightCell("MIN", 10, hdr),
+                        rightCell("MEAN", 10, hdr),
+                        rightCell("MAX", 10, hdr)))
                 .widths(Constraint.length(4), Constraint.fill(),
                         Constraint.length(8), Constraint.length(8),
                         Constraint.length(10), Constraint.length(10), Constraint.length(10))
@@ -493,7 +518,7 @@ class JfrTab extends AbstractTab {
                     ? (f.exceptionMessage.length() > 60 ? f.exceptionMessage.substring(0, 60) + "..." : f.exceptionMessage)
                     : "";
             rows.add(Row.from(
-                    Cell.from(Span.styled(String.valueOf(i + 1), LABEL)),
+                    rightCell(String.valueOf(i + 1), 4, LABEL),
                     Cell.from(Span.styled(time, LABEL)),
                     Cell.from(Span.styled(f.routeId != null ? f.routeId : "", Style.EMPTY.fg(Theme.baseFg()))),
                     Cell.from(Span.styled(
@@ -501,10 +526,15 @@ class JfrTab extends AbstractTab {
                     Cell.from(Span.styled(msg, LABEL))));
         }
 
-        String[] cols = { "#", "TIME", "ROUTE", "EXCEPTION", "MESSAGE" };
+        Style hdr = Style.EMPTY.bold();
         Table table = Table.builder()
                 .rows(rows)
-                .header(headerRow(cols))
+                .header(Row.from(
+                        rightCell("#", 4, hdr),
+                        Cell.from(Span.styled("TIME", hdr)),
+                        Cell.from(Span.styled("ROUTE", hdr)),
+                        Cell.from(Span.styled("EXCEPTION", hdr)),
+                        Cell.from(Span.styled("MESSAGE", hdr))))
                 .widths(Constraint.length(4), Constraint.length(10), Constraint.length(16),
                         Constraint.length(28), Constraint.fill())
                 .highlightStyle(Theme.selectionBg())
@@ -524,17 +554,22 @@ class JfrTab extends AbstractTab {
                     ? r.timestamp.substring(11, 19) : (r.timestamp != null ? r.timestamp : "");
             boolean exhausted = r.attempt >= r.maxAttempts && r.maxAttempts > 0;
             rows.add(Row.from(
-                    Cell.from(Span.styled(String.valueOf(i + 1), LABEL)),
+                    rightCell(String.valueOf(i + 1), 4, LABEL),
                     Cell.from(Span.styled(time, LABEL)),
                     Cell.from(Span.styled(r.routeId != null ? r.routeId : "", Style.EMPTY.fg(Theme.baseFg()))),
                     rightCell(String.valueOf(r.attempt), 8),
                     rightCell(String.valueOf(r.maxAttempts), 8, exhausted ? Theme.error() : Style.EMPTY)));
         }
 
-        String[] cols = { "#", "TIME", "ROUTE", "ATTEMPT", "MAX" };
+        Style hdr = Style.EMPTY.bold();
         Table table = Table.builder()
                 .rows(rows)
-                .header(headerRow(cols))
+                .header(Row.from(
+                        rightCell("#", 4, hdr),
+                        Cell.from(Span.styled("TIME", hdr)),
+                        Cell.from(Span.styled("ROUTE", hdr)),
+                        rightCell("ATTEMPT", 8, hdr),
+                        rightCell("MAX", 8, hdr)))
                 .widths(Constraint.length(4), Constraint.length(10), Constraint.fill(),
                         Constraint.length(8), Constraint.length(8))
                 .highlightStyle(Theme.selectionBg())
@@ -546,21 +581,13 @@ class JfrTab extends AbstractTab {
         renderTableScrollbar(frame, lastTableArea, tableState, scrollState, redeliveryData.size());
     }
 
-    private static Row headerRow(String[] cols) {
-        Cell[] cells = new Cell[cols.length];
-        for (int i = 0; i < cols.length; i++) {
-            cells[i] = Cell.from(Span.styled(cols[i], Style.EMPTY.bold()));
-        }
-        return Row.from(cells);
-    }
-
     private static String formatMs(double ms) {
         if (ms < 1.0) {
-            return String.format("%.1fms", ms);
+            return String.format(Locale.US, "%.1fms", ms);
         } else if (ms < 1000.0) {
-            return String.format("%.0fms", ms);
+            return String.format(Locale.US, "%.0fms", ms);
         } else {
-            return String.format("%.1fs", ms / 1000.0);
+            return String.format(Locale.US, "%.1fs", ms / 1000.0);
         }
     }
 
@@ -778,7 +805,7 @@ class JfrTab extends AbstractTab {
                 statusLoaded = true;
                 return;
             }
-            registered = Boolean.TRUE.equals(jo.getBoolean("registered"));
+            registered = Boolean.TRUE.equals(jo.getBoolean("runtimeEvents"));
             List<String> recs = new ArrayList<>();
             if (jo.get("recordings") instanceof JsonArray recordingsArr) {
                 for (Object o : recordingsArr) {

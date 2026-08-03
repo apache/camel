@@ -235,7 +235,7 @@ class JfrTabRenderTest {
 
     private static JsonObject statusResponse() {
         JsonObject response = new JsonObject();
-        response.put("registered", true);
+        response.put("runtimeEvents", true);
         JsonArray recordings = new JsonArray();
         JsonObject rec = new JsonObject();
         rec.put("name", "default");

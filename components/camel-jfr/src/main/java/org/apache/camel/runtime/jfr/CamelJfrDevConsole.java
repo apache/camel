@@ -112,7 +112,7 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
         List<Recording> recordings = FlightRecorder.getFlightRecorder().getRecordings();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("registered: ").append(isInstrumentationRegistered()).append('\n');
+        sb.append("runtimeEvents: ").append(isInstrumentationRegistered()).append('\n');
         if (recordings.isEmpty()) {
             sb.append("recordings: none active\n");
         } else {
@@ -460,7 +460,7 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
         JsonObject root = new JsonObject();
         switch (command != null ? command : "status") {
             case "status" -> {
-                root.put("registered", isInstrumentationRegistered());
+                root.put("runtimeEvents", isInstrumentationRegistered());
                 JsonArray recordingsJson = new JsonArray();
                 for (Recording recording : FlightRecorder.getFlightRecorder().getRecordings()) {
                     JsonObject rec = new JsonObject();
