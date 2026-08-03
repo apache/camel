@@ -204,7 +204,7 @@ class SourceViewer {
     }
 
     boolean isEditable() {
-        return editableFile != null && Files.isRegularFile(editableFile) && Files.isWritable(editableFile);
+        return editableFile != null;
     }
 
     /**
@@ -280,15 +280,11 @@ class SourceViewer {
             if (search.handleEscape()) {
                 return true;
             }
-            visible = false;
-            onLineSelected = null;
-            editableFile = null;
+            hide();
             return true;
         }
         if (ke.isChar('c')) {
-            visible = false;
-            onLineSelected = null;
-            editableFile = null;
+            hide();
             return true;
         }
         if (isEditable() && ke.isChar('e')) {

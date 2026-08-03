@@ -397,6 +397,40 @@ class SourceViewerEditTest {
         assertThat(Files.readString(sourceFile, StandardCharsets.UTF_8)).contains("z");
     }
 
+    @Test
+    void escDismissClearsSaveMessageBeforeReopen() {
+        viewer.loadFile(sourceFile);
+        viewer.enterEditMode();
+        viewer.handleKeyEvent(KeyEvent.ofChar('x', KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
+
+        List<Span> spans = new ArrayList<>();
+        viewer.renderFooter(spans);
+        assertThat(spansToString(spans)).contains("Saved");
+
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        assertThat(viewer.isVisible()).isFalse();
+
+        viewer.loadFile(sourceFile);
+        spans.clear();
+        viewer.renderFooter(spans);
+        assertThat(spansToString(spans)).doesNotContain("Saved");
+    }
+
+    @Test
+    void cKeyDismissClearsViewerState() {
+        viewer.loadFile(sourceFile);
+        viewer.enterEditMode();
+        viewer.handleKeyEvent(KeyEvent.ofChar('x', KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
+
+        assertThat(viewer.handleKeyEvent(KeyEvent.ofChar('c', KeyModifiers.NONE))).isTrue();
+
+        assertThat(viewer.isVisible()).isFalse();
+        assertThat(viewer.isEditMode()).isFalse();
+        assertThat(viewer.isTextInputActive()).isFalse();
+    }
+
     private static String spansToString(List<Span> spans) {
         StringBuilder sb = new StringBuilder();
         for (Span span : spans) {
