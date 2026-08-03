@@ -495,6 +495,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "copyObject operation requires CopyObjectRequest in POJO mode");
             }
         } else {
             if (ObjectHelper.isEmpty(bucketNameDestination)) {
@@ -576,6 +579,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(true);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteObject operation requires DeleteObjectRequest in POJO mode");
             }
         } else {
             DeleteObjectRequest.Builder deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(keyName);
@@ -607,6 +613,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(resp);
                 populateHttpResponseCode(resp, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteBucket operation requires DeleteBucketRequest in POJO mode");
             }
         } else {
             DeleteBucketRequest.Builder deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName);
@@ -631,6 +640,9 @@ public class AWS2S3Producer extends DefaultProducer {
                     message.setBody(res);
                 }
                 populateMetadata(res, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "getObject operation requires GetObjectRequest in POJO mode");
             }
         } else {
             final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
@@ -694,6 +706,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(res);
                 populateHttpResponseCode(res.response(), message);
+            } else {
+                throw new IllegalArgumentException(
+                        "getObjectRange operation requires GetObjectRequest in POJO mode");
             }
         } else {
             if (ObjectHelper.isEmpty(rangeStart) || ObjectHelper.isEmpty(rangeEnd)) {
@@ -734,6 +749,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(objectList.contents());
                 populateHttpResponseCode(objectList, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "listObjects operation requires ListObjectsV2Request in POJO mode");
             }
         } else {
             final String delimiter
@@ -846,6 +864,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteObjects operation requires DeleteObjectsRequest in POJO mode");
             }
         } else {
             List<String> keysToDelete = exchange.getIn().getHeader(AWS2S3Constants.KEYS_TO_DELETE, List.class);
@@ -883,6 +904,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "restoreObject operation requires RestoreObjectRequest in POJO mode");
             }
         } else {
             Integer days = exchange.getIn().getHeader(AWS2S3Constants.RESTORE_DAYS, 1, Integer.class);
@@ -923,6 +947,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.tagSet());
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "getObjectTagging operation requires GetObjectTaggingRequest in POJO mode");
             }
         } else {
             GetObjectTaggingRequest request = GetObjectTaggingRequest.builder()
@@ -951,6 +978,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "putObjectTagging operation requires PutObjectTaggingRequest in POJO mode");
             }
         } else {
             Map<String, String> tags = exchange.getIn().getHeader(AWS2S3Constants.OBJECT_TAGS, Map.class);
@@ -991,6 +1021,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteObjectTagging operation requires DeleteObjectTaggingRequest in POJO mode");
             }
         } else {
             DeleteObjectTaggingRequest request = DeleteObjectTaggingRequest.builder()
@@ -1019,6 +1052,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "getObjectAcl operation requires GetObjectAclRequest in POJO mode");
             }
         } else {
             GetObjectAclRequest request = GetObjectAclRequest.builder()
@@ -1047,6 +1083,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "putObjectAcl operation requires PutObjectAclRequest in POJO mode");
             }
         } else {
             String cannedAcl = exchange.getIn().getHeader(AWS2S3Constants.CANNED_ACL, String.class);
@@ -1166,6 +1205,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "createBucket operation requires CreateBucketRequest in POJO mode");
             }
         } else {
             CreateBucketRequest.Builder requestBuilder = CreateBucketRequest.builder().bucket(bucketName);
@@ -1198,6 +1240,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.tagSet());
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "getBucketTagging operation requires GetBucketTaggingRequest in POJO mode");
             }
         } else {
             GetBucketTaggingRequest request = GetBucketTaggingRequest.builder()
@@ -1223,6 +1268,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "putBucketTagging operation requires PutBucketTaggingRequest in POJO mode");
             }
         } else {
             Map<String, String> tags = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_TAGS, Map.class);
@@ -1260,6 +1308,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteBucketTagging operation requires DeleteBucketTaggingRequest in POJO mode");
             }
         } else {
             DeleteBucketTaggingRequest request = DeleteBucketTaggingRequest.builder()
@@ -1285,6 +1336,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "getBucketVersioning operation requires GetBucketVersioningRequest in POJO mode");
             }
         } else {
             GetBucketVersioningRequest request = GetBucketVersioningRequest.builder()
@@ -1310,6 +1364,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "putBucketVersioning operation requires PutBucketVersioningRequest in POJO mode");
             }
         } else {
             String versioningStatus = exchange.getIn().getHeader(AWS2S3Constants.VERSIONING_STATUS, String.class);
@@ -1349,6 +1406,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.policy());
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "getBucketPolicy operation requires GetBucketPolicyRequest in POJO mode");
             }
         } else {
             GetBucketPolicyRequest request = GetBucketPolicyRequest.builder()
@@ -1374,6 +1434,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "putBucketPolicy operation requires PutBucketPolicyRequest in POJO mode");
             }
         } else {
             String policy = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_POLICY, String.class);
@@ -1405,6 +1468,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 populateHttpResponseCode(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "deleteBucketPolicy operation requires DeleteBucketPolicyRequest in POJO mode");
             }
         } else {
             DeleteBucketPolicyRequest request = DeleteBucketPolicyRequest.builder()
