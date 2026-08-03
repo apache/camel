@@ -177,24 +177,9 @@ class JfrTab extends AbstractTab {
             return true;
         }
 
-        if (ke.isChar('1')) {
-            switchView(View.ROUTES);
-            return true;
-        }
-        if (ke.isChar('2')) {
-            switchView(View.PROCESSORS);
-            return true;
-        }
-        if (ke.isChar('3')) {
-            switchView(View.ENDPOINTS);
-            return true;
-        }
-        if (ke.isChar('4')) {
-            switchView(View.FAILURES);
-            return true;
-        }
-        if (ke.isChar('5')) {
-            switchView(View.REDELIVERIES);
+        if (ke.isChar(' ')) {
+            View[] views = View.values();
+            switchView(views[(activeView.ordinal() + 1) % views.length]);
             return true;
         }
 
@@ -315,20 +300,19 @@ class JfrTab extends AbstractTab {
         }
 
         List<Rect> rows = Layout.vertical()
-                .constraints(Constraint.length(3), Constraint.length(1), Constraint.fill())
+                .constraints(Constraint.length(4), Constraint.fill())
                 .split(area);
 
         renderStatusHeader(frame, rows.get(0));
-        renderViewTabs(frame, rows.get(1));
-        renderDataTable(frame, rows.get(2));
+        renderDataTable(frame, rows.get(1));
     }
 
     private void renderStatusHeader(Frame frame, Rect area) {
         List<Line> lines = new ArrayList<>();
 
         List<Span> line1 = new ArrayList<>();
-        line1.add(Span.styled(" registered: ", LABEL));
-        line1.add(Span.styled(String.valueOf(registered), registered ? VALUE : Theme.error()));
+        line1.add(Span.styled("runtime events: ", LABEL));
+        line1.add(Span.styled(registered ? "enabled" : "disabled", registered ? VALUE : Theme.error()));
 
         if (!recordings.isEmpty()) {
             line1.add(Span.styled("  recording: ", LABEL));
@@ -352,10 +336,13 @@ class JfrTab extends AbstractTab {
         }
         lines.add(Line.from(line1));
 
-        long enabledCount = events.values().stream().filter(Boolean.TRUE::equals).count();
         List<Span> line2 = new ArrayList<>();
-        line2.add(Span.styled(" events: ", LABEL));
-        line2.add(Span.styled(enabledCount + "/" + events.size() + " enabled", VALUE));
+        line2.add(Span.styled("events: ", LABEL));
+        for (Map.Entry<String, Boolean> entry : events.entrySet()) {
+            boolean on = Boolean.TRUE.equals(entry.getValue());
+            line2.add(Span.styled(on ? "[x]" : "[ ]", on ? VALUE : LABEL));
+            line2.add(Span.styled(" " + entry.getKey() + " ", LABEL));
+        }
 
         if (message != null) {
             line2.add(Span.styled("  " + message, LABEL));
@@ -365,29 +352,12 @@ class JfrTab extends AbstractTab {
         }
         lines.add(Line.from(line2));
 
-        lines.add(Line.from(Span.raw("")));
-
-        frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), area);
-    }
-
-    private void renderViewTabs(Frame frame, Rect area) {
-        List<Span> spans = new ArrayList<>();
-        spans.add(Span.raw(" "));
-        for (int i = 0; i < View.values().length; i++) {
-            View v = View.values()[i];
-            boolean active = v == activeView;
-            String label = " " + (i + 1) + " " + v.label + " ";
-            if (active) {
-                spans.add(Span.styled(label, Style.EMPTY.fg(Theme.baseBg()).bg(Theme.accent())));
-            } else {
-                spans.add(Span.styled(label, LABEL));
-            }
-            spans.add(Span.raw(" "));
-        }
-        if (drillRouteId != null && activeView == View.PROCESSORS) {
-            spans.add(Span.styled(" filtered: " + drillRouteId, Style.EMPTY.fg(Theme.accent())));
-        }
-        frame.renderWidget(Paragraph.builder().text(Text.from(Line.from(spans))).build(), area);
+        frame.renderWidget(
+                Paragraph.builder().text(Text.from(lines))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .title(" JFR ").build())
+                        .build(),
+                area);
     }
 
     private void renderDataTable(Frame frame, Rect area) {
@@ -602,7 +572,7 @@ class JfrTab extends AbstractTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, "1-5", "view");
+        hint(spans, "Space", "view");
         if (snapshotLoaded && activeView == View.ROUTES) {
             hint(spans, "Enter", "drill");
         }
@@ -1127,11 +1097,11 @@ class JfrTab extends AbstractTab {
                 Press **F5** to take a snapshot of the active JFR recording. The snapshot
                 data is aggregated into five views:
 
-                - **1 Routes** — per-route exchange count, failures, and timing
-                - **2 Processors** — per-processor invocation count and timing (slowest first)
-                - **3 Endpoints** — per-endpoint send count and timing
-                - **4 Failures** — recent exchange failures with exception details
-                - **5 Redeliveries** — recent redelivery attempts
+                - **Routes** — per-route exchange count, failures, and timing
+                - **Processors** — per-processor invocation count and timing (slowest first)
+                - **Endpoints** — per-endpoint send count and timing
+                - **Failures** — recent exchange failures with exception details
+                - **Redeliveries** — recent redelivery attempts
 
                 Press **Enter** on a route in the Routes view to drill down into its
                 processors. Press **Esc** to return from drill-down.
@@ -1139,7 +1109,7 @@ class JfrTab extends AbstractTab {
                 ## Controls
 
                 - `F5` — take JFR snapshot
-                - `1`-`5` — switch view
+                - `Space` — cycle view
                 - `Enter` — drill into route processors
                 - `s` / `S` — cycle sort / reverse sort
                 - `E` — enable all runtime events on every active recording

@@ -70,7 +70,7 @@ class JfrTabRenderTest {
     void renderShowsRegisteredAndRecordingState() {
         JfrTab tab = new JfrTab(ctx);
         String rendered = TuiTestHelper.renderToString(tab, 120, 20);
-        assertThat(rendered).contains("registered").contains("no active recording");
+        assertThat(rendered).contains("runtime events").contains("no active recording");
     }
 
     @Test
@@ -102,7 +102,7 @@ class JfrTabRenderTest {
         tab.renderFooter(footerSpans);
         String footer = footerSpans.stream().map(Span::content).reduce("", String::concat);
 
-        assertThat(footer).contains("1-5").contains("view");
+        assertThat(footer).contains("Space").contains("view");
     }
 
     @Test
@@ -122,7 +122,7 @@ class JfrTabRenderTest {
     }
 
     @Test
-    void renderSnapshotDataShowsViewTabs() {
+    void renderSnapshotDataShowsRoutesPanelTitle() {
         TestMonitorContext snapshotCtx = new TestMonitorContext(dataWith(info), statusResponse())
                 .withSnapshot(snapshotResponse());
         snapshotCtx.selectedPid = "1234";
@@ -133,8 +133,7 @@ class JfrTabRenderTest {
 
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
             String rendered = TuiTestHelper.renderToString(tab, 140, 30);
-            assertThat(rendered).contains("1 Routes").contains("2 Processors")
-                    .contains("3 Endpoints").contains("4 Failures").contains("5 Redeliveries");
+            assertThat(rendered).contains("Routes");
         });
     }
 
@@ -147,7 +146,9 @@ class JfrTabRenderTest {
 
         tab.onTabSelected();
         tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
-        tab.handleKeyEvent(KeyEvent.ofChar('3'));
+        // Space cycles: Routes -> Processors -> Endpoints
+        tab.handleKeyEvent(KeyEvent.ofChar(' '));
+        tab.handleKeyEvent(KeyEvent.ofChar(' '));
 
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
             String rendered = TuiTestHelper.renderToString(tab, 140, 30);
