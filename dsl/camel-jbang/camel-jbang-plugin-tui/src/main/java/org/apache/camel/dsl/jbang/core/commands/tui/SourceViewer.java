@@ -127,7 +127,11 @@ class SourceViewer {
     private final TextAreaState editState = new TextAreaState();
     /** Markdown render mode prior to entering edit; restored on cancel. */
     private boolean markdownModeBeforeEdit;
+    private boolean dirty;
     private BiConsumer<String, Boolean> notificationCallback;
+    private AutocompletePopup.AutocompleteProvider autocompleteProvider;
+    private AutocompletePopup.ValueProvider autocompleteValueProvider;
+    private AutocompletePopup autocompletePopup;
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
@@ -152,6 +156,14 @@ class SourceViewer {
 
     void setNotificationCallback(BiConsumer<String, Boolean> callback) {
         this.notificationCallback = callback;
+    }
+
+    void setAutocompleteProvider(AutocompletePopup.AutocompleteProvider provider) {
+        this.autocompleteProvider = provider;
+    }
+
+    void setAutocompleteValueProvider(AutocompletePopup.ValueProvider provider) {
+        this.autocompleteValueProvider = provider;
     }
 
     void hide() {
@@ -192,6 +204,9 @@ class SourceViewer {
         quickDocEntries = Collections.emptyMap();
         deprecatedLineScanner = null;
         deprecatedLines = Collections.emptySet();
+        autocompleteProvider = null;
+        autocompleteValueProvider = null;
+        autocompletePopup = null;
         editableFile = null;
     }
 
@@ -385,6 +400,25 @@ class SourceViewer {
     }
 
     private boolean handleEditKeyEvent(KeyEvent ke) {
+        if (autocompletePopup != null) {
+            boolean wasValueMode = autocompletePopup.isValueMode();
+            AutocompletePopup.Result result = autocompletePopup.handleKeyEvent(ke);
+            if (result == AutocompletePopup.Result.CLOSED) {
+                AutocompletePopup.CompletionItem item = autocompletePopup.consumeSelectedItem();
+                autocompletePopup = null;
+                if (item != null) {
+                    insertCompletion(item, wasValueMode);
+                }
+            } else if (result == AutocompletePopup.Result.CURSOR_RIGHT) {
+                editState.moveCursorRight();
+            } else if (result == AutocompletePopup.Result.CURSOR_LEFT) {
+                editState.moveCursorLeft();
+            }
+            if (autocompletePopup != null && !autocompletePopup.hasItems()) {
+                autocompletePopup = null;
+            }
+            return true;
+        }
         if (ke.isCancel()) {
             exitEditMode();
             return true;
@@ -399,6 +433,7 @@ class SourceViewer {
         }
         if (ke.isConfirm()) {
             editState.insert('\n');
+            dirty = true;
             return true;
         }
         if (ke.isUp()) {
@@ -441,14 +476,21 @@ class SourceViewer {
         }
         if (ke.isDeleteBackward()) {
             editState.deleteBackward();
+            dirty = true;
             return true;
         }
         if (ke.isDeleteForward()) {
             editState.deleteForward();
+            dirty = true;
             return true;
         }
-        if (ke.code() == KeyCode.CHAR) {
+        if (ke.isKey(KeyCode.TAB) && autocompleteProvider != null && isPropertiesFile()) {
+            openAutocomplete();
+            return true;
+        }
+        if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
             editState.insert(ke.character());
+            dirty = true;
             return true;
         }
         return true;
@@ -469,6 +511,7 @@ class SourceViewer {
         markdownMode = false;
         quickDocEnabled = false;
         search.reset();
+        dirty = false;
         editMode = true;
     }
 
@@ -476,10 +519,82 @@ class SourceViewer {
         boolean wasEditing = editMode;
         editMode = false;
         editState.clear();
+        autocompletePopup = null;
         if (wasEditing && isMarkdownFile) {
             markdownMode = markdownModeBeforeEdit;
         }
         markdownModeBeforeEdit = false;
+    }
+
+    private boolean isPropertiesFile() {
+        return editableFile != null
+                && editableFile.getFileName().toString().toLowerCase().endsWith(".properties");
+    }
+
+    private void openAutocomplete() {
+        String lineText = editState.getLine(editState.cursorRow());
+        int col = editState.cursorCol();
+        String textBeforeCursor = col <= lineText.length() ? lineText.substring(0, col) : lineText;
+
+        int eq = textBeforeCursor.indexOf('=');
+        if (eq >= 0 && autocompleteValueProvider != null) {
+            // cursor is after '=' — try value completion
+            String key = textBeforeCursor.substring(0, eq).trim();
+            String valuePrefix = textBeforeCursor.substring(eq + 1).trim();
+            List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(key);
+            if (values != null && !values.isEmpty()) {
+                autocompletePopup = new AutocompletePopup(values, valuePrefix, valuePrefix, true);
+            }
+            return;
+        }
+
+        // key completion
+        String prefix = textBeforeCursor.trim();
+
+        // load all options for the group (up to last dot) so the full list is available
+        int lastDot = prefix.lastIndexOf('.');
+        String groupPrefix = lastDot >= 0 ? prefix.substring(0, lastDot + 1) : prefix;
+
+        // extract full key text for left/right cursor navigation
+        String fullKey = lineText;
+        int eqFull = fullKey.indexOf('=');
+        if (eqFull >= 0) {
+            fullKey = fullKey.substring(0, eqFull);
+        }
+        fullKey = fullKey.trim();
+
+        List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(groupPrefix);
+        if (items != null && !items.isEmpty()) {
+            autocompletePopup = new AutocompletePopup(items, prefix, fullKey);
+        }
+    }
+
+    private void insertCompletion(AutocompletePopup.CompletionItem item, boolean valueMode) {
+        dirty = true;
+        String currentLine = editState.getLine(editState.cursorRow());
+        if (valueMode) {
+            // replace value portion (after =)
+            int eq = currentLine.indexOf('=');
+            if (eq >= 0) {
+                String keyPart = currentLine.substring(0, eq + 1);
+                editState.moveCursorToLineStart();
+                for (int i = 0; i < currentLine.length(); i++) {
+                    editState.deleteForward();
+                }
+                editState.insert(keyPart + item.key());
+            }
+        } else {
+            editState.moveCursorToLineStart();
+            for (int i = 0; i < currentLine.length(); i++) {
+                editState.deleteForward();
+            }
+            boolean isGroup = item.key().endsWith(".");
+            String insertText = isGroup ? item.key() : item.key() + "=";
+            editState.insert(insertText);
+            if (isGroup && autocompleteProvider != null) {
+                openAutocomplete();
+            }
+        }
     }
 
     private void saveEdit() {
@@ -488,6 +603,7 @@ class SourceViewer {
         }
         try {
             Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
+            dirty = false;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
             editMode = false;
@@ -509,6 +625,7 @@ class SourceViewer {
         }
         try {
             Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
+            dirty = false;
             notifySave("Saved: " + editableFile.getFileName(), false);
         } catch (IOException e) {
             notifySave("Save failed: " + e.getMessage(), true);
@@ -541,6 +658,18 @@ class SourceViewer {
             return false;
         }
         if (editMode) {
+            if (autocompletePopup != null) {
+                boolean wasValueMode = autocompletePopup.isValueMode();
+                AutocompletePopup.Result result = autocompletePopup.handleMouseEvent(me);
+                if (result == AutocompletePopup.Result.CLOSED) {
+                    AutocompletePopup.CompletionItem item = autocompletePopup.consumeSelectedItem();
+                    autocompletePopup = null;
+                    if (item != null) {
+                        insertCompletion(item, wasValueMode);
+                    }
+                }
+                return true;
+            }
             if (me.kind() == MouseEventKind.SCROLL_UP) {
                 editState.scrollUp(3);
                 return true;
@@ -591,6 +720,7 @@ class SourceViewer {
         if (editMode) {
             if (text != null && !text.isEmpty()) {
                 editState.insert(text);
+                dirty = true;
             }
             return;
         }
@@ -763,7 +893,7 @@ class SourceViewer {
         Style ts = titleStyle != null ? titleStyle : Style.EMPTY;
         List<Span> titleSpans = new ArrayList<>();
         String info = title != null ? title : "";
-        titleSpans.add(Span.styled(" Edit [" + info + "] ", ts));
+        titleSpans.add(Span.styled(" Edit [" + info + (dirty ? " *" : "") + "] ", ts));
         Block.Builder blockBuilder = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(Line.from(titleSpans)));
@@ -782,6 +912,12 @@ class SourceViewer {
                 .lineNumberStyle(Style.EMPTY.dim())
                 .build();
         textArea.renderWithCursor(inner, frame.buffer(), editState, frame);
+
+        if (autocompletePopup != null) {
+            int cursorRow = editState.cursorRow() - editState.scrollRow();
+            int cursorCol = editState.cursorCol() - editState.scrollCol();
+            autocompletePopup.render(frame, inner, cursorRow, cursorCol);
+        }
     }
 
     void renderFooter(List<Span> spans) {
@@ -789,6 +925,9 @@ class SourceViewer {
             TuiHelper.hint(spans, "Esc", "cancel");
             TuiHelper.hint(spans, "F5", "save & close");
             TuiHelper.hint(spans, "Shift+F5", "save");
+            if (autocompleteProvider != null && isPropertiesFile()) {
+                TuiHelper.hint(spans, "Tab", "complete");
+            }
             TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "move");
             return;
         }
