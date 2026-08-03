@@ -201,6 +201,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                                       + " (when --download=true), otherwise defaults to " + RuntimeType.QUARKUS_VERSION)
     protected String quarkusVersion;
 
+    protected String quarkusPlatformUrl;
+
     @CommandLine.Option(names = { "--quarkus-package-type" },
                         description = "Quarkus package type (uber-jar or fast-jar)",
                         defaultValue = "fast-jar")

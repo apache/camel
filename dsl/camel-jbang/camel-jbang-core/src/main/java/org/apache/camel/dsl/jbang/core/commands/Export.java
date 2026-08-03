@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
+import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
@@ -182,6 +183,8 @@ public class Export extends ExportBaseCommand {
             this.quarkusGroupId = props.getProperty(QUARKUS_GROUP_ID, this.quarkusGroupId);
             this.quarkusArtifactId = props.getProperty(QUARKUS_ARTIFACT_ID, this.quarkusArtifactId);
             this.quarkusVersion = props.getProperty(QUARKUS_VERSION, this.quarkusVersion);
+            this.quarkusPlatformUrl = props.getProperty(
+                    QuarkusHelper.QUARKUS_PLATFORM_URL_PROPERTY, this.quarkusPlatformUrl);
             this.camelSpringBootVersion = props.getProperty(CAMEL_SPRING_BOOT_VERSION, this.camelSpringBootVersion);
             this.springBootVersion = props.getProperty(SPRING_BOOT_VERSION, this.springBootVersion);
             this.mavenWrapper
@@ -209,6 +212,8 @@ public class Export extends ExportBaseCommand {
         this.quarkusGroupId = PropertyResolver.fromSystemProperty(QUARKUS_GROUP_ID, () -> this.quarkusGroupId);
         this.quarkusArtifactId = PropertyResolver.fromSystemProperty(QUARKUS_ARTIFACT_ID, () -> this.quarkusArtifactId);
         this.quarkusVersion = PropertyResolver.fromSystemProperty(QUARKUS_VERSION, () -> this.quarkusVersion);
+        this.quarkusPlatformUrl = PropertyResolver.fromSystemProperty(
+                QuarkusHelper.QUARKUS_PLATFORM_URL_PROPERTY, () -> this.quarkusPlatformUrl);
         this.camelSpringBootVersion
                 = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION, () -> this.camelSpringBootVersion);
     }
@@ -247,6 +252,7 @@ public class Export extends ExportBaseCommand {
         cmd.quarkusGroupId = this.quarkusGroupId;
         cmd.quarkusArtifactId = this.quarkusArtifactId;
         cmd.quarkusVersion = this.quarkusVersion;
+        cmd.quarkusPlatformUrl = this.quarkusPlatformUrl;
         cmd.quarkusPackageType = this.quarkusPackageType;
         cmd.springBootVersion = this.springBootVersion;
         cmd.mavenWrapper = this.mavenWrapper;

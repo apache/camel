@@ -51,7 +51,10 @@ public final class QuarkusHelper {
      * Returns the Quarkus platform registry URL, honoring the system property {@value #QUARKUS_PLATFORM_URL_PROPERTY}
      * if set.
      */
-    public static String getQuarkusPlatformUrl() {
+    public static String getQuarkusPlatformUrl(String userSuppliedUrl) {
+        if (userSuppliedUrl != null) {
+            return userSuppliedUrl;
+        }
         return System.getProperty(QUARKUS_PLATFORM_URL_PROPERTY, DEFAULT_QUARKUS_PLATFORM_URL);
     }
 
@@ -68,7 +71,7 @@ public final class QuarkusHelper {
             Function<T, String> runtimeVersionFunc,
             BiConsumer<T, String> quarkusVersionSetter) {
 
-        JsonArray streams = fetchPlatformStreams();
+        JsonArray streams = fetchPlatformStreams(null);
         if (streams == null) {
             return;
         }
@@ -100,12 +103,12 @@ public final class QuarkusHelper {
      * @return                  the resolved platform BOM version from the registry, or the original buildTimeVersion if
      *                          resolution fails
      */
-    public static String resolveQuarkusPlatformVersion(String buildTimeVersion) {
+    public static String resolveQuarkusPlatformVersion(String buildTimeVersion, String platformUrl) {
         if (buildTimeVersion == null) {
             return null;
         }
 
-        JsonArray streams = fetchPlatformStreams();
+        JsonArray streams = fetchPlatformStreams(platformUrl);
         if (streams == null) {
             return buildTimeVersion;
         }
@@ -120,11 +123,11 @@ public final class QuarkusHelper {
      *
      * @return the streams JsonArray, or null if the registry is unreachable or the response is invalid
      */
-    private static JsonArray fetchPlatformStreams() {
+    private static JsonArray fetchPlatformStreams(String platformUrl) {
         try {
             HttpClient hc = HttpClient.newHttpClient();
             HttpResponse<String> res = hc.send(
-                    HttpRequest.newBuilder(new URI(getQuarkusPlatformUrl()))
+                    HttpRequest.newBuilder(new URI(getQuarkusPlatformUrl(platformUrl)))
                             .timeout(Duration.ofSeconds(2))
                             .build(),
                     HttpResponse.BodyHandlers.ofString());

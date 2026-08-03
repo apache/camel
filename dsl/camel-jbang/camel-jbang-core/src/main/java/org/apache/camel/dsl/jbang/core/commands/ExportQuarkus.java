@@ -74,11 +74,14 @@ class ExportQuarkus extends Export {
         exportBaseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
         Path profile = exportBaseDir.resolve("application.properties");
 
-        // resolve Quarkus platform version from registry (only when no explicit version was provided)
-        if (quarkusVersion == null) {
-            quarkusVersion = RuntimeType.QUARKUS_VERSION;
+        // resolve Quarkus platform version from registry (only when no explicit version was provided,
+        // or when a custom platform URL is configured — indicating the user wants registry resolution)
+        if (quarkusVersion == null || quarkusPlatformUrl != null) {
+            if (quarkusVersion == null) {
+                quarkusVersion = RuntimeType.QUARKUS_VERSION;
+            }
             if (download) {
-                String resolved = QuarkusHelper.resolveQuarkusPlatformVersion(quarkusVersion);
+                String resolved = QuarkusHelper.resolveQuarkusPlatformVersion(quarkusVersion, quarkusPlatformUrl);
                 if (resolved != null) {
                     quarkusVersion = resolved;
                 }
