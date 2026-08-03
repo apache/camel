@@ -122,7 +122,7 @@ class JfrTabRenderTest {
     }
 
     @Test
-    void renderSnapshotDataShowsRoutesPanelTitle() {
+    void renderSnapshotDataShowsProcessorsPanelForSelectedRoute() {
         TestMonitorContext snapshotCtx = new TestMonitorContext(dataWith(info), statusResponse())
                 .withSnapshot(snapshotResponse());
         snapshotCtx.selectedPid = "1234";
@@ -133,7 +133,34 @@ class JfrTabRenderTest {
 
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
             String rendered = TuiTestHelper.renderToString(tab, 140, 30);
-            assertThat(rendered).contains("Routes");
+            assertThat(rendered).contains("Processors [order-in]");
+        });
+    }
+
+    @Test
+    void renderFooterShowsSortHintWhenSnapshotLoaded() {
+        TestMonitorContext snapshotCtx = new TestMonitorContext(dataWith(info), statusResponse())
+                .withSnapshot(snapshotResponse());
+        snapshotCtx.selectedPid = "1234";
+        JfrTab tab = new JfrTab(snapshotCtx, Runnable::run);
+
+        tab.onTabSelected();
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            String rendered = TuiTestHelper.renderToString(tab, 140, 30);
+            assertThat(rendered).contains("Enabled");
+        });
+
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            String rendered = TuiTestHelper.renderToString(tab, 140, 30);
+            assertThat(rendered).contains("order-in");
+
+            List<Span> footerSpans = new ArrayList<>();
+            tab.renderFooter(footerSpans);
+            String footer = footerSpans.stream().map(Span::content).reduce("", String::concat);
+            assertThat(footer).contains("s").contains("sort");
         });
     }
 
