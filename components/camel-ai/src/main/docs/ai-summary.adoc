@@ -4,6 +4,10 @@
 The Camel AI components are a group of components for applying Apache Camel to
 various AI-related technologies.
 
+== Getting started with LLMs
+
+New to Camel AI? Start with the xref:ai-llm-integration-guide.adoc[LLM Integration Guide] — it explains when to use xref:openai-component.adoc[OpenAI] vs xref:langchain4j-chat-component.adoc[LangChain4j Chat], structured JSON extraction, streaming to browsers, dynamic prompts, and prompt management patterns.
+
 == {doctitle} components
 
 See the following for usage of each component:

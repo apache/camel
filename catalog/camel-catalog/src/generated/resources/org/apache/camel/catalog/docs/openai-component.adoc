@@ -165,6 +165,8 @@ YAML::
 ----
 ====
 
+TIP: For component selection, structured extraction, streaming, and prompt management patterns, see the xref:ai-llm-integration-guide.adoc[LLM Integration Guide].
+
 === Basic Chat Completion with String Input
 
 [tabs]
@@ -209,6 +211,71 @@ YAML::
             message: "Response: ${body}"
 ----
 ====
+
+=== Dynamic prompts per exchange
+
+The user prompt can change on every exchange. Set the body to the prompt text, or override with the `CamelOpenAIUserMessage` header (Simple expressions work):
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:score")
+    .setHeader("CamelOpenAIUserMessage", simple("Rate 1-10 for ${header.role}: ${body}"))
+    .to("openai:chat-completion?model=gpt-4o-mini&temperature=0.2")
+    .log("${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:score
+      steps:
+        - setHeader:
+            name: CamelOpenAIUserMessage
+            simple: "Rate 1-10 for ${header.role}: ${body}"
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4o-mini
+              temperature: 0.2
+----
+====
+
+=== Chat generation parameters
+
+Control randomness for chat completions with `temperature` (0.0–2.0) and `topP` (0.0–1.0). Low temperature (for example `0.1`) is recommended for structured JSON extraction.
+
+[tabs]
+====
+YAML::
++
+[source,yaml]
+----
+- to:
+    uri: openai:chat-completion
+    parameters:
+      model: gpt-4o-mini
+      temperature: 0.1
+      topP: 1.0
+----
+
+Java::
++
+[source,java]
+----
+.to("openai:chat-completion?model=gpt-4o-mini&temperature=0.1")
+----
+====
+
+Per-exchange overrides use headers: `CamelOpenAITemperature`, `CamelOpenAITopP`.
+
+For provider-specific request fields not exposed as URI options, use `additionalBodyProperty` (see xref:others:openai-providers.adoc[OpenAI-Compatible Providers]).
 
 === File-Backed Prompt with Text File
 
@@ -395,7 +462,9 @@ When using image input, the userMessage is required. Supported image formats are
 
 === Streaming Response
 
-When `streaming=true`, the component returns an `Iterator<ChatCompletionChunk>` in the message body. You can consume this iterator using Camel's streaming EIPs or process it directly:
+When `streaming=true`, the component returns an `Iterator<ChatCompletionChunk>` in the message body. You can consume this iterator using Camel's streaming EIPs or process it directly.
+
+For Server-Sent Events to web clients (platform-http), structured extraction pipelines, and when to stream through Camel vs. a dedicated handler, see xref:ai-llm-integration-guide.adoc#Streaming responses[LLM Integration Guide — Streaming responses].
 
 .Usage example:
 [source,yaml]
@@ -432,6 +501,8 @@ When `streaming=true`, the component returns an `Iterator<ChatCompletionChunk>` 
 ----
 
 === Structured Output with outputClass
+
+TIP: For extraction tasks (resumes, invoices, classification), prefer `jsonSchema` or `outputClass` instead of hand-written JSON parsing. Use low `temperature` (0.0–0.2). See xref:ai-llm-integration-guide.adoc#Structured output (recommended for extraction)[LLM Integration Guide — Structured output].
 
 .When `outputClass` is set, the model is instructed to produce JSON matching the given class, but the component returns the raw String. Deserialize the body yourself (e.g., with Camel's Jackson) if you need a typed object.
 
@@ -1012,6 +1083,7 @@ NOTE: This maps fields from the response message's additional properties (fields
 
 For more details on specific features, see:
 
+* xref:ai-llm-integration-guide.adoc[LLM Integration Guide] - Choosing components, structured output, streaming, dynamic prompts
 * xref:others:openai-responses.adoc[Responses API operation] - OpenAI Responses API, hosted tools, and server-side conversation state
 * xref:others:openai-mcp.adoc[MCP Tool Calling] - Model Context Protocol server configuration, agentic loop, streaming, and connection recovery
 * xref:others:openai-providers.adoc[OpenAI-Compatible Providers] - Using Ollama, LM Studio, vLLM, and OpenRouter as alternative backends
