@@ -28,12 +28,18 @@ import java.util.stream.Collectors;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
+import dev.langchain4j.guardrail.InputGuardrail;
+import dev.langchain4j.guardrail.OutputGuardrail;
+import dev.langchain4j.guardrail.config.InputGuardrailsConfig;
+import dev.langchain4j.guardrail.config.OutputGuardrailsConfig;
 import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.tool.BeforeToolExecution;
 import dev.langchain4j.service.tool.ToolArgumentsErrorHandler;
+import dev.langchain4j.service.tool.ToolExecution;
 import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,11 +60,15 @@ import org.slf4j.LoggerFactory;
  * <li><strong>Chat Model:</strong> The underlying LLM for processing conversations</li>
  * <li><strong>Memory Provider:</strong> For maintaining conversation history in stateful agents</li>
  * <li><strong>Retrieval Augmentor:</strong> For RAG (Retrieval-Augmented Generation) capabilities</li>
- * <li><strong>Input Guardrails:</strong> Security filters applied to incoming messages</li>
- * <li><strong>Output Guardrails:</strong> Security filters applied to agent responses</li>
+ * <li><strong>Input Guardrails:</strong> Security filters applied to incoming messages (class-based or
+ * instance-based)</li>
+ * <li><strong>Output Guardrails:</strong> Security filters applied to agent responses (class-based or
+ * instance-based)</li>
+ * <li><strong>Guardrail Configuration:</strong> Retry policies and other guardrail behavior settings</li>
  * <li><strong>Custom Tools:</strong> Custom LangChain4j tools with @Tool annotations</li>
  * <li><strong>MCP Clients:</strong> Model Context Protocol clients for external tool integration</li>
  * <li><strong>MCP Tool Filters:</strong> Filters for controlling which MCP tools are available</li>
+ * <li><strong>Tool Execution Hooks:</strong> Callbacks invoked before and after each tool execution</li>
  * </ul>
  *
  * @since 4.9.0
@@ -79,6 +89,12 @@ public class AgentConfiguration {
     private ToolExecutionErrorHandler toolExecutionErrorHandler;
     private ToolArgumentsErrorHandler toolArgumentsErrorHandler;
     private Boolean compensateOnToolErrors;
+    private List<InputGuardrail> inputGuardrails;
+    private List<OutputGuardrail> outputGuardrails;
+    private InputGuardrailsConfig inputGuardrailsConfig;
+    private OutputGuardrailsConfig outputGuardrailsConfig;
+    private Consumer<BeforeToolExecution> beforeToolExecution;
+    private Consumer<ToolExecution> afterToolExecution;
     private Consumer<AiServices<?>> aiServicesCustomizer;
 
     /**
@@ -464,6 +480,165 @@ public class AgentConfiguration {
     }
 
     /**
+     * Gets the configured input guardrail instances for security filtering.
+     *
+     * <p>
+     * Unlike {@link #getInputGuardrailClasses()}, which returns classes to be instantiated by LangChain4j via no-arg
+     * constructor, this returns pre-instantiated guardrail objects that can carry configuration, injected
+     * collaborators, or a {@code CamelContext} reference.
+     * </p>
+     *
+     * @return the list of input guardrail instances, or {@code null} if not configured
+     */
+    public List<InputGuardrail> getInputGuardrails() {
+        return inputGuardrails;
+    }
+
+    /**
+     * Sets pre-instantiated input guardrail instances for security filtering of incoming messages.
+     *
+     * <p>
+     * Use this method when guardrails need configuration (thresholds, wordlists, vault-sourced patterns) or injected
+     * collaborators from a DI container (Spring, Quarkus CDI). Both guardrail classes and instances can be set; they
+     * are additive on the AiServices builder.
+     * </p>
+     *
+     * @param  inputGuardrails list of guardrail instances to apply to user inputs
+     * @return                 this configuration instance for method chaining
+     * @see                    #withInputGuardrailClasses(List)
+     */
+    public AgentConfiguration withInputGuardrails(List<InputGuardrail> inputGuardrails) {
+        this.inputGuardrails = inputGuardrails;
+        return this;
+    }
+
+    /**
+     * Gets the configured output guardrail instances for security filtering.
+     *
+     * <p>
+     * Unlike {@link #getOutputGuardrailClasses()}, which returns classes to be instantiated by LangChain4j via no-arg
+     * constructor, this returns pre-instantiated guardrail objects that can carry configuration, injected
+     * collaborators, or a {@code CamelContext} reference.
+     * </p>
+     *
+     * @return the list of output guardrail instances, or {@code null} if not configured
+     */
+    public List<OutputGuardrail> getOutputGuardrails() {
+        return outputGuardrails;
+    }
+
+    /**
+     * Sets pre-instantiated output guardrail instances for security filtering of agent responses.
+     *
+     * <p>
+     * Use this method when guardrails need configuration or injected collaborators from a DI container. Both guardrail
+     * classes and instances can be set; they are additive on the AiServices builder.
+     * </p>
+     *
+     * @param  outputGuardrails list of guardrail instances to apply to agent outputs
+     * @return                  this configuration instance for method chaining
+     * @see                     #withOutputGuardrailClasses(List)
+     */
+    public AgentConfiguration withOutputGuardrails(List<OutputGuardrail> outputGuardrails) {
+        this.outputGuardrails = outputGuardrails;
+        return this;
+    }
+
+    /**
+     * Gets the configuration for input guardrails (e.g., max retries).
+     *
+     * @return the input guardrails configuration, or {@code null} if not configured
+     */
+    public InputGuardrailsConfig getInputGuardrailsConfig() {
+        return inputGuardrailsConfig;
+    }
+
+    /**
+     * Sets the configuration for input guardrails. This controls behavior such as retry policies when an input
+     * guardrail rejects a message.
+     *
+     * @param  inputGuardrailsConfig the configuration for input guardrails
+     * @return                       this configuration instance for method chaining
+     */
+    public AgentConfiguration withInputGuardrailsConfig(InputGuardrailsConfig inputGuardrailsConfig) {
+        this.inputGuardrailsConfig = inputGuardrailsConfig;
+        return this;
+    }
+
+    /**
+     * Gets the configuration for output guardrails (e.g., max retries).
+     *
+     * @return the output guardrails configuration, or {@code null} if not configured
+     */
+    public OutputGuardrailsConfig getOutputGuardrailsConfig() {
+        return outputGuardrailsConfig;
+    }
+
+    /**
+     * Sets the configuration for output guardrails. This controls behavior such as retry policies when an output
+     * guardrail rejects a response.
+     *
+     * @param  outputGuardrailsConfig the configuration for output guardrails
+     * @return                        this configuration instance for method chaining
+     */
+    public AgentConfiguration withOutputGuardrailsConfig(OutputGuardrailsConfig outputGuardrailsConfig) {
+        this.outputGuardrailsConfig = outputGuardrailsConfig;
+        return this;
+    }
+
+    /**
+     * Gets the callback invoked before each tool execution.
+     *
+     * @return the before-tool-execution consumer, or {@code null} if not configured
+     */
+    public Consumer<BeforeToolExecution> getBeforeToolExecution() {
+        return beforeToolExecution;
+    }
+
+    /**
+     * Sets a callback that is invoked before each tool execution. This is the natural hook for per-tool-call logging,
+     * Camel events, Micrometer metrics and OpenTelemetry spans.
+     *
+     * <p>
+     * <strong>Note:</strong> The {@link BeforeToolExecution} type is marked {@code @Experimental} in LangChain4j — its
+     * API may change in future versions.
+     * </p>
+     *
+     * @param  beforeToolExecution the consumer to invoke before each tool execution
+     * @return                     this configuration instance for method chaining
+     */
+    public AgentConfiguration withBeforeToolExecution(Consumer<BeforeToolExecution> beforeToolExecution) {
+        this.beforeToolExecution = beforeToolExecution;
+        return this;
+    }
+
+    /**
+     * Gets the callback invoked after each tool execution.
+     *
+     * @return the after-tool-execution consumer, or {@code null} if not configured
+     */
+    public Consumer<ToolExecution> getAfterToolExecution() {
+        return afterToolExecution;
+    }
+
+    /**
+     * Sets a callback that is invoked after each tool execution. This is the natural hook for per-tool-call logging,
+     * Camel events, Micrometer metrics and OpenTelemetry spans.
+     *
+     * <p>
+     * <strong>Note:</strong> The {@link ToolExecution} type is marked {@code @Experimental} in LangChain4j — its API
+     * may change in future versions.
+     * </p>
+     *
+     * @param  afterToolExecution the consumer to invoke after each tool execution
+     * @return                    this configuration instance for method chaining
+     */
+    public AgentConfiguration withAfterToolExecution(Consumer<ToolExecution> afterToolExecution) {
+        this.afterToolExecution = afterToolExecution;
+        return this;
+    }
+
+    /**
      * Gets the custom AiServices builder customizer.
      *
      * @return the customizer, or {@code null} if not configured
@@ -476,6 +651,24 @@ public class AgentConfiguration {
      * Sets a customizer callback that is invoked on the LangChain4j {@link AiServices} builder after all standard
      * configuration has been applied but before {@code build()} is called. This provides an escape hatch for
      * configuring any AiServices builder option that is not directly exposed on this configuration class.
+     *
+     * <p>
+     * <strong>Warning:</strong> A customizer that calls {@code chatRequestTransformer(...)} will silently replace the
+     * transformer installed by {@code configureBuilder()} for {@code responseFormat}, breaking
+     * {@code jsonSchema}/{@code outputClass} structured output. If you need to set both a custom transformer and
+     * structured output, compose both transformers into a single {@code UnaryOperator<ChatRequest>} and set it via the
+     * customizer.
+     * </p>
+     *
+     * <p>
+     * The following AiServices builder options are deliberately not exposed as first-class fields and should be
+     * configured via this escape hatch when needed:
+     * </p>
+     * <ul>
+     * <li>{@code toolSearchStrategy} — overlaps with the component's own tool-search mechanism</li>
+     * <li>{@code storeRetrievedContentInChatMemory} — niche RAG-memory flag</li>
+     * <li>{@code AiServiceListener} — users can attach {@code ChatModelListener}s to the ChatModel bean directly</li>
+     * </ul>
      *
      * @param  aiServicesCustomizer the customizer to apply to the AiServices builder
      * @return                      this configuration instance for method chaining
