@@ -73,6 +73,10 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
     @Override
     public void setRuntimeEnabled(boolean runtimeEnabled) {
         this.runtimeEnabled = runtimeEnabled;
+        if (runtimeEnabled && camelContext != null && instrumentation == null) {
+            instrumentation = new CamelJfrRuntimeInstrumentation();
+            camelContext.addLifecycleStrategy(instrumentation);
+        }
     }
 
     @Override

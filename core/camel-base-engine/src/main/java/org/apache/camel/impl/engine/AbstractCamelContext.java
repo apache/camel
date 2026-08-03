@@ -2447,6 +2447,7 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
+        CamelContextAware.trySetCamelContext(startupStepRecorder, this);
         startupStepRecorder.start();
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, null, "Build CamelContext");
 
