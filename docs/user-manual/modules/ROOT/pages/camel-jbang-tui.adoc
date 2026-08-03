@@ -124,9 +124,9 @@ to any tab, or use *Tab* / *Shift+Tab* to cycle.
 The *More* menu (key *0*) opens a popup with tabs organized into groups:
 
 * *Routing* -- Browse Endpoints, Consumers, HTTP, Inflight, Producers, Route Controller
-* *Observability* -- Circuit Breaker, Health, Metrics, Network Services, Exchange Events, Recovery Tasks, OpenTelemetry Spans
+* *Observability* -- Circuit Breaker, Health, JFR, Metrics, Network Services, Exchange Events, Recovery Tasks, OpenTelemetry Spans
 * *Data* -- JDBC DataSource, Kafka, SQL Query, SQL Trace
-* *JVM* -- Classpath, Heap Memory Histogram, JFR, Memory Usage, Memory Leak, Process, Startup, Threads
+* *JVM* -- Classpath, Heap Memory Histogram, Memory Usage, Memory Leak, Process, Startup, Threads
 * *Project* -- Beans, Catalog, Configuration, CVE Audit, Maven Dependencies, Type Converters, Data Type Transformers
 
 Tabs appear dynamically based on what the integration uses. For example, the Kafka tab appears

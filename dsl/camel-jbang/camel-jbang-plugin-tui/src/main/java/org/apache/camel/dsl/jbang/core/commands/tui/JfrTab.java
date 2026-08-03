@@ -1017,8 +1017,89 @@ class JfrTab extends AbstractTab {
     }
 
     @Override
+    public JsonObject getTableDataAsJson() {
+        if (!snapshotLoaded) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "JFR");
+        result.put("view", activeView.label);
+        result.put("eventCount", snapshotEventCount);
+
+        JsonArray rows = new JsonArray();
+        switch (activeView) {
+            case ROUTES -> {
+                for (RouteStats r : routeData) {
+                    JsonObject row = new JsonObject();
+                    row.put("routeId", r.routeId());
+                    row.put("total", r.total());
+                    row.put("failed", r.failed());
+                    row.put("failRate", r.total() > 0 ? Math.round(r.failed() * 1000.0 / r.total()) / 10.0 : 0);
+                    row.put("minMs", r.minMs());
+                    row.put("meanMs", r.meanMs());
+                    row.put("maxMs", r.maxMs());
+                    rows.add(row);
+                }
+            }
+            case PROCESSORS -> {
+                for (ProcessorStats p : processorData) {
+                    JsonObject row = new JsonObject();
+                    row.put("processorId", p.processorId());
+                    row.put("processorType", p.processorType());
+                    row.put("routeId", p.routeId());
+                    row.put("total", p.total());
+                    row.put("failed", p.failed());
+                    row.put("minMs", p.minMs());
+                    row.put("meanMs", p.meanMs());
+                    row.put("maxMs", p.maxMs());
+                    rows.add(row);
+                }
+            }
+            case ENDPOINTS -> {
+                for (EndpointStats e : endpointData) {
+                    JsonObject row = new JsonObject();
+                    row.put("endpointUri", e.endpointUri());
+                    row.put("total", e.total());
+                    row.put("failed", e.failed());
+                    row.put("minMs", e.minMs());
+                    row.put("meanMs", e.meanMs());
+                    row.put("maxMs", e.maxMs());
+                    rows.add(row);
+                }
+            }
+            case FAILURES -> {
+                for (FailureEntry f : failureData) {
+                    JsonObject row = new JsonObject();
+                    row.put("timestamp", f.timestamp());
+                    row.put("exchangeId", f.exchangeId());
+                    row.put("routeId", f.routeId());
+                    row.put("exceptionType", f.exceptionType());
+                    row.put("exceptionMessage", f.exceptionMessage());
+                    rows.add(row);
+                }
+            }
+            case REDELIVERIES -> {
+                for (RedeliveryEntry r : redeliveryData) {
+                    JsonObject row = new JsonObject();
+                    row.put("timestamp", r.timestamp());
+                    row.put("exchangeId", r.exchangeId());
+                    row.put("routeId", r.routeId());
+                    row.put("attempt", r.attempt());
+                    row.put("maxAttempts", r.maxAttempts());
+                    rows.add(row);
+                }
+            }
+        }
+        result.put("rows", rows);
+        result.put("totalRows", rows.size());
+        int sel = tableState.selected() != null ? tableState.selected() : -1;
+        result.put("selectedIndex", sel);
+        return result;
+    }
+
+    @Override
     public String description() {
-        return "JFR runtime instrumentation status, event toggling, and runtime data snapshot";
+        return "JFR runtime profiling with route, processor, and endpoint statistics";
     }
 
     @Override
