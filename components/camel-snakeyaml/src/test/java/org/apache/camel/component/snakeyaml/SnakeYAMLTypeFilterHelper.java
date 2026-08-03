@@ -21,6 +21,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.snakeyaml.model.RexPojo;
 import org.apache.camel.component.snakeyaml.model.TestPojo;
 import org.apache.camel.component.snakeyaml.model.UnsafePojo;
+import org.yaml.snakeyaml.composer.ComposerException;
 import org.yaml.snakeyaml.constructor.ConstructorException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -57,10 +58,11 @@ public final class SnakeYAMLTypeFilterHelper {
                         "!!org.apache.camel.component.snakeyaml.model.UnsafePojo {name: Camel}"),
                 "As SnakeYAML filters class is can unmarshall, UnsafePojo should not be allowed");
 
-        // Wrapped by SnakeYAML
-        assertTrue(ex.getCause() instanceof ConstructorException);
-        // Thrown by SnakeYAMLDataFormat
-        assertTrue(ex.getCause().getCause() instanceof IllegalArgumentException);
+        // Rejected by the SnakeYAML TagInspector allow-list during composing (CAMEL-24294), before
+        // getClassForName would run - so the failure is a ComposerException, not the previous
+        // ConstructorException -> IllegalArgumentException chain.
+        assertTrue(ex.getCause() instanceof ComposerException);
+        assertTrue(ex.getCause().getMessage().contains("UnsafePojo"));
     }
 
     static void testTypeConstructorFromDefinition(ProducerTemplate template) {
@@ -88,10 +90,9 @@ public final class SnakeYAMLTypeFilterHelper {
                         "!!org.apache.camel.component.snakeyaml.model.UnsafePojo {name: Camel}"),
                 "As SnakeYAML filters class is can unmarshall, UnsafePojo should not be allowed");
 
-        // Wrapped by SnakeYAML
-        assertTrue(ex.getCause() instanceof ConstructorException);
-        // Thrown by SnakeYAMLDataFormat
-        assertTrue(ex.getCause().getCause() instanceof IllegalArgumentException);
+        // Rejected by the SnakeYAML TagInspector allow-list during composing (CAMEL-24294)
+        assertTrue(ex.getCause() instanceof ComposerException);
+        assertTrue(ex.getCause().getMessage().contains("UnsafePojo"));
     }
 
     static void testAllowAllConstructor(ProducerTemplate template) {

@@ -1529,6 +1529,16 @@ data format and the iterator/splitter modes. The full, unmodified entry name rem
 so routes that intentionally recreate the archive's directory structure keep working — read it
 from `CamelTarFileEntryName` for tar and from `zipFileName` for zip instead of `CamelFileName`.
 
+=== camel-snakeyaml - typeFilters are now also enforced by the SnakeYAML TagInspector
+
+When `typeFilters` (or `unmarshalType`) is configured, the allow-list is now also enforced by the
+SnakeYAML 2.x `TagInspector` layer, not only by the `getClassForName` constructor override. A YAML
+document that references a disallowed global tag is therefore rejected earlier, during composing, and
+surfaces as an `org.yaml.snakeyaml.composer.ComposerException` (`"Global tag is not allowed: ..."`)
+instead of the previous `ConstructorException` caused by an `IllegalArgumentException`. The set of
+accepted types is unchanged; only the exception raised for a rejected type differs. Routes that do not
+configure `typeFilters` are unaffected.
+
 === camel-jfr
 
 `camel-jfr` can now also emit JFR events during message routing, in addition to the
