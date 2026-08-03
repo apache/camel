@@ -40,8 +40,8 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 /**
- * Shared LLM HTTP client supporting Ollama, OpenAI-compatible, Anthropic (including Vertex AI), and IBM watsonx.ai
- * APIs.
+ * Shared LLM HTTP client supporting Ollama, OpenAI-compatible, Anthropic (including Vertex AI), Google Gemini, and IBM
+ * watsonx.ai APIs.
  */
 public class LlmClient {
 
@@ -58,6 +58,8 @@ public class LlmClient {
     private static final String DEFAULT_AZURE_API_VERSION = "2024-10-21";
     /** Last-resort Azure deployment segment when URL normalization runs before model detection completes. */
     private static final String DEFAULT_AZURE_DEPLOYMENT_FALLBACK = "gpt-4o";
+    private static final String DEFAULT_GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta";
+    private static final String DEFAULT_GEMINI_MODEL = "gemini-2.0-flash";
     private static final int CONNECT_TIMEOUT_SECONDS = 10;
     private static final int HEALTH_CHECK_TIMEOUT_SECONDS = 5;
 
@@ -71,6 +73,7 @@ public class LlmClient {
         ollama,
         openai,
         anthropic,
+        gemini,
         watsonx
     }
 
@@ -84,7 +87,11 @@ public class LlmClient {
     public record ToolDef(String name, String description, JsonObject parameters) {
     }
 
-    public record ToolCall(String id, String name, JsonObject arguments) {
+    public record ToolCall(String id, String name, JsonObject arguments, String thoughtSignature) {
+
+        public ToolCall(String id, String name, JsonObject arguments) {
+            this(id, name, arguments, null);
+        }
     }
 
     public record ToolResult(String toolCallId, String content) {
@@ -246,14 +253,16 @@ public class LlmClient {
             found = switch (apiType) {
                 case anthropic -> tryAnthropicOrVertex();
                 case openai -> tryAzureOpenAi() || tryOpenAi();
+                case gemini -> tryGemini(true);
                 case ollama -> tryInfraOllama() || tryDefaultOllama();
                 case watsonx -> tryWatsonx();
             };
         } else {
-            // auto-detect priority: anthropic → vertex → azure openai → openai → watsonx → ollama
+            // auto-detect priority: anthropic → vertex → azure openai → gemini → openai → watsonx → ollama
             found = tryAnthropicApiKey()
                     || tryVertexAi()
                     || tryAzureOpenAi()
+                    || tryGemini(false)
                     || tryOpenAi()
                     || tryWatsonx()
                     || tryInfraOllama()
@@ -290,6 +299,11 @@ public class LlmClient {
                     model = DEFAULT_OPENAI_MODEL;
                 }
             }
+            case gemini -> {
+                if (model == null || model.isBlank() || DEFAULT_OLLAMA_MODEL.equals(model)) {
+                    model = DEFAULT_GEMINI_MODEL;
+                }
+            }
             case ollama -> {
                 if (model == null || model.isBlank()) {
                     model = resolveDefaultOllamaModel();
@@ -316,6 +330,14 @@ public class LlmClient {
                 return key;
             }
             // Vertex AI uses gcloud token, not API key
+            return null;
+        }
+        if (apiType == ApiType.gemini) {
+            String key = resolveGeminiApiKeyFromEnv();
+            if (key != null) {
+                apiKey = key;
+                return key;
+            }
             return null;
         }
         if (apiType == ApiType.watsonx) {
@@ -354,6 +376,7 @@ public class LlmClient {
             case ollama -> generateOllama(systemPrompt, userPrompt);
             case openai, watsonx -> generateOpenAi(systemPrompt, userPrompt);
             case anthropic -> generateAnthropic(systemPrompt, userPrompt);
+            case gemini -> generateGemini(systemPrompt, userPrompt);
         };
     }
 
@@ -364,6 +387,7 @@ public class LlmClient {
             case ollama -> chatOllamaFormat(systemPrompt, messages, tools);
             case openai, watsonx -> chatOpenAiFormat(systemPrompt, messages, tools);
             case anthropic -> chatAnthropicFormat(systemPrompt, messages, tools);
+            case gemini -> chatGeminiFormat(systemPrompt, messages, tools);
         };
     }
 
@@ -384,6 +408,7 @@ public class LlmClient {
             case ollama -> listOllamaModels();
             case openai -> listOpenAiModels();
             case anthropic -> isVertexAi() ? List.of() : listAnthropicModels();
+            case gemini -> listGeminiModels();
             case watsonx -> listWatsonxModels();
         };
     }
@@ -416,6 +441,46 @@ public class LlmClient {
         String base = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
         JsonObject response = sendGetRequest(base + "/v1/models", buildAnthropicHeaders());
         return extractStringList(response, "data", "id");
+    }
+
+    private List<String> listGeminiModels() {
+        String key = resolveGeminiApiKey();
+        if (key == null || key.isBlank()) {
+            return List.of();
+        }
+        String base = normalizeGeminiBaseUrl(url);
+        JsonObject response = sendGetRequest(base + "/models", buildGeminiHeaders(key));
+        return extractGeminiModelIds(response);
+    }
+
+    static List<String> extractGeminiModelIds(JsonObject response) {
+        if (response == null || !(response.get("models") instanceof JsonArray models)) {
+            return List.of();
+        }
+        List<String> ids = new ArrayList<>();
+        for (Object obj : models) {
+            if (!(obj instanceof JsonObject model)) {
+                continue;
+            }
+            JsonArray methods = (JsonArray) model.get("supportedGenerationMethods");
+            if (methods != null) {
+                boolean supportsGenerate = false;
+                for (Object method : methods) {
+                    if ("generateContent".equals(String.valueOf(method))) {
+                        supportsGenerate = true;
+                        break;
+                    }
+                }
+                if (!supportsGenerate) {
+                    continue;
+                }
+            }
+            String name = model.getString("name");
+            if (name != null && !name.isBlank()) {
+                ids.add(normalizeGeminiModelId(name));
+            }
+        }
+        return ids;
     }
 
     private List<String> listWatsonxModels() {
@@ -516,6 +581,305 @@ public class LlmClient {
 
         JsonObject response = sendRequest(apiUrl, request, resolvedKey);
         return extractOpenAiContent(response);
+    }
+
+    // ---- Gemini generate ----
+
+    private String generateGemini(String systemPrompt, String userPrompt) {
+        JsonObject request = buildGeminiGenerateRequest(systemPrompt, userPrompt, null);
+        String apiUrl = geminiGenerateContentUrl();
+        JsonObject response = sendGeminiRequest(apiUrl, request);
+        return extractGeminiTextFromResponse(response);
+    }
+
+    private ChatResponse chatGeminiFormat(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+        JsonObject request = buildGeminiGenerateRequest(systemPrompt, null, tools);
+        request.put("contents", buildGeminiContents(messages));
+        String apiUrl = geminiGenerateContentUrl();
+        JsonObject response = sendGeminiRequest(apiUrl, request);
+        return parseGeminiChatResponse(response);
+    }
+
+    private JsonObject buildGeminiGenerateRequest(String systemPrompt, String userPrompt, List<ToolDef> tools) {
+        JsonObject request = new JsonObject();
+        if (systemPrompt != null && !systemPrompt.isBlank()) {
+            JsonObject systemInstruction = new JsonObject();
+            JsonArray parts = new JsonArray();
+            JsonObject text = new JsonObject();
+            text.put("text", systemPrompt);
+            parts.add(text);
+            systemInstruction.put("parts", parts);
+            request.put("systemInstruction", systemInstruction);
+        }
+        if (userPrompt != null) {
+            JsonArray contents = new JsonArray();
+            JsonObject user = new JsonObject();
+            user.put("role", "user");
+            JsonArray parts = new JsonArray();
+            JsonObject text = new JsonObject();
+            text.put("text", userPrompt);
+            parts.add(text);
+            user.put("parts", parts);
+            contents.add(user);
+            request.put("contents", contents);
+        }
+        JsonObject generationConfig = new JsonObject();
+        generationConfig.put("temperature", temperature);
+        if (maxTokens > 0) {
+            generationConfig.put("maxOutputTokens", maxTokens);
+        }
+        request.put("generationConfig", generationConfig);
+        JsonArray declarations = buildGeminiFunctionDeclarations(tools);
+        if (declarations != null) {
+            JsonObject toolsObj = new JsonObject();
+            toolsObj.put("functionDeclarations", declarations);
+            JsonArray toolsArray = new JsonArray();
+            toolsArray.add(toolsObj);
+            request.put("tools", toolsArray);
+        }
+        return request;
+    }
+
+    JsonObject buildGeminiGenerateRequestForTest(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+        JsonObject request = buildGeminiGenerateRequest(systemPrompt, null, tools);
+        request.put("contents", buildGeminiContents(messages));
+        return request;
+    }
+
+    private JsonArray buildGeminiContents(List<Message> messages) {
+        JsonArray contents = new JsonArray();
+        for (Message msg : messages) {
+            if (msg.toolCalls() != null && !msg.toolCalls().isEmpty()) {
+                JsonObject modelMsg = new JsonObject();
+                modelMsg.put("role", "model");
+                JsonArray parts = new JsonArray();
+                if (msg.content() != null && !msg.content().isBlank()) {
+                    JsonObject text = new JsonObject();
+                    text.put("text", msg.content());
+                    parts.add(text);
+                }
+                for (ToolCall tc : msg.toolCalls()) {
+                    JsonObject functionCall = new JsonObject();
+                    functionCall.put("name", tc.name());
+                    functionCall.put("args", tc.arguments());
+                    if (tc.id() != null && !tc.id().isBlank() && !tc.id().equals(tc.name())) {
+                        functionCall.put("id", tc.id());
+                    }
+                    if (tc.thoughtSignature() != null && !tc.thoughtSignature().isBlank()) {
+                        functionCall.put("thoughtSignature", tc.thoughtSignature());
+                    }
+                    JsonObject part = new JsonObject();
+                    part.put("functionCall", functionCall);
+                    parts.add(part);
+                }
+                modelMsg.put("parts", parts);
+                contents.add(modelMsg);
+            } else if (msg.toolResults() != null && !msg.toolResults().isEmpty()) {
+                JsonObject userMsg = new JsonObject();
+                userMsg.put("role", "user");
+                JsonArray parts = new JsonArray();
+                for (ToolResult tr : msg.toolResults()) {
+                    JsonObject responseBody = new JsonObject();
+                    responseBody.put("content", tr.content());
+                    JsonObject functionResponse = new JsonObject();
+                    functionResponse.put("name", toolResultFunctionName(tr.toolCallId()));
+                    functionResponse.put("response", responseBody);
+                    JsonObject part = new JsonObject();
+                    part.put("functionResponse", functionResponse);
+                    parts.add(part);
+                }
+                userMsg.put("parts", parts);
+                contents.add(userMsg);
+            } else {
+                JsonObject turn = new JsonObject();
+                turn.put("role", "user".equals(msg.role()) ? "user" : "model");
+                JsonArray parts = new JsonArray();
+                JsonObject text = new JsonObject();
+                text.put("text", msg.content());
+                parts.add(text);
+                turn.put("parts", parts);
+                contents.add(turn);
+            }
+        }
+        return contents;
+    }
+
+    private static String toolResultFunctionName(String toolCallId) {
+        if (toolCallId == null || toolCallId.isBlank()) {
+            return "tool";
+        }
+        return toolCallId;
+    }
+
+    private JsonArray buildGeminiFunctionDeclarations(List<ToolDef> tools) {
+        if (tools == null || tools.isEmpty()) {
+            return null;
+        }
+        JsonArray declarations = new JsonArray();
+        for (ToolDef tool : tools) {
+            JsonObject decl = new JsonObject();
+            decl.put("name", tool.name());
+            decl.put("description", tool.description());
+            decl.put("parameters", tool.parameters());
+            declarations.add(decl);
+        }
+        return declarations;
+    }
+
+    ChatResponse parseGeminiChatResponse(JsonObject response) {
+        if (response == null) {
+            return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
+        }
+        TokenUsage usage = extractGeminiUsage(response);
+        JsonArray candidates = (JsonArray) response.get("candidates");
+        if (candidates == null || candidates.isEmpty()) {
+            return new ChatResponse(null, List.of(), "error", false, usage);
+        }
+        JsonObject candidate = (JsonObject) candidates.get(0);
+        String finishReason = candidate.getString("finishReason");
+        JsonObject content = (JsonObject) candidate.get("content");
+        if (content == null) {
+            return new ChatResponse(null, List.of(), finishReason, false, usage);
+        }
+        JsonArray parts = (JsonArray) content.get("parts");
+        if (parts == null) {
+            return new ChatResponse(null, List.of(), finishReason, false, usage);
+        }
+        StringBuilder text = new StringBuilder();
+        List<ToolCall> toolCalls = new ArrayList<>();
+        for (Object obj : parts) {
+            if (!(obj instanceof JsonObject part)) {
+                continue;
+            }
+            if (part.get("text") != null) {
+                text.append(part.getString("text"));
+            }
+            JsonObject functionCall = (JsonObject) part.get("functionCall");
+            if (functionCall != null) {
+                String name = functionCall.getString("name");
+                String callId = functionCall.getString("id");
+                if (callId == null || callId.isBlank()) {
+                    callId = name;
+                }
+                JsonObject args = functionCall.get("args") instanceof JsonObject jo ? jo : new JsonObject();
+                String thoughtSignature = functionCall.getString("thoughtSignature");
+                toolCalls.add(new ToolCall(callId, name, args, thoughtSignature));
+            }
+        }
+        String stopReason = !toolCalls.isEmpty() ? "tool_calls" : finishReason;
+        String contentText = !text.isEmpty() ? text.toString() : null;
+        return new ChatResponse(contentText, toolCalls, stopReason, false, usage);
+    }
+
+    String extractGeminiTextFromResponse(JsonObject response) {
+        if (response == null) {
+            return null;
+        }
+        JsonArray candidates = (JsonArray) response.get("candidates");
+        if (candidates == null || candidates.isEmpty()) {
+            return null;
+        }
+        JsonObject candidate = (JsonObject) candidates.get(0);
+        JsonObject content = (JsonObject) candidate.get("content");
+        if (content == null) {
+            return null;
+        }
+        JsonArray parts = (JsonArray) content.get("parts");
+        if (parts == null) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Object obj : parts) {
+            if (obj instanceof JsonObject part && part.get("text") != null) {
+                sb.append(part.getString("text"));
+            }
+        }
+        return !sb.isEmpty() ? sb.toString() : null;
+    }
+
+    private TokenUsage extractGeminiUsage(JsonObject response) {
+        JsonObject usageMetadata = (JsonObject) response.get("usageMetadata");
+        if (usageMetadata == null) {
+            return TokenUsage.EMPTY;
+        }
+        int input = getIntValue(usageMetadata, "promptTokenCount");
+        int output = getIntValue(usageMetadata, "candidatesTokenCount");
+        int total = getIntValue(usageMetadata, "totalTokenCount");
+        if (total == 0) {
+            total = input + output;
+        }
+        return new TokenUsage(input, output, total);
+    }
+
+    private JsonObject sendGeminiRequest(String requestUrl, JsonObject body) {
+        return sendRequestWithHeaders(requestUrl, body, buildGeminiHeaders(resolveGeminiApiKey()));
+    }
+
+    String geminiGenerateContentUrl() {
+        String base = normalizeGeminiBaseUrl(url);
+        String modelId = normalizeGeminiModelId(model);
+        return base + "/models/" + modelId + ":generateContent";
+    }
+
+    static String normalizeGeminiModelId(String modelId) {
+        if (modelId == null) {
+            return DEFAULT_GEMINI_MODEL;
+        }
+        if (modelId.startsWith("models/")) {
+            return modelId.substring("models/".length());
+        }
+        return modelId;
+    }
+
+    static String normalizeGeminiBaseUrl(String endpoint) {
+        if (endpoint == null || endpoint.isBlank()) {
+            return DEFAULT_GEMINI_URL;
+        }
+        String u = endpoint.endsWith("/") ? endpoint.substring(0, endpoint.length() - 1) : endpoint;
+        if (u.endsWith(":generateContent") || u.endsWith("%3AgenerateContent")) {
+            int modelsIdx = u.indexOf("/models/");
+            if (modelsIdx > 0) {
+                return u.substring(0, modelsIdx);
+            }
+        }
+        return u;
+    }
+
+    static Map<String, String> buildGeminiHeaders(String key) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        if (key != null && !key.isBlank()) {
+            headers.put("x-goog-api-key", key);
+        }
+        return headers;
+    }
+
+    static boolean isGeminiEndpoint(String endpoint) {
+        return endpoint != null && endpoint.contains("generativelanguage.googleapis.com");
+    }
+
+    private String resolveGeminiApiKey() {
+        if (apiKey != null && !apiKey.isBlank()) {
+            return apiKey;
+        }
+        String key = resolveGeminiApiKeyFromEnv();
+        if (key != null) {
+            apiKey = key;
+        }
+        return key;
+    }
+
+    static String resolveGeminiApiKeyFromEnv() {
+        return Stream.of("GEMINI_API_KEY", "GOOGLE_API_KEY")
+                .map(System::getenv)
+                .filter(k -> k != null && !k.isBlank())
+                .findFirst()
+                .orElse(null);
+    }
+
+    static String resolveGeminiApiKeyFromEnvForAutoDetect() {
+        String key = System.getenv("GEMINI_API_KEY");
+        return key != null && !key.isBlank() ? key : null;
     }
 
     // ---- Anthropic generate ----
@@ -1321,6 +1685,7 @@ public class LlmClient {
     // Order matters: /api/tags is checked before /v1/models, matching the original priority.
     private static final List<Map.Entry<String, ApiType>> EXPLICIT_URL_HEALTH_CHECK_SUFFIXES = List.of(
             Map.entry("/api/tags", ApiType.ollama),
+            Map.entry("/v1beta/models", ApiType.gemini),
             Map.entry("/v1/models", ApiType.openai));
 
     private boolean tryExplicitUrl() {
@@ -1331,6 +1696,13 @@ public class LlmClient {
             return isEndpointReachable(url);
         }
         for (Map.Entry<String, ApiType> check : EXPLICIT_URL_HEALTH_CHECK_SUFFIXES) {
+            if (check.getValue() == ApiType.gemini) {
+                if (tryDetectGeminiAtExplicitUrl(url)) {
+                    apiType = ApiType.gemini;
+                    return true;
+                }
+                continue;
+            }
             if (tryHealthCheck(url + check.getKey())) {
                 apiType = check.getValue();
                 return true;
@@ -1341,6 +1713,22 @@ public class LlmClient {
             return true;
         }
         return false;
+    }
+
+    private boolean tryDetectGeminiAtExplicitUrl(String endpoint) {
+        if (isGeminiEndpoint(endpoint)) {
+            return isEndpointReachable(endpoint);
+        }
+        String key = apiKey;
+        if (key == null || key.isBlank()) {
+            key = resolveGeminiApiKeyFromEnv();
+        }
+        if (key == null || key.isBlank()) {
+            return false;
+        }
+        apiKey = key;
+        String base = normalizeGeminiBaseUrl(endpoint);
+        return tryHealthCheck(base + "/models", buildGeminiHeaders(key));
     }
 
     private boolean isOllamaRoot(String endpoint) {
@@ -1428,6 +1816,22 @@ public class LlmClient {
         if (deployment != null && !deployment.isBlank()
                 && (model == null || model.isBlank() || isGenericPlaceholderModel(model))) {
             model = deployment;
+        }
+        return true;
+    }
+
+    private boolean tryGemini(boolean includeGoogleApiKeyEnv) {
+        String key = apiKey;
+        if (key == null || key.isBlank()) {
+            key = includeGoogleApiKeyEnv ? resolveGeminiApiKeyFromEnv() : resolveGeminiApiKeyFromEnvForAutoDetect();
+        }
+        if (key == null || key.isBlank()) {
+            return false;
+        }
+        apiType = ApiType.gemini;
+        apiKey = key;
+        if (url == null || url.isBlank()) {
+            url = DEFAULT_GEMINI_URL;
         }
         return true;
     }
@@ -1562,6 +1966,14 @@ public class LlmClient {
             String healthUrl = appendAzureApiVersionQuery(base + "/openai/models");
             return tryHealthCheck(healthUrl, buildOpenAiAuthHeaders(resolveApiKey()), true);
         }
+        if (isGeminiEndpoint(endpoint)) {
+            String key = resolveGeminiApiKey();
+            if (key == null || key.isBlank()) {
+                return false;
+            }
+            String base = normalizeGeminiBaseUrl(endpoint);
+            return tryHealthCheck(base + "/models", buildGeminiHeaders(key));
+        }
         return tryHealthCheck(endpoint + "/api/tags", Map.of(), false)
                 || tryHealthCheck(endpoint + "/v1/models", Map.of(), false)
                 || tryHealthCheck(endpoint, Map.of(), false);
@@ -1569,6 +1981,10 @@ public class LlmClient {
 
     private boolean tryHealthCheck(String healthUrl) {
         return tryHealthCheck(healthUrl, Map.of(), false);
+    }
+
+    private boolean tryHealthCheck(String healthUrl, Map<String, String> headers) {
+        return tryHealthCheck(healthUrl, headers, false);
     }
 
     private boolean tryHealthCheck(String healthUrl, Map<String, String> headers, boolean azureEndpoint) {
