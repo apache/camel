@@ -18,12 +18,13 @@ package org.apache.camel.dataformat.univocity;
 
 import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.RowProcessor;
+import org.apache.camel.util.concurrent.ContextValue;
 
 /**
  * This class is used by the unmarshaller in order to retrieve the headers.
  */
 final class HeaderRowProcessor implements RowProcessor {
-    private final static ThreadLocal<String[]> headers = new ThreadLocal<>();
+    private static final ContextValue<String[]> headers = ContextValue.newThreadLocal("UnivocityHeaders");
 
     /**
      * Called when the processing starts, it clears the headers

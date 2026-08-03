@@ -78,13 +78,13 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     @Metadata(description = "Sets at which percentage of the max the throttler should start resuming the route.",
               defaultValue = "70")
     private volatile int resumePercentOfMax = 70;
-    private volatile int resumeInflightExchanges = 700;
 
     // immutable holder for throttling limits that must be visible atomically on routing threads
     private record ThrottlingLimits(int maxInflightExchanges, int resumeInflightExchanges) {
     }
 
-    private volatile ThrottlingLimits throttlingLimits = new ThrottlingLimits(1000, 700);
+    private volatile ThrottlingLimits throttlingLimits
+            = new ThrottlingLimits(maxInflightExchanges, Math.max(resumePercentOfMax * maxInflightExchanges / 100, 1));
 
     @Metadata(description = "Sets the logging level to report the throttling activity.",
               javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
@@ -191,7 +191,6 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         this.maxInflightExchanges = maxInflightExchanges;
         // recalculate, must be at least at 1
         int resume = Math.max(resumePercentOfMax * maxInflightExchanges / 100, 1);
-        this.resumeInflightExchanges = resume;
         // atomically publish both values for routing threads
         this.throttlingLimits = new ThrottlingLimits(maxInflightExchanges, resume);
     }
@@ -215,7 +214,6 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         this.resumePercentOfMax = resumePercentOfMax;
         // recalculate, must be at least at 1
         int resume = Math.max(resumePercentOfMax * maxInflightExchanges / 100, 1);
-        this.resumeInflightExchanges = resume;
         // atomically publish both values for routing threads
         this.throttlingLimits = new ThrottlingLimits(maxInflightExchanges, resume);
     }

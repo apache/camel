@@ -24,6 +24,7 @@ import javax.xml.xpath.XPathVariableResolver;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.util.concurrent.ContextValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,9 +44,9 @@ public class MessageVariableResolver implements XPathVariableResolver {
     private static final Logger LOG = LoggerFactory.getLogger(MessageVariableResolver.class);
 
     private Map<String, Object> variables = new HashMap<>();
-    private final ThreadLocal<Exchange> exchange;
+    private final ContextValue<Exchange> exchange;
 
-    public MessageVariableResolver(ThreadLocal<Exchange> exchange) {
+    public MessageVariableResolver(ContextValue<Exchange> exchange) {
         this.exchange = exchange;
     }
 

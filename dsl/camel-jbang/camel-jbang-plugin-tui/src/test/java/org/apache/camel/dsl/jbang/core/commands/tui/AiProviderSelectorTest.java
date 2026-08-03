@@ -26,8 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -58,7 +59,7 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("auto", "anthropic", "openai", "ollama"),
+        assertEquals(List.of("auto", "anthropic", "openai", "gemini", "ollama", "watsonx"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList(),
                 "all known providers must be offered, even without a detected API key, so they remain selectable");
         assertTrue(choices.get(0).persistedDefault());
@@ -73,7 +74,7 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("anthropic", "openai", "ollama"),
+        assertEquals(List.of("anthropic", "openai", "gemini", "ollama", "watsonx"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList(),
                 "anthropic must not be listed twice when it's already the default");
     }
@@ -87,7 +88,20 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("ollama", "anthropic", "openai"),
+        assertEquals(List.of("ollama", "anthropic", "openai", "gemini", "watsonx"),
+                choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList());
+    }
+
+    @Test
+    void watsonxDefaultIsNotDuplicated(@TempDir Path tempDir) {
+        useHome(tempDir);
+        TuiSettings settings = TuiSettings.load();
+        settings.setAiProvider("watsonx");
+        settings.save();
+
+        List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
+
+        assertEquals(List.of("watsonx", "anthropic", "openai", "gemini", "ollama"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList());
     }
 
@@ -114,15 +128,26 @@ class AiProviderSelectorTest {
     }
 
     @Test
+    void applyChoiceAcceptsGeminiProvider() {
+        LlmClient client = LlmClient.create();
+
+        selector.applyChoice(client, "gemini", "gemini-2.0-flash", "");
+
+        assertThat(client.apiType()).isEqualTo(LlmClient.ApiType.gemini);
+        assertThat(client.model()).isEqualTo("gemini-2.0-flash");
+    }
+
+    @Test
     void applyChoiceRejectsUnknownProviderWithActionableMessage() {
         LlmClient client = LlmClient.create();
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> selector.applyChoice(client, "bogus", null, null));
-
-        assertTrue(ex.getMessage().contains("bogus"));
-        assertTrue(ex.getMessage().contains("ollama"));
-        assertTrue(ex.getMessage().contains("openai"));
-        assertTrue(ex.getMessage().contains("anthropic"));
+        assertThatThrownBy(() -> selector.applyChoice(client, "bogus", null, null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("bogus")
+                .hasMessageContaining("gemini")
+                .hasMessageContaining("ollama")
+                .hasMessageContaining("openai")
+                .hasMessageContaining("anthropic")
+                .hasMessageContaining("watsonx");
     }
 }

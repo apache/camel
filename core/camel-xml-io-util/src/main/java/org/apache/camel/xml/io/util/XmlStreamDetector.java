@@ -67,6 +67,8 @@ public class XmlStreamDetector {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
             factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+            // disable DTD support for consistency with XmlConverter / StaxConverter (defends against DTD-based attacks)
+            factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
             reader = factory.createXMLStreamReader(xmlStream);
         } catch (XMLStreamException e) {
             information.problem = e;

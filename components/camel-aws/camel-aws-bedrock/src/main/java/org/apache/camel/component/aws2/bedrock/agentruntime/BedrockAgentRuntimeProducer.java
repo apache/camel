@@ -142,6 +142,9 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 prepareResponse(result, message);
+            } else {
+                throw new IllegalArgumentException(
+                        "retrieveAndGenerate operation requires a RetrieveAndGenerateRequest body when pojoRequest=true");
             }
         } else {
             String inputText = exchange.getMessage().getMandatoryBody(String.class);

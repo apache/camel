@@ -372,4 +372,83 @@ class KeycloakSecurityProcessorTest {
         assertFalse(routeReached.get(),
                 "Route body must not be reached when the token has the required permission but not the expected audience");
     }
+
+    @Test
+    void testTokenWrongTokenTypeRejectedWithRequiredPermissionsIntrospection() throws Exception {
+        // Token satisfies the required permission but carries the wrong token type: validatePermissions() must
+        // still run the token-type check on the introspection path, otherwise it could be bypassed with a
+        // permissions-only configuration.
+        KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
+                "http://localhost:8080", "test-realm", "test-client", "test-secret", (TokenCache) null) {
+            @Override
+            public IntrospectionResult introspect(String token) {
+                return new IntrospectionResult(Map.of("active", true, "scope", "read", "typ", "Refresh"));
+            }
+        };
+
+        KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy() {
+            @Override
+            public boolean isUseTokenIntrospection() {
+                return true;
+            }
+
+            @Override
+            public KeycloakTokenIntrospector getTokenIntrospector() {
+                return introspector;
+            }
+        };
+        policy.setServerUrl("http://localhost:8080");
+        policy.setRealm("test-realm");
+        policy.setClientId("test-client");
+        policy.setClientSecret("test-secret");
+        policy.setValidateIssuer(false);
+        policy.setExpectedTokenTypes("Bearer");
+        policy.setRequiredPermissions("read");
+
+        AtomicBoolean routeReached = new AtomicBoolean(false);
+        KeycloakSecurityProcessor processor = new KeycloakSecurityProcessor(e -> routeReached.set(true), policy);
+
+        assertThrows(CamelAuthorizationException.class, () -> processor.process(bearer("x")));
+        assertFalse(routeReached.get(),
+                "Route body must not be reached when the token has the required permission but the wrong token type");
+    }
+
+    @Test
+    void testTokenWrongAuthorizedPartyRejectedWithRequiredPermissionsIntrospection() throws Exception {
+        // Token satisfies the required permission but carries the wrong authorized party (azp): validatePermissions()
+        // must still run the azp check on the introspection path.
+        KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
+                "http://localhost:8080", "test-realm", "test-client", "test-secret", (TokenCache) null) {
+            @Override
+            public IntrospectionResult introspect(String token) {
+                return new IntrospectionResult(Map.of("active", true, "scope", "read", "azp", "attacker-client"));
+            }
+        };
+
+        KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy() {
+            @Override
+            public boolean isUseTokenIntrospection() {
+                return true;
+            }
+
+            @Override
+            public KeycloakTokenIntrospector getTokenIntrospector() {
+                return introspector;
+            }
+        };
+        policy.setServerUrl("http://localhost:8080");
+        policy.setRealm("test-realm");
+        policy.setClientId("test-client");
+        policy.setClientSecret("test-secret");
+        policy.setValidateIssuer(false);
+        policy.setExpectedAuthorizedParty("expected-client");
+        policy.setRequiredPermissions("read");
+
+        AtomicBoolean routeReached = new AtomicBoolean(false);
+        KeycloakSecurityProcessor processor = new KeycloakSecurityProcessor(e -> routeReached.set(true), policy);
+
+        assertThrows(CamelAuthorizationException.class, () -> processor.process(bearer("x")));
+        assertFalse(routeReached.get(),
+                "Route body must not be reached when the token has the required permission but the wrong authorized party");
+    }
 }

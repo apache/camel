@@ -727,7 +727,7 @@ public class CamelMonitor extends CamelCommand {
                 && tabRegistry.getActiveMoreTab() == tabRegistry.httpTab()
                 && tabRegistry.httpTab().isProbeMode();
         boolean sourceSearchActive = tabRegistry.selectedTabIndex() == TAB_SOURCE
-                && tabRegistry.sourceTab().isSourceViewerSearchActive();
+                && tabRegistry.sourceTab().isSourceViewerTextInputActive();
         boolean logSearchActive = tabRegistry.selectedTabIndex() == TAB_LOG
                 && tabRegistry.logTab().isSearchInputActive();
         boolean spanFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
@@ -748,9 +748,10 @@ public class CamelMonitor extends CamelCommand {
         boolean catalogFilterActive = tabRegistry.selectedTabIndex() == TAB_MORE
                 && tabRegistry.getActiveMoreTab() == tabRegistry.catalogTab()
                 && tabRegistry.catalogTab().isFilterInputActive();
+        boolean filesBrowserTextActive = filesBrowser.isVisible() && filesBrowser.isSourceViewerTextInputActive();
         boolean textEditing = probeEditing || sourceSearchActive || logSearchActive || spanFilterActive
                 || beanFilterActive || classpathFilterActive || mavenDepsFilterActive || sqlInputActive
-                || catalogFilterActive;
+                || catalogFilterActive || filesBrowserTextActive;
         if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
             if (!ke.isCtrlC() && ctx.confirmActions) {
                 popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> runner.quit());
@@ -1180,11 +1181,11 @@ public class CamelMonitor extends CamelCommand {
             tabRegistry.logTab().handlePaste(pe.text());
             return true;
         }
-        if (filesBrowser.isSourceViewerPasteActive()) {
+        if (filesBrowser.isSourceViewerTextInputActive()) {
             filesBrowser.handlePaste(pe.text());
             return true;
         }
-        if (tabRegistry.sourceTab().isSourceViewerSearchActive()) {
+        if (tabRegistry.sourceTab().isSourceViewerTextInputActive()) {
             tabRegistry.sourceTab().handlePaste(pe.text());
             return true;
         }

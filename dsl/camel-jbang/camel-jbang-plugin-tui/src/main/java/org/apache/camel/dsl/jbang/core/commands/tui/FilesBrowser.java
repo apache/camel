@@ -60,8 +60,8 @@ class FilesBrowser {
         return visible;
     }
 
-    boolean isSourceViewerPasteActive() {
-        return sourceViewer.isSearchInputActive();
+    boolean isSourceViewerTextInputActive() {
+        return sourceViewer.isTextInputActive();
     }
 
     void handlePaste(String text) {

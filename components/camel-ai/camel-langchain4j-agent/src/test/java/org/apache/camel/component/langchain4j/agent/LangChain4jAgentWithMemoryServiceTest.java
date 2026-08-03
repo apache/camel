@@ -72,7 +72,7 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
     }
 
     @Test
-    public void testToolThenMemoryThenAnotherTool() throws Exception {
+    void testToolThenMemoryThenAnotherTool() throws Exception {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(3);
 
@@ -87,10 +87,11 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
                 String.class);
 
         assertNotNull(firstResponse, "First response should not be null");
-        Assertions.assertThat(firstResponse).contains("John Smith", "Gold")
-                .withFailMessage("Response should contain user information from tools");
-        Assertions.assertThat(firstResponse).contains("21", "age", "rental")
-                .withFailMessage("Response should contain rental policy information from RAG");
+        Assertions.assertThat(firstResponse)
+                .withFailMessage("Response should contain user information from tools")
+                .contains("John Smith", "Gold")
+                .withFailMessage("Response should contain rental policy information from RAG")
+                .contains("21", "age", "rental");
 
         // Second interaction: Follow-up question
         AiAgentBody<?> secondRequest = new AiAgentBody<>(
