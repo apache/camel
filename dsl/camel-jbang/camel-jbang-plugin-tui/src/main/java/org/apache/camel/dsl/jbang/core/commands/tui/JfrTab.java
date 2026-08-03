@@ -18,10 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -75,8 +73,6 @@ class JfrTab extends AbstractTab {
     // status state
     private boolean registered;
     private List<String> recordings = List.of();
-    private Map<String, Boolean> events = new LinkedHashMap<>();
-    private String message;
     private String errorMessage;
     private boolean statusLoaded;
 
@@ -96,8 +92,6 @@ class JfrTab extends AbstractTab {
     private final ScrollbarState scrollState = new ScrollbarState();
     private Rect lastTableArea;
     private String drillRouteId;
-    private int sortIndex;
-    private boolean sortReversed;
 
     record RouteStats(String routeId, long total, long failed, double minMs, double meanMs, double maxMs) {
     }
@@ -140,8 +134,6 @@ class JfrTab extends AbstractTab {
     public void onIntegrationChanged() {
         registered = false;
         recordings = List.of();
-        events = new LinkedHashMap<>();
-        message = null;
         errorMessage = null;
         statusLoaded = false;
         clearSnapshotData();
@@ -165,32 +157,9 @@ class JfrTab extends AbstractTab {
             takeSnapshot();
             return true;
         }
-        if (ke.isCharIgnoreCase('e')) {
-            toggleAll(true);
-            return true;
-        }
-        if (ke.isCharIgnoreCase('d')) {
-            toggleAll(false);
-            return true;
-        }
-        if (ke.isCharIgnoreCase('j')) {
-            generateJfc();
-            return true;
-        }
-
         if (ke.isChar(' ')) {
             View[] views = View.values();
             switchView(views[(activeView.ordinal() + 1) % views.length]);
-            return true;
-        }
-
-        if (ke.isChar('s')) {
-            sortIndex++;
-            sortReversed = false;
-            return true;
-        }
-        if (ke.isChar('S')) {
-            sortReversed = !sortReversed;
             return true;
         }
 
@@ -252,8 +221,6 @@ class JfrTab extends AbstractTab {
     private void switchView(View view) {
         if (view != activeView) {
             activeView = view;
-            sortIndex = 0;
-            sortReversed = false;
             tableState.select(0);
         }
     }
@@ -338,15 +305,12 @@ class JfrTab extends AbstractTab {
         lines.add(Line.from(line1));
 
         List<Span> line2 = new ArrayList<>();
-        line2.add(Span.styled("events: ", LABEL));
-        for (Map.Entry<String, Boolean> entry : events.entrySet()) {
-            boolean on = Boolean.TRUE.equals(entry.getValue());
-            line2.add(Span.styled(on ? "[x]" : "[ ]", on ? VALUE : LABEL));
-            line2.add(Span.styled(" " + entry.getKey() + " ", LABEL));
-        }
-
-        if (message != null) {
-            line2.add(Span.styled("  " + message, LABEL));
+        for (View v : View.values()) {
+            if (v.ordinal() > 0) {
+                line2.add(Span.styled(" | ", LABEL));
+            }
+            boolean active = v == activeView;
+            line2.add(Span.styled(v.label, active ? VALUE : LABEL));
         }
         if (errorMessage != null) {
             line2.add(Span.styled("  " + errorMessage, Theme.error()));
@@ -603,9 +567,6 @@ class JfrTab extends AbstractTab {
         if (snapshotLoaded && activeView == View.ROUTES) {
             hint(spans, "Enter", "drill");
         }
-        hint(spans, "s", "sort");
-        hint(spans, "E", "enable");
-        hint(spans, "D", "disable");
         hintLast(spans, "F5", "snapshot");
     }
 
@@ -616,16 +577,7 @@ class JfrTab extends AbstractTab {
             return routeData;
         }
         List<RouteStats> sorted = new ArrayList<>(routeData);
-        int idx = sortIndex % 4;
-        Comparator<RouteStats> cmp = switch (idx) {
-            case 0 -> Comparator.comparingLong(RouteStats::total);
-            case 1 -> Comparator.comparingLong(RouteStats::failed);
-            case 2 -> Comparator.comparingDouble(RouteStats::meanMs);
-            case 3 -> Comparator.comparingDouble(RouteStats::maxMs);
-            default -> Comparator.comparingLong(RouteStats::total);
-        };
-        cmp = sortReversed ? cmp : cmp.reversed();
-        sorted.sort(cmp);
+        sorted.sort(Comparator.comparingLong(RouteStats::total).reversed());
         return sorted;
     }
 
@@ -637,16 +589,7 @@ class JfrTab extends AbstractTab {
             return filtered;
         }
         List<ProcessorStats> sorted = new ArrayList<>(filtered);
-        int idx = sortIndex % 4;
-        Comparator<ProcessorStats> cmp = switch (idx) {
-            case 0 -> Comparator.comparingDouble(ProcessorStats::meanMs);
-            case 1 -> Comparator.comparingLong(ProcessorStats::total);
-            case 2 -> Comparator.comparingLong(ProcessorStats::failed);
-            case 3 -> Comparator.comparingDouble(ProcessorStats::maxMs);
-            default -> Comparator.comparingDouble(ProcessorStats::meanMs);
-        };
-        cmp = sortReversed ? cmp : cmp.reversed();
-        sorted.sort(cmp);
+        sorted.sort(Comparator.comparingDouble(ProcessorStats::meanMs).reversed());
         return sorted;
     }
 
@@ -655,16 +598,7 @@ class JfrTab extends AbstractTab {
             return endpointData;
         }
         List<EndpointStats> sorted = new ArrayList<>(endpointData);
-        int idx = sortIndex % 4;
-        Comparator<EndpointStats> cmp = switch (idx) {
-            case 0 -> Comparator.comparingLong(EndpointStats::total);
-            case 1 -> Comparator.comparingLong(EndpointStats::failed);
-            case 2 -> Comparator.comparingDouble(EndpointStats::meanMs);
-            case 3 -> Comparator.comparingDouble(EndpointStats::maxMs);
-            default -> Comparator.comparingLong(EndpointStats::total);
-        };
-        cmp = sortReversed ? cmp : cmp.reversed();
-        sorted.sort(cmp);
+        sorted.sort(Comparator.comparingLong(EndpointStats::total).reversed());
         return sorted;
     }
 
@@ -720,76 +654,6 @@ class JfrTab extends AbstractTab {
         });
     }
 
-    private void toggleAll(boolean enable) {
-        if (ctx.selectedPid == null) {
-            return;
-        }
-        if (!loading.compareAndSet(false, true)) {
-            return;
-        }
-
-        String pid = ctx.selectedPid;
-        ctx.backgroundExecutor.execute(() -> {
-            try {
-                JsonObject root = new JsonObject();
-                root.put("action", "jfr");
-                root.put("command", enable ? "enable" : "disable");
-                root.put("event", "all");
-
-                JsonObject jo = ctx.executeAction(pid, root, 5000);
-                String result = jo != null ? jo.getString("result") : null;
-                if (result == null) {
-                    applyError(errorOf(jo, "No response from integration"));
-                    return;
-                }
-                if (Boolean.TRUE.equals(jo.getBoolean("success"))) {
-                    applyMessage(result);
-                } else {
-                    applyError(result);
-                }
-            } catch (Exception e) {
-                applyError("Error: " + e.getMessage());
-                return;
-            } finally {
-                loading.set(false);
-            }
-            refreshStatus();
-        });
-    }
-
-    private void generateJfc() {
-        if (ctx.selectedPid == null) {
-            return;
-        }
-        if (!loading.compareAndSet(false, true)) {
-            return;
-        }
-
-        String pid = ctx.selectedPid;
-        ctx.backgroundExecutor.execute(() -> {
-            try {
-                JsonObject root = new JsonObject();
-                root.put("action", "jfr");
-                root.put("command", "jfc");
-
-                JsonObject jo = ctx.executeAction(pid, root, 5000);
-                String jfc = jo != null ? jo.getString("jfc") : null;
-                if (jfc == null) {
-                    applyError(errorOf(jo, "No response from integration"));
-                } else if (ctx.openMarkdownCallback != null && ctx.runner != null) {
-                    ctx.runner.runOnRenderThread(
-                            () -> ctx.openMarkdownCallback.accept("JFR .jfc overlay", "```\n" + jfc + "\n```"));
-                } else {
-                    applyMessage(jfc);
-                }
-            } catch (Exception e) {
-                applyError("Error: " + e.getMessage());
-            } finally {
-                loading.set(false);
-            }
-        });
-    }
-
     // ---- apply results on render thread ----
 
     private void applyStatus(JsonObject jo) {
@@ -815,11 +679,6 @@ class JfrTab extends AbstractTab {
                 }
             }
             recordings = recs;
-            Map<String, Boolean> evts = new LinkedHashMap<>();
-            if (jo.get("events") instanceof JsonObject eventsObj) {
-                eventsObj.forEach((k, v) -> evts.put(k, Boolean.TRUE.equals(v)));
-            }
-            events = evts;
             errorMessage = null;
             statusLoaded = true;
         });
@@ -846,7 +705,6 @@ class JfrTab extends AbstractTab {
             redeliveryData = parseRedeliveries(jo);
 
             errorMessage = null;
-            message = null;
             Long ts = jo.getLong("snapshotTimestamp");
             snapshotTime = ts != null ? ts : System.currentTimeMillis();
             snapshotLoaded = true;
@@ -968,21 +826,8 @@ class JfrTab extends AbstractTab {
         return 0;
     }
 
-    private static String errorOf(JsonObject jo, String fallback) {
-        String error = jo != null ? jo.getString("error") : null;
-        return error != null ? error : fallback;
-    }
-
-    private void applyMessage(String msg) {
-        renderThreadExecutor.accept(() -> {
-            message = msg;
-            errorMessage = null;
-        });
-    }
-
     private void applyError(String error) {
         renderThreadExecutor.accept(() -> {
-            message = null;
             errorMessage = error;
         });
     }

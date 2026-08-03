@@ -242,14 +242,6 @@ class JfrTabRenderTest {
         rec.put("state", "RUNNING");
         recordings.add(rec);
         response.put("recordings", recordings);
-        JsonObject events = new JsonObject();
-        events.put("route", true);
-        events.put("processor", true);
-        events.put("exchange", true);
-        events.put("send", true);
-        events.put("failed", true);
-        events.put("redelivery", true);
-        response.put("events", events);
         return response;
     }
 
