@@ -37,54 +37,59 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Verifies that {@link RouteService#warmUp()} wraps startup failures in a {@link FailedToStartRouteException} whose
- * message is always meaningful — even when the root cause exception itself carries a {@code null} message (e.g. a bare
- * {@link NullPointerException}).
+ * Verifies that {@link RouteService#warmUp()} and {@link RouteService#setUp()} wrap startup failures in a
+ * {@link FailedToStartRouteException} whose message is always meaningful — even when the root cause exception carries a
+ * {@code null} message (e.g. a bare {@link NullPointerException}).
  *
  * <p>
  * Before the fix, {@code RouteService} passed {@code e.getLocalizedMessage()} directly to the
  * {@link FailedToStartRouteException} constructor, which calls {@code Objects.requireNonNull} on that argument. A
  * message-less exception therefore caused a secondary {@link NullPointerException} to be thrown from inside the
  * exception constructor rather than a proper {@link FailedToStartRouteException}.
+ *
+ * <p>
+ * The tests trigger the failure during endpoint initialisation (inside {@code doSetup()}), which is the code path
+ * covered by the {@code RouteService} fix.
  */
 class RouteServiceWarmUpNullMessageTest {
 
     /**
-     * When a route's consumer throws a {@link NullPointerException} with no message during warm-up, the resulting
-     * {@link FailedToStartRouteException} must still carry a non-null, non-empty message.
+     * When the endpoint throws a message-less {@link NullPointerException} during route setup, the result must be a
+     * {@link FailedToStartRouteException}, not a raw NPE.
      */
     @Test
-    void testWarmUpNullMessageExceptionProducesUsefulFailedToStartMessage() throws Exception {
+    void testSetUpNullMessageExceptionProducesFailedToStartRouteException() {
         CamelContext context = new DefaultCamelContext();
         context.addComponent("fail", new NullMessageFailComponent());
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("fail:trigger").routeId("test-route").to("direct:out");
-            }
-        });
 
-        assertThatThrownBy(context::start)
-                .isInstanceOf(FailedToStartRouteException.class);
+        assertThatThrownBy(() -> {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("fail:trigger").routeId("test-route").to("direct:out");
+                }
+            });
+            context.start();
+        }).isInstanceOf(FailedToStartRouteException.class);
     }
 
     /**
-     * The {@link FailedToStartRouteException} message must not be null, must contain the route id, and must not use the
-     * literal string "null" as the failure description.
+     * The {@link FailedToStartRouteException} message must contain the route id and must not use the literal string
+     * "null" as the failure description.
      */
     @Test
-    void testFailedToStartMessageIsNonNullAndMeaningful() throws Exception {
+    void testFailedToStartMessageIsNonNullAndMeaningful() {
         CamelContext context = new DefaultCamelContext();
         context.addComponent("fail", new NullMessageFailComponent());
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("fail:trigger").routeId("meaningful-route").to("direct:out");
-            }
-        });
 
         FailedToStartRouteException caught = null;
         try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("fail:trigger").routeId("meaningful-route").to("direct:out");
+                }
+            });
             context.start();
         } catch (FailedToStartRouteException e) {
             caught = e;
@@ -115,23 +120,23 @@ class RouteServiceWarmUpNullMessageTest {
     }
 
     /**
-     * Verifies that when the root exception has a null message but its cause has a real message, the cause's message is
-     * surfaced in the {@link FailedToStartRouteException}.
+     * When the endpoint throws a message-less outer exception wrapping an inner exception that has a message, the inner
+     * message must be surfaced in the {@link FailedToStartRouteException}.
      */
     @Test
-    void testWarmUpWalksCauseChainForMessage() throws Exception {
+    void testSetUpWalksCauseChainForMessage() {
         CamelContext context = new DefaultCamelContext();
         String expectedFragment = "real cause message from chain";
         context.addComponent("fail", new ChainedNullMessageFailComponent(expectedFragment));
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("fail:trigger").routeId("chain-route").to("direct:out");
-            }
-        });
 
         FailedToStartRouteException caught = null;
         try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("fail:trigger").routeId("chain-route").to("direct:out");
+                }
+            });
             context.start();
         } catch (FailedToStartRouteException e) {
             caught = e;
@@ -159,47 +164,52 @@ class RouteServiceWarmUpNullMessageTest {
 
     // ---- helpers ----
 
-    /** A component whose endpoint throws a message-less {@link NullPointerException} on start. */
+    /**
+     * A component whose endpoint throws a message-less {@link NullPointerException} during its own {@code doStart()} —
+     * which is invoked by {@code RouteService.doSetup()} via {@code ServiceHelper.initService(endpoint)}, exercising
+     * the {@code setUp()} fix.
+     */
     private static class NullMessageFailComponent extends DefaultComponent {
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
-            return new FailOnStartEndpoint(uri, this);
+            return new NullMessageFailEndpoint(uri, this);
+        }
+    }
+
+    private static class NullMessageFailEndpoint extends DefaultEndpoint {
+        NullMessageFailEndpoint(String uri, NullMessageFailComponent component) {
+            super(uri, component);
         }
 
-        private static class FailOnStartEndpoint extends DefaultEndpoint {
-            FailOnStartEndpoint(String uri, NullMessageFailComponent component) {
-                super(uri, component);
-            }
+        @Override
+        protected void doStart() {
+            throw new NullPointerException();
+        }
 
-            @Override
-            public Consumer createConsumer(Processor processor) {
-                return new DefaultConsumer(this, processor) {
-                    @Override
-                    protected void doStart() {
-                        throw new NullPointerException();
-                    }
-                };
-            }
+        @Override
+        public Consumer createConsumer(Processor processor) {
+            return new DefaultConsumer(this, processor) {
+            };
+        }
 
-            @Override
-            public Producer createProducer() {
-                return new DefaultProducer(this) {
-                    @Override
-                    public void process(Exchange exchange) {
-                    }
-                };
-            }
+        @Override
+        public Producer createProducer() {
+            return new DefaultProducer(this) {
+                @Override
+                public void process(Exchange exchange) {
+                }
+            };
+        }
 
-            @Override
-            public boolean isSingleton() {
-                return true;
-            }
+        @Override
+        public boolean isSingleton() {
+            return true;
         }
     }
 
     /**
      * A component whose endpoint throws a message-less outer exception wrapping an inner exception that does have a
-     * message — used to test cause-chain walking.
+     * message — used to test cause-chain walking in {@code extractUsefulMessage}.
      */
     private static class ChainedNullMessageFailComponent extends DefaultComponent {
         private final String causeMessage;
@@ -210,40 +220,41 @@ class RouteServiceWarmUpNullMessageTest {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
-            return new FailOnStartEndpoint(uri, this, causeMessage);
+            return new ChainedNullMessageFailEndpoint(uri, this, causeMessage);
+        }
+    }
+
+    private static class ChainedNullMessageFailEndpoint extends DefaultEndpoint {
+        private final String causeMessage;
+
+        ChainedNullMessageFailEndpoint(String uri, ChainedNullMessageFailComponent component, String causeMessage) {
+            super(uri, component);
+            this.causeMessage = causeMessage;
         }
 
-        private static class FailOnStartEndpoint extends DefaultEndpoint {
-            private final String causeMessage;
+        @Override
+        protected void doStart() {
+            throw new RuntimeException(new IllegalStateException(causeMessage));
+        }
 
-            FailOnStartEndpoint(String uri, ChainedNullMessageFailComponent component, String causeMessage) {
-                super(uri, component);
-                this.causeMessage = causeMessage;
-            }
+        @Override
+        public Consumer createConsumer(Processor processor) {
+            return new DefaultConsumer(this, processor) {
+            };
+        }
 
-            @Override
-            public Consumer createConsumer(Processor processor) {
-                return new DefaultConsumer(this, processor) {
-                    @Override
-                    protected void doStart() {
-                        throw new RuntimeException(new IllegalStateException(causeMessage));
-                    }
-                };
-            }
+        @Override
+        public Producer createProducer() {
+            return new DefaultProducer(this) {
+                @Override
+                public void process(Exchange exchange) {
+                }
+            };
+        }
 
-            @Override
-            public Producer createProducer() {
-                return new DefaultProducer(this) {
-                    @Override
-                    public void process(Exchange exchange) {
-                    }
-                };
-            }
-
-            @Override
-            public boolean isSingleton() {
-                return true;
-            }
+        @Override
+        public boolean isSingleton() {
+            return true;
         }
     }
 }
