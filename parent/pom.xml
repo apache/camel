@@ -61,6 +61,7 @@
         <activemq-version>5.19.9</activemq-version>
         <activemq6-version>6.3.0</activemq6-version>
         <activemq-artemis-version>2.55.0</activemq-artemis-version>
+        <aesh-terminal-version>3.14.1</aesh-terminal-version>
         <agroal-version>3.2.1</agroal-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
         <amazon-kinesis-client-version>3.5.1</amazon-kinesis-client-version>

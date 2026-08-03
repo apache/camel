@@ -40,6 +40,7 @@ import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
+import dev.tamboui.terminal.Backend;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
@@ -108,6 +109,15 @@ public class CamelMonitor extends CamelCommand {
                         defaultValue = "8123")
     int mcpPort = 8123;
 
+    @CommandLine.Option(names = { "--web" },
+                        description = "Enable browser-accessible terminal (WebSocket) server")
+    boolean web;
+
+    @CommandLine.Option(names = { "--web-port" },
+                        description = "Web terminal server port (default: ${DEFAULT-VALUE})",
+                        defaultValue = "8090")
+    int webPort = 8090;
+
     @CommandLine.Option(names = { "--theme" },
                         description = "Color theme (overrides persisted preference for this session)",
                         completionCandidates = ThemeModeCompletionCandidates.class)
@@ -127,6 +137,7 @@ public class CamelMonitor extends CamelCommand {
     private String lastWaveNotification;
     private boolean mcpInjectedKey;
     private TuiMcpServer mcpServer;
+    private TuiWebServer webServer;
     private McpFacade mcpFacade;
     private final Queue<McpFacade.PendingKey> pendingKeys = new ConcurrentLinkedQueue<>();
     private final CaptionOverlay captionOverlay = new CaptionOverlay();
@@ -141,6 +152,9 @@ public class CamelMonitor extends CamelCommand {
 
     private ActionsPopup actionsPopup;
     private TuiRunner runner;
+    // Set by TuiWebServer for browser sessions; local terminal sessions leave this null
+    // and let TuiBackendHelper auto-detect the active terminal instead.
+    Backend webBackend;
 
     private MonitorContext ctx;
 
@@ -523,7 +537,21 @@ public class CamelMonitor extends CamelCommand {
         }
         aiPanel.setMcpInfo(mcp, mcpPort);
 
-        try (var tui = TuiBackendHelper.createTuiRunner()) {
+        if (web) {
+            webServer = new TuiWebServer(webPort, getMain(), classLoader, name, refreshInterval, theme);
+            try {
+                webServer.start();
+            } catch (java.net.BindException e) {
+                System.err.println("Web server failed to start: port " + webPort + " is already in use.");
+                System.err.println("Use --web-port to specify a different port, e.g.: camel tui --web --web-port 8091");
+                webServer = null;
+                web = false;
+            }
+        }
+
+        try (var tui = webBackend != null
+                ? TuiBackendHelper.createTuiRunner(webBackend)
+                : TuiBackendHelper.createTuiRunner()) {
             this.runner = tui;
             aiPanel.setExitCallbackForTestingOrRuntime(tui::quit);
             ctx.runner = tui;
@@ -539,9 +567,14 @@ public class CamelMonitor extends CamelCommand {
             applyLogPin();
             applyRatePer();
             applyConfirmActions();
-            // Intercept Ctrl+C: quit the TUI cleanly instead of letting
-            // the JVM tear down the classloader while we're still running
-            Signal.handle(new Signal("INT"), sig -> tui.quit());
+            if (webBackend == null) {
+                // Intercept Ctrl+C: quit the TUI cleanly instead of letting
+                // the JVM tear down the classloader while we're still running.
+                // Signal.handle is process-wide and would clobber concurrent sessions
+                // (e.g. browser connections via --web), so only the local terminal
+                // session registers it.
+                Signal.handle(new Signal("INT"), sig -> tui.quit());
+            }
             tui.run(
                     this::handleEvent,
                     this::render);
@@ -551,6 +584,9 @@ public class CamelMonitor extends CamelCommand {
             ctx.backgroundExecutor.shutdownNow();
             if (mcpServer != null) {
                 mcpServer.stop();
+            }
+            if (webServer != null) {
+                webServer.stop();
             }
             deleteMcpJson(mcpJsonFile);
             this.runner = null;

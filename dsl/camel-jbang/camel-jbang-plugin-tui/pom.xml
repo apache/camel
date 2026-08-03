@@ -88,6 +88,16 @@
             <version>${tamboui-version}</version>
         </dependency>
         <dependency>
+            <groupId>dev.tamboui</groupId>
+            <artifactId>tamboui-aesh-backend</artifactId>
+            <version>${tamboui-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aesh</groupId>
+            <artifactId>terminal-http</artifactId>
+            <version>${aesh-terminal-version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>
             <scope>test</scope>

@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import dev.tamboui.backend.jline3.JLineBackend;
+import dev.tamboui.terminal.Backend;
 import dev.tamboui.tui.TuiConfig;
 import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -34,5 +35,9 @@ final class TuiBackendHelper {
             return TuiRunner.create(TuiConfig.builder().backend(backend).mouseCapture(true).build());
         }
         return TuiRunner.create(TuiConfig.builder().mouseCapture(true).build());
+    }
+
+    static TuiRunner createTuiRunner(Backend backend) throws Exception {
+        return TuiRunner.create(TuiConfig.builder().backend(backend).mouseCapture(true).build());
     }
 }
