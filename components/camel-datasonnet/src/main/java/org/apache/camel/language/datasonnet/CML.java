@@ -42,10 +42,11 @@ import com.datasonnet.spi.DataFormatService;
 import com.datasonnet.spi.Library;
 import com.datasonnet.spi.PluginException;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.concurrent.ContextValue;
 
 public final class CML extends Library {
     private static final CML INSTANCE = new CML();
-    private final ThreadLocal<Exchange> exchange = new ThreadLocal<>();
+    private final ContextValue<Exchange> exchange = ContextValue.newThreadLocal("DataSonnetExchange");
 
     private CML() {
     }
@@ -54,7 +55,7 @@ public final class CML extends Library {
         return INSTANCE;
     }
 
-    public ThreadLocal<Exchange> getExchange() {
+    public ContextValue<Exchange> getExchange() {
         return exchange;
     }
 
