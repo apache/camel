@@ -298,21 +298,19 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
     }
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
+    protected void doStart() throws Exception {
+        super.doStart();
 
         // if a factory was not autowired then create a default factory
+        // NOTE: must be done in doStart() rather than doInit(), because when a component is
+        // registered via addComponent() (the path used by Spring Boot), doInit() runs before
+        // the autowiring lifecycle strategy has a chance to inject a custom factory.
         if (kafkaClientFactory == null) {
             kafkaClientFactory = new DefaultKafkaClientFactory();
         }
         if (configuration.isAllowManualCommit() && kafkaManualCommitFactory == null) {
             LOG.warn("The component was setup for allowing manual commits, but a manual commit factory was not set");
         }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
 
         Map<String, Object> map = new HashMap<>();
         // resolve parameter values from the values (#bean / #class etc)
