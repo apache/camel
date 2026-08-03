@@ -59,8 +59,11 @@ public class LdifProducer extends DefaultProducer {
      * Process the body. There are two options:
      * <ol>
      * <li>A String body that is the LDIF content. This needs to start with "version: 1".</li>
-     * <li>A String body that is a URL to ready the LDIF content from</li>
+     * <li>A String body that is a URL to read the LDIF content from - only when the allowUrlBody option is
+     * enabled.</li>
      * </ol>
+     * When the body is not LDIF content and allowUrlBody is disabled (the default), an {@link IllegalArgumentException}
+     * is thrown instead of dereferencing the body as a URL.
      */
     @Override
     public void process(Exchange exchange) throws Exception {
@@ -76,7 +79,7 @@ public class LdifProducer extends DefaultProducer {
         } else if (body.startsWith(LDIF_HEADER)) {
             LOG.debug("Reading from LDIF body");
             result = processLdif(new StringReader(body));
-        } else {
+        } else if (((LdifEndpoint) getEndpoint()).isAllowUrlBody()) {
             URL loc;
             try {
                 loc = URI.create(body).toURL();
@@ -88,6 +91,10 @@ public class LdifProducer extends DefaultProducer {
                 }
                 throw new InvalidPayloadException(exchange, String.class);
             }
+        } else {
+            throw new IllegalArgumentException(
+                    "LDIF body does not start with '" + LDIF_HEADER
+                                               + "'. To dereference a non-LDIF body as a URL, enable the allowUrlBody option on the ldif endpoint.");
         }
 
         exchange.getMessage().setBody(result);

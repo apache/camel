@@ -1537,6 +1537,15 @@ data format and the iterator/splitter modes. The full, unmodified entry name rem
 so routes that intentionally recreate the archive's directory structure keep working — read it
 from `CamelTarFileEntryName` for tar and from `zipFileName` for zip instead of `CamelFileName`.
 
+=== camel-ldif - a non-LDIF body is no longer dereferenced as a URL by default
+
+The ldif producer previously treated a message body that does not start with `version: 1` as a URL
+and dereferenced it (`URI.create(body).toURL().openStream()`). This content-sniffed URL fetch is now
+opt-in: a new `allowUrlBody` option (default `false`) gates it. With the default, a body that is not
+LDIF content is rejected with an `IllegalArgumentException` instead of being fetched, which avoids a
+content-sniffed URL fetch (SSRF) from untrusted body content. Routes that rely on passing a URL as the
+body must set `allowUrlBody=true` on the `ldif` endpoint.
+
 === camel-snakeyaml - typeFilters are now also enforced by the SnakeYAML TagInspector
 
 When `typeFilters` (or `unmarshalType`) is configured, the allow-list is now also enforced by the

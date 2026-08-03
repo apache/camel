@@ -23,6 +23,8 @@ public class LdifEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LdifEndpoint target = (LdifEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowurlbody":
+        case "allowUrlBody": target.setAllowUrlBody(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -32,6 +34,8 @@ public class LdifEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowurlbody":
+        case "allowUrlBody": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         default: return null;
@@ -42,6 +46,8 @@ public class LdifEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LdifEndpoint target = (LdifEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowurlbody":
+        case "allowUrlBody": return target.isAllowUrlBody();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;

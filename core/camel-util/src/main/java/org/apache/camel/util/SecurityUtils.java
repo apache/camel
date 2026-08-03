@@ -60,6 +60,7 @@ public final class SecurityUtils {
         map.put("allowjavaserializedobject", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("allowlocalwebhookurls", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowserializedheaders", new SecurityOption(INSECURE_SERIALIZATION, "true"));
+        map.put("allowurlbody", new SecurityOption(INSECURE_DEV, "true"));
         map.put("devconsoleenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("downloadenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("failonunknownhost", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
