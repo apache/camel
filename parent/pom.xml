@@ -122,7 +122,7 @@
         <commons-net-version>3.13.0</commons-net-version>
         <commons-pool2-version>2.13.1</commons-pool2-version>
         <commons-text-version>1.15.0</commons-text-version>
-        <commons-validator-version>1.10.1</commons-validator-version>
+        <commons-validator-version>1.11.0</commons-validator-version>
         <compress-lzf-version>1.2.0</compress-lzf-version>
         <consul-client-version>1.12.1</consul-client-version>
         <couchbase-client-version>3.12.2</couchbase-client-version>
