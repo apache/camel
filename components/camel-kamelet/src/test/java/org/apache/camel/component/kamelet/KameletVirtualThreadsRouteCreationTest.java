@@ -69,6 +69,11 @@ class KameletVirtualThreadsRouteCreationTest {
         main.configure().withVirtualThreadsEnabled(true).addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() {
+                routeTemplate("vt-repro-source")
+                        .from("timer:vt-tick?repeatCount=1&delay=-1")
+                        .setBody(constant("hello"))
+                        .to("kamelet:sink");
+
                 from("kamelet:vt-repro-source").routeId("vt-kamelet-repro").to("mock:vt-out");
             }
         });
