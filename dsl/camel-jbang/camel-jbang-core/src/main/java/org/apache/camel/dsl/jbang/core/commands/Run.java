@@ -69,6 +69,7 @@ import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
 import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.main.util.SuggestSimilarHelper;
@@ -845,6 +846,7 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, HEALTH, serverOptions.health ? "true" : "false");
         writeSetting(main, profileProperties, METRICS, serverOptions.metrics ? "true" : "false");
         writeSetting(main, profileProperties, CONSOLE, serverOptions.console ? "true" : "false");
+        writeSetting(main, profileProperties, OPENAPI_UI, serverOptions.openapiUi ? "true" : "false");
         writeSetting(main, profileProperties, VERBOSE, verbose ? "true" : "false");
         // the runtime version of Camel is what is loaded via the catalog
         writeSetting(main, profileProperties, CAMEL_VERSION, new DefaultCamelCatalog().getCatalogVersion());
@@ -914,6 +916,7 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.main.durationMaxIdleSeconds",
                 () -> executionLimitOptions.maxIdleSeconds > 0
                         ? String.valueOf(executionLimitOptions.maxIdleSeconds) : null);
+        prepareOpenApiUiServerOptions();
         if (serverOptions.port != -1) {
             // enable the main HTTP server when --port is explicitly specified
             writeSetting(main, profileProperties, "camel.server.enabled", "true");
@@ -1249,6 +1252,11 @@ public class Run extends CamelCommand {
         if (serverOptions.observe) {
             dependencies.add("camel:observability-services");
             main.addOverrideProperty("camel.metrics.logMetricsOnShutdown", "false");
+        }
+        if (serverOptions.openapiUi) {
+            dependencies.add("camel:platform-http-main");
+            dependencies.add("camel:openapi-java");
+            applyOpenApiUiRuntimeOptions(main);
         }
         if (debugOptions.openTelemetryAgent) {
             dependencies.add("camel:opentelemetry2");
@@ -3081,6 +3089,10 @@ public class Run extends CamelCommand {
                 description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
         boolean console;
 
+        @Option(names = { "--openapi-ui" }, defaultValue = "false",
+                description = "Swagger UI for REST OpenAPI at /q/openapi (OpenAPI document at /q/openapi.json; port 8080 by default)")
+        boolean openapiUi;
+
         @Deprecated
         @Option(names = { "--health" }, defaultValue = "false",
                 description = "Deprecated: use --observe instead. Health check at /q/health on local HTTP server (port 8080 by default)")
@@ -3094,6 +3106,33 @@ public class Run extends CamelCommand {
         @Option(names = { "--observe" }, defaultValue = "false",
                 description = "Enable observability services (health, metrics, dev console, and lightweight Camel-only tracing in the TUI Spans tab)")
         boolean observe;
+    }
+
+    /**
+     * Align HTTP and management ports when OpenAPI UI is enabled so Swagger UI and the REST OpenAPI document are
+     * co-hosted (same Vert.x server when ports match).
+     */
+    void prepareOpenApiUiServerOptions() {
+        if (!serverOptions.openapiUi) {
+            return;
+        }
+        if (serverOptions.port == -1) {
+            serverOptions.port = 8080;
+        }
+        if (serverOptions.managementPort == -1) {
+            serverOptions.managementPort = serverOptions.port;
+        }
+    }
+
+    void applyOpenApiUiRuntimeOptions(BaseMainSupport main) {
+        if (!serverOptions.openapiUi) {
+            return;
+        }
+        main.addOverrideProperty("camel.rest.apiContextPath", "/q/openapi.json");
+        main.addOverrideProperty("camel.rest.component", "platform-http");
+        main.addOverrideProperty("camel.management.openapiUiEnabled", "true");
+        main.addOverrideProperty("camel.server.enabled", "true");
+        main.addOverrideProperty("camel.management.enabled", "true");
     }
 
     static class FilesConsumer extends ParameterConsumer<Run> {

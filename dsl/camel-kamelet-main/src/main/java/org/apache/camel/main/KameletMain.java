@@ -573,6 +573,18 @@ public class KameletMain extends MainCommandLineSupport {
             configure().httpManagementServer().withInfoEnabled(true);
             configure().httpManagementServer().withJolokiaEnabled(true);
         }
+        boolean openapiUi = "true".equals(getInitialProperties().get(getInstanceType() + ".openapiUi"));
+        if (openapiUi) {
+            configure().httpManagementServer().withEnabled(true);
+            configure().httpManagementServer().withOpenapiUiEnabled(true);
+            configure().httpServer().withEnabled(true);
+            if (!isConfigured("camel.rest.component")) {
+                configure().rest().withComponent("platform-http");
+            }
+            if (!isConfigured("camel.rest.apiContextPath")) {
+                configure().rest().withApiContextPath("/q/openapi.json");
+            }
+        }
         boolean tracing = "true".equals(getInitialProperties().get(getInstanceType() + ".backlogTracing"));
         if (tracing) {
             configure().tracerConfig().withEnabled(true);
@@ -985,6 +997,22 @@ public class KameletMain extends MainCommandLineSupport {
     protected void postProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
         springXmlBeansHandler.createAndRegisterBeans(camelContext);
         blueprintXmlBeansHandler.createAndRegisterBeans(camelContext);
+    }
+
+    private boolean isConfigured(String key) {
+        if (getOverrideProperties() != null) {
+            String value = getOverrideProperties().getProperty(key);
+            if (value != null && !value.isBlank()) {
+                return true;
+            }
+        }
+        if (getInitialProperties() != null) {
+            String value = getInitialProperties().getProperty(key);
+            if (value != null && !value.isBlank()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static String getPid() {

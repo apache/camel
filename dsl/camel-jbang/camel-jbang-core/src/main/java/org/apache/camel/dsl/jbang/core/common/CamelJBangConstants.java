@@ -201,6 +201,10 @@ public final class CamelJBangConstants {
               javaType = "boolean")
     public static final String CONSOLE = "camel.jbang.console";
 
+    @Metadata(description = "Swagger UI for REST OpenAPI at /q/openapi on local HTTP server (port 8080 by default)",
+              javaType = "boolean", security = "insecure:dev")
+    public static final String OPENAPI_UI = "camel.jbang.openapiUi";
+
     @Metadata(description = "Verbose output of startup activity (dependency resolution and downloading",
               javaType = "boolean")
     public static final String VERBOSE = "camel.jbang.verbose";

@@ -62,6 +62,14 @@ The Camel CLI and TUI AI prompt now support native **Google Gemini** when `GEMIN
 the `generativelanguage.googleapis.com` API with function-calling support.
 See xref:camel-jbang-ai.adoc[Camel CLI - AI Tools] for the full detection order.
 
+`camel run`, `camel dev`, and `camel debug` accept `--openapi-ui` to expose Swagger UI for REST DSL OpenAPI
+at `/q/openapi` on the embedded HTTP server (OpenAPI JSON at `/q/openapi.json` by default). The feature is
+gated as developer-only (`insecure:dev`) via `camel.jbang.openapiUi` and `camel.management.openapiUiEnabled`.
+When `--port` is set without `--management-port`, the management server is co-bound to the same port so the UI
+and spec stay together. `--openapi-ui` also sets override properties for `camel.rest.component=platform-http`
+and `camel.rest.apiContextPath=/q/openapi.json`, which take precedence over values in `application.properties`
+or other property sources (same as other CLI `--` server flags that use override properties).
+
 The `camel cmd route-diagram` and `camel cmd route-topology` now accept one or more Camel route source files
 (instead of only the name/pid of a running integration), so diagrams and inter-route topology can be
 generated at design/source time without starting the application first, for example:

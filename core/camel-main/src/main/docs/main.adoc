@@ -225,7 +225,7 @@ The camel.server supports 21 options, which are listed below.
 
 
 === Camel Embedded HTTP management Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.management supports 27 options, which are listed below.
+The camel.management supports 29 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -251,6 +251,8 @@ The camel.management supports 27 options, which are listed below.
 | *camel.management.jwtKeystorePath* | Path to the keystore file used for JWT tokens validation. |  | String
 | *camel.management.jwtKeystoreType* | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
 | *camel.management.metricsEnabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /observe/metrics | false | boolean
+| *camel.management.openapiUiEnabled* | Whether to enable Swagger UI for REST DSL OpenAPI documents. If enabled then you can browse the API at context-path: /q/openapi. The OpenAPI document is expected at openapiUiSpecPath (by default /q/openapi.json from REST DSL apiContextPath ). | false | boolean
+| *camel.management.openapiUiSpecPath* | Path or URL of the OpenAPI document loaded by Swagger UI at /q/openapi. | /q/openapi.json | String
 | *camel.management.path* | Context-path to use for embedded HTTP server | / | String
 | *camel.management.port* | Port to use for binding embedded HTTP management server. Use 0 to dynamic assign a free random port number. | 8080 | int
 | *camel.management.sendEnabled* | Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to Camel endpoint URIs via HTTP. | false | boolean

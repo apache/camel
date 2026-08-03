@@ -57,6 +57,11 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     @Metadata(security = "insecure:dev")
     private boolean sendEnabled;
 
+    @Metadata(security = "insecure:dev")
+    private boolean openapiUiEnabled;
+    @Metadata(defaultValue = "/q/openapi.json")
+    private String openapiUiSpecPath = "/q/openapi.json";
+
     @Metadata(label = "security")
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "security")
@@ -288,6 +293,30 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
      */
     public void setSendEnabled(boolean sendEnabled) {
         this.sendEnabled = sendEnabled;
+    }
+
+    public boolean isOpenapiUiEnabled() {
+        return openapiUiEnabled;
+    }
+
+    /**
+     * Whether to enable Swagger UI for REST DSL OpenAPI documents. If enabled then you can browse the API at
+     * context-path: /q/openapi. The OpenAPI document is expected at {@link #openapiUiSpecPath} (by default
+     * /q/openapi.json from REST DSL {@code apiContextPath}).
+     */
+    public void setOpenapiUiEnabled(boolean openapiUiEnabled) {
+        this.openapiUiEnabled = openapiUiEnabled;
+    }
+
+    public String getOpenapiUiSpecPath() {
+        return openapiUiSpecPath;
+    }
+
+    /**
+     * Path or URL of the OpenAPI document loaded by Swagger UI at /q/openapi.
+     */
+    public void setOpenapiUiSpecPath(String openapiUiSpecPath) {
+        this.openapiUiSpecPath = openapiUiSpecPath;
     }
 
     public boolean isAuthenticationEnabled() {
@@ -525,6 +554,22 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
      */
     public HttpManagementServerConfigurationProperties withSendEnabled(boolean sendEnabled) {
         this.sendEnabled = sendEnabled;
+        return this;
+    }
+
+    /**
+     * Whether to enable Swagger UI at /q/openapi (not intended for production use).
+     */
+    public HttpManagementServerConfigurationProperties withOpenapiUiEnabled(boolean openapiUiEnabled) {
+        this.openapiUiEnabled = openapiUiEnabled;
+        return this;
+    }
+
+    /**
+     * Path or URL of the OpenAPI document loaded by Swagger UI.
+     */
+    public HttpManagementServerConfigurationProperties withOpenapiUiSpecPath(String openapiUiSpecPath) {
+        this.openapiUiSpecPath = openapiUiSpecPath;
         return this;
     }
 
