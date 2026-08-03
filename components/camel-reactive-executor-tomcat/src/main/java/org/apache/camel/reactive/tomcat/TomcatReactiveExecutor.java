@@ -40,7 +40,15 @@ import org.slf4j.LoggerFactory;
 /**
  * This reactive executor is intended for users of Apache Tomcat, to let Camel applications shutdown cleanly when being
  * undeployed in Apache Tomcat.
+ *
+ * @deprecated since 4.22. The cross-thread ThreadLocal cleanup that distinguished this component from
+ *             {@link org.apache.camel.impl.engine.DefaultReactiveExecutor} relied on reflective access to the private
+ *             {@code Thread.threadLocals} field, which is denied by the JDK module system since JDK 17 and is
+ *             incompatible with virtual threads. Without that cleanup, this executor is functionally identical to the
+ *             default. Use {@code DefaultReactiveExecutor} instead (it is used automatically when this module is not on
+ *             the classpath).
  */
+@Deprecated(since = "4.22")
 @ManagedResource(description = "Managed TomcatReactiveExecutor")
 @JdkService(ReactiveExecutor.FACTORY)
 @Experimental
