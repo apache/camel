@@ -10,7 +10,7 @@
 *Since Camel {since}*
 
 The camel-mcp-server module exposes Camel routes registered via the
-xref:components::ai-tool-component.adoc[ai-tool] component as tools of a
+xref:ROOT:ai-tool-component.adoc[ai-tool] component as tools of a
 https://modelcontextprotocol.io[Model Context Protocol] (MCP) server, served
 over MCP streamable HTTP. No route is needed for the server itself: add the
 dependency, configure which tags to expose, and every matching `ai-tool` route
@@ -125,7 +125,7 @@ camelContext.addService(new McpServerBridge(configuration));
 The MCP endpoint is then served at `http://<host>:<port>/mcp` on the Camel
 main HTTP server. Any MCP client can connect over streamable HTTP, for
 example another Camel integration using the
-xref:components::openai-component.adoc[camel-openai] MCP client:
+xref:ROOT:openai-component.adoc[camel-openai] MCP client:
 
 [source,java]
 ----
@@ -209,7 +209,7 @@ following rules:
   router, so platform-http authentication (basic, JWT via
   `camel.server.authentication*` options) applies to it. The MCP
   specification's authorization model is OAuth 2.1; see
-  xref:components:others:oauth.adoc[camel-oauth] for resource-server style
+  xref:oauth.adoc[camel-oauth] for resource-server style
   protection. On Quarkus and Spring Boot, authentication is owned by the
   native runtime security.
 
