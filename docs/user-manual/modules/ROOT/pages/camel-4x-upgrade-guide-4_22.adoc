@@ -595,7 +595,7 @@ Add the `camel-ai-tool` dependency to your project:
 </dependency>
 ----
 
-The `camel-spring-ai-tools` dependency is no longer required by `camel-spring-ai-chat`.
+The `camel-spring-ai-tools` component has been removed. Remove the `camel-spring-ai-tools` dependency from your project.
 
 === camel-pqc - potential breaking change
 
