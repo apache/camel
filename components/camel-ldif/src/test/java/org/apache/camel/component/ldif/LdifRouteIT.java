@@ -61,7 +61,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class LdifRouteIT extends LdifTestSupport {
     // Constants
     private static final String LDAP_CONN_NAME = "conn";
-    private static final String ENDPOINT_LDIF = "ldif:" + LDAP_CONN_NAME;
+    // these tests feed a URL as the body, so URL dereferencing must be explicitly enabled (CAMEL-24297)
+    private static final String ENDPOINT_LDIF = "ldif:" + LDAP_CONN_NAME + "?allowUrlBody=true";
     private static final String ENDPOINT_START = "direct:start";
     private static final String ENDPOINT_SETUP_START = "direct:setup";
     private static final SearchControls SEARCH_CONTROLS

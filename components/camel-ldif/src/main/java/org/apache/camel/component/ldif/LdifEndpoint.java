@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
@@ -34,6 +35,8 @@ public class LdifEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String ldapConnectionName;
+    @UriParam(label = "security", defaultValue = "false", security = "insecure:dev")
+    private boolean allowUrlBody;
 
     protected LdifEndpoint(String endpointUri, String remaining, LdifComponent component) {
         super(endpointUri, component);
@@ -60,5 +63,19 @@ public class LdifEndpoint extends DefaultEndpoint {
      */
     public void setLdapConnectionName(String ldapConnectionName) {
         this.ldapConnectionName = ldapConnectionName;
+    }
+
+    public boolean isAllowUrlBody() {
+        return allowUrlBody;
+    }
+
+    /**
+     * Whether to allow a message body that is not LDIF content to be dereferenced as a URL and fetched. When disabled
+     * (default), a body that does not start with <tt>version: 1</tt> is rejected with an
+     * {@link IllegalArgumentException} instead of being fetched as a URL, which avoids a content-sniffed URL fetch
+     * (SSRF) from untrusted body content.
+     */
+    public void setAllowUrlBody(boolean allowUrlBody) {
+        this.allowUrlBody = allowUrlBody;
     }
 }

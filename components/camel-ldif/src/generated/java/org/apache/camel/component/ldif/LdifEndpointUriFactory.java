@@ -24,7 +24,8 @@ public class LdifEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(2);
+        Set<String> props = new HashSet<>(3);
+        props.add("allowUrlBody");
         props.add("lazyStartProducer");
         props.add("ldapConnectionName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
