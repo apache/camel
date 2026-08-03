@@ -56,9 +56,9 @@ class CatalogToolsTest {
 
         CatalogTools.ComponentListResult result = tools.camel_catalog_components(null, null, null, null, null, null);
 
-        assertThat(result.components().size())
+        assertThat(result.components())
                 .as("default limit should cap results at 20")
-                .isLessThanOrEqualTo(20);
+                .hasSizeLessThanOrEqualTo(20);
     }
 
     @Test
@@ -114,9 +114,9 @@ class CatalogToolsTest {
 
         assertThat(defaultResult.endpointOptions()).isNotEmpty();
         assertThat(allResult.endpointOptions()).isNotEmpty();
-        assertThat(defaultResult.endpointOptions().size())
+        assertThat(defaultResult.endpointOptions())
                 .as("default 'common' scope must filter out advanced/deprecated options")
-                .isLessThan(allResult.endpointOptions().size());
+                .hasSizeLessThan(allResult.endpointOptions().size());
 
         // 'common' must not include any deprecated option (advanced options are not exposed in the
         // returned OptionInfo, but deprecated is hidden internally via the label/deprecated flags)
@@ -132,7 +132,9 @@ class CatalogToolsTest {
         CatalogTools.ComponentDetailResult result
                 = tools.camel_catalog_component_doc("kafka", null, "required", null, null, null, null);
 
-        assertThat(result.endpointOptions()).allMatch(CatalogTools.OptionInfo::required);
+        assertThat(result.endpointOptions())
+                .isNotEmpty()
+                .allMatch(CatalogTools.OptionInfo::required);
     }
 
     @Test
@@ -142,8 +144,8 @@ class CatalogToolsTest {
         CatalogTools.ComponentDetailResult result
                 = tools.camel_catalog_component_doc("kafka", "topic", "all", null, null, null, null);
 
-        assertThat(result.endpointOptions()).isNotEmpty();
         assertThat(result.endpointOptions())
+                .isNotEmpty()
                 .allMatch(o -> o.name().toLowerCase().contains("topic"));
     }
 

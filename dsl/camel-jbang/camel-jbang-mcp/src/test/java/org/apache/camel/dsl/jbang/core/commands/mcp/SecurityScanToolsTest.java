@@ -348,6 +348,7 @@ class SecurityScanToolsTest {
 
         assertThat(result.findings())
                 .filteredOn(f -> f.category().equals("secret"))
+                .isNotEmpty()
                 .allMatch(f -> f.line() == 3);
     }
 
