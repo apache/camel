@@ -255,6 +255,10 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
                     // Only add to list after successful startup
                     subscribers.add(subscriber);
                     subscriberAdded = true;
+                    // a stop while the subscriber was starting missed it; stop it here or awaitTerminated never returns
+                    if (!isRunAllowed() || isSuspendingOrSuspended()) {
+                        subscriber.stopAsync();
+                    }
                     subscriber.awaitTerminated();
                 } catch (Exception e) {
                     // Remove from list if it was added
@@ -321,6 +325,10 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
 
                     synchronousPullResponseFuture = subscriber.pullCallable().futureCall(pullRequest);
                     pendingSynchronousPullResponses.add(synchronousPullResponseFuture);
+                    // a stop while the pull was being issued missed this future; cancel it here or get() blocks
+                    if (!isRunAllowed() || isSuspendingOrSuspended()) {
+                        synchronousPullResponseFuture.cancel(true);
+                    }
                     PullResponse pullResponse = synchronousPullResponseFuture.get();
                     for (ReceivedMessage message : pullResponse.getReceivedMessagesList()) {
                         PubsubMessage pubsubMessage = message.getMessage();
