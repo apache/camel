@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.langchain4j.tools;
 
+@Deprecated(since = "4.22.0")
 final class TagsHelper {
     private TagsHelper() {
     }

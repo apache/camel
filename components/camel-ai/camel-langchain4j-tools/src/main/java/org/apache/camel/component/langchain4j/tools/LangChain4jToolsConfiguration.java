@@ -25,6 +25,7 @@ import org.apache.camel.spi.UriParams;
 
 @Configurer
 @UriParams
+@Deprecated(since = "4.22.0")
 public class LangChain4jToolsConfiguration implements Cloneable {
 
     @UriParam(label = "advanced")

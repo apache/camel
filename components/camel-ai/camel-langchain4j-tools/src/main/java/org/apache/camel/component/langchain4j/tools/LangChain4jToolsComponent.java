@@ -31,6 +31,7 @@ import org.apache.camel.util.StringHelper;
 import static org.apache.camel.component.langchain4j.tools.LangChain4jTools.SCHEME;
 
 @Component(SCHEME)
+@Deprecated(since = "4.22.0")
 public class LangChain4jToolsComponent extends DefaultComponent {
 
     @Metadata
