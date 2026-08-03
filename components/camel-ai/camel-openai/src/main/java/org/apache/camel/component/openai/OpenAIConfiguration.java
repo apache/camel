@@ -167,6 +167,13 @@ public class OpenAIConfiguration implements Cloneable {
                             + "(e.g. additionalResponseHeader.reasoning_content=CamelMyReasoningHeader)")
     private Map<String, Object> additionalResponseHeader;
 
+    @UriParam
+    @Metadata(description = "Comma-separated tags to filter tools from the shared AiToolRegistry. "
+                            + "Tools registered via ai-tool: consumer endpoints with matching tags "
+                            + "are discovered and exposed as OpenAI function-calling tools alongside "
+                            + "any MCP tools. Tools with no tags (default pool) are always included.")
+    private String tags;
+
     @UriParam(prefix = "mcpServer.", multiValue = true)
     @Metadata(description = "MCP (Model Context Protocol) server configurations. "
                             + "Define servers using prefix notation: mcpServer.<name>.transportType=stdio|sse|streamableHttp, (Note that sse is deprecated) "
@@ -680,6 +687,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setSpeechInstructions(String speechInstructions) {
         this.speechInstructions = speechInstructions;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     public Map<String, Object> getMcpServer() {

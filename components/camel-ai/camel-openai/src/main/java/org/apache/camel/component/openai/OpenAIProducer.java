@@ -24,8 +24,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -59,8 +61,14 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.ai.tool.AiToolExecutor;
+import org.apache.camel.component.ai.tool.AiToolParameterHelper;
+import org.apache.camel.component.ai.tool.AiToolRegistry;
+import org.apache.camel.component.ai.tool.AiToolResult;
+import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -204,15 +212,26 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             }
         }
 
+        // Discover Camel route tools from AiToolRegistry by tags
+        Map<String, AiToolSpec> camelRouteTools = discoverCamelRouteTools(config);
+        boolean hasCamelRouteTools = !camelRouteTools.isEmpty();
+        if (hasCamelRouteTools) {
+            for (AiToolSpec spec : camelRouteTools.values()) {
+                paramsBuilder.addTool(AiToolSpecToOpenAI.toFunctionTool(spec));
+            }
+        }
+
+        boolean hasAnyTools = hasMcpTools || hasCamelRouteTools;
+
         ChatCompletionCreateParams params = paramsBuilder.build();
 
-        if (Boolean.TRUE.equals(streaming) && hasMcpTools && config.isAutoToolExecution()) {
-            LOG.info("Streaming with MCP tools is not supported; falling back to non-streaming for the agentic loop");
-            processNonStreaming(exchange, params, config);
+        if (Boolean.TRUE.equals(streaming) && hasAnyTools && config.isAutoToolExecution()) {
+            LOG.info("Streaming with tools is not supported; falling back to non-streaming for the agentic loop");
+            processNonStreaming(exchange, params, config, camelRouteTools);
         } else if (Boolean.TRUE.equals(streaming)) {
             processStreaming(exchange, params);
         } else {
-            processNonStreaming(exchange, params, config);
+            processNonStreaming(exchange, params, config, camelRouteTools);
         }
     }
 
@@ -437,17 +456,20 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                         .build());
     }
 
-    private void processNonStreaming(Exchange exchange, ChatCompletionCreateParams params, OpenAIConfiguration config)
+    private void processNonStreaming(
+            Exchange exchange, ChatCompletionCreateParams params, OpenAIConfiguration config,
+            Map<String, AiToolSpec> camelRouteTools)
             throws Exception {
         List<ChatCompletionFunctionTool> mcpTools = getEndpoint().getMcpToolState().tools();
         boolean hasMcpTools = mcpTools != null && !mcpTools.isEmpty();
+        boolean hasAnyTools = hasMcpTools || !camelRouteTools.isEmpty();
 
-        if (!hasMcpTools || !config.isAutoToolExecution()) {
-            // Path A: No MCP tools or auto-execution disabled -- existing behavior
+        if (!hasAnyTools || !config.isAutoToolExecution()) {
+            // Path A: No tools or auto-execution disabled -- existing behavior
             processNonStreamingSimple(exchange, params, config);
         } else {
-            // Path B: MCP tools with agentic loop
-            processNonStreamingAgentic(exchange, params, config);
+            // Path B: Tools with agentic loop (MCP and/or Camel route tools)
+            processNonStreamingAgentic(exchange, params, config, camelRouteTools);
         }
     }
 
@@ -474,12 +496,17 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     }
 
     private void processNonStreamingAgentic(
-            Exchange exchange, ChatCompletionCreateParams params, OpenAIConfiguration config)
+            Exchange exchange, ChatCompletionCreateParams params, OpenAIConfiguration config,
+            Map<String, AiToolSpec> camelRouteTools)
             throws Exception {
 
         int maxIterations = config.getMaxToolIterations();
+
+        Set<String> availableToolNames = new java.util.LinkedHashSet<>();
+        availableToolNames.addAll(getEndpoint().getMcpToolState().toolClientMap().keySet());
+        availableToolNames.addAll(camelRouteTools.keySet());
         LOG.debug("Starting agentic loop with maxToolIterations={}, available tools: {}", maxIterations,
-                getEndpoint().getMcpToolState().toolClientMap().keySet());
+                availableToolNames);
 
         // Rebuild the builder from the immutable params so we can accumulate messages
         ChatCompletionCreateParams.Builder paramsBuilder = params.toBuilder();
@@ -542,15 +569,26 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 String toolCallId = toolCall.asFunction().id();
                 toolCallsLog.add(toolName);
 
+                // Check if the tool is a Camel route tool first
+                AiToolSpec camelSpec = camelRouteTools.get(toolName);
+                if (camelSpec != null) {
+                    String resultContent = executeCamelRouteTool(camelSpec, argsJson, exchange, config);
+                    LOG.debug("Camel route tool '{}' result: {}", toolName, resultContent);
+                    batchResults.add(new ToolResultEntry(toolCallId, resultContent));
+                    allReturnDirect = false; // Camel route tools do not support returnDirect
+                    continue;
+                }
+
+                // Fall back to MCP tool dispatch
                 McpToolState mcpToolState = getEndpoint().getMcpToolState();
                 McpSyncClient mcpClient = mcpToolState.toolClientMap().get(toolName);
                 if (mcpClient == null) {
                     if (config.getHallucinatedToolNameStrategy() == HallucinatedToolNameStrategy.FAIL_EXCHANGE) {
                         throw new IllegalStateException(
-                                "Tool '" + toolName + "' not found in any configured MCP server");
+                                "Tool '" + toolName + "' not found in any configured tool source");
                     }
                     // repromptModel: send a corrective tool result listing available tools
-                    String available = String.join(", ", mcpToolState.toolClientMap().keySet());
+                    String available = String.join(", ", availableToolNames);
                     String errorMsg = "Error: tool '" + toolName
                                       + "' does not exist. Available tools: " + available;
                     LOG.warn("Hallucinated tool name '{}', sending corrective result to model", toolName);
@@ -631,6 +669,89 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         throw new IllegalStateException(
                 "Max tool iterations (%d) exceeded. Tools called: %s".formatted(maxIterations, toolCallsLog));
+    }
+
+    /**
+     * Executes a Camel route tool via {@link AiToolExecutor}, handling the exchange lifecycle and error strategies.
+     */
+    private String executeCamelRouteTool(
+            AiToolSpec spec, String argsJson, Exchange exchange, OpenAIConfiguration config)
+            throws Exception {
+        LOG.debug("Executing Camel route tool '{}' with args: {}", spec.getName(), argsJson);
+
+        Map<String, Object> argsMap;
+        try {
+            if (argsJson == null || argsJson.trim().isEmpty()) {
+                argsMap = Map.of();
+            } else {
+                argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
+            }
+        } catch (JsonProcessingException e) {
+            if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                throw e;
+            }
+            LOG.warn("Invalid tool arguments for Camel route tool '{}': {}", spec.getName(), argsJson, e);
+            return "Error: invalid tool arguments: " + e.getMessage();
+        }
+
+        // Isolate tool execution in its own exchange copy
+        Exchange toolExchange = ExchangeHelper.createCopy(exchange, true);
+        try {
+            AiToolResult result = AiToolExecutor.execute(spec, argsMap, toolExchange);
+            return handleCamelToolResult(spec.getName(), result, config);
+        } catch (Exception e) {
+            if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                throw e;
+            }
+            LOG.warn("Camel route tool '{}' execution failed: {}", spec.getName(), e.getMessage(), e);
+            return "Error: Tool execution failed: " + e.getMessage();
+        }
+    }
+
+    /**
+     * Converts an {@link AiToolResult} to a string for the LLM, respecting the configured error strategy.
+     */
+    private String handleCamelToolResult(String toolName, AiToolResult result, OpenAIConfiguration config)
+            throws Exception {
+        if (result instanceof AiToolResult.Success success) {
+            return success.value();
+        } else if (result instanceof AiToolResult.ArgumentError error) {
+            if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                throw error.cause();
+            }
+            LOG.warn("Camel route tool '{}' argument error: {}", toolName, error.message(), error.cause());
+            return "Error: invalid tool arguments: " + error.message();
+        } else if (result instanceof AiToolResult.ExecutionError error) {
+            if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                throw error.cause();
+            }
+            LOG.warn("Camel route tool '{}' execution error: {}", toolName, error.message(), error.cause());
+            return "Error: Tool execution failed";
+        }
+        return "Tool execution failed";
+    }
+
+    /**
+     * Discovers Camel route tools from the shared {@link AiToolRegistry} based on the configured tags.
+     */
+    private Map<String, AiToolSpec> discoverCamelRouteTools(OpenAIConfiguration config) {
+        String tags = config.getTags();
+        if (ObjectHelper.isEmpty(tags)) {
+            return Map.of();
+        }
+
+        AiToolRegistry registry = AiToolRegistry.getOrCreate(getEndpoint().getCamelContext());
+        String[] tagArray = AiToolParameterHelper.splitTags(tags);
+
+        Map<String, AiToolSpec> toolsByName = new LinkedHashMap<>();
+        for (String tag : tagArray) {
+            for (AiToolSpec spec : registry.getToolsByTag(tag.trim())) {
+                toolsByName.putIfAbsent(spec.getName(), spec);
+            }
+        }
+
+        LOG.debug("Discovered {} Camel route tools for tags: {}", toolsByName.size(), tags);
+        return toolsByName;
     }
 
     private void setAgenticTokenHeaders(Message message, OpenAIAgenticTokenTracker tokenTracker) {

@@ -17,8 +17,11 @@
 package org.apache.camel.component.openai;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,7 +35,14 @@ import com.openai.models.chat.completions.ChatCompletionUserMessageParam;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.ai.tool.AiToolExecutor;
+import org.apache.camel.component.ai.tool.AiToolParameterHelper;
+import org.apache.camel.component.ai.tool.AiToolRegistry;
+import org.apache.camel.component.ai.tool.AiToolResult;
+import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,11 +134,20 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
                         .toolCalls(toolCalls)
                         .build()));
 
-        // Execute each tool call via MCP and add tool result messages
-        if (getEndpoint().getMcpToolState().toolClientMap().isEmpty()) {
+        // Discover Camel route tools from AiToolRegistry
+        Map<String, AiToolSpec> camelRouteTools = discoverCamelRouteTools(config);
+        boolean hasMcpTools = !getEndpoint().getMcpToolState().toolClientMap().isEmpty();
+        boolean hasCamelRouteTools = !camelRouteTools.isEmpty();
+
+        if (!hasMcpTools && !hasCamelRouteTools) {
             throw new IllegalStateException(
-                    "No MCP tool clients configured on the endpoint. Configure mcpServer.* parameters.");
+                    "No tool sources configured on the endpoint. Configure mcpServer.* parameters or tags for Camel route tools.");
         }
+
+        // Build the available tool name set for hallucinated tool handling
+        Set<String> availableToolNames = new LinkedHashSet<>();
+        availableToolNames.addAll(getEndpoint().getMcpToolState().toolClientMap().keySet());
+        availableToolNames.addAll(camelRouteTools.keySet());
 
         int executedCount = 0;
         for (ChatCompletionMessageToolCall toolCall : toolCalls) {
@@ -136,52 +155,59 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
             String argsJson = toolCall.asFunction().function().arguments();
             String toolCallId = toolCall.asFunction().id();
 
-            McpToolState mcpToolState = getEndpoint().getMcpToolState();
-            McpSyncClient mcpClient = mcpToolState.toolClientMap().get(toolName);
-            if (mcpClient == null) {
-                if (config.getHallucinatedToolNameStrategy() == HallucinatedToolNameStrategy.FAIL_EXCHANGE) {
-                    throw new IllegalStateException(
-                            "Tool '" + toolName + "' not found in any configured MCP server");
-                }
-                // repromptModel: send a corrective tool result listing available tools
-                String available = String.join(", ", mcpToolState.toolClientMap().keySet());
-                String errorMsg = "Error: tool '" + toolName
-                                  + "' does not exist. Available tools: " + available;
-                LOG.warn("Hallucinated tool name '{}', sending corrective result to model", toolName);
-                history.add(ChatCompletionMessageParam.ofTool(
-                        ChatCompletionToolMessageParam.builder()
-                                .toolCallId(toolCallId)
-                                .content(errorMsg)
-                                .build()));
-                executedCount++;
-                continue;
-            }
-
             String resultContent;
 
-            try {
-                Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
-                McpSchema.CallToolResult toolResult
-                        = getEndpoint().callTool(mcpClient, toolName, argsMap);
+            // Check if the tool is a Camel route tool first
+            AiToolSpec camelSpec = camelRouteTools.get(toolName);
+            if (camelSpec != null) {
+                resultContent = executeCamelRouteTool(camelSpec, argsJson, exchange, config);
+            } else {
+                // Fall back to MCP tool dispatch
+                McpToolState mcpToolState = getEndpoint().getMcpToolState();
+                McpSyncClient mcpClient = mcpToolState.toolClientMap().get(toolName);
+                if (mcpClient == null) {
+                    if (config.getHallucinatedToolNameStrategy() == HallucinatedToolNameStrategy.FAIL_EXCHANGE) {
+                        throw new IllegalStateException(
+                                "Tool '" + toolName + "' not found in any configured tool source");
+                    }
+                    // repromptModel: send a corrective tool result listing available tools
+                    String available = String.join(", ", availableToolNames);
+                    String errorMsg = "Error: tool '" + toolName
+                                      + "' does not exist. Available tools: " + available;
+                    LOG.warn("Hallucinated tool name '{}', sending corrective result to model", toolName);
+                    history.add(ChatCompletionMessageParam.ofTool(
+                            ChatCompletionToolMessageParam.builder()
+                                    .toolCallId(toolCallId)
+                                    .content(errorMsg)
+                                    .build()));
+                    executedCount++;
+                    continue;
+                }
 
-                if (Boolean.TRUE.equals(toolResult.isError())) {
-                    resultContent = "Error: " + extractTextContent(toolResult.content());
-                    LOG.warn("MCP tool '{}' returned error: {}", toolName, resultContent);
-                } else {
-                    resultContent = extractTextContent(toolResult.content());
+                try {
+                    Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
+                    McpSchema.CallToolResult toolResult
+                            = getEndpoint().callTool(mcpClient, toolName, argsMap);
+
+                    if (Boolean.TRUE.equals(toolResult.isError())) {
+                        resultContent = "Error: " + extractTextContent(toolResult.content());
+                        LOG.warn("MCP tool '{}' returned error: {}", toolName, resultContent);
+                    } else {
+                        resultContent = extractTextContent(toolResult.content());
+                    }
+                } catch (JsonProcessingException e) {
+                    if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                        throw e;
+                    }
+                    LOG.warn("Invalid tool arguments for '{}': {}", toolName, argsJson, e);
+                    resultContent = "Error: invalid tool arguments: " + e.getMessage();
+                } catch (Exception e) {
+                    if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                        throw e;
+                    }
+                    LOG.warn("MCP tool '{}' execution failed: {}", toolName, e.getMessage(), e);
+                    resultContent = "Error: Tool execution failed: " + e.getMessage();
                 }
-            } catch (JsonProcessingException e) {
-                if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
-                    throw e;
-                }
-                LOG.warn("Invalid tool arguments for '{}': {}", toolName, argsJson, e);
-                resultContent = "Error: invalid tool arguments: " + e.getMessage();
-            } catch (Exception e) {
-                if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
-                    throw e;
-                }
-                LOG.warn("MCP tool '{}' execution failed: {}", toolName, e.getMessage(), e);
-                resultContent = "Error: Tool execution failed: " + e.getMessage();
             }
 
             history.add(ChatCompletionMessageParam.ofTool(
@@ -196,6 +222,74 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
         exchange.setProperty(historyProperty, OpenAIConversationHistoryTrimmer.trim(history, config));
         exchange.getMessage().setBody(null);
         exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, executedCount);
+    }
+
+    private Map<String, AiToolSpec> discoverCamelRouteTools(OpenAIConfiguration config) {
+        String tags = config.getTags();
+        if (ObjectHelper.isEmpty(tags)) {
+            return Map.of();
+        }
+
+        AiToolRegistry registry = AiToolRegistry.getOrCreate(getEndpoint().getCamelContext());
+        String[] tagArray = AiToolParameterHelper.splitTags(tags);
+
+        Map<String, AiToolSpec> toolsByName = new LinkedHashMap<>();
+        for (String tag : tagArray) {
+            for (AiToolSpec spec : registry.getToolsByTag(tag.trim())) {
+                toolsByName.putIfAbsent(spec.getName(), spec);
+            }
+        }
+
+        LOG.debug("Discovered {} Camel route tools for tags: {}", toolsByName.size(), tags);
+        return toolsByName;
+    }
+
+    private String executeCamelRouteTool(
+            AiToolSpec spec, String argsJson, Exchange exchange, OpenAIConfiguration config)
+            throws Exception {
+        LOG.debug("Executing Camel route tool '{}' with args: {}", spec.getName(), argsJson);
+
+        Map<String, Object> argsMap;
+        try {
+            if (argsJson == null || argsJson.trim().isEmpty()) {
+                argsMap = Map.of();
+            } else {
+                argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
+            }
+        } catch (JsonProcessingException e) {
+            if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                throw e;
+            }
+            LOG.warn("Invalid tool arguments for Camel route tool '{}': {}", spec.getName(), argsJson, e);
+            return "Error: invalid tool arguments: " + e.getMessage();
+        }
+
+        Exchange toolExchange = ExchangeHelper.createCopy(exchange, true);
+        try {
+            AiToolResult result = AiToolExecutor.execute(spec, argsMap, toolExchange);
+            if (result instanceof AiToolResult.Success success) {
+                return success.value();
+            } else if (result instanceof AiToolResult.ArgumentError error) {
+                if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                    throw error.cause();
+                }
+                LOG.warn("Camel route tool '{}' argument error: {}", spec.getName(), error.message(), error.cause());
+                return "Error: invalid tool arguments: " + error.message();
+            } else if (result instanceof AiToolResult.ExecutionError error) {
+                if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                    throw error.cause();
+                }
+                LOG.warn("Camel route tool '{}' execution error: {}", spec.getName(), error.message(), error.cause());
+                return "Error: Tool execution failed";
+            }
+            return "Tool execution failed";
+        } catch (Exception e) {
+            if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                throw e;
+            }
+            LOG.warn("Camel route tool '{}' execution failed: {}", spec.getName(), e.getMessage(), e);
+            return "Error: Tool execution failed: " + e.getMessage();
+        }
     }
 
     private String extractTextContent(List<McpSchema.Content> contents) {
