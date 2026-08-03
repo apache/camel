@@ -101,8 +101,19 @@ YAML::
 ----
 ====
 
-Start the MCP server by adding the `McpServerBridge` service to the
-CamelContext, selecting the tags to expose:
+On Camel Main and Camel JBang no code is needed — like Jolokia or
+Prometheus, the server starts from configuration properties alone:
+
+[source,properties]
+----
+camel.server.enabled = true
+camel.server.mcp-enabled = true
+camel.server.mcp-tags = crm,notify
+camel.server.mcp-server-name = my-integration-app
+----
+
+On other runtimes, or when wiring programmatically, add the
+`McpServerBridge` service to the CamelContext instead:
 
 [source,java]
 ----
@@ -128,23 +139,28 @@ from("direct:agent")
 
 == Options
 
-The `McpServerConfiguration` options:
+The options, configurable as `camel.server.mcp-*` properties on Camel Main /
+JBang (see the xref:main.adoc[camel-main] options) or on
+`McpServerConfiguration` programmatically:
 
 [width="100%",cols="2,5,2,1",options="header"]
 |===
 | Option | Description | Default | Owner
 
-| `tags` | Comma-separated list of ai-tool tags to expose as MCP tools. Only
-  tools registered under one of these tags are published; the untagged
-  default pool is never exposed. When not set, no tools are published. |  |
-  bridge
-| `toolTimeout` | Per-call tool execution timeout in milliseconds. A call
-  exceeding the timeout returns an error result to the MCP client; the
-  underlying route keeps running until it completes on its own. | `20000` |
-  bridge
-| `path` | HTTP path where the MCP endpoint is served. | `/mcp` | engine
-| `serverName` | MCP server name advertised to clients. | CamelContext name |
-  engine
+| `camel.server.mcp-enabled` | Whether to expose ai-tool routes as MCP tools
+  over streamable HTTP. | `false` | bridge
+| `camel.server.mcp-tags` | Comma-separated list of ai-tool tags to expose as
+  MCP tools. Only tools registered under one of these tags are published; the
+  untagged default pool is never exposed. When not set, no tools are
+  published. |  | bridge
+| `camel.server.mcp-tool-timeout` | Per-call tool execution timeout in
+  milliseconds. A call exceeding the timeout returns an error result to the
+  MCP client; the underlying route keeps running until it completes on its
+  own. | `20000` | bridge
+| `camel.server.mcp-path` | HTTP path where the MCP endpoint is served. |
+  `/mcp` | engine
+| `camel.server.mcp-server-name` | MCP server name advertised to clients. |
+  CamelContext name | engine
 |===
 
 Bridge-owned options are honored identically on every runtime. Engine-owned
