@@ -1079,6 +1079,173 @@ String-valued fields are set directly. Non-string fields (numbers, booleans, obj
 
 NOTE: This maps fields from the response message's additional properties (fields not part of the standard schema). Standard response fields like `content`, `role`, and `tool_calls` are not accessible through this option.
 
+== Tips for Production Use
+
+This section covers practical advice for production routes. For component selection, streaming to browsers, and prompt management at scale, see the xref:ai-llm-integration-guide.adoc[LLM Integration Guide].
+
+=== Temperature and Model Parameters
+
+The `temperature` endpoint option controls how deterministic the model's output is. Lower values produce more consistent, predictable responses; higher values produce more varied, creative output.
+
+For structured extraction tasks (JSON parsing, data extraction, classification), use a low temperature such as `0.1` to reduce the chance of the model adding unexpected commentary or formatting around the structured output:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:extract-skills")
+    .to("openai:chat-completion?temperature=0.1&outputClass=com.example.SkillList")
+    .log("Extracted: ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:extract-skills
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              temperature: 0.1
+              outputClass: com.example.SkillList
+        - log:
+            message: "Extracted: ${body}"
+----
+====
+
+Temperature can also be set per-exchange via the `CamelOpenAITemperature` header. Other tuning options include `topP` (nucleus sampling) and `maxTokens` (response length limit).
+
+=== Dynamic Prompts
+
+The `CamelOpenAIUserMessage` header is evaluated per-exchange, so you can construct prompts dynamically using Camel's Simple language or any other expression:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:summarize")
+    .setHeader("CamelOpenAIUserMessage",
+        simple("Summarize this ${header.documentType} in 3 bullet points: ${body}"))
+    .to("openai:chat-completion")
+    .log("Summary: ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:summarize
+      steps:
+        - setHeader:
+            name: CamelOpenAIUserMessage
+            simple: "Summarize this ${header.documentType} in 3 bullet points: ${body}"
+        - to:
+            uri: openai:chat-completion
+        - log:
+            message: "Summary: ${body}"
+----
+====
+
+This is useful when chaining multiple enrichment steps where each step needs a different instruction based on the current exchange state.
+
+=== Use Structured Output for JSON Extraction
+
+When you need the model to return structured data (JSON objects, arrays, typed fields), prefer the built-in `outputClass` or `jsonSchema` options over manually parsing the model's text output. These options instruct the model to produce valid JSON matching your schema, which significantly reduces parsing failures:
+
+[source,java]
+----
+// Recommended — structured output handles JSON formatting:
+from("direct:extract")
+    .to("openai:chat-completion?outputClass=com.example.Skills")
+    .log("${body}");
+
+// Avoid — manual JSON parsing is fragile:
+from("direct:extract")
+    .setHeader("CamelOpenAIUserMessage",
+        constant("Extract skills as a JSON array. Respond with valid JSON only."))
+    .to("openai:chat-completion")
+    .process(exchange -> {
+        // This breaks when the model adds commentary around the JSON
+        String json = exchange.getIn().getBody(String.class);
+        List<String> skills = objectMapper.readValue(json, new TypeReference<>() {});
+        exchange.getIn().setBody(skills);
+    });
+----
+
+See <<_structured_output_with_outputclass>> and <<_structured_output_with_json_schema>> above for full examples. For additional validation, pipe the response through the xref:json-validator-component.adoc[JSON Validator] component.
+
+=== Handling Model Output Errors
+
+A successful HTTP 200 response from the model does not guarantee the content is usable. The model may ignore formatting instructions, return truncated output, or produce content that does not match your expected shape. These are not Camel exceptions — they appear as downstream parsing failures in your own processors.
+
+For production routes, add a lightweight validation step after the model call:
+
+[source,java]
+----
+from("direct:extract")
+    .to("openai:chat-completion?outputClass=com.example.Result")
+    .process(exchange -> {
+        String response = exchange.getIn().getBody(String.class);
+        if (response == null || response.isBlank()) {
+            throw new IllegalStateException("Empty model response");
+        }
+    })
+    .to("direct:downstream");
+----
+
+Using `outputClass` or `jsonSchema` already reduces this risk substantially by constraining the model's output format at the API level.
+
+=== Prompt Management
+
+When your project grows beyond a few routes, keeping prompt strings inline in route definitions becomes hard to maintain. Consider these approaches:
+
+*Load prompts from resource files:*
+
+[source,java]
+----
+from("direct:analyze")
+    .setHeader("CamelOpenAISystemMessage",
+        constant("resource:classpath:prompts/system-analyst.txt"))
+    .to("openai:chat-completion");
+----
+
+*Use Camel property placeholders for reusable fragments:*
+
+[source,properties]
+----
+# application.properties
+prompt.system.analyst=You are a technical analyst. Be concise and factual.
+prompt.output.json=Respond with valid JSON only, no commentary.
+----
+
+[source,java]
+----
+from("direct:analyze")
+    .setHeader("CamelOpenAISystemMessage", constant("{{prompt.system.analyst}}"))
+    .setHeader("CamelOpenAIUserMessage",
+        simple("{{prompt.output.json}} Analyze: ${body}"))
+    .to("openai:chat-completion");
+----
+
+TIP: For prompt templates with named variables (e.g., pass:c[`{{dishType}}`]), the xref:langchain4j-chat-component.adoc[LangChain4j Chat] component offers built-in template support via the `CHAT_SINGLE_MESSAGE_WITH_PROMPT` operation.
+
+=== Streaming Considerations
+
+The `streaming=true` option returns an `Iterator<ChatCompletionChunk>` that can be consumed with Camel's Split EIP (see <<_streaming_response>> above). This works well for pipeline-style processing where each chunk is handled as part of a longer integration flow.
+
+For user-facing scenarios that require Server-Sent Events (SSE) or WebSocket delivery to a browser, see xref:ai-llm-integration-guide.adoc#_streaming_responses[LLM Integration Guide — Streaming responses] for platform-http patterns and when to stream through Camel vs. a dedicated handler.
+
+NOTE: When MCP tools with `autoToolExecution` are active, streaming automatically falls back to non-streaming to allow the agentic tool-calling loop to function. See xref:others:openai-mcp.adoc[MCP Tool Calling] for details.
+
 == Sub-Pages
 
 For more details on specific features, see:
