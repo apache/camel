@@ -22,6 +22,8 @@ import org.apache.camel.Service;
 /**
  * Factory for creating the MCP server exposing ai-tool routes as MCP tools, for standalone Camel (not Spring Boot or
  * Quarkus). Provided by camel-mcp-server.
+ *
+ * @since 4.22
  */
 public interface McpServerFactory {
 
