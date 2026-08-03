@@ -29,6 +29,8 @@ for this component:
 </dependency>
 ----
 
+TIP: For a comparison of `camel-langchain4j-chat` vs `camel-openai` and guidance on which to choose, see xref:others:ai-summary.adoc[Choosing the Right AI Component]. If you need streaming responses, structured output (`outputClass` / `jsonSchema`), or MCP tool calling, see the xref:openai-component.adoc[OpenAI] component.
+
 == URI format
 
 ----

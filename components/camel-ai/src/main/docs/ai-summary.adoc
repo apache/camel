@@ -4,6 +4,53 @@
 The Camel AI components are a group of components for applying Apache Camel to
 various AI-related technologies.
 
+== Choosing the Right AI Component
+
+Camel offers two main paths for integrating Large Language Models (LLMs) into routes:
+
+* **xref:openai-component.adoc[OpenAI]** — talks directly to OpenAI and any OpenAI-compatible API (OpenRouter, Ollama, vLLM, LM Studio). Native support for streaming, structured output (`outputClass` / `jsonSchema`), MCP tool calling, conversation memory, and the Responses API. Best when you are committed to the OpenAI ecosystem or using an OpenAI-compatible gateway.
+
+* **xref:langchain4j-chat-component.adoc[LangChain4j Chat]** — abstracts through https://github.com/langchain4j/langchain4j[LangChain4j] so you can switch LLM providers (OpenAI, Anthropic, Google Gemini, Mistral, Ollama, and others) by swapping a dependency. Also provides prompt templates with variables, RAG integration via the Content Enricher pattern, and multi-message conversation history.
+
+[cols="2,1,1"]
+|===
+| Need | camel-openai | camel-langchain4j-chat
+
+| OpenAI or compatible API (OpenRouter, Ollama, vLLM)
+| Yes
+| Via LangChain4j provider
+
+| Switch providers without code changes
+| No (OpenAI-compatible only)
+| Yes
+
+| MCP tool calling / agentic loops
+| Yes
+| No (use xref:langchain4j-tools-component.adoc[langchain4j-tools] instead)
+
+| Streaming responses
+| Yes
+| Manual (via `StreamingChatLanguageModel`)
+
+| Structured output (JSON schema)
+| Yes (`outputClass`, `jsonSchema`)
+| No
+
+| Prompt templates with variables
+| No (use Simple expressions)
+| Yes (built-in `{{variable}}` syntax)
+
+| RAG pipelines
+| Manual
+| Yes (with `LangChain4jRagAggregatorStrategy`)
+
+| Embeddings
+| Yes
+| Via xref:langchain4j-embeddingstore-component.adoc[langchain4j-embeddingstore]
+|===
+
+TIP: If you already use an OpenAI-compatible API and want the richest feature set (streaming, MCP, structured output), start with `camel-openai`. If multi-provider flexibility is a hard requirement, use `camel-langchain4j-chat`. Both can coexist in the same project.
+
 == {doctitle} components
 
 See the following for usage of each component:
