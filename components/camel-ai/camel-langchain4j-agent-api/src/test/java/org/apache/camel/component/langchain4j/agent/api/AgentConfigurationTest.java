@@ -27,7 +27,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
+import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.request.ChatRequest;
+import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.service.tool.ToolArgumentsErrorHandler;
 import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
 import org.junit.jupiter.api.Test;
@@ -342,12 +346,19 @@ class AgentConfigurationTest {
     void duplicateCopiesAllDeclaredInstanceFields() throws Exception {
         Executor executor = Executors.newSingleThreadExecutor();
         try {
+            ChatModel chatModel = new ChatModel() {
+                @Override
+                public ChatResponse doChat(ChatRequest request) {
+                    return ChatResponse.builder().aiMessage(AiMessage.from("ok")).build();
+                }
+            };
             Function<ToolExecutionRequest, ToolExecutionResultMessage> strategy
                     = request -> ToolExecutionResultMessage.from(request, "unknown");
             ToolExecutionErrorHandler execHandler = (error, context) -> null;
             ToolArgumentsErrorHandler argsHandler = (error, context) -> null;
 
             AgentConfiguration original = new AgentConfiguration()
+                    .withChatModel(chatModel)
                     .withMaxToolCallingRoundTrips(11)
                     .withHallucinatedToolNameStrategy(strategy)
                     .withToolExecutionErrorHandler(execHandler)
@@ -355,6 +366,8 @@ class AgentConfigurationTest {
                     .withCompensateOnToolErrors(true)
                     .withExecuteToolsConcurrently(executor)
                     .withInputGuardrailClassesArray(new String[] { "java.lang.String" })
+                    .withOutputGuardrailClassesArray(new String[] { "java.io.Serializable" })
+                    .withCustomTools(List.of("custom-tool"))
                     .withAiServicesCustomizer(builder -> {
                     });
 
