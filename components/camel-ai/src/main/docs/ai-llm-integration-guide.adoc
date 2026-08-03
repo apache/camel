@@ -49,7 +49,7 @@ Camel ships several AI components. Each documents itself well in isolation, but 
 
 * You may switch LLM providers (OpenAI today, Anthropic or local Ollama tomorrow) without rewriting routes
 * You orchestrate RAG with Camel EIPs (content enricher, split, aggregate) and LangChain4j `ChatModel` / `EmbeddingModel` beans
-* You use prompt templates with `{{variable}}` substitution (see <<prompt-templates>>)
+* You use prompt templates with pass:c[`{{variable}}`] substitution (see <<prompt-templates>>)
 
 Both components can call the same underlying models. The difference is abstraction level and which advanced features (MCP, agent guardrails, Spring Boot starters) you need around the chat call.
 
@@ -223,11 +223,11 @@ resume.system.prompt=You are a recruiter assistant. Extract only facts present i
 resume.user.template=Extract structured data from this resume:\n\n{{body}}
 ----
 
-Reference with Camel property placeholders in URI options or `{{property.name}}` in YAML routes.
+Reference with Camel property placeholders in URI options or pass:c[`{{property.name}}`] in YAML routes.
 
 === LangChain4j template variables
 
-For LangChain4j Chat, use `CHAT_SINGLE_MESSAGE_WITH_PROMPT` with `{{variable}}` placeholders — see xref:langchain4j-chat-component.adoc#_send_a_prompt_with_variables[Send a prompt with variables].
+For LangChain4j Chat, use `CHAT_SINGLE_MESSAGE_WITH_PROMPT` with pass:c[`{{variable}}`] placeholders — see xref:langchain4j-chat-component.adoc#_send_a_prompt_with_variables[Send a prompt with variables].
 
 === Organization tips
 
