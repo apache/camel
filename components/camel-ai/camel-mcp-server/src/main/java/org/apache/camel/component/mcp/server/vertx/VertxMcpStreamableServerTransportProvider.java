@@ -58,6 +58,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     private static final Logger LOG = LoggerFactory.getLogger(VertxMcpStreamableServerTransportProvider.class);
 
     private static final Duration NOTIFICATION_TIMEOUT = Duration.ofSeconds(5);
+    private static final Duration INITIALIZATION_TIMEOUT = Duration.ofSeconds(30);
 
     private static final String ACCEPT = "Accept";
     private static final String APPLICATION_JSON = "application/json";
@@ -158,6 +159,13 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             endWithStatus(connection, ctx, 503);
             return;
         }
+        String contentType = ctx.request().getHeader("Content-Type");
+        if (contentType == null || !contentType.contains(APPLICATION_JSON)) {
+            respondError(connection, ctx, 415, McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST)
+                    .message("Content-Type application/json required").build());
+            return;
+        }
+
         List<String> badRequestErrors = new ArrayList<>();
         String accept = ctx.request().getHeader(ACCEPT);
         if (accept == null || !accept.contains(TEXT_EVENT_STREAM)) {
@@ -226,7 +234,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                 });
         McpStreamableServerSession.McpStreamableServerSessionInit init = sessionFactory.startSession(initializeRequest);
         sessions.put(init.session().getId(), init.session());
-        McpSchema.InitializeResult initResult = init.initResult().block();
+        McpSchema.InitializeResult initResult = init.initResult().block(INITIALIZATION_TIMEOUT);
         String json = jsonMapper.writeValueAsString(McpSchema.JSONRPCResponse.result(request.id(), initResult));
         connection.runOnContext(v -> ctx.response()
                 .setStatusCode(200)

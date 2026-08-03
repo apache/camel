@@ -177,7 +177,8 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     }
 
     private void publish(AiToolSpec spec) {
-        McpServerTool tool = null;
+        // the engine is notified while holding the lock so publish/unpublish for the same tool cannot
+        // interleave between the map update and the engine call (which would orphan the tool in the engine)
         lock.lock();
         try {
             AiToolSpec existing = published.get(spec.getName());
@@ -191,15 +192,13 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 return;
             }
             published.put(spec.getName(), spec);
-            tool = createTool(spec);
+            engine.toolAdded(createTool(spec));
         } finally {
             lock.unlock();
         }
-        engine.toolAdded(tool);
     }
 
     private void unpublish(AiToolSpec spec) {
-        boolean removed = false;
         lock.lock();
         try {
             if (published.get(spec.getName()) != spec) {
@@ -210,13 +209,10 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                     .anyMatch(e -> selectedTags.contains(e.getKey()) && e.getValue().contains(spec));
             if (!stillSelected) {
                 published.remove(spec.getName());
-                removed = true;
+                engine.toolRemoved(spec.getName());
             }
         } finally {
             lock.unlock();
-        }
-        if (removed) {
-            engine.toolRemoved(spec.getName());
         }
     }
 
@@ -263,8 +259,9 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 // the route may still be using the exchange; do not return it to the pool
                 release = false;
                 LOG.warn("MCP tool '{}' did not complete within {} ms; returning a timeout error to the client. "
-                         + "The route keeps running until it completes on its own.",
-                        spec.getName(), configuration.getToolTimeout());
+                         + "The route keeps running until it completes on its own, and exchange {} is not returned "
+                         + "to the pool.",
+                        spec.getName(), configuration.getToolTimeout(), exchange.getExchangeId());
                 return new McpToolCallResult(GENERIC_TIMEOUT_ERROR, true);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

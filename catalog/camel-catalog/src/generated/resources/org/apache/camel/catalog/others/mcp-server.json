@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "mcp-server",
+    "title": "MCP Server",
+    "description": "Expose ai-tool routes as MCP tools over streamable HTTP",
+    "deprecated": false,
+    "firstVersion": "4.22.0",
+    "label": "ai",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mcp-server",
+    "version": "4.22.0-SNAPSHOT"
+  }
+}
