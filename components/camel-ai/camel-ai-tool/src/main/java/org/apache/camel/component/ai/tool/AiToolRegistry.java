@@ -19,11 +19,15 @@ package org.apache.camel.component.ai.tool;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CamelContext-scoped registry mapping tags to {@link AiToolSpec} instances. AI components (LangChain4j, Spring AI)
@@ -32,6 +36,9 @@ import org.apache.camel.CamelContext;
  * Each {@link CamelContext} gets its own registry instance, registered as a context plugin. Use
  * {@link #getOrCreate(CamelContext)} to obtain the instance for a given context.
  * <p>
+ * Adapters that need to react to tools appearing or disappearing (e.g. to push MCP {@code tools/list_changed}
+ * notifications) can register an {@link AiToolRegistryListener} instead of polling.
+ * <p>
  * Replaces the duplicated {@code CamelToolExecutorCache} singletons from {@code camel-langchain4j-tools} and
  * {@code camel-spring-ai-tools}.
  *
@@ -39,11 +46,14 @@ import org.apache.camel.CamelContext;
  */
 public final class AiToolRegistry {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AiToolRegistry.class);
+
     private static final ReentrantLock FACTORY_LOCK = new ReentrantLock();
 
     private final ReentrantLock lock = new ReentrantLock();
     private final Map<String, Set<AiToolSpec>> tools;
     private final Set<AiToolSpec> defaultTools;
+    private final List<AiToolRegistryListener> listeners = new CopyOnWriteArrayList<>();
 
     AiToolRegistry() {
         tools = new HashMap<>();
@@ -71,6 +81,7 @@ public final class AiToolRegistry {
     }
 
     public void put(String tag, AiToolSpec spec) {
+        boolean added;
         lock.lock();
         try {
             Set<AiToolSpec> set = tools.computeIfAbsent(tag, k -> new LinkedHashSet<>());
@@ -81,18 +92,22 @@ public final class AiToolRegistry {
                                                        + "': tool names must be unique per tag");
                 }
             }
-            set.add(spec);
+            added = set.add(spec);
         } finally {
             lock.unlock();
+        }
+        if (added) {
+            notifyRegistered(tag, spec);
         }
     }
 
     public void remove(String tag, AiToolSpec spec) {
+        boolean removed = false;
         lock.lock();
         try {
             Set<AiToolSpec> set = tools.get(tag);
             if (set != null) {
-                set.remove(spec);
+                removed = set.remove(spec);
                 if (set.isEmpty()) {
                     tools.remove(tag);
                 }
@@ -100,9 +115,13 @@ public final class AiToolRegistry {
         } finally {
             lock.unlock();
         }
+        if (removed) {
+            notifyDeregistered(tag, spec);
+        }
     }
 
     public void putDefault(AiToolSpec spec) {
+        boolean added;
         lock.lock();
         try {
             for (AiToolSpec existing : defaultTools) {
@@ -112,18 +131,59 @@ public final class AiToolRegistry {
                                                        + "' in the default pool: tool names must be unique");
                 }
             }
-            defaultTools.add(spec);
+            added = defaultTools.add(spec);
         } finally {
             lock.unlock();
+        }
+        if (added) {
+            notifyRegistered(null, spec);
         }
     }
 
     public void removeDefault(AiToolSpec spec) {
+        boolean removed;
         lock.lock();
         try {
-            defaultTools.remove(spec);
+            removed = defaultTools.remove(spec);
         } finally {
             lock.unlock();
+        }
+        if (removed) {
+            notifyDeregistered(null, spec);
+        }
+    }
+
+    /**
+     * Adds a listener notified on tool registration changes. See {@link AiToolRegistryListener} for the callback
+     * contract and the subscribe-then-snapshot idiom to observe current state without missing events.
+     */
+    public void addListener(AiToolRegistryListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(AiToolRegistryListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void notifyRegistered(String tag, AiToolSpec spec) {
+        for (AiToolRegistryListener listener : listeners) {
+            try {
+                listener.toolRegistered(tag, spec);
+            } catch (Exception e) {
+                LOG.warn("AiToolRegistryListener {} failed on toolRegistered for tool '{}': {}",
+                        listener, spec.getName(), e.getMessage(), e);
+            }
+        }
+    }
+
+    private void notifyDeregistered(String tag, AiToolSpec spec) {
+        for (AiToolRegistryListener listener : listeners) {
+            try {
+                listener.toolDeregistered(tag, spec);
+            } catch (Exception e) {
+                LOG.warn("AiToolRegistryListener {} failed on toolDeregistered for tool '{}': {}",
+                        listener, spec.getName(), e.getMessage(), e);
+            }
         }
     }
 
