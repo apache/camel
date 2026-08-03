@@ -133,4 +133,16 @@ public class XmlStreamDetectorTest {
         assertEquals("http://www.w3.org/2001/XMLSchema-instance", info.getNamespaces().get("xsi"));
     }
 
+    @Test
+    void documentWithDoctypeIsRejected() throws IOException {
+        // SUPPORT_DTD=false: a DOCTYPE declaration is not processed, so the stream is reported invalid rather than
+        // expanding any DTD-defined entities (CAMEL-24299)
+        String xml = "<?xml version=\"1.0\"?>\n"
+                     + "<!DOCTYPE root [ <!ENTITY x \"expanded\"> ]>\n"
+                     + "<root>&x;</root>";
+        XmlStreamDetector detector
+                = new XmlStreamDetector(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        assertFalse(detector.information().isValid());
+    }
+
 }
