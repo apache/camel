@@ -129,11 +129,17 @@ class JfrTabRenderTest {
         JfrTab tab = new JfrTab(snapshotCtx, Runnable::run);
 
         tab.onTabSelected();
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            String rendered = TuiTestHelper.renderToString(tab, 140, 30);
+            assertThat(rendered).contains("Enabled");
+        });
+
         tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
 
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
             String rendered = TuiTestHelper.renderToString(tab, 140, 30);
-            assertThat(rendered).contains("Processors [order-in]");
+            assertThat(rendered).contains("Processors [notify]");
         });
     }
 

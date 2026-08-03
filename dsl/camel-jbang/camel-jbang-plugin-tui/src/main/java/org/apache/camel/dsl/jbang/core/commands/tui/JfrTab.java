@@ -96,16 +96,16 @@ class JfrTab extends AbstractTab {
     private int topPanelHeight = -1;
 
     // sort state per view
-    private static final String[] ROUTE_SORT_COLUMNS = { "total", "failed", "mean", "max" };
-    private static final String[] PROCESSOR_SORT_COLUMNS = { "total", "failed", "mean", "max" };
-    private static final String[] ENDPOINT_SORT_COLUMNS = { "total", "failed", "mean", "max" };
-    private String routeSort = "total";
+    private static final String[] ROUTE_SORT_COLUMNS = { "route", "total", "failed", "mean", "max" };
+    private static final String[] PROCESSOR_SORT_COLUMNS = { "processor", "total", "failed", "mean", "max" };
+    private static final String[] ENDPOINT_SORT_COLUMNS = { "endpoint", "total", "failed", "mean", "max" };
+    private String routeSort = "route";
     private int routeSortIndex;
     private boolean routeSortReversed;
-    private String processorSort = "mean";
+    private String processorSort = "processor";
     private int processorSortIndex;
     private boolean processorSortReversed;
-    private String endpointSort = "total";
+    private String endpointSort = "endpoint";
     private int endpointSortIndex;
     private boolean endpointSortReversed;
 
@@ -389,7 +389,7 @@ class JfrTab extends AbstractTab {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
+                        Cell.from(Span.styled(routeSortLabel("ROUTE", "route"), routeSortStyle("route"))),
                         rightCell(routeSortLabel("TOTAL", "total"), 8, routeSortStyle("total")),
                         rightCell(routeSortLabel("FAILED", "failed"), 8, routeSortStyle("failed")),
                         rightCell("RATE", 8, Style.EMPTY.bold()),
@@ -479,7 +479,8 @@ class JfrTab extends AbstractTab {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+                        Cell.from(Span.styled(processorSortLabel("PROCESSOR", "processor"),
+                                processorSortStyle("processor"))),
                         Cell.from(Span.styled("TYPE", Style.EMPTY.bold())),
                         Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
                         rightCell(processorSortLabel("TOTAL", "total"), 8, processorSortStyle("total")),
@@ -515,7 +516,8 @@ class JfrTab extends AbstractTab {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("ENDPOINT", Style.EMPTY.bold())),
+                        Cell.from(Span.styled(endpointSortLabel("ENDPOINT", "endpoint"),
+                                endpointSortStyle("endpoint"))),
                         rightCell(endpointSortLabel("TOTAL", "total"), 8, endpointSortStyle("total")),
                         rightCell(endpointSortLabel("FAILED", "failed"), 8, endpointSortStyle("failed")),
                         rightCell(endpointSortLabel("MEAN", "mean"), 10, endpointSortStyle("mean")),
@@ -694,13 +696,19 @@ class JfrTab extends AbstractTab {
             return routeData;
         }
         List<RouteStats> sorted = new ArrayList<>(routeData);
-        Comparator<RouteStats> cmp = switch (routeSort) {
-            case "failed" -> Comparator.comparingLong(RouteStats::failed);
-            case "mean" -> Comparator.comparingDouble(RouteStats::meanMs);
-            case "max" -> Comparator.comparingDouble(RouteStats::maxMs);
-            default -> Comparator.comparingLong(RouteStats::total);
-        };
-        sorted.sort(routeSortReversed ? cmp : cmp.reversed());
+        if ("route".equals(routeSort)) {
+            sorted.sort(routeSortReversed
+                    ? Comparator.comparing(RouteStats::routeId, String.CASE_INSENSITIVE_ORDER).reversed()
+                    : Comparator.comparing(RouteStats::routeId, String.CASE_INSENSITIVE_ORDER));
+        } else {
+            Comparator<RouteStats> cmp = switch (routeSort) {
+                case "failed" -> Comparator.comparingLong(RouteStats::failed);
+                case "mean" -> Comparator.comparingDouble(RouteStats::meanMs);
+                case "max" -> Comparator.comparingDouble(RouteStats::maxMs);
+                default -> Comparator.comparingLong(RouteStats::total);
+            };
+            sorted.sort(routeSortReversed ? cmp : cmp.reversed());
+        }
         return sorted;
     }
 
@@ -709,13 +717,19 @@ class JfrTab extends AbstractTab {
             return input;
         }
         List<ProcessorStats> sorted = new ArrayList<>(input);
-        Comparator<ProcessorStats> cmp = switch (processorSort) {
-            case "total" -> Comparator.comparingLong(ProcessorStats::total);
-            case "failed" -> Comparator.comparingLong(ProcessorStats::failed);
-            case "max" -> Comparator.comparingDouble(ProcessorStats::maxMs);
-            default -> Comparator.comparingDouble(ProcessorStats::meanMs);
-        };
-        sorted.sort(processorSortReversed ? cmp : cmp.reversed());
+        if ("processor".equals(processorSort)) {
+            sorted.sort(processorSortReversed
+                    ? Comparator.comparing(ProcessorStats::processorId, String.CASE_INSENSITIVE_ORDER).reversed()
+                    : Comparator.comparing(ProcessorStats::processorId, String.CASE_INSENSITIVE_ORDER));
+        } else {
+            Comparator<ProcessorStats> cmp = switch (processorSort) {
+                case "total" -> Comparator.comparingLong(ProcessorStats::total);
+                case "failed" -> Comparator.comparingLong(ProcessorStats::failed);
+                case "max" -> Comparator.comparingDouble(ProcessorStats::maxMs);
+                default -> Comparator.comparingDouble(ProcessorStats::meanMs);
+            };
+            sorted.sort(processorSortReversed ? cmp : cmp.reversed());
+        }
         return sorted;
     }
 
@@ -724,13 +738,19 @@ class JfrTab extends AbstractTab {
             return endpointData;
         }
         List<EndpointStats> sorted = new ArrayList<>(endpointData);
-        Comparator<EndpointStats> cmp = switch (endpointSort) {
-            case "failed" -> Comparator.comparingLong(EndpointStats::failed);
-            case "mean" -> Comparator.comparingDouble(EndpointStats::meanMs);
-            case "max" -> Comparator.comparingDouble(EndpointStats::maxMs);
-            default -> Comparator.comparingLong(EndpointStats::total);
-        };
-        sorted.sort(endpointSortReversed ? cmp : cmp.reversed());
+        if ("endpoint".equals(endpointSort)) {
+            sorted.sort(endpointSortReversed
+                    ? Comparator.comparing(EndpointStats::endpointUri, String.CASE_INSENSITIVE_ORDER).reversed()
+                    : Comparator.comparing(EndpointStats::endpointUri, String.CASE_INSENSITIVE_ORDER));
+        } else {
+            Comparator<EndpointStats> cmp = switch (endpointSort) {
+                case "failed" -> Comparator.comparingLong(EndpointStats::failed);
+                case "mean" -> Comparator.comparingDouble(EndpointStats::meanMs);
+                case "max" -> Comparator.comparingDouble(EndpointStats::maxMs);
+                default -> Comparator.comparingLong(EndpointStats::total);
+            };
+            sorted.sort(endpointSortReversed ? cmp : cmp.reversed());
+        }
         return sorted;
     }
 
