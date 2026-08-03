@@ -48,7 +48,13 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxMcpServerEngine.class);
 
-    private static final String EMPTY_OBJECT_SCHEMA = "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}";
+    private static final String EMPTY_OBJECT_SCHEMA = """
+            {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": false
+            }
+            """;
     private static final String APPLICATION_JSON = "application/json";
 
     private CamelContext camelContext;
