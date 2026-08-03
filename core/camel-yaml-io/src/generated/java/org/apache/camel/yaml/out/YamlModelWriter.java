@@ -1880,6 +1880,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), null);
         doWriteAttribute(jo, "allowOptimisedComponents", def.getAllowOptimisedComponents(), "true");
         doWriteAttribute(jo, "autoStartComponents", def.getAutoStartComponents(), "true");
+        doWriteAttribute(jo, "allowedSchemes", def.getAllowedSchemes(), null);
     }
     protected JsonObject doWriteToDynamicDefinition(ToDynamicDefinition def) {
         JsonObject jo = new JsonObject();

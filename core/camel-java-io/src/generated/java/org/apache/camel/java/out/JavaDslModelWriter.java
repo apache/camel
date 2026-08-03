@@ -2614,6 +2614,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), null);
         doWriteAttribute(sb, "allowOptimisedComponents", def.getAllowOptimisedComponents(), "true");
         doWriteAttribute(sb, "autoStartComponents", def.getAutoStartComponents(), "true");
+        doWriteAttribute(sb, "allowedSchemes", def.getAllowedSchemes(), null);
     }
     protected void doWriteToDynamicDefinition(StringBuilder sb, ToDynamicDefinition def) {
         doWriteToDynamicDefinitionAttributes(sb, def);

@@ -1884,6 +1884,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), null);
         doWriteAttribute("allowOptimisedComponents", def.getAllowOptimisedComponents(), "true");
         doWriteAttribute("autoStartComponents", def.getAutoStartComponents(), "true");
+        doWriteAttribute("allowedSchemes", def.getAllowedSchemes(), null);
     }
     protected void doWriteToDynamicDefinition(String name, ToDynamicDefinition def) throws IOException {
         startElement(name);

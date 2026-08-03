@@ -77,6 +77,7 @@ public class SendDynamicProcessor extends BaseProcessorSupport
     protected int cacheSize;
     protected boolean allowOptimisedComponents = true;
     protected boolean autoStartupComponents = true;
+    protected String allowedSchemes;
 
     public SendDynamicProcessor(String uri, Expression expression) {
         this.uri = uri;
@@ -171,6 +172,18 @@ public class SendDynamicProcessor extends BaseProcessorSupport
                 // no endpoint to send to, so ignore
                 callback.done(true);
                 return true;
+            }
+            // enforce the optional allowed-schemes allow-list on the resolved dynamic recipient (CAMEL-24298);
+            // a disallowed scheme is always rejected, independently of ignoreInvalidEndpoint
+            if (allowedSchemes != null) {
+                String targetUri = targetRecipient.toString();
+                String targetScheme = resolveScheme(exchange, targetUri);
+                if (targetScheme != null && !isSchemeAllowed(targetScheme)) {
+                    exchange.setException(new ResolveEndpointFailedException(
+                            targetUri, "Scheme " + targetScheme + " is not in the allowed schemes: " + allowedSchemes));
+                    callback.done(true);
+                    return true;
+                }
             }
             Endpoint existing = getExistingEndpoint(exchange, targetRecipient);
             if (existing == null) {
@@ -493,5 +506,25 @@ public class SendDynamicProcessor extends BaseProcessorSupport
 
     public void setAutoStartupComponents(boolean autoStartupComponents) {
         this.autoStartupComponents = autoStartupComponents;
+    }
+
+    public String getAllowedSchemes() {
+        return allowedSchemes;
+    }
+
+    public void setAllowedSchemes(String allowedSchemes) {
+        this.allowedSchemes = allowedSchemes;
+    }
+
+    private boolean isSchemeAllowed(String scheme) {
+        if (allowedSchemes == null) {
+            return true;
+        }
+        for (String allowed : allowedSchemes.split(",")) {
+            if (allowed.trim().equals(scheme)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

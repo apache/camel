@@ -77,6 +77,7 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
         if (definition.getAutoStartComponents() != null) {
             processor.setAutoStartupComponents(parseBoolean(definition.getAutoStartComponents(), true));
         }
+        processor.setAllowedSchemes(parseString(definition.getAllowedSchemes()));
         return processor;
     }
 

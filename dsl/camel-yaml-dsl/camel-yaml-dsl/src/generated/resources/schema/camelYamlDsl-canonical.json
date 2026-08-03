@@ -5252,6 +5252,11 @@
             "description" : "Whether to allow components to optimise toD if they are SendDynamicAware.",
             "default" : true
           },
+          "allowedSchemes" : {
+            "type" : "string",
+            "title" : "Allowed Schemes",
+            "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed."
+          },
           "autoStartComponents" : {
             "type" : "boolean",
             "title" : "Auto Start Components",
@@ -5825,6 +5830,11 @@
             "title" : "Allow Optimised Components",
             "description" : "Whether to allow components to optimise toD if they are SendDynamicAware.",
             "default" : true
+          },
+          "allowedSchemes" : {
+            "type" : "string",
+            "title" : "Allowed Schemes",
+            "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed."
           },
           "autoStartComponents" : {
             "type" : "boolean",

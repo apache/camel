@@ -1281,6 +1281,7 @@ public class ModelParser extends BaseParser {
     protected <T extends ToDynamicDefinition> AttributeHandler<T> toDynamicDefinitionAttributeHandler() {
         return (def, key, val) -> switch (key) {
             case "allowOptimisedComponents": def.setAllowOptimisedComponents(val); yield true;
+            case "allowedSchemes": def.setAllowedSchemes(val); yield true;
             case "autoStartComponents": def.setAutoStartComponents(val); yield true;
             case "cacheSize": def.setCacheSize(val); yield true;
             case "ignoreInvalidEndpoint": def.setIgnoreInvalidEndpoint(val); yield true;
