@@ -59,6 +59,8 @@ import org.slf4j.LoggerFactory;
  * <li>Raw route exception messages never reach the engine: execution failures map to a generic error message and the
  * cause is logged server-side.</li>
  * </ul>
+ *
+ * @since 4.22
  */
 public class McpServerBridge extends ServiceSupport implements CamelContextAware, StaticService {
 
@@ -169,7 +171,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         McpServerEngine answer = camelContext.getRegistry().findSingleByType(McpServerEngine.class);
         if (answer == null) {
             answer = ResolverHelper.resolveMandatoryService(camelContext, McpServerConstants.MCP_SERVER_ENGINE_FACTORY,
-                    McpServerEngine.class, "camel-mcp-server-engine-vertx");
+                    McpServerEngine.class, "camel-mcp-server");
         }
         return answer;
     }

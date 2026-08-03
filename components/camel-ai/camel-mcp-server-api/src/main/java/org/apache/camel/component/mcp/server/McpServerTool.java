@@ -23,6 +23,8 @@ import org.apache.camel.component.ai.tool.AiToolParameterHelper.ParameterDef;
 /**
  * A tool published by the bridge into an {@link McpServerEngine}. Engines pick whichever input-schema representation
  * fits their API: the pre-built JSON Schema string or the structured parameter definitions.
+ *
+ * @since 4.22
  */
 public interface McpServerTool {
 

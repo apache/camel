@@ -25,6 +25,8 @@ package org.apache.camel.component.mcp.server;
  * @param serverName the MCP server name advertised to clients (defaults to the CamelContext name)
  * @param version    the MCP server version advertised to clients
  * @param path       the HTTP path where the MCP endpoint should be served
+ *
+ * @since            4.22
  */
 public record McpServerInfo(String serverName, String version, String path) {
 }

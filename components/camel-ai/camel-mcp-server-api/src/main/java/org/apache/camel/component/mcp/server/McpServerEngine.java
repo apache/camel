@@ -32,6 +32,8 @@ import org.apache.camel.Service;
  * {@link #toolAdded(McpServerTool)} for the initial tool set and for every later change (driven by route
  * start/stop/suspend/resume of {@code ai-tool} routes). Engines with a {@code listChanged} capability should emit
  * {@code notifications/tools/list_changed} on add/remove.
+ *
+ * @since 4.22
  */
 public interface McpServerEngine extends Service, CamelContextAware {
 

@@ -22,6 +22,8 @@ package org.apache.camel.component.mcp.server;
  *
  * @param text    the tool output, or a safe error message when {@code isError} is true
  * @param isError whether the invocation failed
+ *
+ * @since         4.22
  */
 public record McpToolCallResult(String text, boolean isError) {
 }

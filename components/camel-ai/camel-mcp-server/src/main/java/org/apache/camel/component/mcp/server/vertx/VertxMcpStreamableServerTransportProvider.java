@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mcp.server.vertx;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,9 +53,11 @@ import reactor.core.publisher.Mono;
  */
 public class VertxMcpStreamableServerTransportProvider implements McpStreamableServerTransportProvider {
 
-    public static final String MESSAGE_EVENT_TYPE = "message";
+    private static final String MESSAGE_EVENT_TYPE = "message";
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxMcpStreamableServerTransportProvider.class);
+
+    private static final Duration NOTIFICATION_TIMEOUT = Duration.ofSeconds(5);
 
     private static final String ACCEPT = "Accept";
     private static final String APPLICATION_JSON = "application/json";
@@ -85,7 +88,8 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         }
         return Mono.fromRunnable(() -> sessions.values().forEach(session -> {
             try {
-                session.sendNotification(method, params).block();
+                // bounded so a single stalled session cannot starve notifications to healthy sessions
+                session.sendNotification(method, params).block(NOTIFICATION_TIMEOUT);
             } catch (Exception e) {
                 LOG.debug("Failed to send notification to MCP session {}: {}", session.getId(), e.getMessage());
             }
@@ -98,7 +102,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             closing = true;
             sessions.values().forEach(session -> {
                 try {
-                    session.closeGracefully().block();
+                    session.closeGracefully().block(NOTIFICATION_TIMEOUT);
                 } catch (Exception e) {
                     LOG.debug("Failed to close MCP session {}: {}", session.getId(), e.getMessage());
                 }
@@ -365,6 +369,8 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                             LOG.debug("Failed to write to MCP session {}: {}", sessionId,
                                     result.cause() != null ? result.cause().getMessage() : "unknown");
                             closed = true;
+                            // the client is gone: drop the session like the SDK servlet transport does
+                            sessions.remove(sessionId);
                         }
                         sink.success();
                     });

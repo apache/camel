@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.mcp.server;
 
+/**
+ * Constants of the Camel MCP server.
+ *
+ * @since 4.22
+ */
 public final class McpServerConstants {
 
     /**

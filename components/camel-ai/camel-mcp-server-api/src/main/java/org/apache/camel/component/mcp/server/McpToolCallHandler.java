@@ -24,6 +24,8 @@ import java.util.Map;
  * The call is blocking and bounded: the bridge applies the configured per-call timeout and maps every outcome
  * (including route exceptions and timeouts) to a pre-sanitized {@link McpToolCallResult} — it never throws and never
  * exposes route internals.
+ *
+ * @since 4.22
  */
 @FunctionalInterface
 public interface McpToolCallHandler {

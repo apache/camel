@@ -22,6 +22,8 @@ package org.apache.camel.component.mcp.server;
  * Bridge-owned options ({@code tags}, {@code toolTimeout}) are honored on every runtime. Engine-owned options
  * ({@code path}, {@code serverName}) are consumed only by engines that serve through Camel — native engines (Quarkus,
  * Spring Boot) use their own runtime configuration instead.
+ *
+ * @since 4.22
  */
 public class McpServerConfiguration {
 
