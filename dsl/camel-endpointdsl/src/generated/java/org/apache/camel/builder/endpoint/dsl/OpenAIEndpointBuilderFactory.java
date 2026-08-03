@@ -1201,6 +1201,23 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated tags to filter tools from the shared AiToolRegistry.
+         * Tools registered via ai-tool: consumer endpoints with matching tags
+         * are discovered and exposed as OpenAI function-calling tools alongside
+         * any MCP tools. Tools with no tags (default pool) are always included.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder tags(String tags) {
+            doSetProperty("tags", tags);
+            return this;
+        }
+        /**
          * Temperature for response generation (0.0 to 2.0).
          * 
          * The option is a: <code>java.lang.Double</code> type.
