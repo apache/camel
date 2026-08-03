@@ -610,7 +610,7 @@ for production use.
 
 === JFR Runtime Profiling
 
-The JFR tab (under More > JVM) gives you a lightweight profiling view of your running integration
+The JFR tab (under More > Observability) gives you a lightweight profiling view of your running integration
 using Java Flight Recorder. JFR is built into the JVM with very low overhead, making it suitable
 for near-production use cases where you need timing data without impacting throughput.
 

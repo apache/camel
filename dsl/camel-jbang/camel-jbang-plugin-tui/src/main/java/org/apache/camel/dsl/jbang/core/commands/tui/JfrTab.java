@@ -198,8 +198,9 @@ class JfrTab extends AbstractTab {
         }
         if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
             TableState ts = activeTableState();
+            int count = getRowCount();
             for (int i = 0; i < 20; i++) {
-                ts.selectNext(getRowCount());
+                ts.selectNext(count);
             }
             return true;
         }
