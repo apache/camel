@@ -203,6 +203,16 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         try {
             refreshConnection();
             initConsumers();
+            connectionLock.lock();
+            try {
+                if (recoverFuture != null) {
+                    recoverFuture.cancel(false);
+                }
+                recoverTask = null;
+                recoverFuture = null;
+            } finally {
+                connectionLock.unlock();
+            }
             LOG.debug("Successfully recovered JMS Connection (attempt: {})", task.iteration());
             // success so do not try again
             return true;
