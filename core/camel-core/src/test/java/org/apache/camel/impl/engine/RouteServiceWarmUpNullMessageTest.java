@@ -234,7 +234,11 @@ class RouteServiceWarmUpNullMessageTest {
 
         @Override
         protected void doStart() {
-            throw new RuntimeException(new IllegalStateException(causeMessage));
+            // Outer NPE has no message; initCause sets the cause without supplying a message to
+            // the outer exception — forces extractUsefulMessage to walk the chain to find causeMessage.
+            NullPointerException outer = new NullPointerException();
+            outer.initCause(new IllegalStateException(causeMessage));
+            throw outer;
         }
 
         @Override
