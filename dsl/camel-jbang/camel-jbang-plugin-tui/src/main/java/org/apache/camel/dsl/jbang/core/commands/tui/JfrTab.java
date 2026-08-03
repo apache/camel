@@ -261,28 +261,6 @@ class JfrTab extends AbstractTab {
             return;
         }
 
-        if (loading.get() && !statusLoaded && !snapshotLoaded) {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(Span.styled("  Loading...", LABEL))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" JFR Runtime Instrumentation ").build())
-                            .build(),
-                    area);
-            return;
-        }
-
-        if (errorMessage != null && !statusLoaded && !snapshotLoaded) {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(Span.styled("  " + errorMessage, Theme.error()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                                    .title(" JFR Runtime Instrumentation ").build())
-                            .build(),
-                    area);
-            return;
-        }
-
         List<Rect> rows = Layout.vertical()
                 .constraints(Constraint.length(4), Constraint.fill())
                 .split(area);
@@ -773,6 +751,13 @@ class JfrTab extends AbstractTab {
 
                 JsonObject jo = ctx.executeAction(pid, root, 5000);
                 applyStatus(jo);
+
+                if (jo != null && jo.get("recordings") instanceof JsonArray recs && !recs.isEmpty()
+                        && !snapshotLoaded) {
+                    loading.set(false);
+                    takeSnapshot();
+                    return;
+                }
             } catch (Exception e) {
                 applyError("Error: " + e.getMessage());
             } finally {
