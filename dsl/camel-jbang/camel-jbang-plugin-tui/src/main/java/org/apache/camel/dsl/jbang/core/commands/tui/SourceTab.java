@@ -23,6 +23,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -95,6 +96,11 @@ class SourceTab extends AbstractTab {
     private final Map<String, Map<String, BaseOptionModel>> componentOptionsCache = new HashMap<>();
     private final Map<String, Map<String, BaseOptionModel>> languageOptionsCache = new HashMap<>();
     private final Map<String, Map<String, BaseOptionModel>> dataformatOptionsCache = new HashMap<>();
+
+    // Component name completion cache (keyed by catalog version)
+    private String componentsCatalogVersion;
+    private List<AutocompletePopup.CompletionItem> consumerComponents;
+    private List<AutocompletePopup.CompletionItem> producerComponents;
 
     // Spring Boot configuration metadata cache (lazy-loaded on-demand via IPC)
     private Map<String, JsonObject> springBootMetadataCache;
@@ -912,7 +918,16 @@ class SourceTab extends AbstractTab {
     // ---- YAML DSL completion ----
 
     private List<AutocompletePopup.CompletionItem> provideYamlKeyCompletions(String context) {
-        if (context == null || !context.startsWith("yaml:")) {
+        if (context == null) {
+            return List.of();
+        }
+
+        // component name completion on uri: lines
+        if (context.startsWith("yaml-uri:")) {
+            return provideComponentNameCompletions(context.substring(9));
+        }
+
+        if (!context.startsWith("yaml:")) {
             return List.of();
         }
         CamelCatalog catalog = getCatalog();
@@ -920,8 +935,8 @@ class SourceTab extends AbstractTab {
             return List.of();
         }
 
-        // context format: "yaml:componentName:consumer|producer"
-        String[] parts = context.substring(5).split(":", 2);
+        // context format: "yaml:componentName:consumer|producer[:existingKey1,existingKey2,...]"
+        String[] parts = context.substring(5).split(":", 3);
         if (parts.length < 2) {
             return List.of();
         }
@@ -929,23 +944,95 @@ class SourceTab extends AbstractTab {
         String role = parts[1];
         boolean isConsumer = "consumer".equals(role);
 
+        Set<String> existingKeys = Set.of();
+        if (parts.length > 2 && !parts[2].isEmpty()) {
+            existingKeys = new HashSet<>(Arrays.asList(parts[2].split(",")));
+        }
+
         ComponentModel model = catalog.componentModel(componentName);
         if (model == null) {
             return List.of();
         }
 
-        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
-        for (ComponentModel.EndpointOptionModel opt : model.getEndpointParameterOptions()) {
-            if (includeEndpointOption(opt, isConsumer)) {
-                items.add(new AutocompletePopup.CompletionItem(
-                        opt.getName(), opt.getDescription(), opt.getType(),
-                        opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
-                        opt.getGroup()));
+        // build a set of multi-valued option names so we can allow duplicates
+        Set<String> multiValuedOptions = new HashSet<>();
+        for (ComponentModel.EndpointOptionModel opt : model.getEndpointOptions()) {
+            if (opt.isMultiValue()) {
+                multiValuedOptions.add(opt.getName());
             }
         }
 
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (ComponentModel.EndpointOptionModel opt : model.getEndpointOptions()) {
+            if (!includeEndpointOption(opt, isConsumer)) {
+                continue;
+            }
+            if (existingKeys.contains(opt.getName()) && !multiValuedOptions.contains(opt.getName())) {
+                continue;
+            }
+            items.add(new AutocompletePopup.CompletionItem(
+                    opt.getName(), opt.getDescription(), opt.getType(),
+                    opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
+                    opt.getGroup(), opt.isRequired()));
+        }
+
+        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
+                .thenComparing((a, b) -> Boolean.compare(b.required(), a.required()))
+                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+        return items;
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideComponentNameCompletions(String role) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+
+        boolean isConsumer = "consumer".equals(role);
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        String version = info != null ? info.camelVersion : null;
+
+        // rebuild cache if catalog version changed
+        if (version != null && !version.equals(componentsCatalogVersion)) {
+            componentsCatalogVersion = version;
+            consumerComponents = null;
+            producerComponents = null;
+        }
+
+        List<AutocompletePopup.CompletionItem> cached = isConsumer ? consumerComponents : producerComponents;
+        if (cached != null) {
+            return cached;
+        }
+
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (String name : catalog.findComponentNames()) {
+            ComponentModel model = catalog.componentModel(name);
+            if (model == null) {
+                continue;
+            }
+            if (isConsumer && model.isProducerOnly()) {
+                continue;
+            }
+            if (!isConsumer && model.isConsumerOnly()) {
+                continue;
+            }
+            String labels = model.getLabel();
+            String firstLabel = labels != null && !labels.isEmpty()
+                    ? labels.split(",")[0].trim()
+                    : "component";
+            items.add(new AutocompletePopup.CompletionItem(
+                    name, model.getTitle() + " - " + model.getDescription(),
+                    firstLabel, null, model.isDeprecated(), model.getDeprecationNote(),
+                    labels));
+        }
         items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
                 .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+
+        if (isConsumer) {
+            consumerComponents = items;
+        } else {
+            producerComponents = items;
+        }
         return items;
     }
 

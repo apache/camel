@@ -542,9 +542,11 @@ class SourceViewer {
     record YamlEndpointContext(String component, boolean consumer) {
     }
 
-    private static final java.util.Set<String> CONSUMER_EIPS = java.util.Set.of("from", "pollEnrich", "poll-enrich");
+    private static final java.util.Set<String> CONSUMER_EIPS
+            = java.util.Set.of("from", "pollEnrich", "poll-enrich", "poll", "interceptFrom", "intercept-from");
     private static final java.util.Set<String> PRODUCER_EIPS
-            = java.util.Set.of("to", "toD", "to-d", "wireTap", "wire-tap", "enrich");
+            = java.util.Set.of("to", "toD", "to-d", "wireTap", "wire-tap", "enrich",
+                    "interceptSendToEndpoint", "intercept-send-to-endpoint");
 
     YamlEndpointContext findEnclosingComponent(int fromRow) {
         String cursorLine = editState.getLine(fromRow);
@@ -622,6 +624,140 @@ class SourceViewer {
 
         if (foundScheme != null) {
             return new YamlEndpointContext(foundScheme, false);
+        }
+        return null;
+    }
+
+    java.util.Set<String> collectExistingParameters(int fromRow) {
+        java.util.Set<String> keys = new java.util.LinkedHashSet<>();
+        // find the parameters: row by walking up
+        int parametersRow = -1;
+        int parametersIndent = -1;
+        String cursorLine = editState.getLine(fromRow);
+        int cursorIndent = countLeadingSpaces(cursorLine);
+
+        // blank lines: derive indent from nearest preceding non-blank line
+        if (cursorLine.isBlank()) {
+            for (int i = fromRow - 1; i >= 0; i--) {
+                String prev = editState.getLine(i);
+                if (!prev.isBlank()) {
+                    if (prev.trim().startsWith("parameters:")) {
+                        parametersRow = i;
+                        parametersIndent = countLeadingSpaces(prev);
+                    } else {
+                        cursorIndent = countLeadingSpaces(prev);
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (parametersRow < 0) {
+            for (int i = fromRow; i >= 0; i--) {
+                String line = editState.getLine(i);
+                if (line.isBlank()) {
+                    continue;
+                }
+                String trimmed = line.trim();
+                int indent = countLeadingSpaces(line);
+                if (trimmed.startsWith("parameters:") && indent < cursorIndent) {
+                    parametersRow = i;
+                    parametersIndent = indent;
+                    break;
+                }
+                if (i < fromRow && indent < cursorIndent && !trimmed.startsWith("#")) {
+                    break;
+                }
+            }
+        }
+        if (parametersRow < 0) {
+            return keys;
+        }
+        int childIndent = parametersIndent + 2;
+        for (int i = parametersRow + 1; i < editState.lineCount(); i++) {
+            if (i == fromRow) {
+                continue;
+            }
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            if (indent < childIndent) {
+                break;
+            }
+            if (indent == childIndent) {
+                String trimmed = line.trim();
+                int colonIdx = trimmed.indexOf(':');
+                if (colonIdx > 0) {
+                    keys.add(trimmed.substring(0, colonIdx).trim());
+                }
+            }
+        }
+        return keys;
+    }
+
+    record YamlUriContext(boolean consumer, String prefix) {
+    }
+
+    YamlUriContext findUriContext(int row) {
+        String lineText = editState.getLine(row);
+        String trimmed = lineText.trim();
+        if (trimmed.startsWith("- ")) {
+            trimmed = trimmed.substring(2).trim();
+        }
+
+        // Check if cursor is on a "uri:" line (possibly with partial value)
+        if (trimmed.startsWith("uri:")) {
+            String value = trimmed.substring(4).trim();
+            if (value.startsWith("\"") || value.startsWith("'")) {
+                value = value.substring(1);
+            }
+            if (value.endsWith("\"") || value.endsWith("'")) {
+                value = value.substring(0, value.length() - 1);
+            }
+            // if value already contains a colon, scheme is already typed
+            if (value.contains(":")) {
+                return null;
+            }
+            // walk up to find the parent EIP
+            int indent = countLeadingSpaces(lineText);
+            for (int i = row - 1; i >= 0; i--) {
+                String prev = editState.getLine(i);
+                if (prev.isBlank()) {
+                    continue;
+                }
+                int prevIndent = countLeadingSpaces(prev);
+                if (prevIndent < indent) {
+                    String eipName = extractEipName(prev.trim());
+                    if (eipName != null) {
+                        boolean consumer = CONSUMER_EIPS.contains(eipName);
+                        return new YamlUriContext(consumer, value);
+                    }
+                    break;
+                }
+            }
+            return null;
+        }
+
+        // Check if cursor is on an inline EIP line: "to: " or "from: kafka" (no colon in value)
+        int colonIdx = trimmed.indexOf(':');
+        if (colonIdx > 0) {
+            String eipName = trimmed.substring(0, colonIdx).trim();
+            if (CONSUMER_EIPS.contains(eipName) || PRODUCER_EIPS.contains(eipName)) {
+                String value = trimmed.substring(colonIdx + 1).trim();
+                if (value.startsWith("\"") || value.startsWith("'")) {
+                    value = value.substring(1);
+                }
+                if (value.endsWith("\"") || value.endsWith("'")) {
+                    value = value.substring(0, value.length() - 1);
+                }
+                if (value.contains(":")) {
+                    return null;
+                }
+                boolean consumer = CONSUMER_EIPS.contains(eipName);
+                return new YamlUriContext(consumer, value);
+            }
         }
         return null;
     }
@@ -756,6 +892,19 @@ class SourceViewer {
             trimmed = trimmed.substring(2).trim();
         }
 
+        // try component name completion on uri: lines first
+        YamlUriContext uriCtx = findUriContext(row);
+        if (uriCtx != null && autocompleteProvider != null) {
+            String role = uriCtx.consumer() ? "consumer" : "producer";
+            String context = "yaml-uri:" + role;
+            List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
+            if (items != null && !items.isEmpty()) {
+                autocompletePopup = new AutocompletePopup(items, uriCtx.prefix(), uriCtx.prefix(), true);
+                autocompletePopup.setTitlePrefix("Components");
+            }
+            return;
+        }
+
         YamlEndpointContext ctx = findEnclosingComponent(row);
         if (ctx == null) {
             return;
@@ -783,10 +932,15 @@ class SourceViewer {
             // key completion — cursor is on an empty or partial key line
             String filter = colonIdx > 0 ? trimmed.substring(0, colonIdx).trim() : trimmed;
             String role = ctx.consumer() ? "consumer" : "producer";
+            java.util.Set<String> existing = collectExistingParameters(row);
             String context = "yaml:" + ctx.component() + ":" + role;
+            if (!existing.isEmpty()) {
+                context += ":" + String.join(",", existing);
+            }
             List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
             if (items != null && !items.isEmpty()) {
                 autocompletePopup = new AutocompletePopup(items, filter, filter);
+                autocompletePopup.setTitlePrefix(ctx.component() + " options");
             }
         }
     }
@@ -860,6 +1014,18 @@ class SourceViewer {
                 editState.insert(indentStr + keyPart + ": " + item.key());
             } else {
                 editState.insert(indentStr + item.key());
+            }
+            // for component names, add parameters: block if not already present
+            if ("component".equals(item.type())) {
+                int nextRow = editState.cursorRow() + 1;
+                boolean hasParameters = nextRow < editState.lineCount()
+                        && editState.getLine(nextRow).trim().startsWith("parameters:");
+                if (!hasParameters) {
+                    editState.insert('\n');
+                    editState.insert(indentStr + "parameters:");
+                    editState.insert('\n');
+                    editState.insert(indentStr + "  ");
+                }
             }
         } else {
             editState.insert(indentStr + item.key() + ": ");

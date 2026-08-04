@@ -68,17 +68,15 @@ class AutocompletePopupTest {
     }
 
     @Test
-    void typingNonMatchingClosesOnBackspace() {
+    void typingNonMatchingKeepsExistingItems() {
         var items = List.of(
                 new AutocompletePopup.CompletionItem("alpha", "desc", "string", null, false, null, null));
         var popup = new AutocompletePopup(items, "", "");
 
+        // typing 'z' should be rejected — no items start with 'z'
         popup.handleKeyEvent(KeyEvent.ofChar('z', KeyModifiers.NONE));
-        assertThat(popup.hasItems()).isFalse();
-
-        assertThat(popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.BACKSPACE, KeyModifiers.NONE)))
-                .isEqualTo(AutocompletePopup.Result.CONSUMED);
         assertThat(popup.hasItems()).isTrue();
+        assertThat(popup.hasFilter()).isFalse();
     }
 
     @Test
@@ -123,8 +121,14 @@ class AutocompletePopupTest {
         var popup = new AutocompletePopup(items, "", "");
         assertThat(popup.hasItems()).isTrue();
 
+        // typing 'z' is rejected since no items match — list stays populated
         popup.handleKeyEvent(KeyEvent.ofChar('z', KeyModifiers.NONE));
-        assertThat(popup.hasItems()).isFalse();
+        assertThat(popup.hasItems()).isTrue();
+
+        // typing 'o' matches "one" — filter is now active
+        popup.handleKeyEvent(KeyEvent.ofChar('o', KeyModifiers.NONE));
+        assertThat(popup.hasItems()).isTrue();
+        assertThat(popup.hasFilter()).isTrue();
     }
 
     @Test

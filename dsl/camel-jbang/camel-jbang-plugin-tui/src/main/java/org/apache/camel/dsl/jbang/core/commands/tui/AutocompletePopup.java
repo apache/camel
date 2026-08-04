@@ -45,7 +45,12 @@ import dev.tamboui.widgets.scrollbar.ScrollbarState;
 class AutocompletePopup {
 
     record CompletionItem(String key, String description, String type, Object defaultValue,
-            boolean deprecated, String deprecationNote, String group) {
+            boolean deprecated, String deprecationNote, String group, boolean required) {
+
+        CompletionItem(String key, String description, String type, Object defaultValue,
+                       boolean deprecated, String deprecationNote, String group) {
+            this(key, description, type, defaultValue, deprecated, deprecationNote, group, false);
+        }
     }
 
     @FunctionalInterface
@@ -76,6 +81,7 @@ class AutocompletePopup {
     private List<CompletionItem> filteredItems;
     private CompletionItem selectedItem;
     private Rect popupRect;
+    private String titlePrefix;
 
     AutocompletePopup(List<CompletionItem> items, String initialPrefix, String lineKeyText) {
         this(items, initialPrefix, lineKeyText, false);
@@ -176,7 +182,14 @@ class AutocompletePopup {
         }
         if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
             filter.appendChar(ke.string().charAt(0));
+            List<CompletionItem> prev = filteredItems;
             rebuildList();
+            if (filteredItems.isEmpty()) {
+                // undo: keep current list instead of showing empty
+                filter.deleteChar();
+                filteredItems = prev;
+                listState.select(prev != null && !prev.isEmpty() ? 0 : null);
+            }
             return Result.CONSUMED;
         }
         return Result.CONSUMED;
@@ -261,6 +274,7 @@ class AutocompletePopup {
         items.add(ListItem.from(Line.from(Span.styled(sep, Style.EMPTY.dim()))));
 
         Style normalStyle = Style.EMPTY;
+        Style boldStyle = Style.EMPTY.bold();
         Style dimStyle = Style.EMPTY.dim();
         Style deprecatedStyle = Style.EMPTY.dim().crossedOut();
 
@@ -269,12 +283,14 @@ class AutocompletePopup {
 
             if (ci.deprecated()) {
                 spans.add(Span.styled(" ✘ ", dimStyle));
+            } else if (ci.required()) {
+                spans.add(Span.styled(" * ", boldStyle));
             } else {
                 spans.add(Span.raw("   "));
             }
 
             String key = ci.key();
-            Style keyStyle = ci.deprecated() ? deprecatedStyle : normalStyle;
+            Style keyStyle = ci.deprecated() ? deprecatedStyle : ci.required() ? boldStyle : normalStyle;
 
             String displayKey = key;
             if (!key.startsWith("{{") && !key.endsWith(".")) {
@@ -309,9 +325,10 @@ class AutocompletePopup {
 
         int total = allItems.size();
         int shown = filteredItems.size();
+        String label = titlePrefix != null ? titlePrefix : "Completions";
         String title = shown == total
-                ? " Completions (" + total + ") "
-                : " Completions (" + shown + "/" + total + ") ";
+                ? " " + label + " (" + total + ") "
+                : " " + label + " (" + shown + "/" + total + ") ";
 
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
@@ -365,6 +382,11 @@ class AutocompletePopup {
                         Span.styled("Group: ", normalStyle.bold()),
                         Span.styled(selected.group(), normalStyle)));
             }
+            if (selected.required()) {
+                lines.add(Line.from(
+                        Span.styled("Required: ", normalStyle.bold()),
+                        Span.styled("true", Theme.info())));
+            }
             if (selected.deprecated()) {
                 String depText = "Deprecated";
                 if (selected.deprecationNote() != null && !selected.deprecationNote().isEmpty()) {
@@ -410,6 +432,14 @@ class AutocompletePopup {
         return filteredItems != null && !filteredItems.isEmpty();
     }
 
+    boolean hasFilter() {
+        return filter.hasFilter();
+    }
+
+    void setTitlePrefix(String titlePrefix) {
+        this.titlePrefix = titlePrefix;
+    }
+
     private void rebuildList() {
         if (!filter.hasFilter()) {
             filteredItems = new ArrayList<>(allItems);
@@ -417,11 +447,23 @@ class AutocompletePopup {
             filteredItems = new ArrayList<>();
             String f = filter.filter();
             for (CompletionItem item : allItems) {
-                if (item.key().toLowerCase().startsWith(f)) {
+                if (item.key().toLowerCase().startsWith(f) || matchesLabel(item.group(), f)) {
                     filteredItems.add(item);
                 }
             }
         }
         listState.select(filteredItems.isEmpty() ? null : 0);
+    }
+
+    private static boolean matchesLabel(String group, String filter) {
+        if (group == null || group.isEmpty()) {
+            return false;
+        }
+        for (String label : group.split(",")) {
+            if (label.trim().toLowerCase().startsWith(filter)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

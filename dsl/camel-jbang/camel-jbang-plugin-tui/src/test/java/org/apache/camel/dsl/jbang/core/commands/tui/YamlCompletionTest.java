@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -254,11 +255,11 @@ class YamlCompletionTest {
     }
 
     @Test
-    void keyCompletionExcludesPathOptions() {
+    void keyCompletionIncludesPathOptions() {
         List<AutocompletePopup.CompletionItem> items = provideKeyCompletions("kafka", "producer");
 
-        // "topic" is a path option in kafka, should NOT appear in parameters completion
-        assertThat(items).noneMatch(i -> i.key().equals("topic"));
+        // "topic" is a path option in kafka, should appear in completion
+        assertThat(items).anyMatch(i -> i.key().equals("topic"));
     }
 
     @Test
@@ -387,25 +388,335 @@ class YamlCompletionTest {
         assertThat(items).isEmpty();
     }
 
+    // --- URI context detection (component name completion) ---
+
+    @Test
+    void findUriContextOnEmptyUriLine() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        SourceViewer.YamlUriContext ctx = viewer.findUriContext(1);
+        assertThat(ctx).isNotNull();
+        assertThat(ctx.consumer()).isTrue();
+        assertThat(ctx.prefix()).isEmpty();
+    }
+
+    @Test
+    void findUriContextOnToUri() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - to:",
+                "          uri: ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        SourceViewer.YamlUriContext ctx = viewer.findUriContext(4);
+        assertThat(ctx).isNotNull();
+        assertThat(ctx.consumer()).isFalse();
+        assertThat(ctx.prefix()).isEmpty();
+    }
+
+    @Test
+    void findUriContextWithPartialPrefix() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: ka",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        SourceViewer.YamlUriContext ctx = viewer.findUriContext(1);
+        assertThat(ctx).isNotNull();
+        assertThat(ctx.consumer()).isTrue();
+        assertThat(ctx.prefix()).isEqualTo("ka");
+    }
+
+    @Test
+    void findUriContextReturnsNullWhenSchemeAlreadyComplete() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        // scheme already has a colon — no component completion needed
+        SourceViewer.YamlUriContext ctx = viewer.findUriContext(1);
+        assertThat(ctx).isNull();
+    }
+
+    @Test
+    void findUriContextOnInlineEip() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - to: ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        SourceViewer.YamlUriContext ctx = viewer.findUriContext(3);
+        assertThat(ctx).isNotNull();
+        assertThat(ctx.consumer()).isFalse();
+    }
+
+    @Test
+    void findUriContextOnPollEnrich() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - pollEnrich:",
+                "          uri: ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        SourceViewer.YamlUriContext ctx = viewer.findUriContext(4);
+        assertThat(ctx).isNotNull();
+        assertThat(ctx.consumer()).isTrue();
+    }
+
+    // --- Component name completion (from vs to filtering) ---
+
+    @Test
+    void componentCompletionForFromExcludesProducerOnly() {
+        List<AutocompletePopup.CompletionItem> items = provideComponentCompletions("consumer");
+
+        // timer is consumer-only — should be in the list
+        assertThat(items).anyMatch(i -> i.key().equals("timer"));
+        // log is producer-only — should NOT be in the list
+        assertThat(items).noneMatch(i -> i.key().equals("log"));
+    }
+
+    @Test
+    void componentCompletionForToExcludesConsumerOnly() {
+        List<AutocompletePopup.CompletionItem> items = provideComponentCompletions("producer");
+
+        // log is producer-only — should be in the list
+        assertThat(items).anyMatch(i -> i.key().equals("log"));
+        // timer is consumer-only — should NOT be in the list
+        assertThat(items).noneMatch(i -> i.key().equals("timer"));
+    }
+
+    @Test
+    void componentCompletionIncludesBothRoles() {
+        List<AutocompletePopup.CompletionItem> consumerItems = provideComponentCompletions("consumer");
+        List<AutocompletePopup.CompletionItem> producerItems = provideComponentCompletions("producer");
+
+        // kafka supports both — should be in both lists
+        assertThat(consumerItems).anyMatch(i -> i.key().equals("kafka"));
+        assertThat(producerItems).anyMatch(i -> i.key().equals("kafka"));
+    }
+
+    @Test
+    void componentCompletionHasDescriptions() {
+        List<AutocompletePopup.CompletionItem> items = provideComponentCompletions("producer");
+
+        var kafka = items.stream().filter(i -> i.key().equals("kafka")).findFirst();
+        assertThat(kafka).isPresent();
+        assertThat(kafka.get().description()).isNotNull().isNotEmpty();
+        // type shows first label (e.g. "messaging") instead of generic "component"
+        assertThat(kafka.get().type()).isEqualTo("messaging");
+    }
+
+    @Test
+    void componentCompletionFilterMatchesLabels() {
+        List<AutocompletePopup.CompletionItem> items = provideComponentCompletions("producer");
+
+        // simulate typing "cloud" — should match components labeled "cloud"
+        var popup = new AutocompletePopup(items, "", "");
+        for (char c : "cloud".toCharArray()) {
+            popup.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofChar(c, dev.tamboui.tui.event.KeyModifiers.NONE));
+        }
+        assertThat(popup.hasItems()).isTrue();
+    }
+
+    // --- Required options ---
+
+    @Test
+    void requiredOptionsAreSortedFirst() {
+        List<AutocompletePopup.CompletionItem> items = provideKeyCompletions("jms", "producer");
+
+        // find first required and first non-required
+        int firstRequired = -1;
+        int lastRequired = -1;
+        int firstNonRequired = -1;
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).required()) {
+                if (firstRequired < 0) {
+                    firstRequired = i;
+                }
+                lastRequired = i;
+            } else if (!items.get(i).deprecated()) {
+                if (firstNonRequired < 0) {
+                    firstNonRequired = i;
+                }
+            }
+        }
+        if (firstRequired >= 0 && firstNonRequired >= 0) {
+            assertThat(lastRequired).isLessThan(firstNonRequired);
+        }
+    }
+
+    @Test
+    void jmsDestinationNameIncluded() {
+        List<AutocompletePopup.CompletionItem> items = provideKeyCompletions("jms", "producer");
+
+        // destinationName is a path option — should be included
+        assertThat(items).anyMatch(i -> i.key().equals("destinationName"));
+    }
+
+    // --- Existing parameters filtering ---
+
+    @Test
+    void collectExistingParametersFindsKeys() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: kafka",
+                "    parameters:",
+                "      brokers: localhost",
+                "      topic: orders",
+                "      ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        // cursor on blank line (line 5) inside parameters
+        Set<String> existing = viewer.collectExistingParameters(5);
+        assertThat(existing).containsExactlyInAnyOrder("brokers", "topic");
+    }
+
+    @Test
+    void collectExistingParametersOnBlankLineAfterParametersHeader() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: kafka",
+                "    parameters:",
+                "      ",
+                "      brokers: localhost",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        // cursor on blank line right after parameters: (line 3)
+        Set<String> existing = viewer.collectExistingParameters(3);
+        assertThat(existing).contains("brokers");
+    }
+
+    @Test
+    void existingParametersFilteredFromCompletions() {
+        Set<String> existing = Set.of("brokers", "topic");
+        List<AutocompletePopup.CompletionItem> items = provideKeyCompletions("kafka", "producer", existing);
+
+        assertThat(items).noneMatch(i -> i.key().equals("brokers"));
+        assertThat(items).noneMatch(i -> i.key().equals("topic"));
+        // other options should still be present
+        assertThat(items).isNotEmpty();
+    }
+
     // --- Helpers that replicate SourceTab logic for testing ---
 
     private List<AutocompletePopup.CompletionItem> provideKeyCompletions(String componentName, String role) {
+        return provideKeyCompletions(componentName, role, Set.of());
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideKeyCompletions(
+            String componentName, String role, Set<String> existingKeys) {
         ComponentModel model = catalog.componentModel(componentName);
         if (model == null) {
             return List.of();
         }
         boolean isConsumer = "consumer".equals(role);
         List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
-        for (ComponentModel.EndpointOptionModel opt : model.getEndpointParameterOptions()) {
+        for (ComponentModel.EndpointOptionModel opt : model.getEndpointOptions()) {
             if (includeEndpointOption(opt, isConsumer)) {
-                items.add(new AutocompletePopup.CompletionItem(
-                        opt.getName(), opt.getDescription(), opt.getType(),
-                        opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
-                        opt.getGroup()));
+                if (!existingKeys.contains(opt.getName()) || opt.isMultiValue()) {
+                    items.add(new AutocompletePopup.CompletionItem(
+                            opt.getName(), opt.getDescription(), opt.getType(),
+                            opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
+                            opt.getGroup(), opt.isRequired()));
+                }
             }
         }
         items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
+                .thenComparing(ci -> !ci.required())
                 .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+        return items;
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideComponentCompletions(String role) {
+        boolean isConsumer = "consumer".equals(role);
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (String name : catalog.findComponentNames()) {
+            ComponentModel model = catalog.componentModel(name);
+            if (model == null) {
+                continue;
+            }
+            if (isConsumer && model.isProducerOnly()) {
+                continue;
+            }
+            if (!isConsumer && model.isConsumerOnly()) {
+                continue;
+            }
+            String labels = model.getLabel();
+            String firstLabel = labels != null && !labels.isEmpty()
+                    ? labels.split(",")[0].trim()
+                    : "component";
+            items.add(new AutocompletePopup.CompletionItem(
+                    model.getScheme(), model.getDescription(), firstLabel,
+                    null, model.isDeprecated(), model.getDeprecationNote(),
+                    labels));
+        }
+        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
         return items;
     }
 
