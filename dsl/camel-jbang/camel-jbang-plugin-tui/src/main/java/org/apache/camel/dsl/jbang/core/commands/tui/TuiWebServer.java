@@ -69,6 +69,7 @@ class TuiWebServer {
     void start() throws IOException {
         bootstrap.setHost("127.0.0.1");
         bootstrap.setPort(port);
+        bootstrap.setResourcePath("/tui/web");
         try {
             bootstrap.start(this::accept).get(START_TIMEOUT_SECONDS, TimeUnit.SECONDS);
         } catch (ExecutionException e) {

@@ -1,0 +1,277 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camel TUI</title>
+  <link rel="stylesheet" href="/vendor/xterm.css" />
+  <style>
+    :root {
+      --camel-orange: #e97826;
+      --camel-navy:   #303284;
+      --camel-white:  #fff;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+      background: #1e1e1e;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .site-nav {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      height: 52px;
+      padding: 0 1.25rem;
+      background: var(--camel-navy);
+      color: var(--camel-white);
+      border-bottom: 3px solid var(--camel-orange);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+    }
+    .logo-mark {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      object-fit: cover;
+      object-position: left center;
+    }
+    .brand-name { font-weight: 700; font-size: .92rem; }
+    .brand-sub  { font-size: .68rem; opacity: .65; }
+    .nav-spacer { flex: 1; }
+
+    .connection-status {
+      flex-shrink: 0;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .status-connecting   { background: #4a3a1a; color: #fbbf24; }
+    .status-connected    { background: #1a472a; color: #4ade80; }
+    .status-disconnected { background: #4a1a1a; color: #f87171; }
+
+    #terminal-wrapper {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+    }
+    #terminal-container {
+      position: absolute;
+      inset: 0;
+      padding: 12px;
+      background: #000;
+    }
+
+    .disconnect-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, .82);
+    }
+    .disconnect-overlay[hidden] { display: none; }
+    .disconnect-box {
+      max-width: 26rem;
+      padding: 1.25rem 1.5rem;
+      border-radius: 8px;
+      border-left: 4px solid var(--camel-orange);
+      background: #232323;
+      color: var(--camel-white);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+    }
+    .disconnect-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: .35rem;
+    }
+    .disconnect-detail {
+      font-size: .85rem;
+      opacity: .8;
+    }
+  </style>
+</head>
+<body>
+  <nav class="site-nav" aria-label="Site navigation">
+    <img class="logo-mark" src="/images/camel-logo.png" alt="" aria-hidden="true">
+    <div>
+      <div class="brand-name">Apache Camel</div>
+      <div class="brand-sub">Camel TUI</div>
+    </div>
+    <div class="nav-spacer"></div>
+    <div id="status" class="connection-status status-connecting">Connecting...</div>
+  </nav>
+  <div id="terminal-wrapper">
+    <div id="terminal-container"></div>
+    <div id="disconnect-overlay" class="disconnect-overlay" hidden>
+      <div class="disconnect-box">
+        <div class="disconnect-title">Connection lost</div>
+        <div class="disconnect-detail" id="disconnect-detail"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/vendor/xterm.js"></script>
+  <script src="/vendor/xterm-addon-fit.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var statusEl = document.getElementById('status');
+      var overlayEl = document.getElementById('disconnect-overlay');
+      var overlayDetailEl = document.getElementById('disconnect-detail');
+
+      function setStatus(status, message) {
+        statusEl.className = 'connection-status status-' + status;
+        statusEl.textContent = message;
+      }
+
+      function showDisconnectOverlay(message) {
+        overlayDetailEl.textContent = message;
+        overlayEl.hidden = false;
+      }
+
+      function hideDisconnectOverlay() {
+        overlayEl.hidden = true;
+      }
+
+      function connect() {
+        var wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        var wsUrl = wsProtocol + '//' + window.location.host + '/ws';
+
+        setStatus('connecting', 'Connecting...');
+        hideDisconnectOverlay();
+
+        var socket = new WebSocket(wsUrl);
+        var term = null;
+        var fitAddon = null;
+        var resizeTimeout = null;
+
+        socket.onopen = function () {
+          setStatus('connected', 'Connected');
+
+          term = new Terminal({
+            cursorBlink: true,
+            cursorStyle: 'block',
+            fontFamily: '"DejaVu Sans Mono", "Liberation Mono", "Courier New", monospace',
+            fontSize: 14,
+            theme: {
+              background: '#000000',
+              foreground: '#f0f0f0',
+              cursor: '#f0f0f0',
+              cursorAccent: '#000000',
+              selectionBackground: 'rgba(255, 255, 255, 0.3)'
+            },
+            allowProposedApi: true
+          });
+
+          fitAddon = new FitAddon.FitAddon();
+          term.loadAddon(fitAddon);
+          term.open(document.getElementById('terminal-container'));
+
+          function sendInit() {
+            fitAddon.fit();
+            // Message shape ({action: 'init'|'read'|'resize', ...}) is dictated by
+            // org.aesh:terminal-http's server-side HttpTtyConnection - it is not ours to change.
+            socket.send(JSON.stringify({
+              action: 'init',
+              type: 'xterm-256color',
+              cols: term.cols,
+              rows: term.rows,
+              userAgent: navigator.userAgent
+            }));
+          }
+
+          // fitAddon.fit() right after open() can measure a stale/default size before the
+          // browser has finished laying out the page - defer past one paint so the server
+          // starts with the terminal's real dimensions instead of drifting and needing a
+          // resize correction.
+          requestAnimationFrame(function () {
+            requestAnimationFrame(sendInit);
+          });
+
+          socket.onmessage = function (event) {
+            term.write(event.data);
+          };
+
+          term.onData(function (data) {
+            socket.send(JSON.stringify({ action: 'read', data: data }));
+          });
+
+          term.onResize(function (size) {
+            socket.send(JSON.stringify({ action: 'resize', cols: size.cols, rows: size.rows }));
+          });
+
+          function handleResize() {
+            if (resizeTimeout) {
+              clearTimeout(resizeTimeout);
+            }
+            resizeTimeout = setTimeout(function () {
+              if (fitAddon && term) {
+                fitAddon.fit();
+              }
+            }, 100);
+          }
+
+          window.addEventListener('resize', handleResize);
+          if (window.ResizeObserver) {
+            new ResizeObserver(handleResize).observe(document.getElementById('terminal-container'));
+          }
+
+          socket.onclose = function (event) {
+            setStatus('disconnected', 'Disconnected (code: ' + event.code + ')');
+            showDisconnectOverlay('The session ended (code ' + event.code + '). Reload the page to reconnect.');
+            window.removeEventListener('resize', handleResize);
+          };
+
+          socket.onerror = function (error) {
+            setStatus('disconnected', 'Connection error');
+            showDisconnectOverlay('Lost contact with the Camel TUI server. Reload the page to reconnect.');
+            console.error('WebSocket error:', error);
+          };
+
+          term.focus();
+        };
+
+        socket.onerror = function (error) {
+          setStatus('disconnected', 'Failed to connect');
+          showDisconnectOverlay('Could not reach the Camel TUI server. Reload the page to retry.');
+          console.error('WebSocket connection error:', error);
+        };
+      }
+
+      window.addEventListener('load', connect);
+    })();
+  </script>
+</body>
+</html>

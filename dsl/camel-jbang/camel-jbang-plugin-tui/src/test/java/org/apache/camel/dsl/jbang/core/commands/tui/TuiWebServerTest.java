@@ -21,6 +21,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.net.http.WebSocket;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -91,6 +93,48 @@ class TuiWebServerTest {
             WebSocket webSocket = handshake.get(5, TimeUnit.SECONDS);
             assertThat(webSocket).isNotNull();
             webSocket.abort();
+        }
+    }
+
+    @Test
+    void servesTheCustomIndexPageWithVendoredAssets() throws Exception {
+        try (Port reserved = AvailablePortFinder.find()) {
+            server = newServer(reserved.getPort());
+            server.start();
+
+            HttpClient client = HttpClient.newHttpClient();
+            String base = "http://127.0.0.1:" + reserved.getPort();
+
+            HttpResponse<String> index = client.send(
+                    HttpRequest.newBuilder(URI.create(base + "/")).build(), HttpResponse.BodyHandlers.ofString());
+            assertThat(index.statusCode()).isEqualTo(200);
+            assertThat(index.headers().firstValue("content-type")).hasValueSatisfying(v -> assertThat(v).contains("text/html"));
+            assertThat(index.body()).contains("Apache Camel").contains("/vendor/xterm.js");
+
+            HttpResponse<String> xtermJs = client.send(
+                    HttpRequest.newBuilder(URI.create(base + "/vendor/xterm.js")).build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertThat(xtermJs.statusCode()).isEqualTo(200);
+            assertThat(xtermJs.headers().firstValue("content-type"))
+                    .hasValueSatisfying(v -> assertThat(v).contains("javascript"));
+
+            HttpResponse<String> xtermCss = client.send(
+                    HttpRequest.newBuilder(URI.create(base + "/vendor/xterm.css")).build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertThat(xtermCss.statusCode()).isEqualTo(200);
+            assertThat(xtermCss.headers().firstValue("content-type"))
+                    .hasValueSatisfying(v -> assertThat(v).contains("text/css"));
+
+            HttpResponse<String> fitAddon = client.send(
+                    HttpRequest.newBuilder(URI.create(base + "/vendor/xterm-addon-fit.js")).build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertThat(fitAddon.statusCode()).isEqualTo(200);
+
+            HttpResponse<byte[]> logo = client.send(
+                    HttpRequest.newBuilder(URI.create(base + "/images/camel-logo.png")).build(),
+                    HttpResponse.BodyHandlers.ofByteArray());
+            assertThat(logo.statusCode()).isEqualTo(200);
+            assertThat(logo.body()).hasSizeGreaterThan(0);
         }
     }
 

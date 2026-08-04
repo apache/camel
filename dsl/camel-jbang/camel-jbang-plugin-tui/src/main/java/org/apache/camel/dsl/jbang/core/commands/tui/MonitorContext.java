@@ -53,6 +53,7 @@ class MonitorContext {
     boolean ratePerMinute;
     boolean confirmActions;
     boolean validateOnSave = true;
+    boolean webSession;
     BiConsumer<String, Boolean> notificationCallback;
     BiConsumer<String, String> openMarkdownCallback;
     OpenOptionsCallback openOptionsCallback;
