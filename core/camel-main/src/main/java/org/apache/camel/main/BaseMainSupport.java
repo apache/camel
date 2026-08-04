@@ -2188,7 +2188,9 @@ public abstract class BaseMainSupport extends BaseService {
                 mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
 
         if (!server.isEnabled()) {
-            // http server is disabled
+            // http server is disabled; the mcp server (if enabled) is still set up so it can
+            // fail-fast with an actionable message about the missing http server
+            setupMcpServer(camelContext, server);
             return;
         }
 
@@ -2207,6 +2209,20 @@ public abstract class BaseMainSupport extends BaseService {
         // force eager starting as embedded http server is used for
         // container platform to check readiness and need to be started eager
         camelContext.addService(http, true, true);
+
+        // the mcp server serves through the http server, so it is set up (and started) after it
+        setupMcpServer(camelContext, server);
+    }
+
+    private void setupMcpServer(CamelContext camelContext, HttpServerConfigurationProperties server) throws Exception {
+        if (!server.isMcpEnabled()) {
+            return;
+        }
+        // auto-detect camel-mcp-server on classpath
+        McpServerFactory factory = resolveMcpServerFactory(camelContext);
+        Service mcp = factory.newMcpServer(camelContext, server);
+        // force eager starting so the mcp endpoint is served as soon as the http server is up
+        camelContext.addService(mcp, true, true);
     }
 
     private void setHttpManagementServerProperties(
@@ -3175,6 +3191,16 @@ public abstract class BaseMainSupport extends BaseService {
         if (answer == null) {
             answer = ResolverHelper.resolveMandatoryBootstrapService(camelContext, MainConstants.PLATFORM_HTTP_SERVER,
                     MainHttpServerFactory.class, "camel-platform-http-main");
+        }
+        return CamelContextAware.trySetCamelContext(answer, camelContext);
+    }
+
+    private static McpServerFactory resolveMcpServerFactory(CamelContext camelContext) {
+        // lookup in service registry first
+        McpServerFactory answer = camelContext.getRegistry().findSingleByType(McpServerFactory.class);
+        if (answer == null) {
+            answer = ResolverHelper.resolveMandatoryBootstrapService(camelContext, MainConstants.MCP_SERVER,
+                    McpServerFactory.class, "camel-mcp-server");
         }
         return CamelContextAware.trySetCamelContext(answer, camelContext);
     }

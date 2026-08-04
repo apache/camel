@@ -71,6 +71,17 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     @Metadata(label = "security", defaultValue = "false", security = "insecure:dev")
     private boolean jwtAllowMissingIssuerAndAudience;
 
+    @Metadata
+    private boolean mcpEnabled;
+    @Metadata
+    private String mcpTags;
+    @Metadata(defaultValue = "20000")
+    private long mcpToolTimeout = 20000;
+    @Metadata(defaultValue = "/mcp")
+    private String mcpPath = "/mcp";
+    @Metadata
+    private String mcpServerName;
+
     public HttpServerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
     }
@@ -326,6 +337,64 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.jwtAllowMissingIssuerAndAudience = jwtAllowMissingIssuerAndAudience;
     }
 
+    public boolean isMcpEnabled() {
+        return mcpEnabled;
+    }
+
+    /**
+     * Whether to expose ai-tool routes as MCP tools over streamable HTTP. Requires camel-mcp-server on the classpath.
+     * By default, the MCP server is not enabled.
+     */
+    public void setMcpEnabled(boolean mcpEnabled) {
+        this.mcpEnabled = mcpEnabled;
+    }
+
+    public String getMcpTags() {
+        return mcpTags;
+    }
+
+    /**
+     * Comma-separated list of ai-tool tags to expose as MCP tools. Only tools registered under one of these tags are
+     * exposed; the untagged default pool is never exposed. When not set, no tools are exposed.
+     */
+    public void setMcpTags(String mcpTags) {
+        this.mcpTags = mcpTags;
+    }
+
+    public long getMcpToolTimeout() {
+        return mcpToolTimeout;
+    }
+
+    /**
+     * Per-call MCP tool execution timeout in milliseconds. A call exceeding the timeout returns an error result to the
+     * MCP client; the underlying route keeps running until it completes on its own.
+     */
+    public void setMcpToolTimeout(long mcpToolTimeout) {
+        this.mcpToolTimeout = mcpToolTimeout;
+    }
+
+    public String getMcpPath() {
+        return mcpPath;
+    }
+
+    /**
+     * HTTP path where the MCP endpoint is served.
+     */
+    public void setMcpPath(String mcpPath) {
+        this.mcpPath = mcpPath;
+    }
+
+    public String getMcpServerName() {
+        return mcpServerName;
+    }
+
+    /**
+     * MCP server name advertised to clients. Defaults to the CamelContext name.
+     */
+    public void setMcpServerName(String mcpServerName) {
+        this.mcpServerName = mcpServerName;
+    }
+
     /**
      * Whether embedded HTTP server is enabled. By default, the server is not enabled.
      */
@@ -503,6 +572,49 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     public HttpServerConfigurationProperties withJwtAllowMissingIssuerAndAudience(
             boolean jwtAllowMissingIssuerAndAudience) {
         this.jwtAllowMissingIssuerAndAudience = jwtAllowMissingIssuerAndAudience;
+        return this;
+    }
+
+    /**
+     * Whether to expose ai-tool routes as MCP tools over streamable HTTP. Requires camel-mcp-server on the classpath.
+     * By default, the MCP server is not enabled.
+     */
+    public HttpServerConfigurationProperties withMcpEnabled(boolean mcpEnabled) {
+        this.mcpEnabled = mcpEnabled;
+        return this;
+    }
+
+    /**
+     * Comma-separated list of ai-tool tags to expose as MCP tools. Only tools registered under one of these tags are
+     * exposed; the untagged default pool is never exposed. When not set, no tools are exposed.
+     */
+    public HttpServerConfigurationProperties withMcpTags(String mcpTags) {
+        this.mcpTags = mcpTags;
+        return this;
+    }
+
+    /**
+     * Per-call MCP tool execution timeout in milliseconds. A call exceeding the timeout returns an error result to the
+     * MCP client; the underlying route keeps running until it completes on its own.
+     */
+    public HttpServerConfigurationProperties withMcpToolTimeout(long mcpToolTimeout) {
+        this.mcpToolTimeout = mcpToolTimeout;
+        return this;
+    }
+
+    /**
+     * HTTP path where the MCP endpoint is served.
+     */
+    public HttpServerConfigurationProperties withMcpPath(String mcpPath) {
+        this.mcpPath = mcpPath;
+        return this;
+    }
+
+    /**
+     * MCP server name advertised to clients. Defaults to the CamelContext name.
+     */
+    public HttpServerConfigurationProperties withMcpServerName(String mcpServerName) {
+        this.mcpServerName = mcpServerName;
         return this;
     }
 
