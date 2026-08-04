@@ -13,6 +13,16 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.21 to 4.22
 
+=== camel-reactive-executor-tomcat
+
+The `camel-reactive-executor-tomcat` component has been deprecated. Its cross-thread `ThreadLocal`
+cleanup relied on reflective access to the private `Thread.threadLocals` field, which is denied by
+the JDK module system since JDK 17 and is incompatible with virtual threads. Without that cleanup,
+this executor is functionally identical to the built-in `DefaultReactiveExecutor`.
+
+To migrate, remove the `camel-reactive-executor-tomcat` dependency from your project. Camel will
+automatically use the default reactive executor.
+
 === camel-core
 
 ==== Property placeholders in toD and enrich dynamic endpoint URIs

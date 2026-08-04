@@ -28,8 +28,8 @@
 
     <artifactId>camel-reactive-executor-tomcat</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Reactive Executor :: Tomcat</name>
-    <description>Reactive Executor for camel-core using Apache Tomcat</description>
+    <name>Camel :: Reactive Executor :: Tomcat (deprecated)</name>
+    <description>Reactive Executor for camel-core using Apache Tomcat (deprecated)</description>
 
     <properties>
         <firstVersion>3.17.0</firstVersion>
