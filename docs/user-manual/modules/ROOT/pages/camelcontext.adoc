@@ -198,7 +198,7 @@ A producer is the Camel abstraction that refers to an entity capable of sending 
 an endpoint. When a message is sent to an endpoint, the producer handles the details of getting
 the message data compatible with that particular endpoint. For example, `FileProducer`
 will write the message body to a `java.io.File`. `JmsProducer`, on the other hand, will map
-the Camel message to `javax.jms.Message` before sending it to a JMS destination. This
+the Camel message to `jakarta.jms.Message` before sending it to a JMS destination. This
 is an important feature in Camel, because it hides the complexity of interacting with
 particular transports. All you need to do is route a message to an endpoint, and the producer
 does the heavy lifting.
